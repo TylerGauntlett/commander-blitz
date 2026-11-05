@@ -1,0 +1,25 @@
+{
+  "_comment": "Cards that exist only for the cast-from-exile condition test (tests/unit/casting/test_cast_from_exile.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_exile_blessing` is Ultimate Magic: Holy's shape on a life-gain body: a foretell sorcery whose rider branches on `cast_from_exile`, so a cast from hand gains 1 and a foretold cast gains 5.",
+  "cards": [
+    {
+      "id": "t_exile_blessing",
+      "name": "Test Exile Blessing",
+      "oracle_text": "You gain 1 life. If this spell was cast from exile, you gain 4 life.\nForetell {W} (During your turn, you may pay {2} and exile this card from your hand face down. Cast it on a later turn for its foretell cost.)",
+      "mana_cost": "{1}{W}",
+      "types": ["Sorcery"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "foretell": "{W}",
+      "spell_effects": [
+        { "op": "gain_life", "player": "you", "amount": { "const": 1 } },
+        {
+          "op": "if",
+          "condition": { "cast_from_exile": true },
+          "then": [
+            { "op": "gain_life", "player": "you", "amount": { "const": 4 } }
+          ]
+        }
+      ]
+    }
+  ]
+}

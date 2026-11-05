@@ -167,6 +167,14 @@ STATIC_EFFECTS = frozenset(
         # what separates it from `lose_all_abilities`: that one would also take
         # the opponents' flying and their triggered and activated abilities.
         "lose_keyword",
+        # Colossus Hammer: "Equipped creature gets +10/+10 and **loses
+        # flying**." The plain removal, with no "can't have": layer 6 in
+        # timestamp order (613.7), so a grant newer than the removal -- Jump,
+        # an anthem that arrived later, a flying counter put on afterwards --
+        # gives the keyword back, where `lose_keyword` outranks every grant.
+        # Applied after the grants by `characteristics._compute`, which compares
+        # each grant's timestamp with the removal's (`static_timestamp`).
+        "lose_keyword_timestamped",
         # Authority of the Consuls; Imposing Sovereign; Kismet; Frozen
         # Aether; Loxodon Gatekeeper; Root Maze; Orb of Dreams; Thalia,
         # Heretic Cathar.  "<permanents> your opponents control enter
@@ -357,6 +365,14 @@ STATIC_EFFECTS = frozenset(
         # this turn. Read by `player_statics.granted_miracle_cost` from
         # `replacements._miracle`, with the card already in hand.
         "grant_miracle",
+        # "Nonartifact spells you cast have improvise." Inspiring Statuary.
+        # `pay_generic_with` names the currency -- convoke, improvise or delve,
+        # the card-level field's three values -- and `affects_spells` the
+        # spells. Not a price like `grant_warp`: the spell keeps its mana cost
+        # and gains another way to pay its generic part. Read by
+        # `player_statics.granted_pay_generic_with`, which
+        # `casting.pay_generic_currencies` unions with the printed field.
+        "grant_pay_generic_with",
         # "You may pay eight {E} rather than pay the mana cost for permanent
         # spells you cast." Nissa, Worldsoul Speaker. `grant_warp`'s shape for
         # a price paid in something other than mana: `affects_spells` names the
@@ -827,6 +843,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "free_cast_permission",
         "grant_warp",
         "grant_miracle",
+        "grant_pay_generic_with",
         "granted_alternative_cost",
         "black_mana_as_phyrexian",
         "spend_mana_as_any_color",
@@ -881,6 +898,10 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
 #:   `characteristics._active_player_statics`, which walks printed faces and
 #:   never sees an appended granted ability.
 #:
+#: And one that would not be inert but wrong: `lose_keyword_timestamped` is a
+#: timestamp comparison, and a granted static is read with its holder's
+#: timestamp rather than the grant's.
+#:
 #: Refused by name rather than left to load, because every one of them would
 #: produce a card that loads clean, prints a line of quoted text and does
 #: nothing -- which is the exact failure the whole validation pass exists to
@@ -889,6 +910,10 @@ UNGRANTABLE_STATIC_EFFECTS = (
     PLAYER_WIDE_STATIC_EFFECTS
     | {"replace_token_creation", "damage_cant_be_prevented", "all_damage_wither"}
     | frozenset(ABILITY_STATICS)
+    # A granted static is read with its holder's timestamp, not the grant's
+    # (`characteristics.static_timestamp`), and this one is nothing but a
+    # timestamp comparison.
+    | {"lose_keyword_timestamped"}
 )
 
 #: Statics a `grant_ability` static may hand to another permanent.
@@ -1194,7 +1219,14 @@ STATIC_FILTER_KEYS = frozenset(
 #: branch. Kept off `STATIC_FILTER_KEYS` itself, which also validates
 #: `blockers`, `targeting`, `damage_source` and the counting filters -- readers
 #: that would each need the recursion argued separately.
-STATIC_AFFECTS_FILTER_KEYS = STATIC_FILTER_KEYS | {"any_of"}
+#:
+#: And ``modified``: "Other **modified** creatures you control have vigilance
+#: and trample" (Red XIII, Proud Warrior) -- a counter, an Equipment told by its
+#: printed face, or an Aura the static's controller controls, all pipeline
+#: inputs (`characteristics.is_modified_printed`). Affects only, because the
+#: matcher behind `affects` is the one that answers it; the cost-reduction,
+#: trigger and spell filters that share `STATIC_FILTER_KEYS` have their own.
+STATIC_AFFECTS_FILTER_KEYS = STATIC_FILTER_KEYS | {"any_of", "modified"}
 
 #: Who a filter's ``owner`` (or ``controller``) may name, relative to the source.
 _FILTER_PLAYERS = ("you", "opponent")
@@ -1571,11 +1603,21 @@ STATIC_VALUE_KEYS = (
 #: up the first time somebody taps a Talisman.
 #: The classes of activated ability an `ability_cost_reduction` may name.
 #:
-#: One so far. Each is a question the engine can actually answer about a
-#: compiled `Ability` -- `equip` reads `Ability.is_equip` -- and a class with no
-#: marker behind it would load and match nothing, which is the printed line
-#: silently not happening.
-ABILITY_CLASS_KEYS = frozenset({"equip"})
+#: Each is a question the engine can actually answer about a compiled
+#: `Ability` -- `equip` reads `Ability.is_equip`, `any` is every activated
+#: ability ("the first activated ability you activate", Professor Hojo) -- and
+#: a class with no marker behind it would load and match nothing, which is the
+#: printed line silently not happening.
+ABILITY_CLASS_KEYS = frozenset({"equip", "any"})
+
+#: The `targeting` keys an `ability_cost_reduction` with
+#: `first_during_your_turn` may read. "The **first** activated ability … that
+#: targets a creature you control" asks about earlier activations too, whose
+#: targets may since have changed or left; each is matched against the
+#: snapshot `Game._activate` filed in `TurnLedger.targeted_activations` -- its
+#: controller, card types and subtypes as it was targeted -- so only those can
+#: be asked.
+FIRST_ACTIVATION_TARGETING_KEYS = frozenset({"controller", "types", "subtypes"})
 
 
 MANA_RIDER_OPS = frozenset(
@@ -1605,9 +1647,10 @@ COUNTERS_ON_ARRIVAL_OPS = frozenset(
 
 
 #: The ops that read ``host_named``: "return … to the battlefield **attached to
-#: that token**" (Forum Filibuster, Gift of Immortality), where the effect names
-#: the Aura's host with a following `attach` and 303.4f's choice is not asked.
-#: Every other arrival of an Aura asks it -- `zones.offer_aura_host`.
+#: that token**" (Forum Filibuster, Gift of Immortality, Unfinished Business),
+#: a selector naming the host, which each arriving Aura must be able to enchant
+#: -- `zones.offer_named_host`. Every other arrival of an Aura chooses its host
+#: -- `zones.offer_aura_host`.
 HOST_NAMED_OPS = frozenset({"return_from_graveyard", "put_onto_battlefield"})
 
 #: The one non-string ``counter`` an ``add_counters`` may name: "the same

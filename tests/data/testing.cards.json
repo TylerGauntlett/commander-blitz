@@ -585,7 +585,8 @@
               ],
               "attacking": true,
               "blocked": false,
-              "count": 1
+              "count": 1,
+              "as": "returned"
             }
           },
           "effects": [
@@ -597,7 +598,9 @@
               },
               "controller": "you",
               "tapped": true,
-              "attacking": true
+              "attacking": {
+                "same_as": "returned"
+              }
             }
           ]
         }

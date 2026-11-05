@@ -409,6 +409,20 @@ class GameObject:
     #: anything never attached; stale once detached, which is harmless because
     #: nothing reads it for an object that is not attached.
     attached_timestamp: int = 0
+    #: When this object entered the zone it is in (613.7), from
+    #: `GameState.alloc_timestamp` and so comparable with every `TempEffect`
+    #: timestamp, `attached_timestamp` and `granted_keyword_at`. Written by
+    #: `zones._add_to_zone`; phasing in is not a zone change and keeps it.
+    #: Read by `characteristics.static_timestamp` to order a timestamped
+    #: keyword removal (`lose_keyword_timestamped`) against the grants around
+    #: it. Zero on an object that has never moved, which is older than
+    #: anything that has.
+    timestamp: int = 0
+    #: When a keyword counter of each kind was last put on this permanent
+    #: (613.7), written by `primitives.add_counters`. A kind missing here
+    #: arrived with the permanent ("enters with") and reads as `timestamp`.
+    #: Cleared with the counters by `reset_permanent_state`.
+    keyword_counter_at: dict[str, int] = field(default_factory=dict)
     #: **The player this Aura enchants** -- "Enchant opponent" (Overencumbered),
     #: "Enchant player" (Sleeper's Robe). 303.4a lets an Aura's enchant ability
     #: name a *player*, and 704.5n is the state-based action that follows: an
@@ -1222,6 +1236,7 @@ class GameObject:
         self.deathtouched = False
         self.regeneration_shields = 0
         self.counters = {}
+        self.keyword_counter_at = {}
         self.attached_to = None
         self.last_attached_to = None
         # Cleared with `attached_to` and for its reason: a permanent that left

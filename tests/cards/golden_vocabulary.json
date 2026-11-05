@@ -1,6 +1,7 @@
 {
  "loader": {
   "ABILITY_CLASS_KEYS": [
+   "any",
    "equip"
   ],
   "ATTACKING_OPS": [
@@ -100,6 +101,11 @@
    "enters_with",
    "name",
    "remove_supertypes"
+  ],
+  "FIRST_ACTIVATION_TARGETING_KEYS": [
+   "controller",
+   "subtypes",
+   "types"
   ],
   "FREE_CAST_FILTER_KEYS": [
    "any_types",
@@ -310,6 +316,7 @@
    "free_cast_permission",
    "freeze_opponent_lands",
    "grant_miracle",
+   "grant_pay_generic_with",
    "grant_warp",
    "granted_alternative_cost",
    "look_at_library_top",
@@ -399,6 +406,7 @@
    "is_token",
    "keywords",
    "mana_cost",
+   "modified",
    "not_keywords",
    "not_supertypes",
    "not_types",
@@ -534,6 +542,7 @@
    "grant_ability",
    "grant_keyword",
    "grant_miracle",
+   "grant_pay_generic_with",
    "grant_warp",
    "granted_alternative_cost",
    "imprint_characteristics",
@@ -541,6 +550,7 @@
    "look_at_library_top",
    "lose_all_abilities",
    "lose_keyword",
+   "lose_keyword_timestamped",
    "mana_becomes_colorless",
    "mana_retention",
    "no_hand_limit",
@@ -699,10 +709,12 @@
    "freeze_opponent_lands",
    "grant_ability",
    "grant_miracle",
+   "grant_pay_generic_with",
    "grant_warp",
    "granted_alternative_cost",
    "look_at_library_top",
    "lose_all_abilities",
+   "lose_keyword_timestamped",
    "mana_becomes_colorless",
    "mana_retention",
    "no_hand_limit",
@@ -833,6 +845,11 @@
     0,
     1
    ]
+  ],
+  "_AS_CAST_RESERVED": [
+   "convoked",
+   "distribution",
+   "warped"
   ],
   "_CHOSEN_QUALITY_KEYS": [
    "chosen_type_of",

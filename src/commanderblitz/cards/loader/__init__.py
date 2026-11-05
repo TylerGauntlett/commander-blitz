@@ -52,6 +52,7 @@ from commanderblitz.engine.effects.values import (
     validate_value,
 )
 from commanderblitz.engine.enums import (
+    NUMBERED_KEYWORDS,
     PERMANENT_TYPES,
     SUBTYPE_CLASS,
     AbilityKind,
@@ -69,6 +70,7 @@ from commanderblitz.engine.mana import (
 )
 from commanderblitz.engine.objects import TIME_COUNTER
 from commanderblitz.engine.sagas import LORE, SAGA
+from commanderblitz.engine.structs import CONVOKED_BINDING
 from commanderblitz.engine.triggers import (
     BATCHED_EVENTS,
     ORDINAL_FILTER_KEYS,
@@ -133,6 +135,7 @@ from .vocabulary import (  # noqa: F401
     COUNTERS_ON_ARRIVAL_OPS,
     DEFENDING_TRIGGERS,
     DELAYED_TRIGGER_KEYS,
+    FIRST_ACTIVATION_TARGETING_KEYS,
     FREE_CAST_FILTER_KEYS,
     GRANTABLE_STATIC_EFFECTS,
     KEYWORD_ALIASES,
@@ -787,6 +790,72 @@ def _final_chapter(model: CardModel, abilities: tuple[Ability, ...], where: str)
     return declared
 
 
+#: Binding names the engine itself writes onto a spell's stack item, which an
+#: ``as_cast`` value would overwrite or be overwritten by.
+_AS_CAST_RESERVED = frozenset({CONVOKED_BINDING, "distribution", "warped"})
+
+
+def _reads_binding(tree: Any, name: str) -> bool:
+    """Does anything in an effect tree read ``{"binding": name}``?"""
+    if isinstance(tree, Mapping):
+        if tree.get("binding") == name:
+            return True
+        return any(_reads_binding(v, name) for v in tree.values())
+    if isinstance(tree, (list, tuple)):
+        return any(_reads_binding(v, name) for v in tree)
+    return False
+
+
+def _mentions_target(tree: Any) -> bool:
+    if isinstance(tree, Mapping):
+        return "target" in tree or any(_mentions_target(v) for v in tree.values())
+    if isinstance(tree, (list, tuple)):
+        return any(_mentions_target(v) for v in tree)
+    return False
+
+
+def _check_as_cast(model: CardModel, where: str) -> None:
+    """``as_cast`` values: well-formed, read, and askable as the spell is cast.
+
+    Each is evaluated by `stack.push_spell` with no targets in reach (the
+    spell's targets are split into their specs only at resolution), so a value
+    naming a ``target`` is refused rather than reading 0. A name nothing in
+    `spell_effects` reads is a typo or a dropped sentence, and a card with no
+    `spell_effects` has nothing to read it with: a permanent's triggers never
+    see its spell's stack item.
+    """
+    if not model.as_cast:
+        return
+    at = f"{where}.as_cast"
+    if not model.spell_effects:
+        raise DslError(
+            f"{at}: a cast-time value is read back by the spell's own "
+            f"spell_effects, and this card has none"
+        )
+    for name, expr in model.as_cast.items():
+        if not name or name in _AS_CAST_RESERVED:
+            raise DslError(
+                f"{at}: {name!r} is not a usable binding name (reserved: "
+                f"{sorted(_AS_CAST_RESERVED)})"
+            )
+        validate_value(expr, f"{at}.{name}")
+        if isinstance(expr, (bool, int, str)):
+            raise DslError(
+                f"{at}.{name}: a constant is the same at cast and at resolution "
+                f"-- write it where it is read"
+            )
+        if _mentions_target(expr):
+            raise DslError(
+                f"{at}.{name}: a cast-time value cannot read a target -- "
+                f"targets are split into their specs only as the spell resolves"
+            )
+        if not _reads_binding(model.spell_effects, name):
+            raise DslError(
+                f"{at}.{name}: nothing in spell_effects reads "
+                f"{{'binding': {name!r}}}"
+            )
+
+
 def _check_distribution_homes(model: CardModel, where: str) -> None:
     """``distribute_counters`` only where its division can be announced.
 
@@ -1031,6 +1100,8 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         has_kicker=model.kicker is not None or model.multikicker is not None,
         # `gift_promised` names the 601.2b promise, so there has to be one.
         has_gift=model.gift is not None,
+        # `cost_option` names a tier, chosen at 601.2b, so it has to exist.
+        cost_options=len(model.additional_cost_options),
     )
     card_level = tuple(spec for spec in all_targets if spec.mode is None)
     # The two sides of the gift promise, when a spec names one. The unpromised
@@ -1043,6 +1114,16 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         if any(spec.gift_promised is not None for spec in card_level)
         else None
     )
+    # Each tier's list, when a spec names a tier (702.183): `targets` keeps
+    # only the specs every tier shares, and a tiered card's cost is mandatory,
+    # so every cast line reads its own tier's list through `targets_for`.
+    cost_option_targets: dict[int, tuple[TargetSpec, ...]] = {}
+    if any(spec.cost_option is not None for spec in targets):
+        cost_option_targets = {
+            n: tuple(spec for spec in targets if spec.cost_option in (None, n))
+            for n in range(len(model.additional_cost_options))
+        }
+        targets = tuple(spec for spec in targets if spec.cost_option is None)
     mode_targets: dict[int, tuple[TargetSpec, ...]] = {}
     for spec in all_targets:
         if spec.mode is not None:
@@ -1066,6 +1147,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         )
     _check_distribution_homes(model, where)
     _check_division_homes(model, where)
+    _check_as_cast(model, where)
 
     for i, replacement in enumerate(model.replacements):
         if replacement.event == "self_enters_prepared" and model.prepared_face is None:
@@ -2248,7 +2330,9 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         targets=targets,
         mode_targets=mode_targets,
         gift_targets=gift_targets,
+        cost_option_targets=cost_option_targets,
         spell_effects=tuple(model.spell_effects),
+        as_cast=dict(model.as_cast),
         replacements=_implied_replacements(model),
         abilities=abilities,
         grantable_abilities=grantable,
@@ -2392,6 +2476,84 @@ def _check_threshold_order(abilities: tuple[Ability, ...], where: str) -> None:
 #: writes any of those is a line the loader would have to either ignore or
 #: believe over the rule.
 _LEVEL_LINE_KEYS = frozenset({"kind", "text", "level", "cost", "sorcery_speed_only"})
+
+
+def _same_as_names(node: Any) -> set[str]:
+    """Every name an ``attacking: {"same_as": …}`` clause under ``node`` reads."""
+    names: set[str] = set()
+    if isinstance(node, Mapping):
+        who = node.get("attacking")
+        if isinstance(who, Mapping) and isinstance(who.get("same_as"), str):
+            names.add(who["same_as"])
+        for value in node.values():
+            names |= _same_as_names(value)
+    elif isinstance(node, list | tuple):
+        for value in node:
+            names |= _same_as_names(value)
+    return names
+
+
+def _check_same_as(effects: Any, cost: Cost | None, where: str) -> None:
+    """``attacking: {"same_as": <name>}`` must name this ability's returned creature.
+
+    The record it reads is written by this ability's own `return_to_hand` cost
+    (``as``) and nothing else. A name nothing writes would leave the binding
+    empty and the ninja arriving tapped and attacking nobody, while the card
+    looked implemented.
+    """
+    names = _same_as_names(effects)
+    if not names:
+        return
+    returned = (cost.return_to_hand or {}).get("as") if cost is not None else None
+    if names != {returned}:
+        raise DslError(
+            f"{where}: attacking 'same_as' {sorted(names)} must name the creature this "
+            f"ability's return_to_hand cost binds with 'as' (got {returned!r})"
+        )
+
+
+def _sacrificed_names(node: Any) -> set[str]:
+    """Every name a ``was_attached_to`` selector key or a ``from_had_counters``
+    name under ``node`` reads."""
+    names: set[str] = set()
+    if isinstance(node, Mapping):
+        for key in ("was_attached_to", "from_had_counters"):
+            if isinstance(node.get(key), str):
+                names.add(node[key])
+        for value in node.values():
+            names |= _sacrificed_names(value)
+    elif isinstance(node, list | tuple):
+        for value in node:
+            names |= _sacrificed_names(value)
+    return names
+
+
+def _check_sacrificed_names(model: AbilityModel, cost: Cost | None, where: str) -> None:
+    """``was_attached_to`` and ``from_had_counters: <name>`` must name the
+    permanent this ability's own `sacrifice` cost binds with ``as``.
+
+    Only that cost writes the record they read (`costs.sacrificed_snapshot`). A
+    name nothing writes would leave the Equipment where it is and put no
+    counters while the card looked implemented. A target selector is refused
+    outright: targets are chosen before costs are paid (601.2c, 601.2h), so
+    the record does not exist yet.
+    """
+    for target in model.targets:
+        if _sacrificed_names(target.model_dump()):
+            raise DslError(
+                f"{where}.targets: 'was_attached_to' reads what the sacrifice cost "
+                f"recorded, and targets are chosen before costs are paid"
+            )
+    names = _sacrificed_names(model.effects)
+    if not names:
+        return
+    sacrificed = (cost.sacrifice or {}).get("as") if cost is not None else None
+    if names != {sacrificed}:
+        raise DslError(
+            f"{where}: 'was_attached_to'/'from_had_counters' {sorted(names)} must name "
+            f"the permanent this ability's sacrifice cost binds with 'as' "
+            f"(got {sacrificed!r})"
+        )
 
 
 def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Ability:
@@ -2686,6 +2848,8 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         if model.cost
         else None
     )
+    _check_same_as(model.effects, cost, where)
+    _check_sacrificed_names(model, cost, where)
     trigger = None
     active_zones: tuple[Zone, ...] = (Zone.BATTLEFIELD,)
 
@@ -3568,6 +3732,13 @@ def _check_static_affects(filt: Mapping[str, Any], where: str, path: str) -> Non
             f"characteristics; unsupported keys {sorted(unknown)}"
         )
     _check_owner_key(filt, path)
+    # "Modified" names no counter, Equipment or Aura, so the key is `true`
+    # alone; `false` would read as no clause at all, and a dict as `true`.
+    if "modified" in filt and filt["modified"] is not True:
+        raise DslError(
+            f"{path}.modified: true only -- a counter, an Equipment, or an Aura "
+            f"you control on the permanent"
+        )
     if not top:
         # The top level is checked by the caller's loop over every filter key.
         _check_mana_cost_key(filt, path)
@@ -4257,6 +4428,35 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             )
         if ManaCost.parse(model.miracle_cost).x_count:
             raise DslError(f"{where}: a miracle cost with X is not implemented")
+    elif model.effect == "grant_pay_generic_with":
+        # "Nonartifact spells you cast have improvise" -- Inspiring Statuary.
+        # `grant_warp`'s guards for its reasons: no filter is the keyword on
+        # every spell rather than the printed "nonartifact spells", and no
+        # currency is an inert static wearing a printed grant. `controller` is
+        # refused because `affects_player` already names the caster.
+        if model.affects is not None:
+            raise DslError(
+                f"{where}: grant_pay_generic_with filters spells with "
+                f"'affects_spells', not 'affects' (which picks out permanents)"
+            )
+        if not model.affects_spells:
+            raise DslError(
+                f"{where}: grant_pay_generic_with needs 'affects_spells' naming "
+                f"which spells gain the keyword -- without one every spell has it"
+            )
+        unknown = set(model.affects_spells) - (SPELL_FILTER_KEYS - {"controller"})
+        if unknown:
+            raise DslError(
+                f"{where}.affects_spells: a spell being cast has a printed face "
+                f"and no board state, and `affects_player` already names the "
+                f"caster; unsupported keys {sorted(unknown)}"
+            )
+        if model.pay_generic_with is None:
+            raise DslError(
+                f"{where}: grant_pay_generic_with needs 'pay_generic_with' -- "
+                f"'tap_creatures' (convoke), 'tap_artifacts' (improvise) or "
+                f"'exile_from_graveyard' (delve)"
+            )
     elif model.effect == "granted_alternative_cost":
         # `free_cast_permission`'s guards, for its reason: a grant with no
         # filter re-prices every spell in the game rather than the printed
@@ -4427,10 +4627,51 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             raise DslError(
                 f"{where}.activated_by: must be 'you', 'opponent' or 'any', got {who!r}"
             )
+        if model.affects_abilities.get("any") and model.targeting is None:
+            # A mana ability is priced by the payment solver, which never
+            # reaches this static, so "every activated ability" with nothing
+            # else said would quietly skip them. A `targeting` clause makes the
+            # gap moot: a mana ability has no targets (605.1a).
+            raise DslError(
+                f"{where}: affects_abilities 'any' needs a 'targeting' clause -- "
+                f"mana abilities are priced where this static is not read"
+            )
+        if model.first_during_your_turn:
+            # "The first … **you** activate during **your** turn that targets
+            # …": the count is of the activator's own matching activations, so
+            # it means nothing without both halves.
+            if who != "you":
+                raise DslError(
+                    f"{where}: first_during_your_turn counts your own activations "
+                    f"on your turn; 'activated_by' must be 'you', got {who!r}"
+                )
+            if model.targeting is None:
+                raise DslError(
+                    f"{where}: first_during_your_turn needs 'targeting' -- the "
+                    f"clause that says which activations are counted"
+                )
+            stray = set(model.targeting) - FIRST_ACTIVATION_TARGETING_KEYS
+            if stray:
+                raise DslError(
+                    f"{where}.targeting: an earlier activation is matched on a "
+                    f"snapshot of its targets, which keeps only "
+                    f"{sorted(FIRST_ACTIVATION_TARGETING_KEYS)}; unsupported "
+                    f"keys {sorted(stray)}"
+                )
+            if model.affects is not None:
+                raise DslError(
+                    f"{where}: first_during_your_turn does not read 'affects' -- "
+                    f"an earlier activation's source is not snapshotted"
+                )
 
     elif model.activated_by is not None or model.affects_abilities is not None:
         raise DslError(
             f"{where}: 'affects_abilities'/'activated_by' only mean anything on an "
+            f"ability_cost_reduction static, not on {model.effect!r}"
+        )
+    if model.first_during_your_turn and model.effect != "ability_cost_reduction":
+        raise DslError(
+            f"{where}: 'first_during_your_turn' only means anything on an "
             f"ability_cost_reduction static, not on {model.effect!r}"
         )
 
@@ -5263,7 +5504,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         carried = NUMBER_CARRYING_GRANT_KEYWORDS
     # Losing toxic is sayable -- `chars` drops the word and `damage_player`
     # reads the derived keywords -- so only the granting statics are refused.
-    if model.effect != "lose_keyword":
+    # `lose_keyword_timestamped` refuses them below, for its own reason.
+    if model.effect not in ("lose_keyword", "lose_keyword_timestamped"):
         refuse_numbered_grant(model.keywords, where, carried)
 
     if model.effect == "activate_loyalty_as_though_instant":
@@ -5496,6 +5738,33 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"{where}: lose_keyword needs 'affects' naming whose permanents "
                 f"lose the keyword -- the filter defaults to your own, which is "
                 f"the opposite of every printed card in this cycle"
+            )
+
+    if model.effect == "lose_keyword_timestamped":
+        # "Equipped creature ... loses flying" -- the plain removal a newer
+        # grant overrides (613.7). Its `lose_keyword` neighbour's two
+        # requirements, for that static's reasons: named keywords, and the
+        # printed clause naming whose permanents lose them.
+        if not model.keywords:
+            raise DslError(
+                f"{where}: lose_keyword_timestamped needs the keywords it removes "
+                f"-- an empty list is an inert static wearing a printed removal"
+            )
+        if model.affects is None:
+            raise DslError(
+                f"{where}: lose_keyword_timestamped needs 'affects' naming whose "
+                f"permanents lose the keyword -- {{'attached': true}} is the "
+                f"printed \"equipped creature\" or \"enchanted creature\""
+            )
+        numbered = [k for k in model.keywords if k in {w.value for w in NUMBERED_KEYWORDS}]
+        if numbered:
+            # An instance of annihilator is counted off the printed card and
+            # each granting static (`annihilator_instances`), which knows no
+            # timestamps, so a removal it cannot order would leave the count
+            # disagreeing with the keyword.
+            raise DslError(
+                f"{where}: lose_keyword_timestamped cannot remove {numbered!r}: a "
+                f"numbered keyword's instances are not ordered by timestamp"
             )
 
     if model.effect == "imprint_characteristics":
@@ -5747,7 +6016,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     # `replace_damage`'s four, copied explicitly for the whitelist reason
     # below: forgotten here, the Flail would double every source's damage to
     # everything, or none of it.
-    # `ability_cost_reduction`'s two, copied explicitly for the whitelist reason
+    # `ability_cost_reduction`'s four, copied explicitly for the whitelist reason
     # below -- and this one bites hardest: without `affects_abilities` the class
     # filter reads empty, and an empty filter discounts *every* activated
     # ability on the table rather than none.
@@ -5757,6 +6026,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["activated_by"] = model.activated_by
     if model.targeting is not None:
         static["targeting"] = dict(model.targeting)
+    if model.first_during_your_turn:
+        static["first_during_your_turn"] = True
     if model.damage_multiplier is not None:
         static["damage_multiplier"] = model.damage_multiplier
     if model.damage_addend is not None:
@@ -5802,6 +6073,16 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     # `grant_miracle`'s price, whitelisted for `warp_cost`'s reason.
     if model.miracle_cost is not None:
         static["miracle_cost"] = model.miracle_cost
+    # `grant_pay_generic_with`'s currency, whitelisted for `warp_cost`'s reason.
+    if model.pay_generic_with is not None:
+        if model.effect != "grant_pay_generic_with":
+            # Read by nothing else: a static carrying it would load clean and
+            # grant no keyword.
+            raise DslError(
+                f"{where}: 'pay_generic_with' on a static is read only by "
+                f"grant_pay_generic_with, not {model.effect!r}"
+            )
+        static["pay_generic_with"] = model.pay_generic_with
     # `double_triggers`' cause clause. Copied explicitly like every other field
     # here: this dict is a whitelist, not a dump of the model, so a field the
     # schema accepts and this loop forgets is silently dropped -- the static

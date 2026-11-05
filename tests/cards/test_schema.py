@@ -244,9 +244,11 @@ class TestVocabularyIsChecked:
         before any layer, so it still cannot see another static's output. The
         restriction is measured in `tests/unit/statics/test_static_power_filter.py`.
 
-        `modified` takes its place, and it is a key the effect-side selector
-        language has and the static one deliberately does not: the cards that
-        print the word grant something once rather than continuously.
+        `equipped` is the exemplar: the effect-side selector tells an
+        Equipment by its derived subtypes (`characteristics.is_equipped`), a
+        layer-4 output, so the static filter language refuses it. `modified`
+        is not one: the static reading tells the Equipment by its printed face
+        (`characteristics.is_modified_printed`).
         """
         model = CardModel.model_validate(
             self._card(
@@ -257,7 +259,7 @@ class TestVocabularyIsChecked:
                     {
                         "kind": "static",
                         "effect": "buff",
-                        "affects": {"controller": "you", "modified": True},
+                        "affects": {"controller": "you", "equipped": True},
                         "power": {"const": 1},
                         "toughness": {"const": 1},
                     }

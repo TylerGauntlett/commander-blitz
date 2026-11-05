@@ -117,6 +117,34 @@ COUNTER_REMOVAL_UP_TO_OPS = ("remove_counters", "remove_counters_from_among")
 ANY_KIND_COUNTER_OPS = ("remove_counters", "move_counters")
 
 
+def _validate_from_had_counters(effect: Mapping[str, Any], op: str, where: str) -> None:
+    """``from_had_counters`` on ``move_counters``: ``true`` (a leave trigger's
+    snapshot) or the name a sacrifice cost's ``as`` wrote (Zack Fair).
+
+    Read only by the every-kind move, so it means nothing without
+    ``all_kinds``; and the counters come off a permanent that has left, so a
+    ``from`` beside it would load and be ignored. A name is tied to this
+    ability's own cost by `loader._check_sacrificed_names`.
+    """
+    had = effect["from_had_counters"]
+    if op != "move_counters":
+        raise DslError(f"{where}: 'from_had_counters' only means anything on move_counters")
+    if not (had is True or (isinstance(had, str) and had)):
+        raise DslError(
+            f"{where}: 'from_had_counters' is true or a sacrifice cost's 'as' name, got {had!r}"
+        )
+    if not effect.get("all_kinds"):
+        raise DslError(
+            f"{where}: 'from_had_counters' puts every kind the permanent had; it needs "
+            f"'all_kinds'"
+        )
+    if "from" in effect:
+        raise DslError(
+            f"{where}: 'from_had_counters' reads a permanent that has left; 'from' would "
+            f"be ignored"
+        )
+
+
 def _validate_any_kind_counters(effect: Mapping[str, Any], op: str, where: str) -> None:
     """``any_kind`` and ``up_to`` on a counter removal: every refusal is a card
     that would load and quietly remove a different number or kind of counters."""
@@ -671,7 +699,11 @@ def _validate_nested_player_refs(node: Any, where: str, target_kinds: Mapping[st
     if isinstance(node, Mapping):
         for key, value in node.items():
             path = f"{where}.{key}"
-            if key in ("controller", "player", "player_count") and isinstance(value, Mapping):
+            if key == "player_count" and isinstance(value, Mapping) and "objects" in value:
+                # The comparing form is not a seat spec: its `player` is one of
+                # the per-player words, and `than` may carry a nested one.
+                _validate_nested_player_refs(value, path, target_kinds)
+            elif key in ("controller", "player", "player_count") and isinstance(value, Mapping):
                 _validate_player_spec(value, path, target_kinds)
             else:
                 _validate_nested_player_refs(value, path, target_kinds)
@@ -696,6 +728,15 @@ def _validate_attacking(who: Any, where: str, target_kinds: Mapping[str, str]) -
     indistinguishable from ``false``.
     """
     if isinstance(who, bool):
+        return
+    if isinstance(who, Mapping) and "same_as" in who:
+        # Ninjutsu (702.49c): whom the creature the ability's cost returned was
+        # attacking. `loader._check_same_as` ties the name to the cost's `as`.
+        if set(who) != {"same_as"} or not (isinstance(who["same_as"], str) and who["same_as"]):
+            raise DslError(
+                f"{where}: {{'same_as': <name>}} takes only the binding name a "
+                f"return_to_hand cost's 'as' wrote, got {who!r}"
+            )
         return
     if isinstance(who, str) and who in PLURAL_PLAYER_SPEC_NAMES:
         raise DslError(
@@ -906,19 +947,29 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             )
 
     # "…to the battlefield **attached to that token**": the effect names the
-    # Aura's host itself, with a following `attach`, so 303.4f's choice is not
-    # asked. Only the two ops that put a card onto the battlefield and are
-    # followed by such an `attach` read it, and only beside the battlefield.
+    # host itself, as a selector, so 303.4f's choice is not asked and the
+    # named host is tested against each Aura's enchant clause instead
+    # (`zones.offer_named_host`). Only the two ops that put a card onto the
+    # battlefield read it, and only beside the battlefield. A boolean is
+    # refused: it would name no host, and an attach written after the arrival
+    # would hang the Aura on something its clause never saw.
     if "host_named" in effect:
-        if op not in HOST_NAMED_OPS or not isinstance(effect["host_named"], bool):
+        named = effect["host_named"]
+        if op not in HOST_NAMED_OPS or not isinstance(named, Mapping):
             raise DslError(
-                f"{where}: 'host_named' is a boolean read by {sorted(HOST_NAMED_OPS)}, "
-                f"not {op!r}"
+                f"{where}: 'host_named' is a selector naming the host, read by "
+                f"{sorted(HOST_NAMED_OPS)}; got {named!r} on {op!r}"
             )
         if op == "return_from_graveyard" and effect.get("destination") != "battlefield":
             raise DslError(
                 f"{where}: 'host_named' needs destination 'battlefield'; an Aura "
                 f"enchants nothing anywhere else"
+            )
+        validate_selector(named, f"{where}.host_named")
+        if "target" in named and str(named["target"]) not in target_kinds:
+            raise DslError(
+                f"{where}.host_named: references target {named['target']!r} "
+                f"which the card does not declare"
             )
 
     # "…put onto the battlefield with this Aura" (Animate Dead): `link` on a
@@ -2667,6 +2718,21 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         _validate_player_spec(effect["controller"], f"{where}.controller", target_kinds)
     if op in ATTACKING_OPS and "attacking" in effect:
         _validate_attacking(effect["attacking"], f"{where}.attacking", target_kinds)
+        if isinstance(effect["attacking"], Mapping) and "same_as" in effect["attacking"]:
+            # Only a card put onto the battlefield in a returned attacker's
+            # place has "the returned creature" to follow; the attack target is
+            # copied whole, so there is nothing for `or_planeswalker` to widen.
+            if op != "put_onto_battlefield":
+                raise DslError(
+                    f"{where}.attacking: 'same_as' is ninjutsu's 'attacking the same "
+                    f"player or planeswalker the returned creature was attacking', "
+                    f"which only put_onto_battlefield says"
+                )
+            if effect.get("or_planeswalker"):
+                raise DslError(
+                    f"{where}.or_planeswalker: 'same_as' already copies the planeswalker "
+                    f"the returned creature was attacking; there is no choice to widen"
+                )
     if op in ATTACKING_OPS and "or_planeswalker" in effect:
         # "…attacking that player or a planeswalker they control." A widening of
         # `attacking`, so it means nothing without one: beside no `attacking`
@@ -2882,6 +2948,8 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"(use set_flag for a word that never wears off)"
             )
     _validate_any_kind_counters(effect, op, where)
+    if "from_had_counters" in effect:
+        _validate_from_had_counters(effect, op, where)
     if op == "move_counters":
         # Without a destination the counters come off the source and go
         # nowhere, which is a card that reads "move a +1/+1 counter onto it"
@@ -3826,7 +3894,8 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # Nissa, Vital Force's land stays a 5/5 "until your next turn".
         duration = effect.get("duration", "until_end_of_turn")
         # Spelled out rather than built from `CONTROL_DURATIONS`: that list
-        # also has "end_of_your_next_turn", which no animation implements.
+        # also has "end_of_your_next_turn" and "as_long_as_you_control_source",
+        # which no animation implements.
         allowed = ("permanent", "until_end_of_turn", "until_your_next_turn")
         if duration not in allowed:
             raise DslError(

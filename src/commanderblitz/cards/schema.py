@@ -326,6 +326,14 @@ class TargetModel(BaseModel):
     #: step before 601.2c declares the targets. Refused on a card with no
     #: ``gift``, on an ability's targets and on a mode-owned spec.
     gift_promised: bool | None = None
+    #: Which **tier** declares this target: the index of the card's
+    #: ``additional_cost_options`` a cast must have paid. Tiered (702.183)
+    #: chooses the tier as an additional cost at 601.2b, one step before 601.2c
+    #: declares targets, so "• Cross-Slash -- {0} -- Destroy target tapped
+    #: creature" is a target only the Cross-Slash cast has. Absent: every tier.
+    #: Refused on a card without ``additional_cost_options``, on an ability's
+    #: targets, and beside ``mode``, ``gift_promised`` or ``count_if_kicked``.
+    cost_option: int | None = None
     #: "Return **up to** X target creature cards." The `count` is a ceiling and
     #: every size from zero through it is legal, which is the one reading none
     #: of the three above can give: a number forces exactly that many,
@@ -415,12 +423,15 @@ class TriggerModel(BaseModel):
     mana_ability: bool | None = None
     #: For ``becomes_target``: "becomes the target of **a spell**" (Goldspan
     #: Dragon).  ``"spell"`` fires on spells only, ``"ability"`` on abilities
-    #: only, omitted on both -- and omitted is ward's printed "a spell or
-    #: ability", so leaving it off is a real reading rather than a default.
+    #: only (activated and triggered alike), ``"activated_ability"`` on
+    #: activated abilities only ("the target of an activated ability" --
+    #: Professor Hojo), omitted on all three -- and omitted is ward's printed
+    #: "a spell or ability", so leaving it off is a real reading rather than a
+    #: default.
     #: Without it the only writable trigger is the wide one, and a Dragon that
     #: mints a Treasure off an opponent's tapper or your own equip is a
     #: strictly larger card.
-    targeted_by: Literal["spell", "ability"] | None = None
+    targeted_by: Literal["spell", "ability", "activated_ability"] | None = None
     #: For ``draw``: "whenever you draw your **second** card each turn".  The
     #: ordinal that draw must have had for its player this turn.  For
     #: ``spell_cast``: "whenever an opponent casts their second spell each
@@ -694,6 +705,15 @@ class AbilityModel(BaseModel):
     #: it is read when no target exists yet: a reduction applies generously
     #: there and a tax is left out, both of them being generous to the caster.
     targeting: dict[str, Any] | None = None
+    #: `ability_cost_reduction`: "**The first** activated ability you activate
+    #: **during your turn** that targets a creature you control costs {2} less"
+    #: (Professor Hojo). The discount reaches only the activator's first
+    #: activation this turn, on their own turn, that matches `affects_abilities`
+    #: and `targeting` -- counted over every such activation this turn, before
+    #: this permanent arrived included, because "the first" is a fact about the
+    #: activation and not about the static. Requires `targeting`, read on the
+    #: snapshots in `TurnLedger.targeted_activations`.
+    first_during_your_turn: bool = False
     affects_player: Literal["you", "opponent", "any"] | None = None
     #: ``cast_from_graveyard``: this permission is **flashback** -- Lier's "each
     #: instant and sorcery card in your graveyard has flashback. The flashback
@@ -1064,6 +1084,12 @@ class AbilityModel(BaseModel):
     #: Molecule Man's ``"{0}"``. Beside `affects_spells` for `warp_cost`'s
     #: reason.
     miracle_cost: str | None = None
+    #: ``grant_pay_generic_with``: the currency the filtered spells gain --
+    #: Inspiring Statuary's ``"tap_artifacts"`` (improvise). The card-level
+    #: field's three values; beside `affects_spells` for `warp_cost`'s reason.
+    pay_generic_with: (
+        Literal["tap_creatures", "tap_artifacts", "exile_from_graveyard"] | None
+    ) = None
 
 
 class ReplacementModel(BaseModel):
@@ -1243,6 +1269,13 @@ class CardModel(BaseModel):
     color_identity: list[str] | None = None
     targets: list[TargetModel] = Field(default_factory=list)
     spell_effects: list[dict[str, Any]] = Field(default_factory=list)
+    #: "…where X is the greatest power among creatures you controlled **as you
+    #: cast this spell**" (Lifestream's Blessing). Named value expressions
+    #: evaluated once, as the spell is put on the stack (601.2), and bound on
+    #: its stack item under those names, so `spell_effects` read them with
+    #: ``{"binding": name}`` at resolution. A creature that dies or shrinks in
+    #: response no longer changes the number.
+    as_cast: dict[str, Any] = Field(default_factory=dict)
     replacements: list[ReplacementModel] = Field(default_factory=list)
     abilities: list[AbilityModel] = Field(default_factory=list)
     #: Abilities this card grants to *another* permanent, referenced by index

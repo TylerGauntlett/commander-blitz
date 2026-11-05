@@ -513,9 +513,10 @@ def unplayable_reason(state: GameState, pid: int, oid: int) -> str | None:
     exclude_sid = state.objects[oid].stack_id
     # Either side of a gift promise will do: a card whose unpromised target is
     # missing is still castable promised, when the promise declares another.
+    # Any tier likewise (702.183): Omnislash declares nothing.
     if not any(
         enumerate_target_tuples(state, pid, specs, oid, exclude_sid=exclude_sid)
-        for specs in (card.targets, card.gift_targets)
+        for specs in (card.targets, card.gift_targets, *card.cost_option_targets.values())
         if specs is not None
     ):
         return "targets"

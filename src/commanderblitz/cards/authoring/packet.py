@@ -196,6 +196,9 @@ CARD_LEVEL_RIDER_KEYS = (
     # ("has annihilator 2") is a grant_keyword static with its own "annihilator": N.
     "annihilator",
     "morph_counter",  # bool; megamorph -- turns face up with a +1/+1 counter, beside `morph`
+    # {name: value}; "…where X is … as you cast this spell" -- each value fixed
+    # as the spell goes on the stack, read back by spell_effects as {"binding": name}
+    "as_cast",
 )
 
 

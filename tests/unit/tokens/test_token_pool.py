@@ -29,8 +29,16 @@ import pytest
 
 from commanderblitz.cards.registry import CardRegistry, authored_card_paths
 from commanderblitz.engine.characteristics import chars
-from commanderblitz.engine.enums import ActionKind
-from tests.conftest import keywords, only_oid, pt, settle_completely, two_seat_board
+from commanderblitz.engine.enums import ActionKind, DecisionKind
+from tests.conftest import (
+    find_action,
+    keywords,
+    only_oid,
+    pass_until,
+    pt,
+    settle_completely,
+    two_seat_board,
+)
 
 
 @pytest.fixture(scope="module")
@@ -563,6 +571,63 @@ class TestCurrencyConvertersRogueIsATwoTwoBlack:
         assert other is not None
         assert (other.power, other.toughness) == (1, 1)
         assert "lifelink" in other.keywords
+
+
+class TestBarretsRebelIsATwoTwoRed:
+    """Barret, Avalanche Leader: *"Whenever an Equipment you control enters,
+    create a **2/2 red Rebel** creature token."*
+
+    `human_knight_2_2_r_trample_haste` is the pool's other 2/2 red token: the
+    right body with two keywords the card never prints and the wrong creature
+    types, and Barret's own combat trigger attaches only to a Rebel (111.4).
+    """
+
+    def test_it_is_a_vanilla_two_two_red_rebel(self, pool):
+        token = pool.get("rebel_2_2_r")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (2, 2)
+        assert sorted(token.colors) == ["R"]
+        assert list(token.types) == ["Creature"]
+        assert list(token.subtypes) == ["Rebel"]
+        assert not token.keywords
+        assert not token.abilities
+
+    def test_the_human_knight_is_still_a_separate_token(self, pool):
+        other = pool.get("human_knight_2_2_r_trample_haste")
+        assert other is not None
+        assert (other.power, other.toughness) == (2, 2)
+        assert sorted(other.keywords) == ["haste", "trample"]
+        assert "Rebel" not in other.subtypes
+
+    def test_an_equipment_entering_makes_one_and_combat_can_equip_it(self, builder):
+        """Accorder's Shield costs nothing, so the Rebel is the trigger's alone;
+        the beginning-of-combat trigger then hangs the Shield on that token."""
+        game = (
+            builder(players=2)
+            .battlefield(0, ["barret_avalanche_leader", "mountain"])
+            .hand(0, ["accorder_s_shield"])
+            .build()
+        )
+        cast = next(
+            a for a in game.legal_actions()
+            if a.kind is ActionKind.CAST
+            and game.state.objects[a.source].def_id == "accorder_s_shield"
+        )
+        game.apply(cast)
+        settle_completely(game)
+        rebel = only_oid(game, "rebel_2_2_r", 0)
+        shield = only_oid(game, "accorder_s_shield", 0)
+
+        pass_until(game, lambda g: g.pending().kind is DecisionKind.CHOOSE_OBJECTS)
+        # The trigger's declaration offers each legal (Equipment, Rebel) pair,
+        # and the bare Rebels for "up to one" Equipment chosen as none.
+        (index,) = [
+            i for i, option in enumerate(game.pending().options)
+            if option.label == "Accorder's Shield, Rebel Token"
+        ]
+        game.apply(find_action(game, ActionKind.CHOOSE, choice=index))
+        settle_completely(game)
+        assert game.state.objects[shield].attached_to == rebel
 
 
 class TestMyrBattlespheresMyrAreColorlessArtifactMyr:

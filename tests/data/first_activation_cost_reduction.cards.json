@@ -1,0 +1,53 @@
+{
+  "_comment": "Shapes for tests/unit/costs/test_first_activation_cost_reduction.py. t_fac_hojo is Professor Hojo's first line alone: the first activated ability you activate during your turn that targets a creature you control costs {2} less. t_fac_green_rod is a {G} activated ability aimed at a creature, the ruling's 'no effect on an activation cost of {G}' case. The {4} ability to discount is t_passage from testing.cards.json.",
+  "cards": [
+    {
+      "id": "t_fac_hojo",
+      "name": "Test First Activation Discounter",
+      "oracle_text": "The first activated ability you activate during your turn that targets a creature you control costs {2} less to activate.",
+      "mana_cost": "{1}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Scientist"],
+      "power": 1,
+      "toughness": 1,
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "The first activated ability you activate during your turn that targets a creature you control costs {2} less to activate.",
+          "effect": "ability_cost_reduction",
+          "affects_abilities": { "any": true },
+          "activated_by": "you",
+          "targeting": { "controller": "you", "types": ["Creature"] },
+          "first_during_your_turn": true,
+          "amount": { "const": 2 }
+        }
+      ]
+    },
+    {
+      "id": "t_fac_green_rod",
+      "name": "Test Green Rod",
+      "oracle_text": "{G}: Target creature can't be blocked this turn.",
+      "mana_cost": "{1}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{G}: Target creature can't be blocked this turn.",
+          "cost": { "mana": "{G}" },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": { "zone": "battlefield", "types": ["Creature"] }
+            }
+          ],
+          "effects": [
+            { "op": "unblockable", "objects": { "target": "t1" }, "duration": "this_turn" }
+          ]
+        }
+      ]
+    }
+  ]
+}

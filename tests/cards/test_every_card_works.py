@@ -648,11 +648,29 @@ def _provide_the_sacrifice(game: Game, registry, ability) -> None:
     count = spec.get("count", 1)
     wanted = max(1, int(count) if isinstance(count, int) else 1)
     match = _fodder_for(registry, spec, wanted)
+    # Professional Face-Breaker sacrifices *a Treasure*, and the only Treasures
+    # are tokens: no printed card has the subtype, so the creature-shaped search
+    # above finds nothing. A subtype with no card type names its own kind, so
+    # the token is the fodder.
+    if match is None and spec.get("subtypes") and not spec.get("types"):
+        wanted_subtypes = {str(s) for s in spec["subtypes"]}
+        match = next(
+            (
+                c
+                for c in sorted(registry, key=lambda c: c.id)
+                if c.is_token and wanted_subtypes & set(c.subtypes)
+            ),
+            None,
+        )
     if match is None:
         return
     for _ in range(wanted):
         fodder = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
         game.state.battlefield.append(fodder.oid)
+        # Sephiroth's Reunion sacrifices *a modified creature*: one with a
+        # counter on it is the cheapest way to be one.
+        if spec.get("modified"):
+            fodder.counters[PLUS_ONE] = 1
 
 
 def _provide_the_tap_fodder(game: Game, registry, ability) -> None:
@@ -1354,6 +1372,12 @@ def _provide_the_attacker(game: Game, registry, ability) -> None:
         ),
         None,
     )
+    # Ninjutsu: "Return an **unblocked attacker** you control to hand" is a
+    # cost, not a target, and asks for the same thing -- plus blockers having
+    # been declared (509.1h), which `_walk_past_blocks` arranges.
+    bounce = getattr(ability.cost, "return_to_hand", None)
+    if wants is None and isinstance(bounce, dict) and bounce.get("attacking"):
+        wants = bounce
     if wants is None:
         return
 
@@ -1379,6 +1403,34 @@ def _provide_the_attacker(game: Game, registry, ability) -> None:
 
     if _walk_to_declare_attackers(game):
         _declare_them(game, [attacker.oid])
+        if "blocked" in wants:
+            _walk_past_blocks(game)
+
+
+def _walk_past_blocks(game: Game) -> None:
+    """Finish every block declaration empty and stop at the first priority after.
+
+    An attacker is unblocked only once blockers are declared (509.1h), so an
+    ability whose cost returns one is first activatable in the declare blockers
+    step. Nothing is blocked: the attacker this family made is the one the cost
+    wants unblocked.
+    """
+    for _ in range(40):
+        decision = game.pending()
+        combat = game.state.combat
+        if decision is None or game.over or combat is None:
+            return
+        if decision.kind is DecisionKind.PRIORITY and combat.blockers_declared:
+            return
+        wanted = (
+            ActionKind.FINISH_DECLARATION
+            if decision.kind is DecisionKind.DECLARE_BLOCKERS
+            else ActionKind.PASS
+        )
+        step = next((a for a in game.legal_actions() if a.kind is wanted), None)
+        if step is None:
+            return
+        game.apply(step)
 
 
 def _walk_to_declare_attackers(game: Game) -> bool:

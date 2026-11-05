@@ -35,6 +35,7 @@ from .player_statics import (
     cast_lock_min_x,
     free_cast_permission,
     granted_alternative_cost,
+    granted_pay_generic_with,
     granted_warp_cost,
     graveyard_cast_allows,
     graveyard_cast_arrival_ok,
@@ -943,9 +944,10 @@ def _cast_options(
     # spell that mana alone cannot pay is still offered; the printed line is
     # that line at zero. A tuple already covered at a smaller spend is not
     # offered again, so each target is one row whatever it costs to reach.
-    if card.pay_generic_with is not None and state.objects[oid].zone is Zone.HAND:
+    currencies = pay_generic_currencies(state, pid, card)
+    if currencies and state.objects[oid].zone is Zone.HAND:
         covered = {action.targets for action in plain}
-        for spend in range(1, _pay_generic_ceiling(state, pid, oid, card) + 1):
+        for spend in range(1, _pay_generic_ceiling(state, pid, oid, card, currencies) + 1):
             for action in _cast_variant(
                 state,
                 pid,
@@ -1269,15 +1271,31 @@ PAY_GENERIC_TAP_TYPES: dict[str, str] = {
 }
 
 
-def pay_generic_tappers(state: GameState, pid: int, card: CardDef) -> list[int]:
-    """The untapped permanents ``pid`` could tap to convoke or improvise ``card``.
+def pay_generic_currencies(state: GameState, pid: int, card: CardDef) -> frozenset[str]:
+    """Every ``pay_generic_with`` currency ``card`` has as ``pid`` casts it.
 
-    Empty for a card whose ``pay_generic_with`` taps nothing. The type is read
-    off the derived characteristics, so an animated artifact land convokes and
-    a Mycosynth-Lattice'd creature improvises.
+    The printed one, and any a static grants (Inspiring Statuary's "nonartifact
+    spells you cast have improvise", `player_statics.granted_pay_generic_with`).
+    A spell may have several -- a convoke spell under the Statuary taps
+    creatures and artifacts alike in one cast -- so every reader takes the set,
+    never the printed field alone.
     """
-    wanted = PAY_GENERIC_TAP_TYPES.get(card.pay_generic_with or "")
-    if wanted is None:
+    granted = granted_pay_generic_with(state, pid, card)
+    if card.pay_generic_with is None:
+        return granted
+    return granted | {card.pay_generic_with}
+
+
+def pay_generic_tappers(state: GameState, pid: int, currencies: frozenset[str]) -> list[int]:
+    """The untapped permanents ``pid`` could tap to convoke or improvise.
+
+    Empty when none of ``currencies`` taps anything. The type is read off the
+    derived characteristics, so an animated artifact land convokes and a
+    Mycosynth-Lattice'd creature improvises. A permanent of both types is
+    listed once: it taps once, for whichever keyword pays more.
+    """
+    wanted = {PAY_GENERIC_TAP_TYPES[c] for c in currencies if c in PAY_GENERIC_TAP_TYPES}
+    if not wanted:
         return []
     return [
         other
@@ -1285,8 +1303,43 @@ def pay_generic_tappers(state: GameState, pid: int, card: CardDef) -> list[int]:
         if (obj := state.objects.get(other)) is not None
         and obj.controller == pid
         and not obj.tapped
-        and wanted in chars(state, other).types
+        and not wanted.isdisjoint(chars(state, other).types)
     ]
+
+
+def pay_generic_pool(
+    state: GameState, pid: int, oid: int, currencies: frozenset[str]
+) -> list[int]:
+    """Everything ``pid`` could spend paying for ``oid`` with ``currencies``.
+
+    The permanents that could tap, then -- with delve among them -- the cards
+    in the graveyard. The spell being cast is not in its graveyard; it is on
+    the stack by the time this is paid.
+    """
+    pool = pay_generic_tappers(state, pid, currencies)
+    if "exile_from_graveyard" in currencies:
+        pool += [other for other in state.players[pid].graveyard if other != oid]
+    return pool
+
+
+def pay_generic_colors(
+    state: GameState, other: int, currencies: frozenset[str]
+) -> frozenset[int]:
+    """The mana symbols ``other`` may pay one of when it is spent: its colours if it convokes.
+
+    Only a creature convokes, and only for a spell with convoke. An improvised
+    artifact or a delved card pays {1} and nothing else, which is
+    `convoke_payments` handed an empty set. An artifact creature on a spell
+    with both keywords convokes, because convoke pays everything improvise
+    does and a pip besides.
+    """
+    if "tap_creatures" not in currencies:
+        return frozenset()
+    if state.objects[other].zone is not Zone.BATTLEFIELD:
+        return frozenset()
+    if "Creature" not in chars(state, other).types:
+        return frozenset()
+    return convoke_colors(state, other)
 
 
 def convoke_colors(state: GameState, oid: int) -> frozenset[int]:
@@ -1365,19 +1418,26 @@ def convoke_payments(
 
 
 def _convoke_prices(
-    state: GameState, pid: int, card: CardDef, cost: ManaCost, spend: int, room: int
+    state: GameState,
+    pid: int,
+    oid: int,
+    currencies: frozenset[str],
+    cost: ManaCost,
+    spend: int,
+    room: int,
 ) -> list[tuple[ManaCost, int]]:
-    """What ``cost`` could come down to with ``spend`` of ``pid``'s creatures convoking.
+    """What ``cost`` could come down to with ``spend`` of ``pid``'s pool spent on it.
 
     Legality's half of `convoke_payments`: the line does not know *which*
     creatures will tap, so every way of choosing ``spend`` of them is tried,
     one colour combination at a time -- two mono-black creatures are the same
+    choice, and an improvised artifact or a delved card is the colourless
     choice. The game asks the player which ones, and `Game._ask_pay_generic`
     then prices that pick through the same function.
     """
     groups: dict[frozenset[int], int] = {}
-    for other in pay_generic_tappers(state, pid, card):
-        colors = convoke_colors(state, other)
+    for other in pay_generic_pool(state, pid, oid, currencies):
+        colors = pay_generic_colors(state, other, currencies)
         groups[colors] = groups.get(colors, 0) + 1
     kinds = sorted(groups, key=sorted)
     out: dict[tuple, tuple[ManaCost, int]] = {}
@@ -1396,7 +1456,9 @@ def _convoke_prices(
     return list(out.values())
 
 
-def _pay_generic_ceiling(state: GameState, pid: int, oid: int, card: CardDef) -> int:
+def _pay_generic_ceiling(
+    state: GameState, pid: int, oid: int, card: CardDef, currencies: frozenset[str]
+) -> int:
     """The most a convoke, improvise or delve line could usefully spend.
 
     Never more than the spell's own generic cost -- "pays for {1}" and a spell
@@ -1405,18 +1467,10 @@ def _pay_generic_ceiling(state: GameState, pid: int, oid: int, card: CardDef) ->
     (702.51a), so its ceiling counts those as well.
     """
     generic = card.mana_cost.generic
-    if card.pay_generic_with == "tap_creatures":
-        payable = generic + convoke_pips(card.mana_cost)
-        return min(payable, len(pay_generic_tappers(state, pid, card)))
-    if generic <= 0:
-        return 0
-    if card.pay_generic_with in PAY_GENERIC_TAP_TYPES:
-        available = len(pay_generic_tappers(state, pid, card))
-    else:
-        # Delve exiles from the graveyard, and the spell being cast is not in
-        # it -- it is on the stack by the time this is paid.
-        available = sum(1 for other in state.players[pid].graveyard if other != oid)
-    return min(generic, available)
+    available = len(pay_generic_pool(state, pid, oid, currencies))
+    if "tap_creatures" in currencies:
+        return min(generic + convoke_pips(card.mana_cost), available)
+    return min(max(generic, 0), available)
 
 
 def _emerge_fodder(state: GameState, pid: int, oid: int) -> list[int]:
@@ -1790,7 +1844,21 @@ def _cast_variant(
     # every repeat count of `_charge_additional_cost` all pass through, and a
     # caller that forgot would offer the unsized `tuples`. The variants with a
     # target list of the rule's own (morph, overload, bestow, mutate) keep it.
-    specs = card.targets_for(gift_promised=gift_to is not None)
+    specs = card.targets_for(gift_promised=gift_to is not None, cost_option=additional_choice)
+    # Tiered (702.183): the tier is an additional cost chosen at 601.2b, so a
+    # line that pays one declares that tier's own list at 601.2c -- Cloud's
+    # Limit Break's Omnislash line points at nothing, and Cross-Slash's needs a
+    # tapped creature. The callers' ``tuples`` were built from the shared list.
+    tiered = additional_choice is not None and additional_choice in card.cost_option_targets
+    if tiered and not (face_down or overloaded or bestowed or mutated or fused):
+        tuples = enumerate_target_tuples(
+            state,
+            pid,
+            specs,
+            oid,
+            exclude_sid=state.objects[oid].stack_id,
+            defer=deferred_target_spec(state, card, specs),
+        )
     if not (face_down or overloaded or bestowed or mutated or fused) and any(
         spec.additional_sized for spec in specs
     ):
@@ -1814,7 +1882,7 @@ def _cast_variant(
     # left once that line's targeting tax is counted. `Game._cast` then floors
     # the announcement at the number of targets the line declared.
     if divided_damage(card):
-        specs = card.targets_for(gift_promised=gift_to is not None)
+        specs = card.targets_for(gift_promised=gift_to is not None, cost_option=additional_choice)
         tuples = [
             t
             for t in tuples
@@ -2045,9 +2113,10 @@ def _cast_variant(
         # priced at every way `pay_generic` creatures could split between the
         # pips and the generic part, and a tuple any of them pays is offered.
         prices = [(cost, pay_generic)]
-        if pay_generic and card.pay_generic_with == "tap_creatures" and convoke_pips(cost):
+        currencies = pay_generic_currencies(state, pid, card) if pay_generic else frozenset()
+        if "tap_creatures" in currencies and convoke_pips(cost):
             room = max(0, cost.generic + extra_generic - discount)
-            prices = _convoke_prices(state, pid, card, cost, pay_generic, room)
+            prices = _convoke_prices(state, pid, oid, currencies, cost, pay_generic, room)
         if emerge_oid is not None:
             # The sacrifice pays for part of the spell. Generic-only and clamped by
             # `pay`, like every other reduction here.

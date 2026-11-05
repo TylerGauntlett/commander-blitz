@@ -1,0 +1,74 @@
+{
+  "_comment": "Cards that exist only for tests/unit/costs/test_sacrificed_source_lki.py. Never part of a deck list. t_zack_outlet is Zack Fair's activated ability on a vanilla 1/1: sacrificed as its cost, it puts its counters on the target and attaches an Equipment that was attached to it. t_zack_gear and t_zack_gear_two are vanilla Equipment; t_zack_charm is a vanilla Aura, attached to Zack so the Equipment filter can be seen to bite.",
+  "cards": [
+    {
+      "id": "t_zack_outlet",
+      "name": "Test Zack Outlet",
+      "oracle_text": "{1}, Sacrifice this creature: Target creature you control gains indestructible until end of turn. Put this creature's counters on that creature and attach an Equipment that was attached to this creature to that creature.",
+      "mana_cost": "{1}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Soldier"],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}, Sacrifice this creature: Target creature you control gains indestructible until end of turn. Put this creature's counters on that creature and attach an Equipment that was attached to this creature to that creature.",
+          "cost": {
+            "mana": "{1}",
+            "sacrifice": {"self_only": true, "as": "zack"}
+          },
+          "targets": [
+            {"id": "t1", "kind": "permanent", "selector": {"zone": "battlefield", "controller": "you", "types": ["Creature"]}}
+          ],
+          "effects": [
+            {"op": "grant_keyword", "keywords": ["indestructible"], "objects": {"target": "t1"}},
+            {"op": "move_counters", "all_kinds": true, "from_had_counters": "zack", "objects": {"target": "t1"}},
+            {"op": "attach",
+             "attachment": {"zone": "battlefield", "subtypes": ["Equipment"], "was_attached_to": "zack", "count": 1},
+             "objects": {"target": "t1"}}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_zack_gear",
+      "name": "Test Zack Gear",
+      "oracle_text": "Equip {1}",
+      "mana_cost": "{1}",
+      "types": ["Artifact"],
+      "subtypes": ["Equipment"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Equip {1}",
+          "cost": {"mana": "{1}"},
+          "sorcery_speed_only": true,
+          "targets": [
+            {"id": "t1", "kind": "permanent", "selector": {"zone": "battlefield", "controller": "you", "types": ["Creature"]}}
+          ],
+          "effects": [{"op": "attach", "objects": {"target": "t1"}}]
+        }
+      ]
+    },
+    {
+      "id": "t_zack_gear_two",
+      "name": "Test Zack Gear Two",
+      "oracle_text": "",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "subtypes": ["Equipment"]
+    },
+    {
+      "id": "t_zack_charm",
+      "name": "Test Zack Charm",
+      "oracle_text": "Enchant creature",
+      "mana_cost": "{W}",
+      "types": ["Enchantment"],
+      "subtypes": ["Aura"],
+      "targets": [
+        {"id": "t1", "kind": "permanent", "selector": {"zone": "battlefield", "types": ["Creature"]}}
+      ]
+    }
+  ]
+}

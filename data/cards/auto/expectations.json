@@ -112,6 +112,10 @@
   "aerial_responder": {
     "zone": "battlefield"
   },
+  "aerith_last_ancient": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "aeronaut_s_wings": {
     "zone": "battlefield"
   },
@@ -930,6 +934,10 @@
   "armored_wolf_rider": {
     "zone": "battlefield"
   },
+  "armory_automaton": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "army_of_the_damned": {
     "battlefield_count": 45,
     "tokens": {
@@ -1074,6 +1082,14 @@
     "zone": "battlefield"
   },
   "avacyn_s_pilgrim": {
+    "zone": "battlefield"
+  },
+  "avalanche_of_sector_7": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
     "zone": "battlefield"
   },
   "avatar_s_wrath": {
@@ -1309,6 +1325,14 @@
     "zone": "battlefield"
   },
   "barren_moor": {
+    "zone": "battlefield"
+  },
+  "barret_avalanche_leader": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "barret_wallace": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "barrier_of_bones": {
@@ -1999,6 +2023,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "bronze_guardian": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "bronze_sable": {
     "zone": "battlefield"
   },
@@ -2038,6 +2066,10 @@
     "zone": "battlefield"
   },
   "bruvac_the_grandiloquent": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "bugenhagen_wise_elder": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -2118,6 +2150,10 @@
     "zone": "battlefield"
   },
   "caelorna_coral_tyrant": {
+    "zone": "battlefield"
+  },
+  "cait_sith_fortune_teller": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "caldera_lake": {
@@ -2506,6 +2542,10 @@
     },
     "zone": "battlefield"
   },
+  "champion_s_helm": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "champions_from_beyond": {
     "battlefield_count": 53,
     "tokens": {
@@ -2620,6 +2660,13 @@
     "zone": "battlefield"
   },
   "chrome_mox": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "cid_freeflier_pilot": {
     "battlefield_count": 33,
     "hand_size": {
       "0": 1
@@ -2748,8 +2795,17 @@
   "cloud_crusader": {
     "zone": "battlefield"
   },
+  "cloud_ex_soldier": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "cloud_manta": {
     "zone": "battlefield"
+  },
+  "cloud_s_limit_break": {
+    "battlefield_count": 32,
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
   },
   "cloudcrown_oak": {
     "zone": "battlefield"
@@ -2834,6 +2890,10 @@
   "colossodon_yearling": {
     "zone": "battlefield"
   },
+  "colossus_hammer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "combat_calligrapher": {
     "battlefield_count": 33,
     "hand_size": {
@@ -2894,6 +2954,10 @@
     "zone": "battlefield"
   },
   "conduit_pylons": {
+    "zone": "battlefield"
+  },
+  "conformer_shuriken": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "conifer_strider": {
@@ -3641,6 +3705,14 @@
   "deceptive_landscape": {
     "zone": "battlefield"
   },
+  "decimate": {
+    "battlefield_count": 30,
+    "graveyard_size": {
+      "0": 5
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
+  },
   "decisive_denial": {
     "zone": "graveyard"
   },
@@ -3710,6 +3782,13 @@
     "battlefield_count": 33,
     "graveyard_size": {
       "0": 2
+    },
+    "zone": "graveyard"
+  },
+  "delayed_blast_fireball": {
+    "life": {
+      "0": 40,
+      "1": 38
     },
     "zone": "graveyard"
   },
@@ -4387,6 +4466,10 @@
   "elementalist_adept": {
     "zone": "battlefield"
   },
+  "elena_turk_recruit": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "elenda_the_dusk_rose": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -4571,6 +4654,10 @@
       "id": "soldier_1_1_w"
     },
     "zone": "graveyard"
+  },
+  "envoy_of_the_ancestors": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "eomer_king_of_rohan": {
     "counters": {
@@ -4878,6 +4965,10 @@
     },
     "zone": "graveyard"
   },
+  "explorer_s_scope": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "expressive_iteration": {
     "graveyard_size": {
       "0": 3
@@ -5000,6 +5091,13 @@
   },
   "fallen_ideal": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "fallen_shinobi": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "fanatic_of_rhonas": {
@@ -5755,6 +5853,10 @@
     },
     "opponent_battlefield_count": 4,
     "zone": "graveyard"
+  },
+  "furious_rise": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "furious_strength": {
     "zone": [
@@ -6948,6 +7050,10 @@
   "hedron_crawler": {
     "zone": "battlefield"
   },
+  "heidegger_shinra_executive": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "heirloom_blade": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -6957,6 +7063,10 @@
     "zone": "battlefield"
   },
   "helionaut": {
+    "zone": "battlefield"
+  },
+  "helitrooper": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "hell_s_kitchen": {
@@ -6977,6 +7087,13 @@
   },
   "hellkite_courser": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "hellkite_tyrant": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "helm_of_the_host": {
@@ -7068,6 +7185,10 @@
     "zone": "battlefield"
   },
   "hero_s_blade": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "hero_s_heirloom": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -7539,6 +7660,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "ingenious_infiltrator": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "ingenious_prodigy": {
     "battlefield_count": 33,
     "hand_size": {
@@ -7559,6 +7687,10 @@
   "ingot_chewer": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
+  "ink_eyes_servant_of_oni": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "inkmoth_nexus": {
@@ -7619,6 +7751,10 @@
     "life": {
       "0": 41
     },
+    "zone": "battlefield"
+  },
+  "inspiring_statuary": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "inspiring_vantage": {
@@ -8145,6 +8281,10 @@
     "zone": "battlefield"
   },
   "kelinore_bat": {
+    "zone": "battlefield"
+  },
+  "kellogg_dangerous_mind": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "kemba_s_skyguard": {
@@ -8711,6 +8851,15 @@
   },
   "lifespring_druid": {
     "zone": "battlefield"
+  },
+  "lifestream_s_blessing": {
+    "library_size": {
+      "0": 38
+    },
+    "life": {
+      "0": 40
+    },
+    "zone": "graveyard"
   },
   "lightning_angel": {
     "zone": "battlefield"
@@ -9793,6 +9942,13 @@
     "zone": "battlefield"
   },
   "mist_leopard": {
+    "zone": "battlefield"
+  },
+  "mistblade_shinobi": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "mister_fantastic": {
@@ -11649,6 +11805,17 @@
       "graveyard"
     ]
   },
+  "professional_face_breaker": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "professor_hojo": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "professor_hulk": {
     "battlefield_count": 33,
     "hand_size": {
@@ -11679,6 +11846,10 @@
     "hand_size": {
       "0": 2
     }
+  },
+  "prosperous_thief": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "proteus_staff": {
     "battlefield_count": 33,
@@ -11742,6 +11913,10 @@
     "zone": "battlefield"
   },
   "puppeteer_clique": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "puresteel_paladin": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -12134,6 +12309,22 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "red_xiii_proud_warrior": {
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "vigilance",
+        "trample"
+      ]
+    },
+    "graveyard_size": {
+      "0": 2
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "redemption_arc": {
     "zone": "battlefield"
   },
@@ -12345,6 +12536,20 @@
     },
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
+  },
+  "restoration_magic": {
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "hexproof",
+        "indestructible"
+      ]
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "graveyard"
   },
   "resupply": {
     "hand_size": {
@@ -13246,6 +13451,13 @@
     },
     "zone": "battlefield"
   },
+  "sephiroth_fallen_hero": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "sepulchral_primordial": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -13674,6 +13886,13 @@
   "silent_artisan": {
     "zone": "battlefield"
   },
+  "silent_blade_oni": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "silent_observer": {
     "zone": "battlefield"
   },
@@ -13903,6 +14122,10 @@
   "slash_panther": {
     "zone": "battlefield"
   },
+  "slayers_stronghold": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "slimebind": {
     "zone": [
       "battlefield",
@@ -14063,6 +14286,10 @@
     "zone": "battlefield"
   },
   "solar_array": {
+    "zone": "battlefield"
+  },
+  "soldier_military_program": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "solstice_revelations": {
@@ -14786,6 +15013,20 @@
     "tokens": {
       "count": 3,
       "id": "knight_2_2_w"
+    },
+    "zone": "battlefield"
+  },
+  "summon_kujata": {
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
+    "zone": "battlefield"
+  },
+  "summoning_materia": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
     },
     "zone": "battlefield"
   },
@@ -15674,6 +15915,10 @@
     },
     "zone": "graveyard"
   },
+  "thousand_faced_shadow": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "thraben_purebloods": {
     "zone": "battlefield"
   },
@@ -15824,6 +16069,13 @@
     "hand_size": {
       "0": 5
     }
+  },
+  "tifa_martial_artist": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "tiger_claws": {
     "zone": [
@@ -16327,6 +16579,19 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "ultimate_magic_holy": {
+    "granted": {
+      "count": 32,
+      "keywords": [
+        "indestructible"
+      ]
+    },
+    "zone": "graveyard"
+  },
+  "ultimate_magic_meteor": {
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
+  },
   "ultimate_nullification": {
     "battlefield_count": 30,
     "graveyard_size": {
@@ -16446,6 +16711,13 @@
       "1": 19
     },
     "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
+  "unfinished_business": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
     "zone": "graveyard"
   },
   "unflinching_courage": {
@@ -16918,6 +17190,10 @@
     }
   },
   "villainous_hideout": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "vincent_vengeful_atoner": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -17823,6 +18099,10 @@
   "wreckage_wickerfolk": {
     "zone": "battlefield"
   },
+  "wrecking_ball_arm": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "wrecking_crew": {
     "zone": "battlefield"
   },
@@ -17917,6 +18197,18 @@
   },
   "youthful_valkyrie": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "yuffie_materia_hunter": {
+    "battlefield_count": 34,
+    "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
+  "zack_fair": {
+    "counters": {
+      "amount": 1,
+      "kind": "+1/+1"
+    },
     "zone": "battlefield"
   },
   "zagoth_crystal": {

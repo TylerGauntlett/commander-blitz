@@ -22,6 +22,7 @@ from ..characteristics import (
     creature_types_of,
     enchanted_by,
     has_counters_matches,
+    is_equipped,
     resolve_chosen_subtypes,
 )
 from ..enums import PERMANENT_TYPES, CardType, Supertype, Zone
@@ -121,6 +122,17 @@ SELECTOR_KEYS = frozenset(
         #: and only Auras you control. `attached` is the other, and names the
         #: one permanent the ability's own source is attached to.
         "enchanted_by",
+        #: "…the number of **equipped** creatures you control" (Barret Wallace);
+        #: "draw a card for each **equipped** attacking creature you control"
+        #: (Cloud, Ex-SOLDIER). `true` when one or more Equipment -- anybody's --
+        #: is attached to the permanent (301.5c), `false` when none is. The
+        #: Equipment twin of `enchanted_by`, answered by
+        #: `characteristics.is_equipped`.
+        #:
+        #: `modified` is the near miss: it also counts counters and your Auras.
+        #: Counting Equipment with `attached_to` counts the Equipment, so a
+        #: creature wearing two would count twice.
+        "equipped",
         #: "…for each Aura you control **that's attached to a creature**"
         #: (Sage's Reverie); "+2/+2 for each Aura **attached to it**" (Kor
         #: Spiritdancer). The other end of `enchanted_by`: an attachment matched
@@ -424,14 +436,25 @@ SELECTOR_KEYS = frozenset(
         #: tokens another permanent made are not in it. "Other" is
         #: `exclude_binding` over the `as` the creating op wrote.
         "created_with",
+        #: "…attach an Equipment **that was attached to Zack Fair**" -- the
+        #: name a `sacrifice` cost's ``as`` wrote. A permanent recorded as
+        #: attached to the sacrificed permanent when it was paid
+        #: (`costs.sacrificed_snapshot`), still on the battlefield as the same
+        #: object: the record keeps each attachment's zone timestamp, so one
+        #: that left and came back (400.7) is a new object and does not match.
+        #: Last-known information (608.2h): the live `attached` and
+        #: `attached_to` keys see the Equipment already fallen off.
+        "was_attached_to",
         # "…dealt damage by this creature this turn." A trigger filter rather
         # than an object filter: answered from the per-turn damage ledger,
         # because the creature it asks about has usually just died.
         "damaged_by",
-        #: "…an unblocked attacking creature you control" -- ninjutsu. Asks
-        #: whether anything is blocking *this attacker*, which is not the
-        #: negation of `blocking`: that key is about a blocker, and these are
-        #: two different creatures.
+        #: "…an unblocked attacker you control" -- ninjutsu. 509.1h: an
+        #: attacking creature becomes blocked or unblocked only once blockers
+        #: have been declared, and stays blocked after its blockers leave.
+        #: Before that, and for a creature that is not attacking, it matches
+        #: neither `true` nor `false`. Not the negation of `blocking`, which
+        #: is about a blocker -- a different creature.
         "blocked",
         #: "Whenever one or more **goaded** creatures deal combat damage to one
         #: of your opponents" -- Puppet Master, String Puller. A creature that
@@ -467,6 +490,22 @@ PAID_BY_SELECTOR_KEYS = frozenset(
 
 
 ZONE_NAMES = {z.value: z for z in Zone}
+
+
+def named_hosts(ctx: EffectContext, spec: Mapping[str, Any]) -> list[int] | None:
+    """The host an arrival's ``host_named`` selector names -- "…to the
+    battlefield attached to **that creature**" -- or ``None`` when the op names
+    none and an Aura chooses its own (303.4f, `zones.offer_aura_host`).
+
+    Resolved once, before the first card moves, and on the battlefield unless
+    the selector says otherwise: the host is a permanent already there, such
+    as the creature an earlier op returned. An empty list is a host the effect
+    names that is not there, and `zones.offer_named_host` keeps an Aura out.
+    """
+    named = spec.get("host_named")
+    if not isinstance(named, Mapping):
+        return None
+    return resolve_pool(ctx, {"zone": "battlefield", **dict(named)})
 
 
 def resolve_pool(ctx: EffectContext, selector: Mapping[str, Any] | None) -> list[int]:
@@ -650,6 +689,28 @@ def _bound_oids(ctx: EffectContext, name: str) -> list[int]:
         return [int(v) for v in value if isinstance(v, int)]
     bound = _bound_oid(ctx, name)
     return [bound] if bound is not None else []
+
+
+def _was_attached_to(ctx: EffectContext, oid: int, name: str) -> bool:
+    """Whether ``oid`` is, as the same object, a permanent the record ``name``
+    says was attached to the permanent it snapshotted (`costs.sacrificed_snapshot`).
+
+    A binding that is not such a record -- nothing paid, or a name bound by
+    something else -- holds no attachments and matches nothing.
+    """
+    record = ctx.bindings.get(name)
+    attached = record.get("attached") if isinstance(record, Mapping) else None
+    if not isinstance(attached, (list, tuple)):
+        return False
+    obj = ctx.state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return False
+    return any(
+        isinstance(entry, Mapping)
+        and entry.get("oid") == oid
+        and entry.get("timestamp") == obj.timestamp
+        for entry in attached
+    )
 
 
 def _zone_owners(ctx: EffectContext, selector: Mapping[str, Any]) -> list[int]:
@@ -839,6 +900,8 @@ def matches(
     if "enchanted_by" in selector and not enchanted_by(
         state, oid, selector["enchanted_by"], ctx.controller
     ):
+        return False
+    if "equipped" in selector and is_equipped(state, oid) != selector["equipped"]:
         return False
     if (host_filter := selector.get("attached_to")) is not None and not _host_matches(
         ctx, obj.attached_to, host_filter
@@ -1103,6 +1166,10 @@ def matches(
         creator = state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
         if creator is None or oid not in creator.created_tokens:
             return False
+    if (name := selector.get("was_attached_to")) is not None and not _was_attached_to(
+        ctx, oid, str(name)
+    ):
+        return False
     if "phased_out_with" in selector:
         # "…until this enchantment leaves the battlefield" -- the permanents
         # *this* card phased out, and no others. The phasing twin of
@@ -1157,13 +1224,17 @@ def matches(
         elif not attacking_player_matches(combat, oid, str(who), ctx.controller, state):
             return False
     if "blocked" in selector:
-        # "…an **unblocked** attacking creature you control" -- ninjutsu. Not
-        # the negation of `blocking`, which is about a *blocker*: this asks
-        # whether anything is blocking **this attacker**, and the two are
-        # different creatures. A creature that is not attacking at all is not
-        # blocked either, which is why `blocked: false` is paired with
-        # `attacking: true` on every printed line of this shape.
-        is_blocked = bool(combat and any(v == oid for v in combat.blockers.values()))
+        # "…an **unblocked** attacker you control" -- ninjutsu. 509.1h: an
+        # attacking creature with a blocker declared for it becomes *blocked*,
+        # one with none becomes *unblocked*, and that happens as blockers are
+        # declared -- before then an attacker is neither, so ninjutsu is not
+        # offered in the declare attackers step. A blocked creature stays
+        # blocked when its blockers leave combat (`block_order` keeps them),
+        # and a band is blocked as a unit (702.21e). Not the negation of
+        # `blocking`, which is about a *blocker*, a different creature.
+        if combat is None or not combat.attacking(oid) or not combat.blockers_declared:
+            return False
+        is_blocked = any(combat.block_order.get(b) for b in combat.band_of(oid))
         if is_blocked != bool(selector["blocked"]):
             return False
     # "…goaded creatures…" (701.38): goaded by anyone, by a resolved goad's
@@ -1860,6 +1931,15 @@ def validate_selector(selector: Any, where: str) -> None:
         # A card can only name itself as the creator; any other value would
         # load and then silently match no token at all.
         raise DslError(f"{where}: created_with must be 'self', got {selector['created_with']!r}")
+    if "was_attached_to" in selector and not (
+        isinstance(selector["was_attached_to"], str) and selector["was_attached_to"]
+    ):
+        # The name of the binding a sacrifice cost's `as` wrote;
+        # `loader._check_sacrificed_names` ties it to this ability's cost.
+        raise DslError(
+            f"{where}: was_attached_to names a sacrifice cost's 'as' binding, "
+            f"got {selector['was_attached_to']!r}"
+        )
     if "returned_with" in selector and selector["returned_with"] != "self":
         # The link is written by this source's own return, so "self" is the
         # only answer; anything else would load and match nothing.
@@ -1928,6 +2008,14 @@ def validate_selector(selector: Any, where: str) -> None:
     # is the tempting spelling -- `goaded_by` is the field it reads -- and it
     # would be read through `bool()` as `true`, quietly meaning "by anyone"
     # whatever word was written.
+    # "Equipped" names no Equipment and no controller, so the key is a
+    # predicate. A filter on the Equipment (`{"controller": "you"}`) would be
+    # a truthy dict read as `true` -- quietly "anybody's".
+    if "equipped" in selector and not isinstance(selector["equipped"], bool):
+        raise DslError(
+            f"{where}: 'equipped' is true or false -- whether any Equipment, "
+            f"anybody's, is attached (301.5c)"
+        )
     if "goaded" in selector and not isinstance(selector["goaded"], bool):
         raise DslError(
             f"{where}: 'goaded' is true or false -- whether anyone has goaded "

@@ -1287,12 +1287,37 @@ stays in the graveyard, and one looked at off the library is one of "the rest".
 A following `attach` is the near miss. It asks a second question after the
 first, and when nothing is legal the Aura has already left its zone.
 
-`host_named: true`, on `return_from_graveyard` (beside `destination:
+`host_named`, on `return_from_graveyard` (beside `destination:
 "battlefield"`) and `put_onto_battlefield`, is the other case: the effect names
 the host itself — Forum Filibuster's "…to the battlefield **attached to that
-token**", Gift of Immortality's "…attached to that creature" — and a following
-`attach` says which. No 303.4f question is asked. The loader refuses the key on
-any other op or destination, and anything but a boolean.
+token**", Unfinished Business's "…attached to that creature". Its value is a
+selector for the host, resolved once before the first card moves and on the
+battlefield unless it says otherwise; its first match is the host. No 303.4f
+question is asked, but the host is held to the same test a chosen one is
+(`zones.offer_named_host`): an Aura enters attached to it only if its enchant
+clause allows it and protection does not refuse it, and otherwise — or with no
+host there at all — stays in its zone (303.4g). An Equipment always enters,
+attached to the host when `attach` allows it and unattached when not; any
+other card enters unattached. The loader refuses the key on any other op or
+destination, anything but a selector, and a `target` the card does not declare.
+
+    Return target creature card from your graveyard to the battlefield, then
+    return up to two target Aura and/or Equipment cards from your graveyard to
+    the battlefield attached to that creature. (If the Auras can't enchant that
+    creature, they remain in your graveyard.)
+
+```jsonc
+"spell_effects": [
+  { "op": "return_from_graveyard", "destination": "battlefield", "controller": "you",
+    "objects": { "target": "t1", "zone": "graveyard" } },
+  { "op": "return_from_graveyard", "destination": "battlefield", "controller": "you",
+    "host_named": { "target": "t1", "zone": "battlefield" },
+    "objects": { "target": "t2", "zone": "graveyard" } }
+]
+```
+
+A following `attach` with `attachment` is the near miss: the Aura has already
+entered unattached, and `attach` does not read its enchant clause.
 
 ### An Aura that enchants a card in a graveyard — Animate Dead
 
@@ -1311,7 +1336,7 @@ any other op or destination, and anything but a boolean.
     "trigger": { "event": "self_enters", "source": "self", "condition": { "zone_is": "battlefield" } },
     "effects": [
       { "op": "return_from_graveyard", "destination": "battlefield", "controller": "you",
-        "host_named": true, "link": true,
+        "link": true,
         "objects": { "attached": true, "controller": "any", "types": ["Creature"], "zone": "graveyard" } },
       { "op": "attach", "objects": { "returned_with": "self" } } ] },
   { "kind": "triggered", "trigger": { "event": "leaves_battlefield", "source": "self" },
@@ -3254,30 +3279,50 @@ Both are board state, so neither can make one static depend on another's output.
   "active_zones": ["hand"],
   "cost": { "mana": "{1}{U}",
             "return_to_hand": { "controller": "you", "types": ["Creature"],
-                                "attacking": true, "blocked": false, "count": 1 } },
+                                "attacking": true, "blocked": false, "count": 1,
+                                "as": "returned" } },
   "effects": [ { "op": "put_onto_battlefield",
                  "objects": { "zone": "hand", "self_only": true },
-                 "controller": "you", "tapped": true, "attacking": true } ] }
+                 "controller": "you", "tapped": true,
+                 "attacking": { "same_as": "returned" } } ] }
 ```
 
-Two words, one on each half.
+Rule 702.49. Two words in the reminder text, one on each half.
 
-**`blocked`** is a selector key and is *not* the negation of `blocking`. That
-key asks whether a creature is blocking something; this asks whether anything
-is blocking **this attacker**, and the two are different creatures.
+**`blocked: false`** is "unblocked" (509.1h). An attacking creature becomes
+blocked or unblocked as blockers are declared: `blocked: true` matches an
+attacker with a blocker declared for it, or in a band that had one (702.21e),
+and keeps matching after its blockers leave combat; `blocked: false` matches an
+attacker with none. Before blockers are declared, and for a creature that is not
+attacking, the key matches neither, so ninjutsu is first offered once blocks are
+in and can never swap a ninja in to be blocked. It is not the negation of
+`blocking`, which asks about a blocker, a different creature.
 
-**`attacking`** is `create_token`'s clause, on `put_onto_battlefield` as well.
-The ninja joins the combat the returned attacker just left, which is why it
-arrives unblocked — the blocker that was there was blocking a creature now
-sitting in its owner's hand. Same contract as the token version: it was never
-*declared* as an attacker (508.4), so it triggers nothing that fires on
-attacking.
+**`attacking: { "same_as": <name> }`** is 702.49c: the ninja enters attacking
+the same player, planeswalker or battle the returned creature was attacking.
+The cost's `as` binds the returned creature as it is paid, before the bounce
+takes it out of combat (506.4): its `zones.snapshot` plus whom it was attacking
+(`costs.returned_snapshot`), so `{"binding": "returned"}` also reads its
+last-known power. A planeswalker that has since left keeps the ninja attacking
+it and dealing no combat damage (506.4c), as it would have the returned
+creature; a defending player who has left the game leaves the ninja arriving
+tapped and attacking nobody. The ninja arrives after blocks, so it is
+unblocked, and it was never *declared* (508.4), so nothing that fires on
+attacking triggers.
+
+The loader refuses `same_as` naming anything but this ability's
+`return_to_hand` `as`, `same_as` on any op but `put_onto_battlefield`, `same_as`
+beside `or_planeswalker` (the walker is copied, not chosen), and a
+`return_to_hand` `as` on a cost that returns more than one permanent or does not
+belong to an activated ability. The near miss is `attacking: true`, which
+follows the source or the first declared attacker's defender, not the returned
+creature's: at a pod that can be the wrong player, and against a planeswalker
+it is the player.
 
 The ability is offered from **hand** and satisfies the outside-the-battlefield
 guard through unearth's satisfier — an unconditional top-level effect moving
-`self_only` out. Ninjutsu is the shape that makes that satisfier obviously
-right: nothing in the *cost* removes the card, and it leaves hand because the
-effect puts it onto the battlefield.
+`self_only` out. Nothing in the *cost* removes the card; it leaves hand because
+the effect puts it onto the battlefield.
 
 ## Reselecting an attack — `redirect_attack`
 
@@ -5499,7 +5544,8 @@ or under another player's control, as the effect would begin, the op does
 nothing at all rather than falling back to a shorter clock. The source is the
 resolving ability's own permanent, so the loader refuses the duration in a
 spell's `spell_effects`, where nobody controls the source, and on every other
-op.
+op but `gain_control`, which takes it for a steal
+([below](#for-as-long-as-you-control-the-source)).
 
 The near misses: `permanent` outlives the source, and a `grant_keyword` static
 ends with its source but re-reads its `affects` filter, which has no key for
@@ -5782,6 +5828,33 @@ cost reduction, and their ceiling is the spell's own generic cost. Convoke's
 ceiling adds the pips a colour could pay.
 The near miss is `cost_reduction` with a count of artifacts (affinity), which
 lowers the price without tapping anything.
+
+##### `grant_pay_generic_with` — "spells you cast have improvise"
+
+A player-wide static that hands one of the three currencies to spells its
+`affects_player` casts, as if each matching spell printed the keyword.
+`pay_generic_with` names the currency (the card-level field's three values)
+and `affects_spells` the spells, matched against the face being cast; both are
+required, `affects_spells` may not be empty and may not carry `controller`
+(`affects_player` already names the caster), and `affects` is refused. The
+key `pay_generic_with` on any other static is refused.
+
+```jsonc
+// Inspiring Statuary -- "Nonartifact spells you cast have improvise."
+{ "kind": "static", "effect": "grant_pay_generic_with",
+  "pay_generic_with": "tap_artifacts", "affects_player": "you",
+  "affects_spells": { "not_types": ["Artifact"] } }
+```
+
+A spell's currencies are the printed one and every grant together
+(`casting.pay_generic_currencies`), so a keyword it already has is redundant
+and two different ones spend in one pick: a convoke spell under the Statuary is
+offered its creatures and artifacts together, tagged `convoke+improvise`, and a
+delve spell its artifacts and graveyard, `improvise+delve`. A permanent that is
+both a creature and an artifact taps once, and convokes when the spell has
+convoke. The near miss is `spell_cost_reduction`, a flat discount that taps
+nothing, and `granted_alternative_cost`, which replaces the cost rather than
+adding a way to pay it.
 
 #### Casting from the graveyard
 
@@ -6386,6 +6459,24 @@ problem. Foretell needs only the first.
 **"On a later turn" is the whole price** — foretold and cast on the same turn is
 the printed cost paid in two instalments with the discount thrown in — so
 `foretold_turn` is recorded and compared.
+
+**"If this spell was cast from exile"** is the condition `cast_from_exile`, the
+third sibling of `cast_from_hand` and `cast_from_graveyard`. It reads
+`cast_from_zone`, the zone `stack.push_spell` records as the card leaves for the
+stack; `zone_is` cannot answer it, since every resolving spell is on the stack.
+It takes `true` or `false` (a string is a load error) and the same optional `of`
+binding as its siblings.
+
+```jsonc
+// Ultimate Magic: Holy — "If this spell was cast from exile, prevent all damage…"
+{ "op": "if", "condition": { "cast_from_exile": true }, "then": [ … ] }
+```
+
+It is true of any cast out of exile — foretold, plotted, an Adventure, any exile
+play permission — so it is not "if this spell was foretold" (Haunting Voyage),
+which names the cost paid. Nor is it `{"not": {"cast_from_hand": true}}`: a spell
+cast off a library top or from the command zone is neither, and a copy was never
+cast (707.10).
 
 #### Dredge, madness and miracle — replacements that stop to ask
 
@@ -7083,6 +7174,37 @@ replaces the loss. Extort's "you gain that much life" is the same read.
 
 The binding is this op's loss alone: a second `lose_life` with the same `as`
 overwrites it rather than adding to it.
+
+### "As you cast this spell" — a value fixed at cast time
+
+A number the card fixes "as you cast this spell" (601.2) is written once, in the
+card-level `as_cast` map, and read by `spell_effects` like any other binding.
+`stack.push_spell` evaluates each value as the spell goes on the stack — costs
+paid, before anyone can respond — and writes it into the stack item's
+`bindings` under its name.
+
+```jsonc
+// Lifestream's Blessing — "Draw X cards, where X is the greatest power among
+// creatures you controlled as you cast this spell."
+"as_cast": {
+  "greatest_power": { "extreme_value": { "of": "power",
+    "objects": { "types": ["Creature"], "controller": "you" } } }
+},
+"spell_effects": [
+  { "op": "draw", "player": "you", "amount": { "binding": "greatest_power" } }
+]
+```
+
+The near miss is the same `extreme_value` written into the `draw`: that is read
+as the spell resolves (608.2h), so a creature killed or pumped in response
+changes X. `snapshot` is an op, and also runs at resolution.
+
+A copy of the spell carries the bound values (707.10), as it carries `x`. The
+loader refuses a card with no `spell_effects` (a permanent's abilities never see
+its spell's stack item), a name nothing in `spell_effects` reads, a constant, a
+value naming a `target` (targets are split into their specs only at
+resolution), and the names the engine binds on a spell itself: `convoked`,
+`distribution`, `warped`.
 
 ### Extort
 
@@ -9030,6 +9152,45 @@ the plain "target creature loses flying until end of turn" (Radjan Spirit). That
 is a layer-6 removal a later grant survives (613.7). It is not built, and the
 `cant_have` key is what stops it loading as this stronger effect.
 `lose_all_abilities` and `lock_abilities` take far more than two keywords.
+
+### `lose_keyword_timestamped` — "loses flying", with no "can't have"
+
+Colossus Hammer: *"Equipped creature gets +10/+10 **and loses flying**."*
+
+```jsonc
+{ "kind": "static",
+  "text": "Equipped creature gets +10/+10 and loses flying.",
+  "effect": "lose_keyword_timestamped",
+  "keywords": ["flying"],
+  "affects": { "attached": true } }
+```
+
+A plain removal in layer 6, ordered by timestamp among the effects that grant
+keywords (613.7). The printed keyword always goes, and so does every grant
+older than the removal; a grant **newer** than it survives. So Jump on the
+hammered creature makes it fly, and so do a flying counter put on afterwards, a
+permanent `grant_keyword` and an anthem that arrives afterwards, while a Jump
+cast before the hammer was attached, or an anthem already on the battlefield, is
+taken away. A tie goes to the removal.
+
+`characteristics._compute` gathers the removals before the grant layers and
+applies them after `granted_keywords`, comparing timestamps: a static's is its
+source's (`static_timestamp`) — `GameObject.timestamp`, taken as it entered its
+zone, or `attached_timestamp` for an Aura or Equipment, which is renewed as it
+becomes attached, so moving the hammer away and back makes it newer than a Jump
+cast in between. A keyword counter's is when it was last put on
+(`GameObject.keyword_counter_at`), or the permanent's own for one it entered
+with; a timed or permanent grant's is its `TempEffect.timestamp` or
+`granted_keyword_at`.
+
+`keywords` and `affects` are required, for `lose_keyword`'s reasons. The loader
+refuses a numbered keyword (annihilator, toxic): `annihilator_instances` counts
+instances without timestamps. It is ungrantable, since a granted static reads its
+holder's timestamp rather than the grant's.
+
+The near miss is the `lose_keyword` static, which is "can't have or gain" and
+beats every grant whatever its timestamp: written with it, the hammer would
+ground its creature through every later Jump.
 
 ### `grant_ability` as a static, and where the line now runs
 
@@ -11628,8 +11789,9 @@ built from zone changes alone would show a creature silently swapping sides.
 ```
 
 Act of Treason, Threaten, Zealous Conscripts. `duration` is `"permanent"` (the
-default), `"until_end_of_turn"` or `"end_of_your_next_turn"` (below); **any
-other spelling is a load error**. A
+default), `"until_end_of_turn"`, `"end_of_your_next_turn"` or
+`"as_long_as_you_control_source"` (both below); **any other spelling is a load
+error**. A
 `duration` the engine does not read would be understood as "until end of turn"
 by whoever wrote it and turn Act of Treason into a permanent steal — a strictly
 better card than the printed one, loading clean.
@@ -11709,6 +11871,33 @@ steal records no previous controller and still leaves with the thief.
 "It gains \"This permanent can't be sacrificed\"" is `cant_sacrifice` on the
 same clock; see that op below for why it rides the permanent rather than the
 table.
+
+### …for as long as you control the source
+
+    "When this creature enters, gain control of target noncreature artifact for
+    as long as you control this creature." (Yuffie, Materia Hunter's trigger.)
+
+```jsonc
+{ "op": "gain_control", "objects": { "target": "t1" },
+  "duration": "as_long_as_you_control_source" }
+```
+
+611.2b's source-bound duration, the one `grant_keyword` and `pump` take for
+Thancred Waters ([above](#for-as-long-as-you-control-this)), on a control
+change. The steal is a `TempEffect(kind="control")` with `while_controller` set
+to the effect's controller, and no cleanup or untap step ends it.
+`temp_effects.end_source_bound` does, the moment the source leaves the
+battlefield or changes controller, and for a control entry ending is the
+handback: the permanent goes home through `_hand_back_control`, so 302.6,
+506.4 and the `control_changed` event apply, a permanent somebody else has
+taken since is not handed anywhere, and a blinked or returned source does not
+take it again. If the source is gone, or not the effect's controller's, as the
+effect would begin, nothing is taken at all. 800.4a ends it like the timed
+steals when the thief leaves the game. Refused in a spell's `spell_effects`,
+where nobody controls the source.
+
+The near misses: `permanent` keeps the artifact after the source dies, the
+strictly better card; `until_end_of_turn` hands it back at the first cleanup.
 
 ### "Choose left or right" — passing the board around the table
 

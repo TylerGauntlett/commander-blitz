@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**159 cards** blocked by **144** capabilities.
+**160 cards** blocked by **145** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -106,6 +106,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
 | [modal-variable-targets](#modal-variable-targets) | 1 | 4339 | engine |
+| [modified](#modified) | 1 | 831 | selector |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
 | [myriad](#myriad) | 1 | 6808 | keyword |
@@ -1672,6 +1673,20 @@ Blocks **1** card.
 
 - **Quandrix Command** (rank 4339) — `quandrix_command`
   - • Target player shuffles up to three target cards from their graveyard into their library.
+
+</details>
+
+## modified
+
+Blocks **1** card.
+
+- **(selector)** the `modified` key (true: has a counter, is equipped, or is enchanted by an Aura its controller controls) accepted in a trigger `filter`, so a `deals_combat_damage_to_player` trigger with filter {controller: you, types: [Creature], modified: true} fires only for a creature that is modified when it deals the damage
+  <br>Why the existing vocabulary won't do: `modified` is in selector_keys and static_affects_filter_keys (so the trample line is expressible), but not in trigger_filter_keys / engine.triggers.TRIGGER_FILTER_KEYS, which the loader enforces. An any_of of has_counters and enchanted_by in the trigger filter misses the equipped limb (`equipped` is not a trigger filter key either; `attached` means attached to the ability's source). Moving the test into the trigger's `condition` as an `exists` over the subject binding makes it an intervening-if that is rechecked on resolution, so a creature that loses its counter or Equipment before resolution would wrongly find no land -- a different card.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Kodama of the West Tree** (rank 831) — `kodama_of_the_west_tree`
+  - Whenever a modified creature you control deals combat damage to a player, search your library for a basic land card, put it onto the battlefield tapped, then shuffle.
 
 </details>
 

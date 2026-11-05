@@ -1519,12 +1519,55 @@ def _return_pool(state: GameState, pid: int, cost: Cost, source_oid: int | None)
     """
 
     spec = dict(cost.return_to_hand or {})
+    # `as` names the returned creature for the ability's effects; it says
+    # nothing about which permanents qualify.
+    spec.pop("as", None)
     spec.setdefault("controller", "you")
     spec.setdefault("zone", "battlefield")
     count = int(spec.pop("count", 1) or 1)
     ctx = EffectContext(state=state, controller=pid, source_oid=source_oid)
     pool = resolve_pool(ctx, spec)
     return pool if len(pool) >= count else []
+
+
+def returned_snapshot(state: GameState, oid: int) -> dict[str, Any]:
+    """Last-known information about a permanent a cost returned, with its attack.
+
+    `zones.snapshot`, plus ``attack``: ``{"player": …, "permanent": …}`` when
+    the creature was attacking -- the defending player, and the planeswalker
+    or battle it was attacking or ``None`` -- and ``None`` when it was not.
+    """
+    record = capture_snapshot(state, oid)
+    combat = state.combat
+    if combat is not None and combat.attacking(oid):
+        record["attack"] = {
+            "player": combat.attackers[oid],
+            "permanent": combat.attacking_permanent.get(oid),
+        }
+    else:
+        record["attack"] = None
+    return record
+
+
+def sacrificed_snapshot(state: GameState, oid: int) -> dict[str, Any]:
+    """Last-known information about a permanent a cost sacrificed, with what hung on it.
+
+    `zones.snapshot` -- characteristics and every counter -- plus
+    ``attached``: one ``{"oid": …, "timestamp": …}`` per permanent attached to
+    it (Equipment, Aura or Fortification), each with the
+    `GameObject.timestamp` of the zone it was in. An oid survives every zone
+    change, so the timestamp is what tells the attachment that was there from
+    a new object (400.7) that left and came back before the ability resolved;
+    the ``was_attached_to`` selector key matches only the first. Taken before
+    the sacrifice detaches them, which is the only moment the answer exists.
+    """
+    record = capture_snapshot(state, oid)
+    record["attached"] = [
+        {"oid": other_oid, "timestamp": state.objects[other_oid].timestamp}
+        for other_oid in state.battlefield
+        if other_oid in state.objects and state.objects[other_oid].attached_to == oid
+    ]
+    return record
 
 
 def _tap_cost_pool(state: GameState, pid: int, cost: Cost, source_oid: int | None) -> list[int]:
@@ -1871,8 +1914,11 @@ def pay(
             # token with no object at all -- and in `zones.snapshot`'s shape,
             # the one the `sacrifice` op's `snapshot` key writes, so
             # `power_of {"binding": …}` and `{"binding": …}` as a selector read
-            # it without knowing a cost wrote it.
-            bindings[str(name)] = capture_snapshot(state, picked[0])
+            # it without knowing a cost wrote it. Zack Fair adds what was
+            # attached to it (`sacrificed_snapshot`), read back by the
+            # `was_attached_to` selector key, and its counters, read back by
+            # `move_counters`' `from_had_counters: <name>`.
+            bindings[str(name)] = sacrificed_snapshot(state, picked[0])
         for oid in picked:
             # The thing being paid for, so the log can say what the creature
             # was sacrificed *to* rather than only that it was sacrificed.
@@ -1882,9 +1928,19 @@ def pay(
         spec = dict(cost.return_to_hand)
         count = int(spec.pop("count", 1) or 1)
         pool = _return_pool(state, pid, cost, source_oid)
+        name = spec.pop("as", None)
         picked = yield from ask_objects(
             ctx, "Return to hand", pool, count, count, pid, "return_cost"
         )
+        if name and picked and bindings is not None:
+            # Ninjutsu: the ninja enters "attacking the same player,
+            # planeswalker or battle the returned creature was attacking"
+            # (702.49c). Bouncing it removes it from combat (506.4), so whom it
+            # was attacking is fixed here, in the window where it has been
+            # chosen and has not yet moved -- `sacrifice`'s `as` snapshot, plus
+            # the attack. `put_onto_battlefield`'s `attacking: {"same_as": …}`
+            # reads it back.
+            bindings[str(name)] = returned_snapshot(state, picked[0])
         for oid in picked:
             bounce_object(state, oid, by=source_oid)
 

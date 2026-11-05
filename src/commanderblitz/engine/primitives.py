@@ -22,7 +22,7 @@ from .characteristics import (
     protected_from,
 )
 from .characteristics import chars as _chars
-from .enums import Keyword, Step, Zone
+from .enums import KEYWORD_COUNTERS, Keyword, Step, Zone
 from .events import EventType
 from .objects import MINUS_ONE, PLUS_ONE, SHIELD, STUN, GameObject
 from .player_statics import (
@@ -1342,6 +1342,10 @@ def add_counters(
     # this is the only moment both exist.
     before = obj.counter(kind)
     obj.add_counter(kind, amount)
+    if amount > 0 and kind in KEYWORD_COUNTERS:
+        # When, for a timestamped keyword removal to compare against (613.7):
+        # a flying counter put on after "loses flying" gives flying back.
+        obj.keyword_counter_at[kind] = state.alloc_timestamp()
     state.bump_chars()
     if amount > 0:
         fire(
@@ -1811,6 +1815,7 @@ def change_control(
     source: int | None = None,
     duration: str = "permanent",
     clock: int | None = None,
+    while_controller: int | None = None,
 ) -> bool:
     """ "Gain control of target creature." Rule 800.4a.
 
@@ -1818,6 +1823,14 @@ def change_control(
     "until the end of **your** next turn", where "your" is the effect's
     controller -- and defaults to ``pid``, the player gaining control, which is
     the same seat on every printed card.  Ignored for the other durations.
+
+    ``while_controller`` is the seat that must go on controlling ``source``
+    for an ``"as_long_as_you_control_source"`` steal -- Yuffie, Materia
+    Hunter's "…for as long as you control Yuffie" (611.2b) -- and is required
+    by that duration and ignored by the others.  The entry is a
+    `TempEffect.while_controller` like Thancred Waters' indestructible, and it
+    ends the same way, in `temp_effects.end_source_bound`, whose handback for a
+    control entry is this function pointed the other way.
 
     The object does not move: ``GameObject.controller`` is a field and
     ``state.battlefield`` is one shared list, so the whole change is that field
@@ -1864,6 +1877,9 @@ def change_control(
 
     if duration not in CONTROL_DURATIONS:  # pragma: no cover - loader guards
         raise ValueError(f"unknown control duration {duration!r}")
+    source_bound = duration == "as_long_as_you_control_source"
+    if source_bound and (source is None or while_controller is None):  # pragma: no cover
+        raise ValueError("a source-bound control change needs its source and seat")
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield or obj.controller == pid:
         # Including the no-op: "gain control of a permanent you control" changes
@@ -1888,6 +1904,16 @@ def change_control(
                 new_controller=pid,
                 until_end_of_turn_of=(pid if clock is None else clock) if next_turn else None,
                 since_turn=state.turn,
+            )
+        )
+    elif source_bound:
+        obj.until_eot.append(
+            TempEffect(
+                kind="control",
+                source=source,
+                previous_controller=previous,
+                new_controller=pid,
+                while_controller=while_controller,
             )
         )
     state.bump_chars()

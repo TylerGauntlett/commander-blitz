@@ -211,8 +211,17 @@ ATTACK_RESTRICTION_DURATIONS = ("this_turn", "this_combat", "attacker_next_turn"
 #: is, because it is the same clock.  Enumerated rather than defaulted for a
 #: harsher reason than most: a misread ``"until_end_of_turn"`` is a *permanent*
 #: steal, which is the strictly better card the loader has always refused to
-#: let anybody write by accident.
-CONTROL_DURATIONS = ("permanent", "until_end_of_turn", "end_of_your_next_turn")
+#: let anybody write by accident.  The fourth is Yuffie, Materia Hunter's "…for
+#: as long as you control Yuffie" (611.2b), spelled the way `grant_keyword`'s
+#: Thancred Waters duration is (`TempEffect.while_controller`), because it is the
+#: same duration ending the same way: `temp_effects.end_source_bound`, which
+#: for a control entry is the handback.
+CONTROL_DURATIONS = (
+    "permanent",
+    "until_end_of_turn",
+    "end_of_your_next_turn",
+    "as_long_as_you_control_source",
+)
 
 
 @dataclass(frozen=True)
@@ -2049,6 +2058,20 @@ class TurnLedger:
     #: activations are two. Keyed by oid, so a walker that arrives after the
     #: Veil resolved gets nothing, as printed.
     extra_loyalty_activations: dict[int, int] = field(default_factory=dict)
+    #: Every activated ability each player has activated this turn, as what
+    #: it was aimed at: player id -> one ``(is_equip, targets)`` entry per
+    #: activation, where ``targets`` is a tuple of ``(controller, types,
+    #: subtypes)`` for each object target, read as it was targeted (before the
+    #: cost was paid). Professor Hojo's "**the first** activated ability you
+    #: activate during your turn that targets a creature you control" asks
+    #: whether an earlier activation matched, and the creature it targeted may
+    #: since have died or changed hands -- so the answer is filed at the
+    #: activation, not looked up later. Written by `Game._activate` after the
+    #: cost is paid, so the activation being priced is never its own
+    #: predecessor; read by `player_statics.ability_cost_reduction`.
+    targeted_activations: dict[
+        int, list[tuple[bool, tuple[tuple[int, frozenset[str], frozenset[str]], ...]]]
+    ] = field(default_factory=dict)
 
     #: Words written onto a permanent that wear off at the turn boundary:
     #: object id -> the flags it has been given **this turn**.  "If this creature
@@ -2238,6 +2261,7 @@ class TurnLedger:
         self.ability_activations.clear()
         self.loyalty_activations.clear()
         self.extra_loyalty_activations.clear()
+        self.targeted_activations.clear()
         self.cards_to_graveyard = 0
         self.permanents_to_graveyard = 0
         self.cards_from_graveyard.clear()

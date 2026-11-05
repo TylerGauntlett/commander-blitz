@@ -28,6 +28,7 @@ from ..zones import (
     move_object,
     offer_aura_host,
     offer_enters_replacement,
+    offer_named_host,
     offer_read_ahead,
     offer_riot_choice,
     record_playable_source,
@@ -40,6 +41,7 @@ from .selectors import (
     ZONE_NAMES,
     choose_objects,
     matches,
+    named_hosts,
     pick_from_pool,
     resolve_pool,
     select_players,
@@ -1212,6 +1214,7 @@ def op_return_from_graveyard(ctx: EffectContext, spec: Mapping[str, Any]):
     selector.setdefault("zone", "graveyard")
     destination = DESTINATIONS[spec.get("destination", "hand")]
     oids = yield from choose_objects(ctx, selector, "Return from graveyard")
+    hosts = named_hosts(ctx, spec)
     for oid in oids:
         obj = ctx.state.objects.get(oid)
         if obj is None:
@@ -1222,11 +1225,13 @@ def op_return_from_graveyard(ctx: EffectContext, spec: Mapping[str, Any]):
             controller = ctx.controller if spec.get("controller") == "you" else obj.owner
             # 303.4f: "return this card to the battlefield" names no host, so
             # an Aura chooses one as it enters and stays in the graveyard when
-            # none is legal. ``host_named`` is "…attached to that creature",
-            # the host named by a following `attach`.
-            if not spec.get("host_named") and not (
-                yield from offer_aura_host(ctx.state, oid, controller)
-            ):
+            # none is legal. ``host_named`` is "…attached to that creature":
+            # the effect names the host, and an Aura that can't legally
+            # enchant it stays in the graveyard (303.4g).
+            if hosts is not None:
+                if not offer_named_host(ctx.state, oid, controller, hosts):
+                    continue
+            elif not (yield from offer_aura_host(ctx.state, oid, controller)):
                 continue
             obj.controller = controller
             # "If this artifact **would enter**…" -- reanimation is an arrival,

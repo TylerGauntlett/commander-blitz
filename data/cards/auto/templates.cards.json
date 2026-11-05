@@ -1518,6 +1518,103 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "life_gained_this_turn": "you"
+                },
+                "right": {
+                  "const": 7
+                }
+              },
+              "else": [
+                {
+                  "destination": "hand",
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ],
+              "op": "if",
+              "then": [
+                {
+                  "controller": "you",
+                  "destination": "battlefield",
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Raise — At the beginning of your end step, if you gained life this turn, return target creature card from your graveyard to your hand. If you gained 7 or more life this turn, return that card to the battlefield instead.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "life_gained_this_turn": "you"
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "aerith_last_ancient",
+      "keywords": [
+        "lifelink"
+      ],
+      "mana_cost": "{2}{G}{W}",
+      "name": "Aerith, Last Ancient",
+      "oracle_text": "Lifelink\nRaise — At the beginning of your end step, if you gained life this turn, return target creature card from your graveyard to your hand. If you gained 7 or more life this turn, return that card to the battlefield instead.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Cleric",
+        "Druid"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -6672,7 +6769,6 @@
             {
               "controller": "you",
               "destination": "battlefield",
-              "host_named": true,
               "link": true,
               "objects": {
                 "attached": true,
@@ -10114,6 +10210,103 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "attachment": {
+                    "target": "t1"
+                  },
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "attach"
+                }
+              ],
+              "op": "may"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": "any",
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "subtypes": [
+                  "Equipment"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever this creature enters or attacks, you may attach any number of target Equipment to it.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "attachment": {
+                    "target": "t1"
+                  },
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "attach"
+                }
+              ],
+              "op": "may"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": "any",
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "subtypes": [
+                  "Equipment"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever this creature enters or attacks, you may attach any number of target Equipment to it.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "armory_automaton",
+      "mana_cost": "{3}",
+      "name": "Armory Automaton",
+      "oracle_text": "Whenever this creature enters or attacks, you may attach any number of target Equipment to it. (Control of the Equipment doesn't change.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Construct"
+      ],
+      "toughness": 2,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -11996,6 +12189,81 @@
         "Monk"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "count": {
+              "controller": "opponent",
+              "types": [
+                "Artifact"
+              ]
+            }
+          },
+          "text": "Avalanche of Sector 7's power is equal to the number of artifacts your opponents control.",
+          "toughness": {
+            "const": 3
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "player": {
+                "binding": "event_player"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent activates an ability of an artifact they control, Avalanche of Sector 7 deals 1 damage to that player.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "ability_activated",
+            "filter": {
+              "controller": "opponent",
+              "types": [
+                "Artifact"
+              ],
+              "zone": "battlefield"
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "avalanche_of_sector_7",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{2}{R}",
+      "name": "Avalanche of Sector 7",
+      "oracle_text": "Menace\nAvalanche of Sector 7's power is equal to the number of artifacts your opponents control.\nWhenever an opponent activates an ability of an artifact they control, Avalanche of Sector 7 deals 1 damage to that player.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Rebel"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -14742,6 +15010,167 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "rebel_2_2_r"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Avalanche! — Whenever an Equipment you control enters, create a 2/2 red Rebel creature token.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "controller": "you",
+              "subtypes": [
+                "Equipment"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "attachment": {
+                "target": "gear"
+              },
+              "objects": {
+                "target": "rebel"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "gear",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "you",
+                "subtypes": [
+                  "Equipment"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            {
+              "count": 1,
+              "id": "rebel",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "subtypes": [
+                  "Rebel"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "At the beginning of combat on your turn, attach up to one target Equipment you control to target Rebel you control.",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "barret_avalanche_leader",
+      "keywords": [
+        "reach"
+      ],
+      "mana_cost": "{2}{R}{G}",
+      "name": "Barret, Avalanche Leader",
+      "oracle_text": "Reach\nAvalanche! — Whenever an Equipment you control enters, create a 2/2 red Rebel creature token.\nAt the beginning of combat on your turn, attach up to one target Equipment you control to target Rebel you control.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Rebel"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "equipped": true,
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "damage",
+              "player": {
+                "binding": "defender"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Barret Wallace attacks, it deals damage equal to the number of equipped creatures you control to defending player.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "barret_wallace",
+      "keywords": [
+        "reach"
+      ],
+      "mana_cost": "{3}{R}",
+      "name": "Barret Wallace",
+      "oracle_text": "Reach\nWhenever Barret Wallace attacks, it deals damage equal to the number of equipped creatures you control to defending player.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Rebel"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -23000,6 +23429,78 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "cost": {
+            "mana": "{2}"
+          },
+          "effect": "ward",
+          "kind": "static",
+          "text": "Ward {2} (Whenever this creature becomes the target of a spell or ability an opponent controls, counter it unless that player pays {2}.)"
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "types": [
+              "Artifact"
+            ]
+          },
+          "cost": {
+            "mana": "{2}"
+          },
+          "effect": "ward",
+          "kind": "static",
+          "text": "Other artifacts you control have ward {2}."
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Artifact"
+              ]
+            }
+          },
+          "text": "Bronze Guardian's power is equal to the number of artifacts you control.",
+          "toughness": {
+            "const": 5
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "bronze_guardian",
+      "keywords": [
+        "double_strike"
+      ],
+      "mana_cost": "{4}{W}",
+      "name": "Bronze Guardian",
+      "oracle_text": "Double strike\nWard {2} (Whenever this creature becomes the target of a spell or ability an opponent controls, counter it unless that player pays {2}.)\nOther artifacts you control have ward {2}.\nBronze Guardian's power is equal to the number of artifacts you control.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Golem"
+      ],
+      "toughness": 5,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "bronze_sable",
@@ -23535,6 +24036,123 @@
         "Legendary"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, if you control a creature with power 7 or greater, draw a card.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "controller": "you",
+                "power": {
+                  "op": ">=",
+                  "value": {
+                    "const": 7
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "controller": "you",
+            "event": "upkeep"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "bugenhagen_wise_elder",
+      "keywords": [
+        "reach"
+      ],
+      "mana_cost": "{1}{G}",
+      "name": "Bugenhagen, Wise Elder",
+      "oracle_text": "Reach\nAt the beginning of your upkeep, if you control a creature with power 7 or greater, draw a card.\n{T}: Add one mana of any color.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Shaman"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -24223,6 +24841,123 @@
       ],
       "toughness": 8,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "scry",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "lucky_slots_card",
+              "destination": "exile",
+              "objects": {
+                "count": 1
+              },
+              "op": "look_at_top",
+              "playable_this_turn": true,
+              "player": "you"
+            },
+            {
+              "condition": {
+                "cmp": ">",
+                "left": {
+                  "count": {
+                    "binding": "lucky_slots_card",
+                    "controller": "any"
+                  }
+                },
+                "right": {
+                  "const": 0
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "ability": "lucky_slots_pump",
+                  "op": "reflexive_trigger"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Lucky Slots — At the beginning of combat on your turn, scry 1, then exile the top card of your library. You may play that card this turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "pump",
+              "power": {
+                "mana_value_of": {
+                  "objects": {
+                    "binding": "lucky_slots_card",
+                    "controller": "any"
+                  }
+                }
+              },
+              "toughness": {
+                "const": 0
+              }
+            }
+          ],
+          "id": "lucky_slots_pump",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When you exile a card this way, target creature you control gets +X/+0 until end of turn, where X is that card's mana value."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "cait_sith_fortune_teller",
+      "mana_cost": "{3}{R}",
+      "name": "Cait Sith, Fortune Teller",
+      "oracle_text": "Lucky Slots — At the beginning of combat on your turn, scry 1, then exile the top card of your library. You may play that card this turn. When you exile a card this way, target creature you control gets +X/+0 until end of turn, where X is that card's mana value.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Cat",
+        "Moogle"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Artifact",
         "Creature"
       ]
     },
@@ -28579,6 +29314,81 @@
     {
       "abilities": [
         {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Equipped creature gets +2/+2",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "affects": {
+            "attached": true,
+            "supertypes": [
+              "Legendary"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "hexproof"
+          ],
+          "kind": "static",
+          "text": "As long as equipped creature is legendary, it has hexproof"
+        },
+        {
+          "cost": {
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {1}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "champion_s_helm",
+      "mana_cost": "{3}",
+      "name": "Champion's Helm",
+      "oracle_text": "Equipped creature gets +2/+2.\nAs long as equipped creature is legendary, it has hexproof. (It can't be the target of spells or abilities your opponents control.)\nEquip {1}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -30413,6 +31223,95 @@
     {
       "abilities": [
         {
+          "affects_spells": {
+            "controller": "you",
+            "subtypes": [
+              "Equipment",
+              "Vehicle"
+            ]
+          },
+          "amount": {
+            "const": 1
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Equipment and Vehicle spells you cast cost {1} less to cast."
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "is_your_turn": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying"
+          ],
+          "kind": "static",
+          "text": "Jump — During your turn, Cid has flying."
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "destination": "hand",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "subtypes": [
+                  "Equipment",
+                  "Vehicle"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "{2}, {T}: Return target Equipment or Vehicle card from your graveyard to your hand."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "cid_freeflier_pilot",
+      "mana_cost": "{1}{W}",
+      "name": "Cid, Freeflier Pilot",
+      "oracle_text": "Equipment and Vehicle spells you cast cost {1} less to cast.\nJump — During your turn, Cid has flying.\n{2}, {T}: Return target Equipment or Vehicle card from your graveyard to your hand.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior",
+        "Pilot"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -31709,6 +32608,123 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "attachment": {
+                "target": "t1"
+              },
+              "objects": {
+                "self_only": true
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "you",
+                "subtypes": [
+                  "Equipment"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When Cloud enters, attach up to one target Equipment you control to it.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "attacking": true,
+                  "controller": "you",
+                  "equipped": true,
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "power_of": {
+                    "self": true
+                  }
+                },
+                "right": {
+                  "const": 7
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "create_token",
+                  "token": "treasure_token"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Cloud attacks, draw a card for each equipped attacking creature you control. Then if Cloud has power 7 or greater, create two Treasure tokens.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "R",
+        "W"
+      ],
+      "id": "cloud_ex_soldier",
+      "keywords": [
+        "haste"
+      ],
+      "mana_cost": "{2}{R}{G}{W}",
+      "name": "Cloud, Ex-SOLDIER",
+      "oracle_text": "Haste\nWhen Cloud enters, attach up to one target Equipment you control to it.\nWhenever Cloud attacks, draw a card for each equipped attacking creature you control. Then if Cloud has power 7 or greater, create two Treasure tokens.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier",
+        "Mercenary"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -31730,6 +32746,110 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "additional_cost_options": [
+        {
+          "mana": "{0}"
+        },
+        {
+          "mana": "{1}"
+        },
+        {
+          "mana": "{3}{W}"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "cloud_s_limit_break",
+      "mana_cost": "{1}{W}",
+      "name": "Cloud's Limit Break",
+      "oracle_text": "Tiered (Choose one additional cost.)\n• Cross-Slash — {0} — Destroy target tapped creature.\n• Blade Beam — {1} — Destroy any number of target tapped creatures with different controllers.\n• Omnislash — {3}{W} — Destroy all tapped creatures.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "cost_option": 0
+          },
+          "op": "if",
+          "then": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "cost_option": 1
+          },
+          "op": "if",
+          "then": [
+            {
+              "objects": {
+                "target": "t2"
+              },
+              "op": "destroy"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "cost_option": 2
+          },
+          "op": "if",
+          "then": [
+            {
+              "objects": {
+                "count": "all",
+                "tapped": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "destroy"
+            }
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "cost_option": 0,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "tapped": true,
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "cost_option": 1,
+          "count": "any",
+          "id": "t2",
+          "kind": "permanent",
+          "one_per_player": true,
+          "selector": {
+            "tapped": true,
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -32741,6 +33861,78 @@
       "abilities": [
         {
           "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 10
+          },
+          "text": "Equipped creature gets +10/+10 and loses flying",
+          "toughness": {
+            "const": 10
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "lose_keyword_timestamped",
+          "keywords": [
+            "flying"
+          ],
+          "kind": "static",
+          "text": "Equipped creature gets +10/+10 and loses flying"
+        },
+        {
+          "cost": {
+            "mana": "{8}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {8}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "colossus_hammer",
+      "mana_cost": "{1}",
+      "name": "Colossus Hammer",
+      "oracle_text": "Equipped creature gets +10/+10 and loses flying.\nEquip {8} ({8}: Attach to target creature you control. Equip only as a sorcery.)",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
             "controller": "any",
             "subtypes": [
               "Inkling"
@@ -33620,6 +34812,138 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Equipped creature has \"Whenever this creature attacks, tap target creature defending player controls. If that creature has greater power than this creature, put a number of +1/+1 counters on this creature equal to the difference.\""
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "tap"
+            },
+            {
+              "condition": {
+                "cmp": ">",
+                "left": {
+                  "power_of": {
+                    "target": "t1"
+                  }
+                },
+                "right": {
+                  "power_of": {
+                    "self": true
+                  }
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "minus": [
+                      {
+                        "power_of": {
+                          "target": "t1"
+                        }
+                      },
+                      {
+                        "power_of": {
+                          "self": true
+                        }
+                      }
+                    ]
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "self_only": true,
+                    "zone": "battlefield"
+                  },
+                  "op": "add_counters"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": {
+                  "binding": "defender"
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever this creature attacks, tap target creature defending player controls. If that creature has greater power than this creature, put a number of +1/+1 counters on this creature equal to the difference.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "conformer_shuriken",
+      "mana_cost": "{2}",
+      "name": "Conformer Shuriken",
+      "oracle_text": "Equipped creature has \"Whenever this creature attacks, tap target creature defending player controls. If that creature has greater power than this creature, put a number of +1/+1 counters on this creature equal to the difference.\"\nEquip {2}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -39125,7 +40449,6 @@
             {
               "controller": "you",
               "destination": "battlefield",
-              "host_named": true,
               "link": true,
               "objects": {
                 "attached": true,
@@ -41760,6 +43083,100 @@
     {
       "color_identity": [
         "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "decimate",
+      "mana_cost": "{2}{R}{G}",
+      "name": "Decimate",
+      "oracle_text": "Destroy target artifact, target creature, target enchantment, and target land. (You can't cast this spell unless you have legal choices for all its targets.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "artifact"
+          },
+          "op": "destroy"
+        },
+        {
+          "objects": {
+            "target": "creature"
+          },
+          "op": "destroy"
+        },
+        {
+          "objects": {
+            "target": "enchantment"
+          },
+          "op": "destroy"
+        },
+        {
+          "objects": {
+            "target": "land"
+          },
+          "op": "destroy"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "artifact",
+          "kind": "permanent",
+          "selector": {
+            "controller": "any",
+            "types": [
+              "Artifact"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "creature",
+          "kind": "permanent",
+          "selector": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "enchantment",
+          "kind": "permanent",
+          "selector": {
+            "controller": "any",
+            "types": [
+              "Enchantment"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "land",
+          "kind": "permanent",
+          "selector": {
+            "controller": "any",
+            "types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "G",
         "U"
       ],
       "colors": [
@@ -42575,6 +43992,65 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "foretell": "{4}{R}{R}",
+      "id": "delayed_blast_fireball",
+      "mana_cost": "{1}{R}{R}",
+      "name": "Delayed Blast Fireball",
+      "oracle_text": "Delayed Blast Fireball deals 2 damage to each opponent and each creature they control. If this spell was cast from exile, it deals 5 damage to each opponent and each creature they control instead.\nForetell {4}{R}{R} (During your turn, you may pay {2} and exile this card from your hand face down. Cast it on a later turn for its foretell cost.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "cast_from_exile": true
+          },
+          "else": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "objects": {
+                "controller": "opponent",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            }
+          ],
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 5
+              },
+              "objects": {
+                "controller": "opponent",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -50719,6 +52195,120 @@
         {
           "effects": [
             {
+              "destination": "hand",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "any_of": [
+                  {
+                    "types": [
+                      "Artifact"
+                    ]
+                  },
+                  {
+                    "supertypes": [
+                      "Legendary"
+                    ]
+                  },
+                  {
+                    "subtypes": [
+                      "Saga"
+                    ]
+                  }
+                ],
+                "controller": "you",
+                "not_subtypes": [
+                  "Assassin"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When Elena enters, return target non-Assassin historic card from your graveyard to your hand.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a historic spell, put a +1/+1 counter on Elena.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_of": [
+                {
+                  "types": [
+                    "Artifact"
+                  ]
+                },
+                {
+                  "supertypes": [
+                    "Legendary"
+                  ]
+                },
+                {
+                  "subtypes": [
+                    "Saga"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "elena_turk_recruit",
+      "mana_cost": "{2}{W}",
+      "name": "Elena, Turk Recruit",
+      "oracle_text": "When Elena enters, return target non-Assassin historic card from your graveyard to your hand. (Artifacts, legendaries, and Sagas are historic.)\nWhenever you cast a historic spell, put a +1/+1 counter on Elena.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Assassin"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 1
               },
@@ -52671,6 +54261,67 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{W}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Outlast {W} ({W}, {T}: Put a +1/+1 counter on this creature. Outlast only as a sorcery.)"
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "modified": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "lifelink"
+          ],
+          "kind": "static",
+          "text": "Modified creatures you control have lifelink. (Equipment, Auras you control, and counters are modifications.)"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "envoy_of_the_ancestors",
+      "mana_cost": "{2}{W}",
+      "name": "Envoy of the Ancestors",
+      "oracle_text": "Outlast {W} ({W}, {T}: Put a +1/+1 counter on this creature. Outlast only as a sorcery.)\nModified creatures you control have lifelink. (Equipment, Auras you control, and counters are modifications.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Cleric"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -55715,6 +57366,82 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "objects": {
+                "count": 1,
+                "optional": true,
+                "types": [
+                  "Land"
+                ]
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "tapped": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever equipped creature attacks, look at the top card of your library. If it's a land card, you may put it onto the battlefield tapped.",
+          "trigger": {
+            "controller": "any",
+            "event": "attacks",
+            "filter": {
+              "attached": true
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {1}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "explorer_s_scope",
+      "mana_cost": "{1}",
+      "name": "Explorer's Scope",
+      "oracle_text": "Whenever equipped creature attacks, look at the top card of your library. If it's a land card, you may put it onto the battlefield tapped.\nEquip {1} ({1}: Attach to target creature you control. Equip only as a sorcery.)",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "R",
         "U"
@@ -56992,6 +58719,91 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "mana": "{2}{U}{B}",
+            "return_to_hand": {
+              "as": "returned",
+              "attacking": true,
+              "blocked": false,
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "attacking": {
+                "same_as": "returned"
+              },
+              "controller": "you",
+              "objects": {
+                "self_only": true,
+                "zone": "hand"
+              },
+              "op": "put_onto_battlefield",
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "text": "Ninjutsu {2}{U}{B} ({2}{U}{B}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.)"
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "destination": "exile",
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "playable": "this_turn",
+              "playable_free": true,
+              "player": {
+                "binding": "event_player"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, that player exiles the top two cards of their library. Until end of turn, you may play those cards without paying their mana costs.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "fallen_shinobi",
+      "mana_cost": "{3}{U}{B}",
+      "name": "Fallen Shinobi",
+      "oracle_text": "Ninjutsu {2}{U}{B} ({2}{U}{B}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.)\nWhenever this creature deals combat damage to a player, that player exiles the top two cards of their library. Until end of turn, you may play those cards without paying their mana costs.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Ninja"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -63715,23 +65527,15 @@
             {
               "controller": "you",
               "destination": "battlefield",
-              "host_named": true,
+              "host_named": {
+                "binding": "inkling",
+                "zone": "battlefield"
+              },
               "objects": {
                 "target": "t1",
                 "zone": "graveyard"
               },
               "op": "return_from_graveyard"
-            },
-            {
-              "attachment": {
-                "target": "t1",
-                "zone": "battlefield"
-              },
-              "objects": {
-                "binding": "inkling",
-                "zone": "battlefield"
-              },
-              "op": "attach"
             }
           ],
           "id": "filibuster_return",
@@ -65142,6 +66946,61 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "destination": "exile",
+              "objects": {
+                "count": 1
+              },
+              "op": "look_at_top",
+              "playable": "until_next_exile_by_source",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, if you control a creature with power 4 or greater, exile the top card of your library. You may play that card until you exile another card with this enchantment.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "controller": "you",
+                "power": {
+                  "op": ">=",
+                  "value": {
+                    "const": 4
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "furious_rise",
+      "mana_cost": "{2}{R}",
+      "name": "Furious Rise",
+      "oracle_text": "At the beginning of your end step, if you control a creature with power 4 or greater, exile the top card of your library. You may play that card until you exile another card with this enchantment.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -68921,23 +70780,15 @@
                     {
                       "controller": "you",
                       "destination": "battlefield",
-                      "host_named": true,
+                      "host_named": {
+                        "binding": "subject",
+                        "zone": "battlefield"
+                      },
                       "objects": {
                         "self_only": true,
                         "zone": "graveyard"
                       },
                       "op": "return_from_graveyard"
-                    },
-                    {
-                      "attachment": {
-                        "self_only": true,
-                        "zone": "battlefield"
-                      },
-                      "objects": {
-                        "binding": "subject",
-                        "zone": "battlefield"
-                      },
-                      "op": "attach"
                     }
                   ]
                 }
@@ -79558,6 +81409,110 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "pump",
+              "power": {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Soldier"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "toughness": {
+                "const": 0
+              }
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "At the beginning of combat on your turn, target creature you control gets +X/+0 until end of turn, where X is the number of Soldiers you control.",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "player_count": {
+                  "cmp": ">",
+                  "objects": {
+                    "types": [
+                      "Creature"
+                    ]
+                  },
+                  "player": "each_opponent",
+                  "than": {
+                    "count": {
+                      "controller": "you",
+                      "types": [
+                        "Creature"
+                      ],
+                      "zone": "battlefield"
+                    }
+                  }
+                }
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "soldier_1_1_w"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, create a number of 1/1 white Soldier creature tokens equal to the number of opponents who control more creatures than you.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "heidegger_shinra_executive",
+      "mana_cost": "{3}{W}",
+      "name": "Heidegger, Shinra Executive",
+      "oracle_text": "At the beginning of combat on your turn, target creature you control gets +X/+0 until end of turn, where X is the number of Soldiers you control.\nAt the beginning of your end step, create a number of 1/1 white Soldier creature tokens equal to the number of opponents who control more creatures than you.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -79842,6 +81797,83 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "flying"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "attacking": true,
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever this creature attacks, another target attacking creature gains flying until end of turn.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "activated_by": "you",
+          "affects_abilities": {
+            "equip": true
+          },
+          "amount": {
+            "const": 2
+          },
+          "effect": "ability_cost_reduction",
+          "kind": "static",
+          "targeting": {
+            "self_only": true
+          },
+          "text": "Equip abilities you activate that target this creature cost {2} less to activate."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "helitrooper",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{W}",
+      "name": "Helitrooper",
+      "oracle_text": "Flying\nWhenever this creature attacks, another target attacking creature gains flying until end of turn.\nEquip abilities you activate that target this creature cost {2} less to activate.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -80039,6 +82071,86 @@
       "mana_cost": "{4}{R}{R}",
       "name": "Hellkite Courser",
       "oracle_text": "Flying\nWhen this creature enters, you may put a commander you own from the command zone onto the battlefield. It gains haste. Return it to the command zone at the beginning of the next end step.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "duration": "permanent",
+              "objects": {
+                "controller": {
+                  "binding": "event_player"
+                },
+                "count": "all",
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "gain_control"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, gain control of all artifacts that player controls.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "op": "win_game",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, if you control twenty or more artifacts, you win the game.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "controller": "you",
+                  "types": [
+                    "Artifact"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "right": {
+                "const": 20
+              }
+            },
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "hellkite_tyrant",
+      "keywords": [
+        "flying",
+        "trample"
+      ],
+      "mana_cost": "{4}{R}{R}",
+      "name": "Hellkite Tyrant",
+      "oracle_text": "Flying, trample\nWhenever this creature deals combat damage to a player, gain control of all artifacts that player controls.\nAt the beginning of your upkeep, if you control twenty or more artifacts, you win the game.",
       "power": 6,
       "source": "auto",
       "subtypes": [
@@ -81504,6 +83616,82 @@
       "mana_cost": "{2}",
       "name": "Hero's Blade",
       "oracle_text": "Equipped creature gets +3/+2.\nWhenever a legendary creature you control enters, you may attach this Equipment to it.\nEquip {4} ({4}: Attach to target creature you control. Equip only as a sorcery.)",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Equipped creature gets +2/+1",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "affects": {
+            "attached": true,
+            "supertypes": [
+              "Legendary"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "trample",
+            "haste"
+          ],
+          "kind": "static",
+          "text": "As long as equipped creature is legendary, it has trample and haste"
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "hero_s_heirloom",
+      "mana_cost": "{2}",
+      "name": "Hero's Heirloom",
+      "oracle_text": "Equipped creature gets +2/+1.\nAs long as equipped creature is legendary, it has trample and haste.\nEquip {2}",
       "source": "auto",
       "subtypes": [
         "Equipment"
@@ -87238,6 +89426,88 @@
     {
       "abilities": [
         {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "mana": "{U}{B}",
+            "return_to_hand": {
+              "as": "returned",
+              "attacking": true,
+              "blocked": false,
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "attacking": {
+                "same_as": "returned"
+              },
+              "controller": "you",
+              "objects": {
+                "self_only": true,
+                "zone": "hand"
+              },
+              "op": "put_onto_battlefield",
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "text": "Ninjutsu {U}{B} ({U}{B}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.)"
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a Ninja you control deals combat damage to a player, draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "deals_combat_damage_to_player",
+            "filter": {
+              "subtypes": [
+                "Ninja"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "ingenious_infiltrator",
+      "mana_cost": "{2}{U}{B}",
+      "name": "Ingenious Infiltrator",
+      "oracle_text": "Ninjutsu {U}{B} ({U}{B}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.)\nWhenever a Ninja you control deals combat damage to a player, draw a card.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Vedalken",
+        "Ninja"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "effects": [
@@ -87457,6 +89727,123 @@
         "Elemental"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "mana": "{3}{B}{B}",
+            "return_to_hand": {
+              "as": "returned",
+              "attacking": true,
+              "blocked": false,
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "attacking": {
+                "same_as": "returned"
+              },
+              "controller": "you",
+              "objects": {
+                "self_only": true,
+                "zone": "hand"
+              },
+              "op": "put_onto_battlefield",
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "text": "Ninjutsu {3}{B}{B} ({3}{B}{B}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.)"
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "controller": "you",
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "put_onto_battlefield"
+                }
+              ],
+              "op": "may",
+              "prompt": "Put the targeted creature card onto the battlefield under your control?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": {
+                  "binding": "event_player"
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Whenever Ink-Eyes deals combat damage to a player, you may put target creature card from that player's graveyard onto the battlefield under your control.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{1}{B}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "regenerate"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{B}: Regenerate Ink-Eyes."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "ink_eyes_servant_of_oni",
+      "mana_cost": "{4}{B}{B}",
+      "name": "Ink-Eyes, Servant of Oni",
+      "oracle_text": "Ninjutsu {3}{B}{B} ({3}{B}{B}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.)\nWhenever Ink-Eyes deals combat damage to a player, you may put target creature card from that player's graveyard onto the battlefield under your control.\n{1}{B}: Regenerate Ink-Eyes.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Rat",
+        "Ninja"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -88095,6 +90482,32 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "affects_spells": {
+            "not_types": [
+              "Artifact"
+            ]
+          },
+          "effect": "grant_pay_generic_with",
+          "kind": "static",
+          "pay_generic_with": "tap_artifacts",
+          "text": "Nonartifact spells you cast have improvise."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "inspiring_statuary",
+      "mana_cost": "{3}",
+      "name": "Inspiring Statuary",
+      "oracle_text": "Nonartifact spells you cast have improvise. (Your artifacts can help cast those spells. Each artifact you tap after you're done activating mana abilities pays for {1}.)",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -95002,6 +97415,89 @@
         {
           "effects": [
             {
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Kellogg attacks, create a Treasure token.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 5,
+              "subtypes": [
+                "Treasure"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "duration": "as_long_as_you_control_source",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "gain_control"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ]
+              }
+            }
+          ],
+          "text": "Sacrifice five Treasures: Gain control of target creature for as long as you control Kellogg. Activate only as a sorcery."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "kellogg_dangerous_mind",
+      "keywords": [
+        "first_strike",
+        "haste"
+      ],
+      "mana_cost": "{1}{B}{R}",
+      "name": "Kellogg, Dangerous Mind",
+      "oracle_text": "First strike, haste\nWhenever Kellogg attacks, create a Treasure token.\nSacrifice five Treasures: Gain control of target creature for as long as you control Kellogg. Activate only as a sorcery.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Mercenary"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 2
               },
@@ -101465,6 +103961,68 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "as_cast": {
+        "greatest_power": {
+          "extreme_value": {
+            "objects": {
+              "controller": "you",
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            },
+            "of": "power"
+          }
+        }
+      },
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "foretell": "{4}{G}",
+      "id": "lifestream_s_blessing",
+      "mana_cost": "{4}{G}{G}",
+      "name": "Lifestream's Blessing",
+      "oracle_text": "Draw X cards, where X is the greatest power among creatures you controlled as you cast this spell. If this spell was cast from exile, you gain twice X life.\nForetell {4}{G} (During your turn, you may pay {2} and exile this card from your hand face down. Cast it on a later turn for its foretell cost.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "binding": "greatest_power"
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "condition": {
+            "cast_from_exile": true
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "times": [
+                  {
+                    "const": 2
+                  },
+                  {
+                    "binding": "greatest_power"
+                  }
+                ]
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -113887,6 +116445,102 @@
         "Cat"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "mana": "{U}",
+            "return_to_hand": {
+              "as": "returned",
+              "attacking": true,
+              "blocked": false,
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "attacking": {
+                "same_as": "returned"
+              },
+              "controller": "you",
+              "objects": {
+                "self_only": true,
+                "zone": "hand"
+              },
+              "op": "put_onto_battlefield",
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "text": "Ninjutsu {U} ({U}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.)"
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "return_to_hand"
+                }
+              ],
+              "op": "may",
+              "prompt": "Return the targeted creature to its owner's hand?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": {
+                  "binding": "event_player"
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever this creature deals combat damage to a player, you may return target creature that player controls to its owner's hand.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "mistblade_shinobi",
+      "mana_cost": "{2}{U}",
+      "name": "Mistblade Shinobi",
+      "oracle_text": "Ninjutsu {U} ({U}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.)\nWhenever this creature deals combat damage to a player, you may return target creature that player controls to its owner's hand.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Ninja"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -136586,6 +139240,147 @@
         {
           "effects": [
             {
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more creatures you control deal combat damage to a player, create a Treasure token.",
+          "trigger": {
+            "controller": "you",
+            "event": "creatures_deal_combat_damage",
+            "per_player": true
+          }
+        },
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "subtypes": [
+                "Treasure"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "destination": "exile",
+              "objects": {
+                "count": 1
+              },
+              "op": "look_at_top",
+              "playable_this_turn": true,
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "Sacrifice a Treasure: Exile the top card of your library. You may play that card this turn."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "professional_face_breaker",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{2}{R}",
+      "name": "Professional Face-Breaker",
+      "oracle_text": "Menace\nWhenever one or more creatures you control deal combat damage to a player, create a Treasure token.\nSacrifice a Treasure: Exile the top card of your library. You may play that card this turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "activated_by": "you",
+          "affects_abilities": {
+            "any": true
+          },
+          "amount": {
+            "const": 2
+          },
+          "effect": "ability_cost_reduction",
+          "first_during_your_turn": true,
+          "kind": "static",
+          "targeting": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "text": "The first activated ability you activate during your turn that targets a creature you control costs {2} less to activate."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more creatures you control become the target of an activated ability, draw a card. This ability triggers only once each turn.",
+          "trigger": {
+            "controller": "any",
+            "event": "becomes_target",
+            "filter": {
+              "controller": "you",
+              "types": [
+                "Creature"
+              ]
+            },
+            "max_per_turn": 1,
+            "targeted_by": "activated_ability"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "professor_hojo",
+      "mana_cost": "{1}{G}",
+      "name": "Professor Hojo",
+      "oracle_text": "The first activated ability you activate during your turn that targets a creature you control costs {2} less to activate.\nWhenever one or more creatures you control become the target of an activated ability, draw a card. This ability triggers only once each turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Scientist"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "binding": "amount"
               },
@@ -137021,6 +139816,89 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "mana": "{1}{U}",
+            "return_to_hand": {
+              "as": "returned",
+              "attacking": true,
+              "blocked": false,
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "attacking": {
+                "same_as": "returned"
+              },
+              "controller": "you",
+              "objects": {
+                "self_only": true,
+                "zone": "hand"
+              },
+              "op": "put_onto_battlefield",
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "text": "Ninjutsu {1}{U} ({1}{U}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.)"
+        },
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more Ninja or Rogue creatures you control deal combat damage to a player, create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+          "trigger": {
+            "controller": "you",
+            "event": "creatures_deal_combat_damage",
+            "filter": {
+              "subtypes": [
+                "Ninja",
+                "Rogue"
+              ],
+              "types": [
+                "Creature"
+              ]
+            },
+            "per_player": true
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "prosperous_thief",
+      "mana_cost": "{2}{U}",
+      "name": "Prosperous Thief",
+      "oracle_text": "Ninjutsu {1}{U} ({1}{U}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.)\nWhenever one or more Ninja or Rogue creatures you control deal combat damage to a player, create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Ninja"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -137652,6 +140530,120 @@
       "subtypes": [
         "Faerie",
         "Wizard"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Draw a card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an Equipment you control enters, you may draw a card",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "controller": "you",
+              "subtypes": [
+                "Equipment"
+              ]
+            }
+          }
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Equipment"
+            ]
+          },
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "count": {
+                "controller": "you",
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 3
+            }
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Metalcraft — Equipment you control have equip {0} as long as you control three or more artifacts"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "mana": "{0}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {0}"
+        }
+      ],
+      "id": "puresteel_paladin",
+      "mana_cost": "{W}{W}",
+      "name": "Puresteel Paladin",
+      "oracle_text": "Whenever an Equipment you control enters, you may draw a card.\nMetalcraft — Equipment you control have equip {0} as long as you control three or more artifacts.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
       ],
       "toughness": 2,
       "types": [
@@ -142149,6 +145141,88 @@
       "abilities": [
         {
           "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "modified": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "vigilance",
+            "trample"
+          ],
+          "kind": "static",
+          "text": "Other modified creatures you control have vigilance and trample."
+        },
+        {
+          "effects": [
+            {
+              "destination": "hand",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "subtypes": [
+                  "Aura",
+                  "Equipment"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Cosmo Memory — When Red XIII enters, return target Aura or Equipment card from your graveyard to your hand.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "red_xiii_proud_warrior",
+      "keywords": [
+        "vigilance",
+        "trample"
+      ],
+      "mana_cost": "{1}{R}{G}",
+      "name": "Red XIII, Proud Warrior",
+      "oracle_text": "Vigilance, trample\nOther modified creatures you control have vigilance and trample. (Equipment, Auras you control, and counters are modifications.)\nCosmo Memory — When Red XIII enters, return target Aura or Equipment card from your graveyard to your hand.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Beast",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
             "attached": true
           },
           "effect": "grant_keyword",
@@ -144234,6 +147308,123 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "additional_cost_options": [
+        {
+          "mana": "{0}"
+        },
+        {
+          "mana": "{1}"
+        },
+        {
+          "mana": "{3}{W}"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "restoration_magic",
+      "mana_cost": "{W}",
+      "name": "Restoration Magic",
+      "oracle_text": "Tiered (Choose one additional cost.)\n• Cure — {0} — Target permanent gains hexproof and indestructible until end of turn.\n• Cura — {1} — Target permanent gains hexproof and indestructible until end of turn. You gain 3 life.\n• Curaga — {3}{W} — Permanents you control gain hexproof and indestructible until end of turn. You gain 6 life.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "cost_option": 0
+          },
+          "op": "if",
+          "then": [
+            {
+              "keywords": [
+                "hexproof",
+                "indestructible"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "cost_option": 1
+          },
+          "op": "if",
+          "then": [
+            {
+              "keywords": [
+                "hexproof",
+                "indestructible"
+              ],
+              "objects": {
+                "target": "t2"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "cost_option": 2
+          },
+          "op": "if",
+          "then": [
+            {
+              "keywords": [
+                "hexproof",
+                "indestructible"
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "amount": {
+                "const": 6
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "cost_option": 0,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "zone": "battlefield"
+          }
+        },
+        {
+          "cost_option": 1,
+          "id": "t2",
+          "kind": "permanent",
+          "selector": {
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -154584,6 +157775,128 @@
             {
               "effects": [
                 {
+                  "amount": {
+                    "const": 1
+                  },
+                  "counter": "cell",
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "add_counters"
+                }
+              ],
+              "op": "may",
+              "prompt": "Put a cell counter on the target creature?"
+            },
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "modified": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 7
+              },
+              "toughness": {
+                "const": 5
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Jenova Cells — Whenever Sephiroth attacks, you may put a cell counter on target creature. Until end of turn, each modified creature you control has base power and toughness 7/5.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "mana": "{3}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "modified": true,
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "controller": "you",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "put_onto_battlefield",
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "text": "The Reunion — {3}, Sacrifice a modified creature: Return this card from your graveyard to the battlefield tapped."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "sephiroth_fallen_hero",
+      "mana_cost": "{3}{R}{W}",
+      "name": "Sephiroth, Fallen Hero",
+      "oracle_text": "Jenova Cells — Whenever Sephiroth attacks, you may put a cell counter on target creature. Until end of turn, each modified creature you control has base power and toughness 7/5. (Equipment, Auras you control, and counters are modifications.)\nThe Reunion — {3}, Sacrifice a modified creature: Return this card from your graveyard to the battlefield tapped.",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Avatar",
+        "Soldier"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
                   "effects": [
                     {
                       "controller": "you",
@@ -159481,6 +162794,93 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "mana": "{4}{U}{B}",
+            "return_to_hand": {
+              "as": "returned",
+              "attacking": true,
+              "blocked": false,
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "attacking": {
+                "same_as": "returned"
+              },
+              "controller": "you",
+              "objects": {
+                "self_only": true,
+                "zone": "hand"
+              },
+              "op": "put_onto_battlefield",
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "text": "Ninjutsu {4}{U}{B} ({4}{U}{B}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.)"
+        },
+        {
+          "effects": [
+            {
+              "op": "look_at_hand",
+              "player": {
+                "binding": "event_player"
+              }
+            },
+            {
+              "objects": {
+                "count": "all",
+                "player": {
+                  "binding": "event_player"
+                },
+                "zone": "hand"
+              },
+              "op": "cast_from_hand",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, look at that player's hand. You may cast a spell from among those cards without paying its mana cost.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "silent_blade_oni",
+      "mana_cost": "{3}{U}{U}{B}{B}",
+      "name": "Silent-Blade Oni",
+      "oracle_text": "Ninjutsu {4}{U}{B} ({4}{U}{B}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.)\nWhenever this creature deals combat damage to a player, look at that player's hand. You may cast a spell from among those cards without paying its mana cost.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Demon",
+        "Ninja"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -161966,6 +165366,81 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{R}{W}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "pump",
+              "power": {
+                "const": 2
+              },
+              "toughness": {
+                "const": 0
+              }
+            },
+            {
+              "keywords": [
+                "vigilance",
+                "haste"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{R}{W}, {T}: Target creature gets +2/+0 and gains vigilance and haste until end of turn."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [],
+      "id": "slayers_stronghold",
+      "name": "Slayers' Stronghold",
+      "oracle_text": "{T}: Add {C}.\n{R}{W}, {T}: Target creature gets +2/+0 and gains vigilance and haste until end of turn.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -163700,6 +167175,85 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "controller": "you",
+                      "op": "create_token",
+                      "token": "soldier_1_1_w"
+                    }
+                  ],
+                  "label": "Create a 1/1 white Soldier creature token."
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "counter": "+1/+1",
+                      "objects": {
+                        "chooser": "controller",
+                        "controller": "you",
+                        "count": 2,
+                        "optional": true,
+                        "subtypes": [
+                          "Soldier"
+                        ],
+                        "zone": "battlefield"
+                      },
+                      "op": "add_counters"
+                    }
+                  ],
+                  "label": "Put a +1/+1 counter on each of up to two Soldiers you control."
+                }
+              ],
+              "op": "choose_mode",
+              "up_to_if": {
+                "condition": {
+                  "exists": {
+                    "controller": "you",
+                    "is_commander": true,
+                    "zone": "battlefield"
+                  }
+                },
+                "count": 2
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of combat on your turn, choose one. If you control a commander, you may choose both instead.\n• Create a 1/1 white Soldier creature token.\n• Put a +1/+1 counter on each of up to two Soldiers you control.",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "soldier_military_program",
+      "mana_cost": "{2}{W}",
+      "name": "SOLDIER Military Program",
+      "oracle_text": "At the beginning of combat on your turn, choose one. If you control a commander, you may choose both instead.\n• Create a 1/1 white Soldier creature token.\n• Put a +1/+1 counter on each of up to two Soldiers you control.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -172473,6 +176027,277 @@
       "types": [
         "Enchantment",
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "chapter": 1,
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "chapter",
+          "targets": [
+            {
+              "count": 2,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "up_to": true
+            }
+          ],
+          "text": "I — Lightning — This creature deals 3 damage to each of up to two target creatures."
+        },
+        {
+          "chapter": 2,
+          "effects": [
+            {
+              "duration": "this_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "cant_block"
+            }
+          ],
+          "kind": "chapter",
+          "targets": [
+            {
+              "count": 3,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "up_to": true
+            }
+          ],
+          "text": "II — Ice — Up to three target creatures can't block this turn."
+        },
+        {
+          "chapter": 3,
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "kujata_discarded",
+              "op": "discard",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "condition": {
+                "cmp": ">",
+                "left": {
+                  "count": {
+                    "binding": "kujata_discarded",
+                    "controller": "any"
+                  }
+                },
+                "right": {
+                  "const": 0
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "ability": "kujata_fire",
+                  "op": "reflexive_trigger"
+                }
+              ]
+            }
+          ],
+          "kind": "chapter",
+          "text": "III — Fire — Discard a card, then draw two cards."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "mana_value_of": {
+                  "objects": {
+                    "binding": "kujata_discarded",
+                    "controller": "any"
+                  }
+                }
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            }
+          ],
+          "id": "kujata_fire",
+          "kind": "reflexive",
+          "text": "When you discard a card this way, this creature deals damage equal to that card's mana value to each opponent."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "summon_kujata",
+      "keywords": [
+        "trample",
+        "haste"
+      ],
+      "mana_cost": "{5}{R}",
+      "name": "Summon: Kujata",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Lightning — This creature deals 3 damage to each of up to two target creatures.\nII — Ice — Up to three target creatures can't block this turn.\nIII — Fire — Discard a card, then draw two cards. When you discard a card this way, this creature deals damage equal to that card's mana value to each opponent.\nTrample, haste",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Saga",
+        "Ox"
+      ],
+      "toughness": 5,
+      "types": [
+        "Enchantment",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "effect": "look_at_library_top",
+          "kind": "static",
+          "text": "You may look at the top card of your library any time."
+        },
+        {
+          "affects_player": "you",
+          "affects_spells": {
+            "types": [
+              "Creature"
+            ]
+          },
+          "condition": {
+            "is_attached": true
+          },
+          "effect": "cast_from_library_top",
+          "kind": "static",
+          "text": "As long as this Equipment is attached to a creature, you may cast creature spells from the top of your library."
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Equipped creature gets +2/+2 and has vigilance and \"{T}: Add {G}.\"",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "vigilance"
+          ],
+          "kind": "static",
+          "text": "Equipped creature gets +2/+2 and has vigilance and \"{T}: Add {G}.\""
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Equipped creature gets +2/+2 and has vigilance and \"{T}: Add {G}.\""
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{G}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G}."
+        }
+      ],
+      "id": "summoning_materia",
+      "mana_cost": "{2}{G}",
+      "name": "Summoning Materia",
+      "oracle_text": "You may look at the top card of your library any time.\nAs long as this Equipment is attached to a creature, you may cast creature spells from the top of your library.\nEquipped creature gets +2/+2 and has vigilance and \"{T}: Add {G}.\"\nEquip {2}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -184662,6 +188487,112 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "mana": "{2}{U}{U}",
+            "return_to_hand": {
+              "as": "returned",
+              "attacking": true,
+              "blocked": false,
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "attacking": {
+                "same_as": "returned"
+              },
+              "controller": "you",
+              "objects": {
+                "self_only": true,
+                "zone": "hand"
+              },
+              "op": "put_onto_battlefield",
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "text": "Ninjutsu {2}{U}{U} ({2}{U}{U}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.)"
+        },
+        {
+          "effects": [
+            {
+              "attacking": true,
+              "objects": {
+                "target": "t1"
+              },
+              "op": "copy_permanent",
+              "tapped": true
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "attacking": true,
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters from your hand, if it's attacking, create a token that's a copy of another target attacking creature. The token enters tapped and attacking.",
+          "trigger": {
+            "condition": {
+              "all": [
+                {
+                  "entered_from": "hand"
+                },
+                {
+                  "exists": {
+                    "attacking": true,
+                    "self_only": true
+                  }
+                }
+              ]
+            },
+            "event": "self_enters"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "thousand_faced_shadow",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{U}",
+      "name": "Thousand-Faced Shadow",
+      "oracle_text": "Ninjutsu {2}{U}{U} ({2}{U}{U}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.)\nFlying\nWhen this creature enters from your hand, if it's attacking, create a token that's a copy of another target attacking creature. The token enters tapped and attacking.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Ninja"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -186138,6 +190069,92 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "untap"
+            },
+            {
+              "condition": {
+                "all": [
+                  {
+                    "is_your_turn": true
+                  },
+                  {
+                    "cmp": "==",
+                    "left": {
+                      "combats_this_turn": true
+                    },
+                    "right": {
+                      "const": 1
+                    }
+                  }
+                ]
+              },
+              "op": "if",
+              "then": [
+                {
+                  "op": "extra_combat"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more creatures you control with power 7 or greater deal combat damage to a player, untap all creatures you control. If it's the first combat phase of your turn, there is an additional combat phase after this phase.",
+          "trigger": {
+            "controller": "you",
+            "event": "creatures_deal_combat_damage",
+            "filter": {
+              "power": {
+                "op": ">=",
+                "value": 7
+              }
+            },
+            "per_player": true
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "R",
+        "W"
+      ],
+      "id": "tifa_martial_artist",
+      "keywords": [
+        "melee"
+      ],
+      "mana_cost": "{1}{R}{G}{W}",
+      "name": "Tifa, Martial Artist",
+      "oracle_text": "Melee (Whenever this creature attacks, it gets +1/+1 until end of turn for each opponent you attacked this combat.)\nWhenever one or more creatures you control with power 7 or greater deal combat damage to a player, untap all creatures you control. If it's the first combat phase of your turn, there is an additional combat phase after this phase.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Monk"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -191598,6 +195615,118 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "foretell": "{2}{W}",
+      "id": "ultimate_magic_holy",
+      "mana_cost": "{2}{W}",
+      "name": "Ultimate Magic: Holy",
+      "oracle_text": "Permanents you control gain indestructible until end of turn. If this spell was cast from exile, prevent all damage that would be dealt to you this turn.\nForetell {2}{W} (During your turn, you may pay {2} and exile this card from your hand face down. Cast it on a later turn for its foretell cost.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "keywords": [
+            "indestructible"
+          ],
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "zone": "battlefield"
+          },
+          "op": "grant_keyword"
+        },
+        {
+          "condition": {
+            "cast_from_exile": true
+          },
+          "op": "if",
+          "then": [
+            {
+              "duration": "this_turn",
+              "op": "prevent_damage",
+              "player": "you"
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "foretell": "{5}{R}",
+      "id": "ultimate_magic_meteor",
+      "mana_cost": "{5}{R}",
+      "name": "Ultimate Magic: Meteor",
+      "oracle_text": "Ultimate Magic: Meteor deals 7 damage to each creature. If this spell was cast from exile, for each opponent, choose an artifact or land that player controls. Destroy the chosen permanents.\nForetell {5}{R} (During your turn, you may pay {2} and exile this card from your hand face down. Cast it on a later turn for its foretell cost.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 7
+          },
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "damage"
+        },
+        {
+          "condition": {
+            "cast_from_exile": true
+          },
+          "op": "if",
+          "then": [
+            {
+              "effects": [
+                {
+                  "as": "meteor_chosen",
+                  "objects": {
+                    "any_types": [
+                      "Artifact",
+                      "Land"
+                    ],
+                    "controller": {
+                      "binding": "each_player"
+                    },
+                    "count": 1,
+                    "zone": "battlefield"
+                  },
+                  "op": "choose_permanents",
+                  "prompt": "Choose an artifact or land that player controls"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            },
+            {
+              "objects": {
+                "binding": "meteor_chosen"
+              },
+              "op": "destroy"
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "additional_cost": {
         "sacrifice": {
           "controller": "you",
@@ -193029,6 +197158,74 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "unfinished_business",
+      "mana_cost": "{3}{W}{W}",
+      "name": "Unfinished Business",
+      "oracle_text": "Return target creature card from your graveyard to the battlefield, then return up to two target Aura and/or Equipment cards from your graveyard to the battlefield attached to that creature. (If the Auras can't enchant that creature, they remain in your graveyard.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "you",
+          "destination": "battlefield",
+          "objects": {
+            "target": "t1",
+            "zone": "graveyard"
+          },
+          "op": "return_from_graveyard"
+        },
+        {
+          "controller": "you",
+          "destination": "battlefield",
+          "host_named": {
+            "target": "t1",
+            "zone": "battlefield"
+          },
+          "objects": {
+            "target": "t2",
+            "zone": "graveyard"
+          },
+          "op": "return_from_graveyard"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          }
+        },
+        {
+          "count": 2,
+          "id": "t2",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "controller": "you",
+            "subtypes": [
+              "Aura",
+              "Equipment"
+            ],
+            "zone": "graveyard"
+          },
+          "up_to": true
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -198557,6 +202754,108 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more creatures you control deal combat damage to a player, put a +1/+1 counter on Vincent.",
+          "trigger": {
+            "controller": "you",
+            "event": "creatures_deal_combat_damage",
+            "per_player": true
+          }
+        },
+        {
+          "effects": [
+            {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "power_of": {
+                    "self": true
+                  }
+                },
+                "right": {
+                  "const": 7
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "binding": "amount"
+                  },
+                  "op": "damage",
+                  "player": {
+                    "except": "you",
+                    "not": {
+                      "binding": "defender"
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Chaos — Whenever Vincent deals combat damage to an opponent, it deals that much damage to each other opponent if Vincent's power is 7 or greater.",
+          "trigger": {
+            "condition": {
+              "cmp": "<",
+              "left": {
+                "player_count": {
+                  "except": "you",
+                  "not": {
+                    "binding": "defender"
+                  }
+                }
+              },
+              "right": {
+                "player_count": "each_opponent"
+              }
+            },
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "vincent_vengeful_atoner",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{2}{R}",
+      "name": "Vincent, Vengeful Atoner",
+      "oracle_text": "Menace\nWhenever one or more creatures you control deal combat damage to a player, put a +1/+1 counter on Vincent.\nChaos — Whenever Vincent deals combat damage to an opponent, it deals that much damage to each other opponent if Vincent's power is 7 or greater.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Assassin"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -208250,6 +212549,117 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "const": 7
+          },
+          "text": "Equipped creature has base power and toughness 7/7 and can't be blocked by creatures with power 2 or less",
+          "toughness": {
+            "const": 7
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "blockers": {
+            "power": {
+              "op": "<=",
+              "value": 2
+            }
+          },
+          "effect": "block_restriction",
+          "kind": "static",
+          "text": "Equipped creature has base power and toughness 7/7 and can't be blocked by creatures with power 2 or less"
+        },
+        {
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "supertypes": [
+                  "Legendary"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip legendary creature {3}"
+        },
+        {
+          "cost": {
+            "mana": "{7}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {7}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "wrecking_ball_arm",
+      "mana_cost": "{2}",
+      "name": "Wrecking Ball Arm",
+      "oracle_text": "Equipped creature has base power and toughness 7/7 and can't be blocked by creatures with power 2 or less.\nEquip legendary creature {3}\nEquip {7}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -209332,6 +213742,204 @@
         "Angel"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "mana": "{1}{R}",
+            "return_to_hand": {
+              "as": "returned",
+              "attacking": true,
+              "blocked": false,
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "attacking": {
+                "same_as": "returned"
+              },
+              "controller": "you",
+              "objects": {
+                "self_only": true,
+                "zone": "hand"
+              },
+              "op": "put_onto_battlefield",
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "text": "Ninjutsu {1}{R} ({1}{R}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.)"
+        },
+        {
+          "effects": [
+            {
+              "duration": "as_long_as_you_control_source",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "gain_control"
+            },
+            {
+              "attachment": {
+                "controller": "you",
+                "count": 1,
+                "optional": true,
+                "subtypes": [
+                  "Equipment"
+                ],
+                "zone": "battlefield"
+              },
+              "objects": {
+                "self_only": true
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "not_types": [
+                  "Creature"
+                ],
+                "types": [
+                  "Artifact"
+                ]
+              }
+            }
+          ],
+          "text": "When Yuffie enters, gain control of target noncreature artifact for as long as you control Yuffie. Then you may attach an Equipment you control to Yuffie.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "yuffie_materia_hunter",
+      "mana_cost": "{2}{R}",
+      "name": "Yuffie, Materia Hunter",
+      "oracle_text": "Ninjutsu {1}{R} ({1}{R}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.)\nWhen Yuffie enters, gain control of target noncreature artifact for as long as you control Yuffie. Then you may attach an Equipment you control to Yuffie.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Ninja"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}",
+            "sacrifice": {
+              "as": "zack",
+              "self_only": true
+            }
+          },
+          "effects": [
+            {
+              "keywords": [
+                "indestructible"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "all_kinds": true,
+              "from_had_counters": "zack",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "move_counters"
+            },
+            {
+              "attachment": {
+                "count": 1,
+                "subtypes": [
+                  "Equipment"
+                ],
+                "was_attached_to": "zack",
+                "zone": "battlefield"
+              },
+              "objects": {
+                "target": "t1"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}, Sacrifice Zack Fair: Target creature you control gains indestructible until end of turn. Put Zack Fair's counters on that creature and attach an Equipment that was attached to Zack Fair to that creature."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "zack_fair",
+      "mana_cost": "{W}",
+      "name": "Zack Fair",
+      "oracle_text": "Zack Fair enters with a +1/+1 counter on it.\n{1}, Sacrifice Zack Fair: Target creature you control gains indestructible until end of turn. Put Zack Fair's counters on that creature and attach an Equipment that was attached to Zack Fair to that creature.",
+      "power": 0,
+      "replacements": [
+        {
+          "amount": 1,
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]

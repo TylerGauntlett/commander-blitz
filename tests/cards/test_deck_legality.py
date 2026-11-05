@@ -37,6 +37,7 @@ PRECONS = {
     "fdc_reign_of_dragons",
     "fdc_tramplesaurus_rex",
     "fdc_wretched_ranks",
+    "fic_limit_break_final_fantasy_vii",
     "fic_revival_trance_final_fantasy_vi",
     "fic_scions_spellcraft_final_fantasy_xiv",
     "frc_multiverse_reforged",

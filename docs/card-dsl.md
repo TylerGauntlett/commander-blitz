@@ -484,7 +484,7 @@ line each is [card-dsl-reference.md#selectors](card-dsl-reference.md#selectors).
   "attacking_player": "you",      // attacking YOU, not your planeswalker -- "you"|"opponent"|"any"|"most_life"|{"binding": name}
   "attacked_this_turn": true,     // Relentless Assault -- read AFTER combat, not during
   "entered_this_turn": true,      // Ocelot Pride -- the turn's arrivals, from the ledger
-  "blocked": false,               // ninjutsu -- is anything blocking *this attacker*
+  "blocked": false,               // ninjutsu -- unblocked once blockers are declared (509.1h); neither before
   "is_commander": false, "is_token": false, "damaged": true,
   "power":      { "op": ">=", "value": { "const": 3 } },   // the LIVE size, after counters and anthems
   "base_power": { "op": "<=", "value": { "const": 1 } },   // Angelic Aberration -- 613.2 layer 7a/7b
@@ -1396,6 +1396,28 @@ the question asked of the declaration, checked as it triggers only:
 | `attached` | names the one permanent the ability's own source is attached to |
 | `attached_to_host` | names the *other* attachments sharing the source's host, not a host |
 
+### "Equipped creatures" — `equipped`
+
+```jsonc
+// Barret Wallace: "…it deals damage equal to the number of equipped creatures you control…"
+{ "op": "damage", "amount": { "count": {
+    "zone": "battlefield", "types": ["Creature"], "controller": "you", "equipped": true } }, … }
+```
+
+Whether one or more Equipment is attached to the permanent (301.5c): `true` is
+equipped by anybody's Equipment, `false` by none. The word names no controller,
+so an Equipment an opponent moved onto your creature equips it too. The
+Equipment twin of `enchanted_by`, answered by `characteristics.is_equipped`
+from the host's end of `attached_to`, with the Equipment told by its derived
+subtypes as `modified` tells it. A selector key only, usable anywhere a
+selector is, `count` included; the loader refuses anything but a boolean.
+
+| Near miss | Why not |
+|---|---|
+| `modified` | also matches a creature with a counter or your Aura on it |
+| `{"subtypes": ["Equipment"], "attached_to": …}` | counts the Equipment, so a creature wearing two counts twice |
+| `attached` | names the one permanent the ability's own source is attached to |
+
 ### "For each Aura that was attached to it" — `auras_had`
 
 ```jsonc
@@ -1602,6 +1624,29 @@ is `{"player_count": "each_opponent"}`. Only players still in the game are
 counted, because a player who has left is nobody's opponent (800.4a). It is
 effect-side only; no static prints a headcount. The near miss is
 `{"count": …}`, which counts objects and cannot reach a player.
+
+Its comparing form counts only the players whose own count passes a test:
+"create a number of 1/1 white Soldier creature tokens equal to the number of
+opponents who control more creatures than you" (Heidegger, Shinra Executive) is
+
+```jsonc
+{ "player_count": { "player": "each_opponent",
+                    "objects": { "types": ["Creature"] },
+                    "cmp": ">",
+                    "than": { "count": { "types": ["Creature"], "controller": "you" } } } }
+```
+
+`player` and `objects` are `max_count_of`'s, validated by the same
+`validate_per_player_count`: one of its player words, a required selector, and
+the per-player scope injected, so `controller` inside `objects` is refused.
+`cmp` is one of the condition comparisons and `than` any value; both are
+required, because a defaulted `than` of 0 would read "more creatures" as "any
+creatures". `than` is evaluated once, before any player is compared, and the
+whole leaf is one number, so it is the amount of a single `create_token`. The
+near miss is a `for_each_player` with an `if` and a token of one each: separate
+events, and each token raises your count before the next opponent is measured.
+`max_count_of` and `min_count_of` answer "an opponent" and "each opponent", not
+how many.
 
 `half` is the one division in the language, and it takes its rounding direction
 as a **required** key: 107.1a makes the card say which way a fraction goes, and
@@ -2307,6 +2352,43 @@ an ability offered at the reduced price and charged the printed one would strand
 the payment. Added to the ability's own `mana_reduction` rather than replacing
 it: two cards may both be talking about one activation, and the printed answer
 is that both apply. Generic only and clamped at zero, like every other reduction.
+
+### "The first activated ability you activate during your turn that targets …"
+
+```jsonc
+// Professor Hojo
+{ "kind": "static", "effect": "ability_cost_reduction",
+  "affects_abilities": { "any": true },
+  "activated_by": "you",
+  "targeting": { "controller": "you", "types": ["Creature"] },
+  "first_during_your_turn": true,
+  "amount": { "const": 2 } }
+```
+
+`affects_abilities: {"any": true}` is every activated ability. The loader
+accepts it only beside `targeting`: a mana ability is priced by the payment
+solver, where this static is never read, and with a `targeting` clause that
+gap is moot because a mana ability has no targets (605.1a).
+
+`first_during_your_turn` limits the discount to one activation: the activator's
+first of their own turn that matches the class and `targeting`. The count is of
+**matching** activations, so an ability aimed at an opponent's creature leaves
+the discount for the next one aimed at yours. A matching ability that costs only
+{G} still is the first, and uses up the turn's discount (the {2} has no effect on
+it, by Hojo's ruling). Every activation of the turn counts, including one made
+before this permanent arrived, because "the first" describes the activation and
+not the static.
+
+`Game._activate` records each activation's object targets, with their controller,
+card types and subtypes as they were targeted, in `TurnLedger.targeted_activations`
+once the cost is paid. Earlier activations are matched against that record, since
+the creature one targeted may have died or changed hands since. So `targeting`
+may read only `controller`, `types` and `subtypes` here, and the loader also
+refuses `affects` and any `activated_by` but `you`.
+
+The near miss is `condition: {"is_your_turn": true}`, which discounts every
+activation of the turn rather than the first. `static_max_per_turn` is metered
+per permanent, and only on graveyard-cast permissions.
 
 ### A delayed trigger scoped to one chosen object
 
@@ -4129,6 +4211,47 @@ Not the `sacrifice` op with `snapshot` in the effects: that pays on resolution,
 so the ability could be activated with no other creature and responded to
 before anything had died.
 
+### Zack Fair — what a sacrificed source had
+
+```jsonc
+{ "kind": "activated",
+  "text": "{1}, Sacrifice Zack Fair: Target creature you control gains indestructible until end of turn. Put Zack Fair's counters on that creature and attach an Equipment that was attached to Zack Fair to that creature.",
+  "cost": { "mana": "{1}", "sacrifice": { "self_only": true, "as": "zack" } },
+  "targets": [ { "id": "t1", "kind": "permanent",
+                 "selector": { "zone": "battlefield", "controller": "you",
+                               "types": ["Creature"] } } ],
+  "effects": [
+    { "op": "grant_keyword", "keywords": ["indestructible"], "objects": { "target": "t1" } },
+    { "op": "move_counters", "all_kinds": true, "from_had_counters": "zack",
+      "objects": { "target": "t1" } },
+    { "op": "attach", "objects": { "target": "t1" },
+      "attachment": { "zone": "battlefield", "subtypes": ["Equipment"],
+                      "was_attached_to": "zack", "count": 1 } } ] }
+```
+
+A `sacrifice` cost's `as` record also holds what was attached to the permanent
+as it was paid: each attachment with the zone timestamp it had. Two readers
+take the permanent's last-known information (608.2h) from it:
+
+- **`from_had_counters: <name>`** on `move_counters` with `all_kinds` puts every
+  kind of counter the sacrificed permanent had, in its amount, on `objects`.
+  `from_had_counters: true` is the same move from a leave trigger's
+  `had_counters` (The Ozolith).
+- **`was_attached_to: <name>`**, a selector key, matches a permanent recorded as
+  attached to it that is still on the battlefield as the same object. One that
+  left and came back is a new object (400.7) and does not match; one moved to
+  another creature in the meantime still does. Write `subtypes: ["Equipment"]`
+  beside it for "an Equipment", and `count: 1` for the controller to pick one.
+
+The loader refuses either name unless it is this ability's sacrifice cost `as`,
+`from_had_counters` without `all_kinds` or beside `from`, and `was_attached_to`
+in a target selector, which is chosen before costs are paid.
+
+Not `move_counters` with `from: {"self_only": true}`, which reads the
+graveyard card's empty counters, nor `counters_had`, which only a leave trigger
+binds. Not `attached` or `attached_to`: they read the live board, where the
+Equipment has already fallen off.
+
 ### Coin of Fate — an exile-from-graveyard cost that names what it exiled
 
 ```jsonc
@@ -4531,7 +4654,7 @@ and the filter keys are
     "counter": "+1/+1",              // `counter_placed` only: which kind
     "put_by": "you",                 // `counter_placed` only: YOU put them
     "mana_ability": false,           // `ability_activated` only: exclude mana abilities
-    "targeted_by": "spell",          // `becomes_target` only: a spell, not an ability
+    "targeted_by": "spell",          // `becomes_target` only: a spell, an ability, or an activated ability
     "to_zones": ["graveyard", "exile"], // `leaves_battlefield` only: where it went
     "from_zones": ["exile"]          // `spell_cast` / `land_played` only: where it was played from
   },
@@ -4916,6 +5039,33 @@ The index rides the stack item and is stamped onto the object **before**
 `spell_effects` run — the same moment and for the same reason as `overloaded`
 and `kicked`. Written after them it would read `None`, every branch would fail,
 and the spell would cost mana and do nothing at all.
+
+**A tier's own targets** are a target spec's `cost_option`: the index of the
+tier that declares it. Cloud's Limit Break's Cross-Slash destroys "target tapped
+creature", Blade Beam "any number of target tapped creatures with different
+controllers" (`count: "any"`, `one_per_player`) and Omnislash targets nothing:
+
+```jsonc
+"targets": [
+  { "id": "t1", "kind": "permanent", "cost_option": 0, "selector": { … "tapped": true } },
+  { "id": "t2", "kind": "permanent", "cost_option": 1, "count": "any",
+    "one_per_player": true, "selector": { … "tapped": true } }
+]
+```
+
+Legal because 702.183 makes the tier an additional cost chosen at 601.2b, one
+step before 601.2c declares targets. The loader splits the specs into
+`CardDef.cost_option_targets`, one list per option — the specs naming that tier
+plus every spec naming none, in printed order — and leaves only the shared ones
+in `targets`. Each tier's cast line enumerates its own list, so a tier whose
+required target is missing is simply not offered while the others stay
+castable; the cast, resolution and a copy (707.10 carries the tier) rebuild the
+same list through `CardDef.targets_for`. Each tier's list obeys the
+variable-size-last rule on its own. The near miss is one shared card-level
+target branched on at resolution: it would make Omnislash need and announce a
+target it never prints. Refused on a card without that many
+`additional_cost_options`, on an ability's targets, and beside `mode`,
+`gift_promised` or `count_if_kicked`.
 
 ### Spree — "choose **one or more** additional costs"
 
@@ -5483,8 +5633,20 @@ shipped user's, so leaving it off stays a real sentence rather than a default:
 
 ```jsonc
 { "event": "becomes_target", "source": "self", "controller": "any",
-  "targeted_by": "spell" }     // "spell" | "ability" | omitted, meaning both
+  "targeted_by": "spell" }     // "spell" | "ability" | "activated_ability" | omitted
 ```
+
+`"ability"` is every ability on the stack, activated and triggered alike, as
+printed "an ability" means. `"activated_ability"` is Professor Hojo's "the
+target of an **activated** ability": it reads the `ability_kind` that
+`announce_targets` copies onto the event from `StackItem.ability_kind`
+(`"activated"` or `"triggered"`, absent for a spell), so an opponent's enters
+trigger tapping your creature does not fire it, and a copy of an activated
+ability does (707.10 keeps the kind). An event that does not say `"activated"`
+never fires it. Hojo's "one or more creatures you control … only once each
+turn" is this clause with `filter: {"controller": "you", "types": ["Creature"]}`
+and `max_per_turn: 1`; the per-turn cap already folds the rest of one
+ability's targets, so it takes no `batched`.
 
 It is a restriction on the trigger because nothing else can reach it. `filter` is
 matched against the event's **subject**, which here is the permanent *being*
@@ -6159,8 +6321,18 @@ language is a conjunction and the definition is a disjunction across three
 unrelated relationships. The Aura limb is the only one that asks about control,
 and that asymmetry is the card: an opponent's Pacifism does not make your
 creature modified, so Silkguard written without it would hand hexproof to
-exactly the creature the opponent was answering. Effect-side only — the cards
-that print the word grant something once, not continuously.
+exactly the creature the opponent was answering.
+
+A static's `affects` takes it too, `true` only — "Other modified creatures you
+control have vigilance and trample" (Red XIII, Proud Warrior) is
+`{"types": ["Creature"], "controller": "you", "exclude_self": true, "modified": true}`.
+There it is answered by `characteristics.is_modified_printed`, which reads only
+pipeline inputs (ADR 0001): counters, the Aura walk `enchanted_by` makes, and an
+Equipment told by its **printed** face, as `sba` bins it, where the effect-side
+key reads derived subtypes. An artifact some static makes an Equipment does not
+modify for a static. The other static filter languages (`blockers`, cost
+reductions, counting filters) refuse it, and an `any_of` of `has_counters` and
+`enchanted_by` is the near miss that drops the equipped limb.
 
 `attached` and `attached_to_host` are the two ends of one relationship, and a
 card that prints "attached to it" needs the second. `attached` names the **host**

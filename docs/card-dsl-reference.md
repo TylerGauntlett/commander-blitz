@@ -11,14 +11,14 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | Family | Count |
 |---|---|
 | [Effect ops](#effect-ops) | 160 |
-| [Selectors](#selectors) | 72 |
+| [Selectors](#selectors) | 74 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 67 |
-| [Conditions](#conditions) | 33 |
+| [Conditions](#conditions) | 34 |
 | [Trigger events](#trigger-events) | 49 |
 | [Trigger filters](#trigger-filters) | 36 |
-| [Static effects](#static-effects) | 90 |
-| [Player-wide statics](#player-wide-statics) | 44 |
+| [Static effects](#static-effects) | 92 |
+| [Player-wide statics](#player-wide-statics) | 45 |
 | [Grantable statics](#grantable-statics) | 41 |
 | [Cost reduction](#cost-reduction) | 6 |
 | [Ability costs](#ability-costs) | 29 |
@@ -27,7 +27,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Card types and supertypes](#card-types-and-supertypes) | 12 |
 | [Durations](#durations) | 6 |
 | [Decision kinds](#decision-kinds) | 11 |
-| [Static filter keys](#static-filter-keys) | 31 |
+| [Static filter keys](#static-filter-keys) | 32 |
 | [Static conditions](#static-conditions) | 14 |
 | [Static values](#static-values) | 18 |
 | [Spell filter keys](#spell-filter-keys) | 12 |
@@ -36,7 +36,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Mana rider ops](#mana-rider-ops) | 6 |
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
 | [Card-level face keys](#card-level-face-keys) | 6 |
-| [Card-level rider keys](#card-level-rider-keys) | 17 |
+| [Card-level rider keys](#card-level-rider-keys) | 18 |
 | [Engine events](#engine-events) | 77 |
 
 ## Effect ops
@@ -64,7 +64,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `mill` | Cards | yes | Put the top N cards of a library into its graveyard. | [Effect ops](card-dsl.md#effect-ops) |
 | `play_exiled` | Cards | yes | Cast the exiled card without paying its mana cost; `exiles` exiles the spell instead of putting it into a graveyard; `as` records what was cast. | ["You may play the exiled card this turn" — impulse draw](card-dsl-cookbook.md#you-may-play-the-exiled-card-this-turn--impulse-draw) |
 | `put_on_top` | Cards | yes | Put objects on top (or bottom) of their owners' libraries; `from_top` is the depth. | [Effect ops](card-dsl.md#effect-ops) |
-| `return_from_graveyard` | Cards |  | Return cards from a graveyard to hand or the battlefield; an Aura chooses its host as it enters unless `host_named`; `link` records the card as returned with this source. | [Effect ops](card-dsl.md#effect-ops) |
+| `return_from_graveyard` | Cards |  | Return cards from a graveyard to hand or the battlefield; an Aura chooses its host as it enters, or enters on the host `host_named` names if it can enchant it; `link` records the card as returned with this source. | [Effect ops](card-dsl.md#effect-ops) |
 | `return_to_command_zone` | Cards |  | Return a commander from wherever it is to the command zone. | ["Return it to the command zone" — return_to_command_zone](card-dsl-cookbook.md#return-it-to-the-command-zone--return_to_command_zone) |
 | `return_to_hand` | Cards | yes | Return objects to their owners' hands. | [Effect ops](card-dsl.md#effect-ops) |
 | `return_to_origin` | Cards |  | Return an exiled card to the zone it came from. | ["…until this permanent leaves the battlefield" — giving it back](card-dsl-cookbook.md#until-this-permanent-leaves-the-battlefield--giving-it-back) |
@@ -102,7 +102,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `exile` | Board | yes | Exile objects; `link`/`playable` tie them to the source or a permission. | [Effect ops](card-dsl.md#effect-ops) |
 | `exile_and_return` | Board |  | Exile permanents, then return them (transformed, under an owner). | ["Exile it, then return it transformed under its owner's control"](card-dsl-cookbook.md#exile-it-then-return-it-transformed-under-its-owners-control) |
 | `freeze` | Board |  | Tap and it doesn't untap during its controller's next untap step. | [Effect ops](card-dsl.md#effect-ops) |
-| `gain_control` | Board | yes | Gain control of permanents, for a duration or for good. | [Gaining control of a permanent](card-dsl-cookbook.md#gaining-control-of-a-permanent) |
+| `gain_control` | Board | yes | Gain control of permanents, for a duration (`as_long_as_you_control_source` included) or for good. | [Gaining control of a permanent](card-dsl-cookbook.md#gaining-control-of-a-permanent) |
 | `goad` | Board |  | Goad creatures until your next turn, or for the rest of the game. | [Goad](card-dsl-cookbook.md#goad) |
 | `grant_ability` | Board |  | Give permanents one of the card's `grantable_abilities`. | [Granting an ability](card-dsl-cookbook.md#granting-an-ability) |
 | `haunt` | Board |  | Exile the source haunting a creature. | [Haunt — the exile link pointing the other way](card-dsl-cookbook.md#haunt--the-exile-link-pointing-the-other-way) |
@@ -111,7 +111,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `manifest` | Board |  | Manifest the top card of a library face down as a 2/2. | [Face-down permanents — morph, megamorph and manifest](card-dsl-cookbook.md#face-down-permanents--morph-megamorph-and-manifest) |
 | `meld` | Board |  | Meld the source with its named partner into one permanent. | [Meld — mutate's merged permanent, with the pair fixed by the card](card-dsl-cookbook.md#meld--mutates-merged-permanent-with-the-pair-fixed-by-the-card) |
 | `monstrosity` | Board |  | Monstrosity N: become monstrous with N +1/+1 counters. | [Monstrosity, and holding creatures down](card-dsl-cookbook.md#monstrosity-and-holding-creatures-down) |
-| `move_counters` | Board |  | Move counters from one permanent to another: one named kind, every kind (`all_kinds`), or N counters of kinds the controller picks (`any_kind`). | [Moving a counter of any kind — move_counters with any_kind](card-dsl.md#moving-a-counter-of-any-kind--move_counters-with-any_kind) |
+| `move_counters` | Board |  | Move counters from one permanent to another: one named kind, every kind (`all_kinds`, from a leave trigger's or a sacrifice cost's record with `from_had_counters`), or N counters of kinds the controller picks (`any_kind`). | [Moving a counter of any kind — move_counters with any_kind](card-dsl.md#moving-a-counter-of-any-kind--move_counters-with-any_kind) |
 | `must_attack` | Board |  | Creatures attack this turn if able. | [Attack requirements](card-dsl-cookbook.md#attack-requirements) |
 | `must_attack_planeswalker` | Board |  | Creatures attack a planeswalker this turn if able. | ["…creatures that player controls attack Gideon Jura if able"](card-dsl-cookbook.md#creatures-that-player-controls-attack-gideon-jura-if-able) |
 | `must_attack_player` | Board |  | Creatures attack a named player each combat if able, until the end of your next turn or this turn. | ["…attacks that player each combat if able"](card-dsl-cookbook.md#attacks-that-player-each-combat-if-able) |
@@ -120,7 +120,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `phase_in` | Board |  | Phased-out permanents phase in. | [Phasing — "does not exist", said by not being in a list](card-dsl-cookbook.md#phasing--does-not-exist-said-by-not-being-in-a-list) |
 | `phase_out` | Board |  | Permanents phase out. | ["Target creature phases out"](card-dsl-cookbook.md#target-creature-phases-out) |
 | `proliferate` | Board |  | Proliferate: choose permanents and players, add one of each counter. | [Proliferate — a choice over permanents and players](card-dsl.md#proliferate--a-choice-over-permanents-and-players) |
-| `put_onto_battlefield` | Board |  | Put cards onto the battlefield, optionally tapped or with counters; an Aura chooses its host as it enters unless `host_named`. | [Effect ops](card-dsl.md#effect-ops) |
+| `put_onto_battlefield` | Board |  | Put cards onto the battlefield, optionally tapped, attacking (`same_as` a returned creature for ninjutsu) or with counters; an Aura chooses its host as it enters, or enters on the host `host_named` names if it can enchant it. | [Effect ops](card-dsl.md#effect-ops) |
 | `redirect_attack` | Board |  | Reselect what an attacking creature attacks; nothing is declared. | [Reselecting an attack — redirect_attack](card-dsl-cookbook.md#reselecting-an-attack--redirect_attack) |
 | `regenerate` | Board |  | Regenerate permanents (a shield for the turn). | ["It can't be regenerated."](card-dsl-cookbook.md#it-cant-be-regenerated) |
 | `remove_counters` | Board |  | Remove N counters of a kind; with `any_kind`, of whichever kinds the controller picks, one at a time, and `up_to` makes N a ceiling. | [Removing counters of any kind — any_kind](card-dsl.md#removing-counters-of-any-kind--any_kind) |
@@ -223,7 +223,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `base_power` | A comparison on base power (layer 7a/7b). | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
 | `base_toughness` | A comparison on base toughness. | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
 | `binding` | Exactly the objects a named `as` recorded. | [Recording what an op consumed or produced — "this way", "the token"](card-dsl.md#recording-what-an-op-consumed-or-produced--this-way-the-token) |
-| `blocked` | Is (or is not) blocked by anything. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
+| `blocked` | An attacker that is blocked (or unblocked) once blockers are declared (509.1h); neither before, nor for a non-attacker. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `blocking` | Is blocking. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `chooser` | Who picks: `controller`, `owner` or `none`. | [chooser — when somebody else picks the mode](card-dsl-cookbook.md#chooser--when-somebody-else-picks-the-mode) |
 | `colorless` | Has no colors (105.2c); true only. | ["Colorless" — colorless](card-dsl.md#colorless--colorless) |
@@ -238,6 +238,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `enchanted_by` | Has an Aura attached (`true`/`false`), or one whose controller is `you`/`opponent`. | ["Enchanted creatures" — enchanted_by](card-dsl.md#enchanted-creatures--enchanted_by) |
 | `encoded_by` | Cards encoded on the named creature (cipher). | [Cipher — the third direction an exile link can point](card-dsl-cookbook.md#cipher--the-third-direction-an-exile-link-can-point) |
 | `entered_this_turn` | Entered the battlefield this turn. | [entered_this_turn — the same fact asked of one permanent](card-dsl.md#entered_this_turn--the-same-fact-asked-of-one-permanent) |
+| `equipped` | Has one or more Equipment attached, anybody's (`true`/`false`). | ["Equipped creatures" — equipped](card-dsl.md#equipped-creatures--equipped) |
 | `exclude_binding` | Everything except the objects under a binding ("each other"). | [Recording what an op consumed or produced — "this way", "the token"](card-dsl.md#recording-what-an-op-consumed-or-produced--this-way-the-token) |
 | `exclude_self` | Not this permanent ("other"). | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `exiled_with` | Exiled with the named source. | [Targeting a card in exile](card-dsl-cookbook.md#targeting-a-card-in-exile) |
@@ -282,6 +283,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `toughness` | A comparison on live toughness. | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
 | `types` | Has all of these card types. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `union` | One pool made of several zones' selectors. | [One choice across two zones — union](card-dsl-cookbook.md#one-choice-across-two-zones--union) |
+| `was_attached_to` | Attached, as the same object, to the permanent a sacrifice cost's `as` recorded, when it was paid (608.2h). | [Zack Fair — what a sacrificed source had](card-dsl.md#zack-fair--what-a-sacrificed-source-had) |
 | `x_in_mana_cost` | Has {X} in its printed mana cost. | [A restriction that is not a name — mana_value, x_in_mana_cost](card-dsl-cookbook.md#a-restriction-that-is-not-a-name--mana_value-x_in_mana_cost) |
 | `zone` | Which zone to look in. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 
@@ -359,7 +361,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `opponents_attacked_this_combat` | How many opponents the player declared attackers against this combat, a planeswalker's or battle's controller included (melee). | [Melee](card-dsl-cookbook.md#melee) |
 | `permanents_entered_this_turn` | How many matching permanents entered this turn. | [Which permanents entered the battlefield this turn](card-dsl.md#which-permanents-entered-the-battlefield-this-turn) |
 | `permanents_to_graveyard_this_turn` | Permanents, tokens included, put into any graveyard from the battlefield this turn (gravestorm). | [Gravestorm — permanents put into a graveyard from the battlefield](card-dsl-cookbook.md#gravestorm--permanents-put-into-a-graveyard-from-the-battlefield) |
-| `player_count` | How many players still in the game a player spec names ("the number of opponents you have"; with `dealt_combat_damage_by`, "the number of your opponents who were dealt combat damage by …"). | [Value expressions](card-dsl.md#value-expressions) |
+| `player_count` | How many players still in the game a player spec names ("the number of opponents you have"; with `dealt_combat_damage_by`, "the number of your opponents who were dealt combat damage by …"); with `player`, `objects`, `cmp` and `than`, how many of a spec's players each have a count passing a comparison ("the number of opponents who control more creatures than you"). | [Value expressions](card-dsl.md#value-expressions) |
 | `power_had` | The power the dying creature had. | [Value expressions](card-dsl.md#value-expressions) |
 | `power_of` | An object's power. | [Value expressions](card-dsl.md#value-expressions) |
 | `resolutions_this_turn` | Times this ability has resolved this turn. | [Value expressions](card-dsl.md#value-expressions) |
@@ -385,6 +387,7 @@ Every head a condition may have: an effect's `if`, a trigger's intervening `cond
 | `any` | At least one listed condition holds. | [Conditions](card-dsl.md#conditions) |
 | `attacked_you_last_turn` | One of these players attacked you (not your planeswalker or battle) during their last completed turn. | [Conditions](card-dsl.md#conditions) |
 | `cast_during` | The phase this spell was cast in (addendum). | [Addendum — the phase a spell was cast in](card-dsl-cookbook.md#addendum--the-phase-a-spell-was-cast-in) |
+| `cast_from_exile` | This spell was cast from exile (foretell, plot or any exile play permission). | [Conditions](card-dsl.md#conditions) |
 | `cast_from_graveyard` | This spell was cast from a graveyard. | [Conditions](card-dsl.md#conditions) |
 | `cast_from_hand` | This spell was cast from hand. | [Conditions](card-dsl.md#conditions) |
 | `cmp` | Compare `left` and `right` values with `op`. | [Conditions](card-dsl.md#conditions) |
@@ -429,7 +432,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `becomes_monarch` | `became_monarch` | A player becomes the monarch. | [The monarch](card-dsl-cookbook.md#the-monarch) |
 | `becomes_monstrous` | `became_monstrous` | A creature becomes monstrous. | [Monstrosity, and holding creatures down](card-dsl-cookbook.md#monstrosity-and-holding-creatures-down) |
 | `becomes_tapped` | `tapped` | A permanent becomes tapped. | [Triggers](card-dsl.md#triggers) |
-| `becomes_target` | `became_target` | A permanent or player becomes the target of a spell or ability. | [Triggers](card-dsl.md#triggers) |
+| `becomes_target` | `became_target` | A permanent or player becomes the target of a spell or ability; `targeted_by` narrows it to a spell, an ability or an activated ability. | [Triggers](card-dsl.md#triggers) |
 | `becomes_untapped` | `untapped` | A permanent becomes untapped. | [Triggers](card-dsl.md#triggers) |
 | `begin_combat` | `begin_combat` | At the beginning of combat. | [Triggers](card-dsl.md#triggers) |
 | `blocks` | `blocks` | A creature blocks. | [Triggers](card-dsl.md#triggers) |
@@ -520,7 +523,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 
 | Name | Player-wide | Grantable | Description | Defined in |
 |---|---|---|---|---|
-| `ability_cost_reduction` |  | yes | Activated abilities of matching permanents cost less. | [A static that discounts another permanent's activated ability](card-dsl.md#a-static-that-discounts-another-permanents-activated-ability) |
+| `ability_cost_reduction` |  | yes | Activated abilities of a class (`equip`, or `any` beside `targeting`) cost less; `first_during_your_turn` limits it to your first matching activation of your turn. | [A static that discounts another permanent's activated ability](card-dsl.md#a-static-that-discounts-another-permanents-activated-ability) |
 | `activate_loyalty_as_though_instant` |  | yes | The player may activate loyalty abilities any time they could cast an instant. | [Static abilities](card-dsl.md#static-abilities) |
 | `add_mana_on_tap` | yes |  | Whenever a matching permanent is tapped for mana, add extra mana. | [Static abilities](card-dsl.md#static-abilities) |
 | `add_subtype` |  | yes | Matching permanents have an extra subtype. | ["…is the chosen type in addition to its other types"](card-dsl-cookbook.md#is-the-chosen-type-in-addition-to-its-other-types) |
@@ -566,6 +569,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `grant_ability` |  |  | Matching permanents have one of the card's `grantable_abilities`. | [grant_ability as a static, and where the line now runs](card-dsl-cookbook.md#grant_ability-as-a-static-and-where-the-line-now-runs) |
 | `grant_keyword` |  | yes | Matching permanents have keywords. | [Static abilities](card-dsl.md#static-abilities) |
 | `grant_miracle` | yes |  | Matching cards in the player's hand have miracle for a price. | [grant_miracle — miracle handed to cards in your hand](card-dsl-cookbook.md#grant_miracle--miracle-handed-to-cards-in-your-hand) |
+| `grant_pay_generic_with` | yes |  | Matching spells the player casts have convoke, improvise or delve. | [grant_pay_generic_with — "spells you cast have improvise"](card-dsl-cookbook.md#grant_pay_generic_with--spells-you-cast-have-improvise) |
 | `grant_warp` | yes |  | Matching spells the player casts have warp for a price. | [grant_warp — a card-level price handed to somebody else's cards](card-dsl-cookbook.md#grant_warp--a-card-level-price-handed-to-somebody-elses-cards) |
 | `granted_alternative_cost` | yes |  | The player may pay `cost` (energy or life) instead of matching spells' mana cost. | [granted_alternative_cost — paying energy instead of a spell's mana cost](card-dsl-cookbook.md#granted_alternative_cost--paying-energy-instead-of-a-spells-mana-cost) |
 | `imprint_characteristics` |  | yes | This creature has the power, toughness and creature types of the last creature card exiled with it. | [imprint_characteristics — Duplicant's size from a card in exile](card-dsl-cookbook.md#imprint_characteristics--duplicants-size-from-a-card-in-exile) |
@@ -573,6 +577,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `look_at_library_top` | yes |  | The player may look at the top card of their library any time. | [Static abilities](card-dsl.md#static-abilities) |
 | `lose_all_abilities` |  |  | Matching permanents lose all abilities. | [lose_all_abilities, and why abilities_of exists](card-dsl-cookbook.md#lose_all_abilities-and-why-abilities_of-exists) |
 | `lose_keyword` |  | yes | Matching permanents lose keywords and can't have or gain them. | [lose_keyword — the other kind of removal, at the other end of the pipeline](card-dsl-cookbook.md#lose_keyword--the-other-kind-of-removal-at-the-other-end-of-the-pipeline) |
+| `lose_keyword_timestamped` |  |  | Matching permanents lose keywords; a grant newer than the removal gives one back (613.7). | [lose_keyword_timestamped — "loses flying", with no "can't have"](card-dsl-cookbook.md#lose_keyword_timestamped--loses-flying-with-no-cant-have) |
 | `mana_becomes_colorless` | yes |  | Unspent mana the player would lose becomes colorless instead. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `mana_retention` | yes |  | The player doesn't lose unspent mana of the listed symbols as steps and phases end. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `no_hand_limit` | yes |  | The player has no maximum hand size. | [Static abilities](card-dsl.md#static-abilities) |
@@ -639,6 +644,7 @@ The static effects that describe the *player* rather than a characteristic, and 
 | `free_cast_permission` | The player may cast matching spells without paying their mana cost. | [free_cast_permission — Dracogenesis' standing free cast](card-dsl-cookbook.md#free_cast_permission--dracogenesis-standing-free-cast) |
 | `freeze_opponent_lands` | The player's lands don't untap during their untap step. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `grant_miracle` | Matching cards in the player's hand have miracle for a price. | [grant_miracle — miracle handed to cards in your hand](card-dsl-cookbook.md#grant_miracle--miracle-handed-to-cards-in-your-hand) |
+| `grant_pay_generic_with` | Matching spells the player casts have convoke, improvise or delve. | [grant_pay_generic_with — "spells you cast have improvise"](card-dsl-cookbook.md#grant_pay_generic_with--spells-you-cast-have-improvise) |
 | `grant_warp` | Matching spells the player casts have warp for a price. | [grant_warp — a card-level price handed to somebody else's cards](card-dsl-cookbook.md#grant_warp--a-card-level-price-handed-to-somebody-elses-cards) |
 | `granted_alternative_cost` | The player may pay `cost` (energy or life) instead of matching spells' mana cost. | [granted_alternative_cost — paying energy instead of a spell's mana cost](card-dsl-cookbook.md#granted_alternative_cost--paying-energy-instead-of-a-spells-mana-cost) |
 | `look_at_library_top` | The player may look at the top card of their library any time. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
@@ -668,7 +674,7 @@ The static effects a `grant_ability` static may hand to another permanent. Defin
 
 | Name | Description | Defined in |
 |---|---|---|
-| `ability_cost_reduction` | Activated abilities of matching permanents cost less. | [A static that discounts another permanent's activated ability](card-dsl.md#a-static-that-discounts-another-permanents-activated-ability) |
+| `ability_cost_reduction` | Activated abilities of a class (`equip`, or `any` beside `targeting`) cost less; `first_during_your_turn` limits it to your first matching activation of your turn. | [A static that discounts another permanent's activated ability](card-dsl.md#a-static-that-discounts-another-permanents-activated-ability) |
 | `activate_loyalty_as_though_instant` | The player may activate loyalty abilities any time they could cast an instant. | [grant_ability as a static, and where the line now runs](card-dsl-cookbook.md#grant_ability-as-a-static-and-where-the-line-now-runs) |
 | `add_subtype` | Matching permanents have an extra subtype. | ["…is the chosen type in addition to its other types"](card-dsl-cookbook.md#is-the-chosen-type-in-addition-to-its-other-types) |
 | `attack_tax` | Matching creatures can't attack unless their controller pays (`x_per_attacker`: {X} read off each attacker). | [Pricing an attack rather than forbidding it](card-dsl.md#pricing-an-attack-rather-than-forbidding-it) |
@@ -750,7 +756,7 @@ Every field an activated ability's `cost` (or a `may`'s `pay`) may carry -- the 
 | `put_counters` | Put N counters of a kind on the source. | [put_counters — counters on the source, paid on activation](card-dsl.md#put_counters--counters-on-the-source-paid-on-activation) |
 | `remove_counters` | Remove N counters of a kind from the source. | [Costs](card-dsl.md#costs) |
 | `remove_counters_from_among` | Remove N counters of any kinds from among other permanents. | [remove_counters_from_among — counters of any kind, off other permanents](card-dsl.md#remove_counters_from_among--counters-of-any-kind-off-other-permanents) |
-| `return_to_hand` | Return a matching permanent to hand. | [Costs](card-dsl.md#costs) |
+| `return_to_hand` | Return a matching permanent to hand; `as` names it, and whom it was attacking, for the effects. | [Ninjutsu — swapping into a combat already under way](card-dsl-cookbook.md#ninjutsu--swapping-into-a-combat-already-under-way) |
 | `sacrifice` | Sacrifice a matching permanent; `as` names it for the effects. | [Ghoulcaller Gisa — a sacrifice cost that names what it sacrificed](card-dsl.md#ghoulcaller-gisa--a-sacrifice-cost-that-names-what-it-sacrificed) |
 | `tap` | {T}: tap the source. | [Costs](card-dsl.md#costs) |
 | `tap_permanents` | Tap N other permanents, or `total_power` of them (crew). | [Crew — a tap cost measured in power](card-dsl.md#crew--a-tap-cost-measured-in-power) |
@@ -923,6 +929,7 @@ The subset of the selector language a static's `affects` may use -- printed char
 | `is_token` | Is (or is not) a token. | [Static abilities](card-dsl.md#static-abilities) |
 | `keywords` | Has all of these keywords. | [Static abilities](card-dsl.md#static-abilities) |
 | `mana_cost` | Printed mana cost is one of these. | [Static abilities](card-dsl.md#static-abilities) |
+| `modified` | Is modified: a counter, an Equipment by its printed face, or your Aura (`true` only). | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `not_keywords` | Has none of these keywords. | [Static abilities](card-dsl.md#static-abilities) |
 | `not_supertypes` | Has none of these supertypes ("nonbasic"). | [Static abilities](card-dsl.md#static-abilities) |
 | `not_types` | Has none of these card types ("noncreature"). | [Static abilities](card-dsl.md#static-abilities) |
@@ -1083,6 +1090,7 @@ Things a card says about itself that are neither a price nor a second face. Defi
 | `toxic` | Toxic N: the N, beside `toxic` in `keywords`. | [Toxic N](card-dsl-cookbook.md#toxic-n) |
 | `annihilator` | Annihilator N: the N, beside `annihilator` in `keywords`. | [Annihilator N](card-dsl-cookbook.md#annihilator-n) |
 | `morph_counter` | Megamorph: turns face up with a +1/+1 counter, beside `morph`. | [Face-down permanents — morph, megamorph and manifest](card-dsl-cookbook.md#face-down-permanents--morph-megamorph-and-manifest) |
+| `as_cast` | Named values fixed as the spell is cast, read by `spell_effects` as `{"binding": name}`. | ["As you cast this spell" — a value fixed at cast time](card-dsl-cookbook.md#as-you-cast-this-spell--a-value-fixed-at-cast-time) |
 
 ## Engine events
 
