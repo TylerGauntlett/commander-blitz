@@ -46,6 +46,10 @@
   align-items: center;
   gap: calc(14px * var(--du));
   padding-bottom: calc(12px * var(--du));
+  /* Clear of a side status bar, as the table's `.track` is; see there. The
+     grid under it runs the full width. */
+  padding-left: var(--safe-l);
+  padding-right: var(--safe-r);
 }
 
 .shelf__t {

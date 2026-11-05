@@ -59,8 +59,9 @@
 
 .pod__bar {
   position: absolute;
-  left: calc(24px * var(--du));
-  right: calc(24px * var(--du));
+  /* Clear of a side status bar, as the table's `.track` is; see there. */
+  left: calc(24px * var(--du) + var(--safe-l));
+  right: calc(24px * var(--du) + var(--safe-r));
   top: calc(18px * var(--du));
   display: flex;
   align-items: center;
@@ -129,7 +130,7 @@
   display: grid;
   grid-template-rows: var(--tag-h) var(--card-h) auto;
   /* The column is the chair's width, not its widest child's: an implicit
-     \`auto\` track grows to a one-line label or button and pushes the chair
+     `auto` track grows to a one-line label or button and pushes the chair
      into its neighbour. */
   grid-template-columns: minmax(0, 1fr);
   gap: calc(8px * var(--du));
