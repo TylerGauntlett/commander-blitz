@@ -36,6 +36,17 @@
 
 .card--static {
   cursor: default;
+  /*
+   * A finger on a static card scrolls whatever it sits in.
+   *
+   * `touch-action: none` above is for the board's card, which a finger drags
+   * onto a lane and which the browser must not take for a pan. A static card is
+   * never dragged -- it is a deck tile, a preview, a prompt option -- and with
+   * `none` inherited a finger landing on one could not scroll the catalogue it
+   * filled, only the gaps between tiles. `manipulation` keeps the pan and the
+   * pinch and drops only the double-tap zoom, as the board's card does.
+   */
+  touch-action: manipulation;
 }
 
 /*
