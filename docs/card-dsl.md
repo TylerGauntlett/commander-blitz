@@ -5081,8 +5081,10 @@ Three events carry a defending player and so accept the clause: `attacks`,
 `creatures_attack_player` and `deals_damage_to_player`. The last is the one that
 is not about combat — Curiosity's "whenever enchanted creature deals damage to
 **an opponent**" asks who took the damage, and `controller` there is a question
-about whose *creature* dealt it. `creatures_deal_combat_damage` accepts it only
-with `per_player`, where each firing is about the one seat it hit.
+about whose *creature* dealt it. On `creatures_deal_combat_damage` it asks the
+seat each firing hit with `per_player`; without it, it narrows the one batch to
+the seats it names ("whenever **your opponents are dealt** combat damage") —
+see ["Your opponents are dealt combat damage"](card-dsl-cookbook.md#your-opponents-are-dealt-combat-damage).
 
 `defending: "most_life"` is dethrone's "whenever this creature attacks **the
 player with the most life or tied for most life**" (702.105a), legal on

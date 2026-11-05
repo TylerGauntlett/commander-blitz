@@ -99296,6 +99296,123 @@
           },
           "effects": [
             {
+              "keywords": [
+                "deathtouch"
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "you",
+                "is_token": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "+1: Creatures you control gain deathtouch until end of turn. Put a +1/+1 counter on up to one target creature token you control."
+        },
+        {
+          "cost": {
+            "loyalty": -2
+          },
+          "effects": [
+            {
+              "duration": "this_turn",
+              "op": "multiply_token_creation",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "−2: Until end of turn, if one or more tokens would be created under your control, twice that many of those tokens are created instead."
+        },
+        {
+          "cost": {
+            "loyalty": -6
+          },
+          "effects": [
+            {
+              "as": "exiled",
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "zone": "graveyard"
+              },
+              "op": "exile"
+            },
+            {
+              "amount": {
+                "count": {
+                  "binding": "exiled",
+                  "zone": "exile"
+                }
+              },
+              "op": "create_token",
+              "token": "spirit_1_1_w_flying"
+            }
+          ],
+          "kind": "activated",
+          "text": "−6: Exile all cards from all graveyards, then create a 1/1 white Spirit creature token with flying for each card exiled this way."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "kaya_geist_hunter",
+      "loyalty": 3,
+      "mana_cost": "{1}{W}{B}",
+      "name": "Kaya, Geist Hunter",
+      "oracle_text": "+1: Creatures you control gain deathtouch until end of turn. Put a +1/+1 counter on up to one target creature token you control.\n−2: Until end of turn, if one or more tokens would be created under your control, twice that many of those tokens are created instead.\n−6: Exile all cards from all graveyards, then create a 1/1 white Spirit creature token with flying for each card exiled this way.",
+      "source": "auto",
+      "subtypes": [
+        "Kaya"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
               "amount": {
                 "const": 1
               },
@@ -119092,6 +119209,60 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever your opponents are dealt combat damage, if any of that damage was dealt by a Warrior, you draw a card and you lose 1 life.",
+          "trigger": {
+            "controller": "any",
+            "defending": "opponent",
+            "event": "creatures_deal_combat_damage",
+            "filter": {
+              "subtypes": [
+                "Warrior"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "mindblade_render",
+      "mana_cost": "{1}{B}",
+      "name": "Mindblade Render",
+      "oracle_text": "Whenever your opponents are dealt combat damage, if any of that damage was dealt by a Warrior, you draw a card and you lose 1 life.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Azra",
+        "Warrior"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "discard": 1,
             "mana": "{1}"
@@ -126074,6 +126245,88 @@
         "Bird"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "create_token",
+              "token": "goblin_1_1_r"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Neriv enters, create two 1/1 red Goblin creature tokens.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "distinct": {
+                  "objects": {
+                    "controller": "you",
+                    "is_token": true,
+                    "zone": "battlefield"
+                  },
+                  "of": "name"
+                }
+              },
+              "destination": "exile",
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "playable": "while_exiled",
+              "playable_condition": "you_attacked_with_a_commander",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Neriv attacks, exile a number of cards from the top of your library equal to the number of differently named tokens you control. During any turn you attacked with a commander, you may play those cards.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "R",
+        "W"
+      ],
+      "id": "neriv_crackling_vanguard",
+      "keywords": [
+        "flying",
+        "deathtouch"
+      ],
+      "mana_cost": "{2}{R}{W}{B}",
+      "name": "Neriv, Crackling Vanguard",
+      "oracle_text": "Flying, deathtouch\nWhen Neriv enters, create two 1/1 red Goblin creature tokens.\nWhenever Neriv attacks, exile a number of cards from the top of your library equal to the number of differently named tokens you control. During any turn you attacked with a commander, you may play those cards.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Dragon"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]

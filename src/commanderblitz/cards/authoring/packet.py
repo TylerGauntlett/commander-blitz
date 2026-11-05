@@ -37,7 +37,7 @@ from commanderblitz.engine.effects.conditions import CONDITION_KEYS
 from commanderblitz.engine.effects.selectors import SELECTOR_KEYS
 from commanderblitz.engine.effects.values import VALUE_KEYS
 from commanderblitz.engine.enums import CardType, Keyword, Supertype
-from commanderblitz.engine.objects import PLAYABLE_DURATIONS
+from commanderblitz.engine.objects import PLAYABLE_CONDITIONS, PLAYABLE_DURATIONS
 from commanderblitz.engine.structs import DELAYED_DURATIONS
 from commanderblitz.engine.triggers import TRIGGER_EVENTS, TRIGGER_FILTER_KEYS
 
@@ -537,6 +537,10 @@ def reference() -> dict:
         # tell "until your next end step" or "for as long as it remains exiled"
         # already shipped short of a load error.
         "playable_durations": sorted(PLAYABLE_DURATIONS),
+        # The values `playable_condition` takes beside one of them: a turn the
+        # permission is shut on although it has not ended ("during any turn you
+        # attacked with a commander, you may play those cards").
+        "playable_conditions": sorted(PLAYABLE_CONDITIONS),
         "static_filter_keys": sorted(STATIC_FILTER_KEYS),
         # What a static's `affects` may use: the list above plus `any_of`, a
         # union of whole filters ("Skeletons and **other** Zombies"). Its own
@@ -780,7 +784,10 @@ def reference() -> dict:
             " `playable` duration (`exile`, `look_at_top` to exile,"
             " `grant_playable`); \"for as long as they remain exiled\" is"
             " `playable: \"while_exiled\"`; \"until you exile another card"
-            " with this creature\" is `playable: \"until_next_exile_by_source\"`."
+            " with this creature\" is `playable: \"until_next_exile_by_source\"`;"
+            " \"during any turn you attacked with a commander, you may play those"
+            " cards\" is `playable: \"while_exiled\"` with `playable_condition:"
+            " \"you_attacked_with_a_commander\"`."
             " The permission is always the"
             " effect controller's, cards from an opponent's library included;"
             " a land still uses a land drop, a spell keeps its timing and its"
@@ -1020,6 +1027,12 @@ def reference() -> dict:
             " instead) and a static takes one or the other. \"Creature tokens\""
             " is an `affects_token` filter; a sentence naming no player (\"if one"
             " or more tokens would be created\") adds `affects_player: \"any\"`.",
+            "\"Until end of turn, if one or more tokens would be created under"
+            " your control, twice that many of those tokens are created"
+            " instead\" on a spell or an activated/loyalty ability is the"
+            " `multiply_token_creation` op with `duration: \"this_turn\"` --"
+            " never a granted `replace_token_creation` static, which would end"
+            " when the source left the battlefield.",
             "\"If an effect would put one or more counters on a permanent you"
             " control, it puts twice that many…\" (Doubling Season) is a"
             " `replace_counters` static with `counter_multiplier: 2`,"

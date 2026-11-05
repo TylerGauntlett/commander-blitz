@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**162 cards** blocked by **151** capabilities.
+**159 cards** blocked by **147** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -39,7 +39,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
-| [attacked-with-commander-play-permission](#attacked-with-commander-play-permission) | 1 | 9555 | engine |
 | [attacking-opponents-of-player](#attacking-opponents-of-player) | 1 | 705 | selector |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
@@ -65,7 +64,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
-| [distinct-names-count](#distinct-names-count) | 1 | 9555 | value |
 | [distribute-counters-spell](#distribute-counters-spell) | 1 | 6993 | op |
 | [divided-damage-any-target](#divided-damage-any-target) | 1 | 5125 | engine |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 1 | 2389 | engine |
@@ -119,7 +117,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [odd-or-even](#odd-or-even) | 1 | 8504 | selector |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
-| [opponents-dealt-combat-damage](#opponents-dealt-combat-damage) | 1 | 5869 | trigger_event |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-mana-ability-until-end-of-turn](#player-mana-ability-until-end-of-turn) | 1 | 12705 | op |
 | [plot](#plot) | 1 | 7506 | op |
@@ -155,7 +152,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
 | [targets-only-self](#targets-only-self) | 1 | 8216 | trigger_event |
 | [teammates](#teammates) | 1 | 26785 | selector |
-| [temporary-token-doubling](#temporary-token-doubling) | 1 | 4479 | op |
 | [this-combat-duration](#this-combat-duration) | 1 | 9126 | op |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
 | [times-attacked-this-turn](#times-attacked-this-turn) | 1 | 988 | value |
@@ -714,21 +710,6 @@ Blocks **1** card.
 
 </details>
 
-## attacked-with-commander-play-permission
-
-Blocks **1** card.
-
-- **(engine)** a playable permission on exiled cards that is open indefinitely but usable only during a turn in which the effect's controller attacked with a commander -- e.g. `playable: "while_exiled"` plus a `playable_condition` reading a per-turn 'you attacked with a commander this turn' fact (a new value/condition such as {"commanders_attacked_this_turn": "you"} > 0)
-  <br>Why the existing vocabulary won't do: playable_durations (this_turn, while_exiled, end_of_your_next_turn, later_turns, ...) carry no condition on the turn the card is played; `attacked_this_turn`/`attackers_this_turn` values do not filter attackers by is_commander, and no exile/look_at_top option gates the permission on a per-turn condition
-
-<details><summary>Cards waiting on this</summary>
-
-- **Neriv, Crackling Vanguard** (rank 9555) — `neriv_crackling_vanguard`
-  - Whenever Neriv attacks, exile a number of cards from the top of your library equal to the number of differently named tokens you control.
-  - During any turn you attacked with a commander, you may play those cards.
-
-</details>
-
 ## attacking-opponents-of-player
 
 Blocks **1** card.
@@ -1086,21 +1067,6 @@ Blocks **1** card.
 
 - **Lion's Eye Diamond** (rank 725) — `lion_s_eye_diamond`
   - Discard your hand, Sacrifice this artifact: Add three mana of any one color. Activate only as an instant.
-
-</details>
-
-## distinct-names-count
-
-Blocks **1** card.
-
-- **(value)** a value counting the distinct names among a selector's matches -- {"distinct": {"of": "name", "objects": {"controller": "you", "is_token": true}}} -- "the number of differently named tokens you control"
-  <br>Why the existing vocabulary won't do: The `distinct` value accepts only of in DISTINCT_OF (power, basic_land_type, card_type, color, counter_kind); `count` counts tokens, not names, and `most_sharing_a_name` measures the largest group sharing one name, not how many names there are
-
-<details><summary>Cards waiting on this</summary>
-
-- **Neriv, Crackling Vanguard** (rank 9555) — `neriv_crackling_vanguard`
-  - Whenever Neriv attacks, exile a number of cards from the top of your library equal to the number of differently named tokens you control.
-  - During any turn you attacked with a commander, you may play those cards.
 
 </details>
 
@@ -1870,20 +1836,6 @@ Blocks **1** card.
 
 </details>
 
-## opponents-dealt-combat-damage
-
-Blocks **1** card.
-
-- **(trigger_event)** a once-per-combat-damage-step trigger keyed on the DAMAGED side: it fires once when one or more of your opponents are dealt combat damage in a step, by creatures of any controller (an opponent's Warrior hitting another opponent in a pod counts), and its filter (subtypes Warrior) must be satisfied by a creature that dealt combat damage to one of those opponents, not by a creature that hit you
-  <br>Why the existing vocabulary won't do: creatures_deal_combat_damage is fired once per DAMAGING seat with no `defender` on the batched form, so `defending: "opponent"` matches nothing unless `per_player` is set; `per_player` fires once per damaged opponent (draws two when Warriors hit two opponents, where the card triggers once per step); `controller: "you"` drops the opponents'-Warriors-hitting-other-opponents case; and no controller at all fires when an opponent's Warrior hits you. Each is a different card from the printed one
-
-<details><summary>Cards waiting on this</summary>
-
-- **Mindblade Render** (rank 5869) — `mindblade_render`
-  - Whenever your opponents are dealt combat damage, if any of that damage was dealt by a Warrior, you draw a card and you lose 1 life.
-
-</details>
-
 ## played-or-cast-from-non-hand-this-turn
 
 Blocks **1** card.
@@ -2375,20 +2327,6 @@ Blocks **1** card.
 
 - **Imperial Mask** (rank 26785) — `imperial_mask`
   - When this enchantment enters, if it's not a token, each of your teammates creates a token that's a copy of this enchantment.
-
-</details>
-
-## temporary-token-doubling
-
-Blocks **1** card.
-
-- **(op)** a one-shot effect that sets up a player-wide token-creation replacement (token_multiplier 2, affects_player you) lasting until end of turn, independent of its source: it must keep applying after the planeswalker that created it leaves the battlefield (611.2a / 614 effect from a resolved ability)
-  <br>Why the existing vocabulary won't do: replace_token_creation exists only as a static ability, read off a permanent on the battlefield for as long as it stays there; no op in reference creates a timed replacement. grant_ability as an op may grant only triggered or activated abilities (the static form is 'as long as', not 'until end of turn'), and granting a static to Kaya would end the doubling if she left the battlefield, which the printed effect does not
-
-<details><summary>Cards waiting on this</summary>
-
-- **Kaya, Geist Hunter** (rank 4479) — `kaya_geist_hunter`
-  - −2: Until end of turn, if one or more tokens would be created under your control, twice that many of those tokens are created instead.
 
 </details>
 

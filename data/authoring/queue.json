@@ -146992,12 +146992,12 @@
     },
     "Kaya, Geist Hunter": {
       "edhrec_rank": 4479,
-      "gate": "template",
+      "gate": null,
       "name": "Kaya, Geist Hunter",
-      "reason": "no template for: +1: Creatures you control gain deathtouch until end of turn. Put a +1/+1 counter on up to ",
+      "reason": "",
       "scryfall_id": "9135b501-82be-43cb-9aa5-9cf08789c636",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kaya, Ghost Assassin": {
@@ -173932,12 +173932,12 @@
     },
     "Mindblade Render": {
       "edhrec_rank": 5869,
-      "gate": "template",
+      "gate": null,
       "name": "Mindblade Render",
-      "reason": "no template for: Whenever your opponents are dealt combat damage, if any of that damage was dealt by a Warr",
+      "reason": "",
       "scryfall_id": "459c5f18-13a3-42c9-b9d7-bf789eefe249",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mindblaze": {
@@ -185212,12 +185212,12 @@
     },
     "Neriv, Crackling Vanguard": {
       "edhrec_rank": 9555,
-      "gate": "template",
+      "gate": null,
       "name": "Neriv, Crackling Vanguard",
-      "reason": "no template for: When Neriv enters, create two 1/1 red Goblin creature tokens",
+      "reason": "",
       "scryfall_id": "ac552ea3-f521-4c42-a846-21a73364e0ca",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Neriv, Heart of the Storm": {

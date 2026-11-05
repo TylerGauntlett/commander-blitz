@@ -333,6 +333,7 @@ def op_exile(ctx: EffectContext, spec: Mapping[str, Any]):
                 obj.playable_by = ctx.controller
                 obj.playable_turn = ctx.state.turn
                 obj.playable_duration = playable_duration
+                obj.playable_condition = spec.get("playable_condition")
                 # Elder Brain's "you may spend mana as though it were mana of
                 # any color to cast it" -- printed beside the permission, and
                 # read only while it is live.

@@ -29,7 +29,7 @@ from commanderblitz.engine.enums import SUBTYPE_CLASS
 from commanderblitz.engine.errors import DslError
 from commanderblitz.engine.mana import SYMBOLS as MANA_SYMBOLS
 from commanderblitz.engine.mana import ManaCost, compile_restriction
-from commanderblitz.engine.objects import PLAYABLE_DURATIONS
+from commanderblitz.engine.objects import PLAYABLE_CONDITIONS, PLAYABLE_DURATIONS
 from commanderblitz.engine.structs import (
     ATTACK_MARK_DURATIONS,
     ATTACK_RESTRICTION_DURATIONS,
@@ -48,6 +48,7 @@ from commanderblitz.engine.structs import (
     PERMANENT_SHIELD_DURATIONS,
     PLAYER_PROTECTION_DURATIONS,
     PROTECTION_SENTINELS,
+    TOKEN_MULTIPLIER_DURATIONS,
     UNBLOCKABLE_DURATIONS,
 )
 from commanderblitz.engine.triggers import (
@@ -2474,6 +2475,26 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                     f"exile, so it needs cards being exiled or already there "
                     f"(exile, look_at_top to exile, grant_playable over zone exile)"
                 )
+    if "playable_condition" in effect:
+        # "During any turn you attacked with a commander, you may play those
+        # cards" (Neriv). A condition on the turn a permission is *used* in, so
+        # it needs a permission to sit on; and a misspelt one would open
+        # nothing on any turn, which reads as a card that silently never works.
+        grants = op == "grant_playable" or (
+            op in ("exile", "look_at_top")
+            and ("playable" in effect or effect.get("playable_this_turn"))
+        )
+        if not grants:
+            raise DslError(
+                f"{where}: 'playable_condition' limits the turns a 'playable' "
+                f"permission may be used on, so it needs one (exile / look_at_top "
+                f"with 'playable', or grant_playable)"
+            )
+        if effect["playable_condition"] not in PLAYABLE_CONDITIONS:
+            raise DslError(
+                f"{where}: unknown 'playable_condition' {effect['playable_condition']!r} "
+                f"(implemented: {sorted(PLAYABLE_CONDITIONS)})"
+            )
     if op == "become_copy" and "except_" in effect:
         # Read only when the copy resolves: a misspelt key or keyword would
         # arrive as a plain copy, which loses the exception and says nothing.
@@ -3027,6 +3048,33 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 )
         if not isinstance(effect.get("next_spell", False), bool):
             raise DslError(f"{where}: grant_flash_permission's 'next_spell' is true or false")
+    if op == "multiply_token_creation":
+        # Without a duration the doubling would have no clock to end on; a
+        # misspelt one would never be swept and double every token for the rest
+        # of the game.
+        if effect.get("duration") not in TOKEN_MULTIPLIER_DURATIONS:
+            raise DslError(
+                f"{where}: multiply_token_creation needs a 'duration' in "
+                f"{list(TOKEN_MULTIPLIER_DURATIONS)}"
+            )
+        if effect.get("player") is not None:
+            _validate_player_spec(effect["player"], f"{where}.player", target_kinds)
+        multiplier = effect.get("token_multiplier", 2)
+        # The static's refusal, for its reason: 1 replaces the creation with
+        # itself and 0 is a prevention, neither of them "twice that many".
+        if isinstance(multiplier, bool) or not isinstance(multiplier, int) or multiplier < 2:
+            raise DslError(
+                f"{where}: multiply_token_creation's 'token_multiplier' is a whole "
+                f"number of 2 or more, not {multiplier!r}"
+            )
+        for key in ("affects_token", "create_instead", "amount"):
+            # The timed form multiplies every token and substitutes none; a
+            # filter or a substitution here would be read by nothing.
+            if key in effect:
+                raise DslError(
+                    f"{where}: multiply_token_creation takes no {key!r} -- it "
+                    f"multiplies every token created under the player"
+                )
     if op in ("add_poison", "add_energy") and "amount" in effect:
         validate_value(effect["amount"], f"{where}.amount")
     if op == "lose_all_player_counters":

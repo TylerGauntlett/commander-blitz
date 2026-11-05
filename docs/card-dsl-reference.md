@@ -10,7 +10,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 163 |
+| [Effect ops](#effect-ops) | 164 |
 | [Selectors](#selectors) | 74 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 69 |
@@ -101,7 +101,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `empower` | Board |  | Empower Jace N: N loyalty on a Jace token you control, creating one first if none. | [empower — "Empower Jace N"](card-dsl-cookbook.md#empower--empower-jace-n) |
 | `encode` | Board |  | Cipher: exile the spell encoded on a creature. | [Cipher — the third direction an exile link can point](card-dsl-cookbook.md#cipher--the-third-direction-an-exile-link-can-point) |
 | `exchange_control` | Board |  | Exchange control of two permanents. | [Exchanging control](card-dsl-cookbook.md#exchanging-control) |
-| `exile` | Board | yes | Exile objects; `link`/`playable` tie them to the source or a permission. | [Effect ops](card-dsl.md#effect-ops) |
+| `exile` | Board | yes | Exile objects; `link`/`playable` tie them to the source or a permission; `playable_condition` shuts that permission on some turns. | [Effect ops](card-dsl.md#effect-ops) |
 | `exile_and_return` | Board |  | Exile permanents, then return them (transformed, under an owner). | ["Exile it, then return it transformed under its owner's control"](card-dsl-cookbook.md#exile-it-then-return-it-transformed-under-its-owners-control) |
 | `freeze` | Board |  | Tap and it doesn't untap during its controller's next untap step. | [Effect ops](card-dsl.md#effect-ops) |
 | `gain_control` | Board | yes | Gain control of permanents, for a duration (`as_long_as_you_control_source` included) or for good. | [Gaining control of a permanent](card-dsl-cookbook.md#gaining-control-of-a-permanent) |
@@ -114,6 +114,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `meld` | Board |  | Meld the source with its named partner into one permanent. | [Meld — mutate's merged permanent, with the pair fixed by the card](card-dsl-cookbook.md#meld--mutates-merged-permanent-with-the-pair-fixed-by-the-card) |
 | `monstrosity` | Board |  | Monstrosity N: become monstrous with N +1/+1 counters. | [Monstrosity, and holding creatures down](card-dsl-cookbook.md#monstrosity-and-holding-creatures-down) |
 | `move_counters` | Board |  | Move counters from one permanent to another: one named kind, every kind (`all_kinds`, from a leave trigger's or a sacrifice cost's record with `from_had_counters`), N counters of kinds the controller picks (`any_kind`), or with `any_number` as many of each kind as the controller chooses. | [Moving a counter of any kind — move_counters with any_kind](card-dsl.md#moving-a-counter-of-any-kind--move_counters-with-any_kind) |
+| `multiply_token_creation` | Board |  | Until end of turn, tokens created under a player are multiplied (twice that many); outlives its source. | [Until end of turn, "twice that many of those tokens"](card-dsl-cookbook.md#until-end-of-turn-twice-that-many-of-those-tokens) |
 | `must_attack` | Board |  | Creatures attack this turn if able. | [Attack requirements](card-dsl-cookbook.md#attack-requirements) |
 | `must_attack_planeswalker` | Board |  | Creatures attack a planeswalker this turn if able. | ["…creatures that player controls attack Gideon Jura if able"](card-dsl-cookbook.md#creatures-that-player-controls-attack-gideon-jura-if-able) |
 | `must_attack_player` | Board |  | Creatures attack a named player each combat if able, until the end of your next turn or this turn. | ["…attacks that player each combat if able"](card-dsl-cookbook.md#attacks-that-player-each-combat-if-able) |
@@ -336,7 +337,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `creatures_died_this_turn` | Creatures that died this turn (morbid). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `creatures_you_control` | Creatures the player controls. | [Value expressions](card-dsl.md#value-expressions) |
 | `damage_taken_this_turn` | Damage the player was dealt this turn, summed over a plural spec (bloodthirst). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
-| `distinct` | Distinct values of a quality among a pool (domain, coven, delirium, colors, kinds of counters). | [Counting different values rather than objects](card-dsl.md#counting-different-values-rather-than-objects) |
+| `distinct` | Distinct values of a quality among a pool (domain, coven, delirium, colors, kinds of counters, names). | [Counting different values rather than objects](card-dsl.md#counting-different-values-rather-than-objects) |
 | `extreme_value` | The greatest/least of a quality in a pool, as one number. | [Value expressions](card-dsl.md#value-expressions) |
 | `greatest_discarded_by_a_player` | The greatest number of cards one player discarded this way. | [Discarding a whole hand, and reading the greatest that went](card-dsl.md#discarding-a-whole-hand-and-reading-the-greatest-that-went) |
 | `half` | Half of a value, rounded `up` or `down`. | [Value expressions](card-dsl.md#value-expressions) |

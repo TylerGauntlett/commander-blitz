@@ -56,6 +56,7 @@ from .temp_effects import (
     clear_permanent_shields,
     clear_player_protections,
     clear_sacrifice_restrictions,
+    clear_token_multipliers,
     clear_unblockables,
 )
 from .triggers import fire
@@ -782,6 +783,9 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int]]:
     clear_outcome_locks(state, "this_turn")
     clear_flash_permissions(state, "this_turn")
     clear_life_floors(state, "this_turn")
+    # Kaya, Geist Hunter's "until end of turn" doubling. Owned by no permanent,
+    # so nothing else would end it: the walker that made it may be long gone.
+    clear_token_multipliers(state, "this_turn")
     # The `this_turn` half of the cast lock, swept here for the reason every
     # timed table above it is: a table the cleanup step could not sweep on
     # that word would be the one exception among them.

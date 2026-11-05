@@ -41,6 +41,7 @@ from .effects.conditions import evaluate
 from .effects.context import EffectContext
 from .enums import ActionKind, DecisionKind, Step, Zone
 from .mana import OTHER_PAYMENT, ManaCost, format_symbols, max_affordable_x
+from .objects import playable_condition_met
 from .player_statics import (
     player_cant_activate,
     player_doubles_mana_from,
@@ -376,7 +377,9 @@ def _land_actions(state: GameState, pid: int) -> list[Action]:
         oid
         for player in state.players
         for oid in player.exile
-        if state.objects[oid].playable_by == pid and state.objects[oid].playable_live(state.turn)
+        if state.objects[oid].playable_by == pid
+        and state.objects[oid].playable_live(state.turn)
+        and playable_condition_met(state, state.objects[oid])
     ]
     if exiled:
         zones.append(exiled)

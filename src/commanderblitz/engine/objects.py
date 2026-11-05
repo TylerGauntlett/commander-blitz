@@ -891,6 +891,15 @@ class GameObject:
     #: colourless mana), and kept beside it for the same reason: it rides on the
     #: permission and expires with it.
     playable_any_color: bool = False
+    #: A condition on the **turn** the permission may be used in, or None for
+    #: one usable on any turn it is live -- one of `PLAYABLE_CONDITIONS`.
+    #: Neriv, Crackling Vanguard: "**During any turn you attacked with a
+    #: commander**, you may play those cards." Orthogonal to
+    #: `playable_duration`, which says when the permission ends: Neriv's never
+    #: does while the card is exiled, it is only shut on the other turns. Read
+    #: by `playable_condition_met` where the play is offered, so nothing has to
+    #: switch it on and off as turns pass.
+    playable_condition: str | None = None
     #: "…its owner may cast it **for {2} rather than its mana cost**" -- airbend
     #: (Avatar's Wrath). The flat price the permission carries, as a printed
     #: mana string, or None for the ordinary permission that charges whatever
@@ -1334,6 +1343,7 @@ class GameObject:
         self.playable_group = None
         self.playable_any_type = False
         self.playable_any_color = False
+        self.playable_condition = None
         self.playable_alt_cost = None
         self.playable_cost_reduction = 0
         self.playable_source = None
@@ -1497,6 +1507,43 @@ PLAYABLE_DURATIONS = (
     #: battlefield the last card it exiled stays playable while it is exiled.
     "until_next_exile_by_source",
 )
+
+
+#: The conditions on the turn a "you may play it" permission may be used in,
+#: the values of an effect's ``playable_condition``. Each has a card behind it.
+#:
+#: - ``"you_attacked_with_a_commander"`` -- Neriv, Crackling Vanguard: "During
+#:   any turn you attacked with a commander, you may play those cards." The
+#:   permission holder declared as an attacker, this turn, a creature that is a
+#:   commander (903.3) -- anybody's, since a stolen commander is still a
+#:   commander -- read off `TurnLedger.creatures_attacked`, so a commander that
+#:   attacked and then died still counts for the rest of the turn. A creature
+#:   put onto the battlefield attacking was never declared and does not.
+PLAYABLE_CONDITIONS = ("you_attacked_with_a_commander",)
+
+
+def playable_condition_met(state: Any, obj: GameObject) -> bool:
+    """May ``obj``'s "you may play it" permission be used on this turn?
+
+    True for a permission with no `playable_condition`. Asked only by the two
+    places a play out of a permission is **offered** -- `casting._cast_actions`
+    and the land half in `legality` -- because every later reader prices or
+    pays a line that was offered, within the same turn.
+    """
+    condition = obj.playable_condition
+    if condition is None:
+        return True
+    if condition == "you_attacked_with_a_commander":
+        holder = obj.playable_by
+        if holder is None:
+            return False
+        attacked = state.turn_ledger.creatures_attacked.get(holder, ())
+        return any(
+            (attacker := state.objects.get(oid)) is not None and attacker.is_commander
+            for oid in attacked
+        )
+    # The loader refuses anything else; an unknown condition opens nothing.
+    return False
 
 
 def playable_duration_of(spec: Mapping[str, Any]) -> str | None:

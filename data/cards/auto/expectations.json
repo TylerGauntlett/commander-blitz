@@ -8427,6 +8427,13 @@
       "0": 2
     }
   },
+  "kaya_geist_hunter": {
+    "counters": {
+      "amount": 3,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
   "kaya_the_inexorable": {
     "battlefield_count": 33,
     "counters": {
@@ -10103,6 +10110,15 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "mindblade_render": {
+    "hand_size": {
+      "0": 1
+    },
+    "life": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "mindless_automaton": {
     "battlefield_count": 33,
     "counters": {
@@ -10724,6 +10740,14 @@
     "zone": "battlefield"
   },
   "nephalia_seakite": {
+    "zone": "battlefield"
+  },
+  "neriv_crackling_vanguard": {
+    "battlefield_count": 35,
+    "tokens": {
+      "count": 2,
+      "id": "goblin_1_1_r"
+    },
     "zone": "battlefield"
   },
   "neriv_heart_of_the_storm": {
