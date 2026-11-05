@@ -77252,12 +77252,12 @@
     },
     "Duskshell Crawler": {
       "edhrec_rank": 1423,
-      "gate": "template",
+      "gate": null,
       "name": "Duskshell Crawler",
-      "reason": "no template for: When this creature enters, put a +1/+1 counter on target creature",
+      "reason": "",
       "scryfall_id": "2ce4ebd2-c3e6-4299-bdb7-8e5eb1834168",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Duskwalker": {
@@ -94742,12 +94742,12 @@
     },
     "Fight Rigging": {
       "edhrec_rank": 3799,
-      "gate": "template",
+      "gate": null,
       "name": "Fight Rigging",
-      "reason": "no template for: Hideaway 5",
+      "reason": "",
       "scryfall_id": "ed314c9c-ce86-4782-981f-7956ceca564c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fight as One": {
@@ -100412,12 +100412,12 @@
     },
     "Forge of Heroes": {
       "edhrec_rank": 2192,
-      "gate": "template",
+      "gate": null,
       "name": "Forge of Heroes",
-      "reason": "no template for: {T}: Choose target commander that entered this turn. Put a +1/+1 counter on it if it's a c",
+      "reason": "",
       "scryfall_id": "7ac60dfc-040e-4cc1-a967-3c915770fc8e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Forgeborn Oreads": {
@@ -106672,12 +106672,12 @@
     },
     "Generous Patron": {
       "edhrec_rank": 3396,
-      "gate": "template",
+      "gate": null,
       "name": "Generous Patron",
-      "reason": "no template for: When this creature enters, support 2",
+      "reason": "",
       "scryfall_id": "8f4a43b9-6ee8-4b89-b204-83093fba8de4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Generous Plunderer": {
@@ -116282,12 +116282,12 @@
     },
     "Grateful Apparition": {
       "edhrec_rank": 1836,
-      "gate": "template",
+      "gate": null,
       "name": "Grateful Apparition",
-      "reason": "no template for: Whenever this creature deals combat damage to a player or planeswalker, proliferate",
+      "reason": "",
       "scryfall_id": "755e0d2b-9a5e-4a13-b085-13c33e120de0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gratuitous Violence": {

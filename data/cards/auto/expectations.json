@@ -4311,6 +4311,10 @@
   "duskmantle_prowler": {
     "zone": "battlefield"
   },
+  "duskshell_crawler": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "dutiful_servants": {
     "zone": "battlefield"
   },
@@ -5341,6 +5345,12 @@
   "fight_for_the_throne": {
     "zone": "graveyard"
   },
+  "fight_rigging": {
+    "library_size": {
+      "0": 39
+    },
+    "zone": "battlefield"
+  },
   "fighting_drake": {
     "zone": "battlefield"
   },
@@ -5715,6 +5725,9 @@
   "forest_bear": {
     "zone": "battlefield"
   },
+  "forge_of_heroes": {
+    "zone": "battlefield"
+  },
   "forgotten_cave": {
     "zone": "battlefield"
   },
@@ -6074,6 +6087,10 @@
       "id": "elephant_3_3_g"
     },
     "zone": "graveyard"
+  },
+  "generous_patron": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "generous_stray": {
     "hand_size": {
@@ -6605,6 +6622,10 @@
     "zone": "battlefield"
   },
   "grasslands": {
+    "zone": "battlefield"
+  },
+  "grateful_apparition": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "grave_pact": {
