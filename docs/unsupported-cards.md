@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**171 cards** blocked by **154** capabilities.
+**170 cards** blocked by **153** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -59,7 +59,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
 | [copy-this-spell-on-resolution](#copy-this-spell-on-resolution) | 1 | 338 | op |
 | [council-s-dilemma](#council-s-dilemma) | 1 | 15065 | decision |
-| [counter-kinds-count](#counter-kinds-count) | 1 | 6934 | value |
 | [counter-put-on-object-this-turn](#counter-put-on-object-this-turn) | 1 | 5243 | value |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [coven](#coven) | 1 | 1129 | value |
@@ -1016,20 +1015,6 @@ Blocks **1** card.
   - Council's dilemma — Starting with you, each player votes for past or present.
   - You mill a card for each past vote, then Fateful Tempest deals damage to each opponent equal to the total mana value of cards milled this way.
   - Exile the top card of your library for each present vote.
-
-</details>
-
-## counter-kinds-count
-
-Blocks **1** card.
-
-- **(value)** a value expression counting the number of distinct kinds of counters on an object (e.g. {"counter_kinds_on": {"objects": {"self_only": true}}}), so the granted trigger can 'draw a card for each kind of counter on it'
-  <br>Why the existing vocabulary won't do: `counters_on` reads the count of one named kind, `has_counters` is only a filter, and `distinct` accepts of: power, basic_land_type, card_type, color only (DISTINCT_OF in engine/effects/values.py) -- none counts kinds of counters
-
-<details><summary>Cards waiting on this</summary>
-
-- **Blitzball Stadium** (rank 6934) — `blitzball_stadium`
-  - Go for the Goal! — {3}, {T}: Until end of turn, target creature gains "Whenever this creature deals combat damage to a player, draw a card for each kind of counter on it" and it can't be blocked this turn.
 
 </details>
 

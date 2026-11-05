@@ -27702,12 +27702,12 @@
     },
     "Blitzball Stadium": {
       "edhrec_rank": 6934,
-      "gate": "template",
+      "gate": null,
       "name": "Blitzball Stadium",
-      "reason": "no template for: When this artifact enters, support X",
+      "reason": "",
       "scryfall_id": "771808d9-d0c8-418b-ab6c-1ae6fc07ca20",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Blitzwing, Cruel Tormentor // Blitzwing, Adaptive Assailant": {
