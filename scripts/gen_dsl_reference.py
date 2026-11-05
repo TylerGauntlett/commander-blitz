@@ -277,7 +277,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                     "The `unblockable` op — the same wire, read from the attacker's end"),
     "cant_sacrifice": ("Board", "Permanents can't be sacrificed for a duration.",
                        "The `cant_sacrifice` op — a prohibition on a *game action*, not a zone change"),
-    "move_counters": ("Board", "Move counters from one permanent to another: one named kind, every kind (`all_kinds`, from a leave trigger's or a sacrifice cost's record with `from_had_counters`), or N counters of kinds the controller picks (`any_kind`).",
+    "move_counters": ("Board", "Move counters from one permanent to another: one named kind, every kind (`all_kinds`, from a leave trigger's or a sacrifice cost's record with `from_had_counters`), N counters of kinds the controller picks (`any_kind`), or with `any_number` as many of each kind as the controller chooses.",
                       "Moving a counter of any kind — `move_counters` with `any_kind`"),
     "set_flag": ("Board", "Write a word on the source for the game (renowned, …).", H_EXERTED),
     "proliferate": ("Board", "Proliferate: choose permanents and players, add one of each counter.",

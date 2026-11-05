@@ -3140,7 +3140,22 @@ when it carries more than one, harmful kinds first). Each is taken off before
 it is put on — a placement, so counter replacements and `counter_placed` see it
 — and with either target gone nothing moves. Two target specs never share an
 object, which is "a second target". The loader refuses `any_kind` beside a
-`counter` or `all_kinds`, and without a printed `amount`.
+`counter` or `all_kinds`, and without a printed `amount` unless `any_number`
+says the number is the controller's.
+
+```jsonc
+// Resourceful Defense — "Move any number of counters from target permanent you
+// control onto a second target permanent you control."
+{ "op": "move_counters", "from": { "target": "from" }, "objects": { "target": "onto" },
+  "any_kind": true, "any_number": true }
+```
+
+`any_number` beside `any_kind` is "any number of counters": for each kind on
+the source (harmful kinds first) the controller says how many move, `ask_x` 0
+up to all of that kind, so any sub-multiset is reachable, none included. Each
+kind comes off and goes on in one placement, so a counter replacement applies
+once per kind. The loader refuses it on any other op, without `any_kind`, and
+beside an `amount`. Not `all_kinds`, which moves every counter.
 
 ### Moving counters off this permanent among others — `distribute_moved_counters`
 

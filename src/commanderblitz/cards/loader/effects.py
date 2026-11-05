@@ -157,6 +157,16 @@ def _validate_any_kind_counters(effect: Mapping[str, Any], op: str, where: str) 
         if not isinstance(effect["any_kind"], bool):
             raise DslError(f"{where}: 'any_kind' is a boolean, got {effect['any_kind']!r}")
     any_kind = bool(effect.get("any_kind"))
+    if "any_number" in effect:
+        if op != "move_counters":
+            raise DslError(f"{where}: 'any_number' only means anything on move_counters")
+        if effect["any_number"] is not True:
+            raise DslError(f"{where}: 'any_number' is true or absent, got {effect['any_number']!r}")
+        if not any_kind:
+            raise DslError(
+                f"{where}: 'any_number' chooses how many of each kind move; it needs "
+                f"'any_kind' (a named 'counter' takes 'amount')"
+            )
     if op not in COUNTER_REMOVAL_UP_TO_OPS and op not in ANY_KIND_COUNTER_OPS:
         return
     if op == "remove_counters_from_among":
@@ -196,7 +206,15 @@ def _validate_any_kind_counters(effect: Mapping[str, Any], op: str, where: str) 
                 f"{where}: 'any_kind' moves counters one at a time and 'all_kinds' "
                 f"moves every counter; a card means one of them"
             )
-        if "amount" not in effect:
+        if effect.get("any_number"):
+            # "Move **any number of** counters": the controller says how many
+            # of each kind, so a printed number has nowhere to go.
+            if "amount" in effect:
+                raise DslError(
+                    f"{where}: 'any_number' lets the controller choose how many of "
+                    f"each kind move; an 'amount' beside it would be ignored"
+                )
+        elif "amount" not in effect:
             raise DslError(
                 f"{where}: move_counters with 'any_kind' needs the printed 'amount' "
                 f"(\"move a counter\" is {{\"const\": 1}})"

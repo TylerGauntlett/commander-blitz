@@ -1,0 +1,27 @@
+{
+  "cards": [
+    {
+      "id": "t_resourceful_mover",
+      "name": "Test Resourceful Mover",
+      "oracle_text": "{1}: Move any number of counters from target permanent you control onto a second target permanent you control.",
+      "types": ["Enchantment"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}: Move any number of counters from target permanent you control onto a second target permanent you control.",
+          "cost": {"mana": "{1}"},
+          "targets": [
+            {"id": "from", "kind": "permanent", "count": 1,
+             "selector": {"zone": "battlefield", "controller": "you"}},
+            {"id": "onto", "kind": "permanent", "count": 1,
+             "selector": {"zone": "battlefield", "controller": "you"}}
+          ],
+          "effects": [
+            {"op": "move_counters", "from": {"target": "from"}, "objects": {"target": "onto"},
+             "any_kind": true, "any_number": true}
+          ]
+        }
+      ]
+    }
+  ]
+}
