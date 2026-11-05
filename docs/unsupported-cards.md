@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**155 cards** blocked by **141** capabilities.
+**163 cards** blocked by **149** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -23,8 +23,10 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
+| [cast-spell-targets](#cast-spell-targets) | 2 | 7849 | selector, value |
 | [cast-trigger-x](#cast-trigger-x) | 2 | 1521 | engine, value |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
+| [counter-to-exile](#counter-to-exile) | 2 | 266 | op |
 | [escape](#escape) | 2 | 388 | engine, static_effect |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
@@ -39,6 +41,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
+| [attacking-opponents-of-player](#attacking-opponents-of-player) | 1 | 705 | selector |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [block-restriction-relative-power](#block-restriction-relative-power) | 1 | 6993 | static_effect |
@@ -46,6 +49,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [can-block-only](#can-block-only) | 1 | 2673 | static_effect |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cards-exiled-trigger](#cards-exiled-trigger) | 1 | 1303 | trigger_event |
+| [cast-from-hand-result](#cast-from-hand-result) | 1 | 7016 | op |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [choose-card-type-from-list](#choose-card-type-from-list) | 1 | 611 | op |
 | [chosen-card-type-cost-reduction](#chosen-card-type-cost-reduction) | 1 | 611 | static_effect |
@@ -57,7 +61,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
 | [copy-this-spell-on-resolution](#copy-this-spell-on-resolution) | 1 | 338 | op |
 | [council-s-dilemma](#council-s-dilemma) | 1 | 15065 | decision |
-| [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [coven](#coven) | 1 | 1129 | value |
 | [crime](#crime) | 1 | 2244 | trigger_event |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
@@ -68,6 +71,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 1 | 2389 | engine |
 | [double-x](#double-x) | 1 | 2672 | op |
 | [echo](#echo) | 1 | 961 | keyword |
+| [elemental-1-1-r](#elemental-1-1-r) | 1 | 811 | token |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
 | [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
@@ -77,10 +81,13 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
 | [filtered-discard](#filtered-discard) | 1 | 9279 | op |
+| [first-mate-ragavan](#first-mate-ragavan) | 1 | 7016 | token |
 | [first-x-spell-cost-reduction](#first-x-spell-cost-reduction) | 1 | 8360 | static_effect |
 | [fixed-piles-opponent-chooses](#fixed-piles-opponent-chooses) | 1 | 12369 | op |
 | [foretold](#foretold) | 1 | 3713 | value |
+| [free-cast-by-other-player](#free-cast-by-other-player) | 1 | 11704 | op |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
+| [gold-token](#gold-token) | 1 | 705 | token |
 | [grant-evoke](#grant-evoke) | 1 | 5749 | static_effect |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
 | [graveyard-cast-per-permanent-type](#graveyard-cast-per-permanent-type) | 1 | 1104 | static_effect |
@@ -107,6 +114,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [modified](#modified) | 1 | 831 | selector |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [myriad](#myriad) | 1 | 6808 | keyword |
+| [no-mana-cost](#no-mana-cost) | 1 | 2978 | engine |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [odd-or-even](#odd-or-even) | 1 | 8504 | selector |
 | [omen](#omen) | 1 | 3355 | cost, engine |
@@ -432,6 +440,26 @@ Blocks **2** cards.
 
 </details>
 
+## cast-spell-targets
+
+Blocks **2** cards.
+
+- **(value)** a condition a spell_cast trigger can ask about the cast spell's PLAYER targets as well as its object targets -- "if it targets a permanent or player" -- e.g. an event binding of the seats the spell targeted (spell_target_players) or a condition key `spell_targets_any: ["permanent", "player"]`, usable in an `if` whose then is copy_spell (new_targets, sid of the triggering spell) and whose else is draw 1
+  <br>Why the existing vocabulary won't do: The spell_cast event binding `spell_targets` (Game._cast) carries only targets of kind "object", deliberately dropping player targets, so `exists` over it answers "targets a permanent" but a spell aimed only at a player (Lightning Bolt to the face, Fact or Fiction-style target-player spells) would wrongly fall into the draw branch instead of being copied. No condition_keys or value_keys entry reads a spell's player targets. The rest of the line (trigger nth: 2 on spell_cast controller you, copy_spell with new_targets, if/else draw) appears expressible once that condition exists; the sid binding naming the triggering spell for copy_spell should also be confirmed.
+- **(selector)** a spell_cast trigger filter key matching a spell that has one or more targets chosen as it was cast (e.g. filter {"has_targets": true}), counting distinct target objects/players across all its target instances
+  <br>Why the existing vocabulary won't do: trigger_filter_keys reads only printed characteristics (types, colors, mana_value, ...) and zone/controller facts; nothing inspects the cast spell's chosen targets. targeted_by on a trigger is the inverse (a permanent becoming the target), and becomes_target fires per targeted object, not once per spell cast
+- **(value)** a value reading the number of targets the triggering spell (bound as the trigger's subject) has, so draw's amount can be 'that many'
+  <br>Why the existing vocabulary won't do: value_keys has count over a selector, x, mana_value_of and spells_cast_this_turn, but no reader of a stack object's chosen targets; the engine's target_count helper in engine/targeting.py computes legal target numbers for a spec, not the targets a cast spell actually chose, and is not exposed to the DSL
+
+<details><summary>Cards waiting on this</summary>
+
+- **Voracious Bibliophile** (rank 7849) — `voracious_bibliophile`
+  - Whenever you cast a spell with one or more targets, draw that many cards.
+- **Shiko and Narset, Unified** (rank 8290) — `shiko_and_narset_unified`
+  - Flurry — Whenever you cast your second spell each turn, copy that spell if it targets a permanent or player, and you may choose new targets for the copy. If you don't copy a spell this way, draw a card.
+
+</details>
+
 ## cast-trigger-x
 
 Blocks **2** cards.
@@ -465,6 +493,24 @@ Blocks **2** cards.
   - You may choose new targets for target spell or ability.
 - **Misdirection** (rank 1562) — `misdirection`
   - Change the target of target spell with a single target.
+
+</details>
+
+## counter-to-exile
+
+Blocks **2** cards.
+
+- **(op)** an option on the `counter` op -- e.g. `to: "exile"` -- that sends the countered spell to exile instead of its owner's graveyard, applying only to spells this instance actually countered ('countered this way'). Wanted by Force of Negation, Dissipate, Void Shatter, Nullify-style exile counters and Hindering Light's cousins.
+  <br>Why the existing vocabulary won't do: `op_counter` (src/commanderblitz/engine/effects/ops_stack.py) unconditionally calls `move_object(..., Zone.GRAVEYARD, cause="countered")` after pulling the item off the stack; the spec accepts only `target`/`sid` and there is no destination key. Chaining `exile` after `counter` cannot reach it either: once countered the spell is no longer a stack object, and `selector_keys` has no way to name the card that a preceding `counter` in the same effect list just moved -- `snapshot` reads a value off an object, not a zone-change replacement. `replace_leaves_battlefield` and `replace_deaths` are battlefield-only and would not see a stack-to-graveyard move.
+- **(op)** an option on the `counter` op that sends the countered spell's card to exile instead of its owner's graveyard (only if it was actually countered, not when it 'can't be countered'), binds that exiled card under `as`, and then lets the effect's controller optionally cast it right away without paying its mana cost (Hullbreacher-style theft of an opponent's spell: Transcendent Dragon, Kheru Spellsnatcher, Spelljack-style counters)
+  <br>Why the existing vocabulary won't do: `counter` takes only `objects`, `sid` and `target` and always moves the card to the graveyard; its only exile path is the spell's own `exiles_instead` flag set by `cast_card`'s `exiles`, which the countering effect cannot set. Following it with `exile` cannot express 'instead of the graveyard' (the card would hit the graveyard first, firing graveyard triggers and letting the owner's graveyard abilities see it) and has no binding to the countered card or to 'if that spell is countered this way'; `cast_card`/`exile` `playable_free` would then need that binding too
+
+<details><summary>Cards waiting on this</summary>
+
+- **Force of Negation** (rank 266) — `force_of_negation`
+  - If that spell is countered this way, exile it instead of putting it into its owner's graveyard.
+- **Transcendent Dragon** (rank 7248) — `transcendent_dragon`
+  - When this creature enters, if you cast it, counter target spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard, then you may cast it without paying its mana cost.
 
 </details>
 
@@ -704,6 +750,20 @@ Blocks **1** card.
 
 </details>
 
+## attacking-opponents-of-player
+
+Blocks **1** card.
+
+- **(selector)** a player set for for_each_player meaning "each opponent (of the Curse's controller) who is attacking the enchanted player this combat", so each of them creates a Gold token under their own control alongside the Curse's controller
+  <br>Why the existing vocabulary won't do: for_each_player takes `players` (e.g. each_opponent), and the trigger side is covered by `creatures_attack_player` with `defending: enchanted_player`, but no player spec found in reference filters opponents down to those with a creature attacking the enchanted player; each_opponent would also give tokens to non-attacking opponents and to the enchanted player. Secondary to the token gap; unverified whether a select_players spec already exists for this
+
+<details><summary>Cards waiting on this</summary>
+
+- **Curse of Opulence** (rank 705) — `curse_of_opulence`
+  - Whenever enchanted player is attacked, create a Gold token. Each opponent attacking that player does the same.
+
+</details>
+
 ## base-power-trigger-filter
 
 Blocks **1** card.
@@ -801,6 +861,20 @@ Blocks **1** card.
 
 - **Laelia, the Blade Reforged** (rank 1303) — `laelia_the_blade_reforged`
   - Whenever one or more cards are put into exile from your library and/or your graveyard, put a +1/+1 counter on Laelia.
+
+</details>
+
+## cast-from-hand-result
+
+Blocks **1** card.
+
+- **(op)** cast_from_hand needs an `as` binding (or equivalent) recording whether a spell was actually cast, so a following `if` can run the 'If you don't' branch only when the player declined or had nothing to cast
+  <br>Why the existing vocabulary won't do: cast_from_hand's option list is exiles/objects/per_owner/player/selector/zones with no `as`; its optionality is internal (ask_objects with minimum 0), so wrapping it in `may` with an `else` would let the player say yes and then pick nothing, skipping both the cast and the token
+
+<details><summary>Cards waiting on this</summary>
+
+- **Baral and Kari Zev** (rank 7016) — `baral_and_kari_zev`
+  - Whenever you cast your first instant or sorcery spell each turn, you may cast a spell with lesser mana value that shares a card type with it from your hand without paying its mana cost. If you don't, create First Mate Ragavan, a legendary 2/1 red Monkey Pirate creature token. It gains haste until end of turn.
 
 </details>
 
@@ -966,20 +1040,6 @@ Blocks **1** card.
 
 </details>
 
-## counter-to-exile
-
-Blocks **1** card.
-
-- **(op)** an option on the `counter` op -- e.g. `to: "exile"` -- that sends the countered spell to exile instead of its owner's graveyard, applying only to spells this instance actually countered ('countered this way'). Wanted by Force of Negation, Dissipate, Void Shatter, Nullify-style exile counters and Hindering Light's cousins.
-  <br>Why the existing vocabulary won't do: `op_counter` (src/commanderblitz/engine/effects/ops_stack.py) unconditionally calls `move_object(..., Zone.GRAVEYARD, cause="countered")` after pulling the item off the stack; the spec accepts only `target`/`sid` and there is no destination key. Chaining `exile` after `counter` cannot reach it either: once countered the spell is no longer a stack object, and `selector_keys` has no way to name the card that a preceding `counter` in the same effect list just moved -- `snapshot` reads a value off an object, not a zone-change replacement. `replace_leaves_battlefield` and `replace_deaths` are battlefield-only and would not see a stack-to-graveyard move.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Force of Negation** (rank 266) — `force_of_negation`
-  - If that spell is countered this way, exile it instead of putting it into its owner's graveyard.
-
-</details>
-
 ## coven
 
 Blocks **1** card.
@@ -1122,6 +1182,20 @@ Blocks **1** card.
 
 </details>
 
+## elemental-1-1-r
+
+Blocks **1** card.
+
+- **(token)** a 1/1 red Elemental creature token (no abilities), suggested id elemental_1_1_r
+  <br>Why the existing vocabulary won't do: token_ids is a closed list and has no mono-red 1/1 Elemental: the nearest is elemental_1_1_ur, which is blue and red, so it would give the token the wrong colours. The trigger half is already expressible: a spell_cast trigger with controller you and filter any_types [Instant, Sorcery] feeding create_token
+
+<details><summary>Cards waiting on this</summary>
+
+- **Young Pyromancer** (rank 811) — `young_pyromancer`
+  - Whenever you cast an instant or sorcery spell, create a 1/1 red Elemental creature token.
+
+</details>
+
 ## elemental-x-x-ur-flying-haste
 
 Blocks **1** card.
@@ -1251,6 +1325,20 @@ Blocks **1** card.
 
 </details>
 
+## first-mate-ragavan
+
+Blocks **1** card.
+
+- **(token)** First Mate Ragavan, a legendary 2/1 red Monkey Pirate creature token (named token, supertype Legendary, no abilities)
+  <br>Why the existing vocabulary won't do: token_ids has no Ragavan or legendary 2/1 red Monkey Pirate; the only Pirate is pirate_2_2_b_menace, which is a different token
+
+<details><summary>Cards waiting on this</summary>
+
+- **Baral and Kari Zev** (rank 7016) — `baral_and_kari_zev`
+  - Whenever you cast your first instant or sorcery spell each turn, you may cast a spell with lesser mana value that shares a card type with it from your hand without paying its mana cost. If you don't, create First Mate Ragavan, a legendary 2/1 red Monkey Pirate creature token. It gains haste until end of turn.
+
+</details>
+
 ## first-x-spell-cost-reduction
 
 Blocks **1** card.
@@ -1299,6 +1387,20 @@ Blocks **1** card.
 
 </details>
 
+## free-cast-by-other-player
+
+Blocks **1** card.
+
+- **(op)** a caster key on the free-cast ops (exile_until's cast_free, and play_exiled) naming a player spec other than the effect's controller, so "its controller exiles cards from the top of their library until they exile a nonland card, then THEY may cast that card without paying its mana cost" offers the cast to the destroyed permanent's controller (e.g. {"controller_of": <snapshot binding>}) and that player controls the resulting spell
+  <br>Why the existing vocabulary won't do: exile_until already walks another player's library via `player`, but its docstring and code route the free-cast offer to ctx.controller always (_offer_free_cast(ctx, controller, ...)), which is Strago and Relm's "You may cast that card"; play_exiled, cast_card and cast_from_hand likewise cast as the resolving controller. Writing it that way would hand the opponent's free spell to the Flourish's caster, a strictly different (and much stronger) card. Demonstrate itself and the conditional destroy (destroy `as` + an `if` on `exists`) are expressible; only the caster of the free spell is not.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Transforming Flourish** (rank 11704) — `transforming_flourish`
+  - Destroy target artifact or creature you don't control. If that permanent is destroyed this way, its controller exiles cards from the top of their library until they exile a nonland card, then they may cast that card without paying its mana cost.
+
+</details>
+
 ## free-cast-tuck-to-library-bottom
 
 Blocks **1** card.
@@ -1311,6 +1413,20 @@ Blocks **1** card.
 - **Quintorius, Loremaster** (rank 8925) — `quintorius_loremaster`
   - At the beginning of your end step, exile target noncreature, nonland card from your graveyard. Create a 3/2 red and white Spirit creature token.
   - {1}{R}{W}, {T}, Sacrifice a Spirit: Choose target card exiled with Quintorius. You may cast that card this turn without paying its mana cost. If that spell would be put into a graveyard, put it on the bottom of its owner's library instead.
+
+</details>
+
+## gold-token
+
+Blocks **1** card.
+
+- **(token)** a colorless Gold artifact token with "Sacrifice this token: Add one mana of any color." (no {T} in the cost), created by each recipient under their own control
+  <br>Why the existing vocabulary won't do: token_ids has no Gold token; the closest is treasure_token, whose ability is "{T}, Sacrifice this artifact: Add one mana of any color." -- it has a tap in its cost and the Treasure subtype, so it is a different token (can't be used while tapped, counts for Treasure synergies)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Curse of Opulence** (rank 705) — `curse_of_opulence`
+  - Whenever enchanted player is attacked, create a Gold token. Each opponent attacking that player does the same.
 
 </details>
 
@@ -1680,6 +1796,20 @@ Blocks **1** card.
 
 - **Mass of Mysteries** (rank 6808) — `mass_of_mysteries`
   - At the beginning of combat on your turn, another target Elemental you control gains myriad until end of turn
+
+</details>
+
+## no-mana-cost
+
+Blocks **1** card.
+
+- **(engine)** A card that prints no mana cost (Ancestral Vision, Lotus Bloom, Living End, Restore Balance, Wheel of Fate) must not be castable for its mana cost: its mana cost is unpayable (118.6, 202.1b), so it may be cast only by an alternative or free cast such as suspend's cast_for_free. The engine needs a distinction between 'no mana cost' and '{0}', and legality must withhold the ordinary hand cast line for the former while still offering the suspend special action and free casts.
+  <br>Why the existing vocabulary won't do: The `suspend` card-level key ({"cost": "{U}", "counters": 4}), a player target and `draw` with `player: {"target": "t1"}` express every printed word, but an omitted `mana_cost` compiles to an empty ManaCost, which legality treats as {0}. Verified with a scratch run of verify(): the draft passed all six gates because the sandbox CAST it straight from hand for nothing, so the card would be a free 'target player draws three cards' at sorcery speed -- strictly better than printed. No card-level rider (`cant_cast_first_turns`, `alternative_cost`, a `cant_cast_spells` static) says 'this card cannot be cast from hand normally' while leaving the suspend free cast open.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ancestral Vision** (rank 2978) — `ancestral_vision`
+  - Suspend 4—{U} (Rather than cast this card from your hand, pay {U} and exile it with four time counters on it. At the beginning of your upkeep, remove a time counter. When the last is removed, you may cast it without paying its mana cost.)
 
 </details>
 

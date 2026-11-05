@@ -1,0 +1,23 @@
+{
+  "card_id": "transcendent_dragon",
+  "name": "Transcendent Dragon",
+  "oracle_text": "Flash\nFlying\nWhen this creature enters, if you cast it, counter target spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard, then you may cast it without paying its mana cost.",
+  "blocked_sentences": [
+    "When this creature enters, if you cast it, counter target spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard, then you may cast it without paying its mana cost."
+  ],
+  "needs": [
+    {
+      "capability": "counter_to_exile",
+      "kind": "op",
+      "what": "an option on the `counter` op that sends the countered spell's card to exile instead of its owner's graveyard (only if it was actually countered, not when it 'can't be countered'), binds that exiled card under `as`, and then lets the effect's controller optionally cast it right away without paying its mana cost (Hullbreacher-style theft of an opponent's spell: Transcendent Dragon, Kheru Spellsnatcher, Spelljack-style counters)",
+      "why_existing_wont_do": "`counter` takes only `objects`, `sid` and `target` and always moves the card to the graveyard; its only exile path is the spell's own `exiles_instead` flag set by `cast_card`'s `exiles`, which the countering effect cannot set. Following it with `exile` cannot express 'instead of the graveyard' (the card would hit the graveyard first, firing graveyard triggers and letting the owner's graveyard abilities see it) and has no binding to the countered card or to 'if that spell is countered this way'; `cast_card`/`exile` `playable_free` would then need that binding too"
+    }
+  ],
+  "closest_existing": [
+    "counter",
+    "exile",
+    "cast_card",
+    "playable_free"
+  ],
+  "confidence": "high"
+}

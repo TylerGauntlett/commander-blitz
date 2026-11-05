@@ -1127,6 +1127,101 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "charge",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast an instant or sorcery spell, if this artifact has fewer than three charge counters on it, put a charge counter on it.",
+          "trigger": {
+            "condition": {
+              "cmp": "<",
+              "left": {
+                "counters_on": {
+                  "counter": "charge",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              },
+              "right": {
+                "const": 3
+              }
+            },
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "remove_counters": {
+              "amount": 3,
+              "counter": "charge"
+            }
+          },
+          "effects": [
+            {
+              "duration": "once_this_turn",
+              "effects": [
+                {
+                  "new_targets": true,
+                  "op": "copy_spell"
+                }
+              ],
+              "op": "delayed_trigger",
+              "text": "When you next cast an instant or sorcery spell this turn, copy it and you may choose new targets for the copy.",
+              "trigger": {
+                "condition": {
+                  "exists": {
+                    "any_types": [
+                      "Instant",
+                      "Sorcery"
+                    ],
+                    "binding": "subject",
+                    "zone": "stack"
+                  }
+                },
+                "controller": "you",
+                "event": "spell_cast"
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "Remove three charge counters from this artifact: When you next cast an instant or sorcery spell this turn, copy it and you may choose new targets for the copy."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "adaptive_training_post",
+      "mana_cost": "{2}{U}",
+      "name": "Adaptive Training Post",
+      "oracle_text": "Whenever you cast an instant or sorcery spell, if this artifact has fewer than three charge counters on it, put a charge counter on it.\nRemove three charge counters from this artifact: When you next cast an instant or sorcery spell this turn, copy it and you may choose new targets for the copy.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -3745,6 +3840,58 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "rally",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            },
+            {
+              "amount": {
+                "counters_on": {
+                  "counter": "rally",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "monk_1_1_w_prowess"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Flurry — Whenever you cast your second spell each turn, put a rally counter on this enchantment. Then create a 1/1 white Monk creature token with prowess for each rally counter on it.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "nth": 2
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "aligned_heart",
+      "mana_cost": "{2}{W}",
+      "name": "Aligned Heart",
+      "oracle_text": "Flurry — Whenever you cast your second spell each turn, put a rally counter on this enchantment. Then create a 1/1 white Monk creature token with prowess for each rally counter on it. (Whenever you cast a noncreature spell, the token gets +1/+1 until end of turn.)",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -14621,6 +14768,57 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "baral_s_expertise",
+      "mana_cost": "{3}{U}{U}",
+      "name": "Baral's Expertise",
+      "oracle_text": "Return up to three target artifacts and/or creatures to their owners' hands.\nYou may cast a spell with mana value 4 or less from your hand without paying its mana cost.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "return_to_hand"
+        },
+        {
+          "op": "cast_from_hand",
+          "player": "you",
+          "selector": {
+            "mana_value": {
+              "op": "<=",
+              "value": {
+                "const": 4
+              }
+            }
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 3,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "up_to": true
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -53139,6 +53337,85 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Prowess",
+          "trigger": {
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "monk_1_1_w_prowess"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Elsha deals combat damage to a player, create that many 1/1 white Monk creature tokens with prowess.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "U",
+        "W"
+      ],
+      "id": "elsha_threefold_master",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{U}{R}{W}",
+      "name": "Elsha, Threefold Master",
+      "oracle_text": "Trample\nProwess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)\nWhenever Elsha deals combat damage to a player, create that many 1/1 white Monk creature tokens with prowess.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Djinn",
+        "Monk"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "loyalty": 1
           },
@@ -74347,6 +74624,47 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects_spells": {
+            "any_types": [
+              "Instant",
+              "Sorcery"
+            ],
+            "controller": "you"
+          },
+          "amount": {
+            "const": 1
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Instant and sorcery spells you cast cost {1} less to cast."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "goblin_electromancer",
+      "mana_cost": "{U}{R}",
+      "name": "Goblin Electromancer",
+      "oracle_text": "Instant and sorcery spells you cast cost {1} less to cast.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Goblin",
+        "Wizard"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -79682,6 +80000,53 @@
           "effects": [
             {
               "amount": {
+                "const": 2
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast an instant or sorcery spell, this creature deals 2 damage to each opponent.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "guttersnipe",
+      "mana_cost": "{2}{R}",
+      "name": "Guttersnipe",
+      "oracle_text": "Whenever you cast an instant or sorcery spell, this creature deals 2 damage to each opponent.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Goblin",
+        "Shaman"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
                 "permanents_entered_this_turn": {
                   "controller": "you",
                   "is_token": false,
@@ -81262,6 +81627,68 @@
         "Warrior"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "count": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ],
+              "controller": "you",
+              "zone": "graveyard"
+            }
+          },
+          "text": "Haughty Djinn's power is equal to the number of instant and sorcery cards in your graveyard.",
+          "toughness": {
+            "const": 4
+          }
+        },
+        {
+          "affects_spells": {
+            "any_types": [
+              "Instant",
+              "Sorcery"
+            ],
+            "controller": "you"
+          },
+          "amount": {
+            "const": 1
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Instant and sorcery spells you cast cost {1} less to cast."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "haughty_djinn",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{U}{U}",
+      "name": "Haughty Djinn",
+      "oracle_text": "Flying\nHaughty Djinn's power is equal to the number of instant and sorcery cards in your graveyard.\nInstant and sorcery spells you cast cost {1} less to cast.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Djinn"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -123306,6 +123733,46 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "narset_s_reversal",
+      "mana_cost": "{U}{U}",
+      "name": "Narset's Reversal",
+      "oracle_text": "Copy target instant or sorcery spell, then return it to its owner's hand. You may choose new targets for the copy.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "new_targets": true,
+          "op": "copy_spell",
+          "target": "t1"
+        },
+        {
+          "op": "return_spell_to_hand",
+          "target": "t1"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "spell",
+          "selector": {
+            "any_types": [
+              "Instant",
+              "Sorcery"
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -163136,6 +163603,82 @@
     {
       "abilities": [
         {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Enchanted creature gets +2/+2 and is goaded.",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "goaded",
+          "kind": "static",
+          "text": "Enchanted creature gets +2/+2 and is goaded."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever enchanted creature attacks, you create a Treasure token.",
+          "trigger": {
+            "controller": "any",
+            "event": "attacks",
+            "filter": {
+              "attached": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "shiny_impetus",
+      "mana_cost": "{2}{R}",
+      "name": "Shiny Impetus",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +2/+2 and is goaded. (It attacks each combat if able and attacks a player other than you if able.)\nWhenever enchanted creature attacks, you create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "mana": "{6}{U}{U}"
           },
@@ -186015,6 +186558,94 @@
     {
       "abilities": [
         {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "amount": {
+                "minus": [
+                  {
+                    "spells_cast_this_turn": "all"
+                  },
+                  {
+                    "const": 1
+                  }
+                ]
+              },
+              "new_targets": true,
+              "op": "copy_spell"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Storm (When you cast this spell, copy it for each spell cast before it this turn. You may choose new targets for the copies. Copies become tokens.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Enchantment"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "text": "Enchanted creature gets +1/+1 for each enchantment you control.",
+          "toughness": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Enchantment"
+              ],
+              "zone": "battlefield"
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "tempest_technique",
+      "mana_cost": "{3}{W}",
+      "name": "Tempest Technique",
+      "oracle_text": "Storm (When you cast this spell, copy it for each spell cast before it this turn. You may choose new targets for the copies. Copies become tokens.)\nEnchant creature you control\nEnchanted creature gets +1/+1 for each enchantment you control.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -191258,6 +191889,82 @@
       "colors": [
         "U"
       ],
+      "flashback": {
+        "mana": "{2}{U}"
+      },
+      "id": "think_twice",
+      "mana_cost": "{1}{U}",
+      "name": "Think Twice",
+      "oracle_text": "Draw a card.\nFlashback {2}{U} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "draw",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "soldier_1_1_c"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a noncreature spell, create a 1/1 colorless Soldier artifact creature token.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "third_path_iconoclast",
+      "mana_cost": "{U}{R}",
+      "name": "Third Path Iconoclast",
+      "oracle_text": "Whenever you cast a noncreature spell, create a 1/1 colorless Soldier artifact creature token.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Monk"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
       "id": "thirst_for_knowledge",
       "mana_cost": "{2}{U}",
       "name": "Thirst for Knowledge",
@@ -193716,6 +194423,49 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "time_wipe",
+      "mana_cost": "{2}{W}{W}{U}",
+      "name": "Time Wipe",
+      "oracle_text": "Return a creature you control to its owner's hand, then destroy all creatures.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "chooser": "controller",
+            "controller": "you",
+            "count": 1,
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "return_to_hand"
+        },
+        {
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "destroy"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -204390,6 +205140,74 @@
         "Warlock"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 7
+              },
+              "cast_free": true,
+              "objects": {
+                "any_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "count": 1,
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "power_of": {
+                      "self": true
+                    }
+                  }
+                },
+                "optional": true
+              },
+              "op": "look_at_top",
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Velomachus Lorehold attacks, look at the top seven cards of your library. You may cast an instant or sorcery spell with mana value less than or equal to Velomachus Lorehold's power from among them without paying its mana cost. Put the rest on the bottom of your library in a random order.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "velomachus_lorehold",
+      "keywords": [
+        "flying",
+        "vigilance",
+        "haste"
+      ],
+      "mana_cost": "{5}{R}{W}",
+      "name": "Velomachus Lorehold",
+      "oracle_text": "Flying, vigilance, haste\nWhenever Velomachus Lorehold attacks, look at the top seven cards of your library. You may cast an instant or sorcery spell with mana value less than or equal to Velomachus Lorehold's power from among them without paying its mana cost. Put the rest on the bottom of your library in a random order.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Elder",
+        "Dragon"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
