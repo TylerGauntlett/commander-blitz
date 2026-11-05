@@ -408,6 +408,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "grant_plot": ("Stack", "Plot a card: exile it, castable free on a later turn.", "Plot"),
     "grant_rebound": ("Stack", "Give a spell rebound as it resolves.",
                       "Granting rebound to a spell that does not print it"),
+    "spell_enters_with_counters": ("Stack", "Promise a spell's permanent counters it enters with.",
+                                   "Promising counters to the permanent a spell becomes"),
     "return_spell_to_hand": ("Stack", "Return a spell from the stack to its owner's hand.",
                              "Doing something to a spell that is not countering it"),
     "reflexive_trigger": ("Stack", "\"When you do\": queue a trigger off the preceding effect.",

@@ -10,7 +10,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 162 |
+| [Effect ops](#effect-ops) | 163 |
 | [Selectors](#selectors) | 74 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 68 |
@@ -33,7 +33,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Spell filter keys](#spell-filter-keys) | 12 |
 | [Spell cost-reduction filter keys](#spell-cost-reduction-filter-keys) | 4 |
 | [Cost-reduction filter keys](#cost-reduction-filter-keys) | 2 |
-| [Mana rider ops](#mana-rider-ops) | 6 |
+| [Mana rider ops](#mana-rider-ops) | 7 |
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
 | [Card-level face keys](#card-level-face-keys) | 6 |
 | [Card-level rider keys](#card-level-rider-keys) | 18 |
@@ -185,6 +185,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `grant_rebound` | Stack |  | Give a spell rebound as it resolves. | [Granting rebound to a spell that does not print it](card-dsl.md#granting-rebound-to-a-spell-that-does-not-print-it) |
 | `reflexive_trigger` | Stack |  | "When you do": queue a trigger off the preceding effect. | ["When you do" — reflexive triggered abilities](card-dsl-cookbook.md#when-you-do--reflexive-triggered-abilities) |
 | `return_spell_to_hand` | Stack |  | Return a spell from the stack to its owner's hand. | [Doing something to a spell that is not countering it](card-dsl.md#doing-something-to-a-spell-that-is-not-countering-it) |
+| `spell_enters_with_counters` | Stack |  | Promise a spell's permanent counters it enters with. | [Promising counters to the permanent a spell becomes](card-dsl.md#promising-counters-to-the-permanent-a-spell-becomes) |
 | `extra_combat` | Turn structure |  | An additional combat phase (and main phase) this turn. | [An additional combat phase](card-dsl-cookbook.md#an-additional-combat-phase) |
 | `extra_turn` | Turn structure |  | A player takes an extra turn after this one. | [An extra turn](card-dsl-cookbook.md#an-extra-turn) |
 | `choose_blockers` | Combat decisions |  | Decide blocks on another player's behalf. | [Effect ops](card-dsl.md#effect-ops) |
@@ -1041,6 +1042,7 @@ The ops a mana ability may carry beside `add_mana` -- the painland's drawback. D
 | `add_counters` | Put N counters of a kind on permanents or players; `counter: {"binding": "counter"}` on a `counter_placed` trigger is the kind that placement put. | [A mana ability with a rider — the painland's drawback](card-dsl-cookbook.md#a-mana-ability-with-a-rider--the-painlands-drawback) |
 | `add_poison` | A player gets N poison counters. | [A mana ability with a rider — the painland's drawback](card-dsl-cookbook.md#a-mana-ability-with-a-rider--the-painlands-drawback) |
 | `damage` | A source deals N damage to objects or players; `excess_to` spills over; `defender_of` hits what a creature is attacking; `divided` splits it among a target spec as the spell is cast. | [damage's excess_to](card-dsl.md#damages-excess_to) |
+| `delayed_trigger` | Create a trigger that watches an event for a `duration` (the rest of the turn by default, or this combat). | [delayed_trigger — an ability that watches an event](card-dsl-cookbook.md#delayed_trigger--an-ability-that-watches-an-event) |
 | `gain_life` | A player gains N life. | [A mana ability with a rider — the painland's drawback](card-dsl-cookbook.md#a-mana-ability-with-a-rider--the-painlands-drawback) |
 | `lose_life` | A player loses N life; `as` records how much. | [A mana ability with a rider — the painland's drawback](card-dsl-cookbook.md#a-mana-ability-with-a-rider--the-painlands-drawback) |
 | `remove_counters` | Remove N counters of a kind; with `any_kind`, of whichever kinds the controller picks, one at a time, and `up_to` makes N a ceiling; with `all_kinds`, every counter of every kind. `as` binds the total removed. | [Removing counters of any kind — any_kind](card-dsl.md#removing-counters-of-any-kind--any_kind) |

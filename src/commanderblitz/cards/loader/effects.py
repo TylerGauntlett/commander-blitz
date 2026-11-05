@@ -1124,7 +1124,16 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"'grants_flashback' -- an unmetered permission is an engine, "
                 f"not a printed line"
             )
-    if op in ("grant_rebound", "grant_plot"):
+    if op == "spell_enters_with_counters":
+        # The map is the whole effect: without it the spell is promised
+        # nothing and the card reads as printed while doing nothing.
+        counters = effect.get("counters")
+        if not isinstance(counters, Mapping) or not counters:
+            raise DslError(
+                f"{where}: spell_enters_with_counters needs 'counters', a map of "
+                f"counter kind to amount (e.g. {{'+1/+1': 2}})"
+            )
+    if op in ("grant_rebound", "grant_plot", "spell_enters_with_counters"):
         # The same two checks `return_spell_to_hand` makes, for the same reason
         # and with the same failure mode: the op reads one stack object, and a
         # `target` that names a permanent or a player finds no spell, sets

@@ -391,6 +391,38 @@ def op_grant_rebound(ctx: EffectContext, spec: Mapping[str, Any]):
     obj.granted_rebound = True
 
 
+@register("spell_enters_with_counters")
+def op_spell_enters_with_counters(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"…that creature enters with two additional +1/+1 counters on it." --
+    Yuna, Grand Summoner.
+
+    A replacement on the **spell's arrival** (614.1c), not counters put on a
+    permanent afterwards: the creature is never on the battlefield without
+    them, so they are one placement with everything else it enters with
+    (122.6) -- Hardened Scales adds one to the total, and an "enters with
+    counters" trigger sees them. So this writes the promise onto the spell's
+    object while it is still on the stack (`GameObject.cast_enters_with`),
+    `move_object` carries it across the reset only to the battlefield, and
+    `zones._enter_battlefield` adds it to the arrival's placement. A countered
+    spell keeps nothing, and a non-permanent spell never arrives to cash it.
+
+    **Which spell** is `_spell_named_by`'s answer -- the trigger's own `sid` by
+    default, which is "**that** creature" on a `spell_cast` delayed trigger.
+    ``counters`` maps a counter kind to an amount, evaluated now, below zero
+    read as zero.
+    """
+    item = _spell_named_by(ctx, spec)
+    if item is None:
+        return
+    obj = ctx.state.objects.get(item.oid)
+    if obj is None:
+        return
+    for kind, amount in (spec.get("counters") or {}).items():
+        value = max(0, int(evaluate_value(ctx, amount)))
+        if value:
+            obj.cast_enters_with[str(kind)] = obj.cast_enters_with.get(str(kind), 0) + value
+
+
 @register("grant_plot")
 def op_grant_plot(ctx: EffectContext, spec: Mapping[str, Any]):
     """"Exile that spell instead of putting it into your graveyard as it resolves.

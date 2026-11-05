@@ -217597,6 +217597,173 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            },
+            {
+              "duration": "once_this_turn",
+              "effects": [
+                {
+                  "counters": {
+                    "+1/+1": 2
+                  },
+                  "op": "spell_enters_with_counters"
+                }
+              ],
+              "op": "delayed_trigger",
+              "text": "When you next cast a creature spell this turn, that creature enters with two additional +1/+1 counters on it.",
+              "trigger": {
+                "condition": {
+                  "exists": {
+                    "binding": "subject",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "stack"
+                  }
+                },
+                "controller": "you",
+                "event": "spell_cast"
+              }
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "Grand Summon — {T}: Add one mana of any color. When you next cast a creature spell this turn, that creature enters with two additional +1/+1 counters on it."
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "counters_had": "any"
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "add_counters"
+                }
+              ],
+              "op": "may",
+              "prompt": "Put that many +1/+1 counters on target creature?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever another permanent you control is put into a graveyard from the battlefield, if it had one or more counters on it, you may put that number of +1/+1 counters on target creature.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "counters_had": "any"
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "controller": "you",
+            "event": "leaves_battlefield",
+            "filter": {
+              "exclude_self": true
+            },
+            "to_zones": [
+              "graveyard"
+            ]
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "U",
+        "W"
+      ],
+      "id": "yuna_grand_summoner",
+      "mana_cost": "{1}{G}{W}{U}",
+      "name": "Yuna, Grand Summoner",
+      "oracle_text": "Grand Summon — {T}: Add one mana of any color. When you next cast a creature spell this turn, that creature enters with two additional +1/+1 counters on it.\nWhenever another permanent you control is put into a graveyard from the battlefield, if it had one or more counters on it, you may put that number of +1/+1 counters on target creature.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Cleric"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],

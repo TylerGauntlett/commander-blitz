@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**157 cards** blocked by **142** capabilities.
+**156 cards** blocked by **141** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -96,7 +96,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
 | [lose-the-game](#lose-the-game) | 1 | 1512 | op |
 | [lure](#lure) | 1 | 31502 | static_effect |
-| [mana-ability-delayed-enters-with-counters](#mana-ability-delayed-enters-with-counters) | 1 | 3706 | op |
 | [mana-ability-leading-rider](#mana-ability-leading-rider) | 1 | 4080 | engine |
 | [mana-cant-pay-generic](#mana-cant-pay-generic) | 1 | 3861 | value |
 | [mana-spent-enters-with-counters](#mana-spent-enters-with-counters) | 1 | 653 | replacement |
@@ -1529,20 +1528,6 @@ Blocks **1** card.
 - **Marble Priest** (rank 31502) — `marble_priest`
   - All Walls able to block this creature do so.
   - Prevent all combat damage that would be dealt to this creature by Walls.
-
-</details>
-
-## mana-ability-delayed-enters-with-counters
-
-Blocks **1** card.
-
-- **(op)** a mana-ability rider that sets up a delayed trigger on activation (no stack): 'when you next cast a creature spell this turn' (fires once, then expires at end of turn), whose effect makes THAT spell's permanent enter with N additional +1/+1 counters (a replacement on the spell, not counters added after it enters)
-  <br>Why the existing vocabulary won't do: A mana ability may hold only add_mana plus riders from add_counters/add_poison/damage/gain_life/lose_life/remove_counters, so delayed_trigger cannot ride on it; mana_grant hands over keywords only, never counters; enters_with_additional_counters is a standing static over a filter rather than a one-shot tied to the next creature spell cast this turn; and add_counters on a spell_cast delayed trigger would act on the spell on the stack, not make the permanent enter with them
-
-<details><summary>Cards waiting on this</summary>
-
-- **Yuna, Grand Summoner** (rank 3706) — `yuna_grand_summoner`
-  - Grand Summon — {T}: Add one mana of any color. When you next cast a creature spell this turn, that creature enters with two additional +1/+1 counters on it.
 
 </details>
 

@@ -8181,10 +8181,30 @@ inside cost payment, so the land could never be tapped to help cast a spell,
 which is the only thing it is played for.
 
 The rider may only use `loader.MANA_RIDER_OPS` — `damage`, `lose_life`,
-`gain_life`, `add_poison`, `add_counters`, `remove_counters`. A mana ability is
-activated inside cost payment, where there is no stack to put a decision on and
-no priority window to answer it in, so an op that yields would hang the solver
-mid-tap. The whitelist makes that a card that will not load instead.
+`gain_life`, `add_poison`, `add_counters`, `remove_counters`, `delayed_trigger`.
+A mana ability is activated inside cost payment, where there is no stack to put a
+decision on and no priority window to answer it in, so an op that yields would
+hang the solver mid-tap. The whitelist makes that a card that will not load
+instead.
+
+`delayed_trigger` asks nothing: it installs a subscription and returns, and the
+delayed half resolves later like any other. Yuna, Grand Summoner's "{T}: Add one
+mana of any color. When you next cast a creature spell this turn, that creature
+enters with two additional +1/+1 counters on it" is the `choose_mode` of five
+`add_mana`s followed by
+
+```jsonc
+{"op": "delayed_trigger", "duration": "once_this_turn",
+ "trigger": {"event": "spell_cast", "controller": "you",
+             "condition": {"exists": {"binding": "subject", "zone": "stack",
+                                      "types": ["Creature"]}}},
+ "effects": [{"op": "spell_enters_with_counters", "counters": {"+1/+1": 2}}]}
+```
+
+The trigger fires on the next creature spell whether or not this mana paid for
+it, which is the card's ruling. A rider's trigger may not carry a `subject` or
+`recipient`: the activation has no target or binding to name one with, so the
+loader refuses it.
 
 ## An activated ability that gets cheaper
 

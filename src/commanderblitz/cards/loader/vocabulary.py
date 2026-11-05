@@ -1620,8 +1620,21 @@ ABILITY_CLASS_KEYS = frozenset({"equip", "any"})
 FIRST_ACTIVATION_TARGETING_KEYS = frozenset({"controller", "types", "subtypes"})
 
 
+#: ``delayed_trigger`` asks nothing either: it installs a subscription and
+#: returns, and the delayed half goes on the stack later like any other
+#: trigger -- Yuna, Grand Summoner's "When you next cast a creature spell this
+#: turn…". `_split_mana_rider` refuses the ``subject`` and ``recipient`` that
+#: would name an object the activation has none of.
 MANA_RIDER_OPS = frozenset(
-    {"damage", "lose_life", "gain_life", "add_poison", "add_counters", "remove_counters"}
+    {
+        "damage",
+        "lose_life",
+        "gain_life",
+        "add_poison",
+        "add_counters",
+        "remove_counters",
+        "delayed_trigger",
+    }
 )
 
 
@@ -1639,10 +1652,17 @@ MANA_AMOUNT_FORBIDDEN = frozenset({"x", "target", "binding", "loop_value"})
 #: counter on it**" (Gilraen).  Both are clauses about a permanent *arriving*,
 #: which is why they belong to the ops that put one there and to nothing else.
 #: `look_at_top` is the third -- "it enters with three additional +1/+1 counters
-#: on it" (Turntimber Symbiosis) -- and the only one whose counters are a true
-#: enters-with, put on inside the arrival; see `zones.move_object`.
+#: on it" (Turntimber Symbiosis) -- whose counters are a true enters-with, put
+#: on inside the arrival; see `zones.move_object`. `spell_enters_with_counters`
+#: is the other true one, promised to a spell on the stack (Yuna, Grand
+#: Summoner) and cashed on the same placement.
 COUNTERS_ON_ARRIVAL_OPS = frozenset(
-    {"return_from_graveyard", "put_onto_battlefield", "look_at_top"}
+    {
+        "return_from_graveyard",
+        "put_onto_battlefield",
+        "look_at_top",
+        "spell_enters_with_counters",
+    }
 )
 
 

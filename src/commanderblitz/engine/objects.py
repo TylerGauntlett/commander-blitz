@@ -302,6 +302,13 @@ class GameObject:
     #: battlefield -- and granted for as long as the permanent lasts rather than
     #: until end of turn. See `structs.CastRider`.
     cast_rider: CastRider | None = None
+    #: "…that creature enters with two additional +1/+1 counters on it" (Yuna,
+    #: Grand Summoner): counters promised to the **spell** by
+    #: `spell_enters_with_counters`, staged and carried like
+    #: `mana_granted_keywords` -- across `reset_permanent_state` only to the
+    #: battlefield -- and added to the arrival's one placement by
+    #: `zones._enter_battlefield`, which empties it.
+    cast_enters_with: dict[str, int] = field(default_factory=dict)
     #: Rebound **granted to a spell that does not print it** -- Ojer Pakpatiq's
     #: "whenever you cast an instant spell from your hand, it gains rebound".
     #: Read beside `card.rebound` in `_place_after_resolution`, exactly as
@@ -1247,6 +1254,7 @@ class GameObject:
         # reset for the one destination that is owed it -- the battlefield.
         self.mana_granted_keywords = set()
         self.cast_rider = None
+        self.cast_enters_with = {}
         self.granted_abilities_permanent = []
         self.animations = []
         self.tapped = False

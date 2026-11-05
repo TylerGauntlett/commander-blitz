@@ -1633,6 +1633,35 @@ Which spell is named the same three ways `copy_spell` names one — a `sid` valu
 a declared `target`, or by default the spell the `spell_cast` trigger bound. The
 two ops share `_spell_named_by` rather than spelling it twice.
 
+### Promising counters to the permanent a spell becomes
+
+```jsonc
+{ "op": "spell_enters_with_counters", "counters": { "+1/+1": 2 } }
+{ "op": "spell_enters_with_counters", "counters": { "+1/+1": 2 }, "target": "t1" }
+```
+
+"When you next cast a creature spell this turn, **that creature enters with two
+additional +1/+1 counters on it**" (Yuna, Grand Summoner). A replacement on the
+spell's arrival (614.1c), not counters put on afterwards: the promise is staged on
+the spell's object (`GameObject.cast_enters_with`) while it is on the stack,
+carried by `move_object` only to the battlefield, and added by
+`zones._enter_battlefield` to the one placement (122.6) everything else the
+permanent enters with makes — so Hardened Scales adds one to the total. A
+countered spell, or one that is not a permanent spell, cashes nothing.
+
+`counters` is required, a map of counter kind to a value expression evaluated as
+the op resolves (below zero is zero). The spell is named as `grant_rebound` names
+one: the `spell_cast` trigger's own spell by default, or a declared `kind: "spell"`
+`target`.
+
+The near misses: `add_counters` on the spell acts on an object on the stack, and
+on the permanent after it resolves is a second placement that "enters with"
+readers never see; `enters_with_additional_counters` is a standing static over a
+filter, not a one-shot owed to one spell. Yuna's sentence is this op inside a
+`delayed_trigger` with `duration: "once_this_turn"` on `spell_cast`, ridden on a
+mana ability — see
+[the mana-rider recipe](card-dsl-cookbook.md#a-mana-ability-with-a-rider--the-painlands-drawback).
+
 ## Value expressions
 
 Anywhere a number is expected -- the leaf list is

@@ -321672,12 +321672,12 @@
     },
     "Yuna, Grand Summoner": {
       "edhrec_rank": 3706,
-      "gate": "template",
+      "gate": null,
       "name": "Yuna, Grand Summoner",
-      "reason": "no template for: Grand Summon — {T}: Add one mana of any color. When you next cast a creature spell this tu",
+      "reason": "",
       "scryfall_id": "2819652e-c944-4c5d-a098-2d15e232366e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Yuna, Hope of Spira": {

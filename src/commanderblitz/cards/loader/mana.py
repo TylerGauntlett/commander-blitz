@@ -385,6 +385,16 @@ def _split_mana_rider(
                 f"'choose_mode' of them), optionally followed by a rider from "
                 f"{sorted(MANA_RIDER_OPS)} -- got {op!r} at effects[{split + i}]"
             )
+        trigger = effect.get("trigger") if op == "delayed_trigger" else None
+        if isinstance(trigger, Mapping) and (set(trigger) & {"subject", "recipient"}):
+            # A mana ability has no targets and no bindings, so "that
+            # creature" names nothing at activation and the subscription would
+            # be installed scoped to nobody -- a card that never fires.
+            raise DslError(
+                f"{where}: a mana ability's delayed_trigger rider cannot scope its "
+                f"trigger to a 'subject' or 'recipient' -- the activation has no "
+                f"object to name"
+            )
     return mana, tuple(rider)
 
 

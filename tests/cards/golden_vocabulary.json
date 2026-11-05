@@ -80,7 +80,8 @@
   "COUNTERS_ON_ARRIVAL_OPS": [
    "look_at_top",
    "put_onto_battlefield",
-   "return_from_graveyard"
+   "return_from_graveyard",
+   "spell_enters_with_counters"
   ],
   "DEFENDING_TRIGGERS": [
    "attacks",
@@ -262,6 +263,7 @@
    "add_counters",
    "add_poison",
    "damage",
+   "delayed_trigger",
    "gain_life",
    "lose_life",
    "remove_counters"
@@ -1031,6 +1033,7 @@
   "shuffle",
   "skip_untap",
   "snapshot",
+  "spell_enters_with_counters",
   "surveil",
   "suspend",
   "tap",

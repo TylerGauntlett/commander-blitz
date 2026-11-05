@@ -338,6 +338,7 @@ def move_object(
     # sit in its graveyard holding a haste to cash on a later cast.
     mana_granted_keywords = obj.mana_granted_keywords
     cast_rider = obj.cast_rider
+    cast_enters_with = obj.cast_enters_with
 
     if was_on_battlefield:
         _remember_leaving_dies_replacer(state, obj)
@@ -395,6 +396,7 @@ def move_object(
     if to_zone is Zone.BATTLEFIELD:
         obj.mana_granted_keywords = mana_granted_keywords
         obj.cast_rider = cast_rider
+        obj.cast_enters_with = cast_enters_with
     _add_to_zone(state, obj, to_zone, target_player, to_top=to_top, to_index=to_index)
     state.bump_chars()
 
@@ -2011,6 +2013,14 @@ def _enter_battlefield(
     # see `move_object`'s ``enters_with``. The same placement, for Giada's
     # reason below.
     for kind, amount in (enters_with or {}).items():
+        entering.setdefault(str(kind), []).append(int(amount))
+
+    # Yuna, Grand Summoner: the "enters with" promised to the spell this
+    # permanent was (`spell_enters_with_counters`), on the same placement and
+    # emptied as it is read -- the promise belongs to this arrival.
+    promised = obj.cast_enters_with
+    obj.cast_enters_with = {}
+    for kind, amount in promised.items():
         entering.setdefault(str(kind), []).append(int(amount))
 
     # Giada, Font of Hope and Oath of Gideon: more "enters with" on the same
