@@ -1,0 +1,25 @@
+{
+  "card_id": "idol_of_oblivion",
+  "name": "Idol of Oblivion",
+  "oracle_text": "{T}: Draw a card. Activate only if you created a token this turn.\n{8}, {T}, Sacrifice this artifact: Create a 10/10 colorless Eldrazi creature token.",
+  "blocked_sentences": [
+    "{8}, {T}, Sacrifice this artifact: Create a 10/10 colorless Eldrazi creature token.",
+    "{T}: Draw a card. Activate only if you created a token this turn."
+  ],
+  "needs": [
+    {
+      "capability": "eldrazi_10_10_c",
+      "kind": "token",
+      "what": "a 10/10 colorless Eldrazi creature token with no abilities",
+      "why_existing_wont_do": "token_ids holds only eldrazi_spawn_0_1_c (which carries a sacrifice-for-{C} mana ability) and eldrazi_angel_4_4_c_flying_vigilance; overriding power/toughness on either would keep abilities and subtypes the printed token does not have"
+    },
+    {
+      "capability": "tokens_created_this_turn",
+      "kind": "value",
+      "what": "a per-player turn ledger value counting tokens the player created this turn (e.g. {\"tokens_created_this_turn\": \"you\"}), usable as an activated ability's condition compared > 0",
+      "why_existing_wont_do": "value_keys has permanents_entered_this_turn and counters_put_this_turn but nothing keyed on token creation by a player; permanents_entered_this_turn filtered by is_token/controller counts tokens that entered under your control, which differs from 'you created' (a token you create for an opponent, or one you created that then left or changed control). The token_created trigger event exists but no trigger is printed to set a flag, and inventing one is not allowed"
+    }
+  ],
+  "closest_existing": ["permanents_entered_this_turn", "token_created", "eldrazi_spawn_0_1_c"],
+  "confidence": "high"
+}

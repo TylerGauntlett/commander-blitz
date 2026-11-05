@@ -1,0 +1,18 @@
+{
+  "card_id": "chittering_witch",
+  "name": "Chittering Witch",
+  "oracle_text": "When this creature enters, create a number of 1/1 black Rat creature tokens equal to the number of opponents you have.\n{1}{B}, Sacrifice a creature: Target creature gets -2/-2 until end of turn.",
+  "blocked_sentences": [
+    "When this creature enters, create a number of 1/1 black Rat creature tokens equal to the number of opponents you have."
+  ],
+  "needs": [
+    {
+      "capability": "rat_token",
+      "kind": "token",
+      "what": "a 1/1 black Rat creature token (no abilities), e.g. id rat_1_1_b",
+      "why_existing_wont_do": "token_ids has no Rat token; the only 1/1 black creature token is vampire_1_1_b, which is a Vampire, not a Rat. The rest of the line is expressible: self_enters trigger with create_token whose amount is the opponent count (player_count), and the activated -2/-2 line is a mana+sacrifice cost with a targeted pump."
+    }
+  ],
+  "closest_existing": ["vampire_1_1_b"],
+  "confidence": "high"
+}

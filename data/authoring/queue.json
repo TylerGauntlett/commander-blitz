@@ -13812,12 +13812,12 @@
     },
     "Aron, Benalia's Ruin": {
       "edhrec_rank": 7382,
-      "gate": "template",
+      "gate": null,
       "name": "Aron, Benalia's Ruin",
-      "reason": "no template for: {W}{B}, {T}, Sacrifice another creature: Put a +1/+1 counter on each creature you control",
+      "reason": "",
       "scryfall_id": "861f36b9-9f43-4ace-8e60-4ba671b2655a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Arrest": {
@@ -23062,12 +23062,12 @@
     },
     "Beetleback Chief": {
       "edhrec_rank": 3545,
-      "gate": "template",
+      "gate": null,
       "name": "Beetleback Chief",
-      "reason": "no template for: When this creature enters, create two 1/1 red Goblin creature tokens",
+      "reason": "",
       "scryfall_id": "fe276be5-bc54-4fb7-82af-a2312c76f1d2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Beetleform Mage": {
@@ -26002,12 +26002,12 @@
     },
     "Blade of Selves": {
       "edhrec_rank": 909,
-      "gate": "template",
+      "gate": null,
       "name": "Blade of Selves",
-      "reason": "no template for: Equipped creature has myriad",
+      "reason": "",
       "scryfall_id": "1138ab11-ab70-44df-9691-ddee39c3ae45",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Blade of Shared Souls": {
@@ -30832,12 +30832,12 @@
     },
     "Bone Devourer": {
       "edhrec_rank": 10381,
-      "gate": "template",
+      "gate": null,
       "name": "Bone Devourer",
-      "reason": "no template for: This creature enters with a number of +1/+1 counters on it equal to the number of creature",
+      "reason": "",
       "scryfall_id": "5acb9bd4-ed86-400e-9f5d-4c26351242f2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bone Dragon": {
@@ -40872,12 +40872,12 @@
     },
     "Castle Embereth": {
       "edhrec_rank": 1068,
-      "gate": "template",
+      "gate": null,
       "name": "Castle Embereth",
-      "reason": "no template for: {1}{R}{R}, {T}: Creatures you control get +1/+0 until end of turn",
+      "reason": "",
       "scryfall_id": "516db41b-188b-405e-8665-fa7021c72fd3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Castle Garenbrig": {
@@ -81042,12 +81042,12 @@
     },
     "Eliminate the Competition": {
       "edhrec_rank": 10778,
-      "gate": "template",
+      "gate": null,
       "name": "Eliminate the Competition",
-      "reason": "no template for: As an additional cost to cast this spell, sacrifice X creatures",
+      "reason": "",
       "scryfall_id": "3bf09460-2e54-4434-ab03-95eef77265dc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Eliminate the Impossible": {

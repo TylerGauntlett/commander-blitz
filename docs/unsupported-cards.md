@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**159 cards** blocked by **147** capabilities.
+**163 cards** blocked by **152** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -52,6 +52,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [choose-card-type-from-list](#choose-card-type-from-list) | 1 | 611 | op |
 | [chosen-card-type-cost-reduction](#chosen-card-type-cost-reduction) | 1 | 611 | static_effect |
 | [combat-damage-amount-binding](#combat-damage-amount-binding) | 1 | 8933 | value |
+| [commander-casts-this-game](#commander-casts-this-game) | 1 | 8233 | value |
 | [companion](#companion) | 1 | 3861 | engine |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [conditional-play-exiled-with-source](#conditional-play-exiled-with-source) | 1 | 4225 | static_effect |
@@ -63,12 +64,14 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [crime](#crime) | 1 | 2244 | trigger_event |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [delirium](#delirium) | 1 | 1799 | value |
+| [discard-x-cost](#discard-x-cost) | 1 | 2013 | cost |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [distribute-counters-spell](#distribute-counters-spell) | 1 | 6993 | op |
 | [divided-damage-any-target](#divided-damage-any-target) | 1 | 5125 | engine |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 1 | 2389 | engine |
 | [double-x](#double-x) | 1 | 2672 | op |
 | [echo](#echo) | 1 | 961 | keyword |
+| [eldrazi-10-10-c](#eldrazi-10-10-c) | 1 | 196 | token |
 | [elemental-1-1-r](#elemental-1-1-r) | 1 | 811 | token |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
@@ -128,6 +131,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
 | [random-order-bottom](#random-order-bottom) | 1 | 1343 | op |
+| [rat-token](#rat-token) | 1 | 3202 | token |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [remove-x-counters-cost](#remove-x-counters-cost) | 1 | 5399 | cost |
@@ -156,6 +160,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
 | [times-attacked-this-turn](#times-attacked-this-turn) | 1 | 988 | value |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 1 | 1802 | token |
+| [tokens-created-this-turn](#tokens-created-this-turn) | 1 | 196 | value |
 | [total-mana-value-selection](#total-mana-value-selection) | 1 | 4244 | op |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
@@ -898,6 +903,20 @@ Blocks **1** card.
 
 </details>
 
+## commander-casts-this-game
+
+Blocks **1** card.
+
+- **(value)** admit the existing value leaf `commander_casts_this_game` (a player spec, here "you"; the 903.8 tally summed over the player's commanders from Player.commander_tax) into STATIC_VALUE_KEYS, so a `buff` static with affects {controller: you, types: [Creature]} can take power and toughness {"times": [{"const": 1}, {"commander_casts_this_game": "you"}]} or the leaf directly, recomputed continuously as the tally rises
+  <br>Why the existing vocabulary won't do: `commander_casts_this_game` (and `command_zone_casts_of`) exist only in value_keys for one-shot effects; static_value_keys omits them and the loader rejects any static magnitude leaf outside that set. `spells_cast_this_turn` is per-turn and counts every spell; `pump` on a trigger would wear off and miss creatures entering later, so the anthem needs the static form
+
+<details><summary>Cards waiting on this</summary>
+
+- **Commander's Insignia** (rank 8233) — `commander_s_insignia`
+  - Creatures you control get +1/+1 for each time you've cast your commander from the command zone this game.
+
+</details>
+
 ## companion
 
 Blocks **1** card.
@@ -1056,6 +1075,20 @@ Blocks **1** card.
 
 </details>
 
+## discard-x-cost
+
+Blocks **1** card.
+
+- **(cost)** an activated-ability cost 'Discard X cards' where X is announced on activation (601.2b, bounded by cards in hand), the cards discarded as the cost, and X readable by the ability's effects via {"x": true} -- here the amount of a look_at_top/exile of the targeted opponent's library with playable_free
+  <br>Why the existing vocabulary won't do: Cost.discard is a fixed int (Cost.from_spec does int(spec['discard'])); x_value only defines the {X} of a mana cost and is refused without {X} in mana; pay_life_x is the announced-X analogue but for life only; times multiplies the mana half and is read only by may's pay. Nothing announces an X that sizes a discard cost
+
+<details><summary>Cards waiting on this</summary>
+
+- **Gix, Yawgmoth Praetor** (rank 2013) — `gix_yawgmoth_praetor`
+  - {4}{B}{B}{B}, Discard X cards: Exile the top X cards of target opponent's library. You may play lands and cast spells from among cards exiled this way without paying their mana costs.
+
+</details>
+
 ## discard-your-hand
 
 Blocks **1** card.
@@ -1139,6 +1172,21 @@ Blocks **1** card.
 
 - **Karmic Guide** (rank 961) — `karmic_guide`
   - Echo {3}{W}{W} (At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.)
+
+</details>
+
+## eldrazi-10-10-c
+
+Blocks **1** card.
+
+- **(token)** a 10/10 colorless Eldrazi creature token with no abilities
+  <br>Why the existing vocabulary won't do: token_ids holds only eldrazi_spawn_0_1_c (which carries a sacrifice-for-{C} mana ability) and eldrazi_angel_4_4_c_flying_vigilance; overriding power/toughness on either would keep abilities and subtypes the printed token does not have
+
+<details><summary>Cards waiting on this</summary>
+
+- **Idol of Oblivion** (rank 196) — `idol_of_oblivion`
+  - {8}, {T}, Sacrifice this artifact: Create a 10/10 colorless Eldrazi creature token.
+  - {T}: Draw a card. Activate only if you created a token this turn.
 
 </details>
 
@@ -1990,6 +2038,20 @@ Blocks **1** card.
 
 </details>
 
+## rat-token
+
+Blocks **1** card.
+
+- **(token)** a 1/1 black Rat creature token (no abilities), e.g. id rat_1_1_b
+  <br>Why the existing vocabulary won't do: token_ids has no Rat token; the only 1/1 black creature token is vampire_1_1_b, which is a Vampire, not a Rat. The rest of the line is expressible: self_enters trigger with create_token whose amount is the opponent count (player_count), and the activated -2/-2 line is a mana+sacrifice cost with a targeted pump.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Chittering Witch** (rank 3202) — `chittering_witch`
+  - When this creature enters, create a number of 1/1 black Rat creature tokens equal to the number of opponents you have.
+
+</details>
+
 ## remove-all-counters
 
 Blocks **1** card.
@@ -2383,6 +2445,21 @@ Blocks **1** card.
 
 - **Teval's Judgment** (rank 1802) — `teval_s_judgment`
   - • Create a 2/2 black Zombie Druid creature token.
+
+</details>
+
+## tokens-created-this-turn
+
+Blocks **1** card.
+
+- **(value)** a per-player turn ledger value counting tokens the player created this turn (e.g. {"tokens_created_this_turn": "you"}), usable as an activated ability's condition compared > 0
+  <br>Why the existing vocabulary won't do: value_keys has permanents_entered_this_turn and counters_put_this_turn but nothing keyed on token creation by a player; permanents_entered_this_turn filtered by is_token/controller counts tokens that entered under your control, which differs from 'you created' (a token you create for an opponent, or one you created that then left or changed control). The token_created trigger event exists but no trigger is printed to set a flag, and inventing one is not allowed
+
+<details><summary>Cards waiting on this</summary>
+
+- **Idol of Oblivion** (rank 196) — `idol_of_oblivion`
+  - {8}, {T}, Sacrifice this artifact: Create a 10/10 colorless Eldrazi creature token.
+  - {T}: Draw a card. Activate only if you created a token this turn.
 
 </details>
 

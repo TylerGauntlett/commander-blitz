@@ -1,0 +1,18 @@
+{
+  "card_id": "gix_yawgmoth_praetor",
+  "name": "Gix, Yawgmoth Praetor",
+  "oracle_text": "Whenever a creature deals combat damage to one of your opponents, its controller may pay 1 life. If they do, they draw a card.\n{4}{B}{B}{B}, Discard X cards: Exile the top X cards of target opponent's library. You may play lands and cast spells from among cards exiled this way without paying their mana costs.",
+  "blocked_sentences": [
+    "{4}{B}{B}{B}, Discard X cards: Exile the top X cards of target opponent's library. You may play lands and cast spells from among cards exiled this way without paying their mana costs."
+  ],
+  "needs": [
+    {
+      "capability": "discard_x_cost",
+      "kind": "cost",
+      "what": "an activated-ability cost 'Discard X cards' where X is announced on activation (601.2b, bounded by cards in hand), the cards discarded as the cost, and X readable by the ability's effects via {\"x\": true} -- here the amount of a look_at_top/exile of the targeted opponent's library with playable_free",
+      "why_existing_wont_do": "Cost.discard is a fixed int (Cost.from_spec does int(spec['discard'])); x_value only defines the {X} of a mana cost and is refused without {X} in mana; pay_life_x is the announced-X analogue but for life only; times multiplies the mana half and is read only by may's pay. Nothing announces an X that sizes a discard cost"
+    }
+  ],
+  "closest_existing": ["pay_life_x", "discard", "x_value"],
+  "confidence": "high"
+}

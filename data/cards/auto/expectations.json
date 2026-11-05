@@ -962,6 +962,10 @@
     },
     "zone": "graveyard"
   },
+  "aron_benalia_s_ruin": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "arrogant_vampire": {
     "zone": "battlefield"
   },
@@ -1464,6 +1468,14 @@
     },
     "zone": "graveyard"
   },
+  "beetleback_chief": {
+    "battlefield_count": 35,
+    "tokens": {
+      "count": 2,
+      "id": "goblin_1_1_r"
+    },
+    "zone": "battlefield"
+  },
   "behemoth_sledge": {
     "zone": "battlefield"
   },
@@ -1627,6 +1639,10 @@
     "zone": "battlefield"
   },
   "blackcleave_goblin": {
+    "zone": "battlefield"
+  },
+  "blade_of_selves": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "blade_of_the_bloodchief": {
@@ -1828,6 +1844,10 @@
     "zone": "battlefield"
   },
   "bonders_enclave": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "bone_devourer": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -2383,6 +2403,10 @@
     "zone": "battlefield"
   },
   "castle_ardenvale": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "castle_embereth": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -4541,6 +4565,14 @@
   },
   "elfhame_wurm": {
     "zone": "battlefield"
+  },
+  "eliminate_the_competition": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
   },
   "elite_cat_warrior": {
     "zone": "battlefield"
