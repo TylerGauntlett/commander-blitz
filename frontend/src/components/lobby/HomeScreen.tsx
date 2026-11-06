@@ -68,7 +68,6 @@ import { DOOR_TUNE, type DoorTune, poseOf, scaleTune } from "../../logic/doorRow
 import { looksLikeCode, normaliseCode } from "../../logic/lobby";
 import { ControllerPanel } from "../ui/ControllerPanel";
 import { Glyph } from "../ui/Glyph";
-import { ScreenDiagnostics } from "../ui/ScreenDiagnostics";
 import { DoorCardArt, DoorCardFrame } from "./doorArt";
 import { type Hue, Room } from "./Room";
 
@@ -742,7 +741,6 @@ export function HomeScreen({
               Which controls the game draws, and whether it can see your pad.
             </p>
             <ControllerPanel />
-            <ScreenDiagnostics />
             <button
               type="button"
               className="door__back"
