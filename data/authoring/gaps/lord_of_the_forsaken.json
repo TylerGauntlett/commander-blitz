@@ -1,0 +1,18 @@
+{
+  "card_id": "lord_of_the_forsaken",
+  "name": "Lord of the Forsaken",
+  "oracle_text": "Flying, trample\n{B}, Sacrifice another creature: Target player mills three cards.\nPay 1 life: Add {C}. Spend this mana only to cast a spell from your graveyard.",
+  "blocked_sentences": [
+    "Pay 1 life: Add {C}. Spend this mana only to cast a spell from your graveyard."
+  ],
+  "needs": [
+    {
+      "capability": "mana_restriction_cast_from_zone",
+      "kind": "engine",
+      "what": "a mana_restriction cast-half predicate on the zone the spell is cast from, e.g. {\"cast\": [[{\"from_zone\": \"graveyard\"}]]}, so the mana pays only for a spell being cast from its controller's graveyard (flashback, escape, graveyard_cast and cast_from_graveyard permissions), carried on SpendPurpose as the spell's origin zone",
+      "why_existing_wont_do": "mana_restriction groups (engine/mana.py compile_restriction / RestrictionGroup) match only type/subtype names, 'not' names, and the predicates in RESTRICTION_PREDICATES (mana_value, x_in_mana_cost); SpendPurpose carries no origin zone. 'any' on the cast half would fund every spell, a strictly better card, and no name or predicate can say 'from your graveyard'"
+    }
+  ],
+  "closest_existing": ["mana_restriction", "spend_mana_as_any_color"],
+  "confidence": "high"
+}

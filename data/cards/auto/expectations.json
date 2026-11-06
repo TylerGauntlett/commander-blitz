@@ -9544,6 +9544,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "lord_of_extinction": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "lord_of_the_accursed": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -12043,6 +12047,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "phyrexian_reclamation": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "phyrexian_tower": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -12882,6 +12893,10 @@
   },
   "reason_believe": {
     "zone": "graveyard"
+  },
+  "reassembling_skeleton": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "reconnaissance_mission": {
     "battlefield_count": 33,

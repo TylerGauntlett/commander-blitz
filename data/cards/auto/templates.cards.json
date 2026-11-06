@@ -112895,6 +112895,51 @@
       "abilities": [
         {
           "affects": {
+            "self_only": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "count": {
+              "controller": "any",
+              "zone": "graveyard"
+            }
+          },
+          "text": "Lord of Extinction's power and toughness are each equal to the number of cards in all graveyards.",
+          "toughness": {
+            "count": {
+              "controller": "any",
+              "zone": "graveyard"
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "lord_of_extinction",
+      "mana_cost": "{3}{B}{G}",
+      "name": "Lord of Extinction",
+      "oracle_text": "Lord of Extinction's power and toughness are each equal to the number of cards in all graveyards.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Elemental"
+      ],
+      "toughness": 0,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
             "controller": "you",
             "exclude_self": true,
             "subtypes": [
@@ -142400,6 +142445,55 @@
       "abilities": [
         {
           "cost": {
+            "mana": "{1}{B}",
+            "pay_life": 2
+          },
+          "effects": [
+            {
+              "destination": "hand",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "{1}{B}, Pay 2 life: Return target creature card from your graveyard to your hand."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "phyrexian_reclamation",
+      "mana_cost": "{B}",
+      "name": "Phyrexian Reclamation",
+      "oracle_text": "{1}{B}, Pay 2 life: Return target creature card from your graveyard to your hand.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
             "tap": true
           },
           "effects": [
@@ -152512,6 +152606,51 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "mana": "{1}{B}"
+          },
+          "effects": [
+            {
+              "controller": "you",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "put_onto_battlefield",
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{B}: Return this card from your graveyard to the battlefield tapped."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "reassembling_skeleton",
+      "mana_cost": "{1}{B}",
+      "name": "Reassembling Skeleton",
+      "oracle_text": "{1}{B}: Return this card from your graveyard to the battlefield tapped.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Skeleton",
+        "Warrior"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
       ]
     },
     {

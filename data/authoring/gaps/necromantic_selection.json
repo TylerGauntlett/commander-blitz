@@ -1,0 +1,18 @@
+{
+  "card_id": "necromantic_selection",
+  "name": "Necromantic Selection",
+  "oracle_text": "Destroy all creatures, then return a creature card put into a graveyard this way to the battlefield under your control. It's a black Zombie in addition to its other colors and types. Exile Necromantic Selection.",
+  "blocked_sentences": [
+    "It's a black Zombie in addition to its other colors and types."
+  ],
+  "needs": [
+    {
+      "capability": "add_color",
+      "kind": "op",
+      "what": "a one-shot effect that permanently adds a color to one permanent (\"it's black in addition to its other colors\") without touching its types or power/toughness, applied to the creature card just returned by return_from_graveyard (which would also need an `as` binding so the following effect can name that one returned card)",
+      "why_existing_wont_do": "add_subtype covers the Zombie half but changes subtypes only. animate is the only one-shot that writes colors: a non-exact animate does add its colors, but the loader refuses it without power and toughness whenever the animation includes Creature (and an empty types list defaults to Creature), so it would overwrite the returned creature's base P/T; keep_colors is legal only on an exact animation, which replaces colors and types rather than adding. The set_colors static replaces colors and lasts only while its source is on the battlefield, and this sorcery exiles itself. return_from_graveyard has no `as`, so even the add_subtype half has no way to name the one returned card apart from `link`/`returned_with`, which ties it to an exiled source."
+    }
+  ],
+  "closest_existing": ["animate", "add_subtype", "return_from_graveyard"],
+  "confidence": "high"
+}

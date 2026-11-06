@@ -161302,12 +161302,12 @@
     },
     "Lord of Extinction": {
       "edhrec_rank": 3693,
-      "gate": "template",
+      "gate": null,
       "name": "Lord of Extinction",
-      "reason": "no template for: 's power and toughness are each equal to the number of cards in all graveyards",
+      "reason": "",
       "scryfall_id": "696cb81d-bc00-4603-b340-c0b2e55c0959",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lord of Shatterskull Pass": {
@@ -201842,12 +201842,12 @@
     },
     "Phyrexian Reclamation": {
       "edhrec_rank": 943,
-      "gate": "template",
+      "gate": null,
       "name": "Phyrexian Reclamation",
-      "reason": "no template for: {1}{B}, Pay 2 life: Return target creature card from your graveyard to your hand",
+      "reason": "",
       "scryfall_id": "3490d482-535a-4080-bc36-941e2536282b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Phyrexian Revoker": {
@@ -217482,12 +217482,12 @@
     },
     "Reassembling Skeleton": {
       "edhrec_rank": 768,
-      "gate": "template",
+      "gate": null,
       "name": "Reassembling Skeleton",
-      "reason": "no template for: {1}{B}: Return this card from your graveyard to the battlefield tapped",
+      "reason": "",
       "scryfall_id": "28e84b1b-1c05-4e1b-93b8-9cc2ca73509d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Reave Soul": {

@@ -1,0 +1,18 @@
+{
+  "card_id": "necropolis_fiend",
+  "name": "Necropolis Fiend",
+  "oracle_text": "Delve (Each card you exile from your graveyard while casting this spell pays for {1}.)\nFlying\n{X}, {T}, Exile X cards from your graveyard: Target creature gets -X/-X until end of turn.",
+  "blocked_sentences": [
+    "{X}, {T}, Exile X cards from your graveyard: Target creature gets -X/-X until end of turn."
+  ],
+  "needs": [
+    {
+      "capability": "exile_x_from_graveyard_cost",
+      "kind": "cost",
+      "what": "an activated-ability cost that exiles exactly X cards from your graveyard, X being the number announced for the ability's {X} mana (the graveyard analogue of discard_x / pay_life_x / loyalty_x), with legality bounding X by the cards in the graveyard",
+      "why_existing_wont_do": "The exile_from_graveyard cost takes only a fixed integer count (engine costs._graveyard_pool and pay do int(spec.pop('count', 1))), so it cannot read the announced X; discard_x, pay_life_x and loyalty_x are the X-sized costs that exist, and none exiles from the graveyard. Exiling with the exile op in the effects would move the payment to resolution and let the ability be activated with an empty graveyard"
+    }
+  ],
+  "closest_existing": ["exile_from_graveyard", "discard_x", "pay_life_x"],
+  "confidence": "high"
+}
