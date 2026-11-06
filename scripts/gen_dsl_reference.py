@@ -444,6 +444,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "choose_color": ("Control flow", "Choose a color, readable later; `except_colors` removes colors from the offer.",
                      '"Choose a color"'),
     "choose_card_name": ("Control flow", "Choose a card name; `as` records it.", '"Choose a card name"'),
+    "choose_number": ("Control flow", "Choose an integer in a printed range on resolution; `as` records it.",
+                      '"Choose a number"'),
     "choose_player": ("Control flow", "Choose a player; `as` records the seat.", None),
     "choose_permanents": ("Control flow", "Mark permanents without acting on them; `as` records them.",
                           H_CHOOSE_PERMANENTS),

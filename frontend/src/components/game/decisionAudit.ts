@@ -638,6 +638,15 @@ export const DECISION_AUDIT: readonly DecisionRow[] = [
   },
   {
     kind: "choose_mode",
+    purpose: "choose_number",
+    asks: "Which number in the printed range",
+    of: "labels",
+    // A short range is the dialog; one past `COMBO_MIN` labels is the combo.
+    today: ["dialog", "combo"],
+    journeys: ["ChooseAMode"],
+  },
+  {
+    kind: "choose_mode",
     purpose: "choose_direction",
     asks: "Left or right",
     of: "labels",

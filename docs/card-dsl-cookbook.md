@@ -13068,6 +13068,34 @@ every zone, plus "Another card name": a library holds only its owner's cards
 that is a real choice. No new `DecisionKind`: `ask_mode`, tagged
 `choose_card_name`; the heuristic agent names what its library holds most of.
 
+## "Choose a number"
+
+    Expel the Interlopers — "Choose a number between 0 and 10. Destroy all
+    creatures with power greater than or equal to the chosen number."
+
+```jsonc
+{ "op": "choose_number", "as": "chosen", "min": 0, "max": 10 },
+{ "op": "destroy",
+  "objects": { "zone": "battlefield", "controller": "any", "types": ["Creature"],
+               "power": { "op": ">=", "value": { "binding": "chosen" } },
+               "count": "all" } }
+```
+
+Binds the chosen **integer** under `as`, which is required; any value
+expression reads it as `{"binding": …}`, so it stands wherever a number does —
+a selector's `power`/`toughness`/`mana_value` comparison, an `amount`. `min`
+(default 0) and `max` (required) are the printed bounds, both inclusive and
+both non-negative integer literals; the loader refuses a missing `max`, a
+non-literal bound and `max` below `min`. A range of one number asks nothing.
+
+The number is chosen by the controller **on resolution**. The near miss is a
+`choose_mode` with one mode per number, and it is a different card: a
+top-level `choose_mode` is answered as the spell is cast (601.2b), which makes
+the spell modal (700.2) and announces the number on the stack. No new
+`DecisionKind`: `ask_mode`, tagged `choose_number`, the label at ordinal `i`
+being `min + i`. Not `ask_x` — every seat answers `CHOOSE_X` with its maximum,
+and the largest number is the one that destroys nothing.
+
 ## "Choose a color"
 
 Heraldic Banner, and the colour twin of the section above. It reads back as

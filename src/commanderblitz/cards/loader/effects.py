@@ -1514,6 +1514,25 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             for name in names:
                 if name not in KNOWN_TYPES:
                     raise DslError(f"{where}: unknown card type {name!r} in {key!r}")
+    if op == "choose_number":
+        # The number exists only as its binding, read by a value expression's
+        # `{"binding": …}` -- without 'as' the answer is thrown away and the
+        # comparison reads 0. The bounds are the printed range, both literal.
+        if not effect.get("as"):
+            raise DslError(
+                f"{where}: choose_number needs an 'as' -- the chosen number is "
+                f"only reachable through the binding it is stored under"
+            )
+        if "max" not in effect:
+            raise DslError(f"{where}: choose_number needs a 'max' -- the printed upper bound")
+        low, high = effect.get("min", 0), effect["max"]
+        for key, bound in (("min", low), ("max", high)):
+            if not isinstance(bound, int) or isinstance(bound, bool) or bound < 0:
+                raise DslError(
+                    f"{where}: choose_number '{key}' is a non-negative integer, got {bound!r}"
+                )
+        if high < low:
+            raise DslError(f"{where}: choose_number 'max' {high} is below 'min' {low}")
     if op == "choose_player":
         # The chosen seat exists only as the binding it is written to -- nothing
         # else on the card can reach it -- so an omitted 'as' is a prompt whose

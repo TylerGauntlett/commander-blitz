@@ -502,6 +502,36 @@ def op_choose_card_name(ctx: EffectContext, spec: Mapping[str, Any]):
     ctx.bindings[str(spec["as"])] = "" if chosen == OTHER_CARD_NAME else chosen
 
 
+@register("choose_number")
+def op_choose_number(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Choose a number between 0 and 10." Expel the Interlopers.
+
+    Binds the chosen integer under ``as``; any value expression reads it back
+    as ``{"binding": …}``, so a selector compares against it with
+    ``{"power": {"op": ">=", "value": {"binding": …}}}``. ``min`` (default 0)
+    and ``max`` are the printed bounds, both inclusive.
+
+    Chosen **on resolution**, by the controller, which is why this is not a
+    `choose_mode` over one mode per number: a top-level `choose_mode` is
+    answered as the spell is cast (601.2b), which makes a non-modal sorcery
+    modal (700.2) and announces the number on the stack where opponents can
+    respond to it.
+
+    **No new `DecisionKind`.** `ask_mode` asks "pick one of these labels", as
+    `choose_card_name` uses it, tagged ``choose_number``; the label at ordinal
+    ``i`` is ``min + i``. Not `ask_x`: `CHOOSE_X` is announcing the X of a
+    cost, and every seat that answers it -- the heuristic agent, the default
+    strategy, the authoring verifier -- takes the maximum, which for a sweeper
+    that spares the small is the number that destroys nothing.
+    """
+    low = int(spec.get("min", 0))
+    high = int(spec["max"])
+    labels = [str(n) for n in range(low, high + 1)]
+    prompt = str(spec.get("prompt") or f"Choose a number from {low} to {high}")
+    picked = yield from ask_mode(ctx, prompt, labels, ctx.controller, purpose="choose_number")
+    ctx.bindings[str(spec["as"])] = low + (picked[0] if picked else 0)
+
+
 @register("choose_player")
 def op_choose_player(ctx: EffectContext, spec: Mapping[str, Any]):
     """ "Choose an opponent." Demonstrate, and the untargeted way to name a seat.
