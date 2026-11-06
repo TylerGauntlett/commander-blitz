@@ -61,7 +61,7 @@ each heading; this table is generated from them.
 | [Temur Roar (Tarkir: Dragonstorm Commander)](#temur-roar-tarkir-dragonstorm-commander) | M | high | Divided damage from a triggered or activated ability, Divided damage that may hit players, Voting: will of the council and council's dilemma | 0 |
 | [Sultai Arisen (Tarkir: Dragonstorm Commander)](#sultai-arisen-tarkir-dragonstorm-commander) | L | high | Experience counters, A trigger for cards put into a graveyard | 0 |
 | [Eternal Might (Aetherdrift Commander)](#eternal-might-aetherdrift-commander) | L | high | Cycling granted to cards in hand | 0 |
-| [Endless Punishment (Duskmourn: House of Horror Commander)](#endless-punishment-duskmourn-house-of-horror-commander) | L | high | nothing | 0 |
+| [Endless Punishment (Duskmourn: House of Horror Commander)](#endless-punishment-duskmourn-house-of-horror-commander) | L | high | A trigger for cards put into a graveyard, Rooms: two doors on one permanent, and the unlock action | 0 |
 | [Death Toll (Duskmourn: House of Horror Commander)](#death-toll-duskmourn-house-of-horror-commander) | L | high | nothing | 0 |
 | [Jump Scare! (Duskmourn: House of Horror Commander)](#jump-scare-duskmourn-house-of-horror-commander) | L | high | nothing | 0 |
 | [Miracle Worker (Duskmourn: House of Horror Commander)](#miracle-worker-duskmourn-house-of-horror-commander) | L | high | nothing | 0 |
@@ -136,17 +136,18 @@ each heading; this table is generated from them.
 | [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) | S | medium | nothing | 0 |
 | [Why a press is refused](#why-a-press-is-refused) | S | medium | nothing | 0 |
 | [Divided damage that may hit players](#divided-damage-that-may-hit-players) | M | medium | nothing | 3 |
+| [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) | M | medium | nothing | 2 |
 | [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) | M | medium | nothing | 2 |
 | [Outcomes as data](#outcomes-as-data) | M | medium | nothing | 2 |
 | [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) | M | medium | nothing | 2 |
 | [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) | M | medium | nothing | 2 |
-| [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) | M | medium | nothing | 1 |
 | [Brackets, derived from the list](#brackets-derived-from-the-list) | M | medium | nothing | 1 |
 | [CPU takeover and reconnection](#cpu-takeover-and-reconnection) | M | medium | nothing | 1 |
 | [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) | M | medium | nothing | 1 |
 | [Distributing counters from a spell](#distributing-counters-from-a-spell) | M | medium | nothing | 1 |
 | [Experience counters](#experience-counters) | M | medium | nothing | 1 |
 | [Replays and sharing](#replays-and-sharing) | M | medium | nothing | 1 |
+| [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) | M | medium | nothing | 1 |
 | [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) | M | medium | nothing | 0 |
 | [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) | M | medium | nothing | 0 |
 | [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) | M | medium | nothing | 0 |
@@ -161,8 +162,6 @@ Derived from the properties: an item is **ready** when nothing it depends
 on is still on this page, and the ready items are ranked by impact, then
 rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
-
-**In progress:** [Endless Punishment (Duskmourn: House of Horror Commander)](#endless-punishment-duskmourn-house-of-horror-commander).
 
 **Ready now, best first:**
 
@@ -240,23 +239,24 @@ same list, and `/extend-roadmap` starts at the top of it.
 72. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
 73. [Why a press is refused](#why-a-press-is-refused) — S, medium
 74. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
-75. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
-76. [Outcomes as data](#outcomes-as-data) — M, medium
-77. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
-78. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
-79. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
+75. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
+76. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
+77. [Outcomes as data](#outcomes-as-data) — M, medium
+78. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
+79. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
 80. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
 81. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
 82. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
 83. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
 84. [Experience counters](#experience-counters) — M, medium
 85. [Replays and sharing](#replays-and-sharing) — M, medium
-86. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-87. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
-88. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
-89. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-90. [Archidekt import](#archidekt-import) — S, low
-91. [Sound](#sound) — S, low
+86. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
+87. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+88. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
+89. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
+90. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+91. [Archidekt import](#archidekt-import) — S, low
+92. [Sound](#sound) — S, low
 
 **Blocked, and by what:**
 
@@ -270,6 +270,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Temur Roar (Tarkir: Dragonstorm Commander)](#temur-roar-tarkir-dragonstorm-commander) — [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability), [Divided damage that may hit players](#divided-damage-that-may-hit-players), [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma)
 - [Sultai Arisen (Tarkir: Dragonstorm Commander)](#sultai-arisen-tarkir-dragonstorm-commander) — [Experience counters](#experience-counters), [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard)
 - [Eternal Might (Aetherdrift Commander)](#eternal-might-aetherdrift-commander) — [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand)
+- [Endless Punishment (Duskmourn: House of Horror Commander)](#endless-punishment-duskmourn-house-of-horror-commander) — [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard), [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -489,6 +490,78 @@ gates pass.
 - **Is it an ADR.** Recommended: no; it widens an existing announcement
   (601.2d) without changing what is announced or when, and the line in
   rules-coverage.md moves from "not implemented" to the implemented table.
+
+### A trigger for cards put into a graveyard
+
+Effort **M** · Impact **medium**, every 'whenever one or more cards are put into your graveyard from your library, or from anywhere' card waits on it, The Gitrog Monster and Sidisi among them · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+`triggers.TRIGGER_EVENTS` has no event for a card arriving in a graveyard.
+`dies` sees creatures from the battlefield, `discard` sees the hand, and
+`leaves_graveyard` (`EventType.LEAVES_GRAVEYARD`) is the reverse direction.
+`EventType.ZONE_CHANGE` records every move but is deliberately kept off the
+trigger bus, and `EventType.LEAVES_GRAVEYARD` is the one narrow departure,
+fired from `zones.move_object` with the graveyard's owner as `player` and a
+`batch` for "one or more". [rules-coverage.md](rules-coverage.md#not-implemented)
+lists "a mill trigger" as not implemented: `EventType.MILL` has no
+`TRIGGER_EVENTS` name.
+
+So no card can say "whenever one or more creature cards are put into your
+graveyard from your library" or "whenever one or more land cards are put into
+your graveyard from anywhere". Colossal Grave-Reaver and Crawling Sensation,
+in the Sultai Arisen precon, are the cards that found it; The Gitrog Monster
+and Centaur Vinecrasher wait on the same slug,
+`put_into_graveyard_from_anywhere`, in `data/authoring/gaps/`.
+
+#### The change
+
+1. An event for a card put into a graveyard, fired narrowly from
+   `zones.move_object` the way `EventType.LEAVES_GRAVEYARD` is, carrying the
+   graveyard's owner as `player`, the zone the card came from, and the
+   `batch` of cards moved together.
+2. Its `TRIGGER_EVENTS` row, with a filter over the moved cards (types,
+   owner) and `from_zones` read for it, so "from your library" and "from
+   anywhere" are one trigger with or without the key. `batched` makes "one
+   or more" fire once for a single mill of several cards.
+3. A binding for the batch, so an effect can reach "one of them" (Colossal
+   Grave-Reaver puts one onto the battlefield) and only cards from this
+   batch that are still in the graveyard on resolution.
+4. "For the first time each turn" (Crawling Sensation) through the existing
+   once-per-turn trigger limit, if it already reads the batched event that
+   way; otherwise an open question below.
+5. Harvest: Colossal Grave-Reaver, Crawling Sensation, The Gitrog Monster,
+   Centaur Vinecrasher, then one `/author-cards` wave over the catalog's
+   other cards with the sentence.
+
+It does not put `ZONE_CHANGE` on the trigger bus, and it does not cover a
+token "put into a graveyard" (it ceases to exist, 704.5d), nor replacements
+that keep a card out of the graveyard (Dauthi Voidwalker is its own gap).
+
+#### Gate
+
+A unit test under `tests/unit/` for the new trigger: a mill of several
+creature cards fires a batched trigger once, a discard does not fire one
+narrowed to the library, "from anywhere" fires for a mill, a discard and a
+dying creature card, an opponent's graveyard does not fire a `controller:
+"you"` trigger, and the "one of them" binding offers only the batch's cards
+still in the graveyard. Colossal Grave-Reaver's and Crawling Sensation's six
+gates pass, and the generated DSL reference lists the new trigger event.
+
+#### Open questions
+
+- **One event or the existing `MILL` event.** Give "put into a graveyard"
+  its own event fired from `zones.move_object` for every source zone, or put
+  `EventType.MILL` on the bus and add others per source? Recommended: one
+  event from `move_object`, because "from anywhere" has to see every source
+  and per-source events would each need the same batching.
+- **A dying creature card.** Does a creature that dies also fire it, for a
+  "from anywhere" trigger? Recommended: yes, the rules say it was put into a
+  graveyard from the battlefield (700.4), and `dies` stays the event for
+  "whenever a creature dies".
+- **Is it an ADR.** Recommended: no; it is a second narrow departure from
+  `ZONE_CHANGE` beside `LEAVES_GRAVEYARD`, and the mill line moves from "not
+  implemented" to the implemented table in rules-coverage.md.
 
 ### Divided damage from a triggered or activated ability
 
@@ -714,78 +787,6 @@ six gates pass.
 - **Is it an ADR.** Recommended: no; it is an additive op, and the line in
   rules-coverage.md moves from "not implemented" to the implemented table.
 
-### A trigger for cards put into a graveyard
-
-Effort **M** · Impact **medium**, every 'whenever one or more cards are put into your graveyard from your library, or from anywhere' card waits on it, The Gitrog Monster and Sidisi among them · Depends on nothing · Awaiting decisions.
-
-#### Today
-
-`triggers.TRIGGER_EVENTS` has no event for a card arriving in a graveyard.
-`dies` sees creatures from the battlefield, `discard` sees the hand, and
-`leaves_graveyard` (`EventType.LEAVES_GRAVEYARD`) is the reverse direction.
-`EventType.ZONE_CHANGE` records every move but is deliberately kept off the
-trigger bus, and `EventType.LEAVES_GRAVEYARD` is the one narrow departure,
-fired from `zones.move_object` with the graveyard's owner as `player` and a
-`batch` for "one or more". [rules-coverage.md](rules-coverage.md#not-implemented)
-lists "a mill trigger" as not implemented: `EventType.MILL` has no
-`TRIGGER_EVENTS` name.
-
-So no card can say "whenever one or more creature cards are put into your
-graveyard from your library" or "whenever one or more land cards are put into
-your graveyard from anywhere". Colossal Grave-Reaver and Crawling Sensation,
-in the Sultai Arisen precon, are the cards that found it; The Gitrog Monster
-and Centaur Vinecrasher wait on the same slug,
-`put_into_graveyard_from_anywhere`, in `data/authoring/gaps/`.
-
-#### The change
-
-1. An event for a card put into a graveyard, fired narrowly from
-   `zones.move_object` the way `EventType.LEAVES_GRAVEYARD` is, carrying the
-   graveyard's owner as `player`, the zone the card came from, and the
-   `batch` of cards moved together.
-2. Its `TRIGGER_EVENTS` row, with a filter over the moved cards (types,
-   owner) and `from_zones` read for it, so "from your library" and "from
-   anywhere" are one trigger with or without the key. `batched` makes "one
-   or more" fire once for a single mill of several cards.
-3. A binding for the batch, so an effect can reach "one of them" (Colossal
-   Grave-Reaver puts one onto the battlefield) and only cards from this
-   batch that are still in the graveyard on resolution.
-4. "For the first time each turn" (Crawling Sensation) through the existing
-   once-per-turn trigger limit, if it already reads the batched event that
-   way; otherwise an open question below.
-5. Harvest: Colossal Grave-Reaver, Crawling Sensation, The Gitrog Monster,
-   Centaur Vinecrasher, then one `/author-cards` wave over the catalog's
-   other cards with the sentence.
-
-It does not put `ZONE_CHANGE` on the trigger bus, and it does not cover a
-token "put into a graveyard" (it ceases to exist, 704.5d), nor replacements
-that keep a card out of the graveyard (Dauthi Voidwalker is its own gap).
-
-#### Gate
-
-A unit test under `tests/unit/` for the new trigger: a mill of several
-creature cards fires a batched trigger once, a discard does not fire one
-narrowed to the library, "from anywhere" fires for a mill, a discard and a
-dying creature card, an opponent's graveyard does not fire a `controller:
-"you"` trigger, and the "one of them" binding offers only the batch's cards
-still in the graveyard. Colossal Grave-Reaver's and Crawling Sensation's six
-gates pass, and the generated DSL reference lists the new trigger event.
-
-#### Open questions
-
-- **One event or the existing `MILL` event.** Give "put into a graveyard"
-  its own event fired from `zones.move_object` for every source zone, or put
-  `EventType.MILL` on the bus and add others per source? Recommended: one
-  event from `move_object`, because "from anywhere" has to see every source
-  and per-source events would each need the same batching.
-- **A dying creature card.** Does a creature that dies also fire it, for a
-  "from anywhere" trigger? Recommended: yes, the rules say it was put into a
-  graveyard from the battlefield (700.4), and `dies` stays the event for
-  "whenever a creature dies".
-- **Is it an ADR.** Recommended: no; it is a second narrow departure from
-  `ZONE_CHANGE` beside `LEAVES_GRAVEYARD`, and the mill line moves from "not
-  implemented" to the implemented table in rules-coverage.md.
-
 ### Cycling granted to cards in hand
 
 Effort **M** · Impact **medium**, every card that hands cycling to the cards in your hand waits on it, Rhet-Tomb Mystic in the Eternal Might precon among them · Depends on nothing · Awaiting decisions.
@@ -1006,6 +1007,86 @@ removes them. Meren's six gates pass, and the generated DSL reference
 - **Is it an ADR.** Recommended: no; it is one more kind under an existing
   rule (122.1), and its line moves from "not implemented" to the
   implemented table in rules-coverage.md.
+
+### Rooms: two doors on one permanent, and the unlock action
+
+Effort **M** · Impact **medium**, every Room card waits on it, and Endless Punishment cannot ship native without Spiked Corridor // Torture Pit · Depends on nothing · ADR first · Awaiting decisions.
+
+#### Today
+
+A Room (709.5) is one card with two doors, each with its own name, mana
+cost and abilities. The engine knows `Room` only as an Enchantment subtype
+(`enums.py`'s subtype table). The nearest shape is `CardDef.second_face`,
+which a split card, an Adventure or a modal double-faced card uses: the half
+that is cast is then the whole object, and nothing keeps two halves on one
+permanent. Nothing records a door as locked or unlocked, nothing switches a
+locked door's abilities off, and `legality.legal_actions` offers no special
+action that pays a locked door's cost to unlock it; the closest special
+action is `legality._turn_face_up_actions`, the one thing a face-down
+permanent can do. No trigger event hears "when you unlock this door".
+
+[rules-coverage.md](rules-coverage.md) does not list Rooms at all. Spiked
+Corridor // Torture Pit, in the Endless Punishment precon, is the card that
+found it; its gap record is
+`data/authoring/gaps/spiked_corridor_torture_pit.json`, under the `rooms`
+capability.
+
+#### The change
+
+1. The card shape. A Room card's definition carries both doors as faces,
+   the way `second_face` names the other half, and the loader checks both
+   are present and that the card is a Room.
+2. Door state on the object: which doors are unlocked. Casting a door
+   (`second_face`'s cast path, either half) puts the permanent onto the
+   battlefield with that door unlocked and the other locked (709.5d).
+   `characteristics` reads the permanent's name, mana value and abilities
+   from its unlocked doors only (709.5e), so a locked door's abilities are
+   off for every reader at once.
+3. The unlock special action (709.5f): as a sorcery, pay a locked
+   door's mana cost to unlock it. Offered by `legality.legal_actions` the
+   way `_turn_face_up_actions` offers turning a permanent face up, without
+   a new `ActionKind`, so the RL action space is unchanged. It does not use
+   the stack.
+4. A `door_unlocked` trigger event for "when you unlock this door", fired
+   both when a door enters unlocked and when the special action unlocks it,
+   and "fully unlock" (both doors unlocked) for the cards that print it.
+5. The client: the unlock action is one control, exactly once
+   ([ADR 0015](adr/0015-every-legal-action-is-one-control.md)), and a
+   Room shows which doors are unlocked; its story ships under the handheld
+   floors ([ADR 0013](adr/0013-handheld-floors-are-ci-gates.md)).
+6. The ADR records the shape: one object with per-door state, read through
+   `characteristics`, rather than two objects.
+7. Harvest Spiked Corridor // Torture Pit (it also needs a Devil token and a
+   noncombat-only `replace_damage`, each its own `/extend-dsl` run) and every
+   other Room one `/author-cards` wave can then express.
+
+It does not add the cards' own riders beyond the Devil token and the
+noncombat-damage key the first harvest needs.
+
+#### Gate
+
+A unit test under `tests/unit/` for Rooms: casting either half enters with
+that door unlocked and the other locked; a locked door's static and
+triggered abilities do nothing; the unlock action is offered only at sorcery
+speed, only for a locked door, and only when its cost can be paid; unlocking
+fires `door_unlocked` once; the permanent's name and mana value follow its
+unlocked doors. A story per layout mode for a Room with one door locked,
+under the floors. Spiked Corridor // Torture Pit's six gates pass and the
+generated DSL reference lists the new event.
+
+#### Open questions
+
+- **One object or two.** Model a Room as one permanent with per-door state
+  read through `characteristics`, or as two linked objects? Recommended: one
+  object, because the rules make it one permanent (709.5) and every reader
+  of names, mana value and abilities already goes through `characteristics`.
+- **The unlock action's kind.** A new `ActionKind`, or offered as an
+  activation the way turning a face-down permanent face up is? Recommended:
+  the face-up pattern, so the RL action space is unchanged.
+- **Scope of the first pull request.** Rooms alone, or Rooms plus the Devil
+  token and the noncombat `replace_damage` key so Spiked Corridor // Torture
+  Pit ships in it? Recommended: plus both, since each is small and the card
+  is the gate.
 
 ## Decks
 
@@ -1659,7 +1740,7 @@ whole-game test able to draw the deck.
 
 ### Endless Punishment (Duskmourn: House of Horror Commander)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing · **In progress**.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard), [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action).
 
 #### Today
 
