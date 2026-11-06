@@ -287572,12 +287572,12 @@
     },
     "Timeless Dragon": {
       "edhrec_rank": 8932,
-      "gate": "template",
+      "gate": null,
       "name": "Timeless Dragon",
-      "reason": "no template for: Plainscycling {2}",
+      "reason": "",
       "scryfall_id": "21070f13-42b3-40c6-8909-25337be6ea6d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Timeless Lotus": {
@@ -295032,12 +295032,12 @@
     },
     "Twisted Abomination": {
       "edhrec_rank": 12814,
-      "gate": "template",
+      "gate": null,
       "name": "Twisted Abomination",
-      "reason": "no template for: {B}: Regenerate this creature",
+      "reason": "",
       "scryfall_id": "99e81075-6f82-4cfb-8d49-07609f9882fa",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Twisted Embrace": {
@@ -297902,12 +297902,12 @@
     },
     "Unholy Grotto": {
       "edhrec_rank": 2937,
-      "gate": "template",
+      "gate": null,
       "name": "Unholy Grotto",
-      "reason": "no template for: {B}, {T}: Put target Zombie card from your graveyard on top of your library",
+      "reason": "",
       "scryfall_id": "e29031f5-19c7-49d7-bd05-01d151592f4a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Unholy Grotto // Unholy Grotto": {
@@ -312492,12 +312492,12 @@
     },
     "Wayward Servant": {
       "edhrec_rank": 5083,
-      "gate": "template",
+      "gate": null,
       "name": "Wayward Servant",
-      "reason": "no template for: Whenever another Zombie you control enters, each opponent loses 1 life and you gain 1 life",
+      "reason": "",
       "scryfall_id": "65475db4-ea0f-4ef3-ac2f-18e308c64682",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wayward Soul": {
@@ -323182,12 +323182,12 @@
     },
     "Zombie Master": {
       "edhrec_rank": 2762,
-      "gate": "template",
+      "gate": null,
       "name": "Zombie Master",
-      "reason": "no template for: Other Zombie creatures have swampwalk",
+      "reason": "",
       "scryfall_id": "8ba84f22-a78a-4a05-905d-a1e6f932350c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Zombie Master // Zombie Master": {

@@ -203139,6 +203139,97 @@
     {
       "abilities": [
         {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "discard_self": true,
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "hand",
+              "op": "search_library",
+              "player": "you",
+              "reveal": true,
+              "selector": {
+                "subtypes": [
+                  "Plains"
+                ]
+              }
+            }
+          ],
+          "is_cycling": true,
+          "kind": "activated",
+          "text": "Plainscycling {2} ({2}, Discard this card: Search your library for a Plains card, reveal it, put it into your hand, then shuffle.)"
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "exile_from_graveyard": {
+              "count": 1,
+              "self_only": true
+            },
+            "mana": "{2}{W}{W}"
+          },
+          "effects": [
+            {
+              "controller": "you",
+              "except_": {
+                "add_subtypes": [
+                  "Zombie"
+                ],
+                "colors": [
+                  "B"
+                ],
+                "no_mana_cost": true,
+                "power": 4,
+                "toughness": 4
+              },
+              "objects": {
+                "controller": "any",
+                "self_only": true,
+                "zone": "exile"
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Eternalize {2}{W}{W} ({2}{W}{W}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a 4/4 black Zombie Dragon with no mana cost. Eternalize only as a sorcery.)"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "timeless_dragon",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{W}{W}",
+      "name": "Timeless Dragon",
+      "oracle_text": "Flying\nPlainscycling {2} ({2}, Discard this card: Search your library for a Plains card, reveal it, put it into your hand, then shuffle.)\nEternalize {2}{W}{W} ({2}{W}{W}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a 4/4 black Zombie Dragon with no mana cost. Eternalize only as a sorcery.)",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -208526,6 +208617,75 @@
     {
       "abilities": [
         {
+          "cost": {
+            "mana": "{B}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "regenerate"
+            }
+          ],
+          "kind": "activated",
+          "text": "{B}: Regenerate this creature. (The next time this creature would be destroyed this turn, instead tap it, remove it from combat, and heal all damage on it.)"
+        },
+        {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "discard_self": true,
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "hand",
+              "op": "search_library",
+              "player": "you",
+              "reveal": true,
+              "selector": {
+                "subtypes": [
+                  "Swamp"
+                ]
+              }
+            }
+          ],
+          "is_cycling": true,
+          "kind": "activated",
+          "text": "Swampcycling {2} ({2}, Discard this card: Search your library for a Swamp card, reveal it, put it into your hand, then shuffle.)"
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "twisted_abomination",
+      "mana_cost": "{5}{B}",
+      "name": "Twisted Abomination",
+      "oracle_text": "{B}: Regenerate this creature. (The next time this creature would be destroyed this turn, instead tap it, remove it from combat, and heal all damage on it.)\nSwampcycling {2} ({2}, Discard this card: Search your library for a Swamp card, reveal it, put it into your hand, then shuffle.)",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Mutant"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -210757,6 +210917,65 @@
       "toughness": 13,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{B}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "put_on_top"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "subtypes": [
+                  "Zombie"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "{B}, {T}: Put target Zombie card from your graveyard on top of your library."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [],
+      "id": "unholy_grotto",
+      "name": "Unholy Grotto",
+      "oracle_text": "{T}: Add {C}.\n{B}, {T}: Put target Zombie card from your graveyard on top of your library.",
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -221441,6 +221660,61 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": "each_opponent"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another Zombie you control enters, each opponent loses 1 life and you gain 1 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "subtypes": [
+                "Zombie"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "wayward_servant",
+      "mana_cost": "{W}{B}",
+      "name": "Wayward Servant",
+      "oracle_text": "Whenever another Zombie you control enters, each opponent loses 1 life and you gain 1 life.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Zombie"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -230378,6 +230652,78 @@
       "subtypes": [
         "Zombie",
         "Giant"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "any",
+            "exclude_self": true,
+            "subtypes": [
+              "Zombie"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "swampwalk"
+          ],
+          "kind": "static",
+          "text": "Other Zombie creatures have swampwalk. (They can't be blocked as long as defending player controls a Swamp.)"
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "controller": "any",
+            "exclude_self": true,
+            "subtypes": [
+              "Zombie"
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Other Zombies have \"{B}: Regenerate this permanent.\""
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "mana": "{B}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "regenerate"
+            }
+          ],
+          "kind": "activated",
+          "text": "{B}: Regenerate this permanent."
+        }
+      ],
+      "id": "zombie_master",
+      "mana_cost": "{1}{B}{B}",
+      "name": "Zombie Master",
+      "oracle_text": "Other Zombie creatures have swampwalk. (They can't be blocked as long as defending player controls a Swamp.)\nOther Zombies have \"{B}: Regenerate this permanent.\"",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Zombie"
       ],
       "toughness": 3,
       "types": [

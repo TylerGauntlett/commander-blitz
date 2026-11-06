@@ -7,12 +7,15 @@
   ],
   "needs": [
     {
-      "capability": "copy_exception_set_creature_types",
+      "capability": "copy_exception_set_subtypes",
       "kind": "engine",
       "what": "A copy exception (copy_permanent `except_`) that REPLACES the copied card's creature types with the printed ones -- \"except it's a 4/4 black Zombie\" without \"in addition to its other types\" makes the token a Zombie and nothing else (205.1b, 707.9b), e.g. an `except_.subtypes: [\"Zombie\"]` override read in characteristics._compute beside `colors`, `power` and `toughness`",
       "why_existing_wont_do": "The rest is expressible: a `discard` trigger with `controller: you` and `filter: {types: [Creature]}`, a `may` with `pay: {mana: {2}{U}}`, and `copy_permanent` on `{binding: subject, zone: graveyard}` with `tapped: true` and `except_` power 4 / toughness 4 / colors [B]. But the only creature-type key `copy_overrides` honours is `add_subtypes` (eternalize's 'Zombie in addition to its other types'); `types` replaces card types only and keeps subtypes. Using `add_subtypes` would leave a discarded Elf Warrior an Elf Warrior Zombie, a different card for every tribal interaction"
     }
   ],
-  "closest_existing": ["copy_permanent", "except_.add_subtypes"],
+  "closest_existing": [
+    "copy_permanent",
+    "except_.add_subtypes"
+  ],
   "confidence": "high"
 }

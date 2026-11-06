@@ -17087,6 +17087,13 @@
     "opponent_battlefield_count": 4,
     "zone": "graveyard"
   },
+  "timeless_dragon": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "timeless_lotus": {
     "zone": "battlefield"
   },
@@ -17579,6 +17586,13 @@
   "twinscroll_shaman": {
     "zone": "battlefield"
   },
+  "twisted_abomination": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "twisted_experiment": {
     "zone": [
       "battlefield",
@@ -17777,6 +17791,10 @@
     ]
   },
   "unhallowed_phalanx": {
+    "zone": "battlefield"
+  },
+  "unholy_grotto": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "unholy_strength": {
@@ -18721,6 +18739,14 @@
   "wayward_giant": {
     "zone": "battlefield"
   },
+  "wayward_servant": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "weakness": {
     "zone": [
       "battlefield",
@@ -19508,6 +19534,10 @@
     "zone": "battlefield"
   },
   "zombie_goliath": {
+    "zone": "battlefield"
+  },
+  "zombie_master": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "zombify": {
