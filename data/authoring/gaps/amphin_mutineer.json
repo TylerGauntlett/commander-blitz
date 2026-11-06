@@ -1,0 +1,21 @@
+{
+  "card_id": "amphin_mutineer",
+  "name": "Amphin Mutineer",
+  "oracle_text": "When this creature enters, exile up to one target non-Salamander creature. That creature's controller creates a 4/3 blue Salamander Warrior creature token.\nEncore {4}{U}{U} ({4}{U}{U}, Exile this card from your graveyard: For each opponent, create a token copy that attacks that opponent this turn if able. They gain haste. Sacrifice them at the beginning of the next end step. Activate only as a sorcery.)",
+  "blocked_sentences": [
+    "When this creature enters, exile up to one target non-Salamander creature. That creature's controller creates a 4/3 blue Salamander Warrior creature token."
+  ],
+  "needs": [
+    {
+      "capability": "salamander_warrior_4_3_u",
+      "kind": "token",
+      "what": "a 4/3 blue Salamander Warrior creature token (no abilities), created under the exiled creature's controller",
+      "why_existing_wont_do": "token_ids has no Salamander Warrior token; the only 4/3 is vampire_demon_4_3_wb_flying, which is a different token. The rest of the card (exile with up_to target, create_token with controller, encore via active_zones graveyard + exile_from_graveyard cost as Angel of Indemnity does) is expressible"
+    }
+  ],
+  "closest_existing": [
+    "vampire_demon_4_3_wb_flying",
+    "create_token"
+  ],
+  "confidence": "high"
+}

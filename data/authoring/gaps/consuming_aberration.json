@@ -1,0 +1,18 @@
+{
+  "card_id": "consuming_aberration",
+  "name": "Consuming Aberration",
+  "oracle_text": "Consuming Aberration's power and toughness are each equal to the number of cards in your opponents' graveyards.\nWhenever you cast a spell, each opponent reveals cards from the top of their library until they reveal a land card, then puts those cards into their graveyard.",
+  "blocked_sentences": [
+    "Whenever you cast a spell, each opponent reveals cards from the top of their library until they reveal a land card, then puts those cards into their graveyard."
+  ],
+  "needs": [
+    {
+      "capability": "reveal_until_rest_to_graveyard",
+      "kind": "op",
+      "what": "a remainder destination on `reveal_until` (e.g. `rest_to: \"graveyard\"`) so the revealed cards walked past before the match are put into their owner's graveyard together with the match (`destination: \"graveyard\"`), as one move -- \"reveals cards from the top of their library until they reveal a land card, then puts those cards into their graveyard\" (Consuming Aberration, Mind Funeral's kin with no count)",
+      "why_existing_wont_do": "`op_reveal_until` (ops_cards.py) moves only the hits to `destination`; the non-matching revealed cards either go to the bottom in a random order (`rest_to_bottom`, defaulted on) or are shuffled back (`shuffle_rest`), and switching both off leaves them on top -- there is no key sending them to the graveyard. `look_at_top` has `rest_to` but a fixed window, not an unbounded 'until'. `repeat_while` around `mill` 1 with an `as` binding and a 'not a land' condition is an approximation: it is a mill (701.13), so it fires mill triggers and `replace_mill` the printed reveal never does, moves the cards one at a time instead of together, and is capped at the 100-iteration guard. The first sentence is expressible (static `set_pt` self_only with `count` of `{controller: opponent, zone: graveyard}` on both power and toughness, as Haughty Djinn does), and the trigger is a plain `spell_cast` with `controller: you` over `for_each_player each_opponent`; only the reveal-and-bin is blocked."
+    }
+  ],
+  "closest_existing": ["reveal_until", "look_at_top", "repeat_while", "mill"],
+  "confidence": "high"
+}
