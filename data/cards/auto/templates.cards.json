@@ -9747,6 +9747,70 @@
               "amount": {
                 "const": 1
               },
+              "op": "add_energy",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Landfall — Whenever a land you control enters, you get {E} (an energy counter).",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "pay_energy": 8
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "beast_6_6_c_artifact"
+            }
+          ],
+          "kind": "activated",
+          "text": "Pay eight {E}: Create a 6/6 colorless Beast artifact creature token."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "architect_of_the_untamed",
+      "mana_cost": "{2}{G}",
+      "name": "Architect of the Untamed",
+      "oracle_text": "Landfall — Whenever a land you control enters, you get {E} (an energy counter).\nPay eight {E}: Create a 6/6 colorless Beast artifact creature token.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Artificer",
+        "Druid"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
               "op": "gain_life",
               "player": "you"
             },
@@ -158679,6 +158743,105 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "untap"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}: Untap this artifact."
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "servo_1_1_c"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, {T}: Create a 1/1 colorless Servo artifact creature token."
+        },
+        {
+          "cost": {
+            "mana": "{1}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "subtypes": [
+                "Servo"
+              ],
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "thopter_1_1_c_flying"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}, {T}, Sacrifice a Servo: Create a 1/1 colorless Thopter artifact creature token with flying."
+        },
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "subtypes": [
+                "Thopter"
+              ],
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "construct_4_4_c_artifact"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Sacrifice a Thopter: Create a 4/4 colorless Construct artifact creature token."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "retrofitter_foundry",
+      "mana_cost": "{1}",
+      "name": "Retrofitter Foundry",
+      "oracle_text": "{3}: Untap this artifact.\n{2}, {T}: Create a 1/1 colorless Servo artifact creature token.\n{1}, {T}, Sacrifice a Servo: Create a 1/1 colorless Thopter artifact creature token with flying.\n{T}, Sacrifice a Thopter: Create a 4/4 colorless Construct artifact creature token.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -208853,6 +209016,65 @@
         "Legendary"
       ],
       "toughness": 7,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "golem_3_3_c_artifact_flying"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "golem_3_3_c_artifact_vigilance"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "golem_3_3_c_artifact_trample"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, create a 3/3 colorless Golem artifact creature token with flying, a 3/3 colorless Golem artifact creature token with vigilance, and a 3/3 colorless Golem artifact creature token with trample.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "triplicate_titan",
+      "keywords": [
+        "flying",
+        "vigilance",
+        "trample"
+      ],
+      "mana_cost": "{9}",
+      "name": "Triplicate Titan",
+      "oracle_text": "Flying, vigilance, trample\nWhen this creature dies, create a 3/3 colorless Golem artifact creature token with flying, a 3/3 colorless Golem artifact creature token with vigilance, and a 3/3 colorless Golem artifact creature token with trample.",
+      "power": 9,
+      "source": "auto",
+      "subtypes": [
+        "Golem"
+      ],
+      "toughness": 9,
       "types": [
         "Artifact",
         "Creature"

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**211 cards** blocked by **192** capabilities.
+**208 cards** blocked by **189** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -51,7 +51,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [batched-combat-damage-amount](#batched-combat-damage-amount) | 1 | 3943 | value |
-| [beast-6-6-c-artifact-token](#beast-6-6-c-artifact-token) | 1 | 9171 | token |
 | [become-copy-add-supertypes](#become-copy-add-supertypes) | 1 | 2059 | op |
 | [become-copy-add-types](#become-copy-add-types) | 1 | 2493 | op |
 | [block-restriction-relative-power](#block-restriction-relative-power) | 1 | 6993 | static_effect |
@@ -70,7 +69,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [companion](#companion) | 1 | 3861 | engine |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [conditional-play-exiled-with-source](#conditional-play-exiled-with-source) | 1 | 4225 | static_effect |
-| [construct-4-4-c-artifact](#construct-4-4-c-artifact) | 1 | 4630 | token |
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
 | [copy-this-spell-on-resolution](#copy-this-spell-on-resolution) | 1 | 338 | op |
@@ -112,7 +110,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [free-cast-this-turn](#free-cast-this-turn) | 1 | 6651 | op |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
 | [gold-token](#gold-token) | 1 | 705 | token |
-| [golem-token](#golem-token) | 1 | 2212 | token |
 | [grant-abilities-of-exiled-cards](#grant-abilities-of-exiled-cards) | 1 | 8370 | static_effect |
 | [grant-cycling-to-cards-in-hand](#grant-cycling-to-cards-in-hand) | 1 | 5169 | static_effect |
 | [grant-evoke](#grant-evoke) | 1 | 5749 | static_effect |
@@ -983,20 +980,6 @@ Blocks **1** card.
 
 </details>
 
-## beast-6-6-c-artifact-token
-
-Blocks **1** card.
-
-- **(token)** a 6/6 colorless Beast artifact creature token (no abilities)
-  <br>Why the existing vocabulary won't do: token_ids has only green/white Beasts (beast_3_3_g, beast_4_4_g, ...) and other 6/6s like dragon_6_6_r_flying; no colorless Beast artifact creature. The cost pay_energy and the landfall line (permanent_enters + add_energy) are otherwise expressible
-
-<details><summary>Cards waiting on this</summary>
-
-- **Architect of the Untamed** (rank 9171) — `architect_of_the_untamed`
-  - Pay eight {E}: Create a 6/6 colorless Beast artifact creature token.
-
-</details>
-
 ## become-copy-add-supertypes
 
 Blocks **1** card.
@@ -1255,20 +1238,6 @@ Blocks **1** card.
 
 - **Evendo Brushrazer** (rank 4225) — `evendo_brushrazer`
   - During your turn, as long as you've sacrificed a nontoken permanent this turn, you may play cards exiled with this creature.
-
-</details>
-
-## construct-4-4-c-artifact
-
-Blocks **1** card.
-
-- **(token)** a 4/4 colorless Construct artifact creature token with no abilities
-  <br>Why the existing vocabulary won't do: token_ids holds only construct_4_4_c_artifact_flying_haste (adds flying and haste) and construct_0_0_c_artifact_buff (carries a +1/+1-per-artifact static that a power/toughness override on create_token would not remove); neither is the printed vanilla 4/4 Construct
-
-<details><summary>Cards waiting on this</summary>
-
-- **Retrofitter Foundry** (rank 4630) — `retrofitter_foundry`
-  - {T}, Sacrifice a Thopter: Create a 4/4 colorless Construct artifact creature token.
 
 </details>
 
@@ -1859,24 +1828,6 @@ Blocks **1** card.
 
 - **Curse of Opulence** (rank 705) — `curse_of_opulence`
   - Whenever enchanted player is attacked, create a Gold token. Each opponent attacking that player does the same.
-
-</details>
-
-## golem-token
-
-Blocks **1** card.
-
-- **(token)** a 3/3 colorless Golem artifact creature token with flying
-  <br>Why the existing vocabulary won't do: token_ids has only golem_3_3_c_artifact (no keywords); creating it and granting flying with grant_keyword would leave the keyword off the token's copiable values, so a copy of it would lack flying
-- **(token)** a 3/3 colorless Golem artifact creature token with vigilance
-  <br>Why the existing vocabulary won't do: token_ids has only the keywordless golem_3_3_c_artifact; a granted keyword is not the printed token
-- **(token)** a 3/3 colorless Golem artifact creature token with trample
-  <br>Why the existing vocabulary won't do: token_ids has only the keywordless golem_3_3_c_artifact; a granted keyword is not the printed token
-
-<details><summary>Cards waiting on this</summary>
-
-- **Triplicate Titan** (rank 2212) — `triplicate_titan`
-  - When this creature dies, create a 3/3 colorless Golem artifact creature token with flying, a 3/3 colorless Golem artifact creature token with vigilance, and a 3/3 colorless Golem artifact creature token with trample.
 
 </details>
 

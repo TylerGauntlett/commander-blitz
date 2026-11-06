@@ -883,6 +883,10 @@
     },
     "zone": "battlefield"
   },
+  "architect_of_the_untamed": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "archivist_of_oghma": {
     "battlefield_count": 33,
     "hand_size": {
@@ -13448,6 +13452,10 @@
   "retreat_to_kazandu": {
     "zone": "battlefield"
   },
+  "retrofitter_foundry": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "return_of_the_wildspeaker": {
     "zone": "graveyard"
   },
@@ -17589,6 +17597,10 @@
     "zone": "battlefield"
   },
   "tri_sentinel_act_of_vengeance": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "triplicate_titan": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

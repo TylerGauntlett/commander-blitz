@@ -994,6 +994,33 @@ class TestEzurisPredationMakesPhyrexianBeasts:
         assert list(beast.subtypes) == ["Beast"]
 
 
+class TestArchitectOfTheUntamedsBeastIsAColorlessArtifact:
+    """Architect of the Untamed: *"Pay eight {E}: Create a 6/6 **colorless**
+    Beast **artifact** creature token."*
+
+    Every other Beast in the pool is green or white and none is an artifact,
+    so `beast_4_4_g` is wrong in body, colour and card type; `golem_9_9_c_artifact`
+    is the right colour and type on the wrong body and creature type. An
+    artifact deck counts this Beast and a green one would not be counted.
+    """
+
+    def test_it_is_a_six_six_colorless_beast_artifact_with_nothing_else(self, pool):
+        token = pool.get("beast_6_6_c_artifact")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (6, 6)
+        assert not token.colors
+        assert sorted(token.types) == ["Artifact", "Creature"]
+        assert list(token.subtypes) == ["Beast"]
+        assert not token.keywords
+        assert not token.abilities
+
+    def test_the_green_beast_is_still_a_separate_token(self, pool):
+        beast = pool.get("beast_4_4_g")
+        assert beast is not None
+        assert sorted(beast.colors) == ["G"]
+        assert "Artifact" not in beast.types
+
+
 class TestEmpowersJaceIsABlueZeroLoyaltyPlaneswalker:
     """Empower Jace N: *"…first create a **blue Jace planeswalker** token with
     "[-1]: Surveil 1" and "[-3]: Draw a card."*" (Plan for All Outcomes).
@@ -1445,6 +1472,31 @@ class TestTheFantasticarsConstructsAreFourFourHastyFliers:
         assert not construct.keywords
 
 
+class TestRetrofitterFoundrysConstructIsAPlainFourFour:
+    """Retrofitter Foundry: *"{T}, Sacrifice a Thopter: Create a 4/4 colorless
+    Construct artifact creature token."*
+
+    `construct_4_4_c_artifact_flying_haste` is the same body with two keywords
+    the Foundry never prints, and `construct_0_0_c_artifact_buff` carries a
+    static that grows it with every artifact; neither is the vanilla 4/4.
+    """
+
+    def test_it_is_a_four_four_colorless_construct_artifact_with_nothing_else(self, pool):
+        token = pool.get("construct_4_4_c_artifact")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (4, 4)
+        assert not token.colors
+        assert sorted(token.types) == ["Artifact", "Creature"]
+        assert list(token.subtypes) == ["Construct"]
+        assert not token.keywords
+        assert not token.abilities
+
+    def test_the_hasty_flier_is_still_a_separate_token(self, pool):
+        other = pool.get("construct_4_4_c_artifact_flying_haste")
+        assert other is not None
+        assert sorted(other.keywords) == ["flying", "haste"]
+
+
 class TestGolemFoundrysGolemIsAPlainThreeThree:
     """Golem Foundry: *"Create a 3/3 colorless Golem artifact creature token."*
 
@@ -1475,6 +1527,31 @@ class TestGolemFoundrysGolemIsAPlainThreeThree:
     def test_gingerbrute_is_still_a_separate_golem(self, pool):
         gingerbrute = pool.get("gingerbrute_1_1_c")
         assert (gingerbrute.power, gingerbrute.toughness) == (1, 1)
+
+
+class TestTriplicateTitansGolemsEachCarryOneKeyword:
+    """Triplicate Titan: *"create a 3/3 colorless Golem artifact creature token
+    with flying, a 3/3 … with vigilance, and a 3/3 … with trample."*
+
+    `golem_3_3_c_artifact` is the body with no keyword, and granting one to it
+    with `grant_keyword` would leave the keyword off the token's copiable
+    values, so a copy of it would lose it. Each Golem prints exactly one of the
+    Titan's three keywords, so none of the three may stand in for another.
+    """
+
+    @pytest.mark.parametrize("keyword", ["flying", "vigilance", "trample"])
+    def test_it_is_a_three_three_colorless_golem_artifact_with_one_keyword(self, pool, keyword):
+        token = pool.get(f"golem_3_3_c_artifact_{keyword}")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (3, 3)
+        assert not token.colors
+        assert sorted(token.types) == ["Artifact", "Creature"]
+        assert list(token.subtypes) == ["Golem"]
+        assert list(token.keywords) == [keyword]
+        assert not token.abilities
+
+    def test_the_vanilla_golem_is_still_a_separate_token(self, pool):
+        assert not pool.get("golem_3_3_c_artifact").keywords
 
 
 class TestPrismariElementalsAreBlueAndRed:

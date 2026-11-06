@@ -12082,12 +12082,12 @@
     },
     "Architect of the Untamed": {
       "edhrec_rank": 9171,
-      "gate": "template",
+      "gate": null,
       "name": "Architect of the Untamed",
-      "reason": "no template for: Landfall — Whenever a land you control enters, you get {E}",
+      "reason": "",
       "scryfall_id": "f11222dc-0dd8-48df-8106-f9e99f0b6e11",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Architects of Will": {
@@ -222102,12 +222102,12 @@
     },
     "Retrofitter Foundry": {
       "edhrec_rank": 4630,
-      "gate": "template",
+      "gate": null,
       "name": "Retrofitter Foundry",
-      "reason": "no template for: {3}: Untap this artifact",
+      "reason": "",
       "scryfall_id": "2ad34311-c7ef-4333-8978-f82d0dfe2836",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Retromancer": {
@@ -292972,12 +292972,12 @@
     },
     "Triplicate Titan": {
       "edhrec_rank": 2212,
-      "gate": "template",
+      "gate": null,
       "name": "Triplicate Titan",
-      "reason": "no template for: When this creature dies, create a 3/3 colorless Golem artifact creature token with flying,",
+      "reason": "",
       "scryfall_id": "36726ee1-b960-4f85-b648-dd3fe0c38e6f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Triskaidekaphile": {
