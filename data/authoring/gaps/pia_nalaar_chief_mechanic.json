@@ -1,0 +1,24 @@
+{
+  "card_id": "pia_nalaar_chief_mechanic",
+  "name": "Pia Nalaar, Chief Mechanic",
+  "oracle_text": "Whenever one or more artifact creatures you control deal combat damage to a player, you get {E}{E} (two energy counters).\nAt the beginning of your end step, you may pay one or more {E}. If you do, create an X/X colorless Vehicle artifact token named Nalaar Aetherjet with flying and crew 2, where X is the amount of {E} paid this way.",
+  "blocked_sentences": [
+    "At the beginning of your end step, you may pay one or more {E}. If you do, create an X/X colorless Vehicle artifact token named Nalaar Aetherjet with flying and crew 2, where X is the amount of {E} paid this way."
+  ],
+  "needs": [
+    {
+      "capability": "nalaar_aetherjet_token",
+      "kind": "token",
+      "what": "a 0/0 (X/X, sized by create_token power/toughness) colorless Vehicle artifact token named Nalaar Aetherjet with flying and crew 2",
+      "why_existing_wont_do": "token_ids has the_blackjack_3_3_c_flying_crew2, a Vehicle with flying and crew 2 but a fixed 3/3 named The Blackjack; substituting it would give the token the wrong name"
+    },
+    {
+      "capability": "pay_any_amount_of_energy",
+      "kind": "decision",
+      "what": "a `may` that lets the player pay any amount (1..their energy) of {E} and binds the amount paid, so the effect can read it as X",
+      "why_existing_wont_do": "may.any_amount is documented only for a mana symbol (\"pay any amount of {R}\"); pay_energy exists as a fixed cost but nothing documents a variable energy payment bound as a value"
+    }
+  ],
+  "closest_existing": ["the_blackjack_3_3_c_flying_crew2", "may.any_amount", "pay_energy"],
+  "confidence": "high"
+}

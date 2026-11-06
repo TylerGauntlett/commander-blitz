@@ -202132,12 +202132,12 @@
     },
     "Pia and Kiran Nalaar": {
       "edhrec_rank": 8803,
-      "gate": "template",
+      "gate": null,
       "name": "Pia and Kiran Nalaar",
-      "reason": "no template for: When enters, create two 1/1 colorless Thopter artifact creature tokens with flying",
+      "reason": "",
       "scryfall_id": "f17e68fd-9c05-460d-96aa-dd0ab8b7af37",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pia's Revolution": {
@@ -217862,12 +217862,12 @@
     },
     "Reckless Fireweaver": {
       "edhrec_rank": 703,
-      "gate": "template",
+      "gate": null,
       "name": "Reckless Fireweaver",
-      "reason": "no template for: Whenever an artifact you control enters, this creature deals 1 damage to each opponent",
+      "reason": "",
       "scryfall_id": "3e626e3e-1d08-4d6c-b29b-71157e568b45",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Reckless Handling": {
@@ -226602,12 +226602,12 @@
     },
     "Rogue Refiner": {
       "edhrec_rank": 11587,
-      "gate": "template",
+      "gate": null,
       "name": "Rogue Refiner",
-      "reason": "no template for: When this creature enters, draw a card and you get {E}{E}",
+      "reason": "",
       "scryfall_id": "4d2f716f-97b3-49dd-b52c-0030d20b1c7f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rogue Skycaptain": {

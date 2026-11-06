@@ -12264,6 +12264,14 @@
   "phyrexian_walker": {
     "zone": "battlefield"
   },
+  "pia_and_kiran_nalaar": {
+    "battlefield_count": 35,
+    "tokens": {
+      "count": 2,
+      "id": "thopter_1_1_c_flying"
+    },
+    "zone": "battlefield"
+  },
   "piercing_exhale": {
     "library_size": {
       "0": 40
@@ -13117,6 +13125,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "reckless_fireweaver": {
+    "battlefield_count": 33,
+    "life": {
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "reconnaissance_mission": {
     "battlefield_count": 33,
     "hand_size": {
@@ -13700,6 +13715,16 @@
     "zone": "battlefield"
   },
   "rograkh_son_of_rohgahh": {
+    "zone": "battlefield"
+  },
+  "rogue_refiner": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
     "zone": "battlefield"
   },
   "rogue_s_passage": {

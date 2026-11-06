@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**210 cards** blocked by **189** capabilities.
+**213 cards** blocked by **192** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -37,6 +37,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
+| [variable-energy-payment](#variable-energy-payment) | 2 | 7567 | cost |
 | [venture](#venture) | 2 | 19644 | engine |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
 | [x-maximum](#x-maximum) | 2 | 1665 | engine |
@@ -69,6 +70,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [companion](#companion) | 1 | 3861 | engine |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [conditional-play-exiled-with-source](#conditional-play-exiled-with-source) | 1 | 4225 | static_effect |
+| [construct-4-4-c-artifact](#construct-4-4-c-artifact) | 1 | 4630 | token |
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
 | [copy-this-spell-on-resolution](#copy-this-spell-on-resolution) | 1 | 338 | op |
@@ -141,11 +143,13 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mode-owned-variable-targets-mid-declaration](#mode-owned-variable-targets-mid-declaration) | 1 | 16968 | engine |
 | [modified](#modified) | 1 | 831 | selector |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
+| [nalaar-aetherjet-token](#nalaar-aetherjet-token) | 1 | 12627 | token |
 | [no-mana-cost](#no-mana-cost) | 1 | 2978 | engine |
 | [nontoken-creatures-died-this-turn](#nontoken-creatures-died-this-turn) | 1 | 3951 | value |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [odd-or-even](#odd-or-even) | 1 | 8504 | selector |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
+| [pay-any-amount-of-energy](#pay-any-amount-of-energy) | 1 | 12627 | decision |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-mana-ability-until-end-of-turn](#player-mana-ability-until-end-of-turn) | 1 | 12705 | op |
 | [players-attacked-last-combat](#players-attacked-last-combat) | 1 | 6681 | value |
@@ -197,7 +201,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [toughness-greater-than-power-filter](#toughness-greater-than-power-filter) | 1 | 3557 | selector |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
-| [variable-energy-payment](#variable-energy-payment) | 1 | 7567 | cost |
 | [while-source-on-battlefield-duration](#while-source-on-battlefield-duration) | 1 | 8222 | engine |
 | [x-cost-mana-restriction](#x-cost-mana-restriction) | 1 | 4046 | decision |
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 1 | 11545 | engine |
@@ -773,6 +776,24 @@ Blocks **2** cards.
 
 </details>
 
+## variable-energy-payment
+
+Blocks **2** cards.
+
+- **(cost)** a `may` whose `pay.pay_energy` is a value expression read at resolution (here `mana_value_of` the target t1), fixed to an integer before the affordability check, the way `pay.pay_life` already accepts a value expression (Niv-Mizzet, Ghost Counsel)
+  <br>Why the existing vocabulary won't do: Cost.pay_energy is an int in schema.py/carddef.py, so only a printed fixed energy price loads; `pay.times` scales only the mana half of a `may` cost (ops_control.op_may), and `any_amount` lets the player choose the count rather than fixing it to the target's mana value. add_energy and gain_control themselves are already expressible
+- **(cost)** a `may` that lets the player announce how many {E} to pay, from 1 up to their current energy, charges exactly that much energy, and binds the count (e.g. `any_amount: {"as": "paid"}` accepted beside `pay: {"pay_energy": 1}`) so a following `add_counters` can read `{"binding": "paid"}` as the number of +1/+1 counters
+  <br>Why the existing vocabulary won't do: `may.any_amount` is the right shape but loader/effects._validate_pay_any_amount refuses any `pay` other than exactly one coloured or {C} mana symbol, and op_may scales only the mana half of the cost; Cost.pay_energy is a fixed int (carddef.py), so no value expression or chosen amount can price it; `choose_number` cannot bound its max by the player's energy because no value key reads a player's energy count. Trample, ward {2}, the upkeep trigger and add_energy with power_of self are otherwise expressible
+
+<details><summary>Cards waiting on this</summary>
+
+- **Confiscation Coup** (rank 7567) — `confiscation_coup`
+  - You get {E}{E}{E}{E} (four energy counters), then you may pay an amount of {E} equal to that permanent's mana value.
+- **Rampaging Aetherhood** (rank 8637) — `rampaging_aetherhood`
+  - At the beginning of your upkeep, you get an amount of {E} (energy counters) equal to this creature's power. Then you may pay one or more {E}. If you do, put that many +1/+1 counters on this creature.
+
+</details>
+
 ## venture
 
 Blocks **2** cards.
@@ -1246,6 +1267,20 @@ Blocks **1** card.
 
 - **Evendo Brushrazer** (rank 4225) — `evendo_brushrazer`
   - During your turn, as long as you've sacrificed a nontoken permanent this turn, you may play cards exiled with this creature.
+
+</details>
+
+## construct-4-4-c-artifact
+
+Blocks **1** card.
+
+- **(token)** a 4/4 colorless Construct artifact creature token with no abilities
+  <br>Why the existing vocabulary won't do: token_ids holds only construct_4_4_c_artifact_flying_haste (adds flying and haste) and construct_0_0_c_artifact_buff (carries a +1/+1-per-artifact static that a power/toughness override on create_token would not remove); neither is the printed vanilla 4/4 Construct
+
+<details><summary>Cards waiting on this</summary>
+
+- **Retrofitter Foundry** (rank 4630) — `retrofitter_foundry`
+  - {T}, Sacrifice a Thopter: Create a 4/4 colorless Construct artifact creature token.
 
 </details>
 
@@ -2278,6 +2313,20 @@ Blocks **1** card.
 
 </details>
 
+## nalaar-aetherjet-token
+
+Blocks **1** card.
+
+- **(token)** a 0/0 (X/X, sized by create_token power/toughness) colorless Vehicle artifact token named Nalaar Aetherjet with flying and crew 2
+  <br>Why the existing vocabulary won't do: token_ids has the_blackjack_3_3_c_flying_crew2, a Vehicle with flying and crew 2 but a fixed 3/3 named The Blackjack; substituting it would give the token the wrong name
+
+<details><summary>Cards waiting on this</summary>
+
+- **Pia Nalaar, Chief Mechanic** (rank 12627) — `pia_nalaar_chief_mechanic`
+  - At the beginning of your end step, you may pay one or more {E}. If you do, create an X/X colorless Vehicle artifact token named Nalaar Aetherjet with flying and crew 2, where X is the amount of {E} paid this way.
+
+</details>
+
 ## no-mana-cost
 
 Blocks **1** card.
@@ -2350,6 +2399,20 @@ Blocks **1** card.
   - Cast this spell only during combat before blockers are declared.
   - X can't be greater than the number of snow lands you control.
   - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
+
+</details>
+
+## pay-any-amount-of-energy
+
+Blocks **1** card.
+
+- **(decision)** a `may` that lets the player pay any amount (1..their energy) of {E} and binds the amount paid, so the effect can read it as X
+  <br>Why the existing vocabulary won't do: may.any_amount is documented only for a mana symbol ("pay any amount of {R}"); pay_energy exists as a fixed cost but nothing documents a variable energy payment bound as a value
+
+<details><summary>Cards waiting on this</summary>
+
+- **Pia Nalaar, Chief Mechanic** (rank 12627) — `pia_nalaar_chief_mechanic`
+  - At the beginning of your end step, you may pay one or more {E}. If you do, create an X/X colorless Vehicle artifact token named Nalaar Aetherjet with flying and crew 2, where X is the amount of {E} paid this way.
 
 </details>
 
@@ -3069,20 +3132,6 @@ Blocks **1** card.
 
 - **Suppressor Skyguard** (rank 9126) — `suppressor_skyguard`
   - Whenever a player attacks you, if that player has another opponent who isn't being attacked, prevent all combat damage that would be dealt to you this combat.
-
-</details>
-
-## variable-energy-payment
-
-Blocks **1** card.
-
-- **(cost)** a `may` whose `pay.pay_energy` is a value expression read at resolution (here `mana_value_of` the target t1), fixed to an integer before the affordability check, the way `pay.pay_life` already accepts a value expression (Niv-Mizzet, Ghost Counsel)
-  <br>Why the existing vocabulary won't do: Cost.pay_energy is an int in schema.py/carddef.py, so only a printed fixed energy price loads; `pay.times` scales only the mana half of a `may` cost (ops_control.op_may), and `any_amount` lets the player choose the count rather than fixing it to the target's mana value. add_energy and gain_control themselves are already expressible
-
-<details><summary>Cards waiting on this</summary>
-
-- **Confiscation Coup** (rank 7567) — `confiscation_coup`
-  - You get {E}{E}{E}{E} (four energy counters), then you may pay an amount of {E} equal to that permanent's mana value.
 
 </details>
 
