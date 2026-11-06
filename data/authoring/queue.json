@@ -15192,12 +15192,12 @@
     },
     "Assault Formation": {
       "edhrec_rank": 2526,
-      "gate": "template",
+      "gate": null,
       "name": "Assault Formation",
-      "reason": "no template for: Each creature you control assigns combat damage equal to its toughness rather than its pow",
+      "reason": "",
       "scryfall_id": "57a7734e-b964-42bb-920d-168ade9c6377",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Assault Griffin": {
@@ -19192,12 +19192,12 @@
     },
     "Baldin, Century Herdmaster": {
       "edhrec_rank": 3884,
-      "gate": "template",
+      "gate": null,
       "name": "Baldin, Century Herdmaster",
-      "reason": "no template for: During your turn, each creature assigns combat damage equal to its toughness rather than i",
+      "reason": "",
       "scryfall_id": "ef84fedd-43a9-4c42-9f8a-e8147cc5eea2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Baldur's Gate": {
@@ -93282,12 +93282,12 @@
     },
     "Felothar the Steadfast": {
       "edhrec_rank": 4208,
-      "gate": "template",
+      "gate": null,
       "name": "Felothar the Steadfast",
-      "reason": "no template for: Each creature you control assigns combat damage equal to its toughness rather than its pow",
+      "reason": "",
       "scryfall_id": "2c3549f6-25df-4ea7-84ad-922ccd4af6b2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Felothar, Dawn of the Abzan": {
@@ -208802,9 +208802,9 @@
     },
     "Protector of the Wastes": {
       "edhrec_rank": 10488,
-      "gate": "compile",
+      "gate": "behaviour",
       "name": "Protector of the Wastes",
-      "reason": "protector_of_the_wastes.abilities[0]: 'one_per_player' needs 'count': 'any' -- it caps a variable-size choice, and a fixed one has no room to cap",
+      "reason": "opponent battlefield is 6, expected 5",
       "scryfall_id": "3d0e4790-3ebc-4e2a-96aa-7f1909864baa",
       "source": "",
       "status": "failed",
@@ -222332,12 +222332,12 @@
     },
     "Reunion of the House": {
       "edhrec_rank": 5542,
-      "gate": "template",
+      "gate": null,
       "name": "Reunion of the House",
-      "reason": "no template for: Return any number of target creature cards with total power 10 or less from your graveyard",
+      "reason": "",
       "scryfall_id": "71e4a360-89dd-4f25-9b85-75d0b131e208",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rev, Tithe Extractor": {
@@ -308902,12 +308902,12 @@
     },
     "Wakestone Gargoyle": {
       "edhrec_rank": 10874,
-      "gate": "template",
+      "gate": null,
       "name": "Wakestone Gargoyle",
-      "reason": "no template for: {1}{W}: Creatures you control with defender can attack this turn as though they didn't hav",
+      "reason": "",
       "scryfall_id": "4fc060fe-0c52-4348-b5e7-a0cb8234c6d5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Waking Nightmare": {
@@ -309042,12 +309042,12 @@
     },
     "Walking Bulwark": {
       "edhrec_rank": 4454,
-      "gate": "template",
+      "gate": null,
       "name": "Walking Bulwark",
-      "reason": "no template for: {2}: Until end of turn, target creature with defender gains haste, can attack as though it",
+      "reason": "",
       "scryfall_id": "602d163c-d341-4b3b-9d3c-5d3419e9b10b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Walking Corpse": {
@@ -312732,12 +312732,12 @@
     },
     "Weathered Sentinels": {
       "edhrec_rank": 2855,
-      "gate": "template",
+      "gate": null,
       "name": "Weathered Sentinels",
-      "reason": "no template for: This creature can attack players who attacked you during their last turn as though it didn",
+      "reason": "",
       "scryfall_id": "41e1cf4c-fa52-4cec-a040-2794326e01de",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Weathered Wayfarer": {

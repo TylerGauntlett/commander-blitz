@@ -10,15 +10,13 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**181 cards** blocked by **161** capabilities.
+**172 cards** blocked by **156** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
-| [attack-despite-defender](#attack-despite-defender) | 5 | 2526 | op, static_effect |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
-| [combat-damage-by-toughness](#combat-damage-by-toughness) | 4 | 2526 | op, static_effect |
 | [copy-exception-ability](#copy-exception-ability) | 4 | 1261 | op |
 | [station](#station) | 4 | 1695 | engine |
 | [omen](#omen) | 3 | 3355 | cost, engine |
@@ -116,7 +114,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mana-spent-trigger-on-activation](#mana-spent-trigger-on-activation) | 1 | 4444 | trigger_event |
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
-| [modal-variable-size-targets](#modal-variable-size-targets) | 1 | 2678 | engine |
 | [modal-variable-targets](#modal-variable-targets) | 1 | 4339 | engine |
 | [mode-owned-variable-targets](#mode-owned-variable-targets) | 1 | 6294 | engine |
 | [mode-owned-variable-targets-mid-declaration](#mode-owned-variable-targets-mid-declaration) | 1 | 16968 | engine |
@@ -126,7 +123,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [nontoken-creatures-died-this-turn](#nontoken-creatures-died-this-turn) | 1 | 3951 | value |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [odd-or-even](#odd-or-even) | 1 | 8504 | selector |
-| [one-per-player-with-count-cap](#one-per-player-with-count-cap) | 1 | 10488 | selector |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-mana-ability-until-end-of-turn](#player-mana-ability-until-end-of-turn) | 1 | 12705 | op |
@@ -162,7 +158,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
-| [target-total-power](#target-total-power) | 1 | 5542 | selector |
 | [targets-only-self](#targets-only-self) | 1 | 8216 | trigger_event |
 | [teammates](#teammates) | 1 | 26785 | selector |
 | [this-combat-duration](#this-combat-duration) | 1 | 9126 | op |
@@ -290,38 +285,6 @@ Blocks **8** cards.
 
 </details>
 
-## attack-despite-defender
-
-Blocks **5** cards.
-
-- **(op)** a one-shot op with a duration (this_turn) letting the targeted creature attack as though it didn't have defender, while it keeps the defender keyword for everything else
-  <br>Why the existing vocabulary won't do: lose_keyword removes defender outright (it would then stop counting as a defender for filters and other effects), and grant_keyword/must_attack do not lift the attack restriction; no op or static permits attacking despite defender
-- **(static_effect)** a static whose `affects` filter selects creatures that can attack as though they didn't have defender (they keep the keyword), here affects: {controller: you, types: [Creature]}
-  <br>Why the existing vocabulary won't do: lose_keyword removes defender entirely, which is a different card (the creatures would no longer have defender for any other purpose, e.g. cards that count or reference defender); cant_attack and attacks_if_able are restrictions/requirements, not an override of the defender restriction
-- **(op)** a one-shot op with a duration (this_turn) that lets the selected permanents (creatures you control with defender, locked in at resolution) attack as though they lacked defender, while they keep the defender keyword for every other purpose (selectors, counts, 'creatures with defender' anthems)
-  <br>Why the existing vocabulary won't do: No op or static_effect relaxes the defender attack restriction. lose_keyword actually removes defender, which changes what 'with defender' selectors and statics see (e.g. a 'creatures with defender get +X' anthem would stop applying), so it is a different card; must_attack/attacks_if_able force attacks rather than permit them
-- **(op)** a one-shot op with a duration (this_turn) letting the targeted creature attack as though it didn't have defender, while it keeps the defender keyword for everything else
-  <br>Why the existing vocabulary won't do: lose_keyword removes defender outright (the creature would stop matching 'creature with defender' filters and lose the keyword for other effects), and grant_keyword/must_attack do not lift the attack restriction; no op permits attacking despite defender
-- **(static_effect)** a static on the source letting it attack as though it didn't have defender, restricted per defending player: only players who attacked you during their last turn are legal defenders for it (the creature keeps defender for everything else and still can't attack other players or planeswalkers)
-  <br>Why the existing vocabulary won't do: No static in static_effects lifts defender's attack restriction; lose_keyword would remove defender entirely (letting it attack anyone and changing what reads the keyword); cant_attack_you / cant_attack restrict rather than permit and are not keyed per defending player. The condition attacked_you_last_turn exists in condition_keys but not in static_condition_keys, and even as a whole-static switch it could not narrow which defender the creature may attack
-
-<details><summary>Cards waiting on this</summary>
-
-- **Assault Formation** (rank 2526) — `assault_formation`
-  - Each creature you control assigns combat damage equal to its toughness rather than its power.
-  - {G}: Target creature with defender can attack this turn as though it didn't have defender.
-- **Weathered Sentinels** (rank 2855) — `weathered_sentinels`
-  - This creature can attack players who attacked you during their last turn as though it didn't have defender.
-- **Felothar the Steadfast** (rank 4208) — `felothar_the_steadfast`
-  - Each creature you control assigns combat damage equal to its toughness rather than its power.
-  - Creatures you control can attack as though they didn't have defender.
-- **Walking Bulwark** (rank 4454) — `walking_bulwark`
-  - {2}: Until end of turn, target creature with defender gains haste, can attack as though it didn't have defender, and assigns combat damage equal to its toughness rather than its power. Activate only as a sorcery.
-- **Wakestone Gargoyle** (rank 10874) — `wakestone_gargoyle`
-  - {1}{W}: Creatures you control with defender can attack this turn as though they didn't have defender.
-
-</details>
-
 ## x-in-mana-cost-trigger-filter
 
 Blocks **5** cards.
@@ -351,34 +314,6 @@ Blocks **5** cards.
   - Whenever you cast your first spell with {X} in its mana cost each turn, put X +1/+1 counters on Nev.
 - **Lattice Library** (rank 10607) — `lattice_library`
   - When this enchantment enters and whenever you cast your first spell with {X} in its mana cost each turn, create a 0/0 green and blue Fractal creature token. Put a number of +1/+1 counters on it equal to the number of study counters on this enchantment.
-
-</details>
-
-## combat-damage-by-toughness
-
-Blocks **4** cards.
-
-- **(static_effect)** a static (Doran/Assault Formation) with an `affects` filter under which each matching creature assigns combat damage equal to its toughness rather than its power (rule 510.1a substitution), read by the combat-damage step and by trample/lethal-assignment math
-  <br>Why the existing vocabulary won't do: static_effects has buff, set_pt and replace_damage, but set_pt/buff change the creature's real power (wrong for every other power read), and replace_damage only multiplies or adds to damage already computed from power; nothing substitutes toughness for power at assignment
-- **(static_effect)** a static effect (Doran, the Siege Tower style) making each creature matching `affects` assign combat damage equal to its toughness rather than its power, usable with a static `condition` such as {"is_your_turn": true}; combat damage assignment must read toughness instead of power for affected creatures
-  <br>Why the existing vocabulary won't do: No entry in static_effects changes which characteristic combat damage is assigned from: set_pt/buff change real power (wrong for every other power-reading effect and wrong for toughness), replace_damage only multiplies or adds to an amount, and all_damage_wither changes damage results not the amount assigned
-- **(static_effect)** a static (Doran, the Siege Tower style) whose `affects` filter selects creatures that assign combat damage equal to their toughness rather than their power (rule 510.1a substitution in the combat damage step), here affects: {controller: you, types: [Creature]}
-  <br>Why the existing vocabulary won't do: No static in static_effects touches combat damage assignment; buff/set_pt change real power, which would also change power reads elsewhere (and the card's own activated ability reads power separately), and replace_damage only scales or adds to an amount, it cannot swap the source stat
-- **(op)** a one-shot op with a duration (this_turn) under which the targeted creature assigns combat damage equal to its toughness rather than its power (rule 510.1a substitution), read by the combat-damage step and trample/lethal-assignment math; the timed counterpart of the Doran/Assault Formation static
-  <br>Why the existing vocabulary won't do: pump and set_pt change the creature's real power, which every other power read would see; replace_damage only scales or adds to damage already computed from power; nothing substitutes toughness for power at assignment, as a static or as an op
-
-<details><summary>Cards waiting on this</summary>
-
-- **Assault Formation** (rank 2526) — `assault_formation`
-  - Each creature you control assigns combat damage equal to its toughness rather than its power.
-  - {G}: Target creature with defender can attack this turn as though it didn't have defender.
-- **Baldin, Century Herdmaster** (rank 3884) — `baldin_century_herdmaster`
-  - During your turn, each creature assigns combat damage equal to its toughness rather than its power.
-- **Felothar the Steadfast** (rank 4208) — `felothar_the_steadfast`
-  - Each creature you control assigns combat damage equal to its toughness rather than its power.
-  - Creatures you control can attack as though they didn't have defender.
-- **Walking Bulwark** (rank 4454) — `walking_bulwark`
-  - {2}: Until end of turn, target creature with defender gains haste, can attack as though it didn't have defender, and assigns combat damage equal to its toughness rather than its power. Activate only as a sorcery.
 
 </details>
 
@@ -1890,20 +1825,6 @@ Blocks **1** card.
 
 </details>
 
-## modal-variable-size-targets
-
-Blocks **1** card.
-
-- **(engine)** a caster-sized ("any number of target opponents": count 'any' / up_to with min_count 0) mode-owned target in a mode that is NOT the last mode owning a target -- here mode 0 owns a variable-size player target and mode 1 owns 'target creature card from your graveyard'. Needs the stored target refs to be split per spec by recorded size (or per-mode buckets) rather than by position, so a variable-size spec can be followed by later modes' targets
-  <br>Why the existing vocabulary won't do: loader.targets._check_mode_targets refuses an optional or variable-size mode-owned target unless _ends_every_declaration holds (last spec of its mode and no later mode owns a target), because targeting.filter_legal splits stored refs by position. Making mode 1's graveyard target card-level instead would force it to be declared when only mode 0 is chosen; fixing mode 0's count would change 'any number' to an exact number. The rest is expressible: choose_mode with up_to_if on an is_commander exists condition (as Will of the Jeskai/Mardu), for_each_player over {target: t1} with a sacrifice using extreme greatest power and chooser owner (as Crackling Doom) plus lose_life 3, and return_from_graveyard for mode 1
-
-<details><summary>Cards waiting on this</summary>
-
-- **Will of the Abzan** (rank 2678) — `will_of_the_abzan`
-  - • Any number of target opponents each sacrifice a creature with the greatest power among creatures that player controls and lose 3 life
-
-</details>
-
 ## modal-variable-targets
 
 Blocks **1** card.
@@ -2031,20 +1952,6 @@ Blocks **1** card.
 
 - **Zimone's Hypothesis** (rank 8504) — `zimone_s_hypothesis`
   - Then choose odd or even. Return each creature with power of the chosen quality to its owner's hand. (Zero is even.)
-
-</details>
-
-## one-per-player-with-count-cap
-
-Blocks **1** card.
-
-- **(selector)** a target spec that is both size-capped ("up to two", count 2 + optional) and constrained so no two chosen targets share a controller ("controlled by different players") -- i.e. allow `one_per_player` on a fixed numeric `count` with `optional: true`, treating the count as the ceiling of the variable-size choice
-  <br>Why the existing vocabulary won't do: `one_per_player` is refused by the loader unless `count` is "any"; with "any" the ceiling is the number of players, so in a four-player Commander game the trigger could exile up to four permanents instead of two. The engine's `size_cap` in targeting.py would do exactly this but is internal (strive/casting) and not reachable from the DSL; dropping `one_per_player` instead would let both targets share a controller
-
-<details><summary>Cards waiting on this</summary>
-
-- **Protector of the Wastes** (rank 10488) — `protector_of_the_wastes`
-  - When this creature enters or becomes monstrous, exile up to two target artifacts and/or enchantments controlled by different players.
 
 </details>
 
@@ -2541,20 +2448,6 @@ Blocks **1** card.
 
 - **Hope of Ghirapur** (rank 3240) — `hope_of_ghirapur`
   - Sacrifice Hope of Ghirapur: Until your next turn, target player who was dealt combat damage by Hope of Ghirapur this turn can't cast noncreature spells.
-
-</details>
-
-## target-total-power
-
-Blocks **1** card.
-
-- **(selector)** a target-spec key `total_power: N` capping the summed power of all objects chosen for a variable-count target ("any number of target creature cards with total power 10 or less"), checked as targets are chosen and enforced as a joint constraint the way `total_mana_value` is
-  <br>Why the existing vocabulary won't do: target_keys offers `total_mana_value`, which caps the sum of mana values, not power; a per-card `power` selector filter caps each card individually, not the sum; and an unbounded `count` with `up_to` would let the spell return more than 10 power. The engine's only total_power sums are crew's tap_permanents cost and cost_reduction, neither of which applies to targets
-
-<details><summary>Cards waiting on this</summary>
-
-- **Reunion of the House** (rank 5542) — `reunion_of_the_house`
-  - Return any number of target creature cards with total power 10 or less from your graveyard to the battlefield.
 
 </details>
 

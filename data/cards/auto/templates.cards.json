@@ -11422,6 +11422,92 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "combat_damage_by_toughness",
+          "kind": "static",
+          "text": "Each creature you control assigns combat damage equal to its toughness rather than its power."
+        },
+        {
+          "cost": {
+            "mana": "{G}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "attack_despite_defender"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "keywords": [
+                  "defender"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{G}: Target creature with defender can attack this turn as though it didn't have defender."
+        },
+        {
+          "cost": {
+            "mana": "{2}{G}"
+          },
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 0
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{G}: Creatures you control get +0/+1 until end of turn."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "assault_formation",
+      "mana_cost": "{1}{G}",
+      "name": "Assault Formation",
+      "oracle_text": "Each creature you control assigns combat damage equal to its toughness rather than its power.\n{G}: Target creature with defender can attack this turn as though it didn't have defender.\n{2}{G}: Creatures you control get +0/+1 until end of turn.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -14403,6 +14489,84 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ]
+          },
+          "condition": {
+            "is_your_turn": true
+          },
+          "effect": "combat_damage_by_toughness",
+          "kind": "static",
+          "text": "During your turn, each creature assigns combat damage equal to its toughness rather than its power."
+        },
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "pump",
+              "power": {
+                "const": 0
+              },
+              "toughness": {
+                "cards_in_hand": "you"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 100,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "up_to": true
+            }
+          ],
+          "text": "Whenever Baldin attacks, up to one hundred target creatures each get +0/+X until end of turn, where X is the number of cards in your hand.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "baldin_century_herdmaster",
+      "mana_cost": "{4}{W}{W}",
+      "name": "Baldin, Century Herdmaster",
+      "oracle_text": "During your turn, each creature assigns combat damage equal to its toughness rather than its power.\nWhenever Baldin attacks, up to one hundred target creatures each get +0/+X until end of turn, where X is the number of cards in your hand.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 7,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -62728,6 +62892,94 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "combat_damage_by_toughness",
+          "kind": "static",
+          "text": "Each creature you control assigns combat damage equal to its toughness rather than its power."
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "attack_despite_defender",
+          "kind": "static",
+          "text": "Creatures you control can attack as though they didn't have defender."
+        },
+        {
+          "cost": {
+            "mana": "{3}",
+            "sacrifice": {
+              "as": "sacrificed",
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "toughness_of": {
+                  "binding": "sacrificed"
+                }
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "power_of": {
+                  "binding": "sacrificed"
+                }
+              },
+              "op": "discard",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}, {T}, Sacrifice another creature: Draw cards equal to the sacrificed creature's toughness, then discard cards equal to its power."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "W"
+      ],
+      "id": "felothar_the_steadfast",
+      "mana_cost": "{1}{W}{B}{G}",
+      "name": "Felothar the Steadfast",
+      "oracle_text": "Each creature you control assigns combat damage equal to its toughness rather than its power.\nCreatures you control can attack as though they didn't have defender.\n{3}, {T}, Sacrifice another creature: Draw cards equal to the sacrificed creature's toughness, then discard cards equal to its power.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -153857,6 +154109,48 @@
     },
     {
       "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "exiles_itself": true,
+      "id": "reunion_of_the_house",
+      "mana_cost": "{5}{W}{W}",
+      "name": "Reunion of the House",
+      "oracle_text": "Return any number of target creature cards with total power 10 or less from your graveyard to the battlefield. Exile Reunion of the House.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "you",
+          "destination": "battlefield",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "return_from_graveyard"
+        }
+      ],
+      "targets": [
+        {
+          "count": "any",
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          },
+          "total_power": 10
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "U"
       ],
       "colors": [
@@ -215135,6 +215429,56 @@
     {
       "abilities": [
         {
+          "cost": {
+            "mana": "{1}{W}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "keywords": [
+                  "defender"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "attack_despite_defender"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{W}: Creatures you control with defender can attack this turn as though they didn't have defender."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "wakestone_gargoyle",
+      "keywords": [
+        "defender",
+        "flying"
+      ],
+      "mana_cost": "{3}{W}",
+      "name": "Wakestone Gargoyle",
+      "oracle_text": "Defender, flying\n{1}{W}: Creatures you control with defender can attack this turn as though they didn't have defender.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Gargoyle"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "objects": {
@@ -215324,6 +215668,77 @@
         "Construct"
       ],
       "toughness": 0,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "haste"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "attack_despite_defender"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "combat_damage_by_toughness"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "keywords": [
+                  "defender"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{2}: Until end of turn, target creature with defender gains haste, can attack as though it didn't have defender, and assigns combat damage equal to its toughness rather than its power. Activate only as a sorcery."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "walking_bulwark",
+      "keywords": [
+        "defender"
+      ],
+      "mana_cost": "{1}",
+      "name": "Walking Bulwark",
+      "oracle_text": "Defender\n{2}: Until end of turn, target creature with defender gains haste, can attack as though it didn't have defender, and assigns combat damage equal to its toughness rather than its power. Activate only as a sorcery.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Golem"
+      ],
+      "toughness": 3,
       "types": [
         "Artifact",
         "Creature"
@@ -217257,6 +217672,72 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "defending": "attacked_you_last_turn",
+          "effect": "attack_despite_defender",
+          "kind": "static",
+          "text": "This creature can attack players who attacked you during their last turn as though it didn't have defender."
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "pump",
+              "power": {
+                "const": 3
+              },
+              "toughness": {
+                "const": 3
+              }
+            },
+            {
+              "keywords": [
+                "indestructible"
+              ],
+              "objects": {
+                "self_only": true
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, it gets +3/+3 and gains indestructible until end of turn.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "weathered_sentinels",
+      "keywords": [
+        "defender",
+        "reach",
+        "vigilance",
+        "trample"
+      ],
+      "mana_cost": "{3}",
+      "name": "Weathered Sentinels",
+      "oracle_text": "Defender, reach, vigilance, trample\nThis creature can attack players who attacked you during their last turn as though it didn't have defender.\nWhenever this creature attacks, it gets +3/+3 and gains indestructible until end of turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Wall"
+      ],
+      "toughness": 5,
+      "types": [
+        "Artifact",
+        "Creature"
       ]
     },
     {

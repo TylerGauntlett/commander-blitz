@@ -1032,6 +1032,10 @@
     },
     "zone": "graveyard"
   },
+  "assault_formation": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "assault_griffin": {
     "zone": "battlefield"
   },
@@ -1259,6 +1263,13 @@
       "0": 2
     },
     "zone": "graveyard"
+  },
+  "baldin_century_herdmaster": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "balduvian_barbarians": {
     "zone": "battlefield"
@@ -5439,6 +5450,13 @@
     "zone": "battlefield"
   },
   "fellwar_stone": {
+    "zone": "battlefield"
+  },
+  "felothar_the_steadfast": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "femeref_scouts": {
@@ -13032,6 +13050,9 @@
   "return_of_the_wildspeaker": {
     "zone": "graveyard"
   },
+  "reunion_of_the_house": {
+    "zone": "exile"
+  },
   "reverse_engineer": {
     "hand_size": {
       "0": 4
@@ -18160,6 +18181,10 @@
     },
     "zone": "graveyard"
   },
+  "wakestone_gargoyle": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "wakka_devoted_guardian": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -18170,6 +18195,10 @@
       "amount": 15,
       "kind": "+1/+1"
     },
+    "zone": "battlefield"
+  },
+  "walking_bulwark": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "walking_corpse": {
@@ -18366,6 +18395,10 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "weathered_sentinels": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "weathered_wayfarer": {
     "battlefield_count": 33,
