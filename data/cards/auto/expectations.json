@@ -4716,6 +4716,13 @@
     },
     "zone": "battlefield"
   },
+  "encroaching_dragonstorm": {
+    "battlefield_count": 35,
+    "library_size": {
+      "0": 38
+    },
+    "zone": "battlefield"
+  },
   "endless_atlas": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -4862,6 +4869,10 @@
     "library_size": {
       "0": 39
     },
+    "zone": "battlefield"
+  },
+  "eshki_temur_s_roar": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "esper_cormorants": {
@@ -6528,6 +6539,10 @@
   "glory_seeker": {
     "zone": "battlefield"
   },
+  "glorybringer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "gluttonous_zombie": {
     "zone": "battlefield"
   },
@@ -7071,6 +7086,10 @@
     },
     "zone": "battlefield"
   },
+  "hammerhead_tyrant": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "hand_of_emrakul": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -7091,6 +7110,16 @@
     "zone": "battlefield"
   },
   "happy_hogan_dauntless_driver": {
+    "zone": "battlefield"
+  },
+  "harbinger_of_the_hunt": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "flying"
+      ]
+    },
     "zone": "battlefield"
   },
   "hard_won_jitte": {

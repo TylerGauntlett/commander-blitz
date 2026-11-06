@@ -83512,12 +83512,12 @@
     },
     "Encroaching Dragonstorm": {
       "edhrec_rank": 2505,
-      "gate": "template",
+      "gate": null,
       "name": "Encroaching Dragonstorm",
-      "reason": "no template for: When a Dragon you control enters, return this enchantment to its owner's hand",
+      "reason": "",
       "scryfall_id": "4ddd4477-f8c9-4d05-9177-f8344ba8f40b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Encroaching Mycosynth": {
@@ -85932,12 +85932,12 @@
     },
     "Eshki, Temur's Roar": {
       "edhrec_rank": 5438,
-      "gate": "template",
+      "gate": null,
       "name": "Eshki, Temur's Roar",
-      "reason": "no template for: Whenever you cast a creature spell, put a +1/+1 counter on Eshki. If that spell's power is",
+      "reason": "",
       "scryfall_id": "ff9aa863-8773-452d-946c-ae334c632e11",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Esika's Chariot": {
@@ -111592,12 +111592,12 @@
     },
     "Glorybringer": {
       "edhrec_rank": 7320,
-      "gate": "template",
+      "gate": null,
       "name": "Glorybringer",
-      "reason": "no template for: You may exert this creature as it attacks. When you do, it deals 4 damage to target non-Dr",
+      "reason": "",
       "scryfall_id": "3277ad99-5682-4baa-b106-de15721876a6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gloryheath Lynx": {
@@ -121972,12 +121972,12 @@
     },
     "Hammerhead Tyrant": {
       "edhrec_rank": 4972,
-      "gate": "template",
+      "gate": null,
       "name": "Hammerhead Tyrant",
-      "reason": "no template for: Whenever you cast a spell, return up to one target nonland permanent an opponent controls ",
+      "reason": "",
       "scryfall_id": "73f4ea2a-bef3-4e17-ab75-1ab0c1811948",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hammerhead, Maggia Boss": {
@@ -122482,12 +122482,12 @@
     },
     "Harbinger of the Hunt": {
       "edhrec_rank": 10527,
-      "gate": "template",
+      "gate": null,
       "name": "Harbinger of the Hunt",
-      "reason": "no template for: {2}{R}: This creature deals 1 damage to each creature without flying",
+      "reason": "",
       "scryfall_id": "52b7ea31-e853-4e8f-82f8-440388a5b110",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Harbinger of the Seas": {

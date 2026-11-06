@@ -55109,6 +55109,69 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "count": 2,
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ]
+              },
+              "tapped": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this enchantment enters, search your library for up to two basic land cards, put them onto the battlefield tapped, then shuffle.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "return_to_hand"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When a Dragon you control enters, return this enchantment to its owner's hand.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "subtypes": [
+                "Dragon"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "encroaching_dragonstorm",
+      "mana_cost": "{3}{G}",
+      "name": "Encroaching Dragonstorm",
+      "oracle_text": "When this enchantment enters, search your library for up to two basic land cards, put them onto the battlefield tapped, then shuffle.\nWhen a Dragon you control enters, return this enchantment to its owner's hand.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "condition": {
             "cmp": ">=",
             "left": {
@@ -56780,6 +56843,110 @@
         "Soldier"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            },
+            {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "power_of": {
+                    "binding": "subject"
+                  }
+                },
+                "right": {
+                  "const": 4
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ]
+            },
+            {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "power_of": {
+                    "binding": "subject"
+                  }
+                },
+                "right": {
+                  "const": 6
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "power_of": {
+                      "self": true
+                    }
+                  },
+                  "op": "damage",
+                  "player": "each_opponent"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a creature spell, put a +1/+1 counter on Eshki. If that spell's power is 4 or greater, draw a card. If that spell's power is 6 or greater, Eshki deals damage equal to Eshki's power to each opponent.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "R",
+        "U"
+      ],
+      "id": "eshki_temur_s_roar",
+      "mana_cost": "{G}{U}{R}",
+      "name": "Eshki, Temur's Roar",
+      "oracle_text": "Whenever you cast a creature spell, put a +1/+1 counter on Eshki. If that spell's power is 4 or greater, draw a card. If that spell's power is 6 or greater, Eshki deals damage equal to Eshki's power to each opponent.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -75154,6 +75321,97 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "flag": "exerted",
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "set_turn_flag"
+                },
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "skip_untap"
+                },
+                {
+                  "ability": "glorybringer_burn",
+                  "op": "reflexive_trigger"
+                }
+              ],
+              "op": "may",
+              "prompt": "Exert Glorybringer?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "You may exert this creature as it attacks.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "id": "glorybringer_burn",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "not_subtypes": [
+                  "Dragon"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When you do, it deals 4 damage to target non-Dragon creature an opponent controls."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "glorybringer",
+      "keywords": [
+        "flying",
+        "haste"
+      ],
+      "mana_cost": "{3}{R}{R}",
+      "name": "Glorybringer",
+      "oracle_text": "Flying, haste\nYou may exert this creature as it attacks. When you do, it deals 4 damage to target non-Dragon creature an opponent controls. (An exerted creature won't untap during your next untap step.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -81824,6 +82082,71 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_to_hand"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "opponent",
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "mana_value_of": {
+                      "binding": "subject"
+                    }
+                  }
+                },
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever you cast a spell, return up to one target nonland permanent an opponent controls with mana value less than or equal to that spell's mana value to its owner's hand.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "hammerhead_tyrant",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{U}{U}",
+      "name": "Hammerhead Tyrant",
+      "oracle_text": "Flying\nWhenever you cast a spell, return up to one target nonland permanent an opponent controls with mana value less than or equal to that spell's mana value to its owner's hand.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "alternative_cost": {
         "sacrifice": {
           "controller": "you",
@@ -82058,6 +82381,87 @@
         "Legendary"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{2}{R}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "not_keywords": [
+                  "flying"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "damage"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{R}: This creature deals 1 damage to each creature without flying."
+        },
+        {
+          "cost": {
+            "mana": "{2}{G}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "exclude_self": true,
+                "keywords": [
+                  "flying"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "damage"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{G}: This creature deals 1 damage to each other creature with flying."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "harbinger_of_the_hunt",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{R}{G}",
+      "name": "Harbinger of the Hunt",
+      "oracle_text": "Flying\n{2}{R}: This creature deals 1 damage to each creature without flying.\n{2}{G}: This creature deals 1 damage to each other creature with flying.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]

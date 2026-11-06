@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**160 cards** blocked by **147** capabilities.
+**161 cards** blocked by **148** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -114,6 +114,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [modified](#modified) | 1 | 831 | selector |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [no-mana-cost](#no-mana-cost) | 1 | 2978 | engine |
+| [nontoken-creatures-died-this-turn](#nontoken-creatures-died-this-turn) | 1 | 3951 | value |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [odd-or-even](#odd-or-even) | 1 | 8504 | selector |
 | [omen](#omen) | 1 | 3355 | cost, engine |
@@ -1788,6 +1789,20 @@ Blocks **1** card.
 
 - **Ancestral Vision** (rank 2978) — `ancestral_vision`
   - Suspend 4—{U} (Rather than cast this card from your hand, pay {U} and exile it with four time counters on it. At the beginning of your upkeep, remove a time counter. When the last is removed, you may cast it without paying its mana cost.)
+
+</details>
+
+## nontoken-creatures-died-this-turn
+
+Blocks **1** card.
+
+- **(value)** a value reading the turn ledger for how many NONTOKEN creatures died this turn (any controller), e.g. {"nontoken_creatures_died_this_turn": "all"}, counted in GameState's DIES ledger update only when the dying object was not a token
+  <br>Why the existing vocabulary won't do: creatures_died_this_turn counts every creature death including tokens (state.py's DIES ledger update increments creatures_died with no is_token check), and permanents_to_graveyard_this_turn / cards_to_graveyard_this_turn are not limited to creatures; a creature_dies trigger setting a counter would miss deaths before Gadrak entered
+
+<details><summary>Cards waiting on this</summary>
+
+- **Gadrak, the Crown-Scourge** (rank 3951) — `gadrak_the_crown_scourge`
+  - At the beginning of your end step, create a Treasure token for each nontoken creature that died this turn.
 
 </details>
 
