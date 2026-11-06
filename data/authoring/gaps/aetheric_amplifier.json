@@ -1,0 +1,18 @@
+{
+  "card_id": "aetheric_amplifier",
+  "name": "Aetheric Amplifier",
+  "oracle_text": "{T}: Add one mana of any color.\n{4}, {T}: Choose one. Activate only as a sorcery.\n• Double the number of each kind of counter on target permanent.\n• Double the number of each kind of counter you have.",
+  "blocked_sentences": [
+    "• Double the number of each kind of counter you have"
+  ],
+  "needs": [
+    {
+      "capability": "double_player_counters",
+      "kind": "op",
+      "what": "an op (or a `player` option on double_counters) that, for each kind of counter a player has (poison, energy, experience, rad, ticket, ...), gives that player that many more of the same kind, as a placement so counter replacements and counter-placed triggers see it",
+      "why_existing_wont_do": "double_counters reads only permanents' counters through `objects` (and the loader refuses it without objects); add_poison and add_energy each name one fixed kind and there is no value reading a player's count of an arbitrary counter kind, so writing poison+energy by hand would silently drop experience and every other player counter kind"
+    }
+  ],
+  "closest_existing": ["double_counters", "add_energy", "add_poison"],
+  "confidence": "high"
+}

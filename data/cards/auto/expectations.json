@@ -62,6 +62,10 @@
     },
     "zone": "battlefield"
   },
+  "academy_ruins": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "access_tunnel": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -139,7 +143,18 @@
     "opponent_battlefield_count": 2,
     "zone": "graveyard"
   },
+  "aether_hub": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "aether_spellbomb": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "aetherflux_conduit": {
     "battlefield_count": 33,
     "hand_size": {
       "0": 1
@@ -160,6 +175,31 @@
     },
     "opponent_battlefield_count": 6,
     "zone": "graveyard"
+  },
+  "aethersquall_ancient": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "aethertide_whale": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "aetherwind_basker": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "trample"
+      ]
+    },
+    "zone": "battlefield"
+  },
+  "aetherworks_marvel": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "affa_protector": {
     "zone": "battlefield"
@@ -1103,6 +1143,15 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "attune_with_aether": {
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "graveyard"
+  },
   "augusta_order_returned": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -1601,6 +1650,13 @@
     },
     "zone": "graveyard"
   },
+  "bespoke_battlewagon": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "betor_ancestor_s_voice": {
     "battlefield_count": 33,
     "hand_size": {
@@ -1970,6 +2026,10 @@
     "hand_size": {
       "0": 5
     }
+  },
+  "bootleggers_stash": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "boots_of_speed": {
     "zone": "battlefield"

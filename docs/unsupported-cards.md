@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**203 cards** blocked by **182** capabilities.
+**205 cards** blocked by **184** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -51,6 +51,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [batched-combat-damage-amount](#batched-combat-damage-amount) | 1 | 3943 | value |
+| [beast-6-6-c-artifact-token](#beast-6-6-c-artifact-token) | 1 | 9171 | token |
 | [become-copy-add-supertypes](#become-copy-add-supertypes) | 1 | 2059 | op |
 | [block-restriction-relative-power](#block-restriction-relative-power) | 1 | 6993 | static_effect |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
@@ -78,6 +79,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [distribute-counters-spell](#distribute-counters-spell) | 1 | 6993 | op |
 | [divided-damage-on-activated](#divided-damage-on-activated) | 1 | 13459 | engine |
+| [double-player-counters](#double-player-counters) | 1 | 2512 | op |
 | [double-x](#double-x) | 1 | 2672 | op |
 | [dragon-egg-0-2-r-defender-token](#dragon-egg-0-2-r-defender-token) | 1 | 3556 | token |
 | [echo](#echo) | 1 | 961 | keyword |
@@ -981,6 +983,20 @@ Blocks **1** card.
 
 </details>
 
+## beast-6-6-c-artifact-token
+
+Blocks **1** card.
+
+- **(token)** a 6/6 colorless Beast artifact creature token (no abilities)
+  <br>Why the existing vocabulary won't do: token_ids has only green/white Beasts (beast_3_3_g, beast_4_4_g, ...) and other 6/6s like dragon_6_6_r_flying; no colorless Beast artifact creature. The cost pay_energy and the landfall line (permanent_enters + add_energy) are otherwise expressible
+
+<details><summary>Cards waiting on this</summary>
+
+- **Architect of the Untamed** (rank 9171) — `architect_of_the_untamed`
+  - Pay eight {E}: Create a 6/6 colorless Beast artifact creature token.
+
+</details>
+
 ## become-copy-add-supertypes
 
 Blocks **1** card.
@@ -1366,6 +1382,20 @@ Blocks **1** card.
 
 - **Skarrgan Hellkite** (rank 13459) — `skarrgan_hellkite`
   - {3}{R}: This creature deals 2 damage divided as you choose among one or two targets. Activate only if this creature has a +1/+1 counter on it.
+
+</details>
+
+## double-player-counters
+
+Blocks **1** card.
+
+- **(op)** an op (or a `player` option on double_counters) that, for each kind of counter a player has (poison, energy, experience, rad, ticket, ...), gives that player that many more of the same kind, as a placement so counter replacements and counter-placed triggers see it
+  <br>Why the existing vocabulary won't do: double_counters reads only permanents' counters through `objects` (and the loader refuses it without objects); add_poison and add_energy each name one fixed kind and there is no value reading a player's count of an arbitrary counter kind, so writing poison+energy by hand would silently drop experience and every other player counter kind
+
+<details><summary>Cards waiting on this</summary>
+
+- **Aetheric Amplifier** (rank 2512) — `aetheric_amplifier`
+  - • Double the number of each kind of counter you have
 
 </details>
 

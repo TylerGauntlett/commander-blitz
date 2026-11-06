@@ -1302,12 +1302,12 @@
     },
     "Academy Ruins": {
       "edhrec_rank": 471,
-      "gate": "template",
+      "gate": null,
       "name": "Academy Ruins",
-      "reason": "no template for: {1}{U}, {T}: Put target artifact card from your graveyard on top of your library",
+      "reason": "",
       "scryfall_id": "128deed2-b9bc-4065-95c9-ccd7b08f1230",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Academy Wall": {
@@ -3042,12 +3042,12 @@
     },
     "Aether Hub": {
       "edhrec_rank": 3372,
-      "gate": "template",
+      "gate": null,
       "name": "Aether Hub",
-      "reason": "no template for: When this land enters, you get {E}",
+      "reason": "",
       "scryfall_id": "bb6a8c30-e824-4137-b83e-b9d175a0d037",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aether Inspector": {
@@ -3312,12 +3312,12 @@
     },
     "Aetherflux Conduit": {
       "edhrec_rank": 5718,
-      "gate": "template",
+      "gate": null,
       "name": "Aetherflux Conduit",
-      "reason": "no template for: Whenever you cast a spell, you get an amount of {E} equal to the amount of mana spent to c",
+      "reason": "",
       "scryfall_id": "dd9ac0f2-2d8f-40fc-97fb-d6e05633405d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aetherflux Reservoir": {
@@ -3452,12 +3452,12 @@
     },
     "Aethersquall Ancient": {
       "edhrec_rank": 6539,
-      "gate": "template",
+      "gate": null,
       "name": "Aethersquall Ancient",
-      "reason": "no template for: At the beginning of your upkeep, you get {E}{E}{E}",
+      "reason": "",
       "scryfall_id": "192882f3-88bc-4fcf-b57c-31108401e4bd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aetherstorm Roc": {
@@ -3482,12 +3482,12 @@
     },
     "Aethertide Whale": {
       "edhrec_rank": 8521,
-      "gate": "template",
+      "gate": null,
       "name": "Aethertide Whale",
-      "reason": "no template for: When this creature enters, you get six {E}",
+      "reason": "",
       "scryfall_id": "78e396a1-a56e-418b-a342-c09a11218a85",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aethertorch Renegade": {
@@ -3512,22 +3512,22 @@
     },
     "Aetherwind Basker": {
       "edhrec_rank": 11351,
-      "gate": "template",
+      "gate": null,
       "name": "Aetherwind Basker",
-      "reason": "no template for: Whenever this creature enters or attacks, you get {E} for each creature you control",
+      "reason": "",
       "scryfall_id": "76f318f4-f809-42ff-99f4-12a51d38c8f7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aetherworks Marvel": {
       "edhrec_rank": 3479,
-      "gate": "template",
+      "gate": null,
       "name": "Aetherworks Marvel",
-      "reason": "no template for: Whenever a permanent you control is put into a graveyard, you get {E}",
+      "reason": "",
       "scryfall_id": "b7e7eba5-8bd8-4c7d-8843-cae6c2ce0043",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aettir and Priwen": {
@@ -15982,12 +15982,12 @@
     },
     "Attune with Aether": {
       "edhrec_rank": 8663,
-      "gate": "template",
+      "gate": null,
       "name": "Attune with Aether",
-      "reason": "no template for: Search your library for a basic land card, reveal it, put it into your hand, then shuffle.",
+      "reason": "",
       "scryfall_id": "442c3621-3d4c-4145-b63d-81cd2564374b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Attuned Hunter": {
@@ -24202,12 +24202,12 @@
     },
     "Bespoke Battlewagon": {
       "edhrec_rank": 6427,
-      "gate": "template",
+      "gate": null,
       "name": "Bespoke Battlewagon",
-      "reason": "no template for: {T}: You get {E}{E}",
+      "reason": "",
       "scryfall_id": "e42f232d-73c3-40bd-8ca2-da53ca20f9de",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bespoke Bō": {
@@ -31552,12 +31552,12 @@
     },
     "Bootleggers' Stash": {
       "edhrec_rank": 1931,
-      "gate": "template",
+      "gate": null,
       "name": "Bootleggers' Stash",
-      "reason": "no template for: Lands you control have \"{T}: Create a Treasure token.\"",
+      "reason": "",
       "scryfall_id": "9be25e90-393a-4c30-86e2-6fa0d8be4247",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Boots of Speed": {
