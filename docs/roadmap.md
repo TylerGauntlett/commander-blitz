@@ -59,7 +59,7 @@ each heading; this table is generated from them.
 | [World Shaper (Edge of Eternities Commander)](#world-shaper-edge-of-eternities-commander) | L | high | Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number | 0 |
 | [Jeskai Striker (Tarkir: Dragonstorm Commander)](#jeskai-striker-tarkir-dragonstorm-commander) | M | high | Divided damage that may hit players | 0 |
 | [Temur Roar (Tarkir: Dragonstorm Commander)](#temur-roar-tarkir-dragonstorm-commander) | M | high | Divided damage from a triggered or activated ability, Divided damage that may hit players, Voting: will of the council and council's dilemma | 0 |
-| [Sultai Arisen (Tarkir: Dragonstorm Commander)](#sultai-arisen-tarkir-dragonstorm-commander) | L | high | nothing | 0 |
+| [Sultai Arisen (Tarkir: Dragonstorm Commander)](#sultai-arisen-tarkir-dragonstorm-commander) | L | high | Experience counters, A trigger for cards put into a graveyard | 0 |
 | [Eternal Might (Aetherdrift Commander)](#eternal-might-aetherdrift-commander) | L | high | nothing | 0 |
 | [Living Energy (Aetherdrift Commander)](#living-energy-aetherdrift-commander) | L | high | nothing | 0 |
 | [Endless Punishment (Duskmourn: House of Horror Commander)](#endless-punishment-duskmourn-house-of-horror-commander) | L | high | nothing | 0 |
@@ -141,9 +141,11 @@ each heading; this table is generated from them.
 | [Outcomes as data](#outcomes-as-data) | M | medium | nothing | 2 |
 | [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) | M | medium | nothing | 2 |
 | [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) | M | medium | nothing | 2 |
+| [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) | M | medium | nothing | 1 |
 | [Brackets, derived from the list](#brackets-derived-from-the-list) | M | medium | nothing | 1 |
 | [CPU takeover and reconnection](#cpu-takeover-and-reconnection) | M | medium | nothing | 1 |
 | [Distributing counters from a spell](#distributing-counters-from-a-spell) | M | medium | nothing | 1 |
+| [Experience counters](#experience-counters) | M | medium | nothing | 1 |
 | [Replays and sharing](#replays-and-sharing) | M | medium | nothing | 1 |
 | [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) | M | medium | nothing | 0 |
 | [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) | M | medium | nothing | 0 |
@@ -159,8 +161,6 @@ Derived from the properties: an item is **ready** when nothing it depends
 on is still on this page, and the ready items are ranked by impact, then
 rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
-
-**In progress:** [Sultai Arisen (Tarkir: Dragonstorm Commander)](#sultai-arisen-tarkir-dragonstorm-commander).
 
 **Ready now, best first:**
 
@@ -245,16 +245,18 @@ same list, and `/extend-roadmap` starts at the top of it.
 79. [Outcomes as data](#outcomes-as-data) — M, medium
 80. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
 81. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
-82. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
-83. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
-84. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
-85. [Replays and sharing](#replays-and-sharing) — M, medium
-86. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-87. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
-88. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
-89. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-90. [Archidekt import](#archidekt-import) — S, low
-91. [Sound](#sound) — S, low
+82. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
+83. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
+84. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
+85. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
+86. [Experience counters](#experience-counters) — M, medium
+87. [Replays and sharing](#replays-and-sharing) — M, medium
+88. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+89. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
+90. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
+91. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+92. [Archidekt import](#archidekt-import) — S, low
+93. [Sound](#sound) — S, low
 
 **Blocked, and by what:**
 
@@ -266,6 +268,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [World Shaper (Edge of Eternities Commander)](#world-shaper-edge-of-eternities-commander) — [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number)
 - [Jeskai Striker (Tarkir: Dragonstorm Commander)](#jeskai-striker-tarkir-dragonstorm-commander) — [Divided damage that may hit players](#divided-damage-that-may-hit-players)
 - [Temur Roar (Tarkir: Dragonstorm Commander)](#temur-roar-tarkir-dragonstorm-commander) — [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability), [Divided damage that may hit players](#divided-damage-that-may-hit-players), [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma)
+- [Sultai Arisen (Tarkir: Dragonstorm Commander)](#sultai-arisen-tarkir-dragonstorm-commander) — [Experience counters](#experience-counters), [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -710,6 +713,78 @@ six gates pass.
 - **Is it an ADR.** Recommended: no; it is an additive op, and the line in
   rules-coverage.md moves from "not implemented" to the implemented table.
 
+### A trigger for cards put into a graveyard
+
+Effort **M** · Impact **medium**, every 'whenever one or more cards are put into your graveyard from your library, or from anywhere' card waits on it, The Gitrog Monster and Sidisi among them · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+`triggers.TRIGGER_EVENTS` has no event for a card arriving in a graveyard.
+`dies` sees creatures from the battlefield, `discard` sees the hand, and
+`leaves_graveyard` (`EventType.LEAVES_GRAVEYARD`) is the reverse direction.
+`EventType.ZONE_CHANGE` records every move but is deliberately kept off the
+trigger bus, and `EventType.LEAVES_GRAVEYARD` is the one narrow departure,
+fired from `zones.move_object` with the graveyard's owner as `player` and a
+`batch` for "one or more". [rules-coverage.md](rules-coverage.md#not-implemented)
+lists "a mill trigger" as not implemented: `EventType.MILL` has no
+`TRIGGER_EVENTS` name.
+
+So no card can say "whenever one or more creature cards are put into your
+graveyard from your library" or "whenever one or more land cards are put into
+your graveyard from anywhere". Colossal Grave-Reaver and Crawling Sensation,
+in the Sultai Arisen precon, are the cards that found it; The Gitrog Monster
+and Centaur Vinecrasher wait on the same slug,
+`put_into_graveyard_from_anywhere`, in `data/authoring/gaps/`.
+
+#### The change
+
+1. An event for a card put into a graveyard, fired narrowly from
+   `zones.move_object` the way `EventType.LEAVES_GRAVEYARD` is, carrying the
+   graveyard's owner as `player`, the zone the card came from, and the
+   `batch` of cards moved together.
+2. Its `TRIGGER_EVENTS` row, with a filter over the moved cards (types,
+   owner) and `from_zones` read for it, so "from your library" and "from
+   anywhere" are one trigger with or without the key. `batched` makes "one
+   or more" fire once for a single mill of several cards.
+3. A binding for the batch, so an effect can reach "one of them" (Colossal
+   Grave-Reaver puts one onto the battlefield) and only cards from this
+   batch that are still in the graveyard on resolution.
+4. "For the first time each turn" (Crawling Sensation) through the existing
+   once-per-turn trigger limit, if it already reads the batched event that
+   way; otherwise an open question below.
+5. Harvest: Colossal Grave-Reaver, Crawling Sensation, The Gitrog Monster,
+   Centaur Vinecrasher, then one `/author-cards` wave over the catalog's
+   other cards with the sentence.
+
+It does not put `ZONE_CHANGE` on the trigger bus, and it does not cover a
+token "put into a graveyard" (it ceases to exist, 704.5d), nor replacements
+that keep a card out of the graveyard (Dauthi Voidwalker is its own gap).
+
+#### Gate
+
+A unit test under `tests/unit/` for the new trigger: a mill of several
+creature cards fires a batched trigger once, a discard does not fire one
+narrowed to the library, "from anywhere" fires for a mill, a discard and a
+dying creature card, an opponent's graveyard does not fire a `controller:
+"you"` trigger, and the "one of them" binding offers only the batch's cards
+still in the graveyard. Colossal Grave-Reaver's and Crawling Sensation's six
+gates pass, and the generated DSL reference lists the new trigger event.
+
+#### Open questions
+
+- **One event or the existing `MILL` event.** Give "put into a graveyard"
+  its own event fired from `zones.move_object` for every source zone, or put
+  `EventType.MILL` on the bus and add others per source? Recommended: one
+  event from `move_object`, because "from anywhere" has to see every source
+  and per-source events would each need the same batching.
+- **A dying creature card.** Does a creature that dies also fire it, for a
+  "from anywhere" trigger? Recommended: yes, the rules say it was put into a
+  graveyard from the battlefield (700.4), and `dies` stays the event for
+  "whenever a creature dies".
+- **Is it an ADR.** Recommended: no; it is a second narrow departure from
+  `ZONE_CHANGE` beside `LEAVES_GRAVEYARD`, and the mill line moves from "not
+  implemented" to the implemented table in rules-coverage.md.
+
 ### Distributing counters from a spell
 
 Effort **M** · Impact **medium**, every 'distribute N counters among any number of target creatures' spell waits on it, Grove's Bounty in the Quandrix Unlimited precon and Biogenic Upgrade among them · Depends on nothing · Awaiting decisions.
@@ -784,6 +859,70 @@ pass.
 - **Is it an ADR.** Recommended: no; it moves an existing announcement to the
   cast line, where divided damage already sits, and the line in
   rules-coverage.md narrows to triggered abilities.
+
+### Experience counters
+
+Effort **M** · Impact **medium**, every experience-counter commander waits on it, Meren of Clan Nel Toth and Ezuri, Claw of Progress among them · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+A player's counters are the kinds in `player.PLAYER_COUNTER_KINDS`, which
+lists poison and energy only. Each kind has its own funnel in
+`primitives` (`add_poison`, `add_energy`), its own field on `PlayerState`,
+its own event (`EventType.ENERGY_ADDED` for energy) and its own readers: `values` reads poison through `max_poison_of`, and
+`Cost.pay_energy` spends energy. `ops_combat_flags` (proliferate) and
+`ops_life.op_lose_all_player_counters` walk `PLAYER_COUNTER_KINDS`, so a new
+kind reaches both once it is listed and funnelled.
+[rules-coverage.md](rules-coverage.md#not-implemented) lists "Experience
+counters (122.1)" as not implemented.
+
+So no card can give a player an experience counter or read how many they
+have. Meren of Clan Nel Toth, the Sultai Arisen precon's card that found it,
+does both; its gap record is `data/authoring/gaps/meren_of_clan_nel_toth.json`.
+The catalog's other experience-counter cards (Ezuri, Claw of Progress,
+Mizzix, Kalemne, Daxos, the Avatar benders) are the same two sentences.
+
+#### The change
+
+1. `experience` joins `PLAYER_COUNTER_KINDS`, with a field on `PlayerState`,
+   an `add_experience` funnel in `primitives` in `add_energy`'s shape (counter
+   replacements applied, then an event of its own), and a key beside poison
+   and energy in the player's serialized view.
+2. An op that gives a player experience counters ("you get an experience
+   counter"), in the shape of `add_energy`.
+3. A value that reads a player's experience counters ("the number of
+   experience counters you have"), usable wherever a value is, in a
+   condition comparing a card's mana value with it (Meren) and in an
+   amount (Ezuri).
+4. Proliferate and "lose all counters" pick the kind up through
+   `PLAYER_COUNTER_KINDS`; a test pins that they do.
+5. Harvest: Meren, then the catalog's other experience-counter cards through
+   one `/author-cards` wave.
+
+It does not add any other player counter kind (rad, ticket), and nothing
+spends experience counters, because no card does.
+
+#### Gate
+
+A unit test under `tests/unit/` for experience counters: the op adds them,
+the value reads them, a mana-value comparison against them resolves both
+ways, proliferate adds one to a player who has any, and losing all counters
+removes them. Meren's six gates pass, and the generated DSL reference
+(`tests/cards/test_dsl_reference.py`) lists the new op and value.
+
+#### Open questions
+
+- **How the counter is stored.** A field of its own on `PlayerState` beside
+  `poison` and `energy`, or a general `counters` mapping on the player that
+  poison and energy later move into? Recommended: a field of its own, the
+  shape the two existing kinds have, so the change stays additive and the
+  general mapping is its own refactor if a fourth kind ever arrives.
+- **Where the client shows it.** Recommended: the same player-counter readout
+  that shows poison and energy, hidden at zero, with no new component; a
+  surface beyond that would need its story and floor (ADR 0013).
+- **Is it an ADR.** Recommended: no; it is one more kind under an existing
+  rule (122.1), and its line moves from "not implemented" to the
+  implemented table in rules-coverage.md.
 
 ## Decks
 
@@ -1329,7 +1468,7 @@ whole-game test able to draw the deck.
 
 ### Sultai Arisen (Tarkir: Dragonstorm Commander)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing · **In progress**.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Experience counters](#experience-counters), [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard).
 
 #### Today
 
@@ -1340,6 +1479,12 @@ coming-soon shell on the shelf: its row `tdc_sultai_arisen` is in
 `python scripts/sync_precons.py --missing tdc_sultai_arisen` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+Two of those capabilities are rules subsystems the engine does not have
+([rules-coverage.md](rules-coverage.md#not-implemented)): Meren of Clan
+Nel Toth gives and reads experience counters, and Colossal Grave-Reaver and
+Crawling Sensation trigger on cards put into a graveyard from the library or
+from anywhere, which is the unlisted mill trigger. The deck waits on the
+items that build them.
 
 #### The change
 
