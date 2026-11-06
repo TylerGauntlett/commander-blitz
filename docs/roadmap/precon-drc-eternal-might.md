@@ -5,8 +5,8 @@ area: decks
 effort: L
 impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
-depends_on: []
-status: in_progress
+depends_on: [granted-cycling]
+status: proposed
 rank: 27
 ---
 
@@ -19,6 +19,10 @@ coming-soon shell on the shelf: its row `drc_eternal_might` is in
 `python scripts/sync_precons.py --missing drc_eternal_might` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+One of those capabilities is a rules subsystem the engine does not have
+([rules-coverage.md](../rules-coverage.md#not-implemented)): Rhet-Tomb Mystic
+hands cycling to the creature cards in your hand, a granted activated ability
+that works off the battlefield. The deck waits on the item that builds it.
 
 ## The change
 
