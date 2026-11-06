@@ -218912,12 +218912,12 @@
     },
     "Reflections of Littjara": {
       "edhrec_rank": 666,
-      "gate": "template",
+      "gate": null,
       "name": "Reflections of Littjara",
-      "reason": "no template for: As this enchantment enters, choose a creature type",
+      "reason": "",
       "scryfall_id": "d7689217-6124-4b2c-ab8b-7067de7f6e22",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Reflective Golem": {
@@ -266072,12 +266072,12 @@
     },
     "Storm's Wrath": {
       "edhrec_rank": 8226,
-      "gate": "template",
+      "gate": null,
       "name": "Storm's Wrath",
-      "reason": "no template for: deals 4 damage to each creature and each planeswalker",
+      "reason": "",
       "scryfall_id": "4bc9ecd2-7664-471b-90f2-2d0dd1acec80",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Storm, Force of Nature": {
@@ -266172,12 +266172,12 @@
     },
     "Stormbreath Dragon": {
       "edhrec_rank": 9600,
-      "gate": "template",
+      "gate": null,
       "name": "Stormbreath Dragon",
-      "reason": "no template for: Flying, haste, protection from white",
+      "reason": "",
       "scryfall_id": "471979de-f569-444a-8651-12d7e726949a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stormcaller of Keranos": {

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**162 cards** blocked by **149** capabilities.
+**168 cards** blocked by **155** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -25,6 +25,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
 | [cast-trigger-x](#cast-trigger-x) | 2 | 1521 | engine, value |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
+| [council-s-dilemma](#council-s-dilemma) | 2 | 4067 | decision |
+| [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 2 | 2389 | engine |
 | [escape](#escape) | 2 | 388 | engine, static_effect |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
@@ -44,6 +46,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [batched-combat-damage-amount](#batched-combat-damage-amount) | 1 | 3943 | value |
+| [become-copy-add-supertypes](#become-copy-add-supertypes) | 1 | 2059 | op |
 | [block-restriction-relative-power](#block-restriction-relative-power) | 1 | 6993 | static_effect |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [can-block-only](#can-block-only) | 1 | 2673 | static_effect |
@@ -60,14 +63,13 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
 | [copy-this-spell-on-resolution](#copy-this-spell-on-resolution) | 1 | 338 | op |
-| [council-s-dilemma](#council-s-dilemma) | 1 | 15065 | decision |
 | [coven](#coven) | 1 | 1129 | value |
 | [crime](#crime) | 1 | 2244 | trigger_event |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [distribute-counters-spell](#distribute-counters-spell) | 1 | 6993 | op |
-| [divided-damage-any-target](#divided-damage-any-target) | 1 | 5125 | engine |
+| [divided-damage-on-activated](#divided-damage-on-activated) | 1 | 13459 | engine |
 | [double-x](#double-x) | 1 | 2672 | op |
 | [dragon-egg-0-2-r-defender-token](#dragon-egg-0-2-r-defender-token) | 1 | 3556 | token |
 | [echo](#echo) | 1 | 961 | keyword |
@@ -96,6 +98,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 1 | 3531 | static_effect |
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
+| [karox-bladewing](#karox-bladewing) | 1 | 8889 | token |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
 | [kicker](#kicker) | 1 | 868 | selector |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
@@ -122,6 +125,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-mana-ability-until-end-of-turn](#player-mana-ability-until-end-of-turn) | 1 | 12705 | op |
+| [players-attacked-last-combat](#players-attacked-last-combat) | 1 | 6681 | value |
 | [plot](#plot) | 1 | 7506 | op |
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
 | [prime-number](#prime-number) | 1 | 11527 | value |
@@ -131,6 +135,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
 | [random-order-bottom](#random-order-bottom) | 1 | 1343 | op |
+| [random-player-choice](#random-player-choice) | 1 | 6681 | op |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [remove-x-counters-cost](#remove-x-counters-cost) | 1 | 5399 | cost |
@@ -161,6 +166,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [total-mana-value-selection](#total-mana-value-selection) | 1 | 4244 | op |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
+| [while-source-on-battlefield-duration](#while-source-on-battlefield-duration) | 1 | 8222 | engine |
 | [x-cost-mana-restriction](#x-cost-mana-restriction) | 1 | 4046 | decision |
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 1 | 11545 | engine |
 
@@ -476,6 +482,46 @@ Blocks **2** cards.
 
 </details>
 
+## council-s-dilemma
+
+Blocks **2** cards.
+
+- **(decision)** a voting op: starting with the controller and proceeding in turn order, each player chooses one of N named options (here 'past' or 'present'); the op binds the vote tally per option (e.g. as: 'votes' giving {binding: 'votes.past'} / {binding: 'votes.present'}) so later effects in the same spell can use each count as an amount. Each player's vote must be visible to the players voting after them (Council's dilemma / Will of the council)
+  <br>Why the existing vocabulary won't do: choose_mode is one chooser picking modes, not every player casting a public vote with a per-option tally; for_each_player + choose_mode cannot accumulate a count per chosen option into a value, and value_keys has no vote count. Also needed: the damage amount is the total mana value of the cards milled this way, which needs mill's `as` binding to be readable as a sum of mana values (mana_value_of over the binding) -- unverified, but the vote tally is the hard blocker
+- **(decision)** a voting op: starting with the controller and proceeding in turn order, each player publicly chooses one of N named options (here 'wild' or 'free'); the op binds the tally per option (e.g. as: 'votes' giving {binding: 'votes.wild'} / {binding: 'votes.free'}) so later effects in the same spell can use each count as an amount -- here reveal_until's creature count and a repeated optional put-from-hand of a permanent card
+  <br>Why the existing vocabulary won't do: value_keys has no vote count and no op in reference casts a vote; choose_mode is one chooser picking modes, and for_each_player + choose_mode cannot accumulate a per-option tally into a value. join_forces pools mana payments, not choices. Once the tally exists, the rest looks expressible: reveal_until with amount {binding: votes.wild}, selector Creature, destination battlefield, shuffle_rest; and repeat over {binding: votes.free} of a may put_onto_battlefield of a permanent card from hand
+
+<details><summary>Cards waiting on this</summary>
+
+- **Selvala's Stampede** (rank 4067) — `selvala_s_stampede`
+  - Council's dilemma — Starting with you, each player votes for wild or free.
+  - Reveal cards from the top of your library until you reveal a creature card for each wild vote.
+  - You may put a permanent card from your hand onto the battlefield for each free vote.
+- **Fateful Tempest** (rank 15065) — `fateful_tempest`
+  - Council's dilemma — Starting with you, each player votes for past or present.
+  - You mill a card for each past vote, then Fateful Tempest deals damage to each opponent equal to the total mana value of cards milled this way.
+  - Exile the top card of your library for each present vote.
+
+</details>
+
+## divided-damage-any-target
+
+Blocks **2** cards.
+
+- **(engine)** damage `divided` over a target spec of kind "any" (creatures, planeswalkers, battles AND players), so the 601.2d announcement offers players a share and resolution deals each player target its share
+  <br>Why the existing vocabulary won't do: `damage` with `divided` exists, but `Game._ask_damage_division` keeps only declared refs with `kind == "object"` and `ops_life._damage_divided` deals each share through `damage_permanent`, so a player chosen as one of the 'any number of targets' would receive no damage at all. It works only for permanent-only specs (Monstrous Onslaught's 'target creatures'); restricting this card to permanents would be an approximation
+- **(engine)** damage `divided` over a target spec of kind "any" (creatures, planeswalkers, battles AND players), so the 601.2d announcement offers players a share and resolution deals each player target its share
+  <br>Why the existing vocabulary won't do: `Game._ask_damage_division` keeps only declared refs with `kind == "object"` and `ops_life._damage_divided` deals each share through `damage_permanent`, so a player chosen as one of the targets would receive no damage; restricting to permanents would be an approximation
+
+<details><summary>Cards waiting on this</summary>
+
+- **Magma Opus** (rank 5125) — `magma_opus`
+  - Magma Opus deals 4 damage divided as you choose among any number of targets.
+- **Skarrgan Hellkite** (rank 13459) — `skarrgan_hellkite`
+  - {3}{R}: This creature deals 2 damage divided as you choose among one or two targets. Activate only if this creature has a +1/+1 counter on it.
+
+</details>
+
 ## divided-damage-on-trigger
 
 Blocks **2** cards.
@@ -786,6 +832,20 @@ Blocks **1** card.
 
 </details>
 
+## become-copy-add-supertypes
+
+Blocks **1** card.
+
+- **(op)** an `add_supertypes` key in `become_copy`'s `except_` (707.9b), written into the copy's copiable values the way `copy_permanent`'s except_ already honours add_supertypes, so "becomes a copy of it until end of turn, except its name is Sarkhan, Soul Aflame and it's legendary in addition to its other types" is become_copy with copying {binding: subject}, duration end_of_turn, except_name "Sarkhan, Soul Aflame" and except_ {"add_supertypes": ["Legendary"]}
+  <br>Why the existing vocabulary won't do: become_copy's except_ is checked against loader.effects.BECOME_COPY_EXCEPT_KEYS, which is only add_keywords and keep_abilities; add_supertypes exists only on copy_permanent's COPY_EXCEPT_KEYS (a token copy, not an in-place copy). Dropping the clause would make Sarkhan a non-legendary copy, so the legend rule and anything counting legends would see a different card. No op (add_subtype, animate) adds a supertype as a later effect either, and that would not be a copiable value anyway. The rest is expressible: spell_cost_reduction with affects_spells subtypes Dragon, and a permanent_enters trigger filtered to Dragons you control wrapping become_copy in a may.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Sarkhan, Soul Aflame** (rank 2059) — `sarkhan_soul_aflame`
+  - Whenever a Dragon you control enters, you may have Sarkhan become a copy of it until end of turn, except its name is Sarkhan, Soul Aflame and it's legendary in addition to its other types.
+
+</details>
+
 ## block-restriction-relative-power
 
 Blocks **1** card.
@@ -1018,22 +1078,6 @@ Blocks **1** card.
 
 </details>
 
-## council-s-dilemma
-
-Blocks **1** card.
-
-- **(decision)** a voting op: starting with the controller and proceeding in turn order, each player chooses one of N named options (here 'past' or 'present'); the op binds the vote tally per option (e.g. as: 'votes' giving {binding: 'votes.past'} / {binding: 'votes.present'}) so later effects in the same spell can use each count as an amount. Each player's vote must be visible to the players voting after them (Council's dilemma / Will of the council)
-  <br>Why the existing vocabulary won't do: choose_mode is one chooser picking modes, not every player casting a public vote with a per-option tally; for_each_player + choose_mode cannot accumulate a count per chosen option into a value, and value_keys has no vote count. Also needed: the damage amount is the total mana value of the cards milled this way, which needs mill's `as` binding to be readable as a sum of mana values (mana_value_of over the binding) -- unverified, but the vote tally is the hard blocker
-
-<details><summary>Cards waiting on this</summary>
-
-- **Fateful Tempest** (rank 15065) — `fateful_tempest`
-  - Council's dilemma — Starting with you, each player votes for past or present.
-  - You mill a card for each past vote, then Fateful Tempest deals damage to each opponent equal to the total mana value of cards milled this way.
-  - Exile the top card of your library for each present vote.
-
-</details>
-
 ## coven
 
 Blocks **1** card.
@@ -1119,17 +1163,17 @@ Blocks **1** card.
 
 </details>
 
-## divided-damage-any-target
+## divided-damage-on-activated
 
 Blocks **1** card.
 
-- **(engine)** damage `divided` over a target spec of kind "any" (creatures, planeswalkers, battles AND players), so the 601.2d announcement offers players a share and resolution deals each player target its share
-  <br>Why the existing vocabulary won't do: `damage` with `divided` exists, but `Game._ask_damage_division` keeps only declared refs with `kind == "object"` and `ops_life._damage_divided` deals each share through `damage_permanent`, so a player chosen as one of the 'any number of targets' would receive no damage at all. It works only for permanent-only specs (Monstrous Onslaught's 'target creatures'); restricting this card to permanents would be an approximation
+- **(engine)** `damage` with `divided` inside an activated ability's effects, with the division announced at activation over the targets just declared (602.2b applying 601.2d), over an ability-level target spec of 'one or two targets' (count 2, min_count 1) capped at one target per point of damage
+  <br>Why the existing vocabulary won't do: `damage.divided` exists, but `loader._check_division_homes` refuses it anywhere but a top-level spell effect ('divided damage is only supported as a top-level effect of a spell'), because `Game._ask_damage_division` is only called from `Game._cast` and `engine.division.divided_damage` reads only `card.spell_effects`. The activation path's `Game._ask_distribution` divides only `distribute_counters`, not damage; two fixed `damage` effects of 1 each would fix the split and the target count, an approximation
 
 <details><summary>Cards waiting on this</summary>
 
-- **Magma Opus** (rank 5125) — `magma_opus`
-  - Magma Opus deals 4 damage divided as you choose among any number of targets.
+- **Skarrgan Hellkite** (rank 13459) — `skarrgan_hellkite`
+  - {3}{R}: This creature deals 2 damage divided as you choose among one or two targets. Activate only if this creature has a +1/+1 counter on it.
 
 </details>
 
@@ -1536,6 +1580,20 @@ Blocks **1** card.
 
 </details>
 
+## karox-bladewing
+
+Blocks **1** card.
+
+- **(token)** Karox Bladewing, a legendary 4/4 red Dragon creature token with flying (named token, supertype Legendary)
+  <br>Why the existing vocabulary won't do: dragon_4_4_r_flying exists in token_ids but is neither named Karox Bladewing nor legendary, so the legend rule would not apply to it; kicker and the kicked condition are otherwise expressible
+
+<details><summary>Cards waiting on this</summary>
+
+- **Verix Bladewing** (rank 8889) — `verix_bladewing`
+  - When Verix Bladewing enters, if it was kicked, create Karox Bladewing, a legendary 4/4 red Dragon creature token with flying.
+
+</details>
+
 ## keyword-counters
 
 Blocks **1** card.
@@ -1912,6 +1970,20 @@ Blocks **1** card.
 
 </details>
 
+## players-attacked-last-combat
+
+Blocks **1** card.
+
+- **(value)** a per-permanent memory of which players this creature attacked during its controller's most recent combat (carried across turns, reset each new combat of that player), readable as a player filter so a player choice can be restricted to 'opponents this creature didn't attack during your last combat', and so the empty-set case can be tested with an if
+  <br>Why the existing vocabulary won't do: attacked_this_turn, attackers_this_turn and opponents_attacked_this_combat only read the current turn or combat; nothing records the defending player per attacker across turns, and choose_player's players spec has no 'not attacked by this last combat' filter
+
+<details><summary>Cards waiting on this</summary>
+
+- **Territorial Hellkite** (rank 6681) — `territorial_hellkite`
+  - At the beginning of combat on your turn, choose an opponent at random that this creature didn't attack during your last combat. This creature attacks that player this combat if able. If you can't choose an opponent this way, tap this creature.
+
+</details>
+
 ## plot
 
 Blocks **1** card.
@@ -2035,6 +2107,20 @@ Blocks **1** card.
 
 - **Endurance** (rank 1343) — `endurance`
   - When this creature enters, up to one target player puts all the cards from their graveyard on the bottom of their library in a random order.
+
+</details>
+
+## random-player-choice
+
+Blocks **1** card.
+
+- **(op)** choose_player with random: true -- the engine picks uniformly at random among the eligible players and binds the result (as), with an else branch when no player is eligible
+  <br>Why the existing vocabulary won't do: choose_player takes only as, players and prompt, so the controller chooses; random exists on choose_mode and discard but not on a player choice
+
+<details><summary>Cards waiting on this</summary>
+
+- **Territorial Hellkite** (rank 6681) — `territorial_hellkite`
+  - At the beginning of combat on your turn, choose an opponent at random that this creature didn't attack during your last combat. This creature attacks that player this combat if able. If you can't choose an opponent this way, tap this creature.
 
 </details>
 
@@ -2459,6 +2545,20 @@ Blocks **1** card.
 
 - **Suppressor Skyguard** (rank 9126) — `suppressor_skyguard`
   - Whenever a player attacks you, if that player has another opponent who isn't being attacked, prevent all combat damage that would be dealt to you this combat.
+
+</details>
+
+## while-source-on-battlefield-duration
+
+Blocks **1** card.
+
+- **(engine)** a duration "for as long as <source> remains on the battlefield" (611.2b, ended only by the source leaving the battlefield, not by a change of its controller) that gain_control, lose_all_abilities, cant_block and a can't-attack effect can all carry, so one trigger steals the target, strips its abilities and stops it attacking or blocking, all ending together when the Dragon leaves
+  <br>Why the existing vocabulary won't do: gain_control's CONTROL_DURATIONS has `as_long_as_you_control_source`, which also ends if the Dragon changes controller -- a different, narrower card; the `lose_all_abilities` op takes only `objects` (no duration), `cant_block` has no source-bound duration, and there is no one-shot can't-attack op with a duration at all (cant_attack_player restricts a defender, not every attack)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Opportunistic Dragon** (rank 8222) — `opportunistic_dragon`
+  - When this creature enters, choose target Human or artifact an opponent controls. For as long as this creature remains on the battlefield, gain control of that permanent, it loses all abilities, and it can't attack or block.
 
 </details>
 

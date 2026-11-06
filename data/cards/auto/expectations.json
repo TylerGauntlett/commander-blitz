@@ -12696,6 +12696,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "reflections_of_littjara": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "reflexes": {
     "zone": [
       "battlefield",
@@ -15228,6 +15232,16 @@
   },
   "storm_queen_of_wakanda": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "storm_s_wrath": {
+    "zone": "graveyard"
+  },
+  "stormbreath_dragon": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "stormcarved_coast": {
