@@ -134,6 +134,7 @@ each heading; this table is generated from them.
 | [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) | L | high | Outcomes as data, Replays and sharing, Difficulty | 0 |
 | [Difficulty](#difficulty) | S | medium | nothing | 1 |
 | [Gate the debug endpoint](#gate-the-debug-endpoint) | S | medium | nothing | 0 |
+| [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) | S | medium | nothing | 0 |
 | [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) | S | medium | nothing | 0 |
 | [Why a press is refused](#why-a-press-is-refused) | S | medium | nothing | 0 |
 | [Divided damage that may hit players](#divided-damage-that-may-hit-players) | M | medium | nothing | 3 |
@@ -238,23 +239,24 @@ same list, and `/extend-roadmap` starts at the top of it.
 72. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
 73. [Difficulty](#difficulty) — S, medium
 74. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
-75. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
-76. [Why a press is refused](#why-a-press-is-refused) — S, medium
-77. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
-78. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
-79. [Outcomes as data](#outcomes-as-data) — M, medium
-80. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
-81. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
-82. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
-83. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
-84. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
-85. [Replays and sharing](#replays-and-sharing) — M, medium
-86. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-87. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
-88. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
-89. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-90. [Archidekt import](#archidekt-import) — S, low
-91. [Sound](#sound) — S, low
+75. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
+76. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
+77. [Why a press is refused](#why-a-press-is-refused) — S, medium
+78. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
+79. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
+80. [Outcomes as data](#outcomes-as-data) — M, medium
+81. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
+82. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
+83. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
+84. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
+85. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
+86. [Replays and sharing](#replays-and-sharing) — M, medium
+87. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+88. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
+89. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
+90. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+91. [Archidekt import](#archidekt-import) — S, low
+92. [Sound](#sound) — S, low
 
 **Blocked, and by what:**
 
@@ -5513,6 +5515,61 @@ the debt page becomes a seeded position in `tests/ai/strategy/` that the new
 pilot must get right. The baseline heuristic stays the opponent `verify.py`
 gates on until a checkpoint has beaten it across the board for long enough
 to be trusted.
+
+### The CPU attacks with defenders that may attack
+
+Effort **S** · Impact **medium**, every game the Abzan Armor CPU plays leaves its whole board at home · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+The engine lets a creature with defender attack under the
+`attack_despite_defender` static and op (`player_statics.defender_waived`,
+read by `combat.can_attack`), and makes a creature deal combat damage equal
+to its toughness under `combat_damage_by_toughness`
+(`combat.combat_damage_amount`). The CPU's board reading predates both:
+`ai/strategy/board.py`'s `can_attack_soon` and `ready_attackers` treat every
+creature with defender as unable to attack, and `power` sizes every attack,
+so `lethal_on_board`, `crack_back` and `GoWide.attack_value` count a 0/4 wall
+as a creature that deals nothing. Abzan Armor ships on the `go_wide`
+archetype with Felothar the Steadfast as its commander, so its CPU declines
+the attacks its whole deck is built to make. `HARMFUL_COUNTERS` in
+`ai/agents/heuristic_agent.py` and `ai/strategy/decks/atraxa_praetors_voice.py`
+lists only `-1/-1` and `stun`, so the CPU proliferates a `-0/-1` counter on
+its own Wall of Roots.
+
+#### The change
+
+The CPU reads the same two rules the engine applies, through the engine's own
+answers rather than a copy of them ([architecture.md](architecture.md)):
+
+1. `board.can_attack_soon` and `board.ready_attackers` ask
+   `player_statics.defender_waived` instead of the defender keyword alone.
+2. A `board.combat_damage` helper returns `combat.combat_damage_amount` for a
+   creature, and `lethal_on_board`, `crack_back`, `incoming_unblocked` and
+   `GoWide.attack_value` size attacks with it instead of `power`.
+3. `HARMFUL_COUNTERS` becomes a predicate over `objects.pt_counter` that
+   names every counter kind lowering power or toughness, shared by both
+   readers.
+
+It adds no archetype and no deck strategy module.
+
+#### Gate
+
+Tests under `tests/ai/`: a position with Felothar and a board of walls in
+which the `go_wide` CPU declares the walls as attackers and counts their
+toughness toward lethal; the same board without Felothar, where it declares
+none; and a proliferate choice that leaves a `-0/-1` counter on its own
+permanent alone.
+
+#### Open questions
+
+- **Scope of the damage helper.** Should every power-based reading in
+  `ai/strategy/` move to the helper, or only the attack and lethal readers
+  named above? Recommended: only those named, since blocking and removal
+  scoring read power for reasons this item does not change.
+- **The Abzan Armor archetype.** Keep `go_wide`, or add a dedicated
+  archetype once the board reading is right? Recommended: keep `go_wide`
+  and measure first; a new archetype is its own item.
 
 ## Matchmaking
 
