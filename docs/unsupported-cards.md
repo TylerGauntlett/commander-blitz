@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**157 cards** blocked by **145** capabilities.
+**160 cards** blocked by **147** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -25,6 +25,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
 | [cast-trigger-x](#cast-trigger-x) | 2 | 1521 | engine, value |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
+| [divided-damage-on-trigger](#divided-damage-on-trigger) | 2 | 2389 | engine |
 | [escape](#escape) | 2 | 388 | engine, static_effect |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
@@ -42,6 +43,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [attacking-opponents-of-player](#attacking-opponents-of-player) | 1 | 705 | selector |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
+| [batched-combat-damage-amount](#batched-combat-damage-amount) | 1 | 3943 | value |
 | [block-restriction-relative-power](#block-restriction-relative-power) | 1 | 6993 | static_effect |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [can-block-only](#can-block-only) | 1 | 2673 | static_effect |
@@ -66,12 +68,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [distribute-counters-spell](#distribute-counters-spell) | 1 | 6993 | op |
 | [divided-damage-any-target](#divided-damage-any-target) | 1 | 5125 | engine |
-| [divided-damage-on-trigger](#divided-damage-on-trigger) | 1 | 2389 | engine |
 | [double-x](#double-x) | 1 | 2672 | op |
 | [echo](#echo) | 1 | 961 | keyword |
 | [elemental-1-1-r](#elemental-1-1-r) | 1 | 811 | token |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
+| [enters-as-copy-add-subtypes](#enters-as-copy-add-subtypes) | 1 | 3852 | replacement |
 | [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
@@ -472,6 +474,24 @@ Blocks **2** cards.
 
 </details>
 
+## divided-damage-on-trigger
+
+Blocks **2** cards.
+
+- **(engine)** `damage` with `divided` inside a triggered ability's effects, with the division announced when the trigger is put on the stack and its targets chosen (603.3d / 601.2d), over an ability-level target spec of 'any number of target creatures and/or planeswalkers your opponents control' capped at one target per point of damage
+  <br>Why the existing vocabulary won't do: `damage.divided` exists, but `loader._check_division_homes` refuses it anywhere but a top-level spell effect ('divided damage is only supported as a top-level effect of a spell'), because the division is only announced from `Game._cast` and `engine.division.divided_damage` reads only `card.spell_effects`. `distribute_counters` is the activated-ability-only analogue and divides counters, not damage; fixed per-target `damage` effects would fix the target count and the split, an approximation
+- **(engine)** `damage` with `divided` inside a triggered ability's effects, with the division announced when the trigger is put on the stack and its targets chosen (603.3d / 601.2d), over an ability-level target spec of 'any number of target creatures and/or planeswalkers' capped at one target per point of damage
+  <br>Why the existing vocabulary won't do: `damage.divided` exists, but `loader._check_division_homes` refuses it anywhere but a top-level spell effect ('divided damage is only supported as a top-level effect of a spell'), because `Game._ask_damage_division` is only called from `Game._cast` and `engine.division.divided_damage` reads only `card.spell_effects`. `distribute_counters` is the activated-ability-only analogue and divides counters, not damage; splitting into fixed per-target `damage` effects would fix the target count and the split, an approximation
+
+<details><summary>Cards waiting on this</summary>
+
+- **Fury** (rank 2389) — `fury`
+  - When this creature enters, it deals 4 damage divided as you choose among any number of target creatures and/or planeswalkers.
+- **Dragonlord Atarka** (rank 4563) — `dragonlord_atarka`
+  - When Dragonlord Atarka enters, it deals 5 damage divided as you choose among any number of target creatures and/or planeswalkers your opponents control.
+
+</details>
+
 ## escape
 
 Blocks **2** cards.
@@ -747,6 +767,20 @@ Blocks **1** card.
 
 - **Urborg, Tomb of Yawgmoth** (rank 73) — `urborg_tomb_of_yawgmoth`
   - Each land is a Swamp in addition to its other land types.
+
+</details>
+
+## batched-combat-damage-amount
+
+Blocks **1** card.
+
+- **(value)** A binding on the `creatures_deal_combat_damage` trigger (with `per_player` and a Dragon `filter`) carrying the total combat damage the matching creatures dealt to that player, so "mana value less than or equal to that damage" can be a `mana_value` selector `{"op": "<=", "value": {"binding": "damage_dealt"}}` on a `put_onto_battlefield` from hand
+  <br>Why the existing vocabulary won't do: The CREATURES_DEALT_COMBAT_DAMAGE event fired by combat._fire_damage_batch carries only `damagers`, `damaged`, `damaged_battles` and `hits` (oids per seat), never an amount, so the trigger's `amount`/`damage` bindings are absent; `deals_combat_damage_to_player` carries a per-creature amount but fires once per creature, not once for 'one or more Dragons' with their summed damage; no value key (`damage_taken_this_turn`, `max_damage_taken_this_turn`) isolates this combat's damage from the filtered creatures
+
+<details><summary>Cards waiting on this</summary>
+
+- **Broodcaller Scourge** (rank 3943) — `broodcaller_scourge`
+  - Whenever one or more Dragons you control deal combat damage to a player, you may put a permanent card with mana value less than or equal to that damage from your hand onto the battlefield.
 
 </details>
 
@@ -1097,20 +1131,6 @@ Blocks **1** card.
 
 </details>
 
-## divided-damage-on-trigger
-
-Blocks **1** card.
-
-- **(engine)** `damage` with `divided` inside a triggered ability's effects, with the division announced when the trigger is put on the stack and its targets chosen (603.3d / 601.2d), over an ability-level target spec of 'any number of target creatures and/or planeswalkers' capped at one target per point of damage
-  <br>Why the existing vocabulary won't do: `damage.divided` exists, but `loader._check_division_homes` refuses it anywhere but a top-level spell effect ('divided damage is only supported as a top-level effect of a spell'), because `Game._ask_damage_division` is only called from `Game._cast` and `engine.division.divided_damage` reads only `card.spell_effects`. `distribute_counters` is the activated-ability-only analogue and divides counters, not damage; splitting into fixed per-target `damage` effects would fix the target count and the split, an approximation
-
-<details><summary>Cards waiting on this</summary>
-
-- **Fury** (rank 2389) — `fury`
-  - When this creature enters, it deals 4 damage divided as you choose among any number of target creatures and/or planeswalkers.
-
-</details>
-
 ## double-x
 
 Blocks **1** card.
@@ -1179,6 +1199,20 @@ Blocks **1** card.
 
 - **Elvish Promenade** (rank 3100) — `elvish_promenade`
   - Create a 1/1 green Elf Warrior creature token for each Elf you control.
+
+</details>
+
+## enters-as-copy-add-subtypes
+
+Blocks **1** card.
+
+- **(replacement)** an `add_subtypes` key in a `self_enters_as_copy` replacement's `except_` (707.9b), written into the copy's copiable values like `add_types`, so "except it's a Dragon in addition to its other types" is {"add_subtypes": ["Dragon"], "add_keywords": ["flying"]}
+  <br>Why the existing vocabulary won't do: The packet's reference does not list the `self_enters_as_copy` replacement at all, and the engine's ENTERS_COPY_EXCEPT_KEYS is only add_keywords, add_types, remove_supertypes, name and enters_with: `add_types` adds card types (Phyrexian Metamorph's artifact), not a creature subtype. A self_enters trigger with `become_copy` or `add_subtype` would let the 1/1 be seen as itself first and make the subtype a later effect rather than part of the copy, which is a different card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Deceptive Frostkite** (rank 3852) — `deceptive_frostkite`
+  - You may have this creature enter as a copy of a creature you control with power 4 or greater, except it's a Dragon in addition to its other types and it has flying.
 
 </details>
 

@@ -15632,12 +15632,12 @@
     },
     "Atarka, World Render": {
       "edhrec_rank": 1324,
-      "gate": "template",
+      "gate": null,
       "name": "Atarka, World Render",
-      "reason": "no template for: Whenever a Dragon you control attacks, it gains double strike until end of turn",
+      "reason": "",
       "scryfall_id": "719f172b-f9ad-4960-af66-757eb54147f6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Atemsis, All-Seeing": {
@@ -22952,12 +22952,12 @@
     },
     "Become the Avalanche": {
       "edhrec_rank": 6433,
-      "gate": "template",
+      "gate": null,
       "name": "Become the Avalanche",
-      "reason": "no template for: Draw a card for each creature you control with power 4 or greater. Then creatures you cont",
+      "reason": "",
       "scryfall_id": "b5e1921a-5d75-4b9d-8293-3e78dfa664cc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Become the Pilot": {
@@ -72882,12 +72882,12 @@
     },
     "Draconic Lore": {
       "edhrec_rank": 7737,
-      "gate": "template",
+      "gate": null,
       "name": "Draconic Lore",
-      "reason": "no template for: This spell costs {2} less to cast if you control a Dragon",
+      "reason": "",
       "scryfall_id": "557f2aa6-0b82-4f60-9617-610b613c2a48",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Draconic Muralists": {
@@ -249054,7 +249054,7 @@
       "edhrec_rank": 13459,
       "gate": "template",
       "name": "Skarrgan Hellkite",
-      "reason": "no template for: Riot",
+      "reason": "no template for: {3}{R}: This creature deals 2 damage divided as you choose among one or two targets. Activ",
       "scryfall_id": "be941a2e-4eb0-45b3-9da0-834053907a65",
       "source": "",
       "status": "pending",

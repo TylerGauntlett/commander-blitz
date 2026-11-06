@@ -1,0 +1,21 @@
+{
+  "card_id": "dragonlord_atarka",
+  "name": "Dragonlord Atarka",
+  "oracle_text": "Flying, trample\nWhen Dragonlord Atarka enters, it deals 5 damage divided as you choose among any number of target creatures and/or planeswalkers your opponents control.",
+  "blocked_sentences": [
+    "When Dragonlord Atarka enters, it deals 5 damage divided as you choose among any number of target creatures and/or planeswalkers your opponents control."
+  ],
+  "needs": [
+    {
+      "capability": "divided_damage_on_trigger",
+      "kind": "engine",
+      "what": "`damage` with `divided` inside a triggered ability's effects, with the division announced when the trigger is put on the stack and its targets chosen (603.3d / 601.2d), over an ability-level target spec of 'any number of target creatures and/or planeswalkers your opponents control' capped at one target per point of damage",
+      "why_existing_wont_do": "`damage.divided` exists, but `loader._check_division_homes` refuses it anywhere but a top-level spell effect ('divided damage is only supported as a top-level effect of a spell'), because the division is only announced from `Game._cast` and `engine.division.divided_damage` reads only `card.spell_effects`. `distribute_counters` is the activated-ability-only analogue and divides counters, not damage; fixed per-target `damage` effects would fix the target count and the split, an approximation"
+    }
+  ],
+  "closest_existing": [
+    "damage.divided",
+    "distribute_counters"
+  ],
+  "confidence": "high"
+}

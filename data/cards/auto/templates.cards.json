@@ -11634,6 +11634,63 @@
         {
           "effects": [
             {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "double_strike"
+              ],
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a Dragon you control attacks, it gains double strike until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "filter": {
+              "subtypes": [
+                "Dragon"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "atarka_world_render",
+      "keywords": [
+        "flying",
+        "trample"
+      ],
+      "mana_cost": "{5}{R}{G}",
+      "name": "Atarka, World Render",
+      "oracle_text": "Flying, trample\nWhenever a Dragon you control attacks, it gains double strike until end of turn.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "op": "proliferate"
             }
           ],
@@ -16799,6 +16856,61 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "become_the_avalanche",
+      "mana_cost": "{4}{G}{G}",
+      "name": "Become the Avalanche",
+      "oracle_text": "Draw a card for each creature you control with power 4 or greater. Then creatures you control get +X/+X until end of turn, where X is the number of cards in your hand.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "count": {
+              "controller": "you",
+              "power": {
+                "op": ">=",
+                "value": {
+                  "const": 4
+                }
+              },
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "duration": "until_end_of_turn",
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "pump",
+          "power": {
+            "cards_in_hand": "you"
+          },
+          "toughness": {
+            "cards_in_hand": "you"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -48725,6 +48837,43 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "cost_reduction": {
+        "amount": 2,
+        "condition": {
+          "exists": {
+            "controller": "you",
+            "subtypes": [
+              "Dragon"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      },
+      "id": "draconic_lore",
+      "mana_cost": "{5}{U}",
+      "name": "Draconic Lore",
+      "oracle_text": "This spell costs {2} less to cast if you control a Dragon.\nDraw three cards.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 3
+          },
+          "op": "draw",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
