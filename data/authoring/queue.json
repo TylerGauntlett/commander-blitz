@@ -76162,12 +76162,12 @@
     },
     "Druid of Purification": {
       "edhrec_rank": 2432,
-      "gate": "template",
+      "gate": null,
       "name": "Druid of Purification",
-      "reason": "no template for: When this creature enters, starting with you, each player may choose an artifact or enchan",
+      "reason": "",
       "scryfall_id": "85fc3d2a-e254-4e1c-8a9d-15a3ea94810b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Druid of the Anima": {

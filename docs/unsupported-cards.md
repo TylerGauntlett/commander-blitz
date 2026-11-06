@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**205 cards** blocked by **185** capabilities.
+**204 cards** blocked by **184** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -179,7 +179,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
-| [starting-with-you](#starting-with-you) | 1 | 2432 | selector |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
@@ -2805,20 +2804,6 @@ Blocks **1** card.
 - **Mindbreak Trap** (rank 539) — `mindbreak_trap`
   - If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.
   - Exile any number of target spells.
-
-</details>
-
-## starting-with-you
-
-Blocks **1** card.
-
-- **(selector)** a player spec (or a for_each_player option) that iterates every living player in turn order beginning with the effect's controller -- what join_forces already does internally via state.turn_order(ctx.controller) -- so for_each_player can say "starting with you, each player ...". With it the card is: self_enters trigger -> for_each_player over that ordering, body a choose_permanents with objects {zone: battlefield, controller: opponent, any_types: [Artifact, Enchantment], count: 1, optional: true, chooser: {binding: each_player}} as 'chosen' (the binding accumulates across iterations), then destroy {binding: chosen}
-  <br>Why the existing vocabulary won't do: for_each_player resolves players through select_players, and 'each_player'/'all' return state.alive() in seat order, not turn order from the controller; no player spec offers a controller-first ordering. The order is not cosmetic: each later player sees the earlier choices (the join_forces docstring calls seat-order-regardless-of-caster a different card). It only coincides when the controller is seat 0
-
-<details><summary>Cards waiting on this</summary>
-
-- **Druid of Purification** (rank 2432) — `druid_of_purification`
-  - When this creature enters, starting with you, each player may choose an artifact or enchantment you don't control. Destroy each permanent chosen this way.
 
 </details>
 

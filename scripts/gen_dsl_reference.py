@@ -440,7 +440,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "if": ("Control flow", "Run `then` effects if a condition holds, else `else`.", None),
     "for_each": ("Control flow", "Run effects once per object a selector finds, bound as the loop value.",
                  None),
-    "for_each_player": ("Control flow", "Run effects once per player of a spec.",
+    "for_each_player": ("Control flow", "Run effects once per player of a spec, in seat order; "
+                        "`starting_with: \"you\"` walks turn order from the controller.",
                         '"Each opponent sacrifices…" — a loop over players'),
     "may": ("Control flow", "Optional effects, with an optional `pay`; `as` records who said yes.",
             "`may`'s `as`, and `except` on a player spec"),

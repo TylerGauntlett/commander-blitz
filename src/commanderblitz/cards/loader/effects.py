@@ -4406,6 +4406,14 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
     # silently becomes "nobody does".
     if op == "for_each_player" and not effect.get("effects"):
         raise DslError(f"{where}: for_each_player needs 'effects' to run per player")
+    # "Starting with you" is the only ordering a printed card names. Any other
+    # value would be read as "no order" and quietly fall back to seat order,
+    # which is the card the key exists to refuse.
+    if op == "for_each_player" and effect.get("starting_with") not in (None, "you"):
+        raise DslError(
+            f"{where}: for_each_player's 'starting_with' takes only \"you\" "
+            f"(turn order beginning with the controller), got {effect['starting_with']!r}"
+        )
 
     # "Choose one that hasn't been chosen" belongs to a permanent's repeated
     # ability, not to a spell. A spell's top-level modes are picked at *cast*

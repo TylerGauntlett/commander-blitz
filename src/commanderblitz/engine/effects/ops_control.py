@@ -1020,9 +1020,18 @@ def op_for_each_player(ctx: EffectContext, spec: Mapping[str, Any]):
     `"opponent"` instead, `extreme` computes a single global maximum over the
     merged pool and at a pod spares whoever's best creature is smaller.
 
-    In APNAP order, which is what `select_players` already returns.
+    In the order `select_players` returns, which is seat order -- not turn
+    order from anybody. ``starting_with: "you"`` reorders the same players into
+    turn order beginning with the controller (`GameState.turn_order`): "**starting
+    with you**, each player may choose…" -- Druid of Purification. The order is
+    the card when each later player sees the earlier choices, and seat order
+    only coincides with it while the controller sits in seat 0. The order
+    `join_forces` already walks.
     """
     players = select_players(ctx, spec.get("players", "each_opponent"))
+    if spec.get("starting_with") == "you":
+        chosen = set(players)
+        players = [pid for pid in ctx.state.turn_order(ctx.controller) if pid in chosen]
     body = spec.get("effects") or []
     previous = ctx.bindings.get("each_player")
     try:

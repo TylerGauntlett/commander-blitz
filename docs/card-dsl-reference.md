@@ -205,7 +205,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `delay` | Control flow |  | Run effects at the beginning of a named later step. | [Delayed triggers — "at the beginning of the next …"](card-dsl-cookbook.md#delayed-triggers--at-the-beginning-of-the-next-) |
 | `delayed_trigger` | Control flow |  | Create a trigger that watches an event for a `duration` (the rest of the turn by default, or this combat). | [delayed_trigger — an ability that watches an event](card-dsl-cookbook.md#delayed_trigger--an-ability-that-watches-an-event) |
 | `for_each` | Control flow |  | Run effects once per object a selector finds, bound as the loop value. | [Effect ops](card-dsl.md#effect-ops) |
-| `for_each_player` | Control flow |  | Run effects once per player of a spec. | ["Each opponent sacrifices…" — a loop over players](card-dsl-cookbook.md#each-opponent-sacrifices--a-loop-over-players) |
+| `for_each_player` | Control flow |  | Run effects once per player of a spec, in seat order; `starting_with: "you"` walks turn order from the controller. | ["Each opponent sacrifices…" — a loop over players](card-dsl-cookbook.md#each-opponent-sacrifices--a-loop-over-players) |
 | `if` | Control flow |  | Run `then` effects if a condition holds, else `else`. | [Effect ops](card-dsl.md#effect-ops) |
 | `join_forces` | Control flow | yes | Each player may pay into one shared X. | [Join forces — the one cost the whole table pays](card-dsl-cookbook.md#join-forces--the-one-cost-the-whole-table-pays) |
 | `may` | Control flow | yes | Optional effects, with an optional `pay`; `as` records who said yes. | [may's as, and except on a player spec](card-dsl-cookbook.md#mays-as-and-except-on-a-player-spec) |

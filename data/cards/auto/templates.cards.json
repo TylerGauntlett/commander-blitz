@@ -53965,6 +53965,71 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "chosen",
+                  "objects": {
+                    "any_types": [
+                      "Artifact",
+                      "Enchantment"
+                    ],
+                    "chooser": {
+                      "binding": "each_player"
+                    },
+                    "controller": "opponent",
+                    "count": 1,
+                    "optional": true,
+                    "zone": "battlefield"
+                  },
+                  "op": "choose_permanents",
+                  "prompt": "Choose an artifact or enchantment to destroy"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_player",
+              "starting_with": "you"
+            },
+            {
+              "objects": {
+                "binding": "chosen"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, starting with you, each player may choose an artifact or enchantment you don't control. Destroy each permanent chosen this way.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "druid_of_purification",
+      "mana_cost": "{3}{G}",
+      "name": "Druid of Purification",
+      "oracle_text": "When this creature enters, starting with you, each player may choose an artifact or enchantment you don't control. Destroy each permanent chosen this way.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Druid"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

@@ -4584,6 +4584,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "druid_of_purification": {
+    "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
   "druid_of_the_anima": {
     "zone": "battlefield"
   },

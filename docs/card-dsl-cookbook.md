@@ -13289,6 +13289,27 @@ Two things that are easy to get wrong and invisible in a duel:
   resolves to the *spell's* controller and lets you pick for them. A board count
   cannot tell the two apart when the options are interchangeable.
 
+### "Starting with you, each player…" — the loop in turn order
+
+```jsonc
+// Druid of Purification
+{"op": "for_each_player", "players": "each_player", "starting_with": "you",
+ "effects": [
+  {"op": "choose_permanents", "as": "chosen", "objects": {
+     "zone": "battlefield", "controller": "opponent",
+     "any_types": ["Artifact", "Enchantment"], "count": 1, "optional": true,
+     "chooser": {"binding": "each_player"}}}]},
+{"op": "destroy", "objects": {"binding": "chosen"}}
+```
+
+The loop walks its players in **seat order**, which is turn order from seat 0
+and matches "starting with you" only while the controller sits there.
+`starting_with: "you"` reorders the same players into turn order beginning with
+the controller, the order `join_forces` walks; it adds and removes nobody, so
+`"each_opponent"` stays opponents. Later players see the earlier choices, so the
+order is part of the card. `"you"` is the only value: the loader refuses any
+other, since a misspelling read as "no order" would fall back to seat order.
+
 ## "Choose a creature type"
 
 Vanquisher's Banner, which asks the question twice — once as a static filter and
