@@ -15632,12 +15632,12 @@
     },
     "Atarka, World Render": {
       "edhrec_rank": 1324,
-      "gate": "template",
+      "gate": null,
       "name": "Atarka, World Render",
-      "reason": "no template for: Whenever a Dragon you control attacks, it gains double strike until end of turn",
+      "reason": "",
       "scryfall_id": "719f172b-f9ad-4960-af66-757eb54147f6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Atemsis, All-Seeing": {
@@ -22952,12 +22952,12 @@
     },
     "Become the Avalanche": {
       "edhrec_rank": 6433,
-      "gate": "template",
+      "gate": null,
       "name": "Become the Avalanche",
-      "reason": "no template for: Draw a card for each creature you control with power 4 or greater. Then creatures you cont",
+      "reason": "",
       "scryfall_id": "b5e1921a-5d75-4b9d-8293-3e78dfa664cc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Become the Pilot": {
@@ -72882,12 +72882,12 @@
     },
     "Draconic Lore": {
       "edhrec_rank": 7737,
-      "gate": "template",
+      "gate": null,
       "name": "Draconic Lore",
-      "reason": "no template for: This spell costs {2} less to cast if you control a Dragon",
+      "reason": "",
       "scryfall_id": "557f2aa6-0b82-4f60-9617-610b613c2a48",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Draconic Muralists": {
@@ -83512,12 +83512,12 @@
     },
     "Encroaching Dragonstorm": {
       "edhrec_rank": 2505,
-      "gate": "template",
+      "gate": null,
       "name": "Encroaching Dragonstorm",
-      "reason": "no template for: When a Dragon you control enters, return this enchantment to its owner's hand",
+      "reason": "",
       "scryfall_id": "4ddd4477-f8c9-4d05-9177-f8344ba8f40b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Encroaching Mycosynth": {
@@ -85932,12 +85932,12 @@
     },
     "Eshki, Temur's Roar": {
       "edhrec_rank": 5438,
-      "gate": "template",
+      "gate": null,
       "name": "Eshki, Temur's Roar",
-      "reason": "no template for: Whenever you cast a creature spell, put a +1/+1 counter on Eshki. If that spell's power is",
+      "reason": "",
       "scryfall_id": "ff9aa863-8773-452d-946c-ae334c632e11",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Esika's Chariot": {
@@ -102532,12 +102532,12 @@
     },
     "Frontier Siege": {
       "edhrec_rank": 3270,
-      "gate": "template",
+      "gate": null,
       "name": "Frontier Siege",
-      "reason": "no template for: As this enchantment enters, choose Khans or Dragons",
+      "reason": "",
       "scryfall_id": "25b37249-bf5c-48ad-a5ea-c7538cc46929",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Frontier Warmonger": {
@@ -111592,12 +111592,12 @@
     },
     "Glorybringer": {
       "edhrec_rank": 7320,
-      "gate": "template",
+      "gate": null,
       "name": "Glorybringer",
-      "reason": "no template for: You may exert this creature as it attacks. When you do, it deals 4 damage to target non-Dr",
+      "reason": "",
       "scryfall_id": "3277ad99-5682-4baa-b106-de15721876a6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gloryheath Lynx": {
@@ -121972,12 +121972,12 @@
     },
     "Hammerhead Tyrant": {
       "edhrec_rank": 4972,
-      "gate": "template",
+      "gate": null,
       "name": "Hammerhead Tyrant",
-      "reason": "no template for: Whenever you cast a spell, return up to one target nonland permanent an opponent controls ",
+      "reason": "",
       "scryfall_id": "73f4ea2a-bef3-4e17-ab75-1ab0c1811948",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hammerhead, Maggia Boss": {
@@ -122482,12 +122482,12 @@
     },
     "Harbinger of the Hunt": {
       "edhrec_rank": 10527,
-      "gate": "template",
+      "gate": null,
       "name": "Harbinger of the Hunt",
-      "reason": "no template for: {2}{R}: This creature deals 1 damage to each creature without flying",
+      "reason": "",
       "scryfall_id": "52b7ea31-e853-4e8f-82f8-440388a5b110",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Harbinger of the Seas": {
@@ -147652,12 +147652,12 @@
     },
     "Keiga, the Tide Star": {
       "edhrec_rank": 4326,
-      "gate": "template",
+      "gate": null,
       "name": "Keiga, the Tide Star",
-      "reason": "no template for: When Keiga dies, gain control of target creature",
+      "reason": "",
       "scryfall_id": "44d544dc-1d2a-4b33-ae62-d0e0217db0a2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Keldon Arsonist": {
@@ -148232,12 +148232,12 @@
     },
     "Kessig Wolf Run": {
       "edhrec_rank": 399,
-      "gate": "template",
+      "gate": null,
       "name": "Kessig Wolf Run",
-      "reason": "no template for: {X}{R}{G}, {T}: Target creature gets +X/+0 and gains trample until end of turn",
+      "reason": "",
       "scryfall_id": "53f72b5f-86a1-4d44-94e2-93d4856ce3a8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kessig Wolfrider": {
@@ -173132,12 +173132,12 @@
     },
     "Migration Path": {
       "edhrec_rank": 1183,
-      "gate": "template",
+      "gate": null,
       "name": "Migration Path",
-      "reason": "no template for: Search your library for up to two basic land cards, put them onto the battlefield tapped, ",
+      "reason": "",
       "scryfall_id": "4fc05cc9-176d-4ffb-8777-935e54030140",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Migratory Greathorn": {
@@ -218912,12 +218912,12 @@
     },
     "Reflections of Littjara": {
       "edhrec_rank": 666,
-      "gate": "template",
+      "gate": null,
       "name": "Reflections of Littjara",
-      "reason": "no template for: As this enchantment enters, choose a creature type",
+      "reason": "",
       "scryfall_id": "d7689217-6124-4b2c-ab8b-7067de7f6e22",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Reflective Golem": {
@@ -249054,7 +249054,7 @@
       "edhrec_rank": 13459,
       "gate": "template",
       "name": "Skarrgan Hellkite",
-      "reason": "no template for: Riot",
+      "reason": "no template for: {3}{R}: This creature deals 2 damage divided as you choose among one or two targets. Activ",
       "scryfall_id": "be941a2e-4eb0-45b3-9da0-834053907a65",
       "source": "",
       "status": "pending",
@@ -266072,12 +266072,12 @@
     },
     "Storm's Wrath": {
       "edhrec_rank": 8226,
-      "gate": "template",
+      "gate": null,
       "name": "Storm's Wrath",
-      "reason": "no template for: deals 4 damage to each creature and each planeswalker",
+      "reason": "",
       "scryfall_id": "4bc9ecd2-7664-471b-90f2-2d0dd1acec80",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Storm, Force of Nature": {
@@ -266172,12 +266172,12 @@
     },
     "Stormbreath Dragon": {
       "edhrec_rank": 9600,
-      "gate": "template",
+      "gate": null,
       "name": "Stormbreath Dragon",
-      "reason": "no template for: Flying, haste, protection from white",
+      "reason": "",
       "scryfall_id": "471979de-f569-444a-8651-12d7e726949a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stormcaller of Keranos": {
@@ -277322,12 +277322,12 @@
     },
     "Temple of the Dragon Queen": {
       "edhrec_rank": 2518,
-      "gate": "template",
+      "gate": null,
       "name": "Temple of the Dragon Queen",
-      "reason": "no template for: As this land enters, choose a color",
+      "reason": "",
       "scryfall_id": "01054cee-3105-4e80-9ded-0ae57db5c159",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Temple of the False God": {
@@ -302452,12 +302452,12 @@
     },
     "Vengeful Ancestor": {
       "edhrec_rank": 2046,
-      "gate": "template",
+      "gate": null,
       "name": "Vengeful Ancestor",
-      "reason": "no template for: Whenever this creature enters or attacks, goad target creature",
+      "reason": "",
       "scryfall_id": "d391c561-906f-4a5b-a36c-3b8743e05af1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vengeful Archon": {

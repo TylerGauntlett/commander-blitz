@@ -1046,6 +1046,17 @@
     },
     "zone": "battlefield"
   },
+  "atarka_world_render": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "flying",
+        "trample"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "atraxa_praetors_voice": {
     "zone": "battlefield"
   },
@@ -1460,6 +1471,9 @@
   },
   "beastcaller_savant": {
     "zone": "battlefield"
+  },
+  "become_the_avalanche": {
+    "zone": "graveyard"
   },
   "bedevil": {
     "battlefield_count": 31,
@@ -4160,6 +4174,15 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "draconic_lore": {
+    "hand_size": {
+      "0": 4
+    },
+    "library_size": {
+      "0": 37
+    },
+    "zone": "graveyard"
+  },
   "draconic_visitor": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -4693,6 +4716,13 @@
     },
     "zone": "battlefield"
   },
+  "encroaching_dragonstorm": {
+    "battlefield_count": 35,
+    "library_size": {
+      "0": 38
+    },
+    "zone": "battlefield"
+  },
   "endless_atlas": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -4839,6 +4869,10 @@
     "library_size": {
       "0": 39
     },
+    "zone": "battlefield"
+  },
+  "eshki_temur_s_roar": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "esper_cormorants": {
@@ -5945,6 +5979,10 @@
   "frontier_guide": {
     "zone": "battlefield"
   },
+  "frontier_siege": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "frontier_warmonger": {
     "zone": "battlefield"
   },
@@ -6505,6 +6543,10 @@
   "glory_seeker": {
     "zone": "battlefield"
   },
+  "glorybringer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "gluttonous_zombie": {
     "zone": "battlefield"
   },
@@ -7048,6 +7090,10 @@
     },
     "zone": "battlefield"
   },
+  "hammerhead_tyrant": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "hand_of_emrakul": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -7068,6 +7114,16 @@
     "zone": "battlefield"
   },
   "happy_hogan_dauntless_driver": {
+    "zone": "battlefield"
+  },
+  "harbinger_of_the_hunt": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "flying"
+      ]
+    },
     "zone": "battlefield"
   },
   "hard_won_jitte": {
@@ -8488,6 +8544,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "keiga_the_tide_star": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "kelinore_bat": {
     "zone": "battlefield"
   },
@@ -8510,6 +8570,9 @@
     "zone": "battlefield"
   },
   "kessig_recluse": {
+    "zone": "battlefield"
+  },
+  "kessig_wolf_run": {
     "zone": "battlefield"
   },
   "ketria_crystal": {
@@ -10087,6 +10150,13 @@
     "life": {
       "0": 44
     }
+  },
+  "migration_path": {
+    "battlefield_count": 34,
+    "library_size": {
+      "0": 38
+    },
+    "zone": "graveyard"
   },
   "miirym_sentinel_wyrm": {
     "battlefield_count": 33,
@@ -12626,6 +12696,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "reflections_of_littjara": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "reflexes": {
     "zone": [
       "battlefield",
@@ -15160,6 +15234,16 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "storm_s_wrath": {
+    "zone": "graveyard"
+  },
+  "stormbreath_dragon": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "stormcarved_coast": {
     "zone": "battlefield"
   },
@@ -15941,6 +16025,13 @@
     "zone": "battlefield"
   },
   "temple_of_silence": {
+    "zone": "battlefield"
+  },
+  "temple_of_the_dragon_queen": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "temple_of_the_false_god": {
@@ -17529,6 +17620,10 @@
     }
   },
   "venerable_warsinger": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "vengeful_ancestor": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

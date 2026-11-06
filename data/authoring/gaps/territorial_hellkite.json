@@ -1,0 +1,29 @@
+{
+  "card_id": "territorial_hellkite",
+  "name": "Territorial Hellkite",
+  "oracle_text": "Flying, haste\nAt the beginning of combat on your turn, choose an opponent at random that this creature didn't attack during your last combat. This creature attacks that player this combat if able. If you can't choose an opponent this way, tap this creature.",
+  "blocked_sentences": [
+    "At the beginning of combat on your turn, choose an opponent at random that this creature didn't attack during your last combat. This creature attacks that player this combat if able. If you can't choose an opponent this way, tap this creature."
+  ],
+  "needs": [
+    {
+      "capability": "players_attacked_last_combat",
+      "kind": "value",
+      "what": "a per-permanent memory of which players this creature attacked during its controller's most recent combat (carried across turns, reset each new combat of that player), readable as a player filter so a player choice can be restricted to 'opponents this creature didn't attack during your last combat', and so the empty-set case can be tested with an if",
+      "why_existing_wont_do": "attacked_this_turn, attackers_this_turn and opponents_attacked_this_combat only read the current turn or combat; nothing records the defending player per attacker across turns, and choose_player's players spec has no 'not attacked by this last combat' filter"
+    },
+    {
+      "capability": "random_player_choice",
+      "kind": "op",
+      "what": "choose_player with random: true -- the engine picks uniformly at random among the eligible players and binds the result (as), with an else branch when no player is eligible",
+      "why_existing_wont_do": "choose_player takes only as, players and prompt, so the controller chooses; random exists on choose_mode and discard but not on a player choice"
+    }
+  ],
+  "closest_existing": [
+    "choose_player",
+    "must_attack_player",
+    "opponents_attacked_this_combat",
+    "tap"
+  ],
+  "confidence": "high"
+}
