@@ -1,0 +1,18 @@
+{
+  "card_id": "god_eternal_oketra",
+  "name": "God-Eternal Oketra",
+  "oracle_text": "Double strike\nWhenever you cast a creature spell, create a 4/4 black Zombie Warrior creature token with vigilance.\nWhen God-Eternal Oketra dies or is put into exile from the battlefield, you may put it into its owner's library third from the top.",
+  "blocked_sentences": [
+    "Whenever you cast a creature spell, create a 4/4 black Zombie Warrior creature token with vigilance."
+  ],
+  "needs": [
+    {
+      "capability": "zombie_warrior_4_4_b_vigilance",
+      "kind": "token",
+      "what": "a 4/4 black Zombie Warrior creature token with vigilance",
+      "why_existing_wont_do": "token_ids has zombie_2_2_b, zombie_2_2_b_decayed, zombie_army_0_0_b and zombie_knight_2_2_b_menace, and 4/4 Warriors only in other colours (rhino_warrior_4_4_g, angel_warrior_4_4_w_flying); none is a 4/4 black Zombie Warrior with vigilance. The spell_cast trigger with a Creature filter and create_token are otherwise sufficient, and the dies/exile line looks expressible with dies and leaves_battlefield (to_zones exile) triggers plus a may put_on_top from_top 3."
+    }
+  ],
+  "closest_existing": ["zombie_knight_2_2_b_menace", "rhino_warrior_4_4_g"],
+  "confidence": "high"
+}

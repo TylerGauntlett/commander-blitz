@@ -6419,6 +6419,13 @@
   "geist_of_the_moors": {
     "zone": "battlefield"
   },
+  "gempalm_polluter": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "gemrazer": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -9317,6 +9324,10 @@
     "zone": "battlefield"
   },
   "lazotep_behemoth": {
+    "zone": "battlefield"
+  },
+  "lazotep_chancellor": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "leaden_myr": {

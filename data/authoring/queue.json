@@ -106412,12 +106412,12 @@
     },
     "Gempalm Polluter": {
       "edhrec_rank": 8387,
-      "gate": "template",
+      "gate": null,
       "name": "Gempalm Polluter",
-      "reason": "no template for: When you cycle this card, you may have target player lose life equal to the number of Zomb",
+      "reason": "",
       "scryfall_id": "2001d23e-feae-4a91-917e-e239b1c2b17c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gempalm Sorcerer": {
@@ -155532,12 +155532,12 @@
     },
     "Lazotep Chancellor": {
       "edhrec_rank": 7115,
-      "gate": "template",
+      "gate": null,
       "name": "Lazotep Chancellor",
-      "reason": "no template for: Whenever you discard a card, you may pay {1}. If you do, amass Zombies 2",
+      "reason": "",
       "scryfall_id": "604d4c94-c73f-423b-8dc0-86a92674adf7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lazotep Plating": {
