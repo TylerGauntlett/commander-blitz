@@ -10,15 +10,16 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**168 cards** blocked by **155** capabilities.
+**172 cards** blocked by **156** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
+| [copy-exception-ability](#copy-exception-ability) | 4 | 1261 | op |
 | [station](#station) | 4 | 1695 | engine |
-| [copy-exception-ability](#copy-exception-ability) | 3 | 1261 | op |
+| [omen](#omen) | 3 | 3355 | cost, engine |
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 3 | 714 | engine |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
@@ -97,6 +98,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [graveyard-play-grants-ability](#graveyard-play-grants-ability) | 1 | 3531 | static_effect |
 | [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 1 | 3531 | static_effect |
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
+| [harmonize](#harmonize) | 1 | 7442 | cost |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [karox-bladewing](#karox-bladewing) | 1 | 8889 | token |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
@@ -121,7 +123,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [nontoken-creatures-died-this-turn](#nontoken-creatures-died-this-turn) | 1 | 3951 | value |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [odd-or-even](#odd-or-even) | 1 | 8504 | selector |
-| [omen](#omen) | 1 | 3355 | cost, engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-mana-ability-until-end-of-turn](#player-mana-ability-until-end-of-turn) | 1 | 12705 | op |
@@ -316,6 +317,32 @@ Blocks **5** cards.
 
 </details>
 
+## copy-exception-ability
+
+Blocks **4** cards.
+
+- **(op)** copy_permanent's `except_` adding a whole quoted triggered ability to the token's copiable values (707.9b), written once under `grantable_abilities` and referenced by index -- here "When this token leaves the battlefield, return the exiled card to its owner's graveyard" -- where "the exiled card" is linked to the specific card the creating ability exiled (e.g. the token records the exiled oid when created, and a selector such as `exiled_with: "self"` on the token resolves to it), so the card returns to its owner's graveyard when that particular token leaves
+  <br>Why the existing vocabulary won't do: copy_permanent's `except_` is checked against COPY_EXCEPT_KEYS (colors, types, power, toughness, add_types, add_subtypes, add_supertypes, remove_supertypes, no_mana_cost) and becomes `copy_overrides`, which characteristics._compute reads only for those characteristics -- `add_subtypes: ["Spirit"]` covers the Spirit half, but nothing adds an ability. The new `except_` keys on become_copy (BECOME_COPY_EXCEPT_KEYS: add_keywords, keep_abilities) do not reach this card: they are become_copy-only (an in-place copy, not a token copy_permanent creates), add_keywords adds keywords rather than a triggered ability, and keep_abilities keeps positions in the copying card's OWN printed abilities -- the quoted leaves-the-battlefield trigger is not one of Hofri's own abilities and would fire for Hofri, not the token. A following `grant_ability` on the `as` binding would be a layer-6 grant rather than a copiable value (a copy of the token would lack it), and the granted trigger has no way to name the card Hofri's trigger exiled: `exiled_with: "self"` on the token would look for cards the token exiled, not cards exiled by Hofri, and an `exile` `link` is held by the exiling source, not by the token it later creates. The first sentence (buff + grant_keyword statics on Spirits you control) and the die/exile/copy steps (creature_dies trigger, exile the dying card, copy_permanent from exile with add_subtypes) are expressible.
+- **(op)** a `become_copy` `except_` key (707.9b) that adds an ability the copying card does NOT itself have -- e.g. `add_abilities: [i]` indexing the card's `grantable_abilities`, appended by `GameState.card_of` the way `copying_own_abilities` is -- so 'becomes a copy of X until end of turn, except it has myriad' writes the myriad triggered ability (as shipped in templates: a self-attacks trigger making tapped-and-attacking token copies exiled at end of combat) into the copiable values, where the myriad tokens and anything copying Muddle see it, and nothing happens when no target was chosen
+  <br>Why the existing vocabulary won't do: `except_` now takes `add_keywords` and `keep_abilities` (BECOME_COPY_EXCEPT_KEYS). Myriad is not in `keywords` -- the pool writes it as a triggered ability -- so `add_keywords` cannot name it. `keep_abilities` only carries positions in the card's OWN printed `abilities` onto the copy; Muddle does not print myriad as its own ability, and writing it into `abilities` to keep it would give the uncopied Muddle myriad permanently. A `grant_ability` after the copy is a layer-6 grant, not a copiable value (the doc names it the near miss), so copies of Muddle would lack myriad
+- **(op)** copy_permanent's `except_` honouring `add_keywords` (707.9b): "create a token that's a copy of that creature, except it has haste" writes haste into the token's copiable values, so the token has haste as part of what it is and any later copy of the token also has haste
+  <br>Why the existing vocabulary won't do: copy_permanent's except_ is checked against loader.effects.COPY_EXCEPT_KEYS (colors, types, power, toughness, add_types, add_subtypes, add_supertypes, remove_supertypes, no_mana_cost), so add_keywords on copy_permanent is refused at load, and characteristics._compute never reads keywords from copy_overrides. The new become_copy except_ (add_keywords/keep_abilities, BECOME_COPY_EXCEPT_KEYS) writes obj.copying_keywords, but become_copy turns an existing permanent into a copy; it creates no token, so it cannot say "create a token that's a copy of that creature". The as-enters path (ENTERS_COPY_EXCEPT_KEYS, Dack's Duplicate) is likewise for the card itself entering. The pool's workaround for "that token gains haste" (Helm of the Host, Rionya) is a following grant_keyword with duration permanent, which is a granted effect rather than a copiable value: a copy of a Twinflame token would lose the haste. The fix is probably small: accept add_keywords in COPY_EXCEPT_KEYS and have characteristics._compute add copy_overrides['add_keywords'] to the printed keywords (or set copying_keywords on the token). The rest of the card is expressible: strive "{2}{R}" with a count "any" creature-you-control target (as Call the Coppercoats), copy_permanent with `as`, and a delay at end_step exiling the binding (as Stormsplitter).
+- **(op)** copy_permanent's `except_` honouring `add_keywords` (707.9b): "except it's a 4/4 Dragon creature with flying in addition to its other types" is {"add_types": ["Creature"], "add_subtypes": ["Dragon"], "power": 4, "toughness": 4, "add_keywords": ["flying"]}, with flying written into the token's copiable values so the token flies as part of what it is and any copy of the token flies too
+  <br>Why the existing vocabulary won't do: copy_permanent's except_ is checked against loader.effects.COPY_EXCEPT_KEYS (colors, types, power, toughness, add_types, add_subtypes, add_supertypes, remove_supertypes, no_mana_cost), so add_keywords is refused at load and characteristics._compute never reads keywords from copy_overrides. The 4/4, Creature and Dragon parts are expressible with power/toughness/add_types/add_subtypes. A following grant_keyword with duration permanent on the `as` binding is a layer-6 grant, not a copiable value, so a copy of the token would lack flying. become_copy's add_keywords creates no token. The rest of the card is expressible: choose_mode with up_to_if on an is_commander exists condition (as Akroma's Will / Will of the Jeskai), mode-scoped targets, and a draw whose amount is extreme_value greatest mana_value over permanents you control
+
+<details><summary>Cards waiting on this</summary>
+
+- **Twinflame** (rank 1261) — `twinflame`
+  - Choose any number of target creatures you control. For each of them, create a token that's a copy of that creature, except it has haste. Exile those tokens at the beginning of the next end step
+- **Will of the Temur** (rank 4158) — `will_of_the_temur`
+  - • Create a token that's a copy of target permanent, except it's a 4/4 Dragon creature with flying in addition to its other types
+- **Hofri Ghostforge** (rank 6941) — `hofri_ghostforge`
+  - Whenever another nontoken creature you control dies, exile it. If you do, create a token that's a copy of that creature, except it's a Spirit in addition to its other types and it has "When this token leaves the battlefield, return the exiled card to its owner's graveyard."
+- **Muddle, the Ever-Changing** (rank 11112) — `muddle_the_ever_changing`
+  - Whenever you cast an instant or sorcery spell, Muddle becomes a copy of up to one target nonlegendary creature you control until end of turn, except it has myriad
+
+</details>
+
 ## station
 
 Blocks **4** cards.
@@ -350,25 +377,29 @@ Blocks **4** cards.
 
 </details>
 
-## copy-exception-ability
+## omen
 
 Blocks **3** cards.
 
-- **(op)** copy_permanent's `except_` adding a whole quoted triggered ability to the token's copiable values (707.9b), written once under `grantable_abilities` and referenced by index -- here "When this token leaves the battlefield, return the exiled card to its owner's graveyard" -- where "the exiled card" is linked to the specific card the creating ability exiled (e.g. the token records the exiled oid when created, and a selector such as `exiled_with: "self"` on the token resolves to it), so the card returns to its owner's graveyard when that particular token leaves
-  <br>Why the existing vocabulary won't do: copy_permanent's `except_` is checked against COPY_EXCEPT_KEYS (colors, types, power, toughness, add_types, add_subtypes, add_supertypes, remove_supertypes, no_mana_cost) and becomes `copy_overrides`, which characteristics._compute reads only for those characteristics -- `add_subtypes: ["Spirit"]` covers the Spirit half, but nothing adds an ability. The new `except_` keys on become_copy (BECOME_COPY_EXCEPT_KEYS: add_keywords, keep_abilities) do not reach this card: they are become_copy-only (an in-place copy, not a token copy_permanent creates), add_keywords adds keywords rather than a triggered ability, and keep_abilities keeps positions in the copying card's OWN printed abilities -- the quoted leaves-the-battlefield trigger is not one of Hofri's own abilities and would fire for Hofri, not the token. A following `grant_ability` on the `as` binding would be a layer-6 grant rather than a copiable value (a copy of the token would lack it), and the granted trigger has no way to name the card Hofri's trigger exiled: `exiled_with: "self"` on the token would look for cards the token exiled, not cards exiled by Hofri, and an `exile` `link` is held by the exiling source, not by the token it later creates. The first sentence (buff + grant_keyword statics on Spirits you control) and the die/exile/copy steps (creature_dies trigger, exile the dying card, copy_permanent from exile with add_subtypes) are expressible.
-- **(op)** a `become_copy` `except_` key (707.9b) that adds an ability the copying card does NOT itself have -- e.g. `add_abilities: [i]` indexing the card's `grantable_abilities`, appended by `GameState.card_of` the way `copying_own_abilities` is -- so 'becomes a copy of X until end of turn, except it has myriad' writes the myriad triggered ability (as shipped in templates: a self-attacks trigger making tapped-and-attacking token copies exiled at end of combat) into the copiable values, where the myriad tokens and anything copying Muddle see it, and nothing happens when no target was chosen
-  <br>Why the existing vocabulary won't do: `except_` now takes `add_keywords` and `keep_abilities` (BECOME_COPY_EXCEPT_KEYS). Myriad is not in `keywords` -- the pool writes it as a triggered ability -- so `add_keywords` cannot name it. `keep_abilities` only carries positions in the card's OWN printed `abilities` onto the copy; Muddle does not print myriad as its own ability, and writing it into `abilities` to keep it would give the uncopied Muddle myriad permanently. A `grant_ability` after the copy is a layer-6 grant, not a copiable value (the doc names it the near miss), so copies of Muddle would lack myriad
-- **(op)** copy_permanent's `except_` honouring `add_keywords` (707.9b): "create a token that's a copy of that creature, except it has haste" writes haste into the token's copiable values, so the token has haste as part of what it is and any later copy of the token also has haste
-  <br>Why the existing vocabulary won't do: copy_permanent's except_ is checked against loader.effects.COPY_EXCEPT_KEYS (colors, types, power, toughness, add_types, add_subtypes, add_supertypes, remove_supertypes, no_mana_cost), so add_keywords on copy_permanent is refused at load, and characteristics._compute never reads keywords from copy_overrides. The new become_copy except_ (add_keywords/keep_abilities, BECOME_COPY_EXCEPT_KEYS) writes obj.copying_keywords, but become_copy turns an existing permanent into a copy; it creates no token, so it cannot say "create a token that's a copy of that creature". The as-enters path (ENTERS_COPY_EXCEPT_KEYS, Dack's Duplicate) is likewise for the card itself entering. The pool's workaround for "that token gains haste" (Helm of the Host, Rionya) is a following grant_keyword with duration permanent, which is a granted effect rather than a copiable value: a copy of a Twinflame token would lose the haste. The fix is probably small: accept add_keywords in COPY_EXCEPT_KEYS and have characteristics._compute add copy_overrides['add_keywords'] to the printed keywords (or set copying_keywords on the token). The rest of the card is expressible: strive "{2}{R}" with a count "any" creature-you-control target (as Call the Coppercoats), copy_permanent with `as`, and a delay at end_step exiling the binding (as Stormsplitter).
+- **(cost)** the Omen half of a card as a castable second face: an alternative cast from hand at the Omen's own cost and type line, whose card is shuffled into its owner's library instead of going to the graveyard as it resolves. The existing `second_face` / `second_face_zone` machinery is the right chassis -- this is a 'play one face or the other' card, not a transforming one -- and what is missing beside it is the shuffle-self rider, which no `card_level_rider_keys` entry provides (Aftermath exiles, Adventure exiles-then-recasts, and this returns to the library).
+  <br>Why the existing vocabulary won't do: `second_face` covers split, Adventure and Aftermath halves and is exactly the right shape, but every existing user of it leaves the card in the graveyard or in exile; there is no rider that shuffles the source into its owner's library on resolution. Writing the Omen without it makes a strictly better card -- a repeatable bounce spell that also leaves a 6/7 flier available later is not the printed card.
+- **(engine)** scripts/build_card_index.py must expose the half at all. The catalog row's layout is `adventure`, which the builder keeps out of both `_HALVES_LAYOUTS` (so the two halves are never joined into `oracle_text`) and `_TWO_FACED_LAYOUTS` (so the `back_*` columns stay empty). The packet therefore shows `back_face: {}` and a front-only `oracle_text`, and `--collect` feeds the residual gate that same front-only text.
+  <br>Why the existing vocabulary won't do: This is the part that makes the gap invisible rather than merely unbuilt. Every one of the six gates can pass on a card whose printed second half the pipeline cannot see, so the card is reported `native` with no notes while half its printing does nothing. Until the index carries the half, no gate can refuse an incomplete answer for it.
+- **(engine)** scripts/build_card_index.py must expose the Omen half. The card's layout is `adventure`, which the builder keeps out of both `_HALVES_LAYOUTS` and `_TWO_FACED_LAYOUTS`, so the packet carries `back_face: {}`, a front-only `oracle_text`, and a `type_line` of 'Creature - Dragon // Sorcery - Omen' with the Sorcery half's text nowhere. The local MTGJSON deck file (TemurRoar_TDC) also lists only side 'a'. Once the half is visible, it is a `second_face` (cast from hand, one face or the other) carrying `tucks_itself: "shuffle"` for the Omen reminder.
+  <br>Why the existing vocabulary won't do: The front face alone is expressible (flying, haste, and an activated `pump` of +1/+0 on self), and `second_face` plus the `tucks_itself: "shuffle"` rider look like the right chassis for the Omen half. But the half's printed text is not in the packet, so it cannot be written verbatim, and an answer for the front alone would pass every gate while half the printing does nothing -- the same invisibility recorded on marang_river_regent_coil_and_catch_omen.
+- **(cost)** the Omen half of a card as a castable second face: an alternative cast from hand at the Omen's own cost ({2}{G}) and type line (Sorcery - Omen), whose card is shuffled into its owner's library instead of going to the graveyard as it resolves. `second_face` with `second_face_zone: "hand"` is the right chassis; what is missing beside it is the shuffle-self rider, which no `card_level_rider_keys` entry provides (`exiles_itself` exiles, `tucks_itself` puts it on top/bottom without a shuffle, Adventure exiles-then-recasts).
+  <br>Why the existing vocabulary won't do: `second_face` covers split, Adventure and Aftermath halves and is the right shape, but every existing user leaves the card in the graveyard or exile; nothing shuffles the source into its owner's library on resolution. Writing the Omen without it leaves the card in the graveyard, a different card.
+- **(engine)** scripts/build_card_index.py must expose the Omen half: the catalog row's layout is not in `_HALVES_LAYOUTS` or `_TWO_FACED_LAYOUTS`, so the packet shows `back_face: {}` and a front-only `oracle_text`, and the residual gate cannot see the Dynamic Soar text at all.
+  <br>Why the existing vocabulary won't do: Without the half in the index, an answer covering only the front (Flash, Flying, and the `cast_as_though_flash` static -- which IS expressible as two statics, one with `affects_spells: {"types": ["Sorcery"]}` and one with `affects_spells: {"subtypes": ["Dragon"]}`) would pass every gate and be counted native while the printed Omen half does nothing. Same block as Marang River Regent // Coil and Catch.
 
 <details><summary>Cards waiting on this</summary>
 
-- **Twinflame** (rank 1261) — `twinflame`
-  - Choose any number of target creatures you control. For each of them, create a token that's a copy of that creature, except it has haste. Exile those tokens at the beginning of the next end step
-- **Hofri Ghostforge** (rank 6941) — `hofri_ghostforge`
-  - Whenever another nontoken creature you control dies, exile it. If you do, create a token that's a copy of that creature, except it's a Spirit in addition to its other types and it has "When this token leaves the battlefield, return the exiled card to its owner's graveyard."
-- **Muddle, the Ever-Changing** (rank 11112) — `muddle_the_ever_changing`
-  - Whenever you cast an instant or sorcery spell, Muddle becomes a copy of up to one target nonlegendary creature you control until end of turn, except it has myriad
+- **Marang River Regent // Coil and Catch** (rank 3355) — `marang_river_regent_coil_and_catch_omen`
+  - Coil and Catch -- Instant - Omen, {3}{U}: Return up to two target nonland permanents to their owners' hands. (Then shuffle this card into its owner's library.)
+- **Stormshriek Feral // Flush Out** (rank 6593) — `stormshriek_feral_flush_out`
+  - Flush Out -- Sorcery - Omen, {1}{R}: <the Omen half's rules text, absent from the packet and from the local catalog> (Then shuffle this card into its owner's library.)
+- **Whirlwing Stormbrood // Dynamic Soar** (rank 6636) — `whirlwing_stormbrood_dynamic_soar`
+  - Dynamic Soar -- Sorcery - Omen, {2}{G}: Put three +1/+1 counters on target creature you control. (Then shuffle this card into its owner's library.)
 
 </details>
 
@@ -1566,6 +1597,20 @@ Blocks **1** card.
 
 </details>
 
+## harmonize
+
+Blocks **1** card.
+
+- **(cost)** a card-level graveyard alternative cost (702.180) that lets the caster, while paying it, optionally tap one untapped creature they control to reduce the generic part of the cost by that creature's power, and exiles the spell instead of putting it anywhere else as it resolves or leaves the stack
+  <br>Why the existing vocabulary won't do: graveyard_cost plus exiles_itself covers casting from the graveyard for a printed price and exiling afterwards, but nothing reduces that price by a tapped creature's power: pay_generic_with only knows tap_creatures (convoke, {1} per creature) and tap_artifacts (improvise), cost_reduction's total_power counts creatures without tapping them, and a tap_permanents cost with `as` exists only on activated abilities, not on a spell's cast
+
+<details><summary>Cards waiting on this</summary>
+
+- **Zenith Festival** (rank 7442) — `zenith_festival`
+  - Harmonize {X}{R}{R}
+
+</details>
+
 ## impulse-from-opponent-library
 
 Blocks **1** card.
@@ -1907,22 +1952,6 @@ Blocks **1** card.
 
 - **Zimone's Hypothesis** (rank 8504) — `zimone_s_hypothesis`
   - Then choose odd or even. Return each creature with power of the chosen quality to its owner's hand. (Zero is even.)
-
-</details>
-
-## omen
-
-Blocks **1** card.
-
-- **(cost)** the Omen half of a card as a castable second face: an alternative cast from hand at the Omen's own cost and type line, whose card is shuffled into its owner's library instead of going to the graveyard as it resolves. The existing `second_face` / `second_face_zone` machinery is the right chassis -- this is a 'play one face or the other' card, not a transforming one -- and what is missing beside it is the shuffle-self rider, which no `card_level_rider_keys` entry provides (Aftermath exiles, Adventure exiles-then-recasts, and this returns to the library).
-  <br>Why the existing vocabulary won't do: `second_face` covers split, Adventure and Aftermath halves and is exactly the right shape, but every existing user of it leaves the card in the graveyard or in exile; there is no rider that shuffles the source into its owner's library on resolution. Writing the Omen without it makes a strictly better card -- a repeatable bounce spell that also leaves a 6/7 flier available later is not the printed card.
-- **(engine)** scripts/build_card_index.py must expose the half at all. The catalog row's layout is `adventure`, which the builder keeps out of both `_HALVES_LAYOUTS` (so the two halves are never joined into `oracle_text`) and `_TWO_FACED_LAYOUTS` (so the `back_*` columns stay empty). The packet therefore shows `back_face: {}` and a front-only `oracle_text`, and `--collect` feeds the residual gate that same front-only text.
-  <br>Why the existing vocabulary won't do: This is the part that makes the gap invisible rather than merely unbuilt. Every one of the six gates can pass on a card whose printed second half the pipeline cannot see, so the card is reported `native` with no notes while half its printing does nothing. Until the index carries the half, no gate can refuse an incomplete answer for it.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Marang River Regent // Coil and Catch** (rank 3355) — `marang_river_regent_coil_and_catch_omen`
-  - Coil and Catch -- Instant - Omen, {3}{U}: Return up to two target nonland permanents to their owners' hands. (Then shuffle this card into its owner's library.)
 
 </details>
 

@@ -277322,12 +277322,12 @@
     },
     "Temple of the Dragon Queen": {
       "edhrec_rank": 2518,
-      "gate": "template",
+      "gate": null,
       "name": "Temple of the Dragon Queen",
-      "reason": "no template for: As this land enters, choose a color",
+      "reason": "",
       "scryfall_id": "01054cee-3105-4e80-9ded-0ae57db5c159",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Temple of the False God": {
@@ -302452,12 +302452,12 @@
     },
     "Vengeful Ancestor": {
       "edhrec_rank": 2046,
-      "gate": "template",
+      "gate": null,
       "name": "Vengeful Ancestor",
-      "reason": "no template for: Whenever this creature enters or attacks, goad target creature",
+      "reason": "",
       "scryfall_id": "d391c561-906f-4a5b-a36c-3b8743e05af1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vengeful Archon": {

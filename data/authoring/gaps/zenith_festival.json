@@ -1,0 +1,14 @@
+{
+  "card_id": "zenith_festival",
+  "name": "Zenith Festival",
+  "oracle_text": "Exile the top X cards of your library. You may play them until the end of your next turn.\nHarmonize {X}{R}{R} (You may cast this card from your graveyard for its harmonize cost. You may tap a creature you control to reduce that cost by an amount of generic mana equal to its power. Then exile this spell.)",
+  "blocked_sentences": ["Harmonize {X}{R}{R}"],
+  "needs": [{
+    "capability": "harmonize",
+    "kind": "cost",
+    "what": "a card-level graveyard alternative cost (702.180) that lets the caster, while paying it, optionally tap one untapped creature they control to reduce the generic part of the cost by that creature's power, and exiles the spell instead of putting it anywhere else as it resolves or leaves the stack",
+    "why_existing_wont_do": "graveyard_cost plus exiles_itself covers casting from the graveyard for a printed price and exiling afterwards, but nothing reduces that price by a tapped creature's power: pay_generic_with only knows tap_creatures (convoke, {1} per creature) and tap_artifacts (improvise), cost_reduction's total_power counts creatures without tapping them, and a tap_permanents cost with `as` exists only on activated abilities, not on a spell's cast"
+  }],
+  "closest_existing": ["graveyard_cost", "exiles_itself", "pay_generic_with", "flashback"],
+  "confidence": "high"
+}

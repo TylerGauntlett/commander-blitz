@@ -1,0 +1,18 @@
+{
+  "card_id": "stormshriek_feral_flush_out",
+  "name": "Stormshriek Feral // Flush Out",
+  "oracle_text": "Flying, haste\n{1}{R}: This creature gets +1/+0 until end of turn.",
+  "blocked_sentences": [
+    "Flush Out -- Sorcery - Omen, {1}{R}: <the Omen half's rules text, absent from the packet and from the local catalog> (Then shuffle this card into its owner's library.)"
+  ],
+  "needs": [
+    {
+      "capability": "omen",
+      "kind": "engine",
+      "what": "scripts/build_card_index.py must expose the Omen half. The card's layout is `adventure`, which the builder keeps out of both `_HALVES_LAYOUTS` and `_TWO_FACED_LAYOUTS`, so the packet carries `back_face: {}`, a front-only `oracle_text`, and a `type_line` of 'Creature - Dragon // Sorcery - Omen' with the Sorcery half's text nowhere. The local MTGJSON deck file (TemurRoar_TDC) also lists only side 'a'. Once the half is visible, it is a `second_face` (cast from hand, one face or the other) carrying `tucks_itself: \"shuffle\"` for the Omen reminder.",
+      "why_existing_wont_do": "The front face alone is expressible (flying, haste, and an activated `pump` of +1/+0 on self), and `second_face` plus the `tucks_itself: \"shuffle\"` rider look like the right chassis for the Omen half. But the half's printed text is not in the packet, so it cannot be written verbatim, and an answer for the front alone would pass every gate while half the printing does nothing -- the same invisibility recorded on marang_river_regent_coil_and_catch_omen."
+    }
+  ],
+  "closest_existing": ["second_face", "second_face_zone", "tucks_itself", "adventure"],
+  "confidence": "high"
+}

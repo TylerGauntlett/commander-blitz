@@ -16027,6 +16027,13 @@
   "temple_of_silence": {
     "zone": "battlefield"
   },
+  "temple_of_the_dragon_queen": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "temple_of_the_false_god": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -17613,6 +17620,10 @@
     }
   },
   "venerable_warsinger": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "vengeful_ancestor": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

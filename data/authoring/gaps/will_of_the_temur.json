@@ -1,0 +1,18 @@
+{
+  "card_id": "will_of_the_temur",
+  "name": "Will of the Temur",
+  "oracle_text": "Choose one. If you control a commander as you cast this spell, you may choose both instead.\n• Create a token that's a copy of target permanent, except it's a 4/4 Dragon creature with flying in addition to its other types.\n• Target player draws cards equal to the greatest mana value among permanents you control.",
+  "blocked_sentences": [
+    "• Create a token that's a copy of target permanent, except it's a 4/4 Dragon creature with flying in addition to its other types"
+  ],
+  "needs": [
+    {
+      "capability": "copy_exception_ability",
+      "kind": "op",
+      "what": "copy_permanent's `except_` honouring `add_keywords` (707.9b): \"except it's a 4/4 Dragon creature with flying in addition to its other types\" is {\"add_types\": [\"Creature\"], \"add_subtypes\": [\"Dragon\"], \"power\": 4, \"toughness\": 4, \"add_keywords\": [\"flying\"]}, with flying written into the token's copiable values so the token flies as part of what it is and any copy of the token flies too",
+      "why_existing_wont_do": "copy_permanent's except_ is checked against loader.effects.COPY_EXCEPT_KEYS (colors, types, power, toughness, add_types, add_subtypes, add_supertypes, remove_supertypes, no_mana_cost), so add_keywords is refused at load and characteristics._compute never reads keywords from copy_overrides. The 4/4, Creature and Dragon parts are expressible with power/toughness/add_types/add_subtypes. A following grant_keyword with duration permanent on the `as` binding is a layer-6 grant, not a copiable value, so a copy of the token would lack flying. become_copy's add_keywords creates no token. The rest of the card is expressible: choose_mode with up_to_if on an is_commander exists condition (as Akroma's Will / Will of the Jeskai), mode-scoped targets, and a draw whose amount is extreme_value greatest mana_value over permanents you control"
+    }
+  ],
+  "closest_existing": ["copy_permanent", "grant_keyword", "become_copy"],
+  "confidence": "high"
+}
