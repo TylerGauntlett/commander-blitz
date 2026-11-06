@@ -169238,6 +169238,64 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "any",
+            "power": {
+              "op": "<=",
+              "value": 2
+            },
+            "types": [
+              "Creature"
+            ]
+          },
+          "blockers": {
+            "controller": "opponent",
+            "not_keywords": [
+              "flying",
+              "reach"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "block_restriction",
+          "kind": "static",
+          "text": "Creatures your opponents control without flying or reach can't block creatures with power 2 or less."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "sidar_kondo_of_jamuraa",
+      "keywords": [
+        "flanking",
+        "partner"
+      ],
+      "mana_cost": "{2}{G}{W}",
+      "name": "Sidar Kondo of Jamuraa",
+      "oracle_text": "Flanking (Whenever a creature without flanking blocks this creature, the blocking creature gets -1/-1 until end of turn.)\nCreatures your opponents control without flying or reach can't block creatures with power 2 or less.\nPartner (You can have two commanders if both have partner.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -215678,6 +215736,51 @@
         "Wall"
       ],
       "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "put_counters": {
+              "amount": 1,
+              "counter": "-0/-1"
+            }
+          },
+          "effects": [
+            {
+              "mana": "{G}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "once_each_turn": true,
+          "text": "Put a -0/-1 counter on this creature: Add {G}. Activate only once each turn."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "wall_of_roots",
+      "keywords": [
+        "defender"
+      ],
+      "mana_cost": "{1}{G}",
+      "name": "Wall of Roots",
+      "oracle_text": "Defender\nPut a -0/-1 counter on this creature: Add {G}. Activate only once each turn.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Plant",
+        "Wall"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]

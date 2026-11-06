@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**183 cards** blocked by **163** capabilities.
+**181 cards** blocked by **161** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -90,7 +90,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [first-mate-ragavan](#first-mate-ragavan) | 1 | 7016 | token |
 | [first-x-spell-cost-reduction](#first-x-spell-cost-reduction) | 1 | 8360 | static_effect |
 | [fixed-piles-opponent-chooses](#fixed-piles-opponent-chooses) | 1 | 12369 | op |
-| [flanking](#flanking) | 1 | 5209 | keyword |
 | [foretold](#foretold) | 1 | 3713 | value |
 | [free-cast-by-other-player](#free-cast-by-other-player) | 1 | 11704 | op |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
@@ -138,7 +137,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [primo-the-indivisible](#primo-the-indivisible) | 1 | 11527 | token |
 | [proliferate-binding](#proliferate-binding) | 1 | 957 | op |
 | [protection-from-multicolored](#protection-from-multicolored) | 1 | 1516 | static_effect |
-| [pt-modifying-counters](#pt-modifying-counters) | 1 | 3583 | engine |
 | [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
 | [random-order-bottom](#random-order-bottom) | 1 | 1343 | op |
@@ -1523,20 +1521,6 @@ Blocks **1** card.
 
 </details>
 
-## flanking
-
-Blocks **1** card.
-
-- **(keyword)** the flanking keyword (702.25): a creature that has it, when blocked by a creature WITHOUT flanking, gives that blocker -1/-1 until end of turn; it must be a keyword the engine knows so that 'without flanking' can be tested on the blocker and so that multiple instances trigger separately
-  <br>Why the existing vocabulary won't do: `flanking` is not in the packet's `keywords`, so neither the card can carry it nor a filter can ask `not_keywords: ["flanking"]` of the blocker. A hand-written `becomes_blocked` trigger with a `pump` of -1/-1 on the blocker could approximate the effect, but it cannot express the 'without flanking' exemption (no flanking keyword to read, and `trigger_filter_keys` has no `not_keywords`), and other cards granting or reading flanking would not see it
-
-<details><summary>Cards waiting on this</summary>
-
-- **Sidar Kondo of Jamuraa** (rank 5209) — `sidar_kondo_of_jamuraa`
-  - Flanking (Whenever a creature without flanking blocks this creature, the blocking creature gets -1/-1 until end of turn.)
-
-</details>
-
 ## foretold
 
 Blocks **1** card.
@@ -2203,20 +2187,6 @@ Blocks **1** card.
 
 - **Stonecoil Serpent** (rank 1516) — `stonecoil_serpent`
   - Reach, trample, protection from multicolored
-
-</details>
-
-## pt-modifying-counters
-
-Blocks **1** card.
-
-- **(engine)** counters of the form +X/+Y or -X/-Y other than +1/+1 and -1/-1 (here a -0/-1 counter) that the characteristics pipeline reads as a P/T change in the counters step, so a put_counters cost of {"counter": "-0/-1"} lowers the creature's toughness by 1 per counter and a Wall of Roots with five of them dies to the toughness SBA
-  <br>Why the existing vocabulary won't do: The cost side exists (put_counters on an activated mana ability, with once_each_turn and add_mana), but counter kinds are free strings and characteristics.py only sums PLUS_ONE and MINUS_ONE into power/toughness, so a "-0/-1" counter is an inert tally and the wall would tap for {G} every turn without shrinking. Writing it as -1/-1 changes power too and interacts with +1/+1 annihilation; adding an unprinted static buff reading counters_on would be an extra ability lost to ability-removal effects, unlike a real counter
-
-<details><summary>Cards waiting on this</summary>
-
-- **Wall of Roots** (rank 3583) — `wall_of_roots`
-  - Put a -0/-1 counter on this creature: Add {G}. Activate only once each turn.
 
 </details>
 

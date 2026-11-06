@@ -246172,12 +246172,12 @@
     },
     "Sidar Kondo of Jamuraa": {
       "edhrec_rank": 5209,
-      "gate": "template",
+      "gate": null,
       "name": "Sidar Kondo of Jamuraa",
-      "reason": "no template for: Flanking",
+      "reason": "",
       "scryfall_id": "9c551a94-9895-486a-a39a-6bf2f8939b35",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sidequest: Card Collection // Magicked Card": {
@@ -309562,12 +309562,12 @@
     },
     "Wall of Roots": {
       "edhrec_rank": 3583,
-      "gate": "template",
+      "gate": null,
       "name": "Wall of Roots",
-      "reason": "no template for: Put a -0/-1 counter on this creature: Add {G}. Activate only once each turn",
+      "reason": "",
       "scryfall_id": "04326924-55c4-4315-893a-6a05e0b7eb7f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wall of Runes": {
