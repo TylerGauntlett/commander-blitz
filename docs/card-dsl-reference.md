@@ -36,7 +36,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Mana rider ops](#mana-rider-ops) | 7 |
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
 | [Card-level face keys](#card-level-face-keys) | 6 |
-| [Card-level rider keys](#card-level-rider-keys) | 18 |
+| [Card-level rider keys](#card-level-rider-keys) | 19 |
 | [Engine events](#engine-events) | 78 |
 
 ## Effect ops
@@ -1095,6 +1095,7 @@ Things a card says about itself that are neither a price nor a second face. Defi
 |---|---|---|
 | `exiles_itself` | Exile this card as it resolves. | ["Exile <this card>." -- a spell that exiles itself](card-dsl-cookbook.md#exile-this-card----a-spell-that-exiles-itself) |
 | `tucks_itself` | Put this card Nth from the top, on the bottom, or shuffled into its owner's library as it resolves. | ["Put <this card> into its owner's library" -- tucks_itself](card-dsl-cookbook.md#put-this-card-into-its-owners-library----tucks_itself) |
+| `suspends_itself` | Exile this card with N time counters on it, suspended, as it resolves. | ["Exile <this card> with N time counters on it." -- suspends_itself](card-dsl-cookbook.md#exile-this-card-with-n-time-counters-on-it----suspends_itself) |
 | `uncounterable` | This spell can't be countered. | ["This spell can't be countered"](card-dsl-cookbook.md#this-spell-cant-be-countered) |
 | `rebound` | Rebound. | [Rebound](card-dsl-cookbook.md#rebound) |
 | `split_second` | Split second. | [Alternative ways to play a card](card-dsl-cookbook.md#alternative-ways-to-play-a-card) |

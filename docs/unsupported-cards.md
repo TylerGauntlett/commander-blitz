@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**207 cards** blocked by **193** capabilities.
+**205 cards** blocked by **192** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -36,7 +36,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
 | [random-player-choice](#random-player-choice) | 2 | 5120 | op |
-| [self-suspend-on-resolution](#self-suspend-on-resolution) | 2 | 2750 | engine |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [venture](#venture) | 2 | 19644 | engine |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
@@ -739,24 +738,6 @@ Blocks **2** cards.
   - Whenever you cast your first spell each turn, choose an opponent at random. Vial Smasher deals damage equal to that spell's mana value to that player or a planeswalker that player controls.
 - **Territorial Hellkite** (rank 6681) — `territorial_hellkite`
   - At the beginning of combat on your turn, choose an opponent at random that this creature didn't attack during your last combat. This creature attacks that player this combat if able. If you can't choose an opponent this way, tap this creature.
-
-</details>
-
-## self-suspend-on-resolution
-
-Blocks **2** cards.
-
-- **(engine)** a card-level resolution rider for an instant or sorcery, beside exiles_itself: 'as this spell resolves, exile it with N time counters on it' -- the spell goes to exile instead of the graveyard and is made suspended (suspend.make_suspended with N counters, suspended_by its owner) so the upkeep tick and the free cast recur. Shared by the Rousing Refrain / Arc Blade / Lotus Blossom-style self-suspending spells, e.g. a rider like `suspends_itself: 3`
-  <br>Why the existing vocabulary won't do: The `suspend` op (op_suspend) only works on a target or binding; called on the spell itself from spell_effects, it would exile the card off the stack mid-resolution, and stack._resolve_spell then unconditionally calls _place_after_resolution, which moves it on to the graveyard (resetting the suspended mark) -- the same reason exiles_itself exists as a rider rather than an `exile` op. `exiles_itself` exiles without time counters or the suspended mark, so the card would never come back; the card-level `suspend` key covers only the cast-from-hand alternative, not the resolution exile.
-- **(engine)** a card-level resolution rider for an instant or sorcery, beside exiles_itself: 'as this spell resolves, exile it with N time counters on it' -- the spell goes to exile instead of the graveyard and is made suspended (suspend.make_suspended with N counters, suspended_by its owner) so the upkeep tick and the free cast recur. Same need as Rousing Refrain; e.g. a rider like `suspends_itself: 3`
-  <br>Why the existing vocabulary won't do: The `suspend` op (op_suspend) works on a target or binding; aimed at the spell itself from spell_effects it would exile the card off the stack mid-resolution, and stack._resolve_spell then unconditionally calls _place_after_resolution, which moves it on to the graveyard and resets the suspended mark. `exiles_itself` exiles with no time counters and no suspended mark, so the card would never come back; the card-level `suspend` key covers only the cast-from-hand alternative cost, not the resolution exile.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Rousing Refrain** (rank 2750) — `rousing_refrain`
-  - Exile Rousing Refrain with three time counters on it.
-- **Suspended Sentence** (rank 4910) — `suspended_sentence`
-  - Exile Suspended Sentence with three time counters on it.
 
 </details>
 

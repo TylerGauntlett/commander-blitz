@@ -13938,6 +13938,12 @@
   "rotting_mastodon": {
     "zone": "battlefield"
   },
+  "rousing_refrain": {
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "exile"
+  },
   "roving_harper": {
     "hand_size": {
       "0": 2
@@ -16392,6 +16398,13 @@
   },
   "surveillance_room": {
     "zone": "battlefield"
+  },
+  "suspended_sentence": {
+    "life": {
+      "1": 37
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "exile"
   },
   "swab_goblin": {
     "zone": "battlefield"

@@ -228052,12 +228052,12 @@
     },
     "Rousing Refrain": {
       "edhrec_rank": 2750,
-      "gate": "template",
+      "gate": null,
       "name": "Rousing Refrain",
-      "reason": "no template for: Add {R} for each card in target opponent's hand. Until end of turn, you don't lose this ma",
+      "reason": "",
       "scryfall_id": "2b3ec666-0e57-4c42-872c-51799e0b5c68",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rousing of Souls": {
@@ -271252,12 +271252,12 @@
     },
     "Suspended Sentence": {
       "edhrec_rank": 4910,
-      "gate": "template",
+      "gate": null,
       "name": "Suspended Sentence",
-      "reason": "no template for: Destroy target creature an opponent controls. That player loses 3 life. Exile with three t",
+      "reason": "",
       "scryfall_id": "38c98aa0-bfa1-42f4-b035-a48dac86f0ce",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Suspension Field": {

@@ -12123,6 +12123,30 @@ while the card is still on the stack, so the library is shuffled without it and
 the card then sits on the bottom, where its owner knows exactly when it comes
 back.
 
+## "Exile <this card> with N time counters on it." -- suspends_itself
+
+```jsonc
+"suspends_itself": 3   // Rousing Refrain: "Exile Rousing Refrain with three time counters on it."
+```
+
+`exiles_itself`'s shape with suspend's ending: as the spell resolves it goes to
+exile with the printed number of time counters and is suspended for its owner
+(702.62, through `suspend.make_suspended`), so its owner's upkeep ticks it down
+and the last counter casts it for free, after which it resolves and suspends
+itself again. Read in `stack._place_after_resolution`, but unlike the other
+riders on that slot it is the card's own instruction rather than a replacement
+of the graveyard, so it wins over flashback's exile, a granted rebound or plot,
+and a cast that would exile instead. A spell that fizzles or is countered never
+resolved and goes to the graveyard. The loader refuses a count below 1, the
+rider on a permanent card, and the rider beside `exiles_itself`, `rebound`,
+`tucks_itself` or `buyback`, each of which names another destination. The
+card's own `suspend` key is its separate "Suspend N--{cost}" line and is written
+beside it.
+
+**Not `exiles_itself`**, which exiles with no counters and never brings the
+card back. **Not a `suspend` op in `spell_effects`**: the spell is already off
+the stack while they run, and is then moved to the graveyard regardless.
+
 ## Airbend — "exile them, and their owners may cast them for {2}"
 
 ```jsonc

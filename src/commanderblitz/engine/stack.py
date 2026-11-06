@@ -1205,6 +1205,20 @@ def _place_after_resolution(
         destination = Zone.EXILE
     if rebounds:
         destination = Zone.EXILE
+    # "Exile Rousing Refrain with three time counters on it." The card's own
+    # instruction, carried out as the last step of its resolution (608.2c)
+    # rather than a replacement of the graveyard, so it **overrides** every
+    # rider above: the card never would be put into a graveyard, so flashback's
+    # exile, a granted rebound or plot, and a cast-from-exile `exiles_instead`
+    # have nothing to replace. A fizzled or countered spell never resolved and
+    # never gets here, which is the printed card too. Suspending it is after
+    # the move, below.
+    suspends = card.suspends_itself is not None and not card.is_permanent
+    if suspends:
+        destination = Zone.EXILE
+        rebounds = plots = False
+        tuck_to = None
+        shuffles_in = False
     # Adventure (715.3c) and aftermath (702.127b): the fifth rider on this slot,
     # and the only one that has to read the **printed** card rather than the one
     # that just resolved -- `card` here is the second face, and the flags that
@@ -1282,6 +1296,16 @@ def _place_after_resolution(
         # Disturb's whole content is that it arrives on the back face.
         obj.transformed = True
         state.bump_chars()
+    if suspends:
+        # 702.62: "with N time counters on it", suspended for its owner, so the
+        # upkeep tick and the free cast come round again -- and a card cast
+        # that way suspends itself once more as it resolves. After the move for
+        # `rebound_by`'s reason: `move_object` resets the object on the way.
+        # A commander its owner sent to the command zone is not suspended,
+        # which `make_suspended` reports and nothing needs to act on.
+        from commanderblitz.engine.suspend import make_suspended
+
+        make_suspended(state, obj.oid, card.suspends_itself)
     if rebounds:
         # After the move: `move_object` runs `reset_permanent_state` on the way,
         # which would wipe this if it were set first -- the same ordering

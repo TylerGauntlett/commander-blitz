@@ -1467,6 +1467,16 @@ class CardModel(BaseModel):
     #: `shuffle` op in the card's own effects runs while the card is still on
     #: the stack, so it would shuffle the library *without* it.
     tucks_itself: int | Literal["bottom", "shuffle"] | None = None
+    #: "Exile <this card> with three time counters on it." -- Rousing Refrain,
+    #: Suspended Sentence. The rider beside `exiles_itself` that also makes the
+    #: card **suspended** (702.62): the printed number of time counters, and
+    #: suspended for its owner, so the upkeep tick and the free cast recur.
+    #:
+    #: Not the `suspend` op in the card's own effects: the spell is already off
+    #: the stack while they run, and `_place_after_resolution` would then move
+    #: it on to the graveyard and wipe the mark. Not `exiles_itself`, which
+    #: exiles with no counters and never brings the card back.
+    suspends_itself: int | None = None
     #: **Overload** (702.96a): "You may cast this spell for its overload cost.
     #: If you do, change its text by replacing all instances of 'target' with
     #: 'each'." A third cast variant beside kicked and evoked, and the text

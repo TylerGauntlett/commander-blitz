@@ -178,6 +178,9 @@ CARD_LEVEL_RIDER_KEYS = (
     # sentence on the card by exactly the test above, so a worker reading it goes
     # looking for this.
     "tucks_itself",
+    # int; "Exile <this card> with N time counters on it." -- the N. Exiled and
+    # suspended (702.62) for its owner as it resolves, so it comes back.
+    "suspends_itself",
     "uncounterable",  # "This spell can't be countered."
     "rebound",  # exiled as it resolves, cast free from exile next upkeep
     "split_second",  # "…players can't cast spells or activate abilities"

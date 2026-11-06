@@ -1122,6 +1122,10 @@ RIDER_KEYS: dict[str, Entry] = {
         "Put this card Nth from the top, on the bottom, or shuffled into its owner's library as it resolves.",
         "\"Put <this card> into its owner's library\" -- tucks_itself",
     ),
+    "suspends_itself": (
+        "Exile this card with N time counters on it, suspended, as it resolves.",
+        '"Exile <this card> with N time counters on it." -- suspends_itself',
+    ),
     "uncounterable": ("This spell can't be countered.", H_CANT_COUNTER),
     "rebound": ("Rebound.", "Rebound"),
     "split_second": ("Split second.", None),

@@ -1627,6 +1627,45 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
                 f"{where}: 'tucks_itself' only means anything on an instant or "
                 f"sorcery -- a permanent spell enters the battlefield instead"
             )
+    if model.suspends_itself is not None:
+        # A count of none would exile the card with no counters and suspend it
+        # for an upkeep tick that has nothing to remove.
+        if model.suspends_itself < 1:
+            raise DslError(
+                f"{where}: 'suspends_itself' is the number of time counters, at least 1"
+            )
+        # Rebound's guard, for its reason: a permanent spell enters the
+        # battlefield and never reaches the rider.
+        if set(model.types) & {
+            "Creature",
+            "Land",
+            "Artifact",
+            "Enchantment",
+            "Planeswalker",
+            "Battle",
+        }:
+            raise DslError(
+                f"{where}: 'suspends_itself' only means anything on an instant or "
+                f"sorcery -- a permanent spell enters the battlefield instead"
+            )
+        # Every one of these names another place for the card to go as it
+        # resolves; written beside this one, whichever the code read last would
+        # decide, and no printing says both.
+        clashing = [
+            key
+            for key, present in (
+                ("exiles_itself", model.exiles_itself),
+                ("rebound", model.rebound),
+                ("tucks_itself", model.tucks_itself is not None),
+                ("buyback", model.buyback),
+            )
+            if present
+        ]
+        if clashing:
+            raise DslError(
+                f"{where}: 'suspends_itself' already says where the spell goes as "
+                f"it resolves; drop {', '.join(repr(k) for k in clashing)}"
+            )
     if model.exiles_itself and model.rebound:
         # Both replace the graveyard with exile, and rebound also promises the
         # card back at the next upkeep. Written together, whichever the code
@@ -2384,6 +2423,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         rebound=model.rebound,
         exiles_itself=model.exiles_itself,
         tucks_itself=model.tucks_itself,
+        suspends_itself=model.suspends_itself,
         overload=overload,
         graveyard_cast_transformed=model.graveyard_cast_transformed,
         dredge=model.dredge,
