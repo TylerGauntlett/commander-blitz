@@ -10998,9 +10998,24 @@ reads the wrong refs back on resolution. The spell would fizzle, or hit the
 wrong permanent, depending on how many targets the caster declined. One spec
 that swallows whatever was chosen cannot have that bug.
 
-Needs `count: "any"`; refused at load time otherwise, because on a fixed-size
-spec the cap either changes nothing or makes the spec unsatisfiable, and both
-are silent.
+**Under a printed ceiling.** "Exile **up to two** target artifacts and/or
+enchantments **controlled by different players**" (Protector of the Wastes) is
+the same rule with the card's own ceiling:
+
+```jsonc
+{"id": "t1", "kind": "permanent", "count": 2, "up_to": true,
+ "one_per_player": true,
+ "selector": {"controller": "any", "any_types": ["Artifact", "Enchantment"]}}
+```
+
+The subset enumeration applies both — at most two, pairwise different
+controllers, every size from none up. `count: "any"` alone is the near miss: at
+a pod of four it exiles up to four.
+
+Needs a size the caster picks — `count: "any"`, or `up_to` with a ceiling;
+refused at load time otherwise (an exact `count`, or `optional`'s "exactly N, or
+none"), because on a fixed-size spec the cap either changes nothing or makes the
+spec unsatisfiable, and both are silent.
 
 ## "…with total mana value 6 or less" — a cap on the picks together
 

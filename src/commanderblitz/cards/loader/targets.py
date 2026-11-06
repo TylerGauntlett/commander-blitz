@@ -101,12 +101,17 @@ def _compile_targets(
             raise DslError(f"{where}: two targets share the id {spec.id!r}")
         seen.add(spec.id)
     for spec in specs:
-        # A per-player cap is a constraint on how many of a *variable-size*
-        # choice may share a controller. On a fixed-size spec it either changes
+        # A per-player cap is a constraint on how many of a *caster-sized*
+        # choice may share a controller: "any number of …, no two controlled by
+        # the same player" (`count: "any"`), or under a printed ceiling, "up to
+        # two target artifacts and/or enchantments controlled by different
+        # players" (Protector of the Wastes, `count: 2, up_to: true`). On an
+        # exact size, or `optional`'s "exactly N, or none", it either changes
         # nothing or makes the spec unsatisfiable, and both are silent.
-        if spec.one_per_player and spec.count != "any":
+        if spec.one_per_player and not (spec.count == "any" or spec.up_to):
             raise DslError(
-                f"{where}: 'one_per_player' needs 'count': 'any' -- "
+                f"{where}: 'one_per_player' needs a size the caster picks -- "
+                f"'count': 'any', or a ceiling ('count': N with 'up_to': true); "
                 f"it caps a variable-size choice, and a fixed one has no room to cap"
             )
         if (

@@ -126,8 +126,9 @@ class TargetSpec:
     #: cast at all (601.2c). ``0`` is plain "up to N".
     min_count: int = 0
     #: At most one chosen object per controller -- "for each player, up to one
-    #: target permanent that player controls". Only meaningful with
-    #: ``count == "any"``.
+    #: target permanent that player controls". Only on a caster-sized spec:
+    #: ``count == "any"``, or an `up_to` ceiling ("up to two target artifacts
+    #: controlled by different players").
     one_per_player: bool = False
     optional: bool = False
     #: A cap on the combined mana value of everything chosen for this spec --

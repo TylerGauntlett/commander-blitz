@@ -376,7 +376,10 @@ class TargetModel(BaseModel):
     #: player controls." The same set of legal choices as "any number of target
     #: nonland permanents, no two controlled by the same player" -- which is
     #: what this says, and why it is a constraint on the *combination* rather
-    #: than one spec per seat. Requires ``count: "any"``.
+    #: than one spec per seat. Requires a size the caster picks: ``count:
+    #: "any"``, or a printed ceiling (``count: N, up_to: true``) -- "exile **up
+    #: to two** target artifacts and/or enchantments controlled by different
+    #: players" (Protector of the Wastes).
     one_per_player: bool = False
     optional: bool = False
     #: "Choose up to two. Return those cards from your graveyard to your hand.
