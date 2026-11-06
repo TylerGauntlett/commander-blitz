@@ -12304,6 +12304,10 @@
   "protection_magic": {
     "zone": "graveyard"
   },
+  "protector_of_the_wastes": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "proteus_staff": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -18616,6 +18620,13 @@
   "wilhelt_the_rotcleaver": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "will_of_the_abzan": {
+    "life": {
+      "1": 37
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
   },
   "will_of_the_jeskai": {
     "graveyard_size": {

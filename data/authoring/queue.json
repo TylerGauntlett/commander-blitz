@@ -208802,12 +208802,12 @@
     },
     "Protector of the Wastes": {
       "edhrec_rank": 10488,
-      "gate": "behaviour",
+      "gate": null,
       "name": "Protector of the Wastes",
-      "reason": "opponent battlefield is 6, expected 5",
+      "reason": "",
       "scryfall_id": "3d0e4790-3ebc-4e2a-96aa-7f1909864baa",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Protege's Awakening": {
@@ -315682,12 +315682,12 @@
     },
     "Will of the Abzan": {
       "edhrec_rank": 2678,
-      "gate": "template",
+      "gate": null,
       "name": "Will of the Abzan",
-      "reason": "no template for: Choose one. If you control a commander as you cast this spell, you may choose both instead",
+      "reason": "",
       "scryfall_id": "b322ba2f-8474-4c73-b2fb-0f2e380a4e04",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Will of the All-Hunter": {
