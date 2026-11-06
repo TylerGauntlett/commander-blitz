@@ -113543,6 +113543,48 @@
       ]
     },
     {
+      "alternative_cost": {
+        "condition": {
+          "cmp": ">",
+          "left": {
+            "life_lost_this_turn": "each_opponent"
+          },
+          "right": {
+            "const": 0
+          }
+        },
+        "mana": "{R}"
+      },
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "light_up_the_stage",
+      "mana_cost": "{2}{R}",
+      "name": "Light Up the Stage",
+      "oracle_text": "Spectacle {R} (You may cast this spell for its spectacle cost rather than its mana cost if an opponent lost life this turn.)\nExile the top two cards of your library. Until the end of your next turn, you may play those cards.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "destination": "exile",
+          "objects": {
+            "count": "all"
+          },
+          "op": "look_at_top",
+          "playable": "end_of_your_next_turn",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "color_identity": [
         "R",
         "U",
@@ -122773,6 +122815,104 @@
     {
       "abilities": [
         {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying",
+            "lifelink"
+          ],
+          "kind": "static",
+          "text": "Equipped creature has flying and lifelink."
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "power_had": true
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "pay_life": {
+                  "power_had": true
+                }
+              },
+              "prompt": "Pay life equal to its power to draw that many cards?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever equipped creature dies, you may pay X life, where X is its power. If you do, draw X cards.",
+          "trigger": {
+            "controller": "any",
+            "event": "dies",
+            "filter": {
+              "attached": true
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {3}"
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "mask_of_griselbrand",
+      "mana_cost": "{1}{B}{B}",
+      "name": "Mask of Griselbrand",
+      "oracle_text": "Equipped creature has flying and lifelink.\nWhenever equipped creature dies, you may pay X life, where X is its power. If you do, draw X cards.\nEquip {3}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "effects": [
@@ -123140,6 +123280,76 @@
         "Legendary"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "controller": "opponent",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": -2
+              },
+              "toughness": {
+                "const": -2
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, creatures your opponents control get -2/-2 until end of turn.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "lose_life",
+              "player": {
+                "controller_of": "subject"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature an opponent controls dies, that player loses 2 life.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "creature_dies"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "massacre_wurm",
+      "mana_cost": "{3}{B}{B}{B}",
+      "name": "Massacre Wurm",
+      "oracle_text": "When this creature enters, creatures your opponents control get -2/-2 until end of turn.\nWhenever a creature an opponent controls dies, that player loses 2 life.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Wurm"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
@@ -134325,6 +134535,64 @@
       "source": "auto",
       "subtypes": [
         "Dryad"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": {
+                "binding": "event_player"
+              }
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a land an opponent controls enters, that player loses 1 life. Put a +1/+1 counter on this creature.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "nightshade_harvester",
+      "mana_cost": "{3}{B}",
+      "name": "Nightshade Harvester",
+      "oracle_text": "Whenever a land an opponent controls enters, that player loses 1 life. Put a +1/+1 counter on this creature.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Shaman"
       ],
       "toughness": 2,
       "types": [

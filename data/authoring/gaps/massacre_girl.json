@@ -1,0 +1,18 @@
+{
+  "card_id": "massacre_girl",
+  "name": "Massacre Girl",
+  "oracle_text": "Menace\nWhen Massacre Girl enters, each other creature gets -1/-1 until end of turn. Whenever a creature dies this turn, each creature other than Massacre Girl gets -1/-1 until end of turn.",
+  "blocked_sentences": [
+    "Whenever a creature dies this turn, each creature other than Massacre Girl gets -1/-1 until end of turn."
+  ],
+  "needs": [
+    {
+      "capability": "delayed_creature_dies",
+      "kind": "trigger_event",
+      "what": "an unscoped delayed_trigger on `creature_dies` (no `subject`, controller any) that fires only when a CREATURE dies, i.e. the delayed path honouring the event's `was_creature` the way the hosted path does",
+      "why_existing_wont_do": "`delayed_trigger` accepts event `creature_dies`, but `triggers._delayed_matches` only compares the event type (DIES), half, outcome, subject and controller; the `was_creature` check that makes `creature_dies` mean 'a creature' lives only in `triggers._matches`. zones fires DIES for every permanent put into a graveyard from the battlefield, so a delayed `creature_dies` would also fire on a sacrificed Treasure, a destroyed artifact or enchantment, or a dead land, shrinking every creature each time. `was_creature` is not in `EVENT_BINDING_KEYS`, so a trigger `condition` cannot filter it either. Every shipped delayed dies trigger (Fight for the Throne, Together Forever, Heroic Sacrifice) is scoped to a creature `subject`, which hides the gap"
+    }
+  ],
+  "closest_existing": ["delayed_trigger", "creature_dies", "pump"],
+  "confidence": "high"
+}

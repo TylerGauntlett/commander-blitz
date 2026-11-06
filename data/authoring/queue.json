@@ -158002,12 +158002,12 @@
     },
     "Light Up the Stage": {
       "edhrec_rank": 1214,
-      "gate": "template",
+      "gate": null,
       "name": "Light Up the Stage",
-      "reason": "no template for: Spectacle {R}",
+      "reason": "",
       "scryfall_id": "21775491-53e7-4654-8d23-54d0acd89299",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Light from Within": {
@@ -168632,12 +168632,12 @@
     },
     "Mask of Griselbrand": {
       "edhrec_rank": 3074,
-      "gate": "template",
+      "gate": null,
       "name": "Mask of Griselbrand",
-      "reason": "no template for: Whenever equipped creature dies, you may pay X life, where X is its power. If you do, draw",
+      "reason": "",
       "scryfall_id": "a8c36e65-395c-4800-bd0a-c444940a9b36",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mask of Immolation": {
@@ -168932,12 +168932,12 @@
     },
     "Massacre Wurm": {
       "edhrec_rank": 513,
-      "gate": "template",
+      "gate": null,
       "name": "Massacre Wurm",
-      "reason": "no template for: When this creature enters, creatures your opponents control get -2/-2 until end of turn",
+      "reason": "",
       "scryfall_id": "670a36cc-34e1-4d11-808e-1b6bc88eb5d8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Massimo, the Magician": {
@@ -186852,12 +186852,12 @@
     },
     "Nightshade Harvester": {
       "edhrec_rank": 4499,
-      "gate": "template",
+      "gate": null,
       "name": "Nightshade Harvester",
-      "reason": "no template for: Whenever a land an opponent controls enters, that player loses 1 life. Put a +1/+1 counter",
+      "reason": "",
       "scryfall_id": "fac55604-3635-4af1-b9ca-10d1f89db504",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nightshade Peddler": {

@@ -9617,6 +9617,18 @@
     },
     "zone": "graveyard"
   },
+  "light_up_the_stage": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "graveyard"
+  },
   "lightning_angel": {
     "zone": "battlefield"
   },
@@ -10370,6 +10382,13 @@
   "mask_of_avacyn": {
     "zone": "battlefield"
   },
+  "mask_of_griselbrand": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "mask_of_memory": {
     "battlefield_count": 33,
     "hand_size": {
@@ -10410,6 +10429,13 @@
       "keywords": [
         "wither"
       ]
+    },
+    "zone": "battlefield"
+  },
+  "massacre_wurm": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40
     },
     "zone": "battlefield"
   },
@@ -11408,6 +11434,10 @@
     "zone": "battlefield"
   },
   "nightshade_dryad": {
+    "zone": "battlefield"
+  },
+  "nightshade_harvester": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "nightveil_predator": {
