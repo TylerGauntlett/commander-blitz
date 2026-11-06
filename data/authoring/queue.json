@@ -21762,13 +21762,13 @@
     },
     "Battle Angels of Tyr": {
       "edhrec_rank": 1762,
-      "gate": "template",
+      "gate": null,
       "name": "Battle Angels of Tyr",
-      "reason": "no template for: Flying, myriad",
+      "reason": "",
       "scryfall_id": "8b3c8050-6acb-4d53-ba46-646ca88d4eb6",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Battle Brawler": {
       "edhrec_rank": 24357,
@@ -300742,13 +300742,13 @@
     },
     "Vampire Gourmand": {
       "edhrec_rank": 7864,
-      "gate": "template",
+      "gate": null,
       "name": "Vampire Gourmand",
-      "reason": "no template for: Whenever this creature attacks, you may sacrifice another creature. If you do, draw a card",
+      "reason": "",
       "scryfall_id": "917514c0-9cd5-4b97-85b9-c4f753560ad4",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Vampire Hexmage": {
       "edhrec_rank": 8991,
