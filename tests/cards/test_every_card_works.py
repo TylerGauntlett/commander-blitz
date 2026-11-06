@@ -300,7 +300,10 @@ class TestEveryCardIsPlayable:
         card = registry.get(card_id)
         game = build_sandbox(registry, card_id)
 
-        needs_spell_target = any(spec.kind == "spell" for spec in card.targets)
+        # A `spell_or_ability` target (Disallow) is aimed at a dummy spell too.
+        needs_spell_target = any(
+            spec.kind in ("spell", "spell_or_ability") for spec in card.targets
+        )
         if needs_spell_target:
             add_dummy_spell(game)
         game._advance()
@@ -1204,7 +1207,7 @@ def _provide_the_target(game: Game, registry, oid: int, ability) -> None:
         return
     if enumerate_target_tuples(game.state, 0, ability.targets, oid):
         return
-    if any(spec.kind == "spell" for spec in ability.targets):
+    if any(spec.kind in ("spell", "spell_or_ability") for spec in ability.targets):
         # An **ability** that counters a spell -- Frontline Medic's "Sacrifice
         # this creature: Counter target spell…". The fodder helpers below stock
         # the *battlefield*, and a spell is not on it; there is nothing to point

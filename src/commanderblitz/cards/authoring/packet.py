@@ -636,8 +636,9 @@ def reference() -> dict:
             " `ability_keys` is what an entry in `abilities` may have. Read both"
             " before concluding a line cannot be said: `copy_spell` takes"
             " `new_targets` (\"you may choose new targets for the copy\"), an"
-            " ability takes `sorcery_speed_only`, `once_each_turn` and"
-            " `activate_steps` for printed activation limits, and"
+            " ability takes `sorcery_speed_only`, `once_each_turn`,"
+            " `activate_steps` and `exhaust` (\"activate each exhaust ability"
+            " only once\") for printed activation limits, and"
             " `mana_restriction` for \"spend this mana only to ...\". Each of"
             " those has been filed as a missing capability by a worker that had"
             " only the op *names*.",
@@ -1024,7 +1025,10 @@ def reference() -> dict:
             " `replace_token_creation` static with `token_multiplier: 2` and no"
             " `create_instead` -- the tokens keep their identity, so copies stay"
             " copies. `create_instead` is the OTHER axis (which token is made"
-            " instead) and a static takes one or the other. \"Creature tokens\""
+            " instead), `and_create` the third (\"those tokens plus an additional"
+            " 1/1 ... Thopter ... token are created instead\", Stridehangar"
+            " Automaton: the tokens are kept and one of each listed id is added,"
+            " once per creation), and a static takes exactly one. \"Creature tokens\""
             " is an `affects_token` filter; a sentence naming no player (\"if one"
             " or more tokens would be created\") adds `affects_player: \"any\"`.",
             "\"Until end of turn, if one or more tokens would be created under"

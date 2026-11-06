@@ -4913,6 +4913,33 @@ The `cant_attack_you` static is the near miss and is scoped to the seat of the
 permanent printing it: granted to another player's creature, "you" would be
 that creature's own controller.
 
+## Block requirements
+
+    Peema Aether-Seer — "Pay {E}{E}{E}: Target creature blocks this turn if able."
+
+```jsonc
+{ "op": "must_block_any", "objects": { "target": "t1" } }
+```
+
+Two ops, because a block requirement either names what to block or does not, and
+the two carry different data on different clocks:
+
+| | |
+|---|---|
+| `must_block` | provoke and the lure family — "blocks **this creature** this combat if able". Records the attacker (`attacker`, defaulting to the ability's source) on the blocker; `combat.discharge_block_requirements` spends it when blockers lock in |
+| `must_block_any` | "blocks this turn if able" — no attacker, so blocking any creature attacking its controller obeys it (509.1c), and it binds **every** combat this turn. Records the turn number (`GameObject.must_block_any_turn`); nothing spends it, and the next turn ends it |
+
+Both are enforced by `combat.unmet_block_requirements`, which withholds "Done
+blocking" while an able creature owes a block, so the CPU is held to them by the
+same legal actions a human is offered. "If able" is `combat.block_any_required`:
+`can_block` with `ignore_existing` against some attacker, no block tax owed
+(509.1c), and a menacing attacker counts only when a second creature of the same
+player could block it beside this one. Neither op untaps — provoke's untap is
+its own `untap` op before `must_block`. A creature carrying both is narrowed to
+the named attacker by `legal_blocks`, which obeys both at once. The loader
+refuses `must_block_any` without `objects` or with an `attacker`; "blocks this
+creature this turn" is a near miss neither op says.
+
 ## Goad
 
     Taunt from the Rampart — "Goad all creatures your opponents control. Until
@@ -7266,7 +7293,7 @@ so N Soldiers become N Angels and "that many" is preserved without a count ever
 being written down.
 
 **"Twice that many of those tokens are created instead."** The static's second
-axis is the **count**, and a static carries exactly one of the two:
+mode is the **count**:
 
 ```jsonc
 // Bard, King of Dale (also Parallel Lives, Anointed Procession, Doubling Season's token half)
@@ -7301,11 +7328,45 @@ apply to each.
   `"you"`, which is the token's controller — the seat the token arrives under,
   not whoever controls the creating effect. `"any"` is Primal Vigor.
 - `token_multiplier` must be **2 or more** (1 replaces the creation with itself,
-  0 is a prevention), and it and `create_instead` together are refused.
+  0 is a prevention). A static carries exactly one of `create_instead`,
+  `token_multiplier` and `and_create`; two together are refused.
 - "**Until end of turn**, … twice that many" from a resolved ability is not a
   static at all but the
   [`multiply_token_creation`](#until-end-of-turn-twice-that-many-of-those-tokens)
   op, which outlives its source.
+
+**"Those tokens plus an additional … token are created instead."** The third
+mode is an **addition**, `and_create`:
+
+```jsonc
+// Stridehangar Automaton
+{ "kind": "static",
+  "text": "If one or more artifact tokens would be created under your control, those tokens plus an additional 1/1 colorless Thopter artifact creature token with flying are created instead.",
+  "effect": "replace_token_creation",
+  "affects_token": { "types": ["Artifact"] },
+  "and_create": ["thopter_1_1_c_flying"] }
+```
+
+**Every token about to be made is kept, and one of each id in `and_create`
+joins them, once per creation** — however many of its tokens `affects_token`
+matched, so three Treasures bring one Thopter. It is part of the same event and
+not a trigger: the Thopter arrives inside the one `create_token`, in the same
+`token_created` batch. Its rulings are the substitution's: it has none of the
+`overrides` the other tokens were created with, but is tapped and attacking
+when they are, and an `as` binding ("exile that token") names it too.
+
+- **The addition goes first.** 616.1 gives the token's controller the order,
+  and beside a doubler or a substitution the order shows. The engine cannot ask
+  there, so every `and_create` static is applied before the other replacements:
+  one Treasure under an Automaton and a Doubling Season is two Treasures and two
+  Thopters, and the Thopter into a Divine Visitation becomes an Angel. The
+  original tokens are kept either way, so this order never leaves fewer tokens.
+- **Two Automatons are two Thopters**: the second sees the first's Thopter, an
+  artifact token, in the event, and each applies once (614.5).
+- The near miss is a `token_created` trigger, which uses the stack, adds one
+  Thopter per token rather than per creation, and re-triggers on its own Thopter
+  forever. `and_create` on `replace_dies` is Kalitas's rider, the same key on a
+  different event.
 
 `affects_token`, not `affects`: the token being asked about **does not exist
 yet**, so there is no permanent for a static filter to find and no board state to
@@ -9169,12 +9230,15 @@ copiable values its creating effect sets (111.4, 707.2):
 ```
 
 The token is written **0/0 with `"variable_pt": true`** in `tokens.cards.json`,
-the way its token card prints `*/*`. The loader holds both directions: the pair
+the way its token card prints `*/*`. A Vehicle token can be one too (301.7: it
+has a size without being a creature) -- Pia Nalaar's X/X Nalaar Aetherjet,
+whose crew is an `animate` with `keep_pt` so that crewing it keeps the size it
+was made at. The loader holds both directions: the pair
 is refused on a token without the flag, a flagged token is refused without the
 pair (it would arrive 0/0 and die), one half alone is refused, and a
 `create_instead` or `and_create` cannot name a flagged token, since a
 replacement names its token by id alone. The flag itself needs a 0/0 creature
-token.
+or Vehicle token.
 
 The near misses are each a different card. A 0/0 given X +1/+1 counters (the
 Fractal shape) is what proliferate, -1/-1 counters and "creatures with counters"
@@ -10348,6 +10412,49 @@ spell, so every other spell is a permanent spell.
 - Not `free_cast_permission`, which waives the cost rather than replacing it,
   and not `alternative_cost`, which only the card that prints it has.
 
+### "You may pay one or more {E}" — a variable energy payment
+
+Inside a `may`'s `pay`, the energy price need not be printed. Two shapes, one
+key:
+
+```jsonc
+// Territorial Aetherkite: "Then you may pay one or more {E}. When you do, this
+//                          creature deals that much damage to each other creature."
+{ "op": "may", "pay": { "pay_energy": 1 },
+  "any_amount": { "as": "paid" },
+  "effects": [ { "op": "reflexive_trigger", "ability": "kite_burn" } ] }
+// …and the reflexive ability deals { "binding": "paid" }.
+
+// Confiscation Coup: "…then you may pay an amount of {E} equal to that
+//                     permanent's mana value. If you do, gain control of it."
+{ "op": "may", "pay": { "pay_energy": { "mana_value_of": { "target": "t1" } } },
+  "effects": [ { "op": "gain_control", "objects": { "target": "t1" } } ] }
+```
+
+- **Chosen** — `any_amount` beside exactly `{"pay_energy": 1}`. After the yes
+  the player is asked `choose_x` from **1** up to the energy they have, and
+  exactly that much is paid; `any_amount.as` binds the amount paid for the
+  effects to read ("that many", "where X is the amount of {E} paid this way").
+  With no energy the `may` is not asked; with one there is no count to choose.
+  0 is never offered: the no is how a player pays none.
+- **Computed** — `pay_energy` as a value expression, read as the `may`
+  resolves with its targets and bindings in hand and fixed to a whole number
+  before the affordability check, as `pay_life` is. 107.14: more energy than
+  the player has is not offered and the `effects` do not run; a price of 0 is
+  always paid. The amount is the expression, so the effects read the same
+  expression if they need the number.
+
+Refused at load: `any_amount` beside a `pay_energy` other than 1 (`2` would
+charge pairs and bind a count that is not the energy), beside any other cost,
+or beside a computed `pay_energy` (chosen or computed, not both); a malformed
+expression. A computed `pay_energy` belongs to a resolving `may` only: an
+activated ability's cost, an additional cost or a granted alternative cost
+takes a whole number, because legality prices those before any effect has run.
+
+The near miss is a fixed `pay_energy`, which spends one amount whatever the
+player has or the target costs, and `choose_number`, which nothing bounds by
+the player's energy.
+
 ## A player losing all counters
 
 "Each opponent loses all counters" -- Final Act's fifth mode. Every counter of
@@ -10371,6 +10478,33 @@ corrupted static re-reads at once) and fires `counter_removed` with `player`,
   not one. "Loses all poison counters" (one kind) is a different sentence this
   op does not write.
 - Not a `pay_energy` cost: paying is a cost, this is an effect.
+
+## Doubling a player's counters
+
+"Double the number of each kind of counter you have" -- Aetheric Amplifier's
+second mode. For every kind the named player already has, that many more go on
+(122.1):
+
+```jsonc
+{ "op": "double_player_counters", "player": "you" }
+```
+
+`player` is required and is any player spec. The kinds are
+`player.PLAYER_COUNTER_KINDS`, each count read before anything is added, and a
+kind at zero is nothing to double. It is a placement, not a set: the extra goes
+on through `primitives.add_player_counters` (the `add_poison` and `add_energy`
+funnels), so a counter replacement that reaches players applies -- under
+Innkeeper's Talent, 2 energy becomes 6 -- and `poison_added` or `energy_added`
+fires with the number that arrived. Ten poison from a doubling is lethal like
+any other ten.
+
+- The loader refuses a missing `player`, and a `counter`, `kinds`, `amount` or
+  `objects` key, which this op would ignore.
+- Not `double_counters`, which doubles the counters on **permanents** named by
+  `objects`; a player is not one. Not `proliferate`, which adds one of each kind.
+- Not an `add_energy` and an `add_poison` written side by side: the sentence
+  says each kind, and a card listing two would miss the next kind the player
+  model carries.
 
 ## Aura swap — an exchange, not two moves
 
@@ -12477,6 +12611,29 @@ in response was already dropped on resolution (608.2b), so it arrives here as an
 empty pool, and the other half is not performed alone. Both keys are required,
 and `duration` is refused, because every printed exchange is permanent.
 
+## Exhaust — "Activate each exhaust ability only once"
+
+```jsonc
+// Peema Trailblazer: "Exhaust — Pay six {E}: Put two +1/+1 counters on this
+// creature. Then draw cards equal to the greatest power among creatures you control."
+{ "kind": "activated", "exhaust": true,
+  "cost": { "pay_energy": 6 },
+  "effects": [ … ] }
+```
+
+702.177. `exhaust` limits the ability to one activation for as long as the
+**object** exists. `Game._activate` records the ability's index on
+`GameObject.exhausted` as the activation happens, so an activation that is
+countered or fizzles has still been used. `legality` then stops offering it, so
+the ability is missing from `legal_actions` for every caller. A permanent that
+changes zones is a new object (400.7), and `reset_permanent_state` clears the
+record, so a blinked Peema can exhaust again.
+
+The near miss is `once_each_turn`. It lives on the turn ledger and comes back at
+cleanup, so it would let Peema draw every turn. The loader refuses `exhaust` on
+anything but an activated ability, and on a mana ability too, because the
+payment solver activates those itself and never passes the record.
+
 ## "Its activated abilities can't be activated this turn"
 
 ```jsonc
@@ -12563,6 +12720,7 @@ its own. So the exception rides on the **object**, as `copy_overrides`:
 | `add_supertypes` | *adds* supertypes — "except it's legendary" (Adagia, Windswept Bastion); the legend rule reads it |
 | `remove_supertypes` | *removes* supertypes — "except the token isn't legendary" (Miirym, Sentinel Wyrm; Helm of the Host; Kindred Charge) |
 | `power`, `toughness` | *replace* the base size, a pair of non-negative integers — eternalize's "4/4" |
+| `add_keywords` | *adds* keywords — "except it's a 5/5 artifact creature in addition to its other types and has haste" (Saheeli, Radiant Creator; Twinflame; Will of the Temur's flying) |
 
 The whole set is 707.9b's copiable values that a printing has asked for, and
 the loader holds it as `COPY_EXCEPT_KEYS`. `types` and `add_types` together are
@@ -12570,6 +12728,13 @@ refused (one replaces, one adds, and the order would be a guess), as are an
 empty addition or removal, half a size, and a supertype named in both
 `add_supertypes` and `remove_supertypes` (whichever way `chars` ordered the two
 would decide the card by accident).
+
+`add_keywords` takes known, unnumbered keywords (toxic N is refused: it has
+nowhere to carry its N). The keywords sit beside the printed ones before layer
+6, so a "loses all abilities" effect takes them, and a copy of the token
+inherits them, unioned with that copy's own `add_keywords`. The near miss is a
+`grant_keyword` on the `as` binding after the copy: a layer-6 grant, which a
+copy of the token would not have.
 
 `remove_supertypes` is the one subtraction in the table, and it exists for one
 printed word. "Whenever another nontoken Dragon you control enters, create a
@@ -13184,6 +13349,27 @@ Two things that are easy to get wrong and invisible in a duel:
   sacrifices, so they choose among their own tied permanents; `"controller"`
   resolves to the *spell's* controller and lets you pick for them. A board count
   cannot tell the two apart when the options are interchangeable.
+
+### "Starting with you, each player…" — the loop in turn order
+
+```jsonc
+// Druid of Purification
+{"op": "for_each_player", "players": "each_player", "starting_with": "you",
+ "effects": [
+  {"op": "choose_permanents", "as": "chosen", "objects": {
+     "zone": "battlefield", "controller": "opponent",
+     "any_types": ["Artifact", "Enchantment"], "count": 1, "optional": true,
+     "chooser": {"binding": "each_player"}}}]},
+{"op": "destroy", "objects": {"binding": "chosen"}}
+```
+
+The loop walks its players in **seat order**, which is turn order from seat 0
+and matches "starting with you" only while the controller sits there.
+`starting_with: "you"` reorders the same players into turn order beginning with
+the controller, the order `join_forces` walks; it adds and removes nobody, so
+`"each_opponent"` stays opponents. Later players see the earlier choices, so the
+order is part of the card. `"you"` is the only value: the loader refuses any
+other, since a misspelling read as "no order" would fall back to seat order.
 
 ## "Choose a creature type"
 

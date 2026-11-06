@@ -212,6 +212,11 @@ class GameObject:
     #: types". Written, read and cleared beside `copying_keywords`, for its
     #: reasons.
     copying_add_types: frozenset[str] | None = None
+    #: Supertypes the copy carries *in addition to* the copied ones (707.9b) --
+    #: Sarkhan, Soul Aflame's "…and it's legendary in addition to its other
+    #: types". Written by `become_copy` from its ``except_.add_supertypes``,
+    #: and read and cleared beside `copying_remove_supertypes`, for its reasons.
+    copying_add_supertypes: frozenset[str] | None = None
     #: Positions in this permanent's **own** printed ``abilities`` that the copy
     #: keeps as part of its copiable values (707.9b) -- Kimahri, Valiant
     #: Guardian's "…except its name is Kimahri, Valiant Guardian and it has
@@ -622,6 +627,14 @@ class GameObject:
     #: "until end of turn" on it lasts as long as the permanent does, and one
     #: that wore off at cleanup would be a strictly weaker card.
     granted_abilities_permanent: list[TempEffect] = field(default_factory=list)
+    #: Exhaust (702.177): the indices of this object's exhaust abilities that
+    #: have been activated. "Activate each exhaust ability only once" is a limit
+    #: on the *object*, not the turn, so it lives here rather than on
+    #: `TurnLedger` -- and it is cleared by `reset_permanent_state`, because a
+    #: permanent that changed zones is a new object (400.7) whose exhaust
+    #: abilities have never been activated. Written by `Game._activate` the
+    #: moment the activation happens, read by `legality`.
+    exhausted: set[int] = field(default_factory=set)
     #: The same thing for an animation: "Target artifact or creature ... becomes
     #: a green Elk creature with base power and toughness 3/3" -- Oko, Thief of
     #: Crowns, which prints no duration. `TempEffect(kind="animate")` entries
@@ -977,6 +990,14 @@ class GameObject:
     #: combat and cleared when blockers are locked in, so unlike
     #: ``must_attack`` there is no duration to carry.
     must_block: int | None = None
+    #: "Target creature blocks this turn if able" (Peema Aether-Seer): the
+    #: turn number in which this creature must block -- *any* attacker -- in
+    #: every combat, or None. The other half of a block requirement, and why it
+    #: is not :attr:`must_block`: it names no attacker, so any block meets it,
+    #: and "this turn" spans every combat in the turn, so nothing spends it when
+    #: blockers lock in. A turn number rather than a bool so it expires on its
+    #: own when the turn ends, with no cleanup hook to forget.
+    must_block_any_turn: int | None = None
     #: Detain (701.30a): "until **your** next turn, that permanent can't attack
     #: or block and its activated abilities can't be activated". The pid of the
     #: player who detained it, cleared by that player's own untap step.
@@ -1264,6 +1285,7 @@ class GameObject:
         """Wipe everything that only means something on the battlefield."""
         self.must_attack = None
         self.must_block = None
+        self.must_block_any_turn = None
         self.detained_by = None
         # A permanent that left and came back is a new object (400.7), so it is
         # no longer the creature anybody goaded -- blink your own goaded
@@ -1293,6 +1315,8 @@ class GameObject:
         self.cast_rider = None
         self.cast_enters_with = {}
         self.granted_abilities_permanent = []
+        # 400.7: a new object's exhaust abilities are fresh (702.177).
+        self.exhausted = set()
         self.animations = []
         self.tapped = False
         self.damage = 0
@@ -1323,6 +1347,7 @@ class GameObject:
         self.copying_keywords = None
         self.copying_remove_supertypes = None
         self.copying_add_types = None
+        self.copying_add_supertypes = None
         self.copying_own_abilities = None
         self.renamed_to = None
         self.lost_all_abilities = False
@@ -1482,6 +1507,9 @@ class GameObject:
             "skip_next_untap": self.skip_next_untap,
             "suspended_by": self.suspended_by,
             "hasted_by_suspend": self.hasted_by_suspend,
+            # Only once an exhaust ability has been used, for the emblem line's
+            # reason below.
+            **({"exhausted": sorted(self.exhausted)} if self.exhausted else {}),
             # Only on an emblem, so every other object's snapshot is unchanged.
             **({"emblem": self.emblem} if self.emblem is not None else {}),
             # Only while a prevention shield stands, for the emblem line's reason.

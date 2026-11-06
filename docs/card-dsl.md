@@ -1192,6 +1192,30 @@ half is pulled off the stack uncountered into its owner's library, the owner
 choosing top or bottom under `owner_chooses`), and `return_spell_to_hand`. Any
 other op reading `objects: {"target": …}` of this kind is refused at load time.
 
+### "Target spell, activated ability, or triggered ability"
+
+```jsonc
+{ "id": "t1", "kind": "spell_or_ability", "count": 1 }
+```
+
+Disallow. One spec whose pool is every object on the stack: the spells a
+`"spell"` target offers and the abilities an `"ability_on_stack"` target
+offers, spells first. A mana ability never uses the stack (605.3b), so it is
+never a candidate. `counter` on the binding counters whichever it is: a spell
+goes to its owner's graveyard, an ability is removed from the stack and its
+effect never happens (701.6b). "Target spell or ability" (Deflecting Swat) is
+the same pool.
+
+The `selector` reads only `controller`, as `"you"` or `"opponent"` ("spell or
+ability an opponent controls"): it is the one clause a spell and an ability
+both answer. Every other clause, `ability_kind`, a Mapping `controller`,
+`total_mana_value` and `total_power` are refused at load time, since each would
+narrow one half or be read off the ability's source. `still_legal` re-checks a
+spell ref through `_spell_matches` and an ability ref through `_ability_matches`,
+the matchers `candidates` offered them through. The near miss is two specs, one
+`"spell"` and one `"ability_on_stack"`: a card that targets twice and is cast
+only with both on the stack.
+
 ### "As this enters, you may pay …"
 
 ```jsonc
@@ -2973,17 +2997,20 @@ granted on top:
 |---|---|
 | `add_keywords` | keywords added to the copied face, on `copying_keywords` ("and it has vigilance") |
 | `keep_abilities` | positions in the copying card's **own** printed `abilities` that the copy keeps, on `copying_own_abilities` ("and this ability") |
+| `add_types` | card types added to the copied face, on `copying_add_types` ("except it's an artifact in addition to its other types", Saheeli, Sublime Artificer) |
+| `add_supertypes` | supertypes added to the copied face, on `copying_add_supertypes` ("and it's legendary in addition to its other types", Sarkhan, Soul Aflame), so the legend rule sees the copy |
 
 `GameState.card_of` appends the kept abilities after the copied face's own, so
 the copied card's indices keep meaning what they printed, and a kept triggered
 ability fires off the copy on later turns. A new `become_copy` replaces the
 whole copy, exceptions included; a timed copy's exceptions end at cleanup with
 it. The loader holds the key set as `BECOME_COPY_EXCEPT_KEYS` and refuses an
-unknown key, an empty exception, an unknown keyword and a position the card does
-not print.
+unknown key, an empty exception, an empty list, an unknown keyword, card type or
+supertype, and a position the card does not print.
 
 The near miss is a `grant_keyword` or `grant_ability` after the copy: a layer-6
-grant, not part of what the copy is. A copy of a copy still takes only the
+grant, not part of what the copy is; likewise `animate` or `add_subtype` for a
+type, a layer-4 effect rather than a copiable value. A copy of a copy still takes only the
 copied card's printed face ([rules coverage](rules-coverage.md)).
 
 ### A permanent whose arrival is itself replaced
@@ -4455,6 +4482,14 @@ rather than taking every creature that could have helped.
 
 `count` and `total_power` together are refused: they are two different questions,
 and a card giving both would be paid by whichever was checked first.
+
+A Vehicle whose size is not printed -- an X/X token like the Nalaar Aetherjet,
+sized by the effect that made it -- crews with `"keep_pt": true` in place of
+`power` and `toughness`: "becomes an artifact creature" (702.122a) and keeps its
+own base size, so a second crew or a +1/+1 counter does not move it. `keep_pt`
+is refused beside `power` or `toughness`, on anything but `objects` `self_only`,
+and on a card with no printed power and toughness; an animation into a creature
+without it still needs both.
 
 ### Crews Vehicles as though its power were N greater
 

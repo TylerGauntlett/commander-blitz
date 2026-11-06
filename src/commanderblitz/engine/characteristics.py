@@ -403,6 +403,13 @@ def _compute(state: GameState, oid: int) -> Characteristics:
     if obj.copy_overrides:
         if added := obj.copy_overrides.get("add_subtypes"):
             subtypes.update(added)
+        if added_keywords := obj.copy_overrides.get("add_keywords"):
+            # "…except it's a 5/5 artifact creature in addition to its other
+            # types and **has haste**" (Saheeli, Radiant Creator). A copiable
+            # value, so it sits beside the printed keywords before layer 6: a
+            # "loses all abilities" effect removes it, and a copy of this token
+            # inherits it through `copy_overrides` (707.9b).
+            keywords.update(added_keywords)
         if (repaint := obj.copy_overrides.get("colors")) is not None:
             colors = set(repaint)
         if (retyped := obj.copy_overrides.get("types")) is not None:
@@ -2784,6 +2791,10 @@ def keyword_as_it_enters(state: GameState, oid: int, keyword: str) -> bool:
     if obj.pending_face_down:
         return False
     if keyword in state.card_of(obj).keywords:
+        return True
+    # A token copy's exception (707.9b) is part of what arrives, as printed as
+    # the copied card's own keywords.
+    if obj.copy_overrides and keyword in (obj.copy_overrides.get("add_keywords") or ()):
         return True
     for source_obj, static in _battlefield_statics(state):
         if static.get("effect") != "grant_keyword":

@@ -10,7 +10,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 167 |
+| [Effect ops](#effect-ops) | 169 |
 | [Selectors](#selectors) | 74 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 69 |
@@ -121,6 +121,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `must_attack_planeswalker` | Board |  | Creatures attack a planeswalker this turn if able. | ["…creatures that player controls attack Gideon Jura if able"](card-dsl-cookbook.md#creatures-that-player-controls-attack-gideon-jura-if-able) |
 | `must_attack_player` | Board |  | Creatures attack a named player each combat if able, until the end of your next turn or this turn. | ["…attacks that player each combat if able"](card-dsl-cookbook.md#attacks-that-player-each-combat-if-able) |
 | `must_block` | Board |  | Creatures block this turn if able. | [Effect ops](card-dsl.md#effect-ops) |
+| `must_block_any` | Board |  | Creatures block (any attacker) in every combat this turn if able. | [Block requirements](card-dsl-cookbook.md#block-requirements) |
 | `pair` | Board |  | Soulbond: pair the source with another creature. | [Soulbond — a relationship that is not attachment](card-dsl-cookbook.md#soulbond--a-relationship-that-is-not-attachment) |
 | `phase_in` | Board |  | Phased-out permanents phase in. | [Phasing — "does not exist", said by not being in a list](card-dsl-cookbook.md#phasing--does-not-exist-said-by-not-being-in-a-list) |
 | `phase_out` | Board |  | Permanents phase out. | ["Target creature phases out"](card-dsl-cookbook.md#target-creature-phases-out) |
@@ -143,7 +144,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `unblockable` | Board |  | Creatures can't be blocked this turn (optionally except by blockers matching a filter, or only by opponents' creatures with `by_opponents`). | [The unblockable op — the same wire, read from the attacker's end](card-dsl-cookbook.md#the-unblockable-op--the-same-wire-read-from-the-attackers-end) |
 | `untap` | Board |  | Untap permanents. | [Untapping on somebody else's turn](card-dsl-cookbook.md#untapping-on-somebody-elses-turn) |
 | `add_subtype` | Modify |  | Permanents gain a subtype in addition to their others, for good or for a duration. | ["It becomes a Vampire in addition to its other types"](card-dsl-cookbook.md#it-becomes-a-vampire-in-addition-to-its-other-types) |
-| `animate` | Modify |  | A permanent becomes a creature, or another type (types, P/T, colors), for a duration; `exact` replaces, `keep_colors` keeps the colours, a non-creature animation may omit P/T. | [Creature-lands](card-dsl-cookbook.md#creature-lands) |
+| `animate` | Modify |  | A permanent becomes a creature, or another type (types, P/T, colors), for a duration; `exact` replaces, `keep_colors` keeps the colours, a non-creature animation may omit P/T, `keep_pt` keeps a Vehicle's own size. | [Creature-lands](card-dsl-cookbook.md#creature-lands) |
 | `become_level` | Modify |  | A Class becomes level N. | [Classes](card-dsl-cookbook.md#classes) |
 | `change_text` | Modify |  | Replace one creature type or color word with another in its text. | [change_text — "replacing all instances of one creature type"](card-dsl-cookbook.md#change_text--replacing-all-instances-of-one-creature-type) |
 | `grant_keyword` | Modify |  | Permanents gain keywords for a duration; `as_long_as_you_control_source` lasts while you control the source. | [How long a granted keyword lasts](card-dsl-cookbook.md#how-long-a-granted-keyword-lasts) |
@@ -159,6 +160,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `cant_lose_the_game` | Life & damage |  | A player can't lose and opponents can't win, for a duration. | [Effect ops](card-dsl.md#effect-ops) |
 | `damage` | Life & damage |  | A source deals N damage to objects or players; `excess_to` spills over; `defender_of` hits what a creature is attacking; `divided` splits it among a target spec as the spell is cast. | [damage's excess_to](card-dsl.md#damages-excess_to) |
 | `damage_life_floor` | Life & damage |  | Damage can't reduce a player's life below N this turn. | [Damage can't take you below 1](card-dsl-cookbook.md#damage-cant-take-you-below-1) |
+| `double_player_counters` | Life & damage |  | Each named player gets as many more of each kind of counter they have. | [Doubling a player's counters](card-dsl-cookbook.md#doubling-a-players-counters) |
 | `exchange_life_total` | Life & damage |  | Exchange a player's life total with the source creature's toughness (701.12), in full or not at all. | [Exchanging a life total with a toughness](card-dsl-cookbook.md#exchanging-a-life-total-with-a-toughness) |
 | `fight` | Life & damage |  | Two creatures fight. | [fight](card-dsl-cookbook.md#fight) |
 | `gain_life` | Life & damage |  | A player gains N life. | [Effect ops](card-dsl.md#effect-ops) |
@@ -204,7 +206,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `delay` | Control flow |  | Run effects at the beginning of a named later step. | [Delayed triggers — "at the beginning of the next …"](card-dsl-cookbook.md#delayed-triggers--at-the-beginning-of-the-next-) |
 | `delayed_trigger` | Control flow |  | Create a trigger that watches an event for a `duration` (the rest of the turn by default, or this combat). | [delayed_trigger — an ability that watches an event](card-dsl-cookbook.md#delayed_trigger--an-ability-that-watches-an-event) |
 | `for_each` | Control flow |  | Run effects once per object a selector finds, bound as the loop value. | [Effect ops](card-dsl.md#effect-ops) |
-| `for_each_player` | Control flow |  | Run effects once per player of a spec. | ["Each opponent sacrifices…" — a loop over players](card-dsl-cookbook.md#each-opponent-sacrifices--a-loop-over-players) |
+| `for_each_player` | Control flow |  | Run effects once per player of a spec, in seat order; `starting_with: "you"` walks turn order from the controller. | ["Each opponent sacrifices…" — a loop over players](card-dsl-cookbook.md#each-opponent-sacrifices--a-loop-over-players) |
 | `if` | Control flow |  | Run `then` effects if a condition holds, else `else`. | [Effect ops](card-dsl.md#effect-ops) |
 | `join_forces` | Control flow | yes | Each player may pay into one shared X. | [Join forces — the one cost the whole table pays](card-dsl-cookbook.md#join-forces--the-one-cost-the-whole-table-pays) |
 | `may` | Control flow | yes | Optional effects, with an optional `pay`; `as` records who said yes. | [may's as, and except on a player spec](card-dsl-cookbook.md#mays-as-and-except-on-a-player-spec) |
@@ -610,7 +612,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `replace_life_loss` | yes |  | If the player would lose life, they lose more instead. | ["If a player would lose life, they lose twice that much instead"](card-dsl-cookbook.md#if-a-player-would-lose-life-they-lose-twice-that-much-instead) |
 | `replace_mill` | yes |  | If the player would mill, they mill more instead. | [Doubling a mill](card-dsl-cookbook.md#doubling-a-mill) |
 | `replace_proliferate` | yes |  | If the player would proliferate, they proliferate again. | [Proliferating twice](card-dsl-cookbook.md#proliferating-twice) |
-| `replace_token_creation` |  |  | If the player would create tokens, create more or different ones instead. | ["If you would create a … token, instead …"](card-dsl-cookbook.md#if-you-would-create-a--token-instead-) |
+| `replace_token_creation` |  |  | If the player would create tokens, create more, different or additional ones instead. | ["If you would create a … token, instead …"](card-dsl-cookbook.md#if-you-would-create-a--token-instead-) |
 | `reveal_library_top` | yes |  | The player plays with the top card of their library revealed. | [Static abilities](card-dsl.md#static-abilities) |
 | `set_colors` |  | yes | Matching permanents are the given colors. | [set_colors](card-dsl-cookbook.md#set_colors) |
 | `set_creature_types` |  | yes | Matching permanents' creature types are exactly the given ones; other subtypes and types stay. | [set_creature_types — "it loses all other creature types"](card-dsl-cookbook.md#set_creature_types--it-loses-all-other-creature-types) |
@@ -764,7 +766,7 @@ Every field an activated ability's `cost` (or a `may`'s `pay`) may carry -- the 
 | `mana` | A mana cost. | [Costs](card-dsl.md#costs) |
 | `mana_reduction` | A reduction applied to this ability's mana cost. | [An activated ability that gets cheaper](card-dsl-cookbook.md#an-activated-ability-that-gets-cheaper) |
 | `mill` | Mill N cards off your own library. | [mill — a cost, and never an effect](card-dsl.md#mill--a-cost-and-never-an-effect) |
-| `pay_energy` | Pay N energy ({E}). | [Energy](card-dsl-cookbook.md#energy) |
+| `pay_energy` | Pay N energy ({E}); inside `may`, a value expression, or 1 counted by `any_amount`. | ["You may pay one or more {E}" — a variable energy payment](card-dsl-cookbook.md#you-may-pay-one-or-more-e--a-variable-energy-payment) |
 | `pay_life` | Pay N life, or a value expression (inside `may`, read with the effect's bindings). | ["You may pay that much life. If you do…"](card-dsl-cookbook.md#you-may-pay-that-much-life-if-you-do) |
 | `pay_life_x` | Pay X life, X announced. | [Costs](card-dsl.md#costs) |
 | `put_counters` | Put N counters of a kind on the source. | [put_counters — counters on the source, paid on activation](card-dsl.md#put_counters--counters-on-the-source-paid-on-activation) |

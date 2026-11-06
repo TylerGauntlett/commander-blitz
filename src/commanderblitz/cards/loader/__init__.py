@@ -1059,15 +1059,16 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         raise DslError(f"{where}: creatures need power and toughness")
     if model.variable_pt and not (
         model.is_token
-        and CardType.CREATURE.value in model.types
+        and (CardType.CREATURE.value in model.types or "Vehicle" in model.subtypes)
         and (model.power, model.toughness) == (0, 0)
     ):
         # The X/X token's size is the creating effect's, so its definition says
         # nothing about it: written 0/0, the base `create_token`'s ``power`` and
-        # ``toughness`` replace. Anywhere else the flag would mark a size that
-        # nothing ever sets.
+        # ``toughness`` replace. A Vehicle has a size without being a creature
+        # (301.7) -- Pia Nalaar's X/X Nalaar Aetherjet. Anywhere else the flag
+        # would mark a size that nothing ever sets.
         raise DslError(
-            f"{where}: 'variable_pt' marks an X/X creature token, written 0/0"
+            f"{where}: 'variable_pt' marks an X/X creature or Vehicle token, written 0/0"
         )
 
     # The same sentence for a battle (310.3), and refused rather than defaulted
@@ -2751,6 +2752,16 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             f"{where}: 'activate_steps' and 'once_each_turn' restrict *activating*, "
             f"so they only mean anything on an activated ability"
         )
+    if model.exhaust and (kind is not AbilityKind.ACTIVATED or model.is_mana_ability):
+        # 702.177 is a limit on activating, so on a trigger or a static it would
+        # load and be ignored. And not on a mana ability: the payment solver
+        # activates those for itself through `costs.activate_mana_ability`,
+        # which no limit recorded by `Game._activate` would ever see -- an
+        # exhaust mana ability would tap for mana every time it was needed.
+        raise DslError(
+            f"{where}: 'exhaust' restricts *activating*, so it only means anything "
+            f"on an activated ability that is not a mana ability"
+        )
     if kind is AbilityKind.ACTIVATED and _has_per_turn_modes(model.effects):
         # An activated ability's modes are answered at 602.2b by
         # `Game._ask_modes`, which never sees the strike-off or spends a mode,
@@ -3630,6 +3641,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         is_cycling=model.is_cycling,
         activate_steps=tuple(model.activate_steps),
         once_each_turn=model.once_each_turn,
+        exhaust=model.exhaust,
         activated_by=_activated_by(model, kind, active_zones, cost, where),
         threshold=threshold,
         trigger=trigger,
@@ -4778,12 +4790,22 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"{where}.affects_token: a token that does not exist yet has a "
                     f"printed face and nothing else; unsupported keys {sorted(unknown)}"
                 )
-        # Exactly one axis. Both at once is a shape no printed card takes, and
-        # neither is a replacement that says nothing about what is made.
-        if model.create_instead and model.token_multiplier is not None:
+        # Exactly one mode. Two at once is a shape no printed card takes, and
+        # none is a replacement that says nothing about what is made.
+        modes = [
+            name
+            for name, present in (
+                ("create_instead", bool(model.create_instead)),
+                ("token_multiplier", model.token_multiplier is not None),
+                ("and_create", bool(model.and_create)),
+            )
+            if present
+        ]
+        if len(modes) > 1:
             raise DslError(
-                f"{where}: replace_token_creation takes 'create_instead' (which "
-                f"tokens) or 'token_multiplier' (how many of those tokens), not both"
+                f"{where}: replace_token_creation takes one of 'create_instead' "
+                f"(which tokens), 'token_multiplier' (how many of those tokens) or "
+                f"'and_create' (those tokens plus these), not both {modes[0]!r} and {modes[1]!r}"
             )
         if model.token_multiplier is not None:
             # 1 replaces a creation with itself, and 0 is "no tokens are
@@ -4796,13 +4818,14 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"different effect"
                 )
         # A replacement that creates nothing is not this effect. "Instead create
-        # one of each" and "that many are created instead" both name what is
-        # made; an empty list would silently *delete* every token its filter
+        # one of each", "that many are created instead" and "those tokens plus
+        # an additional …" all name what is made; an empty list would silently *delete* every token its filter
         # matched, which is a different and much stronger card.
-        elif not model.create_instead:
+        elif not model.create_instead and not model.and_create:
             raise DslError(
                 f"{where}: replace_token_creation needs 'create_instead' -- the "
                 f"token ids created instead, one of each per token replaced -- "
+                f"'and_create' for \"those tokens plus an additional …\", "
                 f"or 'token_multiplier' for \"twice that many of those tokens\""
             )
     elif (
@@ -5638,10 +5661,10 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"{where}: replace_dies needs 'destination': 'exile' -- the zone the "
                 f"printed card sends the creature to instead"
             )
-    elif model.and_create:
+    elif model.and_create and model.effect != "replace_token_creation":
         raise DslError(
-            f"{where}: 'and_create' is a replace_dies rider; on {model.effect!r} "
-            f"nothing would create the tokens"
+            f"{where}: 'and_create' is a replace_dies or replace_token_creation "
+            f"rider; on {model.effect!r} nothing would create the tokens"
         )
 
     if model.effect == "untap_limit":

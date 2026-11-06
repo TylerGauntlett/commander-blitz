@@ -1,0 +1,29 @@
+{
+  "_comment": "Shapes for tests/unit/targets/test_spell_or_ability.py. t_disallow is Disallow: one spell_or_ability target, every spell and every non-mana ability on the stack. t_disallow_theirs narrows it with controller: opponent, the one clause the kind reads.",
+  "cards": [
+    {
+      "id": "t_disallow",
+      "name": "Test Disallow",
+      "oracle_text": "Counter target spell, activated ability, or triggered ability.",
+      "mana_cost": "{U}",
+      "types": ["Instant"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "targets": [{"id": "t1", "kind": "spell_or_ability", "count": 1}],
+      "spell_effects": [{"op": "counter", "target": "t1"}]
+    },
+    {
+      "id": "t_disallow_theirs",
+      "name": "Test Disallow Theirs",
+      "oracle_text": "Counter target spell or ability an opponent controls.",
+      "mana_cost": "{U}",
+      "types": ["Instant"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "targets": [
+        {"id": "t1", "kind": "spell_or_ability", "count": 1, "selector": {"controller": "opponent"}}
+      ],
+      "spell_effects": [{"op": "counter", "target": "t1"}]
+    }
+  ]
+}

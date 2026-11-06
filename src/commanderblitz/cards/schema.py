@@ -294,6 +294,14 @@ class TargetModel(BaseModel):
         #: different things at all -- an ability on the stack is not a spell and
         #: has no card behind it, only a source, an index and its bindings.
         "ability_on_stack",
+        #: "Counter target **spell, activated ability, or triggered ability**"
+        #: (Disallow). One instance of the word "target" whose pool is every
+        #: object on the stack: the `"spell"` pool and the `"ability_on_stack"`
+        #: pool together, spells first. A mana ability never uses the stack
+        #: (605.3b), so it is never a candidate. The `selector` takes only
+        #: `controller` (``"you"`` or ``"opponent"``), the one clause both a
+        #: spell and an ability can answer.
+        "spell_or_ability",
     ]
     #: "…any number of target creature cards **with total mana value 6 or
     #: less**" (Phoenix, Warden of Fire). A cap on the picks **together**, not
@@ -671,6 +679,11 @@ class AbilityModel(BaseModel):
         Literal["upkeep", "draw_step", "precombat_main", "end_step"]
     ] = Field(default_factory=list)
     once_each_turn: bool = False
+    #: **Exhaust** (702.177): "Exhaust — [Cost]: [Effect]. (Activate each
+    #: exhaust ability only once.)" Once for as long as the *object* exists,
+    #: not once a turn: a permanent that leaves and comes back is a new object
+    #: (400.7) and may activate it again. Activated, non-mana abilities only.
+    exhaust: bool = False
     #: A station symbol (721): "12+ | {U}, {T}: Add {U} for each artifact you
     #: control" -- ``{"counter": "charge", "at_least": 12}``. The permanent
     #: **has** this ability only while it has that many counters; below it the
@@ -869,6 +882,13 @@ class AbilityModel(BaseModel):
     #: that card **and create a 2/2 black Zombie creature token**". Part of the
     #: replacement rather than a trigger, because the creature never dies
     #: (614.6) and a `creature_dies` trigger has nothing to fire on.
+    #:
+    #: ``replace_token_creation``: the third mode beside `create_instead` and
+    #: `token_multiplier` -- "those tokens **plus** an additional 1/1 colorless
+    #: Thopter artifact creature token with flying are created instead"
+    #: (Stridehangar Automaton). The tokens about to be made are all kept and
+    #: one of each id here joins them, once per creation however many of its
+    #: tokens `affects_token` matched. See `primitives._token_creation_plan`.
     and_create: list[str] = Field(default_factory=list)
     #: Whether `replace_graveyard` also catches a **token** -- the printed "a
     #: card **or token**" (Rest in Peace). Defaults to catching them, which is

@@ -1262,6 +1262,29 @@ def add_energy(
     return amount
 
 
+def add_player_counters(
+    state: GameState,
+    pid: int,
+    kind: str,
+    amount: int,
+    *,
+    source: int | None = None,
+    by: int | None = None,
+) -> int:
+    """Put ``amount`` counters of ``kind`` on a player, through that kind's funnel.
+
+    `remove_player_counters`' twin for an effect that names the kind only at
+    resolution (proliferate's "each kind already there", a doubling's "each
+    kind you have"): ``kind`` is one of `player.PLAYER_COUNTER_KINDS`, and the
+    placement goes through `add_poison` or `add_energy`, so counter
+    replacements that reach players apply. Keyed, not an if/else: a kind
+    added to the list without a funnel raises here instead of arriving as
+    another kind. Returns how many arrived.
+    """
+    funnel = {"poison": add_poison, "energy": add_energy}[kind]
+    return funnel(state, pid, amount, source=source, by=by)
+
+
 def pay_energy(state: GameState, pid: int, amount: int, *, source: int | None = None) -> None:
     """Spend ``amount`` of a player's energy, which `costs.can_pay` proved they have.
 
@@ -1454,7 +1477,7 @@ def _token_creation_plan(
     asked for -- which is what decides whether that effect's ``overrides`` still
     describe it (see `create_token`).
 
-    The static has two axes, and a card uses exactly one of them:
+    The static has three modes, and a card uses exactly one of them:
 
     - **``create_instead`` -- identity.**  Academy Manufactor ("if you would
       create a Clue, Food, or Treasure token, instead create one of each") and
@@ -1471,6 +1494,17 @@ def _token_creation_plan(
       rather than a copy and a plain card -- and its count is multiplied.  The
       card names no token, so no id could be written in ``create_instead``, and
       listing one there would convert every other token into it.
+    - **``and_create`` -- addition.**  Stridehangar Automaton: "those tokens
+      **plus** an additional 1/1 colorless Thopter ... are created instead".
+      The pending entries are all kept, and one of each id in ``and_create``
+      joins them -- **once per creation**, not once per matching token, so a
+      Treasure and three Treasures each bring one Thopter.  The added entry is
+      part of the same event and not a trigger: it is ``substituted`` for
+      `create_token`'s purposes (its rulings: the Thopter has none of the
+      abilities the other tokens were created with, but is tapped, attacking
+      and bound by "exile that token" exactly as they are), it fires in the
+      same `token_created` batch, and the later replacements in the pass see
+      it.
 
     **What this is not.** It is not rule 616 and it is not a general replacement
     system.  There is no event object, nothing else in the engine can be
@@ -1498,6 +1532,18 @@ def _token_creation_plan(
       whether the filter matches (a Treasure-only doubler and a Manufactor); no
       printed doubler filters that way today, and the divergence is recorded in
       ``docs/rules-coverage.md``.
+    - **An addition goes first.**  616.1 gives the token's controller the
+      order, and between an addition and anything else that order shows: a
+      Stridehangar applied before an Anointed Procession makes two Treasures
+      and two Thopters, after it two Treasures and one Thopter (its printed
+      ruling), and before a Divine Visitation its Thopter becomes an Angel too.
+      This engine cannot ask from inside `create_token`, so every ``and_create``
+      static is applied ahead of the rest, in battlefield order among
+      themselves: the order the controller would pick, since the original
+      tokens are kept either way and the added one is then itself subject to
+      every later replacement, so it never leaves fewer tokens.  Two
+      Stridehangars make two Thopters -- the second sees an artifact token in
+      the event the first left.
     - **A timed doubler is one more entry.**  "Until end of turn, … twice that
       many of those tokens are created instead" (Kaya, Geist Hunter) is a
       `structs.TokenMultiplier` a resolved ability left on the table, read by
@@ -1521,8 +1567,11 @@ def _token_creation_plan(
     # after the statics: one more replacement each, in the same single pass.
     # Unfiltered multiplication commutes with everything in the list, so their
     # place in it is unobservable.
+    replacements = token_creation_replacements(state, controller)
     statics = [
-        *token_creation_replacements(state, controller),
+        # The additions first, the order the controller would pick (above).
+        *(static for static in replacements if static.get("and_create")),
+        *(static for static in replacements if not static.get("and_create")),
         *timed_token_multipliers(state, controller),
     ]
     if not statics:
@@ -1531,6 +1580,16 @@ def _token_creation_plan(
     replaced = False
     for static in statics:
         selector = static.get("affects_token") or {}
+        if additions := static.get("and_create"):
+            # "If one or more artifact tokens would be created": one match in
+            # the event is enough, and the extra is made once for all of it.
+            if any(
+                pending_count > 0 and printed_token_matches(state, pending_id, selector)
+                for pending_id, pending_count, _ in plan
+            ):
+                plan = [*plan, *((str(extra), 1, True) for extra in additions)]
+                replaced = True
+            continue
         substitutes = static.get("create_instead") or ()
         multiplier = int(static.get("token_multiplier") or 1)
         after: list[tuple[str, int, bool]] = []
@@ -1583,7 +1642,9 @@ def create_token(
     never made, so a substituted entry drops them rather than painting somebody
     else's exception onto an Angel.  A *multiplied* entry keeps them, because
     "twice that many of those tokens" are still those tokens: a doubled embalm
-    copy is two white Zombie copies.
+    copy is two white Zombie copies.  An *added* token (``and_create``,
+    Stridehangar's Thopter) is treated as a substitution: tapped and attacking
+    like the rest, without their ``overrides``.
 
     ``source`` is the object whose effect is creating the tokens, and each one
     is recorded in its `created_tokens` -- "tokens created with this creature"
@@ -2405,6 +2466,7 @@ def clear_until_eot(state: GameState) -> None:
             obj.copying_keywords = None
             obj.copying_remove_supertypes = None
             obj.copying_add_types = None
+            obj.copying_add_supertypes = None
             obj.copying_own_abilities = None
             obj.copying_until_eot = False
         handbacks.extend(

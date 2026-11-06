@@ -237,6 +237,23 @@
       "is_token": true
     },
     {
+      "id": "beast_6_6_c_artifact",
+      "name": "Beast Token",
+      "oracle_text": "6/6 colorless Beast artifact creature token.",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Beast"
+      ],
+      "power": 6,
+      "toughness": 6,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true
+    },
+    {
       "id": "beast_4_4_w_alone",
       "name": "Beast Token",
       "oracle_text": "This token can't attack or block alone.",
@@ -600,6 +617,66 @@
       "is_token": true
     },
     {
+      "id": "golem_3_3_c_artifact_flying",
+      "name": "Golem Token",
+      "oracle_text": "3/3 colorless Golem artifact creature token with flying.",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Golem"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true,
+      "keywords": [
+        "flying"
+      ]
+    },
+    {
+      "id": "golem_3_3_c_artifact_vigilance",
+      "name": "Golem Token",
+      "oracle_text": "3/3 colorless Golem artifact creature token with vigilance.",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Golem"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true,
+      "keywords": [
+        "vigilance"
+      ]
+    },
+    {
+      "id": "golem_3_3_c_artifact_trample",
+      "name": "Golem Token",
+      "oracle_text": "3/3 colorless Golem artifact creature token with trample.",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Golem"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true,
+      "keywords": [
+        "trample"
+      ]
+    },
+    {
       "id": "construct_4_4_c_artifact_flying_haste",
       "name": "Construct Token",
       "oracle_text": "4/4 colorless Construct artifact creature token with flying and haste.",
@@ -619,6 +696,23 @@
         "flying",
         "haste"
       ]
+    },
+    {
+      "id": "construct_4_4_c_artifact",
+      "name": "Construct Token",
+      "oracle_text": "4/4 colorless Construct artifact creature token.",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Construct"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true
     },
     {
       "id": "contract",
@@ -3173,6 +3267,54 @@
               "toughness": {
                 "const": 3
               },
+              "types": [
+                "Creature"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nalaar_aetherjet_x_x_c_flying_crew2",
+      "name": "Nalaar Aetherjet",
+      "oracle_text": "X/X colorless Vehicle artifact token named Nalaar Aetherjet with flying and crew 2.",
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [
+        "Vehicle"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "variable_pt": true,
+      "keywords": [
+        "flying"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Crew 2",
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 2,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "animate",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "keep_pt": true,
               "types": [
                 "Creature"
               ]

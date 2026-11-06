@@ -91,9 +91,11 @@ from .walk import (
 #: ``types``, ``power`` and ``toughness``. Additions: ``add_types``,
 #: ``add_subtypes`` and ``add_supertypes``. Removals: ``remove_supertypes``,
 #: the only subtraction any printing asks for ("except the token isn't
-#: legendary"). And ``no_mana_cost``.
+#: legendary"). ``add_keywords``, "…and has haste" (Saheeli, Radiant Creator).
+#: And ``no_mana_cost``.
 COPY_EXCEPT_KEYS = frozenset(
     {
+        "add_keywords",
         "colors",
         "types",
         "power",
@@ -110,9 +112,14 @@ COPY_EXCEPT_KEYS = frozenset(
 #: The keys `become_copy`'s ``except_`` (707.9b) reads: ``add_keywords``, as
 #: on an as-enters copy ("and it has vigilance"), and ``keep_abilities``,
 #: positions in the copying card's own printed ``abilities`` the copy keeps
-#: ("and this ability", Kimahri, Valiant Guardian). The name stays on
-#: ``except_name``.
-BECOME_COPY_EXCEPT_KEYS = frozenset({"add_keywords", "keep_abilities"})
+#: ("and this ability", Kimahri, Valiant Guardian); ``add_types`` and
+#: ``add_supertypes``, as `copy_permanent`'s keys of the same names ("except
+#: it's an artifact in addition to its other types", Saheeli, Sublime
+#: Artificer; "and it's legendary in addition to its other types", Sarkhan,
+#: Soul Aflame). The name stays on ``except_name``.
+BECOME_COPY_EXCEPT_KEYS = frozenset(
+    {"add_keywords", "keep_abilities", "add_types", "add_supertypes"}
+)
 
 #: The recorders whose `as` binding is a **set of seats** rather than of
 #: objects: `may` (the players who said yes) and `draw` (the players who
@@ -369,7 +376,10 @@ def _validate_pay_any_amount(effect: Mapping[str, Any], where: str) -> None:
 
     The ``pay`` is **exactly one coloured (or {C}) symbol and nothing else**,
     because the announced count multiplies it: ``{R}`` at three is
-    ``{R}{R}{R}``. A generic ``{1}`` there is "any amount of mana", which is
+    ``{R}{R}{R}``. Or it is **exactly** ``{"pay_energy": 1}``: "you may pay one
+    or more {E}" (Territorial Aetherkite), the count being the energy paid --
+    ``pay_energy: 2`` would charge pairs and bind a count that is not the
+    energy. A generic ``{1}`` there is "any amount of mana", which is
     ``{X}`` and the ``x`` key; ``{R}{R}`` would charge pairs; a life or
     sacrifice beside it would be multiplied or charged once, and no printing
     says which.
@@ -392,18 +402,26 @@ def _validate_pay_any_amount(effect: Mapping[str, Any], where: str) -> None:
     if not (isinstance(spec.get("as"), str) and spec["as"]):
         raise DslError(f"{where}.any_amount.as: a binding name for the amount paid is required")
     pay_spec = effect["pay"]
-    if extra := {k for k, v in pay_spec.items() if v not in (None, False, 0)} - {"mana"}:
-        raise DslError(
-            f"{where}.any_amount: the payment is one mana symbol and nothing else; "
-            f"'pay' also has {sorted(extra)}"
-        )
-    mana = ManaCost.parse(pay_spec.get("mana"))
-    if mana.generic or mana.x_count or mana.hybrid or sum(mana.colored) != 1:
-        raise DslError(
-            f"{where}.any_amount: 'pay.mana' must be exactly one coloured or {{C}} symbol "
-            f"(\"{{R}}\"), not {pay_spec.get('mana')!r} -- any amount of generic mana is "
-            f"'{{X}}' with 'x'"
-        )
+    if pay_spec.get("pay_energy"):
+        priced = {k for k, v in pay_spec.items() if v not in (None, False, 0, "")}
+        if priced != {"pay_energy"} or pay_spec["pay_energy"] != 1:
+            raise DslError(
+                f"{where}.any_amount: an energy payment is 'pay': {{'pay_energy': 1}} and "
+                f"nothing else -- the count is the energy paid; got {dict(pay_spec)!r}"
+            )
+    else:
+        if extra := {k for k, v in pay_spec.items() if v not in (None, False, 0)} - {"mana"}:
+            raise DslError(
+                f"{where}.any_amount: the payment is one mana symbol and nothing else; "
+                f"'pay' also has {sorted(extra)}"
+            )
+        mana = ManaCost.parse(pay_spec.get("mana"))
+        if mana.generic or mana.x_count or mana.hybrid or sum(mana.colored) != 1:
+            raise DslError(
+                f"{where}.any_amount: 'pay.mana' must be exactly one coloured or {{C}} "
+                f"symbol (\"{{R}}\"), or 'pay_energy' 1, not {pay_spec.get('mana')!r} -- "
+                f"any amount of generic mana is '{{X}}' with 'x'"
+            )
     if "x" in effect:
         raise DslError(f"{where}.any_amount: cannot be combined with 'x'")
     if effect.get("repeat"):
@@ -1215,10 +1233,28 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # card that draws for {2} into one that draws free.
         if not isinstance(effect["pay"], dict):
             raise DslError(f"{where}: 'pay' must be an object")
+        energy = effect["pay"].get("pay_energy")
         try:
-            CostModel.model_validate(effect["pay"])
+            # A computed energy price is a resolving `may`'s alone (op_may
+            # fixes it before pricing), so `CostModel` keeps `pay_energy` an
+            # integer for every other cost and the expression is checked here.
+            CostModel.model_validate(
+                {**effect["pay"], "pay_energy": 0}
+                if isinstance(energy, dict)
+                else effect["pay"]
+            )
         except Exception as exc:  # pydantic ValidationError
             raise DslError(f"{where}: bad 'pay' cost: {exc}") from exc
+        if isinstance(energy, dict):
+            # "Pay an amount of {E} equal to that permanent's mana value" --
+            # Confiscation Coup. Validated so a misspelt expression is a load
+            # error rather than a price of 0 and a free "if you do".
+            validate_value(energy, f"{where}.pay.pay_energy")
+            if "any_amount" in effect:
+                raise DslError(
+                    f"{where}.any_amount: the amount is chosen or computed, not both -- "
+                    f"'any_amount' counts a 'pay_energy' of exactly 1"
+                )
         if "any_amount" in effect:
             _validate_pay_any_amount(effect, where)
         # A payment has to buy *something*, but there are two things it can buy.
@@ -2563,6 +2599,18 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                     f"{where}.except_.keep_abilities: needs a non-empty list of "
                     f"positions in this card's 'abilities'"
                 )
+        for key, known, noun in (
+            ("add_types", KNOWN_TYPES, "card type"),
+            ("add_supertypes", KNOWN_SUPERTYPES, "supertype"),
+        ):
+            if key not in exception:
+                continue
+            named = exception[key]
+            if not isinstance(named, list) or not named:
+                raise DslError(f"{where}.except_.{key}: must be a non-empty list")
+            for name in named:
+                if name not in known:
+                    raise DslError(f"{where}.except_.{key}: unknown {noun} {name!r}")
     if op == "copy_permanent" and (overrides := effect.get("except_") or effect.get("except")):
         # "…except it's a white Zombie Angel with no mana cost." A misspelled
         # key here would be silently dropped, and the token would come back a
@@ -2579,6 +2627,17 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         for color in overrides.get("colors") or ():
             if color not in KNOWN_COLORS:
                 raise DslError(f"{where}.except_.colors: unknown colour {color!r}")
+        if "add_keywords" in overrides:
+            # "…except it's a 5/5 artifact creature … and has haste." Checked
+            # here because the token reads it only as it is created: a
+            # misspelt keyword would arrive as a copy without it.
+            added = overrides["add_keywords"]
+            if not isinstance(added, list) or not added:
+                raise DslError(f"{where}.except_.add_keywords: needs a non-empty list of keywords")
+            for k in added:
+                if k not in KNOWN_KEYWORDS:
+                    raise DslError(f"{where}.except_.add_keywords: unknown keyword {k!r}")
+            refuse_numbered_grant(added, f"{where}.except_.add_keywords")
         if "types" in overrides:
             # A **replacement**, unlike `add_subtypes` beside it -- "it's an
             # artifact and it loses all other card types". So an empty list is a
@@ -3146,6 +3205,21 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                     f"{where}: lose_all_player_counters removes every kind of "
                     f"counter from the player, so it takes no {key!r}"
                 )
+    if op == "double_player_counters":
+        # "Double the number of each kind of counter you have" always names
+        # whose; and it reads every kind off the player, so a narrowing key
+        # (or `objects`, which is `double_counters`') would be silently ignored.
+        if "player" not in effect:
+            raise DslError(
+                f"{where}: double_player_counters needs 'player' naming whose "
+                f"counters are doubled, e.g. 'you'"
+            )
+        for key in ("counter", "kinds", "amount", "objects"):
+            if key in effect:
+                raise DslError(
+                    f"{where}: double_player_counters doubles every kind of "
+                    f"counter the player has, so it takes no {key!r}"
+                )
     if op == "proliferate" and "objects" in effect:
         # The retired simplification's narrowing key. 701.27a is a free choice
         # over every permanent and player with a counter, which the op now asks;
@@ -3302,6 +3376,16 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             f"{where}: must_block needs 'objects' naming who has to block "
             f"(the attacker defaults to the ability's own source)"
         )
+    if op == "must_block_any":
+        # The same empty pool as `must_block`'s, and with no source default to
+        # fall back on: the op names only who must block.
+        if not effect.get("objects"):
+            raise DslError(f"{where}: must_block_any needs 'objects' naming who has to block")
+        if "attacker" in effect:
+            raise DslError(
+                f"{where}: must_block_any names no attacker -- any block obeys it; "
+                f"use must_block for 'blocks this creature if able'"
+            )
     if op == "counter" and "exiles" in effect and not isinstance(effect["exiles"], bool):
         # "Exile it instead" is a yes or a no; a string "false" read as truthy
         # would exile a spell the card sends to its owner's graveyard.
@@ -4180,12 +4264,32 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # no size to name: "target creature becomes a Treasure artifact ... and
         # loses all other card types" (Vraska, Betrayal's Sting). Its base
         # power and toughness are left alone. Both keys or neither, always.
+        #
+        # The other is `keep_pt`: crew's "becomes an artifact creature"
+        # (702.122a) on a Vehicle whose size is its own -- the X/X Nalaar
+        # Aetherjet, sized by the effect that made it (301.7, 111.4). It says
+        # out loud that the size is deliberately left alone, and the linking
+        # pass holds it to a source that has a printed power and toughness.
         sized = ("power" in effect, "toughness" in effect)
         becomes_creature = "Creature" in (effect.get("types") or ("Creature",))
-        if sized != (True, True) and (becomes_creature or any(sized)):
+        keep_pt = effect.get("keep_pt", False)
+        if not isinstance(keep_pt, bool):
+            raise DslError(f"{where}: animate's 'keep_pt' is true or false")
+        if keep_pt and any(sized):
+            raise DslError(
+                f"{where}: 'keep_pt' keeps the permanent's own size, so there is no "
+                f"'power' or 'toughness' to give as well"
+            )
+        if keep_pt and not (
+            isinstance(effect.get("objects"), Mapping) and effect["objects"].get("self_only")
+        ):
+            raise DslError(
+                f"{where}: 'keep_pt' animates the Vehicle itself ('objects' self_only)"
+            )
+        if not keep_pt and sized != (True, True) and (becomes_creature or any(sized)):
             raise DslError(
                 f"{where}: animate needs 'power' and 'toughness' (only an "
-                f"animation into a non-creature may leave out both)"
+                f"animation into a non-creature, or a 'keep_pt' one, may leave out both)"
             )
         keep_colors = effect.get("keep_colors", False)
         if not isinstance(keep_colors, bool):
@@ -4334,6 +4438,14 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
     # silently becomes "nobody does".
     if op == "for_each_player" and not effect.get("effects"):
         raise DslError(f"{where}: for_each_player needs 'effects' to run per player")
+    # "Starting with you" is the only ordering a printed card names. Any other
+    # value would be read as "no order" and quietly fall back to seat order,
+    # which is the card the key exists to refuse.
+    if op == "for_each_player" and effect.get("starting_with") not in (None, "you"):
+        raise DslError(
+            f"{where}: for_each_player's 'starting_with' takes only \"you\" "
+            f"(turn order beginning with the controller), got {effect['starting_with']!r}"
+        )
 
     # "Choose one that hasn't been chosen" belongs to a permanent's repeated
     # ability, not to a spell. A spell's top-level modes are picked at *cast*

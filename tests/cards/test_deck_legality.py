@@ -32,6 +32,7 @@ FAVORITES = {
 #: The lists Wizards sold, shipped as ``precon``: every one has a row in
 #: ``data/decks/sources.json`` (``tests/cards/test_precon_sources.py``).
 PRECONS = {
+    "drc_living_energy",
     "fdc_calling_all_angels",
     "fdc_keen_engineering",
     "fdc_reign_of_dragons",

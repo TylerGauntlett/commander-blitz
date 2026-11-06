@@ -1302,12 +1302,12 @@
     },
     "Academy Ruins": {
       "edhrec_rank": 471,
-      "gate": "template",
+      "gate": null,
       "name": "Academy Ruins",
-      "reason": "no template for: {1}{U}, {T}: Put target artifact card from your graveyard on top of your library",
+      "reason": "",
       "scryfall_id": "128deed2-b9bc-4065-95c9-ccd7b08f1230",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Academy Wall": {
@@ -3042,12 +3042,12 @@
     },
     "Aether Hub": {
       "edhrec_rank": 3372,
-      "gate": "template",
+      "gate": null,
       "name": "Aether Hub",
-      "reason": "no template for: When this land enters, you get {E}",
+      "reason": "",
       "scryfall_id": "bb6a8c30-e824-4137-b83e-b9d175a0d037",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aether Inspector": {
@@ -3312,12 +3312,12 @@
     },
     "Aetherflux Conduit": {
       "edhrec_rank": 5718,
-      "gate": "template",
+      "gate": null,
       "name": "Aetherflux Conduit",
-      "reason": "no template for: Whenever you cast a spell, you get an amount of {E} equal to the amount of mana spent to c",
+      "reason": "",
       "scryfall_id": "dd9ac0f2-2d8f-40fc-97fb-d6e05633405d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aetherflux Reservoir": {
@@ -3342,12 +3342,12 @@
     },
     "Aetheric Amplifier": {
       "edhrec_rank": 2512,
-      "gate": "template",
+      "gate": null,
       "name": "Aetheric Amplifier",
-      "reason": "no template for: {4}, {T}: Choose one. Activate only as a sorcery",
+      "reason": "",
       "scryfall_id": "21c33a91-b02c-43ec-a385-aa0349928f9c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aetherize": {
@@ -3452,12 +3452,12 @@
     },
     "Aethersquall Ancient": {
       "edhrec_rank": 6539,
-      "gate": "template",
+      "gate": null,
       "name": "Aethersquall Ancient",
-      "reason": "no template for: At the beginning of your upkeep, you get {E}{E}{E}",
+      "reason": "",
       "scryfall_id": "192882f3-88bc-4fcf-b57c-31108401e4bd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aetherstorm Roc": {
@@ -3482,12 +3482,12 @@
     },
     "Aethertide Whale": {
       "edhrec_rank": 8521,
-      "gate": "template",
+      "gate": null,
       "name": "Aethertide Whale",
-      "reason": "no template for: When this creature enters, you get six {E}",
+      "reason": "",
       "scryfall_id": "78e396a1-a56e-418b-a342-c09a11218a85",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aethertorch Renegade": {
@@ -3512,22 +3512,22 @@
     },
     "Aetherwind Basker": {
       "edhrec_rank": 11351,
-      "gate": "template",
+      "gate": null,
       "name": "Aetherwind Basker",
-      "reason": "no template for: Whenever this creature enters or attacks, you get {E} for each creature you control",
+      "reason": "",
       "scryfall_id": "76f318f4-f809-42ff-99f4-12a51d38c8f7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aetherworks Marvel": {
       "edhrec_rank": 3479,
-      "gate": "template",
+      "gate": null,
       "name": "Aetherworks Marvel",
-      "reason": "no template for: Whenever a permanent you control is put into a graveyard, you get {E}",
+      "reason": "",
       "scryfall_id": "b7e7eba5-8bd8-4c7d-8843-cae6c2ce0043",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aettir and Priwen": {
@@ -12082,12 +12082,12 @@
     },
     "Architect of the Untamed": {
       "edhrec_rank": 9171,
-      "gate": "template",
+      "gate": null,
       "name": "Architect of the Untamed",
-      "reason": "no template for: Landfall — Whenever a land you control enters, you get {E}",
+      "reason": "",
       "scryfall_id": "f11222dc-0dd8-48df-8106-f9e99f0b6e11",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Architects of Will": {
@@ -15982,12 +15982,12 @@
     },
     "Attune with Aether": {
       "edhrec_rank": 8663,
-      "gate": "template",
+      "gate": null,
       "name": "Attune with Aether",
-      "reason": "no template for: Search your library for a basic land card, reveal it, put it into your hand, then shuffle.",
+      "reason": "",
       "scryfall_id": "442c3621-3d4c-4145-b63d-81cd2564374b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Attuned Hunter": {
@@ -21768,7 +21768,7 @@
       "scryfall_id": "8b3c8050-6acb-4d53-ba46-646ca88d4eb6",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Battle Brawler": {
       "edhrec_rank": 24357,
@@ -24202,12 +24202,12 @@
     },
     "Bespoke Battlewagon": {
       "edhrec_rank": 6427,
-      "gate": "template",
+      "gate": null,
       "name": "Bespoke Battlewagon",
-      "reason": "no template for: {T}: You get {E}{E}",
+      "reason": "",
       "scryfall_id": "e42f232d-73c3-40bd-8ca2-da53ca20f9de",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bespoke Bō": {
@@ -31552,12 +31552,12 @@
     },
     "Bootleggers' Stash": {
       "edhrec_rank": 1931,
-      "gate": "template",
+      "gate": null,
       "name": "Bootleggers' Stash",
-      "reason": "no template for: Lands you control have \"{T}: Create a Treasure token.\"",
+      "reason": "",
       "scryfall_id": "9be25e90-393a-4c30-86e2-6fa0d8be4247",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Boots of Speed": {
@@ -51662,12 +51662,12 @@
     },
     "Confiscation Coup": {
       "edhrec_rank": 7567,
-      "gate": "template",
+      "gate": null,
       "name": "Confiscation Coup",
-      "reason": "no template for: Choose target artifact or creature. You get {E}{E}{E}{E} , then you may pay an amount of {",
+      "reason": "",
       "scryfall_id": "fdd39363-34f0-4bb7-9537-69a47789a3b4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Conflagrate": {
@@ -51852,12 +51852,12 @@
     },
     "Conjurer's Closet": {
       "edhrec_rank": 483,
-      "gate": "template",
+      "gate": null,
       "name": "Conjurer's Closet",
-      "reason": "no template for: At the beginning of your end step, you may exile target creature you control, then return ",
+      "reason": "",
       "scryfall_id": "7e520d49-f3d5-46b3-a941-c57936648a47",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Conjurer's Mantle": {
@@ -64392,12 +64392,12 @@
     },
     "Decoction Module": {
       "edhrec_rank": 4130,
-      "gate": "template",
+      "gate": null,
       "name": "Decoction Module",
-      "reason": "no template for: Whenever a creature you control enters, you get {E}",
+      "reason": "",
       "scryfall_id": "0e63512b-32a4-495a-8f8d-273e74505995",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Decode Transmissions": {
@@ -69512,12 +69512,12 @@
     },
     "Disallow": {
       "edhrec_rank": 1822,
-      "gate": "template",
+      "gate": null,
       "name": "Disallow",
-      "reason": "no template for: Counter target spell, activated ability, or triggered ability",
+      "reason": "",
       "scryfall_id": "80f8aa2a-78e1-4717-a0bd-a435f4922668",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Disappear": {
@@ -76162,12 +76162,12 @@
     },
     "Druid of Purification": {
       "edhrec_rank": 2432,
-      "gate": "template",
+      "gate": null,
       "name": "Druid of Purification",
-      "reason": "no template for: When this creature enters, starting with you, each player may choose an artifact or enchan",
+      "reason": "",
       "scryfall_id": "85fc3d2a-e254-4e1c-8a9d-15a3ea94810b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Druid of the Anima": {
@@ -85242,12 +85242,12 @@
     },
     "Era of Innovation": {
       "edhrec_rank": 7280,
-      "gate": "template",
+      "gate": null,
       "name": "Era of Innovation",
-      "reason": "no template for: Whenever an artifact or Artificer you control enters, you may pay {1}. If you do, you get ",
+      "reason": "",
       "scryfall_id": "edf49825-c432-4eb3-97da-b92ae6b9fab8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Eradicate": {
@@ -110722,12 +110722,12 @@
     },
     "Glimmer of Genius": {
       "edhrec_rank": 5941,
-      "gate": "template",
+      "gate": null,
       "name": "Glimmer of Genius",
-      "reason": "no template for: Scry 2, then draw two cards. You get {E}{E}",
+      "reason": "",
       "scryfall_id": "913bb5da-57b7-44c0-9c6e-630ae71c4b1b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Glimmerbell": {
@@ -158422,12 +158422,12 @@
     },
     "Lightning Runner": {
       "edhrec_rank": 4874,
-      "gate": "template",
+      "gate": null,
       "name": "Lightning Runner",
-      "reason": "no template for: Whenever this creature attacks, you get {E}{E} , then you may pay eight {E}. If you pay, u",
+      "reason": "",
       "scryfall_id": "80e06596-fb1a-4d89-8d91-c6b95014f132",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lightning Serpent": {
@@ -192922,12 +192922,12 @@
     },
     "One with the Machine": {
       "edhrec_rank": 2851,
-      "gate": "template",
+      "gate": null,
       "name": "One with the Machine",
-      "reason": "no template for: Draw cards equal to the greatest mana value among artifacts you control",
+      "reason": "",
       "scryfall_id": "f114e0fe-1879-42de-83cb-104ace913ffb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "One with the Multiverse": {
@@ -197402,12 +197402,12 @@
     },
     "Panharmonicon": {
       "edhrec_rank": 263,
-      "gate": "template",
+      "gate": null,
       "name": "Panharmonicon",
-      "reason": "no template for: If an artifact or creature entering causes a triggered ability of a permanent you control ",
+      "reason": "",
       "scryfall_id": "9d7903ff-359b-49f5-8782-c9dd789c2da6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Panic": {
@@ -199222,12 +199222,12 @@
     },
     "Peema Aether-Seer": {
       "edhrec_rank": 12851,
-      "gate": "template",
+      "gate": null,
       "name": "Peema Aether-Seer",
-      "reason": "no template for: When this creature enters, you get an amount of {E} equal to the greatest power among crea",
+      "reason": "",
       "scryfall_id": "deaad8d1-9a60-4a65-8f20-53d83be09619",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Peema Outrider": {
@@ -199242,12 +199242,12 @@
     },
     "Peema Trailblazer": {
       "edhrec_rank": 9767,
-      "gate": "template",
+      "gate": null,
       "name": "Peema Trailblazer",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, you get that many {E}",
+      "reason": "",
       "scryfall_id": "d513e533-d3c5-45a1-a03c-2770b7b6832b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Peer Past the Veil": {
@@ -202112,12 +202112,12 @@
     },
     "Pia Nalaar, Chief Mechanic": {
       "edhrec_rank": 12627,
-      "gate": "template",
+      "gate": null,
       "name": "Pia Nalaar, Chief Mechanic",
-      "reason": "no template for: Whenever one or more artifact creatures you control deal combat damage to a player, you ge",
+      "reason": "",
       "scryfall_id": "f4b46b1f-0cfe-42cc-aac5-e6912b2f9fd2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pia Nalaar, Consul of Revival": {
@@ -202132,12 +202132,12 @@
     },
     "Pia and Kiran Nalaar": {
       "edhrec_rank": 8803,
-      "gate": "template",
+      "gate": null,
       "name": "Pia and Kiran Nalaar",
-      "reason": "no template for: When enters, create two 1/1 colorless Thopter artifact creature tokens with flying",
+      "reason": "",
       "scryfall_id": "f17e68fd-9c05-460d-96aa-dd0ab8b7af37",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pia's Revolution": {
@@ -214762,12 +214762,12 @@
     },
     "Rampaging Aetherhood": {
       "edhrec_rank": 8637,
-      "gate": "template",
+      "gate": null,
       "name": "Rampaging Aetherhood",
-      "reason": "no template for: Trample, ward {2}",
+      "reason": "",
       "scryfall_id": "b1f36e04-3500-410b-a07c-28a280b5a0fc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rampaging Brontodon": {
@@ -217862,12 +217862,12 @@
     },
     "Reckless Fireweaver": {
       "edhrec_rank": 703,
-      "gate": "template",
+      "gate": null,
       "name": "Reckless Fireweaver",
-      "reason": "no template for: Whenever an artifact you control enters, this creature deals 1 damage to each opponent",
+      "reason": "",
       "scryfall_id": "3e626e3e-1d08-4d6c-b29b-71157e568b45",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Reckless Handling": {
@@ -222102,12 +222102,12 @@
     },
     "Retrofitter Foundry": {
       "edhrec_rank": 4630,
-      "gate": "template",
+      "gate": null,
       "name": "Retrofitter Foundry",
-      "reason": "no template for: {3}: Untap this artifact",
+      "reason": "",
       "scryfall_id": "2ad34311-c7ef-4333-8978-f82d0dfe2836",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Retromancer": {
@@ -226602,12 +226602,12 @@
     },
     "Rogue Refiner": {
       "edhrec_rank": 11587,
-      "gate": "template",
+      "gate": null,
       "name": "Rogue Refiner",
-      "reason": "no template for: When this creature enters, draw a card and you get {E}{E}",
+      "reason": "",
       "scryfall_id": "4d2f716f-97b3-49dd-b52c-0030d20b1c7f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rogue Skycaptain": {
@@ -231302,22 +231302,22 @@
     },
     "Saheeli, Radiant Creator": {
       "edhrec_rank": 9955,
-      "gate": "template",
+      "gate": null,
       "name": "Saheeli, Radiant Creator",
-      "reason": "no template for: Whenever you cast an Artificer or artifact spell, you get {E}",
+      "reason": "",
       "scryfall_id": "5fea0781-e933-47ef-9414-92c8652a7778",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Saheeli, Sublime Artificer": {
       "edhrec_rank": 2493,
-      "gate": "template",
+      "gate": null,
       "name": "Saheeli, Sublime Artificer",
-      "reason": "no template for: Whenever you cast a noncreature spell, create a 1/1 colorless Servo artifact creature toke",
+      "reason": "",
       "scryfall_id": "2e7329c4-5803-43f0-a4b5-306fb77923b7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Saheeli, the Gifted": {
@@ -233502,12 +233502,12 @@
     },
     "Sarkhan, Soul Aflame": {
       "edhrec_rank": 2059,
-      "gate": "template",
+      "gate": null,
       "name": "Sarkhan, Soul Aflame",
-      "reason": "no template for: Dragon spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "18484227-b96a-40fb-9788-656d00705d80",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sarkhan, the Dragonspeaker": {
@@ -241252,12 +241252,12 @@
     },
     "Servant of the Conduit": {
       "edhrec_rank": 11781,
-      "gate": "template",
+      "gate": null,
       "name": "Servant of the Conduit",
-      "reason": "no template for: When this creature enters, you get {E}{E}",
+      "reason": "",
       "scryfall_id": "f433cd63-1d11-4782-a051-00151fac3a85",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Servant of the Scale": {
@@ -254172,12 +254172,12 @@
     },
     "Solar Transformer": {
       "edhrec_rank": 3205,
-      "gate": "template",
+      "gate": null,
       "name": "Solar Transformer",
-      "reason": "no template for: When this artifact enters, you get {E}{E}{E}",
+      "reason": "",
       "scryfall_id": "fbc1c8dd-ea66-4dc3-8444-9f20758a45f7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Solarion": {
@@ -267172,12 +267172,12 @@
     },
     "Stridehangar Automaton": {
       "edhrec_rank": 1753,
-      "gate": "template",
+      "gate": null,
       "name": "Stridehangar Automaton",
-      "reason": "no template for: Thopters you control get +1/+1",
+      "reason": "",
       "scryfall_id": "4c398d11-a2fc-43e2-96e9-7f3383e1a43c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Strider Harness": {
@@ -278442,12 +278442,12 @@
     },
     "Territorial Aetherkite": {
       "edhrec_rank": 11470,
-      "gate": "template",
+      "gate": null,
       "name": "Territorial Aetherkite",
-      "reason": "no template for: When this creature enters, you get {E}{E} . Then you may pay one or more {E}. When you do,",
+      "reason": "",
       "scryfall_id": "0713f2e0-31be-4cd9-818f-538757913d8d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Territorial Allosaurus": {
@@ -291972,12 +291972,12 @@
     },
     "Treasure Vault": {
       "edhrec_rank": 486,
-      "gate": "template",
+      "gate": null,
       "name": "Treasure Vault",
-      "reason": "no template for: {X}{X}, {T}, Sacrifice this land: Create X Treasure tokens",
+      "reason": "",
       "scryfall_id": "e571614b-cef1-4e44-bfe4-0029db9694eb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Treasured Find": {
@@ -292972,12 +292972,12 @@
     },
     "Triplicate Titan": {
       "edhrec_rank": 2212,
-      "gate": "template",
+      "gate": null,
       "name": "Triplicate Titan",
-      "reason": "no template for: When this creature dies, create a 3/3 colorless Golem artifact creature token with flying,",
+      "reason": "",
       "scryfall_id": "36726ee1-b960-4f85-b648-dd3fe0c38e6f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Triskaidekaphile": {
@@ -294882,12 +294882,12 @@
     },
     "Twinflame": {
       "edhrec_rank": 1261,
-      "gate": "template",
+      "gate": null,
       "name": "Twinflame",
-      "reason": "no template for: Strive — This spell costs {2}{R} more to cast for each target beyond the first",
+      "reason": "",
       "scryfall_id": "85c863ef-b266-410d-87b3-ced791f99966",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Twinflame Travelers": {
@@ -300748,7 +300748,7 @@
       "scryfall_id": "917514c0-9cd5-4b97-85b9-c4f753560ad4",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Vampire Hexmage": {
       "edhrec_rank": 8991,
@@ -314012,12 +314012,12 @@
     },
     "Whirler Virtuoso": {
       "edhrec_rank": 5812,
-      "gate": "template",
+      "gate": null,
       "name": "Whirler Virtuoso",
-      "reason": "no template for: When this creature enters, you get {E}{E}{E}",
+      "reason": "",
       "scryfall_id": "e6f210bf-30c9-4904-9ceb-4ab180938f09",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Whirlermaker": {
@@ -315742,12 +315742,12 @@
     },
     "Will of the Temur": {
       "edhrec_rank": 4158,
-      "gate": "template",
+      "gate": null,
       "name": "Will of the Temur",
-      "reason": "no template for: Choose one. If you control a commander as you cast this spell, you may choose both instead",
+      "reason": "",
       "scryfall_id": "c50fe0ff-6826-485a-a0cf-a8f8193bc756",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Will, Scion of Peace": {
