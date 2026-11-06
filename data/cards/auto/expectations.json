@@ -3421,6 +3421,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "crypt_of_agadeem": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "crypt_of_the_eternals": {
     "life": {
       "0": 41
@@ -4151,6 +4155,13 @@
     },
     "zone": "battlefield"
   },
+  "disciple_of_bolas": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "zone": "battlefield"
+  },
   "dismal_backwater": {
     "life": {
       "0": 41
@@ -4413,6 +4424,10 @@
     "zone": "battlefield"
   },
   "drowned_secrets": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "drownyard_temple": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

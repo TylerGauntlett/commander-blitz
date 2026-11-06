@@ -57442,12 +57442,12 @@
     },
     "Crypt of Agadeem": {
       "edhrec_rank": 1730,
-      "gate": "template",
+      "gate": null,
       "name": "Crypt of Agadeem",
-      "reason": "proxy simplified it: mana scales with 'black creature card in your graveyard'; implemented as one",
+      "reason": "",
       "scryfall_id": "ba4c4c6b-65bf-480f-bdd5-e7acc8a512bf",
-      "source": "",
-      "status": "unexpressible",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Crypt of the Eternals": {
@@ -69592,12 +69592,12 @@
     },
     "Disciple of Bolas": {
       "edhrec_rank": 1518,
-      "gate": "template",
+      "gate": null,
       "name": "Disciple of Bolas",
-      "reason": "no template for: When this creature enters, sacrifice another creature. You gain X life and draw X cards, w",
+      "reason": "",
       "scryfall_id": "e9263fc4-f9f5-447a-a055-eeec80ba387e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Disciple of Caelus Nin": {
@@ -76062,12 +76062,12 @@
     },
     "Drownyard Temple": {
       "edhrec_rank": 1972,
-      "gate": "template",
+      "gate": null,
       "name": "Drownyard Temple",
-      "reason": "no template for: {3}: Return this card from your graveyard to the battlefield tapped",
+      "reason": "",
       "scryfall_id": "ae9a7d45-fec6-404e-965e-68e463d65fbf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Drowsing Tyrannodon": {
