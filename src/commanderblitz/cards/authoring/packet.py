@@ -1025,7 +1025,10 @@ def reference() -> dict:
             " `replace_token_creation` static with `token_multiplier: 2` and no"
             " `create_instead` -- the tokens keep their identity, so copies stay"
             " copies. `create_instead` is the OTHER axis (which token is made"
-            " instead) and a static takes one or the other. \"Creature tokens\""
+            " instead), `and_create` the third (\"those tokens plus an additional"
+            " 1/1 ... Thopter ... token are created instead\", Stridehangar"
+            " Automaton: the tokens are kept and one of each listed id is added,"
+            " once per creation), and a static takes exactly one. \"Creature tokens\""
             " is an `affects_token` filter; a sentence naming no player (\"if one"
             " or more tokens would be created\") adds `affects_player: \"any\"`.",
             "\"Until end of turn, if one or more tokens would be created under"

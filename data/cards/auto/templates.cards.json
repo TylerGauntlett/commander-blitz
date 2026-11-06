@@ -187695,6 +187695,59 @@
       "abilities": [
         {
           "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Thopter"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Thopters you control get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "affects_token": {
+            "types": [
+              "Artifact"
+            ]
+          },
+          "and_create": [
+            "thopter_1_1_c_flying"
+          ],
+          "effect": "replace_token_creation",
+          "kind": "static",
+          "text": "If one or more artifact tokens would be created under your control, those tokens plus an additional 1/1 colorless Thopter artifact creature token with flying are created instead."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "stridehangar_automaton",
+      "mana_cost": "{3}",
+      "name": "Stridehangar Automaton",
+      "oracle_text": "Thopters you control get +1/+1.\nIf one or more artifact tokens would be created under your control, those tokens plus an additional 1/1 colorless Thopter artifact creature token with flying are created instead.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Construct"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
             "attached": true
           },
           "effect": "buff",

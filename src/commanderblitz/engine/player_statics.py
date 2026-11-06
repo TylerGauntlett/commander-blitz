@@ -2677,8 +2677,8 @@ def player_extra_land_drops(state: GameState, pid: int) -> int:
 def token_creation_replacements(state: GameState, pid: int) -> list[Mapping[str, Any]]:
     """The active ``replace_token_creation`` statics reaching ``pid``, in battlefield order.
 
-    Academy Manufactor, Divine Visitation, and the doublers -- Doubling Season,
-    Parallel Lives, Bard, King of Dale. Read by
+    Academy Manufactor, Divine Visitation, Stridehangar Automaton, and the
+    doublers -- Doubling Season, Parallel Lives, Bard, King of Dale. Read by
     `primitives._token_creation_plan` and by nothing else, the way
     `untap_during_each_untap_step` is read by the untap step alone: a token that
     is about to be created has no object for a characteristic to attach to, so

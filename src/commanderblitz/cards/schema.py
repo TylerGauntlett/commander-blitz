@@ -882,6 +882,13 @@ class AbilityModel(BaseModel):
     #: that card **and create a 2/2 black Zombie creature token**". Part of the
     #: replacement rather than a trigger, because the creature never dies
     #: (614.6) and a `creature_dies` trigger has nothing to fire on.
+    #:
+    #: ``replace_token_creation``: the third mode beside `create_instead` and
+    #: `token_multiplier` -- "those tokens **plus** an additional 1/1 colorless
+    #: Thopter artifact creature token with flying are created instead"
+    #: (Stridehangar Automaton). The tokens about to be made are all kept and
+    #: one of each id here joins them, once per creation however many of its
+    #: tokens `affects_token` matched. See `primitives._token_creation_plan`.
     and_create: list[str] = Field(default_factory=list)
     #: Whether `replace_graveyard` also catches a **token** -- the printed "a
     #: card **or token**" (Rest in Peace). Defaults to catching them, which is

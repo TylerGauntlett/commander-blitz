@@ -323,7 +323,7 @@ class TestTheLoaderRefusals:
             self._compile(affects_player="opponent")
 
     def test_and_create_elsewhere_is_refused(self):
-        with pytest.raises(DslError, match="'and_create' is a replace_dies rider"):
+        with pytest.raises(DslError, match="'and_create' is a replace_dies or replace_token_creation rider"):
             compile_card(
                 CardModel.model_validate(
                     static_probe(

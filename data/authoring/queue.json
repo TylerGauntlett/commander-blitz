@@ -267172,12 +267172,12 @@
     },
     "Stridehangar Automaton": {
       "edhrec_rank": 1753,
-      "gate": "template",
+      "gate": null,
       "name": "Stridehangar Automaton",
-      "reason": "no template for: Thopters you control get +1/+1",
+      "reason": "",
       "scryfall_id": "4c398d11-a2fc-43e2-96e9-7f3383e1a43c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Strider Harness": {

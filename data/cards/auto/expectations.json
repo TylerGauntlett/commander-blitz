@@ -15938,6 +15938,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "stridehangar_automaton": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "strider_harness": {
     "zone": "battlefield"
   },

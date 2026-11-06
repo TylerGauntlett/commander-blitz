@@ -7293,7 +7293,7 @@ so N Soldiers become N Angels and "that many" is preserved without a count ever
 being written down.
 
 **"Twice that many of those tokens are created instead."** The static's second
-axis is the **count**, and a static carries exactly one of the two:
+mode is the **count**:
 
 ```jsonc
 // Bard, King of Dale (also Parallel Lives, Anointed Procession, Doubling Season's token half)
@@ -7328,11 +7328,45 @@ apply to each.
   `"you"`, which is the token's controller — the seat the token arrives under,
   not whoever controls the creating effect. `"any"` is Primal Vigor.
 - `token_multiplier` must be **2 or more** (1 replaces the creation with itself,
-  0 is a prevention), and it and `create_instead` together are refused.
+  0 is a prevention). A static carries exactly one of `create_instead`,
+  `token_multiplier` and `and_create`; two together are refused.
 - "**Until end of turn**, … twice that many" from a resolved ability is not a
   static at all but the
   [`multiply_token_creation`](#until-end-of-turn-twice-that-many-of-those-tokens)
   op, which outlives its source.
+
+**"Those tokens plus an additional … token are created instead."** The third
+mode is an **addition**, `and_create`:
+
+```jsonc
+// Stridehangar Automaton
+{ "kind": "static",
+  "text": "If one or more artifact tokens would be created under your control, those tokens plus an additional 1/1 colorless Thopter artifact creature token with flying are created instead.",
+  "effect": "replace_token_creation",
+  "affects_token": { "types": ["Artifact"] },
+  "and_create": ["thopter_1_1_c_flying"] }
+```
+
+**Every token about to be made is kept, and one of each id in `and_create`
+joins them, once per creation** — however many of its tokens `affects_token`
+matched, so three Treasures bring one Thopter. It is part of the same event and
+not a trigger: the Thopter arrives inside the one `create_token`, in the same
+`token_created` batch. Its rulings are the substitution's: it has none of the
+`overrides` the other tokens were created with, but is tapped and attacking
+when they are, and an `as` binding ("exile that token") names it too.
+
+- **The addition goes first.** 616.1 gives the token's controller the order,
+  and beside a doubler or a substitution the order shows. The engine cannot ask
+  there, so every `and_create` static is applied before the other replacements:
+  one Treasure under an Automaton and a Doubling Season is two Treasures and two
+  Thopters, and the Thopter into a Divine Visitation becomes an Angel. The
+  original tokens are kept either way, so this order never leaves fewer tokens.
+- **Two Automatons are two Thopters**: the second sees the first's Thopter, an
+  artifact token, in the event, and each applies once (614.5).
+- The near miss is a `token_created` trigger, which uses the stack, adds one
+  Thopter per token rather than per creation, and re-triggers on its own Thopter
+  forever. `and_create` on `replace_dies` is Kalitas's rider, the same key on a
+  different event.
 
 `affects_token`, not `affects`: the token being asked about **does not exist
 yet**, so there is no permanent for a static filter to find and no board state to

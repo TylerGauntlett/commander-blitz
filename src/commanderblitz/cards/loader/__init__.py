@@ -4790,12 +4790,22 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"{where}.affects_token: a token that does not exist yet has a "
                     f"printed face and nothing else; unsupported keys {sorted(unknown)}"
                 )
-        # Exactly one axis. Both at once is a shape no printed card takes, and
-        # neither is a replacement that says nothing about what is made.
-        if model.create_instead and model.token_multiplier is not None:
+        # Exactly one mode. Two at once is a shape no printed card takes, and
+        # none is a replacement that says nothing about what is made.
+        modes = [
+            name
+            for name, present in (
+                ("create_instead", bool(model.create_instead)),
+                ("token_multiplier", model.token_multiplier is not None),
+                ("and_create", bool(model.and_create)),
+            )
+            if present
+        ]
+        if len(modes) > 1:
             raise DslError(
-                f"{where}: replace_token_creation takes 'create_instead' (which "
-                f"tokens) or 'token_multiplier' (how many of those tokens), not both"
+                f"{where}: replace_token_creation takes one of 'create_instead' "
+                f"(which tokens), 'token_multiplier' (how many of those tokens) or "
+                f"'and_create' (those tokens plus these), not both {modes[0]!r} and {modes[1]!r}"
             )
         if model.token_multiplier is not None:
             # 1 replaces a creation with itself, and 0 is "no tokens are
@@ -4808,13 +4818,14 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"different effect"
                 )
         # A replacement that creates nothing is not this effect. "Instead create
-        # one of each" and "that many are created instead" both name what is
-        # made; an empty list would silently *delete* every token its filter
+        # one of each", "that many are created instead" and "those tokens plus
+        # an additional …" all name what is made; an empty list would silently *delete* every token its filter
         # matched, which is a different and much stronger card.
-        elif not model.create_instead:
+        elif not model.create_instead and not model.and_create:
             raise DslError(
                 f"{where}: replace_token_creation needs 'create_instead' -- the "
                 f"token ids created instead, one of each per token replaced -- "
+                f"'and_create' for \"those tokens plus an additional …\", "
                 f"or 'token_multiplier' for \"twice that many of those tokens\""
             )
     elif (
@@ -5650,10 +5661,10 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"{where}: replace_dies needs 'destination': 'exile' -- the zone the "
                 f"printed card sends the creature to instead"
             )
-    elif model.and_create:
+    elif model.and_create and model.effect != "replace_token_creation":
         raise DslError(
-            f"{where}: 'and_create' is a replace_dies rider; on {model.effect!r} "
-            f"nothing would create the tokens"
+            f"{where}: 'and_create' is a replace_dies or replace_token_creation "
+            f"rider; on {model.effect!r} nothing would create the tokens"
         )
 
     if model.effect == "untap_limit":

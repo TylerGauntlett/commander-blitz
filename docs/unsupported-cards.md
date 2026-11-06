@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**201 cards** blocked by **181** capabilities.
+**200 cards** blocked by **180** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -184,7 +184,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [this-combat-duration](#this-combat-duration) | 1 | 9126 | op |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
 | [times-attacked-this-turn](#times-attacked-this-turn) | 1 | 988 | value |
-| [token-creation-addition](#token-creation-addition) | 1 | 1753 | replacement |
 | [total-mana-value-selection](#total-mana-value-selection) | 1 | 4244 | op |
 | [total-toughness-cost-reduction](#total-toughness-cost-reduction) | 1 | 5188 | value |
 | [toughness-greater-than-power-filter](#toughness-greater-than-power-filter) | 1 | 3557 | selector |
@@ -2871,20 +2870,6 @@ Blocks **1** card.
 
 - **Moraug, Fury of Akoum** (rank 988) — `moraug_fury_of_akoum`
   - Each creature you control gets +1/+0 for each time it has attacked this turn.
-
-</details>
-
-## token-creation-addition
-
-Blocks **1** card.
-
-- **(replacement)** a replace_token_creation static axis that keeps the original tokens and adds a fixed extra token (here one thopter_1_1_c_flying) once per creation event, filtered by affects_token types [Artifact] and affects_player you -- e.g. an `and_create` list on replace_token_creation
-  <br>Why the existing vocabulary won't do: replace_token_creation offers only token_multiplier (doubles the same tokens, so a Treasure would become two Treasures, not a Treasure plus a Thopter) and create_instead (replaces the tokens, losing the originals); `and_create` exists but the loader refuses it outside replace_dies
-
-<details><summary>Cards waiting on this</summary>
-
-- **Stridehangar Automaton** (rank 1753) — `stridehangar_automaton`
-  - If one or more artifact tokens would be created under your control, those tokens plus an additional 1/1 colorless Thopter artifact creature token with flying are created instead.
 
 </details>
 
