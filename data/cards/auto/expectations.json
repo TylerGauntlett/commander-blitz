@@ -17534,6 +17534,10 @@
     },
     "zone": "graveyard"
   },
+  "treasure_vault": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "tree_monkey": {
     "zone": "battlefield"
   },
@@ -18988,6 +18992,10 @@
       "count": 2,
       "id": "thopter_1_1_c_flying"
     },
+    "zone": "battlefield"
+  },
+  "whirler_virtuoso": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "whirlwind_adept": {

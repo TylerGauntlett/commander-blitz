@@ -207842,6 +207842,57 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{X}{X}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "x": true
+              },
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "activated",
+          "text": "{X}{X}, {T}, Sacrifice this land: Create X Treasure tokens."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "treasure_vault",
+      "name": "Treasure Vault",
+      "oracle_text": "{T}: Add {C}.\n{X}{X}, {T}, Sacrifice this land: Create X Treasure tokens.",
+      "source": "auto",
+      "types": [
+        "Artifact",
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -224241,6 +224292,65 @@
         "Artificer"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "add_energy",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, you get {E}{E}{E} (three energy counters).",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "pay_energy": 3
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "thopter_1_1_c_flying"
+            }
+          ],
+          "kind": "activated",
+          "text": "Pay {E}{E}{E}: Create a 1/1 colorless Thopter artifact creature token with flying."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "whirler_virtuoso",
+      "mana_cost": "{1}{U}{R}",
+      "name": "Whirler Virtuoso",
+      "oracle_text": "When this creature enters, you get {E}{E}{E} (three energy counters).\nPay {E}{E}{E}: Create a 1/1 colorless Thopter artifact creature token with flying.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Vedalken",
+        "Artificer"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]

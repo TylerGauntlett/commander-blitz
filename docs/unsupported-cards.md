@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**217 cards** blocked by **194** capabilities.
+**218 cards** blocked by **195** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -113,6 +113,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [free-cast-this-turn](#free-cast-this-turn) | 1 | 6651 | op |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
 | [gold-token](#gold-token) | 1 | 705 | token |
+| [golem-token](#golem-token) | 1 | 2212 | token |
 | [grant-abilities-of-exiled-cards](#grant-abilities-of-exiled-cards) | 1 | 8370 | static_effect |
 | [grant-cycling-to-cards-in-hand](#grant-cycling-to-cards-in-hand) | 1 | 5169 | static_effect |
 | [grant-evoke](#grant-evoke) | 1 | 5749 | static_effect |
@@ -1895,6 +1896,24 @@ Blocks **1** card.
 
 - **Curse of Opulence** (rank 705) — `curse_of_opulence`
   - Whenever enchanted player is attacked, create a Gold token. Each opponent attacking that player does the same.
+
+</details>
+
+## golem-token
+
+Blocks **1** card.
+
+- **(token)** a 3/3 colorless Golem artifact creature token with flying
+  <br>Why the existing vocabulary won't do: token_ids has only golem_3_3_c_artifact (no keywords); creating it and granting flying with grant_keyword would leave the keyword off the token's copiable values, so a copy of it would lack flying
+- **(token)** a 3/3 colorless Golem artifact creature token with vigilance
+  <br>Why the existing vocabulary won't do: token_ids has only the keywordless golem_3_3_c_artifact; a granted keyword is not the printed token
+- **(token)** a 3/3 colorless Golem artifact creature token with trample
+  <br>Why the existing vocabulary won't do: token_ids has only the keywordless golem_3_3_c_artifact; a granted keyword is not the printed token
+
+<details><summary>Cards waiting on this</summary>
+
+- **Triplicate Titan** (rank 2212) — `triplicate_titan`
+  - When this creature dies, create a 3/3 colorless Golem artifact creature token with flying, a 3/3 colorless Golem artifact creature token with vigilance, and a 3/3 colorless Golem artifact creature token with trample.
 
 </details>
 

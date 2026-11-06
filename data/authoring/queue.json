@@ -291972,12 +291972,12 @@
     },
     "Treasure Vault": {
       "edhrec_rank": 486,
-      "gate": "template",
+      "gate": null,
       "name": "Treasure Vault",
-      "reason": "no template for: {X}{X}, {T}, Sacrifice this land: Create X Treasure tokens",
+      "reason": "",
       "scryfall_id": "e571614b-cef1-4e44-bfe4-0029db9694eb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Treasured Find": {
@@ -314012,12 +314012,12 @@
     },
     "Whirler Virtuoso": {
       "edhrec_rank": 5812,
-      "gate": "template",
+      "gate": null,
       "name": "Whirler Virtuoso",
-      "reason": "no template for: When this creature enters, you get {E}{E}{E}",
+      "reason": "",
       "scryfall_id": "e6f210bf-30c9-4904-9ceb-4ab180938f09",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Whirlermaker": {
