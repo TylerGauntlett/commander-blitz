@@ -1,0 +1,18 @@
+{
+  "card_id": "protector_of_the_wastes",
+  "name": "Protector of the Wastes",
+  "oracle_text": "Flying\nWhen this creature enters or becomes monstrous, exile up to two target artifacts and/or enchantments controlled by different players.\n{4}{W}: Monstrosity 3. (If this creature isn't monstrous, put three +1/+1 counters on it and it becomes monstrous.)",
+  "blocked_sentences": [
+    "When this creature enters or becomes monstrous, exile up to two target artifacts and/or enchantments controlled by different players."
+  ],
+  "needs": [
+    {
+      "capability": "one_per_player_with_count_cap",
+      "kind": "selector",
+      "what": "a target spec that is both size-capped (\"up to two\", count 2 + optional) and constrained so no two chosen targets share a controller (\"controlled by different players\") -- i.e. allow `one_per_player` on a fixed numeric `count` with `optional: true`, treating the count as the ceiling of the variable-size choice",
+      "why_existing_wont_do": "`one_per_player` is refused by the loader unless `count` is \"any\"; with \"any\" the ceiling is the number of players, so in a four-player Commander game the trigger could exile up to four permanents instead of two. The engine's `size_cap` in targeting.py would do exactly this but is internal (strive/casting) and not reachable from the DSL; dropping `one_per_player` instead would let both targets share a controller"
+    }
+  ],
+  "closest_existing": ["one_per_player", "total_mana_value"],
+  "confidence": "high"
+}

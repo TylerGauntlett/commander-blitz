@@ -1,0 +1,18 @@
+{
+  "card_id": "baldin_century_herdmaster",
+  "name": "Baldin, Century Herdmaster",
+  "oracle_text": "During your turn, each creature assigns combat damage equal to its toughness rather than its power.\nWhenever Baldin attacks, up to one hundred target creatures each get +0/+X until end of turn, where X is the number of cards in your hand.",
+  "blocked_sentences": [
+    "During your turn, each creature assigns combat damage equal to its toughness rather than its power."
+  ],
+  "needs": [
+    {
+      "capability": "combat_damage_by_toughness",
+      "kind": "static_effect",
+      "what": "a static effect (Doran, the Siege Tower style) making each creature matching `affects` assign combat damage equal to its toughness rather than its power, usable with a static `condition` such as {\"is_your_turn\": true}; combat damage assignment must read toughness instead of power for affected creatures",
+      "why_existing_wont_do": "No entry in static_effects changes which characteristic combat damage is assigned from: set_pt/buff change real power (wrong for every other power-reading effect and wrong for toughness), replace_damage only multiplies or adds to an amount, and all_damage_wither changes damage results not the amount assigned"
+    }
+  ],
+  "closest_existing": ["set_pt", "replace_damage"],
+  "confidence": "high"
+}

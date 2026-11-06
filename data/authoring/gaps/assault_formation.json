@@ -1,0 +1,25 @@
+{
+  "card_id": "assault_formation",
+  "name": "Assault Formation",
+  "oracle_text": "Each creature you control assigns combat damage equal to its toughness rather than its power.\n{G}: Target creature with defender can attack this turn as though it didn't have defender.\n{2}{G}: Creatures you control get +0/+1 until end of turn.",
+  "blocked_sentences": [
+    "Each creature you control assigns combat damage equal to its toughness rather than its power.",
+    "{G}: Target creature with defender can attack this turn as though it didn't have defender."
+  ],
+  "needs": [
+    {
+      "capability": "combat_damage_by_toughness",
+      "kind": "static_effect",
+      "what": "a static (Doran/Assault Formation) with an `affects` filter under which each matching creature assigns combat damage equal to its toughness rather than its power (rule 510.1a substitution), read by the combat-damage step and by trample/lethal-assignment math",
+      "why_existing_wont_do": "static_effects has buff, set_pt and replace_damage, but set_pt/buff change the creature's real power (wrong for every other power read), and replace_damage only multiplies or adds to damage already computed from power; nothing substitutes toughness for power at assignment"
+    },
+    {
+      "capability": "attack_despite_defender",
+      "kind": "op",
+      "what": "a one-shot op with a duration (this_turn) letting the targeted creature attack as though it didn't have defender, while it keeps the defender keyword for everything else",
+      "why_existing_wont_do": "lose_keyword removes defender outright (it would then stop counting as a defender for filters and other effects), and grant_keyword/must_attack do not lift the attack restriction; no op or static permits attacking despite defender"
+    }
+  ],
+  "closest_existing": ["set_pt", "replace_damage", "lose_keyword"],
+  "confidence": "high"
+}

@@ -1372,12 +1372,12 @@
     },
     "Access Tunnel": {
       "edhrec_rank": 588,
-      "gate": "template",
+      "gate": null,
       "name": "Access Tunnel",
-      "reason": "no template for: {3}, {T}: Target creature with power 3 or less can't be blocked this turn",
+      "reason": "",
       "scryfall_id": "de71e040-bf32-4469-bc18-567dace97dc8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Acclaimed Contender": {
@@ -11032,12 +11032,12 @@
     },
     "Arbor Adherent": {
       "edhrec_rank": 3044,
-      "gate": "template",
+      "gate": null,
       "name": "Arbor Adherent",
-      "reason": "proxy simplified it: mana clause read loosely: 'X mana of any one color, where X is the '",
+      "reason": "",
       "scryfall_id": "33e1dc92-8bb3-4841-ab7b-e9810c762c2a",
-      "source": "",
-      "status": "unexpressible",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Arbor Armament": {
@@ -18102,12 +18102,12 @@
     },
     "Axebane Guardian": {
       "edhrec_rank": 3282,
-      "gate": "template",
+      "gate": null,
       "name": "Axebane Guardian",
-      "reason": "proxy simplified it: mana clause read loosely: 'X mana in any combination of colors, whe'",
+      "reason": "",
       "scryfall_id": "2dfb7033-495d-4495-af02-d0841f081f1c",
-      "source": "",
-      "status": "unexpressible",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Axebane Stag": {
@@ -23172,12 +23172,12 @@
     },
     "Behind the Scenes": {
       "edhrec_rank": 4932,
-      "gate": "template",
+      "gate": null,
       "name": "Behind the Scenes",
-      "reason": "no template for: Creatures you control have skulk",
+      "reason": "",
       "scryfall_id": "7fac171d-a8b6-4bb7-a559-473574aa02a8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Behold the Beyond": {
@@ -24292,12 +24292,12 @@
     },
     "Betor, Ancestor's Voice": {
       "edhrec_rank": 5423,
-      "gate": "template",
+      "gate": null,
       "name": "Betor, Ancestor's Voice",
-      "reason": "no template for: At the beginning of your end step, put a number of +1/+1 counters on up to one other targe",
+      "reason": "",
       "scryfall_id": "2e261489-8dde-4594-8868-69f432f03d03",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Betor, Kin to All": {
@@ -26992,12 +26992,12 @@
     },
     "Blight Pile": {
       "edhrec_rank": 9532,
-      "gate": "template",
+      "gate": null,
       "name": "Blight Pile",
-      "reason": "no template for: {2}{B}, {T}: Each opponent loses X life, where X is the number of creatures with defender ",
+      "reason": "",
       "scryfall_id": "0dcc2699-03e6-47d1-b976-1453fe9d27b7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Blight Rot": {
@@ -38932,12 +38932,12 @@
     },
     "Canopy Gargantuan": {
       "edhrec_rank": 3284,
-      "gate": "template",
+      "gate": null,
       "name": "Canopy Gargantuan",
-      "reason": "no template for: Flying, ward {2}",
+      "reason": "",
       "scryfall_id": "87736547-7534-4f0a-86e0-be9b0428be1e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Canopy Gorger": {
@@ -49882,12 +49882,12 @@
     },
     "Colfenor's Urn": {
       "edhrec_rank": 7043,
-      "gate": "template",
+      "gate": null,
       "name": "Colfenor's Urn",
-      "reason": "no template for: Whenever a creature with toughness 4 or greater is put into your graveyard from the battle",
+      "reason": "",
       "scryfall_id": "419fea28-3813-4e65-8b90-6d335fdf0a0b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Colfenor, the Last Yew": {
@@ -55402,12 +55402,12 @@
     },
     "Crashing Drawbridge": {
       "edhrec_rank": 972,
-      "gate": "template",
+      "gate": null,
       "name": "Crashing Drawbridge",
-      "reason": "no template for: {T}: Creatures you control gain haste until end of turn",
+      "reason": "",
       "scryfall_id": "bc3e81f3-b456-4fe6-941d-a7f2bf4aa844",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Crashing Footfalls": {
@@ -130092,12 +130092,12 @@
     },
     "Hornet Nest": {
       "edhrec_rank": 2822,
-      "gate": "template",
+      "gate": null,
       "name": "Hornet Nest",
-      "reason": "no template for: Whenever this creature is dealt damage, create that many 1/1 green Insect creature tokens ",
+      "reason": "",
       "scryfall_id": "579b6909-a2e1-45d1-aa02-9318c468f9b0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hornet Queen": {
@@ -133642,12 +133642,12 @@
     },
     "Ikra Shidiqi, the Usurper": {
       "edhrec_rank": 3720,
-      "gate": "template",
+      "gate": null,
       "name": "Ikra Shidiqi, the Usurper",
-      "reason": "no template for: Whenever a creature you control deals combat damage to a player, you gain life equal to th",
+      "reason": "",
       "scryfall_id": "fa39bace-fc76-478d-b8f7-db75a59091fd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Il Mheg Pixie": {
@@ -135912,12 +135912,12 @@
     },
     "Indulging Patrician": {
       "edhrec_rank": 4231,
-      "gate": "template",
+      "gate": null,
       "name": "Indulging Patrician",
-      "reason": "no template for: At the beginning of your end step, if you gained 3 or more life this turn, each opponent l",
+      "reason": "",
       "scryfall_id": "642e0c48-1f77-41e0-abbe-f570b757cd66",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Industrial Advancement": {
@@ -141642,12 +141642,12 @@
     },
     "Jaddi Offshoot": {
       "edhrec_rank": 5266,
-      "gate": "template",
+      "gate": null,
       "name": "Jaddi Offshoot",
-      "reason": "no template for: Landfall — Whenever a land you control enters, you gain 1 life",
+      "reason": "",
       "scryfall_id": "88e69772-50b7-496e-a7b1-702f57a66d64",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jade Avenger": {
@@ -142212,12 +142212,12 @@
     },
     "Jaws of Defeat": {
       "edhrec_rank": 4373,
-      "gate": "template",
+      "gate": null,
       "name": "Jaws of Defeat",
-      "reason": "no template for: Whenever a creature you control enters, target opponent loses life equal to the difference",
+      "reason": "",
       "scryfall_id": "91db532f-6781-4240-9337-315efb54d631",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jaws of Stone": {
@@ -189752,12 +189752,12 @@
     },
     "Nyx-Fleece Ram": {
       "edhrec_rank": 4535,
-      "gate": "template",
+      "gate": null,
       "name": "Nyx-Fleece Ram",
-      "reason": "no template for: At the beginning of your upkeep, you gain 1 life",
+      "reason": "",
       "scryfall_id": "550c6402-5a9b-4318-9883-8ffacd61eba1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nyxathid": {
@@ -208802,12 +208802,12 @@
     },
     "Protector of the Wastes": {
       "edhrec_rank": 10488,
-      "gate": "template",
+      "gate": "compile",
       "name": "Protector of the Wastes",
-      "reason": "no template for: When this creature enters or becomes monstrous, exile up to two target artifacts and/or en",
+      "reason": "protector_of_the_wastes.abilities[0]: 'one_per_player' needs 'count': 'any' -- it caps a variable-size choice, and a fixed one has no room to cap",
       "scryfall_id": "3d0e4790-3ebc-4e2a-96aa-7f1909864baa",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Protege's Awakening": {
@@ -214952,12 +214952,12 @@
     },
     "Rampart Architect": {
       "edhrec_rank": 5588,
-      "gate": "template",
+      "gate": null,
       "name": "Rampart Architect",
-      "reason": "no template for: Whenever this creature enters or attacks, create a 1/3 white Wall creature token with defe",
+      "reason": "",
       "scryfall_id": "027dc6b6-cf74-423d-a6b4-3d7feb05a809",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rampart Crawler": {
@@ -223122,12 +223122,12 @@
     },
     "Rhox Faithmender": {
       "edhrec_rank": 1620,
-      "gate": "template",
+      "gate": null,
       "name": "Rhox Faithmender",
-      "reason": "no template for: If you would gain life, you gain twice that much life instead",
+      "reason": "",
       "scryfall_id": "de15c99b-a2f1-47df-8779-e7485ceee98a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rhox Maulers": {
@@ -238782,12 +238782,12 @@
     },
     "Seedborn Muse": {
       "edhrec_rank": 285,
-      "gate": "template",
+      "gate": null,
       "name": "Seedborn Muse",
-      "reason": "no template for: Untap all permanents you control during each other player's untap step",
+      "reason": "",
       "scryfall_id": "5a8412d9-8ee2-48ac-ad41-8957d535bcce",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Seedcradle Witch": {
@@ -242332,12 +242332,12 @@
     },
     "Shalai, Voice of Plenty": {
       "edhrec_rank": 1192,
-      "gate": "template",
+      "gate": null,
       "name": "Shalai, Voice of Plenty",
-      "reason": "no template for: You, planeswalkers you control, and other creatures you control have hexproof",
+      "reason": "",
       "scryfall_id": "b459b25c-647b-4353-932e-f590f26ab973",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shaleskin Bruiser": {
@@ -262012,12 +262012,12 @@
     },
     "Staff of Compleation": {
       "edhrec_rank": 1344,
-      "gate": "template",
+      "gate": null,
       "name": "Staff of Compleation",
-      "reason": "no template for: {T}, Pay 1 life: Destroy target permanent you own",
+      "reason": "",
       "scryfall_id": "315490d2-4d1f-4065-9d18-4682f1d7d066",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Staff of Domination": {
@@ -287882,12 +287882,12 @@
     },
     "Tip the Scales": {
       "edhrec_rank": 8026,
-      "gate": "template",
+      "gate": null,
       "name": "Tip the Scales",
-      "reason": "no template for: Sacrifice a creature. When you do, all creatures get -X/-X until end of turn, where X is t",
+      "reason": "",
       "scryfall_id": "00b492ca-9cba-4d51-91b9-41430c6933a1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tippy-Toe, Terrific Partner": {
@@ -290232,12 +290232,12 @@
     },
     "Tower Defense": {
       "edhrec_rank": 2929,
-      "gate": "template",
+      "gate": null,
       "name": "Tower Defense",
-      "reason": "no template for: Creatures you control get +0/+5 and gain reach until end of turn",
+      "reason": "",
       "scryfall_id": "195e94a4-a698-4c66-9428-5cc8a40d42c6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tower Drake": {
@@ -290402,12 +290402,12 @@
     },
     "Towering Titan": {
       "edhrec_rank": 4815,
-      "gate": "template",
+      "gate": null,
       "name": "Towering Titan",
-      "reason": "no template for: This creature enters with X +1/+1 counters on it, where X is the total toughness of other ",
+      "reason": "",
       "scryfall_id": "a2c3eac5-3354-44ce-97c2-bafce78433ca",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Towering Viewpoint": {
@@ -292022,12 +292022,12 @@
     },
     "Tree of Redemption": {
       "edhrec_rank": 3340,
-      "gate": "template",
+      "gate": null,
       "name": "Tree of Redemption",
-      "reason": "no template for: {T}: Exchange your life total with this creature's toughness",
+      "reason": "",
       "scryfall_id": "e39cc3c8-79c2-4593-8340-c3285f3a4c3a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tree of Tales": {
@@ -309422,12 +309422,12 @@
     },
     "Wall of Limbs": {
       "edhrec_rank": 11922,
-      "gate": "template",
+      "gate": null,
       "name": "Wall of Limbs",
-      "reason": "no template for: Whenever you gain life, put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "66d46b81-3131-4561-beca-ccf4a0973610",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wall of Lost Thoughts": {
@@ -309552,12 +309552,12 @@
     },
     "Wall of Reverence": {
       "edhrec_rank": 4420,
-      "gate": "template",
+      "gate": null,
       "name": "Wall of Reverence",
-      "reason": "no template for: At the beginning of your end step, you may gain life equal to the power of target creature",
+      "reason": "",
       "scryfall_id": "1515e039-b838-40b6-b087-eb9e9d9ff008",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wall of Roots": {
@@ -316562,12 +316562,12 @@
     },
     "Wingmantle Chaplain": {
       "edhrec_rank": 6776,
-      "gate": "template",
+      "gate": null,
       "name": "Wingmantle Chaplain",
-      "reason": "no template for: When this creature enters, create a 1/1 white Bird creature token with flying for each cre",
+      "reason": "",
       "scryfall_id": "f5800f3d-b2e0-4c74-94bf-f29b27f82130",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wingmate Roc": {
