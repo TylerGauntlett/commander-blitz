@@ -110572,12 +110572,12 @@
     },
     "Gleeful Arsonist": {
       "edhrec_rank": 2685,
-      "gate": "template",
+      "gate": null,
       "name": "Gleeful Arsonist",
-      "reason": "no template for: Whenever an opponent casts a noncreature spell, this creature deals damage equal to its po",
+      "reason": "",
       "scryfall_id": "5949e77b-a9e8-4c1c-8ee0-f3c7ac5f8f83",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gleeful Demolition": {
@@ -115582,12 +115582,12 @@
     },
     "Grab the Prize": {
       "edhrec_rank": 1455,
-      "gate": "template",
+      "gate": null,
       "name": "Grab the Prize",
-      "reason": "no template for: Draw two cards. If the discarded card wasn't a land card, deals 2 damage to each opponent",
+      "reason": "",
       "scryfall_id": "50895202-f1a1-4840-a11a-55b78b8b5929",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Grab the Reins": {
@@ -144992,12 +144992,12 @@
     },
     "Kaervek the Merciless": {
       "edhrec_rank": 2553,
-      "gate": "template",
+      "gate": null,
       "name": "Kaervek the Merciless",
-      "reason": "no template for: Whenever an opponent casts a spell, Kaervek deals damage equal to that spell's mana value ",
+      "reason": "",
       "scryfall_id": "95c5bd95-b483-4dfb-9010-cfee47d22468",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kaervek's Hex": {
@@ -147222,12 +147222,12 @@
     },
     "Kederekt Parasite": {
       "edhrec_rank": 1985,
-      "gate": "template",
+      "gate": null,
       "name": "Kederekt Parasite",
-      "reason": "no template for: Whenever an opponent draws a card, if you control a red permanent, you may have this creat",
+      "reason": "",
       "scryfall_id": "bc5da9e8-c070-4cf4-a21b-24ff2178d751",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kediss, Emberclaw Familiar": {
@@ -156082,12 +156082,12 @@
     },
     "Leechridden Swamp": {
       "edhrec_rank": 2520,
-      "gate": "template",
+      "gate": null,
       "name": "Leechridden Swamp",
-      "reason": "no template for: {B}, {T}: Each opponent loses 1 life. Activate only if you control two or more black perma",
+      "reason": "",
       "scryfall_id": "a07a0e31-ace6-40ad-8700-2d58135b5320",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Leela, Sevateem Warrior": {

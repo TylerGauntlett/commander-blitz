@@ -79344,6 +79344,86 @@
           "effects": [
             {
               "amount": {
+                "power_of": {
+                  "self": true
+                }
+              },
+              "op": "damage",
+              "player": {
+                "controller_of": "subject"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent casts a noncreature spell, this creature deals damage equal to its power to that player.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "counters": {
+                "+1/+1": 1
+              },
+              "destination": "battlefield",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Undying (When this creature dies, if it had no +1/+1 counters on it, return it to the battlefield under its owner's control with a +1/+1 counter on it.)",
+          "trigger": {
+            "condition": {
+              "cmp": "==",
+              "left": {
+                "counters_had": "+1/+1"
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "gleeful_arsonist",
+      "mana_cost": "{2}{R}",
+      "name": "Gleeful Arsonist",
+      "oracle_text": "Whenever an opponent casts a noncreature spell, this creature deals damage equal to its power to that player.\nUndying (When this creature dies, if it had no +1/+1 counters on it, return it to the battlefield under its owner's control with a +1/+1 counter on it.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
                 "const": 1
               },
               "op": "scry",
@@ -82545,6 +82625,64 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "additional_cost_options": [
+        {
+          "discard": 1,
+          "discard_selector": {
+            "not_types": [
+              "Land"
+            ]
+          }
+        },
+        {
+          "discard": 1,
+          "discard_selector": {
+            "types": [
+              "Land"
+            ]
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "grab_the_prize",
+      "mana_cost": "{1}{R}",
+      "name": "Grab the Prize",
+      "oracle_text": "As an additional cost to cast this spell, discard a card.\nDraw two cards. If the discarded card wasn't a land card, Grab the Prize deals 2 damage to each opponent.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "condition": {
+            "cost_option": 0
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -103863,6 +104001,68 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "mana_value_of": {
+                  "binding": "subject"
+                }
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker",
+                  "Battle"
+                ]
+              }
+            }
+          ],
+          "text": "Whenever an opponent casts a spell, Kaervek deals damage equal to that spell's mana value to any target.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "spell_cast"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "kaervek_the_merciless",
+      "mana_cost": "{5}{B}{R}",
+      "name": "Kaervek the Merciless",
+      "oracle_text": "Whenever an opponent casts a spell, Kaervek deals damage equal to that spell's mana value to any target.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Shaman"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -105483,6 +105683,63 @@
         "Horror"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "damage",
+                  "player": {
+                    "binding": "event_player"
+                  }
+                }
+              ],
+              "op": "may",
+              "prompt": "Have Kederekt Parasite deal 1 damage to that player?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent draws a card, if you control a red permanent, you may have this creature deal 1 damage to that player.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "colors": [
+                  "R"
+                ],
+                "controller": "you",
+                "zone": "battlefield"
+              }
+            },
+            "controller": "opponent",
+            "event": "draw"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "kederekt_parasite",
+      "mana_cost": "{B}",
+      "name": "Kederekt Parasite",
+      "oracle_text": "Whenever an opponent draws a card, if you control a red permanent, you may have this creature deal 1 damage to that player.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Horror"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -111972,6 +112229,75 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{B}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "({T}: Add {B}.)"
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "count": {
+                "colors": [
+                  "B"
+                ],
+                "controller": "you",
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "cost": {
+            "mana": "{B}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "activated",
+          "text": "{B}, {T}: Each opponent loses 1 life. Activate only if you control two or more black permanents"
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [],
+      "id": "leechridden_swamp",
+      "name": "Leechridden Swamp",
+      "oracle_text": "({T}: Add {B}.)\nThis land enters tapped.\n{B}, {T}: Each opponent loses 1 life. Activate only if you control two or more black permanents.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Swamp"
+      ],
+      "types": [
+        "Land"
       ]
     },
     {

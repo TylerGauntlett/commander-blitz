@@ -6860,6 +6860,14 @@
     },
     "zone": "battlefield"
   },
+  "gleeful_arsonist": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "glider_kids": {
     "zone": "battlefield"
   },
@@ -7103,6 +7111,22 @@
   "graaz_unstoppable_juggernaut": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "grab_the_prize": {
+    "graveyard_size": {
+      "0": 4
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 38
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "graveyard"
   },
   "grand_coliseum": {
     "zone": "battlefield"
@@ -8810,6 +8834,13 @@
       "0": 42
     }
   },
+  "kaervek_the_merciless": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "kalakscion_hunger_tyrant": {
     "zone": "battlefield"
   },
@@ -8917,6 +8948,13 @@
     }
   },
   "kederekt_creeper": {
+    "zone": "battlefield"
+  },
+  "kederekt_parasite": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "keen_duelist": {
@@ -9474,6 +9512,10 @@
     "zone": "battlefield"
   },
   "leech_collector_bloodletting": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "leechridden_swamp": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
