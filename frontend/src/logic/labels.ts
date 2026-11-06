@@ -606,14 +606,6 @@ export function describeEvent(
      */
     case "creature_dealt_combat_damage":
       return null;
-    /*
-     * A card arriving in a graveyard, silent because the move already has its
-     * line: `zone_change` for a departure from the battlefield, `mill` and
-     * `discard` for the library and the hand. It exists so a trigger can hear
-     * the arrival; a line here would say every death and mill twice.
-     */
-    case "put_into_graveyard":
-      return null;
     case "blockers_declared":
       return "Blockers declared";
     // Payment used to be entirely silent, then was narrated by a second switch

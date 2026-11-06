@@ -528,16 +528,6 @@ def move_object(
         # and its next death is not the one the delayed ability was about.
         _release_delayed_subject(state, oid, look_back=False)
 
-    # "Whenever a land card is put into a graveyard **from anywhere**" -- The
-    # Gitrog Monster, Syr Konrad. After the departure events, so a permanent's
-    # own leave triggers are heard first, and only once `to_zone` is final: a
-    # card a replacement sent to exile or the command zone was never put into a
-    # graveyard. The cards under a mutated pile arrive with it, from the
-    # battlefield, and are cards put there too.
-    if to_zone is Zone.GRAVEYARD and from_zone is not Zone.GRAVEYARD:
-        for arrived in (oid, *merged):
-            _fire_put_into_graveyard(state, arrived, from_zone)
-
     # "…and create a 2/2 black Zombie creature token": the rest of the
     # replacement event, performed once the card is in exile. Under the
     # replacement's controller, which is Kalitas's and not the dead creature's.
@@ -560,29 +550,6 @@ def move_object(
         )
 
     return obj
-
-
-def _fire_put_into_graveyard(state: GameState, oid: int, from_zone: Zone) -> None:
-    """Announce one card's arrival in a graveyard (`EventType.PUT_INTO_GRAVEYARD`).
-
-    Tokens are skipped: every printed line on this event says "card", and a
-    token is not one (111.1) -- nor is a copy of a spell, which is a token here.
-    ``player`` is the owner, whose graveyard it is (400.3), so ``controller:
-    "you"`` reads "**your** graveyard" whoever moved it.
-    """
-    obj = state.objects.get(oid)
-    if obj is None or obj.is_token or obj.zone is not Zone.GRAVEYARD:
-        return
-    fire(
-        state,
-        EventType.PUT_INTO_GRAVEYARD,
-        player=obj.owner,
-        source=oid,
-        oid=oid,
-        card=state.card_of(obj).id,
-        from_zone=from_zone.value,
-        batch=state.event_batch,
-    )
 
 
 def _card_id_of(state: GameState, oid: int | None) -> str | None:

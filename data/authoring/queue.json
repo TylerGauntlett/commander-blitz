@@ -42522,12 +42522,12 @@
     },
     "Centaur Vinecrasher": {
       "edhrec_rank": 10988,
-      "gate": null,
+      "gate": "template",
       "name": "Centaur Vinecrasher",
-      "reason": "",
+      "reason": "no template for: This creature enters with a number of +1/+1 counters on it equal to the number of land car",
       "scryfall_id": "cf8712ba-574b-4e53-9c7e-0a1465116320",
-      "source": "agent",
-      "status": "done",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "Centaur's Herald": {
@@ -50232,12 +50232,12 @@
     },
     "Colossal Grave-Reaver": {
       "edhrec_rank": 1942,
-      "gate": null,
+      "gate": "template",
       "name": "Colossal Grave-Reaver",
-      "reason": "",
+      "reason": "no template for: Whenever this creature enters or attacks, mill three cards",
       "scryfall_id": "7c3f7d76-528a-490a-852a-071adcd7bd55",
-      "source": "agent",
-      "status": "done",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "Colossal Growth": {
@@ -273282,12 +273282,12 @@
     },
     "Syr Konrad, the Grim": {
       "edhrec_rank": 256,
-      "gate": null,
+      "gate": "template",
       "name": "Syr Konrad, the Grim",
-      "reason": "",
+      "reason": "no template for: Whenever another creature dies, or a creature card is put into a graveyard from anywhere o",
       "scryfall_id": "5b40815d-0104-461e-b193-fcf5e1f35299",
-      "source": "agent",
-      "status": "done",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "Syr Vondam, Sunstar Exemplar": {
@@ -280982,12 +280982,12 @@
     },
     "The Gitrog Monster": {
       "edhrec_rank": 902,
-      "gate": null,
+      "gate": "template",
       "name": "The Gitrog Monster",
-      "reason": "",
+      "reason": "no template for: At the beginning of your upkeep, sacrifice unless you sacrifice a land",
       "scryfall_id": "40489e28-878d-44a2-847f-07beef1aa0f8",
-      "source": "agent",
-      "status": "done",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "The Gitrog, Ravenous Ride": {

@@ -48,19 +48,6 @@ class EventType:
     #: "one or more" batching in `triggers._queue` can fire it once for a
     #: single move of several cards.
     LEAVES_GRAVEYARD = "leaves_graveyard"
-    #: A card was put into a graveyard, from any zone -- "whenever a land card
-    #: is put into a graveyard **from anywhere**" (The Gitrog Monster), "a
-    #: creature card is put into a graveyard from anywhere other than the
-    #: battlefield" (Syr Konrad). The arriving direction of `LEAVES_GRAVEYARD`,
-    #: and narrow for the same reason: `ZONE_CHANGE` stays off the trigger bus.
-    #:
-    #: Fired by `zones.move_object` once the move is final, so a card a
-    #: replacement sent elsewhere (Rest in Peace, the commander replacement,
-    #: madness) was never put there and fires nothing. Cards only: a token is
-    #: not a card (111.1), and a copy of a spell is a token. ``player`` is the
-    #: graveyard's **owner** (400.3), ``from_zone`` where the card came from,
-    #: and ``batch`` the simultaneous group for "one or more".
-    PUT_INTO_GRAVEYARD = "put_into_graveyard"
 
     # cards and the stack
     #: One card drawn. ``data["nth"]`` is that draw's **ordinal** for its player

@@ -9873,11 +9873,8 @@ group. `discard` groups by the discard: one `replacements.discard` call -- a
 cleanup-step trim, one creature's connive -- is one group, and two discards
 are two. `life_lost` groups by the loss: one effect op or cost payment, or one
 combat damage step however many players it hits; it is below. `dealt_damage`
-groups by the damage event, below. `put_into_graveyard` groups by the effect
-op, cost payment or discard that moved the cards, and binds every matching card
-of the group as `moved`; see
-["Put into a graveyard from anywhere"](#put-into-a-graveyard-from-anywhere--put_into_graveyard).
-The loader refuses `batched` on any other event, where nothing would group it.
+groups by the damage event, below. The loader refuses `batched` on any other
+event, where nothing would group it.
 
 "Whenever you discard one or more land cards, each opponent loses 2 life."
 (Doctor Doom, King of Latveria)
@@ -9957,69 +9954,6 @@ opponent. `controller` is asked of each loss first, so your own loss in an
 even in one resolution. Nothing is summed, since the group spans players:
 `amount` and `event_player` are the first opponent's, so a card that pays out
 "that much" per opponent wants the unbatched trigger.
-
-## Put into a graveyard from anywhere — `put_into_graveyard`
-
-"Whenever one or more land cards are put into your graveyard from anywhere,
-draw a card." (The Gitrog Monster)
-
-```jsonc
-"trigger": {"event": "put_into_graveyard", "controller": "you",
-            "filter": {"types": ["Land"]}, "batched": true},
-"effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
-```
-
-One event per **card** that arrives in a graveyard, from any zone: dying or
-sacrificed, discarded, milled or surveilled, countered or resolved off the
-stack, out of exile. `zones.move_object` fires it once the destination is
-final, so a card Rest in Peace, the commander replacement or madness sent
-elsewhere fires nothing. A token is not a card (111.1) and never fires it,
-nor does a copy of a spell; a dying token is `dies`'s. The subject is the card,
-asked by its printed face in the graveyard, and `controller` is the
-graveyard's **owner** (400.3): "your graveyard" holds even for a stolen
-creature that dies under an opponent.
-
-`from_zones` narrows where it came from. "Whenever … a creature card is put
-into a graveyard from anywhere other than the battlefield, Syr Konrad deals 1
-damage to each opponent":
-
-```jsonc
-"trigger": {"event": "put_into_graveyard", "controller": "any",
-            "from_zones": ["library", "hand", "stack", "exile", "command"],
-            "filter": {"types": ["Creature"]}}
-```
-
-The other two clauses of that sentence are their own abilities on the same
-printed line, `creature_dies` with `exclude_self` and `leaves_graveyard`; a
-creature dying is that first clause and not this one, so it pays once.
-
-`batched` makes "one or more" one firing per group, and binds the group's
-matching cards as the list `moved`. "Whenever one or more creature cards are
-put into your graveyard from your library, put one of them onto the
-battlefield" (Colossal Grave-Reaver):
-
-```jsonc
-"trigger": {"event": "put_into_graveyard", "controller": "you",
-            "from_zones": ["library"], "filter": {"types": ["Creature"]},
-            "batched": true},
-"effects": [{"op": "put_onto_battlefield",
-             "objects": {"binding": "moved", "zone": "graveyard",
-                         "count": 1, "chooser": "controller"}}]
-```
-
-`zone: "graveyard"` keeps "one of them" to the cards still there as it
-resolves. Unbatched, `moved` is the one card. A card already in the graveyard
-is never in it, which is what sets it apart from a plain graveyard selector.
-
-From its own graveyard: "Whenever a land card is put into a graveyard from
-anywhere, you may pay {G}{G}. If you do, return this card from your graveyard
-to your hand" (Centaur Vinecrasher) is the same trigger with `active_zones:
-["graveyard"]`.
-
-The near misses: `leaves_battlefield` with `to_zones: ["graveyard"]` and
-`dies` see a permanent leaving play and never a milled or discarded card;
-`discard` sees only the hand; a `discard` trigger beside a `dies` trigger still
-misses every mill and fires twice for one move across two zones.
 
 ## "Enters with a counter on it **for each** …"
 
