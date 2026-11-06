@@ -1943,3 +1943,35 @@ class TestTheMarduSurgeTokens:
         other = pool.get(near_miss)
         assert other is not None
         assert differs(other)
+
+
+class TestTheAbzanArmorTokens:
+    """Hornet Nest: *"create that many 1/1 green Insect creature tokens with
+    flying and deathtouch"*; Rampart Architect: *"create a 1/3 white Wall
+    creature token with defender."* Each sits beside the near miss a card
+    would otherwise reach for."""
+
+    def test_the_hornet_is_a_green_one_one_with_flying_and_deathtouch(self, pool):
+        token = pool.get("insect_1_1_g_flying_deathtouch")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (1, 1)
+        assert sorted(token.colors) == ["G"]
+        assert list(token.subtypes) == ["Insect"]
+        assert sorted(token.keywords) == ["deathtouch", "flying"]
+        assert not token.abilities
+
+    def test_the_plain_green_insect_has_neither_keyword(self, pool):
+        assert not pool.get("insect_1_1_g").keywords
+
+    def test_the_rampart_wall_is_a_white_one_three_defender(self, pool):
+        token = pool.get("wall_1_3_w_defender")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (1, 3)
+        assert sorted(token.colors) == ["W"]
+        assert list(token.subtypes) == ["Wall"]
+        assert list(token.keywords) == ["defender"]
+        assert not token.abilities
+
+    def test_the_colorless_wall_is_still_zero_power_with_reach(self, pool):
+        wall = pool.get("wall_0_3_c_defender_reach")
+        assert wall.power == 0 and not wall.colors and "reach" in wall.keywords

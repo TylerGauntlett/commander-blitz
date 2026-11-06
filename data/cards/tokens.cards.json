@@ -1965,6 +1965,30 @@
       ]
     },
     {
+      "id": "insect_1_1_g_flying_deathtouch",
+      "name": "Insect Token",
+      "oracle_text": "1/1 green Insect creature token with flying and deathtouch.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Insect"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true,
+      "keywords": [
+        "flying",
+        "deathtouch"
+      ]
+    },
+    {
       "id": "insect_1_1_b_flying",
       "name": "Insect Token",
       "oracle_text": "1/1 black Insect creature token with flying.",
@@ -3467,6 +3491,29 @@
         "B"
       ],
       "is_token": true
+    },
+    {
+      "id": "wall_1_3_w_defender",
+      "name": "Wall Token",
+      "oracle_text": "1/3 white Wall creature token with defender.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Wall"
+      ],
+      "power": 1,
+      "toughness": 3,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true,
+      "keywords": [
+        "defender"
+      ]
     },
     {
       "id": "wall_0_3_c_defender_reach",
