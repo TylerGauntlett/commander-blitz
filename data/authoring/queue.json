@@ -21768,7 +21768,7 @@
       "scryfall_id": "8b3c8050-6acb-4d53-ba46-646ca88d4eb6",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Battle Brawler": {
       "edhrec_rank": 24357,
@@ -300748,7 +300748,7 @@
       "scryfall_id": "917514c0-9cd5-4b97-85b9-c4f753560ad4",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Vampire Hexmage": {
       "edhrec_rank": 8991,
