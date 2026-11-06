@@ -194197,6 +194197,11 @@
       "source": "auto",
       "spell_effects": [
         {
+          "as": "victim",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
           "objects": {
             "target": "t1"
           },
@@ -194208,7 +194213,7 @@
           },
           "op": "lose_life",
           "player": {
-            "controller_of_target": "t1"
+            "controller_of": "victim"
           }
         }
       ],
