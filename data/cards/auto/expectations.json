@@ -69,6 +69,10 @@
   "accorder_s_shield": {
     "zone": "battlefield"
   },
+  "accursed_duneyard": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "accursed_spirit": {
     "zone": "battlefield"
   },
@@ -1618,6 +1622,10 @@
     },
     "zone": "graveyard"
   },
+  "binding_mummy": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "binding_the_old_gods": {
     "counters": {
       "amount": 1,
@@ -2482,6 +2490,11 @@
   "cascade_bluffs": {
     "zone": "battlefield"
   },
+  "cast_out": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
   "castle_ardenvale": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -3106,6 +3119,20 @@
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
+  "commence_the_endgame": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 38
+    },
+    "tokens": {
+      "count": 1,
+      "id": "zombie_army_0_0_b"
+    },
+    "zone": "graveyard"
+  },
   "commencement_of_festivities": {
     "zone": "graveyard"
   },
@@ -3247,6 +3274,17 @@
   },
   "coretapper": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "corpse_augur": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "corpse_knight": {
+    "battlefield_count": 33,
+    "life": {
+      "1": 40
+    },
     "zone": "battlefield"
   },
   "corrupted_conviction": {

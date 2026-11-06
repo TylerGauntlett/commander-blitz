@@ -1462,12 +1462,12 @@
     },
     "Accursed Duneyard": {
       "edhrec_rank": 2532,
-      "gate": "template",
+      "gate": null,
       "name": "Accursed Duneyard",
-      "reason": "no template for: {2}, {T}: Regenerate target Shade, Skeleton, Specter, Spirit, Vampire, Wraith, or Zombie",
+      "reason": "",
       "scryfall_id": "7f288449-e9a8-444e-9639-fbcb742d2409",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Accursed Horde": {
@@ -24862,12 +24862,12 @@
     },
     "Binding Mummy": {
       "edhrec_rank": 9195,
-      "gate": "template",
+      "gate": null,
       "name": "Binding Mummy",
-      "reason": "no template for: Whenever another Zombie you control enters, you may tap target artifact or creature",
+      "reason": "",
       "scryfall_id": "5433a7a1-0602-4aa5-ae7e-815b105bc601",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Binding Negotiation": {
@@ -40772,12 +40772,12 @@
     },
     "Cast Out": {
       "edhrec_rank": 5128,
-      "gate": "template",
+      "gate": null,
       "name": "Cast Out",
-      "reason": "no template for: When this enchantment enters, exile target nonland permanent an opponent controls until th",
+      "reason": "",
       "scryfall_id": "0d403ab1-56d1-44a6-a414-6cc7a114c62d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cast Through Time": {
@@ -50832,12 +50832,12 @@
     },
     "Commence the Endgame": {
       "edhrec_rank": 8438,
-      "gate": "template",
+      "gate": null,
       "name": "Commence the Endgame",
-      "reason": "no template for: This spell can't be countered",
+      "reason": "",
       "scryfall_id": "4ed00cef-17e0-4d21-97b7-2f7e31c7d752",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Commencement of Festivities": {
@@ -53512,12 +53512,12 @@
     },
     "Corpse Augur": {
       "edhrec_rank": 5944,
-      "gate": "template",
+      "gate": null,
       "name": "Corpse Augur",
-      "reason": "no template for: When this creature dies, you draw X cards and you lose X life, where X is the number of cr",
+      "reason": "",
       "scryfall_id": "8d1d7df2-acf8-4e10-81cc-bdb23ffd4c7f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Corpse Blockade": {
@@ -53612,12 +53612,12 @@
     },
     "Corpse Knight": {
       "edhrec_rank": 1409,
-      "gate": "template",
+      "gate": null,
       "name": "Corpse Knight",
-      "reason": "no template for: Whenever another creature you control enters, each opponent loses 1 life",
+      "reason": "",
       "scryfall_id": "8859c03c-6c75-402f-9870-d4067a4ec4ed",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Corpse Lunge": {
