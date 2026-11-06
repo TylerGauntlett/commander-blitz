@@ -16511,6 +16511,10 @@
   "taigam_s_scheming": {
     "zone": "graveyard"
   },
+  "tainted_peak": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "tajuru_blightblade": {
     "zone": "battlefield"
   },
@@ -16698,6 +16702,10 @@
     }
   },
   "teacher_s_pest": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "tectonic_giant": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -17039,6 +17047,13 @@
     "zone": "battlefield"
   },
   "the_lady_of_the_mountain": {
+    "zone": "battlefield"
+  },
+  "the_lord_of_pain": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "the_mycosynth_gardens": {

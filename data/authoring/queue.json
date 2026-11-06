@@ -273802,12 +273802,12 @@
     },
     "Tainted Peak": {
       "edhrec_rank": 498,
-      "gate": "template",
+      "gate": null,
       "name": "Tainted Peak",
-      "reason": "no template for: {T}: Add {B} or {R}. Activate only if you control a Swamp",
+      "reason": "",
       "scryfall_id": "7e6f1a55-0fec-4b94-9640-9110ca8d0212",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tainted Remedy": {
@@ -276172,12 +276172,12 @@
     },
     "Tectonic Giant": {
       "edhrec_rank": 2896,
-      "gate": "template",
+      "gate": null,
       "name": "Tectonic Giant",
-      "reason": "no template for: Whenever this creature attacks or becomes the target of a spell an opponent controls, choo",
+      "reason": "",
       "scryfall_id": "4134a2aa-623c-49fc-bd87-26b861860ad5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tectonic Hazard": {
@@ -281422,12 +281422,12 @@
     },
     "The Lord of Pain": {
       "edhrec_rank": 2363,
-      "gate": "template",
+      "gate": null,
       "name": "The Lord of Pain",
-      "reason": "no template for: Your opponents can't gain life",
+      "reason": "",
       "scryfall_id": "494c244e-dcdc-4169-9743-8a61f58e8763",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Lord of the Eagles": {

@@ -1,0 +1,18 @@
+{
+  "card_id": "theater_of_horrors",
+  "name": "Theater of Horrors",
+  "oracle_text": "At the beginning of your upkeep, exile the top card of your library.\nDuring your turn, if an opponent lost life this turn, you may play lands and cast spells from among cards exiled with this enchantment.\n{3}{R}: This enchantment deals 1 damage to target opponent or planeswalker.",
+  "blocked_sentences": [
+    "During your turn, if an opponent lost life this turn, you may play lands and cast spells from among cards exiled with this enchantment."
+  ],
+  "needs": [
+    {
+      "capability": "playable_condition_opponent_lost_life",
+      "kind": "engine",
+      "what": "a new `playable_condition` value (e.g. \"your_turn_and_opponent_lost_life\") for exile/look_at_top permissions with `playable: \"while_exiled\"`: the exiled cards may be played only while it is the effect controller's turn and some opponent's TurnLedger.life_lost is greater than 0 this turn, rechecked each time the play is offered",
+      "why_existing_wont_do": "PLAYABLE_CONDITIONS (playable_conditions in the packet) holds only \"you_attacked_with_a_commander\"; the value `life_lost_this_turn` and the condition `is_your_turn` exist but only for `if`/trigger conditions, not as a play permission gate, and a `while_exiled` permission without the gate would let the cards be played on any turn with no life loss, which is a strictly stronger card"
+    }
+  ],
+  "closest_existing": ["exile playable: while_exiled", "playable_condition: you_attacked_with_a_commander", "life_lost_this_turn"],
+  "confidence": "high"
+}
