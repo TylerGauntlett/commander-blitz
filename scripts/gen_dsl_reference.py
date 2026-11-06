@@ -447,7 +447,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "choose_number": ("Control flow", "Choose an integer in a printed range on resolution; `as` records it.",
                       '"Choose a number"'),
     "choose_player": ("Control flow", "Choose a player; `as` records the seat.", None),
-    "choose_permanents": ("Control flow", "Mark permanents without acting on them; `as` records them.",
+    "choose_permanents": ("Control flow", "Mark permanents without acting on them; `as` records them; `max_total_power` caps the chosen set's total power.",
                           H_CHOOSE_PERMANENTS),
     "repeat": ("Control flow", "Run effects N times.", None),
     "repeat_while": ("Control flow", "Run effects while a condition holds.", None),

@@ -196,7 +196,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `choose_color` | Control flow |  | Choose a color, readable later; `except_colors` removes colors from the offer. | ["Choose a color"](card-dsl-cookbook.md#choose-a-color) |
 | `choose_mode` | Control flow |  | Choose one or more modes and run them. | [Modal spells with a target](card-dsl-cookbook.md#modal-spells-with-a-target) |
 | `choose_number` | Control flow | yes | Choose an integer in a printed range on resolution; `as` records it. | ["Choose a number"](card-dsl-cookbook.md#choose-a-number) |
-| `choose_permanents` | Control flow | yes | Mark permanents without acting on them; `as` records them. | [choose_permanents — marking without acting](card-dsl-cookbook.md#choose_permanents--marking-without-acting) |
+| `choose_permanents` | Control flow | yes | Mark permanents without acting on them; `as` records them; `max_total_power` caps the chosen set's total power. | [choose_permanents — marking without acting](card-dsl-cookbook.md#choose_permanents--marking-without-acting) |
 | `choose_player` | Control flow | yes | Choose a player; `as` records the seat. | [Effect ops](card-dsl.md#effect-ops) |
 | `choose_type` | Control flow |  | Choose a creature, permanent or card type (`of`), readable later. | ["Choose a creature type"](card-dsl-cookbook.md#choose-a-creature-type) |
 | `delay` | Control flow |  | Run effects at the beginning of a named later step. | [Delayed triggers — "at the beginning of the next …"](card-dsl-cookbook.md#delayed-triggers--at-the-beginning-of-the-next-) |

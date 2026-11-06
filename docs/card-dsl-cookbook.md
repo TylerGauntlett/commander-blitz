@@ -10409,6 +10409,31 @@ Its binding **accumulates**, which is what makes the per-type quota sayable.
 choice of four would happily keep four creatures; four choices sharing one name
 keep one of each, and the single `exclude_binding` on the sweep spares them all.
 
+#### `max_total_power` — a ceiling on the chosen set's sum
+
+```jsonc
+// Slaughter the Strong — each player keeps creatures with total power 4 or less.
+{ "op": "for_each_player", "players": "each_player", "effects": [
+    { "op": "choose_permanents", "as": "kept", "max_total_power": 4,
+      "prompt": "Keep creatures with total power 4 or less",
+      "objects": { "zone": "battlefield", "controller": { "binding": "each_player" },
+                   "types": ["Creature"], "count": "any",
+                   "chooser": { "binding": "each_player" } } } ] },
+{ "op": "sacrifice", "chooser": "none",
+  "objects": { "zone": "battlefield", "controller": "any", "types": ["Creature"],
+               "count": "all", "exclude_binding": "kept" } }
+```
+
+`max_total_power` (a value expression) caps the **sum** of the live power of
+what is chosen. It is asked one permanent at a time, the way crew's
+`total_power` is paid: each question offers only what still fits under what is
+left, and the chooser may stop whenever they like. Power is not clamped, so a
+negative-power creature makes room for the next pick. The loader requires
+`count: "any"` on its `objects` and refuses the key on any other op. The near
+miss is a per-creature `power: {"op": "<=", "value": 4}` filter, which keeps
+two 4/4s where the printed card keeps one. The sweep is a `sacrifice`, so an
+indestructible creature that was not kept still goes.
+
 ### `may`'s `as`, and `except` on a player spec
 
 ```jsonc

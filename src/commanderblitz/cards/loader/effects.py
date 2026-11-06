@@ -2763,6 +2763,23 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             f"{where}: 'choose_permanents' only marks permanents, so it needs an "
             f"'as' for something later to read"
         )
+    if "max_total_power" in effect:
+        # Slaughter the Strong's "any number … with total power 4 or less".
+        # Only `choose_permanents` reads it; on another op it would load and
+        # take everything. The ceiling is the whole constraint, so the pool is
+        # "any number" -- a fixed count beside it is two limits nothing printed
+        # says. (`count: "any"` already refuses `random`.)
+        if op != "choose_permanents":
+            raise DslError(
+                f"{where}: 'max_total_power' caps a choose_permanents choice, not {op!r}"
+            )
+        validate_value(effect["max_total_power"], f"{where}.max_total_power")
+        objects = effect.get("objects")
+        if not isinstance(objects, Mapping) or objects.get("count") != "any":
+            raise DslError(
+                f"{where}: 'max_total_power' chooses any number under the ceiling, "
+                f"so its 'objects' needs count: \"any\""
+            )
     if op == "create_token" and "token" not in effect:
         raise DslError(f"{where}: create_token needs a 'token' id")
     if op == "create_token" and ("power" in effect) != ("toughness" in effect):
