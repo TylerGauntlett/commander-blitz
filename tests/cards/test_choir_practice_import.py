@@ -23,7 +23,11 @@ The list then moved -- Archivist of Oghma and Heraldic Banner out, Herald of
 Eternal Dawn and Lightning Greaves in -- and came back 73 of 74, with the Herald's
 "you can't lose the game" inert until it was written. Then Angel of the Ruins
 and Angel of Vitality out, Herald of the Host and Seraph of the Sword in -- 73
-of 74, with the Host's myriad inert until it was written.
+of 74, with the Host's myriad inert until it was written. Then Dawn of Hope,
+Dazzling Angel, Mind Stone, Seraph of the Sword and Youthful Valkyrie out, Angel
+of Vitality, Authority of the Consuls, Battle Angels of Tyr, Land Tax and
+Luminarch Ascension in -- 73 of 74, with Battle Angels of Tyr partial until it
+was written.
 
 So this file pins the same claim as its siblings: **every one of its 74 distinct
 cards resolving `native`**, through the same `importer.import_deck` a pasted link
@@ -53,19 +57,20 @@ DECK: tuple[tuple[str, int], ...] = (
     ("Akroma's Will", 1),
     ("Angel of Destiny", 1),
     ("Angel of Invention", 1),
+    ("Angel of Vitality", 1),
     ("Angelic Field Marshal", 1),
     ("Arcane Signet", 1),
     ("Archangel of Thune", 1),
     ("Archangel of Tithes", 1),
+    ("Authority of the Consuls", 1),
     ("Avacyn, Angel of Hope", 1),
+    ("Battle Angels of Tyr", 1),
     ("Bishop of Wings", 1),
     ("Bonders' Enclave", 1),
     ("Castle Ardenvale", 1),
     ("Cathars' Crusade", 1),
     ("Clever Concealment", 1),
     ("Court of Grace", 1),
-    ("Dawn of Hope", 1),
-    ("Dazzling Angel", 1),
     ("Drannith Magistrate", 1),
     ("Eiganjo, Seat of the Empire", 1),
     ("Elesh Norn, Grand Cenobite", 1),
@@ -87,13 +92,14 @@ DECK: tuple[tuple[str, int], ...] = (
     ("Herald's Horn", 1),
     ("Inspiring Overseer", 1),
     ("Kindred Judgment", 1),
+    ("Land Tax", 1),
     ("Lightning Greaves", 1),
+    ("Luminarch Ascension", 1),
     ("Lyra Dawnbringer", 1),
     ("Lyra, Archangel of Dawn", 1),
     ("Magus of the Moat", 1),
     ("Metastatic Evangel", 1),
     ("Minas Tirith", 1),
-    ("Mind Stone", 1),
     ("Norn's Choirmaster", 1),
     ("Ob Nixilis, the Ascended", 1),
     ("Patchwork Banner", 1),
@@ -106,7 +112,6 @@ DECK: tuple[tuple[str, int], ...] = (
     ("Secluded Steppe", 1),
     ("Sephara, Sky's Blade", 1),
     ("Seraph Sanctuary", 1),
-    ("Seraph of the Sword", 1),
     ("Serra the Benevolent", 1),
     ("Sol Ring", 1),
     ("Starnheim Aspirant", 1),
@@ -122,7 +127,6 @@ DECK: tuple[tuple[str, int], ...] = (
     ("Vanquisher's Banner", 1),
     ("War Room", 1),
     ("Wojek Investigator", 1),
-    ("Youthful Valkyrie", 1),
 )
 
 pytestmark = pytest.mark.skipif(

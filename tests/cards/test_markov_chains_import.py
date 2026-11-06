@@ -9,7 +9,9 @@ Vampire Nocturnus out, Carmen, Cruel Skymarcher in -- and 90 of 91 with Carmen
 partial, until #53 wrote her. Then Florian, Malakir Bloodwitch and Sundown
 Pass out, Authority of the Consuls, Bloodline Recollector and an eighth Swamp
 in -- 89 of 90 with Bloodline Recollector's prepare trigger inert, until it
-was written. This file holds the list
+was written. Then Authority of the Consuls, Clavileño and Village Rites out,
+Idol of Oblivion, Malakir Bloodwitch and Vampire Gourmand in -- 89 of 90 with
+Vampire Gourmand partial, until it was written. This file holds the list
 as it now stands, imported through the same `importer.import_deck` a pasted
 link goes through, so a card dropping out of `data/cards/auto/` or an engine
 change invalidating one fails here rather than in a game.
@@ -36,7 +38,6 @@ DECK: tuple[tuple[str, int], ...] = (
     ("Anguished Unmaking", 1),
     ("Anowon, the Ruin Sage", 1),
     ("Arcane Signet", 1),
-    ("Authority of the Consuls", 1),
     ("Baron Bertram Graywater", 1),
     ("Bartolomé del Presidio", 1),
     ("Bastion of Remembrance", 1),
@@ -56,7 +57,6 @@ DECK: tuple[tuple[str, int], ...] = (
     ("Carrion Feeder", 1),
     ("Caves of Koilos", 1),
     ("Charismatic Conqueror", 1),
-    ("Clavile\u00f1o, First of the Blessed", 1),
     ("Clever Concealment", 1),
     ("Command Tower", 1),
     ("Cordial Vampire", 1),
@@ -76,10 +76,12 @@ DECK: tuple[tuple[str, int], ...] = (
     ("Henrika Domnathi // Henrika, Infernal Seer", 1),
     ("Herald's Horn", 1),
     ("High-Society Hunter", 1),
+    ("Idol of Oblivion", 1),
     ("Impact Tremors", 1),
     ("Indulgent Aristocrat", 1),
     ("Isolated Chapel", 1),
     ("Legion Lieutenant", 1),
+    ("Malakir Bloodwitch", 1),
     ("Malakir Rebirth // Malakir Mire", 1),
     ("Marauding Blight-Priest", 1),
     ("Master of Dark Rites", 1),
@@ -113,9 +115,9 @@ DECK: tuple[tuple[str, int], ...] = (
     ("Talisman of Hierarchy", 1),
     ("Talisman of Indulgence", 1),
     ("Teferi's Protection", 1),
+    ("Vampire Gourmand", 1),
     ("Vault of the Archangel", 1),
     ("Vein Ripper", 1),
-    ("Village Rites", 1),
     ("Viscera Seer", 1),
     ("Vito, Thorn of the Dusk Rose", 1),
     ("Voldaren Estate", 1),

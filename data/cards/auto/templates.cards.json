@@ -17509,6 +17509,239 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "effects": [
+                    {
+                      "as": "myriad_token",
+                      "attacking": {
+                        "binding": "each_player"
+                      },
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "copy_permanent",
+                      "or_planeswalker": true,
+                      "tapped": true
+                    },
+                    {
+                      "effects": [
+                        {
+                          "objects": {
+                            "binding": "myriad_token"
+                          },
+                          "op": "exile"
+                        }
+                      ],
+                      "op": "delay",
+                      "step": "end_of_combat",
+                      "text": "Exile the tokens at end of combat."
+                    }
+                  ],
+                  "op": "may"
+                }
+              ],
+              "op": "for_each_player",
+              "players": {
+                "except": "you",
+                "not": {
+                  "binding": "defender"
+                }
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Flying, myriad",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "condition": {
+                "all": [
+                  {
+                    "cmp": "=",
+                    "left": {
+                      "player_count": {
+                        "binding": "event_player"
+                      }
+                    },
+                    "right": {
+                      "const": 1
+                    }
+                  },
+                  {
+                    "cmp": "=",
+                    "left": {
+                      "player_count": {
+                        "cmp": ">=",
+                        "objects": {
+                          "zone": "hand"
+                        },
+                        "player": "each_player",
+                        "than": {
+                          "cards_in_hand": {
+                            "binding": "event_player"
+                          }
+                        }
+                      }
+                    },
+                    "right": {
+                      "const": 1
+                    }
+                  }
+                ]
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ]
+            },
+            {
+              "condition": {
+                "all": [
+                  {
+                    "cmp": "=",
+                    "left": {
+                      "player_count": {
+                        "binding": "event_player"
+                      }
+                    },
+                    "right": {
+                      "const": 1
+                    }
+                  },
+                  {
+                    "cmp": "=",
+                    "left": {
+                      "player_count": {
+                        "cmp": ">=",
+                        "objects": {
+                          "types": [
+                            "Land"
+                          ],
+                          "zone": "battlefield"
+                        },
+                        "player": "each_player",
+                        "than": {
+                          "count": {
+                            "controller": {
+                              "binding": "event_player"
+                            },
+                            "types": [
+                              "Land"
+                            ],
+                            "zone": "battlefield"
+                          }
+                        }
+                      }
+                    },
+                    "right": {
+                      "const": 1
+                    }
+                  }
+                ]
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "create_token",
+                  "token": "treasure_token"
+                }
+              ]
+            },
+            {
+              "condition": {
+                "all": [
+                  {
+                    "cmp": "=",
+                    "left": {
+                      "player_count": {
+                        "binding": "event_player"
+                      }
+                    },
+                    "right": {
+                      "const": 1
+                    }
+                  },
+                  {
+                    "cmp": ">",
+                    "left": {
+                      "life_of": {
+                        "binding": "event_player"
+                      }
+                    },
+                    "right": {
+                      "max_life_of": {
+                        "not": {
+                          "binding": "event_player"
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 3
+                  },
+                  "op": "gain_life",
+                  "player": "you"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, draw a card if that player has more cards in hand than each other player. Then you create a Treasure token if that player controls more lands than each other player. Then you gain 3 life if that player has more life than each other player.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "battle_angels_of_tyr",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{W}{W}",
+      "name": "Battle Angels of Tyr",
+      "oracle_text": "Flying, myriad\nWhenever this creature deals combat damage to a player, draw a card if that player has more cards in hand than each other player. Then you create a Treasure token if that player controls more lands than each other player. Then you gain 3 life if that player has more life than each other player.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Angel",
+        "Knight"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "mana": "{1}{R}"
           },
@@ -216113,6 +216346,71 @@
         "Soldier"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                },
+                {
+                  "duration": "this_turn",
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "unblockable"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "sacrifice": {
+                  "controller": "you",
+                  "count": 1,
+                  "exclude_self": true,
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "player": "you",
+              "prompt": "Sacrifice another creature?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, you may sacrifice another creature. If you do, draw a card and this creature can't be blocked this turn.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "vampire_gourmand",
+      "mana_cost": "{1}{B}",
+      "name": "Vampire Gourmand",
+      "oracle_text": "Whenever this creature attacks, you may sacrifice another creature. If you do, draw a card and this creature can't be blocked this turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Vampire"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]

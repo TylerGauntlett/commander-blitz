@@ -1410,3 +1410,84 @@ class TestHeraldOfTheHost:
         assert [life(game, pid) for pid in (1, 2, 3)] == [40 - power] * 3
         assert self.copies(game) == []
         assert game.state.objects[host].zone is Zone.BATTLEFIELD
+
+
+class TestBattleAngelsOfTyr:
+    """ "Whenever this creature deals combat damage to a player, draw a card if
+    that player has more cards in hand than each other player. Then you create a
+    Treasure token if that player controls more lands than each other player.
+    Then you gain 3 life if that player has more life than each other player."
+
+    The gate declines combat, so none of the three clauses ever fires there. The
+    near misses are all in "more than **each other** player": a tie is not more,
+    "each other player" is every other seat and not just you, and each clause is
+    its own "if" -- leading in one gives that one reward and no other. Life is
+    read as the trigger resolves, after the Angels' own four damage.
+    """
+
+    ANGELS = "battle_angels_of_tyr"
+    TREASURE = "treasure_token"
+
+    def hit(
+        self,
+        builder,
+        *,
+        mine: tuple[int, int, int],
+        theirs: tuple[int, int, int],
+        third: tuple[int, int, int] | None = None,
+    ):
+        """Swing at seat 1, unblocked. Each tuple is (cards in hand, lands, life)."""
+        seats = [mine, theirs] + ([third] if third else [])
+        b = builder(players=len(seats))
+        for pid, (hand, lands, total) in enumerate(seats):
+            b = b.battlefield(pid, [PLAINS] * lands + ([self.ANGELS] if pid == 0 else []))
+            b = b.hand(pid, [ANCHOR] * hand).life(pid, total).library(pid, [PLAINS] * 20)
+        game = b.active(0).step(Step.BEGIN_COMBAT).build()
+        angels = only_oid(game, self.ANGELS, 0)
+        attack_options(game)
+        game.apply(
+            next(
+                a
+                for a in game.legal_actions()
+                if a.kind is ActionKind.ADD_ATTACKER
+                and a.source == angels
+                and a.targets[0] == TargetRef.player(1)
+            )
+        )
+        game.apply(find_action(game, ActionKind.FINISH_DECLARATION))
+        # Myriad's "may" is declined by the default answer: one hit, on seat 1.
+        pass_until(game, lambda g: g.state.step is Step.POSTCOMBAT_MAIN)
+        assert life(game, 1) == theirs[2] - 4, "the Angels connected"
+        return game
+
+    def rewards(self, game, mine: tuple[int, int, int]) -> tuple[int, int, int]:
+        """(cards drawn, Treasures made, life gained) for seat 0."""
+        return (
+            len(game.state.players[0].hand) - mine[0],
+            len(tokens(game, self.TREASURE)),
+            life(game, 0) - mine[2],
+        )
+
+    def test_leading_in_all_three_pays_all_three(self, builder):
+        mine, theirs = (1, 3, 30), (4, 6, 40)
+        assert self.rewards(self.hit(builder, mine=mine, theirs=theirs), mine) == (1, 1, 3)
+
+    def test_a_tie_is_not_more(self, builder):
+        # 38 - 4 damage = 34: level with seat 0 when the trigger resolves.
+        mine, theirs = (2, 4, 34), (2, 4, 38)
+        assert self.rewards(self.hit(builder, mine=mine, theirs=theirs), mine) == (0, 0, 0)
+
+    def test_life_is_read_after_the_hit(self, builder):
+        """37 before the hit leads 34; 33 after it does not."""
+        mine, theirs = (1, 3, 34), (1, 3, 37)
+        assert self.rewards(self.hit(builder, mine=mine, theirs=theirs), mine) == (0, 0, 0)
+
+    def test_each_clause_is_its_own_if(self, builder):
+        mine, theirs = (1, 6, 40), (4, 3, 30)
+        assert self.rewards(self.hit(builder, mine=mine, theirs=theirs), mine) == (1, 0, 0)
+
+    def test_each_other_player_includes_a_third_seat(self, builder):
+        """Seat 1 leads you in everything, but seat 2 leads seat 1 in everything."""
+        mine, theirs, third = (1, 3, 30), (4, 6, 40), (5, 7, 50)
+        game = self.hit(builder, mine=mine, theirs=theirs, third=third)
+        assert self.rewards(game, mine) == (0, 0, 0)

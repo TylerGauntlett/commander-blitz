@@ -1303,6 +1303,10 @@
     "artist": "Lucio Parrillo",
     "scryfall_id": "c2c43855-e2f9-4369-b404-ebede94fd264"
   },
+  "battle_angels_of_tyr": {
+    "artist": "Fajareka Setiawan",
+    "scryfall_id": "d1ad6649-8371-42da-809e-df27c45a2d52"
+  },
   "battle_cry_goblin": {
     "artist": "David Szabo",
     "scryfall_id": "ba41ec1b-e631-4882-b897-df26e26ada04"
@@ -16442,6 +16446,10 @@
   "vampire_demon_4_3_wb_flying": {
     "artist": "Nino Vecia",
     "scryfall_id": "3005eb0a-5c96-4a07-a6b9-a907d1095cdf"
+  },
+  "vampire_gourmand": {
+    "artist": "Chris Rallis",
+    "scryfall_id": "225e4b55-5e93-430a-9910-aa8e9b8c3317"
   },
   "vampire_knight_1_1_b_lifelink": {
     "artist": "Lake Hurwitz",
