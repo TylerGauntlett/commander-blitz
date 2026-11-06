@@ -11280,6 +11280,13 @@
     },
     "zone": "battlefield"
   },
+  "nyx_weaver": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "nyxborn_brute": {
     "zone": "battlefield"
   },
@@ -11364,6 +11371,10 @@
       "0": 40
     },
     "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
+  "ob_nixilis_the_fallen": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "ob_nixilis_the_hate_twisted": {
@@ -13423,6 +13434,16 @@
     "zone": "battlefield"
   },
   "river_kaijin": {
+    "zone": "battlefield"
+  },
+  "river_kelpie": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
     "zone": "battlefield"
   },
   "river_of_tears": {

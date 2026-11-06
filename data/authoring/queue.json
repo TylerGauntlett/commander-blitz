@@ -189742,12 +189742,12 @@
     },
     "Nyx Weaver": {
       "edhrec_rank": 1689,
-      "gate": "template",
+      "gate": null,
       "name": "Nyx Weaver",
-      "reason": "no template for: At the beginning of your upkeep, mill two cards",
+      "reason": "",
       "scryfall_id": "5b88ca44-1151-49c1-9ad8-d8bffee867c8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nyx-Fleece Ram": {
@@ -190382,12 +190382,12 @@
     },
     "Ob Nixilis, the Fallen": {
       "edhrec_rank": 1957,
-      "gate": "template",
+      "gate": null,
       "name": "Ob Nixilis, the Fallen",
-      "reason": "no template for: Landfall — Whenever a land you control enters, you may have target player lose 3 life. If ",
+      "reason": "",
       "scryfall_id": "79e0fbea-1f35-4db8-a5b0-0b1c016f4946",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ob Nixilis, the Hate-Twisted": {
@@ -225572,12 +225572,12 @@
     },
     "River Kelpie": {
       "edhrec_rank": 3462,
-      "gate": "template",
+      "gate": null,
       "name": "River Kelpie",
-      "reason": "no template for: Whenever this creature or another permanent enters from a graveyard, draw a card",
+      "reason": "",
       "scryfall_id": "81efe7cf-81f0-4799-813f-73ec8d865190",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "River Merfolk": {
