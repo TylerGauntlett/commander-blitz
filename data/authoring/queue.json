@@ -189102,12 +189102,12 @@
     },
     "Noxious Gearhulk": {
       "edhrec_rank": 974,
-      "gate": "template",
+      "gate": null,
       "name": "Noxious Gearhulk",
-      "reason": "no template for: When this creature enters, you may destroy another target creature. If a creature is destr",
+      "reason": "",
       "scryfall_id": "6ea94d38-d99a-4668-adb4-5f60724ca484",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Noxious Ghoul": {
@@ -249932,12 +249932,12 @@
     },
     "Skull Prophet": {
       "edhrec_rank": 1369,
-      "gate": "template",
+      "gate": null,
       "name": "Skull Prophet",
-      "reason": "no template for: {T}: Mill two cards",
+      "reason": "",
       "scryfall_id": "2f5ec787-79f6-4922-a0f7-debde8f7a4be",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Skull Raid": {
@@ -318252,12 +318252,12 @@
     },
     "Wonder": {
       "edhrec_rank": 824,
-      "gate": "template",
+      "gate": null,
       "name": "Wonder",
-      "reason": "no template for: As long as this card is in your graveyard and you control an Island, creatures you control",
+      "reason": "",
       "scryfall_id": "675d6729-23da-4f0b-b222-fe54fe24dd90",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wonder Man, Hollywood Hero": {

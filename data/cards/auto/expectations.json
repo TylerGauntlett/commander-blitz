@@ -11264,6 +11264,9 @@
     "opponent_battlefield_count": 4,
     "zone": "graveyard"
   },
+  "noxious_gearhulk": {
+    "zone": "battlefield"
+  },
   "noxious_ghoul": {
     "zone": "battlefield"
   },
@@ -14761,6 +14764,13 @@
   },
   "skrelv_s_hive": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "skull_prophet": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "skullclamp": {
@@ -19042,6 +19052,10 @@
     "zone": "battlefield"
   },
   "wolf_cove_villager": {
+    "zone": "battlefield"
+  },
+  "wonder": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "wooded_bastion": {

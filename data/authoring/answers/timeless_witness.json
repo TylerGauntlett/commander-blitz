@@ -1,0 +1,65 @@
+{
+  "card": {
+    "id": "timeless_witness",
+    "name": "Timeless Witness",
+    "oracle_text": "When this creature enters, return target card from your graveyard to your hand.\nEternalize {5}{G}{G} ({5}{G}{G}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a 4/4 black Zombie Human Shaman with no mana cost. Eternalize only as a sorcery.)",
+    "mana_cost": "{2}{G}{G}",
+    "types": ["Creature"],
+    "subtypes": ["Human", "Shaman"],
+    "power": 2,
+    "toughness": 1,
+    "colors": ["G"],
+    "color_identity": ["G"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature enters, return target card from your graveyard to your hand.",
+        "trigger": {"event": "self_enters"},
+        "targets": [
+          {
+            "id": "gy_card",
+            "kind": "card_in_graveyard",
+            "selector": {"controller": "you", "zone": "graveyard"}
+          }
+        ],
+        "effects": [
+          {
+            "op": "return_from_graveyard",
+            "destination": "hand",
+            "objects": {"target": "gy_card"}
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "active_zones": ["graveyard"],
+        "cost": {
+          "exile_from_graveyard": {"count": 1, "self_only": true},
+          "mana": "{5}{G}{G}"
+        },
+        "effects": [
+          {
+            "op": "copy_permanent",
+            "controller": "you",
+            "except_": {
+              "add_subtypes": ["Zombie"],
+              "colors": ["B"],
+              "no_mana_cost": true,
+              "power": 4,
+              "toughness": 4
+            },
+            "objects": {"controller": "any", "self_only": true, "zone": "exile"}
+          }
+        ],
+        "sorcery_speed_only": true,
+        "text": "Eternalize {5}{G}{G} ({5}{G}{G}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a 4/4 black Zombie Human Shaman with no mana cost. Eternalize only as a sorcery.)"
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {"0": 2},
+    "graveyard_size": {"0": 1}
+  }
+}
