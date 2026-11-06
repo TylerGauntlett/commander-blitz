@@ -9684,6 +9684,10 @@
   "lost_leonin": {
     "zone": "battlefield"
   },
+  "lost_monarch_of_ifnir": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "lost_soul": {
     "zone": "battlefield"
   },
@@ -11182,6 +11186,9 @@
   "neurok_hoversail": {
     "zone": "battlefield"
   },
+  "never_return": {
+    "zone": "graveyard"
+  },
   "neverwinter_dryad": {
     "zone": "battlefield"
   },
@@ -12216,6 +12223,9 @@
   "plague_beetle": {
     "zone": "battlefield"
   },
+  "plague_belcher": {
+    "zone": "battlefield"
+  },
   "plague_myr": {
     "zone": "battlefield"
   },
@@ -12374,6 +12384,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "priest_of_the_crossing": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "priest_of_titania": {

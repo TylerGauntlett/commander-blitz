@@ -161702,12 +161702,12 @@
     },
     "Lost Monarch of Ifnir": {
       "edhrec_rank": 3222,
-      "gate": "template",
+      "gate": null,
       "name": "Lost Monarch of Ifnir",
-      "reason": "no template for: Afflict 3",
+      "reason": "",
       "scryfall_id": "2a404d57-d822-4f9b-b3c0-4b8a54bbb5fc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lost Order of Jarkeld": {
@@ -185802,12 +185802,12 @@
     },
     "Never // Return": {
       "edhrec_rank": 11751,
-      "gate": "template",
+      "gate": null,
       "name": "Never // Return",
-      "reason": "no template for: Destroy target creature or planeswalker",
+      "reason": "",
       "scryfall_id": "f6bb09b1-d28a-48c1-9d97-11bec84afb5e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Never Happened": {
@@ -203402,12 +203402,12 @@
     },
     "Plague Belcher": {
       "edhrec_rank": 3638,
-      "gate": "template",
+      "gate": null,
       "name": "Plague Belcher",
-      "reason": "no template for: When this creature enters, put two -1/-1 counters on target creature you control",
+      "reason": "",
       "scryfall_id": "26c3846a-b5a6-42ad-bcc0-96f2077b1b47",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Plague Boiler": {
@@ -206842,12 +206842,12 @@
     },
     "Priest of the Crossing": {
       "edhrec_rank": 10326,
-      "gate": "template",
+      "gate": null,
       "name": "Priest of the Crossing",
-      "reason": "no template for: At the beginning of each end step, put X +1/+1 counters on each creature you control, wher",
+      "reason": "",
       "scryfall_id": "6efec3e5-6cad-4982-9a95-d46136a835fc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Priest of the Haunted Edge": {
