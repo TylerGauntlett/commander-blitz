@@ -1,0 +1,39 @@
+{
+  "_comment": "Cards that exist only for tests/unit/casting/test_suspends_itself.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_suspends_itself` gains 2 life so the test can see the effects ran each time it resolves; `t_suspends_itself_kill` has a target, so the test can make it fizzle.",
+  "cards": [
+    {
+      "id": "t_suspends_itself",
+      "name": "Test Suspends Itself",
+      "oracle_text": "You gain 2 life. Exile Test Suspends Itself with two time counters on it.",
+      "mana_cost": "{1}{W}",
+      "types": ["Sorcery"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "suspends_itself": 2,
+      "spell_effects": [
+        { "op": "gain_life", "player": "you", "amount": { "const": 2 } }
+      ]
+    },
+    {
+      "id": "t_suspends_itself_kill",
+      "name": "Test Suspends Itself Kill",
+      "oracle_text": "Destroy target creature. Exile Test Suspends Itself Kill with two time counters on it.",
+      "mana_cost": "{B}",
+      "types": ["Instant"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "suspends_itself": 2,
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "selector": { "zone": "battlefield", "controller": "any", "types": ["Creature"] }
+        }
+      ],
+      "spell_effects": [
+        { "op": "destroy", "objects": { "target": "t1" } }
+      ]
+    }
+  ]
+}

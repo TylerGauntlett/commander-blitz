@@ -28212,12 +28212,12 @@
     },
     "Blood Seeker": {
       "edhrec_rank": 2610,
-      "gate": "template",
+      "gate": null,
       "name": "Blood Seeker",
-      "reason": "no template for: Whenever a creature an opponent controls enters, you may have that player lose 1 life",
+      "reason": "",
       "scryfall_id": "fe88cbee-5f6c-47e0-8a84-192c4c2ca984",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Blood Servitor": {
@@ -33172,12 +33172,12 @@
     },
     "Brash Taunter": {
       "edhrec_rank": 795,
-      "gate": "template",
+      "gate": null,
       "name": "Brash Taunter",
-      "reason": "no template for: Whenever this creature is dealt damage, it deals that much damage to target opponent",
+      "reason": "",
       "scryfall_id": "275f8721-a6e5-489b-851f-1676aad5ec39",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Brass Gnat": {
@@ -64532,12 +64532,12 @@
     },
     "Decree of Pain": {
       "edhrec_rank": 1338,
-      "gate": "template",
+      "gate": null,
       "name": "Decree of Pain",
-      "reason": "no template for: Destroy all creatures. They can't be regenerated. Draw a card for each creature destroyed ",
+      "reason": "",
       "scryfall_id": "bd594aeb-f5cc-4435-8ea8-c35c5824b58c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Decree of Savagery": {
@@ -83432,12 +83432,12 @@
     },
     "Enchanter's Bane": {
       "edhrec_rank": 9581,
-      "gate": "template",
+      "gate": null,
       "name": "Enchanter's Bane",
-      "reason": "no template for: At the beginning of your end step, target enchantment deals damage equal to its mana value",
+      "reason": "",
       "scryfall_id": "3f053af0-9a08-44e5-be57-6d0fabfde31a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Enchantment Alteration": {
@@ -110572,12 +110572,12 @@
     },
     "Gleeful Arsonist": {
       "edhrec_rank": 2685,
-      "gate": "template",
+      "gate": null,
       "name": "Gleeful Arsonist",
-      "reason": "no template for: Whenever an opponent casts a noncreature spell, this creature deals damage equal to its po",
+      "reason": "",
       "scryfall_id": "5949e77b-a9e8-4c1c-8ee0-f3c7ac5f8f83",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gleeful Demolition": {
@@ -115582,12 +115582,12 @@
     },
     "Grab the Prize": {
       "edhrec_rank": 1455,
-      "gate": "template",
+      "gate": null,
       "name": "Grab the Prize",
-      "reason": "no template for: Draw two cards. If the discarded card wasn't a land card, deals 2 damage to each opponent",
+      "reason": "",
       "scryfall_id": "50895202-f1a1-4840-a11a-55b78b8b5929",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Grab the Reins": {
@@ -144992,12 +144992,12 @@
     },
     "Kaervek the Merciless": {
       "edhrec_rank": 2553,
-      "gate": "template",
+      "gate": null,
       "name": "Kaervek the Merciless",
-      "reason": "no template for: Whenever an opponent casts a spell, Kaervek deals damage equal to that spell's mana value ",
+      "reason": "",
       "scryfall_id": "95c5bd95-b483-4dfb-9010-cfee47d22468",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kaervek's Hex": {
@@ -147222,12 +147222,12 @@
     },
     "Kederekt Parasite": {
       "edhrec_rank": 1985,
-      "gate": "template",
+      "gate": null,
       "name": "Kederekt Parasite",
-      "reason": "no template for: Whenever an opponent draws a card, if you control a red permanent, you may have this creat",
+      "reason": "",
       "scryfall_id": "bc5da9e8-c070-4cf4-a21b-24ff2178d751",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kediss, Emberclaw Familiar": {
@@ -156082,12 +156082,12 @@
     },
     "Leechridden Swamp": {
       "edhrec_rank": 2520,
-      "gate": "template",
+      "gate": null,
       "name": "Leechridden Swamp",
-      "reason": "no template for: {B}, {T}: Each opponent loses 1 life. Activate only if you control two or more black perma",
+      "reason": "",
       "scryfall_id": "a07a0e31-ace6-40ad-8700-2d58135b5320",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Leela, Sevateem Warrior": {
@@ -158002,12 +158002,12 @@
     },
     "Light Up the Stage": {
       "edhrec_rank": 1214,
-      "gate": "template",
+      "gate": null,
       "name": "Light Up the Stage",
-      "reason": "no template for: Spectacle {R}",
+      "reason": "",
       "scryfall_id": "21775491-53e7-4654-8d23-54d0acd89299",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Light from Within": {
@@ -168632,12 +168632,12 @@
     },
     "Mask of Griselbrand": {
       "edhrec_rank": 3074,
-      "gate": "template",
+      "gate": null,
       "name": "Mask of Griselbrand",
-      "reason": "no template for: Whenever equipped creature dies, you may pay X life, where X is its power. If you do, draw",
+      "reason": "",
       "scryfall_id": "a8c36e65-395c-4800-bd0a-c444940a9b36",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mask of Immolation": {
@@ -168932,12 +168932,12 @@
     },
     "Massacre Wurm": {
       "edhrec_rank": 513,
-      "gate": "template",
+      "gate": null,
       "name": "Massacre Wurm",
-      "reason": "no template for: When this creature enters, creatures your opponents control get -2/-2 until end of turn",
+      "reason": "",
       "scryfall_id": "670a36cc-34e1-4d11-808e-1b6bc88eb5d8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Massimo, the Magician": {
@@ -186852,12 +186852,12 @@
     },
     "Nightshade Harvester": {
       "edhrec_rank": 4499,
-      "gate": "template",
+      "gate": null,
       "name": "Nightshade Harvester",
-      "reason": "no template for: Whenever a land an opponent controls enters, that player loses 1 life. Put a +1/+1 counter",
+      "reason": "",
       "scryfall_id": "fac55604-3635-4af1-b9ca-10d1f89db504",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nightshade Peddler": {
@@ -200102,12 +200102,12 @@
     },
     "Persistent Constrictor": {
       "edhrec_rank": 2710,
-      "gate": "template",
+      "gate": null,
       "name": "Persistent Constrictor",
-      "reason": "no template for: At the beginning of each opponent's upkeep, they lose 1 life and you put a -1/-1 counter o",
+      "reason": "",
       "scryfall_id": "0a25d478-84fd-4e4b-abb7-f5f6becf6eb0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Persistent Marshstalker": {
@@ -214812,12 +214812,12 @@
     },
     "Rampaging Ferocidon": {
       "edhrec_rank": 2490,
-      "gate": "template",
+      "gate": null,
       "name": "Rampaging Ferocidon",
-      "reason": "no template for: Players can't gain life",
+      "reason": "",
       "scryfall_id": "53c38f4e-81ec-45b3-a6cf-06a65b674978",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rampaging Geoderm": {
@@ -228052,12 +228052,12 @@
     },
     "Rousing Refrain": {
       "edhrec_rank": 2750,
-      "gate": "template",
+      "gate": null,
       "name": "Rousing Refrain",
-      "reason": "no template for: Add {R} for each card in target opponent's hand. Until end of turn, you don't lose this ma",
+      "reason": "",
       "scryfall_id": "2b3ec666-0e57-4c42-872c-51799e0b5c68",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rousing of Souls": {
@@ -230762,12 +230762,12 @@
     },
     "Sadistic Shell Game": {
       "edhrec_rank": 5212,
-      "gate": "template",
+      "gate": null,
       "name": "Sadistic Shell Game",
-      "reason": "no template for: Starting with the next opponent in turn order, each player chooses a creature you don't co",
+      "reason": "",
       "scryfall_id": "4c5c8eb3-c866-4974-90eb-be99c07af1a1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sadistic Skymarcher": {
@@ -244782,12 +244782,12 @@
     },
     "Shivan Gorge": {
       "edhrec_rank": 2305,
-      "gate": "template",
+      "gate": null,
       "name": "Shivan Gorge",
-      "reason": "no template for: {2}{R}, {T}: deals 1 damage to each opponent",
+      "reason": "",
       "scryfall_id": "c1752b65-dace-4c87-b102-23df276b2e41",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shivan Harvest": {
@@ -260352,12 +260352,12 @@
     },
     "Spiteful Visions": {
       "edhrec_rank": 2284,
-      "gate": "template",
+      "gate": null,
       "name": "Spiteful Visions",
-      "reason": "no template for: At the beginning of each player's draw step, that player draws an additional card",
+      "reason": "",
       "scryfall_id": "3be610eb-790f-4f47-a92a-34fe704cc8e0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spitemare": {
@@ -262652,12 +262652,12 @@
     },
     "Star Athlete": {
       "edhrec_rank": 4754,
-      "gate": "template",
+      "gate": null,
       "name": "Star Athlete",
-      "reason": "no template for: Whenever this creature attacks, choose up to one target nonland permanent. Its controller ",
+      "reason": "",
       "scryfall_id": "5c7c23a6-53ff-4588-838c-7936cb9eb86b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Star Charter": {
@@ -266302,12 +266302,12 @@
     },
     "Stormfist Crusader": {
       "edhrec_rank": 1923,
-      "gate": "template",
+      "gate": null,
       "name": "Stormfist Crusader",
-      "reason": "no template for: At the beginning of your upkeep, each player draws a card and loses 1 life",
+      "reason": "",
       "scryfall_id": "0b420ce8-3dd1-430b-a090-4b4e8dcb6aa9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stormfront Pegasus": {
@@ -271252,12 +271252,12 @@
     },
     "Suspended Sentence": {
       "edhrec_rank": 4910,
-      "gate": "template",
+      "gate": null,
       "name": "Suspended Sentence",
-      "reason": "no template for: Destroy target creature an opponent controls. That player loses 3 life. Exile with three t",
+      "reason": "",
       "scryfall_id": "38c98aa0-bfa1-42f4-b035-a48dac86f0ce",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Suspension Field": {
@@ -273392,12 +273392,12 @@
     },
     "Séance Board": {
       "edhrec_rank": 4166,
-      "gate": "template",
+      "gate": null,
       "name": "Séance Board",
-      "reason": "no template for: Morbid — At the beginning of each end step, if a creature died this turn, put a soul count",
+      "reason": "",
       "scryfall_id": "65a6c25f-860e-401f-ac01-d16e4327248d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "T'Chaka, Venerable King": {
@@ -273802,12 +273802,12 @@
     },
     "Tainted Peak": {
       "edhrec_rank": 498,
-      "gate": "template",
+      "gate": null,
       "name": "Tainted Peak",
-      "reason": "no template for: {T}: Add {B} or {R}. Activate only if you control a Swamp",
+      "reason": "",
       "scryfall_id": "7e6f1a55-0fec-4b94-9640-9110ca8d0212",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tainted Remedy": {
@@ -276172,12 +276172,12 @@
     },
     "Tectonic Giant": {
       "edhrec_rank": 2896,
-      "gate": "template",
+      "gate": null,
       "name": "Tectonic Giant",
-      "reason": "no template for: Whenever this creature attacks or becomes the target of a spell an opponent controls, choo",
+      "reason": "",
       "scryfall_id": "4134a2aa-623c-49fc-bd87-26b861860ad5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tectonic Hazard": {
@@ -281422,12 +281422,12 @@
     },
     "The Lord of Pain": {
       "edhrec_rank": 2363,
-      "gate": "template",
+      "gate": null,
       "name": "The Lord of Pain",
-      "reason": "no template for: Your opponents can't gain life",
+      "reason": "",
       "scryfall_id": "494c244e-dcdc-4169-9743-8a61f58e8763",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Lord of the Eagles": {

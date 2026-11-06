@@ -1464,6 +1464,11 @@ class CardDef:
     #: library" (Ultimate Nullification), or ``"shuffle"`` for "shuffle it into
     #: its owner's library" (Black Sun's Zenith).
     tucks_itself: int | str | None = None
+    #: "Exile <this card> with N time counters on it." The rider that sends a
+    #: resolved instant or sorcery to exile **suspended** (702.62) for its
+    #: owner, with N time counters; the card's own instruction, so it wins over
+    #: every graveyard replacement on the same slot.
+    suspends_itself: int | None = None
     #: **Overload**. A third cast variant, and the only one that changes what
     #: the spell *targets* rather than what it costs: an overloaded spell is put
     #: on the stack with no targets at all, and the card branches on

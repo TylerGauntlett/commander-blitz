@@ -10,14 +10,14 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**200 cards** blocked by **180** capabilities.
+**209 cards** blocked by **192** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
+| [put-into-graveyard-from-anywhere](#put-into-graveyard-from-anywhere) | 5 | 256 | trigger_event |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
-| [put-into-graveyard-from-anywhere](#put-into-graveyard-from-anywhere) | 4 | 902 | trigger_event |
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
 | [copy-exception-set-subtypes](#copy-exception-set-subtypes) | 3 | 1740 | engine, op |
@@ -36,6 +36,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [escape](#escape) | 2 | 388 | engine, static_effect |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
+| [random-player-choice](#random-player-choice) | 2 | 5120 | op |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [venture](#venture) | 2 | 19644 | engine |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
@@ -58,6 +59,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cards-exiled-trigger](#cards-exiled-trigger) | 1 | 1303 | trigger_event |
 | [cards-to-your-graveyard-from-zones-this-turn](#cards-to-your-graveyard-from-zones-this-turn) | 1 | 7412 | value |
 | [cast-from-hand-result](#cast-from-hand-result) | 1 | 7016 | op |
+| [cast-restriction-self](#cast-restriction-self) | 1 | 2559 | engine |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [choose-card-type-from-list](#choose-card-type-from-list) | 1 | 611 | op |
 | [chosen-card-type-cost-reduction](#chosen-card-type-cost-reduction) | 1 | 611 | static_effect |
@@ -72,8 +74,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [coven](#coven) | 1 | 1129 | value |
 | [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
 | [crime](#crime) | 1 | 2244 | trigger_event |
+| [damage-player-or-planeswalker](#damage-player-or-planeswalker) | 1 | 5120 | op |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
+| [delayed-creature-dies](#delayed-creature-dies) | 1 | 1661 | trigger_event |
 | [delirium](#delirium) | 1 | 1799 | value |
+| [devil-token](#devil-token) | 1 | 4163 | token |
+| [devotion](#devotion) | 1 | 2401 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [distribute-counters-spell](#distribute-counters-spell) | 1 | 6993 | op |
 | [divided-damage-on-activated](#divided-damage-on-activated) | 1 | 13459 | engine |
@@ -104,6 +110,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [free-cast-by-other-player](#free-cast-by-other-player) | 1 | 11704 | op |
 | [free-cast-this-turn](#free-cast-this-turn) | 1 | 6651 | op |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
+| [goad-without-goaded](#goad-without-goaded) | 1 | 973 | op |
 | [gold-token](#gold-token) | 1 | 705 | token |
 | [grant-abilities-of-exiled-cards](#grant-abilities-of-exiled-cards) | 1 | 8370 | static_effect |
 | [grant-cycling-to-cards-in-hand](#grant-cycling-to-cards-in-hand) | 1 | 5169 | static_effect |
@@ -119,6 +126,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [karox-bladewing](#karox-bladewing) | 1 | 8889 | token |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
 | [kicker](#kicker) | 1 | 868 | selector |
+| [life-lost-this-turn-static-value](#life-lost-this-turn-static-value) | 1 | 2559 | value |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
 | [living-metal](#living-metal) | 1 | 11641 | keyword |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
@@ -129,6 +137,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mana-restriction-cast-from-zone](#mana-restriction-cast-from-zone) | 1 | 9291 | engine |
 | [mana-spent-enters-with-counters](#mana-spent-enters-with-counters) | 1 | 653 | replacement |
 | [mana-spent-trigger-on-activation](#mana-spent-trigger-on-activation) | 1 | 4444 | trigger_event |
+| [mana-tap-trigger-damage-rider](#mana-tap-trigger-damage-rider) | 1 | 7929 | static_effect |
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
 | [modal-variable-targets](#modal-variable-targets) | 1 | 4339 | engine |
@@ -137,10 +146,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [modified](#modified) | 1 | 831 | selector |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [no-mana-cost](#no-mana-cost) | 1 | 2978 | engine |
+| [noncombat-damage-trigger](#noncombat-damage-trigger) | 1 | 6793 | trigger_event |
 | [nontoken-creatures-died-this-turn](#nontoken-creatures-died-this-turn) | 1 | 3951 | value |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [odd-or-even](#odd-or-even) | 1 | 8504 | selector |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
+| [playable-condition-opponent-lost-life](#playable-condition-opponent-lost-life) | 1 | 4478 | engine |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-mana-ability-until-end-of-turn](#player-mana-ability-until-end-of-turn) | 1 | 12705 | op |
 | [players-attacked-last-combat](#players-attacked-last-combat) | 1 | 6681 | value |
@@ -153,16 +164,17 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
 | [random-order-bottom](#random-order-bottom) | 1 | 1343 | op |
-| [random-player-choice](#random-player-choice) | 1 | 6681 | op |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [remove-x-counters-cost](#remove-x-counters-cost) | 1 | 5399 | cost |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
+| [replace-damage-noncombat](#replace-damage-noncombat) | 1 | 4163 | static_effect |
 | [replace-dies-link](#replace-dies-link) | 1 | 2740 | replacement |
 | [replace-graveyard-with-counter](#replace-graveyard-with-counter) | 1 | 386 | replacement |
 | [retrace](#retrace) | 1 | 5451 | engine |
 | [reveal-from-hand](#reveal-from-hand) | 1 | 3623 | cost |
 | [reveal-until-rest-to-graveyard](#reveal-until-rest-to-graveyard) | 1 | 1606 | op |
+| [rooms](#rooms) | 1 | 4163 | engine |
 | [sacrifice-multiple-distinct](#sacrifice-multiple-distinct) | 1 | 1918 | cost |
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
@@ -171,7 +183,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
-| [self-suspend-on-resolution](#self-suspend-on-resolution) | 1 | 2750 | engine |
 | [shapeshifter-2-2-u-changeling](#shapeshifter-2-2-u-changeling) | 1 | 494 | token |
 | [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
@@ -189,6 +200,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [toughness-greater-than-power-filter](#toughness-greater-than-power-filter) | 1 | 3557 | selector |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
+| [unlock-door](#unlock-door) | 1 | 4163 | trigger_event |
 | [while-source-on-battlefield-duration](#while-source-on-battlefield-duration) | 1 | 8222 | engine |
 | [x-cost-mana-restriction](#x-cost-mana-restriction) | 1 | 4046 | decision |
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 1 | 11545 | engine |
@@ -309,6 +321,36 @@ Blocks **8** cards.
 
 </details>
 
+## put-into-graveyard-from-anywhere
+
+Blocks **5** cards.
+
+- **(trigger_event)** a trigger event that fires whenever a card matching a filter (here: a land card, any owner) is put into a graveyard from ANY zone -- battlefield, hand (discard), library (mill), stack -- usable on an ability with active_zones ["graveyard"] so the card triggers while it sits in its owner's graveyard (Ashen Ghoul / Vengevine style recursion)
+  <br>Why the existing vocabulary won't do: leaves_battlefield with to_zones ["graveyard"] only sees permanents leaving the battlefield (a sacrificed or destroyed land) and misses discarded, milled and countered-from-stack cards; discard covers only the hand; dies is creatures only; there is no mill or generic zone-change-to-graveyard event in trigger_events. The may-pay {G}{G} and return_to_hand halves are expressible once the event exists.
+- **(trigger_event)** a trigger event that fires when cards matching a filter (here: creature cards, owner = you) are put into a graveyard, narrowed by `from_zones: ["library"]` (mill, surveil, self-mill costs), with `batched: true` so one simultaneous move of several creature cards triggers once ("one or more"), and binding the batch of moved cards so the effect can be `put_onto_battlefield` over exactly one of THEM chosen by the controller ("put one of them"), still in the graveyard on resolution
+  <br>Why the existing vocabulary won't do: trigger_events has no zone-change-to-graveyard event: leaves_battlefield only sees permanents leaving the battlefield, dies is battlefield creatures, discard is the hand, leaves_graveyard is the reverse direction; the trigger's from_zones key is read only for spell_cast and land_played. Without the event there is also no binding for 'them', so a put_onto_battlefield over any creature card in the graveyard would wrongly reach creature cards milled earlier. The Flying keyword and the enters-or-attacks mill three (self_enters + attacks triggers with mill) are expressible today.
+- **(trigger_event)** a trigger event that fires when one or more cards matching a filter (here: land cards, owner = you) are put into a graveyard from ANY zone -- battlefield, hand (discard), library (mill, surveil), stack -- supporting `batched: true` so one simultaneous move of several land cards triggers once, and `max_per_turn: 1` for "for the first time each turn"
+  <br>Why the existing vocabulary won't do: trigger_events has no generic zone-change-to-graveyard event: leaves_battlefield with to_zones ["graveyard"] (and dies) only sees permanents leaving the battlefield and misses milled and discarded land cards, which is what this card's own upkeep mill feeds; discard covers only the hand; leaves_graveyard is the opposite direction. The upkeep `may` + `mill` line and the insect_1_1_g token are expressible today.
+- **(trigger_event)** a trigger event that fires whenever a card matching a filter (here: a creature card, any owner, any graveyard) is put into a graveyard, with a from_zones/except-battlefield clause so it can be narrowed to arrivals from anywhere other than the battlefield -- hand (discard), library (mill), stack (countered or resolved), exile, command zone
+  <br>Why the existing vocabulary won't do: The other two clauses are expressible (`creature_dies` / `dies` with exclude_self, and `leaves_graveyard` filtered to creature cards you own), but there is no zone-change-to-graveyard event in trigger_events: `discard` covers only the hand, `dies` and `leaves_battlefield` only the battlefield, and there is no mill event; the trigger's `from_zones` key is read only for spell_cast and land_played. Writing just the two expressible clauses would silently drop the milled/discarded-creature half, which is the card's main engine with its own {1}{B} mill ability.
+- **(trigger_event)** a trigger event that fires when a card matching a filter (here: a land card, owner = you) is put into a graveyard from ANY zone -- battlefield (sacrifice/destroy), hand (discard), library (mill, surveil), stack -- and supports `batched: true` so that several land cards moved by one event (a mill of three lands, a discard of two lands) trigger it exactly once ("one or more")
+  <br>Why the existing vocabulary won't do: leaves_battlefield with to_zones ["graveyard"] sees only permanents leaving the battlefield and misses discarded, milled and surveilled land cards, which are the card's whole engine (Gitrog + discard/dredge loops); discard covers only the hand and carries no card-type filter on the moved card from library; there is no mill or generic zone-change-to-graveyard event in trigger_events. Combining leaves_battlefield and discard triggers would still miss mill/surveil and would trigger twice for a single simultaneous event that moves lands from two zones. The draw half is a plain draw op once the event exists. The upkeep 'sacrifice unless you sacrifice a land' and extra_land_drops lines are expressible today.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Syr Konrad, the Grim** (rank 256) — `syr_konrad_the_grim`
+  - Whenever another creature dies, or a creature card is put into a graveyard from anywhere other than the battlefield, or a creature card leaves your graveyard, Syr Konrad deals 1 damage to each opponent.
+- **The Gitrog Monster** (rank 902) — `the_gitrog_monster`
+  - Whenever one or more land cards are put into your graveyard from anywhere, draw a card.
+- **Colossal Grave-Reaver** (rank 1942) — `colossal_grave_reaver`
+  - Whenever one or more creature cards are put into your graveyard from your library, put one of them onto the battlefield.
+- **Crawling Sensation** (rank 3007) — `crawling_sensation`
+  - Whenever one or more land cards are put into your graveyard from anywhere for the first time each turn, create a 1/1 green Insect creature token.
+- **Centaur Vinecrasher** (rank 10988) — `centaur_vinecrasher`
+  - Whenever a land card is put into a graveyard from anywhere, you may pay {G}{G}. If you do, return this card from your graveyard to your hand.
+
+</details>
+
 ## x-in-mana-cost-trigger-filter
 
 Blocks **5** cards.
@@ -338,32 +380,6 @@ Blocks **5** cards.
   - Whenever you cast your first spell with {X} in its mana cost each turn, put X +1/+1 counters on Nev.
 - **Lattice Library** (rank 10607) — `lattice_library`
   - When this enchantment enters and whenever you cast your first spell with {X} in its mana cost each turn, create a 0/0 green and blue Fractal creature token. Put a number of +1/+1 counters on it equal to the number of study counters on this enchantment.
-
-</details>
-
-## put-into-graveyard-from-anywhere
-
-Blocks **4** cards.
-
-- **(trigger_event)** a trigger event that fires whenever a card matching a filter (here: a land card, any owner) is put into a graveyard from ANY zone -- battlefield, hand (discard), library (mill), stack -- usable on an ability with active_zones ["graveyard"] so the card triggers while it sits in its owner's graveyard (Ashen Ghoul / Vengevine style recursion)
-  <br>Why the existing vocabulary won't do: leaves_battlefield with to_zones ["graveyard"] only sees permanents leaving the battlefield (a sacrificed or destroyed land) and misses discarded, milled and countered-from-stack cards; discard covers only the hand; dies is creatures only; there is no mill or generic zone-change-to-graveyard event in trigger_events. The may-pay {G}{G} and return_to_hand halves are expressible once the event exists.
-- **(trigger_event)** a trigger event that fires when cards matching a filter (here: creature cards, owner = you) are put into a graveyard, narrowed by `from_zones: ["library"]` (mill, surveil, self-mill costs), with `batched: true` so one simultaneous move of several creature cards triggers once ("one or more"), and binding the batch of moved cards so the effect can be `put_onto_battlefield` over exactly one of THEM chosen by the controller ("put one of them"), still in the graveyard on resolution
-  <br>Why the existing vocabulary won't do: trigger_events has no zone-change-to-graveyard event: leaves_battlefield only sees permanents leaving the battlefield, dies is battlefield creatures, discard is the hand, leaves_graveyard is the reverse direction; the trigger's from_zones key is read only for spell_cast and land_played. Without the event there is also no binding for 'them', so a put_onto_battlefield over any creature card in the graveyard would wrongly reach creature cards milled earlier. The Flying keyword and the enters-or-attacks mill three (self_enters + attacks triggers with mill) are expressible today.
-- **(trigger_event)** a trigger event that fires when one or more cards matching a filter (here: land cards, owner = you) are put into a graveyard from ANY zone -- battlefield, hand (discard), library (mill, surveil), stack -- supporting `batched: true` so one simultaneous move of several land cards triggers once, and `max_per_turn: 1` for "for the first time each turn"
-  <br>Why the existing vocabulary won't do: trigger_events has no generic zone-change-to-graveyard event: leaves_battlefield with to_zones ["graveyard"] (and dies) only sees permanents leaving the battlefield and misses milled and discarded land cards, which is what this card's own upkeep mill feeds; discard covers only the hand; leaves_graveyard is the opposite direction. The upkeep `may` + `mill` line and the insect_1_1_g token are expressible today.
-- **(trigger_event)** a trigger event that fires when a card matching a filter (here: a land card, owner = you) is put into a graveyard from ANY zone -- battlefield (sacrifice/destroy), hand (discard), library (mill, surveil), stack -- and supports `batched: true` so that several land cards moved by one event (a mill of three lands, a discard of two lands) trigger it exactly once ("one or more")
-  <br>Why the existing vocabulary won't do: leaves_battlefield with to_zones ["graveyard"] sees only permanents leaving the battlefield and misses discarded, milled and surveilled land cards, which are the card's whole engine (Gitrog + discard/dredge loops); discard covers only the hand and carries no card-type filter on the moved card from library; there is no mill or generic zone-change-to-graveyard event in trigger_events. Combining leaves_battlefield and discard triggers would still miss mill/surveil and would trigger twice for a single simultaneous event that moves lands from two zones. The draw half is a plain draw op once the event exists. The upkeep 'sacrifice unless you sacrifice a land' and extra_land_drops lines are expressible today.
-
-<details><summary>Cards waiting on this</summary>
-
-- **The Gitrog Monster** (rank 902) — `the_gitrog_monster`
-  - Whenever one or more land cards are put into your graveyard from anywhere, draw a card.
-- **Colossal Grave-Reaver** (rank 1942) — `colossal_grave_reaver`
-  - Whenever one or more creature cards are put into your graveyard from your library, put one of them onto the battlefield.
-- **Crawling Sensation** (rank 3007) — `crawling_sensation`
-  - Whenever one or more land cards are put into your graveyard from anywhere for the first time each turn, create a 1/1 green Insect creature token.
-- **Centaur Vinecrasher** (rank 10988) — `centaur_vinecrasher`
-  - Whenever a land card is put into a graveyard from anywhere, you may pay {G}{G}. If you do, return this card from your graveyard to your hand.
 
 </details>
 
@@ -737,6 +753,24 @@ Blocks **2** cards.
 
 </details>
 
+## random-player-choice
+
+Blocks **2** cards.
+
+- **(op)** choose_player with random: true -- the engine picks uniformly at random among the eligible players and binds the result (as), with an else branch when no player is eligible
+  <br>Why the existing vocabulary won't do: choose_player takes only as, players and prompt, so the controller chooses; random exists on choose_mode and discard but not on a player choice
+- **(op)** choose_player with random: true -- the engine picks uniformly at random among the eligible players (here each opponent still in the game) and binds the result under `as`, asking nobody
+  <br>Why the existing vocabulary won't do: choose_player takes only as, players and prompt and always asks the controller (ask_player); `random` exists on selectors over objects, choose_mode and discard but not on a player choice, so 'each_opponent' or a chosen opponent would both be a different card in a pod
+
+<details><summary>Cards waiting on this</summary>
+
+- **Vial Smasher the Fierce** (rank 5120) — `vial_smasher_the_fierce`
+  - Whenever you cast your first spell each turn, choose an opponent at random. Vial Smasher deals damage equal to that spell's mana value to that player or a planeswalker that player controls.
+- **Territorial Hellkite** (rank 6681) — `territorial_hellkite`
+  - At the beginning of combat on your turn, choose an opponent at random that this creature didn't attack during your last combat. This creature attacks that player this combat if able. If you can't choose an opponent this way, tap this creature.
+
+</details>
+
 ## targeted-discard
 
 Blocks **2** cards.
@@ -1071,6 +1105,21 @@ Blocks **1** card.
 
 </details>
 
+## cast-restriction-self
+
+Blocks **1** card.
+
+- **(engine)** a card-level casting restriction on the card itself, gated by a condition checked at cast time (here: the sum of life lost this turn by your opponents is greater than 0), applied from hand and the command zone
+  <br>Why the existing vocabulary won't do: card_level_rider_keys only has cant_cast_first_turns (a fixed turn count, no condition); the cant_cast_spells static has affects_spells with no self_only key and its condition can only use static_value_keys, which have no life_lost_this_turn
+
+<details><summary>Cards waiting on this</summary>
+
+- **Rakdos, Lord of Riots** (rank 2559) — `rakdos_lord_of_riots`
+  - You can't cast Rakdos unless an opponent lost life this turn.
+  - Creature spells you cast cost {1} less to cast for each 1 life your opponents have lost this turn.
+
+</details>
+
 ## cast-timing-restriction
 
 Blocks **1** card.
@@ -1274,6 +1323,20 @@ Blocks **1** card.
 
 </details>
 
+## damage-player-or-planeswalker
+
+Blocks **1** card.
+
+- **(op)** an or_planeswalker option on the damage op's `player` half: for each resolved player, the damage source's controller chooses (on resolution, untargeted) to deal the damage to that player or to one planeswalker that player controls -- the damage counterpart of create_token's or_planeswalker
+  <br>Why the existing vocabulary won't do: op_damage's `player` key only calls damage_player and its `objects` key damages a fixed pool; no option lets the controller redirect a player's damage to a planeswalker that player controls (or_planeswalker exists only on create_token/copy_permanent/put_onto_battlefield attacking). Dealing it to the player only is a narrower card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Vial Smasher the Fierce** (rank 5120) — `vial_smasher_the_fierce`
+  - Whenever you cast your first spell each turn, choose an opponent at random. Vial Smasher deals damage equal to that spell's mana value to that player or a planeswalker that player controls.
+
+</details>
+
 ## dealt-damage-to-player-this-turn
 
 Blocks **1** card.
@@ -1288,6 +1351,20 @@ Blocks **1** card.
 
 </details>
 
+## delayed-creature-dies
+
+Blocks **1** card.
+
+- **(trigger_event)** an unscoped delayed_trigger on `creature_dies` (no `subject`, controller any) that fires only when a CREATURE dies, i.e. the delayed path honouring the event's `was_creature` the way the hosted path does
+  <br>Why the existing vocabulary won't do: `delayed_trigger` accepts event `creature_dies`, but `triggers._delayed_matches` only compares the event type (DIES), half, outcome, subject and controller; the `was_creature` check that makes `creature_dies` mean 'a creature' lives only in `triggers._matches`. zones fires DIES for every permanent put into a graveyard from the battlefield, so a delayed `creature_dies` would also fire on a sacrificed Treasure, a destroyed artifact or enchantment, or a dead land, shrinking every creature each time. `was_creature` is not in `EVENT_BINDING_KEYS`, so a trigger `condition` cannot filter it either. Every shipped delayed dies trigger (Fight for the Throne, Together Forever, Heroic Sacrifice) is scoped to a creature `subject`, which hides the gap
+
+<details><summary>Cards waiting on this</summary>
+
+- **Massacre Girl** (rank 1661) — `massacre_girl`
+  - Whenever a creature dies this turn, each creature other than Massacre Girl gets -1/-1 until end of turn.
+
+</details>
+
 ## delirium
 
 Blocks **1** card.
@@ -1299,6 +1376,36 @@ Blocks **1** card.
 
 - **Dragon's Rage Channeler** (rank 1799) — `dragon_s_rage_channeler`
   - Delirium — As long as there are four or more card types among cards in your graveyard, this creature gets +2/+2, has flying, and attacks each combat if able.
+
+</details>
+
+## devil-token
+
+Blocks **1** card.
+
+- **(token)** a 1/1 red Devil creature token with "When this token dies, it deals 1 damage to any target."
+  <br>Why the existing vocabulary won't do: token_ids contains no Devil token
+
+<details><summary>Cards waiting on this</summary>
+
+- **Spiked Corridor // Torture Pit** (rank 4163) — `spiked_corridor_torture_pit`
+  - When you unlock this door, create three 1/1 red Devil creature tokens with "When this token dies, it deals 1 damage to any target."
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - If a source you control would deal noncombat damage to an opponent, it deals that much damage plus 2 instead.
+
+</details>
+
+## devotion
+
+Blocks **1** card.
+
+- **(value)** a static value for devotion to two colours (rule 700.5a): the number of mana symbols in the mana costs of permanents you control that are black OR red, where a hybrid {B/R} pip counts once, not twice -- e.g. mana_symbols accepting a list `of: ["B", "R"]` that counts each pip at most once if it contains any listed colour
+  <br>Why the existing vocabulary won't do: mana_symbols takes a single colour in `of` (validate_mana_symbols refuses anything else), and summing mana_symbols of B plus mana_symbols of R double-counts every {B/R} hybrid pip because symbols_of in engine/mana.py counts a hybrid pip for each of its colours; no static value subtracts hybrid pips, so the God would become a creature too early
+
+<details><summary>Cards waiting on this</summary>
+
+- **Mogis, God of Slaughter** (rank 2401) — `mogis_god_of_slaughter`
+  - As long as your devotion to black and red is less than seven, Mogis isn't a creature.
 
 </details>
 
@@ -1738,6 +1845,20 @@ Blocks **1** card.
 
 </details>
 
+## goad-without-goaded
+
+Blocks **1** card.
+
+- **(op)** a one-shot effect giving the creatures matched at resolution goad's two requirements (attack each combat if able; attack a player other than the effect's controller if able) until the controller's next turn, WITHOUT marking them goaded -- e.g. a `goad` option like `mark_goaded: false`, so `goaded` filters (Vengeful Ancestor, Puppet Master's treasure trigger) do not see them
+  <br>Why the existing vocabulary won't do: `goad` gives exactly these requirements but also makes the creatures goaded, which Kardur's ruling says it does not (an observable difference for every `goaded` filter); `must_attack` compels one combat only and has no defender restriction; `must_attack_player` names one required defender rather than forbidding the controller; `cant_attack_player` is a prohibition, not an 'if able' preference; the `attacks_if_able` static lives on Kardur, ends when it leaves, and cannot end at your next turn
+
+<details><summary>Cards waiting on this</summary>
+
+- **Kardur, Doomscourge** (rank 973) — `kardur_doomscourge`
+  - When Kardur enters, until your next turn, creatures your opponents control attack each combat if able and attack a player other than you if able.
+
+</details>
+
 ## gold-token
 
 Blocks **1** card.
@@ -1948,6 +2069,21 @@ Blocks **1** card.
 
 </details>
 
+## life-lost-this-turn-static-value
+
+Blocks **1** card.
+
+- **(value)** life_lost_this_turn (summed over opponents) as a static_value_keys leaf, so a spell_cost_reduction's amount can be {1} less per 1 life your opponents lost this turn, and a static condition can compare it
+  <br>Why the existing vocabulary won't do: life_lost_this_turn is only in value_keys (effects), not static_value_keys; spell_cost_reduction's amount is read by _static_value, which rejects unknown leaves, and cost_reduction_keys (count/total_power/...) only count objects, not player life ledgers
+
+<details><summary>Cards waiting on this</summary>
+
+- **Rakdos, Lord of Riots** (rank 2559) — `rakdos_lord_of_riots`
+  - You can't cast Rakdos unless an opponent lost life this turn.
+  - Creature spells you cast cost {1} less to cast for each 1 life your opponents have lost this turn.
+
+</details>
+
 ## life-total-reduction-replacement
 
 Blocks **1** card.
@@ -2092,6 +2228,20 @@ Blocks **1** card.
 
 </details>
 
+## mana-tap-trigger-damage-rider
+
+Blocks **1** card.
+
+- **(static_effect)** a triggered mana ability off any player's land tap (605.1b) that, beside the extra mana of a type the land produced, has the tapped LAND deal 1 damage to the player who tapped it -- a rider with the land as damage source and the tapping player as recipient, resolved at the mana choke point without the stack
+  <br>Why the existing vocabulary won't do: `double_land_mana` (affects_player any, gated by a static condition that this creature is tapped) covers the extra mana, but neither it nor `add_mana_on_tap` carries any rider: `player_statics.mana_added_on_tap` and `costs.mana_produced` only add mana. The mana-ability rider list (damage, lose_life, ...) belongs to an activated mana ability of the tapped permanent itself, not to a static reacting to another permanent's tap, and no trigger_event fires on 'taps a land for mana' (becomes_tapped with mana_ability is a stack trigger, which 605.4a forbids for a mana-triggered mana ability). Dropping the damage would make a strictly better card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Barbflare Gremlin** (rank 7929) — `barbflare_gremlin`
+  - Whenever a player taps a land for mana, if this creature is tapped, that player adds one mana of any type that land produced. Then that land deals 1 damage to that player.
+
+</details>
+
 ## may-pay-named-cost
 
 Blocks **1** card.
@@ -2205,6 +2355,20 @@ Blocks **1** card.
 
 </details>
 
+## noncombat-damage-trigger
+
+Blocks **1** card.
+
+- **(trigger_event)** a `deals_damage_to_player` trigger restricted to NONCOMBAT damage (e.g. a trigger key `noncombat: true` read against the DAMAGE_DEALT event's `combat` flag), with `controller: you` matching any source you control (spells and abilities included, not only permanents), `defending: opponent`, the damage amount bound for the effect ('that amount') and the damaged player bound so the target can be 'target creature that player controls'
+  <br>Why the existing vocabulary won't do: `deals_damage_to_player` fires on combat and noncombat damage alike and `trigger_keys` has no combat/noncombat clause (`combat_only` exists only as an ability key on the `prevent_damage` static); dropping 'noncombat' would make every combat hit by your creatures trigger it, a strictly wider card. The delirium condition itself is expressible as `{"distinct": {"of": "card_type", "objects": {"zone": "graveyard", "owner": "you"}}}` >= 4, so only the event restriction (and confirming the target can be scoped to the damaged player) is missing
+
+<details><summary>Cards waiting on this</summary>
+
+- **Fear of Burning Alive** (rank 6793) — `fear_of_burning_alive`
+  - Delirium — Whenever a source you control deals noncombat damage to an opponent, if there are four or more card types among cards in your graveyard, this creature deals that amount of damage to target creature that player controls.
+
+</details>
+
 ## nontoken-creatures-died-this-turn
 
 Blocks **1** card.
@@ -2263,6 +2427,20 @@ Blocks **1** card.
   - Cast this spell only during combat before blockers are declared.
   - X can't be greater than the number of snow lands you control.
   - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
+
+</details>
+
+## playable-condition-opponent-lost-life
+
+Blocks **1** card.
+
+- **(engine)** a new `playable_condition` value (e.g. "your_turn_and_opponent_lost_life") for exile/look_at_top permissions with `playable: "while_exiled"`: the exiled cards may be played only while it is the effect controller's turn and some opponent's TurnLedger.life_lost is greater than 0 this turn, rechecked each time the play is offered
+  <br>Why the existing vocabulary won't do: PLAYABLE_CONDITIONS (playable_conditions in the packet) holds only "you_attacked_with_a_commander"; the value `life_lost_this_turn` and the condition `is_your_turn` exist but only for `if`/trigger conditions, not as a play permission gate, and a `while_exiled` permission without the gate would let the cards be played on any turn with no life loss, which is a strictly stronger card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Theater of Horrors** (rank 4478) — `theater_of_horrors`
+  - During your turn, if an opponent lost life this turn, you may play lands and cast spells from among cards exiled with this enchantment.
 
 </details>
 
@@ -2434,20 +2612,6 @@ Blocks **1** card.
 
 </details>
 
-## random-player-choice
-
-Blocks **1** card.
-
-- **(op)** choose_player with random: true -- the engine picks uniformly at random among the eligible players and binds the result (as), with an else branch when no player is eligible
-  <br>Why the existing vocabulary won't do: choose_player takes only as, players and prompt, so the controller chooses; random exists on choose_mode and discard but not on a player choice
-
-<details><summary>Cards waiting on this</summary>
-
-- **Territorial Hellkite** (rank 6681) — `territorial_hellkite`
-  - At the beginning of combat on your turn, choose an opponent at random that this creature didn't attack during your last combat. This creature attacks that player this combat if able. If you can't choose an opponent this way, tap this creature.
-
-</details>
-
 ## remove-all-counters
 
 Blocks **1** card.
@@ -2501,6 +2665,22 @@ Blocks **1** card.
 
 - **Scolding Administrator** (rank 18369) — `scolding_administrator`
   - Repartee — Whenever you cast an instant or sorcery spell that targets a creature, put a +1/+1 counter on this creature.
+
+</details>
+
+## replace-damage-noncombat
+
+Blocks **1** card.
+
+- **(static_effect)** replace_damage restricted to noncombat damage (damage_addend 2, damage_source controller you, affects_player opponent), gated on the Torture Pit door being unlocked
+  <br>Why the existing vocabulary won't do: replace_damage with damage_addend covers the plus-N part, and combat_only exists, but no key restricts it to noncombat damage; and the static must only apply while its door is unlocked, which needs the Room engine above
+
+<details><summary>Cards waiting on this</summary>
+
+- **Spiked Corridor // Torture Pit** (rank 4163) — `spiked_corridor_torture_pit`
+  - When you unlock this door, create three 1/1 red Devil creature tokens with "When this token dies, it deals 1 damage to any target."
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - If a source you control would deal noncombat damage to an opponent, it deals that much damage plus 2 instead.
 
 </details>
 
@@ -2572,6 +2752,22 @@ Blocks **1** card.
 
 - **Consuming Aberration** (rank 1606) — `consuming_aberration`
   - Whenever you cast a spell, each opponent reveals cards from the top of their library until they reveal a land card, then puts those cards into their graveyard.
+
+</details>
+
+## rooms
+
+Blocks **1** card.
+
+- **(engine)** Room split permanents (rule 709.5): a card with two door halves, each with its own name and mana cost, castable as either half; the cast half enters unlocked, the other locked; a locked door's abilities are inactive; a sorcery-speed special action pays a locked door's mana cost to unlock it; the permanent's name/cost reflect only unlocked doors
+  <br>Why the existing vocabulary won't do: second_face is a split/adventure/MDFC half that is cast instead of the front and then is the whole object; nothing keeps both halves on one permanent with per-half locked/unlocked state, and no special action unlocks a half
+
+<details><summary>Cards waiting on this</summary>
+
+- **Spiked Corridor // Torture Pit** (rank 4163) — `spiked_corridor_torture_pit`
+  - When you unlock this door, create three 1/1 red Devil creature tokens with "When this token dies, it deals 1 damage to any target."
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - If a source you control would deal noncombat damage to an opponent, it deals that much damage plus 2 instead.
 
 </details>
 
@@ -2686,20 +2882,6 @@ Blocks **1** card.
 - **Intuition** (rank 1971) — `intuition`
   - Target opponent chooses one.
   - Put that card into your hand and the rest into your graveyard.
-
-</details>
-
-## self-suspend-on-resolution
-
-Blocks **1** card.
-
-- **(engine)** a card-level resolution rider for an instant or sorcery, beside exiles_itself: 'as this spell resolves, exile it with N time counters on it' -- the spell goes to exile instead of the graveyard and is made suspended (suspend.make_suspended with N counters, suspended_by its owner) so the upkeep tick and the free cast recur. Shared by the Rousing Refrain / Arc Blade / Lotus Blossom-style self-suspending spells, e.g. a rider like `suspends_itself: 3`
-  <br>Why the existing vocabulary won't do: The `suspend` op (op_suspend) only works on a target or binding; called on the spell itself from spell_effects, it would exile the card off the stack mid-resolution, and stack._resolve_spell then unconditionally calls _place_after_resolution, which moves it on to the graveyard (resetting the suspended mark) -- the same reason exiles_itself exists as a rider rather than an `exile` op. `exiles_itself` exiles without time counters or the suspended mark, so the card would never come back; the card-level `suspend` key covers only the cast-from-hand alternative, not the resolution exile.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Rousing Refrain** (rank 2750) — `rousing_refrain`
-  - Exile Rousing Refrain with three time counters on it.
 
 </details>
 
@@ -2940,6 +3122,22 @@ Blocks **1** card.
 
 - **Suppressor Skyguard** (rank 9126) — `suppressor_skyguard`
   - Whenever a player attacks you, if that player has another opponent who isn't being attacked, prevent all combat damage that would be dealt to you this combat.
+
+</details>
+
+## unlock-door
+
+Blocks **1** card.
+
+- **(trigger_event)** a trigger event 'when you unlock this door' that fires when this door becomes unlocked, both when the half is cast (enters unlocked) and when unlocked later by the special action
+  <br>Why the existing vocabulary won't do: self_enters fires only on entering, missing a later unlock, and fires even when this door enters locked because the other half was cast; trigger_events has no unlock event
+
+<details><summary>Cards waiting on this</summary>
+
+- **Spiked Corridor // Torture Pit** (rank 4163) — `spiked_corridor_torture_pit`
+  - When you unlock this door, create three 1/1 red Devil creature tokens with "When this token dies, it deals 1 damage to any target."
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - If a source you control would deal noncombat damage to an opponent, it deals that much damage plus 2 instead.
 
 </details>
 

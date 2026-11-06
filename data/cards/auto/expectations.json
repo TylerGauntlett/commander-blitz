@@ -1869,6 +1869,10 @@
     },
     "zone": "graveyard"
   },
+  "blood_seeker": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "bloodfire_expert": {
     "zone": "battlefield"
   },
@@ -2149,6 +2153,10 @@
     "zone": "graveyard"
   },
   "brambleweft_behemoth": {
+    "zone": "battlefield"
+  },
+  "brash_taunter": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "brass_infiniscope": {
@@ -4049,6 +4057,17 @@
     },
     "zone": "graveyard"
   },
+  "decree_of_pain": {
+    "battlefield_count": 30,
+    "hand_size": {
+      "0": 5
+    },
+    "library_size": {
+      "0": 36
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
+  },
   "deekah_fractal_theorist": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -4987,6 +5006,10 @@
     "library_size": {
       "0": 36
     },
+    "zone": "battlefield"
+  },
+  "enchanter_s_bane": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "encroaching_dragonstorm": {
@@ -6837,6 +6860,14 @@
     },
     "zone": "battlefield"
   },
+  "gleeful_arsonist": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "glider_kids": {
     "zone": "battlefield"
   },
@@ -7080,6 +7111,22 @@
   "graaz_unstoppable_juggernaut": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "grab_the_prize": {
+    "graveyard_size": {
+      "0": 4
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 38
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "graveyard"
   },
   "grand_coliseum": {
     "zone": "battlefield"
@@ -8787,6 +8834,13 @@
       "0": 42
     }
   },
+  "kaervek_the_merciless": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "kalakscion_hunger_tyrant": {
     "zone": "battlefield"
   },
@@ -8894,6 +8948,13 @@
     }
   },
   "kederekt_creeper": {
+    "zone": "battlefield"
+  },
+  "kederekt_parasite": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "keen_duelist": {
@@ -9454,6 +9515,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "leechridden_swamp": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "legion_loyalty": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -9549,6 +9614,18 @@
     },
     "life": {
       "0": 40
+    },
+    "zone": "graveyard"
+  },
+  "light_up_the_stage": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 38
     },
     "zone": "graveyard"
   },
@@ -10305,6 +10382,13 @@
   "mask_of_avacyn": {
     "zone": "battlefield"
   },
+  "mask_of_griselbrand": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "mask_of_memory": {
     "battlefield_count": 33,
     "hand_size": {
@@ -10345,6 +10429,13 @@
       "keywords": [
         "wither"
       ]
+    },
+    "zone": "battlefield"
+  },
+  "massacre_wurm": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40
     },
     "zone": "battlefield"
   },
@@ -11345,6 +11436,10 @@
   "nightshade_dryad": {
     "zone": "battlefield"
   },
+  "nightshade_harvester": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "nightveil_predator": {
     "zone": "battlefield"
   },
@@ -12224,6 +12319,10 @@
     },
     "zone": "graveyard"
   },
+  "persistent_constrictor": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "persistent_petitioners": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -13031,6 +13130,14 @@
   "rampaging_aetherhood": {
     "zone": "battlefield"
   },
+  "rampaging_ferocidon": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "rampaging_hippo": {
     "zone": "battlefield"
   },
@@ -13818,6 +13925,12 @@
   "rotting_mastodon": {
     "zone": "battlefield"
   },
+  "rousing_refrain": {
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "exile"
+  },
   "roving_harper": {
     "hand_size": {
       "0": 2
@@ -13935,6 +14048,10 @@
   },
   "sacred_wolf": {
     "zone": "battlefield"
+  },
+  "sadistic_shell_game": {
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
   },
   "sage_s_dousing": {
     "zone": "graveyard"
@@ -14266,6 +14383,10 @@
     "zone": "battlefield"
   },
   "seal_away": {
+    "zone": "battlefield"
+  },
+  "seance_board": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "search_for_tomorrow": {
@@ -14753,6 +14874,10 @@
     "zone": "battlefield"
   },
   "shivan_devastator": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "shivan_gorge": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -15598,6 +15723,10 @@
       "graveyard"
     ]
   },
+  "spiteful_visions": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "spitting_image": {
     "zone": "graveyard"
   },
@@ -15726,6 +15855,10 @@
     "zone": "battlefield"
   },
   "stangg_echo_warrior": {
+    "zone": "battlefield"
+  },
+  "star_athlete": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "starfield_mystic": {
@@ -15896,6 +16029,16 @@
     "zone": "battlefield"
   },
   "stormcloud_spirit": {
+    "zone": "battlefield"
+  },
+  "stormfist_crusader": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "menace"
+      ]
+    },
     "zone": "battlefield"
   },
   "stormfront_pegasus": {
@@ -16243,6 +16386,13 @@
   "surveillance_room": {
     "zone": "battlefield"
   },
+  "suspended_sentence": {
+    "life": {
+      "1": 37
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "exile"
+  },
   "swab_goblin": {
     "zone": "battlefield"
   },
@@ -16373,6 +16523,10 @@
   },
   "taigam_s_scheming": {
     "zone": "graveyard"
+  },
+  "tainted_peak": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "tajuru_blightblade": {
     "zone": "battlefield"
@@ -16561,6 +16715,10 @@
     }
   },
   "teacher_s_pest": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "tectonic_giant": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -16902,6 +17060,13 @@
     "zone": "battlefield"
   },
   "the_lady_of_the_mountain": {
+    "zone": "battlefield"
+  },
+  "the_lord_of_pain": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "the_mycosynth_gardens": {

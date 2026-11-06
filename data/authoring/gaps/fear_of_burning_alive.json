@@ -1,0 +1,18 @@
+{
+  "card_id": "fear_of_burning_alive",
+  "name": "Fear of Burning Alive",
+  "oracle_text": "When this creature enters, it deals 4 damage to each opponent.\nDelirium — Whenever a source you control deals noncombat damage to an opponent, if there are four or more card types among cards in your graveyard, this creature deals that amount of damage to target creature that player controls.",
+  "blocked_sentences": [
+    "Delirium — Whenever a source you control deals noncombat damage to an opponent, if there are four or more card types among cards in your graveyard, this creature deals that amount of damage to target creature that player controls."
+  ],
+  "needs": [
+    {
+      "capability": "noncombat_damage_trigger",
+      "kind": "trigger_event",
+      "what": "a `deals_damage_to_player` trigger restricted to NONCOMBAT damage (e.g. a trigger key `noncombat: true` read against the DAMAGE_DEALT event's `combat` flag), with `controller: you` matching any source you control (spells and abilities included, not only permanents), `defending: opponent`, the damage amount bound for the effect ('that amount') and the damaged player bound so the target can be 'target creature that player controls'",
+      "why_existing_wont_do": "`deals_damage_to_player` fires on combat and noncombat damage alike and `trigger_keys` has no combat/noncombat clause (`combat_only` exists only as an ability key on the `prevent_damage` static); dropping 'noncombat' would make every combat hit by your creatures trigger it, a strictly wider card. The delirium condition itself is expressible as `{\"distinct\": {\"of\": \"card_type\", \"objects\": {\"zone\": \"graveyard\", \"owner\": \"you\"}}}` >= 4, so only the event restriction (and confirming the target can be scoped to the damaged player) is missing"
+    }
+  ],
+  "closest_existing": ["deals_damage_to_player", "deals_combat_damage_to_player"],
+  "confidence": "high"
+}

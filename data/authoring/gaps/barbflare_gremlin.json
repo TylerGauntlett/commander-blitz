@@ -1,0 +1,18 @@
+{
+  "card_id": "barbflare_gremlin",
+  "name": "Barbflare Gremlin",
+  "oracle_text": "First strike, haste\nWhenever a player taps a land for mana, if this creature is tapped, that player adds one mana of any type that land produced. Then that land deals 1 damage to that player.",
+  "blocked_sentences": [
+    "Whenever a player taps a land for mana, if this creature is tapped, that player adds one mana of any type that land produced. Then that land deals 1 damage to that player."
+  ],
+  "needs": [
+    {
+      "capability": "mana_tap_trigger_damage_rider",
+      "kind": "static_effect",
+      "what": "a triggered mana ability off any player's land tap (605.1b) that, beside the extra mana of a type the land produced, has the tapped LAND deal 1 damage to the player who tapped it -- a rider with the land as damage source and the tapping player as recipient, resolved at the mana choke point without the stack",
+      "why_existing_wont_do": "`double_land_mana` (affects_player any, gated by a static condition that this creature is tapped) covers the extra mana, but neither it nor `add_mana_on_tap` carries any rider: `player_statics.mana_added_on_tap` and `costs.mana_produced` only add mana. The mana-ability rider list (damage, lose_life, ...) belongs to an activated mana ability of the tapped permanent itself, not to a static reacting to another permanent's tap, and no trigger_event fires on 'taps a land for mana' (becomes_tapped with mana_ability is a stack trigger, which 605.4a forbids for a mana-triggered mana ability). Dropping the damage would make a strictly better card"
+    }
+  ],
+  "closest_existing": ["double_land_mana", "add_mana_on_tap"],
+  "confidence": "high"
+}

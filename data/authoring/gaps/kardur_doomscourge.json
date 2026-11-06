@@ -1,0 +1,18 @@
+{
+  "card_id": "kardur_doomscourge",
+  "name": "Kardur, Doomscourge",
+  "oracle_text": "When Kardur enters, until your next turn, creatures your opponents control attack each combat if able and attack a player other than you if able.\nWhenever an attacking creature dies, each opponent loses 1 life and you gain 1 life.",
+  "blocked_sentences": [
+    "When Kardur enters, until your next turn, creatures your opponents control attack each combat if able and attack a player other than you if able."
+  ],
+  "needs": [
+    {
+      "capability": "goad_without_goaded",
+      "kind": "op",
+      "what": "a one-shot effect giving the creatures matched at resolution goad's two requirements (attack each combat if able; attack a player other than the effect's controller if able) until the controller's next turn, WITHOUT marking them goaded -- e.g. a `goad` option like `mark_goaded: false`, so `goaded` filters (Vengeful Ancestor, Puppet Master's treasure trigger) do not see them",
+      "why_existing_wont_do": "`goad` gives exactly these requirements but also makes the creatures goaded, which Kardur's ruling says it does not (an observable difference for every `goaded` filter); `must_attack` compels one combat only and has no defender restriction; `must_attack_player` names one required defender rather than forbidding the controller; `cant_attack_player` is a prohibition, not an 'if able' preference; the `attacks_if_able` static lives on Kardur, ends when it leaves, and cannot end at your next turn"
+    }
+  ],
+  "closest_existing": ["goad", "must_attack", "cant_attack_player", "attacks_if_able"],
+  "confidence": "high"
+}

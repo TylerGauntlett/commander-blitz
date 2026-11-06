@@ -1,0 +1,38 @@
+{
+  "card_id": "spiked_corridor_torture_pit",
+  "name": "Spiked Corridor // Torture Pit",
+  "oracle_text": "When you unlock this door, create three 1/1 red Devil creature tokens with \"When this token dies, it deals 1 damage to any target.\"\n(You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)\nIf a source you control would deal noncombat damage to an opponent, it deals that much damage plus 2 instead.\n(You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)",
+  "blocked_sentences": [
+    "When you unlock this door, create three 1/1 red Devil creature tokens with \"When this token dies, it deals 1 damage to any target.\"",
+    "(You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)",
+    "If a source you control would deal noncombat damage to an opponent, it deals that much damage plus 2 instead."
+  ],
+  "needs": [
+    {
+      "capability": "rooms",
+      "kind": "engine",
+      "what": "Room split permanents (rule 709.5): a card with two door halves, each with its own name and mana cost, castable as either half; the cast half enters unlocked, the other locked; a locked door's abilities are inactive; a sorcery-speed special action pays a locked door's mana cost to unlock it; the permanent's name/cost reflect only unlocked doors",
+      "why_existing_wont_do": "second_face is a split/adventure/MDFC half that is cast instead of the front and then is the whole object; nothing keeps both halves on one permanent with per-half locked/unlocked state, and no special action unlocks a half"
+    },
+    {
+      "capability": "unlock_door",
+      "kind": "trigger_event",
+      "what": "a trigger event 'when you unlock this door' that fires when this door becomes unlocked, both when the half is cast (enters unlocked) and when unlocked later by the special action",
+      "why_existing_wont_do": "self_enters fires only on entering, missing a later unlock, and fires even when this door enters locked because the other half was cast; trigger_events has no unlock event"
+    },
+    {
+      "capability": "devil_token",
+      "kind": "token",
+      "what": "a 1/1 red Devil creature token with \"When this token dies, it deals 1 damage to any target.\"",
+      "why_existing_wont_do": "token_ids contains no Devil token"
+    },
+    {
+      "capability": "replace_damage_noncombat",
+      "kind": "static_effect",
+      "what": "replace_damage restricted to noncombat damage (damage_addend 2, damage_source controller you, affects_player opponent), gated on the Torture Pit door being unlocked",
+      "why_existing_wont_do": "replace_damage with damage_addend covers the plus-N part, and combat_only exists, but no key restricts it to noncombat damage; and the static must only apply while its door is unlocked, which needs the Room engine above"
+    }
+  ],
+  "closest_existing": ["second_face", "self_enters", "replace_damage"],
+  "confidence": "high"
+}

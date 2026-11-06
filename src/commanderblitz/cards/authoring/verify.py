@@ -1200,7 +1200,7 @@ def _play_once(registry: CardRegistry, card: CardDef) -> list[str]:
         # rather than the type. Widened only by a declared flag: a spell that
         # merely finds itself in exile still fails, which is what this catches.
         spell_zones = {Zone.GRAVEYARD}
-        if played.exiles_itself or played.rebound:
+        if played.exiles_itself or played.rebound or played.suspends_itself is not None:
             spell_zones.add(Zone.EXILE)
         if played.tucks_itself is not None:
             # "…put it into its owner's library seventh from the top" -- Approach

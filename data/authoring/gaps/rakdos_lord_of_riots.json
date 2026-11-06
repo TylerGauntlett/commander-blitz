@@ -1,0 +1,25 @@
+{
+  "card_id": "rakdos_lord_of_riots",
+  "name": "Rakdos, Lord of Riots",
+  "oracle_text": "You can't cast Rakdos unless an opponent lost life this turn.\nFlying, trample\nCreature spells you cast cost {1} less to cast for each 1 life your opponents have lost this turn.",
+  "blocked_sentences": [
+    "You can't cast Rakdos unless an opponent lost life this turn.",
+    "Creature spells you cast cost {1} less to cast for each 1 life your opponents have lost this turn."
+  ],
+  "needs": [
+    {
+      "capability": "cast_restriction_self",
+      "kind": "engine",
+      "what": "a card-level casting restriction on the card itself, gated by a condition checked at cast time (here: the sum of life lost this turn by your opponents is greater than 0), applied from hand and the command zone",
+      "why_existing_wont_do": "card_level_rider_keys only has cant_cast_first_turns (a fixed turn count, no condition); the cant_cast_spells static has affects_spells with no self_only key and its condition can only use static_value_keys, which have no life_lost_this_turn"
+    },
+    {
+      "capability": "life_lost_this_turn_static_value",
+      "kind": "value",
+      "what": "life_lost_this_turn (summed over opponents) as a static_value_keys leaf, so a spell_cost_reduction's amount can be {1} less per 1 life your opponents lost this turn, and a static condition can compare it",
+      "why_existing_wont_do": "life_lost_this_turn is only in value_keys (effects), not static_value_keys; spell_cost_reduction's amount is read by _static_value, which rejects unknown leaves, and cost_reduction_keys (count/total_power/...) only count objects, not player life ledgers"
+    }
+  ],
+  "closest_existing": ["spell_cost_reduction", "cant_cast_first_turns", "cant_cast_spells"],
+  "confidence": "high"
+}

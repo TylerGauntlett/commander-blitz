@@ -1,0 +1,18 @@
+{
+  "card_id": "mogis_god_of_slaughter",
+  "name": "Mogis, God of Slaughter",
+  "oracle_text": "Indestructible\nAs long as your devotion to black and red is less than seven, Mogis isn't a creature.\nAt the beginning of each opponent's upkeep, Mogis deals 2 damage to that player unless they sacrifice a creature of their choice.",
+  "blocked_sentences": [
+    "As long as your devotion to black and red is less than seven, Mogis isn't a creature."
+  ],
+  "needs": [
+    {
+      "capability": "devotion",
+      "kind": "value",
+      "what": "a static value for devotion to two colours (rule 700.5a): the number of mana symbols in the mana costs of permanents you control that are black OR red, where a hybrid {B/R} pip counts once, not twice -- e.g. mana_symbols accepting a list `of: [\"B\", \"R\"]` that counts each pip at most once if it contains any listed colour",
+      "why_existing_wont_do": "mana_symbols takes a single colour in `of` (validate_mana_symbols refuses anything else), and summing mana_symbols of B plus mana_symbols of R double-counts every {B/R} hybrid pip because symbols_of in engine/mana.py counts a hybrid pip for each of its colours; no static value subtracts hybrid pips, so the God would become a creature too early"
+    }
+  ],
+  "closest_existing": ["mana_symbols", "sum", "set_types"],
+  "confidence": "high"
+}

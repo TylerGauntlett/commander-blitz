@@ -1,0 +1,29 @@
+{
+  "card_id": "vial_smasher_the_fierce",
+  "name": "Vial Smasher the Fierce",
+  "oracle_text": "Whenever you cast your first spell each turn, choose an opponent at random. Vial Smasher deals damage equal to that spell's mana value to that player or a planeswalker that player controls.\nPartner (You can have two commanders if both have partner.)",
+  "blocked_sentences": [
+    "Whenever you cast your first spell each turn, choose an opponent at random. Vial Smasher deals damage equal to that spell's mana value to that player or a planeswalker that player controls."
+  ],
+  "needs": [
+    {
+      "capability": "random_player_choice",
+      "kind": "op",
+      "what": "choose_player with random: true -- the engine picks uniformly at random among the eligible players (here each opponent still in the game) and binds the result under `as`, asking nobody",
+      "why_existing_wont_do": "choose_player takes only as, players and prompt and always asks the controller (ask_player); `random` exists on selectors over objects, choose_mode and discard but not on a player choice, so 'each_opponent' or a chosen opponent would both be a different card in a pod"
+    },
+    {
+      "capability": "damage_player_or_planeswalker",
+      "kind": "op",
+      "what": "an or_planeswalker option on the damage op's `player` half: for each resolved player, the damage source's controller chooses (on resolution, untargeted) to deal the damage to that player or to one planeswalker that player controls -- the damage counterpart of create_token's or_planeswalker",
+      "why_existing_wont_do": "op_damage's `player` key only calls damage_player and its `objects` key damages a fixed pool; no option lets the controller redirect a player's damage to a planeswalker that player controls (or_planeswalker exists only on create_token/copy_permanent/put_onto_battlefield attacking). Dealing it to the player only is a narrower card"
+    }
+  ],
+  "closest_existing": [
+    "choose_player",
+    "damage",
+    "mana_value_of",
+    "spell_cast"
+  ],
+  "confidence": "high"
+}
