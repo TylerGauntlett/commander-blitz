@@ -236,6 +236,39 @@ def player_cant_gain_life(state: GameState, pid: int) -> bool:
     )
 
 
+def damage_cant_be_prevented(state: GameState) -> bool:
+    """Is every prevention effect switched off right now?  Usually false.
+
+    Everlasting Torment: "Damage can't be prevented." A "can't" over every
+    prevention effect at once (615.12), so it beats each of them however it was
+    made (101.2) -- shields from the `prevent_damage` ops, the `prevent_damage`
+    and `prevent_all_but` statics, fogs, Panther Habit's "prevent that damage
+    and put counters", and protection's damage half (702.16e). Read by
+    `primitives.damage_player` and `primitives.damage_permanent`, which own
+    every one of those hooks. Not a player-wide static in the `affects_player`
+    sense: it reaches all damage, to anything, from anything.
+
+    A shield counter is **not** a prevention: 122.1c makes it a replacement
+    ("instead remove a shield counter"), so it still answers damage under this.
+    Nor is a redirect (614.9) or a life floor (614.1a).
+    """
+    return next(_active_player_statics(state, "damage_cant_be_prevented"), None) is not None
+
+
+def all_damage_withers(state: GameState) -> bool:
+    """Is all damage dealt as though its source had wither right now?  Usually false.
+
+    Everlasting Torment: "All damage is dealt as though its source had
+    wither." Every source -- a creature, a spell on the stack, an ability whose
+    source has left, either player's -- so it cannot be a `grant_keyword`
+    static, which reaches only the permanents its `affects` matches. Read at
+    the one place damage to a creature becomes -1/-1 counters
+    (`primitives.damage_permanent`, 702.80a); damage to a player is unchanged,
+    as wither's is.
+    """
+    return next(_active_player_statics(state, "all_damage_wither"), None) is not None
+
+
 def outcome_barred_by_static(state: GameState, pid: int, effect: str) -> bool:
     """Does an active ``cant_lose_the_game`` / ``cant_win_the_game`` static name ``pid``?
 
@@ -919,6 +952,10 @@ def attack_tax(
     A static carrying ``x_per_attacker`` prices ``{X}`` per creature instead:
     X is read off ``oid`` itself (`attacker_x`), so Nils, Discipline
     Enforcer's three-counter creature pays {3} where a one-counter one pays {1}.
+
+    The timed taxes on `GameState.attack_taxes` (the `attack_tax` op, Summon:
+    Yojimbo) are added to the same sum, so a Propaganda and a Yojimbo chapter
+    together charge {4}.
     """
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
@@ -950,6 +987,12 @@ def attack_tax(
                 specs.append({"mana": "{" + str(x) + "}"})
             continue
         specs.append(static.get("cost"))
+    # The timed form (`structs.AttackTax`), installed by a resolving ability
+    # and owned by no permanent. Same seat test; never on a planeswalker,
+    # because the sentence names "you" (506.2); and no creature filter,
+    # because "creatures can't attack you" names every one of them.
+    if not planeswalker:
+        specs.extend({"mana": tax.mana} for tax in state.attack_taxes if tax.player == defender)
     return _summed_mana(specs)
 
 
@@ -1088,8 +1131,50 @@ def block_alone_forbidden(state: GameState, oid: int) -> bool:
     return _alone_forbidden(state, oid, "cant_block_alone")
 
 
+#: The `affects_spells` keys that read the zone a spell is cast **from**.
+CAST_ZONE_KEYS = frozenset({"from_zone", "not_from_zone"})
+
+
+def cast_zone_matches(filt: Mapping[str, Any], zone: Any) -> bool:
+    """Does a cast made from ``zone`` satisfy ``filt``'s zone keys?
+
+    ``from_zone`` names the zone (or zones) the spell must be cast from --
+    "spells you cast **from your graveyard**" (Emet-Selch of the Third Seat);
+    ``not_from_zone`` the zone(s) it must not be -- "spells you cast **from
+    anywhere other than your hand**" (Advanced Reconstruction). Either is one
+    zone name or a list of them. A filter with neither matches every zone.
+
+    ``zone`` is the zone the card was cast from, as a `Zone` or its string
+    value. 601.2a puts the card on the stack before 601.2f totals its cost, but
+    the engine prices before `push_spell` moves the object, so every pricer
+    reads the origin straight off the object.
+    ``None`` -- a caller that did not say -- fails closed on either key, so a
+    new pricing lane that forgets the zone discounts nothing rather than
+    everything.
+    """
+    wanted = filt.get("from_zone")
+    refused = filt.get("not_from_zone")
+    if wanted is None and refused is None:
+        return True
+    if zone is None:
+        return False
+    here = str(getattr(zone, "value", zone))
+
+    def names(spec: Any) -> set[str]:
+        return {spec} if isinstance(spec, str) else {str(z) for z in spec}
+
+    if wanted is not None and here not in names(wanted):
+        return False
+    return not (refused is not None and here in names(refused))
+
+
 def spell_cost_reduction(
-    state: GameState, pid: int, card: CardDef, targets: Sequence[Any] | None = None
+    state: GameState,
+    pid: int,
+    card: CardDef,
+    targets: Sequence[Any] | None = None,
+    *,
+    zone: Any = None,
 ) -> int:
     """How much less ``pid`` pays for ``card`` because of statics on the board.
 
@@ -1127,6 +1212,11 @@ def spell_cost_reduction(
     a gate asked before any target exists, and the clause is read generously
     then; see `ability_cost_reduction`, which takes the same shape for the same
     reason.
+
+    ``zone`` is the zone the spell is being cast **from**, read by the
+    ``from_zone`` / ``not_from_zone`` keys through `cast_zone_matches` -- a
+    graveyard discount must reach flashback, a granted graveyard cast and a
+    resolving `cast_card` alike, and never the hand or the command zone.
     """
     total = 0
     for source_obj, static in _battlefield_statics(state):
@@ -1145,6 +1235,9 @@ def spell_cost_reduction(
             continue
         if filt.get("exclude_self") and card.id == state.card_of(source_obj).id:
             continue
+        if not cast_zone_matches(filt, zone):
+            continue
+        filt = {k: v for k, v in filt.items() if k not in CAST_ZONE_KEYS}
         # "Creature spells you cast **of the chosen type** cost {1} less."
         # Herald's Horn. The substitution needs the permanent that made the
         # choice, and this loop has had it all along -- `_battlefield_statics`
@@ -1380,9 +1473,12 @@ def ability_cost_reduction(
     printing the ability could ever discount it. Strong Back is an Aura
     discounting somebody else's Equipment.
 
-    ``affects_abilities`` says which abilities. ``equip`` is the only class so
-    far, and it is the reason `Ability.is_equip` exists -- an equip ability is
-    otherwise indistinguishable from any other that attaches something.
+    ``affects_abilities`` says which abilities. ``equip`` is the reason
+    `Ability.is_equip` exists -- an equip ability is otherwise
+    indistinguishable from any other that attaches something -- and ``any`` is
+    every activated ability (Professor Hojo), which the loader accepts only
+    beside a `targeting` clause, since a mana ability is priced where this
+    function is never asked and has no targets anyway (605.1a).
     ``affects`` says whose permanent prints it, matched as an ordinary static
     filter against the permanent the ability is on.
 
@@ -1401,6 +1497,9 @@ def ability_cost_reduction(
     nothing unaffordable survives to be offered. `pay` is handed the action's
     own targets, so the charge is the number the offer showed.
 
+    ``first_during_your_turn`` limits the discount to the activator's first
+    matching activation of their own turn; see `_first_matching_activation`.
+
     Returns a total, clamped and applied by `costs.ability_mana` -- the one
     function `can_pay` and `pay` both reach, so an ability offered at the
     reduced price is also charged at it.
@@ -1412,6 +1511,10 @@ def ability_cost_reduction(
         if static.get("effect") != "ability_cost_reduction":
             continue
         classes = static.get("affects_abilities") or {}
+        if not classes:
+            # The loader requires a class; an empty one would discount every
+            # activated ability on the table, so a compile bug reads as none.
+            continue
         if classes.get("equip") and not getattr(ability, "is_equip", False):
             continue
         # "abilities **you** activate". The activating player, not the
@@ -1437,8 +1540,74 @@ def ability_cost_reduction(
             )
         ):
             continue
+        if static.get("first_during_your_turn") and not _first_matching_activation(
+            state, pid, source_obj, static
+        ):
+            continue
         total += _static_value(state, static.get("amount"), source_obj)
     return total
+
+
+def _first_matching_activation(
+    state: GameState, pid: int, source_obj: GameObject, static: Mapping[str, Any]
+) -> bool:
+    """Would an activation by ``pid`` now be the first one this static counts?
+
+    "**The first** activated ability you activate **during your turn** that
+    targets a creature you control" -- Professor Hojo. Two questions: is it
+    ``pid``'s turn, and has ``pid`` activated, earlier this turn, an ability of
+    the static's class aimed at something its `targeting` names? The earlier
+    ones are asked of `TurnLedger.targeted_activations`, the snapshot filed as
+    each was activated, because their targets may have died or changed since.
+
+    Every activation counts, including one made before this permanent arrived:
+    "the first" is a fact about the activation, the reading the rulings give
+    Esper Sentinel's "the first noncreature spell". The count is of
+    **matching** activations only -- an ability aimed at an opponent's
+    creature, or at no creature, leaves the discount for the next one that
+    does (Hojo's rulings: the discount goes to "the first activated ability
+    you activate during your turn that targets a creature"). Whether the
+    *current* activation matches is `ability_cost_reduction`'s own
+    `targeting` check; this answers only "first".
+
+    One use per turn whether or not the discount saved anything: an ability
+    costing {G} still is the first (the {2} "will have no effect"), and the
+    next one is not.
+    """
+    if state.active_player != pid:
+        return False
+    aimed = static.get("targeting") or {}
+    equip_only = bool((static.get("affects_abilities") or {}).get("equip"))
+    for is_equip, targets in state.turn_ledger.targeted_activations.get(pid, ()):
+        if equip_only and not is_equip:
+            continue
+        if any(_snapshot_matches(snap, source_obj, aimed) for snap in targets):
+            return False
+    return True
+
+
+def _snapshot_matches(
+    snap: tuple[int, frozenset[str], frozenset[str]],
+    source_obj: GameObject,
+    filt: Mapping[str, Any],
+) -> bool:
+    """A `targeting` filter asked of one snapshotted target.
+
+    The keys `FIRST_ACTIVATION_TARGETING_KEYS` admits, read as `_matches`
+    reads them: ``controller`` defaults to "you" and is relative to the
+    static's source, ``types`` is a conjunction, ``subtypes`` any of.
+    """
+    controller, types, subtypes = snap
+    who = str(filt.get("controller", "you"))
+    if who == "you" and controller != source_obj.controller:
+        return False
+    if who == "opponent" and controller == source_obj.controller:
+        return False
+    if (want := filt.get("types")) and not set(want) <= types:
+        return False
+    if (want := filt.get("subtypes")) and not set(want) & subtypes:
+        return False
+    return True
 
 
 def attack_compelled(state: GameState, oid: int) -> bool:
@@ -2235,10 +2404,9 @@ def free_cast_permission(
         # "…from your hand" (Tamiyo, Field Researcher's emblem; Omniscience).
         # ``zone`` is where this cast is being made from; a caller that does not
         # say is refused rather than freed, so a new cast lane fails closed.
-        if "from_zone" in filt:
-            if zone != filt["from_zone"]:
-                continue
-            filt = {k: v for k, v in filt.items() if k != "from_zone"}
+        if not cast_zone_matches(filt, zone):
+            continue
+        filt = {k: v for k, v in filt.items() if k not in CAST_ZONE_KEYS}
         resolved = resolve_chosen_colors(resolve_chosen_subtypes(filt, source_obj), source_obj)
         if _matches_printed(card, resolved):
             return True
@@ -2293,6 +2461,36 @@ def granted_warp_cost(state: GameState, pid: int, card: CardDef) -> str | None:
         if _matches_printed(card, resolved):
             return str(price)
     return None
+
+
+def granted_pay_generic_with(state: GameState, pid: int, card: CardDef) -> frozenset[str]:
+    """The ``pay_generic_with`` currencies statics hand ``card`` as ``pid`` casts it.
+
+    "Nonartifact spells you cast have improvise" -- Inspiring Statuary. The
+    spell has the keyword while it is being cast, exactly as if it were
+    printed, so `casting.pay_generic_currencies` unions these with the card's
+    own field and every reader of the currency sees one set. ``affects_spells``
+    is matched against the face being cast, like every other cast-time grant.
+
+    A union, not the first grant: two different keywords on one spell are both
+    usable in the same cast (Statuary's improvise on a convoke spell taps
+    creatures and artifacts alike), and two instances of one keyword on a spell
+    are redundant, which a set says for free.
+    """
+    out: set[str] = set()
+    for source_obj, static in _active_player_statics(state, "grant_pay_generic_with"):
+        if not _reaches_player(source_obj, static, pid):
+            continue
+        currency = static.get("pay_generic_with")
+        filt = static.get("affects_spells")
+        if not currency or not filt:
+            # The loader requires both; defaulting the filter would hand the
+            # keyword to every spell.
+            continue
+        resolved = resolve_chosen_colors(resolve_chosen_subtypes(filt, source_obj), source_obj)
+        if _matches_printed(card, resolved):
+            out.add(str(currency))
+    return frozenset(out)
 
 
 def granted_miracle_cost(state: GameState, pid: int, card: CardDef) -> str | None:

@@ -18,6 +18,7 @@ from .player import COMMANDER_DAMAGE_THRESHOLD
 from .player_statics import legend_rule_exempt, outcome_barred_by_static
 from .primitives import become_monarch, clear_until_next_turn, end_effects_of_leaving_player
 from .temp_effects import (
+    clear_attack_taxes,
     clear_flash_permissions,
     clear_goad,
     clear_permanent_shields,
@@ -287,6 +288,9 @@ def _eliminate(state: GameState, pid: int, reason: LossReason) -> None:
     clear_until_next_turn(state, pid)
     # And a timed flash permission keyed to a seat that has left.
     clear_flash_permissions(state, "until_your_next_turn", pid)
+    # And a timed attack tax protecting a seat that has left: nobody attacks
+    # that seat again, so the row is dead weight on every attack mask.
+    clear_attack_taxes(state, "until_your_next_turn", pid)
     player.mana_pool.clear()
     _monarch_left(state, pid)
     state.bump_chars()

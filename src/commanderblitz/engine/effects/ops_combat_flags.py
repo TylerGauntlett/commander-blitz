@@ -17,6 +17,7 @@ from ..primitives import add_counters, add_energy, add_poison, remove_counters
 from ..structs import (
     ATTACK_MARK_DURATIONS,
     ATTACK_RESTRICTION_DURATIONS,
+    ATTACK_TAX_DURATIONS,
     BLOCK_PROHIBITION_DURATIONS,
     CANT_SACRIFICE_DURATIONS,
     UNBLOCKABLE_DURATIONS,
@@ -32,12 +33,14 @@ from ..temp_effects import (
     require_attack_on,
     require_attack_player,
     restrict_attack,
+    tax_attacks,
 )
 from .board_helpers import (
     _offer_blocks_to,
     _players,
 )
-from .context import EffectContext, ask_targets
+from .context import EffectContext, ask_targets, ask_x
+from .counter_removal import ask_counter_kind, counters_on, kinds_held
 from .registry import register
 from .selectors import (
     choose_objects,
@@ -235,11 +238,25 @@ def _move_every_kind(ctx: EffectContext, spec: Mapping[str, Any]):
       so the counts come from the leave event's `had_counters` snapshot, which
       is the same place `counters_had` reads and the same explicit-LKI pattern
       `snapshot` established.
+
+    ``from_had_counters`` is ``true`` for that leave event, or the name a
+    `sacrifice` cost's ``as`` wrote -- Zack Fair's "put Zack Fair's counters on
+    that creature", where the creature was sacrificed to pay for the ability
+    and its counters are read off that cost's snapshot
+    (`costs.sacrificed_snapshot`, 608.2h).
     """
-    from_had = bool(spec.get("from_had_counters"))
+    from_had = spec.get("from_had_counters")
     if from_had:
-        snapshot = ctx.bindings.get("had_counters")
-        counts = dict(snapshot) if isinstance(snapshot, Mapping) else {}
+        if isinstance(from_had, str):
+            record = ctx.bindings.get(from_had)
+            snapshot = record.get("counters") if isinstance(record, Mapping) else None
+        else:
+            snapshot = ctx.bindings.get("had_counters")
+        counts = (
+            {kind: int(n) for kind, n in snapshot.items() if int(n) > 0}
+            if isinstance(snapshot, Mapping)
+            else {}
+        )
         sources: list[int] = []
     else:
         if "from" in spec:
@@ -271,6 +288,83 @@ def _move_every_kind(ctx: EffectContext, spec: Mapping[str, Any]):
     for dest_oid in destinations:
         for counter_kind, amount in counts.items():
             add_counters(ctx.state, dest_oid, counter_kind, amount, source=ctx.source_oid)
+
+
+def _move_chosen_kinds(ctx: EffectContext, spec: Mapping[str, Any]):
+    """``any_kind``: move ``amount`` counters, each of a kind the controller picks.
+
+    Nesting Grounds -- "Move **a counter** from target permanent you control
+    onto a second target permanent." One counter, of whichever kind is on the
+    source (122.1): a charge, oil or loyalty counter as readily as a +1/+1.
+    Naming a kind would make the land useless against the others, and
+    `all_kinds` moves the whole multiset. The kind is chosen on resolution,
+    asked only when the source carries more than one
+    (`counter_removal.ask_counter_kind`), and taken off before it is put on,
+    so a counter that was not there is never created.
+
+    With either target gone (608.2b) nothing moves: there is no destination,
+    or nothing to take a counter from.
+    """
+    if "from" in spec:
+        sources = resolve_pool(ctx, spec["from"])
+    else:
+        sources = [ctx.source_oid] if ctx.source_oid is not None else []
+    sources = [oid for oid in sources if counters_on(ctx, oid) > 0]
+    if not sources:
+        return
+    destinations = yield from choose_objects(ctx, spec.get("objects"), "Move counters to")
+    if not destinations:
+        return
+    amount = max(0, evaluate_value(ctx, spec.get("amount", 1)))
+    for source_oid in sources:
+        for _ in range(amount):
+            kind = yield from ask_counter_kind(ctx, source_oid, ctx.controller, verb="Move")
+            if kind is None or not remove_counters(ctx.state, source_oid, kind, 1):
+                break
+            for dest_oid in destinations:
+                add_counters(ctx.state, dest_oid, kind, 1, source=ctx.source_oid)
+
+
+def _move_any_number(ctx: EffectContext, spec: Mapping[str, Any]):
+    """``any_kind`` with ``any_number``: any sub-multiset of the source's counters.
+
+    Resourceful Defense -- "Move **any number of counters** from target
+    permanent you control onto a second target permanent you control." Any
+    number of any kinds (122.1): three of the source's five +1/+1 counters and
+    its one shield counter, or none at all. One `ask_x` per kind the source
+    carries (harmful kinds first, `counter_removal.kinds_held`), 0 up to every
+    counter of that kind -- the question `distribute_moved_counters` asks for
+    its one kind -- so every split is reachable without a distribution
+    decision. Each kind comes off the source and goes on the destination in
+    one placement, so a Hardened Scales adds one per kind moved, not one per
+    counter.
+
+    Not `all_kinds`, which moves every counter, nor `any_kind` with an
+    ``amount``, which moves exactly that many. With either target gone
+    (608.2b) nothing moves and nothing is asked.
+    """
+    if "from" in spec:
+        sources = resolve_pool(ctx, spec["from"])
+    else:
+        sources = [ctx.source_oid] if ctx.source_oid is not None else []
+    sources = [oid for oid in sources if counters_on(ctx, oid) > 0]
+    if not sources:
+        return
+    destinations = yield from choose_objects(ctx, spec.get("objects"), "Move counters to")
+    destinations = [oid for oid in destinations if oid not in sources]
+    if not destinations:
+        return
+    for source_oid in sources:
+        name = ctx.name_of(source_oid)
+        for kind, held in kinds_held(ctx, source_oid).items():
+            moving = yield from ask_x(
+                ctx, f"Move how many {kind} counters from {name}?", held, ctx.controller
+            )
+            moving = remove_counters(ctx.state, source_oid, kind, min(moving, held))
+            if not moving:
+                continue
+            for dest_oid in destinations:
+                add_counters(ctx.state, dest_oid, kind, moving, source=ctx.source_oid)
 
 
 @register("move_counters")
@@ -305,6 +399,12 @@ def op_move_counters(ctx: EffectContext, spec: Mapping[str, Any]):
     # quietly smaller than printed.
     if spec.get("all_kinds"):
         yield from _move_every_kind(ctx, spec)
+        return
+    if spec.get("any_kind") and spec.get("any_number"):
+        yield from _move_any_number(ctx, spec)
+        return
+    if spec.get("any_kind"):
+        yield from _move_chosen_kinds(ctx, spec)
         return
     kind = str(spec.get("counter", PLUS_ONE))
     if "from" in spec:
@@ -559,6 +659,45 @@ def op_must_attack_planeswalker(ctx: EffectContext, spec: Mapping[str, Any]):
     yield from ()
 
 
+@register("attack_tax")
+def op_attack_tax(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Until your next turn, creatures can't attack you unless their controller
+    pays {2} for each of those creatures." -- Summon: Yojimbo, chapters II-III.
+
+    The timed twin of the `attack_tax` static. The static is the near miss and
+    misses twice: it is a `static_effect`, read only while its permanent sits on
+    the battlefield, so a Saga sacrificed after chapter IV would end the
+    chapter-III tax a turn early; and it has no clock at all. `cant_attack_player`
+    has the clock and the seat but no price -- a wall where the card prints a
+    toll.
+
+    So it is a row in a timed table, `structs.AttackTax`, which
+    `player_statics.attack_tax` sums with the static taxes as each attacker is
+    declared -- the declare-attackers label, the payability check and the
+    charge all read it through `combat.attack_tax_cost`, as they do Propaganda.
+
+    ``cost``      required, ``{"mana": "{2}"}`` -- the static's own `cost`
+                  mapping, per attacking creature.
+    ``duration``  required, ``until_your_next_turn`` or ``this_turn``.
+
+    The protected seat and the clock are both the resolving controller: "can't
+    attack **you**", "until **your** next turn". An attack on that player's
+    planeswalkers is not taxed (506.2).
+    """
+
+    duration = str(spec["duration"])
+    if duration not in ATTACK_TAX_DURATIONS:  # pragma: no cover - loader guards
+        raise DslError(f"unknown attack_tax duration {duration!r}")
+    tax_attacks(
+        ctx.state,
+        ctx.controller,
+        str((spec.get("cost") or {}).get("mana") or ""),
+        duration,
+        source=ctx.source_oid,
+    )
+    yield from ()
+
+
 @register("cant_attack_player")
 def op_cant_attack_player(ctx: EffectContext, spec: Mapping[str, Any]):
     """ "You can't attack that player this turn." "They can't attack you this combat."
@@ -764,6 +903,11 @@ def op_unblockable(ctx: EffectContext, spec: Mapping[str, Any]):
     creature that gains haste afterwards may still block. Absent, every blocker
     is refused -- which is why it may never be dropped from a card that prints
     the exception: the creature would be strictly harder to block than printed.
+
+    ``by_opponents: true`` is "…can't be blocked by creatures your opponents
+    control" (Rikku, Resourceful Guardian): only blockers controlled by an
+    opponent of this effect's controller are refused, so a creature of an
+    opponent's that this marks may still be blocked by you.
     """
 
     duration = str(spec.get("duration", "this_turn"))
@@ -781,6 +925,7 @@ def op_unblockable(ctx: EffectContext, spec: Mapping[str, Any]):
         player=ctx.controller,
         source=ctx.source_oid,
         except_blockers=spec.get("except_blockers"),
+        opponents_only=bool(spec.get("by_opponents", False)),
     )
     yield from ()
 
@@ -985,3 +1130,53 @@ def op_redirect_attack(ctx: EffectContext, spec: Mapping[str, Any]):
         )
         if not still_attacked and state.step < Step.DECLARE_BLOCKERS:
             combat.pending_blockers = [p for p in combat.pending_blockers if p != old]
+
+
+@register("remove_from_combat")
+def op_remove_from_combat(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Remove enchanted creature from combat." -- Observed Stasis.
+
+    Rule 506.4: a creature removed from combat stops being an attacking,
+    blocking, blocked or unblocked creature. The engine already had the
+    mechanism -- `CombatState.remove`, which regeneration (701.15a), phasing and
+    a change of control (506.4 itself) all call -- and every combat read goes
+    through it: `attacking`, `blocking`, the blocker legality checks, the
+    unblocked-attacker events and both halves of combat damage skip a removed
+    creature. So this op only names the creatures; ``objects`` is required.
+
+    What 506.4 and 509.1h leave behind, and the existing reads already keep:
+
+    - An attacker whose blocker is removed **stays blocked**. `_attacker_assignments`
+      asks whether the attacker *was* blocked off the declared `block_order`, so
+      without trample it deals no damage, as a blocked creature whose blockers
+      all died does not.
+    - A blocker whose attacker is removed **stays blocking**, and deals no
+      damage: there is no attacker in combat to deal it to.
+    - The declaration is not undone: the turn ledger (`creatures_attacked`,
+      `players_attacked_by`) and every attack trigger already fired keep what
+      was declared, and a creature removed and still on the battlefield cannot
+      be declared again, because `can_attack` refuses one already in
+      `combat.attackers`.
+
+    Before blockers are declared, a defending player nobody attacks any more is
+    dropped from the blocker queue, which is what `redirect_attack` does for the
+    same window. Outside combat, and for a creature not in it, the op does
+    nothing.
+    """
+    state = ctx.state
+    combat = state.combat
+    if combat is None:
+        return
+    defenders = {pid for oid, pid in combat.attackers.items() if combat.attacking(oid)}
+    for oid in resolve_pool(ctx, spec.get("objects") or {}):
+        obj = state.objects.get(oid)
+        if obj is None or not obj.on_battlefield:
+            continue
+        if combat.attacking(oid) or combat.blocking(oid):
+            combat.remove(oid)
+    if state.step < Step.DECLARE_BLOCKERS:
+        still = {pid for oid, pid in combat.attackers.items() if combat.attacking(oid)}
+        gone = defenders - still
+        if gone:
+            combat.pending_blockers = [p for p in combat.pending_blockers if p not in gone]
+    yield from ()

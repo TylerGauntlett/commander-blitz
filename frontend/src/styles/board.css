@@ -1674,7 +1674,10 @@
   position: relative;
   z-index: 1;
   gap: 14px;
-  padding: 9px 18px;
+  /* Clear of the side insets (`--safe-*`): an installed web app draws under
+     the status bar, and on a screen that puts it at the side in landscape the
+     clock sits over this ribbon's end. Zero everywhere else. */
+  padding: 9px calc(18px + var(--safe-r)) 9px calc(18px + var(--safe-l));
   border-bottom: 1px solid var(--edge);
   /* Lit from above rather than a flat bar, so the ribbon sits *on* the table
      instead of floating over it. */

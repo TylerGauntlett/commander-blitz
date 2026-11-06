@@ -1,0 +1,16 @@
+{
+  "card_id": "moxite_refinery",
+  "name": "Moxite Refinery",
+  "oracle_text": "{2}, {T}, Remove X counters from an artifact or creature you control: Choose one. Activate only as a sorcery.\n• Put X charge counters on target artifact.\n• Put X +1/+1 counters on target creature.",
+  "blocked_sentences": [
+    "{2}, {T}, Remove X counters from an artifact or creature you control: Choose one. Activate only as a sorcery."
+  ],
+  "needs": [{
+    "capability": "remove_x_counters_cost",
+    "kind": "cost",
+    "what": "an activated-ability cost that removes an announced number X of counters (any kinds) from ONE chosen artifact or creature you control, with X bound so the effects can read it ({\"x\": ...}); X is bounded by the counters on the chosen permanent and is not part of the mana cost",
+    "why_existing_wont_do": "cost.remove_counters takes only a fixed amount of one named kind and only off the source; cost.remove_counters_from_among takes a fixed integer count (Cost reads int(count)) and lets the payer split the removal across several permanents, whereas this card takes all X from a single permanent; x_value defines a mana {X} from a value expression, and there is no {X} in this cost for the player to announce"
+  }],
+  "closest_existing": ["remove_counters_from_among", "remove_counters", "x_value"],
+  "confidence": "high"
+}

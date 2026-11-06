@@ -1,0 +1,20 @@
+{
+  "card_id": "inspirit_flagship_vessel",
+  "name": "Inspirit, Flagship Vessel",
+  "oracle_text": "Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 8+.)\n1+ | At the beginning of combat on your turn, put your choice of a +1/+1 counter or two charge counters on up to one other target artifact.\n8+ | Flying\nOther artifacts you control have hexproof and indestructible.",
+  "blocked_sentences": [
+    "Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 8+.)",
+    "1+ | At the beginning of combat on your turn, put your choice of a +1/+1 counter or two charge counters on up to one other target artifact.",
+    "8+ | Flying"
+  ],
+  "needs": [
+    {
+      "capability": "station",
+      "kind": "engine",
+      "what": "Station symbols (721) on triggered and static/keyword abilities: a `threshold: {counter: charge, at_least: N}` that makes the permanent HAVE a triggered ability (1+ begin-combat trigger) or a keyword (8+ Flying) only at N+ charge counters, plus the Spacecraft rule that the permanent is an artifact creature with its printed P/T only at its highest station threshold (8+) and a noncreature artifact below it",
+      "why_existing_wont_do": "Ability.threshold is accepted only on activated abilities (loader _compile_threshold refuses others); a trigger `condition` or static `condition` on counters would leave the ability on the permanent, which the packet notes forbid for striations; and nothing gates the Spacecraft becoming a 5/5 artifact creature at 8+ -- a counters-conditioned set_types static would be an invented approximation of rule 721 rather than the station mechanic"
+    }
+  ],
+  "closest_existing": ["threshold", "tap_permanents"],
+  "confidence": "high"
+}

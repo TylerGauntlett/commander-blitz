@@ -1,0 +1,24 @@
+{
+  "card_id": "curse_of_opulence",
+  "name": "Curse of Opulence",
+  "oracle_text": "Enchant player\nWhenever enchanted player is attacked, create a Gold token. Each opponent attacking that player does the same. (A Gold token is an artifact with \"Sacrifice this token: Add one mana of any color.\")",
+  "blocked_sentences": [
+    "Whenever enchanted player is attacked, create a Gold token. Each opponent attacking that player does the same."
+  ],
+  "needs": [
+    {
+      "capability": "gold_token",
+      "kind": "token",
+      "what": "a colorless Gold artifact token with \"Sacrifice this token: Add one mana of any color.\" (no {T} in the cost), created by each recipient under their own control",
+      "why_existing_wont_do": "token_ids has no Gold token; the closest is treasure_token, whose ability is \"{T}, Sacrifice this artifact: Add one mana of any color.\" -- it has a tap in its cost and the Treasure subtype, so it is a different token (can't be used while tapped, counts for Treasure synergies)"
+    },
+    {
+      "capability": "attacking_opponents_of_player",
+      "kind": "selector",
+      "what": "a player set for for_each_player meaning \"each opponent (of the Curse's controller) who is attacking the enchanted player this combat\", so each of them creates a Gold token under their own control alongside the Curse's controller",
+      "why_existing_wont_do": "for_each_player takes `players` (e.g. each_opponent), and the trigger side is covered by `creatures_attack_player` with `defending: enchanted_player`, but no player spec found in reference filters opponents down to those with a creature attacking the enchanted player; each_opponent would also give tokens to non-attacking opponents and to the enchanted player. Secondary to the token gap; unverified whether a select_players spec already exists for this"
+    }
+  ],
+  "closest_existing": ["treasure_token", "creatures_attack_player", "for_each_player"],
+  "confidence": "high"
+}

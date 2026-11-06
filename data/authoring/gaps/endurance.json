@@ -1,0 +1,22 @@
+{
+  "card_id": "endurance",
+  "name": "Endurance",
+  "oracle_text": "Flash\nReach\nWhen this creature enters, up to one target player puts all the cards from their graveyard on the bottom of their library in a random order.\nEvoke—Exile a green card from your hand.",
+  "blocked_sentences": [
+    "When this creature enters, up to one target player puts all the cards from their graveyard on the bottom of their library in a random order."
+  ],
+  "needs": [
+    {
+      "capability": "random_order_bottom",
+      "kind": "op",
+      "what": "a `random_order` option on `put_on_top` (with `bottom: true`) that places the moved cards on the bottom of the library in a random order, for 'puts all the cards from their graveyard on the bottom of their library in a random order' (Endurance, also Tormod's Crypt-style tucks, cascade/discover leftovers).",
+      "why_existing_wont_do": "`put_on_top` (ops_cards.py) offers `bottom` and `any_order` (owner chooses order) or pool order; neither is random, and a `shuffle` op afterwards would randomise the whole library, not just the bottom segment."
+    }
+  ],
+  "closest_existing": [
+    "evoke",
+    "alternative_cost",
+    "put_on_top"
+  ],
+  "confidence": "high"
+}

@@ -548,6 +548,58 @@
       ]
     },
     {
+      "id": "golem_3_3_c_artifact",
+      "name": "Golem Token",
+      "oracle_text": "3/3 colorless Golem artifact creature token.",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Golem"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true
+    },
+    {
+      "id": "golem_3_3_c_enchantment_artifact",
+      "name": "Golem Token",
+      "oracle_text": "3/3 colorless Golem enchantment artifact creature token.",
+      "types": [
+        "Enchantment",
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Golem"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true
+    },
+    {
+      "id": "golem_9_9_c_artifact",
+      "name": "Golem Token",
+      "oracle_text": "9/9 colorless Golem artifact creature token.",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Golem"
+      ],
+      "power": 9,
+      "toughness": 9,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true
+    },
+    {
       "id": "construct_4_4_c_artifact_flying_haste",
       "name": "Construct Token",
       "oracle_text": "4/4 colorless Construct artifact creature token with flying and haste.",
@@ -1048,6 +1100,29 @@
         "U"
       ],
       "is_token": true
+    },
+    {
+      "id": "squid_1_1_u_islandwalk",
+      "name": "Squid Token",
+      "oracle_text": "1/1 blue Squid creature token with islandwalk.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Squid"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "is_token": true,
+      "keywords": [
+        "islandwalk"
+      ]
     },
     {
       "id": "food_token",
@@ -1890,6 +1965,29 @@
       ]
     },
     {
+      "id": "insect_1_1_b_flying",
+      "name": "Insect Token",
+      "oracle_text": "1/1 black Insect creature token with flying.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Insect"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "is_token": true,
+      "keywords": [
+        "flying"
+      ]
+    },
+    {
       "id": "jace_planeswalker_u",
       "name": "Jace",
       "oracle_text": "−1: Surveil 1.\n−3: Draw a card.",
@@ -2592,6 +2690,26 @@
       "is_token": true
     },
     {
+      "id": "rebel_2_2_r",
+      "name": "Rebel Token",
+      "oracle_text": "2/2 red Rebel creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Rebel"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "is_token": true
+    },
+    {
       "id": "rhino_4_4_g_trample",
       "name": "Rhino Token",
       "oracle_text": "4/4 green Rhino creature token with trample.",
@@ -2983,6 +3101,61 @@
         "U"
       ],
       "is_token": true
+    },
+    {
+      "id": "the_blackjack_3_3_c_flying_crew2",
+      "name": "The Blackjack",
+      "oracle_text": "The Blackjack, a legendary 3/3 colorless Vehicle artifact token with flying and crew 2.",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [
+        "Vehicle"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "keywords": [
+        "flying"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Crew 2",
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 2,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "animate",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "power": {
+                "const": 3
+              },
+              "toughness": {
+                "const": 3
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "thopter_1_1_c_flying",
@@ -3464,6 +3637,444 @@
       "color_identity": [
         "U"
       ],
+      "is_token": true
+    },
+    {
+      "id": "wizard_0_1_b_noncreature_ping",
+      "name": "Wizard Token",
+      "oracle_text": "0/1 black Wizard creature token with \"Whenever you cast a noncreature spell, this token deals 1 damage to each opponent.\"",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Wizard"
+      ],
+      "power": 0,
+      "toughness": 1,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you cast a noncreature spell, this token deals 1 damage to each opponent.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "you",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "damage",
+              "amount": {
+                "const": 1
+              },
+              "player": "each_opponent"
+            }
+          ]
+        }
+      ],
+      "is_token": true
+    },
+    {
+      "id": "elf_warrior_1_1_g",
+      "name": "Elf Warrior Token",
+      "oracle_text": "1/1 green Elf Warrior creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elf",
+        "Warrior"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "snake_1_1_g_deathtouch",
+      "name": "Snake Token",
+      "oracle_text": "1/1 green Snake creature token with deathtouch.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Snake"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true,
+      "keywords": [
+        "deathtouch"
+      ]
+    },
+    {
+      "id": "scarecrow_2_2_c",
+      "name": "Scarecrow Token",
+      "oracle_text": "2/2 colorless Scarecrow artifact creature token.",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Scarecrow"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true
+    },
+    {
+      "id": "shapeshifter_1_1_c_changeling",
+      "name": "Shapeshifter Token",
+      "oracle_text": "1/1 colorless Shapeshifter creature token with changeling. (It is every creature type.)",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Shapeshifter"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Changeling (This card is every creature type.)",
+          "effect": "add_subtype",
+          "affects": {
+            "self_only": true
+          },
+          "subtypes": [
+            "Human",
+            "Soldier",
+            "Warrior",
+            "Wizard",
+            "Cleric",
+            "Rogue",
+            "Knight",
+            "Elf",
+            "Goblin",
+            "Zombie",
+            "Vampire",
+            "Spirit",
+            "Beast",
+            "Elemental",
+            "Dragon",
+            "Angel",
+            "Demon",
+            "Sphinx",
+            "Bird",
+            "Cat",
+            "Snake",
+            "Insect",
+            "Serpent",
+            "Giant",
+            "Orc",
+            "Merfolk",
+            "Druid",
+            "Shaman",
+            "Bear",
+            "Wall"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "shapeshifter_x_x_c_changeling_deathtouch",
+      "name": "Shapeshifter Token",
+      "oracle_text": "X/X colorless Shapeshifter creature token with changeling and deathtouch. (It is every creature type.)",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Shapeshifter"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "variable_pt": true,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true,
+      "keywords": [
+        "deathtouch"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Changeling (This card is every creature type.)",
+          "effect": "add_subtype",
+          "affects": {
+            "self_only": true
+          },
+          "subtypes": [
+            "Human",
+            "Soldier",
+            "Warrior",
+            "Wizard",
+            "Cleric",
+            "Rogue",
+            "Knight",
+            "Elf",
+            "Goblin",
+            "Zombie",
+            "Vampire",
+            "Spirit",
+            "Beast",
+            "Elemental",
+            "Dragon",
+            "Angel",
+            "Demon",
+            "Sphinx",
+            "Bird",
+            "Cat",
+            "Snake",
+            "Insect",
+            "Serpent",
+            "Giant",
+            "Orc",
+            "Merfolk",
+            "Druid",
+            "Shaman",
+            "Bear",
+            "Wall"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "elemental_5_5_rg",
+      "name": "Elemental Token",
+      "oracle_text": "5/5 red and green Elemental creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elemental"
+      ],
+      "power": 5,
+      "toughness": 5,
+      "colors": [
+        "R",
+        "G"
+      ],
+      "color_identity": [
+        "R",
+        "G"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "elemental_5_3_g",
+      "name": "Elemental Token",
+      "oracle_text": "5/3 green Elemental creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elemental"
+      ],
+      "power": 5,
+      "toughness": 3,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "elemental_4_4_w_flying",
+      "name": "Elemental Token",
+      "oracle_text": "4/4 white Elemental creature token with flying.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elemental"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true,
+      "keywords": [
+        "flying"
+      ]
+    },
+    {
+      "id": "rhino_warrior_4_4_g",
+      "name": "Rhino Warrior Token",
+      "oracle_text": "4/4 green Rhino Warrior creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Rhino",
+        "Warrior"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "elemental_x_x_gw_creature_count",
+      "name": "Elemental Token",
+      "oracle_text": "Green and white Elemental creature token with \"This token's power and toughness are each equal to the number of creatures you control.\"",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elemental"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "colors": [
+        "G",
+        "W"
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This token's power and toughness are each equal to the number of creatures you control.",
+          "effect": "set_pt",
+          "affects": {
+            "self_only": true
+          },
+          "power": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "toughness": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "rat_1_1_b",
+      "name": "Rat Token",
+      "oracle_text": "1/1 black Rat creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Rat"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "dog_1_1_w",
+      "name": "Dog Token",
+      "oracle_text": "1/1 white Dog creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Dog"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "elemental_1_1_r_haste",
+      "name": "Elemental Token",
+      "oracle_text": "1/1 red Elemental creature token with haste.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elemental"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "is_token": true,
+      "keywords": [
+        "haste"
+      ]
+    },
+    {
+      "id": "eldrazi_10_10_c",
+      "name": "Eldrazi Token",
+      "oracle_text": "10/10 colorless Eldrazi creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Eldrazi"
+      ],
+      "power": 10,
+      "toughness": 10,
+      "colors": [],
+      "color_identity": [],
       "is_token": true
     }
   ]

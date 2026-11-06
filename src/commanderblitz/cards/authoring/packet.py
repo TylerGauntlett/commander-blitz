@@ -37,7 +37,7 @@ from commanderblitz.engine.effects.conditions import CONDITION_KEYS
 from commanderblitz.engine.effects.selectors import SELECTOR_KEYS
 from commanderblitz.engine.effects.values import VALUE_KEYS
 from commanderblitz.engine.enums import CardType, Keyword, Supertype
-from commanderblitz.engine.objects import PLAYABLE_DURATIONS
+from commanderblitz.engine.objects import PLAYABLE_CONDITIONS, PLAYABLE_DURATIONS
 from commanderblitz.engine.structs import DELAYED_DURATIONS
 from commanderblitz.engine.triggers import TRIGGER_EVENTS, TRIGGER_FILTER_KEYS
 
@@ -196,6 +196,9 @@ CARD_LEVEL_RIDER_KEYS = (
     # ("has annihilator 2") is a grant_keyword static with its own "annihilator": N.
     "annihilator",
     "morph_counter",  # bool; megamorph -- turns face up with a +1/+1 counter, beside `morph`
+    # {name: value}; "…where X is … as you cast this spell" -- each value fixed
+    # as the spell goes on the stack, read back by spell_effects as {"binding": name}
+    "as_cast",
 )
 
 
@@ -534,6 +537,10 @@ def reference() -> dict:
         # tell "until your next end step" or "for as long as it remains exiled"
         # already shipped short of a load error.
         "playable_durations": sorted(PLAYABLE_DURATIONS),
+        # The values `playable_condition` takes beside one of them: a turn the
+        # permission is shut on although it has not ended ("during any turn you
+        # attacked with a commander, you may play those cards").
+        "playable_conditions": sorted(PLAYABLE_CONDITIONS),
         "static_filter_keys": sorted(STATIC_FILTER_KEYS),
         # What a static's `affects` may use: the list above plus `any_of`, a
         # union of whole filters ("Skeletons and **other** Zombies"). Its own
@@ -777,7 +784,10 @@ def reference() -> dict:
             " `playable` duration (`exile`, `look_at_top` to exile,"
             " `grant_playable`); \"for as long as they remain exiled\" is"
             " `playable: \"while_exiled\"`; \"until you exile another card"
-            " with this creature\" is `playable: \"until_next_exile_by_source\"`."
+            " with this creature\" is `playable: \"until_next_exile_by_source\"`;"
+            " \"during any turn you attacked with a commander, you may play those"
+            " cards\" is `playable: \"while_exiled\"` with `playable_condition:"
+            " \"you_attacked_with_a_commander\"`."
             " The permission is always the"
             " effect controller's, cards from an opponent's library included;"
             " a land still uses a land drop, a spell keeps its timing and its"
@@ -946,7 +956,10 @@ def reference() -> dict:
             " it no name). It works on an instant or sorcery too, read inside"
             " `spell_effects`: \"You may pay {1}{B} rather than pay this"
             " spell's mana cost. If the {1}{B} cost was paid, ...\" is"
-            " `\"evoke\": \"{1}{B}\"` plus an `if` on `{\"evoked\": true}`.",
+            " `\"evoke\": \"{1}{B}\"` plus an `if` on `{\"evoked\": true}`."
+            " A non-mana evoke is a cost node from `cost_keys`:"
+            " \"Evoke—Exile a green card from your hand.\" is `\"evoke\":"
+            " {\"exile_from_hand\": {\"colors\": [\"G\"]}}`, still evoked.",
             "Exiling from hand as a cost is two keys, the way discarding is:"
             " `exile_from_hand` picks a card by selector (\"a blue card\"),"
             " and `exile_self_from_hand` is \"Exile this card from your hand\""
@@ -954,6 +967,13 @@ def reference() -> dict:
             " an ability with `active_zones: [\"hand\"]`. `exile_self` is a"
             " different cost: it is \"Exile this artifact\" and requires the"
             " source to be on the battlefield.",
+            "\"Blight N\" as a cost is `{\"blight\": N}` on any cost node: the"
+            " payer puts N -1/-1 counters on a creature they control, chosen"
+            " as they pay. \"Ward—Blight 2\" is a ward static with"
+            " `\"cost\": {\"blight\": 2}`, and \"you may blight 1\" as an"
+            " additional cost is `additional_cost` plus `additional_optional`,"
+            " read back with `additional_paid`. Not `put_counters`, which puts"
+            " them on the source.",
             "A quoted ability a permanent GAINS (\"This Saga gains \\\"{T}: Add"
             " {C}.\\\"\", \"It gains \\\"When this creature dies, ...\\\"\") is"
             " written once under the card's `grantable_abilities` and handed"
@@ -1007,6 +1027,12 @@ def reference() -> dict:
             " instead) and a static takes one or the other. \"Creature tokens\""
             " is an `affects_token` filter; a sentence naming no player (\"if one"
             " or more tokens would be created\") adds `affects_player: \"any\"`.",
+            "\"Until end of turn, if one or more tokens would be created under"
+            " your control, twice that many of those tokens are created"
+            " instead\" on a spell or an activated/loyalty ability is the"
+            " `multiply_token_creation` op with `duration: \"this_turn\"` --"
+            " never a granted `replace_token_creation` static, which would end"
+            " when the source left the battlefield.",
             "\"If an effect would put one or more counters on a permanent you"
             " control, it puts twice that many…\" (Doubling Season) is a"
             " `replace_counters` static with `counter_multiplier: 2`,"
@@ -1021,7 +1047,8 @@ def reference() -> dict:
             " puts the counters, any permanent, and players (poison).",
             "\"…with counters on them\" / \"…with a counter on it\" is the"
             " filter key `has_counters: true` (any kind of counter), valid in a"
-            " static's `affects` and in an effect selector.",
+            " static's `affects` and in an effect selector. \"…with a -1/-1"
+            " counter on it\" names the kind: `has_counters: \"-1/-1\"`.",
             "\"Distribute N +1/+1 counters among up to N target creatures\" on an"
             " ACTIVATED ability (a planeswalker's loyalty line) is"
             " `distribute_counters` with `counter`, a printed `amount` and"
@@ -1057,7 +1084,10 @@ def reference() -> dict:
             " written without the flag cannot tap off a Wastes. The flag is read"
             " by the LOADER rather than by `op_add_mana`, so until a card using"
             " it ships it is not in `op_options`; it is refused on any `add_mana`"
-            " that has no `reflecting`, because nothing else reads it.",
+            " that has no `reflecting`, because nothing else reads it. An"
+            " `amount` beside `reflecting` scales the one reflected type"
+            " (Incubation Druid's \"three mana of that type instead\" is"
+            " `1 + 2 * min(+1/+1 counters on self, 1)`).",
             "\"Add one mana of any of **the exiled card's colors**\" (Chrome"
             " Mox) is `colors_of` on the `add_mana`, holding a selector over"
             " the CARDS whose printed colours are offered --"

@@ -1,0 +1,22 @@
+{
+  "card_id": "hearthhull_the_worldseed",
+  "name": "Hearthhull, the Worldseed",
+  "oracle_text": "Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 8+.)\n2+ | {1}, {T}, Sacrifice a land: Draw two cards. You may play an additional land this turn.\n8+ | Flying, vigilance, haste\nWhenever you sacrifice a land, each opponent loses 2 life.",
+  "blocked_sentences": [
+    "Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 8+.)",
+    "8+ | Flying, vigilance, haste"
+  ],
+  "needs": [
+    {
+      "capability": "station",
+      "kind": "engine",
+      "what": "Station symbols (721) on keywords: an `8+ | Flying, vigilance, haste` line the permanent HAS only at 8+ charge counters, plus the Spacecraft rule that it is an artifact creature with its printed P/T only at its highest station threshold (8+) and a noncreature artifact below it. Its 2+ activated ability is expressible with Ability.threshold today",
+      "why_existing_wont_do": "Ability.threshold is accepted only on activated abilities (loader _compile_threshold refuses others); a trigger `condition` or static `condition` on counters would leave the ability on the permanent, which the packet notes forbid for striations; and nothing gates the Spacecraft becoming a 5/5 artifact creature at 8+ -- a counters-conditioned set_types static would be an invented approximation of rule 721 rather than the station mechanic"
+    }
+  ],
+  "closest_existing": [
+    "threshold",
+    "tap_permanents"
+  ],
+  "confidence": "high"
+}

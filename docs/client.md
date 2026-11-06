@@ -31,9 +31,11 @@ one control* the consequence for the UI.
 Three input paths funnel into the same call, and the third is load-bearing rather than a
 fallback:
 
-1. **Drag** a hand card onto a lane. `Card`'s drag-end hit-tests the `data-dropzone`
-   under the pointer; `canDropOnLane` in `logic/actionMatch.ts` says yes or no, and a no
-   springs the card back with nothing sent.
+1. **Drag** a hand card onto your board. `Card`'s drag-end hit-tests the `data-dropzone`
+   under the pointer, a lane or the mat around it; `dropPlays` in `logic/actionMatch.ts`
+   says yes anywhere on your own board for a card with a legal play, because which row a
+   permanent is drawn in is the server's to decide. A no springs the card back with
+   nothing sent. `canDropOnLane` only says which lane to light.
 2. **Click** a card, then its target. What is targetable comes from the action's own
    `targets`; a click settles only the half it answers, and `uiStore.narrowTargeting`
    leaves the panel to ask the rest. Hovering or focusing a card the targeting skips
@@ -53,7 +55,7 @@ Everything lives under `frontend/src`. The rule per folder is the thing to prese
 | `screens/` | one component per address; `App.tsx` is the route table | the only place that imports `react-router`, with one exception: `components/ui/UpdateBanner.tsx` calls `useMatch` to know whether the player is at the table, and `tests/renderWithRouter.tsx` exists so its test can mount it |
 | `components/` | `game/`, `lobby/`, `menu/`, `ui/`, `screen/` — presentation | renders bare, with no provider around it; anything that needs a router, a query client or a session is wired in `screens/` |
 | `logic/` | every decision the client makes, as pure functions over the server's view | no DOM, no React; this is what the unit tests cover |
-| `state/` | `useGame.ts` and `usePod.ts` (react-query long polls), `uiStore.ts` (zustand), `useAppConfig.tsx` (`GET /api/config`), `storage.ts` and `migrate.ts`, `useHandheld.ts`, `useZoomFit.ts`, `narration.ts` | the four kinds of state below, and nothing that belongs to the server |
+| `state/` | `useGame.ts` and `usePod.ts` (react-query long polls), `uiStore.ts` (zustand), `useAppConfig.tsx` (`GET /api/config`), `storage.ts` and `migrate.ts`, `useHandheld.ts`, `useZoomFit.ts`, `viewportFit.ts`, `narration.ts` | the four kinds of state below, and nothing that belongs to the server |
 | `input/` | `pad.ts` and `padRead.ts` (the gamepad poll), `cursor.ts`, `stops.ts`, `groups.ts`, `nav.ts`, `ring.ts`, `inputMode.ts`, `useCursorNav.ts`, `longPress.ts`, `stickScroll.ts`, `repeat.ts`, and the `useTable*` hooks | two signals, one intent; the cursor is an attribute, never state |
 | `fx/` | `scheduler.ts`, `actuators.ts`, `particles.ts`, `presets.ts`, `reducedMotion.ts` | effects run concurrently on one frame loop and never touch React state |
 | `motion/` | `springs.ts` | every transition in the app, named once |
@@ -67,9 +69,12 @@ Everything lives under `frontend/src`. The rule per folder is the thing to prese
 `--pod-lanes-h`, `--mat-side`, `--pod-seat-h`, `--seat-h`, …) so a transition on one
 re-resolves every declaration that reads it. It also reads the attributes on `<html>`
 that the rest of the stylesheets key on: `data-layout` and `data-compact` for the
-layout, `data-input` for whether a focus ring and button glyphs are drawn. The phone's
+layout, `data-input` for whether a focus ring and button glyphs are drawn. The
 safe-area insets are its `--safe-*` tokens, read from `env()` under `index.html`'s
-`viewport-fit=cover`.
+`viewport-fit=cover`. The phone pads its whole table by them. Every other layout runs
+edge to edge, including under an installed app's status bar (`index.html`'s
+`black-translucent`), and only the top bars that reach the clock's corner keep clear of
+them: the phase track, the pod bar, the shelf bar and the mulligan lamps.
 
 ## State: four kinds
 
@@ -150,6 +155,13 @@ query second.
 
 **The floors are per mode**: `logic/floors.ts:FLOORS` holds a row for `handheld` and one
 for `phone`, and the gates read the row for the page's layout (see Input and the cursor).
+
+**A handheld is drawn at the Deck's height.** Every fixed piece of the handheld layout
+is in px against the Deck's panel, so a screen in the handheld band but shorter than
+`logic/viewportScale.ts:HANDHELD_DESIGN_H` is laid out at that height and scaled to fit
+through the viewport tag (ADR 0028 *A short handheld lays out at the Deck's height*).
+`state/viewportFit.ts` writes the tag before the first render, and it is the only
+writer of it; a desktop browser ignores the tag, so only touch devices are scaled.
 
 What the compact layouts give up, as rules:
 
@@ -524,8 +536,9 @@ the catalogue's order is decided: precons in one run per `release.set_name`, new
 is a labelled region (`role="region"`, `aria-label` its title), so a screen reader can
 jump between sets; the header is type and not a stop, so a pad walking down passes from
 the last deck of one run to the first of the next. A single run under its own segment
-has no header, because the segment already names it. Filters that come and go with the
-decks, like the archetype one, are drawn only when they have something to offer. The
+has no header, because the segment already names it. The filters are one row (search,
+colour, source) and the rack is always by name: a sort and an archetype filter were a
+second row that cost a short screen a row of tiles. The
 star on an import is drawn from `DeckSummary.starred` alone: the press sends the value it
 wants, and `useStarDeck` puts the server's answer into the deck list.
 
@@ -534,7 +547,7 @@ ship yet (`GET /api/precons/upcoming`) is drawn by `ShellTile` in `DeckCatalog.t
 grayed-out commander under a "Coming soon" badge, in its release's run after the playable
 decks (`visibleShells`, then `groupDecks`). It has no role, no tab stop and no handler,
 so ADR 0015 *Every legal action is exactly one control* is untouched: the ring and Tab pass
-over it. A colour or archetype filter hides every shell, since a shell has neither to match.
+over it. A colour filter hides every shell, since a shell has no identity to match.
 Shells are drawn under **Precons** only: **All** is what a player can take today, so it
 puts Favorites and Yours first and the precon runs after them, without shells.
 

@@ -62,7 +62,10 @@ class TempEffect:
     ``"cant_sacrifice"`` ("it gains \"This permanent can't be sacrificed\"",
     read by `temp_effects.sacrifice_forbidden`), or ``"lose_keyword"`` ("…lose
     hexproof **and can't have** hexproof": ``keyword`` is taken away by the last
-    keyword step of ``chars``, after every grant).  The lock is not a keyword because it is not a characteristic: it is
+    keyword step of ``chars``, after every grant), or ``"set_toughness"`` (an
+    indefinite layer-7b "its toughness becomes N", kept on
+    `GameObject.animations` and ordered against the indefinite animations there
+    by ``timestamp``).  The lock is not a keyword because it is not a characteristic: it is
     a permission, read by legality and by the mana solver rather than by
     ``chars``, and showing it in a card's keyword list would be a lie.
 
@@ -120,6 +123,16 @@ class TempEffect:
     #: Goblin stops being a Goblin, per the card's rulings. Supertypes are never
     #: touched: an Oko'd legend is a legendary Elk.
     exact: bool = False
+    #: For an ``exact`` ``kind == "animate"``: the colours are left as they
+    #: are rather than replaced by ``colors``. Vraska, Betrayal's Sting's
+    #: "target creature becomes a Treasure artifact ... and loses all other card
+    #: types" names no colour, and a Treasure that went colourless would stop
+    #: answering "destroy target green permanent".
+    keeps_colors: bool = False
+    #: For ``kind == "animate"``: the animation names no size, so the base
+    #: power and toughness are left alone. Only a non-creature animation may
+    #: say nothing about its size (the loader's rule) -- the same Treasure.
+    keeps_pt: bool = False
     #: For ``kind == "animate"``: when it began (613.7), from
     #: `GameState.alloc_timestamp`. Two animations each set a base P/T and the
     #: later one wins, which has to be decidable across the two lists an
@@ -150,6 +163,15 @@ class TempEffect:
     #: number, so an elimination or an extra turn that moves the seat's next
     #: turn moves the end with it -- detain's reason for keying on the seat.
     since_turn: int = 0
+    #: "…for as long as **you control** Thancred Waters" (611.2b): the seat that
+    #: must go on controlling :attr:`source` for the entry to stand, and
+    #: ``None`` on every other clock. No cleanup or untap step ends it.
+    #: `temp_effects.end_source_bound` does, eagerly, at the two moments the
+    #: duration can end -- `zones.move_object` as the source leaves the
+    #: battlefield and `primitives.change_control` as it changes hands -- so a
+    #: source that is blinked, or stolen and handed back, does not revive it:
+    #: the oid survives both, and the effect must not.
+    while_controller: int | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -164,9 +186,12 @@ class TempEffect:
             "previous_controller": self.previous_controller,
             "new_controller": self.new_controller,
             "exact": self.exact,
+            "keeps_colors": self.keeps_colors,
+            "keeps_pt": self.keeps_pt,
             "until_player": self.until_player,
             "until_end_of_turn_of": self.until_end_of_turn_of,
             "since_turn": self.since_turn,
+            "while_controller": self.while_controller,
         }
 
 
@@ -186,8 +211,17 @@ ATTACK_RESTRICTION_DURATIONS = ("this_turn", "this_combat", "attacker_next_turn"
 #: is, because it is the same clock.  Enumerated rather than defaulted for a
 #: harsher reason than most: a misread ``"until_end_of_turn"`` is a *permanent*
 #: steal, which is the strictly better card the loader has always refused to
-#: let anybody write by accident.
-CONTROL_DURATIONS = ("permanent", "until_end_of_turn", "end_of_your_next_turn")
+#: let anybody write by accident.  The fourth is Yuffie, Materia Hunter's "…for
+#: as long as you control Yuffie" (611.2b), spelled the way `grant_keyword`'s
+#: Thancred Waters duration is (`TempEffect.while_controller`), because it is the
+#: same duration ending the same way: `temp_effects.end_source_bound`, which
+#: for a control entry is the handback.
+CONTROL_DURATIONS = (
+    "permanent",
+    "until_end_of_turn",
+    "end_of_your_next_turn",
+    "as_long_as_you_control_source",
+)
 
 
 @dataclass(frozen=True)
@@ -291,6 +325,29 @@ class AttackRestriction:
 #: The durations an :class:`AttackMark` can carry. Spelled the way
 #: `CONTROL_DURATIONS` spells the same clock, because it is the same clock.
 ATTACK_MARK_DURATIONS = ("end_of_your_next_turn", "this_turn")
+
+
+@dataclass(frozen=True)
+class CastRider:
+    """What a creature spell cast free by an effect gains as it becomes a
+    permanent -- Strago and Relm's "if you cast a creature spell this way, it
+    gains haste and "At the beginning of the end step, sacrifice this
+    creature."".
+
+    Staged on the spell (`GameObject.cast_rider`) by `suspend.cast_for_free`
+    only once the cast has happened and only for a creature spell, and cashed
+    by `zones._enter_battlefield` on the permanent it becomes. Both halves are
+    for as long as the permanent lasts: the sentence prints no duration.
+
+    ``keywords`` are granted as riot's are (`granted_keywords`); ``abilities``
+    index ``source``'s ``grantable_abilities``, handed over as the
+    `grant_ability` op's ``duration: "permanent"`` would, so a granted trigger
+    is an ability of the creature rather than a delayed trigger of the card's.
+    """
+
+    source: int
+    keywords: tuple[str, ...] = ()
+    abilities: tuple[int, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -546,6 +603,14 @@ class Unblockable:
     #: hashed, because a mapping is not hashable and equality is all the
     #: primitive's deduplication asks of it.
     except_blockers: Mapping[str, Any] | None = field(default=None, hash=False)
+    #: "…can't be blocked by creatures **your opponents** control" (Rikku,
+    #: Resourceful Guardian): the restriction refuses only blockers controlled
+    #: by an opponent of :attr:`player`, the granting player. Not expressible as
+    #: an ``except_blockers`` filter, because a static filter's ``controller`` is
+    #: read relative to the *attacker*, and the attacker may be an opponent's
+    #: creature with several opponents of its own. ``False`` refuses every
+    #: controller's creatures.
+    opponents_only: bool = False
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -556,6 +621,7 @@ class Unblockable:
             "except_blockers": (
                 dict(self.except_blockers) if self.except_blockers is not None else None
             ),
+            "opponents_only": self.opponents_only,
         }
 
 
@@ -785,6 +851,13 @@ class PermanentShield:
     #: (510.2) is stopped, so a burn spell or a fight still lands.
     #: `DamageShield.combat_only`'s permanent twin.
     combat_only: bool = False
+    #: "If damage would be dealt to that creature this turn, prevent that damage
+    #: and put that many +1/+1 counters on it" (Gatta and Luzzu, 615.5): the id
+    #: tying this shield to its "prevented this way" rider, carried as
+    #: ``shield`` on every `DAMAGE_PREVENTED` it fires.  `DamageShield.link`'s
+    #: permanent twin, drawn from the same `GameState.alloc_timestamp`, so a
+    #: linked shield never deduplicates.  ``None`` is a shield with no rider.
+    link: int | None = None
 
     @property
     def stops_damage_to(self) -> bool:
@@ -807,6 +880,7 @@ class PermanentShield:
             "player": self.player,
             "source": self.source,
             "combat_only": self.combat_only,
+            "link": self.link,
         }
 
 
@@ -1029,7 +1103,42 @@ class LifeFloor:
     source: int | None = None
 
 
-LIFE_LOCK_DURATIONS = ("this_turn", "until_your_next_turn")
+#: The durations a `TokenMultiplier` may carry. "Until end of turn" is the only
+#: one printed on a card that installs one.
+TOKEN_MULTIPLIER_DURATIONS = ("this_turn",)
+
+
+@dataclass(frozen=True)
+class TokenMultiplier:
+    """"Until end of turn, if one or more tokens would be created under your
+    control, twice that many of those tokens are created instead." -- Kaya,
+    Geist Hunter's -2.  Rules 611.2a, 614.
+
+    The timed twin of a `replace_token_creation` static with `token_multiplier`,
+    and the difference is who holds it. A static is read off a permanent for as
+    long as that permanent is on the battlefield; this is the continuous effect
+    a *resolved* ability created (611.2a), so it belongs to the table and keeps
+    applying after the planeswalker that made it has died, been exiled or been
+    bounced.
+
+    Read in `primitives._token_creation_plan` beside the statics, as one more
+    replacement of the creation, applied once (614.5) -- so it compounds with a
+    Parallel Lives exactly as a second Parallel Lives would. **Never
+    deduplicated**: two -2s resolved in one turn are two replacement effects, and
+    each doubles the creation once.
+    """
+
+    #: The seat whose tokens are multiplied: "created **under your control**".
+    #: Fixed as the ability resolves, never re-read from the source.
+    player: int
+    multiplier: int = 2
+    duration: str = "this_turn"
+    #: The object whose ability installed it, for the log. Not part of the
+    #: lifetime.
+    source: int | None = None
+
+
+LIFE_LOCK_DURATIONS =("this_turn", "until_your_next_turn")
 
 
 @dataclass(frozen=True)
@@ -1159,6 +1268,62 @@ class CastLock:
             "player": self.player,
             "affects": list(self.affects),
             "zones": list(self.zones),
+            "duration": self.duration,
+            "source": self.source,
+        }
+
+
+#: The durations an :class:`AttackTax` can carry.  Both, for the reason
+#: :data:`CAST_LOCK_DURATIONS` carries both: the printed sentence says "until
+#: your next turn", and a timed table the cleanup step could not sweep on
+#: ``this_turn`` would be the one exception among them.
+ATTACK_TAX_DURATIONS = ("this_turn", "until_your_next_turn")
+
+
+@dataclass(frozen=True)
+class AttackTax:
+    """"Until your next turn, creatures can't attack you unless their controller
+    pays {2} for each of those creatures." -- Summon: Yojimbo, chapters II-III.
+
+    The **timed** form of the `attack_tax` static (Propaganda), installed by a
+    resolving ability rather than carried by a permanent. The static cannot
+    say it: it is read off `_battlefield_statics` for exactly as long as its
+    source sits there, with no clock, and a Saga that is sacrificed after its
+    last chapter would take the tax with it a turn early. `cant_attack_player`
+    is the other near miss and is a wall with no price -- a lock, strictly
+    stronger than the printed toll.
+
+    Lives on the table (:attr:`GameState.attack_taxes`) beside `cast_locks`,
+    for their reason, and shares their clock: cleared in :attr:`player`'s untap
+    step, keyed by a seat and never by a turn number. :attr:`player` is both
+    the protected seat and the clock, because the printed sentence is one
+    sentence about one player -- "can't attack **you**", "until **your** next
+    turn".
+
+    **Not deduplicated**, unlike the locks beside it. A lock does not stack --
+    two "can't cast" say what one does -- but a tax does: two Propagandas
+    charge {4}, and two of these records are two effects, each asking its own
+    payment (508.1g totals them). `player_statics.attack_tax` sums them with
+    the static ones.
+
+    Planeswalkers are not taxed. The sentence names "you", and attacking a
+    planeswalker is not attacking its controller (506.2) -- Propaganda's
+    reading, which is the static's default too.
+    """
+
+    #: The protected seat, and whose next turn ends this.
+    player: int
+    #: The mana each attacking creature costs, as a mana string ("{2}").
+    mana: str = ""
+    duration: str = "until_your_next_turn"
+    #: What installed it, for the log. Not part of the lifetime: the tax
+    #: stands after the Saga that installed it is gone.
+    source: int | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "player": self.player,
+            "mana": self.mana,
             "duration": self.duration,
             "source": self.source,
         }
@@ -1512,11 +1677,14 @@ class DelayedTrigger:
     #: Only read when ``trigger`` is set; see :data:`DELAYED_DURATIONS`.
     duration: str = "this_turn"
     #: "If damage is prevented **this way**" (615.5): the `DamageShield.link`
-    #: of the one shield this rider answers.  Set only by the `prevent_damage`
-    #: op's ``effects``, on a ``damage_prevented`` subscription, and compared
-    #: against the event's ``shield`` key -- so a Fog, a Selfless Squire or
-    #: protection preventing the same damage pays nothing, and a second
-    #: Inkshield's tokens come from its own shield only.
+    #: or `PermanentShield.link` of the one shield this rider answers.  Set only
+    #: by the ``effects`` of the `prevent_damage` and `prevent_damage_permanent`
+    #: ops, on a ``damage_prevented`` subscription, and compared against the
+    #: event's ``shield`` key -- so a Fog, a Selfless Squire or protection
+    #: preventing the same damage pays nothing, and a second Inkshield's tokens
+    #: come from its own shield only.  The link alone decides the match, so the
+    #: rider answers its shield on either half of the event (a seat or a
+    #: permanent).
     shield: int | None = None
 
 
@@ -1579,6 +1747,29 @@ DELAYED_DURATIONS = (
     "until_your_next_turn",
     "this_combat",
 )
+
+
+@dataclass(frozen=True)
+class CountersPut:
+    """One COUNTER_PLACED, as the turn ledger remembers it.
+
+    ``put_by`` is who put them (122.6a), not the recipient's controller: a
+    counter you put on an opponent's creature is one **you** put. ``types``
+    are the recipient's derived card types at the moment of placement, which
+    is what "on a creature" asks -- the permanent may have left, or stopped
+    being a creature, by the time the question is read.
+
+    ``oid`` is the recipient, for "if a counter was put on Wakka this turn",
+    and ``None`` once that permanent has left the battlefield (400.7): the
+    object that comes back is a new one no counter was put on, while the
+    placement still counts for whoever put it.
+    """
+
+    put_by: int
+    counter: str
+    amount: int
+    types: frozenset[str]
+    oid: int | None = None
 
 
 @dataclass(frozen=True)
@@ -1848,6 +2039,19 @@ class TurnLedger:
     #: stack still resolves off what the old object did -- last-known
     #: information, so a Hellkite killed in response still destroys.
     players_dealt_combat_damage_by: dict[int, set[int]] = field(default_factory=dict)
+    #: The same seats keyed by the **subtype** of the creature that dealt the
+    #: damage -- Estinien Varlineau's "the number of your opponents who were
+    #: dealt combat damage by Estinien Varlineau **or a Dragon** this turn".
+    #:
+    #: `combat_damage_types` below is the near miss: it says *that* a Dragon got
+    #: through, at a table, and not *to whom*, so it cannot count opponents. The
+    #: oid-keyed field above says whom but not what the creature was, and by the
+    #: second main phase the Dragon may be dead, bounced or no longer a Dragon.
+    #: Read off **derived** subtypes as the damage lands, for prowl's reason: a
+    #: changeling and a creature granted the type both count, and a Dragon that
+    #: loses the type afterwards still dealt the damage as one. Never cleared
+    #: per oid -- the record is about the damage, not about any object.
+    players_dealt_combat_damage_by_subtype: dict[str, set[int]] = field(default_factory=dict)
     #: Damage dealt to each player this turn.
     damage_taken: dict[int, int] = field(default_factory=dict)
     #: Life *lost* by each player this turn, which is the wider question: a
@@ -1971,6 +2175,20 @@ class TurnLedger:
     #: activations are two. Keyed by oid, so a walker that arrives after the
     #: Veil resolved gets nothing, as printed.
     extra_loyalty_activations: dict[int, int] = field(default_factory=dict)
+    #: Every activated ability each player has activated this turn, as what
+    #: it was aimed at: player id -> one ``(is_equip, targets)`` entry per
+    #: activation, where ``targets`` is a tuple of ``(controller, types,
+    #: subtypes)`` for each object target, read as it was targeted (before the
+    #: cost was paid). Professor Hojo's "**the first** activated ability you
+    #: activate during your turn that targets a creature you control" asks
+    #: whether an earlier activation matched, and the creature it targeted may
+    #: since have died or changed hands -- so the answer is filed at the
+    #: activation, not looked up later. Written by `Game._activate` after the
+    #: cost is paid, so the activation being priced is never its own
+    #: predecessor; read by `player_statics.ability_cost_reduction`.
+    targeted_activations: dict[
+        int, list[tuple[bool, tuple[tuple[int, frozenset[str], frozenset[str]], ...]]]
+    ] = field(default_factory=dict)
 
     #: Words written onto a permanent that wear off at the turn boundary:
     #: object id -> the flags it has been given **this turn**.  "If this creature
@@ -2050,6 +2268,12 @@ class TurnLedger:
     #: attacked, and that is the case the board-shaped near miss (`exists`)
     #: gets wrong.  Cleared at cleanup with everything else here.
     permanents_entered: list[EnteredPermanent] = field(default_factory=list)
+    #: Every placement of counters on a permanent this turn, as
+    #: :class:`CountersPut` records, in order. "If you put a counter on a
+    #: creature this turn" (Lasting Tarfire). Folded off COUNTER_PLACED, so the
+    #: counters a permanent enters with count too (122.6), and kept when the
+    #: counter or the permanent has gone since: it was still put there.
+    counters_put: list[CountersPut] = field(default_factory=list)
 
     @property
     def attacked(self) -> set[int]:
@@ -2142,6 +2366,7 @@ class TurnLedger:
         self.attacks_by_creature.clear()
         self.taps_by_permanent.clear()
         self.players_dealt_combat_damage_by.clear()
+        self.players_dealt_combat_damage_by_subtype.clear()
         self.damage_taken.clear()
         self.life_lost.clear()
         self.life_gained.clear()
@@ -2153,6 +2378,7 @@ class TurnLedger:
         self.ability_activations.clear()
         self.loyalty_activations.clear()
         self.extra_loyalty_activations.clear()
+        self.targeted_activations.clear()
         self.cards_to_graveyard = 0
         self.permanents_to_graveyard = 0
         self.cards_from_graveyard.clear()
@@ -2162,6 +2388,7 @@ class TurnLedger:
         self.discarded.clear()
         self.cards_discarded.clear()
         self.permanents_entered.clear()
+        self.counters_put.clear()
         self.combats = 0
 
 

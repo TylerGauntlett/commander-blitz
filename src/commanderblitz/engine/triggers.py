@@ -36,6 +36,7 @@ from .characteristics import (
     granted_abilities,
     granted_ability_origin,
     granted_wards,
+    has_counters_matches,
     has_keyword,
     resolve_chosen_subtypes,
 )
@@ -217,6 +218,22 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: cause rather than the search: a cracked fetchland and a resolved tutor
     #: are both one search, and a "you may search" declined is none.
     "searches_library": EventType.LIBRARY_SEARCHED,
+    #: "Whenever you win a coin flip, create two tapped Treasure tokens." --
+    #: Setzer, Wandering Gambler. Once per flip won (705), fired by
+    #: `ops_cards.op_flip_coin`, the one place a coin is flipped, so a flip won
+    #: off any card's effect counts and not only the watcher's own. A lost flip
+    #: fires the same `COIN_FLIPPED` event and is turned away by
+    #: `_outcome_matches`.
+    #:
+    #: The subject is a **player** -- the one who flipped -- so it is absent
+    #: from `OBJECT_SUBJECT_TRIGGERS` and `_actor` reads `event.player`:
+    #: `controller: "you"` is "whenever **you** win a coin flip", and an
+    #: opponent winning their own flip is `controller: "opponent"`.
+    #:
+    #: The near miss is the win branch of the card's own `flip_coin`, which is
+    #: a narrower card: it pays only for the flips that one ability makes, and
+    #: never for a flip won off any other source.
+    "wins_coin_flip": EventType.COIN_FLIPPED,
     #: "Whenever a creature you control connives, …" (701.47) -- Glorious
     #: Purpose, Iron Monger, Ultron. Once per conniving permanent, after its
     #: draw, discard and counter, fired by `ops_cards.op_connive`. The subject
@@ -408,6 +425,17 @@ STATE_TRIGGER = "state"
 #: one or more **land** cards" drains once for two lands. The `filter` is asked
 #: per card before the batch is spent, so a land and a nonland discarded
 #: together fire it once and two nonlands not at all.
+#:
+#: `life_lost` takes it from `primitives.lose_life` and `primitives.damage_player`:
+#: one effect op or cost payment (`state.event_batch`) -- "each opponent loses
+#: 2 life" is one event for every seat it reaches -- or one combat damage step
+#: (510.2, `combat.deal_combat_damage`), however many players it hits. So
+#: Emet-Selch of the Third Seat's "whenever one or more opponents lose life"
+#: fires once for a drain across the table, not once per opponent. `controller`
+#: is asked of each loss before the batch is spent, so your own loss beside an
+#: opponent's cannot use up the firing. Unlike `dealt_damage` nothing is
+#: summed: the batch spans players, so the bindings (`amount`, `event_player`)
+#: are the first matching loss's.
 BATCHED_EVENTS = frozenset(
     {
         "permanent_enters",
@@ -416,6 +444,7 @@ BATCHED_EVENTS = frozenset(
         "attacks_unblocked",
         "dealt_damage",
         "discard",
+        "life_lost",
     }
 )
 
@@ -573,6 +602,27 @@ def _half_matches(dsl_event: str, event: GameEvent) -> bool:
     return half is None or event.data.get("to") == half
 
 
+#: DSL trigger name -> the coin-flip outcome it is about (705.2). `COIN_FLIPPED`
+#: carries ``won`` for both outcomes, and "whenever you win a coin flip" must not
+#: pay on a lost one. Compared with ``is`` against the required value, for the
+#: reason `EVENT_HALVES` is compared with ``==``: an emission that forgot to say
+#: fails the trigger rather than passing it.
+EVENT_OUTCOMES: dict[str, bool] = {
+    "wins_coin_flip": True,
+}
+
+
+def _outcome_matches(dsl_event: str, event: GameEvent) -> bool:
+    """Whether this flip came down the way ``dsl_event`` asks.
+
+    Shared by `_matches` and `_delayed_matches` for `_half_matches`' reason: a
+    delayed subscription must not be wider than the hosted trigger of the same
+    name.
+    """
+    outcome = EVENT_OUTCOMES.get(dsl_event)
+    return outcome is None or event.data.get("won") is outcome
+
+
 #: Triggers that keep working while their source is in the graveyard, because the
 #: source has just left the battlefield.
 #:
@@ -672,13 +722,16 @@ def collect(state: GameState, event: GameEvent) -> None:
         spec = ability.trigger
         if spec is None:
             continue
-        for heard in _per_player_events(spec, event):
+        for heard in _per_player_events(state, obj, spec, event):
             _collect_one(state, obj, ability, heard, doubled, doublers)
     _arm_delayed(state, event)
 
 
-def _per_player_events(spec: TriggerSpec, event: GameEvent) -> list[GameEvent]:
-    """The event as this trigger hears it: whole, or once per damaged seat.
+def _per_player_events(
+    state: GameState, obj: GameObject, spec: TriggerSpec, event: GameEvent
+) -> list[GameEvent]:
+    """The event as this trigger hears it: whole, once per damaged seat, or
+    narrowed to the seats `defending` names.
 
     "Whenever one or more Dragons you control deal combat damage to **an
     opponent**, … destroy target artifact **that opponent** controls" --
@@ -696,9 +749,23 @@ def _per_player_events(spec: TriggerSpec, event: GameEvent) -> list[GameEvent]:
     A copy rather than a second fired event, because a second event would
     fire every unflagged trigger on this event again. The copy is never
     emitted into the log; it is only what `_matches` and `_queue` read.
+
+    Without `per_player`, a `defending` clause narrows the whole batch to the
+    seats it names and hears it **once**: "whenever **your opponents are
+    dealt** combat damage, if any of that damage was dealt by a Warrior"
+    (Mindblade Render). `damaged` keeps only the matching seats, `damagers`
+    only the creatures that hit one of them -- so the `filter` is never
+    satisfied by a Warrior that hit somebody else -- and a batch that hit
+    none of them is not heard at all. One firing per event is one per step:
+    only attacking creatures deal combat damage to players, and they are all
+    the active player's (506.2, 506.4), so a step's player damage is one batch.
     """
-    if not spec.per_player or event.type != EventType.CREATURES_DEALT_COMBAT_DAMAGE:
+    if event.type != EventType.CREATURES_DEALT_COMBAT_DAMAGE:
         return [event]
+    if not spec.per_player:
+        if spec.defending is None:
+            return [event]
+        return _defending_batch(state, spec, obj, event)
     heard: list[GameEvent] = []
     for hit in event.data.get("hits") or []:
         data = dict(event.data)
@@ -712,6 +779,38 @@ def _per_player_events(spec: TriggerSpec, event: GameEvent) -> list[GameEvent]:
         )
         heard.append(replace(event, data=data))
     return heard
+
+
+def _defending_batch(
+    state: GameState, spec: TriggerSpec, obj: GameObject, event: GameEvent
+) -> list[GameEvent]:
+    """The batch narrowed to the seats ``spec.defending`` names, or nothing.
+
+    Each seat is asked the question `_defender_matches` asks of a `per_player`
+    copy, so every clause means the same thing on both readings. No
+    `defender` is bound: the narrowed batch may name several seats.
+    """
+    hits = [
+        hit
+        for hit in event.data.get("hits") or []
+        if _defender_matches(
+            state,
+            spec.defending,
+            obj,
+            replace(event, data={"defender": int(hit["player"])}),
+        )
+    ]
+    if not hits:
+        return []
+    damagers = sorted({int(oid) for hit in hits for oid in hit["damagers"]})
+    data = dict(event.data)
+    data.update(
+        damaged=sorted(int(hit["player"]) for hit in hits),
+        damagers=damagers,
+        damaged_battles=[],
+        hits=hits,
+    )
+    return [replace(event, data=data)]
 
 
 def _collect_one(
@@ -837,7 +936,11 @@ def _delayed_matches(
 
     # The one restriction here that is not read off a hosting permanent, and so
     # the one a delayed ability can still be asked. See `_half_matches`.
-    if not _half_matches(spec.event, event):
+    # A shield-linked rider skips the half check: its link names the one
+    # prevention it answers, and a permanent's shield fires the permanent half.
+    if delayed.shield is None and not _half_matches(spec.event, event):
+        return False
+    if not _outcome_matches(spec.event, event):
         return False
     if delayed.shield is not None and event.data.get("shield") != delayed.shield:
         # "If damage is prevented **this way**" (615.5): the one shield this
@@ -1228,6 +1331,10 @@ def _matches(
     if not _half_matches(spec.event, event):
         return False
 
+    # Which outcome of a coin flip this trigger is about -- see `EVENT_OUTCOMES`.
+    if not _outcome_matches(spec.event, event):
+        return False
+
     # `source: "self"` on `dealt_damage` means *this creature was dealt damage*,
     # never "this creature dealt it". The generic check above accepts either,
     # because for most events the subject and the source are the same object --
@@ -1348,11 +1455,22 @@ def _matches(
     # Read as a presence rather than a truthiness: a `spell` clause meeting an
     # event that forgot to say would otherwise pass, which is the wide
     # direction, and one that forgot to say is exactly the bug this guards.
+    #
+    # ``"activated_ability"`` is Professor Hojo's "the target of an **activated**
+    # ability": the ``ability`` arm narrowed by the ``ability_kind`` the item
+    # recorded as it went on the stack, so an opponent's enters trigger aimed at
+    # your creature does not draw. Same presence rule: an event that does not
+    # say ``"activated"`` does not fire it.
     if spec.targeted_by is not None:
         flag = event.data.get("is_spell")
         if flag is None:
             return False
         if (spec.targeted_by == "spell") is not bool(flag):
+            return False
+        if (
+            spec.targeted_by == "activated_ability"
+            and event.data.get("ability_kind") != "activated"
+        ):
             return False
 
     # "Whenever you draw your **second** card each turn." An ordinal is a fact
@@ -1394,7 +1512,13 @@ def _matches(
         if spec.controller == "opponent" and actor == obj.controller:
             return False
 
-    if spec.defending is not None and not _defender_matches(state, spec.defending, obj, event):
+    # The unsplit combat-damage batch names no one defender; its `defending`
+    # clause was applied seat by seat in `_defending_batch` instead.
+    if (
+        spec.defending is not None
+        and not (spec.event == "creatures_deal_combat_damage" and not spec.per_player)
+        and not _defender_matches(state, spec.defending, obj, event)
+    ):
         return False
 
     # "Whenever one or more **Dragons you control** deal combat damage to a
@@ -1668,6 +1792,15 @@ EVENT_BINDING_KEYS = (
     # else's spell chose. `becomes_target` is the other, and is a per-permanent
     # trigger -- written on Orvar it would only ever see spells aimed at Orvar.
     "spell_targets",
+    # "Whenever you cast a spell **with one or more targets**, draw **that
+    # many** cards" -- Voracious Bibliophile. How many targets the spell was
+    # cast with, every kind and every instance, written by `Game._cast` beside
+    # `spell_targets`. Read with `{"binding": "spell_target_count"}`, both as
+    # the trigger's `condition` (with `recheck: false`: "with one or more
+    # targets" describes the cast, and this is a snapshot of it anyway) and as
+    # the draw's amount, which is the count as cast even if the spell has been
+    # countered in response.
+    "spell_target_count",
     # Persist and undying: what was on the creature before it died, which
     # nothing can read off the object afterwards.
     "had_counters",
@@ -1683,6 +1816,10 @@ EVENT_BINDING_KEYS = (
     # wore, one seat per Aura, snapshotted by `zones._auras_had` before
     # `_detach_all`. Read through the `auras_had` value key.
     "had_auras",
+    # "Whenever a creature you control without flying dies" (Luminous
+    # Broodmoth): the keywords the departed permanent had as it left, derived.
+    # Read through the `keywords_had` value key.
+    "had_keywords",
     # The X paid for the ability whose event this is, written over the `x`
     # `event_bindings` reads off the permanent. Only `cycle` carries it: "When
     # you cycle this card, create an X/X…" (Shark Typhoon) means the X in the
@@ -1823,7 +1960,11 @@ def _actor(
     # answer only because the subject is not an object; the event's `source` is
     # the tutor or fetchland that asked, and on Path to Exile that is *my* spell
     # making *them* search, so a subject read off it would be the wrong seat.
-    if dsl_event in ("land_played", "spell_cast", "spell_copied", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target", "becomes_monarch", "ability_activated", "damage_prevented", "creatures_attack_player", "creatures_deal_combat_damage", "searches_library"):
+    # `wins_coin_flip` is listed for the same reason: the actor is the player
+    # who **flipped**, and the event's `source` is the card whose effect made
+    # the flip -- on a flip one player's card makes another player take, a
+    # subject read off it would be the wrong seat.
+    if dsl_event in ("land_played", "spell_cast", "spell_copied", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target", "becomes_monarch", "ability_activated", "damage_prevented", "creatures_attack_player", "creatures_deal_combat_damage", "searches_library", "wins_coin_flip"):
         return event.player
     # `deals_damage_to_player` is here beside the combat-only trigger it
     # generalises, and for the same reason: `event.player` on a damage event is
@@ -2218,9 +2359,7 @@ def matches_card_filter(
     # permanent whose state `reset_permanent_state` has already cleared.
     if "tapped" in filt and bool(obj.tapped) != bool(filt["tapped"]):
         return False
-    if "has_counters" in filt and any(n > 0 for n in obj.counters.values()) != bool(
-        filt["has_counters"]
-    ):
+    if "has_counters" in filt and not has_counters_matches(obj, filt["has_counters"]):
         return False
     # "Whenever one or more **goaded** creatures deal combat damage to one of
     # your opponents" -- Puppet Master, String Puller. Live object state, sound

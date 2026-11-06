@@ -89,7 +89,7 @@ from .carddef import Ability, CardDef, ward_ability
 from .enums import KEYWORD_COUNTERS, SUBTYPE_CLASS, Keyword, Zone
 from .errors import DslError
 from .mana import ManaOrigin, printed_cost_is
-from .objects import MINUS_ONE, PLUS_ONE, TIME_COUNTER, GameObject
+from .objects import ANY_COUNTER_KIND, MINUS_ONE, PLUS_ONE, TIME_COUNTER, GameObject
 from .structs import PROTECTION_COLORLESS, PROTECTION_EVERYTHING, Characteristics
 from .text_change import apply_to_ability
 from .text_change import apply_to_subtypes as apply_text_changes
@@ -548,11 +548,20 @@ def _compute(state: GameState, oid: int) -> Characteristics:
         #     types exactly these ("becomes a green Elk creature"). Subtypes of
         #     a card type it no longer has go with that type (205.1b, the rule
         #     `set_types` below applies too); supertypes are untouched.
+        #     `keeps_colors` leaves the colours as they are ("becomes a Treasure
+        #     artifact" names none), and `keeps_pt` the base size of an
+        #     animation into a non-creature that names no size.
         animations = sorted(
             (*obj.animations, *(t for t in obj.until_eot if t.kind == "animate")),
             key=lambda t: t.timestamp,
         )
         for temp in animations:
+            if temp.kind == "set_toughness":
+                # "…this creature's toughness becomes N" (Tree of Perdition's
+                # exchange): the toughness half of a 7b set, in the same
+                # timestamp order, touching nothing else.
+                toughness = temp.toughness
+                continue
             if temp.exact:
                 types = set(temp.types)
                 subtypes = {
@@ -561,13 +570,15 @@ def _compute(state: GameState, oid: int) -> Characteristics:
                     if SUBTYPE_CLASS.get(sub, "Creature") in types
                     and SUBTYPE_CLASS.get(sub, "Creature") != "Creature"
                 }
-                colors = set(temp.colors)
+                if not temp.keeps_colors:
+                    colors = set(temp.colors)
             else:
                 types.update(temp.types)
                 colors.update(temp.colors)
             subtypes.update(temp.subtypes)
-            power = temp.power
-            toughness = temp.toughness
+            if not temp.keeps_pt:
+                power = temp.power
+                toughness = temp.toughness
 
         # 0. type replacement -- "as long as it has a slumber counter, it's a
         #    land (it's not a creature)". Before the grants, so a card that both
@@ -679,12 +690,25 @@ def _compute(state: GameState, oid: int) -> Characteristics:
         if _loses_abilities(state, obj):
             keywords = set()
 
+        #    "Equipped creature gets +10/+10 **and loses flying**" (Colossus
+        #    Hammer): a plain removal, which 613.7 orders by timestamp among
+        #    the layer-6 effects -- unlike the "can't have" of step 9. Gathered
+        #    here, applied after step 8: each named keyword goes unless an
+        #    effect granting it is *newer* than the newest removal of it. So
+        #    `stamped` records every grant below with its timestamp, and only
+        #    when there is a removal to compare it against.
+        removed_at = _timestamped_removals(state, obj, statics)
+        stamped: list[tuple[int, str]] | None = [] if removed_at else None
+
         # 2. keyword grants
         for source_obj, static in statics:
             if static.get("effect") != "grant_keyword":
                 continue
             if _matches(state, obj, source_obj, static.get("affects")):
                 keywords.update(static.get("keywords", ()))
+                if stamped is not None:
+                    stamp = static_timestamp(source_obj)
+                    stamped.extend((stamp, word) for word in static.get("keywords", ()))
 
         # 2b. Keyword counters (122.1c): "a permanent with a keyword counter on
         #     it has that keyword ability".  A vigilance counter is not
@@ -721,6 +745,8 @@ def _compute(state: GameState, oid: int) -> Characteristics:
         for kind, amount in obj.counters.items():
             if amount > 0 and kind in KEYWORD_COUNTERS:
                 keywords.add(kind)
+                if stamped is not None:
+                    stamped.append((obj.keyword_counter_at.get(kind, obj.timestamp), kind))
 
         # 3. P/T setting
         for source_obj, static in statics:
@@ -758,12 +784,16 @@ def _compute(state: GameState, oid: int) -> Characteristics:
                 if temp.only_your_turn and state.active_player != obj.controller:
                     continue
                 keywords.add(temp.keyword)
+                if stamped is not None:
+                    stamped.append((temp.timestamp, temp.keyword))
 
         # 7. haste from suspend, which is *not* an until-end-of-turn effect: it
         #    lasts as long as the permanent does. Without it a suspended creature
         #    arrives summoning sick and suspend is never worth doing.
         if obj.hasted_by_suspend:
             keywords.add(Keyword.HASTE.value)
+            if stamped is not None:
+                stamped.append((obj.timestamp, Keyword.HASTE.value))
 
         # 8. Keywords granted for as long as the permanent lasts -- riot's "or
         #    with haste", which is not a pump that wears off but part of what
@@ -772,6 +802,22 @@ def _compute(state: GameState, oid: int) -> Characteristics:
         #    general form, and the two stay separate because suspend's is set
         #    while the card is still in exile.
         keywords.update(obj.granted_keywords)
+        if stamped is not None:
+            # Riot's haste, written as the permanent arrives, carries no stamp
+            # of its own: it began with the arrival.
+            stamped.extend(
+                (obj.granted_keyword_at.get(word, obj.timestamp), word)
+                for word in obj.granted_keywords
+            )
+
+        # 8b. The timestamped removals gathered before step 2. Printed
+        #     keywords always go -- they are the object's own, not an effect
+        #     with a timestamp -- and so does every grant older than the
+        #     removal; a grant newer than it survives (613.7). A tie goes to
+        #     the removal.
+        for word, at in removed_at.items():
+            if not any(stamp > at for stamp, granted in stamped or () if granted == word):
+                keywords.discard(word)
 
         # 9. "Creatures your opponents control **lose first strike and can't
         #    have or gain first strike**" -- Archetype of Courage, and the rest
@@ -868,6 +914,38 @@ def _ability_statics(state: GameState) -> list[tuple[GameObject, Mapping[str, An
         state.ability_static_cache = out
         state.ability_static_version = state.char_version
     return state.ability_static_cache
+
+
+def static_timestamp(source: GameObject) -> int:
+    """The timestamp of a continuous effect from ``source``'s static ability.
+
+    613.7: the object's own, from when it entered its zone, or, for an Aura,
+    Equipment or Fortification, from when it became attached, whichever is
+    later. A static an object holds because something granted it reads the
+    holder's timestamp, not the later moment of the grant.
+    """
+    if source.attached_to is not None or source.attached_to_player is not None:
+        return max(source.timestamp, source.attached_timestamp)
+    return source.timestamp
+
+
+def _timestamped_removals(
+    state: GameState,
+    obj: GameObject,
+    statics: list[tuple[GameObject, Mapping[str, Any]]],
+) -> dict[str, int]:
+    """Each keyword a `lose_keyword_timestamped` static takes from ``obj``,
+    with the newest such removal's timestamp."""
+    out: dict[str, int] = {}
+    for source_obj, static in statics:
+        if static.get("effect") != "lose_keyword_timestamped":
+            continue
+        if not _matches(state, obj, source_obj, static.get("affects")):
+            continue
+        stamp = static_timestamp(source_obj)
+        for word in static.get("keywords", ()):
+            out[word] = max(out.get(word, stamp), stamp)
+    return out
 
 
 def _loses_abilities(state: GameState, obj: GameObject) -> bool:
@@ -1654,6 +1732,22 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
             ),
             default=0,
         )
+    if "commander_casts_this_game" in expr:
+        # Commander's Insignia: "Creatures you control get +1/+1 for each time
+        # you've cast your commander from the command zone this game." The
+        # effect side's leaf: rule 903.8's tally, `Player.commander_tax`, which
+        # `Game` bumps once per cast from the command zone, summed over
+        # `commanders_of` the source's controller so partners both count and no
+        # other tax entry can. Only a commander's owner may cast it from the
+        # command zone, so the owner's tally is "you've cast". A pipeline input:
+        # no layer writes the tally, and the write bumps `char_version`, so the
+        # anthem grows the moment the cast is made.
+        pids = _static_players(state, source, expr["commander_casts_this_game"])
+        return sum(
+            state.players[pid].commander_tax.get(oid, 0)
+            for pid in pids
+            for oid in state.commanders_of(pid)
+        )
     if "extreme_value" in expr:
         # Dragon Man, Reformed Robot: "power is equal to the greatest mana value
         # among noncreature permanents you control and noncreature cards in your
@@ -1701,8 +1795,27 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
         # off SPELL_CAST and the cleanup step empties it, no layer touches it,
         # and both bump `char_version`, so a cached answer cannot outlive the
         # cast that changed it or the turn that ended it.
-        pids = _static_players(state, source, expr["spells_cast_this_turn"])
-        return sum(state.turn_ledger.spells_cast.get(p, 0) for p in pids)
+        spec = expr["spells_cast_this_turn"]
+        if not isinstance(spec, Mapping):
+            pids = _static_players(state, source, spec)
+            return sum(state.turn_ledger.spells_cast.get(p, 0) for p in pids)
+        # Lyse Hext: "As long as you've cast two or more **noncreature** spells
+        # this turn". The effect side's typed form, counted off the ids the same
+        # fold records beside the flat total -- which knows only how many, so
+        # two creature spells would switch the static on. Matched on the printed
+        # face the cast recorded, as the effect side matches it: a resolved
+        # spell has no board state left to ask about, and a face is no layer's
+        # output, so the input argument above still holds.
+        pids = _static_players(state, source, spec.get("player", "you"))
+        filt = spec["filter"]
+        registry = state.registry
+        return sum(
+            1
+            for p in pids
+            for cast_id in state.turn_ledger.spells_cast_ids.get(p, ())
+            # `in` before `get`: `get` raises on an id the registry lacks.
+            if cast_id in registry and _matches_printed(registry.get(cast_id), filt)
+        )
     if "creatures_died_this_turn" in expr:
         # Gorma, the Gullet: "...for each creature that died under your control
         # this turn." The effect side's morbid leaf, keyed by the creature's
@@ -1772,7 +1885,7 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
         spec = expr["counters_on"] or {}
         kind = str(spec.get("counter", PLUS_ONE))
         return sum(
-            obj.counter(kind)
+            counters_of_kind(obj, kind)
             for obj in _matching_objects(state, spec.get("objects") or {"self_only": True}, source)
         )
     raise DslError(f"unknown static value {sorted(expr)}")
@@ -2202,6 +2315,30 @@ def has_any_counter(obj: GameObject) -> bool:
     return any(n > 0 for n in obj.counters.values())
 
 
+def has_counters_matches(obj: GameObject, spec: Any) -> bool:
+    """The ``has_counters`` filter key, the same in every filter language.
+
+    ``true`` is one or more counters of any kind (122.1) and ``false`` none at
+    all -- "with counters on them". A kind is one or more of **that** kind --
+    "target creature with a -1/-1 counter on it" (Liliana, Death Wielder),
+    which a creature carrying only +1/+1 or stun counters does not satisfy.
+    """
+    if isinstance(spec, str):
+        return obj.counter(spec) > 0
+    return has_any_counter(obj) == bool(spec)
+
+
+def counters_of_kind(obj: GameObject, kind: str) -> int:
+    """How many counters of ``kind`` sit on ``obj`` -- every kind for ``"any"``.
+
+    The one reader behind both value languages' ``counters_on``, so an effect's
+    amount and a static's magnitude cannot disagree about what "counters" means.
+    """
+    if kind == ANY_COUNTER_KIND:
+        return sum(n for n in obj.counters.values() if n > 0)
+    return obj.counter(kind)
+
+
 def enchanted_by(state: GameState, oid: int, spec: Any, controller: int) -> bool:
     """The ``enchanted_by`` filter key: is ``oid`` enchanted, by whose Aura?
 
@@ -2224,6 +2361,53 @@ def enchanted_by(state: GameState, oid: int, spec: Any, controller: int) -> bool
     static's output (ADR 0001).
     """
     return enchanted_by_answer(aura_controllers(state, oid), spec, controller)
+
+
+def is_equipped(state: GameState, oid: int) -> bool:
+    """The ``equipped`` selector key: is one or more Equipment attached to ``oid``?
+
+    "…the number of **equipped creatures** you control" (Barret Wallace). A
+    permanent is equipped when an Equipment is attached to it (301.5c), and
+    anybody's counts: the word asks what is attached, not whose it is -- the
+    equipped limb of `modified`, and `enchanted_by`'s walk for the other kind of
+    attachment. An Equipment is told by its derived subtypes, the test
+    `selectors._is_modified` and `zones._equipment_had` make of the board.
+
+    The derived subtypes are a pipeline **output**, so this is an effect-side
+    reader only; a static's filter would have to tell the Equipment by its
+    printed face, as `sba` does, to stay clear of another static (ADR 0001).
+    """
+    for other_oid in state.battlefield:
+        other = state.objects.get(other_oid)
+        if other is None or other.attached_to != oid:
+            continue
+        if "Equipment" in chars(state, other_oid).subtypes:
+            return True
+    return False
+
+
+def is_modified_printed(state: GameState, obj: GameObject, controller: int) -> bool:
+    """The static ``modified`` filter key: a counter, an Equipment, or your Aura.
+
+    "Other **modified** creatures you control have vigilance and trample" (Red
+    XIII, Proud Warrior). The keyword-action definition `selectors._is_modified`
+    answers for effects, asked of a static's filter: one or more counters of any
+    kind, one or more Equipment attached (anybody's, 301.5c), or one or more
+    Auras attached whose controller is ``controller`` -- the static's.
+
+    Every limb is a pipeline **input**, so a static may read it without
+    depending on another static's output (ADR 0001): counters are
+    `has_counters`' board state; the Aura limb is `enchanted_by`'s walk; and the
+    Equipment is told by its printed face, as `sba` bins it, rather than by its
+    derived subtypes as `is_equipped` tells it -- those are layer 4's output.
+    """
+    if has_any_counter(obj):
+        return True
+    for other_oid in state.battlefield:
+        other = state.objects.get(other_oid)
+        if other is not None and other.attached_to == obj.oid and state.card_of(other).is_equipment:
+            return True
+    return enchanted_by(state, obj.oid, {"controller": "you"}, controller)
 
 
 def aura_controllers(state: GameState, oid: int) -> list[int]:
@@ -2494,7 +2678,7 @@ def _matches_wherever(
     # (Innkeeper's Talent). Counters are board state no layer writes -- a
     # static never puts one on -- so this is a pipeline input for `tapped`'s
     # reason, and the answer moves the moment a counter arrives or leaves.
-    if "has_counters" in selector and has_any_counter(obj) != bool(selector["has_counters"]):
+    if "has_counters" in selector and not has_counters_matches(obj, selector["has_counters"]):
         return False
     # "Each creature that's **enchanted by an Aura you control**" (Eriette of
     # the Charmed Apple). Attachment is board state no layer writes, so it is a
@@ -2503,6 +2687,11 @@ def _matches_wherever(
     if "enchanted_by" in selector and not enchanted_by(
         state, obj.oid, selector["enchanted_by"], source.controller
     ):
+        return False
+    # "Other **modified** creatures you control have vigilance and trample"
+    # (Red XIII, Proud Warrior). Counters, attachment and printed faces, all
+    # pipeline inputs; `is_modified_printed` says why each limb is.
+    if selector.get("modified") and not is_modified_printed(state, obj, source.controller):
         return False
     if "is_commander" in selector and bool(obj.is_commander) != bool(selector["is_commander"]):
         return False

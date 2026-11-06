@@ -19,27 +19,31 @@ from ..player_statics import (
 )
 from ..primitives import add_counters, mill_cards, shuffle_library
 from ..stack import pull_spell_off_stack
-from ..structs import GraveyardCastGrant
+from ..structs import CastRider, GraveyardCastGrant
 from ..suspend import cast_for_free, make_suspended
 from ..triggers import entering_together, fire
 from ..zones import (
     end_permissions_until_next_exile,
     link_exiled,
     move_object,
+    offer_as_enters_effects,
     offer_aura_host,
     offer_enters_replacement,
+    offer_named_host,
     offer_read_ahead,
     offer_riot_choice,
     record_playable_source,
 )
 from . import execute
 from .behold import announce_beheld, behold_count, behold_pool
+from .conditions import evaluate as evaluate_condition_in
 from .context import EffectContext, ask_objects, ask_player, ask_yes_no
 from .registry import register
 from .selectors import (
     ZONE_NAMES,
     choose_objects,
     matches,
+    named_hosts,
     pick_from_pool,
     resolve_pool,
     select_players,
@@ -231,6 +235,11 @@ def op_grant_playable(ctx: EffectContext, spec: Mapping[str, Any]):
     "and mana of any type can be spent to cast that spell" -- and belongs to
     the same grant rather than to the player or the turn.
 
+    ``as_adventure`` is Hildibrand Manderville's "you may cast it from your
+    graveyard **as an Adventure**": only the card's Adventure half is offered,
+    never its creature face, and the half resolves onto its adventure in exile
+    (715.3d) so the creature may be cast from there afterwards.
+
     ``limit`` is "a spell", singular. Counted per granting permanent in the turn
     ledger, the way a `cast_from_graveyard` permission is, so two Lockes are two
     spells and one Locke milling three cards is still one.
@@ -245,11 +254,16 @@ def op_grant_playable(ctx: EffectContext, spec: Mapping[str, Any]):
         obj.playable_by = ctx.controller
         obj.playable_turn = ctx.state.turn
         obj.playable_duration = playable_duration_of(spec) or "this_turn"
+        obj.playable_condition = spec.get("playable_condition")
         obj.playable_group = ctx.source_oid if limit else None
         # "…gains **flashback**", rather than a bare permission to cast it: the
         # card is exiled as it resolves, so the grant is worth one cast per card
         # rather than as many as the turn's mana allows.
         obj.playable_exiles = bool(spec.get("as_flashback"))
+        # "…cast it from your graveyard **as an Adventure**" (Hildibrand
+        # Manderville): the permission reaches the Adventure half only, and
+        # the half's own resolution exiles it on an adventure (715.3d).
+        obj.playable_as_adventure = bool(spec.get("as_adventure"))
         # "…and mana of any type can be spent to cast that spell" travels with
         # the permission it is printed beside, and expires with it: the flag is
         # read only where `playable_turn` already gates the offer.
@@ -258,6 +272,10 @@ def op_grant_playable(ctx: EffectContext, spec: Mapping[str, Any]):
         # "…without paying their mana costs" (601.2b), plot's flag on the
         # same permission and read by the same cast path.
         obj.playable_free = bool(spec.get("playable_free"))
+        # "Spells you cast this way cost {2} less to cast" (Urianger
+        # Augurelt): a discount on this permission's casts only, read by
+        # `casting.permission_cost_reduction` while the permission is live.
+        obj.playable_cost_reduction = int(spec.get("playable_cost_reduction", 0) or 0)
         record_playable_source(ctx.state, oid, ctx.source_oid)
 
 
@@ -423,7 +441,14 @@ def _search(ctx: EffectContext, spec: Mapping[str, Any], zones: tuple[str, ...])
         to_top = spec.get("destination") == "library_top"
         if shuffles and to_top:
             shuffle_library(ctx.state, pid)
-        if picked:
+        if picked and spec.get("may_destination"):
+            # "If an opponent controls more lands than you, you may put that
+            # card onto the battlefield tapped. If you don't …, put it into your
+            # hand. Then shuffle." (Scholar of New Horizons). Asked after the
+            # card is chosen and revealed, so the player decides about the card
+            # they found -- and before the shuffle, which the card prints last.
+            picked = yield from _move_found_may(ctx, picked, pid, destination, spec, "search")
+        elif picked:
             picked = yield from _move_found(ctx, picked, pid, destination, spec, tapped, "search")
         if shuffles and not to_top:
             shuffle_library(ctx.state, pid)
@@ -673,12 +698,16 @@ def _move_found(
                 obj.playable_by = ctx.controller
                 obj.playable_turn = ctx.state.turn
                 obj.playable_duration = duration
+                # "During any turn you attacked with a commander, you may play
+                # those cards" (Neriv) -- see `objects.PLAYABLE_CONDITIONS`.
+                obj.playable_condition = spec.get("playable_condition")
                 # "Mana of any type can be spent to cast a spell this way"
                 # (Klaw, Master of Sound) -- `grant_playable`'s flag, read by
                 # the same cast path while the permission is live.
                 obj.playable_any_type = bool(spec.get("any_type"))
                 obj.playable_any_color = bool(spec.get("any_color"))
                 obj.playable_free = bool(spec.get("playable_free"))
+                obj.playable_cost_reduction = int(spec.get("playable_cost_reduction", 0) or 0)
                 record_playable_source(ctx.state, oid, ctx.source_oid)
         # "Exile the top card of your library **face down**." Necropotence.
         # Face-down here is *privacy*, not the 707 morph identity `face_down`
@@ -1132,6 +1161,7 @@ def op_return_to_origin(ctx: EffectContext, spec: Mapping[str, Any]):
             # Wild picks again.
             yield from offer_riot_choice(ctx.state, oid, obj.controller)
             yield from offer_read_ahead(ctx.state, oid, obj.controller)
+            yield from offer_as_enters_effects(ctx.state, oid, obj.controller)
         move_object(
             ctx.state,
             oid,
@@ -1198,6 +1228,7 @@ def op_return_from_graveyard(ctx: EffectContext, spec: Mapping[str, Any]):
     selector.setdefault("zone", "graveyard")
     destination = DESTINATIONS[spec.get("destination", "hand")]
     oids = yield from choose_objects(ctx, selector, "Return from graveyard")
+    hosts = named_hosts(ctx, spec)
     for oid in oids:
         obj = ctx.state.objects.get(oid)
         if obj is None:
@@ -1208,11 +1239,13 @@ def op_return_from_graveyard(ctx: EffectContext, spec: Mapping[str, Any]):
             controller = ctx.controller if spec.get("controller") == "you" else obj.owner
             # 303.4f: "return this card to the battlefield" names no host, so
             # an Aura chooses one as it enters and stays in the graveyard when
-            # none is legal. ``host_named`` is "…attached to that creature",
-            # the host named by a following `attach`.
-            if not spec.get("host_named") and not (
-                yield from offer_aura_host(ctx.state, oid, controller)
-            ):
+            # none is legal. ``host_named`` is "…attached to that creature":
+            # the effect names the host, and an Aura that can't legally
+            # enchant it stays in the graveyard (303.4g).
+            if hosts is not None:
+                if not offer_named_host(ctx.state, oid, controller, hosts):
+                    continue
+            elif not (yield from offer_aura_host(ctx.state, oid, controller)):
                 continue
             obj.controller = controller
             # "If this artifact **would enter**…" -- reanimation is an arrival,
@@ -1225,6 +1258,7 @@ def op_return_from_graveyard(ctx: EffectContext, spec: Mapping[str, Any]):
             # is -- see `zones.offer_riot_choice`.
             yield from offer_riot_choice(ctx.state, oid, obj.controller)
             yield from offer_read_ahead(ctx.state, oid, obj.controller)
+            yield from offer_as_enters_effects(ctx.state, oid, obj.controller)
         move_object(
             ctx.state,
             oid,
@@ -1677,10 +1711,12 @@ def op_flip_coin(ctx: EffectContext, spec: Mapping[str, Any]):
 
     Determinism: the outcome comes from ``state.rng``, the engine's single
     seeded source, so a replay of the same seed and action tape flips the same
-    way. One ``coin_flipped`` event carries ``won`` for the log.
+    way. One ``coin_flipped`` event carries ``won``, fired through the trigger
+    bus rather than only logged, because ``wins_coin_flip`` listens for it.
     """
     won = ctx.state.rng.randint(0, 1) == 1
-    ctx.state.emit(
+    fire(
+        ctx.state,
         EventType.COIN_FLIPPED,
         player=ctx.controller,
         source=ctx.source_oid,
@@ -1754,13 +1790,37 @@ def op_roll_dice(ctx: EffectContext, spec: Mapping[str, Any]):
         )
 
 
-def _offer_free_cast(ctx: EffectContext, pid: int, oid: int, prompt: str):
+def cast_rider(ctx: EffectContext, spec: Mapping[str, Any] | None) -> CastRider | None:
+    """A free cast's ``creature_cast_gains`` as the `CastRider` `cast_for_free` stages.
+
+    "If you cast a creature spell this way, it gains …": the keywords and the
+    indices into this card's ``grantable_abilities`` that the permanent the
+    spell becomes is handed for as long as it lasts. Not a `grant_keyword` and
+    a `grant_ability` written after the cast, which would reach the spell on
+    the stack -- or a hit left uncast in exile -- and not the permanent; the
+    rider rides the cast itself, so it applies exactly when the card was cast
+    this way, and `cast_for_free` drops it for a noncreature spell.
+    """
+    if not spec or ctx.source_oid is None:
+        return None
+    return CastRider(
+        source=ctx.source_oid,
+        keywords=tuple(str(k) for k in spec.get("keywords") or ()),
+        abilities=tuple(int(i) for i in spec.get("abilities") or ()),
+    )
+
+
+def _offer_free_cast(
+    ctx: EffectContext, pid: int, oid: int, prompt: str, rider: CastRider | None = None
+):
     """ "You may cast it without paying its mana cost."  Returns whether it was.
 
     Shares `suspend.cast_for_free`, which is what makes the copy a real cast --
-    it uses the stack and can be countered. Haste is **not** shared: that flag
-    belongs to suspend, and a cascaded creature that could attack immediately
-    would be a strictly better card.
+    it uses the stack and can be countered. Suspend's haste is **not** shared:
+    a cascaded creature that could attack immediately would be a strictly
+    better card. What a card does give the creature it casts this way -- Strago
+    and Relm's "it gains haste and …" -- is ``rider``, passed through to
+    `cast_for_free` and so applied only on a yes that reached the stack.
     """
 
     obj = ctx.state.objects.get(oid)
@@ -1773,7 +1833,7 @@ def _offer_free_cast(ctx: EffectContext, pid: int, oid: int, prompt: str):
     if not (yield from ask_yes_no(ctx, prompt, pid)):
         return False
     before = len(ctx.state.stack)
-    cast_for_free(ctx.state, pid, oid)
+    cast_for_free(ctx.state, pid, oid, rider=rider)
     return len(ctx.state.stack) > before
 
 
@@ -1811,9 +1871,19 @@ def op_cast_from_hand(ctx: EffectContext, spec: Mapping[str, Any]):
     its owner keeps it (108.3), which is `push_spell` taking the card out of
     the owner's list. One question per owner, in the pool's own order, because
     "a card" with no "for each player" would be one cast in total.
+
+    ``exiles: true`` is "If that spell would be put into a graveyard, exile it
+    instead" -- Torrential Gearhulk and Impulsivity, casting a target card out
+    of a graveyard (``objects: {"target": …}``). `cast_card`'s rider on the
+    free cast: it rides on the stack item (`StackItem.exiles_instead`), so it
+    holds however the spell leaves the stack for a graveyard -- resolving,
+    fizzling or being countered -- and the same card cast later by other means
+    goes back to the graveyard. `cast_card` is the near miss and charges the
+    mana cost; `play_exiled` is free but reads its pool out of exile.
     """
 
     selector = spec.get("selector") or {}
+    exiles = bool(spec.get("exiles", False))
     prompt = "Cast a spell without paying its mana cost"
     # "…from your hand, **from your graveyard, or from among cards you own in
     # exile**" -- Kaya the Inexorable's emblem. One choice over the union of the
@@ -1870,7 +1940,7 @@ def op_cast_from_hand(ctx: EffectContext, spec: Mapping[str, Any]):
         for group in groups:
             picked = yield from ask_objects(ctx, prompt, group, 0, 1, pid, "cast_from_hand")
             if picked:
-                cast_for_free(ctx.state, pid, picked[0])
+                cast_for_free(ctx.state, pid, picked[0], exiles_instead=exiles)
 
 
 def _cast_paying_mana_cost(ctx: EffectContext, pid: int, oid: int, *, exiles: bool = False):
@@ -1910,8 +1980,8 @@ def _cast_paying_mana_cost(ctx: EffectContext, pid: int, oid: int, *, exiles: bo
     from ..player_statics import cast_lock_min_x
     from ..primitives import cast_locked_zones
     from ..stack import free_cast_modes, push_spell
-    from ..targeting import additional_sized_targets, describe_ref, enumerate_target_tuples
-    from .context import ask_mode, ask_targets, ask_x
+    from ..targeting import additional_sized_targets, enumerate_target_tuples
+    from .context import ask_x
 
     state = ctx.state
     obj = state.objects.get(oid)
@@ -1936,7 +2006,9 @@ def _cast_paying_mana_cost(ctx: EffectContext, pid: int, oid: int, *, exiles: bo
     purpose = spell_purpose(card)
 
     def extra_for(targets) -> int:
-        return -cost_reduction(state, pid, card, targets)
+        # The zone the card is cast from -- graveyard, exile or wherever the
+        # resolving effect found it -- since it has not reached the stack yet.
+        return -cost_reduction(state, pid, card, targets, zone=zone_of(state, oid))
 
     def ceiling(extra: int) -> int:
         """The largest payable X, or -1 when nothing is payable at all."""
@@ -1966,28 +2038,7 @@ def _cast_paying_mana_cost(ctx: EffectContext, pid: int, oid: int, *, exiles: bo
         return False
     if not (yield from ask_yes_no(ctx, f"Cast {card.name}, paying its mana cost?", pid)):
         return False
-    targets = tuples[0]
-    if len(tuples) > 1 and all(len(t) == 1 for t in tuples):
-        # One target -- an Aura's "enchant creature", which is every printed
-        # permanent spell that targets: the objects themselves, so the client
-        # can point at them.
-        chosen = yield from ask_targets(
-            ctx,
-            f"Choose a target for {card.name}",
-            [(describe_ref(state, t[0]), t[0]) for t in tuples],
-            1,
-            1,
-            pid,
-        )
-        targets = (chosen[0],)
-    elif len(tuples) > 1:
-        labels = [
-            ", ".join(describe_ref(state, ref) for ref in t) or "no target" for t in tuples
-        ]
-        picked = yield from ask_mode(
-            ctx, f"Choose targets for {card.name}", labels, pid, purpose="target"
-        )
-        targets = tuples[picked[0]]
+    targets = yield from _ask_cast_targets(ctx, pid, card.name, tuples)
     extra = extra_for(targets)
     x = 0
     if cost.x_count:
@@ -2025,6 +2076,136 @@ def _cast_paying_mana_cost(ctx: EffectContext, pid: int, oid: int, *, exiles: bo
         sid=item.sid,
         card=card.id,
     )
+    return True
+
+
+def _ask_cast_targets(ctx: EffectContext, pid: int, name: str, tuples):
+    """601.2c for a cast made inside a resolution: one of ``tuples``, asked.
+
+    Asked rather than taken first-legal, because each offered tuple was priced
+    with its own discount. One tuple is no question at all.
+    """
+    from ..targeting import describe_ref
+    from .context import ask_mode, ask_targets
+
+    state = ctx.state
+    if len(tuples) > 1 and all(len(t) == 1 for t in tuples):
+        # One target -- an Aura's "enchant creature", which is every printed
+        # permanent spell that targets: the objects themselves, so the client
+        # can point at them.
+        chosen = yield from ask_targets(
+            ctx,
+            f"Choose a target for {name}",
+            [(describe_ref(state, t[0]), t[0]) for t in tuples],
+            1,
+            1,
+            pid,
+        )
+        return (chosen[0],)
+    if len(tuples) > 1:
+        labels = [
+            ", ".join(describe_ref(state, ref) for ref in t) or "no target" for t in tuples
+        ]
+        picked = yield from ask_mode(ctx, f"Choose targets for {name}", labels, pid, purpose="target")
+        return tuples[picked[0]]
+    return tuples[0]
+
+
+def cast_copy_paying(ctx: EffectContext, pid: int, oid: int, price: str):
+    """ "Copy it. You may cast the copy by paying {3} rather than paying its
+    mana cost." -- Blue Mage's Cane. `op_cast_copy` with a ``cost``.
+
+    Returns whether the copy reached the stack. ``price`` is an **alternative
+    cost** (118.9): it replaces the copied card's mana cost and nothing else,
+    so the cast line's adjustments still apply on top of it (601.2f) --
+    `cost_reduction` with the declared targets (Kasmina's tax included), the
+    spell's restricted-mana purpose -- and an X in the card's own cost is 0
+    (107.3), because the price paid has none. The copy's mana value is still
+    the card's.
+
+    The caster may always decline (118.9: an alternative cost is a choice), and
+    is asked only when some target line is payable (118.4), so a yes is never a
+    question whose answer does nothing. The steps run in 601.2's order: the
+    proposal, the targets (601.2c, asked -- each tuple priced with its own
+    discount), the copy on the stack, then the payment (601.2h), recorded on
+    the copy so "mana spent to cast it" reads the copy.
+
+    The narrowings are `_cast_paying_mana_cost`'s: no kicker or optional
+    additional cost is offered, and a card whose additional cost is mandatory is
+    not offered at all rather than cast without it.
+    """
+    from ..cost_reduction import cost_reduction
+    from ..costs import can_pay_mana, pay, spell_purpose, zone_of
+    from ..mana import ManaCost
+    from ..player_statics import cast_lock_min_x
+    from ..primitives import cast_locked_zones
+    from ..stack import free_cast_modes
+    from ..structs import StackItem
+    from ..targeting import additional_sized_targets, enumerate_target_tuples
+    from .ops_stack import put_copy_on_stack
+
+    state = ctx.state
+    obj = state.objects.get(oid)
+    if obj is None:
+        return False
+    card = state.card_of(obj)
+    if card.is_land:
+        return False
+    if card.additional_cost is not None and not card.additional_optional:
+        return False
+    if card.additional_cost_options:
+        return False
+    if zone_of(state, oid) in cast_locked_zones(state, pid):
+        return False
+    if player_cant_cast_while_resolving(state, pid, card):
+        return False
+    min_x = cast_lock_min_x(state, pid, card)
+    if min_x is None or min_x > 0:
+        # A mana-value floor the copy cannot meet: X is 0 under this price.
+        return False
+    cost = ManaCost.parse(price)
+    purpose = spell_purpose(card)
+
+    def payable(targets) -> bool:
+        extra = -cost_reduction(state, pid, card, targets)
+        return can_pay_mana(state, pid, cost, extra_generic=extra, purpose=purpose)
+
+    tuples = [
+        t
+        for t in enumerate_target_tuples(
+            state,
+            pid,
+            additional_sized_targets(card.targets, 0),
+            oid,
+            size_cap=1 if card.strive is not None else None,
+        )
+        if payable(t)
+    ]
+    if not tuples:
+        return False
+    if not (
+        yield from ask_yes_no(ctx, f"Cast a copy of {card.name} by paying {cost.text}?", pid)
+    ):
+        return False
+    targets = yield from _ask_cast_targets(ctx, pid, card.name, tuples)
+    extra = -cost_reduction(state, pid, card, targets)
+    modes, mode_refs = free_cast_modes(state, pid, card, oid)
+    template = StackItem(
+        sid=-1, kind="spell", controller=pid, def_id=obj.def_id, oid=oid, modes=modes
+    )
+    copy = put_copy_on_stack(state, pid, template, targets=tuple(targets) + mode_refs)
+    paid = yield from pay(
+        state,
+        pid,
+        Cost(mana=cost),
+        None,
+        extra_generic=extra,
+        purpose=purpose,
+        record_colors_on=copy.oid,
+    )
+    if not paid:  # pragma: no cover - the offer proved this payable
+        state.stack.remove(copy)
+        return False
     return True
 
 
@@ -2292,38 +2473,66 @@ def op_exile_until(ctx: EffectContext, spec: Mapping[str, Any]):
     - ``else_destination`` is where the hit goes when it is not cast -- declined,
       disallowed by ``cast_free_if``, or refused by `cast_for_free`. Omitted, it
       stays in exile with the rest (Wanda's Vision).
-    - ``as`` records the hit, cast or not, as a list of zero or one oids; an
-      exhausted library binds the empty list.
+    - ``player`` is whose library is walked -- "**target opponent** exiles cards
+      from the top of their library until they exile an instant, sorcery, or
+      creature card. **You** may cast that card" (Strago and Relm) is
+      ``{"target": "t1"}``. Any player spec `select_players` reads, defaulting
+      to the controller; ``"each_player"`` walks every seat's library in turn.
+      Only the library changes hands: the free-cast offer always goes to the
+      ability's **controller**, who casts the other player's card (the spell is
+      theirs to control, the card stays its owner's), and every card the walk
+      moves -- and an uncast hit sent to ``else_destination`` -- goes to its
+      **owner's** zone (400.3), never the controller's.
+    - ``creature_cast_gains`` is the rider on that cast -- "if you cast a
+      creature spell this way, it gains haste and "At the beginning of the end
+      step, sacrifice this creature."" (Strago and Relm) is
+      ``{"keywords": ["haste"], "abilities": [0]}``, ``abilities`` indexing
+      this card's ``grantable_abilities``. See `cast_rider`.
+    - ``as`` records the hits, cast or not, as a list -- one oid per walked
+      library that found one; an exhausted library adds nothing, so a single
+      walk that finds nothing binds the empty list.
     """
-    pid = ctx.controller
-    library = ctx.state.players[pid].library
+    controller = ctx.controller
     selector = spec.get("objects") or {}
-
-    hit: int | None = None
-    walked = 0
-    while library:
-        oid = library[0]
-        found = _matches_library(ctx, oid, selector)
-        move_object(ctx.state, oid, Zone.EXILE, to_player=pid, cause="exile_until")
-        walked += 1
-        if found:
-            hit = oid
-            break
-    ctx.state.emit("exile_until", player=pid, source=ctx.source_oid, exiled=walked)
-
-    if binding := spec.get("as"):
-        ctx.bindings[str(binding)] = [hit] if hit is not None else []
-    if hit is None:
-        return
-    cast = False
     condition = spec.get("cast_free_if")
-    if spec.get("cast_free") and (
-        condition is None or _matches_in_zone(ctx, hit, condition, "exile")
-    ):
-        name = ctx.state.card_of(ctx.state.objects[hit]).name
-        cast = yield from _offer_free_cast(ctx, pid, hit, f"Cast {name} for free?")
-    if not cast and (where := spec.get("else_destination")):
-        move_object(ctx.state, hit, DESTINATIONS[str(where)], to_player=pid, cause="exile_until")
+    binding = spec.get("as")
+    rider = cast_rider(ctx, spec.get("creature_cast_gains"))
+    hits: list[int] = []
+    if binding:
+        # Written before the walk, so a walk that finds nothing still binds the
+        # empty list rather than leaving an earlier op's value in place.
+        ctx.bindings[str(binding)] = []
+
+    for pid in select_players(ctx, spec.get("player", "you")):
+        library = ctx.state.players[pid].library
+        hit: int | None = None
+        walked = 0
+        while library:
+            oid = library[0]
+            found = _matches_library(ctx, oid, selector)
+            move_object(ctx.state, oid, Zone.EXILE, cause="exile_until")
+            walked += 1
+            if found:
+                hit = oid
+                break
+        ctx.state.emit("exile_until", player=pid, source=ctx.source_oid, exiled=walked)
+        if hit is None:
+            continue
+        hits.append(hit)
+        if binding:
+            # Bound before the offer, as the single walk always did: the free
+            # cast suspends this generator, and the binding is what resumes.
+            ctx.bindings[str(binding)] = list(hits)
+        cast = False
+        if spec.get("cast_free") and (
+            condition is None or _matches_in_zone(ctx, hit, condition, "exile")
+        ):
+            name = ctx.state.card_of(ctx.state.objects[hit]).name
+            cast = yield from _offer_free_cast(
+                ctx, controller, hit, f"Cast {name} for free?", rider=rider
+            )
+        if not cast and (where := spec.get("else_destination")):
+            move_object(ctx.state, hit, DESTINATIONS[str(where)], cause="exile_until")
 
 
 @register("suspend")
@@ -2548,21 +2757,31 @@ def _move_found_may(
     pid: int,
     fallback: Zone,
     spec: Mapping[str, Any],
+    cause: str = "reveal_until",
 ):
     """ "You may put that card onto the battlefield. If you don't, put it into
-    your hand." `reveal_until`'s ``may_destination``, asked per match.
+    your hand." ``may_destination`` on `reveal_until` and the search ops, asked
+    per card.
 
-    Returns what moved, which is every match: a declined card and one whose
+    Returns what moved, which is every card: a declined card and one whose
     arrival was refused (an Aura with no legal host, 303.4g) both go to the
     fallback, because each is a card that was not put onto the battlefield.
+
+    ``may_destination_if`` is a condition gating the offer -- "**If an opponent
+    controls more lands than you**, you may put that card onto the battlefield
+    tapped" (Scholar of New Horizons). Read as the card is about to move, after
+    it was found; while it is false nothing is asked and the card takes the
+    fallback, because the "you may" never arose.
     """
     controller = ctx.controller if spec.get("controller") == "you" else None
+    gate = spec.get("may_destination_if")
     moved: list[int] = []
     for oid in hits:
         name = ctx.state.card_of(ctx.state.objects[oid]).name
         where = str(spec["may_destination"])
         arrived: list[int] = []
-        if (yield from ask_yes_no(ctx, f"Put {name} onto the {where}?", ctx.controller)):
+        offered = gate is None or evaluate_condition_in(ctx, gate)
+        if offered and (yield from ask_yes_no(ctx, f"Put {name} onto the {where}?", ctx.controller)):
             arrived = yield from _move_found(
                 ctx,
                 [oid],
@@ -2570,11 +2789,11 @@ def _move_found_may(
                 DESTINATIONS[where],
                 {**spec, "destination": where},
                 bool(spec.get("tapped")),
-                "reveal_until",
+                cause,
                 controller=controller,
             )
         if not arrived:
-            arrived = yield from _move_found(ctx, [oid], pid, fallback, spec, False, "reveal_until")
+            arrived = yield from _move_found(ctx, [oid], pid, fallback, spec, False, cause)
         moved.extend(arrived)
     return moved
 
@@ -2708,6 +2927,38 @@ def op_put_on_top(ctx: EffectContext, spec: Mapping[str, Any]):
             source=oid,
             to="library_top" if depth == 1 else "library",
         )
+    # "The owner of target **spell**, nonland permanent, or card in a graveyard
+    # puts it…" (Endless Detour). A spell is a stack ref, which `objects`
+    # (`ctx.target_oids`) never reaches, so a target that landed on the stack
+    # is tucked here: off the stack uncountered, into its owner's library. A
+    # copy of a spell is no card and goes nowhere (706.10).
+    objects = spec.get("objects")
+    if isinstance(objects, Mapping) and set(objects) == {"target"}:
+        for sid in ctx.target_sids(str(objects["target"])):
+            item = ctx.state.stack_item(sid)
+            obj = ctx.state.objects.get(item.oid) if item and item.oid is not None else None
+            if obj is None:
+                continue
+            to_bottom = bottom
+            if owner_chooses:
+                to_bottom = not (
+                    yield from ask_yes_no(ctx, "Put it on top of your library?", obj.owner)
+                )
+            pull_spell_off_stack(
+                ctx.state,
+                sid,
+                Zone.LIBRARY,
+                cause="tuck",
+                by=ctx.source_oid,
+                to_index=None if to_bottom else depth - 1,
+            )
+            if obj.oid in ctx.state.objects and ctx.state.objects[obj.oid].zone is Zone.LIBRARY:
+                moved.append(obj.oid)
+                ctx.state.emit(
+                    EventType.ZONE_CHANGE,
+                    source=obj.oid,
+                    to="library_top" if depth == 1 else "library",
+                )
     if name := spec.get("as"):
         ctx.bindings[str(name)] = moved
 

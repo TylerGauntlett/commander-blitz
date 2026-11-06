@@ -1,0 +1,14 @@
+{
+  "card_id": "patrolling_peacemaker",
+  "name": "Patrolling Peacemaker",
+  "oracle_text": "This creature enters with two +1/+1 counters on it.\nWhenever an opponent commits a crime, proliferate. (They commit a crime if they target an opponent, anything an opponent controls, and/or cards in an opponent's graveyard. To proliferate, you choose any number of permanents and/or players, then give each another counter of each kind already there.)",
+  "blocked_sentences": ["Whenever an opponent commits a crime, proliferate"],
+  "needs": [{
+    "capability": "crime",
+    "kind": "trigger_event",
+    "what": "a trigger event fired once per spell cast or ability put on the stack whose targets include one of the controller's opponents, a permanent or spell an opponent of that controller controls, or a card in an opponent's graveyard (rule 700.13), filterable by who committed the crime (here: cause_controller opponent)",
+    "why_existing_wont_do": "becomes_target fires per targeted object and only for permanents, so it misses targeting a player or graveyard cards and would fire multiple times for one spell with several targets; spell_cast and ability_activated carry no information about whether the targets belong to an opponent; the engine has no crime concept at all"
+  }],
+  "closest_existing": ["becomes_target", "spell_cast", "ability_activated"],
+  "confidence": "high"
+}

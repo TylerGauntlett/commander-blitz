@@ -1,0 +1,69 @@
+{
+  "_comment": "Shapes for tests/unit/casting/test_free_cast_exile_instead.py. t_fcei_gearhulk is Torrential Gearhulk's trigger on a {U} 1/1: a free cast of target instant card from your graveyard, exiled instead of graveyarded. t_fcei_impulse is Impulsivity's: target instant or sorcery card from any graveyard. t_fcei_insight is an instant that asks nothing.",
+  "cards": [
+    {
+      "id": "t_fcei_gearhulk",
+      "name": "Test Torrent Gearhulk",
+      "oracle_text": "When this creature enters, you may cast target instant card from your graveyard without paying its mana cost. If that spell would be put into your graveyard, exile it instead.",
+      "mana_cost": "{U}",
+      "types": ["Creature"],
+      "power": 1,
+      "toughness": 1,
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "trigger": {"event": "self_enters"},
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "count": 1,
+              "selector": {"zone": "graveyard", "controller": "you", "types": ["Instant"]}
+            }
+          ],
+          "effects": [{"op": "cast_from_hand", "objects": {"target": "t1"}, "exiles": true}],
+          "text": "When this creature enters, you may cast target instant card from your graveyard without paying its mana cost. If that spell would be put into your graveyard, exile it instead."
+        }
+      ]
+    },
+    {
+      "id": "t_fcei_impulse",
+      "name": "Test Impulsive Return",
+      "oracle_text": "When this creature enters, you may cast target instant or sorcery card from a graveyard without paying its mana cost. If that spell would be put into a graveyard, exile it instead.",
+      "mana_cost": "{R}",
+      "types": ["Creature"],
+      "power": 1,
+      "toughness": 1,
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "trigger": {"event": "self_enters"},
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "count": 1,
+              "selector": {"zone": "graveyard", "controller": "any", "any_types": ["Instant", "Sorcery"]}
+            }
+          ],
+          "effects": [{"op": "cast_from_hand", "objects": {"target": "t1"}, "exiles": true}],
+          "text": "When this creature enters, you may cast target instant or sorcery card from a graveyard without paying its mana cost. If that spell would be put into a graveyard, exile it instead."
+        }
+      ]
+    },
+    {
+      "id": "t_fcei_insight",
+      "name": "Test Flashed Insight",
+      "oracle_text": "Draw two cards.",
+      "mana_cost": "{2}{U}",
+      "types": ["Instant"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "spell_effects": [{"op": "draw", "player": "you", "amount": {"const": 2}}]
+    }
+  ]
+}

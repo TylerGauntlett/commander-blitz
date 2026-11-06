@@ -16,11 +16,15 @@ from typing import Any
 
 from .enums import Step, Zone
 from .mana import ManaOrigin
-from .structs import AttackMark, PermanentShield, TempEffect
+from .structs import AttackMark, CastRider, PermanentShield, TempEffect
 
 #: Counter kinds the engine understands specially.  Anything else is inert data.
 PLUS_ONE = "+1/+1"
 MINUS_ONE = "-1/-1"
+#: Not a counter kind but the word a *reader* uses for every kind summed --
+#: `counters_on`'s and `counters_had`'s "counters", where the kinds are
+#: open-ended (122.1) and no list of them would be the printed card.
+ANY_COUNTER_KIND = "any"
 #: A **time counter**: what a suspended card in exile carries, and what an
 #: impending permanent enters with (702.176a). Named like the printed one so a
 #: UI that shows counters shows the right word.
@@ -175,6 +179,19 @@ class GameObject:
     #: `GameState.card_of` into the copied face so the legend rule never sees a
     #: Legendary, and cleared with `copying`.
     copying_remove_supertypes: frozenset[str] | None = None
+    #: Card types the copy carries *in addition to* the copied ones (707.9b) --
+    #: Phyrexian Metamorph's "…except it's an artifact in addition to its other
+    #: types". Written, read and cleared beside `copying_keywords`, for its
+    #: reasons.
+    copying_add_types: frozenset[str] | None = None
+    #: Positions in this permanent's **own** printed ``abilities`` that the copy
+    #: keeps as part of its copiable values (707.9b) -- Kimahri, Valiant
+    #: Guardian's "…except its name is Kimahri, Valiant Guardian and it has
+    #: vigilance **and this ability**". Written by `become_copy` from its
+    #: ``except_.keep_abilities``, read by `GameState.card_of`, which appends
+    #: them after the copied face's abilities so the copied indices never move,
+    #: and cleared beside `copying_keywords`, for its reasons.
+    copying_own_abilities: tuple[int, ...] | None = None
     #: "…**become a legendary Equipment artifact named Everflame, Heroes'
     #: Legacy**" -- The Irencrag. A name written onto the object by a resolving
     #: effect and read by `GameState.card_of`, the one place a permanent's
@@ -278,6 +295,20 @@ class GameObject:
     #: a countered creature spell must not keep the promise in its graveyard and
     #: cash it on a later cast.
     mana_granted_keywords: set[str] = field(default_factory=set)
+    #: "If you cast a creature spell this way, it gains haste and "At the
+    #: beginning of the end step, sacrifice this creature."" (Strago and Relm).
+    #: `mana_granted_keywords`' twin for a free cast made by an effect, staged
+    #: and carried the same way -- across `reset_permanent_state` only to the
+    #: battlefield -- and granted for as long as the permanent lasts rather than
+    #: until end of turn. See `structs.CastRider`.
+    cast_rider: CastRider | None = None
+    #: "…that creature enters with two additional +1/+1 counters on it" (Yuna,
+    #: Grand Summoner): counters promised to the **spell** by
+    #: `spell_enters_with_counters`, staged and carried like
+    #: `mana_granted_keywords` -- across `reset_permanent_state` only to the
+    #: battlefield -- and added to the arrival's one placement by
+    #: `zones._enter_battlefield`, which empties it.
+    cast_enters_with: dict[str, int] = field(default_factory=dict)
     #: Rebound **granted to a spell that does not print it** -- Ojer Pakpatiq's
     #: "whenever you cast an instant spell from your hand, it gains rebound".
     #: Read beside `card.rebound` in `_place_after_resolution`, exactly as
@@ -354,6 +385,16 @@ class GameObject:
     #:
     #: Survives `reset_permanent_state` for `riot_choice`'s reason.
     read_ahead_chapter: int | None = None
+    #: What a `self_enters_with_counters` replacement's ``as_enters`` effects
+    #: bound -- Sin, Unending Cataclysm's "the number of counters removed this
+    #: way". Recorded by `zones.offer_as_enters_effects` just before the move,
+    #: keyed by the replacement's index on the card, and read -- and cleared --
+    #: by `_enter_battlefield` as the bindings its ``amount`` is evaluated
+    #: with. ``None`` is "nobody was asked": the effects did not happen, so
+    #: the amount reads every name as unbound.
+    #:
+    #: Survives `reset_permanent_state` for `riot_choice`'s reason.
+    as_enters_bindings: dict[int, dict[str, Any]] | None = None
     #: The host an Aura put onto the battlefield without being cast will enchant
     #: (303.4f): a permanent's oid, or a seat in `enters_attached_to_player`.
     #: Recorded by `zones.offer_aura_host` just before the move and read -- and
@@ -393,6 +434,20 @@ class GameObject:
     #: anything never attached; stale once detached, which is harmless because
     #: nothing reads it for an object that is not attached.
     attached_timestamp: int = 0
+    #: When this object entered the zone it is in (613.7), from
+    #: `GameState.alloc_timestamp` and so comparable with every `TempEffect`
+    #: timestamp, `attached_timestamp` and `granted_keyword_at`. Written by
+    #: `zones._add_to_zone`; phasing in is not a zone change and keeps it.
+    #: Read by `characteristics.static_timestamp` to order a timestamped
+    #: keyword removal (`lose_keyword_timestamped`) against the grants around
+    #: it. Zero on an object that has never moved, which is older than
+    #: anything that has.
+    timestamp: int = 0
+    #: When a keyword counter of each kind was last put on this permanent
+    #: (613.7), written by `primitives.add_counters`. A kind missing here
+    #: arrived with the permanent ("enters with") and reads as `timestamp`.
+    #: Cleared with the counters by `reset_permanent_state`.
+    keyword_counter_at: dict[str, int] = field(default_factory=dict)
     #: **The player this Aura enchants** -- "Enchant opponent" (Overencumbered),
     #: "Enchant player" (Sleeper's Robe). 303.4a lets an Aura's enchant ability
     #: name a *player*, and 704.5n is the state-based action that follows: an
@@ -813,6 +868,12 @@ class GameObject:
     #: *instant* may only be cast at sorcery speed, and its own type line still
     #: says instant.
     playable_sorcery_only: bool = False
+    #: "…you may cast it from your graveyard **as an Adventure**" -- Hildibrand
+    #: Manderville. A restriction on which *face* the permission reaches: the
+    #: Adventure half (the card's `second_face`) is offered, and the front face
+    #: is not. Resolving, the half goes on its adventure as any Adventure does
+    #: (715.3d), because `showing_second_face` is what that rider reads.
+    playable_as_adventure: bool = False
     #: Which permanent's permission made this card playable, when that
     #: permission caps how many of its cards may be cast -- Locke, Treasure
     #: Hunter: "you may cast **a spell** from among those cards", singular, out
@@ -830,6 +891,15 @@ class GameObject:
     #: colourless mana), and kept beside it for the same reason: it rides on the
     #: permission and expires with it.
     playable_any_color: bool = False
+    #: A condition on the **turn** the permission may be used in, or None for
+    #: one usable on any turn it is live -- one of `PLAYABLE_CONDITIONS`.
+    #: Neriv, Crackling Vanguard: "**During any turn you attacked with a
+    #: commander**, you may play those cards." Orthogonal to
+    #: `playable_duration`, which says when the permission ends: Neriv's never
+    #: does while the card is exiled, it is only shut on the other turns. Read
+    #: by `playable_condition_met` where the play is offered, so nothing has to
+    #: switch it on and off as turns pass.
+    playable_condition: str | None = None
     #: "…its owner may cast it **for {2} rather than its mana cost**" -- airbend
     #: (Avatar's Wrath). The flat price the permission carries, as a printed
     #: mana string, or None for the ordinary permission that charges whatever
@@ -847,6 +917,15 @@ class GameObject:
     #: is simply not the card's. Rides on the permission and dies with it, the
     #: way `playable_any_color` does.
     playable_alt_cost: str | None = None
+    #: "…Spells you cast **this way** cost {2} less to cast" -- Urianger
+    #: Augurelt's Play Arcanum. A generic discount the permission carries, read
+    #: by `casting.permission_cost_reduction` only on a line that casts under
+    #: this permission: another exile cast, or a flashback out of a graveyard
+    #: the permission also covers, is not "this way". Kept on the card beside
+    #: `playable_alt_cost` for that field's reason -- it rides on the grant and
+    #: dies with it, so it ends when the permission does (this turn, for
+    #: Urianger) rather than when the granting permanent leaves.
+    playable_cost_reduction: int = 0
     #: The object whose effect granted an ``"until_next_exile_by_source"``
     #: permission -- Superior Foes of Spider-Man: "you may play that card
     #: **until you exile another card with this creature**". Read only by
@@ -1183,6 +1262,8 @@ class GameObject:
         # graveyard owing nobody haste. `move_object` restores it across this
         # reset for the one destination that is owed it -- the battlefield.
         self.mana_granted_keywords = set()
+        self.cast_rider = None
+        self.cast_enters_with = {}
         self.granted_abilities_permanent = []
         self.animations = []
         self.tapped = False
@@ -1190,6 +1271,7 @@ class GameObject:
         self.deathtouched = False
         self.regeneration_shields = 0
         self.counters = {}
+        self.keyword_counter_at = {}
         self.attached_to = None
         self.last_attached_to = None
         # Cleared with `attached_to` and for its reason: a permanent that left
@@ -1212,6 +1294,8 @@ class GameObject:
         self.copying_name = None
         self.copying_keywords = None
         self.copying_remove_supertypes = None
+        self.copying_add_types = None
+        self.copying_own_abilities = None
         self.renamed_to = None
         self.lost_all_abilities = False
         self.copying_until_eot = False
@@ -1255,10 +1339,13 @@ class GameObject:
         self.playable_duration = "this_turn"
         self.playable_free = False
         self.playable_sorcery_only = False
+        self.playable_as_adventure = False
         self.playable_group = None
         self.playable_any_type = False
         self.playable_any_color = False
+        self.playable_condition = None
         self.playable_alt_cost = None
+        self.playable_cost_reduction = 0
         self.playable_source = None
         self.exiled_from = None
         self.prepared = False
@@ -1420,6 +1507,43 @@ PLAYABLE_DURATIONS = (
     #: battlefield the last card it exiled stays playable while it is exiled.
     "until_next_exile_by_source",
 )
+
+
+#: The conditions on the turn a "you may play it" permission may be used in,
+#: the values of an effect's ``playable_condition``. Each has a card behind it.
+#:
+#: - ``"you_attacked_with_a_commander"`` -- Neriv, Crackling Vanguard: "During
+#:   any turn you attacked with a commander, you may play those cards." The
+#:   permission holder declared as an attacker, this turn, a creature that is a
+#:   commander (903.3) -- anybody's, since a stolen commander is still a
+#:   commander -- read off `TurnLedger.creatures_attacked`, so a commander that
+#:   attacked and then died still counts for the rest of the turn. A creature
+#:   put onto the battlefield attacking was never declared and does not.
+PLAYABLE_CONDITIONS = ("you_attacked_with_a_commander",)
+
+
+def playable_condition_met(state: Any, obj: GameObject) -> bool:
+    """May ``obj``'s "you may play it" permission be used on this turn?
+
+    True for a permission with no `playable_condition`. Asked only by the two
+    places a play out of a permission is **offered** -- `casting._cast_actions`
+    and the land half in `legality` -- because every later reader prices or
+    pays a line that was offered, within the same turn.
+    """
+    condition = obj.playable_condition
+    if condition is None:
+        return True
+    if condition == "you_attacked_with_a_commander":
+        holder = obj.playable_by
+        if holder is None:
+            return False
+        attacked = state.turn_ledger.creatures_attacked.get(holder, ())
+        return any(
+            (attacker := state.objects.get(oid)) is not None and attacker.is_commander
+            for oid in attacked
+        )
+    # The loader refuses anything else; an unknown condition opens nothing.
+    return False
 
 
 def playable_duration_of(spec: Mapping[str, Any]) -> str | None:

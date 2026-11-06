@@ -1,0 +1,33 @@
+{
+  "_comment": "Shapes for tests/unit/statics/test_static_typed_spells_cast.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. t_stsc_hexer is Lyse Hext's double-strike line on a vanilla 2/2. t_sorcery, t_bolt and t_bear come from the other fixture files.",
+  "cards": [
+    {
+      "id": "t_stsc_hexer",
+      "name": "Test Hex Duelist",
+      "oracle_text": "As long as you've cast two or more noncreature spells this turn, this creature has double strike.",
+      "mana_cost": "{1}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Warrior"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "As long as you've cast two or more noncreature spells this turn, this creature has double strike.",
+          "effect": "grant_keyword",
+          "keywords": ["double_strike"],
+          "affects": {"self_only": true},
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "spells_cast_this_turn": {"player": "you", "filter": {"not_types": ["Creature"]}}
+            },
+            "right": {"const": 2}
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -26,8 +26,14 @@ forms::
     {"max_poison_of": "each_opponent"}  the most poison counters on one of them
     {"unspent_mana_count": "you"}     the mana in those players' pools
     {"player_count": "each_opponent"}  how many players the spec names
+    {"player_count": {"player": …,     how many of them have a count passing
+                      "objects": …,     a comparison: "the number of opponents
+                      "cmp": ">",       who control more creatures than you"
+                      "than": …}}
     {"max_damage_taken_this_turn":    the most damage ONE of them was dealt
         "each_opponent"}                this turn, where the plain tally sums
+    {"max_life_lost_this_turn":       the most life ONE of them lost this
+        "each_player"}                  turn (damage, drains and payments)
     {"starting_life_of": "you"}       the life total one seat began with (103.4)
     {"commander_casts_this_game":     casts of their commanders from the
         "you"}                          command zone this game (903.8's tally)
@@ -41,14 +47,24 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from ..characteristics import _matches_printed, auras_matching, chars, min_count, min_life
-from ..enums import KEYWORD_COUNTERS
+from ..characteristics import (
+    _COMPARISONS,
+    _compare,
+    _matches_printed,
+    auras_matching,
+    chars,
+    counters_of_kind,
+    min_count,
+    min_life,
+)
+from ..enums import KEYWORD_COUNTERS, Keyword
 from ..errors import DslError
-from ..objects import FINALITY, PLUS_ONE, SHIELD, STUN
+from ..objects import ANY_COUNTER_KIND, FINALITY, PLUS_ONE, SHIELD, STUN
 from .context import EffectContext
 from .selectors import (
     ENCHANTED_BY_CONTROLLERS,
     ENCHANTED_BY_KEYS,
+    KNOWN_TYPES,
     PLAYER_SPEC_NAMES,
     resolve_pool,
     select_players,
@@ -181,9 +197,21 @@ VALUE_KEYS = frozenset(
         # `min_` twin, which no printed card needs yet.
         "max_damage_taken_this_turn",
         "life_lost_this_turn",
+        # "…if **a player** lost 4 or more life this turn" -- Y'shtola, Night's
+        # Blessed. The life-loss twin of `max_damage_taken_this_turn`, for the
+        # same reason: `life_lost_this_turn` SUMS over its spec, so two players
+        # losing 2 each would read 4 and open a threshold nobody reached. Off
+        # `TurnLedger.life_lost`, so damage counts (119.3) as do drains and
+        # life paid (119.4); infect, which costs no life, does not.
+        "max_life_lost_this_turn",
         # "…if you gained life this turn" -- Witch of the Moors. The gain twin
         # of the line above; "did it happen" is a `cmp` against 0.
         "life_gained_this_turn",
+        # "…if you put a counter on a creature this turn" -- Lasting Tarfire.
+        # Counters the player put (122.6a), optionally only on permanents of
+        # some types, of one kind, or on one object (`on`, an object reference:
+        # "if a counter was put on Wakka this turn"), off `TurnLedger.counters_put`.
+        "counters_put_this_turn",
         # "…if you didn't activate a loyalty ability of a planeswalker this
         # turn" -- The Chain Veil. How many, per activating player; "didn't"
         # is a `cmp` `==` 0. Counted at activation, so a planeswalker that has
@@ -292,6 +320,25 @@ VALUE_KEYS = frozenset(
         # before the event fired, and by resolution they are graveyard cards.
         # Answered from the departure event's `had_auras` snapshot (603.10a).
         "auras_had",
+        # "Whenever a creature you control **without flying** dies" (Luminous
+        # Broodmoth). 1 if the departed permanent had the keyword as it left,
+        # else 0, off the departure event's `had_keywords` snapshot (603.10a).
+        # A trigger filter's `keywords` reads the printed face, which a flying
+        # counter or an anthem's grant never reaches -- a creature Broodmoth
+        # returned would come back for ever.
+        "keywords_had",
+        # "…copy that spell **if it targets a permanent or player**" (Shiko
+        # and Narset, Unified). How many of the triggering spell's targets
+        # are, as this is asked, of the named kinds: `"permanent"` an object
+        # target on the battlefield, `"player"` a player target still in the
+        # game, each counted once per target instance. The spell is the
+        # trigger's `sid` binding -- the one `copy_spell` defaults to -- and
+        # it is read **live** off the stack, so a spell that has left it
+        # targets nothing and reads 0: the "if you don't copy a spell this
+        # way" branch is then the one taken. The `spell_targets` binding is
+        # the near miss, a cast-time list of object targets only, and
+        # `spell_target_count` is the cast-time number of every kind.
+        "targets_of_spell",
         # "…for each basic land type among lands you control" (domain), and
         # "three or more creatures with different powers" (coven). A count of
         # *distinct values* over a pool, which no other leaf can be: `count`
@@ -353,8 +400,11 @@ ROLL_PARITIES = ("even", "odd")
 #: A fourth would be vocabulary with nothing printed asking for it, and a
 #: misspelling has to be a load error rather than a silent zero.
 #: ``color`` is First Family's "the number of colors among permanents you
-#: control and spells you've cast this turn".
-DISTINCT_OF = ("power", "basic_land_type", "card_type", "color")
+#: control and spells you've cast this turn". ``counter_kind`` is Blitzball
+#: Stadium's "draw a card for each kind of counter on it" (122.1). ``name`` is
+#: Neriv, Crackling Vanguard's "the number of differently named tokens you
+#: control": a token's name is the one its definition gives it (111.4).
+DISTINCT_OF = ("power", "basic_land_type", "card_type", "color", "counter_kind", "name")
 
 #: The five colors (105.1). Colorless is not a color (105.2c), so a pool of
 #: artifacts and lands counts none.
@@ -440,12 +490,26 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
     if "counters_on" in expr:
         # How many counters of a kind sit on an object -- which is what "double
         # the number of +1/+1 counters on this creature" needs, and the one
-        # quantity the value language could not previously reach.
+        # quantity the value language could not previously reach. `"any"` is
+        # every kind summed -- Ferrafor's "the number of counters among
+        # creatures target player controls".
         spec = expr["counters_on"]
         kind = str(spec.get("counter", PLUS_ONE))
 
-        pool = resolve_pool(ctx, spec.get("objects") or {"self_only": True})
-        return sum(ctx.state.objects[oid].counter(kind) for oid in pool if oid in ctx.state.objects)
+        objects = spec.get("objects") or {"self_only": True}
+        snap = ctx.bindings.get(str(objects["binding"])) if "binding" in objects else None
+        if isinstance(snap, Mapping) and "counters" in snap:
+            # A snapshot -- a sacrifice cost's `as` -- answers with the counters
+            # the object had as it last existed on the battlefield (608.2h),
+            # since the object itself lost them as it moved (400.7).
+            had = snap["counters"]
+            if kind == ANY_COUNTER_KIND:
+                return sum(int(n) for n in had.values())
+            return int(had.get(kind, 0))
+        pool = resolve_pool(ctx, objects)
+        return sum(
+            counters_of_kind(ctx.state.objects[oid], kind) for oid in pool if oid in ctx.state.objects
+        )
     if "additional_paid" in expr:
         # Casualty and replicate. Read off the object being cast, which is what
         # a "when you cast this spell" trigger is sourced to.
@@ -518,6 +582,32 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
                         if cast_id in registry:
                             colors |= set(registry.get(cast_id).colors)
             return len(colors & COLORS)
+        if of == "counter_kind":
+            # "…for each kind of counter on it" (Blitzball Stadium). Kinds, not
+            # counters: three +1/+1 counters and a shield counter are two. Not
+            # `counters_on {"counter": "any"}`, which sums them and would read
+            # four. A kind with no counters left on the object is not on it.
+            kinds: set[str] = set()
+            for oid in pool:
+                obj = ctx.state.objects.get(oid)
+                if obj is not None:
+                    kinds |= {kind for kind, n in obj.counters.items() if n > 0}
+            return len(kinds)
+        if of == "name":
+            # "…the number of **differently named** tokens you control"
+            # (Neriv, Crackling Vanguard). Read off `card_of(...).name`, as
+            # `shares_a_name_with` and `most_sharing_a_name` read it: nothing
+            # in the characteristics layer renames an object, and a token's
+            # name is the one its definition carries -- its subtypes plus
+            # "Token" unless the creating effect names it (111.4), a copy's
+            # the copied card's (707.2). A face-down permanent has no name
+            # (708.2a), so it adds none.
+            named: set[str] = set()
+            for oid in pool:
+                obj = ctx.state.objects.get(oid)
+                if obj is not None and not obj.face_down:
+                    named.add(ctx.state.card_of(obj).name)
+            return len(named)
         found: set[str] = set()
         for oid in pool:
             found |= BASIC_LAND_TYPES & chars(ctx.state, oid).subtypes
@@ -589,7 +679,10 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         pids = _players(ctx, expr["unspent_mana_count"])
         return sum(ctx.state.players[p].mana_pool.total() for p in pids)
     if "player_count" in expr:
-        pids = _players(ctx, expr["player_count"])
+        spec = expr["player_count"]
+        if isinstance(spec, Mapping) and "objects" in spec:
+            return _players_whose_count_compares(ctx, spec)
+        pids = _players(ctx, spec)
         return len({p for p in pids if ctx.state.is_alive(p)})
     if "cards_in_hand" in expr:
         pids = _players(ctx, expr["cards_in_hand"])
@@ -622,6 +715,15 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         if not isinstance(had, (list, tuple)):
             return 0
         return auras_matching(had, expr["auras_had"], ctx.controller)
+    if "targets_of_spell" in expr:
+        return _targets_of_spell(ctx, expr["targets_of_spell"])
+    if "keywords_had" in expr:
+        # One keyword, as a bare string: {"keywords_had": "flying"}. A trigger
+        # that never fired binds nothing and reads 0, as `counters_had` does.
+        had = ctx.bindings.get("had_keywords")
+        if not isinstance(had, (list, tuple, set, frozenset)):
+            return 0
+        return 1 if str(expr["keywords_had"]) in had else 0
     if "cards_drawn_this_turn" in expr:
         pids = _players(ctx, expr["cards_drawn_this_turn"])
         return sum(ctx.state.cards_drawn_this_turn.get(p, 0) for p in pids)
@@ -703,9 +805,32 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
     if "life_lost_this_turn" in expr:
         pids = _players(ctx, expr["life_lost_this_turn"])
         return sum(ledger.life_lost.get(p, 0) for p in pids)
+    if "max_life_lost_this_turn" in expr:
+        pids = _players(ctx, expr["max_life_lost_this_turn"])
+        return max((ledger.life_lost.get(p, 0) for p in pids), default=0)
     if "life_gained_this_turn" in expr:
         pids = _players(ctx, expr["life_gained_this_turn"])
         return sum(ledger.life_gained.get(p, 0) for p in pids)
+    if "counters_put_this_turn" in expr:
+        # Every placement is remembered with the recipient's types as the
+        # counter arrived, so a creature that has since died, or lost the
+        # counter, still had one put on it this turn.
+        spec = expr["counters_put_this_turn"]
+        pids = set(_players(ctx, spec["player"]))
+        types = set(spec.get("types") or ())
+        kind = str(spec.get("counter", ANY_COUNTER_KIND))
+        # "…if a counter was put on Wakka this turn": one recipient, by oid. A
+        # reference that names nobody reads 0, and a permanent that left and
+        # came back is a new object no counter was put on (400.7).
+        on = set(_referenced_oids(ctx, spec["on"])) if "on" in spec else None
+        return sum(
+            put.amount
+            for put in ledger.counters_put
+            if put.put_by in pids
+            and types <= put.types
+            and (kind == ANY_COUNTER_KIND or put.counter == kind)
+            and (on is None or (put.oid is not None and put.oid in on))
+        )
     if "cards_discarded_this_turn" in expr:
         pids = _players(ctx, expr["cards_discarded_this_turn"])
         return sum(ledger.cards_discarded.get(p, 0) for p in pids)
@@ -974,6 +1099,21 @@ def _counts_per_player(ctx: EffectContext, spec: Any) -> list[int]:
     return counts
 
 
+def _players_whose_count_compares(ctx: EffectContext, spec: Mapping[str, Any]) -> int:
+    """How many of ``spec["player"]``'s players have a count passing ``cmp``.
+
+    "…equal to the number of opponents who control more creatures than you"
+    (Heidegger, Shinra Executive). The per-player counts are
+    `_counts_per_player`'s, the same measurement `max_count_of` extremes, and
+    ``than`` is read **once**, before any of them is compared: the value is the
+    amount of one instruction, so the whole headcount is taken at one moment
+    and nothing the instruction then does can feed back into it.
+    """
+    than = evaluate_value(ctx, spec.get("than"))
+    op = str(spec["cmp"])
+    return sum(1 for n in _counts_per_player(ctx, spec) if _compare(op, n, than))
+
+
 def _characteristic(ctx: EffectContext, ref: Any, which: str) -> int:
     """Read power/toughness/mana value from a target, binding or snapshot."""
     if isinstance(ref, Mapping) and "var" in ref:
@@ -1215,7 +1355,9 @@ def validate_counters_on(spec: Any, where: str, *, validate_objects: Any = None)
     has, so the anthem would silently sum charge counters across the board.
 
     The kind itself goes through :func:`validate_counter_kind`, so a keyword
-    near-miss is refused here exactly as it is on ``add_counters``.
+    near-miss is refused here exactly as it is on ``add_counters``. The one
+    word that is not a kind is ``"any"``: every kind summed (122.1), Ferrafor's
+    "the number of counters among creatures target player controls".
     """
     if not isinstance(spec, Mapping):
         raise DslError(f"{where}: must be an object")
@@ -1228,7 +1370,8 @@ def validate_counters_on(spec: Any, where: str, *, validate_objects: Any = None)
             f"to '{PLUS_ONE}' in the evaluator and so would read 0 for ever on a "
             f"permanent that carries some other kind"
         )
-    validate_counter_kind(spec["counter"], f"{where}.counter")
+    if spec["counter"] != ANY_COUNTER_KIND:
+        validate_counter_kind(spec["counter"], f"{where}.counter")
     if not spec.get("objects"):
         raise DslError(
             f"{where}: needs 'objects' -- an empty selector is not "
@@ -1237,6 +1380,71 @@ def validate_counters_on(spec: Any, where: str, *, validate_objects: Any = None)
     if validate_objects is None:
         validate_objects = validate_selector
     validate_objects(spec["objects"], f"{where}.objects")
+
+
+def validate_counters_put_this_turn(spec: Any, where: str) -> None:
+    """Load-time check of ``{"counters_put_this_turn": {...}}``.
+
+    ``player`` is required: "you put" names the putter, and a default would
+    silently be somebody. ``types`` is a list of card types the recipient had
+    as the counter arrived, all of them; omitted, any permanent. ``counter`` is
+    one kind, through the `add_counters` near-miss check, or ``"any"`` (the
+    default) for every kind. ``on`` is one object reference
+    (`validate_object_ref`) naming the recipient; omitted, any permanent.
+    """
+    if not isinstance(spec, Mapping):
+        raise DslError(f"{where}: must be an object with a 'player'")
+    unknown = set(spec) - {"player", "types", "counter", "on"}
+    if unknown:
+        raise DslError(
+            f"{where}: unsupported keys {sorted(unknown)} (only 'player', 'types', "
+            f"'counter' and 'on' are remembered about a placement)"
+        )
+    if "on" in spec:
+        validate_object_ref(spec["on"], f"{where}.on")
+    if "player" not in spec:
+        raise DslError(f"{where}: needs 'player' -- who put the counters, e.g. 'you'")
+    who = spec["player"]
+    if not isinstance(who, Mapping) and (not isinstance(who, str) or who not in PLAYER_SPEC_NAMES):
+        raise DslError(f"{where}.player: needs a player spec, e.g. 'you', got {who!r}")
+    types = spec.get("types")
+    if types is not None and (
+        not isinstance(types, list)
+        or not types
+        or not all(isinstance(t, str) and t in KNOWN_TYPES for t in types)
+    ):
+        raise DslError(
+            f"{where}.types: a non-empty list of card types such as "
+            f'["Creature"], got {types!r}'
+        )
+    kind = spec.get("counter", ANY_COUNTER_KIND)
+    if kind != ANY_COUNTER_KIND:
+        validate_counter_kind(kind, f"{where}.counter")
+
+
+#: The keys of `player_count`'s comparing form, beside `validate_per_player_count`'s.
+PLAYER_COUNT_WHERE_KEYS = frozenset({"cmp", "than"})
+
+
+def validate_player_count_where(spec: Mapping[str, Any], where: str) -> None:
+    """``{"player_count": {"player", "objects", "cmp", "than"}}``.
+
+    The per-player half is `validate_per_player_count` -- the same spec list,
+    the same refusal of an injected ``controller`` -- and both comparison keys
+    are required: without ``cmp`` there is no test, and a ``than`` defaulted to
+    0 would turn "more creatures than you" into "any creatures".
+    """
+    validate_per_player_count(
+        {k: v for k, v in spec.items() if k not in PLAYER_COUNT_WHERE_KEYS}, where
+    )
+    op = spec.get("cmp")
+    if not isinstance(op, str) or op not in _COMPARISONS:
+        raise DslError(f"{where}.cmp: must be one of {sorted(_COMPARISONS)}, got {op!r}")
+    if "than" not in spec:
+        raise DslError(
+            f"{where}: needs 'than' -- what each player's count is compared with"
+        )
+    validate_value(spec["than"], f"{where}.than")
 
 
 def validate_per_player_count(spec: Any, where: str, *, validate_objects: Any = None) -> None:
@@ -1431,6 +1639,38 @@ def validate_starting_life_of(who: Any, where: str) -> None:
         raise DslError(f"{where}: needs a player spec, e.g. 'you'")
 
 
+#: What `targets_of_spell` may name: the kinds of thing a spell's target is.
+TARGETS_OF_SPELL_KINDS = frozenset({"permanent", "player"})
+
+
+def _targets_of_spell(ctx: EffectContext, kinds: Any) -> int:
+    """How many of the triggering spell's targets are, now, of these kinds.
+
+    The spell is the one the trigger's ``sid`` binding names, looked up on the
+    stack as this is asked: gone from the stack, it has no targets and this is
+    0. Each `TargetRef` is one target instance, so a player chosen for two
+    "target" words counts twice (115.3). ``"permanent"`` is an object target on
+    the battlefield -- a creature bounced in response is no longer a permanent
+    the spell targets -- and ``"player"`` a player target still in the game.
+    """
+    sid = ctx.bindings.get("sid")
+    item = ctx.state.stack_item(sid) if isinstance(sid, int) else None
+    if item is None or not item.is_spell:
+        return 0
+    wanted = set(kinds)
+    total = 0
+    for ref in item.targets:
+        if ref.kind == "player":
+            total += "player" in wanted and ctx.state.is_alive(ref.id)
+        elif ref.kind == "object":
+            total += "permanent" in wanted and ref.id in ctx.state.battlefield
+    return int(total)
+
+
+#: What `keywords_had` may name: a keyword the engine implements.
+_KEYWORD_WORDS = frozenset(k.value for k in Keyword)
+
+
 def validate_auras_had(spec: Any, where: str) -> None:
     """``auras_had`` is ``true`` or ``{"controller": ...}``, as `enchanted_by` is.
 
@@ -1494,6 +1734,23 @@ def validate_value(expr: Any, where: str) -> None:
         validate_counters_on(expr["counters_on"], f"{where}.counters_on")
     if "auras_had" in expr:
         validate_auras_had(expr["auras_had"], f"{where}.auras_had")
+    if "targets_of_spell" in expr:
+        kinds = expr["targets_of_spell"]
+        if (
+            not isinstance(kinds, (list, tuple))
+            or not kinds
+            or not all(isinstance(k, str) and k in TARGETS_OF_SPELL_KINDS for k in kinds)
+        ):
+            raise DslError(
+                f"{where}.targets_of_spell: a non-empty list of "
+                f"{sorted(TARGETS_OF_SPELL_KINDS)}, got {kinds!r}"
+            )
+    if "keywords_had" in expr:
+        word = expr["keywords_had"]
+        if not isinstance(word, str) or word not in _KEYWORD_WORDS:
+            raise DslError(
+                f"{where}.keywords_had: one implemented keyword, e.g. 'flying', got {word!r}"
+            )
     if "times_tapped_this_turn" in expr:
         validate_object_ref(expr["times_tapped_this_turn"], f"{where}.times_tapped_this_turn")
     if "command_zone_casts_of" in expr:
@@ -1539,6 +1796,10 @@ def validate_value(expr: Any, where: str) -> None:
                 f"{where}.modified_creatures_died_this_turn: needs a player spec, "
                 f"e.g. 'you' (under whose control they died), got {who!r}"
             )
+    if "counters_put_this_turn" in expr:
+        validate_counters_put_this_turn(
+            expr["counters_put_this_turn"], f"{where}.counters_put_this_turn"
+        )
     if "cards_discarded_this_turn" in expr:
         who = expr["cards_discarded_this_turn"]
         if not isinstance(who, Mapping) and (
@@ -1548,7 +1809,11 @@ def validate_value(expr: Any, where: str) -> None:
                 f"{where}.cards_discarded_this_turn: needs a player spec, e.g. 'you' "
                 f"(who discarded), got {who!r}"
             )
-    if "player_count" in expr:
+    if "player_count" in expr and isinstance(expr["player_count"], Mapping) and (
+        "objects" in expr["player_count"]
+    ):
+        validate_player_count_where(expr["player_count"], f"{where}.player_count")
+    elif "player_count" in expr:
         who = expr["player_count"]
         if not isinstance(who, Mapping) and (
             not isinstance(who, str) or who not in PLAYER_SPEC_NAMES

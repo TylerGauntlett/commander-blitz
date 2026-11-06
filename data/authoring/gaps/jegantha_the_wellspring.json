@@ -1,0 +1,25 @@
+{
+  "card_id": "jegantha_the_wellspring",
+  "name": "Jegantha, the Wellspring",
+  "oracle_text": "Companion — No card in your starting deck has more than one of the same mana symbol in its mana cost. (If this card is your chosen companion, you may put it into your hand from outside the game for {3} as a sorcery.)\n{T}: Add {W}{U}{B}{R}{G}. This mana can't be spent to pay generic mana costs.",
+  "blocked_sentences": [
+    "Companion — No card in your starting deck has more than one of the same mana symbol in its mana cost. (If this card is your chosen companion, you may put it into your hand from outside the game for {3} as a sorcery.)",
+    "{T}: Add {W}{U}{B}{R}{G}. This mana can't be spent to pay generic mana costs."
+  ],
+  "needs": [
+    {
+      "capability": "companion",
+      "kind": "engine",
+      "what": "the Companion keyword ability (702.139): a deckbuilding condition checked against the starting deck (here: no card's mana cost contains the same mana symbol more than once), a chosen-companion slot outside the game, and a special action, once per game, paying {3} at sorcery speed to put the companion into its owner's hand",
+      "why_existing_wont_do": "No card_level_cost_keys, card_level_rider_keys or keyword covers it: the deck validator has no companion condition, there is no outside-the-game zone, and no special action moves a card from outside the game to hand; moxfield import explicitly ignores companions"
+    },
+    {
+      "capability": "mana_cant_pay_generic",
+      "kind": "value",
+      "what": "a mana_restriction (or add_mana rider) that forbids the produced mana from paying the generic portion of any cost while still letting it pay coloured, hybrid and other non-generic pips of spells, abilities and other payments",
+      "why_existing_wont_do": "mana_restriction (engine/mana.py compile_restriction) restricts by what is being paid for -- cast / activate / other, filtered by spell types, mana value or X -- never by which pip of the cost the mana pays, so the generic-versus-coloured split this sentence needs has no spelling; dropping it makes a strictly better card"
+    }
+  ],
+  "closest_existing": ["mana_restriction", "add_mana"],
+  "confidence": "high"
+}

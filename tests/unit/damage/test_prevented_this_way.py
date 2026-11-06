@@ -24,8 +24,8 @@ What is pinned below:
 3. A linked shield is preferred over an unlinked one, the order the protected
    player would pick (616.1).
 4. Cleanup ends the shield and the rider together.
-5. The loader refuses an empty rider, a target inside it, and a rider on
-   `prevent_damage_permanent`, where it would never run.
+5. The loader refuses an empty rider and a target inside it. The permanent
+   shield's rider is `test_prevented_this_way_permanent.py`.
 """
 
 from __future__ import annotations
@@ -217,10 +217,3 @@ class TestTheLoader:
         ]}
         with pytest.raises(DslError, match="inside a delay"):
             compile_card(self._card(effect, [{"id": "t1", "kind": "permanent", "selector": {"types": ["Creature"]}}]))
-
-    def test_a_rider_on_the_permanent_shield_is_refused(self):
-        effect = {"op": "prevent_damage_permanent", "objects": {"self_only": True},
-                  "dealt": "to", "duration": "this_turn",
-                  "effects": INKSHIELD["effects"]}
-        with pytest.raises(DslError, match="player shield only"):
-            compile_card(self._card(effect))

@@ -1,0 +1,24 @@
+{
+  "card_id": "opportunistic_dragon",
+  "name": "Opportunistic Dragon",
+  "oracle_text": "Flying\nWhen this creature enters, choose target Human or artifact an opponent controls. For as long as this creature remains on the battlefield, gain control of that permanent, it loses all abilities, and it can't attack or block.",
+  "blocked_sentences": [
+    "When this creature enters, choose target Human or artifact an opponent controls. For as long as this creature remains on the battlefield, gain control of that permanent, it loses all abilities, and it can't attack or block."
+  ],
+  "needs": [
+    {
+      "capability": "while_source_on_battlefield_duration",
+      "kind": "engine",
+      "what": "a duration \"for as long as <source> remains on the battlefield\" (611.2b, ended only by the source leaving the battlefield, not by a change of its controller) that gain_control, lose_all_abilities, cant_block and a can't-attack effect can all carry, so one trigger steals the target, strips its abilities and stops it attacking or blocking, all ending together when the Dragon leaves",
+      "why_existing_wont_do": "gain_control's CONTROL_DURATIONS has `as_long_as_you_control_source`, which also ends if the Dragon changes controller -- a different, narrower card; the `lose_all_abilities` op takes only `objects` (no duration), `cant_block` has no source-bound duration, and there is no one-shot can't-attack op with a duration at all (cant_attack_player restricts a defender, not every attack)"
+    }
+  ],
+  "closest_existing": [
+    "gain_control",
+    "lose_all_abilities",
+    "lock_abilities",
+    "cant_block",
+    "cant_attack_player"
+  ],
+  "confidence": "high"
+}

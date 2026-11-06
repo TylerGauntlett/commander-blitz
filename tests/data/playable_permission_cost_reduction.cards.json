@@ -1,0 +1,86 @@
+{
+  "_comment": "Shapes for tests/unit/casting/test_playable_permission_cost_reduction.py. t_pcr_arcanum is Urianger Augurelt's Play Arcanum on a plain artifact (no summoning sickness to dodge); t_pcr_plain_arcanum the same permission without the discount; t_pcr_recall grants a this-turn permission over a sorcery in your graveyard with the same discount, so a flashback card it reaches offers both lanes; t_pcr_heist exiles a card with a discounted permission through the exile op.",
+  "cards": [
+    {
+      "id": "t_pcr_arcanum",
+      "name": "Test Play Arcanum",
+      "oracle_text": "{T}: Until end of turn, you may play cards exiled with Test Play Arcanum. Spells you cast this way cost {2} less to cast.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Until end of turn, you may play cards exiled with Test Play Arcanum. Spells you cast this way cost {2} less to cast.",
+          "cost": {"tap": true},
+          "effects": [
+            {"op": "grant_playable", "playable": "this_turn", "playable_cost_reduction": 2,
+             "objects": {"zone": "exile", "controller": "any", "exiled_with": "self"}}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_pcr_plain_arcanum",
+      "name": "Test Plain Arcanum",
+      "oracle_text": "{T}: Until end of turn, you may play cards exiled with Test Plain Arcanum.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Until end of turn, you may play cards exiled with Test Plain Arcanum.",
+          "cost": {"tap": true},
+          "effects": [
+            {"op": "grant_playable", "playable": "this_turn",
+             "objects": {"zone": "exile", "controller": "any", "exiled_with": "self"}}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_pcr_recall",
+      "name": "Test Discounted Recall",
+      "oracle_text": "{T}: Choose target sorcery card in your graveyard. You may cast that card this turn. Spells you cast this way cost {2} less to cast.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Choose target sorcery card in your graveyard. You may cast that card this turn. Spells you cast this way cost {2} less to cast.",
+          "cost": {"tap": true},
+          "targets": [
+            {"id": "t1", "kind": "card_in_graveyard", "count": 1,
+             "selector": {"zone": "graveyard", "player": "you", "types": ["Sorcery"]}}
+          ],
+          "effects": [
+            {"op": "grant_playable", "playable_this_turn": true, "playable_cost_reduction": 2,
+             "objects": {"target": "t1"}}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_pcr_heist",
+      "name": "Test Discounted Heist",
+      "oracle_text": "Exile target artifact card from an opponent's graveyard. You may cast it this turn. Spells you cast this way cost {2} less to cast.",
+      "mana_cost": "{R}",
+      "types": ["Sorcery"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "targets": [
+        {"id": "t1", "kind": "card_in_graveyard", "count": 1,
+         "selector": {"zone": "graveyard", "player": "opponent", "types": ["Artifact"]}}
+      ],
+      "spell_effects": [
+        {"op": "exile", "objects": {"target": "t1"}, "playable": "this_turn",
+         "playable_cost_reduction": 2}
+      ]
+    }
+  ]
+}

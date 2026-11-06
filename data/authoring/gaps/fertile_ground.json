@@ -1,0 +1,18 @@
+{
+  "card_id": "fertile_ground",
+  "name": "Fertile Ground",
+  "oracle_text": "Enchant land\nWhenever enchanted land is tapped for mana, its controller adds an additional one mana of any color.",
+  "blocked_sentences": [
+    "Whenever enchanted land is tapped for mana, its controller adds an additional one mana of any color."
+  ],
+  "needs": [
+    {
+      "capability": "add_mana_on_tap_any_color",
+      "kind": "static_effect",
+      "what": "an add_mana_on_tap payload meaning 'one mana of any color', chosen by the tapping player each time the triggered mana ability resolves (605.1b), e.g. add_mana: {\"any_color\": 1}, with the mana solver treating it as a wildcard pip",
+      "why_existing_wont_do": "add_mana_on_tap with tapped_permanent {attached: true} covers the enchanted-land trigger (Wild Growth, Utopia Sprawl), but its add_mana accepts only a literal production string or {\"chosen_color_of\": \"self\"}; the loader refuses any other dynamic form, and player_statics._mana_added runs inside cost payment where no choice can be asked, so a per-tap color choice cannot be expressed"
+    }
+  ],
+  "closest_existing": ["add_mana_on_tap"],
+  "confidence": "high"
+}

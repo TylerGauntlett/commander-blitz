@@ -11,11 +11,10 @@ import { useCallback } from "react";
 import type { CardView, GameView, LegalAction, StackItemView } from "../api/types";
 import type { SoundName } from "../audio/sfx";
 import { abilityRoute } from "../logic/abilities";
-import { actionsForCard, blockableBy, canDropOnLane, defendersFor } from "../logic/actionMatch";
+import { actionsForCard, blockableBy, defendersFor, dropPlays } from "../logic/actionMatch";
 import type { Gesture } from "../logic/followUp";
 import { boardPickAction, isBoardPick, isPickSeveral, pickOptions } from "../logic/pickSeveral";
 import { decisionKey, pickedFor, stagedAs } from "../logic/staging";
-import type { Lane as LaneName } from "../logic/zoneGrouping";
 import { useUiStore } from "../state/uiStore";
 import type { useGame } from "../state/useGame";
 import type { useTableDerived } from "../state/useTableDerived";
@@ -109,20 +108,12 @@ export function useTableGestures({
     (card: CardView, zone: string) => {
       if (gateInput()) return;
       /*
-       * WHOSE lane, and it was being thrown away.
-       *
-       * `lane:<pid>:<lane>` names a seat and this read the lane and skipped the
-       * pid, so a drop onto an opponent's creature row was treated as a drop
-       * onto your own. It could not be reached while their lanes were the only
-       * other drop zones and nothing dragged there; standing at their seat puts
-       * their lanes under the viewer's own hand.
+       * WHOSE board, and anywhere on it (`dropPlays`). The zone names a seat,
+       * and a drop onto an opponent's lanes -- which standing at their seat
+       * puts under the viewer's own hand -- is refused rather than read as a
+       * drop onto your own.
        */
-      const [kind, pid, lane] = zone.split(":");
-      if (
-        kind !== "lane" ||
-        Number(pid) !== state.seat ||
-        !canDropOnLane(state, actions, card.oid, lane as LaneName)
-      ) {
+      if (!dropPlays(state, actions, card.oid, zone)) {
         cue("deny");
         return;
       }
