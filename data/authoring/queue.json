@@ -3642,12 +3642,12 @@
     },
     "Afterlife from the Loam": {
       "edhrec_rank": 4232,
-      "gate": "template",
+      "gate": null,
       "name": "Afterlife from the Loam",
-      "reason": "no template for: Delve",
+      "reason": "",
       "scryfall_id": "9361b548-a8d9-4e57-98cf-0c464742e1c9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aftermath Analyst": {
@@ -98532,12 +98532,12 @@
     },
     "Floral Evoker": {
       "edhrec_rank": 7181,
-      "gate": "template",
+      "gate": null,
       "name": "Floral Evoker",
-      "reason": "no template for: Landfall — Whenever a land you control enters, put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "4452f54b-1b44-4ccf-be99-7d3c2614d89a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Floral Spuzzem": {
@@ -99862,12 +99862,12 @@
     },
     "Forbidden Alchemy": {
       "edhrec_rank": 5204,
-      "gate": "template",
+      "gate": null,
       "name": "Forbidden Alchemy",
-      "reason": "no template for: Look at the top four cards of your library. Put one of them into your hand and the rest in",
+      "reason": "",
       "scryfall_id": "b49c5c76-3098-427b-87c1-b90d17a0909e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Forbidden Crypt": {
@@ -116092,12 +116092,12 @@
     },
     "Grapple with the Past": {
       "edhrec_rank": 2142,
-      "gate": "template",
+      "gate": null,
       "name": "Grapple with the Past",
-      "reason": "no template for: Mill three cards, then you may return a creature or land card from your graveyard to your ",
+      "reason": "",
       "scryfall_id": "06e0c180-2275-461a-86e7-8ccdc5f47938",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Grappler Spider": {
@@ -118612,12 +118612,12 @@
     },
     "Grisly Salvage": {
       "edhrec_rank": 1334,
-      "gate": "template",
+      "gate": null,
       "name": "Grisly Salvage",
-      "reason": "no template for: Reveal the top five cards of your library. You may put a creature or land card from among ",
+      "reason": "",
       "scryfall_id": "1a9efda9-5f19-4e20-b3ec-ca2bd33fd089",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Grisly Sigil": {
@@ -125182,12 +125182,12 @@
     },
     "Hedron Crab": {
       "edhrec_rank": 1489,
-      "gate": "template",
+      "gate": null,
       "name": "Hedron Crab",
-      "reason": "no template for: Landfall — Whenever a land you control enters, target player mills three cards",
+      "reason": "",
       "scryfall_id": "eaa1db45-6e3a-4941-b55e-7a91a60ea1b6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hedron Crawler": {

@@ -2068,6 +2068,64 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "afterlife_from_the_loam",
+      "mana_cost": "{5}{B}{B}{B}",
+      "name": "Afterlife from the Loam",
+      "oracle_text": "Delve (Each card you exile from your graveyard while casting this spell pays for {1}.)\nFor each player, choose up to one target creature card in that player's graveyard. Put those cards onto the battlefield under your control. They're Zombies in addition to their other types.",
+      "pay_generic_with": "exile_from_graveyard",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "objects": {
+                "binding": "each"
+              },
+              "op": "put_onto_battlefield"
+            },
+            {
+              "objects": {
+                "binding": "each"
+              },
+              "op": "add_subtype",
+              "subtypes": [
+                "Zombie"
+              ]
+            }
+          ],
+          "objects": {
+            "target": "t1"
+          },
+          "op": "for_each"
+        }
+      ],
+      "targets": [
+        {
+          "count": "any",
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "one_per_player": true,
+          "selector": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -67287,6 +67345,93 @@
           "effects": [
             {
               "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Landfall — Whenever a land you control enters, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "discard": 1,
+            "discard_selector": {
+              "types": [
+                "Creature"
+              ]
+            },
+            "mana": "{G}"
+          },
+          "effects": [
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "target": "gy_land"
+              },
+              "op": "return_from_graveyard",
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "gy_land",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Land"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "{G}, Discard a creature card: Return target land card from your graveyard to the battlefield tapped."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "floral_evoker",
+      "mana_cost": "{2}{G}",
+      "name": "Floral Evoker",
+      "oracle_text": "Landfall — Whenever a land you control enters, put a +1/+1 counter on this creature.\n{G}, Discard a creature card: Return target land card from your graveyard to the battlefield tapped.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Snake",
+        "Druid"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
                 "life_lost_this_turn": "each_opponent"
               },
               "destination": "exile",
@@ -67948,6 +68093,40 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "flashback": {
+        "mana": "{6}{B}"
+      },
+      "id": "forbidden_alchemy",
+      "mana_cost": "{2}{U}",
+      "name": "Forbidden Alchemy",
+      "oracle_text": "Look at the top four cards of your library. Put one of them into your hand and the rest into your graveyard.\nFlashback {6}{B} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 4
+          },
+          "destination": "hand",
+          "objects": {
+            "count": 1
+          },
+          "op": "look_at_top",
+          "player": "you",
+          "rest_to": "graveyard"
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -79803,6 +79982,45 @@
       "colors": [
         "G"
       ],
+      "id": "grapple_with_the_past",
+      "mana_cost": "{1}{G}",
+      "name": "Grapple with the Past",
+      "oracle_text": "Mill three cards, then you may return a creature or land card from your graveyard to your hand. (To mill three cards, put the top three cards of your library into your graveyard.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 3
+          },
+          "op": "mill",
+          "player": "you"
+        },
+        {
+          "destination": "hand",
+          "objects": {
+            "any_types": [
+              "Creature",
+              "Land"
+            ],
+            "controller": "you",
+            "count": 1,
+            "optional": true,
+            "zone": "graveyard"
+          },
+          "op": "return_from_graveyard"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
       "id": "grappler_spider",
       "keywords": [
         "reach"
@@ -81760,6 +81978,43 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "grisly_salvage",
+      "mana_cost": "{B}{G}",
+      "name": "Grisly Salvage",
+      "oracle_text": "Reveal the top five cards of your library. You may put a creature or land card from among them into your hand. Put the rest into your graveyard.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 5
+          },
+          "destination": "hand",
+          "objects": {
+            "any_types": [
+              "Creature",
+              "Land"
+            ],
+            "count": 1,
+            "optional": true
+          },
+          "op": "look_at_top",
+          "player": "you",
+          "rest_to": "graveyard"
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -85843,6 +86098,63 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "mill",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "any"
+              }
+            }
+          ],
+          "text": "Landfall — Whenever a land you control enters, target player mills three cards.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "hedron_crab",
+      "mana_cost": "{U}",
+      "name": "Hedron Crab",
+      "oracle_text": "Landfall — Whenever a land you control enters, target player mills three cards. (They put the top three cards of their library into their graveyard.)",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Crab"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {

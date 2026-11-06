@@ -160,6 +160,15 @@
   "affa_protector": {
     "zone": "battlefield"
   },
+  "afterlife_from_the_loam": {
+    "graveyard_size": {
+      "0": 1
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "aftermath_analyst": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -5848,6 +5857,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "floral_evoker": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "florian_voldaren_scion": {
     "granted": {
       "count": 1,
@@ -5925,6 +5938,18 @@
   },
   "foot_soldiers": {
     "zone": "battlefield"
+  },
+  "forbidden_alchemy": {
+    "graveyard_size": {
+      "0": 6
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 36
+    },
+    "zone": "graveyard"
   },
   "forbidden_orchard": {
     "battlefield_count": 33,
@@ -6891,6 +6916,12 @@
   "granitic_titan": {
     "zone": "battlefield"
   },
+  "grapple_with_the_past": {
+    "library_size": {
+      "0": 37
+    },
+    "zone": "graveyard"
+  },
   "grappler_spider": {
     "zone": "battlefield"
   },
@@ -7056,6 +7087,12 @@
       "kind": "-1/-1"
     },
     "zone": "battlefield"
+  },
+  "grisly_salvage": {
+    "library_size": {
+      "0": 35
+    },
+    "zone": "graveyard"
   },
   "grixis_panorama": {
     "zone": "battlefield"
@@ -7398,6 +7435,10 @@
     "zone": "battlefield"
   },
   "hedron_archive": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "hedron_crab": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
