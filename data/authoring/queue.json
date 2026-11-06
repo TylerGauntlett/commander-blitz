@@ -88342,12 +88342,12 @@
     },
     "Expel the Interlopers": {
       "edhrec_rank": 2754,
-      "gate": "template",
+      "gate": null,
       "name": "Expel the Interlopers",
-      "reason": "no template for: Choose a number between 0 and 10. Destroy all creatures with power greater than or equal t",
+      "reason": "",
       "scryfall_id": "1094eef0-6c57-4bfa-a584-f708b87354fb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Expel the Unworthy": {
@@ -251542,12 +251542,12 @@
     },
     "Slaughter the Strong": {
       "edhrec_rank": 2351,
-      "gate": "template",
+      "gate": null,
       "name": "Slaughter the Strong",
-      "reason": "no template for: Each player chooses any number of creatures they control with total power 4 or less, then ",
+      "reason": "",
       "scryfall_id": "8ceb48f7-6e2d-48c9-b02d-13b2b1accc59",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Slaughter-Priest of Mogis": {

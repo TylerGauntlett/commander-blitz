@@ -59610,6 +59610,47 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "expel_the_interlopers",
+      "mana_cost": "{3}{W}{W}",
+      "name": "Expel the Interlopers",
+      "oracle_text": "Choose a number between 0 and 10. Destroy all creatures with power greater than or equal to the chosen number.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "chosen",
+          "max": 10,
+          "min": 0,
+          "op": "choose_number"
+        },
+        {
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "power": {
+              "op": ">=",
+              "value": {
+                "binding": "chosen"
+              }
+            },
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "destroy"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -172254,6 +172295,62 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "slaughter_the_strong",
+      "mana_cost": "{1}{W}{W}",
+      "name": "Slaughter the Strong",
+      "oracle_text": "Each player chooses any number of creatures they control with total power 4 or less, then sacrifices all other creatures they control.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "as": "kept",
+              "max_total_power": 4,
+              "objects": {
+                "chooser": {
+                  "binding": "each_player"
+                },
+                "controller": {
+                  "binding": "each_player"
+                },
+                "count": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "choose_permanents",
+              "prompt": "Keep creatures with total power 4 or less"
+            }
+          ],
+          "op": "for_each_player",
+          "players": "each_player"
+        },
+        {
+          "chooser": "none",
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "exclude_binding": "kept",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "sacrifice"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {

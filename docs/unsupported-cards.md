@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**187 cards** blocked by **167** capabilities.
+**183 cards** blocked by **163** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -58,8 +58,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-from-hand-result](#cast-from-hand-result) | 1 | 7016 | op |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [choose-card-type-from-list](#choose-card-type-from-list) | 1 | 611 | op |
-| [choose-number](#choose-number) | 1 | 2754 | op |
-| [choose-with-total-power-limit](#choose-with-total-power-limit) | 1 | 2351 | decision |
 | [chosen-card-type-cost-reduction](#chosen-card-type-cost-reduction) | 1 | 611 | static_effect |
 | [combat-damage-amount-binding](#combat-damage-amount-binding) | 1 | 8933 | value |
 | [companion](#companion) | 1 | 3861 | engine |
@@ -105,7 +103,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
 | [harmonize](#harmonize) | 1 | 7442 | cost |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
-| [insect-1-1-g-flying-deathtouch](#insect-1-1-g-flying-deathtouch) | 1 | 2822 | token |
 | [karox-bladewing](#karox-bladewing) | 1 | 8889 | token |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
 | [kicker](#kicker) | 1 | 868 | selector |
@@ -177,7 +174,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [total-mana-value-selection](#total-mana-value-selection) | 1 | 4244 | op |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
-| [wall-1-3-w-defender](#wall-1-3-w-defender) | 1 | 5588 | token |
 | [while-source-on-battlefield-duration](#while-source-on-battlefield-duration) | 1 | 8222 | engine |
 | [x-cost-mana-restriction](#x-cost-mana-restriction) | 1 | 4046 | decision |
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 1 | 11545 | engine |
@@ -1065,34 +1061,6 @@ Blocks **1** card.
 
 </details>
 
-## choose-number
-
-Blocks **1** card.
-
-- **(op)** an op that asks the controller, on resolution, to choose an integer in a printed range (here 0..10) and binds it under `as`, so a later selector can compare against it -- e.g. destroy with objects {zone: battlefield, controller: any, types: [Creature], power: {op: '>=', value: {binding: 'chosen'}}}
-  <br>Why the existing vocabulary won't do: No op chooses a number. choose_mode over eleven destroy modes is the near miss, but a top-level choose_mode is answered at cast time (count_mode_specs / cast-time mode selection), which turns this non-modal sorcery into a modal spell (700.2) and announces the number on the stack instead of choosing it on resolution; it would also count as modal for anything that cares. roll_dice binds a random number, not a chosen one, and x/may.any_amount are tied to paying mana
-
-<details><summary>Cards waiting on this</summary>
-
-- **Expel the Interlopers** (rank 2754) — `expel_the_interlopers`
-  - Choose a number between 0 and 10. Destroy all creatures with power greater than or equal to the chosen number.
-
-</details>
-
-## choose-with-total-power-limit
-
-Blocks **1** card.
-
-- **(decision)** a per-player choice of any number of permanents matching a selector, constrained so the chosen set's total power is at most N (here 4), bound under a name so a following sacrifice can exclude them (sacrifice all creatures you control except the chosen ones), run for each player in turn order
-  <br>Why the existing vocabulary won't do: choose_permanents takes only as/objects/prompt with no budget over the chosen set; selector_keys has no total_power and target_keys only total_mana_value (a target budget, and these are not targets); total_power exists only on crew's tap_permanents cost and on cost_reduction, neither of which is a resolution-time choice. A per-creature power <= 4 filter would be a different, wrong card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Slaughter the Strong** (rank 2351) — `slaughter_the_strong`
-  - Each player chooses any number of creatures they control with total power 4 or less, then sacrifices all other creatures they control.
-
-</details>
-
 ## chosen-card-type-cost-reduction
 
 Blocks **1** card.
@@ -1735,20 +1703,6 @@ Blocks **1** card.
 
 - **Ragavan, Nimble Pilferer** (rank 271) — `ragavan_nimble_pilferer`
   - Whenever Ragavan deals combat damage to a player, create a Treasure token and exile the top card of that player's library. Until end of turn, you may cast that card.
-
-</details>
-
-## insect-1-1-g-flying-deathtouch
-
-Blocks **1** card.
-
-- **(token)** a 1/1 green Insect creature token with flying and deathtouch
-  <br>Why the existing vocabulary won't do: token_ids has insect_1_1_g (no keywords), insect_1_1_b_flying (black, no deathtouch) and snake_1_1_g_deathtouch (a Snake, no flying); none is a green Insect with both flying and deathtouch. The rest of the line looks expressible: the dealt_damage trigger event with source self and create_token with an amount reading the damage dealt
-
-<details><summary>Cards waiting on this</summary>
-
-- **Hornet Nest** (rank 2822) — `hornet_nest`
-  - Whenever this creature is dealt damage, create that many 1/1 green Insect creature tokens with flying and deathtouch.
 
 </details>
 
@@ -2757,20 +2711,6 @@ Blocks **1** card.
 
 - **Suppressor Skyguard** (rank 9126) — `suppressor_skyguard`
   - Whenever a player attacks you, if that player has another opponent who isn't being attacked, prevent all combat damage that would be dealt to you this combat.
-
-</details>
-
-## wall-1-3-w-defender
-
-Blocks **1** card.
-
-- **(token)** a 1/3 white Wall creature token with defender
-  <br>Why the existing vocabulary won't do: token_ids is a closed list and its only Wall is wall_0_3_c_defender_reach, a 0/3 colorless Wall with defender and reach: wrong power, color and keywords. create_token with power/toughness overrides would still leave it colorless with reach
-
-<details><summary>Cards waiting on this</summary>
-
-- **Rampart Architect** (rank 5588) — `rampart_architect`
-  - Whenever this creature enters or attacks, create a 1/3 white Wall creature token with defender.
 
 </details>
 

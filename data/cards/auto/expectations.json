@@ -5140,6 +5140,14 @@
   "expedition_envoy": {
     "zone": "battlefield"
   },
+  "expel_the_interlopers": {
+    "battlefield_count": 30,
+    "graveyard_size": {
+      "0": 5
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
+  },
   "experimental_armor": {
     "zone": "battlefield"
   },
@@ -14648,6 +14656,9 @@
   },
   "slash_panther": {
     "zone": "battlefield"
+  },
+  "slaughter_the_strong": {
+    "zone": "graveyard"
   },
   "slayers_stronghold": {
     "battlefield_count": 33,
