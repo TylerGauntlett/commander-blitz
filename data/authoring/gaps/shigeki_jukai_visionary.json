@@ -1,0 +1,18 @@
+{
+  "card_id": "shigeki_jukai_visionary",
+  "name": "Shigeki, Jukai Visionary",
+  "oracle_text": "{1}{G}, {T}, Return Shigeki to its owner's hand: Reveal the top four cards of your library. You may put a land card from among them onto the battlefield tapped. Put the rest into your graveyard.\nChannel — {X}{X}{G}{G}, Discard this card: Return X target nonlegendary cards from your graveyard to your hand.",
+  "blocked_sentences": [
+    "Channel — {X}{X}{G}{G}, Discard this card: Return X target nonlegendary cards from your graveyard to your hand."
+  ],
+  "needs": [
+    {
+      "capability": "x_sized_ability_targets",
+      "kind": "engine",
+      "what": "An activated ability whose target COUNT is the announced X from its own {X} mana cost (targets: [{count: {\"x\": true}, kind: card_in_graveyard, ...}]) -- legality must enumerate one activation per payable X with exactly X targets, as it already does for spells (TargetSpec.x_sized via Game._ask_x_sized_targets) and for abilities whose target SELECTOR reads X",
+      "why_existing_wont_do": "legality._targets_read_x only checks whether a target's selector mentions X (_mentions_x on spec.selector), never spec.count, so an ability with count {\"x\": true} is enumerated once with targeting.target_count evaluating the count from bindings that carry no x -- it sizes to 0 and the ability always returns nothing. The x_sized path in game.py covers card.targets (spells) only, and no shipped activated ability uses an X-sized target count"
+    }
+  ],
+  "closest_existing": ["crackle_with_power", "curse_of_the_swine", "the_mycosynth_gardens"],
+  "confidence": "high"
+}
