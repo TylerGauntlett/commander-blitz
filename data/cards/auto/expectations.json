@@ -6816,6 +6816,15 @@
   "glider_kids": {
     "zone": "battlefield"
   },
+  "glimmer_of_genius": {
+    "hand_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "graveyard"
+  },
   "glissa_s_courier": {
     "zone": "battlefield"
   },
@@ -9538,6 +9547,10 @@
   "lightning_hounds": {
     "zone": "battlefield"
   },
+  "lightning_runner": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "lightning_stormkin": {
     "zone": "battlefield"
   },
@@ -11730,6 +11743,15 @@
   "ondu_giant": {
     "zone": "battlefield"
   },
+  "one_with_the_machine": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "one_with_the_wind": {
     "zone": [
       "battlefield",
@@ -11980,6 +12002,10 @@
     "zone": "battlefield"
   },
   "palladium_myr": {
+    "zone": "battlefield"
+  },
+  "panharmonicon": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "panther_habit": {

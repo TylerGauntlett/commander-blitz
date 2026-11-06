@@ -78479,6 +78479,45 @@
     },
     {
       "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "glimmer_of_genius",
+      "mana_cost": "{3}{U}",
+      "name": "Glimmer of Genius",
+      "oracle_text": "Scry 2, then draw two cards. You get {E}{E} (two energy counters).",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "scry",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "add_energy",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "G"
       ],
       "colors": [
@@ -112446,6 +112485,77 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "add_energy",
+              "player": "you"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "untap"
+                },
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "extra_combat"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "pay_energy": 8
+              },
+              "prompt": "Pay eight {E} to untap all creatures you control and take an additional combat phase?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, you get {E}{E} (two energy counters), then you may pay eight {E}. If you pay, untap all creatures you control, and after this phase, there is an additional combat phase.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "lightning_runner",
+      "keywords": [
+        "double_strike",
+        "haste"
+      ],
+      "mana_cost": "{3}{R}{R}",
+      "name": "Lightning Runner",
+      "oracle_text": "Double strike, haste\nWhenever this creature attacks, you get {E}{E} (two energy counters), then you may pay eight {E}. If you pay, untap all creatures you control, and after this phase, there is an additional combat phase.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R",
         "U"
@@ -138694,6 +138804,41 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "one_with_the_machine",
+      "mana_cost": "{3}{U}",
+      "name": "One with the Machine",
+      "oracle_text": "Draw cards equal to the greatest mana value among artifacts you control.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "extreme_value": {
+              "objects": {
+                "controller": "you",
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              },
+              "of": "mana_value",
+              "pick": "greatest"
+            }
+          },
+          "op": "draw",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -141677,6 +141822,37 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you"
+          },
+          "cause_events": [
+            "permanent_enters"
+          ],
+          "cause_filter": {
+            "any_types": [
+              "Artifact",
+              "Creature"
+            ]
+          },
+          "effect": "double_triggers",
+          "kind": "static",
+          "text": "If an artifact or creature entering causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "panharmonicon",
+      "mana_cost": "{4}",
+      "name": "Panharmonicon",
+      "oracle_text": "If an artifact or creature entering causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {

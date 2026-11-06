@@ -110722,12 +110722,12 @@
     },
     "Glimmer of Genius": {
       "edhrec_rank": 5941,
-      "gate": "template",
+      "gate": null,
       "name": "Glimmer of Genius",
-      "reason": "no template for: Scry 2, then draw two cards. You get {E}{E}",
+      "reason": "",
       "scryfall_id": "913bb5da-57b7-44c0-9c6e-630ae71c4b1b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Glimmerbell": {
@@ -158422,12 +158422,12 @@
     },
     "Lightning Runner": {
       "edhrec_rank": 4874,
-      "gate": "template",
+      "gate": null,
       "name": "Lightning Runner",
-      "reason": "no template for: Whenever this creature attacks, you get {E}{E} , then you may pay eight {E}. If you pay, u",
+      "reason": "",
       "scryfall_id": "80e06596-fb1a-4d89-8d91-c6b95014f132",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lightning Serpent": {
@@ -192922,12 +192922,12 @@
     },
     "One with the Machine": {
       "edhrec_rank": 2851,
-      "gate": "template",
+      "gate": null,
       "name": "One with the Machine",
-      "reason": "no template for: Draw cards equal to the greatest mana value among artifacts you control",
+      "reason": "",
       "scryfall_id": "f114e0fe-1879-42de-83cb-104ace913ffb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "One with the Multiverse": {
@@ -197402,12 +197402,12 @@
     },
     "Panharmonicon": {
       "edhrec_rank": 263,
-      "gate": "template",
+      "gate": null,
       "name": "Panharmonicon",
-      "reason": "no template for: If an artifact or creature entering causes a triggered ability of a permanent you control ",
+      "reason": "",
       "scryfall_id": "9d7903ff-359b-49f5-8782-c9dd789c2da6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Panic": {

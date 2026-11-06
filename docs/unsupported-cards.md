@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**208 cards** blocked by **187** capabilities.
+**210 cards** blocked by **189** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -55,6 +55,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [become-copy-add-supertypes](#become-copy-add-supertypes) | 1 | 2059 | op |
 | [block-restriction-relative-power](#block-restriction-relative-power) | 1 | 6993 | static_effect |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
+| [blocks-if-able](#blocks-if-able) | 1 | 12851 | op |
 | [can-block-only](#can-block-only) | 1 | 2673 | static_effect |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cards-exiled-trigger](#cards-exiled-trigger) | 1 | 1303 | trigger_event |
@@ -92,6 +93,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [every-creature-type-everywhere](#every-creature-type-everywhere) | 1 | 494 | static_effect |
+| [exhaust](#exhaust) | 1 | 9767 | engine |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [exile-x-from-graveyard-cost](#exile-x-from-graveyard-cost) | 1 | 17252 | cost |
 | [exiled-this-way-lki](#exiled-this-way-lki) | 1 | 6960 | value |
@@ -1044,6 +1046,20 @@ Blocks **1** card.
 
 </details>
 
+## blocks-if-able
+
+Blocks **1** card.
+
+- **(op)** a one-shot op placing an until-end-of-turn requirement on a target creature that it block (any attacker of its controller's choice) in every combat this turn if able -- no specific attacker named
+  <br>Why the existing vocabulary won't do: must_block always names the attacker to block (defaulting to the ability's source, i.e. provoke/lure-this-creature) and is spent after one combat by finish_blockers; using it would force the target to block Peema specifically and only in the next combat. attacks_if_able / must_attack are the attack-side mirror only, and no static or op expresses a generic block requirement
+
+<details><summary>Cards waiting on this</summary>
+
+- **Peema Aether-Seer** (rank 12851) — `peema_aether_seer`
+  - Pay {E}{E}{E}: Target creature blocks this turn if able.
+
+</details>
+
 ## can-block-only
 
 Blocks **1** card.
@@ -1572,6 +1588,20 @@ Blocks **1** card.
 - **Maskwood Nexus** (rank 494) — `maskwood_nexus`
   - Creatures you control are every creature type. The same is true for creature spells you control and creature cards you own that aren't on the battlefield.
   - {3}, {T}: Create a 2/2 blue Shapeshifter creature token with changeling. (It is every creature type.)
+
+</details>
+
+## exhaust
+
+Blocks **1** card.
+
+- **(engine)** an activated-ability flag meaning the ability may be activated only once for as long as this object exists (702.177: each exhaust ability only once), tracked per object and per ability, reset only when the permanent becomes a new object
+  <br>Why the existing vocabulary won't do: ability_keys carry once_each_turn, activate_steps and sorcery_speed_only, all of which reset each turn or restrict timing; nothing limits an activation to once per object lifetime, and the cost (pay_energy) and effects (add_counters, draw with extreme_value/max power) are otherwise expressible, so only the limit is missing
+
+<details><summary>Cards waiting on this</summary>
+
+- **Peema Trailblazer** (rank 9767) — `peema_trailblazer`
+  - Exhaust — Pay six {E}: Put two +1/+1 counters on this creature. Then draw cards equal to the greatest power among creatures you control. (Activate each exhaust ability only once.)
 
 </details>
 
