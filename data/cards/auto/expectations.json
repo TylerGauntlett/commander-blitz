@@ -15717,6 +15717,10 @@
       "graveyard"
     ]
   },
+  "spiteful_visions": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "spitting_image": {
     "zone": "graveyard"
   },
@@ -15845,6 +15849,10 @@
     "zone": "battlefield"
   },
   "stangg_echo_warrior": {
+    "zone": "battlefield"
+  },
+  "star_athlete": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "starfield_mystic": {
@@ -16015,6 +16023,16 @@
     "zone": "battlefield"
   },
   "stormcloud_spirit": {
+    "zone": "battlefield"
+  },
+  "stormfist_crusader": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "menace"
+      ]
+    },
     "zone": "battlefield"
   },
   "stormfront_pegasus": {

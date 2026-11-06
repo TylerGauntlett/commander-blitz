@@ -1,0 +1,22 @@
+{
+  "card_id": "suspended_sentence",
+  "name": "Suspended Sentence",
+  "oracle_text": "Destroy target creature an opponent controls. That player loses 3 life. Exile Suspended Sentence with three time counters on it.\nSuspend 3—{1}{B} (Rather than cast this card from your hand, you may pay {1}{B} and exile it with three time counters on it. At the beginning of your upkeep, remove a time counter. When the last is removed, you may cast it without paying its mana cost.)",
+  "blocked_sentences": [
+    "Exile Suspended Sentence with three time counters on it."
+  ],
+  "needs": [
+    {
+      "capability": "self_suspend_on_resolution",
+      "kind": "engine",
+      "what": "a card-level resolution rider for an instant or sorcery, beside exiles_itself: 'as this spell resolves, exile it with N time counters on it' -- the spell goes to exile instead of the graveyard and is made suspended (suspend.make_suspended with N counters, suspended_by its owner) so the upkeep tick and the free cast recur. Same need as Rousing Refrain; e.g. a rider like `suspends_itself: 3`",
+      "why_existing_wont_do": "The `suspend` op (op_suspend) works on a target or binding; aimed at the spell itself from spell_effects it would exile the card off the stack mid-resolution, and stack._resolve_spell then unconditionally calls _place_after_resolution, which moves it on to the graveyard and resets the suspended mark. `exiles_itself` exiles with no time counters and no suspended mark, so the card would never come back; the card-level `suspend` key covers only the cast-from-hand alternative cost, not the resolution exile."
+    }
+  ],
+  "closest_existing": [
+    "exiles_itself",
+    "suspend",
+    "rebound"
+  ],
+  "confidence": "high"
+}

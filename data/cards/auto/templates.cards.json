@@ -185256,6 +185256,64 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": {
+                "binding": "event_player"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each player's draw step, that player draws an additional card.",
+          "trigger": {
+            "controller": "any",
+            "event": "draw_step"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "player": {
+                "binding": "event_player"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a player draws a card, this enchantment deals 1 damage to that player.",
+          "trigger": {
+            "controller": "any",
+            "event": "draw"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "spiteful_visions",
+      "mana_cost": "{2}{B/R}{B/R}",
+      "name": "Spiteful Visions",
+      "oracle_text": "At the beginning of each player's draw step, that player draws an additional card.\nWhenever a player draws a card, this enchantment deals 1 damage to that player.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "G",
         "U"
@@ -186718,6 +186776,175 @@
         "Legendary"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "athlete_sacrificed",
+                  "objects": {
+                    "chooser": "controller",
+                    "controller": "any",
+                    "target": "t1"
+                  },
+                  "op": "sacrifice"
+                },
+                {
+                  "condition": {
+                    "cmp": "==",
+                    "left": {
+                      "count": {
+                        "binding": "athlete_sacrificed"
+                      }
+                    },
+                    "right": {
+                      "const": 0
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "amount": {
+                        "const": 5
+                      },
+                      "op": "damage",
+                      "player": {
+                        "controller_of_target": "t1"
+                      }
+                    }
+                  ]
+                }
+              ],
+              "else": [
+                {
+                  "amount": {
+                    "const": 5
+                  },
+                  "op": "damage",
+                  "player": {
+                    "controller_of_target": "t1"
+                  }
+                }
+              ],
+              "op": "may",
+              "player": {
+                "controller_of_target": "t1"
+              },
+              "prompt": "Sacrifice the targeted permanent? (Otherwise Star Athlete deals 5 damage to you.)"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "any",
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever this creature attacks, choose up to one target nonland permanent. Its controller may sacrifice it. If they don't, this creature deals 5 damage to that player.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "duration": "permanent",
+              "keyword": "haste",
+              "objects": {
+                "self_only": true
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "ability": 0,
+              "duration": "permanent",
+              "objects": {
+                "self_only": true
+              },
+              "op": "grant_ability"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Blitz {3}{R} (If you cast this spell for its blitz cost, it gains haste and \"When this creature dies, draw a card.\" Sacrifice it at the beginning of the next end step.)",
+          "trigger": {
+            "condition": {
+              "evoked": true
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "evoke": "{3}{R}",
+      "evoke_label": "blitz",
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, draw a card.",
+          "trigger": {
+            "controller": "any",
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "star_athlete",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{1}{R}{R}",
+      "name": "Star Athlete",
+      "oracle_text": "Menace\nWhenever this creature attacks, choose up to one target nonland permanent. Its controller may sacrifice it. If they don't, this creature deals 5 damage to that player.\nBlitz {3}{R} (If you cast this spell for its blitz cost, it gains haste and \"When this creature dies, draw a card.\" Sacrifice it at the beginning of the next end step.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -188697,6 +188924,59 @@
         "Spirit"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "each_player"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": "each_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, each player draws a card and loses 1 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "stormfist_crusader",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{B}{R}",
+      "name": "Stormfist Crusader",
+      "oracle_text": "Menace\nAt the beginning of your upkeep, each player draws a card and loses 1 life.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]

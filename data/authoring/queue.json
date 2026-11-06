@@ -260352,12 +260352,12 @@
     },
     "Spiteful Visions": {
       "edhrec_rank": 2284,
-      "gate": "template",
+      "gate": null,
       "name": "Spiteful Visions",
-      "reason": "no template for: At the beginning of each player's draw step, that player draws an additional card",
+      "reason": "",
       "scryfall_id": "3be610eb-790f-4f47-a92a-34fe704cc8e0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spitemare": {
@@ -262652,12 +262652,12 @@
     },
     "Star Athlete": {
       "edhrec_rank": 4754,
-      "gate": "template",
+      "gate": null,
       "name": "Star Athlete",
-      "reason": "no template for: Whenever this creature attacks, choose up to one target nonland permanent. Its controller ",
+      "reason": "",
       "scryfall_id": "5c7c23a6-53ff-4588-838c-7936cb9eb86b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Star Charter": {
@@ -266302,12 +266302,12 @@
     },
     "Stormfist Crusader": {
       "edhrec_rank": 1923,
-      "gate": "template",
+      "gate": null,
       "name": "Stormfist Crusader",
-      "reason": "no template for: At the beginning of your upkeep, each player draws a card and loses 1 life",
+      "reason": "",
       "scryfall_id": "0b420ce8-3dd1-430b-a090-4b4e8dcb6aa9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stormfront Pegasus": {
