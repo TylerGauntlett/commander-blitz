@@ -26,15 +26,17 @@ from .carddef import Cost
 from .casting import (
     GRAVEYARD_CAST_SLOT,
     MORPH_COST,
-    PAY_GENERIC_TAP_TYPES,
     _graveyard_cast_permission,
     _spell_as_cast,
     chosen_additional,
-    convoke_colors,
     convoke_payments,
     convoke_pips,
     deferred_target_spec,
-    pay_generic_tappers,
+    life_x_ceiling,
+    pay_generic_colors,
+    pay_generic_currencies,
+    pay_generic_pool,
+    permission_cost_reduction,
     strive_surcharge,
 )
 from .characteristics import abilities_of, chars, mana_source_traits
@@ -47,12 +49,13 @@ from .costs import (
     can_pay_mana,
     commander_cost,
     defined_x,
+    discard_x_ceiling,
     mana_sources,
     most_life_for_mana,
     pay,
     spell_purpose,
 )
-from .division import divided_damage, division_amount, division_caps
+from .division import divided_damage, division_amount, division_caps, fits_division
 from .effects.context import EffectContext, ask_mode, ask_objects, ask_targets, ask_x, ask_yes_no
 from .effects.modes import chosen_at_random, modal_bounds, mode_labels, pick_at_random
 from .enums import ActionKind, DecisionKind, Step, Zone
@@ -87,6 +90,7 @@ from .turn import _next_blocker_decision
 from .zones import exile as exile_object
 from .zones import (
     move_object,
+    offer_as_enters_effects,
     offer_enters_copy,
     offer_enters_costs,
     offer_enters_replacement,
@@ -109,6 +113,14 @@ MAX_ADVANCE_STEPS = 20_000
 #: How many times a convoke pick that leaves the rest of the mana unpayable is
 #: asked again before `Game._ask_pay_generic` picks for the player.
 MAX_PAY_GENERIC_ASKS = 3
+#: The decision tag and the prompt's verb for each ``pay_generic_with``
+#: currency, in the order a spell with several names them.
+PAY_GENERIC_WORDS: dict[str, tuple[str, str]] = {
+    "tap_creatures": ("convoke", "tap creatures to convoke"),
+    "tap_artifacts": ("improvise", "tap artifacts to improvise"),
+    "exile_from_graveyard": ("delve", "exile cards to delve"),
+}
+
 #: How many picks of one size `Game._ask_pay_generic` tries once it is picking
 #: for the player, so a board of thirty creatures is not searched exhaustively.
 MAX_PAY_GENERIC_PICKS = 256
@@ -372,6 +384,7 @@ class Game:
         # what the arriving permanent is and riot asks about a creature.
         yield from offer_riot_choice(state, oid, pid)
         yield from offer_read_ahead(state, oid, pid)
+        yield from offer_as_enters_effects(state, oid, pid)
         # Where the land was played from -- "whenever you play a card **from
         # exile**" (Klaw, Master of Sound). Read before the move, which is the
         # last moment the object still says.
@@ -453,9 +466,43 @@ class Game:
         # A promised cast declares the promised list (601.2b, then 601.2c):
         # legality enumerated this line from it, and `stack._resolve_spell`
         # splits the stored refs by it.
-        specs = card.targets_for(gift_promised=action.gift_to is not None)
+        # A tiered cast declares the list of the tier it paid, for the same reason.
+        specs = card.targets_for(
+            gift_promised=action.gift_to is not None, cost_option=action.additional_choice
+        )
         if action.kicked and (swapped := kicked_targets(specs)) is not None:
             specs = swapped
+        # 601.2b before 601.2c: "as an additional cost to cast this spell, pay
+        # X life" announces X *now*, ahead of the targets, because Fire
+        # Covenant's "X damage divided as you choose among any number of target
+        # creatures" caps the targets at X (601.2d gives each at least one).
+        # Only the announcement moves; the life is paid with the other
+        # additional costs below (601.2h). A mana {X} stays where it is: its
+        # ceiling reads cost reductions that read the targets.
+        #
+        # Floored at the targets the line already carries, for the line legality
+        # offered with its targets on it (a targeting tax stops the deferral):
+        # each of those must be dealt at least one.
+        life_x: int | None = None
+        life_ceiling = life_x_ceiling(state, pid, card, action.additional_choice, action.targets)
+        if life_ceiling is not None:
+            floor = 0
+            if divided_damage(card):
+                floor = next(
+                    (
+                        v
+                        for v in range(life_ceiling + 1)
+                        if fits_division(state, pid, oid, card, specs, action.targets, x=v)
+                    ),
+                    life_ceiling,
+                )
+            life_x = yield from ask_x(
+                EffectContext(state=state, controller=pid, source_oid=oid, source_name=card.name),
+                f"Choose X for {card.name}",
+                life_ceiling,
+                pid,
+                min_x=floor,
+            )
         deferred = (
             None
             if action.overloaded or action.bestowed or action.mutated
@@ -464,7 +511,7 @@ class Game:
         late_refs: tuple[TargetRef, ...] = ()
         if deferred is not None:
             late_refs = yield from self._ask_deferred_targets(
-                pid, card, oid, deferred, action.targets
+                pid, card, oid, deferred, action.targets, x=life_x or 0
             )
         targets = tuple(action.targets) + late_refs
 
@@ -474,7 +521,23 @@ class Game:
         # The targets the action actually carries, so a discount that reads
         # them charges the number legality offered -- `_priced_tuples` priced
         # this very tuple.
-        extra -= cost_reduction(state, pid, card, targets)
+        # ``obj.zone`` is still the zone the card is cast from: `push_spell`
+        # has not moved it yet, so a graveyard-only discount reads flashback.
+        extra -= cost_reduction(state, pid, card, targets, zone=obj.zone)
+        # "Spells you cast this way cost {2} less" (Urianger Augurelt): the
+        # discount the permission this line casts under carries, decided from
+        # the same lane flags `_cast_variant` priced it with.
+        extra -= permission_cost_reduction(
+            state,
+            pid,
+            oid,
+            flashback=action.flashback,
+            foretold=action.foretold,
+            from_library_top=action.from_library_top,
+            prepared=action.prepared,
+            second_face=action.second_face,
+            fused=action.fused,
+        )
 
         # Kicker is an additional cost, paid at the same time as the mana cost
         # and not separable from it: there is no state in which the spell is on
@@ -655,19 +718,18 @@ class Game:
         # that pip out of `cost`. Before X, because X's ceiling is what the
         # mana has left once this is spent.
         convoked: list[int] = []
+        currencies = pay_generic_currencies(state, pid, card)
         if (
-            card.pay_generic_with is not None
+            currencies
             and obj.zone is Zone.HAND
             and not action.cast_free
             and not action.from_library_top
             and not action.granted_cost
         ):
-            cost, spent, picked = yield from self._ask_pay_generic(
-                pid, card, oid, cost, extra, action.pay_generic
+            cost, spent, convoked = yield from self._ask_pay_generic(
+                pid, card, oid, currencies, cost, extra, action.pay_generic
             )
             extra -= spent
-            if card.pay_generic_with == "tap_creatures":
-                convoked = picked
 
         # How big is X? Asked here rather than settled in legality, because the
         # answer is the player's: the action carries X = 0 and this is where it
@@ -684,6 +746,11 @@ class Game:
         x = yield from self._ask_x(
             pid, card.name, cost, extra, spell_purpose(card), min_x=min_x or 0
         )
+        # The one X a spell has is the one the player announced, whichever half
+        # of the cost it belongs to: `_ask_x` returned 0 for a card whose X is
+        # its life payment, and the loader refuses a card with both.
+        if life_x is not None:
+            x = life_x
 
         # Which mode, also before paying (rule 601.2b). Recorded on the stack
         # item so `op_choose_mode` finds it already answered on resolution.
@@ -710,7 +777,7 @@ class Game:
         # 601.2d: "deals 4 damage divided as you choose" is divided now, over
         # the targets just declared and before the cost is paid.
         division = yield from self._ask_damage_division(
-            pid, card, oid, modes, targets + x_refs + mode_refs
+            pid, card, oid, modes, targets + x_refs + mode_refs, x=x
         )
 
         ok = yield from pay(
@@ -786,6 +853,13 @@ class Game:
             ok = yield from pay(state, pid, card.alternative_cost.without_mana(), oid)
             if not ok:  # pragma: no cover - legality already proved payability
                 return
+        # The evoke cost's own non-mana half -- "Evoke--Exile a green card from
+        # your hand" -- charged the same way at the same moment, and priced by
+        # legality through the same `can_pay` with the same source.
+        if action.evoked and card.evoke is not None and card.evoke_payment is not None:
+            ok = yield from pay(state, pid, card.evoke_payment, oid)
+            if not ok:  # pragma: no cover - legality already proved payability
+                return
 
         # Rule 601.2g: additional costs are paid after the mana. Sacrificing
         # here rather than before means a creature that taps for mana can still
@@ -802,22 +876,14 @@ class Game:
         # player was offered. Legality prices the line through the same helper,
         # so the price shown and the price taken cannot disagree.
         additional = chosen_additional(card, action.additional_choice)
-        if additional is not None and additional.pay_life_x:
+        if additional is not None and additional.pay_life_x and life_x is not None:
             # "As an additional cost to cast this spell, pay X life" -- Toxic
-            # Deluge. 601.2b puts the announcement here, with the rest of the
-            # costs, and 118.4 lets a player pay life down to exactly 0, so the
-            # ceiling is the whole life total. `x` is then carried on the stack
-            # item, which is how the sweep reads `{"x": true}` on resolution.
-            ctx = EffectContext(state=state, controller=pid, source_oid=oid)
-            # Reassigns `x`, which is 0 for these cards: `_ask_x` above returns
-            # early unless the *mana* cost has an {X}, and Toxic Deluge's is
-            # {2}{B}. The one X a spell has is the one the player announced,
-            # whichever half of the cost it belongs to, and `push_spell` carries
-            # it below.
-            x = yield from ask_x(
-                ctx, f"Choose X for {card.name}", state.players[pid].life, pid
-            )
-            yield from pay(state, pid, Cost(pay_life=x), oid)
+            # Deluge. X was announced at the top of the cast (601.2b, before the
+            # targets), up to the whole life total (118.4); this is the payment
+            # (601.2h), with the rest of the additional costs. `x` rides on the
+            # stack item, which is how the sweep reads `{"x": true}` on
+            # resolution.
+            yield from pay(state, pid, Cost(pay_life=life_x), oid)
         if action.additional_times and additional is not None:
             for _ in range(action.additional_times):
                 ok = yield from pay(state, pid, additional.without_mana(), oid)
@@ -832,6 +898,9 @@ class Game:
         if from_command:
             player = state.players[obj.owner]
             player.commander_tax[oid] = player.commander_tax.get(oid, 0) + 1
+            # The tally is a static's input (`commander_casts_this_game`,
+            # Commander's Insignia), and `chars` caches per `char_version`.
+            state.bump_chars()
 
         # Splice (702.47a): "as you cast an Arcane spell, you may reveal this
         # card from your hand and pay its splice cost". Offered here, after the
@@ -963,7 +1032,7 @@ class Game:
         )
         if division:
             item.bindings["distribution"] = division
-        if card.pay_generic_with == "tap_creatures":
+        if "tap_creatures" in currencies:
             # 702.51c: "a creature that convoked it" is one tapped to pay for
             # it, and only this cast knows which. Read by the `convoked`
             # selector key as the spell resolves; `zones.move_object` strikes
@@ -1006,6 +1075,15 @@ class Game:
             # consumer -- `_bound_oids` cannot tell them apart, since both are
             # `int`. Ordinary selector keys narrow it the rest of the way.
             spell_targets=[ref.id for ref in item.targets if ref.kind == "object"],
+            # "Whenever you cast a spell **with one or more targets**, draw
+            # **that many** cards" (Voracious Bibliophile). Every target the
+            # spell was cast with, of every kind -- objects, players, spells --
+            # counted once per target instance (115.3): a player chosen for two
+            # different "target" words is two targets. A number rather than a
+            # second list, so nothing has to tell seat numbers from oids.
+            # Frozen here, so the count is the cast's even after the spell has
+            # left the stack; `targets_of_spell` is the live question.
+            spell_target_count=len(item.targets),
         )
 
     def _activate(self, pid: int, action: Action) -> Generator[Any, list[int]]:
@@ -1065,6 +1143,17 @@ class Game:
                 ceiling,
                 pid,
                 loyalty_cost=True,
+            )
+        elif ability.cost is not None and ability.cost.discard_x:
+            # "Discard X cards" (Gix, Yawgmoth Praetor): announced now, before
+            # the cost is paid (601.2b), and bounded by the cards the cost may
+            # take -- `costs.pay` discards exactly this many and the stack item
+            # carries it to the effects that read X.
+            x = yield from ask_x(
+                EffectContext(state=state, controller=pid, source_oid=oid),
+                f"Choose X for {card.name}",
+                discard_x_ceiling(state, pid, ability.cost, oid),
+                pid,
             )
         elif ability.cost is not None and ability.cost.mana.x_count:
             # The tapped source cannot help pay for itself, so the ceiling has
@@ -1145,6 +1234,22 @@ class Game:
         # cost is paid, because a cost that moves the source resets it.
         if (chosen := state.objects[oid].chosen_type) is not None:
             bindings[ACTIVATION_CHOSEN_TYPE] = chosen
+        # "The first activated ability you activate during your turn **that
+        # targets a creature you control**" (Professor Hojo): what this
+        # activation is aimed at, read now -- a cost may sacrifice the very
+        # creature it targets -- and filed only once the cost is paid, so the
+        # pricing below never sees this activation as its own predecessor.
+        aimed = tuple(
+            (
+                target.controller,
+                frozenset(chars(state, target.oid).types),
+                frozenset(chars(state, target.oid).subtypes),
+            )
+            for ref in action.targets
+            if ref.kind == "object"
+            and (target := state.objects.get(ref.id)) is not None
+            and target.zone is Zone.BATTLEFIELD
+        )
         ok = yield from pay(
             state,
             pid,
@@ -1161,6 +1266,9 @@ class Game:
         )
         if not ok:  # pragma: no cover
             return
+        state.turn_ledger.targeted_activations.setdefault(pid, []).append(
+            (bool(getattr(ability, "is_equip", False)), aimed)
+        )
 
         stack.push_activated_ability(
             state,
@@ -1248,7 +1356,7 @@ class Game:
         return out
 
     def _ask_damage_division(
-        self, pid: int, card, oid: int, modes, targets
+        self, pid: int, card, oid: int, modes, targets, *, x: int = 0
     ) -> Generator[Any, list[int], dict[str, list[list[int]]]]:
         """Divide each divided damage effect's amount among its declared targets.
 
@@ -1274,7 +1382,7 @@ class Game:
             oids = [r.id for r in declared.get(target_id, ()) if r.kind == "object"]
             if not oids:
                 continue
-            total = division_amount(state, pid, oid, effect)
+            total = division_amount(state, pid, oid, effect, x=x)
             out[target_id] = yield from _divide(
                 ctx,
                 pid,
@@ -1286,14 +1394,27 @@ class Game:
         return out
 
     def _ask_pay_generic(
-        self, pid: int, card, oid: int, cost: ManaCost, extra: int, fewest: int
+        self,
+        pid: int,
+        card,
+        oid: int,
+        currencies: frozenset[str],
+        cost: ManaCost,
+        extra: int,
+        fewest: int,
     ) -> Generator[Any, list[int], tuple[ManaCost, int, list[int]]]:
         """Convoke, improvise and delve: ask what taps, or which cards go, and spend them.
 
         Between ``fewest`` -- what legality found the mana could not cover, the
         floor the line was offered at -- and the most the cost can absorb.
         Returns the cost left to pay with mana, how many of the picked paid
-        for {1} (netted into ``extra`` by the caller), and the picked objects.
+        for {1} (netted into ``extra`` by the caller), and the creatures that
+        convoked (702.51c).
+
+        ``currencies`` is every keyword the spell has (`casting.pay_generic_currencies`),
+        printed or granted, and they are spent in one pick: a convoke spell
+        under Inspiring Statuary is offered its creatures and artifacts
+        together, as the rules let one cast use both.
 
         Convoked creatures and improvised artifacts are tapped *here*, before
         any mana is paid, so the payment below cannot also tap one of them for
@@ -1309,12 +1430,8 @@ class Game:
         the way the mana solver picks which land pays which pip.
         """
         state = self.state
-        taps = card.pay_generic_with in PAY_GENERIC_TAP_TYPES
-        convokes = card.pay_generic_with == "tap_creatures"
-        if taps:
-            pool = pay_generic_tappers(state, pid, card)
-        else:
-            pool = [other for other in state.players[pid].graveyard if other != oid]
+        convokes = "tap_creatures" in currencies
+        pool = pay_generic_pool(state, pid, oid, currencies)
         room = max(0, cost.generic + extra)
         payable_symbols = room + (convoke_pips(cost) if convokes else 0)
         most = min(payable_symbols, len(pool))
@@ -1325,16 +1442,17 @@ class Game:
 
         def price(picked: list[int]) -> tuple[ManaCost, int] | None:
             """What the rest costs once ``picked`` are spent, or ``None`` if unpayable."""
-            if not taps:
-                return cost, len(picked)
+            tapped = [o for o in picked if state.objects[o].zone is Zone.BATTLEFIELD]
             if convokes:
                 splits = convoke_payments(
-                    cost, [convoke_colors(state, other) for other in picked], room
+                    cost, [pay_generic_colors(state, o, currencies) for o in picked], room
                 )
             else:
                 splits = [(cost, len(picked))] if len(picked) <= room else []
+            if not tapped:
+                return splits[0] if splits else None
             # Tapped for the question only, with no event: nothing has happened yet.
-            for other in picked:
+            for other in tapped:
                 state.objects[other].tapped = True
             state.bump_chars()
             try:
@@ -1345,15 +1463,15 @@ class Game:
                         return left, generic
                 return None
             finally:
-                for other in picked:
+                for other in tapped:
                     state.objects[other].tapped = False
                 state.bump_chars()
 
         ctx = EffectContext(state=state, controller=pid, source_oid=oid)
-        purpose_tag, verb = {
-            "tap_creatures": ("convoke", "Tap creatures to convoke"),
-            "tap_artifacts": ("improvise", "Tap artifacts to improvise"),
-        }.get(card.pay_generic_with, ("delve", "Exile cards to delve"))
+        spoken = [PAY_GENERIC_WORDS[c] for c in PAY_GENERIC_WORDS if c in currencies]
+        purpose_tag = "+".join(tag for tag, _verb in spoken)
+        verb = " or ".join(verb for _tag, verb in spoken)
+        verb = verb[0].upper() + verb[1:]
         floor = f"at least {fewest}, " if fewest else ""
         prompt = f"{verb} for {card.name} ({floor}up to {most})"
         picked: list[int] = []
@@ -1387,13 +1505,20 @@ class Game:
             if paid is None:  # pragma: no cover - legality proved some pick pays
                 paid = (cost, min(len(picked), room))
 
+        convoked = [
+            other
+            for other in picked
+            if convokes
+            and state.objects[other].zone is Zone.BATTLEFIELD
+            and "Creature" in chars(state, other).types
+        ]
         for other in picked:
-            if taps:
+            if state.objects[other].zone is Zone.BATTLEFIELD:
                 tap_permanent(state, other)
             else:
                 exile_object(state, other, cause="cost")
         left, generic = paid
-        return left, generic, list(picked)
+        return left, generic, convoked
 
     def _ask_x(
         self,
@@ -1651,18 +1776,34 @@ class Game:
                     (describe_ref(state, ref), ref)
                     for ref in candidates(state, pid, spec, oid)
                 ]
-                # An int by construction: `loader.targets._check_mode_targets` refuses a
-                # caster-chosen or computed size on a mode-owned spec, because
-                # `filter_legal` splits the stored refs by position.
-                want = int(target_count(state, pid, spec, oid))
+                count = target_count(state, pid, spec, oid)
+                if spec.variable_size:
+                    # "Return one or two target permanent cards" (Yuna's
+                    # Decision) -- a size the caster picks, from `min_count`
+                    # through the printed ceiling. `loader.targets._check_mode_targets`
+                    # admits only a printed size (a literal or "any"), and only
+                    # where the spec ends every declaration, so however many
+                    # refs it stores, `filter_legal` hands them all to it.
+                    ceiling = (
+                        len(options) if count == "any" else min(int(count), len(options))
+                    )
+                    floor = 0 if spec.optional else min(spec.min_count, ceiling)
+                else:
+                    # An int by construction: the loader refuses a computed
+                    # size on a mode-owned spec. "Up to one target" --
+                    # `optional` -- is declinable whether or not there is
+                    # something to point at, and the same last-declared rule
+                    # makes storing no ref for it shift nothing.
+                    ceiling = int(count)
+                    floor = 0 if spec.optional else ceiling
                 chosen = yield from ask_targets(
-                    ctx, f"Target for {card.name}", options, want, want, pid
+                    ctx, f"Target for {card.name}", options, floor, ceiling, pid
                 )
                 out.extend(chosen)
         return tuple(out)
 
     def _ask_deferred_targets(
-        self, pid: int, card, oid: int, spec, chosen
+        self, pid: int, card, oid: int, spec, chosen, *, x: int = 0
     ) -> Generator[Any, list[int], tuple[TargetRef, ...]]:
         """Declare a variable-size spec's refs as one set -- "any number of targets".
 
@@ -1671,8 +1812,9 @@ class Game:
         of a board are too many to offer as lines. `casting.deferred_target_spec`
         has the argument and says which spec.
 
-        Any size from zero to the ceiling, the two readings that reach here both
-        including zero. ``chosen`` is the refs the line already carries for the
+        Any size from the spec's floor to the ceiling: zero for "any number" and
+        "up to N", ``min_count`` for "one, two, or three" -- legality offered the
+        line only while that floor could be met. ``chosen`` is the refs the line already carries for the
         specs before this one, struck off for the reason
         `enumerate_target_tuples` drops a tuple that reuses an object: one
         object cannot fill two targets of one spell.
@@ -1689,11 +1831,12 @@ class Game:
         ceiling = len(options) if count == "any" else min(int(count), len(options))
         # Divided damage gives every target at least one (601.2d), so there are
         # never more targets than damage -- see `engine.division`.
-        cap = division_caps(state, pid, oid, card).get(spec.id)
+        # ``x`` is a `pay_life_x` X, announced before this pick (Fire Covenant).
+        cap = division_caps(state, pid, oid, card, x=x).get(spec.id)
         if cap is not None:
             ceiling = min(ceiling, cap)
         picked = yield from ask_targets(
-            ctx, f"Targets for {card.name}", options, 0, ceiling, pid
+            ctx, f"Targets for {card.name}", options, min(spec.min_count, ceiling), ceiling, pid
         )
         return tuple(picked)
 
@@ -1832,6 +1975,7 @@ class Game:
             pid,
             action.mana_option or 0,
             source_traits=traits,
+            ability=ability,
         )
 
     def _pass_priority(self) -> None:

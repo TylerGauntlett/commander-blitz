@@ -35,6 +35,10 @@ from .values import evaluate_value
 #: lock may run on. ``grant_keyword`` adds ``permanent`` (riot) to these.
 TIMED_DURATIONS = ("until_end_of_turn", "until_your_next_turn")
 
+#: "…for as long as you control <this>" (611.2b), which `grant_keyword` and
+#: `pump` take beside the timed clocks. Not a clock: see `source_bound_seat`.
+SOURCE_BOUND = "as_long_as_you_control_source"
+
 
 def until_player_of(ctx: EffectContext, spec: Mapping[str, Any]) -> int | None:
     """The seat whose next turn ends this effect, or ``None`` for cleanup.
@@ -46,9 +50,30 @@ def until_player_of(ctx: EffectContext, spec: Mapping[str, Any]) -> int | None:
     duration = str(spec.get("duration", "until_end_of_turn"))
     if duration == "until_your_next_turn":
         return ctx.controller
-    if duration not in (*TIMED_DURATIONS, "permanent"):  # pragma: no cover - loader guards
+    if duration not in (*TIMED_DURATIONS, "permanent", SOURCE_BOUND):  # pragma: no cover - loader guards
         raise ValueError(f"unknown duration {duration!r}")
     return None
+
+
+def source_bound_seat(ctx: EffectContext, spec: Mapping[str, Any]) -> tuple[bool, int | None]:
+    """``(applies, while_controller)`` for a ``SOURCE_BOUND`` duration.
+
+    "…gains indestructible for as long as you control Thancred Waters." The
+    seat is the effect's controller -- "you" -- and the entry it is written
+    onto ends when the source leaves the battlefield or changes hands
+    (`temp_effects.end_source_bound`). 611.2b's other half is read here: "if
+    you don't control [it] when the effect would begin, it does nothing", so
+    a source that has already left, or been stolen, before the trigger resolves
+    answers ``applies`` false and the op writes nothing -- it must not fall
+    back to an until-end-of-turn grant. Every other duration applies and
+    carries no seat.
+    """
+    if str(spec.get("duration", "")) != SOURCE_BOUND:
+        return True, None
+    source = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
+    if source is None or not source.on_battlefield or source.controller != ctx.controller:
+        return False, None
+    return True, ctx.controller
 
 
 @register("add_subtype")
@@ -275,9 +300,20 @@ def op_pump(ctx: EffectContext, spec: Mapping[str, Any]):
     power = evaluate_value(ctx, spec.get("power", 0))
     toughness = evaluate_value(ctx, spec.get("toughness", 0))
     until_player = until_player_of(ctx, spec)
+    applies, while_controller = source_bound_seat(ctx, spec)
+    if not applies:
+        return
     oids = yield from choose_objects(ctx, spec.get("objects"), "Pump")
     for oid in oids:
-        pump(ctx.state, oid, power, toughness, source=ctx.source_oid, until_player=until_player)
+        pump(
+            ctx.state,
+            oid,
+            power,
+            toughness,
+            source=ctx.source_oid,
+            until_player=until_player,
+            while_controller=while_controller,
+        )
 
 
 @register("grant_keyword")
@@ -289,11 +325,18 @@ def op_grant_keyword(ctx: EffectContext, spec: Mapping[str, Any]):
     would let the creature attack the turn it arrived and be indistinguishable
     from the counter mode ever after, which is not a smaller version of the
     card, it is the wrong one half the time.
+
+    ``duration: "as_long_as_you_control_source"`` is Thancred Waters' "…gains
+    indestructible for as long as you control Thancred Waters": no clock, and
+    it ends the moment the source leaves or changes hands (`source_bound_seat`).
     """
     keywords = spec.get("keywords") or ([spec["keyword"]] if "keyword" in spec else [])
     permanent = str(spec.get("duration", "until_end_of_turn")) == "permanent"
     # "…and gain lifelink **until your next turn**" -- Sorin, Solemn Visitor.
     until_player = until_player_of(ctx, spec)
+    applies, while_controller = source_bound_seat(ctx, spec)
+    if not applies:
+        return
     oids = yield from choose_objects(ctx, spec.get("objects"), "Grant")
     for oid in oids:
         for keyword in keywords:
@@ -304,6 +347,7 @@ def op_grant_keyword(ctx: EffectContext, spec: Mapping[str, Any]):
                 source=ctx.source_oid,
                 permanent=permanent,
                 until_player=until_player,
+                while_controller=while_controller,
             )
 
 
@@ -425,6 +469,13 @@ def op_animate(ctx: EffectContext, spec: Mapping[str, Any]):
     permanent's power happens to be right now.  An animation names the base
     value, so counters and anthems add to it instead of being cancelled by it.
     """
+    # "Target creature becomes a Treasure artifact ... and loses all other card
+    # types" (Vraska, Betrayal's Sting) names no size and no colour: a
+    # non-creature animation may leave out `power`/`toughness` (the loader
+    # allows it only then), and `keep_colors` on an exact one leaves the
+    # colours as they are.
+    keep_pt = "power" not in spec and "toughness" not in spec
+    keep_colors = bool(spec.get("keep_colors", False))
     power = evaluate_value(ctx, spec.get("power", 0))
     toughness = evaluate_value(ctx, spec.get("toughness", 0))
     types = [str(t) for t in spec.get("types", ("Creature",))]
@@ -465,6 +516,8 @@ def op_animate(ctx: EffectContext, spec: Mapping[str, Any]):
             permanent=permanent,
             exact=exact,
             until_player=until_player,
+            keep_colors=keep_colors,
+            keep_pt=keep_pt,
         )
         for keyword in keywords:
             grant_keyword(

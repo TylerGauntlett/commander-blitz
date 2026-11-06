@@ -60,6 +60,11 @@ class TestTheBranches:
         assert game.state.players[0].life == 38
         assert [e.data["won"] for e in flips(events)] == [False]
 
+    def test_a_bare_flip_is_still_flipped(self, builder):
+        game, events = flip(builder, seed=seed_that(True), spec={"op": "flip_coin"})
+        assert game.state.players[0].life == 40
+        assert [e.data["won"] for e in flips(events)] == [True]
+
     def test_a_loss_with_no_else_does_nothing(self, builder):
         game, events = flip(builder, seed=seed_that(False), spec={"effects": WIN})
         assert game.state.players[0].life == 40
@@ -90,9 +95,9 @@ class TestTheLoader:
         )
         return compile_card(model)
 
-    def test_a_flip_with_no_branch_is_refused(self):
-        with pytest.raises(DslError, match="flip_coin needs 'effects'"):
-            self._compile({})
+    def test_a_bare_flip_loads(self):
+        """Setzer's "flip a coin": no branch, read by a `wins_coin_flip` trigger."""
+        self._compile({})
 
     def test_a_branch_must_be_a_list(self):
         with pytest.raises(DslError, match="a list of effects"):

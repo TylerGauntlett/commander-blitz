@@ -69,6 +69,7 @@ class TargetSpec:
     id: str
     kind: str  # "permanent" | "player" | "spell" | "card_in_graveyard"
     #        | "card_in_exile" | "any" | "spell_or_permanent" | "ability_on_stack"
+    #        | "spell_permanent_or_graveyard_card"
     selector: Mapping[str, Any] = field(default_factory=dict)
     #: A ``"spell_or_permanent"`` spec's selector for its **permanent** half,
     #: when the printed word narrows only that half -- "target spell or
@@ -106,12 +107,24 @@ class TargetSpec:
     #: nothing in the engine reads the field itself -- it records the printed
     #: clause the way `mode` records which bullet owns a spec.
     gift_promised: bool | None = None
+    #: The index of the **tier** that declares this spec -- which of the card's
+    #: `additional_cost_options` the cast paid -- or ``None`` for every tier.
+    #: Split by the loader into :attr:`CardDef.cost_option_targets`, the way
+    #: :attr:`gift_promised` is split into :attr:`CardDef.gift_targets`, so the
+    #: engine never reads the field itself.
+    cost_option: int | None = None
     #: "Return **up to X** target creature cards from your graveyard." The
     #: ``count`` is a *ceiling* rather than an exact number, so every size from
     #: zero through it is a legal choice. `optional` cannot say it -- that is
     #: "exactly N, or none", which forbids every size between 1 and N-1 -- and
     #: ``"any"`` cannot either, because it has no ceiling at all.
     up_to: bool = False
+    #: The **floor** beside an `up_to` ceiling -- "one, two, or three target
+    #: creature cards" (Aberrant Return) is ``min_count: 1`` with ``count: 3``.
+    #: Every size from the floor through the ceiling is legal and none below
+    #: it, so with fewer than ``min_count`` legal targets the spell cannot be
+    #: cast at all (601.2c). ``0`` is plain "up to N".
+    min_count: int = 0
     #: At most one chosen object per controller -- "for each player, up to one
     #: target permanent that player controls". Only meaningful with
     #: ``count == "any"``.
@@ -153,6 +166,22 @@ class TargetSpec:
         if self.permanent_selector is not None:
             return self.permanent_selector
         return self.selector
+
+    @property
+    def graveyard_half(self) -> Mapping[str, Any]:
+        """The selector a ``"spell_permanent_or_graveyard_card"`` spec's
+        graveyard half reads: `selector` in the graveyard zone.
+
+        "Card in **a** graveyard" is every graveyard at the table, and a zone
+        walk with no ``controller`` reads only the caster's
+        (`selectors._zone_owners`), so ``controller: "any"`` is supplied unless
+        the card named whose. Shared by `candidates` and `still_legal`, like
+        `permanent_half`.
+        """
+        half = {**dict(self.selector), "zone": "graveyard"}
+        if not {"controller", "owner", "player"} & set(half):
+            half["controller"] = "any"
+        return half
 
     @property
     def variable_size(self) -> bool:
@@ -345,6 +374,13 @@ class Cost:
     #: ``remove_counters``, and not the `add_counters` op, which would move the
     #: payment to resolution.
     put_counters: Mapping[str, Any] | None = None
+    #: "**Blight N**" (Lorwyn Eclipsed): the *payer* puts N -1/-1 counters on
+    #: a creature they control, chosen as the cost is paid -- Burning
+    #: Curiosity's optional additional cost, Auntie Ool's "Ward--Blight 2". Not
+    #: ``put_counters``, which has no choice to make and goes on the source.
+    #: Payable only while the payer controls a creature that can take the
+    #: counters; see `costs._blight_pool`.
+    blight: int = 0
     #: A loyalty cost (606.2), signed. `None` rather than `0` for "no loyalty
     #: cost", because `0:` is a real and different thing -- a printed zero
     #: ability still counts as the one loyalty ability that turn.
@@ -355,6 +391,16 @@ class Cost:
     #: ``loyalty is not None`` -- sees one; `costs.can_pay` and `costs.pay` read
     #: the announced ``x`` for the amount.
     loyalty_x: bool = False
+    #: "{4}{B}{B}{B}, **Discard X cards**: ..." -- Gix, Yawgmoth Praetor. The
+    #: controller announces X as the ability is activated (601.2b, 107.3),
+    #: bounded by the cards in hand the cost may take (`discard_selector`
+    #: narrows them, the source is never among them), and discards exactly
+    #: that many as the cost; the ability's effects read the number back with
+    #: ``{"x": true}``. `costs.can_pay` and `costs.pay` read the announced
+    #: ``x``, the way they read it for ``loyalty_x``. A flag beside ``discard``
+    #: rather than a spelling of it, because ``discard`` is a number the card
+    #: fixes and this one is the player's.
+    discard_x: bool = False
     exile_from_graveyard: Mapping[str, Any] | None = None
     #: How much less **this cost node** costs -- `{"count": filter}`,
     #: `{"total_power": filter}` or a flat `{"amount": N}`, any of them optionally
@@ -420,6 +466,7 @@ class Cost:
                 dict(spec["discard_selector"]) if spec.get("discard_selector") else None
             ),
             discard_self=bool(spec.get("discard_self", False)),
+            discard_x=bool(spec.get("discard_x")),
             pay_life=(
                 dict(spec["pay_life"])
                 if isinstance(spec.get("pay_life"), Mapping)
@@ -431,6 +478,7 @@ class Cost:
             put_counters=(
                 dict(spec["put_counters"]) if spec.get("put_counters") else None
             ),
+            blight=int(spec.get("blight", 0) or 0),
             # `is not None`, not truthiness: `0:` is a printed loyalty cost and
             # a falsy one, and reading it as "no loyalty cost" would make a zero
             # ability free to use twice in a turn.
@@ -497,6 +545,7 @@ class Cost:
             and self.untap_permanents is None
             and self.remove_counters_from_among is None
             and self.discard == 0
+            and not self.discard_x
             and not self.discard_self
             # Without this the payment solver would treat Millikin as a plain
             # tap-for-mana source and take the {C} without ever milling.
@@ -517,6 +566,7 @@ class Cost:
             and not self.pay_energy
             and self.remove_counters is None
             and self.put_counters is None
+            and not self.blight
             and self.loyalty is None
             and self.exile_from_graveyard is None
         )
@@ -545,6 +595,8 @@ class Cost:
             parts.append(f"Mill {self.mill}")
         if self.discard:
             parts.append(f"Discard {self.discard}")
+        if self.discard_x:
+            parts.append("Discard X")
         if self.discard_self:
             parts.append("Discard this card")
         if self.exile_self:
@@ -568,6 +620,8 @@ class Cost:
             amount = self.put_counters.get("amount", 1)
             kind = self.put_counters.get("counter", "")
             parts.append(f"Put {amount} {kind} counter{'s' if amount != 1 else ''} on this")
+        if self.blight:
+            parts.append(f"Blight {self.blight}")
         if self.remove_counters_from_among:
             count = self.remove_counters_from_among.get("count", 1)
             parts.append(f"Remove {count} counters from among permanents")
@@ -636,7 +690,8 @@ class TriggerSpec:
     #: ``becomes_target`` only: "becomes the target of **a spell**" (Goldspan
     #: Dragon), as against ward's "a spell or ability", which is the unclaused
     #: form.  ``"spell"`` fires on spells alone, ``"ability"`` on abilities
-    #: alone, and ``None`` on both.
+    #: alone, ``"activated_ability"`` on activated abilities alone (read off
+    #: the event's ``ability_kind``, Professor Hojo), and ``None`` on both.
     #:
     #: A restriction rather than a ``filter`` or a ``condition``, because
     #: neither can reach it.  ``filter`` is matched against the trigger's
@@ -976,6 +1031,14 @@ class Ability:
     #: the colour named on entry, and would decouple the mana line from the
     #: anthem line that reads the same choice.
     mana_chosen_color: bool = False
+    #: "{T}: Add {R} **or** one mana of the chosen color" -- the Thriving lands.
+    #: The fixed options offered beside the chosen colour, in printed order, on
+    #: a `mana_chosen_color` ability written as a `choose_mode` of fixed
+    #: `add_mana`s and one `{"chosen_color_of": "self"}` mode. Empty on the plain
+    #: Heraldic Banner form. `costs.mana_options_of` offers these always, then
+    #: the chosen colour once one is named; they are printed symbols, so they
+    #: count towards colour identity where the superset does not.
+    mana_chosen_color_fixed: tuple[tuple[int, ...], ...] = ()
     #: "Spend this mana only to cast a creature spell of the chosen type or
     #: activate an ability of a creature source of the chosen type."  ``None`` is
     #: ordinary mana.  See :class:`~commanderblitz.engine.mana.ManaRestriction` for the
@@ -1032,6 +1095,15 @@ class Ability:
     activate_steps: tuple[str, ...] = ()
     #: Forecast: "only once each turn", counted per (object, ability index).
     once_each_turn: bool = False
+    #: Who may activate this ability (602.1, 602.2): ``"you"`` -- the
+    #: permanent's controller, the default for every activated ability --
+    #: ``"opponent"`` ("Only your opponents may activate this ability",
+    #: Oft-Nabbed Goat) or ``"any"`` ("Any player may activate this ability").
+    #: Relative to the controller *now*, so a Goat that changed hands is
+    #: activated by its new controller's opponents. The activating player pays
+    #: the cost and controls the ability on the stack (602.2), which
+    #: `Game._activate` already does for whoever acts.
+    activated_by: str = "you"
     #: A station symbol (721): ``(counter kind, N)`` -- this permanent has the
     #: ability only while it has N or more of that counter. Read by
     #: `characteristics.abilities_of`, which leaves the ability out below N, so
@@ -1196,7 +1268,21 @@ class CardDef:
     #: `stack._resolve_spell`, which must agree on the list or the stored refs
     #: are split into the wrong buckets.
     gift_targets: tuple[TargetSpec, ...] | None = None
+    #: The card-level specs a cast declares when it paid one **tier** -- one of
+    #: `additional_cost_options` -- keyed by that option's index, for the
+    #: options whose list differs from :attr:`targets`. Tiered (702.183) makes
+    #: the tier an additional cost chosen at 601.2b, so Cloud's Limit Break's
+    #: Cross-Slash declares one tapped creature, Blade Beam any number with
+    #: different controllers and Omnislash none. Empty for every other card.
+    #: Read through :meth:`targets_for`, by the same callers as
+    #: :attr:`gift_targets` and for the same reason.
+    cost_option_targets: Mapping[int, tuple[TargetSpec, ...]] = field(default_factory=dict)
     spell_effects: tuple[Mapping[str, Any], ...] = ()
+    #: "…as you cast this spell": named value expressions `stack.push_spell`
+    #: evaluates once, as the spell goes on the stack, and writes into the
+    #: stack item's `bindings`, where `spell_effects` read them back with
+    #: ``{"binding": name}``. Empty for every card that prints no such clause.
+    as_cast: Mapping[str, Any] = field(default_factory=dict)
     replacements: tuple[Mapping[str, Any], ...] = ()
     #: Starting loyalty. Kept as a characteristic as well as compiled into a
     #: replacement, because the client shows it on the card in hand where no
@@ -1311,8 +1397,9 @@ class CardDef:
     #: Approach of the Second Sun's "seventh from the top". The eighth rider
     #: on the resolution slot, and the only one whose destination is a library
     #: and whose value is a depth rather than a flag. The printed ordinal,
-    #: counting from 1, or ``"bottom"`` for "on the bottom of its owner's
-    #: library" (Ultimate Nullification).
+    #: counting from 1, ``"bottom"`` for "on the bottom of its owner's
+    #: library" (Ultimate Nullification), or ``"shuffle"`` for "shuffle it into
+    #: its owner's library" (Black Sun's Zenith).
     tucks_itself: int | str | None = None
     #: **Overload**. A third cast variant, and the only one that changes what
     #: the spell *targets* rather than what it costs: an overloaded spell is put
@@ -1371,7 +1458,16 @@ class CardDef:
     #: Subtractive where ``kicker`` is additive, and like it kept out of
     #: ``mana_cost`` so mana value stays what is printed: an evoked
     #: Mulldrifter is still a five-drop to anything that counts.
+    #:
+    #: The *mana* of the evoke cost, and empty rather than ``None`` on a pitch
+    #: elemental whose evoke has no mana at all: ``None`` is "no evoke".
     evoke: ManaCost | None = None
+    #: The rest of the evoke cost -- Endurance's "Exile a green card from your
+    #: hand" -- paid after the mana (601.2g) the way ``alternative_cost``'s
+    #: non-mana half is, and priced by `casting` through `can_pay` with the
+    #: spell as the source so it never pitches itself (601.2a). ``None`` when
+    #: the evoke cost is mana only.
+    evoke_payment: Cost | None = None
     #: **Bestow** (702.103a). An alternative cost like ``evoke``, and the only
     #: one that changes what the spell *targets*: "enchant creature" is fixed by
     #: the rule, so `legality.BESTOW_TARGET` supplies it and no card writes one.
@@ -1521,7 +1617,11 @@ class CardDef:
         return None if asks_another_player(spec) or is_budgeted(spec) else spec
 
     def specs_for_modes(
-        self, modes: Sequence[int], *, gift_promised: bool = False
+        self,
+        modes: Sequence[int],
+        *,
+        gift_promised: bool = False,
+        cost_option: int | None = None,
     ) -> tuple[TargetSpec, ...]:
         """The target specs a cast of this spell actually declared.
 
@@ -1534,14 +1634,18 @@ class CardDef:
         A card with no mode-owned targets returns :attr:`targets` unchanged,
         which is every card in the pool but the modal ones.
 
-        ``gift_promised`` picks the side of the promise the cast was on -- see
-        :meth:`targets_for`.
+        ``gift_promised`` picks the side of the promise the cast was on, and
+        ``cost_option`` the tier it paid -- see :meth:`targets_for`.
         """
         return _specs_for_modes(
-            self.targets_for(gift_promised=gift_promised), self.mode_targets, modes
+            self.targets_for(gift_promised=gift_promised, cost_option=cost_option),
+            self.mode_targets,
+            modes,
         )
 
-    def targets_for(self, *, gift_promised: bool) -> tuple[TargetSpec, ...]:
+    def targets_for(
+        self, *, gift_promised: bool, cost_option: int | None = None
+    ) -> tuple[TargetSpec, ...]:
         """The card-level specs a cast declares, on its side of the gift promise.
 
         601.2b announces the promise and 601.2c declares the targets after it,
@@ -1549,7 +1653,13 @@ class CardDef:
         graveyard" (Consumed by Greed) is a target only the promised cast has.
         :attr:`targets` unchanged for an unpromised cast and for every card
         with no gift-gated spec.
+
+        ``cost_option`` is the tier the cast paid (702.183): an additional cost
+        chosen at 601.2b, so the tier's own list -- :attr:`cost_option_targets`
+        -- is what 601.2c declares. The loader refuses a card with both.
         """
+        if cost_option is not None and cost_option in self.cost_option_targets:
+            return self.cost_option_targets[cost_option]
         if gift_promised and self.gift_targets is not None:
             return self.gift_targets
         return self.targets

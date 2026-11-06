@@ -5,7 +5,7 @@ area: decks
 effort: L
 impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
-depends_on: []
+depends_on: [divided-damage-on-abilities]
 status: proposed
 rank: 15
 ---
@@ -19,6 +19,21 @@ coming-soon shell on the shelf: its row `ecc_dance_of_the_elements` is in
 `python scripts/sync_precons.py --missing ecc_dance_of_the_elements` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+
+Every card on the list has been through `/author-cards` once. What is left
+is eleven cards, each with a gap record naming what it waits on: Fury on
+divided damage from a triggered ability (its own item, which this one
+depends on); Ashling, the Limitless on granting evoke to Elemental spells by a
+static; Endurance on putting cards on the bottom of a library in a random
+order; Fertile Ground on an any-colour `add_mana_on_tap`; Flamekin Village on a
+cost that reveals a card from hand, the same sentence Primal Beyond reads
+loosely today as an unconditional enters-tapped, as the shipped reveal-lands
+do; Haunting Voyage on a `foretold` condition; Impulsivity on a free cast from a
+graveyard that exiles instead; Jegantha, the Wellspring on its companion line
+(inert inside a game, 702.139a) and mana that cannot pay generic costs; Mass of
+Mysteries on myriad; Muldrotha, the Gravetide on a graveyard cast metered per
+permanent type; and Opal Palace on mana that makes a commander enter with
+counters.
 
 ## The change
 

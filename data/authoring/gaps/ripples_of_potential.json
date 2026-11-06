@@ -1,0 +1,18 @@
+{
+  "card_id": "ripples_of_potential",
+  "name": "Ripples of Potential",
+  "oracle_text": "Proliferate, then choose any number of permanents you control that had a counter put on them this way. Those permanents phase out. (To proliferate, choose any number of permanents and/or players, then give each another counter of each kind already there. Treat phased-out permanents and anything attached to them as though they don't exist until their controller's next turn.)",
+  "blocked_sentences": [
+    "Proliferate, then choose any number of permanents you control that had a counter put on them this way. Those permanents phase out"
+  ],
+  "needs": [
+    {
+      "capability": "proliferate_binding",
+      "kind": "op",
+      "what": "an `as` option on the `proliferate` op that binds the permanents which actually received a counter from that proliferate (across every repetition under replace_proliferate), so a following `choose_permanents` with objects {binding: <as>, controller: you} can pick any number of them and a `phase_out` can act on the choice",
+      "why_existing_wont_do": "`proliferate` takes no options at all (op_options is empty) and its implementation picks refs through ask_targets without recording them anywhere; no selector key (has_counters, modified, binding) or value reads 'had a counter put on them this way', and has_counters would wrongly offer every permanent you control carrying a counter, including ones you declined to proliferate"
+    }
+  ],
+  "closest_existing": ["proliferate", "choose_permanents", "phase_out"],
+  "confidence": "high"
+}

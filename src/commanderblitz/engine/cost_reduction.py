@@ -8,7 +8,7 @@ from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any
 
 from .carddef import CardDef, Cost
-from .characteristics import chars, compare_pt, enchanted_by
+from .characteristics import chars, compare_pt, enchanted_by, has_counters_matches
 from .effects.conditions import evaluate_condition
 from .effects.selectors import has_printed_cost
 from .player_statics import spell_cost_reduction, spell_mana_tax
@@ -17,7 +17,9 @@ if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
 
 
-def cost_reduction(state: GameState, pid: int, card: CardDef, targets=None) -> int:
+def cost_reduction(
+    state: GameState, pid: int, card: CardDef, targets=None, *, zone: Any = None
+) -> int:
     """How much less this card costs its controller right now.
 
     ``targets`` is what the cast actually aimed at, when it is known. A
@@ -33,13 +35,17 @@ def cost_reduction(state: GameState, pid: int, card: CardDef, targets=None) -> i
     could act on.  Read from the board rather than stored, because it changes
     every time a creature arrives -- Ghalta is a 12-drop or a 2-drop depending on
     what is already in play.
+
+    ``zone`` is the zone the card is being cast from, handed on to
+    `spell_cost_reduction` for "spells you cast from your graveyard" -- every
+    cast lane passes the object's zone as it prices the line.
     """
     # Two sources, added together, and they point in opposite directions.
     # `card.cost_reduction` is Ghalta -- "THIS spell costs {X} less", counting
     # permanents. The statics are Warden of Evos Isle -- "creature spells with
     # flying YOU CAST cost {1} less", discounting a different card, picked out
     # by that card's own printed face.
-    total = spell_cost_reduction(state, pid, card, targets)
+    total = spell_cost_reduction(state, pid, card, targets, zone=zone)
     # And the one that points the other way: Kasmina's "spells your opponents
     # cast that target a creature or planeswalker you control cost {2} more".
     # Netted in as a negative discount, so the offer and the charge price it
@@ -190,13 +196,13 @@ def variant_reduction(state: GameState, pid: int, cost: Cost | None, source_oid:
     in the wrong slot and silently ignored.
 
     Only `flashback`/`graveyard_cost` can carry one today, and that is a fact
-    about the schema rather than about this function: `evoke`, `emerge`,
-    `overload`, `bestow`, `foretell` and `mutate` are bare mana strings with no
-    node to hang a rider on, and the loader says so rather than accepting one.
+    about the schema rather than about this function: `emerge`, `overload`,
+    `bestow`, `foretell` and `mutate` are bare mana strings with no node to
+    hang a rider on, and the loader says so rather than accepting one.
 
-    `alternative_cost` is the second full `Cost` -- Force of Will's pitch needs
-    somewhere to put a payment that is not mana -- but it is deliberately *not*
-    read here. A discount belongs to the branch that priced the line, and no
+    `alternative_cost` and `evoke` may be full `Cost` nodes -- Force of Will's
+    and Endurance's pitches need somewhere to put a payment that is not mana --
+    but they are deliberately *not* read here. A discount belongs to the branch that priced the line, and no
     printed prowl or pitch cost says "costs {X} less to cast this way"; the
     loader refuses `mana_reduction` on it rather than leaving a key that loads
     and is ignored.
@@ -343,9 +349,7 @@ def _object_matches(
     # while pricing cannot depend on a static that has not run.
     if "tapped" in filt and bool(obj.tapped) != bool(filt["tapped"]):
         return False
-    if "has_counters" in filt and any(n > 0 for n in obj.counters.values()) != bool(
-        filt["has_counters"]
-    ):
+    if "has_counters" in filt and not has_counters_matches(obj, filt["has_counters"]):
         return False
     if "is_token" in filt and bool(obj.is_token) != bool(filt["is_token"]):
         return False

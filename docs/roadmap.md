@@ -54,16 +54,11 @@ each heading; this table is generated from them.
 | [Lorehold Spirit (Secrets of Strixhaven Commander)](#lorehold-spirit-secrets-of-strixhaven-commander) | L | high | Voting: will of the council and council's dilemma | 0 |
 | [Quandrix Unlimited (Secrets of Strixhaven Commander)](#quandrix-unlimited-secrets-of-strixhaven-commander) | L | high | Distributing counters from a spell | 0 |
 | [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) | L | high | nothing | 0 |
-| [Dance of the Elements (Lorwyn Eclipsed Commander)](#dance-of-the-elements-lorwyn-eclipsed-commander) | L | high | nothing | 0 |
-| [Counter Intelligence (Edge of Eternities Commander)](#counter-intelligence-edge-of-eternities-commander) | L | high | nothing | 0 |
-| [World Shaper (Edge of Eternities Commander)](#world-shaper-edge-of-eternities-commander) | L | high | nothing | 0 |
-| [Revival Trance (FINAL FANTASY VI) (Final Fantasy Commander)](#revival-trance-final-fantasy-vi-final-fantasy-commander) | S | high | nothing | 0 |
-| [Scions & Spellcraft (FINAL FANTASY XIV) (Final Fantasy Commander)](#scions--spellcraft-final-fantasy-xiv-final-fantasy-commander) | L | high | nothing | 0 |
-| [Limit Break (FINAL FANTASY VII) (Final Fantasy Commander)](#limit-break-final-fantasy-vii-final-fantasy-commander) | L | high | nothing | 0 |
-| [Counter Blitz (FINAL FANTASY X) (Final Fantasy Commander)](#counter-blitz-final-fantasy-x-final-fantasy-commander) | L | high | nothing | 0 |
-| [Jeskai Striker (Tarkir: Dragonstorm Commander)](#jeskai-striker-tarkir-dragonstorm-commander) | M | high | nothing | 0 |
-| [Mardu Surge (Tarkir: Dragonstorm Commander)](#mardu-surge-tarkir-dragonstorm-commander) | M | high | nothing | 0 |
-| [Temur Roar (Tarkir: Dragonstorm Commander)](#temur-roar-tarkir-dragonstorm-commander) | M | high | nothing | 0 |
+| [Dance of the Elements (Lorwyn Eclipsed Commander)](#dance-of-the-elements-lorwyn-eclipsed-commander) | L | high | Divided damage from a triggered or activated ability | 0 |
+| [Counter Intelligence (Edge of Eternities Commander)](#counter-intelligence-edge-of-eternities-commander) | L | high | Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number | 0 |
+| [World Shaper (Edge of Eternities Commander)](#world-shaper-edge-of-eternities-commander) | L | high | Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number | 0 |
+| [Jeskai Striker (Tarkir: Dragonstorm Commander)](#jeskai-striker-tarkir-dragonstorm-commander) | M | high | Divided damage that may hit players | 0 |
+| [Temur Roar (Tarkir: Dragonstorm Commander)](#temur-roar-tarkir-dragonstorm-commander) | M | high | Divided damage from a triggered or activated ability, Divided damage that may hit players, Voting: will of the council and council's dilemma | 0 |
 | [Abzan Armor (Tarkir: Dragonstorm Commander)](#abzan-armor-tarkir-dragonstorm-commander) | L | high | nothing | 0 |
 | [Sultai Arisen (Tarkir: Dragonstorm Commander)](#sultai-arisen-tarkir-dragonstorm-commander) | L | high | nothing | 0 |
 | [Eternal Might (Aetherdrift Commander)](#eternal-might-aetherdrift-commander) | L | high | nothing | 0 |
@@ -141,13 +136,15 @@ each heading; this table is generated from them.
 | [Gate the debug endpoint](#gate-the-debug-endpoint) | S | medium | nothing | 0 |
 | [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) | S | medium | nothing | 0 |
 | [Why a press is refused](#why-a-press-is-refused) | S | medium | nothing | 0 |
+| [Divided damage that may hit players](#divided-damage-that-may-hit-players) | M | medium | nothing | 3 |
+| [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) | M | medium | nothing | 2 |
 | [Outcomes as data](#outcomes-as-data) | M | medium | nothing | 2 |
+| [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) | M | medium | nothing | 2 |
+| [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) | M | medium | nothing | 2 |
 | [Brackets, derived from the list](#brackets-derived-from-the-list) | M | medium | nothing | 1 |
 | [CPU takeover and reconnection](#cpu-takeover-and-reconnection) | M | medium | nothing | 1 |
 | [Distributing counters from a spell](#distributing-counters-from-a-spell) | M | medium | nothing | 1 |
-| [Divided damage that may hit players](#divided-damage-that-may-hit-players) | M | medium | nothing | 1 |
 | [Replays and sharing](#replays-and-sharing) | M | medium | nothing | 1 |
-| [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) | M | medium | nothing | 1 |
 | [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) | M | medium | nothing | 0 |
 | [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) | M | medium | nothing | 0 |
 | [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) | M | medium | nothing | 0 |
@@ -166,111 +163,108 @@ same list, and `/extend-roadmap` starts at the top of it.
 **Ready now, best first:**
 
 1. [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) — L, high
-2. [Dance of the Elements (Lorwyn Eclipsed Commander)](#dance-of-the-elements-lorwyn-eclipsed-commander) — L, high
-3. [Counter Intelligence (Edge of Eternities Commander)](#counter-intelligence-edge-of-eternities-commander) — L, high
-4. [World Shaper (Edge of Eternities Commander)](#world-shaper-edge-of-eternities-commander) — L, high
-5. [Revival Trance (FINAL FANTASY VI) (Final Fantasy Commander)](#revival-trance-final-fantasy-vi-final-fantasy-commander) — S, high
-6. [Scions & Spellcraft (FINAL FANTASY XIV) (Final Fantasy Commander)](#scions--spellcraft-final-fantasy-xiv-final-fantasy-commander) — L, high
-7. [Limit Break (FINAL FANTASY VII) (Final Fantasy Commander)](#limit-break-final-fantasy-vii-final-fantasy-commander) — L, high
-8. [Counter Blitz (FINAL FANTASY X) (Final Fantasy Commander)](#counter-blitz-final-fantasy-x-final-fantasy-commander) — L, high
-9. [Jeskai Striker (Tarkir: Dragonstorm Commander)](#jeskai-striker-tarkir-dragonstorm-commander) — M, high
-10. [Mardu Surge (Tarkir: Dragonstorm Commander)](#mardu-surge-tarkir-dragonstorm-commander) — M, high
-11. [Temur Roar (Tarkir: Dragonstorm Commander)](#temur-roar-tarkir-dragonstorm-commander) — M, high
-12. [Abzan Armor (Tarkir: Dragonstorm Commander)](#abzan-armor-tarkir-dragonstorm-commander) — L, high
-13. [Sultai Arisen (Tarkir: Dragonstorm Commander)](#sultai-arisen-tarkir-dragonstorm-commander) — L, high
-14. [Eternal Might (Aetherdrift Commander)](#eternal-might-aetherdrift-commander) — L, high
-15. [Living Energy (Aetherdrift Commander)](#living-energy-aetherdrift-commander) — L, high
-16. [Endless Punishment (Duskmourn: House of Horror Commander)](#endless-punishment-duskmourn-house-of-horror-commander) — L, high
-17. [Death Toll (Duskmourn: House of Horror Commander)](#death-toll-duskmourn-house-of-horror-commander) — L, high
-18. [Jump Scare! (Duskmourn: House of Horror Commander)](#jump-scare-duskmourn-house-of-horror-commander) — L, high
-19. [Miracle Worker (Duskmourn: House of Horror Commander)](#miracle-worker-duskmourn-house-of-horror-commander) — L, high
-20. [Animated Army (Bloomburrow Commander)](#animated-army-bloomburrow-commander) — M, high
-21. [Family Matters (Bloomburrow Commander)](#family-matters-bloomburrow-commander) — L, high
-22. [Peace Offering (Bloomburrow Commander)](#peace-offering-bloomburrow-commander) — L, high
-23. [Squirreled Away (Bloomburrow Commander)](#squirreled-away-bloomburrow-commander) — L, high
-24. [Creative Energy (Modern Horizons 3 Commander)](#creative-energy-modern-horizons-3-commander) — L, high
-25. [Graveyard Overdrive (Modern Horizons 3 Commander)](#graveyard-overdrive-modern-horizons-3-commander) — L, high
-26. [Tricky Terrain (Modern Horizons 3 Commander)](#tricky-terrain-modern-horizons-3-commander) — L, high
-27. [Eldrazi Incursion (Modern Horizons 3 Commander)](#eldrazi-incursion-modern-horizons-3-commander) — L, high
-28. [Quick Draw (Outlaws of Thunder Junction Commander)](#quick-draw-outlaws-of-thunder-junction-commander) — M, high
-29. [Desert Bloom (Outlaws of Thunder Junction Commander)](#desert-bloom-outlaws-of-thunder-junction-commander) — L, high
-30. [Grand Larceny (Outlaws of Thunder Junction Commander)](#grand-larceny-outlaws-of-thunder-junction-commander) — L, high
-31. [Most Wanted (Outlaws of Thunder Junction Commander)](#most-wanted-outlaws-of-thunder-junction-commander) — L, high
-32. [Hail, Caesar (Fallout)](#hail-caesar-fallout) — L, high
-33. [Scrappy Survivors (Fallout)](#scrappy-survivors-fallout) — L, high
-34. [Science! (Fallout)](#science-fallout) — L, high
-35. [Mutant Menace (Fallout)](#mutant-menace-fallout) — L, high
-36. [Deep Clue Sea (Murders at Karlov Manor Commander)](#deep-clue-sea-murders-at-karlov-manor-commander) — L, high
-37. [Revenant Recon (Murders at Karlov Manor Commander)](#revenant-recon-murders-at-karlov-manor-commander) — L, high
-38. [Blame Game (Murders at Karlov Manor Commander)](#blame-game-murders-at-karlov-manor-commander) — L, high
-39. [Deadly Disguise (Murders at Karlov Manor Commander)](#deadly-disguise-murders-at-karlov-manor-commander) — L, high
-40. [Blood Rites (The Lost Caverns of Ixalan Commander)](#blood-rites-the-lost-caverns-of-ixalan-commander) — M, high
-41. [Veloci-Ramp-Tor (The Lost Caverns of Ixalan Commander)](#veloci-ramp-tor-the-lost-caverns-of-ixalan-commander) — L, high
-42. [Ahoy Mateys (The Lost Caverns of Ixalan Commander)](#ahoy-mateys-the-lost-caverns-of-ixalan-commander) — L, high
-43. [Explorers of the Deep (The Lost Caverns of Ixalan Commander)](#explorers-of-the-deep-the-lost-caverns-of-ixalan-commander) — L, high
-44. [Masters of Evil (Doctor Who)](#masters-of-evil-doctor-who) — L, high
-45. [Paradox Power (Doctor Who)](#paradox-power-doctor-who) — L, high
-46. [Blast from the Past (Doctor Who)](#blast-from-the-past-doctor-who) — L, high
-47. [Timey-Wimey (Doctor Who)](#timey-wimey-doctor-who) — L, high
-48. [Fae Dominion (Wilds of Eldraine Commander)](#fae-dominion-wilds-of-eldraine-commander) — L, high
-49. [Virtue and Valor (Wilds of Eldraine Commander)](#virtue-and-valor-wilds-of-eldraine-commander) — L, high
-50. [Riders of Rohan (Tales of Middle-earth Commander)](#riders-of-rohan-tales-of-middle-earth-commander) — S, high
-51. [Food and Fellowship (Tales of Middle-earth Commander)](#food-and-fellowship-tales-of-middle-earth-commander) — L, high
-52. [Elven Council (Tales of Middle-earth Commander)](#elven-council-tales-of-middle-earth-commander) — L, high
-53. [The Hosts of Mordor (Tales of Middle-earth Commander)](#the-hosts-of-mordor-tales-of-middle-earth-commander) — L, high
-54. [Cavalry Charge (March of the Machine Commander)](#cavalry-charge-march-of-the-machine-commander) — L, high
-55. [Divine Convocation (March of the Machine Commander)](#divine-convocation-march-of-the-machine-commander) — L, high
-56. [Tinker Time (March of the Machine Commander)](#tinker-time-march-of-the-machine-commander) — L, high
-57. [Growing Threat (March of the Machine Commander)](#growing-threat-march-of-the-machine-commander) — L, high
-58. [Call for Backup (March of the Machine Commander)](#call-for-backup-march-of-the-machine-commander) — L, high
-59. [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander) — M, high
-60. [Corrupting Influence (Phyrexia: All Will Be One Commander)](#corrupting-influence-phyrexia-all-will-be-one-commander) — L, high
-61. [Draconic Destruction (Starter Commander Decks)](#draconic-destruction-starter-commander-decks) — M, high
-62. [Grave Danger (Starter Commander Decks)](#grave-danger-starter-commander-decks) — M, high
-63. [First Flight (Starter Commander Decks)](#first-flight-starter-commander-decks) — M, high
-64. [Chaos Incarnate (Starter Commander Decks)](#chaos-incarnate-starter-commander-decks) — M, high
-65. [Token Triumph (Starter Commander Decks)](#token-triumph-starter-commander-decks) — L, high
-66. [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) — M, high
-67. [Mishra's Burnished Banner (The Brothers' War Commander)](#mishras-burnished-banner-the-brothers-war-commander) — L, high
-68. [Forces of the Imperium (Warhammer 40,000 Commander)](#forces-of-the-imperium-warhammer-40000-commander) — L, high
-69. [The Ruinous Powers (Warhammer 40,000 Commander)](#the-ruinous-powers-warhammer-40000-commander) — L, high
-70. [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) — L, high
-71. [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) — L, high
-72. [Legends' Legacy (Dominaria United Commander)](#legends-legacy-dominaria-united-commander) — L, high
-73. [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — L, high
-74. [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — L, high
-75. [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — L, high
-76. [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — L, high
-77. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
-78. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
-79. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
-80. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
-81. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
-82. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
-83. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
-84. [Difficulty](#difficulty) — S, medium
-85. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
-86. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
-87. [Why a press is refused](#why-a-press-is-refused) — S, medium
-88. [Outcomes as data](#outcomes-as-data) — M, medium
-89. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
-90. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
-91. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
-92. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
-93. [Replays and sharing](#replays-and-sharing) — M, medium
-94. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
-95. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-96. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
-97. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
-98. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-99. [Archidekt import](#archidekt-import) — S, low
-100. [Sound](#sound) — S, low
+2. [Abzan Armor (Tarkir: Dragonstorm Commander)](#abzan-armor-tarkir-dragonstorm-commander) — L, high
+3. [Sultai Arisen (Tarkir: Dragonstorm Commander)](#sultai-arisen-tarkir-dragonstorm-commander) — L, high
+4. [Eternal Might (Aetherdrift Commander)](#eternal-might-aetherdrift-commander) — L, high
+5. [Living Energy (Aetherdrift Commander)](#living-energy-aetherdrift-commander) — L, high
+6. [Endless Punishment (Duskmourn: House of Horror Commander)](#endless-punishment-duskmourn-house-of-horror-commander) — L, high
+7. [Death Toll (Duskmourn: House of Horror Commander)](#death-toll-duskmourn-house-of-horror-commander) — L, high
+8. [Jump Scare! (Duskmourn: House of Horror Commander)](#jump-scare-duskmourn-house-of-horror-commander) — L, high
+9. [Miracle Worker (Duskmourn: House of Horror Commander)](#miracle-worker-duskmourn-house-of-horror-commander) — L, high
+10. [Animated Army (Bloomburrow Commander)](#animated-army-bloomburrow-commander) — M, high
+11. [Family Matters (Bloomburrow Commander)](#family-matters-bloomburrow-commander) — L, high
+12. [Peace Offering (Bloomburrow Commander)](#peace-offering-bloomburrow-commander) — L, high
+13. [Squirreled Away (Bloomburrow Commander)](#squirreled-away-bloomburrow-commander) — L, high
+14. [Creative Energy (Modern Horizons 3 Commander)](#creative-energy-modern-horizons-3-commander) — L, high
+15. [Graveyard Overdrive (Modern Horizons 3 Commander)](#graveyard-overdrive-modern-horizons-3-commander) — L, high
+16. [Tricky Terrain (Modern Horizons 3 Commander)](#tricky-terrain-modern-horizons-3-commander) — L, high
+17. [Eldrazi Incursion (Modern Horizons 3 Commander)](#eldrazi-incursion-modern-horizons-3-commander) — L, high
+18. [Quick Draw (Outlaws of Thunder Junction Commander)](#quick-draw-outlaws-of-thunder-junction-commander) — M, high
+19. [Desert Bloom (Outlaws of Thunder Junction Commander)](#desert-bloom-outlaws-of-thunder-junction-commander) — L, high
+20. [Grand Larceny (Outlaws of Thunder Junction Commander)](#grand-larceny-outlaws-of-thunder-junction-commander) — L, high
+21. [Most Wanted (Outlaws of Thunder Junction Commander)](#most-wanted-outlaws-of-thunder-junction-commander) — L, high
+22. [Hail, Caesar (Fallout)](#hail-caesar-fallout) — L, high
+23. [Scrappy Survivors (Fallout)](#scrappy-survivors-fallout) — L, high
+24. [Science! (Fallout)](#science-fallout) — L, high
+25. [Mutant Menace (Fallout)](#mutant-menace-fallout) — L, high
+26. [Deep Clue Sea (Murders at Karlov Manor Commander)](#deep-clue-sea-murders-at-karlov-manor-commander) — L, high
+27. [Revenant Recon (Murders at Karlov Manor Commander)](#revenant-recon-murders-at-karlov-manor-commander) — L, high
+28. [Blame Game (Murders at Karlov Manor Commander)](#blame-game-murders-at-karlov-manor-commander) — L, high
+29. [Deadly Disguise (Murders at Karlov Manor Commander)](#deadly-disguise-murders-at-karlov-manor-commander) — L, high
+30. [Blood Rites (The Lost Caverns of Ixalan Commander)](#blood-rites-the-lost-caverns-of-ixalan-commander) — M, high
+31. [Veloci-Ramp-Tor (The Lost Caverns of Ixalan Commander)](#veloci-ramp-tor-the-lost-caverns-of-ixalan-commander) — L, high
+32. [Ahoy Mateys (The Lost Caverns of Ixalan Commander)](#ahoy-mateys-the-lost-caverns-of-ixalan-commander) — L, high
+33. [Explorers of the Deep (The Lost Caverns of Ixalan Commander)](#explorers-of-the-deep-the-lost-caverns-of-ixalan-commander) — L, high
+34. [Masters of Evil (Doctor Who)](#masters-of-evil-doctor-who) — L, high
+35. [Paradox Power (Doctor Who)](#paradox-power-doctor-who) — L, high
+36. [Blast from the Past (Doctor Who)](#blast-from-the-past-doctor-who) — L, high
+37. [Timey-Wimey (Doctor Who)](#timey-wimey-doctor-who) — L, high
+38. [Fae Dominion (Wilds of Eldraine Commander)](#fae-dominion-wilds-of-eldraine-commander) — L, high
+39. [Virtue and Valor (Wilds of Eldraine Commander)](#virtue-and-valor-wilds-of-eldraine-commander) — L, high
+40. [Riders of Rohan (Tales of Middle-earth Commander)](#riders-of-rohan-tales-of-middle-earth-commander) — S, high
+41. [Food and Fellowship (Tales of Middle-earth Commander)](#food-and-fellowship-tales-of-middle-earth-commander) — L, high
+42. [Elven Council (Tales of Middle-earth Commander)](#elven-council-tales-of-middle-earth-commander) — L, high
+43. [The Hosts of Mordor (Tales of Middle-earth Commander)](#the-hosts-of-mordor-tales-of-middle-earth-commander) — L, high
+44. [Cavalry Charge (March of the Machine Commander)](#cavalry-charge-march-of-the-machine-commander) — L, high
+45. [Divine Convocation (March of the Machine Commander)](#divine-convocation-march-of-the-machine-commander) — L, high
+46. [Tinker Time (March of the Machine Commander)](#tinker-time-march-of-the-machine-commander) — L, high
+47. [Growing Threat (March of the Machine Commander)](#growing-threat-march-of-the-machine-commander) — L, high
+48. [Call for Backup (March of the Machine Commander)](#call-for-backup-march-of-the-machine-commander) — L, high
+49. [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander) — M, high
+50. [Corrupting Influence (Phyrexia: All Will Be One Commander)](#corrupting-influence-phyrexia-all-will-be-one-commander) — L, high
+51. [Draconic Destruction (Starter Commander Decks)](#draconic-destruction-starter-commander-decks) — M, high
+52. [Grave Danger (Starter Commander Decks)](#grave-danger-starter-commander-decks) — M, high
+53. [First Flight (Starter Commander Decks)](#first-flight-starter-commander-decks) — M, high
+54. [Chaos Incarnate (Starter Commander Decks)](#chaos-incarnate-starter-commander-decks) — M, high
+55. [Token Triumph (Starter Commander Decks)](#token-triumph-starter-commander-decks) — L, high
+56. [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) — M, high
+57. [Mishra's Burnished Banner (The Brothers' War Commander)](#mishras-burnished-banner-the-brothers-war-commander) — L, high
+58. [Forces of the Imperium (Warhammer 40,000 Commander)](#forces-of-the-imperium-warhammer-40000-commander) — L, high
+59. [The Ruinous Powers (Warhammer 40,000 Commander)](#the-ruinous-powers-warhammer-40000-commander) — L, high
+60. [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) — L, high
+61. [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) — L, high
+62. [Legends' Legacy (Dominaria United Commander)](#legends-legacy-dominaria-united-commander) — L, high
+63. [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — L, high
+64. [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — L, high
+65. [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — L, high
+66. [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — L, high
+67. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
+68. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
+69. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
+70. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
+71. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
+72. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
+73. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
+74. [Difficulty](#difficulty) — S, medium
+75. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+76. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
+77. [Why a press is refused](#why-a-press-is-refused) — S, medium
+78. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
+79. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
+80. [Outcomes as data](#outcomes-as-data) — M, medium
+81. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
+82. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
+83. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
+84. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
+85. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
+86. [Replays and sharing](#replays-and-sharing) — M, medium
+87. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+88. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
+89. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
+90. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+91. [Archidekt import](#archidekt-import) — S, low
+92. [Sound](#sound) — S, low
 
 **Blocked, and by what:**
 
 - [Prismari Artistry (Secrets of Strixhaven Commander)](#prismari-artistry-secrets-of-strixhaven-commander) — [Divided damage that may hit players](#divided-damage-that-may-hit-players)
 - [Lorehold Spirit (Secrets of Strixhaven Commander)](#lorehold-spirit-secrets-of-strixhaven-commander) — [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma)
 - [Quandrix Unlimited (Secrets of Strixhaven Commander)](#quandrix-unlimited-secrets-of-strixhaven-commander) — [Distributing counters from a spell](#distributing-counters-from-a-spell)
+- [Dance of the Elements (Lorwyn Eclipsed Commander)](#dance-of-the-elements-lorwyn-eclipsed-commander) — [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability)
+- [Counter Intelligence (Edge of Eternities Commander)](#counter-intelligence-edge-of-eternities-commander) — [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number)
+- [World Shaper (Edge of Eternities Commander)](#world-shaper-edge-of-eternities-commander) — [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number)
+- [Jeskai Striker (Tarkir: Dragonstorm Commander)](#jeskai-striker-tarkir-dragonstorm-commander) — [Divided damage that may hit players](#divided-damage-that-may-hit-players)
+- [Temur Roar (Tarkir: Dragonstorm Commander)](#temur-roar-tarkir-dragonstorm-commander) — [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability), [Divided damage that may hit players](#divided-damage-that-may-hit-players), [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -426,6 +420,295 @@ and the mute setting's e2e assertion still passes.
 
 ## Cards
 
+### Divided damage that may hit players
+
+Effort **M** · Impact **medium**, every 'divided as you choose among any number of targets' burn spell waits on it, Magma Opus and Arc Lightning among them · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+Divided damage (601.2d) is announced as the spell is cast and dealt on
+resolution, but only among permanents. `cards.loader` refuses a `damage`
+effect with `divided` whose target spec is not `kind: "permanent"`;
+`Game._ask_damage_division` keeps only the declared targets whose kind is
+`"object"` and walks them through `_divide`, which asks one object at a time
+through `ask_objects`; and `effects.ops_life._damage_divided` deals each share
+with `damage_permanent`. [rules-coverage.md](rules-coverage.md#not-implemented)
+lists "dividing damage among players or any target" as not implemented.
+
+So every "deals N damage divided as you choose among any number of targets"
+spell is unwritable, because a player is a legal target of it. Magma Opus,
+in the Prismari Artistry precon, is the card that found it; Arc Lightning and
+Fireball's divided mode are the same sentence. Its gap record is
+`data/authoring/gaps/magma_opus.json`.
+
+#### The change
+
+1. The division carries players. `_ask_damage_division` divides over every
+   declared target of the spec, object or player, and the shares on the stack
+   item's `bindings["distribution"]` name which is which, so a player and a
+   permanent with the same number are never confused.
+2. The question asked while dividing offers players beside objects. Placing
+   one more point is one choice among the declared targets; `ask_objects`
+   names objects only, so this is either a target-shaped ask or a decision kind
+   of its own (an open question below).
+3. `_damage_divided` deals a player's share as damage to that player from the
+   source, with everything damage to a player already implies (lifelink,
+   infect, commander damage from a commander source, prevention), and a share
+   for a player who left the game or became an illegal target is lost (608.2b).
+4. The loader accepts `divided` over a spec of `kind: "any"` and
+   `kind: "player"`. The verifier's auto-answer table answers the new question,
+   or `/author-cards` hangs.
+5. Harvest: Magma Opus, then the catalog's other divided-among-any-targets
+   cards through the template tier with `--retry` and one `/author-cards` wave.
+
+It does not touch divided combat damage (510.1c) or `distribute_counters`,
+whose objects are always permanents.
+
+#### Gate
+
+A unit test under `tests/unit/` for divided damage over players and
+permanents together: the announcement on casting, each share dealt on
+resolution, a player's share lost when that player is no longer a legal
+target, lifelink and commander damage counted per share, and the loader
+accepting `kind: "any"` while still refusing divided damage on an ability. The
+verifier's auto-answer test covers the new question, and Magma Opus's six
+gates pass.
+
+#### Open questions
+
+- **How the division is asked.** Extend `ask_objects` to accept player
+  targets, or add a decision kind for "one more point to which target"?
+  Recommended: a target-shaped ask built on the existing target references,
+  because the client already renders a player as a target, and a new decision
+  kind would need its frontend label and an e2e path for no new rule.
+- **Is it an ADR.** Recommended: no; it widens an existing announcement
+  (601.2d) without changing what is announced or when, and the line in
+  rules-coverage.md moves from "not implemented" to the implemented table.
+
+### Divided damage from a triggered or activated ability
+
+Effort **M** · Impact **medium**, every creature whose enters or attack trigger divides its damage waits on it, Fury and Inferno Titan among them · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+Divided damage (601.2d) is announced on one line only: as a spell is cast.
+`Game._ask_damage_division` reads `engine.division.divided_damage(card)`,
+which walks `card.spell_effects`, and is called from `Game._cast`; the split
+rides on the stack item's `bindings["distribution"]` and
+`effects.ops_life._damage_divided` deals it on resolution.
+`cards.loader._check_division_homes` refuses `damage` with `divided` anywhere
+else ("only supported as a top-level effect of a spell"), and
+[rules-coverage.md](rules-coverage.md#not-implemented) lists dividing
+damage "on an ability" as not implemented.
+
+The ability-level twin already exists for counters: `distribute_counters` on
+an activated ability is divided by `Game._ask_distribution` at activation
+(602.2b applying 601.2d), composed from `ask_objects` with no decision kind of
+its own. A triggered ability chooses its modes and targets in
+`stack._choose_trigger_targets` as it is put on the stack (603.3d), and
+nothing there asks for a division.
+
+So "When this creature enters, it deals 4 damage divided as you choose among
+any number of target creatures and/or planeswalkers" is unwritable. Fury, in
+the Dance of the Elements precon, is the card that found it; its gap record is
+`data/authoring/gaps/fury.json`.
+
+#### The change
+
+1. The trigger line divides. Where `stack` puts a triggered ability on the
+   stack and has chosen its targets, a `damage` effect with `divided` among
+   the ability's top-level effects is divided over the targets just declared,
+   through the same walk `_ask_damage_division` uses, and stored on the stack
+   item's `bindings["distribution"]` so `_damage_divided` resolves it
+   unchanged. The amount is read then (601.2d via 603.3d).
+2. The activation line divides damage the way it already divides counters:
+   `Game._ask_distribution` takes divided `damage` beside
+   `distribute_counters`.
+3. `_check_division_homes` accepts divided damage as a top-level effect of a
+   triggered or activated ability whose spec targets objects, and still
+   refuses it nested in a branch, where no announcement exists.
+4. The verifier's auto-answer table answers the division on the trigger line,
+   or `/author-cards` hangs on Fury.
+5. Harvest: Fury (which also waits on evoke with a non-mana cost) and the
+   catalog's other divided-damage triggers through the template tier with
+   `--retry` and one `/author-cards` wave.
+
+It does not let the division include players: that is
+[divided-damage-any-target](divided-damage-any-target.md), which this item
+neither needs nor blocks. Inferno Titan needs both.
+
+#### Gate
+
+A unit test under `tests/unit/` for divided damage on a trigger and on an
+activation: the division asked as the trigger goes on the stack and before a
+response is possible, each share dealt on resolution, an illegal target's share
+lost (608.2b), the forced split asking nothing, and the loader accepting the
+top-level ability home while still refusing a nested one. The verifier's
+auto-answer test covers the trigger-line question, and the harvested cards pass
+their six gates.
+
+#### Open questions
+
+- **Where the trigger's division is asked.** In `stack` beside
+  `_choose_trigger_targets`, or by handing the trigger to the same
+  `Game` helper the cast and activation lines use? Recommended: one shared
+  helper called from all three lines, because the walk and its purpose tag are
+  already shared and a third copy would drift.
+- **Is it an ADR.** Recommended: no; it applies the existing announcement
+  (601.2d) on the two lines 602.2b and 603.3d already send it to, and the
+  rules-coverage.md line moves to the implemented table.
+- **Scope of the harvest.** Fury only, or every divided-damage trigger the
+  template tier can then read? Recommended: one template-tier `--retry` and
+  one `/author-cards` wave, the precon items' convention.
+
+### Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number
+
+Effort **M** · Impact **medium**, every Spacecraft in Edge of Eternities waits on it, two in the Counter Intelligence precon and two in World Shaper, whose commander is one · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+Station (702.184) is written out as a cost: `tap_permanents` with `as` and
+`power_of {"binding": …}` charges the counters. A station symbol (721) is an
+`Ability.threshold` of `{counter, at_least}`, and `cards.loader._compile_threshold`
+accepts one on an **activated** ability only: `characteristics.abilities_of`
+drops a gated ability below its number, and legality, the mana solver and the
+AI read that list. A gated trigger or static is refused at load, because the
+trigger collectors, `_ability_statics` and the player statics read printed
+faces and would treat it as always on. A printed keyword has no threshold at
+all, and nothing makes a Spacecraft a noncreature artifact below its highest
+number and an artifact creature with its printed power and toughness at it
+(721.2b). [rules-coverage.md](rules-coverage.md#not-implemented) lists all
+three as not implemented: "Spacecraft becoming artifact creatures at their
+number, and a `threshold` on anything but an activated ability."
+
+The two Planets (activated abilities only) are what ships. Inspirit, Flagship
+Vessel and Uthros Research Craft, in the Counter Intelligence precon, are the
+cards that found the rest; their gap records are
+`data/authoring/gaps/inspirit_flagship_vessel.json` and
+`data/authoring/gaps/uthros_research_craft.json`. World Shaper's commander,
+Hearthhull, the Worldseed (an `8+` keyword line), and Exploration Broodship (a
+`3+` static and an `8+` keyword) wait on it too:
+`data/authoring/gaps/hearthhull_the_worldseed.json` and
+`data/authoring/gaps/exploration_broodship.json`.
+
+#### The change
+
+1. A threshold on a triggered ability. Every trigger collector asks
+   `threshold_met` before it fires an ability with one, so a gated trigger
+   below its number never triggers; the ability already on the stack resolves
+   regardless (113.7a), as the activated form does.
+2. A threshold on a static ability and on a printed keyword. The static
+   collectors and the keyword reader skip a gated entry below its number, in
+   the layer they already apply it in; a keyword threshold is a static
+   `grant_keyword` on `self_only` gated the same way, or a keyword entry that
+   carries its own threshold.
+3. The Spacecraft rule. A card-level station number (the highest printed one,
+   or a field the loader checks against it) makes `chars` read the Spacecraft
+   as a noncreature artifact, with no power or toughness, below that number
+   and as an artifact creature with its printed P/T at it (721.2b), in the
+   type-changing layer.
+4. `_compile_threshold` accepts the new homes, `_check_threshold_order` keeps
+   its suffix rule, and rules-coverage.md moves the line to the implemented
+   table.
+5. Harvest the two Counter Intelligence Spacecraft, the two World Shaper ones and every other Spacecraft
+   the template tier or one `/author-cards` wave can then express.
+
+It does not add stationing with toughness (Tapestry Warden), which is a
+separate cost reading.
+
+#### Gate
+
+A unit test under `tests/unit/` for each home: a gated trigger that does not
+fire below its number and fires at it, a gated keyword and a gated static that
+switch on at the number and off when counters leave, the Spacecraft a
+noncreature artifact below its number (no P/T, not attackable as a creature,
+not hit by creature removal) and an artifact creature at it, and the loader
+still refusing a threshold out of order. The harvested cards pass their six
+gates.
+
+#### Open questions
+
+- **How a keyword threshold is written.** A gated `grant_keyword` static on
+  `self_only`, or a threshold field on the keyword entry itself? Recommended:
+  the gated static, because it reuses the static gate this item builds and
+  needs no new shape in `keywords`.
+- **Where the Spacecraft's number lives.** Inferred from the highest
+  threshold, or a card-level `station` field the loader checks against the
+  thresholds? Recommended: a card-level field, because the reminder text prints
+  the number and a Spacecraft whose top line is not a creature-gate would
+  otherwise be read wrongly.
+- **Is it an ADR.** Recommended: no; it extends the threshold 721 already
+  uses here to the homes the rule names, and the rules-coverage line moves to
+  the implemented table.
+- **Scope of the harvest.** The two precon cards only, or every Spacecraft
+  the template tier and one wave reach? Recommended: one template-tier
+  `--retry` and one `/author-cards` wave, the precon items' convention.
+
+### Voting: will of the council and council's dilemma
+
+Effort **M** · Impact **medium**, every voting card waits on it, Fateful Tempest in the Lorehold Spirit precon and Council's Judgment among them · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+Voting (701.38) is absent. [rules-coverage.md](rules-coverage.md#not-implemented)
+lists "Voting — will of the council, council's dilemma" as not implemented, and
+the shipped decks avoid it. The nearest shapes in
+`engine/effects/ops_control.py` each miss one half of it: `join_forces` asks
+every player in turn order starting with the controller, which is the order a
+vote is cast in, but it adds up mana paid rather than tallying named choices;
+`choose_mode` and `ask_mode` in `engine/effects/context.py` let one chooser
+pick among labelled options, but bind no per-option count a later effect can
+read. `for_each_player` around `choose_mode` asks the right people and keeps
+nothing.
+
+So every "each player votes for A or B" card is unwritable. Fateful Tempest,
+in the Lorehold Spirit precon, is the card that found it; Council's Judgment,
+Tivit, Seller of Secrets and the Conspiracy council cards are the same
+sentence. Its gap record is `data/authoring/gaps/fateful_tempest.json`.
+
+#### The change
+
+1. A `vote` op in `engine/effects/ops_control.py`: starting with the
+   controller and in turn order (`GameState.turn_order`, as `join_forces`
+   walks it), each player in the game chooses one of the spec's named options
+   through `ask_mode`, with the votes so far in the decision's `context` so a
+   later voter sees them (701.38a). It binds the tally under `as`, one count
+   per option, read back as `{"binding": "<as>.<option>"}`, and the winners
+   (the options with the most votes, all of them on a tie) for will of the
+   council's "if X gets more votes or the vote is tied".
+2. A `vote_cast` event emitted per vote, so "whenever a player votes" has an
+   event to name later, without adding that trigger now.
+3. `cards.loader`'s `_validate_effect` refuses a `vote` with fewer than two
+   options or a missing `as`; the verifier's auto-answer table already answers
+   `CHOOSE_MODE`, so the behaviour gate needs nothing new.
+4. Harvest: Fateful Tempest, then the catalog's other voting cards through the
+   template tier with `--retry` and one `/author-cards` wave.
+
+It does not add extra votes (Brago's Representative, Grudge Keeper's
+"whenever a player votes") or vote-changing effects; those are additions on
+the `vote_cast` event once the op exists.
+
+#### Gate
+
+A unit test under `tests/unit/` for `vote`: players asked in turn order from
+the controller, each later voter's decision carrying the earlier votes, the
+tally bound per option, the tie reported as every leading option, an eliminated
+player not asked, and the loader refusing a one-option vote. Fateful Tempest's
+six gates pass.
+
+#### Open questions
+
+- **Where a vote is asked.** `ask_mode` per voter, or a decision kind of its
+  own? Recommended: `ask_mode` with a `purpose: "vote"` tag, because the
+  client and the CPUs already answer a labelled choice and a new decision kind
+  would need its frontend label, its auto-answer and an e2e path for no new
+  rule.
+- **How the CPUs vote.** Recommended: the heuristic agent's existing label
+  answer for now, with the `purpose` tag left for a strategy to read; voting
+  well is a CPU item, not a rules one.
+- **Is it an ADR.** Recommended: no; it is an additive op, and the line in
+  rules-coverage.md moves from "not implemented" to the implemented table.
+
 ### Distributing counters from a spell
 
 Effort **M** · Impact **medium**, every 'distribute N counters among any number of target creatures' spell waits on it, Grove's Bounty in the Quandrix Unlimited precon and Biogenic Upgrade among them · Depends on nothing · Awaiting decisions.
@@ -500,136 +783,6 @@ pass.
 - **Is it an ADR.** Recommended: no; it moves an existing announcement to the
   cast line, where divided damage already sits, and the line in
   rules-coverage.md narrows to triggered abilities.
-
-### Divided damage that may hit players
-
-Effort **M** · Impact **medium**, every 'divided as you choose among any number of targets' burn spell waits on it, Magma Opus and Arc Lightning among them · Depends on nothing · Awaiting decisions.
-
-#### Today
-
-Divided damage (601.2d) is announced as the spell is cast and dealt on
-resolution, but only among permanents. `cards.loader` refuses a `damage`
-effect with `divided` whose target spec is not `kind: "permanent"`;
-`Game._ask_damage_division` keeps only the declared targets whose kind is
-`"object"` and walks them through `_divide`, which asks one object at a time
-through `ask_objects`; and `effects.ops_life._damage_divided` deals each share
-with `damage_permanent`. [rules-coverage.md](rules-coverage.md#not-implemented)
-lists "dividing damage among players or any target" as not implemented.
-
-So every "deals N damage divided as you choose among any number of targets"
-spell is unwritable, because a player is a legal target of it. Magma Opus,
-in the Prismari Artistry precon, is the card that found it; Arc Lightning and
-Fireball's divided mode are the same sentence. Its gap record is
-`data/authoring/gaps/magma_opus.json`.
-
-#### The change
-
-1. The division carries players. `_ask_damage_division` divides over every
-   declared target of the spec, object or player, and the shares on the stack
-   item's `bindings["distribution"]` name which is which, so a player and a
-   permanent with the same number are never confused.
-2. The question asked while dividing offers players beside objects. Placing
-   one more point is one choice among the declared targets; `ask_objects`
-   names objects only, so this is either a target-shaped ask or a decision kind
-   of its own (an open question below).
-3. `_damage_divided` deals a player's share as damage to that player from the
-   source, with everything damage to a player already implies (lifelink,
-   infect, commander damage from a commander source, prevention), and a share
-   for a player who left the game or became an illegal target is lost (608.2b).
-4. The loader accepts `divided` over a spec of `kind: "any"` and
-   `kind: "player"`. The verifier's auto-answer table answers the new question,
-   or `/author-cards` hangs.
-5. Harvest: Magma Opus, then the catalog's other divided-among-any-targets
-   cards through the template tier with `--retry` and one `/author-cards` wave.
-
-It does not touch divided combat damage (510.1c) or `distribute_counters`,
-whose objects are always permanents.
-
-#### Gate
-
-A unit test under `tests/unit/` for divided damage over players and
-permanents together: the announcement on casting, each share dealt on
-resolution, a player's share lost when that player is no longer a legal
-target, lifelink and commander damage counted per share, and the loader
-accepting `kind: "any"` while still refusing divided damage on an ability. The
-verifier's auto-answer test covers the new question, and Magma Opus's six
-gates pass.
-
-#### Open questions
-
-- **How the division is asked.** Extend `ask_objects` to accept player
-  targets, or add a decision kind for "one more point to which target"?
-  Recommended: a target-shaped ask built on the existing target references,
-  because the client already renders a player as a target, and a new decision
-  kind would need its frontend label and an e2e path for no new rule.
-- **Is it an ADR.** Recommended: no; it widens an existing announcement
-  (601.2d) without changing what is announced or when, and the line in
-  rules-coverage.md moves from "not implemented" to the implemented table.
-
-### Voting: will of the council and council's dilemma
-
-Effort **M** · Impact **medium**, every voting card waits on it, Fateful Tempest in the Lorehold Spirit precon and Council's Judgment among them · Depends on nothing · Awaiting decisions.
-
-#### Today
-
-Voting (701.38) is absent. [rules-coverage.md](rules-coverage.md#not-implemented)
-lists "Voting — will of the council, council's dilemma" as not implemented, and
-the shipped decks avoid it. The nearest shapes in
-`engine/effects/ops_control.py` each miss one half of it: `join_forces` asks
-every player in turn order starting with the controller, which is the order a
-vote is cast in, but it adds up mana paid rather than tallying named choices;
-`choose_mode` and `ask_mode` in `engine/effects/context.py` let one chooser
-pick among labelled options, but bind no per-option count a later effect can
-read. `for_each_player` around `choose_mode` asks the right people and keeps
-nothing.
-
-So every "each player votes for A or B" card is unwritable. Fateful Tempest,
-in the Lorehold Spirit precon, is the card that found it; Council's Judgment,
-Tivit, Seller of Secrets and the Conspiracy council cards are the same
-sentence. Its gap record is `data/authoring/gaps/fateful_tempest.json`.
-
-#### The change
-
-1. A `vote` op in `engine/effects/ops_control.py`: starting with the
-   controller and in turn order (`GameState.turn_order`, as `join_forces`
-   walks it), each player in the game chooses one of the spec's named options
-   through `ask_mode`, with the votes so far in the decision's `context` so a
-   later voter sees them (701.38a). It binds the tally under `as`, one count
-   per option, read back as `{"binding": "<as>.<option>"}`, and the winners
-   (the options with the most votes, all of them on a tie) for will of the
-   council's "if X gets more votes or the vote is tied".
-2. A `vote_cast` event emitted per vote, so "whenever a player votes" has an
-   event to name later, without adding that trigger now.
-3. `cards.loader`'s `_validate_effect` refuses a `vote` with fewer than two
-   options or a missing `as`; the verifier's auto-answer table already answers
-   `CHOOSE_MODE`, so the behaviour gate needs nothing new.
-4. Harvest: Fateful Tempest, then the catalog's other voting cards through the
-   template tier with `--retry` and one `/author-cards` wave.
-
-It does not add extra votes (Brago's Representative, Grudge Keeper's
-"whenever a player votes") or vote-changing effects; those are additions on
-the `vote_cast` event once the op exists.
-
-#### Gate
-
-A unit test under `tests/unit/` for `vote`: players asked in turn order from
-the controller, each later voter's decision carrying the earlier votes, the
-tally bound per option, the tie reported as every leading option, an eliminated
-player not asked, and the loader refusing a one-option vote. Fateful Tempest's
-six gates pass.
-
-#### Open questions
-
-- **Where a vote is asked.** `ask_mode` per voter, or a decision kind of its
-  own? Recommended: `ask_mode` with a `purpose: "vote"` tag, because the
-  client and the CPUs already answer a labelled choice and a new decision kind
-  would need its frontend label, its auto-answer and an e2e path for no new
-  rule.
-- **How the CPUs vote.** Recommended: the heuristic agent's existing label
-  answer for now, with the `purpose` tag left for a strategy to read; voting
-  well is a CPU item, not a rules one.
-- **Is it an ADR.** Recommended: no; it is an additive op, and the line in
-  rules-coverage.md moves from "not implemented" to the implemented table.
 
 ## Decks
 
@@ -829,7 +982,7 @@ whole-game test able to draw the deck.
 
 ### Blight Curse (Lorwyn Eclipsed Commander)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing · Awaiting decisions.
 
 #### Today
 
@@ -840,6 +993,18 @@ coming-soon shell on the shelf: its row `ecc_blight_curse` is in
 `python scripts/sync_precons.py --missing ecc_blight_curse` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+
+Every card on the list has been through `/author-cards`, and the capabilities
+its gap records named are built (blight, counters read and moved by kind, the
+counter-placement ledger, a target floor, divided damage off a life X,
+exchanging life with toughness, `activated_by`, damage that can't be
+prevented, wither for every source, and a sacrificed source's counters). What
+is left is Riveteers Overlook, which the DSL already expresses: its gap record
+names gate 4 of `cards.authoring.verify`, which allows a permanent to end only
+on the battlefield (an Aura also in the graveyard), while the card's own enters
+trigger sacrifices it. `tests/cards/test_authoring.py` pins that a creature
+whose text is "When this creature enters, sacrifice it." must still fail that
+gate, so admitting the land is the owner's decision, below.
 
 #### The change
 
@@ -876,9 +1041,25 @@ whole-game test able to draw the deck.
   this item back to `proposed`, and opens the pull request with the cards and
   capabilities done so far. This item stays until the deck is whole.
 
+#### Open questions
+
+- **A permanent whose own text sacrifices it on entering.** Riveteers Overlook
+  ("When this land enters, sacrifice it. When you do, search your library for
+  a basic Swamp, Mountain, or Forest card, put it onto the battlefield tapped,
+  then shuffle and you gain 1 life.") ends in the graveyard as printed, and
+  gate 4 rejects it. May gate 4 admit the graveyard for a permanent whose
+  unconditional enters trigger opens by sacrificing itself and goes on to a
+  reflexive "when you do" ability, the way it admits an Aura? Recommended:
+  yes, narrowed to that shape (a `self_enters` trigger with no condition whose
+  first effect sacrifices `self_only` and whose next is a `reflexive_trigger`),
+  so the pinned vanishing creature, which has no reflexive half, still fails
+  and nothing else the gate catches moves; the expectation then has to assert
+  what the reflexive half did (the fetched land and the life), which a card
+  that merely vanished cannot.
+
 ### Dance of the Elements (Lorwyn Eclipsed Commander)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability).
 
 #### Today
 
@@ -889,6 +1070,21 @@ coming-soon shell on the shelf: its row `ecc_dance_of_the_elements` is in
 `python scripts/sync_precons.py --missing ecc_dance_of_the_elements` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+
+Every card on the list has been through `/author-cards` once. What is left
+is eleven cards, each with a gap record naming what it waits on: Fury on
+divided damage from a triggered ability (its own item, which this one
+depends on); Ashling, the Limitless on granting evoke to Elemental spells by a
+static; Endurance on putting cards on the bottom of a library in a random
+order; Fertile Ground on an any-colour `add_mana_on_tap`; Flamekin Village on a
+cost that reveals a card from hand, the same sentence Primal Beyond reads
+loosely today as an unconditional enters-tapped, as the shipped reveal-lands
+do; Haunting Voyage on a `foretold` condition; Impulsivity on a free cast from a
+graveyard that exiles instead; Jegantha, the Wellspring on its companion line
+(inert inside a game, 702.139a) and mana that cannot pay generic costs; Mass of
+Mysteries on myriad; Muldrotha, the Gravetide on a graveyard cast metered per
+permanent type; and Opal Palace on mana that makes a commander enter with
+counters.
 
 #### The change
 
@@ -927,7 +1123,7 @@ whole-game test able to draw the deck.
 
 ### Counter Intelligence (Edge of Eternities Commander)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number).
 
 #### Today
 
@@ -976,7 +1172,7 @@ whole-game test able to draw the deck.
 
 ### World Shaper (Edge of Eternities Commander)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number).
 
 #### Today
 
@@ -1023,205 +1219,9 @@ whole-game test able to draw the deck.
   this item back to `proposed`, and opens the pull request with the cards and
   capabilities done so far. This item stays until the deck is whole.
 
-### Revival Trance (FINAL FANTASY VI) (Final Fantasy Commander)
-
-Effort **S** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
-
-#### Today
-
-Revival Trance (FINAL FANTASY VI), the Final Fantasy Commander precon released 2025-06-13, is a
-coming-soon shell on the shelf: its row `fic_revival_trance_final_fantasy_vi` is in
-`data/decks/sources.json` and there is no `data/decks/fic_revival_trance_final_fantasy_vi.deck.json`, so
-`GET /api/precons/upcoming` serves it.
-`python scripts/sync_precons.py --missing fic_revival_trance_final_fantasy_vi` lists the cards the engine
-lacks, and the gap records in `data/authoring/gaps/` name the capability each
-attempted card waits on.
-
-#### The change
-
-Revival Trance (FINAL FANTASY VI) ships native, card for card, as one batch of
-[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
-
-1. `/author-cards` by name over the `--missing` list.
-2. One `/extend-dsl` run per capability the gap records name, in the order
-   the most cards elsewhere in the catalog wait on it.
-3. Re-author until `--missing` is empty, then `--write-deck fic_revival_trance_final_fantasy_vi`, the
-   dossier and the archetype, and the deck joins `PRECONS` in
-   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
-4. One `/author-cards` wave over the pending cards the new capabilities reach.
-
-It does not touch another precon's deck.
-
-#### Gate
-
-`tests/cards/test_precon_imports.py` over the new deck; one unit test under
-`tests/unit/` per capability; the manifest test and
-`tests/server/test_upcoming_precons.py` still green; and the sampled
-whole-game test able to draw the deck.
-
-#### Decisions
-
-- **Scope:** this precon only, taken to 100% in one pull request titled
-  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
-- **The editorial fields:** the run writes the dossier and picks the closest
-  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
-  archetype that visibly misplays the deck is a new item.
-- **A capability that needs a rules subsystem the engine does not have**
-  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
-  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
-  this item back to `proposed`, and opens the pull request with the cards and
-  capabilities done so far. This item stays until the deck is whole.
-
-### Scions & Spellcraft (FINAL FANTASY XIV) (Final Fantasy Commander)
-
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
-
-#### Today
-
-Scions & Spellcraft (FINAL FANTASY XIV), the Final Fantasy Commander precon released 2025-06-13, is a
-coming-soon shell on the shelf: its row `fic_scions_spellcraft_final_fantasy_xiv` is in
-`data/decks/sources.json` and there is no `data/decks/fic_scions_spellcraft_final_fantasy_xiv.deck.json`, so
-`GET /api/precons/upcoming` serves it.
-`python scripts/sync_precons.py --missing fic_scions_spellcraft_final_fantasy_xiv` lists the cards the engine
-lacks, and the gap records in `data/authoring/gaps/` name the capability each
-attempted card waits on.
-
-#### The change
-
-Scions & Spellcraft (FINAL FANTASY XIV) ships native, card for card, as one batch of
-[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
-
-1. `/author-cards` by name over the `--missing` list.
-2. One `/extend-dsl` run per capability the gap records name, in the order
-   the most cards elsewhere in the catalog wait on it.
-3. Re-author until `--missing` is empty, then `--write-deck fic_scions_spellcraft_final_fantasy_xiv`, the
-   dossier and the archetype, and the deck joins `PRECONS` in
-   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
-4. One `/author-cards` wave over the pending cards the new capabilities reach.
-
-It does not touch another precon's deck.
-
-#### Gate
-
-`tests/cards/test_precon_imports.py` over the new deck; one unit test under
-`tests/unit/` per capability; the manifest test and
-`tests/server/test_upcoming_precons.py` still green; and the sampled
-whole-game test able to draw the deck.
-
-#### Decisions
-
-- **Scope:** this precon only, taken to 100% in one pull request titled
-  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
-- **The editorial fields:** the run writes the dossier and picks the closest
-  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
-  archetype that visibly misplays the deck is a new item.
-- **A capability that needs a rules subsystem the engine does not have**
-  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
-  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
-  this item back to `proposed`, and opens the pull request with the cards and
-  capabilities done so far. This item stays until the deck is whole.
-
-### Limit Break (FINAL FANTASY VII) (Final Fantasy Commander)
-
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
-
-#### Today
-
-Limit Break (FINAL FANTASY VII), the Final Fantasy Commander precon released 2025-06-13, is a
-coming-soon shell on the shelf: its row `fic_limit_break_final_fantasy_vii` is in
-`data/decks/sources.json` and there is no `data/decks/fic_limit_break_final_fantasy_vii.deck.json`, so
-`GET /api/precons/upcoming` serves it.
-`python scripts/sync_precons.py --missing fic_limit_break_final_fantasy_vii` lists the cards the engine
-lacks, and the gap records in `data/authoring/gaps/` name the capability each
-attempted card waits on.
-
-#### The change
-
-Limit Break (FINAL FANTASY VII) ships native, card for card, as one batch of
-[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
-
-1. `/author-cards` by name over the `--missing` list.
-2. One `/extend-dsl` run per capability the gap records name, in the order
-   the most cards elsewhere in the catalog wait on it.
-3. Re-author until `--missing` is empty, then `--write-deck fic_limit_break_final_fantasy_vii`, the
-   dossier and the archetype, and the deck joins `PRECONS` in
-   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
-4. One `/author-cards` wave over the pending cards the new capabilities reach.
-
-It does not touch another precon's deck.
-
-#### Gate
-
-`tests/cards/test_precon_imports.py` over the new deck; one unit test under
-`tests/unit/` per capability; the manifest test and
-`tests/server/test_upcoming_precons.py` still green; and the sampled
-whole-game test able to draw the deck.
-
-#### Decisions
-
-- **Scope:** this precon only, taken to 100% in one pull request titled
-  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
-- **The editorial fields:** the run writes the dossier and picks the closest
-  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
-  archetype that visibly misplays the deck is a new item.
-- **A capability that needs a rules subsystem the engine does not have**
-  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
-  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
-  this item back to `proposed`, and opens the pull request with the cards and
-  capabilities done so far. This item stays until the deck is whole.
-
-### Counter Blitz (FINAL FANTASY X) (Final Fantasy Commander)
-
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
-
-#### Today
-
-Counter Blitz (FINAL FANTASY X), the Final Fantasy Commander precon released 2025-06-13, is a
-coming-soon shell on the shelf: its row `fic_counter_blitz_final_fantasy_x` is in
-`data/decks/sources.json` and there is no `data/decks/fic_counter_blitz_final_fantasy_x.deck.json`, so
-`GET /api/precons/upcoming` serves it.
-`python scripts/sync_precons.py --missing fic_counter_blitz_final_fantasy_x` lists the cards the engine
-lacks, and the gap records in `data/authoring/gaps/` name the capability each
-attempted card waits on.
-
-#### The change
-
-Counter Blitz (FINAL FANTASY X) ships native, card for card, as one batch of
-[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
-
-1. `/author-cards` by name over the `--missing` list.
-2. One `/extend-dsl` run per capability the gap records name, in the order
-   the most cards elsewhere in the catalog wait on it.
-3. Re-author until `--missing` is empty, then `--write-deck fic_counter_blitz_final_fantasy_x`, the
-   dossier and the archetype, and the deck joins `PRECONS` in
-   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
-4. One `/author-cards` wave over the pending cards the new capabilities reach.
-
-It does not touch another precon's deck.
-
-#### Gate
-
-`tests/cards/test_precon_imports.py` over the new deck; one unit test under
-`tests/unit/` per capability; the manifest test and
-`tests/server/test_upcoming_precons.py` still green; and the sampled
-whole-game test able to draw the deck.
-
-#### Decisions
-
-- **Scope:** this precon only, taken to 100% in one pull request titled
-  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
-- **The editorial fields:** the run writes the dossier and picks the closest
-  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
-  archetype that visibly misplays the deck is a new item.
-- **A capability that needs a rules subsystem the engine does not have**
-  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
-  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
-  this item back to `proposed`, and opens the pull request with the cards and
-  capabilities done so far. This item stays until the deck is whole.
-
 ### Jeskai Striker (Tarkir: Dragonstorm Commander)
 
-Effort **M** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+Effort **M** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Divided damage that may hit players](#divided-damage-that-may-hit-players).
 
 #### Today
 
@@ -1232,6 +1232,9 @@ coming-soon shell on the shelf: its row `tdc_jeskai_striker` is in
 `python scripts/sync_precons.py --missing tdc_jeskai_striker` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+Magma Opus waits on [divided damage that may hit players](divided-damage-any-target.md),
+a rules subsystem `rules-coverage.md` lists as not implemented, so the deck
+cannot be whole until that item is delivered.
 
 #### The change
 
@@ -1268,58 +1271,9 @@ whole-game test able to draw the deck.
   this item back to `proposed`, and opens the pull request with the cards and
   capabilities done so far. This item stays until the deck is whole.
 
-### Mardu Surge (Tarkir: Dragonstorm Commander)
-
-Effort **M** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
-
-#### Today
-
-Mardu Surge, the Tarkir: Dragonstorm Commander precon released 2025-04-11, is a
-coming-soon shell on the shelf: its row `tdc_mardu_surge` is in
-`data/decks/sources.json` and there is no `data/decks/tdc_mardu_surge.deck.json`, so
-`GET /api/precons/upcoming` serves it.
-`python scripts/sync_precons.py --missing tdc_mardu_surge` lists the cards the engine
-lacks, and the gap records in `data/authoring/gaps/` name the capability each
-attempted card waits on.
-
-#### The change
-
-Mardu Surge ships native, card for card, as one batch of
-[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
-
-1. `/author-cards` by name over the `--missing` list.
-2. One `/extend-dsl` run per capability the gap records name, in the order
-   the most cards elsewhere in the catalog wait on it.
-3. Re-author until `--missing` is empty, then `--write-deck tdc_mardu_surge`, the
-   dossier and the archetype, and the deck joins `PRECONS` in
-   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
-4. One `/author-cards` wave over the pending cards the new capabilities reach.
-
-It does not touch another precon's deck.
-
-#### Gate
-
-`tests/cards/test_precon_imports.py` over the new deck; one unit test under
-`tests/unit/` per capability; the manifest test and
-`tests/server/test_upcoming_precons.py` still green; and the sampled
-whole-game test able to draw the deck.
-
-#### Decisions
-
-- **Scope:** this precon only, taken to 100% in one pull request titled
-  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
-- **The editorial fields:** the run writes the dossier and picks the closest
-  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
-  archetype that visibly misplays the deck is a new item.
-- **A capability that needs a rules subsystem the engine does not have**
-  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
-  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
-  this item back to `proposed`, and opens the pull request with the cards and
-  capabilities done so far. This item stays until the deck is whole.
-
 ### Temur Roar (Tarkir: Dragonstorm Commander)
 
-Effort **M** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+Effort **M** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability), [Divided damage that may hit players](#divided-damage-that-may-hit-players), [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma).
 
 #### Today
 
@@ -1330,6 +1284,12 @@ coming-soon shell on the shelf: its row `tdc_temur_roar` is in
 `python scripts/sync_precons.py --missing tdc_temur_roar` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+Three of those capabilities are rules subsystems the engine does not have
+([rules-coverage.md](rules-coverage.md#not-implemented)): Dragonlord
+Atarka divides damage from an enters trigger and Skarrgan Hellkite from an
+activated ability that may hit players (divided damage on an ability, to any
+target), and Selvala's Stampede is a council's dilemma vote. The deck waits
+on the items that build them.
 
 #### The change
 

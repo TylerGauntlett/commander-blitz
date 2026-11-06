@@ -140,6 +140,22 @@ already there. The caster controls the spell; its owner keeps the card. Without
 `per_owner` the pool is one choice. The loader refuses `objects` beside `zones`,
 and `per_owner` without `objects`.
 
+`exiles: true` is "If that spell would be put into a graveyard, exile it
+instead". With `objects` naming a target it is Torrential Gearhulk's "you may
+cast target instant card from your graveyard without paying its mana cost":
+
+```jsonc
+// the trigger's targets: [{ "id": "t1", "kind": "card_in_graveyard", "count": 1,
+//   "selector": { "zone": "graveyard", "controller": "you", "types": ["Instant"] } }]
+{ "op": "cast_from_hand", "objects": { "target": "t1" }, "exiles": true }
+```
+
+It is `cast_card`'s rider on the free cast, carried on the stack item
+(`StackItem.exiles_instead`), so it holds whether the spell resolves, fizzles or
+is countered, and the same card cast later by another route goes back to the
+graveyard. `exiles` must be a boolean. `cast_card` is the near miss and charges
+the mana cost; `play_exiled` is free but defaults its pool to cards in exile.
+
 `scry` takes `player` (whose library) and `chooser` (who decides) separately.
 They are the same person for scry and different people for **fateseal** —
 `{"op": "scry", "player": {"target": "t1"}, "chooser": "you"}` — and that is
@@ -468,7 +484,7 @@ line each is [card-dsl-reference.md#selectors](card-dsl-reference.md#selectors).
   "attacking_player": "you",      // attacking YOU, not your planeswalker -- "you"|"opponent"|"any"|"most_life"|{"binding": name}
   "attacked_this_turn": true,     // Relentless Assault -- read AFTER combat, not during
   "entered_this_turn": true,      // Ocelot Pride -- the turn's arrivals, from the ledger
-  "blocked": false,               // ninjutsu -- is anything blocking *this attacker*
+  "blocked": false,               // ninjutsu -- unblocked once blockers are declared (509.1h); neither before
   "is_commander": false, "is_token": false, "damaged": true,
   "power":      { "op": ">=", "value": { "const": 3 } },   // the LIVE size, after counters and anthems
   "base_power": { "op": "<=", "value": { "const": 1 } },   // Angelic Aberration -- 613.2 layer 7a/7b
@@ -1039,6 +1055,42 @@ being targeted and resolving is dropped like any other target.
 `tests/unit/costs/test_x_in_mana_cost.py` pins the spell-target selector, on shipped
 cards as well as on `x_in_mana_cost`.
 
+### "If that spell is countered this way, exile it instead"
+
+```jsonc
+// Force of Negation — "Counter target noncreature spell. If that spell is
+//   countered this way, exile it instead of putting it into its owner's graveyard."
+{ "targets": [ { "id": "t1", "kind": "spell", "selector": { "not_types": ["Creature"] } } ],
+  "spell_effects": [ { "op": "counter", "target": "t1", "exiles": true } ] }
+
+// Transcendent Dragon — "…counter target spell. If that spell is countered this
+//   way, exile it instead of putting it into its owner's graveyard, then you may
+//   cast it without paying its mana cost."
+"effects": [
+  { "op": "counter", "target": "t1", "exiles": true, "as": "countered" },
+  { "op": "may", "prompt": "Cast the exiled card without paying its mana cost?",
+    "effects": [ { "op": "play_exiled", "objects": { "binding": "countered" } } ] } ]
+```
+
+`exiles: true` on `counter` is a replacement on the counter's own zone change
+(614.1a): a spell this op countered goes to exile, not to its owner's graveyard.
+"Countered this way" is the whole condition, so a spell that can't be countered
+stays on the stack and nothing moves (701.6a), and an ability countered has no
+card to move. The spell's own `StackItem.exiles_instead` (`cast_card`'s and
+`play_exiled`'s `exiles`) exiles it too, whichever says it. A non-boolean is a
+load error.
+
+`as` binds the cards this op countered that reached the zone it sent them to,
+which is the "it" a following `play_exiled` casts (`suspend.cast_for_free`, at
+the resolving controller's hands, whoever owns the card). An uncounterable
+spell, a copy (707.10a) and a commander its owner moved to the command zone
+(903.9a) are not in it, so the "may" offers nothing for them.
+
+The near miss is an `exile` op after the counter. By then the card is in a
+graveyard, has fired whatever watches one, and is a new object (400.7) that no
+selector names as "that spell". Exiling a spell *without* countering it is a
+different action and is not this key.
+
 ### Doing something to a spell that is not countering it
 
 ```jsonc
@@ -1050,7 +1102,8 @@ cards as well as on `x_in_mana_cost`.
 
 Rule 701.5a makes **countering** one specific action, and three things are true
 of it and of nothing else: "this spell can't be countered" stops it, the card
-lands in its owner's graveyard, and it is what "whenever a spell is countered"
+leaves the stack for its owner's graveyard unless a replacement such as
+`exiles` sends it elsewhere, and it is what "whenever a spell is countered"
 watches. Returning a spell to a hand shares none of them, so it is a separate op
 rather than a `destination` key on `counter` — which would be a card that
 declines to answer Carnage Tyrant and sets off the wrong triggers when it does.
@@ -1113,6 +1166,32 @@ reason: a union target that landed on a permanent would otherwise return nothing
 and leave it on the battlefield with the card looking like it worked — the silent
 failure that op's docstring was already written about, one kind further along.
 
+### "Target spell, nonland permanent, or card in a graveyard"
+
+```jsonc
+{ "id": "t1", "kind": "spell_permanent_or_graveyard_card", "count": 1,
+  "permanent_selector": { "not_types": ["Land"] } }
+```
+
+Endless Detour. `spell_or_permanent` with a third half: one spec whose pool is
+the spells on the stack, then the permanents, then the cards in **every**
+graveyard. The spell half reads `selector`, the permanent half
+`permanent_selector` when there is one, and the graveyard half `selector` in the
+graveyard zone — over every graveyard unless the selector names whose
+(`controller`, `owner` or `player`), via `TargetSpec.graveyard_half`. "Nonland"
+narrows only the permanent: a land card in a graveyard is legal, so it belongs in
+`permanent_selector`, not `selector`.
+
+`still_legal` re-checks an object ref against the half for the zone it is in as
+the spell resolves, and a ref in any other zone is no target. A `zone` on the
+selector is refused, since each half supplies its own.
+
+Only two ops can move it, because a `{"target": …}` selector reaches object refs
+alone: `put_on_top` with `objects: {"target": …}` and nothing else (the spell
+half is pulled off the stack uncountered into its owner's library, the owner
+choosing top or bottom under `owner_chooses`), and `return_spell_to_hand`. Any
+other op reading `objects: {"target": …}` of this kind is refused at load time.
+
 ### "As this enters, you may pay …"
 
 ```jsonc
@@ -1149,6 +1228,43 @@ An unaffordable price is never offered: 118.4 forbids paying life you do not hav
 so `can_pay` is asked first rather than showing a question whose "yes" cannot be
 honoured.
 
+### "As this enters, do something, and it enters with what that did" — `as_enters`
+
+```jsonc
+// Sin, Unending Cataclysm
+{ "event": "self_enters_with_counters", "counter": "+1/+1",
+  "amount": { "times": [{ "const": 2 }, { "binding": "removed" }] },
+  "as_enters": [
+    { "op": "remove_counters", "all_kinds": true,
+      "objects": { "zone": "battlefield",
+                   "any_types": ["Artifact", "Creature", "Enchantment"],
+                   "count": "any" },
+      "as": "removed" } ] }
+```
+
+"As Sin enters, remove all counters from any number of artifacts, creatures, and
+enchantments. Sin enters with X +1/+1 counters on it, where X is twice the
+number of counters removed this way." `as_enters` is a list of effects run as
+part of the arrival (614.1c), and a name they bind is readable by the same
+replacement's `amount`.
+
+The effects are run by `zones.offer_as_enters_effects`, beside
+`offer_riot_choice` and `offer_read_ahead` and from their call sites, for the
+reason the section above gives: `move_object` cannot stop to ask, and nobody
+receives priority between the effects and the arrival. The bindings wait on
+`obj.as_enters_bindings` for `_enter_battlefield`, which clears them. An arrival
+on a route that cannot stop (a token) runs no effects and reads every name as
+unbound, so 0. The replacement's `condition` gates the effects too. The entering
+permanent is not on the battlefield yet, so a battlefield pool never contains
+it.
+
+The near miss is a `self_enters` trigger running the same effects and then
+`add_counters`: the permanent would arrive at its printed size, other enters
+triggers would read that size, and a printed 0/0 would die before the trigger
+resolved. The loader refuses `as_enters` on any event but
+`self_enters_with_counters`, an empty list, and validates each effect with no
+targets — "as this enters" chooses, it never targets.
+
 ### "Target … chosen at random"
 
 ```jsonc
@@ -1167,6 +1283,28 @@ fixed `count` and no `mode`, `optional` or `up_to`: a spell's and an activated
 ability's targets are chosen in legality, where nothing would read the clause.
 The near miss is an untargeted `exile` with `random` in its `objects`, which
 never fizzles and goes on the stack with nothing to exile.
+
+### "One, two, or three targets" -- `min_count`
+
+```jsonc
+// Aberrant Return: "Put one, two, or three target creature cards from
+// graveyards onto the battlefield under your control."
+{ "id": "t1", "kind": "card_in_graveyard", "count": 3, "up_to": true, "min_count": 1,
+  "selector": { "types": ["Creature"], "zone": "graveyard", "controller": "any" } }
+```
+
+`min_count` is the floor under an `up_to` ceiling: every size from it through
+`count` is legal and none below. With fewer legal targets than the floor the
+spell has no legal declaration and is not offered (601.2c), and a triggered
+ability is not put on the stack. Every declaration path reads it: the
+enumerator's subsets (`targeting._spec_options`, largest first, no empty
+subset), a spell's mid-cast pick (`Game._ask_deferred_targets`, offered only
+while the floor can be met) and a trigger's pick (`stack._choose_each_target`).
+
+The loader refuses `min_count` without `up_to`, over a computed `count`, below 1,
+or at or above the ceiling (that is a plain `count`). The near misses: `up_to`
+alone is zero to N, so the spell could be cast at nothing; `optional` is
+"exactly N, or none"; a fixed `count` forces exactly N.
 
 ### "Each of X targets"
 
@@ -1358,6 +1496,28 @@ the question asked of the declaration, checked as it triggers only:
 | `attached` | names the one permanent the ability's own source is attached to |
 | `attached_to_host` | names the *other* attachments sharing the source's host, not a host |
 
+### "Equipped creatures" — `equipped`
+
+```jsonc
+// Barret Wallace: "…it deals damage equal to the number of equipped creatures you control…"
+{ "op": "damage", "amount": { "count": {
+    "zone": "battlefield", "types": ["Creature"], "controller": "you", "equipped": true } }, … }
+```
+
+Whether one or more Equipment is attached to the permanent (301.5c): `true` is
+equipped by anybody's Equipment, `false` by none. The word names no controller,
+so an Equipment an opponent moved onto your creature equips it too. The
+Equipment twin of `enchanted_by`, answered by `characteristics.is_equipped`
+from the host's end of `attached_to`, with the Equipment told by its derived
+subtypes as `modified` tells it. A selector key only, usable anywhere a
+selector is, `count` included; the loader refuses anything but a boolean.
+
+| Near miss | Why not |
+|---|---|
+| `modified` | also matches a creature with a counter or your Aura on it |
+| `{"subtypes": ["Equipment"], "attached_to": …}` | counts the Equipment, so a creature wearing two counts twice |
+| `attached` | names the one permanent the ability's own source is attached to |
+
 ### "For each Aura that was attached to it" — `auras_had`
 
 ```jsonc
@@ -1390,6 +1550,33 @@ but `controller`.
 | `{"count": {"subtypes": ["Aura"], "attached_to": …}}` | reads the board at resolution, when the Auras are graveyard cards |
 | `attached` | names the one permanent the ability's own source was attached to |
 | `counters_had` | the counters it died with, not its attachments |
+
+### "Without flying", asked of a creature that died — `keywords_had`
+
+```jsonc
+// Luminous Broodmoth: "Whenever a creature you control without flying dies,
+// return it to the battlefield under its owner's control with a flying counter on it."
+{ "kind": "triggered",
+  "trigger": { "event": "creature_dies", "controller": "you",
+               "condition": { "cmp": "==", "left": { "keywords_had": "flying" },
+                              "right": { "const": 0 } } },
+  "effects": [ { "op": "return_from_graveyard", "destination": "battlefield",
+                 "objects": { "binding": "subject", "zone": "graveyard" },
+                 "counters": { "flying": 1 } } ] }
+```
+
+A value, on a trigger about a permanent that has just left the battlefield: 1
+if it had the named keyword as it left (603.10a), else 0. The keyword is one
+bare string the engine implements; the loader refuses anything else.
+`zones.move_object` writes the derived keywords, from `chars()` before the
+wipe, as `had_keywords` on the `dies` and `leaves_battlefield` events, so a
+keyword counter, an anthem's grant and a removal all count. A trigger that
+never fired binds nothing and reads 0.
+
+| Near miss | Why not |
+|---|---|
+| a trigger filter's `keywords` | reads the printed face: a creature Broodmoth returned wears a flying counter, dies with flying, and would be returned again for ever |
+| `counters_had: "flying"` | sees the counter, not flying from an anthem, an Equipment or the printed line |
 
 ### "Attached to a creature" — `attached_to`
 
@@ -1483,6 +1670,35 @@ Which spell is named the same three ways `copy_spell` names one — a `sid` valu
 a declared `target`, or by default the spell the `spell_cast` trigger bound. The
 two ops share `_spell_named_by` rather than spelling it twice.
 
+### Promising counters to the permanent a spell becomes
+
+```jsonc
+{ "op": "spell_enters_with_counters", "counters": { "+1/+1": 2 } }
+{ "op": "spell_enters_with_counters", "counters": { "+1/+1": 2 }, "target": "t1" }
+```
+
+"When you next cast a creature spell this turn, **that creature enters with two
+additional +1/+1 counters on it**" (Yuna, Grand Summoner). A replacement on the
+spell's arrival (614.1c), not counters put on afterwards: the promise is staged on
+the spell's object (`GameObject.cast_enters_with`) while it is on the stack,
+carried by `move_object` only to the battlefield, and added by
+`zones._enter_battlefield` to the one placement (122.6) everything else the
+permanent enters with makes — so Hardened Scales adds one to the total. A
+countered spell, or one that is not a permanent spell, cashes nothing.
+
+`counters` is required, a map of counter kind to a value expression evaluated as
+the op resolves (below zero is zero). The spell is named as `grant_rebound` names
+one: the `spell_cast` trigger's own spell by default, or a declared `kind: "spell"`
+`target`.
+
+The near misses: `add_counters` on the spell acts on an object on the stack, and
+on the permanent after it resolves is a second placement that "enters with"
+readers never see; `enters_with_additional_counters` is a standing static over a
+filter, not a one-shot owed to one spell. Yuna's sentence is this op inside a
+`delayed_trigger` with `duration: "once_this_turn"` on `spell_cast`, ridden on a
+mana ability — see
+[the mana-rider recipe](card-dsl-cookbook.md#a-mana-ability-with-a-rider--the-painlands-drawback).
+
 ## Value expressions
 
 Anywhere a number is expected -- the leaf list is
@@ -1521,7 +1737,12 @@ Anywhere a number is expected -- the leaf list is
 { "damage_taken_this_turn": "each_opponent" }   // bloodthirst; SUMMED over the spec
 { "max_damage_taken_this_turn": "each_opponent" } // "an opponent was dealt N or more"; ONE player's total
 { "life_lost_this_turn": "each_opponent" }      // spectacle; damage counts towards it
+{ "max_life_lost_this_turn": "each_player" }    // "a player lost N or more life"; ONE player's total
 { "life_gained_this_turn": "you" }              // "if you gained life this turn"; lifelink counts
+{ "counters_put_this_turn": { "player": "you",  // "if you put a counter on a creature this turn";
+    "types": ["Creature"] } }                   //   who PUT them (122.6a), enters-with counts (122.6)
+{ "counters_put_this_turn": { "player": "all",  // "if a counter was put on Wakka this turn";
+    "on": { "self": true } } }                  //   one recipient, by anybody
 { "loyalty_activations_this_turn": "you" }      // The Chain Veil; "didn't activate" is `==` 0
 { "spells_cast_this_turn": "all" }              // storm
 { "cards_to_graveyard_this_turn": true }        // CARDS, from anywhere; every graveyard, so no spec
@@ -1532,6 +1753,10 @@ Anywhere a number is expected -- the leaf list is
 { "resolutions_this_turn": "self" }             // …times THIS ability has resolved
 { "binding": "amount" }                         // a value the trigger carried
 { "counters_on": { "counter": "+1/+1", "objects": { "self_only": true } } }
+{ "counters_on": { "counter": "charge",         // Wickersmith's Tools; a sacrifice cost's `as`
+                   "objects": { "binding": "sacrificed" } } }  //   snapshot keeps its counters
+{ "counters_on": { "counter": "any",            // every kind summed, live (Ferrafor)
+                  "objects": { "types": ["Creature"], "controller": { "target": "t1" } } } }
 { "counters_had": "-1/-1" }                     // what a creature that just died had
 { "counters_had": "any" }                       // …of every kind, summed (Angelic Sleuth)
 { "power_had": true } { "toughness_had": true }  // …and the P/T it died with
@@ -1557,6 +1782,29 @@ is `{"player_count": "each_opponent"}`. Only players still in the game are
 counted, because a player who has left is nobody's opponent (800.4a). It is
 effect-side only; no static prints a headcount. The near miss is
 `{"count": …}`, which counts objects and cannot reach a player.
+
+Its comparing form counts only the players whose own count passes a test:
+"create a number of 1/1 white Soldier creature tokens equal to the number of
+opponents who control more creatures than you" (Heidegger, Shinra Executive) is
+
+```jsonc
+{ "player_count": { "player": "each_opponent",
+                    "objects": { "types": ["Creature"] },
+                    "cmp": ">",
+                    "than": { "count": { "types": ["Creature"], "controller": "you" } } } }
+```
+
+`player` and `objects` are `max_count_of`'s, validated by the same
+`validate_per_player_count`: one of its player words, a required selector, and
+the per-player scope injected, so `controller` inside `objects` is refused.
+`cmp` is one of the condition comparisons and `than` any value; both are
+required, because a defaulted `than` of 0 would read "more creatures" as "any
+creatures". `than` is evaluated once, before any player is compared, and the
+whole leaf is one number, so it is the amount of a single `create_token`. The
+near miss is a `for_each_player` with an `if` and a token of one each: separate
+events, and each token raises your count before the next opponent is measured.
+`max_count_of` and `min_count_of` answer "an opponent" and "each opponent", not
+how many.
 
 `half` is the one division in the language, and it takes its rounding direction
 as a **required** key: 107.1a makes the card say which way a fraction goes, and
@@ -1651,6 +1899,26 @@ spelling `counters_had` uses). An X of 0 charges nothing. The loader refuses an
 than `{X}` alone, and the key on any static but `attack_tax`. A source-side X
 (Sphere of Safety's "the number of enchantments you control") is not this key:
 it reads the taxing permanent's board, not the attacker.
+
+**A tax with a clock.** "Until your next turn, creatures can't attack you
+unless their controller pays {2} for each of those creatures" (Summon:
+Yojimbo, chapters II–III) is the `attack_tax` **op**, the static's timed twin:
+
+```jsonc
+{ "op": "attack_tax", "cost": { "mana": "{2}" }, "duration": "until_your_next_turn" }
+```
+
+It writes a `structs.AttackTax` row on `GameState.attack_taxes`, which
+`player_statics.attack_tax` sums with the static taxes, so the price, the
+withheld unpayable declaration and the label all behave as Propaganda's do. The
+row is owned by no permanent: it stands after the Saga that installed it is
+sacrificed, and it ends in the resolving controller's untap step
+(`until_your_next_turn`) or at cleanup (`this_turn`). The protected seat and
+the clock are both the resolving controller; planeswalkers are not taxed
+(506.2), and every creature is priced. Two rows are two taxes and sum. `cost`
+and `duration` are required, and the cost must be a fixed, non-empty mana cost.
+The near misses are the static, which ends when its source leaves and has no
+clock, and the `cant_attack_player` op, which is a wall with no price.
 
 ### Pricing a block rather than forbidding it
 
@@ -1946,8 +2214,21 @@ to ask.
   "affects": { "controller": "you", "has_counters": true } }
 ```
 
-One or more counters of **any** kind (122.1); `false` is "with no counters on
-it". A static filter key for `tapped`'s licence — counters are board state no
+```jsonc
+// Liliana, Death Wielder: "−3: Destroy target creature with a -1/-1 counter on it."
+{ "id": "t1", "kind": "permanent", "count": 1,
+  "selector": { "zone": "battlefield", "types": ["Creature"], "controller": "any",
+                "has_counters": "-1/-1" } }
+```
+
+`true` is one or more counters of **any** kind (122.1); `false` is "with no
+counters on it"; a counter kind is one or more of **that** kind, so a creature
+with only +1/+1 or stun counters is not "a creature with a -1/-1 counter on it".
+The kind goes through the same near-miss check `add_counters` uses, and `"any"`
+is refused because `true` already says it. In a target spec the restriction is
+asked as the target is chosen and again on resolution (608.2b). `counters_on` in
+an `if` is the near miss: it changes what the ability does, not what it may
+target. A static filter key for `tapped`'s licence — counters are board state no
 layer writes, since no static puts a counter on anything — and honoured by every
 reader of the filter language (the layer pipeline, trigger filters, cost
 reductions) and by the effect-side selector. The answer moves the moment a
@@ -2249,6 +2530,43 @@ an ability offered at the reduced price and charged the printed one would strand
 the payment. Added to the ability's own `mana_reduction` rather than replacing
 it: two cards may both be talking about one activation, and the printed answer
 is that both apply. Generic only and clamped at zero, like every other reduction.
+
+### "The first activated ability you activate during your turn that targets …"
+
+```jsonc
+// Professor Hojo
+{ "kind": "static", "effect": "ability_cost_reduction",
+  "affects_abilities": { "any": true },
+  "activated_by": "you",
+  "targeting": { "controller": "you", "types": ["Creature"] },
+  "first_during_your_turn": true,
+  "amount": { "const": 2 } }
+```
+
+`affects_abilities: {"any": true}` is every activated ability. The loader
+accepts it only beside `targeting`: a mana ability is priced by the payment
+solver, where this static is never read, and with a `targeting` clause that
+gap is moot because a mana ability has no targets (605.1a).
+
+`first_during_your_turn` limits the discount to one activation: the activator's
+first of their own turn that matches the class and `targeting`. The count is of
+**matching** activations, so an ability aimed at an opponent's creature leaves
+the discount for the next one aimed at yours. A matching ability that costs only
+{G} still is the first, and uses up the turn's discount (the {2} has no effect on
+it, by Hojo's ruling). Every activation of the turn counts, including one made
+before this permanent arrived, because "the first" describes the activation and
+not the static.
+
+`Game._activate` records each activation's object targets, with their controller,
+card types and subtypes as they were targeted, in `TurnLedger.targeted_activations`
+once the cost is paid. Earlier activations are matched against that record, since
+the creature one targeted may have died or changed hands since. So `targeting`
+may read only `controller`, `types` and `subtypes` here, and the loader also
+refuses `affects` and any `activated_by` but `you`.
+
+The near miss is `condition: {"is_your_turn": true}`, which discounts every
+activation of the turn rather than the first. `static_max_per_turn` is metered
+per permanent, and only on graveyard-cast permissions.
 
 ### A delayed trigger scoped to one chosen object
 
@@ -2606,9 +2924,10 @@ The other keys, each a copiable value the copy carries until it ends:
 | key | meaning |
 |---|---|
 | `add_keywords` | keywords added to the copied face |
+| `add_types` | `copy_permanent`'s key of the same name: card types the copy has in addition to the copied ones, on `copying_add_types` — Phyrexian Metamorph's `["Artifact"]` |
 | `remove_supertypes` | `copy_permanent`'s key of the same name: supertypes the copy does not take, on `copying_remove_supertypes`. The legend rule reads the result |
 | `name` | the name the copy keeps (`become_copy`'s `except_name`), on `copying_name` |
-| `enters_with` | counters the copy enters with, each `{counter, amount, condition}`, the fields `self_enters_with_counters` has |
+| `enters_with` | counters the copy enters with, each `{counter, amount, condition}`, the fields `self_enters_with_counters` has; `amount` is a value expression in which `{"x": true}` is the X announced on casting (Altered Ego) |
 
 `enters_with` is part of the replacement (614.1c). Its conditions are judged once
 the copy is applied, with the arriving permanent as `self_only`, so "if it's a
@@ -2632,6 +2951,40 @@ a malformed condition and an empty name.
 offer, because every printed card in this family says "you may"; an empty pool
 asks nothing, and the arriving permanent is not on the battlefield yet, so it
 cannot find itself.
+
+### A permanent that becomes a copy, except it keeps this ability
+
+```jsonc
+// Kimahri, Valiant Guardian — Ronso Rage, abilities[0]
+{ "op": "may", "effects": [
+  { "op": "become_copy", "duration": "permanent",
+    "objects": { "zone": "battlefield", "self_only": true },
+    "copying": { "target": "t1" },
+    "except_name": "Kimahri, Valiant Guardian",
+    "except_": { "add_keywords": ["vigilance"], "keep_abilities": [0] } } ] }
+```
+
+`become_copy` applies a copy in place (Gogo, Clone's shape with `duration:
+"permanent"`). `except_name` is the name the copy keeps; `except_` holds its
+other 707.9b exceptions, each written into the copiable values rather than
+granted on top:
+
+| key | meaning |
+|---|---|
+| `add_keywords` | keywords added to the copied face, on `copying_keywords` ("and it has vigilance") |
+| `keep_abilities` | positions in the copying card's **own** printed `abilities` that the copy keeps, on `copying_own_abilities` ("and this ability") |
+
+`GameState.card_of` appends the kept abilities after the copied face's own, so
+the copied card's indices keep meaning what they printed, and a kept triggered
+ability fires off the copy on later turns. A new `become_copy` replaces the
+whole copy, exceptions included; a timed copy's exceptions end at cleanup with
+it. The loader holds the key set as `BECOME_COPY_EXCEPT_KEYS` and refuses an
+unknown key, an empty exception, an unknown keyword and a position the card does
+not print.
+
+The near miss is a `grant_keyword` or `grant_ability` after the copy: a layer-6
+grant, not part of what the copy is. A copy of a copy still takes only the
+copied card's printed face ([rules coverage](rules-coverage.md)).
 
 ### A permanent whose arrival is itself replaced
 
@@ -2885,11 +3238,32 @@ power). Nothing changes when the board does before resolution. `engine.division`
 caps "any number" of targets at the amount where they are chosen, and legality
 offers no line with more targets than damage.
 
+**X damage divided, X paid in life** -- Fire Covenant, "As an additional cost to
+cast this spell, pay X life. Fire Covenant deals X damage divided as you choose
+among any number of target creatures":
+
+```jsonc
+"additional_cost": { "pay_life_x": true },
+"targets": [ { "id": "t1", "kind": "permanent", "count": "any",
+               "selector": { "types": ["Creature"], "controller": "any" } } ],
+"spell_effects": [ { "op": "damage", "amount": { "x": true }, "divided": "t1" } ]
+```
+
+`Game._cast` announces a `pay_life_x` X **first**, before any target is declared
+(601.2b, then 601.2c), so the "any number" pick is capped at X; the life is still
+paid with the other additional costs (601.2h). Legality has no X yet, so a line
+whose targets are on it (a targeting tax keeps them there) is capped at the most
+X the caster could announce -- `casting.life_x_ceiling`, the life total less the
+targets' life tax -- and the announcement is then floored at that line's target
+count.
+
 The loader accepts it only as a **top-level spell effect**, over a `permanent`
 spec the spell declares, with no other recipient (`objects`, `player`, `target`)
-beside it; a fixed target count larger than a printed amount, and an amount that
-reads the announced X, are refused. Dividing among players or "any target", and
-dividing on an ability, are not modelled.
+beside it. Refused: a fixed target count larger than a printed amount, and an
+amount reading the announced X unless an additional `pay_life_x` cost announces
+it -- a mana {X} is announced after the targets, because its ceiling reads cost
+reductions that read them. Dividing among players or "any target", and dividing
+on an ability, are not modelled.
 
 ### Doubling the counters on a permanent
 
@@ -2908,6 +3282,131 @@ more — through `add_counters`, so it is a placement: Doubling Season doubles w
 it puts (2 become 6) and "whenever a counter is put on" triggers. Not
 `proliferate` (one of each kind) and not `move_counters` (from somewhere else).
 `objects` is required.
+
+### Removing counters of any kind — `any_kind`
+
+```jsonc
+// Glissa Sunslayer — "• Remove up to three counters from target permanent."
+{ "op": "remove_counters", "objects": { "target": "permanent" },
+  "any_kind": true, "amount": { "const": 3 }, "up_to": true }
+```
+
+Without `any_kind`, `remove_counters` takes `amount` of the one named `counter`
+kind (default +1/+1). With it the card names no kind, and the controller takes
+the counters off each of `objects` one at a time — which permanent, declinable
+once the floor is met (`ask_objects`, purpose `"remove_counter"`), then which
+kind when it carries more than one (`ask_mode`, harmful kinds such as -1/-1 and
+stun first) — so any mix of kinds is expressible. This is the question the
+`remove_counters_from_among` cost asks, from `effects.counter_removal`.
+
+`amount` alone is exactly that many, or as many as there are (609.3); with
+`up_to` it is a ceiling the controller may stop short of, down to none; left out
+it is "any number". The loader refuses `any_kind` beside a named `counter`, on
+any op that does not read it, or without `objects`; `up_to` on a named-kind
+removal or without an `amount`; and an amount below one.
+
+### Removing all counters — `remove_counters` with `all_kinds`
+
+```jsonc
+// Sin, Unending Cataclysm — "remove all counters from any number of
+// artifacts, creatures, and enchantments"
+{ "op": "remove_counters", "all_kinds": true,
+  "objects": { "zone": "battlefield",
+               "any_types": ["Artifact", "Creature", "Enchantment"],
+               "count": "any" },
+  "as": "removed" }
+```
+
+Every counter of every kind comes off each of `objects`; the only choice is the
+objects themselves. The near miss is `remove_counters_from_among`, which takes
+counters one at a time from a pool and so lets the controller strip a permanent
+only partly — "all counters" leaves nothing to split. The loader refuses
+`all_kinds` beside `counter`, `amount`, `any_kind` or `up_to`, and without
+`objects`.
+
+`as` on any `remove_counters` binds the total actually removed across every
+object, an int read back with `{"binding": …}` — "the number of counters
+removed this way".
+
+### Moving a counter of any kind — `move_counters` with `any_kind`
+
+```jsonc
+// Nesting Grounds — "Move a counter from target permanent you control onto a
+// second target permanent."
+{ "op": "move_counters", "from": { "target": "from" }, "objects": { "target": "onto" },
+  "any_kind": true, "amount": { "const": 1 } }
+```
+
+`move_counters` takes counters off `from` (default this permanent) and puts
+them on `objects`: of one named `counter` kind (default +1/+1, `amount`
+defaulting to all of it), or with `all_kinds` the whole multiset. `any_kind` is
+the third reading: `amount` counters, one at a time, each of the kind the
+controller picks on resolution from those on the source (`ask_mode`, asked only
+when it carries more than one, harmful kinds first). Each is taken off before
+it is put on — a placement, so counter replacements and `counter_placed` see it
+— and with either target gone nothing moves. Two target specs never share an
+object, which is "a second target". The loader refuses `any_kind` beside a
+`counter` or `all_kinds`, and without a printed `amount` unless `any_number`
+says the number is the controller's.
+
+```jsonc
+// Resourceful Defense — "Move any number of counters from target permanent you
+// control onto a second target permanent you control."
+{ "op": "move_counters", "from": { "target": "from" }, "objects": { "target": "onto" },
+  "any_kind": true, "any_number": true }
+```
+
+`any_number` beside `any_kind` is "any number of counters": for each kind on
+the source (harmful kinds first) the controller says how many move, `ask_x` 0
+up to all of that kind, so any sub-multiset is reachable, none included. Each
+kind comes off and goes on in one placement, so a counter replacement applies
+once per kind. The loader refuses it on any other op, without `any_kind`, and
+beside an `amount`. Not `all_kinds`, which moves every counter.
+
+### Moving counters off this permanent among others — `distribute_moved_counters`
+
+```jsonc
+// Forgotten Ancient — "At the beginning of your upkeep, you may move any
+// number of +1/+1 counters from this creature onto other creatures."
+{ "op": "distribute_moved_counters", "counter": "+1/+1",
+  "objects": { "types": ["Creature"], "controller": "any", "exclude_self": true } }
+```
+
+An untargeted split chosen on resolution (608.2d): nothing is announced as the
+ability goes on the stack, because 601.2d divides only among targets. The
+controller says how many `counter` counters (default +1/+1) leave this
+permanent — `ask_x`, 0 up to all of them, 0 being the "you may" declined — then
+which permanent from the `objects` pool gets each one (`ask_objects`, purpose
+`distribute`); this permanent is never offered. They come off once, and each
+permanent's share goes on in one placement, so a counter replacement applies
+once per permanent. Nothing is asked with this permanent gone, no counter on
+it or an empty pool. Not `move_counters`, which puts the same amount on every
+destination, and not `distribute_counters`, a division among targets announced
+on activation. The loader refuses it without a selector `objects`, with a
+`target` or `binding` pool, and with `amount` or `from`.
+
+### Removing counters from among permanents — the `remove_counters_from_among` op
+
+```jsonc
+// Eventide's Shadow
+"spell_effects": [
+  { "op": "remove_counters_from_among",
+    "objects": { "zone": "battlefield", "controller": "any" }, "as": "removed" },
+  { "op": "draw", "player": "you", "amount": { "binding": "removed" } },
+  { "op": "lose_life", "player": "you", "amount": { "binding": "removed" } }
+]
+```
+
+The effect twin of the [cost of the same name](#remove_counters_from_among--counters-of-any-kind-off-other-permanents):
+counters of any kinds off whichever of the `objects` pool the controller picks,
+one counter at a time, as `any_kind` asks. `objects` is a required selector
+(`controller` defaults to you, so "permanents on the battlefield" says `"any"`);
+only permanents carrying a counter are offered. `amount` and `up_to` read as on
+`any_kind` — absent is "any number", down to none. `as` binds the number
+actually removed, an int for `{"binding": …}`, which is the only place "the
+number of counters removed this way" survives. The loader refuses a `counter`
+kind, `any_kind` (it is implied), a missing `objects`, and a `count` or
+`chooser` inside `objects` — the number is the op's `amount`.
 
 ### The same number and kind of counters
 
@@ -3149,6 +3648,13 @@ is: the card is still in the library when the question is put. A branch with no
 fallthrough), and the key is refused on any op but the two searches, where it
 would load and be ignored — the printed line with half its sentence missing.
 
+When the destination is the **player's** choice rather than a property of the
+card — "you may put that card onto the battlefield tapped. If you don't, put it
+into your hand" — the search takes `may_destination` instead, optionally gated
+by `may_destination_if`; see the cookbook's
+[`may_destination`](card-dsl-cookbook.md#you-may-put-that-card-onto-the-battlefield-if-you-dont---may_destination).
+The two are refused together.
+
 ### Narrowing when a spell may be cast
 
 ```jsonc
@@ -3319,9 +3825,34 @@ than three because `count` fails them in **opposite** directions:
 
 No selector, however filtered, reaches any of those numbers — `count` counts
 matches, and these count the distinct values those matches hold. `of` is `power`,
-`basic_land_type`, `card_type` or `color`, and nothing else: each has a printed
-card behind it, and a misspelling is a load error rather than a silent fall back
-to powers.
+`basic_land_type`, `card_type`, `color`, `counter_kind` or `name`, and nothing else: each
+has a printed card behind it, and a misspelling is a load error rather than a
+silent fall back to powers.
+
+`counter_kind` counts the kinds of counters (122.1) on the pool, a kind with no
+counters left on the object counting none — Blitzball Stadium's granted "draw a
+card for each kind of counter on it":
+
+```jsonc
+{ "distinct": { "of": "counter_kind", "objects": { "self_only": true } } }
+```
+
+Three +1/+1 counters and a shield counter are two kinds. **Not**
+`counters_on {"counter": "any"}`, which sums every counter and would read four.
+
+`name` counts the names among the pool, read off the face `card_of` shows as
+`shares_a_name_with` reads it; a face-down permanent has no name (708.2a) and
+adds none. A token's name is its definition's — its subtypes plus "Token"
+unless the creating effect names it (111.4) — so two Goblin tokens and a Treasure
+are two names. Neriv, Crackling Vanguard's "the number of differently named
+tokens you control":
+
+```jsonc
+{ "distinct": { "of": "name", "objects": { "controller": "you", "is_token": true } } }
+```
+
+**Not** `most_sharing_a_name`, which is the size of the largest group sharing
+one name rather than how many names there are.
 
 `color` counts the five colors (105.1) among the pool's derived colors;
 colorless counts none (105.2c). It alone takes `spells_cast_this_turn`, a player
@@ -3484,12 +4015,32 @@ Two things about that ledger are load-bearing:
   took 4 each. `max_damage_taken_this_turn` reads each player's total and
   takes the greatest, so the `cmp` asks about one opponent — the
   `life_of` / `min_life_of` split, for the same reason.
+  `max_life_lost_this_turn` is its life-loss twin (Y'shtola, Night's Blessed:
+  "if a player lost 4 or more life this turn"), counting everything
+  `life_lost_this_turn` does — damage, drains, life paid — one player at a time.
 - **A count per seat is not a record per object.** `cards_discarded_this_turn`
   ("if you discarded a card this turn", Typhoid Mary, Fractured) counts DISCARD
   events by the discarding player, so a card discarded and since exiled, cast
   with mayhem, or replaced into exile by madness or Rest in Peace still counts.
   Mayhem's `TurnLedger.discarded` is the near miss: it asks about one object
   and forgets it at its next zone change (400.7).
+- **A counter is counted by who put it.** `counters_put_this_turn` ("if you
+  put a counter on a creature this turn", Lasting Tarfire) takes a required
+  `player` (the putter, 122.6a — not the recipient's controller), optional
+  `types` (card types the recipient had as the counter arrived, all of them)
+  optional `counter` (one kind; `"any"`, the default, is every kind) and
+  optional `on`, one object reference (`{"self": true}`, `{"binding": …}` or
+  `{"target": …}`) naming the recipient ("if a counter was put on Wakka this
+  turn" is `"player": "all"` with `"on": {"self": true}`); a permanent that
+  left the battlefield and came back is a new object with nothing put on it
+  (400.7). It
+  sums the amounts of every COUNTER_PLACED this turn, the counters a permanent
+  entered with included (122.6), and keeps them when the counter or the
+  permanent has gone since. A `counter_placed` trigger setting a turn flag is
+  the near miss: an unprinted ability that misses counters put before the
+  permanent arrived. `counters_on` is the other: it reads counters present
+  now, so a counter put and removed this turn is missed and one from an
+  earlier turn is counted.
 - **A death can be filtered by what the creature was as it died, and only by
   that.** `modified_creatures_died_this_turn` ("if a modified creature died
   under your control this turn", Intermediate Chirography) counts the deaths
@@ -3549,9 +4100,12 @@ and [#card-level-costs](card-dsl-reference.md#card-level-costs):
   "mill": 1,                                      // Millikin: off *your* library's top
   "pay_life_x": true,                             // Toxic Deluge: X life, the caster announces it
   "loyalty_x": true,                              // a planeswalker's −X: X loyalty, announced
+  "discard_x": true,                              // Gix: discard X cards, X announced
   "remove_counters": { "counter": "-1/-1", "amount": 1 },
   "put_counters":    { "counter": "page", "amount": 1 },   // Mazemind Tome: onto the source
   "exile_from_graveyard": { "types": ["Creature"] },
+  "exile_from_graveyard": { "types": ["Creature"], "count": 2,
+                            "as": "exiled" },    // Coin of Fate: names *the* exiled cards
   "times": { "counters_on": { "counter": "age",            // cumulative upkeep:
                               "objects": { "self_only": true } } },  // …for each
   "x_value": { "mana_value_of": { "objects": {             // "X is the mana value
@@ -3600,6 +4154,31 @@ test and no attacking test, because the only printed exert cost is on a land.
 `Cost.is_tap_only` excludes it, which is what keeps the payment solver off it —
 a solver that paid an exert silently would keep a land down for a turn nobody
 agreed to. Cashed by `tests/unit/keywords/test_exert_cost.py`.
+
+### `discard_x` — discard X cards, X announced
+
+"{4}{B}{B}{B}, Discard X cards: Exile the top X cards of target opponent's
+library." — Gix, Yawgmoth Praetor.
+
+```jsonc
+"cost": { "mana": "{4}{B}{B}{B}", "discard_x": true },
+"effects": [{ "op": "look_at_top", "player": "target", "amount": { "x": true }, ... }]
+```
+
+The controller announces X as the ability is activated (601.2b, 107.3) and
+discards exactly that many cards, chosen as the cost is paid (601.2h); the
+effects read the number with `{"x": true}` / `"x"`, as they read an `{X}` in a
+mana cost. The ceiling is `costs.discard_x_ceiling`, the cards in hand the cost
+may take: `discard_selector` narrows them ("Discard X land cards") and the source
+is never among them. X = 0 is a legal announcement, so the ability is on offer
+with an empty hand. A target whose filter reads X is offered once per X up to
+that ceiling, each activation carrying the targets legal at that X, the shape
+`loyalty_x` uses.
+
+Not `discard`, which is a number the card fixes. The loader refuses it beside
+`discard` (two numbers for one payment), beside an `{X}` in `mana`, `pay_life_x`
+or `loyalty_x` (an ability announces one X), and anywhere but an activated
+ability's cost.
 
 ### `mill` — a cost, and never an effect
 
@@ -3657,6 +4236,44 @@ counter to resolution where a response can stop it arriving, and `loyalty`,
 which is a planeswalker's and carries 606.3's once per turn. Like every non-tap
 cost it disqualifies a mana ability from `Cost.is_tap_only()`, so the payment
 solver never pays it silently.
+
+### `blight` — -1/-1 counters on a creature the payer chooses
+
+"To blight N, a player puts N -1/-1 counters on a creature they control."
+
+```jsonc
+// Burning Curiosity -- "As an additional cost to cast this spell, you may blight 1."
+"additional_cost": { "blight": 1 }, "additional_optional": true
+// …"If this spell's additional cost was paid" is
+// {"cmp": ">=", "left": {"additional_paid": true}, "right": {"const": 1}}
+
+// Auntie Ool, Cursewretch -- "Ward—Blight 2."
+{ "kind": "static", "effect": "ward", "affects": { "self_only": true },
+  "cost": { "blight": 2 } }
+
+// An activated ability -- "Blight 1: Draw a card."
+"cost": { "blight": 1 }
+```
+
+A positive integer, on any cost node: an activated ability, an `additional_cost`,
+a ward cost or a `may`'s `pay`. The **payer** chooses one creature they control
+as the cost is paid (601.2h), and all N counters go on it through
+`add_counters` with `as_cost`, so the placement raises `counter_placed` put by
+the payer and the counter replacements that are not "if an effect would" apply.
+That is why ward works unchanged: the targeting opponent pays, so the pool is
+their creatures, never the warded permanent's controller's. An activated ability
+on a creature may blight that creature.
+
+It is payable only while the payer controls a creature that can take -1/-1
+counters (`costs._blight_pool`): with none, the cast line, the activation and the
+ward "yes" are withheld, and a creature under "can't have -1/-1 counters put on
+it" is not a candidate, for `put_counters`' reason. The loader refuses a
+negative N.
+
+The near miss is `put_counters`, which puts counters on the cost's own source
+and asks nothing — as Auntie Ool's ward cost it would shrink Auntie Ool. "Blight
+N" as an **effect** (Sinister Gnarlbark) is not a cost and is written with
+`choose_permanents` and `add_counters`.
 
 ### `exile_from_hand` — the pitch cost, and why it is not a discard
 
@@ -3931,6 +4548,82 @@ Not the `sacrifice` op with `snapshot` in the effects: that pays on resolution,
 so the ability could be activated with no other creature and responded to
 before anything had died.
 
+### Zack Fair — what a sacrificed source had
+
+```jsonc
+{ "kind": "activated",
+  "text": "{1}, Sacrifice Zack Fair: Target creature you control gains indestructible until end of turn. Put Zack Fair's counters on that creature and attach an Equipment that was attached to Zack Fair to that creature.",
+  "cost": { "mana": "{1}", "sacrifice": { "self_only": true, "as": "zack" } },
+  "targets": [ { "id": "t1", "kind": "permanent",
+                 "selector": { "zone": "battlefield", "controller": "you",
+                               "types": ["Creature"] } } ],
+  "effects": [
+    { "op": "grant_keyword", "keywords": ["indestructible"], "objects": { "target": "t1" } },
+    { "op": "move_counters", "all_kinds": true, "from_had_counters": "zack",
+      "objects": { "target": "t1" } },
+    { "op": "attach", "objects": { "target": "t1" },
+      "attachment": { "zone": "battlefield", "subtypes": ["Equipment"],
+                      "was_attached_to": "zack", "count": 1 } } ] }
+```
+
+A `sacrifice` cost's `as` record also holds what was attached to the permanent
+as it was paid: each attachment with the zone timestamp it had. Two readers
+take the permanent's last-known information (608.2h) from it:
+
+- **`from_had_counters: <name>`** on `move_counters` with `all_kinds` puts every
+  kind of counter the sacrificed permanent had, in its amount, on `objects`.
+  `from_had_counters: true` is the same move from a leave trigger's
+  `had_counters` (The Ozolith).
+- **`was_attached_to: <name>`**, a selector key, matches a permanent recorded as
+  attached to it that is still on the battlefield as the same object. One that
+  left and came back is a new object (400.7) and does not match; one moved to
+  another creature in the meantime still does. Write `subtypes: ["Equipment"]`
+  beside it for "an Equipment", and `count: 1` for the controller to pick one.
+
+The loader refuses either name unless it is this ability's sacrifice cost `as`,
+`from_had_counters` without `all_kinds` or beside `from`, and `was_attached_to`
+in a target selector, which is chosen before costs are paid.
+
+Not `move_counters` with `from: {"self_only": true}`, which reads the
+graveyard card's empty counters, nor `counters_had`, which only a leave trigger
+binds. Not `attached` or `attached_to`: they read the live board, where the
+Equipment has already fallen off.
+
+### Coin of Fate — an exile-from-graveyard cost that names what it exiled
+
+```jsonc
+{ "kind": "activated",
+  "text": "{3}{W}, {T}, Exile two creature cards from your graveyard, Sacrifice this artifact: An opponent chooses one of the exiled cards. …",
+  "cost": { "mana": "{3}{W}", "tap": true, "sacrifice": { "self_only": true },
+            "exile_from_graveyard": { "types": ["Creature"], "count": 2,
+                                      "as": "exiled" } },
+  "effects": [
+    { "op": "choose_player", "players": "each_opponent", "as": "chooser" },
+    { "op": "choose_permanents", "as": "chosen",
+      "objects": { "binding": "exiled", "zone": "exile", "count": 1,
+                   "chooser": { "binding": "chooser" } } },
+    { "op": "put_on_top", "bottom": true,
+      "objects": { "binding": "chosen", "zone": "exile" } },
+    { "op": "put_onto_battlefield", "tapped": true,
+      "objects": { "binding": "exiled", "zone": "exile" } } ] }
+```
+
+`as` on the `exile_from_graveyard` cost binds **every** card the cost exiled,
+as a list of oids, so `{"binding": …}` as a selector reaches exactly those cards
+and `count`/`chooser` pick among them. Any `count` is allowed — unlike
+`sacrifice`'s and `tap_permanents`' `as`, which name *the* one permanent — because
+the binding is the set, not its first member. Only cards that arrived in exile
+are named. Write `zone: "exile"` beside the binding: a card that leaves exile
+before the ability resolves is a new object (400.7) and no longer one of "the
+exiled cards", and without the zone the selector would follow it. The loader
+refuses an empty name, and `as` anywhere but an activated ability's cost, for
+`sacrifice`'s reason.
+
+Not `{"zone": "exile"}` alone, which is every exiled card in the game, and not
+`exiled_with: "self"`, which reads a link this cost does not write. Not the
+`exile` op with `as` in the effects: that exiles on resolution, so the ability
+could be activated with an empty graveyard.
+
 ### Station symbols — `threshold`, an ability the permanent has only at N+
 
 ```jsonc
@@ -4007,7 +4700,7 @@ The list with a line each is
 `{ "controller_of_target": "t1" }` ·
 `{ "controller_of": "snapshot_name" }` · `{ "owner_of": "snapshot_name" }` ·
 `{ "binding": "name" }` · `{ "not": { … } }` · `{ "attacked_by": "self" }` ·
-`{ "dealt_combat_damage_by": "self" }`
+`{ "dealt_combat_damage_by": "self" | { "subtypes": [ … ] } | { "any_of": [ … ] } }`
 
 `{"binding": …}` names whichever seat a trigger, a `for_each_player` or a
 `choose_player` put under that name. It is the only one of these that can name
@@ -4053,7 +4746,7 @@ And the record goes when the creature **leaves the battlefield**: the oid
 survives the zone change but the object does not (400.7), and a flickered Angel
 attacked nobody. `"self"` is the only subject; anything else is a load error.
 
-### `dealt_combat_damage_by` — the players *this creature* dealt combat damage to this turn
+### `dealt_combat_damage_by` — the players a creature dealt combat damage to this turn
 
 ```jsonc
 // Steel Hellkite: "{X}: Destroy each nonland permanent with mana value X whose
@@ -4080,7 +4773,36 @@ The record is dropped when the oid **enters** the battlefield, because the
 permanent that comes back is a new object that has dealt nobody anything
 (400.7). It is kept when the creature leaves, so an ability it already put on
 the stack still resolves off what it did — a Hellkite killed in response still
-destroys. `"self"` is the only subject; anything else is a load error.
+destroys.
+
+The subject is one of three shapes, and anything else is a load error:
+
+| Subject | Whom it names |
+|---|---|
+| `"self"` | the seats the ability's source dealt combat damage to, by oid as above |
+| `{ "subtypes": ["Dragon"] }` | the seats dealt combat damage by any creature, under any controller, that had one of these subtypes **as the damage was dealt** |
+| `{ "any_of": [ … ] }` | the union of its subjects' seats, so a player hit by two of them is one player |
+
+```jsonc
+// Estinien Varlineau: "At the beginning of your second main phase, you draw X
+// cards and lose X life, where X is the number of your opponents who were dealt
+// combat damage by Estinien Varlineau or a Dragon this turn."
+"trigger": { "event": "postcombat_main", "controller": "you" },
+"effects": [
+  { "op": "draw", "player": "you",
+    "amount": { "player_count": {
+      "dealt_combat_damage_by": { "any_of": [ "self", { "subtypes": ["Dragon"] } ] },
+      "except": "you" } } },
+  { "op": "lose_life", "player": "you", "amount": { /* the same value */ } } ]
+```
+
+`subtypes` reads `TurnLedger.players_dealt_combat_damage_by_subtype` (subtype →
+seats), folded off the same event from the attacker's **derived** subtypes, so a
+changeling counts, a Dragon that dies or stops being one afterwards still dealt
+the damage as a Dragon, and a creature made a Dragon after combat did not.
+`except: "you"` is what makes it "your opponents": an opponent's Dragon that hit
+you put your seat in the set. The `combat_damage_by` condition (prowl) is the
+near miss — it says a Dragon got through, not to whom, so it cannot count.
 
 ### `not` — the player a card *excludes*
 
@@ -4269,7 +4991,7 @@ and the filter keys are
     "counter": "+1/+1",              // `counter_placed` only: which kind
     "put_by": "you",                 // `counter_placed` only: YOU put them
     "mana_ability": false,           // `ability_activated` only: exclude mana abilities
-    "targeted_by": "spell",          // `becomes_target` only: a spell, not an ability
+    "targeted_by": "spell",          // `becomes_target` only: a spell, an ability, or an activated ability
     "to_zones": ["graveyard", "exile"], // `leaves_battlefield` only: where it went
     "from_zones": ["exile"]          // `spell_cast` / `land_played` only: where it was played from
   },
@@ -4359,8 +5081,10 @@ Three events carry a defending player and so accept the clause: `attacks`,
 `creatures_attack_player` and `deals_damage_to_player`. The last is the one that
 is not about combat — Curiosity's "whenever enchanted creature deals damage to
 **an opponent**" asks who took the damage, and `controller` there is a question
-about whose *creature* dealt it. `creatures_deal_combat_damage` accepts it only
-with `per_player`, where each firing is about the one seat it hit.
+about whose *creature* dealt it. On `creatures_deal_combat_damage` it asks the
+seat each firing hit with `per_player`; without it, it narrows the one batch to
+the seats it names ("whenever **your opponents are dealt** combat damage") —
+see ["Your opponents are dealt combat damage"](card-dsl-cookbook.md#your-opponents-are-dealt-combat-damage).
 
 `defending: "most_life"` is dethrone's "whenever this creature attacks **the
 player with the most life or tied for most life**" (702.105a), legal on
@@ -4584,7 +5308,7 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `becomes_monarch` ·
 `counter_placed` · `sacrificed` · `leaves_graveyard` · `token_created` · `draw` · `discard` · `cycle` ·
 `ability_activated` · `damage_prevented` · `deals_damage_to_player` ·
-`searches_library` · `state`
+`searches_library` · `wins_coin_flip` · `state`
 
 ### `state` — "When there are four or more page counters on this artifact"
 
@@ -4654,6 +5378,33 @@ The index rides the stack item and is stamped onto the object **before**
 `spell_effects` run — the same moment and for the same reason as `overloaded`
 and `kicked`. Written after them it would read `None`, every branch would fail,
 and the spell would cost mana and do nothing at all.
+
+**A tier's own targets** are a target spec's `cost_option`: the index of the
+tier that declares it. Cloud's Limit Break's Cross-Slash destroys "target tapped
+creature", Blade Beam "any number of target tapped creatures with different
+controllers" (`count: "any"`, `one_per_player`) and Omnislash targets nothing:
+
+```jsonc
+"targets": [
+  { "id": "t1", "kind": "permanent", "cost_option": 0, "selector": { … "tapped": true } },
+  { "id": "t2", "kind": "permanent", "cost_option": 1, "count": "any",
+    "one_per_player": true, "selector": { … "tapped": true } }
+]
+```
+
+Legal because 702.183 makes the tier an additional cost chosen at 601.2b, one
+step before 601.2c declares targets. The loader splits the specs into
+`CardDef.cost_option_targets`, one list per option — the specs naming that tier
+plus every spec naming none, in printed order — and leaves only the shared ones
+in `targets`. Each tier's cast line enumerates its own list, so a tier whose
+required target is missing is simply not offered while the others stay
+castable; the cast, resolution and a copy (707.10 carries the tier) rebuild the
+same list through `CardDef.targets_for`. Each tier's list obeys the
+variable-size-last rule on its own. The near miss is one shared card-level
+target branched on at resolution: it would make Omnislash need and announce a
+target it never prints. Refused on a card without that many
+`additional_cost_options`, on an ability's targets, and beside `mode`,
+`gift_promised` or `count_if_kicked`.
 
 ### Spree — "choose **one or more** additional costs"
 
@@ -5129,6 +5880,12 @@ own. `spell_cast` and `ability_activated` are the near misses and fire on the
 cause: they count a conditional tutor that never searched and miss a search a
 trigger performed.
 
+**`wins_coin_flip`** fires once per coin flip won (705), from `op_flip_coin`, the
+one place a coin is flipped, so a flip won off any card counts. Its subject is a
+**player**: `controller` and `event_player` name the player who flipped and won.
+A lost flip fires nothing. See
+["Whenever you win a coin flip"](card-dsl-cookbook.md#whenever-you-win-a-coin-flip).
+
 **`becomes_untapped`** is inspired, and it is nearly all untap step.
 `untap_permanent` fires it, and the untap step fires one event per permanent like
 every other path does, each naming its permanent for `source: "self"` to match. A
@@ -5215,8 +5972,20 @@ shipped user's, so leaving it off stays a real sentence rather than a default:
 
 ```jsonc
 { "event": "becomes_target", "source": "self", "controller": "any",
-  "targeted_by": "spell" }     // "spell" | "ability" | omitted, meaning both
+  "targeted_by": "spell" }     // "spell" | "ability" | "activated_ability" | omitted
 ```
+
+`"ability"` is every ability on the stack, activated and triggered alike, as
+printed "an ability" means. `"activated_ability"` is Professor Hojo's "the
+target of an **activated** ability": it reads the `ability_kind` that
+`announce_targets` copies onto the event from `StackItem.ability_kind`
+(`"activated"` or `"triggered"`, absent for a spell), so an opponent's enters
+trigger tapping your creature does not fire it, and a copy of an activated
+ability does (707.10 keeps the kind). An event that does not say `"activated"`
+never fires it. Hojo's "one or more creatures you control … only once each
+turn" is this clause with `filter: {"controller": "you", "types": ["Creature"]}`
+and `max_per_turn: 1`; the per-turn cap already folds the rest of one
+ability's targets, so it takes no `batched`.
 
 It is a restriction on the trigger because nothing else can reach it. `filter` is
 matched against the event's **subject**, which here is the permanent *being*
@@ -5295,6 +6064,56 @@ It is last-known information and has to be: by the time the trigger resolves the
 object is out of combat and there is nothing left to ask. It is snapshotted where
 `was_creature` already was — the one LKI case a card cannot reach with a
 `snapshot` op of its own, because the object has already gone.
+
+### What the cast spell targets — `spell_target_count` and `targets_of_spell`
+
+A `spell_cast` trigger can ask about the targets of the spell that fired it in
+three ways, which differ in what they count and **when** they look:
+
+| Read | What it is | When |
+|---|---|---|
+| `{"binding": "spell_targets"}` | the spell's **object** targets, a list of oids for a selector | as cast |
+| `{"binding": "spell_target_count"}` | how many targets the spell was cast with: objects, players and spells, once per target instance (115.3) | as cast |
+| `{"targets_of_spell": ["permanent", "player"]}` | how many of the spell's targets are, now, a permanent on the battlefield or a player still in the game | as asked |
+
+"Whenever you cast a spell **with one or more targets**, draw **that many**
+cards" (Voracious Bibliophile) is the binding, twice:
+
+```jsonc
+"trigger": { "event": "spell_cast", "controller": "you",
+             "condition": { "cmp": ">=", "left": { "binding": "spell_target_count" },
+                            "right": { "const": 1 } },
+             "recheck": false },
+"effects": [ { "op": "draw", "player": "you",
+               "amount": { "binding": "spell_target_count" } } ]
+```
+
+"With one or more targets" describes the cast, so the condition is a `recheck:
+false` "while", and a spell with no targets never puts the ability on the
+stack. The number is `Game._cast`'s snapshot, so a spell countered in response
+still draws its count.
+
+"…copy that spell **if it targets a permanent or player** … If you don't copy a
+spell this way, draw a card" (Shiko and Narset, Unified, with `nth: 2`) is
+asked as the ability resolves, so it is the live value inside an `if`:
+
+```jsonc
+{ "op": "if",
+  "condition": { "cmp": ">=", "left": { "targets_of_spell": ["permanent", "player"] },
+                 "right": { "const": 1 } },
+  "then": [ { "op": "copy_spell", "new_targets": true } ],
+  "else": [ { "op": "draw", "player": "you", "amount": { "const": 1 } } ] }
+```
+
+`targets_of_spell` reads the stack item the trigger's `sid` binding names — the
+spell `copy_spell` copies by default — and a spell that has left the stack
+targets nothing and reads 0, so a Flurry spell countered in response draws
+instead. A target that has left the battlefield is no longer a permanent the
+spell targets. It takes a non-empty list of `permanent` and `player`; the
+loader refuses anything else. The near misses are both wrong on one line of
+play: `spell_target_count` would take the copy branch for a countered spell and
+then copy and draw nothing, and `exists` over `spell_targets` never sees a
+player.
 
 ## Static abilities
 
@@ -5405,17 +6224,18 @@ smaller than the effect-side `value_keys`:
 |---|---|
 | `{"const": n}` | a literal |
 | `{"count": filter}` | how many objects match, in any [countable zone](#counting-filters-and-the-zone-key) |
-| `{"counters_on": {"counter": …, "objects": …}}` | how many counters of a kind sit on the objects the filter picks |
+| `{"counters_on": {"counter": …, "objects": …}}` | how many counters of a kind sit on the objects the filter picks; `"any"` sums every kind (122.1) |
 | `{"mana_symbols": {"of": "G", "objects": …}}` | chroma — pips in printed costs |
 | `{"permanents_entered_this_turn": filter}` | [how many arrived this turn](#which-permanents-entered-the-battlefield-this-turn), not how many are standing there |
 | `{"min_life_of": …}` / `{"max_life_of": …}` | [one player's life at a time](#an-opponent-has-10-or-less-life) |
 | `{"max_poison_of": …}` | [the most poison counters on one player](#corrupted--an-opponent-has-three-or-more-poison-counters) |
 | `{"unspent_mana_count": …}` | [the unspent mana in the players' pools](#for-each-unspent-mana-you-have) |
-| `{"spells_cast_this_turn": …}` | [how many spells the players have cast this turn](#as-long-as-an-opponent-has-cast-a-spell-this-turn) — the bare player spec only |
+| `{"spells_cast_this_turn": …}` | [how many spells the players have cast this turn](#as-long-as-an-opponent-has-cast-a-spell-this-turn) — a bare player spec, or `{"player", "filter"}` for spells of a type |
 | `{"creatures_died_this_turn": …}` | how many creatures died under the players' control this turn, off `TurnLedger.creatures_died`; the bare player spec only, and the death fold and the cleanup step both bump `char_version` (Gorma, the Gullet's [entering counters](card-dsl-cookbook.md#enters_with_additional_counters--a-static-about-other-arrivals)) |
 | `{"max_count_of": …}` / `{"min_count_of": …}` | [one player's count at a time](#counting-one-player-at-a-time) |
 | `{"starting_life_of": "you"}` | [your starting life total](#at-least-7-life-more-than-your-starting-life-total) — `"you"` only |
 | `{"greatest_commander_mana_value": "you"}` | the greatest printed mana value among your commanders, wherever they are (Tangleweave Armor); 0 with none — `"you"` only |
+| `{"commander_casts_this_game": "you"}` | [how many times you have cast your commanders from the command zone this game](card-dsl-cookbook.md#an-anthem-for-each-commander-cast) (903.8's tally, Commander's Insignia) — `"you"` only |
 | `{"extreme_value": {"of": "mana_value", "pick": …, "objects": …}}` | the greatest (or least) printed mana value among the objects a counting filter, or a `union` of them, finds; 0 with none — `"mana_value"` only (Dragon Man, Reformed Robot) |
 | `{"times": [a, b, …]}` / `{"sum": [a, b, …]}` | arithmetic over the leaves above; every term is held to this same list |
 
@@ -5816,10 +6636,31 @@ The ledger is a pipeline input on a poison count's terms: only the cast fold
 writes it and only the cleanup step empties it, never a layer (ADR 0001), and
 both bump `char_version`, so a `buff` with the same condition moves the moment
 the spell is cast and again when the turn ends. A static takes the life
-leaves' player specs and the bare spec only; the loader refuses the effect
-side's typed `{"player", "filter"}` form by name. A `spell_cast` trigger setting
-a turn flag is the near miss: it is an ability the card does not print, and it
-misses a spell cast before the permanent entered.
+leaves' player specs. A `spell_cast` trigger setting a turn flag is the near
+miss: it is an ability the card does not print, and it misses a spell cast
+before the permanent entered.
+
+"Spells **of a type**" is the effect side's typed form, `{"player", "filter"}`:
+
+```jsonc
+// Lyse Hext -- "As long as you've cast two or more noncreature spells this
+// turn, Lyse Hext has double strike."
+{ "kind": "static", "effect": "grant_keyword", "keywords": ["double_strike"],
+  "affects": { "self_only": true },
+  "condition": { "cmp": ">=",
+                 "left": { "spells_cast_this_turn": { "player": "you",
+                           "filter": { "not_types": ["Creature"] } } },
+                 "right": { "const": 2 } } }
+```
+
+It counts the faces the same fold records in `TurnLedger.spells_cast_ids`,
+matched on their printed characteristics by `_matches_printed`, so "two
+creature spells" never satisfies it — the bare count would. `player` defaults
+to `you` and takes the same specs. `filter` is required and non-empty, and
+takes the spell-filter keys less `controller` (`types`, `any_types`,
+`not_types`, `subtypes`, `supertypes`, `colors`, `min_colors`, `keywords`,
+`not_keywords`, `name`, `mana_cost`); the loader refuses a board-state key,
+an unknown type or supertype, and an empty filter (that is the bare spec).
 
 #### "At least 7 life more than your starting life total"
 
@@ -5870,8 +6711,18 @@ language is a conjunction and the definition is a disjunction across three
 unrelated relationships. The Aura limb is the only one that asks about control,
 and that asymmetry is the card: an opponent's Pacifism does not make your
 creature modified, so Silkguard written without it would hand hexproof to
-exactly the creature the opponent was answering. Effect-side only — the cards
-that print the word grant something once, not continuously.
+exactly the creature the opponent was answering.
+
+A static's `affects` takes it too, `true` only — "Other modified creatures you
+control have vigilance and trample" (Red XIII, Proud Warrior) is
+`{"types": ["Creature"], "controller": "you", "exclude_self": true, "modified": true}`.
+There it is answered by `characteristics.is_modified_printed`, which reads only
+pipeline inputs (ADR 0001): counters, the Aura walk `enchanted_by` makes, and an
+Equipment told by its **printed** face, as `sba` bins it, where the effect-side
+key reads derived subtypes. An artifact some static makes an Equipment does not
+modify for a static. The other static filter languages (`blockers`, cost
+reductions, counting filters) refuse it, and an `any_of` of `has_counters` and
+`enchanted_by` is the near miss that drops the equipped limb.
 
 `attached` and `attached_to_host` are the two ends of one relationship, and a
 card that prints "attached to it" needs the second. `attached` names the **host**

@@ -20,6 +20,18 @@ coming-soon shell on the shelf: its row `ecc_blight_curse` is in
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
 
+Every card on the list has been through `/author-cards`, and the capabilities
+its gap records named are built (blight, counters read and moved by kind, the
+counter-placement ledger, a target floor, divided damage off a life X,
+exchanging life with toughness, `activated_by`, damage that can't be
+prevented, wither for every source, and a sacrificed source's counters). What
+is left is Riveteers Overlook, which the DSL already expresses: its gap record
+names gate 4 of `cards.authoring.verify`, which allows a permanent to end only
+on the battlefield (an Aura also in the graveyard), while the card's own enters
+trigger sacrifices it. `tests/cards/test_authoring.py` pins that a creature
+whose text is "When this creature enters, sacrifice it." must still fail that
+gate, so admitting the land is the owner's decision, below.
+
 ## The change
 
 Blight Curse ships native, card for card, as one batch of
@@ -54,3 +66,19 @@ whole-game test able to draw the deck.
   own item through `/plan-feature`, adds it to this item's `depends_on`, sets
   this item back to `proposed`, and opens the pull request with the cards and
   capabilities done so far. This item stays until the deck is whole.
+
+## Open questions
+
+- **A permanent whose own text sacrifices it on entering.** Riveteers Overlook
+  ("When this land enters, sacrifice it. When you do, search your library for
+  a basic Swamp, Mountain, or Forest card, put it onto the battlefield tapped,
+  then shuffle and you gain 1 life.") ends in the graveyard as printed, and
+  gate 4 rejects it. May gate 4 admit the graveyard for a permanent whose
+  unconditional enters trigger opens by sacrificing itself and goes on to a
+  reflexive "when you do" ability, the way it admits an Aura? Recommended:
+  yes, narrowed to that shape (a `self_enters` trigger with no condition whose
+  first effect sacrifices `self_only` and whose next is a `reflexive_trigger`),
+  so the pinned vanishing creature, which has no reflexive half, still fails
+  and nothing else the gate catches moves; the expectation then has to assert
+  what the reflexive half did (the fetched land and the life), which a card
+  that merely vanished cannot.

@@ -27,8 +27,13 @@ from typing import Any
 from ..errors import DslError
 from ..primitives import become_monarch, give_emblem
 from ..sba import declare_loss, declare_win
-from ..structs import ACTIVATION_CHOSEN_TYPE, CAST_LOCK_DURATIONS, CASTABLE_ZONES
-from ..temp_effects import grant_flash_permission, lock_casting_zones
+from ..structs import (
+    ACTIVATION_CHOSEN_TYPE,
+    CAST_LOCK_DURATIONS,
+    CASTABLE_ZONES,
+    TOKEN_MULTIPLIER_DURATIONS,
+)
+from ..temp_effects import grant_flash_permission, lock_casting_zones, multiply_tokens
 from .context import EffectContext
 from .registry import register
 from .selectors import resolve_pool, select_players
@@ -216,6 +221,31 @@ def op_grant_flash_permission(ctx: EffectContext, spec: Mapping[str, Any]):
             duration=duration,
             source=ctx.source_oid,
         )
+    yield from ()
+
+
+@register("multiply_token_creation")
+def op_multiply_token_creation(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Until end of turn, if one or more tokens would be created under your
+    control, twice that many of those tokens are created instead." -- Kaya,
+    Geist Hunter's -2.  Rules 611.2a, 614.
+
+    The one-shot, timed form of a `replace_token_creation` static with
+    `token_multiplier`, for `grant_flash_permission`'s reason: a loyalty
+    ability leaves no permanent to carry a static, and the effect it creates
+    must outlive the walker. Writes a `structs.TokenMultiplier` for each
+    ``player`` (default ``"you"``), which `primitives._token_creation_plan`
+    applies beside the statics, once per creation (614.5) -- so it compounds
+    with a Parallel Lives, and two of them in one turn are four times.
+    ``token_multiplier`` defaults to 2; ``duration`` is required.
+    """
+
+    duration = str(spec["duration"])
+    if duration not in TOKEN_MULTIPLIER_DURATIONS:  # pragma: no cover - loader guards
+        raise DslError(f"unknown multiply_token_creation duration {duration!r}")
+    multiplier = int(spec.get("token_multiplier", 2))
+    for pid in select_players(ctx, spec.get("player", "you")):
+        multiply_tokens(ctx.state, pid, multiplier, duration, source=ctx.source_oid)
     yield from ()
 
 

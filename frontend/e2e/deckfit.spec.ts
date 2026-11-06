@@ -178,3 +178,34 @@ for (const { w, h } of SIZES) {
     });
   });
 }
+
+/*
+ * A screen in the handheld band but shorter than the Deck (ADR 0028).
+ *
+ * The first is an unfolded phone held sideways, the size the bug was reported
+ * at: the seat panel and the lanes were clipped under the hand, because every
+ * fixed piece of the handheld layout is measured against 800px. `isMobile`,
+ * because a mobile engine is what reads the viewport tag the fix writes; a
+ * desktop browser ignores it.
+ */
+for (const { w, h } of [
+  { w: 1000, h: 703 },
+  { w: 1000, h: 600 },
+] as const) {
+  test.describe(`a ${w}x${h} touch screen lays out at the Deck's height`, () => {
+    test.use({ viewport: { width: w, height: h }, isMobile: true, hasTouch: true });
+
+    test("the whole board is on screen, played in", async ({ page }) => {
+      await startGame(page, { opponents: 1, seed: 7 });
+      const laid = await page.evaluate(() => ({
+        height: window.innerHeight,
+        layout: document.documentElement.dataset.layout,
+      }));
+      expect(laid.layout).toBe("handheld");
+      expect(laid.height).toBeGreaterThanOrEqual(799);
+      expect(laid.height).toBeLessThanOrEqual(803);
+      await develop(page);
+      await expectSettledFit(page);
+    });
+  });
+}

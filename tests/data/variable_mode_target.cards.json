@@ -1,0 +1,70 @@
+{
+  "_comment": "Test-only cards for tests/unit/modes/test_variable_mode_target.py -- a caster-sized ('one or two') target owned by one mode of a top-level choose_mode, beside a targetless mode. Shaped on Yuna's Decision.",
+  "cards": [
+    {
+      "id": "t_one_or_two_find",
+      "name": "Test Find Another Way",
+      "oracle_text": "Choose one —\n• Draw a card.\n• Return one or two target permanent cards from your graveyard to your hand.",
+      "mana_cost": "{G}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "targets": [
+        {
+          "id": "recalled",
+          "kind": "card_in_graveyard",
+          "mode": 1,
+          "count": 2,
+          "min_count": 1,
+          "up_to": true,
+          "selector": {
+            "zone": "graveyard",
+            "controller": "you",
+            "any_types": [
+              "Artifact",
+              "Creature",
+              "Enchantment",
+              "Land",
+              "Planeswalker",
+              "Battle"
+            ]
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "choose_mode",
+          "count": 1,
+          "modes": [
+            {
+              "label": "Draw a card.",
+              "effects": [
+                {
+                  "op": "draw"
+                }
+              ]
+            },
+            {
+              "label": "Return one or two target permanent cards from your graveyard to your hand.",
+              "effects": [
+                {
+                  "op": "return_from_graveyard",
+                  "destination": "hand",
+                  "objects": {
+                    "target": "recalled"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

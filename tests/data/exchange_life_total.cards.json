@@ -1,0 +1,48 @@
+{
+  "_comment": "Cards that exist only for tests/unit/players/test_exchange_life_total.py. Never part of a deck list. `t_tree_of_perdition` is Tree of Perdition as printed; `t_tree_of_redemption` is Tree of Redemption, the same exchange with its controller's own life total.",
+  "cards": [
+    {
+      "id": "t_tree_of_perdition",
+      "name": "Test Tree of Perdition",
+      "oracle_text": "Defender\n{T}: Exchange target opponent's life total with this creature's toughness.",
+      "mana_cost": "{3}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Plant"],
+      "power": 0,
+      "toughness": 13,
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "keywords": ["defender"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Exchange target opponent's life total with this creature's toughness.",
+          "cost": {"tap": true},
+          "targets": [{"id": "t1", "kind": "player", "count": 1, "selector": {"controller": "opponent"}}],
+          "effects": [{"op": "exchange_life_total", "player": {"target": "t1"}}]
+        }
+      ]
+    },
+    {
+      "id": "t_tree_of_redemption",
+      "name": "Test Tree of Redemption",
+      "oracle_text": "Defender\n{T}: Exchange your life total with this creature's toughness.",
+      "mana_cost": "{3}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Plant"],
+      "power": 0,
+      "toughness": 13,
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "keywords": ["defender"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Exchange your life total with this creature's toughness.",
+          "cost": {"tap": true},
+          "effects": [{"op": "exchange_life_total", "player": "you"}]
+        }
+      ]
+    }
+  ]
+}

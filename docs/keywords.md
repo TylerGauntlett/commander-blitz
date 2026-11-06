@@ -192,6 +192,7 @@ Not abilities: instructions naming something a player or the game does.
 | Keyword | Status | Mechanism | Engine name |
 |---|---|---|---|
 | Attach | shipped | op | `attach` |
+| Blight | shipped | the `blight` cost key: the payer's creature, chosen while paying, on any cost node (an activated ability, `additional_cost`, ward). As an effect it is `choose_permanents` plus `add_counters` | — |
 | Clash | shipped | op, plus a `clash_won` binding an ordinary `if` reads back | `clash` |
 | Counter | shipped | op, and it honours `uncounterable` | `counter` |
 | Mill † | shipped | op | `mill` |
@@ -310,7 +311,7 @@ This is the long tail, and where the build order comes from.
 | Morph / megamorph | shipped | a face-down cast line at a fixed `{3}`, and `morph` / `morph_counter` for turning up | `morph` |
 | Mutate | shipped | an alternative cost with `MUTATE_TARGET`, and a **synthesised `CardDef`** written onto the host at `card_of` — the top card carrying the abilities of everything under it | `mutate` |
 | Nightbound † | shipped | the other half of daybound, and the reason the switching code keeps no record: the two are printed one per face, so `chars` already says which way round a permanent is | `nightbound` |
-| Ninjutsu | shipped | a `blocked` selector key on the bounce cost, and `attacking` on `put_onto_battlefield` | — |
+| Ninjutsu | shipped | a `blocked` selector key on the bounce cost, read once blockers are declared; the cost's `as`, and `attacking: {"same_as": …}` on `put_onto_battlefield` | — |
 | Offering | free | `emerge` plus `emerge_subtype`, and the `flash` keyword for "any time you could cast an instant" | `emerge_subtype` |
 | Overload | shipped | card-level field: a third cast line with **no targets**, and an `{"overloaded": true}` branch | `overload` |
 | Partner † | shipped | an **inert** `Keyword` — deck construction only, and the engine is handed a finished deck | `partner` |

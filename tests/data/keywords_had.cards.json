@@ -1,0 +1,59 @@
+{
+  "_comment": "Shapes for tests/unit/values/test_keywords_had.py. t_kh_broodmoth is Luminous Broodmoth's trigger on its printed 3/4 flyer. t_kh_wings grants flying to your creatures and nothing else. The bear and the flyer are tests/data/testing.cards.json's t_bear and t_flyer.",
+  "cards": [
+    {
+      "id": "t_kh_broodmoth",
+      "name": "Test Luminous Moth",
+      "oracle_text": "Flying\nWhenever a creature you control without flying dies, return it to the battlefield under its owner's control with a flying counter on it.",
+      "mana_cost": "{2}{W}{W}",
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "types": ["Creature"],
+      "subtypes": ["Insect"],
+      "power": 3,
+      "toughness": 4,
+      "keywords": ["flying"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a creature you control without flying dies, return it to the battlefield under its owner's control with a flying counter on it.",
+          "trigger": {
+            "event": "creature_dies",
+            "controller": "you",
+            "condition": {
+              "cmp": "==",
+              "left": {"keywords_had": "flying"},
+              "right": {"const": 0}
+            }
+          },
+          "effects": [
+            {
+              "op": "return_from_graveyard",
+              "destination": "battlefield",
+              "objects": {"binding": "subject", "zone": "graveyard"},
+              "counters": {"flying": 1}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_kh_wings",
+      "name": "Test Borrowed Wings",
+      "oracle_text": "Creatures you control have flying.",
+      "mana_cost": "{1}{U}",
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "types": ["Enchantment"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures you control have flying.",
+          "effect": "grant_keyword",
+          "affects": {"controller": "you", "types": ["Creature"]},
+          "keywords": ["flying"]
+        }
+      ]
+    }
+  ]
+}

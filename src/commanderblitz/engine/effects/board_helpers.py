@@ -46,6 +46,9 @@ def _attacking_player(ctx: EffectContext, spec: Mapping[str, Any], fallback) -> 
         return None
     if who is True:
         return fallback(ctx)
+    if isinstance(who, Mapping) and "same_as" in who:
+        same = _same_attack(ctx, spec)
+        return same[0] if same is not None else None
     named = select_players(ctx, who)
     if len(named) > 1:
         raise DslError(
@@ -54,6 +57,32 @@ def _attacking_player(ctx: EffectContext, spec: Mapping[str, Any], fallback) -> 
     if not named or not ctx.state.is_alive(named[0]):
         return None
     return named[0]
+
+
+def _same_attack(ctx: EffectContext, spec: Mapping[str, Any]) -> tuple[int, int | None] | None:
+    """``attacking: {"same_as": <name>}`` -- ninjutsu's "attacking the same
+    player, planeswalker or battle the returned creature was attacking" (702.49c).
+
+    Read from the record the cost's `return_to_hand` ``as`` wrote
+    (`costs.returned_snapshot`) -- the returned creature's own attack, not
+    the first declared attacker's -- so at a pod the ninja hits the seat the
+    creature it replaced was hitting, and a walker stays the walker. Returns
+    ``(player, permanent)``, ``permanent`` being the planeswalker or battle or
+    ``None``. ``None`` when the returned creature was not attacking or its
+    defending player has left the game: nobody to join, and the permanent
+    simply arrives. A planeswalker that has since left is kept, as it is for
+    the returned creature: the ninja is attacking and deals no combat damage
+    (506.4c), not redirected to the player.
+    """
+    record = ctx.bindings.get(str(spec["attacking"]["same_as"]))
+    attack = record.get("attack") if isinstance(record, Mapping) else None
+    if not isinstance(attack, Mapping):
+        return None
+    player = int(attack["player"])
+    if not ctx.state.is_alive(player):
+        return None
+    permanent = attack.get("permanent")
+    return player, (int(permanent) if permanent is not None else None)
 
 
 def _aim_at_planeswalker(ctx: EffectContext, spec: Mapping[str, Any], oids, defender: int | None):

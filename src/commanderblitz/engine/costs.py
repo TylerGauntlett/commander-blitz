@@ -19,6 +19,7 @@ from .effects import execute
 from .effects.behold import announce_beheld, behold_count, behold_pool
 from .effects.conditions import evaluate
 from .effects.context import EffectContext, ask_mode, ask_objects
+from .effects.counter_removal import remove_counters_one_at_a_time
 from .effects.selectors import matches, resolve_pool
 from .effects.values import evaluate_value
 from .enums import COLORLESS, Keyword, Zone
@@ -41,6 +42,7 @@ from .mana import (
     format_symbols,
     solve_payment,
 )
+from .objects import MINUS_ONE
 from .player_statics import (
     ability_cost_reduction,
     counters_prohibited,
@@ -633,17 +635,29 @@ def _chosen_color_options(
     never picks a source that produces nothing -- and it is the same answer
     `_identity_options` gives a colourless commander.
 
+    "{T}: Add {R} or one mana of the chosen color" -- the Thriving lands --
+    carries its fixed options in `mana_chosen_color_fixed`. Those are offered
+    always and first, in printed order, and the chosen colour follows once one
+    is named: {R} alone before the choice, {R} and {G} after a green one. A
+    chosen colour the fixed options already make is not offered twice.
+
     It **only looks**: reading `chosen_color` asks nothing and puts nothing on
     the stack, so this stays a mana ability for 605.1a.
     """
+    fixed = ability.mana_chosen_color_fixed
     obj = state.objects.get(oid)
     chosen = obj.chosen_color if obj is not None else None
     if chosen is None:
-        return ()
+        return fixed
     index = SYMBOL_INDEX.get(chosen)
     if index is None:  # pragma: no cover - the loader only writes WUBRG here
-        return ()
-    return tuple(option for option in ability.mana_options if option[index])
+        return fixed
+    live = tuple(
+        option
+        for option in ability.mana_options
+        if option[index] and sum(option) == 1 and option not in fixed
+    )
+    return fixed + live
 
 
 #: How many ways a split may be offered before it is truncated. Two colours and
@@ -1254,6 +1268,11 @@ def can_pay(
         return False
     if cost.discard and len(_discard_pool(state, pid, cost, source_oid)) < cost.discard:
         return False
+    if cost.discard_x and x > len(_discard_pool(state, pid, cost, source_oid)):
+        # "Discard X cards" at the announced number. X = 0 is always payable,
+        # the `loyalty_x` floor, which is what lets legality offer the ability
+        # with an empty hand and `game._activate` bound X by `discard_x_ceiling`.
+        return False
     if cost.exile_self:
         # "Exile this artifact" -- the source has to still be on the battlefield
         # to exile, checked for the same reason `discard_self` checks the hand:
@@ -1315,6 +1334,8 @@ def can_pay(
     if cost.put_counters is not None and counters_prohibited(
         state, source_oid, str(cost.put_counters["counter"])
     ):
+        return False
+    if cost.blight and not _blight_pool(state, pid, source_oid):
         return False
     if cost.loyalty is not None and cost.loyalty > 0 and source_oid is not None and (
         counters_prohibited(state, source_oid, "loyalty")
@@ -1381,6 +1402,18 @@ def can_pay(
         ):
             return False
     return True
+
+
+def discard_x_ceiling(
+    state: GameState, pid: int, cost: Cost, source_oid: int | None = None
+) -> int:
+    """The most X a ``discard_x`` cost may announce: the cards it may take.
+
+    The one bound `legality._ability_aims` and `game._activate` both use, read
+    off the pool `can_pay` and `pay` read, so the offer, the question and the
+    charge cannot disagree.
+    """
+    return len(_discard_pool(state, pid, cost, source_oid))
 
 
 def _discard_pool(
@@ -1472,6 +1505,27 @@ def _sacrifice_pool(state: GameState, pid: int, cost: Cost, source_oid: int | No
     return pool if len(pool) >= count else []
 
 
+def _blight_pool(state: GameState, pid: int, source_oid: int | None) -> list[int]:
+    """Which creatures the payer may blight -- "a creature **they** control".
+
+    Built around ``pid``, the *paying* player, and never the source's
+    controller: ward's "Blight 2" is paid by the opponent who targeted, onto a
+    creature of their own. The source itself qualifies when it is a creature
+    its payer controls -- nothing in the rule excludes it, and an activated
+    "Blight 1:" on a creature may blight that creature.
+
+    A creature that can't have -1/-1 counters is not in the pool, for
+    `put_counters`' reason: the placement would not happen, and a cost is paid
+    only by doing all of it (601.2h). So a board of nothing but such creatures
+    makes the cost unpayable rather than free.
+    """
+    ctx = EffectContext(state=state, controller=pid, source_oid=source_oid)
+    spec = {"types": ["Creature"], "controller": "you", "zone": "battlefield"}
+    return [
+        oid for oid in resolve_pool(ctx, spec) if not counters_prohibited(state, oid, MINUS_ONE)
+    ]
+
+
 def _return_pool(state: GameState, pid: int, cost: Cost, source_oid: int | None) -> list[int]:
     """Which permanents this cost may bounce -- "return a land you control".
 
@@ -1482,12 +1536,55 @@ def _return_pool(state: GameState, pid: int, cost: Cost, source_oid: int | None)
     """
 
     spec = dict(cost.return_to_hand or {})
+    # `as` names the returned creature for the ability's effects; it says
+    # nothing about which permanents qualify.
+    spec.pop("as", None)
     spec.setdefault("controller", "you")
     spec.setdefault("zone", "battlefield")
     count = int(spec.pop("count", 1) or 1)
     ctx = EffectContext(state=state, controller=pid, source_oid=source_oid)
     pool = resolve_pool(ctx, spec)
     return pool if len(pool) >= count else []
+
+
+def returned_snapshot(state: GameState, oid: int) -> dict[str, Any]:
+    """Last-known information about a permanent a cost returned, with its attack.
+
+    `zones.snapshot`, plus ``attack``: ``{"player": …, "permanent": …}`` when
+    the creature was attacking -- the defending player, and the planeswalker
+    or battle it was attacking or ``None`` -- and ``None`` when it was not.
+    """
+    record = capture_snapshot(state, oid)
+    combat = state.combat
+    if combat is not None and combat.attacking(oid):
+        record["attack"] = {
+            "player": combat.attackers[oid],
+            "permanent": combat.attacking_permanent.get(oid),
+        }
+    else:
+        record["attack"] = None
+    return record
+
+
+def sacrificed_snapshot(state: GameState, oid: int) -> dict[str, Any]:
+    """Last-known information about a permanent a cost sacrificed, with what hung on it.
+
+    `zones.snapshot` -- characteristics and every counter -- plus
+    ``attached``: one ``{"oid": …, "timestamp": …}`` per permanent attached to
+    it (Equipment, Aura or Fortification), each with the
+    `GameObject.timestamp` of the zone it was in. An oid survives every zone
+    change, so the timestamp is what tells the attachment that was there from
+    a new object (400.7) that left and came back before the ability resolved;
+    the ``was_attached_to`` selector key matches only the first. Taken before
+    the sacrifice detaches them, which is the only moment the answer exists.
+    """
+    record = capture_snapshot(state, oid)
+    record["attached"] = [
+        {"oid": other_oid, "timestamp": state.objects[other_oid].timestamp}
+        for other_oid in state.battlefield
+        if other_oid in state.objects and state.objects[other_oid].attached_to == oid
+    ]
+    return record
 
 
 def _tap_cost_pool(state: GameState, pid: int, cost: Cost, source_oid: int | None) -> list[int]:
@@ -1620,14 +1717,11 @@ def _counters_on(state: GameState, oid: int) -> int:
     return sum(n for n in obj.counters.values() if n > 0) if obj is not None else 0
 
 
-#: Counter kinds that hurt the permanent they are on, offered first when a
-#: cost asks which kind to remove -- so the default answer is the kind the
-#: payer would most like gone.
-_HARMFUL_COUNTERS = ("-1/-1", "stun")
-
-
 def _graveyard_pool(state: GameState, pid: int, cost: Cost, source_oid: int | None) -> list[int]:
     spec = dict(cost.exile_from_graveyard or {})
+    # `as` names what was exiled for the ability's effects; like
+    # `tap_permanents`' it says nothing about which cards qualify.
+    spec.pop("as", None)
     spec.setdefault("controller", "you")
     spec["zone"] = "graveyard"
     count = int(spec.pop("count", 1) or 1)
@@ -1663,8 +1757,9 @@ def pay(
     so a ``False`` return means the game state changed underneath them.
 
     ``bindings`` is where a cost that **names** what paid it writes the name --
-    `tap_permanents` with ``as``, Station's "the tapped creature", and
-    `sacrifice` with ``as``, Ghoulcaller Gisa's "the sacrificed creature". The caller
+    `tap_permanents` with ``as``, Station's "the tapped creature",
+    `sacrifice` with ``as``, Ghoulcaller Gisa's "the sacrificed creature", and
+    `exile_from_graveyard` with ``as``, Coin of Fate's "the exiled cards". The caller
     hands the same dict to the stack item, so the ability's effects read it
     back. ``None`` from every caller with no ability to hand it to; a named cost
     paid there simply names nothing.
@@ -1776,6 +1871,13 @@ def pay(
         )
         yield from _discard(state, pid, picked)
 
+    if cost.discard_x and x > 0:
+        # Exactly the announced number, chosen now (601.2h) by the payer --
+        # `game._activate` bounded X by this same pool.
+        pool = _discard_pool(state, pid, cost, source_oid)
+        picked = yield from ask_objects(ctx, f"Discard {x}", pool, x, x, pid, "discard")
+        yield from _discard(state, pid, picked)
+
     if cost.discard_self and source_oid is not None:
         # No `ask_objects`: which card goes is not a choice, it is *this* card.
         # That is the whole difference from `discard`, and asking would let the
@@ -1836,8 +1938,11 @@ def pay(
             # token with no object at all -- and in `zones.snapshot`'s shape,
             # the one the `sacrifice` op's `snapshot` key writes, so
             # `power_of {"binding": …}` and `{"binding": …}` as a selector read
-            # it without knowing a cost wrote it.
-            bindings[str(name)] = capture_snapshot(state, picked[0])
+            # it without knowing a cost wrote it. Zack Fair adds what was
+            # attached to it (`sacrificed_snapshot`), read back by the
+            # `was_attached_to` selector key, and its counters, read back by
+            # `move_counters`' `from_had_counters: <name>`.
+            bindings[str(name)] = sacrificed_snapshot(state, picked[0])
         for oid in picked:
             # The thing being paid for, so the log can say what the creature
             # was sacrificed *to* rather than only that it was sacrificed.
@@ -1847,9 +1952,19 @@ def pay(
         spec = dict(cost.return_to_hand)
         count = int(spec.pop("count", 1) or 1)
         pool = _return_pool(state, pid, cost, source_oid)
+        name = spec.pop("as", None)
         picked = yield from ask_objects(
             ctx, "Return to hand", pool, count, count, pid, "return_cost"
         )
+        if name and picked and bindings is not None:
+            # Ninjutsu: the ninja enters "attacking the same player,
+            # planeswalker or battle the returned creature was attacking"
+            # (702.49c). Bouncing it removes it from combat (506.4), so whom it
+            # was attacking is fixed here, in the window where it has been
+            # chosen and has not yet moved -- `sacrifice`'s `as` snapshot, plus
+            # the attack. `put_onto_battlefield`'s `attacking: {"same_as": …}`
+            # reads it back.
+            bindings[str(name)] = returned_snapshot(state, picked[0])
         for oid in picked:
             bounce_object(state, oid, by=source_oid)
 
@@ -1901,38 +2016,17 @@ def pay(
         # One counter at a time: which permanent, then -- if it carries more
         # than one kind -- which kind. "From among" lets the payer split the
         # removal however they like (all three off one permanent, or one off
-        # each), and asking per counter is the one question that can say every
-        # split without a distribution decision the engine does not have.
+        # each); see `effects.counter_removal`. A cost is paid in full, so the
+        # payer may not stop short: `least` is the whole count.
         needed = int(cost.remove_counters_from_among.get("count", 1) or 1)
-        while needed > 0:
-            pool = _counter_removal_pool(state, pid, cost, source_oid)
-            if not pool:
-                break
-            picked = yield from ask_objects(
-                ctx,
-                f"Remove a counter ({needed} more)",
-                pool,
-                1,
-                1,
-                pid,
-                "remove_counter_cost",
-            )
-            if not picked:
-                break
-            chosen = picked[0]
-            held = {k: n for k, n in state.objects[chosen].counters.items() if n > 0}
-            kinds = sorted(held, key=lambda k: (k not in _HARMFUL_COUNTERS, -held[k], k))
-            kind = kinds[0]
-            if len(kinds) > 1:
-                [index] = yield from ask_mode(
-                    ctx,
-                    f"Remove which counter from {ctx.name_of(chosen)}?",
-                    [f"{k} counter ({held[k]})" for k in kinds],
-                    pid,
-                )
-                kind = kinds[index]
-            remove_counters(state, chosen, kind, 1)
-            needed -= 1
+        yield from remove_counters_one_at_a_time(
+            ctx,
+            lambda: _counter_removal_pool(state, pid, cost, source_oid),
+            most=needed,
+            least=needed,
+            chooser=pid,
+            purpose="remove_counter_cost",
+        )
 
     if cost.remove_counters is not None and source_oid is not None:
         remove_counters(
@@ -1955,6 +2049,21 @@ def pay(
             as_cost=True,
             by=pid,
         )
+
+    if cost.blight:
+        # "To blight N, a player puts N -1/-1 counters on a creature they
+        # control." One creature takes all N -- the rule says "a creature" --
+        # chosen now, while paying (601.2h), by the payer. Through
+        # `add_counters` with `as_cost`, `put_counters`' reason: the placement
+        # raises `counter_placed` (Auntie Ool's own trigger reads it) and the
+        # counter replacements that are not "if an effect would" apply.
+        pool = _blight_pool(state, pid, source_oid)
+        picked = yield from ask_objects(
+            ctx, f"Blight {cost.blight}", pool, 1, 1, pid, "blight_cost"
+        )
+        if not picked:
+            return False
+        add_counters(state, picked[0], MINUS_ONE, cost.blight, as_cost=True, by=pid)
 
     if cost.loyalty is not None and source_oid is not None:
         # A **cost**, so it is paid as the ability goes on the stack and is not
@@ -1981,12 +2090,28 @@ def pay(
     if cost.exile_from_graveyard is not None:
         spec = dict(cost.exile_from_graveyard)
         count = int(spec.pop("count", 1) or 1)
+        name = spec.pop("as", None)
         pool = _graveyard_pool(state, pid, cost, source_oid)
         picked = yield from ask_objects(
             ctx, "Exile from your graveyard", pool, count, count, pid, "exile_cost"
         )
         for oid in picked:
             exile_object(state, oid, cause="cost")
+        if name and bindings is not None:
+            # Coin of Fate: "An opponent chooses one of **the exiled cards**."
+            # The set, not one card and not a snapshot: every card this cost
+            # took, as a list of oids the way an op's `as` records a set, so
+            # `{"binding": …}` as a selector reaches exactly those cards and
+            # `count`/`chooser` pick among them. Only what actually arrived in
+            # exile is named -- a card a replacement sent elsewhere was not
+            # exiled. The cards are still the same objects at resolution only
+            # while they stay in exile (400.7), which is why a reader writes
+            # `zone: "exile"` beside the binding.
+            bindings[str(name)] = [
+                oid
+                for oid in picked
+                if (obj := state.objects.get(oid)) is not None and obj.zone is Zone.EXILE
+            ]
 
     return True
 
@@ -2096,6 +2221,7 @@ def activate_mana_ability(
     pid: int,
     option_index: int = 0,
     source_traits: ManaOrigin | None = None,
+    ability: Any = None,
 ) -> None:
     """Tap a permanent for mana.  Mana abilities never use the stack.
 
@@ -2117,8 +2243,15 @@ def activate_mana_ability(
     Treasure. That path passes the snapshot it took while the token was still on
     the battlefield. Left ``None`` -- the payment solver's path, which only ever
     taps -- the snapshot is taken here, which is still before the tap.
+
+    ``ability`` is the same kind of snapshot, for the same path: a *granted*
+    sacrifice-for-mana ability (Vraska, Betrayal's Sting's Treasure) is on the
+    permanent only while it is on the battlefield, so once the cost has
+    sacrificed it `abilities_of` no longer lists it. `Game._activate_mana`
+    hands over the ability it read before paying.
     """
-    ability = abilities_of(state, oid)[ability_index]
+    if ability is None:
+        ability = abilities_of(state, oid)[ability_index]
     if source_traits is None:
         source_traits = mana_source_traits(state, oid)
 

@@ -42,6 +42,7 @@ from .zones import exile, move_object
 
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
+    from .structs import CastRider
 
 
 def suspend_card(state: GameState, pid: int, oid: int) -> Generator[Any, list[int], bool]:
@@ -222,7 +223,13 @@ def rebound_tick(state: GameState, pid: int) -> None:
 
 
 def cast_for_free(
-    state: GameState, pid: int, oid: int, *, haste: bool = False, exiles_instead: bool = False
+    state: GameState,
+    pid: int,
+    oid: int,
+    *,
+    haste: bool = False,
+    exiles_instead: bool = False,
+    rider: CastRider | None = None,
 ) -> bool:
     """Put a suspended card on the stack having paid nothing for it.
 
@@ -238,6 +245,11 @@ def cast_for_free(
     ``exiles_instead`` is "if that spell would be put into your graveyard,
     exile it instead" (Power Pack), the replacement `StackItem.exiles_instead`
     carries for `cast_card`'s ``exiles`` too.
+
+    ``rider`` is "if you cast a creature spell this way, it gains …" (Strago
+    and Relm): staged on the spell only once it is on the stack and only for a
+    creature spell, and cashed on the permanent it becomes. A cast refused
+    below, or a noncreature spell, carries nothing.
     """
 
     obj = state.objects.get(oid)
@@ -292,6 +304,9 @@ def cast_for_free(
     item = stack.push_spell(
         state, oid, pid, options[0] + mode_refs, modes=modes, exiles_instead=exiles_instead
     )
+    # After the push, so a cast refused above leaves the card owing nothing --
+    # Thundermane Dragon's rider is staged at the same moment in `Game._cast`.
+    obj.cast_rider = rider if rider is not None and card.is_creature else None
     triggers.fire(
         state,
         EventType.SPELL_CAST,

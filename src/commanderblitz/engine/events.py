@@ -358,7 +358,8 @@ class EventType:
     #: A coin was flipped (rule 705) -- one event per `flip_coin`.
     #: ``data["won"]`` is whether the flipper won, which is what the branch
     #: that follows turns on; without the line a sacrifice on a lost flip would
-    #: appear in the log with no reason beside it.
+    #: appear in the log with no reason beside it. Fired through the trigger
+    #: bus, where ``wins_coin_flip`` hears the won ones.
     COIN_FLIPPED = "coin_flipped"
 
     # game outcome

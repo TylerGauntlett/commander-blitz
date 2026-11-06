@@ -22,7 +22,7 @@ from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any
 
 from ..characteristics import chars
-from ..enums import STEP_PHASE, Phase, Step
+from ..enums import STEP_PHASE, Phase, Step, Zone
 from ..errors import DslError
 from .context import EffectContext
 from .selectors import PLAYER_SPEC_NAMES, resolve_pool, select_players, validate_selector
@@ -83,6 +83,11 @@ CONDITION_KEYS = frozenset(
         #: exile, from a Citadel top or from the command zone was cast from
         #: neither, and a copy was never cast at all (707.10).
         "cast_from_hand",
+        #: "If this spell was cast from exile" (Ultimate Magic: Holy). The third
+        #: sibling, reading the zone name `stack.push_spell` stamps beside
+        #: `cast_from_hand`. Broader than foretell on purpose: plot, an
+        #: Adventure's exile cast and any exile play permission all count.
+        "cast_from_exile",
         # Overload (702.96a): "change its text by replacing all instances of
         # 'target' with 'each'". There is no rewriting a printed sentence, and
         # the two halves really are two effects, so the card branches on this.
@@ -301,6 +306,26 @@ def evaluate(ctx: EffectContext, cond: Any) -> bool:
         obj = ctx.state.objects.get(target) if isinstance(target, int) else None
         from_hand = obj is not None and obj.cast_from_hand
         return from_hand == bool(cond["cast_from_hand"])
+    if "cast_from_exile" in cond:
+        # "**If this spell was cast from exile**, prevent all damage that would
+        # be dealt to you this turn." (Ultimate Magic: Holy)
+        #
+        # The third sibling, reading `cast_from_zone`, the zone name
+        # `stack.push_spell` writes beside `cast_from_hand`. It is the printed
+        # words and nothing narrower: a foretold cast, a plotted card, an
+        # Adventure cast from exile and a card cast under any exile play
+        # permission all qualify, so it is not `foretold` (Haunting Voyage),
+        # which asks which *cost* was paid. Nor is it the negation of the two
+        # keys above: a spell cast off a library top or from the command zone
+        # was cast from none of the three, and a copy was never cast (707.10)
+        # -- it is backed by a token whose `cast_from_zone` is never written.
+        who = cond.get("of")
+        target = ctx.bindings.get(str(who)) if who is not None else ctx.source_oid
+        if isinstance(target, list):
+            target = target[0] if target else None
+        obj = ctx.state.objects.get(target) if isinstance(target, int) else None
+        from_exile = obj is not None and obj.cast_from_zone == Zone.EXILE.value
+        return from_exile == bool(cond["cast_from_exile"])
     if "cast_during" in cond:
         # Addendum. Asked of the ability's own source: while the spell resolves
         # that is the spell itself, and once it has become a permanent it is
@@ -520,6 +545,8 @@ def validate_condition(cond: Any, where: str) -> None:
         raise DslError(f"{where}.impending: must be true or false")
     if "escaped" in cond and not isinstance(cond["escaped"], bool):
         raise DslError(f"{where}.escaped: must be true or false")
+    if "cast_from_exile" in cond and not isinstance(cond["cast_from_exile"], bool):
+        raise DslError(f"{where}.cast_from_exile: must be true or false")
     if "no_monarch" in cond and not isinstance(cond["no_monarch"], bool):
         raise DslError(f"{where}.no_monarch: must be true or false")
     if "is_monarch" in cond:

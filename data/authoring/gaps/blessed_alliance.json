@@ -7,12 +7,12 @@
   ],
   "needs": [
     {
-      "capability": "mode_owned_variable_targets",
+      "capability": "mode_owned_variable_targets_mid_declaration",
       "kind": "engine",
-      "what": "a mode-owned target spec (target `mode`) whose size is caster-chosen -- `count: 2, up_to: true`, zero to two creatures -- declared only when its mode is chosen, beside the other modes' fixed-size mode-owned targets (a player for mode 0, an opponent for mode 2)",
-      "why_existing_wont_do": "`loader.targets._check_mode_targets` refuses a `variable_size` mode-owned spec because `filter_legal` splits the stored refs by position, and also refuses a card-level variable-size target on a card with any mode-owned one; `Game._ask_mode_targets` asks exactly `want` refs. A fixed `count: 2` would demand two creatures and forbid untapping zero or one, and moving the targets to card level would declare every mode's targets whether or not the mode is chosen. Escalate itself (card-level `escalate` with an `or_more` choose_mode) and the other two modes (`gain_life` on a player target; `sacrifice` with `chooser` over an attacking creature the targeted opponent controls) are expressible"
+      "what": "a caster-sized mode-owned target spec (`mode: 1, count: 2, up_to: true` -- zero to two creatures) that is NOT the last target declared, because a later mode (mode 2, `Target opponent`) owns a fixed-size target of its own; the stored refs must be split per spec by recorded size rather than by position so the opponent ref after a 0-, 1- or 2-creature pick lands in mode 2's bucket",
+      "why_existing_wont_do": "Caster-sized mode-owned targets now load (Yuna's Decision), but `loader.targets._check_mode_targets` / `_ends_every_declaration` admit one only as the last target declared -- the last spec of its mode with no later mode owning a target -- since `filter_legal` splits the stored refs by position in `CardDef.specs_for_modes` order. Here mode 2 owns a target after it, so the card is refused. Reordering the bullets so the untap mode is last would break 700.2's printed resolution order and the printed mode order; a fixed `count: 2` forbids untapping zero or one creature; a card-level target would be declared whether or not the mode is chosen; and making mode 2's opponent a non-targeting choice drops the targeting. Escalate (card-level `escalate` with an `or_more` choose_mode), mode 0 (`gain_life` on a player target) and mode 2 (`sacrifice` with `chooser` over an attacking creature the targeted opponent controls) are expressible"
     }
   ],
-  "closest_existing": ["collective_resistance", "abrade"],
+  "closest_existing": ["yunas_decision", "collective_resistance", "abrade"],
   "confidence": "high"
 }

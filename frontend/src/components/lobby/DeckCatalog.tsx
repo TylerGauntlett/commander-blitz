@@ -34,14 +34,10 @@ import { setCursor } from "../../input/cursor";
 import { useDismiss } from "../../input/useDismiss";
 import { canImport } from "../../logic/desktop";
 import {
-  archetypeName,
-  archetypeOptions,
   type CatalogFilters,
-  type DeckSort,
   type DeckSource,
   EMPTY_FILTERS,
   groupDecks,
-  nextArchetype,
   visibleDecks,
   visibleShells,
 } from "../../logic/lobby";
@@ -60,23 +56,6 @@ const COLOURS: [string, string][] = [
   ["R", "Red"],
   ["G", "Green"],
 ];
-
-const SORTS: [DeckSort, string][] = [
-  ["name", "Name"],
-  ["speed", "Fastest"],
-  ["complexity", "Most complex"],
-  ["pilot", "Easiest to pilot"],
-];
-
-/** The order after this one, wrapping round. */
-function nextSort(sort: DeckSort): DeckSort {
-  const at = SORTS.findIndex(([id]) => id === sort);
-  return SORTS[(at + 1) % SORTS.length][0];
-}
-
-function sortName(sort: DeckSort): string {
-  return SORTS.find(([id]) => id === sort)?.[1] ?? SORTS[0][1];
-}
 
 /* ADR 0024: each segment is a promise about where its decks came from. */
 const SOURCES: [DeckSource, string][] = [
@@ -156,7 +135,6 @@ export function DeckCatalog({
     () => groupDecks(shown, filters.source, shells),
     [shown, filters.source, shells],
   );
-  const archetypes = useMemo(() => archetypeOptions(decks, filters), [decks, filters]);
 
   /* The ring lands on a deck. See the header: without this it opens on the ✕,
      which is the way out of the screen the player just asked for. Once, on
@@ -237,8 +215,8 @@ export function DeckCatalog({
           the web puts a search box and is the wrong place here for a reason a
           mouse cannot feel: nothing in the strip below it lined up with it, so
           pressing Up from the colour pips was a WALL. The box was reachable
-          only by walking to the sort dropdown first and going up from there --
-          which nobody would guess, and which reads as the box not being
+          only by walking to the far end of the row first and going up from
+          there -- which nobody would guess, and which reads as the box not being
           reachable at all. One row, and every filter is one press from its
           neighbours.
         */}
@@ -292,51 +270,6 @@ export function DeckCatalog({
               </button>
             ))}
           </span>
-
-          {/*
-            A BUTTON THAT CYCLES, NOT A `<select>`. A pad's `A` is a synthetic
-            `click()`, and a native select opens on nothing but a real pointer
-            or key -- so on a Steam Deck the sort could be landed on and never
-            changed. Four orders is a short enough loop that pressing through
-            them is quicker than opening a list would be anyway.
-          */}
-          <button
-            type="button"
-            className="shelf__sort"
-            onClick={() => set("sort", nextSort(filters.sort))}
-            aria-label={`Sort decks: ${sortName(filters.sort)}`}
-            data-hint="Change the order"
-            data-testid="deck-sort"
-            data-sort={filters.sort}
-          >
-            <span className="shelf__sortk" aria-hidden="true">
-              Sort
-            </span>{" "}
-            {sortName(filters.sort)}
-          </button>
-
-          {/*
-            The archetype cycles for the sort's reason, and only through the
-            archetypes the other filters leave (`archetypeOptions`). When no
-            visible deck names one there is nothing to choose, so there is no
-            control -- a button whose every press says "Any" is a dead stop.
-          */}
-          {archetypes.length > 0 && (
-            <button
-              type="button"
-              className="shelf__sort"
-              onClick={() => set("archetype", nextArchetype(filters.archetype, archetypes))}
-              aria-label={`Archetype: ${archetypeName(filters.archetype)}`}
-              data-hint="Show one archetype"
-              data-testid="deck-archetype"
-              data-archetype={filters.archetype}
-            >
-              <span className="shelf__sortk" aria-hidden="true">
-                Archetype
-              </span>{" "}
-              {archetypeName(filters.archetype)}
-            </button>
-          )}
 
           <span className="shelf__gap" />
 

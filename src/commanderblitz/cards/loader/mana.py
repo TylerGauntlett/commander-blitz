@@ -89,8 +89,50 @@ def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
                 f"can read what its cost sacrificed; this cost names it for nothing"
             )
     validate_selector(sacrifice_selector, f"{where}.cost.sacrifice")
-    validate_selector(model.return_to_hand, f"{where}.cost.return_to_hand")
-    validate_selector(model.exile_from_graveyard, f"{where}.cost.exile_from_graveyard")
+    return_selector = dict(model.return_to_hand) if model.return_to_hand is not None else None
+    if return_selector is not None and "as" in return_selector:
+        # Ninjutsu: "…attacking the same player, planeswalker or battle **the
+        # returned creature** was attacking" (702.49c). `sacrifice`'s `as`,
+        # for the creature a cost bounced, and refused on the same grounds.
+        return_name = return_selector.pop("as")
+        if not isinstance(return_name, str) or not return_name:
+            raise DslError(
+                f"{where}.cost.return_to_hand.as: a binding name, got {return_name!r}"
+            )
+        if int(return_selector.get("count", 1) or 1) != 1:
+            raise DslError(
+                f"{where}.cost.return_to_hand.as: names *the* returned permanent, so "
+                f"the cost must return exactly one -- no 'count' above 1"
+            )
+        if not defines_x:
+            raise DslError(
+                f"{where}.cost.return_to_hand.as: only an activated ability's effects "
+                f"can read what its cost returned; this cost names it for nothing"
+            )
+    validate_selector(return_selector, f"{where}.cost.return_to_hand")
+    graveyard_selector = (
+        dict(model.exile_from_graveyard) if model.exile_from_graveyard is not None else None
+    )
+    if graveyard_selector is not None and "as" in graveyard_selector:
+        # "An opponent chooses one of **the exiled cards**" (Coin of Fate). The
+        # graveyard twin of `sacrifice`'s `as`, lifted out before the selector
+        # language sees it for the same reason. Any count: what it names is the
+        # set the cost exiled, read back as `{"binding": …}`, so two cards is
+        # two cards rather than the first of them.
+        exiled_name = graveyard_selector.pop("as")
+        if not isinstance(exiled_name, str) or not exiled_name:
+            raise DslError(
+                f"{where}.cost.exile_from_graveyard.as: a binding name, got {exiled_name!r}"
+            )
+        if not defines_x:
+            # `sacrifice.as`' reason: only an activated ability's cost is
+            # handed a place to write the name, so anywhere else every read of
+            # it would be empty while the card looked implemented.
+            raise DslError(
+                f"{where}.cost.exile_from_graveyard.as: only an activated ability's "
+                f"effects can read what its cost exiled; this cost names it for nothing"
+            )
+    validate_selector(graveyard_selector, f"{where}.cost.exile_from_graveyard")
     validate_selector(model.discard_selector, f"{where}.cost.discard_selector")
     exile_hand = dict(model.exile_from_hand) if model.exile_from_hand is not None else None
     if exile_hand is not None:
@@ -149,8 +191,36 @@ def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
                 f"{where}.cost: 'loyalty_x' announces this ability's X, so the "
                 f"cost may not carry a second X in 'mana' or 'pay_life_x'"
             )
+    if model.discard_x:
+        # "Discard X cards". The same three refusals as `loyalty_x`: only an
+        # activated ability announces an X here (`Game._activate`), a fixed
+        # `discard` beside it is a second number for one payment, and a second
+        # announced X would leave one of the two never asked.
+        if not defines_x:
+            raise DslError(
+                f"{where}.cost: 'discard_x' is announced as an activated ability "
+                f"is activated, and this is not one -- nothing else would ask for X"
+            )
+        if model.discard:
+            raise DslError(
+                f"{where}.cost: 'discard_x' is the whole discard (X cards); give it "
+                f"or 'discard', not both (got discard {model.discard!r})"
+            )
+        if "X" in str(model.mana or "").upper() or model.pay_life_x or model.loyalty_x:
+            raise DslError(
+                f"{where}.cost: 'discard_x' announces this ability's X, so the "
+                f"cost may not carry a second X in 'mana', 'pay_life_x' or 'loyalty_x'"
+            )
     if model.put_counters is not None:
         _validate_put_counters(model.put_counters, where, defines_x=defines_x)
+    if model.blight < 0:
+        # "Blight N" always prints a positive N; a negative one would be a cost
+        # that removes -1/-1 counters, which is `remove_counters_from_among`'s
+        # sentence and not this one.
+        raise DslError(
+            f"{where}.cost: 'blight' is how many -1/-1 counters go on a creature "
+            f"you control, so it cannot be negative (got {model.blight})"
+        )
     if model.mill < 0:
         raise DslError(
             f"{where}.cost: 'mill' is how many cards go from the top of your "
@@ -197,8 +267,10 @@ def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
             # so it would load clean and do nothing at all.
             raise DslError(f"{where}.cost: 'mana_reduction' needs a 'mana' cost to reduce")
         _validate_cost_reduction(model.mana_reduction, f"{where}.cost.mana_reduction")
-    if model.discard_selector is not None and not model.discard:
-        raise DslError(f"{where}: 'discard_selector' needs a 'discard' count to narrow")
+    if model.discard_selector is not None and not (model.discard or model.discard_x):
+        raise DslError(
+            f"{where}: 'discard_selector' needs a 'discard' count or 'discard_x' to narrow"
+        )
     if model.tap_permanents is not None and "tapped" in model.tap_permanents:
         # The pool forces `tapped: False` -- "untapped" is part of every printed
         # line of this shape, and a cost that could re-tap something already
@@ -335,6 +407,16 @@ def _split_mana_rider(
                 f"'choose_mode' of them), optionally followed by a rider from "
                 f"{sorted(MANA_RIDER_OPS)} -- got {op!r} at effects[{split + i}]"
             )
+        trigger = effect.get("trigger") if op == "delayed_trigger" else None
+        if isinstance(trigger, Mapping) and (set(trigger) & {"subject", "recipient"}):
+            # A mana ability has no targets and no bindings, so "that
+            # creature" names nothing at activation and the subscription would
+            # be installed scoped to nobody -- a card that never fires.
+            raise DslError(
+                f"{where}: a mana ability's delayed_trigger rider cannot scope its "
+                f"trigger to a 'subject' or 'recipient' -- the activation has no "
+                f"object to name"
+            )
     return mana, tuple(rider)
 
 
@@ -348,6 +430,58 @@ def _mana_options(effects: list[dict[str, Any]], where: str) -> tuple[tuple[int,
             raise DslError(f"{where}: modal mana ability has no modes")
         return tuple(options)
     return (_sum_mana(effects, where),)
+
+
+def _chosen_color_or_fixed(
+    effects: list[dict[str, Any]], where: str
+) -> tuple[tuple[int, ...], ...] | None:
+    """The fixed options of "Add {R} or one mana of the chosen color", or ``None``.
+
+    The Thriving lands. ``None`` means the ability is not this shape -- a
+    ``choose_mode`` with a ``{"chosen_color_of": "self"}`` mode -- and the caller
+    reads it some other way. Otherwise the shape is held exactly: every mode is
+    one ``add_mana``, exactly one of them names the chosen colour, at least one
+    names a fixed symbol, and none carries an ``amount``. The chosen-colour mode
+    is answered live by `costs.mana_options_of`, so it is not among the options
+    returned here; the fixed ones are, in the order the modes print them.
+    """
+    if len(effects) != 1 or effects[0].get("op") != "choose_mode":
+        return None
+    modes = list(effects[0].get("modes") or ())
+    if not any(
+        isinstance(e, Mapping) and isinstance(e.get("mana"), Mapping)
+        for mode in modes
+        for e in mode.get("effects") or ()
+    ):
+        return None
+    fixed: list[tuple[int, ...]] = []
+    chosen = 0
+    for i, mode in enumerate(modes):
+        at = f"{where}.modes[{i}]"
+        mode_effects = list(mode.get("effects") or ())
+        for e in mode_effects:
+            if isinstance(e, Mapping) and "amount" in e:
+                raise DslError(
+                    f"{at}: an 'amount' is not read on a fixed-or-chosen-colour mana "
+                    f"ability -- each mode adds one mana"
+                )
+        if len(mode_effects) == 1 and isinstance(mode_effects[0].get("mana"), Mapping):
+            chosen += 1
+            continue
+        # A mode summing the chosen colour with another symbol reaches
+        # `_sum_mana`, which refuses it.
+        fixed.append(_sum_mana(mode_effects, at))
+    if chosen != 1:
+        raise DslError(
+            f"{where}: a fixed-or-chosen-colour mana ability has exactly one "
+            f'{{"chosen_color_of": "self"}} mode, not {chosen}'
+        )
+    if not fixed:
+        raise DslError(
+            f"{where}: a choose_mode whose only mode is the chosen colour is the "
+            f"plain chosen-colour ability -- write the 'add_mana' on its own"
+        )
+    return tuple(fixed)
 
 
 def _validate_mana_amount(amount: Any, where: str) -> None:
@@ -388,15 +522,14 @@ def _sum_mana(effects: list[dict[str, Any]], where: str) -> tuple[int, ...]:
             )
         if isinstance(effect.get("mana"), Mapping):
             # `{"chosen_color_of": "self"}` is one symbol whose colour is not
-            # known at load time, so it cannot be summed with anything and it
-            # cannot be one mode among five -- a mode is a choice made at
-            # activation, which is the *any colour* card this spelling exists to
-            # refuse. It has to be the whole ability, which the branch in
-            # `_build_ability` handles before anything reaches here.
+            # known at load time, so it cannot be summed with anything. It is
+            # the whole ability, or a mode of its own beside fixed symbols, and
+            # both shapes are read by branches in `_build_ability` before
+            # anything reaches here.
             raise DslError(
                 f"{where}: a chosen-colour 'add_mana' must be the mana ability's "
-                f"only effect -- it cannot be summed with another symbol or "
-                f"offered as one mode among several"
+                f"only effect, or the only effect of one mode beside fixed-symbol "
+                f"modes -- it cannot be summed with another symbol"
             )
         for i, v in enumerate(parse_mana_production(str(effect.get("mana", "")))):
             total[i] += v

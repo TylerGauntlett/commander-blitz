@@ -10,14 +10,17 @@ from ..characteristics import chars
 from ..enums import Keyword
 from ..errors import DslError
 from ..player import PLAYER_COUNTER_KINDS
+from ..player_statics import player_cant_gain_life
 from ..primitives import (
     add_energy,
     add_poison,
     damage_permanent,
     damage_player,
     gain_life,
+    life_locked,
     lose_life,
     remove_player_counters,
+    set_base_toughness,
 )
 from ..structs import (
     DAMAGE_SHIELD_DURATIONS,
@@ -250,6 +253,16 @@ def op_prevent_damage_permanent(ctx: EffectContext, spec: Mapping[str, Any]):
     combat damage that would be dealt to it this turn" (Fleeting Flight), and
     "…target creature would deal" (Azorius Ploy).
 
+    ``effects`` is the 615.5 rider, `prevent_damage`'s on a permanent: "If damage
+    would be dealt to that creature this turn, prevent that damage and put that
+    many +1/+1 counters on it" (Gatta and Luzzu). Each shielded object gets its
+    own `PermanentShield.link` and a ``damage_prevented`` `DelayedTrigger`
+    scoped to it, so the effects run each time *that* shield prevents damage,
+    with the prevented amount as ``{"binding": "amount"}`` and the shielded
+    permanent as ``{"binding": "shielded"}`` -- the rider resolves with no
+    targets, so "it" cannot be the target it was aimed with. Only ``this_turn``
+    takes a rider: a delayed ability's clock is the turn.
+
     Installs a `structs.PermanentShield` on each object and modifies nothing
     else; `primitives.damage_permanent` and `primitives.damage_player` read it.
     """
@@ -260,15 +273,35 @@ def op_prevent_damage_permanent(ctx: EffectContext, spec: Mapping[str, Any]):
     dealt = str(spec.get("dealt", "to"))
     if dealt not in PERMANENT_SHIELD_DIRECTIONS:  # pragma: no cover - loader guards
         raise DslError(f"unknown prevent_damage_permanent direction {dealt!r}")
+    rider = tuple(spec.get("effects") or ())
+    state = ctx.state
     for oid in resolve_pool(ctx, spec.get("objects") or {}):
-        shield_permanent(
-            ctx.state,
+        link = state.alloc_timestamp() if rider else None
+        installed = shield_permanent(
+            state,
             oid,
             dealt,
             duration,
             player=ctx.controller,
             source=ctx.source_oid,
             combat_only=bool(spec.get("combat_only", False)),
+            link=link,
+        )
+        if not installed or link is None:
+            continue
+        state.delayed_triggers.append(
+            DelayedTrigger(
+                step="",
+                controller=ctx.controller,
+                effects=rider,
+                bindings={**ctx.bindings, "shielded": oid},
+                source_oid=ctx.source_oid,
+                description=str(spec.get("text") or ctx.source_name),
+                turn=state.turn,
+                trigger=TriggerSpec(event="damage_prevented", controller="any"),
+                duration="this_turn",
+                shield=link,
+            )
         )
 
 
@@ -353,6 +386,53 @@ def op_lock_life_total(ctx: EffectContext, spec: Mapping[str, Any]):
         raise DslError(f"unknown lock_life_total duration {duration!r}")
     for pid in select_players(ctx, spec.get("player", "you")):
         lock_life_total(ctx.state, pid, duration, source=ctx.source_oid)
+
+
+@register("exchange_life_total")
+def op_exchange_life_total(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Exchange target opponent's life total with this creature's toughness."
+    Tree of Perdition (and Tree of Redemption, with ``player: "you"``).
+
+    701.12a/b: the exchange happens in full or not at all. The player's life
+    total becomes the creature's toughness the way 119.5 sets any life total --
+    as a gain or a loss of the difference, so a life-gain trigger hears it and a
+    loss replacement applies to it -- and the creature's toughness becomes the
+    player's *former* life total as an indefinite layer-7b set
+    (`primitives.set_base_toughness`), with counters and pumps still on top.
+
+    Nothing happens when either half cannot: the source has left the
+    battlefield or is no creature, the selector does not come to exactly one
+    player, that player's life total is locked (118.5), or the change is a gain
+    for a player who can't gain life (Erebos, Everlasting Torment). An equal
+    life total and toughness still exchanges: nothing moves, but the toughness
+    is now *set*.
+
+    The creature is always the ability's own source -- every printing says
+    "this creature" -- and ``player`` is required.
+    """
+    state = ctx.state
+    oid = ctx.source_oid
+    obj = state.objects.get(oid) if oid is not None else None
+    if obj is None or not obj.on_battlefield:
+        return
+    current = chars(state, oid)
+    if "Creature" not in current.types:
+        return
+    players = list(select_players(ctx, spec["player"]))
+    if len(players) != 1:
+        return
+    pid = players[0]
+    life = state.players[pid].life
+    delta = current.toughness - life
+    if delta and life_locked(state, pid):
+        return
+    if delta > 0 and player_cant_gain_life(state, pid):
+        return
+    if delta > 0:
+        gain_life(state, pid, delta, source=oid)
+    elif delta < 0:
+        lose_life(state, pid, -delta, source=oid)
+    set_base_toughness(state, oid, life, source=oid)
 
 
 @register("damage")

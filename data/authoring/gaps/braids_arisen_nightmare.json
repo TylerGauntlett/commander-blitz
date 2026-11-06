@@ -1,0 +1,24 @@
+{
+  "card_id": "braids_arisen_nightmare",
+  "name": "Braids, Arisen Nightmare",
+  "oracle_text": "At the beginning of your end step, you may sacrifice an artifact, creature, enchantment, land, or planeswalker. If you do, each opponent may sacrifice a permanent of their choice that shares a card type with it. For each opponent who doesn't, that player loses 2 life and you draw a card.",
+  "blocked_sentences": [
+    "If you do, each opponent may sacrifice a permanent of their choice that shares a card type with it. For each opponent who doesn't, that player loses 2 life and you draw a card."
+  ],
+  "needs": [
+    {
+      "capability": "shares_card_type_with_sacrificed",
+      "kind": "selector",
+      "what": "a selector clause matching permanents that share a permanent card type with an object sacrificed earlier in the same resolution, read from that object's last-known types (the snapshot the sacrifice op's `snapshot` key captures), so a sacrificed token (Treasure, Clue, creature token) still answers with its types after it has ceased to exist",
+      "why_existing_wont_do": "`shares_permanent_type_with` reads the bound oid's CURRENT characteristics via chars(state, oid): the `as` binding is a list, which `_bound_oid` rejects (matches nothing), and the `snapshot` binding resolves to the oid, whose object is gone for a token and back to printed types for a nontoken card in the graveyard -- so the opponent's sacrifice pool is empty or wrong exactly when it matters"
+    },
+    {
+      "capability": "punisher_sacrifice",
+      "kind": "op",
+      "what": "an opponent's optional sacrifice that is only offered when they actually have a matching permanent ('may sacrifice ... For each opponent who doesn't'), with the refusal branch (that player loses 2 life, you draw a card) run for an opponent who declines OR cannot sacrifice -- i.e. `may` with `pay: {sacrifice: <selector with a resolution binding>}` evaluated in the resolving effect's context",
+      "why_existing_wont_do": "`may` with `effects`/`else` lets an opponent with no matching permanent answer yes, sacrifice nothing and dodge the penalty; `may` with `pay.sacrifice` checks affordability in `costs._sacrifice_pool`, which builds a bare EffectContext with no bindings, so the 'shares a card type with it' filter cannot be expressed in the cost"
+    }
+  ],
+  "closest_existing": ["shares_permanent_type_with", "sacrifice.snapshot", "may.else", "may.pay", "for_each_player"],
+  "confidence": "high"
+}

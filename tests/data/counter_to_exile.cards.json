@@ -1,0 +1,62 @@
+{
+  "_comment": "Shapes for tests/unit/casting/test_counter_to_exile.py. t_cte_negation is Force of Negation's counter without its pitch cost: counter target noncreature spell, exiled instead of going to its owner's graveyard. t_cte_dragon is Transcendent Dragon on a cheaper body: an if-you-cast-it enters trigger that counters a spell into exile and offers its controller a free cast of it. t_cte_unstoppable is a sorcery that can't be countered, so 'countered this way' has something to refuse.",
+  "cards": [
+    {
+      "id": "t_cte_negation",
+      "name": "Test Exiling Negation",
+      "oracle_text": "Counter target noncreature spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.",
+      "mana_cost": "{U}",
+      "types": ["Instant"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "targets": [
+        {"id": "t1", "kind": "spell", "count": 1, "selector": {"not_types": ["Creature"]}}
+      ],
+      "spell_effects": [
+        {"op": "counter", "target": "t1", "exiles": true}
+      ]
+    },
+    {
+      "id": "t_cte_dragon",
+      "name": "Test Transcendent Drake",
+      "oracle_text": "Flash\nFlying\nWhen this creature enters, if you cast it, counter target spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard, then you may cast it without paying its mana cost.",
+      "mana_cost": "{1}{U}",
+      "types": ["Creature"],
+      "subtypes": ["Dragon"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "keywords": ["flash", "flying"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature enters, if you cast it, counter target spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard, then you may cast it without paying its mana cost.",
+          "trigger": {"event": "self_enters", "source": "self", "condition": {"was_cast": true}},
+          "targets": [{"id": "t1", "kind": "spell", "count": 1, "selector": {}}],
+          "effects": [
+            {"op": "counter", "target": "t1", "exiles": true, "as": "countered"},
+            {
+              "op": "may",
+              "prompt": "Cast the exiled card without paying its mana cost?",
+              "effects": [{"op": "play_exiled", "objects": {"binding": "countered"}}]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_cte_unstoppable",
+      "name": "Test Unstoppable Insight",
+      "oracle_text": "This spell can't be countered.\nDraw two cards.",
+      "mana_cost": "{2}{U}",
+      "types": ["Sorcery"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "uncounterable": true,
+      "spell_effects": [
+        {"op": "draw", "player": "you", "amount": {"const": 2}}
+      ]
+    }
+  ]
+}

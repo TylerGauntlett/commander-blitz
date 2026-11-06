@@ -37,6 +37,10 @@ PRECONS = {
     "fdc_reign_of_dragons",
     "fdc_tramplesaurus_rex",
     "fdc_wretched_ranks",
+    "fic_counter_blitz_final_fantasy_x",
+    "fic_limit_break_final_fantasy_vii",
+    "fic_revival_trance_final_fantasy_vi",
+    "fic_scions_spellcraft_final_fantasy_xiv",
     "frc_multiverse_reforged",
     "msc_avengers_assemble",
     "msc_doom_prevails",
@@ -44,6 +48,7 @@ PRECONS = {
     "msc_wakanda_forever",
     "soc_silverquill_influence",
     "soc_witherbloom_pestilence",
+    "tdc_mardu_surge",
 }
 
 #: Every deck a player sees on the shelf.

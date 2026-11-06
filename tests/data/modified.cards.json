@@ -1,0 +1,44 @@
+{
+  "_comment": "Shapes for tests/unit/attachments/test_modified_static.py. t_mod_lord is Red XIII, Proud Warrior's middle line alone: other modified creatures you control have vigilance and trample. The modifications are t_eb_aura (an Aura with nothing else), t_plain_gear (an Equipment with nothing else) and a counter; t_eb_bear and t_eb_cub are the vanilla creatures they go on.",
+  "cards": [
+    {
+      "id": "t_mod_lord",
+      "name": "Test Modified Lord",
+      "oracle_text": "Other modified creatures you control have vigilance and trample.",
+      "mana_cost": "{1}{G}",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Dog"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Other modified creatures you control have vigilance and trample.",
+          "effect": "grant_keyword",
+          "keywords": [
+            "vigilance",
+            "trample"
+          ],
+          "affects": {
+            "types": [
+              "Creature"
+            ],
+            "controller": "you",
+            "exclude_self": true,
+            "modified": true
+          }
+        }
+      ]
+    }
+  ]
+}

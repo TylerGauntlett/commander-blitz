@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/copies/test_enters_as_copy_except.py. t_eacx_duplicate is Dack's Duplicate: a 0/0 that may enter as a copy of any creature, except it has haste and dethrone. t_eacx_mirror is Cursed Mirror: a mana rock that may enter as a copy of any creature until end of turn, except it has haste. t_eacx_spark is Spark Double: a 0/0 that may enter as a copy of a creature or planeswalker you control, with an additional +1/+1 counter if it's a creature, an additional loyalty counter if it's a planeswalker, and not legendary. t_eacx_chameleon is Chameleon, Master of Disguise: a legendary 2/3 that may enter as a copy of a creature you control, except his name stays his own.",
+  "_comment": "Shapes for tests/unit/copies/test_enters_as_copy_except.py. t_eacx_duplicate is Dack's Duplicate: a 0/0 that may enter as a copy of any creature, except it has haste and dethrone. t_eacx_mirror is Cursed Mirror: a mana rock that may enter as a copy of any creature until end of turn, except it has haste. t_eacx_spark is Spark Double: a 0/0 that may enter as a copy of a creature or planeswalker you control, with an additional +1/+1 counter if it's a creature, an additional loyalty counter if it's a planeswalker, and not legendary. t_eacx_chameleon is Chameleon, Master of Disguise: a legendary 2/3 that may enter as a copy of a creature you control, except his name stays his own. t_eacx_metamorph is Phyrexian Metamorph: a 0/0 that may enter as a copy of any artifact or creature, except it's an artifact in addition to its other types.",
   "cards": [
     {
       "id": "t_eacx_duplicate",
@@ -88,6 +88,25 @@
           "event": "self_enters_as_copy",
           "copying": {"zone": "battlefield", "controller": "you", "types": ["Creature"]},
           "except_": {"name": "Test Chameleon, Master of Disguise"}
+        }
+      ]
+    },
+    {
+      "id": "t_eacx_metamorph",
+      "name": "Test Metamorph",
+      "oracle_text": "You may have this creature enter as a copy of any artifact or creature on the battlefield, except it's an artifact in addition to its other types.",
+      "mana_cost": "{3}",
+      "types": ["Creature"],
+      "subtypes": ["Phyrexian", "Shapeshifter"],
+      "power": 0,
+      "toughness": 0,
+      "colors": [],
+      "color_identity": [],
+      "replacements": [
+        {
+          "event": "self_enters_as_copy",
+          "copying": {"zone": "battlefield", "any_types": ["Artifact", "Creature"]},
+          "except_": {"add_types": ["Artifact"]}
         }
       ]
     }

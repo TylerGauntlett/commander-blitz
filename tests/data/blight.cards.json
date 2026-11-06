@@ -1,0 +1,119 @@
+{
+  "_comment": "Shapes for tests/unit/costs/test_blight_cost.py. t_blight_curiosity is Burning Curiosity (the optional additional cost read back by additional_paid), t_blight_ool is Auntie Ool, Cursewretch (Ward--Blight 2, paid by the targeting opponent, and the counter_placed trigger that reads it), t_blight_engine an activated 'Blight 1: draw a card' on a creature, t_blight_rock the same ability on a noncreature artifact so the source is not itself a candidate. Never part of a deck list.",
+  "cards": [
+    {
+      "id": "t_blight_curiosity",
+      "name": "Test Blight Curiosity",
+      "oracle_text": "As an additional cost to cast this spell, you may blight 1. (You may put a -1/-1 counter on a creature you control.)\nExile the top two cards of your library. If this spell's additional cost was paid, exile the top three cards instead. Until the end of your next turn, you may play those cards.",
+      "mana_cost": "{2}{R}",
+      "types": ["Sorcery"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "additional_cost": {"blight": 1},
+      "additional_optional": true,
+      "spell_effects": [
+        {
+          "op": "if",
+          "condition": {"cmp": ">=", "left": {"additional_paid": true}, "right": {"const": 1}},
+          "then": [
+            {
+              "op": "look_at_top",
+              "player": "you",
+              "amount": {"const": 3},
+              "objects": {"count": "all"},
+              "destination": "exile",
+              "playable": "end_of_your_next_turn"
+            }
+          ],
+          "else": [
+            {
+              "op": "look_at_top",
+              "player": "you",
+              "amount": {"const": 2},
+              "objects": {"count": "all"},
+              "destination": "exile",
+              "playable": "end_of_your_next_turn"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_blight_ool",
+      "name": "Test Blight Ool",
+      "oracle_text": "Ward—Blight 2. (To blight 2, a player puts two -1/-1 counters on a creature they control.)\nWhenever one or more -1/-1 counters are put on a creature, draw a card if you control that creature. If you don't control it, its controller loses 1 life.",
+      "mana_cost": "{1}{B}{R}{G}",
+      "types": ["Creature"],
+      "supertypes": ["Legendary"],
+      "subtypes": ["Goblin", "Warlock"],
+      "colors": ["B", "R", "G"],
+      "color_identity": ["B", "R", "G"],
+      "power": 4,
+      "toughness": 4,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Ward—Blight 2.",
+          "effect": "ward",
+          "affects": {"self_only": true},
+          "cost": {"blight": 2}
+        },
+        {
+          "kind": "triggered",
+          "text": "Whenever one or more -1/-1 counters are put on a creature, draw a card if you control that creature. If you don't control it, its controller loses 1 life.",
+          "trigger": {
+            "event": "counter_placed",
+            "controller": "any",
+            "counter": "-1/-1",
+            "filter": {"types": ["Creature"]}
+          },
+          "effects": [
+            {
+              "op": "if",
+              "condition": {"exists": {"binding": "subject", "controller": "you"}},
+              "then": [{"op": "draw", "player": "you", "amount": {"const": 1}}],
+              "else": [
+                {"op": "lose_life", "player": {"controller_of": "subject"}, "amount": {"const": 1}}
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_blight_engine",
+      "name": "Test Blight Engine",
+      "oracle_text": "Blight 1: Draw a card.",
+      "mana_cost": "{1}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Warlock"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "power": 3,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Blight 1: Draw a card.",
+          "cost": {"blight": 1},
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_blight_rock",
+      "name": "Test Blight Rock",
+      "oracle_text": "Blight 1: Draw a card.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Blight 1: Draw a card.",
+          "cost": {"blight": 1},
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    }
+  ]
+}

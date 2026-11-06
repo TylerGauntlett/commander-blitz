@@ -1,0 +1,48 @@
+{
+  "_comment": "Cards that exist only for tests/unit/effects/test_control_while_you_control_source.py. Never part of a deck list. `t_materia_thief` is Yuffie, Materia Hunter's enters trigger on its own, at no cost; `t_cwy_relic` is a plain noncreature artifact for it to take.",
+  "cards": [
+    {
+      "id": "t_materia_thief",
+      "name": "Test Materia Thief",
+      "oracle_text": "When this creature enters, gain control of target noncreature artifact for as long as you control this creature.",
+      "mana_cost": "{0}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Ninja"],
+      "power": 3,
+      "toughness": 3,
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature enters, gain control of target noncreature artifact for as long as you control this creature.",
+          "trigger": {"event": "self_enters"},
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "count": 1,
+              "selector": {"types": ["Artifact"], "not_types": ["Creature"]}
+            }
+          ],
+          "effects": [
+            {
+              "op": "gain_control",
+              "objects": {"target": "t1"},
+              "duration": "as_long_as_you_control_source"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_cwy_relic",
+      "name": "Test Coveted Relic",
+      "oracle_text": "",
+      "mana_cost": "{1}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": []
+    }
+  ]
+}

@@ -59,7 +59,11 @@ def _derive_color_identity(
             or ability.mana_colors_of is not None
             or ability.mana_each_color_among is not None
         )
-        for option in () if skip_superset else ability.mana_options:
+        # The fixed half of "Add {R} or one mana of the chosen color" is a
+        # printed symbol, so it counts even where the superset does not.
+        for option in (
+            ability.mana_chosen_color_fixed if skip_superset else ability.mana_options
+        ):
             for i, amount in enumerate(option[:5]):
                 if amount:
                     identity.add(("W", "U", "B", "R", "G")[i])

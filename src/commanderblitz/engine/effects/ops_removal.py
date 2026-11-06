@@ -19,8 +19,10 @@ from ..zones import (
     exile,
     link_exiled,
     move_object,
+    offer_as_enters_effects,
     offer_aura_host,
     offer_enters_replacement,
+    offer_named_host,
     offer_read_ahead,
     offer_riot_choice,
     record_playable_source,
@@ -34,12 +36,14 @@ from .board_helpers import (
     _attacking_player,
     _offer_blocks_to,
     _players,
+    _same_attack,
 )
 from .context import EffectContext
 from .registry import register
 from .selectors import (
     ZONE_NAMES,
     choose_objects,
+    named_hosts,
     pick_from_pool,
     resolve_pool,
 )
@@ -128,9 +132,13 @@ def op_become_copy(ctx: EffectContext, spec: Mapping[str, Any]):
     legality, combat and the serializer at once without any of them changing.
 
     ``except_name`` is the "except its name is Gogo, Mysterious Mime" clause,
-    which 706.2 allows a copy effect to override. ``duration`` defaults to
-    ``end_of_turn``; ``permanent`` is Clone's shape, and only the timed form is
-    cleared by `clear_until_eot`.
+    which 706.2 allows a copy effect to override. ``except_`` holds the other
+    707.9b exceptions, written into the copiable values rather than granted on
+    top: ``add_keywords`` ("and it has vigilance") and ``keep_abilities``,
+    positions in the copying permanent's own printed ``abilities`` that the
+    copy keeps ("and this ability", Kimahri, Valiant Guardian). ``duration``
+    defaults to ``end_of_turn``; ``permanent`` is Clone's shape, and only the
+    timed form is cleared by `clear_until_eot`.
     """
     objects = spec.get("objects") or {"self_only": True}
     subjects = yield from choose_objects(ctx, objects, "Become a copy", "become_copy")
@@ -147,15 +155,21 @@ def op_become_copy(ctx: EffectContext, spec: Mapping[str, Any]):
         return
     copied = ctx.state.card_of(model)
     until_eot = str(spec.get("duration", "end_of_turn")) != "permanent"
+    # A new copy effect replaces the old one whole, exception and all: only
+    # this effect's own exceptions are written below.
+    exception = spec.get("except_") or {}
+    added = exception.get("add_keywords")
+    kept = tuple(int(i) for i in exception.get("keep_abilities") or ()) or None
     for oid in subjects:
         obj = ctx.state.objects.get(oid)
         if obj is None or not obj.on_battlefield:
             continue
         obj.copying = copied.id
         obj.copying_name = spec.get("except_name")
-        # A new copy effect replaces the old one whole, exception and all.
-        obj.copying_keywords = None
+        obj.copying_keywords = frozenset(added) if added else None
         obj.copying_remove_supertypes = None
+        obj.copying_add_types = None
+        obj.copying_own_abilities = kept
         obj.copying_until_eot = until_eot
     ctx.state.bump_chars()
 
@@ -319,6 +333,7 @@ def op_exile(ctx: EffectContext, spec: Mapping[str, Any]):
                 obj.playable_by = ctx.controller
                 obj.playable_turn = ctx.state.turn
                 obj.playable_duration = playable_duration
+                obj.playable_condition = spec.get("playable_condition")
                 # Elder Brain's "you may spend mana as though it were mana of
                 # any color to cast it" -- printed beside the permission, and
                 # read only while it is live.
@@ -329,6 +344,9 @@ def op_exile(ctx: EffectContext, spec: Mapping[str, Any]):
                 # "…without paying its mana cost" (601.2b) -- plot's flag,
                 # read by the same cast path. See `_move_found`.
                 obj.playable_free = bool(spec.get("playable_free"))
+                # "Spells you cast this way cost {N} less" -- `grant_playable`'s
+                # discount rider, read by the same cast path.
+                obj.playable_cost_reduction = int(spec.get("playable_cost_reduction", 0) or 0)
                 record_playable_source(ctx.state, oid, ctx.source_oid)
         if link and ctx.source_oid is not None:
             # After the move: `move_object` runs `reset_permanent_state` on the
@@ -567,10 +585,13 @@ def op_sacrifice(ctx: EffectContext, spec: Mapping[str, Any]):
 def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
     """Put objects onto the battlefield, optionally tapped and attacking.
 
-    ``attacking`` is **ninjutsu**: "put this card onto the battlefield from your
-    hand tapped and attacking". It joins the combat the returned attacker just
-    left, which is why the ninja arrives unblocked -- the blocker that was there
-    was blocking a creature that is now in its owner's hand.
+    ``attacking`` is "put … onto the battlefield tapped and attacking".
+    ``true`` attacks whatever the source is attacking, or failing that the
+    first declared attacker's defender (`_attack_defender`); a player spec
+    names the seat. ``{"same_as": <name>}`` is **ninjutsu** (702.49c): the
+    player, planeswalker or battle the creature the ability's `return_to_hand`
+    cost bound as ``<name>`` was attacking (`_same_attack`). The ninja arrives
+    after blockers were declared, so it is unblocked (509.1h).
 
     Same contract `create_token`'s `attacking` has: a permanent put in this way
     was never *declared* as an attacker, so it triggers nothing that fires on
@@ -593,7 +614,13 @@ def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
     oids = yield from choose_objects(ctx, spec.get("objects"), "Put onto the battlefield")
     tapped = bool(spec.get("tapped"))
     attacking = _attacking_player(ctx, spec, _attack_defender)
+    same = (
+        _same_attack(ctx, spec)
+        if isinstance(spec.get("attacking"), Mapping) and "same_as" in spec["attacking"]
+        else None
+    )
     counters = spec.get("counters") or {}
+    hosts = named_hosts(ctx, spec)
     arrived: list[int] = []
     for oid in oids:
         obj = ctx.state.objects.get(oid)
@@ -603,10 +630,11 @@ def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
         # 303.4f: an Aura this puts down chooses its host as it enters, and
         # stays where it is when nothing could be enchanted -- before anything
         # else is asked about an arrival that may not happen. ``host_named`` is
-        # the effect naming the host itself with a following `attach`.
-        if not spec.get("host_named") and not (
-            yield from offer_aura_host(ctx.state, oid, controller)
-        ):
+        # the effect naming the host itself, held to the same legality test.
+        if hosts is not None:
+            if not offer_named_host(ctx.state, oid, controller, hosts):
+                continue
+        elif not (yield from offer_aura_host(ctx.state, oid, controller)):
             continue
         obj.controller = controller
         # "If this artifact **would enter**, you may discard a land card
@@ -621,6 +649,7 @@ def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
         # see `zones.offer_riot_choice`.
         yield from offer_riot_choice(ctx.state, oid, controller)
         yield from offer_read_ahead(ctx.state, oid, controller)
+        yield from offer_as_enters_effects(ctx.state, oid, controller)
         # `cause` travels into the enters-the-battlefield event, so an ability
         # that puts permanents down can name itself here and then refuse to
         # trigger on its own output -- see `TriggerSpec.not_cause`.
@@ -645,6 +674,8 @@ def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
             add_counters(ctx.state, oid, str(kind), int(amount), source=ctx.source_oid)
         if attacking is not None and ctx.state.combat is not None:
             ctx.state.combat.attackers[oid] = attacking
+            if same is not None and same[1] is not None:
+                ctx.state.combat.attacking_permanent[oid] = same[1]
             _offer_blocks_to(ctx, attacking)
             arrived.append(oid)
     # "…attacking that player or a planeswalker they control" -- asked once

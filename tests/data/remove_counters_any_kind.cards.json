@@ -1,0 +1,89 @@
+{
+  "cards": [
+    {
+      "id": "t_counter_scour",
+      "name": "Test Counter Scour",
+      "oracle_text": "{T}: Remove up to three counters from target permanent.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Remove up to three counters from target permanent.",
+          "cost": {"tap": true},
+          "targets": [
+            {"id": "t1", "kind": "permanent", "count": 1, "selector": {"zone": "battlefield"}}
+          ],
+          "effects": [
+            {"op": "remove_counters", "objects": {"target": "t1"}, "any_kind": true,
+             "amount": {"const": 3}, "up_to": true}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_counter_strip",
+      "name": "Test Counter Strip",
+      "oracle_text": "{T}: Remove two counters from target permanent.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Remove two counters from target permanent.",
+          "cost": {"tap": true},
+          "targets": [
+            {"id": "t1", "kind": "permanent", "count": 1, "selector": {"zone": "battlefield"}}
+          ],
+          "effects": [
+            {"op": "remove_counters", "objects": {"target": "t1"}, "any_kind": true,
+             "amount": {"const": 2}}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_sunslayer",
+      "name": "Test Sunslayer",
+      "oracle_text": "First strike, deathtouch\nWhenever Test Sunslayer deals combat damage to a player, choose one —\n• You draw a card and lose 1 life.\n• Destroy target enchantment.\n• Remove up to three counters from target permanent.",
+      "mana_cost": "{1}{B}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Phyrexian", "Zombie", "Elf"],
+      "supertypes": ["Legendary"],
+      "colors": ["B", "G"],
+      "color_identity": ["B", "G"],
+      "power": 3,
+      "toughness": 3,
+      "keywords": ["first_strike", "deathtouch"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever Test Sunslayer deals combat damage to a player, choose one —\n• You draw a card and lose 1 life.\n• Destroy target enchantment.\n• Remove up to three counters from target permanent.",
+          "trigger": {"event": "deals_combat_damage_to_player", "source": "self"},
+          "targets": [
+            {"id": "enchantment", "kind": "permanent", "count": 1, "mode": 1,
+             "selector": {"zone": "battlefield", "types": ["Enchantment"]}},
+            {"id": "permanent", "kind": "permanent", "count": 1, "mode": 2,
+             "selector": {"zone": "battlefield"}}
+          ],
+          "effects": [
+            {"op": "choose_mode", "count": 1, "modes": [
+              {"label": "You draw a card and lose 1 life.",
+               "effects": [
+                 {"op": "draw", "player": "you", "amount": {"const": 1}},
+                 {"op": "lose_life", "player": "you", "amount": {"const": 1}}
+               ]},
+              {"label": "Destroy target enchantment.",
+               "effects": [{"op": "destroy", "objects": {"target": "enchantment"}}]},
+              {"label": "Remove up to three counters from target permanent.",
+               "effects": [
+                 {"op": "remove_counters", "objects": {"target": "permanent"},
+                  "any_kind": true, "amount": {"const": 3}, "up_to": true}
+               ]}
+            ]}
+          ]
+        }
+      ]
+    }
+  ]
+}

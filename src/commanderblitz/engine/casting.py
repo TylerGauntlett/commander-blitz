@@ -31,10 +31,12 @@ from .effects.context import EffectContext
 from .effects.selectors import resolve_pool
 from .enums import COLORLESS, ActionKind, Keyword, Step, Zone
 from .mana import SYMBOL_INDEX, ManaCost, max_affordable_x, solve_payment
+from .objects import playable_condition_met
 from .player_statics import (
     cast_lock_min_x,
     free_cast_permission,
     granted_alternative_cost,
+    granted_pay_generic_with,
     granted_warp_cost,
     graveyard_cast_allows,
     graveyard_cast_arrival_ok,
@@ -188,6 +190,10 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
         obj = state.objects[oid]
         if obj.playable_by != pid or not obj.playable_live(state.turn):
             continue
+        # "During any turn you attacked with a commander, you may play those
+        # cards" (Neriv): live, but shut on this turn.
+        if not playable_condition_met(state, obj):
+            continue
         # "…you may cast **a spell** from among those cards", singular out of
         # however many were milled. Counted per granting permanent, so two
         # Lockes are two spells and one Locke milling three cards is still one.
@@ -200,6 +206,19 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
         # a plotted instant is still an instant, and `_timing_ok` would happily
         # offer it with something on the stack.
         if obj.playable_sorcery_only and not sorcery_speed:
+            continue
+        # "…you may cast it from your graveyard **as an Adventure**" --
+        # Hildibrand Manderville. The permission reaches one face, so the
+        # Adventure half is offered (timed, priced and targeted off its own
+        # `CardDef`) and the front face is not. The half's printed zone is the
+        # hand, which this permission is the exception to, so the zone gate is
+        # waived; everything after the cast is the ordinary Adventure.
+        if obj.playable_as_adventure:
+            out.extend(
+                _second_face_actions(
+                    state, pid, oid, card, obj.zone, sorcery_speed, permitted=True
+                )
+            )
             continue
         if card.is_land or not _timing_ok(state, pid, card, sorcery_speed):
             continue
@@ -407,8 +426,15 @@ def _second_face_actions(
     card: CardDef,
     zone: Zone,
     sorcery_speed: bool,
+    *,
+    permitted: bool = False,
 ) -> list[Action]:
     """The lines for casting this card as its second face, if there are any.
+
+    ``permitted`` is a "you may cast it as an Adventure" permission on the
+    object (`playable_as_adventure`), which casts the half from a zone its
+    `second_face_zone` does not name -- so the zone gate is skipped, and the
+    fuse line, which is a hand-only third option, is never offered.
 
     One card, two spells. Everything the variant needs -- the price, the name,
     the targets, the timing -- is read off the *second face's* ``CardDef``, so
@@ -421,7 +447,7 @@ def _second_face_actions(
     """
     if card.second_face is None:
         return []
-    if SECOND_FACE_ZONES.get(card.second_face_zone) is not zone:
+    if not permitted and SECOND_FACE_ZONES.get(card.second_face_zone) is not zone:
         return []
     face = state.registry.get(card.second_face)
     # A land half is **played**, not cast, and `_land_actions` offers it. Without
@@ -446,7 +472,7 @@ def _second_face_actions(
     # together, both target lists chosen together. Priced and enumerated off a
     # card built from the two, so `_cast_variant` needs no notion of fusion: it
     # is pricing one spell, as it always is.
-    if card.fuse and zone is Zone.HAND:
+    if card.fuse and zone is Zone.HAND and not permitted:
         both = dataclasses.replace(
             card,
             name=f"{card.name} // {face.name}",
@@ -755,7 +781,16 @@ def _cast_options(
     # Only from hand: an alternative cost is permission to cast the card *this
     # way*, and nothing extends it to the graveyard or the command zone the way
     # `retrace` and commander casting do.
-    if card.evoke is not None and state.objects[oid].zone is Zone.HAND:
+    #
+    # A non-mana evoke payment is priced here, before the line is offered, for
+    # the pitch spells' reason below: Endurance held with no other green card
+    # cannot be evoked at all. `oid` as the source keeps it from pitching
+    # itself (601.2a).
+    if (
+        card.evoke is not None
+        and state.objects[oid].zone is Zone.HAND
+        and (card.evoke_payment is None or can_pay(state, pid, card.evoke_payment, oid))
+    ):
         out += _cast_variant(
             state, pid, oid, card, tuples, extra_generic=extra_generic, evoked=True
         )
@@ -914,9 +949,10 @@ def _cast_options(
     # spell that mana alone cannot pay is still offered; the printed line is
     # that line at zero. A tuple already covered at a smaller spend is not
     # offered again, so each target is one row whatever it costs to reach.
-    if card.pay_generic_with is not None and state.objects[oid].zone is Zone.HAND:
+    currencies = pay_generic_currencies(state, pid, card)
+    if currencies and state.objects[oid].zone is Zone.HAND:
         covered = {action.targets for action in plain}
-        for spend in range(1, _pay_generic_ceiling(state, pid, oid, card) + 1):
+        for spend in range(1, _pay_generic_ceiling(state, pid, oid, card, currencies) + 1):
             for action in _cast_variant(
                 state,
                 pid,
@@ -1030,6 +1066,22 @@ def chosen_additional(card: CardDef, choice: int | None) -> Cost | None:
             return None
         return card.additional_cost_options[choice]
     return card.additional_cost
+
+
+def life_x_ceiling(
+    state: GameState, pid: int, card: CardDef, choice: int | None, targets
+) -> int | None:
+    """The most X a ``pay_life_x`` additional cost may announce, or ``None``.
+
+    118.4 lets a player pay life down to exactly 0, so the ceiling is the life
+    total less any life the targets themselves cost (Terror of the Peaks), which
+    is paid on the same cast. ``None`` for a line whose additional cost does not
+    announce an X at all.
+    """
+    additional = chosen_additional(card, choice)
+    if additional is None or not additional.pay_life_x:
+        return None
+    return max(0, state.players[pid].life - spell_life_tax(state, pid, card, targets))
 
 
 def _charge_additional_cost(
@@ -1224,15 +1276,31 @@ PAY_GENERIC_TAP_TYPES: dict[str, str] = {
 }
 
 
-def pay_generic_tappers(state: GameState, pid: int, card: CardDef) -> list[int]:
-    """The untapped permanents ``pid`` could tap to convoke or improvise ``card``.
+def pay_generic_currencies(state: GameState, pid: int, card: CardDef) -> frozenset[str]:
+    """Every ``pay_generic_with`` currency ``card`` has as ``pid`` casts it.
 
-    Empty for a card whose ``pay_generic_with`` taps nothing. The type is read
-    off the derived characteristics, so an animated artifact land convokes and
-    a Mycosynth-Lattice'd creature improvises.
+    The printed one, and any a static grants (Inspiring Statuary's "nonartifact
+    spells you cast have improvise", `player_statics.granted_pay_generic_with`).
+    A spell may have several -- a convoke spell under the Statuary taps
+    creatures and artifacts alike in one cast -- so every reader takes the set,
+    never the printed field alone.
     """
-    wanted = PAY_GENERIC_TAP_TYPES.get(card.pay_generic_with or "")
-    if wanted is None:
+    granted = granted_pay_generic_with(state, pid, card)
+    if card.pay_generic_with is None:
+        return granted
+    return granted | {card.pay_generic_with}
+
+
+def pay_generic_tappers(state: GameState, pid: int, currencies: frozenset[str]) -> list[int]:
+    """The untapped permanents ``pid`` could tap to convoke or improvise.
+
+    Empty when none of ``currencies`` taps anything. The type is read off the
+    derived characteristics, so an animated artifact land convokes and a
+    Mycosynth-Lattice'd creature improvises. A permanent of both types is
+    listed once: it taps once, for whichever keyword pays more.
+    """
+    wanted = {PAY_GENERIC_TAP_TYPES[c] for c in currencies if c in PAY_GENERIC_TAP_TYPES}
+    if not wanted:
         return []
     return [
         other
@@ -1240,8 +1308,43 @@ def pay_generic_tappers(state: GameState, pid: int, card: CardDef) -> list[int]:
         if (obj := state.objects.get(other)) is not None
         and obj.controller == pid
         and not obj.tapped
-        and wanted in chars(state, other).types
+        and not wanted.isdisjoint(chars(state, other).types)
     ]
+
+
+def pay_generic_pool(
+    state: GameState, pid: int, oid: int, currencies: frozenset[str]
+) -> list[int]:
+    """Everything ``pid`` could spend paying for ``oid`` with ``currencies``.
+
+    The permanents that could tap, then -- with delve among them -- the cards
+    in the graveyard. The spell being cast is not in its graveyard; it is on
+    the stack by the time this is paid.
+    """
+    pool = pay_generic_tappers(state, pid, currencies)
+    if "exile_from_graveyard" in currencies:
+        pool += [other for other in state.players[pid].graveyard if other != oid]
+    return pool
+
+
+def pay_generic_colors(
+    state: GameState, other: int, currencies: frozenset[str]
+) -> frozenset[int]:
+    """The mana symbols ``other`` may pay one of when it is spent: its colours if it convokes.
+
+    Only a creature convokes, and only for a spell with convoke. An improvised
+    artifact or a delved card pays {1} and nothing else, which is
+    `convoke_payments` handed an empty set. An artifact creature on a spell
+    with both keywords convokes, because convoke pays everything improvise
+    does and a pip besides.
+    """
+    if "tap_creatures" not in currencies:
+        return frozenset()
+    if state.objects[other].zone is not Zone.BATTLEFIELD:
+        return frozenset()
+    if "Creature" not in chars(state, other).types:
+        return frozenset()
+    return convoke_colors(state, other)
 
 
 def convoke_colors(state: GameState, oid: int) -> frozenset[int]:
@@ -1320,19 +1423,26 @@ def convoke_payments(
 
 
 def _convoke_prices(
-    state: GameState, pid: int, card: CardDef, cost: ManaCost, spend: int, room: int
+    state: GameState,
+    pid: int,
+    oid: int,
+    currencies: frozenset[str],
+    cost: ManaCost,
+    spend: int,
+    room: int,
 ) -> list[tuple[ManaCost, int]]:
-    """What ``cost`` could come down to with ``spend`` of ``pid``'s creatures convoking.
+    """What ``cost`` could come down to with ``spend`` of ``pid``'s pool spent on it.
 
     Legality's half of `convoke_payments`: the line does not know *which*
     creatures will tap, so every way of choosing ``spend`` of them is tried,
     one colour combination at a time -- two mono-black creatures are the same
+    choice, and an improvised artifact or a delved card is the colourless
     choice. The game asks the player which ones, and `Game._ask_pay_generic`
     then prices that pick through the same function.
     """
     groups: dict[frozenset[int], int] = {}
-    for other in pay_generic_tappers(state, pid, card):
-        colors = convoke_colors(state, other)
+    for other in pay_generic_pool(state, pid, oid, currencies):
+        colors = pay_generic_colors(state, other, currencies)
         groups[colors] = groups.get(colors, 0) + 1
     kinds = sorted(groups, key=sorted)
     out: dict[tuple, tuple[ManaCost, int]] = {}
@@ -1351,7 +1461,9 @@ def _convoke_prices(
     return list(out.values())
 
 
-def _pay_generic_ceiling(state: GameState, pid: int, oid: int, card: CardDef) -> int:
+def _pay_generic_ceiling(
+    state: GameState, pid: int, oid: int, card: CardDef, currencies: frozenset[str]
+) -> int:
     """The most a convoke, improvise or delve line could usefully spend.
 
     Never more than the spell's own generic cost -- "pays for {1}" and a spell
@@ -1360,18 +1472,10 @@ def _pay_generic_ceiling(state: GameState, pid: int, oid: int, card: CardDef) ->
     (702.51a), so its ceiling counts those as well.
     """
     generic = card.mana_cost.generic
-    if card.pay_generic_with == "tap_creatures":
-        payable = generic + convoke_pips(card.mana_cost)
-        return min(payable, len(pay_generic_tappers(state, pid, card)))
-    if generic <= 0:
-        return 0
-    if card.pay_generic_with in PAY_GENERIC_TAP_TYPES:
-        available = len(pay_generic_tappers(state, pid, card))
-    else:
-        # Delve exiles from the graveyard, and the spell being cast is not in
-        # it -- it is on the stack by the time this is paid.
-        available = sum(1 for other in state.players[pid].graveyard if other != oid)
-    return min(generic, available)
+    available = len(pay_generic_pool(state, pid, oid, currencies))
+    if "tap_creatures" in currencies:
+        return min(generic + convoke_pips(card.mana_cost), available)
+    return min(max(generic, 0), available)
 
 
 def _emerge_fodder(state: GameState, pid: int, oid: int) -> list[int]:
@@ -1650,6 +1754,50 @@ def _spell_as_cast(card: CardDef, face_down: bool, bestowed: bool) -> CardDef:
     return card
 
 
+def permission_cost_reduction(
+    state: GameState,
+    pid: int,
+    oid: int,
+    *,
+    flashback: bool = False,
+    foretold: bool = False,
+    from_library_top: bool = False,
+    prepared: bool = False,
+    second_face: bool = False,
+    fused: bool = False,
+) -> int:
+    """How much less a cast line costs because it uses a discounted permission.
+
+    "Until end of turn, you may play cards exiled with Urianger Augurelt.
+    **Spells you cast this way** cost {2} less to cast." The discount belongs to
+    the permission (`GameObject.playable_cost_reduction`), so it is owed only on
+    a line that casts *under* it: the plain line the permitted-zone walk in
+    `_cast_actions` offers, every variant `_cast_options` builds from it
+    (kicked, evoked, ...: 601.2f reduces whatever cost is paid), and the
+    Adventure half when the permission is `as_adventure`.
+
+    Not on a line some other rule offers out of the same zone -- flashback,
+    foretell, the top of the library, a prepared copy, a split card's other
+    half -- because those are not "this way". Not after the permission has
+    lapsed, which `playable_live` decides. `_cast_variant` prices the line with
+    this and `Game._cast` charges it from the same flags off the action, so the
+    line offered is the line paid.
+    """
+    obj = state.objects.get(oid)
+    if (
+        obj is None
+        or not obj.playable_cost_reduction
+        or obj.playable_by != pid
+        or not obj.playable_live(state.turn)
+    ):
+        return 0
+    if flashback or foretold or from_library_top or prepared or fused:
+        return 0
+    if second_face and not obj.playable_as_adventure:
+        return 0
+    return obj.playable_cost_reduction
+
+
 def _cast_variant(
     state: GameState,
     pid: int,
@@ -1701,7 +1849,21 @@ def _cast_variant(
     # every repeat count of `_charge_additional_cost` all pass through, and a
     # caller that forgot would offer the unsized `tuples`. The variants with a
     # target list of the rule's own (morph, overload, bestow, mutate) keep it.
-    specs = card.targets_for(gift_promised=gift_to is not None)
+    specs = card.targets_for(gift_promised=gift_to is not None, cost_option=additional_choice)
+    # Tiered (702.183): the tier is an additional cost chosen at 601.2b, so a
+    # line that pays one declares that tier's own list at 601.2c -- Cloud's
+    # Limit Break's Omnislash line points at nothing, and Cross-Slash's needs a
+    # tapped creature. The callers' ``tuples`` were built from the shared list.
+    tiered = additional_choice is not None and additional_choice in card.cost_option_targets
+    if tiered and not (face_down or overloaded or bestowed or mutated or fused):
+        tuples = enumerate_target_tuples(
+            state,
+            pid,
+            specs,
+            oid,
+            exclude_sid=state.objects[oid].stack_id,
+            defer=deferred_target_spec(state, card, specs),
+        )
     if not (face_down or overloaded or bestowed or mutated or fused) and any(
         spec.additional_sized for spec in specs
     ):
@@ -1719,9 +1881,21 @@ def _cast_variant(
     # 601.2d: divided damage gives each of its targets at least one, so a line
     # naming more targets than there is damage cannot be divided and is not a
     # cast. Here for `modal_cast_ok`'s reason: every offered cast passes through.
+    #
+    # A divided X from `pay_life_x` (Fire Covenant) is not announced yet, so a
+    # line is capped at the most X the caster could announce for it -- the life
+    # left once that line's targeting tax is counted. `Game._cast` then floors
+    # the announcement at the number of targets the line declared.
     if divided_damage(card):
-        specs = card.targets_for(gift_promised=gift_to is not None)
-        tuples = [t for t in tuples if fits_division(state, pid, oid, card, specs, t)]
+        specs = card.targets_for(gift_promised=gift_to is not None, cost_option=additional_choice)
+        tuples = [
+            t
+            for t in tuples
+            if fits_division(
+                state, pid, oid, card, specs, t,
+                x=life_x_ceiling(state, pid, card, additional_choice, t) or 0,
+            )
+        ]
     # "Your opponents can't cast **noncreature** spells" -- Narset
     # Transcendent's emblem. The filtered half of `player_cant_cast_spells`,
     # asked here because this is the one function every offered cast passes
@@ -1752,6 +1926,24 @@ def _cast_variant(
     # variant-blind by design -- Ghalta costs less however you cast it -- and a
     # rider written there would discount the printed hand cast too.
     variant_less = 0
+    # The zone the card is cast *from*, for "spells you cast from your
+    # graveyard" (`spell_cost_reduction`'s ``from_zone``) -- read off the object
+    # before `push_spell` moves it, so flashback and foretell price from where
+    # the card sits.
+    cast_zone = state.objects[oid].zone
+    # "Spells you cast this way cost {2} less" -- a discount the permission
+    # this line casts under carries, not the card (Urianger Augurelt).
+    variant_less += permission_cost_reduction(
+        state,
+        pid,
+        oid,
+        flashback=flashback,
+        foretold=foretold,
+        from_library_top=from_library_top,
+        prepared=prepared,
+        second_face=second_face,
+        fused=fused,
+    )
 
     if free:
         # "…without paying its mana cost." Plot (702.171a). First in the chain
@@ -1775,7 +1967,7 @@ def _cast_variant(
         cost = ManaCost.parse(alt_cost)
     elif flashback and card.flashback is not None:
         cost = card.flashback.mana
-        variant_less = variant_reduction(state, pid, card.flashback, oid)
+        variant_less += variant_reduction(state, pid, card.flashback, oid)
     elif emerge_oid is not None and card.emerge is not None:
         cost = card.emerge
     elif evoked and card.evoke is not None:
@@ -1910,7 +2102,7 @@ def _cast_variant(
         # yet, and refusing here would drop a spell that is affordable once
         # discounted. `_priced_tuples` re-prices each tuple exactly.
         def _discount_for(aimed_at):
-            return cost_reduction(state, pid, card, aimed_at) + variant_less
+            return cost_reduction(state, pid, card, aimed_at, zone=cast_zone) + variant_less
 
         discount = _discount_for(None)
 
@@ -1926,9 +2118,10 @@ def _cast_variant(
         # priced at every way `pay_generic` creatures could split between the
         # pips and the generic part, and a tuple any of them pays is offered.
         prices = [(cost, pay_generic)]
-        if pay_generic and card.pay_generic_with == "tap_creatures" and convoke_pips(cost):
+        currencies = pay_generic_currencies(state, pid, card) if pay_generic else frozenset()
+        if "tap_creatures" in currencies and convoke_pips(cost):
             room = max(0, cost.generic + extra_generic - discount)
-            prices = _convoke_prices(state, pid, card, cost, pay_generic, room)
+            prices = _convoke_prices(state, pid, oid, currencies, cost, pay_generic, room)
         if emerge_oid is not None:
             # The sacrifice pays for part of the spell. Generic-only and clamped by
             # `pay`, like every other reduction here.

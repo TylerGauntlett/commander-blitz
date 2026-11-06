@@ -1,0 +1,24 @@
+{
+  "card_id": "skarrgan_hellkite",
+  "name": "Skarrgan Hellkite",
+  "oracle_text": "Riot (This creature enters with your choice of a +1/+1 counter or haste.)\nFlying\n{3}{R}: This creature deals 2 damage divided as you choose among one or two targets. Activate only if this creature has a +1/+1 counter on it.",
+  "blocked_sentences": [
+    "{3}{R}: This creature deals 2 damage divided as you choose among one or two targets. Activate only if this creature has a +1/+1 counter on it."
+  ],
+  "needs": [
+    {
+      "capability": "divided_damage_on_activated",
+      "kind": "engine",
+      "what": "`damage` with `divided` inside an activated ability's effects, with the division announced at activation over the targets just declared (602.2b applying 601.2d), over an ability-level target spec of 'one or two targets' (count 2, min_count 1) capped at one target per point of damage",
+      "why_existing_wont_do": "`damage.divided` exists, but `loader._check_division_homes` refuses it anywhere but a top-level spell effect ('divided damage is only supported as a top-level effect of a spell'), because `Game._ask_damage_division` is only called from `Game._cast` and `engine.division.divided_damage` reads only `card.spell_effects`. The activation path's `Game._ask_distribution` divides only `distribute_counters`, not damage; two fixed `damage` effects of 1 each would fix the split and the target count, an approximation"
+    },
+    {
+      "capability": "divided_damage_any_target",
+      "kind": "engine",
+      "what": "damage `divided` over a target spec of kind \"any\" (creatures, planeswalkers, battles AND players), so the 601.2d announcement offers players a share and resolution deals each player target its share",
+      "why_existing_wont_do": "`Game._ask_damage_division` keeps only declared refs with `kind == \"object\"` and `ops_life._damage_divided` deals each share through `damage_permanent`, so a player chosen as one of the targets would receive no damage; restricting to permanents would be an approximation"
+    }
+  ],
+  "closest_existing": ["damage.divided", "distribute_counters"],
+  "confidence": "high"
+}

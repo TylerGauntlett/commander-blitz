@@ -1,0 +1,51 @@
+{
+  "_comment": "Shapes for tests/unit/counters/test_has_counter_of_kind.py. t_hck_wielder is Liliana, Death Wielder, all three lines: the -3 targets a creature with a -1/-1 counter on it, which `has_counters: \"-1/-1\"` says.",
+  "cards": [
+    {
+      "id": "t_hck_wielder",
+      "name": "Test Death Wielder",
+      "oracle_text": "+2: Put a -1/-1 counter on up to one target creature.\n−3: Destroy target creature with a -1/-1 counter on it.\n−10: Return all creature cards from your graveyard to the battlefield.",
+      "mana_cost": "{1}{B}{B}",
+      "types": ["Planeswalker"],
+      "supertypes": ["Legendary"],
+      "subtypes": ["Liliana"],
+      "loyalty": 3,
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "+2: Put a -1/-1 counter on up to one target creature.",
+          "cost": {"loyalty": 2},
+          "targets": [
+            {"id": "t1", "kind": "permanent", "count": 1, "optional": true,
+             "selector": {"zone": "battlefield", "types": ["Creature"], "controller": "any"}}
+          ],
+          "effects": [
+            {"op": "add_counters", "counter": "-1/-1", "amount": {"const": 1}, "objects": {"target": "t1"}}
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "−3: Destroy target creature with a -1/-1 counter on it.",
+          "cost": {"loyalty": -3},
+          "targets": [
+            {"id": "t1", "kind": "permanent", "count": 1,
+             "selector": {"zone": "battlefield", "types": ["Creature"], "controller": "any",
+                          "has_counters": "-1/-1"}}
+          ],
+          "effects": [{"op": "destroy", "objects": {"target": "t1"}}]
+        },
+        {
+          "kind": "activated",
+          "text": "−10: Return all creature cards from your graveyard to the battlefield.",
+          "cost": {"loyalty": -10},
+          "effects": [
+            {"op": "return_from_graveyard", "controller": "you", "destination": "battlefield",
+             "objects": {"zone": "graveyard", "controller": "you", "count": "all", "types": ["Creature"]}}
+          ]
+        }
+      ]
+    }
+  ]
+}

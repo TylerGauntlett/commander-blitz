@@ -5,7 +5,7 @@ area: decks
 effort: M
 impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
-depends_on: []
+depends_on: [divided-damage-on-abilities, divided-damage-any-target, voting]
 status: proposed
 rank: 24
 ---
@@ -19,6 +19,12 @@ coming-soon shell on the shelf: its row `tdc_temur_roar` is in
 `python scripts/sync_precons.py --missing tdc_temur_roar` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+Three of those capabilities are rules subsystems the engine does not have
+([rules-coverage.md](../rules-coverage.md#not-implemented)): Dragonlord
+Atarka divides damage from an enters trigger and Skarrgan Hellkite from an
+activated ability that may hit players (divided damage on an ability, to any
+target), and Selvala's Stampede is a council's dilemma vote. The deck waits
+on the items that build them.
 
 ## The change
 

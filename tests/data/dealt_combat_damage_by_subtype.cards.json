@@ -1,0 +1,59 @@
+{
+  "_comment": "Shapes for tests/unit/combat/test_dealt_combat_damage_by_subtype.py. t_dcs_estinien is Estinien Varlineau's second-main-phase line on a bare 3/3 Human Knight; t_dcs_dragon is a vanilla 2/2 Dragon.",
+  "cards": [
+    {
+      "id": "t_dcs_estinien",
+      "name": "Test Estinien",
+      "oracle_text": "At the beginning of your second main phase, you draw X cards and lose X life, where X is the number of your opponents who were dealt combat damage by Test Estinien or a Dragon this turn.",
+      "mana_cost": "{2}{U}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Knight"],
+      "power": 3,
+      "toughness": 3,
+      "colors": ["U", "R"],
+      "color_identity": ["U", "R"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "At the beginning of your second main phase, you draw X cards and lose X life, where X is the number of your opponents who were dealt combat damage by Test Estinien or a Dragon this turn.",
+          "trigger": {"event": "postcombat_main", "controller": "you"},
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "player_count": {
+                  "dealt_combat_damage_by": {"any_of": ["self", {"subtypes": ["Dragon"]}]},
+                  "except": "you"
+                }
+              }
+            },
+            {
+              "op": "lose_life",
+              "player": "you",
+              "amount": {
+                "player_count": {
+                  "dealt_combat_damage_by": {"any_of": ["self", {"subtypes": ["Dragon"]}]},
+                  "except": "you"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_dcs_dragon",
+      "name": "Test Whelp",
+      "oracle_text": "",
+      "mana_cost": "{1}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Dragon"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "abilities": []
+    }
+  ]
+}

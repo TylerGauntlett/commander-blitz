@@ -1,0 +1,24 @@
+{
+  "card_id": "evendo_brushrazer",
+  "name": "Evendo Brushrazer",
+  "oracle_text": "Whenever you sacrifice a nontoken permanent, exile the top card of your library.\nDuring your turn, as long as you've sacrificed a nontoken permanent this turn, you may play cards exiled with this creature.\n{T}, Sacrifice a land: Add {R}{R}.",
+  "blocked_sentences": [
+    "During your turn, as long as you've sacrificed a nontoken permanent this turn, you may play cards exiled with this creature."
+  ],
+  "needs": [
+    {
+      "capability": "conditional_play_exiled_with_source",
+      "kind": "static_effect",
+      "what": "a static ability on the permanent granting its controller permission to play (cast spells and play lands from) the cards exiled with this permanent (selector zone exile, exiled_with self), switched on by a static condition -- here is_your_turn AND a condition 'you have sacrificed a nontoken permanent this turn'. The permission must turn on and off as the condition changes, and must apply to every card ever exiled with the source, including ones exiled on an opponent's turn",
+      "why_existing_wont_do": "The exile op's playable/playable_free and grant_playable fix a permission at the moment of exiling with a duration from playable_durations (this_turn, while_exiled, until_next_exile_by_source, ...), none of which is gated on a live condition; there is no static_effect for 'play cards exiled with this' (free_cast_permission, cast_from_library_top and play_lands_from_graveyard are other zones). Exiling with playable: while_exiled would let the cards be played on any turn with no sacrifice, which is a different card"
+    },
+    {
+      "capability": "sacrificed_this_turn",
+      "kind": "value",
+      "what": "a turn-ledger value (or static condition) counting nontoken permanents the player sacrificed this turn, e.g. {\"permanents_sacrificed_this_turn\": {\"player\": \"you\", \"filter\": {\"is_token\": false}}}, readable from a static ability's condition and counting sacrifices made before this creature entered",
+      "why_existing_wont_do": "value_keys has permanents_to_graveyard_this_turn and creatures_died_this_turn but nothing keyed on sacrifice or on nontoken; static_value_keys is smaller still. A sacrificed trigger setting a turn flag would miss sacrifices made before the creature entered, and has_turn_flag is in condition_keys but not static_condition_keys"
+    }
+  ],
+  "closest_existing": ["grant_playable", "exile", "play_exiled", "set_turn_flag"],
+  "confidence": "high"
+}

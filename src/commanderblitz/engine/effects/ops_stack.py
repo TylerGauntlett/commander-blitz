@@ -165,10 +165,12 @@ def _choose_new_targets(ctx: EffectContext, original, chooser: int | None = None
         chooser = ctx.controller
     card = ctx.state.registry.get(original.def_id)
     specs = getattr(card, "targets", ()) or ()
-    if original.gift_to is not None:
-        # The copy keeps the promise (707.10), so it re-chooses among the
-        # promised specs -- the list its stored refs were declared under.
-        specs = card.targets_for(gift_promised=True)
+    if original.gift_to is not None or original.cost_option is not None:
+        # The copy keeps the promise and the tier (707.10), so it re-chooses
+        # among the specs its stored refs were declared under.
+        specs = card.targets_for(
+            gift_promised=original.gift_to is not None, cost_option=original.cost_option
+        )
     if not specs:
         return None
     options = enumerate_target_tuples(
@@ -251,6 +253,10 @@ def put_copy_on_stack(state, controller: int, original, targets=None):
         # declared under the promised target list, so `stack._resolve_spell`
         # has to split them by that list rather than the unpromised one.
         gift_to=original.gift_to,
+        # And the tier paid (702.183 makes it an additional cost, so 707.10
+        # copies it): the copy's `{"cost_option": n}` branch and the target
+        # list its refs are split by are the original's.
+        cost_option=original.cost_option,
         # Everything but the convoking creatures: 702.51c's "convoked it" is a
         # creature tapped to *pay* for the spell, and a copy was never paid for
         # -- convoke is neither an additional nor an alternative cost, so
@@ -385,6 +391,38 @@ def op_grant_rebound(ctx: EffectContext, spec: Mapping[str, Any]):
     obj.granted_rebound = True
 
 
+@register("spell_enters_with_counters")
+def op_spell_enters_with_counters(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"…that creature enters with two additional +1/+1 counters on it." --
+    Yuna, Grand Summoner.
+
+    A replacement on the **spell's arrival** (614.1c), not counters put on a
+    permanent afterwards: the creature is never on the battlefield without
+    them, so they are one placement with everything else it enters with
+    (122.6) -- Hardened Scales adds one to the total, and an "enters with
+    counters" trigger sees them. So this writes the promise onto the spell's
+    object while it is still on the stack (`GameObject.cast_enters_with`),
+    `move_object` carries it across the reset only to the battlefield, and
+    `zones._enter_battlefield` adds it to the arrival's placement. A countered
+    spell keeps nothing, and a non-permanent spell never arrives to cash it.
+
+    **Which spell** is `_spell_named_by`'s answer -- the trigger's own `sid` by
+    default, which is "**that** creature" on a `spell_cast` delayed trigger.
+    ``counters`` maps a counter kind to an amount, evaluated now, below zero
+    read as zero.
+    """
+    item = _spell_named_by(ctx, spec)
+    if item is None:
+        return
+    obj = ctx.state.objects.get(item.oid)
+    if obj is None:
+        return
+    for kind, amount in (spec.get("counters") or {}).items():
+        value = max(0, int(evaluate_value(ctx, amount)))
+        if value:
+            obj.cast_enters_with[str(kind)] = obj.cast_enters_with.get(str(kind), 0) + value
+
+
 @register("grant_plot")
 def op_grant_plot(ctx: EffectContext, spec: Mapping[str, Any]):
     """"Exile that spell instead of putting it into your graveyard as it resolves.
@@ -428,8 +466,27 @@ def op_counter(ctx: EffectContext, spec: Mapping[str, Any]):
     ``{"sid": {"binding": "sid"}}`` says it without inventing a target the
     printed card does not have -- which would also let the ward creature's
     controller point it somewhere else.
+
+    ``exiles: true`` is "If that spell is countered this way, exile it instead
+    of putting it into its owner's graveyard" -- Force of Negation, Transcendent
+    Dragon. A replacement on this counter's own zone change (614.1a), so it
+    touches only a spell this op actually countered: one that "can't be
+    countered" stays on the stack and nothing moves (701.6a). It is the
+    countering effect saying it, not the spell -- `StackItem.exiles_instead` is
+    the spell's own rider, set by whoever cast it, and either one exiles. Not
+    an `exile` op after the counter: by then the card is in a graveyard, has
+    fired whatever watches graveyards, and is a new object nothing names
+    (400.7).
+
+    ``as`` binds the cards of the spells this op countered that reached the
+    zone it sent them to -- "it" in "then you may cast it", read by
+    `play_exiled`'s ``objects: {"binding": …}``. An uncounterable spell, an
+    ability, a copy (which ceases to exist, 707.10a) and a commander its owner
+    sent to the command zone (903.9a) are not in it.
     """
     state = ctx.state
+    exiles = bool(spec.get("exiles", False))
+    countered: list[int] = []
     target_id = str(spec.get("target", "t1"))
     if "sid" in spec:
         sids = [evaluate_value(ctx, spec["sid"])]
@@ -490,8 +547,14 @@ def op_counter(ctx: EffectContext, spec: Mapping[str, Any]):
                 # instead" is a replacement on the spell, not a resolution
                 # rider, so a countered one is exiled too (`cast_card`'s
                 # ``exiles``).
-                destination = Zone.EXILE if item.exiles_instead else Zone.GRAVEYARD
-                move_object(state, item.oid, destination, to_player=obj.owner, cause="countered")
+                destination = Zone.EXILE if item.exiles_instead or exiles else Zone.GRAVEYARD
+                moved = move_object(
+                    state, item.oid, destination, to_player=obj.owner, cause="countered"
+                )
+                if moved.zone is destination:
+                    countered.append(moved.oid)
+    if name := spec.get("as"):
+        ctx.bindings[str(name)] = countered
 
 
 @register("reflexive_trigger")

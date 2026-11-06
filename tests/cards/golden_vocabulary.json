@@ -1,6 +1,7 @@
 {
  "loader": {
   "ABILITY_CLASS_KEYS": [
+   "any",
    "equip"
   ],
   "ATTACKING_OPS": [
@@ -21,6 +22,13 @@
    "subtypes",
    "supertypes",
    "types"
+  ],
+  "CAST_ORIGIN_ZONES": [
+   "command",
+   "exile",
+   "graveyard",
+   "hand",
+   "library"
   ],
   "CONTROLLED_TARGET_KINDS": [
    "card_in_exile",
@@ -72,7 +80,8 @@
   "COUNTERS_ON_ARRIVAL_OPS": [
    "look_at_top",
    "put_onto_battlefield",
-   "return_from_graveyard"
+   "return_from_graveyard",
+   "spell_enters_with_counters"
   ],
   "DEFENDING_TRIGGERS": [
    "attacks",
@@ -89,9 +98,15 @@
   ],
   "ENTERS_COPY_EXCEPT_KEYS": [
    "add_keywords",
+   "add_types",
    "enters_with",
    "name",
    "remove_supertypes"
+  ],
+  "FIRST_ACTIVATION_TARGETING_KEYS": [
+   "controller",
+   "subtypes",
+   "types"
   ],
   "FREE_CAST_FILTER_KEYS": [
    "any_types",
@@ -248,6 +263,7 @@
    "add_counters",
    "add_poison",
    "damage",
+   "delayed_trigger",
    "gain_life",
    "lose_life",
    "remove_counters"
@@ -262,6 +278,7 @@
   ],
   "NOT_A_CAST_TIME_COST": [
    "discard_self",
+   "discard_x",
    "exile_self",
    "exile_self_from_hand",
    "loyalty",
@@ -302,6 +319,7 @@
    "free_cast_permission",
    "freeze_opponent_lands",
    "grant_miracle",
+   "grant_pay_generic_with",
    "grant_warp",
    "granted_alternative_cost",
    "look_at_library_top",
@@ -342,10 +360,12 @@
    "colors",
    "controller",
    "exclude_self",
+   "from_zone",
    "keywords",
    "mana_cost",
    "min_colors",
    "name",
+   "not_from_zone",
    "not_keywords",
    "not_types",
    "power",
@@ -389,6 +409,7 @@
    "is_token",
    "keywords",
    "mana_cost",
+   "modified",
    "not_keywords",
    "not_supertypes",
    "not_types",
@@ -482,6 +503,7 @@
    "activate_loyalty_as_though_instant",
    "add_mana_on_tap",
    "add_subtype",
+   "all_damage_wither",
    "attack_tax",
    "attacks_if_able",
    "black_mana_as_phyrexian",
@@ -507,6 +529,7 @@
    "cast_from_library_top",
    "cast_only_at_sorcery_speed",
    "crew_power_bonus",
+   "damage_cant_be_prevented",
    "damage_life_floor",
    "double_land_mana",
    "double_land_triggers",
@@ -522,6 +545,7 @@
    "grant_ability",
    "grant_keyword",
    "grant_miracle",
+   "grant_pay_generic_with",
    "grant_warp",
    "granted_alternative_cost",
    "imprint_characteristics",
@@ -529,6 +553,7 @@
    "look_at_library_top",
    "lose_all_abilities",
    "lose_keyword",
+   "lose_keyword_timestamped",
    "mana_becomes_colorless",
    "mana_retention",
    "no_hand_limit",
@@ -611,6 +636,7 @@
    "you"
   ],
   "STATIC_VALUE_KEYS": [
+   "commander_casts_this_game",
    "const",
    "count",
    "counters_on",
@@ -663,6 +689,7 @@
   ],
   "UNGRANTABLE_STATIC_EFFECTS": [
    "add_mana_on_tap",
+   "all_damage_wither",
    "black_mana_as_phyrexian",
    "cant_activate_abilities",
    "cant_cast_spells",
@@ -675,6 +702,7 @@
    "cast_from_graveyard",
    "cast_from_library_top",
    "cast_only_at_sorcery_speed",
+   "damage_cant_be_prevented",
    "damage_life_floor",
    "double_land_mana",
    "double_land_triggers",
@@ -685,10 +713,12 @@
    "freeze_opponent_lands",
    "grant_ability",
    "grant_miracle",
+   "grant_pay_generic_with",
    "grant_warp",
    "granted_alternative_cost",
    "look_at_library_top",
    "lose_all_abilities",
+   "lose_keyword_timestamped",
    "mana_becomes_colorless",
    "mana_retention",
    "no_hand_limit",
@@ -820,6 +850,11 @@
     1
    ]
   ],
+  "_AS_CAST_RESERVED": [
+   "convoked",
+   "distribution",
+   "warped"
+  ],
   "_CHOSEN_QUALITY_KEYS": [
    "chosen_type_of",
    "chosen_color_of"
@@ -857,6 +892,7 @@
   "amass",
   "animate",
   "attach",
+  "attack_tax",
   "aura_swap",
   "become_copy",
   "become_level",
@@ -898,12 +934,14 @@
   "discover",
   "distribute_control_among_opponents",
   "distribute_counters",
+  "distribute_moved_counters",
   "double_counters",
   "draw",
   "emblem",
   "empower",
   "encode",
   "exchange_control",
+  "exchange_life_total",
   "exile",
   "exile_and_return",
   "exile_until",
@@ -948,6 +986,7 @@
   "mill",
   "monstrosity",
   "move_counters",
+  "multiply_token_creation",
   "must_attack",
   "must_attack_planeswalker",
   "must_attack_player",
@@ -970,6 +1009,8 @@
   "reflexive_trigger",
   "regenerate",
   "remove_counters",
+  "remove_counters_from_among",
+  "remove_from_combat",
   "rename",
   "repeat",
   "repeat_while",
@@ -995,6 +1036,7 @@
   "shuffle",
   "skip_untap",
   "snapshot",
+  "spell_enters_with_counters",
   "surveil",
   "suspend",
   "tap",

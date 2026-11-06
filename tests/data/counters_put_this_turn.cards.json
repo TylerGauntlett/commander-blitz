@@ -1,0 +1,30 @@
+{
+  "_comment": "Shapes for tests/unit/ledger/test_counters_put_this_turn.py. t_cpt_tarfire is Lasting Tarfire: at the beginning of each end step, if you put a counter on a creature this turn, 2 damage to each opponent.",
+  "cards": [
+    {
+      "id": "t_cpt_tarfire",
+      "name": "Test Lasting Tarfire",
+      "oracle_text": "At the beginning of each end step, if you put a counter on a creature this turn, this enchantment deals 2 damage to each opponent.",
+      "mana_cost": "{1}{R}",
+      "types": ["Enchantment"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "At the beginning of each end step, if you put a counter on a creature this turn, this enchantment deals 2 damage to each opponent.",
+          "trigger": {
+            "event": "end_step",
+            "controller": "any",
+            "condition": {
+              "cmp": ">",
+              "left": {"counters_put_this_turn": {"player": "you", "types": ["Creature"]}},
+              "right": {"const": 0}
+            }
+          },
+          "effects": [{"op": "damage", "player": "each_opponent", "amount": {"const": 2}}]
+        }
+      ]
+    }
+  ]
+}

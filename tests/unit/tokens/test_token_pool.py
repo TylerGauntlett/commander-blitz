@@ -28,6 +28,17 @@ import json
 import pytest
 
 from commanderblitz.cards.registry import CardRegistry, authored_card_paths
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind, DecisionKind
+from tests.conftest import (
+    find_action,
+    keywords,
+    only_oid,
+    pass_until,
+    pt,
+    settle_completely,
+    two_seat_board,
+)
 
 
 @pytest.fixture(scope="module")
@@ -395,6 +406,35 @@ class TestDawnOfHopesSoldiersHaveLifelink:
         assert "lifelink" not in other.keywords
 
 
+class TestChasmSkulkersSquidsHaveIslandwalk:
+    """Chasm Skulker: *"create X 1/1 blue Squid creature tokens with
+    **islandwalk**."*
+
+    `fish_1_1_u` is the nearest body: one-one and blue, but a Fish with no
+    keyword. Islandwalk is what lets a swarm of one-ones matter against a blue
+    opponent, so the vanilla Fish would be a weaker card than the printed one.
+    """
+
+    TOKEN = "squid_1_1_u_islandwalk"
+
+    def test_it_exists(self, pool):
+        assert pool.get(self.TOKEN) is not None
+
+    def test_it_is_a_one_one_blue_squid_with_islandwalk(self, pool):
+        squid = pool.get(self.TOKEN)
+        assert (squid.power, squid.toughness) == (1, 1)
+        assert sorted(squid.colors) == ["U"]
+        assert list(squid.subtypes) == ["Squid"]
+        assert list(squid.keywords) == ["islandwalk"]
+        assert squid.is_creature and squid.is_token
+
+    def test_the_vanilla_blue_fish_is_still_a_separate_token(self, pool):
+        other = pool.get("fish_1_1_u")
+        assert other is not None
+        assert list(other.subtypes) == ["Fish"]
+        assert not other.keywords
+
+
 class TestEmeriasCallsAngelsAreWarriorsToo:
     """Emeria's Call: *"Create two 4/4 white **Angel Warrior** creature tokens
     with flying."*
@@ -562,6 +602,63 @@ class TestCurrencyConvertersRogueIsATwoTwoBlack:
         assert "lifelink" in other.keywords
 
 
+class TestBarretsRebelIsATwoTwoRed:
+    """Barret, Avalanche Leader: *"Whenever an Equipment you control enters,
+    create a **2/2 red Rebel** creature token."*
+
+    `human_knight_2_2_r_trample_haste` is the pool's other 2/2 red token: the
+    right body with two keywords the card never prints and the wrong creature
+    types, and Barret's own combat trigger attaches only to a Rebel (111.4).
+    """
+
+    def test_it_is_a_vanilla_two_two_red_rebel(self, pool):
+        token = pool.get("rebel_2_2_r")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (2, 2)
+        assert sorted(token.colors) == ["R"]
+        assert list(token.types) == ["Creature"]
+        assert list(token.subtypes) == ["Rebel"]
+        assert not token.keywords
+        assert not token.abilities
+
+    def test_the_human_knight_is_still_a_separate_token(self, pool):
+        other = pool.get("human_knight_2_2_r_trample_haste")
+        assert other is not None
+        assert (other.power, other.toughness) == (2, 2)
+        assert sorted(other.keywords) == ["haste", "trample"]
+        assert "Rebel" not in other.subtypes
+
+    def test_an_equipment_entering_makes_one_and_combat_can_equip_it(self, builder):
+        """Accorder's Shield costs nothing, so the Rebel is the trigger's alone;
+        the beginning-of-combat trigger then hangs the Shield on that token."""
+        game = (
+            builder(players=2)
+            .battlefield(0, ["barret_avalanche_leader", "mountain"])
+            .hand(0, ["accorder_s_shield"])
+            .build()
+        )
+        cast = next(
+            a for a in game.legal_actions()
+            if a.kind is ActionKind.CAST
+            and game.state.objects[a.source].def_id == "accorder_s_shield"
+        )
+        game.apply(cast)
+        settle_completely(game)
+        rebel = only_oid(game, "rebel_2_2_r", 0)
+        shield = only_oid(game, "accorder_s_shield", 0)
+
+        pass_until(game, lambda g: g.pending().kind is DecisionKind.CHOOSE_OBJECTS)
+        # The trigger's declaration offers each legal (Equipment, Rebel) pair,
+        # and the bare Rebels for "up to one" Equipment chosen as none.
+        (index,) = [
+            i for i, option in enumerate(game.pending().options)
+            if option.label == "Accorder's Shield, Rebel Token"
+        ]
+        game.apply(find_action(game, ActionKind.CHOOSE, choice=index))
+        settle_completely(game)
+        assert game.state.objects[shield].attached_to == rebel
+
+
 class TestMyrBattlespheresMyrAreColorlessArtifactMyr:
     """Myr Battlesphere: *"create four **1/1 colorless Myr artifact** creature
     tokens"*, and then *"you may tap X untapped **Myr** you control"*.
@@ -694,6 +791,74 @@ class TestKherKeepsKoboldsCarryTheirName:
         plant = pool.get("plant_0_1_g")
         assert plant is not None
         assert sorted(plant.colors) == ["G"]
+
+
+class TestSetzersBlackjackIsALegendaryFlyingVehicle:
+    """Setzer, Wandering Gambler: *"create **The Blackjack, a legendary 3/3
+    colorless Vehicle artifact token with flying and crew 2**."*
+
+    Every part is a characteristic a card reads. The name and the supertype put
+    it under the legend rule; the Vehicle subtype is what Setzer's second
+    ability watches; and it is an artifact, not a creature, until it is crewed.
+    `pilot_1_1_c_crew2` is the pool's only other crew-related token and is the
+    creature that does the crewing, not a Vehicle; `komas_coil_3_3_u` is the
+    other named 3/3 and is a blue Serpent creature.
+    """
+
+    TOKEN = "the_blackjack_3_3_c_flying_crew2"
+
+    def test_it_is_a_legendary_three_three_colorless_flying_vehicle(self, pool):
+        token = pool.get(self.TOKEN)
+        assert token is not None and token.is_token
+        assert token.name == "The Blackjack"
+        assert sorted(token.supertypes) == ["Legendary"]
+        assert list(token.types) == ["Artifact"]
+        assert list(token.subtypes) == ["Vehicle"]
+        assert (token.power, token.toughness) == (3, 3)
+        assert not token.colors and not token.color_identity
+        assert list(token.keywords) == ["flying"]
+        assert not token.is_creature
+
+    def test_its_one_ability_is_crew_two(self, pool):
+        (crew,) = pool.get(self.TOKEN).abilities
+        assert crew.text == "Crew 2"
+        assert crew.cost.tap_permanents["total_power"] == 2
+
+    def test_a_two_power_creature_crews_it_into_a_three_three_flier(self, builder):
+        game = two_seat_board(builder, mine=[self.TOKEN, "grizzly_bears"])
+        vehicle = only_oid(game, self.TOKEN, 0)
+        assert "Creature" not in chars(game.state, vehicle).types
+        game.apply(
+            next(
+                a
+                for a in game.legal_actions()
+                if a.kind is ActionKind.ACTIVATE and a.source == vehicle
+            )
+        )
+        settle_completely(game)
+        assert {"Artifact", "Creature"} <= chars(game.state, vehicle).types
+        assert pt(game, vehicle) == (3, 3)
+        assert "flying" in keywords(game, vehicle)
+
+    @staticmethod
+    def _can_crew(game, vehicle: int) -> bool:
+        return any(
+            a.kind is ActionKind.ACTIVATE and a.source == vehicle
+            for a in game.legal_actions()
+        )
+
+    def test_a_one_power_creature_cannot_crew_it(self, builder):
+        game = two_seat_board(builder, mine=[self.TOKEN, "llanowar_elves"])
+        assert not self._can_crew(game, only_oid(game, self.TOKEN, 0))
+
+    def test_a_pilot_crews_it_as_a_three(self, builder):
+        game = two_seat_board(builder, mine=[self.TOKEN, "pilot_1_1_c_crew2"])
+        assert self._can_crew(game, only_oid(game, self.TOKEN, 0))
+
+    def test_the_pilot_is_still_a_separate_token(self, pool):
+        pilot = pool.get("pilot_1_1_c_crew2")
+        assert pilot.is_creature and list(pilot.subtypes) == ["Pilot"]
+        assert "Vehicle" not in pilot.subtypes
 
 
 class TestEzurisPredationMakesPhyrexianBeasts:
@@ -1171,6 +1336,38 @@ class TestTheFantasticarsConstructsAreFourFourHastyFliers:
         assert not construct.keywords
 
 
+class TestGolemFoundrysGolemIsAPlainThreeThree:
+    """Golem Foundry: *"Create a 3/3 colorless Golem artifact creature token."*
+
+    `gingerbrute_1_1_c` is the pool's other Golem: a 1/1 Food with haste and
+    an evasion clause. `construct_4_4_c_artifact_flying_haste` is the nearest
+    colorless artifact body, a different creature type with two keywords.
+    """
+
+    def test_it_is_a_three_three_colorless_golem_artifact_with_nothing_else(self, pool):
+        token = pool.get("golem_3_3_c_artifact")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (3, 3)
+        assert not token.colors
+        assert sorted(token.types) == ["Artifact", "Creature"]
+        assert list(token.subtypes) == ["Golem"]
+        assert not token.keywords
+        assert not token.abilities
+
+    def test_titan_forges_golem_is_the_same_shape_at_nine_nine(self, pool):
+        """Titan Forge: *"Create a 9/9 colorless Golem artifact creature token."*"""
+        token = pool.get("golem_9_9_c_artifact")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (9, 9)
+        assert not token.colors
+        assert list(token.subtypes) == ["Golem"]
+        assert not token.keywords and not token.abilities
+
+    def test_gingerbrute_is_still_a_separate_golem(self, pool):
+        gingerbrute = pool.get("gingerbrute_1_1_c")
+        assert (gingerbrute.power, gingerbrute.toughness) == (1, 1)
+
+
 class TestPrismariElementalsAreBlueAndRed:
     """Prismari Pianist, Furygale Flocking, Magma Opus and Resculpt: *"a 1/1
     blue and red Elemental"*, *"two 3/3 blue and red Elemental creature tokens
@@ -1481,3 +1678,268 @@ class TestCurseOfTheSwinesBoar:
         other = pool.get("elemental_2_2_g")
         assert other is not None
         assert "Boar" not in other.subtypes
+
+
+class TestBlightCursesTokens:
+    """Three tokens the Blight Curse precon prints, each beside its near miss.
+
+    Flourishing Defenses makes a *1/1 green Elf Warrior*, where the pool's
+    other 1/1 Warrior is white and no Elf; Hapatra, Vizier of Poisons makes a
+    *1/1 green Snake with deathtouch*, where the pool's Snake is black; and
+    Wickersmith's Tools makes a *2/2 colorless Scarecrow artifact creature*.
+    Rule 111.4: a token is exactly what its creating effect says.
+    """
+
+    def test_the_elf_warrior_is_green_and_both_types(self, pool):
+        token = pool.get("elf_warrior_1_1_g")
+        assert token is not None and token.is_creature and token.is_token
+        assert (token.power, token.toughness) == (1, 1)
+        assert sorted(token.colors) == ["G"]
+        assert sorted(token.subtypes) == ["Elf", "Warrior"]
+        assert not token.keywords
+
+    def test_the_white_warrior_is_still_a_separate_token(self, pool):
+        white = pool.get("warrior_1_1_w")
+        assert white is not None and "Elf" not in white.subtypes
+
+    def test_the_green_snake_has_deathtouch(self, pool):
+        token = pool.get("snake_1_1_g_deathtouch")
+        assert token is not None and token.is_token
+        assert (token.power, token.toughness) == (1, 1)
+        assert sorted(token.colors) == ["G"]
+        assert "deathtouch" in token.keywords
+
+    def test_the_black_snake_is_still_a_separate_token(self, pool):
+        black = pool.get("snake_1_1_b_deathtouch")
+        assert black is not None and sorted(black.colors) == ["B"]
+
+    def test_the_scarecrow_is_a_colorless_artifact_creature(self, pool):
+        token = pool.get("scarecrow_2_2_c")
+        assert token is not None and token.is_token
+        assert (token.power, token.toughness) == (2, 2)
+        assert not token.colors
+        assert "Artifact" in token.types and "Creature" in token.types
+        assert list(token.subtypes) == ["Scarecrow"]
+
+
+class TestTheDanceOfTheElementsTokens:
+    """Dance of the Elements names five tokens the pool lacked, each next to a
+    near miss that would have made its card a different card.
+
+    - Crib Swap, Belonging, Springleaf Parade and Abundant Countryside make a
+      **1/1** changeling Shapeshifter; the pool's only Shapeshifter was a 3/2.
+    - Elemental Spectacle and Omnath, Locus of Rage make a **5/5 red and
+      green** Elemental; the nearest was the 4/4 blue and red one.
+    - Hoofprints of the Stag makes a **4/4 white** Elemental with flying.
+    - Titan of Industry makes a 4/4 green **Rhino Warrior** with no
+      keywords; `rhino_4_4_g_trample` is a Rhino alone, with trample.
+    - Vernal Sovereign makes a green and white Elemental whose power and
+      toughness *are* the number of creatures you control -- a
+      characteristic-defining static, not a number fixed when it is made.
+    """
+
+    def test_the_small_shapeshifter_is_a_colorless_changeling(self, pool):
+        token = pool.get("shapeshifter_1_1_c_changeling")
+        assert token is not None and token.is_token
+        assert (token.power, token.toughness) == (1, 1)
+        assert not token.colors
+        assert "Shapeshifter" in token.subtypes
+        assert any(a.text.startswith("Changeling") for a in token.abilities)
+
+    def test_the_large_shapeshifter_is_still_a_separate_token(self, pool):
+        other = pool.get("shapeshifter_3_2_c_changeling")
+        assert (other.power, other.toughness) == (3, 2)
+
+    def test_the_red_green_elemental_is_a_five_five(self, pool):
+        token = pool.get("elemental_5_5_rg")
+        assert token is not None and token.is_token
+        assert (token.power, token.toughness) == (5, 5)
+        assert sorted(token.colors) == ["G", "R"]
+        assert list(token.subtypes) == ["Elemental"]
+        assert not token.keywords
+
+    def test_the_white_elemental_flies(self, pool):
+        token = pool.get("elemental_4_4_w_flying")
+        assert token is not None and token.is_token
+        assert (token.power, token.toughness) == (4, 4)
+        assert sorted(token.colors) == ["W"]
+        assert list(token.keywords) == ["flying"]
+
+    def test_the_blue_red_elemental_is_still_a_separate_token(self, pool):
+        other = pool.get("elemental_4_4_ur")
+        assert sorted(other.colors) == ["R", "U"] and not other.keywords
+
+    def test_the_rhino_warrior_has_both_types_and_no_keywords(self, pool):
+        token = pool.get("rhino_warrior_4_4_g")
+        assert token is not None and token.is_token
+        assert (token.power, token.toughness) == (4, 4)
+        assert sorted(token.colors) == ["G"]
+        assert sorted(token.subtypes) == ["Rhino", "Warrior"]
+        assert not token.keywords
+
+    def test_the_trampling_rhino_is_still_a_separate_token(self, pool):
+        other = pool.get("rhino_4_4_g_trample")
+        assert "Warrior" not in other.subtypes and "trample" in other.keywords
+
+    def test_the_sovereigns_elemental_counts_your_creatures(self, pool):
+        token = pool.get("elemental_x_x_gw_creature_count")
+        assert token is not None and token.is_token
+        assert sorted(token.colors) == ["G", "W"]
+        assert list(token.subtypes) == ["Elemental"]
+        assert (token.power, token.toughness) == (0, 0)
+
+    def test_the_sovereigns_elemental_grows_with_your_board(self, builder):
+        game = two_seat_board(
+            builder,
+            mine=["elemental_x_x_gw_creature_count", "grizzly_bears"],
+            theirs=["grizzly_bears"],
+        )
+        token = only_oid(game, "elemental_x_x_gw_creature_count", 0)
+        assert pt(game, token) == (2, 2)
+
+
+class TestTheWorldShaperTokens:
+    """Eumidian Hatchery and Scouring Swarm: *"a 1/1 black Insect creature token
+    with flying"*; Hammer of Purphoros: *"a 3/3 colorless Golem enchantment
+    artifact creature token"*; Titania, Protector of Argoth: *"a 5/3 green
+    Elemental creature token"*; Formless Genesis: *"an X/X colorless
+    Shapeshifter creature token with changeling and deathtouch"*. Each sits
+    beside a near miss that is not it."""
+
+    def test_the_black_insect_is_a_one_one_flier(self, pool):
+        token = pool.get("insect_1_1_b_flying")
+        assert token is not None and token.is_token
+        assert (token.power, token.toughness) == (1, 1)
+        assert sorted(token.colors) == ["B"]
+        assert list(token.subtypes) == ["Insect"]
+        assert list(token.keywords) == ["flying"]
+
+    def test_the_green_and_white_insects_are_still_separate_tokens(self, pool):
+        assert sorted(pool.get("insect_1_1_g").colors) == ["G"]
+        assert not pool.get("insect_1_1_g").keywords
+        assert (pool.get("insect_2_1_w_flying").power, pool.get("insect_2_1_w_flying").toughness) == (2, 1)
+
+    def test_the_hammers_golem_is_an_enchantment_too(self, pool):
+        token = pool.get("golem_3_3_c_enchantment_artifact")
+        assert token is not None and token.is_token
+        assert (token.power, token.toughness) == (3, 3)
+        assert not token.colors
+        assert sorted(token.types) == ["Artifact", "Creature", "Enchantment"]
+        assert list(token.subtypes) == ["Golem"]
+
+    def test_the_plain_golem_is_not_an_enchantment(self, pool):
+        assert "Enchantment" not in pool.get("golem_3_3_c_artifact").types
+
+    def test_titanias_elemental_is_a_green_five_three(self, pool):
+        token = pool.get("elemental_5_3_g")
+        assert token is not None and token.is_token
+        assert (token.power, token.toughness) == (5, 3)
+        assert sorted(token.colors) == ["G"]
+        assert list(token.subtypes) == ["Elemental"]
+        assert not token.keywords
+
+    def test_the_red_green_five_five_is_still_a_separate_token(self, pool):
+        other = pool.get("elemental_5_5_rg")
+        assert (other.power, other.toughness) == (5, 5)
+
+    def test_the_formless_shapeshifter_has_deathtouch_and_variable_size(self, pool):
+        token = pool.get("shapeshifter_x_x_c_changeling_deathtouch")
+        assert token is not None and token.is_token
+        assert not token.colors
+        assert list(token.keywords) == ["deathtouch"]
+        assert token.variable_pt
+        assert any(a.text.startswith("Changeling") for a in token.abilities)
+
+    def test_the_small_changeling_has_no_deathtouch(self, pool):
+        assert "deathtouch" not in pool.get("shapeshifter_1_1_c_changeling").keywords
+
+
+class TestTheScionsWizardPings:
+    """Circle of Power and Transpose: *"a 0/1 black Wizard creature token with
+    'Whenever you cast a noncreature spell, this token deals 1 damage to each
+    opponent.'"* The pool's other Wizard is a vanilla 2/2 blue, two power and a
+    colour away, with no trigger at all."""
+
+    TOKEN = "wizard_0_1_b_noncreature_ping"
+
+    def test_it_is_a_zero_one_black_wizard(self, pool):
+        token = pool.get(self.TOKEN)
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (0, 1)
+        assert sorted(token.colors) == ["B"]
+        assert list(token.subtypes) == ["Wizard"]
+        assert not token.keywords
+
+    def test_it_carries_the_noncreature_spell_trigger(self, pool):
+        (ability,) = pool.get(self.TOKEN).abilities
+        assert ability.text.startswith("Whenever you cast a noncreature spell")
+
+    def test_the_blue_wizard_is_still_a_separate_vanilla_token(self, pool):
+        other = pool.get("wizard_2_2_u")
+        assert (other.power, other.toughness) == (2, 2)
+        assert sorted(other.colors) == ["U"]
+        assert not other.abilities
+
+    def test_a_noncreature_spell_pings_each_opponent(self, builder):
+        """Brainstorm deals no damage of its own, so the point lost is the token's."""
+        game = (
+            builder(players=2)
+            .battlefield(0, [self.TOKEN, "island"])
+            .hand(0, ["brainstorm"])
+            .build()
+        )
+        before = game.state.players[1].life
+        cast = next(
+            a for a in game.legal_actions()
+            if a.kind is ActionKind.CAST and game.state.objects[a.source].def_id == "brainstorm"
+        )
+        game.apply(cast)
+        settle_completely(game)
+        assert game.state.players[1].life == before - 1
+
+
+class TestTheMarduSurgeTokens:
+    """Four tokens Mardu Surge prints that the pool had only near misses for.
+
+    - Chittering Witch: *"create a 1/1 **black Rat** creature token"* -- the
+      pool's 1/1 black is a Vampire, which Vampire-typal cards would count.
+    - Release the Dogs: *"Create four 1/1 **white Dog** creature tokens"* --
+      `cat_1_1_w` is the right body under the wrong creature type.
+    - Tempt with Vengeance: *"1/1 **red** Elemental creature tokens **with
+      haste**"* -- `elemental_1_1_ur` is blue and red, and has no haste.
+    - Idol of Oblivion: *"Create a **10/10 colorless Eldrazi** creature
+      token"* -- the pool's other Eldrazi are a Spawn with a mana ability and a
+      flying, vigilant Angel.
+    """
+
+    @pytest.mark.parametrize(
+        ("token_id", "size", "colors", "subtypes", "kws"),
+        [
+            ("rat_1_1_b", (1, 1), ["B"], ["Rat"], []),
+            ("dog_1_1_w", (1, 1), ["W"], ["Dog"], []),
+            ("elemental_1_1_r_haste", (1, 1), ["R"], ["Elemental"], ["haste"]),
+            ("eldrazi_10_10_c", (10, 10), [], ["Eldrazi"], []),
+        ],
+    )
+    def test_it_is_exactly_the_printed_token(self, pool, token_id, size, colors, subtypes, kws):
+        token = pool.get(token_id)
+        assert token is not None
+        assert (token.power, token.toughness) == size
+        assert sorted(token.colors) == colors
+        assert list(token.subtypes) == subtypes
+        assert list(token.keywords) == kws
+        assert not token.abilities
+
+    @pytest.mark.parametrize(
+        ("near_miss", "differs"),
+        [
+            ("vampire_1_1_b", lambda t: "Rat" not in t.subtypes),
+            ("cat_1_1_w", lambda t: "Dog" not in t.subtypes),
+            ("elemental_1_1_ur", lambda t: "haste" not in t.keywords and "U" in t.colors),
+            ("eldrazi_spawn_0_1_c", lambda t: (t.power, t.toughness) == (0, 1)),
+        ],
+    )
+    def test_the_near_miss_is_still_a_separate_token(self, pool, near_miss, differs):
+        other = pool.get(near_miss)
+        assert other is not None
+        assert differs(other)

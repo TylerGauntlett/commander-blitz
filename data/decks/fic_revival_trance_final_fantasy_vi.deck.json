@@ -1,0 +1,893 @@
+{
+  "id": "fic_revival_trance_final_fantasy_vi",
+  "name": "Revival Trance (FINAL FANTASY VI)",
+  "commanders": [
+    "terra_herald_of_hope"
+  ],
+  "color_identity": [
+    "B",
+    "R",
+    "W"
+  ],
+  "source": "precon",
+  "release": {
+    "set_code": "FIC",
+    "set_name": "Final Fantasy Commander",
+    "date": "2025-06-13"
+  },
+  "notes": "Final Fantasy Commander precon, card for card (https://mtgjson.com/api/v5/decks/RevivalTranceFinalFantasyVi_FIC.json).",
+  "tags": [
+    "Reanimator",
+    "Self-mill",
+    "Combat damage",
+    "Graveyard"
+  ],
+  "strategy": "Terra, Herald of Hope mills two at the beginning of each of your combats, flies in, and pays {2} on combat damage to put a creature card with power 3 or less back onto the battlefield tapped. The deck fills its own graveyard to feed that: Siegfried, Famed Swordsman, Stitcher's Supplier, Locke, Treasure Hunter and Ruin Grinder mill or refill, and The Warring Triad wakes once eight cards are there. Then it brings creatures back: General Leo Cristophe, Sun Titan, Priest of Fell Rites, Phoenix Down, Reanimate and Stitch Together return the small ones, Sepulchral Primordial and Rise of the Dark Realms take the table's, Celes, Rune Knight puts a +1/+1 counter on the team when creatures arrive from a graveyard, and Cyan, Vengeful Samurai grows whenever creature cards leave yours. Shadow, Mysterious Assassin, The Falcon, Airship Restored and Setzer, Wandering Gambler turn combat damage into cards, recursion and Treasure, and Pitiless Plunderer and Morbid Opportunist pay for the creatures that die on the way.",
+  "archetype": "aggro",
+  "printings": {
+    "angel_of_the_ruins": {
+      "scryfall_id": "fd9c99f0-390d-4ab1-ac0a-b18f1b0af12c",
+      "artist": "Nereida",
+      "set_code": "fic",
+      "collector_number": "229"
+    },
+    "anger": {
+      "scryfall_id": "484ade24-6c2c-4f7e-b561-da802a80e0bb",
+      "artist": "David Astruga",
+      "set_code": "fic",
+      "collector_number": "289"
+    },
+    "arcane_signet": {
+      "scryfall_id": "9ce66ebc-b39f-4b40-9d95-981629a5dd06",
+      "artist": "Grace Zhu",
+      "set_code": "fic",
+      "collector_number": "332"
+    },
+    "archfiend_of_depravity": {
+      "scryfall_id": "aa0ba9cb-e45c-4c23-baab-38e01391ec6b",
+      "artist": "Néstor Ossandón Leal",
+      "set_code": "fic",
+      "collector_number": "273"
+    },
+    "ash_barrens": {
+      "scryfall_id": "77df073b-49dc-4743-82a3-d595bc938761",
+      "artist": "Sam Burley",
+      "set_code": "fic",
+      "collector_number": "374"
+    },
+    "banon_the_returners_leader": {
+      "scryfall_id": "63e84ece-b129-457d-84ed-b4280120f08b",
+      "artist": "Daniel Landerman",
+      "set_code": "fic",
+      "collector_number": "78"
+    },
+    "battlefield_forge": {
+      "scryfall_id": "a2de3346-9647-4540-ba41-e67c24ddf141",
+      "artist": "Marc Simonetti",
+      "set_code": "fic",
+      "collector_number": "375"
+    },
+    "bedevil": {
+      "scryfall_id": "284fe591-88e6-46f0-8b9c-9ec7d143a2d0",
+      "artist": "Fang Xinyu",
+      "set_code": "fic",
+      "collector_number": "319"
+    },
+    "big_score": {
+      "scryfall_id": "67d41ba2-a908-4613-b275-6ffe4165e48a",
+      "artist": "Toni Infante",
+      "set_code": "fic",
+      "collector_number": "290"
+    },
+    "celes_rune_knight": {
+      "scryfall_id": "30584c53-533b-4dc7-b07c-8600164a99b3",
+      "artist": "Néstor Ossandón Leal",
+      "set_code": "fic",
+      "collector_number": "1"
+    },
+    "clifftop_retreat": {
+      "scryfall_id": "2cddc851-fef6-4a45-818c-97d3dfc4140d",
+      "artist": "Eddie Mendoza",
+      "set_code": "fic",
+      "collector_number": "381"
+    },
+    "coin_of_fate": {
+      "scryfall_id": "cde3765f-e25c-4d16-b361-448167ed8736",
+      "artist": "Kotetsu Kinoshita",
+      "set_code": "fic",
+      "collector_number": "15"
+    },
+    "combustible_gearhulk": {
+      "scryfall_id": "07cc036d-f46e-490d-adbb-d6974c4e10fd",
+      "artist": "Narendra Bintara Adi",
+      "set_code": "fic",
+      "collector_number": "292"
+    },
+    "command_tower": {
+      "scryfall_id": "4a2dfd72-a8f4-4e43-b5de-caf6a129a51a",
+      "artist": "Anthony Devine",
+      "set_code": "fic",
+      "collector_number": "484"
+    },
+    "commanders_sphere": {
+      "scryfall_id": "0851660f-fa02-4f08-b28b-10279c58d4e4",
+      "artist": "Alexandre Honoré",
+      "set_code": "fic",
+      "collector_number": "339"
+    },
+    "crackling_doom": {
+      "scryfall_id": "e7674039-7640-4f70-84e9-d1fa76a59dbe",
+      "artist": "Néstor Ossandón Leal",
+      "set_code": "fic",
+      "collector_number": "322"
+    },
+    "cyan_vengeful_samurai": {
+      "scryfall_id": "a1e779b4-32dd-406b-8b68-48f6df458005",
+      "artist": "Christian Angel",
+      "set_code": "fic",
+      "collector_number": "16"
+    },
+    "demolition_field": {
+      "scryfall_id": "7f6d8cae-face-4bff-8c0a-348cefe1e9dd",
+      "artist": "David Frasheski",
+      "set_code": "fic",
+      "collector_number": "385"
+    },
+    "desolate_mire": {
+      "scryfall_id": "a0ecbdad-aebf-421d-a71e-e112f8c0e4bb",
+      "artist": "Hristo D. Chukov",
+      "set_code": "fic",
+      "collector_number": "386"
+    },
+    "dragonskull_summit": {
+      "scryfall_id": "44f78cab-06d4-4786-987f-4d0d15654fd5",
+      "artist": "Wei Guan",
+      "set_code": "fic",
+      "collector_number": "387"
+    },
+    "edgar_master_machinist": {
+      "scryfall_id": "098a8025-6454-45d8-abe3-2c3dada3f582",
+      "artist": "Immanuela Crovius",
+      "set_code": "fic",
+      "collector_number": "80"
+    },
+    "espers_to_magicite": {
+      "scryfall_id": "6cb18871-dd23-4ce8-a535-16adefae63c0",
+      "artist": "AKAGI",
+      "set_code": "fic",
+      "collector_number": "43"
+    },
+    "evolving_wilds": {
+      "scryfall_id": "351f791c-4bee-4fce-aee4-d0214ca0c945",
+      "artist": "Jeremy Paillotin",
+      "set_code": "fic",
+      "collector_number": "389"
+    },
+    "exotic_orchard": {
+      "scryfall_id": "47c2b572-b54a-444c-8d74-b005e94d751f",
+      "artist": "David Frasheski",
+      "set_code": "fic",
+      "collector_number": "390"
+    },
+    "fetid_heath": {
+      "scryfall_id": "5277f73d-b964-4ce6-823d-ce0fbf0a2d28",
+      "artist": "Allen Morris",
+      "set_code": "fic",
+      "collector_number": "391"
+    },
+    "flayer_of_the_hatebound": {
+      "scryfall_id": "fe233fa7-bc38-45f5-bfe5-da93877f1075",
+      "artist": "Josu Hernaiz",
+      "set_code": "fic",
+      "collector_number": "293"
+    },
+    "foreboding_ruins": {
+      "scryfall_id": "a7659f3f-a26a-4097-88ea-d72c3abb5e1d",
+      "artist": "Gal Or",
+      "set_code": "fic",
+      "collector_number": "394"
+    },
+    "furycalm_snarl": {
+      "scryfall_id": "67e44005-d0a5-49d2-b2f7-4b991ffbb5ce",
+      "artist": "Erikas Perl",
+      "set_code": "fic",
+      "collector_number": "397"
+    },
+    "gau_feral_youth": {
+      "scryfall_id": "89175ce1-0746-4ba1-970e-617d134b0527",
+      "artist": "Eglė Mosakaitė",
+      "set_code": "fic",
+      "collector_number": "55"
+    },
+    "general_leo_cristophe": {
+      "scryfall_id": "39384ab7-54da-43e3-8fbc-5c171b7ca7f4",
+      "artist": "Lee Woo-chul",
+      "set_code": "fic",
+      "collector_number": "20"
+    },
+    "geothermal_bog": {
+      "scryfall_id": "d504caa5-e557-4e69-8899-44760b88f076",
+      "artist": "Jonas De Ro",
+      "set_code": "fic",
+      "collector_number": "399"
+    },
+    "gogo_mysterious_mime": {
+      "scryfall_id": "0db05dc8-03f8-4ab4-9ca3-2aaaa0099eb4",
+      "artist": "Lee Woo-chul",
+      "set_code": "fic",
+      "collector_number": "56"
+    },
+    "graven_cairns": {
+      "scryfall_id": "7f33cce1-1484-43da-a825-b090eb5403a4",
+      "artist": "Henry Wong",
+      "set_code": "fic",
+      "collector_number": "401"
+    },
+    "high_market": {
+      "scryfall_id": "09eeb9f5-4149-47c6-bfd0-472237043672",
+      "artist": "Rockey Chen",
+      "set_code": "fic",
+      "collector_number": "402"
+    },
+    "interceptor_shadow_s_hound": {
+      "scryfall_id": "30be9a07-5803-4bef-9313-391c926bfcec",
+      "artist": "Sansyu",
+      "set_code": "fic",
+      "collector_number": "47"
+    },
+    "isolated_chapel": {
+      "scryfall_id": "8ca61142-d0ed-42cb-9a51-0e44151f2b44",
+      "artist": "Henry Wong",
+      "set_code": "fic",
+      "collector_number": "405"
+    },
+    "kefka_dancing_mad": {
+      "scryfall_id": "21cfc161-11b8-4253-a872-3b08a13b6991",
+      "artist": "Anton Solovianchyk",
+      "set_code": "fic",
+      "collector_number": "84"
+    },
+    "key_to_the_city": {
+      "scryfall_id": "df087751-b8bf-4db0-a571-fb32f596fc2e",
+      "artist": "Elizabeth Peiró",
+      "set_code": "fic",
+      "collector_number": "348"
+    },
+    "laughing_mad": {
+      "scryfall_id": "cd5b9daf-6325-4eb4-a069-4a8cc7807884",
+      "artist": "RARE ENGINE",
+      "set_code": "fin",
+      "collector_number": "143"
+    },
+    "legions_to_ashes": {
+      "scryfall_id": "39fe8402-2f70-4498-a0b6-6a9dd0e2848f",
+      "artist": "Anton Solovianchyk",
+      "set_code": "fic",
+      "collector_number": "326"
+    },
+    "locke_treasure_hunter": {
+      "scryfall_id": "42cd66f2-0704-4c8e-b5de-6df93f4a8bed",
+      "artist": "AKAGI",
+      "set_code": "fic",
+      "collector_number": "87"
+    },
+    "meteor_golem": {
+      "scryfall_id": "7aeddfc1-38b0-4491-92f1-0a9989a53439",
+      "artist": "Narendra Bintara Adi",
+      "set_code": "fic",
+      "collector_number": "351"
+    },
+    "millikin": {
+      "scryfall_id": "717b0d6b-fa62-46d2-a061-7161d3255c98",
+      "artist": "Anthony Devine",
+      "set_code": "fic",
+      "collector_number": "352"
+    },
+    "mind_stone": {
+      "scryfall_id": "7fdef0b6-a3b9-4752-bce6-53c0140a1693",
+      "artist": "Madeline Boni",
+      "set_code": "fic",
+      "collector_number": "353"
+    },
+    "mog_moogle_warrior": {
+      "scryfall_id": "e9cb8ac9-64a0-455d-a8dd-1579ee321bbd",
+      "artist": "OTUMAMI",
+      "set_code": "fic",
+      "collector_number": "89"
+    },
+    "morbid_opportunist": {
+      "scryfall_id": "44b14a83-ba66-4c94-8b67-ebe577024532",
+      "artist": "HAIKEI",
+      "set_code": "fic",
+      "collector_number": "278"
+    },
+    "mortify": {
+      "scryfall_id": "5f4fa21b-4733-49a6-b751-779b8325c4d2",
+      "artist": "Thanh Tuấn",
+      "set_code": "fic",
+      "collector_number": "327"
+    },
+    "mountain": {
+      "scryfall_id": "a18ef64b-a9de-4548-b4d5-168758442db7",
+      "artist": "Domenico Cava",
+      "set_code": "fin",
+      "collector_number": "303"
+    },
+    "nights_whisper": {
+      "scryfall_id": "47dfd4bd-a7a0-40bd-80e8-16c5ddd91091",
+      "artist": "Colin Boyer",
+      "set_code": "fic",
+      "collector_number": "280"
+    },
+    "nomad_outpost": {
+      "scryfall_id": "790d5244-5042-4b84-b16d-be0f87d11fad",
+      "artist": "Pablo Mendoza",
+      "set_code": "fic",
+      "collector_number": "409"
+    },
+    "palace_jailer": {
+      "scryfall_id": "9f129968-0af6-4ae4-a0c3-6f911a7bae22",
+      "artist": "Touge369",
+      "set_code": "fic",
+      "collector_number": "247"
+    },
+    "path_of_ancestry": {
+      "scryfall_id": "4dd83a5d-1908-4141-8449-fac5e77cd6c0",
+      "artist": "Gal Or",
+      "set_code": "fic",
+      "collector_number": "411"
+    },
+    "phoenix_down": {
+      "scryfall_id": "62e299b0-9ef6-49d3-aa79-384325fed89e",
+      "artist": "John Severin Brassell",
+      "set_code": "fin",
+      "collector_number": "29"
+    },
+    "pitiless_plunderer": {
+      "scryfall_id": "8ba8b02a-8a05-40cd-8b83-51fd0cc0a7a5",
+      "artist": "Lorenzo Mastroianni",
+      "set_code": "fic",
+      "collector_number": "281"
+    },
+    "plains": {
+      "scryfall_id": "9dd2d666-7c6b-48ce-93dc-c004ebdd1fe9",
+      "artist": "Shahab Alizadeh",
+      "set_code": "fin",
+      "collector_number": "294"
+    },
+    "priest_of_fell_rites": {
+      "scryfall_id": "1131c841-d736-4c97-9c80-7e61fa30079d",
+      "artist": "Crystal Fae",
+      "set_code": "fic",
+      "collector_number": "328"
+    },
+    "reanimate": {
+      "scryfall_id": "58838b71-404f-41ad-9a9b-2c7f875bab06",
+      "artist": "Wei Guan",
+      "set_code": "fic",
+      "collector_number": "282"
+    },
+    "rejoin_the_fight": {
+      "scryfall_id": "f3140950-1ce2-41b8-91f9-da53bfbee963",
+      "artist": "YASUNARI HIRASAKA",
+      "set_code": "fic",
+      "collector_number": "49"
+    },
+    "rise_of_the_dark_realms": {
+      "scryfall_id": "953c7338-e30d-452c-89ff-0c5fca690b2f",
+      "artist": "Alexander Mokhov",
+      "set_code": "fic",
+      "collector_number": "283"
+    },
+    "rogue_s_passage": {
+      "scryfall_id": "b8cd0293-d140-4f80-804c-019957c1f49a",
+      "artist": "Shahab Alizadeh",
+      "set_code": "fic",
+      "collector_number": "415"
+    },
+    "rugged_prairie": {
+      "scryfall_id": "3d575770-cb81-4353-b49e-cdaca7a5162f",
+      "artist": "Pablo Mendoza",
+      "set_code": "fic",
+      "collector_number": "417"
+    },
+    "ruin_grinder": {
+      "scryfall_id": "a0eafd12-c0c9-4fe3-a4bb-40ab7b64e47c",
+      "artist": "Lorenzo Mastroianni",
+      "set_code": "fic",
+      "collector_number": "297"
+    },
+    "ruinous_ultimatum": {
+      "scryfall_id": "930bc0f5-758a-49a7-ab23-5b74802bcddb",
+      "artist": "Tran Nguyen",
+      "set_code": "fic",
+      "collector_number": "329"
+    },
+    "sabin_master_monk": {
+      "scryfall_id": "43bacd07-fdaf-4ce4-bf7a-dda55a99d460",
+      "artist": "Kevin Glint",
+      "set_code": "fic",
+      "collector_number": "57"
+    },
+    "sacred_peaks": {
+      "scryfall_id": "eb18e293-a58b-4a49-b601-88a30ffa9b99",
+      "artist": "Josu Solano",
+      "set_code": "fic",
+      "collector_number": "418"
+    },
+    "sepulchral_primordial": {
+      "scryfall_id": "4a4192e9-ba32-4801-a7f5-b4dad3559e4e",
+      "artist": "Nino Is",
+      "set_code": "fic",
+      "collector_number": "284"
+    },
+    "setzer_wandering_gambler": {
+      "scryfall_id": "5e3e5b0f-c702-4671-ad95-ab0cda1ab83d",
+      "artist": "Norikatsu Miyoshi",
+      "set_code": "fic",
+      "collector_number": "93"
+    },
+    "shadow_mysterious_assassin": {
+      "scryfall_id": "f88d81d9-8ded-4c20-8237-2218046595fb",
+      "artist": "Wisnu Tan",
+      "set_code": "fic",
+      "collector_number": "50"
+    },
+    "shadowblood_ridge": {
+      "scryfall_id": "4d02658c-bbe8-4673-8b44-0b24e0155a85",
+      "artist": "Ramza Psyru",
+      "set_code": "fic",
+      "collector_number": "421"
+    },
+    "shineshadow_snarl": {
+      "scryfall_id": "e45eff2e-c624-4c59-b192-a9d7dc2eeeba",
+      "artist": "Piotr Dura",
+      "set_code": "fic",
+      "collector_number": "422"
+    },
+    "siegfried_famed_swordsman": {
+      "scryfall_id": "69dadb0c-413e-4658-9cdc-23a65df7a800",
+      "artist": "Crystal Fae",
+      "set_code": "fic",
+      "collector_number": "51"
+    },
+    "smoldering_marsh": {
+      "scryfall_id": "7ddf0ca3-dc64-47ac-87b9-4bd85b173885",
+      "artist": "Gal Or",
+      "set_code": "fic",
+      "collector_number": "425"
+    },
+    "snort": {
+      "scryfall_id": "46f1179d-6e48-46ed-ab41-abddace7b5d4",
+      "artist": "ikeda_cpt",
+      "set_code": "fic",
+      "collector_number": "58"
+    },
+    "sol_ring": {
+      "scryfall_id": "8fb860f9-3729-436e-adfb-c98c2a389d5d",
+      "artist": "Andrea Tentori Montalto",
+      "set_code": "fic",
+      "collector_number": "356"
+    },
+    "solemn_simulacrum": {
+      "scryfall_id": "64d2d473-9157-408a-b088-1489306c1912",
+      "artist": "Kevin Glint",
+      "set_code": "fic",
+      "collector_number": "360"
+    },
+    "stitch_together": {
+      "scryfall_id": "73f1aa13-b3bc-480e-826c-6bded7ee1ca6",
+      "artist": "Gal Or",
+      "set_code": "fic",
+      "collector_number": "286"
+    },
+    "stitcher_s_supplier": {
+      "scryfall_id": "fa6c734a-672b-44cb-9232-5688e3534ccc",
+      "artist": "Alexandre Honoré",
+      "set_code": "fic",
+      "collector_number": "287"
+    },
+    "strago_and_relm": {
+      "scryfall_id": "a8c971d0-9ac4-4b34-ae19-1152c1c9dac1",
+      "artist": "Darius Zablockis",
+      "set_code": "fic",
+      "collector_number": "59"
+    },
+    "sulfurous_springs": {
+      "scryfall_id": "35b403ee-62cc-4f67-911e-4bf26e495374",
+      "artist": "Henry Wong",
+      "set_code": "fic",
+      "collector_number": "427"
+    },
+    "summon_esper_valigarmanda": {
+      "scryfall_id": "7f0298b4-c7ca-49b8-baaa-b9fad4c2bfd5",
+      "artist": "Fiona Hsieh",
+      "set_code": "fic",
+      "collector_number": "60"
+    },
+    "sun_titan": {
+      "scryfall_id": "e135d544-2a3e-4b22-ae4d-6c2203769e2a",
+      "artist": "Joshua Raphael",
+      "set_code": "fic",
+      "collector_number": "254"
+    },
+    "sunlit_marsh": {
+      "scryfall_id": "4b163c67-2e88-4181-90c9-3f15eba59d03",
+      "artist": "Shahab Alizadeh",
+      "set_code": "fic",
+      "collector_number": "431"
+    },
+    "sunscorched_divide": {
+      "scryfall_id": "84b648e4-d9c2-426f-8b2a-ef88e9eb25ac",
+      "artist": "Pablo Mendoza",
+      "set_code": "fic",
+      "collector_number": "433"
+    },
+    "swamp": {
+      "scryfall_id": "f66094ef-059b-4511-aa6e-835906736de4",
+      "artist": "Domenico Cava",
+      "set_code": "fin",
+      "collector_number": "300"
+    },
+    "swiftfoot_boots": {
+      "scryfall_id": "1beee53e-9380-481e-86a6-d13645a6a5a5",
+      "artist": "Daniel Landerman",
+      "set_code": "fic",
+      "collector_number": "361"
+    },
+    "talisman_of_conviction": {
+      "scryfall_id": "029fb369-f5ef-4768-8c0b-23d3cfd023d9",
+      "artist": "Andreia Ugrai",
+      "set_code": "fic",
+      "collector_number": "363"
+    },
+    "talisman_of_indulgence": {
+      "scryfall_id": "0f7b46ae-2cd4-407b-a97a-d112a5b6b86b",
+      "artist": "Kevin Sidharta",
+      "set_code": "fic",
+      "collector_number": "366"
+    },
+    "terra_herald_of_hope": {
+      "scryfall_id": "5aa1a2d7-6133-41a9-9662-9008d1309935",
+      "artist": "Marta Nael",
+      "set_code": "fic",
+      "collector_number": "4"
+    },
+    "the_falcon_airship_restored": {
+      "scryfall_id": "080fc2be-d463-4e8e-ba42-8f3cb0c95ed3",
+      "artist": "Kotakan",
+      "set_code": "fic",
+      "collector_number": "45"
+    },
+    "the_warring_triad": {
+      "scryfall_id": "99fd1cd5-4740-4a0f-b773-3d3b66861d77",
+      "artist": "Norikatsu Miyoshi",
+      "set_code": "fic",
+      "collector_number": "99"
+    },
+    "tragic_arrogance": {
+      "scryfall_id": "a479784c-3f94-4950-8928-6a1e57bb6627",
+      "artist": "Anton Solovianchyk",
+      "set_code": "fic",
+      "collector_number": "258"
+    },
+    "umaro_raging_yeti": {
+      "scryfall_id": "31aed8e9-44be-4e7c-85ac-a084eaecaea7",
+      "artist": "Norikatsu Miyoshi",
+      "set_code": "fic",
+      "collector_number": "63"
+    },
+    "wayfarers_bauble": {
+      "scryfall_id": "69dd3fa7-5498-4b88-bc98-6de8ca5fe007",
+      "artist": "Elizabeth Peiró",
+      "set_code": "fic",
+      "collector_number": "372"
+    }
+  },
+  "cards": [
+    {
+      "id": "angel_of_the_ruins"
+    },
+    {
+      "id": "anger"
+    },
+    {
+      "id": "arcane_signet"
+    },
+    {
+      "id": "archfiend_of_depravity"
+    },
+    {
+      "id": "ash_barrens"
+    },
+    {
+      "id": "banon_the_returners_leader"
+    },
+    {
+      "id": "battlefield_forge"
+    },
+    {
+      "id": "bedevil"
+    },
+    {
+      "id": "big_score"
+    },
+    {
+      "id": "celes_rune_knight"
+    },
+    {
+      "id": "clifftop_retreat"
+    },
+    {
+      "id": "coin_of_fate"
+    },
+    {
+      "id": "combustible_gearhulk"
+    },
+    {
+      "id": "command_tower"
+    },
+    {
+      "id": "commanders_sphere"
+    },
+    {
+      "id": "crackling_doom"
+    },
+    {
+      "id": "cyan_vengeful_samurai"
+    },
+    {
+      "id": "demolition_field"
+    },
+    {
+      "id": "desolate_mire"
+    },
+    {
+      "id": "dragonskull_summit"
+    },
+    {
+      "id": "edgar_master_machinist"
+    },
+    {
+      "id": "espers_to_magicite"
+    },
+    {
+      "id": "evolving_wilds"
+    },
+    {
+      "id": "exotic_orchard"
+    },
+    {
+      "id": "fetid_heath"
+    },
+    {
+      "id": "flayer_of_the_hatebound"
+    },
+    {
+      "id": "foreboding_ruins"
+    },
+    {
+      "id": "furycalm_snarl"
+    },
+    {
+      "id": "gau_feral_youth"
+    },
+    {
+      "id": "general_leo_cristophe"
+    },
+    {
+      "id": "geothermal_bog"
+    },
+    {
+      "id": "gogo_mysterious_mime"
+    },
+    {
+      "id": "graven_cairns"
+    },
+    {
+      "id": "high_market"
+    },
+    {
+      "id": "interceptor_shadow_s_hound"
+    },
+    {
+      "id": "isolated_chapel"
+    },
+    {
+      "id": "kefka_dancing_mad"
+    },
+    {
+      "id": "key_to_the_city"
+    },
+    {
+      "id": "laughing_mad"
+    },
+    {
+      "id": "legions_to_ashes"
+    },
+    {
+      "id": "locke_treasure_hunter"
+    },
+    {
+      "id": "meteor_golem"
+    },
+    {
+      "id": "millikin"
+    },
+    {
+      "id": "mind_stone"
+    },
+    {
+      "id": "mog_moogle_warrior"
+    },
+    {
+      "id": "morbid_opportunist"
+    },
+    {
+      "id": "mortify"
+    },
+    {
+      "id": "mountain",
+      "qty": 3
+    },
+    {
+      "id": "nights_whisper"
+    },
+    {
+      "id": "nomad_outpost"
+    },
+    {
+      "id": "palace_jailer"
+    },
+    {
+      "id": "path_of_ancestry"
+    },
+    {
+      "id": "phoenix_down"
+    },
+    {
+      "id": "pitiless_plunderer"
+    },
+    {
+      "id": "plains",
+      "qty": 4
+    },
+    {
+      "id": "priest_of_fell_rites"
+    },
+    {
+      "id": "reanimate"
+    },
+    {
+      "id": "rejoin_the_fight"
+    },
+    {
+      "id": "rise_of_the_dark_realms"
+    },
+    {
+      "id": "rogue_s_passage"
+    },
+    {
+      "id": "rugged_prairie"
+    },
+    {
+      "id": "ruin_grinder"
+    },
+    {
+      "id": "ruinous_ultimatum"
+    },
+    {
+      "id": "sabin_master_monk"
+    },
+    {
+      "id": "sacred_peaks"
+    },
+    {
+      "id": "sepulchral_primordial"
+    },
+    {
+      "id": "setzer_wandering_gambler"
+    },
+    {
+      "id": "shadow_mysterious_assassin"
+    },
+    {
+      "id": "shadowblood_ridge"
+    },
+    {
+      "id": "shineshadow_snarl"
+    },
+    {
+      "id": "siegfried_famed_swordsman"
+    },
+    {
+      "id": "smoldering_marsh"
+    },
+    {
+      "id": "snort"
+    },
+    {
+      "id": "sol_ring"
+    },
+    {
+      "id": "solemn_simulacrum"
+    },
+    {
+      "id": "stitch_together"
+    },
+    {
+      "id": "stitcher_s_supplier"
+    },
+    {
+      "id": "strago_and_relm"
+    },
+    {
+      "id": "sulfurous_springs"
+    },
+    {
+      "id": "summon_esper_valigarmanda"
+    },
+    {
+      "id": "sun_titan"
+    },
+    {
+      "id": "sunlit_marsh"
+    },
+    {
+      "id": "sunscorched_divide"
+    },
+    {
+      "id": "swamp",
+      "qty": 3
+    },
+    {
+      "id": "swiftfoot_boots"
+    },
+    {
+      "id": "talisman_of_conviction"
+    },
+    {
+      "id": "talisman_of_indulgence"
+    },
+    {
+      "id": "the_falcon_airship_restored"
+    },
+    {
+      "id": "the_warring_triad"
+    },
+    {
+      "id": "tragic_arrogance"
+    },
+    {
+      "id": "umaro_raging_yeti"
+    },
+    {
+      "id": "wayfarers_bauble"
+    }
+  ],
+  "ratings": {
+    "speed": 3,
+    "complexity": 4,
+    "interaction": 3,
+    "resilience": 4,
+    "pilot": 4
+  },
+  "signature": [
+    {
+      "card_id": "terra_herald_of_hope",
+      "why": "Mills two each combat on your turn, gains flying, and on combat damage pays {2} to return a creature card with power 3 or less to the battlefield tapped."
+    },
+    {
+      "card_id": "general_leo_cristophe",
+      "why": "Returns a creature card with mana value 3 or less when it enters, then grows with a +1/+1 counter for each creature you control."
+    },
+    {
+      "card_id": "rise_of_the_dark_realms",
+      "why": "Puts every creature card from every graveyard onto the battlefield under your control."
+    },
+    {
+      "card_id": "the_falcon_airship_restored",
+      "why": "Sacrifices itself on combat damage to return any creature card from your graveyard, and comes back from the graveyard for {4}{B}."
+    }
+  ]
+}

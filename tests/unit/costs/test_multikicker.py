@@ -176,6 +176,59 @@ class TestTheCountSurvivesEnteringTheBattlefield:
         assert the_anthem(game).zone is Zone.BATTLEFIELD
 
 
+class TestAReplacementCountsTheKicks:
+    """Everflowing Chalice: *"This artifact enters with a charge counter on it
+    for each time it was kicked."*
+
+    614.1c makes that a replacement, not a trigger: the artifact is never seen
+    at zero counters, and no ability goes on the stack to be answered. So the
+    one reader of `additional_paid` on the card is a `self_enters_with_counters`
+    replacement's `amount`, and the "a cost no effect reads" guard has to look
+    there too -- or the one shape that is the printed card is refused, and the
+    only shape that loads is an enters trigger, which is a different card.
+    """
+
+    CHALICE = "everflowing_chalice"
+
+    def chalice_board(self, builder, lands: int):
+        return (
+            builder(players=2)
+            .battlefield(0, [PLAINS] * lands)
+            .hand(0, [self.CHALICE])
+            .library(0, [PLAINS] * 20)
+            .library(1, [PLAINS] * 20)
+            .build()
+        )
+
+    def test_a_replacement_reader_satisfies_the_guard(self):
+        card = compile_card(
+            _model(
+                types=["Artifact"],
+                mana_cost="{0}",
+                spell_effects=[],
+                replacements=[
+                    {
+                        "event": "self_enters_with_counters",
+                        "counter": "charge",
+                        "amount": {"additional_paid": True},
+                    }
+                ],
+            )
+        )
+        assert card.multikicker is not None
+
+    @pytest.mark.parametrize("times", [0, 1, 3])
+    def test_it_enters_with_one_counter_per_kick(self, builder, times):
+        game = self.chalice_board(builder, lands=6)
+        game.apply(next(a for a in lines(game, self.CHALICE) if a.additional_times == times))
+        settle(game)
+
+        chalice = next(
+            o for o in game.state.battlefield_objects(0) if o.def_id == self.CHALICE
+        )
+        assert chalice.counters.get("charge", 0) == times
+
+
 class TestItDesugarsToTheRepeatableSlot:
     """No new machinery: the word compiles to the fields replicate already used."""
 
