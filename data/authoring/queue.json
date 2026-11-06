@@ -208492,12 +208492,12 @@
     },
     "Prophet of the Scarab": {
       "edhrec_rank": 5433,
-      "gate": "template",
+      "gate": null,
       "name": "Prophet of the Scarab",
-      "reason": "no template for: When this creature enters, draw cards equal to the number of Zombies you control or the nu",
+      "reason": "",
       "scryfall_id": "0208b947-78d9-45bd-855f-846d9a7c547d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Prophetic Bolt": {
@@ -220432,12 +220432,12 @@
     },
     "Renewed Solidarity": {
       "edhrec_rank": 1794,
-      "gate": "template",
+      "gate": null,
       "name": "Renewed Solidarity",
-      "reason": "no template for: As this enchantment enters, choose a creature type",
+      "reason": "",
       "scryfall_id": "8b7e679d-c99e-49c7-91e6-e2b3d6b57482",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Renewing Dawn": {
@@ -227752,12 +227752,12 @@
     },
     "Rot Hulk": {
       "edhrec_rank": 5574,
-      "gate": "template",
+      "gate": null,
       "name": "Rot Hulk",
-      "reason": "no template for: When this creature enters, return up to X target Zombie cards from your graveyard to the b",
+      "reason": "",
       "scryfall_id": "cc22c08c-bbaa-44f7-9c14-cd1fe9377da2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rot Shambler": {
@@ -276962,12 +276962,12 @@
     },
     "Temmet, Naktamun's Will": {
       "edhrec_rank": 5388,
-      "gate": "template",
+      "gate": null,
       "name": "Temmet, Naktamun's Will",
-      "reason": "no template for: Whenever you attack, draw a card, then discard a card",
+      "reason": "",
       "scryfall_id": "c0629894-0b72-4abe-9771-03becfdb241c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Temmet, Vizier of Naktamun": {

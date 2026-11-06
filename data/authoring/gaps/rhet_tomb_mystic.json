@@ -1,0 +1,16 @@
+{
+  "card_id": "rhet_tomb_mystic",
+  "name": "Rhet-Tomb Mystic",
+  "oracle_text": "Flying\nEach creature card in your hand has cycling {1}{U}. ({1}{U}, Discard that card: Draw a card.)",
+  "blocked_sentences": [
+    "Each creature card in your hand has cycling {1}{U}. ({1}{U}, Discard that card: Draw a card.)"
+  ],
+  "needs": [{
+    "capability": "cycling",
+    "kind": "static_effect",
+    "what": "a static on a permanent that grants cycling {1}{U} (an activated ability playable from hand: pay {1}{U}, discard that card, draw a card, counting as cycling for `cycle` triggers) to each creature card in its controller's hand, while the permanent is on the battlefield",
+    "why_existing_wont_do": "The `grant_ability` static grants abilities only to permanents and a granted activated ability works on the battlefield only; `static_affects_filter_keys` has no zone key to reach cards in hand; cycling is not in `keywords`, and `is_cycling`/`discard_self` with `active_zones: [\"hand\"]` only describe a card's own printed cycling, not one granted by another permanent"
+  }],
+  "closest_existing": ["grant_ability", "is_cycling", "discard_self"],
+  "confidence": "high"
+}

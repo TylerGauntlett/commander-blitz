@@ -12550,6 +12550,15 @@
   "prophet_of_the_peak": {
     "zone": "battlefield"
   },
+  "prophet_of_the_scarab": {
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "battlefield"
+  },
   "prophetic_prism": {
     "hand_size": {
       "0": 2
@@ -13175,6 +13184,10 @@
   "renegade_troops": {
     "zone": "battlefield"
   },
+  "renewed_solidarity": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "replication_technique": {
     "battlefield_count": 34,
     "opponent_battlefield_count": 6,
@@ -13620,6 +13633,9 @@
     "zone": "battlefield"
   },
   "rorix_bladewing": {
+    "zone": "battlefield"
+  },
+  "rot_hulk": {
     "zone": "battlefield"
   },
   "rotted_hulk": {
@@ -16416,6 +16432,10 @@
     "zone": "battlefield"
   },
   "tekuthal_inquiry_dominus": {
+    "zone": "battlefield"
+  },
+  "temmet_naktamun_s_will": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "tempest_drake": {
