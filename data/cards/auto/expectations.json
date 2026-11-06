@@ -14442,6 +14442,10 @@
   "servant_of_nefarox": {
     "zone": "battlefield"
   },
+  "servant_of_the_conduit": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "setzer_wandering_gambler": {
     "battlefield_count": 34,
     "tokens": {
@@ -15275,6 +15279,13 @@
     "zone": "battlefield"
   },
   "solar_array": {
+    "zone": "battlefield"
+  },
+  "solar_transformer": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "soldier_military_program": {

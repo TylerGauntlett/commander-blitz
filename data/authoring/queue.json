@@ -241252,12 +241252,12 @@
     },
     "Servant of the Conduit": {
       "edhrec_rank": 11781,
-      "gate": "template",
+      "gate": null,
       "name": "Servant of the Conduit",
-      "reason": "no template for: When this creature enters, you get {E}{E}",
+      "reason": "",
       "scryfall_id": "f433cd63-1d11-4782-a051-00151fac3a85",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Servant of the Scale": {
@@ -254172,12 +254172,12 @@
     },
     "Solar Transformer": {
       "edhrec_rank": 3205,
-      "gate": "template",
+      "gate": null,
       "name": "Solar Transformer",
-      "reason": "no template for: When this artifact enters, you get {E}{E}{E}",
+      "reason": "",
       "scryfall_id": "fbc1c8dd-ea66-4dc3-8444-9f20758a45f7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Solarion": {

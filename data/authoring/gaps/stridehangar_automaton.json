@@ -1,0 +1,18 @@
+{
+  "card_id": "stridehangar_automaton",
+  "name": "Stridehangar Automaton",
+  "oracle_text": "Thopters you control get +1/+1.\nIf one or more artifact tokens would be created under your control, those tokens plus an additional 1/1 colorless Thopter artifact creature token with flying are created instead.",
+  "blocked_sentences": [
+    "If one or more artifact tokens would be created under your control, those tokens plus an additional 1/1 colorless Thopter artifact creature token with flying are created instead."
+  ],
+  "needs": [
+    {
+      "capability": "token_creation_addition",
+      "kind": "replacement",
+      "what": "a replace_token_creation static axis that keeps the original tokens and adds a fixed extra token (here one thopter_1_1_c_flying) once per creation event, filtered by affects_token types [Artifact] and affects_player you -- e.g. an `and_create` list on replace_token_creation",
+      "why_existing_wont_do": "replace_token_creation offers only token_multiplier (doubles the same tokens, so a Treasure would become two Treasures, not a Treasure plus a Thopter) and create_instead (replaces the tokens, losing the originals); `and_create` exists but the loader refuses it outside replace_dies"
+    }
+  ],
+  "closest_existing": ["replace_token_creation", "and_create"],
+  "confidence": "high"
+}
