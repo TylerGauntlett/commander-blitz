@@ -157712,12 +157712,12 @@
     },
     "Life from the Loam": {
       "edhrec_rank": 695,
-      "gate": "template",
+      "gate": null,
       "name": "Life from the Loam",
-      "reason": "no template for: Return up to three target land cards from your graveyard to your hand",
+      "reason": "",
       "scryfall_id": "59927e3b-65bc-4ab6-ad7b-6f558ccca6a8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Life of Toshiro Umezawa // Memory of Toshiro": {
