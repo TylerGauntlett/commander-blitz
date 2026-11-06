@@ -51852,12 +51852,12 @@
     },
     "Conjurer's Closet": {
       "edhrec_rank": 483,
-      "gate": "template",
+      "gate": null,
       "name": "Conjurer's Closet",
-      "reason": "no template for: At the beginning of your end step, you may exile target creature you control, then return ",
+      "reason": "",
       "scryfall_id": "7e520d49-f3d5-46b3-a941-c57936648a47",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Conjurer's Mantle": {
@@ -64392,12 +64392,12 @@
     },
     "Decoction Module": {
       "edhrec_rank": 4130,
-      "gate": "template",
+      "gate": null,
       "name": "Decoction Module",
-      "reason": "no template for: Whenever a creature you control enters, you get {E}",
+      "reason": "",
       "scryfall_id": "0e63512b-32a4-495a-8f8d-273e74505995",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Decode Transmissions": {
@@ -85242,12 +85242,12 @@
     },
     "Era of Innovation": {
       "edhrec_rank": 7280,
-      "gate": "template",
+      "gate": null,
       "name": "Era of Innovation",
-      "reason": "no template for: Whenever an artifact or Artificer you control enters, you may pay {1}. If you do, you get ",
+      "reason": "",
       "scryfall_id": "edf49825-c432-4eb3-97da-b92ae6b9fab8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Eradicate": {

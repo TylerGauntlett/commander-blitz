@@ -38357,6 +38357,65 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "closeted",
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "exile"
+                },
+                {
+                  "controller": "you",
+                  "objects": {
+                    "binding": "closeted",
+                    "zone": "exile"
+                  },
+                  "op": "put_onto_battlefield"
+                }
+              ],
+              "op": "may",
+              "prompt": "Exile the target creature, then return it to the battlefield under your control?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "At the beginning of your end step, you may exile target creature you control, then return that card to the battlefield under your control",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "conjurer_s_closet",
+      "mana_cost": "{5}",
+      "name": "Conjurer's Closet",
+      "oracle_text": "At the beginning of your end step, you may exile target creature you control, then return that card to the battlefield under your control.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -47042,6 +47101,71 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "add_energy"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control enters, you get {E} (an energy counter).",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{4}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_to_hand"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{4}, {T}: Return target creature you control to its owner's hand."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "decoction_module",
+      "mana_cost": "{2}",
+      "name": "Decoction Module",
+      "oracle_text": "Whenever a creature you control enters, you get {E} (an energy counter).\n{4}, {T}: Return target creature you control to its owner's hand.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -59232,6 +59356,84 @@
           }
         }
       ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "add_energy",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{1}"
+              },
+              "prompt": "Pay {1} to get {E}{E}?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an artifact or Artificer you control enters, you may pay {1}. If you do, you get {E}{E} (two energy counters).",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "any_of": [
+                {
+                  "types": [
+                    "Artifact"
+                  ]
+                },
+                {
+                  "subtypes": [
+                    "Artificer"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "pay_energy": 6,
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "Pay six {E}, Sacrifice this enchantment: Draw three cards."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "era_of_innovation",
+      "mana_cost": "{1}{U}",
+      "name": "Era of Innovation",
+      "oracle_text": "Whenever an artifact or Artificer you control enters, you may pay {1}. If you do, you get {E}{E} (two energy counters).\nPay six {E}, Sacrifice this enchantment: Draw three cards.",
+      "source": "auto",
       "types": [
         "Enchantment"
       ]

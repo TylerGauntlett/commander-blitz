@@ -1,0 +1,18 @@
+{
+  "card_id": "disallow",
+  "name": "Disallow",
+  "oracle_text": "Counter target spell, activated ability, or triggered ability. (Mana abilities can't be targeted.)",
+  "blocked_sentences": [
+    "Counter target spell, activated ability, or triggered ability."
+  ],
+  "needs": [
+    {
+      "capability": "target_spell_or_ability",
+      "kind": "selector",
+      "what": "a single target kind whose pool spans every stack object -- spells and activated/triggered abilities on the stack together (e.g. kind \"spell_or_ability\", optionally narrowed by controller) -- so one instance of the word \"target\" can pick either a spell or a non-mana ability, and `counter` on that binding counters whichever it is",
+      "why_existing_wont_do": "Target kinds offer 'spell' and 'ability_on_stack' separately but no union of the two ('spell_or_permanent' and 'spell_permanent_or_graveyard_card' are the only multi-pool kinds, and neither covers abilities). Two target specs would make the card target twice and need both legal; a choose_mode between 'counter target spell' and 'counter target ability' is a modal card, a different choice made at a different time, not one target"
+    }
+  ],
+  "closest_existing": ["ability_on_stack", "spell_or_permanent", "counter"],
+  "confidence": "high"
+}

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**205 cards** blocked by **184** capabilities.
+**208 cards** blocked by **187** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -179,10 +179,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
+| [starting-with-you](#starting-with-you) | 1 | 2432 | selector |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
+| [target-spell-or-ability](#target-spell-or-ability) | 1 | 1822 | selector |
 | [targets-only-self](#targets-only-self) | 1 | 8216 | trigger_event |
 | [teammates](#teammates) | 1 | 26785 | selector |
 | [this-combat-duration](#this-combat-duration) | 1 | 9126 | op |
@@ -193,6 +195,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [toughness-greater-than-power-filter](#toughness-greater-than-power-filter) | 1 | 3557 | selector |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
+| [variable-energy-payment](#variable-energy-payment) | 1 | 7567 | cost |
 | [while-source-on-battlefield-duration](#while-source-on-battlefield-duration) | 1 | 8222 | engine |
 | [x-cost-mana-restriction](#x-cost-mana-restriction) | 1 | 4046 | decision |
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 1 | 11545 | engine |
@@ -2815,6 +2818,20 @@ Blocks **1** card.
 
 </details>
 
+## starting-with-you
+
+Blocks **1** card.
+
+- **(selector)** a player spec (or a for_each_player option) that iterates every living player in turn order beginning with the effect's controller -- what join_forces already does internally via state.turn_order(ctx.controller) -- so for_each_player can say "starting with you, each player ...". With it the card is: self_enters trigger -> for_each_player over that ordering, body a choose_permanents with objects {zone: battlefield, controller: opponent, any_types: [Artifact, Enchantment], count: 1, optional: true, chooser: {binding: each_player}} as 'chosen' (the binding accumulates across iterations), then destroy {binding: chosen}
+  <br>Why the existing vocabulary won't do: for_each_player resolves players through select_players, and 'each_player'/'all' return state.alive() in seat order, not turn order from the controller; no player spec offers a controller-first ordering. The order is not cosmetic: each later player sees the earlier choices (the join_forces docstring calls seat-order-regardless-of-caster a different card). It only coincides when the controller is seat 0
+
+<details><summary>Cards waiting on this</summary>
+
+- **Druid of Purification** (rank 2432) — `druid_of_purification`
+  - When this creature enters, starting with you, each player may choose an artifact or enchantment you don't control. Destroy each permanent chosen this way.
+
+</details>
+
 ## sunburst
 
 Blocks **1** card.
@@ -2868,6 +2885,20 @@ Blocks **1** card.
 
 - **Hope of Ghirapur** (rank 3240) — `hope_of_ghirapur`
   - Sacrifice Hope of Ghirapur: Until your next turn, target player who was dealt combat damage by Hope of Ghirapur this turn can't cast noncreature spells.
+
+</details>
+
+## target-spell-or-ability
+
+Blocks **1** card.
+
+- **(selector)** a single target kind whose pool spans every stack object -- spells and activated/triggered abilities on the stack together (e.g. kind "spell_or_ability", optionally narrowed by controller) -- so one instance of the word "target" can pick either a spell or a non-mana ability, and `counter` on that binding counters whichever it is
+  <br>Why the existing vocabulary won't do: Target kinds offer 'spell' and 'ability_on_stack' separately but no union of the two ('spell_or_permanent' and 'spell_permanent_or_graveyard_card' are the only multi-pool kinds, and neither covers abilities). Two target specs would make the card target twice and need both legal; a choose_mode between 'counter target spell' and 'counter target ability' is a modal card, a different choice made at a different time, not one target
+
+<details><summary>Cards waiting on this</summary>
+
+- **Disallow** (rank 1822) — `disallow`
+  - Counter target spell, activated ability, or triggered ability.
 
 </details>
 
@@ -3008,6 +3039,20 @@ Blocks **1** card.
 
 - **Suppressor Skyguard** (rank 9126) — `suppressor_skyguard`
   - Whenever a player attacks you, if that player has another opponent who isn't being attacked, prevent all combat damage that would be dealt to you this combat.
+
+</details>
+
+## variable-energy-payment
+
+Blocks **1** card.
+
+- **(cost)** a `may` whose `pay.pay_energy` is a value expression read at resolution (here `mana_value_of` the target t1), fixed to an integer before the affordability check, the way `pay.pay_life` already accepts a value expression (Niv-Mizzet, Ghost Counsel)
+  <br>Why the existing vocabulary won't do: Cost.pay_energy is an int in schema.py/carddef.py, so only a printed fixed energy price loads; `pay.times` scales only the mana half of a `may` cost (ops_control.op_may), and `any_amount` lets the player choose the count rather than fixing it to the target's mana value. add_energy and gain_control themselves are already expressible
+
+<details><summary>Cards waiting on this</summary>
+
+- **Confiscation Coup** (rank 7567) — `confiscation_coup`
+  - You get {E}{E}{E}{E} (four energy counters), then you may pay an amount of {E} equal to that permanent's mana value.
 
 </details>
 

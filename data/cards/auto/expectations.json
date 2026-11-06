@@ -3238,6 +3238,10 @@
     },
     "zone": "battlefield"
   },
+  "conjurer_s_closet": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "conqueror_s_flail": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -4018,6 +4022,10 @@
   },
   "decisive_denial": {
     "zone": "graveyard"
+  },
+  "decoction_module": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "decree_of_justice": {
     "battlefield_count": 45,
@@ -5073,6 +5081,10 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "era_of_innovation": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "erebos_god_of_the_dead": {
     "battlefield_count": 33,
