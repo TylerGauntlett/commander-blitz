@@ -1331,11 +1331,16 @@ def _target_fodder(registry, spec):
     # blocked this turn." The fodder is a card from hand by default, which a
     # token-only spec can never point at; read only when the spec asks for it.
     wants_token = selector.get("is_token") is True
+    # Assault Formation -- "{G}: Target creature **with defender** can attack
+    # this turn…". The biggest creature has no keywords, so the ability read as
+    # unusable when it was only unaimed.
+    keywords = {str(k) for k in selector.get("keywords") or []}
 
     def eligible(card) -> bool:
         return (
             card.is_token == wants_token
             and types <= set(card.types)
+            and keywords <= {str(k) for k in card.keywords}
             and (not subtypes or subtypes & set(card.subtypes))
             and not (forbidden & set(card.supertypes))
         )
