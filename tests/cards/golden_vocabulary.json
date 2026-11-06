@@ -89,6 +89,10 @@
    "creatures_deal_combat_damage",
    "deals_damage_to_player"
   ],
+  "DEFENDING_WORDS": {
+   "attacked_you_last_turn": "attack_despite_defender",
+   "opponent_most_life": "attacks_if_able"
+  },
   "DELAYED_TRIGGER_KEYS": [
    "condition",
    "controller",
@@ -127,6 +131,7 @@
    "ability_cost_reduction",
    "activate_loyalty_as_though_instant",
    "add_subtype",
+   "attack_despite_defender",
    "attack_tax",
    "attacks_if_able",
    "block_restriction",
@@ -506,6 +511,7 @@
    "add_mana_on_tap",
    "add_subtype",
    "all_damage_wither",
+   "attack_despite_defender",
    "attack_tax",
    "attacks_if_able",
    "black_mana_as_phyrexian",
@@ -895,6 +901,7 @@
   "amass",
   "animate",
   "attach",
+  "attack_despite_defender",
   "attack_tax",
   "aura_swap",
   "become_copy",

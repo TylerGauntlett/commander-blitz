@@ -931,6 +931,24 @@ def op_unblockable(ctx: EffectContext, spec: Mapping[str, Any]):
     yield from ()
 
 
+@register("attack_despite_defender")
+def op_attack_despite_defender(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Target creature with defender can attack this turn as though it didn't
+    have defender." (Assault Formation, Walking Bulwark, Wakestone Gargoyle.)
+
+    The timed form of the `attack_despite_defender` static, read by the same
+    predicate, `player_statics.defender_waived`. ``objects`` is resolved now --
+    Wakestone Gargoyle's "creatures you control with defender" is the group
+    found as it resolves (611.2c), so a wall that enters later stays a wall --
+    and each carries the grant until end of turn.
+
+    The near miss is `lose_keyword`: the creature keeps defender, so a
+    "creature with defender" filter and an anthem for walls still see it.
+    """
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Attack despite defender")
+    grant_combat_rule(ctx.state, oids, "attack_despite_defender", source=ctx.source_oid)
+
+
 @register("combat_damage_by_toughness")
 def op_combat_damage_by_toughness(ctx: EffectContext, spec: Mapping[str, Any]):
     """ "Until end of turn, target creature … assigns combat damage equal to its

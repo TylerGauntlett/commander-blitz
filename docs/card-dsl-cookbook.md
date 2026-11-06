@@ -4610,6 +4610,57 @@ The near misses are `buff` and `set_pt`, which change power itself — a fight,
 all read the changed number — and `replace_damage`, which scales an amount
 already computed from power.
 
+## Attacking as though it didn't have defender
+
+    Felothar the Steadfast — "Creatures you control can attack as though they
+                              didn't have defender."
+    Assault Formation — "{G}: Target creature with defender can attack this turn
+                         as though it didn't have defender."
+    Wakestone Gargoyle — "{1}{W}: Creatures you control with defender can attack
+                          this turn as though they didn't have defender."
+    Weathered Sentinels — "This creature can attack players who attacked you
+                           during their last turn as though it didn't have defender."
+
+The creature keeps defender for every other purpose — a "creature with defender"
+filter, an anthem for walls — so `lose_keyword` is the wrong op. It is a static
+and an op of the same name.
+
+```jsonc
+// Felothar
+{ "kind": "static", "effect": "attack_despite_defender",
+  "affects": { "types": ["Creature"] } }
+
+// Weathered Sentinels: only players who attacked you during their last turn
+{ "kind": "static", "effect": "attack_despite_defender",
+  "affects": { "self_only": true }, "defending": "attacked_you_last_turn" }
+
+// Assault Formation, Walking Bulwark: the creature the ability targeted
+{ "op": "attack_despite_defender", "objects": { "target": "t1" } }
+
+// Wakestone Gargoyle: the group found as it resolves
+{ "op": "attack_despite_defender",
+  "objects": { "zone": "battlefield", "controller": "you",
+               "types": ["Creature"], "keywords": ["defender"] } }
+```
+
+The static's `affects` is required and read off each creature as it now is.
+`defending: "attacked_you_last_turn"` names the opponents whose last completed
+turn included an attack on the static's controller (`GameState.attacked_last_turn`,
+seats only, 506.2); the creature may attack those players and none of their
+planeswalkers or battles, and with none of them left it cannot attack. Without
+`defending` it may attack anything it otherwise could. The word is refused on any
+other static, and `opponent_most_life` is refused here.
+
+The op's `objects` is required and resolved as it resolves (611.2c), so a wall
+that enters afterwards is not covered; each creature found carries a
+`TempEffect(kind="attack_despite_defender")` until end of turn, and `duration` may
+only be `this_turn`, its default.
+
+Both are read by `player_statics.defender_waived`, which `combat.can_attack`
+asks of a creature with defender and `combat.attack_target_forbidden` asks per
+defending player. It lifts defender only: summoning sickness, tapping and every
+other restriction still apply, so Walking Bulwark grants haste in a separate op.
+
 ## Attack requirements
 
     Trench Behemoth — "Landfall — Whenever a land you control enters, target

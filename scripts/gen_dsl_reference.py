@@ -282,6 +282,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                     "The `unblockable` op — the same wire, read from the attacker's end"),
     "cant_sacrifice": ("Board", "Permanents can't be sacrificed for a duration.",
                        "The `cant_sacrifice` op — a prohibition on a *game action*, not a zone change"),
+    "attack_despite_defender": ("Board", "Until end of turn, creatures can attack as though they didn't have defender, keeping the keyword.",
+                                "Attacking as though it didn't have defender"),
     "combat_damage_by_toughness": ("Board", "Until end of turn, creatures assign combat damage equal to their toughness rather than their power.",
                                    "Combat damage equal to toughness"),
     "move_counters": ("Board", "Move counters from one permanent to another: one named kind, every kind (`all_kinds`, from a leave trigger's or a sacrifice cost's record with `from_had_counters`), N counters of kinds the controller picks (`any_kind`), or with `any_number` as many of each kind as the controller chooses.",
@@ -834,6 +836,9 @@ STATICS: dict[str, Entry] = {
     "attack_tax": ("Matching creatures can't attack unless their controller pays "
                    "(`x_per_attacker`: {X} read off each attacker).",
                    "Pricing an attack rather than forbidding it"),
+    "attack_despite_defender": ("Matching creatures can attack as though they didn't have "
+                                "defender (`defending`: only the players it names).",
+                                "Attacking as though it didn't have defender"),
     "attacks_if_able": ("Matching creatures attack each combat if able "
                         "(`defending`: only a named player obeys it).", "The continuous form"),
     "black_mana_as_phyrexian": ("The player may pay life for each {B} in a cost.",

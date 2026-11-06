@@ -67,7 +67,9 @@ class TempEffect:
     `GameObject.animations` and ordered against the indefinite animations there
     by ``timestamp``), or ``"combat_damage_by_toughness"`` ("assigns combat
     damage equal to its toughness rather than its power", read by
-    `player_statics.assigns_damage_by_toughness`).  The lock is not a keyword
+    `player_statics.assigns_damage_by_toughness`), or
+    ``"attack_despite_defender"`` ("can attack this turn as though it didn't
+    have defender", read by `player_statics.defender_waived`).  The lock is not a keyword
     because it is not a characteristic: it is a permission, read by legality
     and by the mana solver rather than by ``chars``, and showing it in a card's
     keyword list would be a lie.

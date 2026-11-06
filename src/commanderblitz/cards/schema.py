@@ -966,7 +966,13 @@ class AbilityModel(BaseModel):
     #: any attack obeys it. With it, only an attack on one of those players
     #: does -- not on a planeswalker or battle they control (506.2) -- and
     #: while none of them can be attacked it compels nothing.
-    defending: Literal["opponent_most_life"] | None = None
+    #:
+    #: ``attack_despite_defender``: the only players the creature may attack
+    #: despite defender -- Weathered Sentinels' "can attack **players who
+    #: attacked you during their last turn**" is ``"attacked_you_last_turn"``.
+    #: Not their planeswalkers or battles (506.2). Omitted, it may attack
+    #: anything it otherwise could.
+    defending: Literal["opponent_most_life", "attacked_you_last_turn"] | None = None
     #: ``replace_token_creation``: which token is about to be made. A filter on
     #: a *printed face* and not on `affects`, which picks out permanents on the
     #: battlefield: the token this asks about does not exist yet, has no

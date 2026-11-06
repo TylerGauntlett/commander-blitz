@@ -10,16 +10,16 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 165 |
+| [Effect ops](#effect-ops) | 166 |
 | [Selectors](#selectors) | 74 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 69 |
 | [Conditions](#conditions) | 34 |
 | [Trigger events](#trigger-events) | 49 |
 | [Trigger filters](#trigger-filters) | 36 |
-| [Static effects](#static-effects) | 93 |
+| [Static effects](#static-effects) | 94 |
 | [Player-wide statics](#player-wide-statics) | 45 |
-| [Grantable statics](#grantable-statics) | 42 |
+| [Grantable statics](#grantable-statics) | 43 |
 | [Cost reduction](#cost-reduction) | 6 |
 | [Ability costs](#ability-costs) | 30 |
 | [Card-level costs](#card-level-costs) | 32 |
@@ -82,6 +82,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `airbend` | Board | yes | Airbend: exile and let owners cast for {2}; `as` records the pool. | [Airbend — "exile them, and their owners may cast them for {2}"](card-dsl-cookbook.md#airbend--exile-them-and-their-owners-may-cast-them-for-2) |
 | `amass` | Board | yes | Amass [subtype] N: N +1/+1 counters on an Army creature you control, creating a 0/0 black Army token first if none; it becomes that subtype too. | [amass — "Amass Zombies N"](card-dsl-cookbook.md#amass--amass-zombies-n) |
 | `attach` | Board |  | Attach an Aura, Equipment or Fortification to a permanent; with `player`, move this Aura onto one player (701.3). | [Auras and Equipment](card-dsl-cookbook.md#auras-and-equipment) |
+| `attack_despite_defender` | Board |  | Until end of turn, creatures can attack as though they didn't have defender, keeping the keyword. | [Attacking as though it didn't have defender](card-dsl-cookbook.md#attacking-as-though-it-didnt-have-defender) |
 | `attack_tax` | Board |  | Until your next turn (or this turn), creatures can't attack you unless their controller pays a mana cost for each (the timed form of the static). | [Pricing an attack rather than forbidding it](card-dsl.md#pricing-an-attack-rather-than-forbidding-it) |
 | `aura_swap` | Board |  | Exchange the source for an Aura card in hand. | [Aura swap — an exchange, not two moves](card-dsl-cookbook.md#aura-swap--an-exchange-not-two-moves) |
 | `become_copy` | Board |  | A permanent becomes a copy of another. | [A permanent that enters as a copy](card-dsl.md#a-permanent-that-enters-as-a-copy) |
@@ -536,6 +537,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `add_mana_on_tap` | yes |  | Whenever a matching permanent is tapped for mana, add extra mana. | [Static abilities](card-dsl.md#static-abilities) |
 | `add_subtype` |  | yes | Matching permanents have an extra subtype. | ["…is the chosen type in addition to its other types"](card-dsl-cookbook.md#is-the-chosen-type-in-addition-to-its-other-types) |
 | `all_damage_wither` |  |  | All damage to creatures, from every source, is dealt as -1/-1 counters. | ["All damage is dealt as though its source had wither"](card-dsl-cookbook.md#all-damage-is-dealt-as-though-its-source-had-wither) |
+| `attack_despite_defender` |  | yes | Matching creatures can attack as though they didn't have defender (`defending`: only the players it names). | [Attacking as though it didn't have defender](card-dsl-cookbook.md#attacking-as-though-it-didnt-have-defender) |
 | `attack_tax` |  | yes | Matching creatures can't attack unless their controller pays (`x_per_attacker`: {X} read off each attacker). | [Pricing an attack rather than forbidding it](card-dsl.md#pricing-an-attack-rather-than-forbidding-it) |
 | `attacks_if_able` |  | yes | Matching creatures attack each combat if able (`defending`: only a named player obeys it). | [The continuous form](card-dsl-cookbook.md#the-continuous-form) |
 | `black_mana_as_phyrexian` | yes |  | The player may pay life for each {B} in a cost. | [black_mana_as_phyrexian — K'rrik's "For each {B} in a cost"](card-dsl-cookbook.md#black_mana_as_phyrexian--krriks-for-each-b-in-a-cost) |
@@ -686,6 +688,7 @@ The static effects a `grant_ability` static may hand to another permanent. Defin
 | `ability_cost_reduction` | Activated abilities of a class (`equip`, or `any` beside `targeting`) cost less; `first_during_your_turn` limits it to your first matching activation of your turn. | [A static that discounts another permanent's activated ability](card-dsl.md#a-static-that-discounts-another-permanents-activated-ability) |
 | `activate_loyalty_as_though_instant` | The player may activate loyalty abilities any time they could cast an instant. | [grant_ability as a static, and where the line now runs](card-dsl-cookbook.md#grant_ability-as-a-static-and-where-the-line-now-runs) |
 | `add_subtype` | Matching permanents have an extra subtype. | ["…is the chosen type in addition to its other types"](card-dsl-cookbook.md#is-the-chosen-type-in-addition-to-its-other-types) |
+| `attack_despite_defender` | Matching creatures can attack as though they didn't have defender (`defending`: only the players it names). | [Attacking as though it didn't have defender](card-dsl-cookbook.md#attacking-as-though-it-didnt-have-defender) |
 | `attack_tax` | Matching creatures can't attack unless their controller pays (`x_per_attacker`: {X} read off each attacker). | [Pricing an attack rather than forbidding it](card-dsl.md#pricing-an-attack-rather-than-forbidding-it) |
 | `attacks_if_able` | Matching creatures attack each combat if able (`defending`: only a named player obeys it). | [The continuous form](card-dsl-cookbook.md#the-continuous-form) |
 | `block_restriction` | Matching creatures can't block, or can only block under a rule. | [Block restrictions](card-dsl-cookbook.md#block-restrictions) |

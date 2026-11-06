@@ -843,7 +843,7 @@ def grant_cant_be_sacrificed(
 #: The combat-rule changes a resolving effect writes onto a creature until end of
 #: turn, each a `TempEffect.kind` read by one predicate rather than by `chars`:
 #: they are permissions and substitutions, not characteristics.
-COMBAT_RULE_GRANTS = frozenset({"combat_damage_by_toughness"})
+COMBAT_RULE_GRANTS = frozenset({"attack_despite_defender", "combat_damage_by_toughness"})
 
 
 def grant_combat_rule(
@@ -851,8 +851,10 @@ def grant_combat_rule(
 ) -> list[int]:
     """Write one of `COMBAT_RULE_GRANTS` onto each creature named, until end of turn.
 
-    Walking Bulwark: "until end of turn, target creature … assigns combat damage
-    equal to its toughness rather than its power". The set is the one found as
+    Walking Bulwark: "until end of turn, target creature … can attack as though
+    it didn't have defender, and assigns combat damage equal to its toughness
+    rather than its power"; Wakestone Gargoyle's "creatures you control with
+    defender can attack this turn …". The set is the one found as
     the effect resolved (611.2c): each creature carries its own entry, so one
     that enters afterwards is not covered, and one that leaves sheds it with
     the rest of `until_eot` (400.7). `primitives.clear_until_eot` ends it.

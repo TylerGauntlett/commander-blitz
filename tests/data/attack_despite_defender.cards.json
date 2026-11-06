@@ -1,0 +1,82 @@
+{
+  "_comment": "Shapes for tests/unit/combat/test_attack_despite_defender.py. t_add_felothar is Felothar's defender line alone; t_add_sentinels is Weathered Sentinels' per-player waiver on a 2/4 defender; t_add_formation is Assault Formation's targeted line on a {T} cost; t_add_gargoyle is Wakestone Gargoyle's group line on a {T} cost. The wall they free is the pool's t_wall.",
+  "cards": [
+    {
+      "id": "t_add_felothar",
+      "name": "Test Defender Waiver",
+      "oracle_text": "Creatures you control can attack as though they didn't have defender.",
+      "mana_cost": "{1}{W}",
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "types": ["Enchantment"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures you control can attack as though they didn't have defender.",
+          "effect": "attack_despite_defender",
+          "affects": {"types": ["Creature"]}
+        }
+      ]
+    },
+    {
+      "id": "t_add_sentinels",
+      "name": "Test Vengeful Sentinels",
+      "oracle_text": "Defender\nThis creature can attack players who attacked you during their last turn as though it didn't have defender.",
+      "mana_cost": "{3}",
+      "types": ["Artifact", "Creature"],
+      "subtypes": ["Wall"],
+      "power": 2,
+      "toughness": 4,
+      "keywords": ["defender"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This creature can attack players who attacked you during their last turn as though it didn't have defender.",
+          "effect": "attack_despite_defender",
+          "affects": {"self_only": true},
+          "defending": "attacked_you_last_turn"
+        }
+      ]
+    },
+    {
+      "id": "t_add_formation",
+      "name": "Test Defender Formation",
+      "oracle_text": "{T}: Target creature with defender can attack this turn as though it didn't have defender.",
+      "mana_cost": "{1}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Target creature with defender can attack this turn as though it didn't have defender.",
+          "cost": {"tap": true},
+          "targets": [
+            {"id": "t1", "kind": "permanent", "selector": {"zone": "battlefield", "types": ["Creature"], "keywords": ["defender"]}}
+          ],
+          "effects": [
+            {"op": "attack_despite_defender", "objects": {"target": "t1"}}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_add_gargoyle",
+      "name": "Test Defender Gargoyle",
+      "oracle_text": "{T}: Creatures you control with defender can attack this turn as though they didn't have defender.",
+      "mana_cost": "{1}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Creatures you control with defender can attack this turn as though they didn't have defender.",
+          "cost": {"tap": true},
+          "effects": [
+            {
+              "op": "attack_despite_defender",
+              "objects": {"zone": "battlefield", "controller": "you", "types": ["Creature"], "keywords": ["defender"]}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

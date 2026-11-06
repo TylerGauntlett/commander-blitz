@@ -94,6 +94,7 @@ under [Simplified](#simplified); what is missing outright is under
 | Area | Detail |
 |---|---|
 | **Combat** | Attacker and blocker declaration, evasion, damage assignment order, simultaneous damage (510.2), first and double strike as separate sub-steps (510.4) |
+| **Attacking despite defender** | The `attack_despite_defender` static (its `affects` on current characteristics; `defending: "attacked_you_last_turn"` limits it to those players' seats, off `GameState.attacked_last_turn`, 506.2) and op (until end of turn on the creatures found as it resolves, 611.2c), read by `player_statics.defender_waived` from `combat.can_attack` and `combat.attack_target_forbidden`; the creature keeps the keyword |
 | **Combat damage equal to toughness** | 510.1a's substitution: the `combat_damage_by_toughness` static (its `affects` on current characteristics, its `condition` asked per creature) and op (until end of turn on the creatures found as it resolves, 611.2c), read by `combat.combat_damage_amount` for attackers and blockers, so lethal-first division and trample divide the toughness; power is unchanged elsewhere |
 | **Declaration-wide restrictions** | 508.1c, 509.1b: menace, `require_all`, "can't attack or block alone", enforced by withholding "Done" and by `combat.drop_illegal_attacks` / `drop_illegal_blocks` |
 | **Banding** | 702.21: two `ask_objects` questions for the band, `CombatState.band_of`, and `_divide` walking 510.1c for whichever player orders the damage |

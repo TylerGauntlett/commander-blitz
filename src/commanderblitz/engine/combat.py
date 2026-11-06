@@ -22,6 +22,7 @@ from .enums import LANDWALK_SUBTYPE, Keyword
 from .events import EventType
 from .mana import OTHER_PAYMENT, ManaCost
 from .player_statics import (
+    ALL_DEFENDERS,
     any_defender_attack_prohibition,
     assigns_damage_by_toughness,
     attack_alone_forbidden,
@@ -32,6 +33,7 @@ from .player_statics import (
     block_alone_forbidden,
     block_forbidden,
     block_tax,
+    defender_waived,
     goaders,
     static_attack_defenders,
 )
@@ -85,8 +87,15 @@ def can_attack(state: GameState, oid: int) -> bool:
     c = chars(state, oid)
     if "Creature" not in c.types:
         return False
+    # Defender (702.3b), unless a waiver lets it attack as though it didn't
+    # have it. A waiver naming players leaves the rest to
+    # `attack_target_forbidden`, and the guard below then asks whether any of
+    # them is left to attack.
+    waiver = None
     if Keyword.DEFENDER.value in c.keywords:
-        return False
+        waiver = defender_waived(state, oid)
+        if not waiver:
+            return False
     if obj.summoning_sick(state.turn) and Keyword.HASTE.value not in c.keywords:
         return False
     if attack_forbidden(state, oid):
@@ -119,6 +128,7 @@ def can_attack(state: GameState, oid: int) -> bool:
         state.attack_restrictions
         or any(m.prohibition for m in obj.attack_marks)
         or any_defender_attack_prohibition(state)
+        or (waiver is not None and waiver is not ALL_DEFENDERS)
     ) and not (
         legal_defenders(state, oid) or legal_permanent_defenders(state, oid)
     ):
@@ -379,6 +389,14 @@ def attack_target_forbidden(
     obj = state.objects.get(oid)
     if _attack_prohibited(state, oid, defender, permanent=permanent):
         return True
+    # A defender waived only against some players (Weathered Sentinels): any
+    # other player, and every planeswalker or battle, is still off limits.
+    if obj is not None and Keyword.DEFENDER.value in chars(state, oid).keywords:
+        waiver = defender_waived(state, oid)
+        if waiver is None or (
+            waiver is not ALL_DEFENDERS and (permanent is not None or defender not in waiver)
+        ):
+            return True
     # "During target opponent's next turn, creatures that player controls
     # attack Gideon Jura if able" -- a requirement naming one attack target.
     # Asked after the prohibitions, which a requirement never overrides
