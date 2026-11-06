@@ -1,0 +1,18 @@
+{
+  "card_id": "nesting_dragon",
+  "name": "Nesting Dragon",
+  "oracle_text": "Flying\nLandfall — Whenever a land you control enters, create a 0/2 red Dragon Egg creature token with defender and \"When this token dies, create a 2/2 red Dragon creature token with flying and '{R}: This token gets +1/+0 until end of turn.'\"",
+  "blocked_sentences": [
+    "Landfall — Whenever a land you control enters, create a 0/2 red Dragon Egg creature token with defender and \"When this token dies, create a 2/2 red Dragon creature token with flying and '{R}: This token gets +1/+0 until end of turn.'\""
+  ],
+  "needs": [
+    {
+      "capability": "dragon_egg_0_2_r_defender_token",
+      "kind": "token",
+      "what": "a 0/2 red Dragon Egg creature token with defender and \"When this token dies, create a 2/2 red Dragon creature token with flying and '{R}: This token gets +1/+0 until end of turn.'\" -- which in turn needs a second token, a 2/2 red Dragon creature token with flying and \"{R}: This token gets +1/+0 until end of turn.\"",
+      "why_existing_wont_do": "token_ids is a closed list with no Dragon Egg and no 2/2 firebreathing Dragon; the nearest red Dragons (dragon_4_4_r_flying, dragon_5_5_r_flying, dragon_6_6_r_flying) are the wrong size and lack the pump ability. The rest of the card is expressible: flying from starting_point, and the landfall line is a permanent_enters trigger filtered to lands you control with a create_token effect"
+    }
+  ],
+  "closest_existing": ["dragon_4_4_r_flying"],
+  "confidence": "high"
+}

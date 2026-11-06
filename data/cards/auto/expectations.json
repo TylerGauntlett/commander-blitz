@@ -5979,6 +5979,10 @@
   "frontier_guide": {
     "zone": "battlefield"
   },
+  "frontier_siege": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "frontier_warmonger": {
     "zone": "battlefield"
   },
@@ -8540,6 +8544,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "keiga_the_tide_star": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "kelinore_bat": {
     "zone": "battlefield"
   },
@@ -8562,6 +8570,9 @@
     "zone": "battlefield"
   },
   "kessig_recluse": {
+    "zone": "battlefield"
+  },
+  "kessig_wolf_run": {
     "zone": "battlefield"
   },
   "ketria_crystal": {
@@ -10139,6 +10150,13 @@
     "life": {
       "0": 44
     }
+  },
+  "migration_path": {
+    "battlefield_count": 34,
+    "library_size": {
+      "0": 38
+    },
+    "zone": "graveyard"
   },
   "miirym_sentinel_wyrm": {
     "battlefield_count": 33,

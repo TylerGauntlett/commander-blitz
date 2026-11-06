@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**161 cards** blocked by **148** capabilities.
+**162 cards** blocked by **149** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -69,6 +69,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [distribute-counters-spell](#distribute-counters-spell) | 1 | 6993 | op |
 | [divided-damage-any-target](#divided-damage-any-target) | 1 | 5125 | engine |
 | [double-x](#double-x) | 1 | 2672 | op |
+| [dragon-egg-0-2-r-defender-token](#dragon-egg-0-2-r-defender-token) | 1 | 3556 | token |
 | [echo](#echo) | 1 | 961 | keyword |
 | [elemental-1-1-r](#elemental-1-1-r) | 1 | 811 | token |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
@@ -1144,6 +1145,20 @@ Blocks **1** card.
 - **Unbound Flourishing** (rank 2672) — `unbound_flourishing`
   - Whenever you cast a permanent spell with a mana cost that contains {X}, double the value of X.
   - Whenever you cast an instant or sorcery spell or activate an ability, if that spell's mana cost or that ability's activation cost contains {X}, copy that spell or ability. You may choose new targets for the copy.
+
+</details>
+
+## dragon-egg-0-2-r-defender-token
+
+Blocks **1** card.
+
+- **(token)** a 0/2 red Dragon Egg creature token with defender and "When this token dies, create a 2/2 red Dragon creature token with flying and '{R}: This token gets +1/+0 until end of turn.'" -- which in turn needs a second token, a 2/2 red Dragon creature token with flying and "{R}: This token gets +1/+0 until end of turn."
+  <br>Why the existing vocabulary won't do: token_ids is a closed list with no Dragon Egg and no 2/2 firebreathing Dragon; the nearest red Dragons (dragon_4_4_r_flying, dragon_5_5_r_flying, dragon_6_6_r_flying) are the wrong size and lack the pump ability. The rest of the card is expressible: flying from starting_point, and the landfall line is a permanent_enters trigger filtered to lands you control with a create_token effect
+
+<details><summary>Cards waiting on this</summary>
+
+- **Nesting Dragon** (rank 3556) — `nesting_dragon`
+  - Landfall — Whenever a land you control enters, create a 0/2 red Dragon Egg creature token with defender and "When this token dies, create a 2/2 red Dragon creature token with flying and '{R}: This token gets +1/+0 until end of turn.'"
 
 </details>
 

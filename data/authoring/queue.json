@@ -102532,12 +102532,12 @@
     },
     "Frontier Siege": {
       "edhrec_rank": 3270,
-      "gate": "template",
+      "gate": null,
       "name": "Frontier Siege",
-      "reason": "no template for: As this enchantment enters, choose Khans or Dragons",
+      "reason": "",
       "scryfall_id": "25b37249-bf5c-48ad-a5ea-c7538cc46929",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Frontier Warmonger": {
@@ -147652,12 +147652,12 @@
     },
     "Keiga, the Tide Star": {
       "edhrec_rank": 4326,
-      "gate": "template",
+      "gate": null,
       "name": "Keiga, the Tide Star",
-      "reason": "no template for: When Keiga dies, gain control of target creature",
+      "reason": "",
       "scryfall_id": "44d544dc-1d2a-4b33-ae62-d0e0217db0a2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Keldon Arsonist": {
@@ -148232,12 +148232,12 @@
     },
     "Kessig Wolf Run": {
       "edhrec_rank": 399,
-      "gate": "template",
+      "gate": null,
       "name": "Kessig Wolf Run",
-      "reason": "no template for: {X}{R}{G}, {T}: Target creature gets +X/+0 and gains trample until end of turn",
+      "reason": "",
       "scryfall_id": "53f72b5f-86a1-4d44-94e2-93d4856ce3a8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kessig Wolfrider": {
@@ -173132,12 +173132,12 @@
     },
     "Migration Path": {
       "edhrec_rank": 1183,
-      "gate": "template",
+      "gate": null,
       "name": "Migration Path",
-      "reason": "no template for: Search your library for up to two basic land cards, put them onto the battlefield tapped, ",
+      "reason": "",
       "scryfall_id": "4fc05cc9-176d-4ffb-8777-935e54030140",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Migratory Greathorn": {
