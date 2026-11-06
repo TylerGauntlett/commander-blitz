@@ -672,3 +672,82 @@ class TestRuthlessLawbringer:
                 seen.update(t.id for t in a.targets)
             game.apply(_default_answer(game, decision))
         assert forest not in seen
+
+
+GOURMAND = "vampire_gourmand"
+
+
+class TestVampireGourmand:
+    """ "Whenever this creature attacks, you may sacrifice another creature. If
+    you do, draw a card and this creature can't be blocked this turn."
+
+    The gate declines combat, so the trigger never fires there. The near misses:
+    **if you do** -- declining, or having nothing else to sacrifice, gives
+    neither the card nor the evasion; and **another** -- the Gourmand is never
+    its own fodder.
+    """
+
+    def swing(self, builder, *, fodder: bool = True, yes: bool = True):
+        game = (
+            builder(players=2)
+            .battlefield(0, ["swamp"] * 2 + [GOURMAND] + ([BEAR] if fodder else []))
+            .battlefield(1, ["plains", BEAR])
+            .hand(0, [ANCHOR])
+            .hand(1, [ANCHOR])
+            .library(0, ["swamp"] * 20)
+            .library(1, ["plains"] * 20)
+            .active(0)
+            .step(Step.BEGIN_COMBAT)
+            .build()
+        )
+        gourmand = only_oid(game, GOURMAND, 0)
+        pass_until(
+            game,
+            lambda g: g.pending() is not None
+            and g.pending().kind is DecisionKind.DECLARE_ATTACKERS,
+        )
+        game.apply(
+            next(
+                a
+                for a in attack_actions(game, gourmand)
+                if a.targets[0].kind == "player"
+            )
+        )
+        game.apply(find_action(game, ActionKind.FINISH_DECLARATION))
+        for _ in range(100):
+            decision = game.pending()
+            if decision.kind is DecisionKind.DECLARE_BLOCKERS:
+                break
+            if decision.kind is DecisionKind.MAY:
+                game.apply(find_action(game, ActionKind.YES if yes else ActionKind.NO))
+                continue
+            game.apply(_default_answer(game, decision))
+        else:
+            raise AssertionError("never reached declare blockers")
+        return game, gourmand
+
+    def blockable(self, game, gourmand: int) -> bool:
+        return any(
+            a.kind is ActionKind.ADD_BLOCKER and gourmand in [t.id for t in a.targets]
+            for a in game.legal_actions()
+        )
+
+    def test_a_sacrifice_draws_and_makes_it_unblockable(self, builder):
+        game, gourmand = self.swing(builder)
+        assert count_on_battlefield(game, BEAR, 0) == 0
+        assert len(game.state.players[0].hand) == 2
+        assert not self.blockable(game, gourmand)
+
+    def test_declining_gives_neither(self, builder):
+        game, gourmand = self.swing(builder, yes=False)
+        assert count_on_battlefield(game, BEAR, 0) == 1
+        assert len(game.state.players[0].hand) == 1
+        assert self.blockable(game, gourmand)
+
+    def test_it_is_never_its_own_fodder(self, builder):
+        """Alone, there is nothing to sacrifice: no card, no evasion, and the
+        Gourmand is still attacking."""
+        game, gourmand = self.swing(builder, fodder=False)
+        assert game.state.objects[gourmand].zone is Zone.BATTLEFIELD
+        assert len(game.state.players[0].hand) == 1
+        assert self.blockable(game, gourmand)

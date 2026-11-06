@@ -204,12 +204,6 @@
       "set_code": "c14",
       "collector_number": "298"
     },
-    "goldvein_hydra": {
-      "scryfall_id": "3baebc29-bc89-4b56-a821-b5d3ca0cd3b4",
-      "artist": "David Auden Nash",
-      "set_code": "soc",
-      "collector_number": "270"
-    },
     "greensleeves_maro_sorcerer": {
       "scryfall_id": "0969d7f3-cec5-4118-adb1-ff957eedf6ab",
       "artist": "Tuan Duong Chu",
@@ -299,6 +293,12 @@
       "artist": "Alexander Forssberg",
       "set_code": "pip",
       "collector_number": "274"
+    },
+    "mystical_tutor": {
+      "scryfall_id": "36fa9a0b-b0c9-43ea-ba11-99d7982f974e",
+      "artist": "Lindsey Look",
+      "set_code": "dmr",
+      "collector_number": "60"
     },
     "negate": {
       "scryfall_id": "cfc1c914-fa52-4492-8dee-0c35bebc3766",
@@ -589,9 +589,6 @@
       "id": "ghost_quarter"
     },
     {
-      "id": "goldvein_hydra"
-    },
-    {
       "id": "greensleeves_maro_sorcerer"
     },
     {
@@ -636,6 +633,9 @@
     },
     {
       "id": "myriad_landscape"
+    },
+    {
+      "id": "mystical_tutor"
     },
     {
       "id": "negate"

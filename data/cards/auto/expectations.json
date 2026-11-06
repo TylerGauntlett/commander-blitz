@@ -1463,6 +1463,10 @@
     "opponent_battlefield_count": 4,
     "zone": "graveyard"
   },
+  "battle_angels_of_tyr": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "battle_cry_goblin": {
     "zone": "battlefield"
   },
@@ -17985,6 +17989,13 @@
     "zone": "graveyard"
   },
   "vampire_champion": {
+    "zone": "battlefield"
+  },
+  "vampire_gourmand": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "vampire_neonate": {

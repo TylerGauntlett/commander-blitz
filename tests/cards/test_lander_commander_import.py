@@ -11,7 +11,8 @@ a land on every player's upkeep, so a card off Aesi on every upkeep -- and
 Turntimber Symbiosis' "it enters with three additional +1/+1 counters", a real
 614.1c enters-with on a card `look_at_top` puts onto the battlefield, with its
 land face Turntimber, Serpentine Wood. A later edit of the list swapped an
-Island for Oboro, Palace in the Clouds, which was already native.
+Island for Oboro, Palace in the Clouds, which was already native, and a later one
+Goldvein Hydra for Mystical Tutor, also already native.
 
 So this file pins the same claim as its siblings: **every one of its 78 distinct
 cards resolving `native`**, through the same `importer.import_deck` a pasted link
@@ -65,7 +66,6 @@ DECK: tuple[tuple[str, int], ...] = (
     ("Flooded Grove", 1),
     ("Forest", 13),
     ("Ghost Quarter", 1),
-    ("Goldvein Hydra", 1),
     ("Greensleeves, Maro-Sorcerer", 1),
     ("Growth Spiral", 1),
     ("Herd Heirloom", 1),
@@ -81,6 +81,7 @@ DECK: tuple[tuple[str, int], ...] = (
     ("Lotus Cobra", 1),
     ("Mossborn Hydra", 1),
     ("Myriad Landscape", 1),
+    ("Mystical Tutor", 1),
     ("Negate", 1),
     ("Nezahal, Primal Tide", 1),
     ("Nissa, Worldsoul Speaker", 1),

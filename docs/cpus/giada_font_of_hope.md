@@ -48,7 +48,7 @@ as `ChoirPractice`, a small subclass of `Tribal` with `tribe = "Angel"`.
 | Behaviour | Where |
 |---|---|
 | **Giada before any other Angel.** Her key-card bonus (150) puts her well over a three-drop Angel, which the classic agent preferred because it costs more. | `DeckPlan.key_cards`, read by `DefaultStrategy.priority_value` ([default.py](../../src/commanderblitz/ai/strategy/default.py)) |
-| **An Angel over a non-Angel.** Every Angel cast gets the tribe bonus, so Youthful Valkyrie goes ahead of Magus of the Moat. | `Tribal.priority_value` ([archetypes.py](../../src/commanderblitz/ai/strategy/archetypes.py)) |
+| **An Angel over a non-Angel.** Every Angel cast gets the tribe bonus, so Angel of Vitality goes ahead of Magus of the Moat. | `Tribal.priority_value` ([archetypes.py](../../src/commanderblitz/ai/strategy/archetypes.py)) |
 | **Rocks and cost reducers early.** Through turn six, a mana rock or an Angel cost reducer scores above a three-drop: each is an extra Angel per turn for the rest of the game. | `ChoirPractice.priority_value` |
 | **Engines over filler.** Cathars' Crusade, Court of Grace and Vanquisher's Banner score as creatures would, not as 100-point "other" spells. | `DeckPlan.key_cards` |
 | **Lyra + Thune, Lyra + Destiny.** The second piece is cast with a big bonus once the first is in hand or on the table, and the first is held back from discard. | `DeckPlan.combos`, `DefaultStrategy.combo_bonus` |
