@@ -11334,7 +11334,8 @@ target tuple, so its targets are fixed before `Game._activate` asks which mode.
 | `mode` out of range | the card does not print that bullet |
 | a computed count on a mode-owned spec | a spell's is declared before anything it could read exists; a mode-owned size must be printed — a literal `count` (with `up_to` / `min_count`) or `"any"` |
 | `one_per_player`, `total_mana_value` or `total_power` on a caster-sized mode-owned spec | a spell's mode targets are asked one spec at a time by `Game._ask_mode_targets`, with no check between the picks |
-| `optional`, `up_to` or `"any"` on a mode-owned spec that is not the last target declared — not the last spec of its mode, or a later mode owns a target | a declined or caster-sized target stores no fixed number of refs, so `filter_legal` would read the next spec's ref into its bucket |
+| a second `optional`, `up_to` or `"any"` mode-owned spec on the same card | a declined or caster-sized target stores no fixed number of refs, so it is stored last (`CardDef.specs_for_modes`), and two of them in one declaration leave no position to split them at |
+| a target whose selector names that sizeless spec | stored last, the sizeless spec is enumerated after every other target, so nothing can read its answer |
 | a variable-size or `optional` *card-level* spec on the same card | the mode's refs are stored after it, so a caster-chosen size or a declined target in front of them makes the split ambiguous |
 
 ### "Up to one target" inside a mode
@@ -11354,9 +11355,8 @@ creature an opponent controls". `optional: true` on a mode-owned spec is
 the last tuple, and `Game._ask_mode_targets` asks a spell's with a floor of
 zero. Because declaring nothing is a legal declaration, the mode stays on offer
 (601.2b) — and in a `random` mode's pool — with nothing to target, where a fixed
-`count: 1` would strike it and force the target whenever one exists. The loader
-admits it only as **the last target declared**: the last spec of its mode, with
-no later mode owning a target, so a declined one shifts no ref after it.
+`count: 1` would strike it and force the target whenever one exists. It is
+**stored last** — see "Where a sizeless mode target is stored" below.
 
 ### "One or two targets" inside a mode
 
@@ -11378,9 +11378,33 @@ offers every subset largest first through `enumerate_target_tuples`. The mode
 is on offer only while the floor can be met (601.2b), so with one permanent
 card in the graveyard the bullet returns that one, where a fixed `count: 2`
 would strike it; a card-level `up_to` target would instead be declared — and
-need a legal choice — under the targetless bullet too. The same
-**last-target-declared** rule as `optional` applies, for the same positional
-reason.
+need a legal choice — under the targetless bullet too. It is **stored last**,
+as an `optional` one is.
+
+### Where a sizeless mode target is stored
+
+Will of the Abzan's *first* bullet owns "any number of target opponents" and
+its second "target creature card from your graveyard":
+
+```jsonc
+"targets": [
+  {"id": "foes", "kind": "player", "mode": 0, "count": "any",
+   "selector": {"controller": "opponent"}},
+  {"id": "back", "kind": "card_in_graveyard", "mode": 1,
+   "selector": {"zone": "graveyard", "controller": "you", "types": ["Creature"]}}
+]
+```
+
+The stored refs are one flat tuple that `filter_legal` splits spec by spec, and
+a declined or caster-sized spec can only be split off as "whatever is left". So
+`CardDef.specs_for_modes` lays a declaration out as the card-level specs, the
+chosen modes' **fixed-size** specs in printed mode order, then the one
+**sizeless** (`optional`, `up_to` or `"any"`) mode-owned spec, whichever mode
+owns it. The questions are still asked in printed mode order
+(`Game._ask_mode_targets`, a trigger as it goes on the stack); only the storage
+moves, and every reader of the stored refs walks the same list. The loader
+admits one sizeless mode-owned spec per card, and none a sibling's selector
+names.
 
 ## "Target creature phases out"
 

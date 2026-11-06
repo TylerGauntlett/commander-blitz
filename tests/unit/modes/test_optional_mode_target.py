@@ -18,10 +18,10 @@ declaring none is a legal way. Each nearer spelling is a different card:
   cannot share the card with the other bullets' mode-owned targets.
 
 The machinery's one hazard is positional: `filter_legal` splits stored refs
-spec by spec, and a declined target stores none. So the loader admits an
-``optional`` mode-owned spec only where it ends every declaration -- the last
-spec of its mode, no later mode owning a target -- and these tests pin both
-that boundary and the behaviour it buys.
+spec by spec, and a declined target stores none. So `CardDef.specs_for_modes`
+stores an ``optional`` mode-owned spec after every fixed-size one, and the
+loader admits one such spec per card -- these tests pin both that boundary and
+the behaviour it buys.
 """
 
 from __future__ import annotations
@@ -216,11 +216,18 @@ class TestTheLoaderBoundary:
     def test_the_last_target_declared_loads(self):
         self.compile(self.base())
 
-    def test_not_last_when_a_later_mode_owns_a_target(self):
+    def test_before_a_later_modes_target_it_is_stored_last(self):
         card = self.base()
         card["targets"][0]["optional"] = True
         card["targets"][1]["optional"] = False
-        with pytest.raises(DslError, match="must be the last target declared"):
+        compiled = compile_card(CardModel.model_validate(card))
+        stored = [spec.id for spec in compiled.specs_for_modes(tuple(compiled.mode_targets))]
+        assert stored[-1] == card["targets"][0]["id"]
+
+    def test_two_optional_mode_targets_are_refused(self):
+        card = self.base()
+        card["targets"][0]["optional"] = True
+        with pytest.raises(DslError, match="at most one 'optional' or caster-sized"):
             self.compile(card)
 
     def test_beside_a_card_level_optional_target(self):

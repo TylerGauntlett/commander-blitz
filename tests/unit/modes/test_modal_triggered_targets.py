@@ -298,8 +298,14 @@ class TestTheLoaderRefusals:
         ability.update(over)
         return ability
 
+    def stored(self, ability) -> list[str]:
+        """The spec ids in the order a trigger choosing every mode stores refs."""
+        card = self.compile(ability)
+        compiled = card.abilities[0]
+        return [spec.id for spec in compiled.specs_for_modes(tuple(compiled.mode_targets))]
+
     def compile(self, ability):
-        compile_card(
+        return compile_card(
             CardModel.model_validate(
                 {
                     "id": "x_modal_trigger",
@@ -336,9 +342,10 @@ class TestTheLoaderRefusals:
         with pytest.raises(DslError, match="mode 7 does not exist"):
             self.compile(ability)
 
-    def test_an_optional_mode_owned_target_before_another_of_its_mode(self):
+    def test_an_optional_mode_owned_target_before_another_is_stored_last(self):
         """A declined one stores no ref, so the next spec's ref would be read
-        back into its bucket. See tests/unit/modes/test_optional_mode_target.py."""
+        back into its bucket -- unless it is stored last. See
+        tests/unit/modes/test_optional_mode_target.py."""
         ability = self.ability()
         ability["targets"][0]["optional"] = True
         ability["targets"].append(
@@ -352,12 +359,11 @@ class TestTheLoaderRefusals:
         ability["effects"][0]["modes"][1]["effects"].append(
             {"op": "tap", "objects": {"target": "other"}}
         )
-        with pytest.raises(DslError, match="must be the last target declared"):
-            self.compile(ability)
+        assert self.stored(ability)[-1] == ability["targets"][0]["id"]
 
-    def test_a_caster_chosen_size_before_another_of_its_mode(self):
+    def test_a_caster_chosen_size_before_another_is_stored_last(self):
         """"Any number" stores as many refs as were picked, so the next spec's
-        ref would be read back into its bucket."""
+        ref would be read back into its bucket -- unless it is stored last."""
         ability = self.ability()
         ability["targets"][0]["count"] = "any"
         ability["targets"].append(
@@ -371,8 +377,7 @@ class TestTheLoaderRefusals:
         ability["effects"][0]["modes"][1]["effects"].append(
             {"op": "tap", "objects": {"target": "other"}}
         )
-        with pytest.raises(DslError, match="must be the last target declared"):
-            self.compile(ability)
+        assert self.stored(ability)[-1] == ability["targets"][0]["id"]
 
     def test_a_computed_size_inside_a_mode(self):
         ability = self.ability()

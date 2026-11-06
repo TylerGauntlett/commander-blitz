@@ -380,24 +380,32 @@ def _check_mode_targets(
                 f"mode's targets are asked one spec at a time, with no check "
                 f"between the picks"
             )
-        if (spec.optional or spec.variable_size) and not _ends_every_declaration(
-            spec, owned
-        ):
-            # "This creature fights **up to one** target creature an opponent
-            # controls" (Summon: Magus Sisters), "return **one or two** target
-            # permanent cards" (Yuna's Decision): a declined optional stores no
-            # ref and a caster-sized spec stores as many as were picked, and
-            # `filter_legal` splits the stored refs by position, so a spec
-            # declared after either would read nothing back -- or the wrong
-            # thing. Last in every list a cast or trigger can declare, it
-            # swallows only its own refs, as a card-level variable-size spec
-            # at the end of its list does.
-            raise DslError(
-                f"{label}: an 'optional' or variable-size mode-owned target must "
-                f"be the last target declared -- the last spec of its mode, with "
-                f"no later mode owning a target -- or the refs after it land in "
-                f"the wrong bucket"
-            )
+    # "This creature fights **up to one** target creature an opponent controls"
+    # (Summon: Magus Sisters), "return **one or two** target permanent cards"
+    # (Yuna's Decision), "**any number of** target opponents" in Will of the
+    # Abzan's *first* bullet: a declined optional stores no ref and a
+    # caster-sized spec stores as many as were picked, so `filter_legal` can
+    # only split one off as "whatever is left". `CardDef.specs_for_modes`
+    # therefore stores it last, after every fixed-size spec of every chosen
+    # mode -- which is unambiguous for exactly one such spec per list.
+    sizeless = [spec for spec in owned if spec.optional or spec.variable_size]
+    if len(sizeless) > 1:
+        raise DslError(
+            f"{where}: at most one 'optional' or caster-sized mode-owned target "
+            f"per card -- {', '.join(repr(s.id) for s in sizeless)} each store as "
+            f"many refs as were picked, and two of them in one declaration "
+            f"leave no way to say where the first one ends"
+        )
+    for last in sizeless:
+        for other in specs:
+            if other is not last and _names_target(other.selector, last.id):
+                # Stored last, it is enumerated after every other spec, so one
+                # reading its answer would be asked with no answer to read.
+                raise DslError(
+                    f"{where}.target[{other.id}]: its selector names {last.id!r}, "
+                    f"an 'optional' or caster-sized mode-owned target -- that one "
+                    f"is stored after every other target, so nothing can read it"
+                )
     if any(spec.optional for spec in specs if spec.mode is None):
         raise DslError(
             f"{where}: a card-level 'optional' target cannot share a card with a "
@@ -412,21 +420,15 @@ def _check_mode_targets(
         )
 
 
-def _ends_every_declaration(spec: TargetSpec, owned: list[TargetSpec]) -> bool:
-    """Is ``spec`` the last ref-storing spec of every list it is declared in?
-
-    `CardDef.specs_for_modes` lays a declaration out as the card-level specs,
-    then each chosen mode's specs in ascending mode index. A spec whose stored
-    size is not fixed reads back
-    correctly only when nothing is declared after it, and that holds for every
-    choice of modes exactly when it is the last spec of its own mode and no
-    later mode owns a target.  Declinable (`optional`) and caster-sized
-    (`variable_size`) specs are both of that kind.
-    """
-    assert spec.mode is not None
-    later = [o for o in owned if o.mode is not None and o.mode > spec.mode]
-    own = [o for o in owned if o.mode == spec.mode]
-    return not later and own[-1] is spec
+def _names_target(node: Any, target_id: str) -> bool:
+    """Does this selector name the sibling target ``target_id``?"""
+    if isinstance(node, Mapping):
+        if node.get("target") == target_id:
+            return True
+        return any(_names_target(v, target_id) for v in node.values())
+    if isinstance(node, (list, tuple)):
+        return any(_names_target(v, target_id) for v in node)
+    return False
 
 
 def _reads_context(node: Any) -> bool:

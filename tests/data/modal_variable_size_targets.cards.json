@@ -1,0 +1,57 @@
+{
+  "_comment": "Cards that exist only for tests/unit/modes/test_modal_variable_size_targets.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_abzan_will` is Will of the Abzan: a caster-sized player target ('any number of target opponents') owned by the FIRST mode, with the second mode owning a fixed graveyard target -- the shape a positional split could not store.",
+  "cards": [
+    {
+      "id": "t_abzan_will",
+      "name": "Test Abzan Will",
+      "oracle_text": "Choose one. If you control a commander as you cast this spell, you may choose both instead.\n• Any number of target opponents each sacrifice a creature with the greatest power among creatures that player controls and lose 3 life.\n• Return target creature card from your graveyard to the battlefield.",
+      "mana_cost": "{1}",
+      "types": ["Sorcery"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "targets": [
+        {"id": "foes", "kind": "player", "mode": 0, "count": "any",
+         "selector": {"controller": "opponent"}},
+        {"id": "back", "kind": "card_in_graveyard", "mode": 1,
+         "selector": {"zone": "graveyard", "controller": "you", "types": ["Creature"]}}
+      ],
+      "spell_effects": [
+        {
+          "op": "choose_mode",
+          "count": 1,
+          "up_to_if": {
+            "condition": {"exists": {"controller": "you", "is_commander": true, "zone": "battlefield"}},
+            "count": 2
+          },
+          "modes": [
+            {
+              "label": "Any number of target opponents each sacrifice a creature with the greatest power among creatures that player controls and lose 3 life.",
+              "effects": [
+                {
+                  "op": "for_each_player",
+                  "players": {"target": "foes"},
+                  "effects": [
+                    {"op": "sacrifice",
+                     "objects": {"zone": "battlefield", "types": ["Creature"],
+                                 "controller": {"binding": "each_player"},
+                                 "chooser": "owner", "count": 1,
+                                 "extreme": {"of": "power", "pick": "greatest"}}},
+                    {"op": "lose_life", "amount": {"const": 3},
+                     "player": {"binding": "each_player"}}
+                  ]
+                }
+              ]
+            },
+            {
+              "label": "Return target creature card from your graveyard to the battlefield.",
+              "effects": [
+                {"op": "return_from_graveyard", "destination": "battlefield",
+                 "controller": "you", "objects": {"target": "back"}}
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
