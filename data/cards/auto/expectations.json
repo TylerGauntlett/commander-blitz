@@ -12319,6 +12319,10 @@
     },
     "zone": "graveyard"
   },
+  "persistent_constrictor": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "persistent_petitioners": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -13124,6 +13128,14 @@
     "zone": "battlefield"
   },
   "rampaging_aetherhood": {
+    "zone": "battlefield"
+  },
+  "rampaging_ferocidon": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
     "zone": "battlefield"
   },
   "rampaging_hippo": {
@@ -14031,6 +14043,10 @@
   "sacred_wolf": {
     "zone": "battlefield"
   },
+  "sadistic_shell_game": {
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
   "sage_s_dousing": {
     "zone": "graveyard"
   },
@@ -14361,6 +14377,10 @@
     "zone": "battlefield"
   },
   "seal_away": {
+    "zone": "battlefield"
+  },
+  "seance_board": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "search_for_tomorrow": {
@@ -14848,6 +14868,10 @@
     "zone": "battlefield"
   },
   "shivan_devastator": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "shivan_gorge": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

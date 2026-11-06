@@ -200102,12 +200102,12 @@
     },
     "Persistent Constrictor": {
       "edhrec_rank": 2710,
-      "gate": "template",
+      "gate": null,
       "name": "Persistent Constrictor",
-      "reason": "no template for: At the beginning of each opponent's upkeep, they lose 1 life and you put a -1/-1 counter o",
+      "reason": "",
       "scryfall_id": "0a25d478-84fd-4e4b-abb7-f5f6becf6eb0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Persistent Marshstalker": {
@@ -214812,12 +214812,12 @@
     },
     "Rampaging Ferocidon": {
       "edhrec_rank": 2490,
-      "gate": "template",
+      "gate": null,
       "name": "Rampaging Ferocidon",
-      "reason": "no template for: Players can't gain life",
+      "reason": "",
       "scryfall_id": "53c38f4e-81ec-45b3-a6cf-06a65b674978",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rampaging Geoderm": {
@@ -230762,12 +230762,12 @@
     },
     "Sadistic Shell Game": {
       "edhrec_rank": 5212,
-      "gate": "template",
+      "gate": null,
       "name": "Sadistic Shell Game",
-      "reason": "no template for: Starting with the next opponent in turn order, each player chooses a creature you don't co",
+      "reason": "",
       "scryfall_id": "4c5c8eb3-c866-4974-90eb-be99c07af1a1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sadistic Skymarcher": {
@@ -244782,12 +244782,12 @@
     },
     "Shivan Gorge": {
       "edhrec_rank": 2305,
-      "gate": "template",
+      "gate": null,
       "name": "Shivan Gorge",
-      "reason": "no template for: {2}{R}, {T}: deals 1 damage to each opponent",
+      "reason": "",
       "scryfall_id": "c1752b65-dace-4c87-b102-23df276b2e41",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shivan Harvest": {
@@ -273392,12 +273392,12 @@
     },
     "Séance Board": {
       "edhrec_rank": 4166,
-      "gate": "template",
+      "gate": null,
       "name": "Séance Board",
-      "reason": "no template for: Morbid — At the beginning of each end step, if a creature died this turn, put a soul count",
+      "reason": "",
       "scryfall_id": "65a6c25f-860e-401f-ac01-d16e4327248d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "T'Chaka, Venerable King": {
