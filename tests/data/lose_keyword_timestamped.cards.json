@@ -1,0 +1,45 @@
+{
+  "_comment": "Cards for tests/unit/statics/test_lose_keyword_timestamped.py -- 'loses flying' as a removal ordered by timestamp (613.7).",
+  "cards": [
+    {
+      "id": "t_hammer",
+      "name": "Test Hammer",
+      "oracle_text": "Equipped creature gets +10/+10 and loses flying.\nEquip {8}",
+      "mana_cost": "{1}",
+      "types": ["Artifact"],
+      "subtypes": ["Equipment"],
+      "abilities": [
+        {
+          "kind": "static",
+          "effect": "buff",
+          "text": "Equipped creature gets +10/+10 and loses flying.",
+          "affects": {"attached": true},
+          "power": {"const": 10},
+          "toughness": {"const": 10}
+        },
+        {
+          "kind": "static",
+          "effect": "lose_keyword_timestamped",
+          "text": "Equipped creature gets +10/+10 and loses flying.",
+          "affects": {"attached": true},
+          "keywords": ["flying"]
+        },
+        {
+          "kind": "activated",
+          "text": "Equip {8}",
+          "is_equip": true,
+          "sorcery_speed_only": true,
+          "cost": {"mana": "{8}"},
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {"zone": "battlefield", "controller": "you", "types": ["Creature"]}
+            }
+          ],
+          "effects": [{"op": "attach", "objects": {"target": "equip_target"}}]
+        }
+      ]
+    }
+  ]
+}

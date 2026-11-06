@@ -14,6 +14,7 @@ from commanderblitz.engine.effects.selectors import (
     validate_attached_to_key,
     validate_colorless_key,
     validate_enchanted_by_key,
+    validate_has_counters_key,
 )
 from commanderblitz.engine.effects.values import (
     validate_counter_kind,
@@ -128,6 +129,7 @@ def _check_attached_to_key(filt: Any, where: str) -> None:
     _check_pt_keys(host_filter, here)
     validate_colorless_key(host_filter, here)
     validate_enchanted_by_key(host_filter, here)
+    validate_has_counters_key(host_filter, here)
 
 
 def _refuse_granted_chosen_qualities(filt: Any, where: str) -> None:
@@ -259,10 +261,10 @@ def _mentions_condition(model: CardModel, key: str) -> bool:
 def _mentions_key_anywhere(model: CardModel, key: str) -> bool:
     """Does ``key`` appear anywhere on this card, replacements and statics included?
 
-    `_mentions_condition` searches effects, targets and trigger conditions only.
-    A condition that is read mostly by a **replacement** -- `escaped`, whose
-    printed home is "escapes with" -- needs the whole card searched, which is
-    safe only for a key no other part of the schema spells.
+    `_mentions_condition` searches effects, targets, trigger conditions and
+    replacements, but not statics or costs. A key read from one of those needs
+    the whole card searched, which is safe only for a key no other part of the
+    schema spells.
     """
 
     def walk(node: Any) -> bool:
@@ -309,6 +311,11 @@ def _mentions(model: CardModel, predicate: Any) -> bool:
 
     if walk(model.spell_effects) or walk(targets_of(model.targets)):
         return True
+    # Replacements too: "enters with a charge counter on it for each time it was
+    # kicked" is a 614.1c replacement, so its `amount` is the one place
+    # Everflowing Chalice reads `additional_paid`.
+    if walk([r.model_dump(exclude_none=True) for r in model.replacements]):
+        return True
     return any(
         walk(a.effects)
         or walk(targets_of(a.targets))
@@ -332,3 +339,22 @@ def _before(models: Sequence[Any], target_id: str) -> set[str]:
 #: languages and one copy of the near-miss rule is the point; aliased here for
 #: the trigger, replacement and ``add_counters`` call sites that predate it.
 _check_counter_kind = validate_counter_kind
+
+
+def uses_source_bound_duration(effects: Any) -> bool:
+    """Does any effect in this tree last "for as long as you control" its source?
+
+    ``duration: "as_long_as_you_control_source"`` on `grant_keyword`, `pump` or
+    `gain_control`.
+    Only a permanent can be controlled for a while, so the spell compiler
+    refuses it on ``spell_effects``: an instant's source is on the stack as the
+    effect would begin, and 611.2b makes the whole effect do nothing -- a card
+    that loads and never works.
+    """
+    if isinstance(effects, Mapping):
+        if effects.get("duration") == "as_long_as_you_control_source":
+            return True
+        return any(uses_source_bound_duration(v) for v in effects.values())
+    if isinstance(effects, (list, tuple)):
+        return any(uses_source_bound_duration(v) for v in effects)
+    return False

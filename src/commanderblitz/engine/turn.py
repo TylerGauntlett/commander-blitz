@@ -42,6 +42,7 @@ from .temp_effects import (
     clear_attack_marks,
     clear_attack_requirements,
     clear_attack_restrictions,
+    clear_attack_taxes,
     clear_block_prohibitions,
     clear_cast_locks,
     clear_combat_fogs,
@@ -55,6 +56,7 @@ from .temp_effects import (
     clear_permanent_shields,
     clear_player_protections,
     clear_sacrifice_restrictions,
+    clear_token_multipliers,
     clear_unblockables,
 )
 from .triggers import fire
@@ -83,10 +85,12 @@ def _expire_permissions(state: GameState, duration: str, *, after_grant_turn: bo
         obj.playable_any_type = False
         obj.playable_any_color = False
         obj.playable_exiles = False
+        obj.playable_as_adventure = False
         # The airbend price rides on the permission, so it goes when the
         # permission does -- a card left in exile carrying a {2} nobody may
         # spend would be a live-looking field on a dead grant.
         obj.playable_alt_cost = None
+        obj.playable_cost_reduction = 0
 
 
 def begin_step(state: GameState) -> Generator[Any, list[int]]:
@@ -379,6 +383,10 @@ def _untap_step(state: GameState) -> Generator[Any, list[int]]:
     # says. Cleared here, at the top of that turn, so the opponents' last
     # chance to cast out of a graveyard was the turn cycle in between.
     clear_cast_locks(state, "until_your_next_turn", player.pid)
+    # "Until your next turn, creatures can't attack you unless their
+    # controller pays {2} …" (Summon: Yojimbo.) The same clock, keyed to the
+    # protected seat, which is also the seat whose turn this is.
+    clear_attack_taxes(state, "until_your_next_turn", player.pid)
     # "Until your next turn, prevent all damage target permanent would deal."
     # (Gideon of the Trials, Kiora, the Crashing Wave.) The same clock, keyed to
     # the player who installed the shield.
@@ -775,10 +783,14 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int]]:
     clear_outcome_locks(state, "this_turn")
     clear_flash_permissions(state, "this_turn")
     clear_life_floors(state, "this_turn")
+    # Kaya, Geist Hunter's "until end of turn" doubling. Owned by no permanent,
+    # so nothing else would end it: the walker that made it may be long gone.
+    clear_token_multipliers(state, "this_turn")
     # The `this_turn` half of the cast lock, swept here for the reason every
     # timed table above it is: a table the cleanup step could not sweep on
     # that word would be the one exception among them.
     clear_cast_locks(state, "this_turn")
+    clear_attack_taxes(state, "this_turn")
     # "**Until end of turn**, you may cast … from any graveyard." Beside the
     # rest and owned by no permanent for their reason, and more literally than
     # most: the Saga chapter that grants it exiles the Saga on the same line, so

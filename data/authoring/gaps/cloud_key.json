@@ -1,0 +1,25 @@
+{
+  "card_id": "cloud_key",
+  "name": "Cloud Key",
+  "oracle_text": "As this artifact enters, choose artifact, creature, enchantment, instant, or sorcery.\nSpells you cast of the chosen type cost {1} less to cast.",
+  "blocked_sentences": [
+    "As this artifact enters, choose artifact, creature, enchantment, instant, or sorcery",
+    "Spells you cast of the chosen type cost {1} less to cast"
+  ],
+  "needs": [
+    {
+      "capability": "choose_card_type_from_list",
+      "kind": "op",
+      "what": "choose_type over a printed subset of card types (Artifact, Creature, Enchantment, Instant, Sorcery) writing chosen_card_type, e.g. an `options` list on choose_type",
+      "why_existing_wont_do": "choose_type's only fixed axes are `permanent_type` (six permanent types, no Instant/Sorcery) and `card_type` (all nine of 205.2a, adding Battle, Kindred, Land and Planeswalker); neither offers exactly the five printed choices, and offering Planeswalker/Battle/Kindred would discount spells the printed card cannot"
+    },
+    {
+      "capability": "chosen_card_type_cost_reduction",
+      "kind": "static_effect",
+      "what": "spell_cost_reduction whose affects_spells.types may hold {\"chosen_card_type_of\": \"self\"}, substituted with the source's chosen_card_type when pricing a spell",
+      "why_existing_wont_do": "player_statics.spell_cost_reduction resolves only chosen_type_of (creature subtype) and chosen_color_of in its filter; chosen_card_type_of is resolved only in effect selectors and protection from_types, so a spell filter naming it would match nothing"
+    }
+  ],
+  "closest_existing": ["choose_type", "spell_cost_reduction"],
+  "confidence": "high"
+}

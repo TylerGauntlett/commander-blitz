@@ -1526,7 +1526,9 @@ html[data-input="pad"] .act__key {
  */
 [data-compact] .track {
   gap: 8px;
-  padding: 6px 10px;
+  /* Clear of a side status bar, as `board.css` says on `.track`. `phone.css`
+     takes it back, because the phone pads the whole table instead. */
+  padding: 6px calc(10px + var(--safe-r)) 6px calc(10px + var(--safe-l));
 }
 
 [data-compact] .ph {

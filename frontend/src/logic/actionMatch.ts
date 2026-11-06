@@ -35,6 +35,35 @@ export function canDropOnLane(
 }
 
 /**
+ * Whether a hand card dropped on this zone plays it.
+ *
+ * ANYWHERE ON YOUR OWN BOARD, not only the lane the card will sit in. Which
+ * row a permanent is drawn in is presentation -- the server puts it where it
+ * goes -- so asking the player to aim at it was a test with no rule behind it,
+ * and one they could not see: the compact board draws no lane headings, so a
+ * land let go over the creature row, or over the seat panel beside the lanes,
+ * sprang back to the hand. `canDropOnLane` still says which lane to light, so
+ * the board shows where the card will land; it no longer decides whether it
+ * does.
+ *
+ * `zone` is a `data-dropzone` value: `lane:<pid>:<lane>` for a lane and
+ * `board:<pid>` for the mat around it. Anybody else's board refuses, as does a
+ * card with no legal way to be played.
+ */
+export function dropPlays(
+  state: GameView,
+  actions: LegalAction[],
+  oid: number,
+  zone: string,
+): boolean {
+  const [kind, pid] = zone.split(":");
+  if (kind !== "lane" && kind !== "board") return false;
+  if (Number(pid) !== state.seat) return false;
+  const inHand = state.players[state.seat].hand?.some((entry) => entry.oid === oid) ?? false;
+  return inHand && actionsForCard(actions, oid).length > 0;
+}
+
+/**
  * Which lanes should highlight while this card is being dragged.
  */
 export function dropTargets(

@@ -1,0 +1,65 @@
+{
+  "_comment": "Cards that exist only for tests/unit/targets/test_target_floor.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_one_two_or_three_return` is Aberrant Return's shape (count 3, up_to, min_count 1 over creature cards in any graveyard); `t_one_or_two_recall` puts the same floor on a triggered ability's target, which `stack._choose_each_target` asks for.",
+  "cards": [
+    {
+      "id": "t_one_two_or_three_return",
+      "name": "Test One Two Or Three Return",
+      "oracle_text": "Put one, two, or three target creature cards from graveyards onto the battlefield under your control. Each of them enters with an additional -1/-1 counter on it.",
+      "mana_cost": "{1}{B}",
+      "types": ["Sorcery"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "count": 3,
+          "up_to": true,
+          "min_count": 1,
+          "selector": { "types": ["Creature"], "zone": "graveyard", "controller": "any" }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "return_from_graveyard",
+          "objects": { "target": "t1" },
+          "destination": "battlefield",
+          "controller": "you",
+          "counters": { "-1/-1": 1 }
+        }
+      ]
+    },
+    {
+      "id": "t_one_or_two_recall",
+      "name": "Test One Or Two Recall",
+      "oracle_text": "When Test One Or Two Recall enters, return one or two target creature cards from your graveyard to your hand.",
+      "mana_cost": "{1}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Zombie"],
+      "power": 1,
+      "toughness": 1,
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "trigger": { "event": "self_enters", "source": "self" },
+          "text": "When Test One Or Two Recall enters, return one or two target creature cards from your graveyard to your hand.",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "count": 2,
+              "up_to": true,
+              "min_count": 1,
+              "selector": { "types": ["Creature"], "zone": "graveyard", "controller": "you" }
+            }
+          ],
+          "effects": [
+            { "op": "return_from_graveyard", "objects": { "target": "t1" }, "destination": "hand" }
+          ]
+        }
+      ]
+    }
+  ]
+}

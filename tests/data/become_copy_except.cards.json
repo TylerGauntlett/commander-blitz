@@ -1,0 +1,60 @@
+{
+  "_comment": "Cards that exist only for the become_copy exception test (tests/unit/copies/test_become_copy_except.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_guardian` is Kimahri, Valiant Guardian's shape -- a permanent in-place copy except its name, vigilance and this ability. `t_lifegiver` is a creature to copy that prints an ability of its own, so the kept ability's seat after it can be checked.",
+  "cards": [
+    {
+      "id": "t_guardian",
+      "name": "Test Guardian",
+      "oracle_text": "Vigilance\nAt the beginning of combat on your turn, put a +1/+1 counter on this creature and tap target creature an opponent controls. Then you may have this creature become a copy of that creature, except its name is Test Guardian and it has vigilance and this ability.",
+      "mana_cost": "{3}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Warrior"],
+      "power": 1,
+      "toughness": 1,
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "keywords": ["vigilance"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "At the beginning of combat on your turn, put a +1/+1 counter on this creature and tap target creature an opponent controls. Then you may have this creature become a copy of that creature, except its name is Test Guardian and it has vigilance and this ability.",
+          "trigger": {"event": "begin_combat", "controller": "you"},
+          "targets": [
+            {"id": "t1", "kind": "permanent", "count": 1,
+             "selector": {"zone": "battlefield", "controller": "opponent", "types": ["Creature"]}}
+          ],
+          "effects": [
+            {"op": "add_counters", "counter": "+1/+1", "amount": {"const": 1},
+             "objects": {"zone": "battlefield", "self_only": true}},
+            {"op": "tap", "objects": {"target": "t1"}},
+            {"op": "may", "prompt": "Become a copy of that creature?", "effects": [
+              {"op": "become_copy", "duration": "permanent", "except_name": "Test Guardian",
+               "except_": {"add_keywords": ["vigilance"], "keep_abilities": [0]},
+               "objects": {"zone": "battlefield", "self_only": true},
+               "copying": {"target": "t1"}}
+            ]}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_lifegiver",
+      "name": "Test Lifegiver",
+      "oracle_text": "{1}: You gain 1 life.",
+      "mana_cost": "{2}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Elf"],
+      "power": 3,
+      "toughness": 3,
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}: You gain 1 life.",
+          "cost": {"mana": "{1}"},
+          "effects": [{"op": "gain_life", "amount": {"const": 1}}]
+        }
+      ]
+    }
+  ]
+}

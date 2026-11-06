@@ -93,6 +93,14 @@ class CostModel(BaseModel):
     discard_selector: dict[str, Any] | None = None
     #: Cycling's "Discard this card": the source discards itself, no choice.
     discard_self: bool = False
+    #: "{4}{B}{B}{B}, **Discard X cards**:" -- Gix, Yawgmoth Praetor. The
+    #: controller announces X as the ability is activated (601.2b, 107.3), no
+    #: more than the cards in hand the cost may take (``discard_selector``
+    #: narrows them), and discards that many as the cost; the effects read X
+    #: back with ``{"x": true}``. Activated abilities only. Not beside
+    #: ``discard`` (two numbers for one payment) and not beside an ``{X}`` in
+    #: ``mana``, ``loyalty_x`` or ``pay_life_x`` (an ability announces one X).
+    discard_x: bool = False
     #: "{1}{W}, {T}, **Exile this artifact**:" -- Phoenix Down. The exile twin
     #: of `discard_self`, and deliberately not `sacrifice`, which puts the
     #: source in the graveyard. The difference is the whole card here: Phoenix
@@ -165,6 +173,16 @@ class CostModel(BaseModel):
     #: never gets the counter; and not ``loyalty``, which is a planeswalker's
     #: and carries 606.3's once-per-turn. Activated abilities only.
     put_counters: dict[str, Any] | None = None
+    #: "**Blight N**" -- "To blight N, a player puts N -1/-1 counters on a
+    #: creature they control" (Lorwyn Eclipsed). A positive integer. The
+    #: *payer* chooses the creature as the cost is paid, so it is the right key
+    #: wherever someone other than the source's controller pays: Auntie Ool's
+    #: "Ward--Blight 2" is paid by the targeting opponent onto one of their own
+    #: creatures. Any cost node takes it -- an activated ability, an
+    #: ``additional_cost`` ("you may blight 1" with ``additional_optional``,
+    #: Burning Curiosity), a ward or a ``may`` ``pay``. Not ``put_counters``,
+    #: which goes on the source and asks nothing.
+    blight: int = 0
     #: A loyalty cost (606.2), signed: `+1`, `0`, `-3`. Not `remove_counters`,
     #: which only ever takes them off -- a plus ability *adds* loyalty, and it
     #: is a cost rather than an effect, so it is paid whether or not the ability
@@ -257,6 +275,15 @@ class TargetModel(BaseModel):
         "card_in_exile",
         "any",
         "spell_or_permanent",
+        #: "The owner of target **spell, nonland permanent, or card in a
+        #: graveyard** puts it…" (Endless Detour). `"spell_or_permanent"` with a
+        #: third half: one instance of the word "target" whose pool spans the
+        #: stack, the battlefield and every graveyard. The spell half reads
+        #: `selector`, the permanent half `permanent_selector` when there is
+        #: one, and the graveyard half `selector` over **every** graveyard
+        #: unless the selector names whose. A selector ``zone`` is refused,
+        #: since the kind already names all three.
+        "spell_permanent_or_graveyard_card",
         #: "Copy target activated or triggered ability **you control**" -- Peter
         #: Parker's Camera, Lithoform Engine, Strionic Resonator.
         #:
@@ -282,7 +309,9 @@ class TargetModel(BaseModel):
     #: is legal, and of the permanents only creatures. `selector` then narrows
     #: the spell half alone. Absent, both halves read `selector`, which is
     #: Sink into Stupor's "spell or nonland permanent an opponent controls".
-    #: Refused on every other kind, with a ``zone`` other than the battlefield,
+    #: The same on a ``"spell_permanent_or_graveyard_card"`` target, whose
+    #: "**nonland** permanent" narrows the battlefield half alone (Endless
+    #: Detour). Refused on every other kind, with a ``zone`` other than the battlefield,
     #: and with a clause naming a sibling target or ``{X}``.
     permanent_selector: dict[str, Any] | None = None
     #: How many. ``"any"`` is "any number of target …" -- a size the *caster*
@@ -316,12 +345,26 @@ class TargetModel(BaseModel):
     #: step before 601.2c declares the targets. Refused on a card with no
     #: ``gift``, on an ability's targets and on a mode-owned spec.
     gift_promised: bool | None = None
+    #: Which **tier** declares this target: the index of the card's
+    #: ``additional_cost_options`` a cast must have paid. Tiered (702.183)
+    #: chooses the tier as an additional cost at 601.2b, one step before 601.2c
+    #: declares targets, so "• Cross-Slash -- {0} -- Destroy target tapped
+    #: creature" is a target only the Cross-Slash cast has. Absent: every tier.
+    #: Refused on a card without ``additional_cost_options``, on an ability's
+    #: targets, and beside ``mode``, ``gift_promised`` or ``count_if_kicked``.
+    cost_option: int | None = None
     #: "Return **up to** X target creature cards." The `count` is a ceiling and
     #: every size from zero through it is legal, which is the one reading none
     #: of the three above can give: a number forces exactly that many,
     #: `optional` makes it "exactly N or none", and ``"any"`` has no ceiling.
     #: Pairs with either a literal or a value expression.
     up_to: bool = False
+    #: The floor beside an ``up_to`` ceiling: "**one, two, or three** target
+    #: creature cards" (Aberrant Return) is ``count: 3, up_to: true,
+    #: min_count: 1``. Sizes below it are not legal, so the spell cannot be
+    #: cast with fewer legal targets than the floor (601.2c). Requires
+    #: ``up_to`` and a literal ``count`` above it.
+    min_count: int = 0
     #: "**For each player**, exile up to one target nonland permanent that
     #: player controls." The same set of legal choices as "any number of target
     #: nonland permanents, no two controlled by the same player" -- which is
@@ -399,12 +442,15 @@ class TriggerModel(BaseModel):
     mana_ability: bool | None = None
     #: For ``becomes_target``: "becomes the target of **a spell**" (Goldspan
     #: Dragon).  ``"spell"`` fires on spells only, ``"ability"`` on abilities
-    #: only, omitted on both -- and omitted is ward's printed "a spell or
-    #: ability", so leaving it off is a real reading rather than a default.
+    #: only (activated and triggered alike), ``"activated_ability"`` on
+    #: activated abilities only ("the target of an activated ability" --
+    #: Professor Hojo), omitted on all three -- and omitted is ward's printed
+    #: "a spell or ability", so leaving it off is a real reading rather than a
+    #: default.
     #: Without it the only writable trigger is the wide one, and a Dragon that
     #: mints a Treasure off an opponent's tapper or your own equip is a
     #: strictly larger card.
-    targeted_by: Literal["spell", "ability"] | None = None
+    targeted_by: Literal["spell", "ability", "activated_ability"] | None = None
     #: For ``draw``: "whenever you draw your **second** card each turn".  The
     #: ordinal that draw must have had for its player this turn.  For
     #: ``spell_cast``: "whenever an opponent casts their second spell each
@@ -661,6 +707,10 @@ class AbilityModel(BaseModel):
     #: `ability_cost_reduction`: whose activation is discounted -- "abilities
     #: **you** activate". The *activating player*, not the permanent's
     #: controller: an opponent equipping your Equipment is their activation.
+    #:
+    #: On an **activated ability**: who may activate it -- ``"opponent"`` is
+    #: "Only your opponents may activate this ability" (Oft-Nabbed Goat),
+    #: ``"any"`` is "Any player may activate this ability" (`Ability.activated_by`).
     activated_by: str | None = None
     #: `ability_cost_reduction`: what the activation must be **aimed at** --
     #: "equip abilities you activate **that target enchanted creature**".
@@ -674,6 +724,15 @@ class AbilityModel(BaseModel):
     #: it is read when no target exists yet: a reduction applies generously
     #: there and a tax is left out, both of them being generous to the caster.
     targeting: dict[str, Any] | None = None
+    #: `ability_cost_reduction`: "**The first** activated ability you activate
+    #: **during your turn** that targets a creature you control costs {2} less"
+    #: (Professor Hojo). The discount reaches only the activator's first
+    #: activation this turn, on their own turn, that matches `affects_abilities`
+    #: and `targeting` -- counted over every such activation this turn, before
+    #: this permanent arrived included, because "the first" is a fact about the
+    #: activation and not about the static. Requires `targeting`, read on the
+    #: snapshots in `TurnLedger.targeted_activations`.
+    first_during_your_turn: bool = False
     affects_player: Literal["you", "opponent", "any"] | None = None
     #: ``cast_from_graveyard``: this permission is **flashback** -- Lier's "each
     #: instant and sorcery card in your graveyard has flashback. The flashback
@@ -1044,6 +1103,12 @@ class AbilityModel(BaseModel):
     #: Molecule Man's ``"{0}"``. Beside `affects_spells` for `warp_cost`'s
     #: reason.
     miracle_cost: str | None = None
+    #: ``grant_pay_generic_with``: the currency the filtered spells gain --
+    #: Inspiring Statuary's ``"tap_artifacts"`` (improvise). The card-level
+    #: field's three values; beside `affects_spells` for `warp_cost`'s reason.
+    pay_generic_with: (
+        Literal["tap_creatures", "tap_artifacts", "exile_from_graveyard"] | None
+    ) = None
 
 
 class ReplacementModel(BaseModel):
@@ -1122,6 +1187,21 @@ class ReplacementModel(BaseModel):
     #: payload that depended on which of two simultaneous triggers his
     #: controller happened to order first.
     amount: int | dict[str, Any] = 1
+    #: `self_enters_with_counters`: effects run **as** the permanent enters,
+    #: before its counters are counted -- Sin, Unending Cataclysm's "As Sin
+    #: enters, remove all counters from any number of artifacts, creatures, and
+    #: enchantments. Sin enters with X +1/+1 counters on it, where X is twice
+    #: the number of counters removed this way." A name an effect here binds
+    #: (``as``) is readable by `amount` with ``{"binding": ...}``, which is how
+    #: "removed this way" reaches the number the permanent enters with.
+    #:
+    #: Part of the replacement (614.1c), not a trigger: nobody receives priority
+    #: between the effects and the arrival, and the permanent is never seen
+    #: without its counters. Run just before the move by
+    #: `zones.offer_as_enters_effects`, on every route that can stop to ask; an
+    #: arrival that cannot (a token) runs none of them and binds nothing. No
+    #: targets: "as this enters" chooses, it does not target.
+    as_enters: list[dict[str, Any]] | None = None
     #: Applied only when this holds, evaluated as the permanent enters with the
     #: entering object as the source -- so `exclude_self` means "other lands you
     #: control" and counts the board the land is arriving on.  The printed
@@ -1223,6 +1303,13 @@ class CardModel(BaseModel):
     color_identity: list[str] | None = None
     targets: list[TargetModel] = Field(default_factory=list)
     spell_effects: list[dict[str, Any]] = Field(default_factory=list)
+    #: "…where X is the greatest power among creatures you controlled **as you
+    #: cast this spell**" (Lifestream's Blessing). Named value expressions
+    #: evaluated once, as the spell is put on the stack (601.2), and bound on
+    #: its stack item under those names, so `spell_effects` read them with
+    #: ``{"binding": name}`` at resolution. A creature that dies or shrinks in
+    #: response no longer changes the number.
+    as_cast: dict[str, Any] = Field(default_factory=dict)
     replacements: list[ReplacementModel] = Field(default_factory=list)
     abilities: list[AbilityModel] = Field(default_factory=list)
     #: Abilities this card grants to *another* permanent, referenced by index
@@ -1338,7 +1425,12 @@ class CardModel(BaseModel):
     #: ``"bottom"`` is "put <this card> on the bottom of its owner's library"
     #: (Ultimate Nullification): no ordinal names the bottom of a library
     #: whose size varies.
-    tucks_itself: int | Literal["bottom"] | None = None
+    #:
+    #: ``"shuffle"`` is "shuffle <this card> into its owner's library" (the
+    #: Sun's Zenith cycle): the card goes in, then that library is shuffled. A
+    #: `shuffle` op in the card's own effects runs while the card is still on
+    #: the stack, so it would shuffle the library *without* it.
+    tucks_itself: int | Literal["bottom", "shuffle"] | None = None
     #: **Overload** (702.96a): "You may cast this spell for its overload cost.
     #: If you do, change its text by replacing all instances of 'target' with
     #: 'each'." A third cast variant beside kicked and evoked, and the text
@@ -1482,7 +1574,13 @@ class CardModel(BaseModel):
     #: while casting from hand.  Subtractive where kicker is additive, and the
     #: printed mana value is unchanged: a Mulldrifter evoked is still a
     #: five-drop for anything that counts mana value.
-    evoke: str | None = None
+    #:
+    #: A mana string, or a full cost for a printed non-mana evoke (rule 702.74a
+    #: allows any cost): "Evoke--Exile a green card from your hand" is
+    #: ``{"exile_from_hand": {"colors": ["G"]}}``. The mana on the node
+    #: replaces the printed cost and the rest is paid after it (601.2g), and
+    #: either way the cast is evoked.
+    evoke: str | CostModel | None = None
     #: What to call that cost on screen. ``evoke`` is the engine's name for a
     #: general thing — an alternative mana cost offered from hand, plus a flag
     #: the card can read back — and **dash** and **blitz** are the same

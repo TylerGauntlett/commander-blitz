@@ -1,0 +1,18 @@
+{
+  "card_id": "horizon_explorer",
+  "name": "Horizon Explorer",
+  "oracle_text": "Lands you control enter untapped.\nWhenever you attack a player, create a Lander token. (It's an artifact with \"{2}, {T}, Sacrifice this token: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.\")",
+  "blocked_sentences": [
+    "Lands you control enter untapped."
+  ],
+  "needs": [
+    {
+      "capability": "enters_untapped",
+      "kind": "static_effect",
+      "what": "a static effect on one permanent, filtered by `affects` (here Land, controller you), that makes matching permanents enter the battlefield untapped however they arrive: it overrides a land's own printed self_enters_tapped replacement (no 'pay 3 life' prompt needed), a board enters_tapped static from another permanent, and an effect that puts the land onto the battlefield tapped (the Lander token's own search, fetchlands, ramp spells)",
+      "why_existing_wont_do": "The closest is the `enters_tapped` static, read by zones._apply_board_enters_tapped, which only ever sets `tapped` to True; nothing in static_effects sets it back to False or suppresses the self_enters_tapped replacement and the `tapped: true` put_onto_battlefield path in stack.py. The second line is expressible (a `you_attack` trigger with create_token `lander_token`)"
+    }
+  ],
+  "closest_existing": ["enters_tapped", "self_enters_tapped"],
+  "confidence": "high"
+}

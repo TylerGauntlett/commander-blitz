@@ -46,7 +46,6 @@
               "op": "return_from_graveyard",
               "destination": "battlefield",
               "controller": "you",
-              "host_named": true,
               "link": true,
               "objects": {
                 "attached": true,

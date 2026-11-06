@@ -107,7 +107,7 @@ test.describe("the handheld layout holds its floors", () => {
   test("the shelf's segments, precons grouped by release", async ({ page }) => {
     // The precons and imports are appended to the server's list; see
     // `stubDeckList`. Every segment is gated, because each draws different
-    // controls: the archetype filter, the release headers, the stars.
+    // controls: the release headers, the stars.
     await stubDeckList(page, [...STUB_PRECONS, ...STUB_IMPORTS]);
     await stubUpcoming(page, STUB_UPCOMING);
     await browseDecks(page);
@@ -122,7 +122,6 @@ test.describe("the handheld layout holds its floors", () => {
     await gate(page, "the precons, by release, with coming-soon shells");
 
     await page.getByTestId("source-favorite").click();
-    await expect(page.getByTestId("deck-archetype")).toHaveCount(0);
     await gate(page, "the favorites");
 
     await page.getByTestId("source-moxfield").click();

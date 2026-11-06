@@ -576,8 +576,25 @@ def build_sandbox(registry: CardRegistry, card_id: str, *, in_hand: bool = True)
         # "measurement happens before cleanup, so until-end-of-turn effects are
         # still live". Before this, Call for Aid was measured *after* its
         # control effect had worn off.
-        builder.hand(0, [card_id, "forest"])
+        #
+        # One spare per card the additional cost discards, never fewer than
+        # one: Cathartic Reunion's "discard two cards" had only one card of
+        # fodder and was unplayable here for the same reason. Every other card
+        # keeps the single Forest, so no authored `hand_size` moves.
+        builder.hand(0, [card_id, *["forest"] * spare_cards_in_hand(under_test)])
     return builder.build(advance=False)
+
+
+def spare_cards_in_hand(card: CardDef | None) -> int:
+    """How many spare Forests sit beside ``card`` in the sandbox hand.
+
+    One, unless the card's additional cost discards more than that: a card can
+    never discard itself to pay its own cost (601.2a), so "as an additional
+    cost to cast this spell, discard two cards" needs two other cards in hand.
+    """
+    if card is None or card.additional_cost is None:
+        return 1
+    return max(1, card.additional_cost.discard)
 
 
 #: The spells every card with a `kind: "spell"` target finds on the stack.
@@ -1187,9 +1204,11 @@ def _play_once(registry: CardRegistry, card: CardDef) -> list[str]:
             spell_zones.add(Zone.EXILE)
         if played.tucks_itself is not None:
             # "…put it into its owner's library seventh from the top" -- Approach
-            # of the Second Sun. The third rider to widen this set, admitted on
-            # exactly the same terms as the two above: a **declared** flag, so a
-            # spell that merely finds itself in a library still fails the gate.
+            # of the Second Sun -- and every other form of the rider: "on the
+            # bottom", and "shuffle it into its owner's library" (Black Sun's
+            # Zenith). The third rider to widen this set, admitted on exactly the
+            # same terms as the two above: a **declared** flag, so a spell that
+            # merely finds itself in a library still fails the gate.
             spell_zones.add(Zone.LIBRARY)
         if obj.zone not in spell_zones:
             return [f"{card.id} is a spell but ended in {obj.zone.value}"]
@@ -1693,6 +1712,17 @@ def _covered(card: CardDef, line: str) -> bool:
         and _claims_numbered_line(card, stripped, "annihilator", card.annihilator)
     ):
         return True
+    # "Dredge 2 (If you would draw a card, you may mill two cards instead…)" is
+    # the card-level `dredge` field, read by the draw replacement in
+    # `replacements._dredge` (702.52a) -- a replacement offered from the
+    # graveyard, so no ability on the card could honestly carry the line.
+    # Strict: the printed number must be the card's, so `dredge: 2` cannot
+    # claim a printed "Dredge 5".
+    if card.dredge:
+        bare = re.sub(r"\s*\([^)]*\)", "", stripped).strip().rstrip(".")
+        match = re.fullmatch(r"dredge (\d+)", bare.casefold())
+        if match is not None:
+            return int(match.group(1)) == card.dredge
 
     # "Kicker {1}{U}" is the cost half of a mechanic whose other half is an
     # ordinary `if`, so no ability carries this line either.
@@ -1819,7 +1849,9 @@ def _covered(card: CardDef, line: str) -> bool:
     # the "it's sacrificed when it enters" trigger it really does have.
     if card.emerge is not None and stripped.lower().startswith("emerge "):
         return True
-    if card.evoke is not None and stripped.lower().startswith("evoke "):
+    # The em dash is the non-mana spelling: "Evoke—Exile a green card from
+    # your hand." (Endurance), whose price is not a mana string.
+    if card.evoke is not None and stripped.lower().startswith(("evoke ", "evoke—", "evoke-")):
         return True
 
     # "Bestow {1}{G}" is that same card-level alternative cost once more, and

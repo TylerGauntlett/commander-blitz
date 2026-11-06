@@ -23,6 +23,13 @@ amount is always the number as the spell was cast: Monstrous Onslaught's
 "greatest power among creatures you control **as you cast this spell**" is the
 printed form of what every divided amount is. Nothing is re-read on
 resolution, and a target that became illegal loses its share (608.2b).
+
+**An announced X** reaches here as ``x``. Only the X of an additional
+``pay_life_x`` cost (Fire Covenant) may be divided: `Game._cast` announces it
+before the targets are declared (601.2b, then 601.2c), so the "any number" pick
+is capped by it. Legality, which has no X yet, caps a line at the most X the
+caster could announce. A mana {X} is announced after the targets on this
+engine's cast line, and the loader refuses dividing it.
 """
 
 from __future__ import annotations
@@ -50,19 +57,24 @@ def divided_damage(card: CardDef) -> list[Mapping[str, Any]]:
 
 
 def division_amount(
-    state: GameState, controller: int, source_oid: int, effect: Mapping[str, Any]
+    state: GameState,
+    controller: int,
+    source_oid: int,
+    effect: Mapping[str, Any],
+    *,
+    x: int = 0,
 ) -> int:
     """The damage to divide, read now -- which is as the spell is cast."""
-    ctx = EffectContext(state=state, controller=controller, source_oid=source_oid)
+    ctx = EffectContext(state=state, controller=controller, source_oid=source_oid, x=x)
     return max(0, evaluate_value(ctx, effect.get("amount", 1)))
 
 
 def division_caps(
-    state: GameState, controller: int, source_oid: int, card: CardDef
+    state: GameState, controller: int, source_oid: int, card: CardDef, *, x: int = 0
 ) -> dict[str, int]:
     """The most targets each divided spec may take: one per point of damage."""
     return {
-        str(effect["divided"]): division_amount(state, controller, source_oid, effect)
+        str(effect["divided"]): division_amount(state, controller, source_oid, effect, x=x)
         for effect in divided_damage(card)
     }
 
@@ -74,9 +86,11 @@ def fits_division(
     card: CardDef,
     specs: Sequence[TargetSpec],
     targets: Sequence[TargetRef],
+    *,
+    x: int = 0,
 ) -> bool:
     """Can every divided spec's declared targets each be dealt at least one?"""
-    caps = division_caps(state, controller, source_oid, card)
+    caps = division_caps(state, controller, source_oid, card, x=x)
     if not caps:
         return True
     declared = declared_by_spec(specs, targets)

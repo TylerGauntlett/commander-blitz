@@ -35,9 +35,10 @@ from .effects.modes import (
     record_per_turn,
     unspent,
 )
+from .effects.values import evaluate_value
 from .enums import DecisionKind, Zone
 from .events import EventType
-from .primitives import attach, attach_to_player, merge_permanents
+from .primitives import attach, attach_to_player, merge_permanents, shuffle_library
 from .structs import DelayedTrigger, StackItem, TargetRef, TriggerInstance
 from .targeting import (
     describe_ref,
@@ -50,6 +51,7 @@ from .targeting import (
 from .triggers import fire
 from .zones import (
     move_object,
+    offer_as_enters_effects,
     offer_enters_copy,
     offer_enters_costs,
     offer_enters_replacement,
@@ -174,6 +176,23 @@ def push_spell(
     obj.stack_id = item.sid
     state.stack.append(item)
     state.bump_chars()
+    if card.as_cast:
+        # "…as you cast this spell" (601.2): evaluated now, with the costs
+        # paid and the card on the stack, and never again. A creature that
+        # dies or shrinks in response changes the board, not the number.
+        # Bound on the item, so a copy carries it (707.10) and the resolving
+        # `spell_effects` read it with ``{"binding": name}``.
+        cast_ctx = EffectContext(
+            state=state,
+            controller=controller,
+            source_oid=oid,
+            x=x,
+            kicked=kicked,
+            source_name=card.name,
+            source_def_id=card.id,
+        )
+        for name, expr in card.as_cast.items():
+            item.bindings[name] = evaluate_value(cast_ctx, expr)
     announce_targets(state, item)
     return item
 
@@ -208,6 +227,10 @@ def announce_targets(state: GameState, item: StackItem) -> None:
                 card=state.card_of(target).id if target is not None else None,
                 sid=item.sid,
                 is_spell=1 if item.is_spell else 0,
+                # "…the target of an **activated** ability" (Professor Hojo):
+                # ``"activated"`` or ``"triggered"`` off the item, absent for a
+                # spell. See `TriggerSpec.targeted_by`.
+                ability_kind=item.ability_kind,
             )
         elif ref.kind == "player":
             # No object, so no permanent's trigger can be about it -- but the
@@ -221,6 +244,7 @@ def announce_targets(state: GameState, item: StackItem) -> None:
                 target_player=ref.id,
                 sid=item.sid,
                 is_spell=1 if item.is_spell else 0,
+                ability_kind=item.ability_kind,
             )
 
 
@@ -231,6 +255,7 @@ def pull_spell_off_stack(
     *,
     cause: str = "",
     by: int | None = None,
+    to_index: int | None = None,
 ) -> StackItem | None:
     """Take a spell off the stack **without countering it**, and move its card.
 
@@ -248,6 +273,8 @@ def pull_spell_off_stack(
     goes* is the only thing that varies between the effects that do this;
     everything above it -- unlinking the object, forgetting the face it was cast
     as, and a copy ceasing to exist -- is the same however far it travels.
+    ``to_index`` is `move_object`'s, for a library: ``None`` is the bottom, 0
+    the top (Endless Detour).
 
     Returns the removed :class:`StackItem`, or ``None`` when that ``sid`` is not
     a spell on the stack any more. That is not an error: targets are re-checked
@@ -277,7 +304,9 @@ def pull_spell_off_stack(
         state.objects.pop(obj.oid, None)
         state.bump_chars()
         return item
-    move_object(state, obj.oid, to_zone, to_player=obj.owner, cause=cause, by=by)
+    move_object(
+        state, obj.oid, to_zone, to_player=obj.owner, to_index=to_index, cause=cause, by=by
+    )
     return item
 
 
@@ -600,10 +629,10 @@ def _choose_each_target(
     spec = specs[0]
     if spec.one_per_player or spec.total_mana_value is not None:
         return None
-    count = target_count(state, trig.controller, spec, trig.source_oid)
+    count = target_count(state, trig.controller, spec, trig.source_oid, bindings=trig.bindings)
     if count != "any" and (not isinstance(count, int) or count < 2 or spec.optional):
         return None
-    single = replace(spec, count=1, optional=False, up_to=False)
+    single = replace(spec, count=1, optional=False, up_to=False, min_count=0)
     candidates = [
         combo[0]
         for combo in enumerate_target_tuples(
@@ -615,7 +644,11 @@ def _choose_each_target(
     if count == "any":
         floor, ceiling = 0, len(candidates)
     elif spec.up_to:
-        floor, ceiling = 0, count
+        # "One, two, or three": below the floor the ability has no legal tuple,
+        # the same call the exactly-N branch makes.
+        if len(candidates) < spec.min_count:
+            return None
+        floor, ceiling = spec.min_count, count
     else:
         # Exactly N: with fewer than N legal targets the ability cannot be put
         # on the stack with all of them, and that is the enumeration's call.
@@ -652,7 +685,7 @@ def _random_trigger_targets(
     spec, so there is no other spec to combine with and no size to ask.
     """
     count = spec.count if isinstance(spec.count, int) else 1
-    single = replace(spec, count=1, optional=False, up_to=False)
+    single = replace(spec, count=1, optional=False, up_to=False, min_count=0)
     candidates = [
         combo[0]
         for combo in enumerate_target_tuples(
@@ -836,7 +869,10 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
     # And the side of the gift promise it was cast on, for the same reason:
     # "if the gift was promised, return target creature card…" is a spec only
     # the promised cast declared, so only its refs have a bucket for it.
-    specs = card.specs_for_modes(item.modes, gift_promised=item.gift_to is not None)
+    # And the tier it paid (702.183), whose list the cast declared.
+    specs = card.specs_for_modes(
+        item.modes, gift_promised=item.gift_to is not None, cost_option=item.cost_option
+    )
     if item.fused and card.second_face is not None:
         # Both halves' targets, in the order legality offered them.
         specs = tuple(card.targets) + tuple(state.registry.get(card.second_face).targets)
@@ -1133,10 +1169,19 @@ def _place_after_resolution(
     # (Ultimate Nullification). No ordinal names the bottom of a library whose
     # size varies, and none is needed: a library move with no index appends,
     # which is the bottom.
+    #
+    # `"shuffle"` is "shuffle <this card> into its owner's library" (the Sun's
+    # Zenith cycle): the same move with no depth, then that library shuffled
+    # (701.24a). It cannot be a `shuffle` op in the card's own effects -- those
+    # run while the card is still on the stack, so the card would land on the
+    # bottom of a library already shuffled without it.
     tuck_to = None
+    shuffles_in = False
     if card.tucks_itself is not None and destination is Zone.GRAVEYARD:
         destination = Zone.LIBRARY
-        if card.tucks_itself != "bottom":
+        if card.tucks_itself == "shuffle":
+            shuffles_in = True
+        elif card.tucks_itself != "bottom":
             tuck_to = max(0, int(card.tucks_itself) - 1)
     # `granted_rebound` beside the printed flag, and the disjunction is the
     # whole of Ojer Pakpatiq's "it gains rebound": a spell that prints rebound
@@ -1195,6 +1240,7 @@ def _place_after_resolution(
         # above decides what is arriving, and riot asks about a creature.
         yield from offer_riot_choice(state, obj.oid, controller)
         yield from offer_read_ahead(state, obj.oid, controller)
+        yield from offer_as_enters_effects(state, obj.oid, controller)
     # A resolving spell's arrival is its own simultaneous event, not part of
     # whichever op last bumped the counter -- a token an ability made while this
     # spell waited is an Angel Giada's "already control" must count.
@@ -1213,6 +1259,8 @@ def _place_after_resolution(
             to_index=tuck_to,
             cause="resolved",
         )
+    if shuffles_in:
+        shuffle_library(state, obj.owner)
     if obj.pending_face_down and destination is Zone.BATTLEFIELD:
         # Morph. Marked after the move for `cast_transformed`'s reason:
         # `reset_permanent_state` clears it on the way onto the battlefield,

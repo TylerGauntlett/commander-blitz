@@ -1,0 +1,84 @@
+{
+  "_comment": "Shapes for tests/unit/triggers/test_becomes_target_of_activated_ability.py. `t_hojo_drawer` is Professor Hojo's second line alone -- `targeted_by: \"activated_ability\"` over creatures you control, once each turn. `t_hojo_wide_drawer` is the same line spelled with the `ability` arm, the near miss that also draws off a triggered ability. `t_enter_tapper` is an opponent's creature whose enters trigger taps a creature its controller's opponent controls, the triggered ability that must not fire Hojo.",
+  "cards": [
+    {
+      "id": "t_hojo_drawer",
+      "name": "Test Hojo Drawer",
+      "oracle_text": "Whenever one or more creatures you control become the target of an activated ability, draw a card. This ability triggers only once each turn.",
+      "mana_cost": "{1}{U}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Scientist"],
+      "power": 1,
+      "toughness": 3,
+      "colors": ["U", "B"],
+      "color_identity": ["U", "B"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever one or more creatures you control become the target of an activated ability, draw a card. This ability triggers only once each turn.",
+          "trigger": {
+            "event": "becomes_target",
+            "controller": "any",
+            "filter": {"controller": "you", "types": ["Creature"]},
+            "targeted_by": "activated_ability",
+            "max_per_turn": 1
+          },
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_hojo_wide_drawer",
+      "name": "Test Hojo Wide Drawer",
+      "oracle_text": "Whenever one or more creatures you control become the target of an ability, draw a card. This ability triggers only once each turn.",
+      "mana_cost": "{1}{U}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Scientist"],
+      "power": 1,
+      "toughness": 3,
+      "colors": ["U", "B"],
+      "color_identity": ["U", "B"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever one or more creatures you control become the target of an ability, draw a card. This ability triggers only once each turn.",
+          "trigger": {
+            "event": "becomes_target",
+            "controller": "any",
+            "filter": {"controller": "you", "types": ["Creature"]},
+            "targeted_by": "ability",
+            "max_per_turn": 1
+          },
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_enter_tapper",
+      "name": "Test Enter Tapper",
+      "oracle_text": "When this creature enters, tap target creature an opponent controls.",
+      "mana_cost": "{U}",
+      "types": ["Creature"],
+      "subtypes": ["Merfolk"],
+      "power": 1,
+      "toughness": 1,
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature enters, tap target creature an opponent controls.",
+          "trigger": {"event": "self_enters", "source": "self"},
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {"zone": "battlefield", "controller": "opponent", "types": ["Creature"]}
+            }
+          ],
+          "effects": [{"op": "tap", "objects": {"target": "t1"}}]
+        }
+      ]
+    }
+  ]
+}

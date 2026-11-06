@@ -1,0 +1,23 @@
+{
+  "card_id": "loamcrafter_faun",
+  "name": "Loamcrafter Faun",
+  "oracle_text": "When this creature enters, you may discard one or more land cards. When you do, return up to that many target nonland permanent cards from your graveyard to your hand.",
+  "blocked_sentences": [
+    "When this creature enters, you may discard one or more land cards. When you do, return up to that many target nonland permanent cards from your graveyard to your hand."
+  ],
+  "needs": [
+    {
+      "capability": "filtered_discard",
+      "kind": "op",
+      "what": "a `selector` (card filter over the discarding player's hand, here `{\"types\": [\"Land\"]}`) on the `discard` effect op, so a resolving ability can say \"you may discard one or more land cards\": only matching cards are offered, any number from 0 (up_to, read with `cards_in_hand`-style ceiling over the matching cards) and they are discarded simultaneously as one discard event, recorded by `as` so a following `reflexive_trigger` can set its target `count` to `{\"count\": {\"binding\": ...}}` with `up_to`",
+      "why_existing_wont_do": "op_discard takes only amount, as, player, random, up_to and whole_hand and offers the player's whole hand to `ask_objects`, so a nonland card could be discarded and counted toward \"that many\". The cost key `discard` + `discard_selector` does filter to lands, but it is a fixed count, so a `may` with `pay` cannot express \"one or more\"; looping a one-card `may pay` via `repeat_while` would discard the lands as separate events (a batched \"whenever you discard one or more land cards\" trigger such as Doctor Doom's would fire once per land) and is an approximation."
+    }
+  ],
+  "closest_existing": [
+    "discard",
+    "discard_selector",
+    "may",
+    "reflexive_trigger"
+  ],
+  "confidence": "high"
+}

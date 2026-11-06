@@ -16,10 +16,12 @@ from .player_statics import colorless_instead_players, retained_mana_by_player
 from .rng import Rng
 from .structs import (
     AttackRestriction,
+    AttackTax,
     BlockProhibition,
     CastLock,
     CombatFog,
     CombatState,
+    CountersPut,
     DamageRedirect,
     DamageShield,
     DelayedTrigger,
@@ -32,6 +34,7 @@ from .structs import (
     PlayerProtection,
     SacrificeRestriction,
     StackItem,
+    TokenMultiplier,
     TriggerInstance,
     TurnLedger,
     Unblockable,
@@ -442,6 +445,11 @@ class GameState:
     #: `outcome_locks`, installed by the same Instant and swept in the same
     #: cleanup step, and read only by `primitives.damage_player`.
     life_floors: list[LifeFloor] = field(default_factory=list)
+    #: "Until end of turn, if one or more tokens would be created under your
+    #: control, twice that many of those tokens are created instead" -- see
+    #: :class:`structs.TokenMultiplier`. Swept in the cleanup step with
+    #: `life_floors`, and read only by `primitives._token_creation_plan`.
+    token_multipliers: list[TokenMultiplier] = field(default_factory=list)
     #: "Until your next turn, you may cast sorcery spells as though they had
     #: flash" -- see :class:`structs.FlashPermission`. Read by
     #: `casting._timing_ok`; empty in every game that plays none of these.
@@ -455,6 +463,11 @@ class GameState:
     #: the empty list -- which is what it is in every game that plays none of
     #: these cards, and this one is read on every legality build.
     cast_locks: list[CastLock] = field(default_factory=list)
+    #: "Until your next turn, creatures can't attack you unless their
+    #: controller pays {2} for each of those creatures" -- see
+    #: :class:`structs.AttackTax`. The timed table beside `cast_locks`, on the
+    #: same clock, read by `player_statics.attack_tax` beside the static taxes.
+    attack_taxes: list[AttackTax] = field(default_factory=list)
     #: "You can't sacrifice those creatures this turn" -- see
     #: :class:`structs.SacrificeRestriction`.
     #:
@@ -601,6 +614,27 @@ class GameState:
                 # the legend rule (704.5j) never pairs it with its original.
                 copied = replace(
                     copied, supertypes=copied.supertypes - obj.copying_remove_supertypes
+                )
+            if obj.copying_add_types:
+                # "…except it's an artifact in addition to its other types"
+                # (Phyrexian Metamorph): on the copied face, so the copy is an
+                # artifact before any layer and to every reader.
+                copied = replace(copied, types=copied.types | obj.copying_add_types)
+            if obj.copying_own_abilities:
+                # "…and it has vigilance **and this ability**" (Kimahri,
+                # Valiant Guardian): the permanent's own printed abilities,
+                # carried onto the copied face (707.9b). Appended, so every
+                # index the copied card prints keeps meaning what it printed,
+                # and renumbered so `Ability.index` agrees with its seat.
+                own = self.registry.get(obj.def_id).abilities
+                kept = [own[i] for i in obj.copying_own_abilities if 0 <= i < len(own)]
+                base = len(copied.abilities)
+                copied = replace(
+                    copied,
+                    abilities=copied.abilities
+                    + tuple(
+                        replace(ability, index=base + k) for k, ability in enumerate(kept)
+                    ),
                 )
             if obj.renamed_to is not None:
                 copied = replace(copied, name=obj.renamed_to)
@@ -876,6 +910,24 @@ class GameState:
             if oid is not None:
                 taps = ledger.taps_by_permanent
                 taps[int(oid)] = taps.get(int(oid), 0) + 1
+        elif event.type == EventType.COUNTER_PLACED:
+            # "…if you put a counter on a creature this turn" (Lasting
+            # Tarfire). Both emitters -- `add_counters` and the enters-with
+            # report (122.6) -- fire while the permanent is on the battlefield
+            # with its counters already written, so its derived types here are
+            # the ones it had as the counter arrived.
+            oid = data.get("oid")
+            put_by = data.get("put_by")
+            if oid is not None and put_by is not None and int(oid) in self.objects:
+                ledger.counters_put.append(
+                    CountersPut(
+                        put_by=int(put_by),
+                        counter=str(data.get("counter", "")),
+                        amount=int(data.get("amount", 0)),
+                        types=frozenset(chars(self, int(oid)).types),
+                        oid=int(oid),
+                    )
+                )
         elif event.type == EventType.ENTERS_BATTLEFIELD:
             # "…if another Human entered the battlefield under your control this
             # turn." Snapshotted here rather than counted, because the question
@@ -942,7 +994,16 @@ class GameState:
             # is cast the attacker may be dead, bounced, or no longer a Faerie.
             attacker = data.get("source") or event.source
             if attacker is not None and attacker in self.objects:
-                ledger.combat_damage_types.update(chars(self, attacker).subtypes)
+                subtypes = chars(self, attacker).subtypes
+                ledger.combat_damage_types.update(subtypes)
+                # "…dealt combat damage by Estinien Varlineau or a Dragon": the
+                # same subtypes at the same moment, but per seat, so the
+                # opponents can be counted after the Dragon has gone.
+                if pid is not None:
+                    for subtype in subtypes:
+                        ledger.players_dealt_combat_damage_by_subtype.setdefault(
+                            subtype, set()
+                        ).add(pid)
             # Steel Hellkite's "whose controller was dealt combat damage by this
             # creature this turn": which seat, by which object. `player` is the
             # seat that was dealt it.
@@ -1022,6 +1083,10 @@ class GameState:
                 ledger.players_attacked_by.pop(data.get("oid"), None)
                 ledger.attacks_by_creature.pop(data.get("oid"), None)
                 ledger.taps_by_permanent.pop(data.get("oid"), None)
+                ledger.counters_put[:] = [
+                    replace(put, oid=None) if put.oid == data.get("oid") else put
+                    for put in ledger.counters_put
+                ]
             if data.get("to") == Zone.GRAVEYARD.value and obj is not None and not obj.is_token:
                 ledger.cards_to_graveyard += 1
             # Gravestorm's count, and the token is *in* it: the token

@@ -193,11 +193,15 @@ export function CardFace({ card, variant = "board", art: chosen }: Props) {
             // are images too and they live inside this same box, so `.face__art
             // img` stopped meaning "the illustration" the moment the symbols
             // became real artwork.
+            // `draggable={false}`: an `<img>` is natively draggable, and a
+            // native drag cancels the pointer stream mid-gesture, so dragging a
+            // hand card by its picture -- most of the card -- sprang it back.
             <img
               className="face__art-img"
               src={art}
               alt=""
               loading="lazy"
+              draggable={false}
               onError={() => setBroken(true)}
             />
           ) : (

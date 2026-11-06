@@ -1,0 +1,50 @@
+{
+  "_comment": "Witnesses for tests/unit/casting/test_playable_attacked_with_commander.py.",
+  "cards": [
+    {
+      "id": "t_cmdr_impulse",
+      "name": "Test Commander Impulse",
+      "oracle_text": "Exile the top two cards of your library. During any turn you attacked with a commander, you may play those cards.",
+      "mana_cost": "{R}",
+      "types": ["Sorcery"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "spell_effects": [
+        {
+          "op": "look_at_top",
+          "player": "you",
+          "amount": {"const": 2},
+          "objects": {"count": "all"},
+          "destination": "exile",
+          "playable": "while_exiled",
+          "playable_condition": "you_attacked_with_a_commander"
+        }
+      ]
+    },
+    {
+      "id": "t_cmdr_exile_impulse",
+      "name": "Test Commander Exile Impulse",
+      "oracle_text": "Exile target card from a graveyard. During any turn you attacked with a commander, you may play it.",
+      "mana_cost": "{R}",
+      "types": ["Sorcery"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "spell_effects": [
+        {
+          "op": "exile",
+          "objects": {"zone": "graveyard", "controller": "you"},
+          "playable": "while_exiled",
+          "playable_condition": "you_attacked_with_a_commander"
+        }
+      ]
+    },
+    {
+      "id": "t_cmdr_free_gift",
+      "name": "Test Commander Free Gift",
+      "oracle_text": "You gain 1 life.",
+      "mana_cost": "{0}",
+      "types": ["Instant"],
+      "spell_effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+    }
+  ]
+}

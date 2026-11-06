@@ -732,6 +732,31 @@
   color: var(--text-dim);
 }
 
+.ctrl__diag {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+}
+
+.ctrl__diagrow {
+  display: grid;
+  grid-template-columns: 12ch minmax(0, 1fr);
+  gap: 12px;
+  font-size: 16px;
+}
+
+.ctrl__diagrow dt {
+  color: var(--text-dim);
+}
+
+.ctrl__diagrow dd {
+  margin: 0;
+  /* Numbers and a tag string: monospace keeps two screenshots comparable. */
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
 .ctrl__foot {
   margin: 0;
   padding-top: 14px;

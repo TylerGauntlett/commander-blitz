@@ -1,0 +1,42 @@
+{
+  "_comment": "Shapes for tests/unit/combat/test_opponents_dealt_combat_damage.py. t_odc_render is Mindblade Render's line: a creatures_deal_combat_damage trigger with controller any, defending opponent (unsplit, so once per batch) and a Warrior filter asked only of the creatures that hit an opponent. t_odc_warrior is the body the filter names; t_bcd_elf (batched_combat_damage.cards.json) is the one it does not.",
+  "cards": [
+    {
+      "id": "t_odc_warrior",
+      "name": "Test Render Warrior",
+      "oracle_text": "",
+      "mana_cost": "{1}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Warrior"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "power": 2,
+      "toughness": 2
+    },
+    {
+      "id": "t_odc_render",
+      "name": "Test Mind Render",
+      "oracle_text": "Whenever your opponents are dealt combat damage, if any of that damage was dealt by a Warrior, you draw a card and you lose 1 life.",
+      "mana_cost": "{2}{B}",
+      "types": ["Enchantment"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever your opponents are dealt combat damage, if any of that damage was dealt by a Warrior, you draw a card and you lose 1 life.",
+          "trigger": {
+            "event": "creatures_deal_combat_damage",
+            "controller": "any",
+            "defending": "opponent",
+            "filter": {"subtypes": ["Warrior"]}
+          },
+          "effects": [
+            {"op": "draw", "player": "you", "amount": {"const": 1}},
+            {"op": "lose_life", "player": "you", "amount": {"const": 1}}
+          ]
+        }
+      ]
+    }
+  ]
+}

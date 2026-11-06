@@ -83,7 +83,8 @@
 
 .mull__lamps {
   position: absolute;
-  right: calc(40px * var(--mu));
+  /* Clear of a side status bar, as `.track` is; see there. */
+  right: calc(40px * var(--mu) + var(--safe-r));
   top: calc(26px * var(--mu));
   z-index: 5;
   display: flex;
@@ -92,6 +93,11 @@
   height: 44px;
   color: var(--text-dim);
   font-size: max(var(--type-floor), calc(16px * var(--mu)));
+}
+
+/* The phone pads the whole table by the insets already (`phone.css`). */
+[data-layout="phone"] .mull__lamps {
+  right: calc(40px * var(--mu));
 }
 
 .mull__lampsRow {

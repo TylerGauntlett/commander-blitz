@@ -6,6 +6,7 @@ import {
   blockableBy,
   canDropOnLane,
   defendersFor,
+  dropPlays,
   dropTargets,
   groupPlayActions,
   isOurDecision,
@@ -72,6 +73,34 @@ describe("canDropOnLane", () => {
   it("refuses a card that is not in hand", () => {
     const actions = [action({ id: "a1", kind: "cast", source_oid: 77 })];
     expect(canDropOnLane(state, actions, 77, "Creatures")).toBe(false);
+  });
+});
+
+describe("dropPlays", () => {
+  const state = stateWithHand();
+  const land = [action({ id: "a2", kind: "play_land", source_oid: 11 })];
+
+  it("plays a land let go over ANY of your lanes, not only the land row", () => {
+    for (const lane of LANES) expect(dropPlays(state, land, 11, `lane:0:${lane}`)).toBe(true);
+  });
+
+  it("plays a card let go over the rest of your board, the seat panel included", () => {
+    expect(dropPlays(state, land, 11, "board:0")).toBe(true);
+  });
+
+  it("refuses somebody else's board", () => {
+    expect(dropPlays(state, land, 11, "lane:1:Lands")).toBe(false);
+    expect(dropPlays(state, land, 11, "board:1")).toBe(false);
+  });
+
+  it("refuses a card with no legal play, or one not in hand", () => {
+    expect(dropPlays(state, [], 11, "board:0")).toBe(false);
+    const stray = [action({ id: "a1", kind: "cast", source_oid: 77 })];
+    expect(dropPlays(state, stray, 77, "board:0")).toBe(false);
+  });
+
+  it("refuses a zone that is not a board", () => {
+    expect(dropPlays(state, land, 11, "pile:0:graveyard")).toBe(false);
   });
 });
 

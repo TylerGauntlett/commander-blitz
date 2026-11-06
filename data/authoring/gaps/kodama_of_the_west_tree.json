@@ -1,0 +1,18 @@
+{
+  "card_id": "kodama_of_the_west_tree",
+  "name": "Kodama of the West Tree",
+  "oracle_text": "Reach\nModified creatures you control have trample. (Equipment, Auras you control, and counters are modifications.)\nWhenever a modified creature you control deals combat damage to a player, search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
+  "blocked_sentences": [
+    "Whenever a modified creature you control deals combat damage to a player, search your library for a basic land card, put it onto the battlefield tapped, then shuffle."
+  ],
+  "needs": [
+    {
+      "capability": "modified",
+      "kind": "selector",
+      "what": "the `modified` key (true: has a counter, is equipped, or is enchanted by an Aura its controller controls) accepted in a trigger `filter`, so a `deals_combat_damage_to_player` trigger with filter {controller: you, types: [Creature], modified: true} fires only for a creature that is modified when it deals the damage",
+      "why_existing_wont_do": "`modified` is in selector_keys and static_affects_filter_keys (so the trample line is expressible), but not in trigger_filter_keys / engine.triggers.TRIGGER_FILTER_KEYS, which the loader enforces. An any_of of has_counters and enchanted_by in the trigger filter misses the equipped limb (`equipped` is not a trigger filter key either; `attached` means attached to the ability's source). Moving the test into the trigger's `condition` as an `exists` over the subject binding makes it an intervening-if that is rechecked on resolution, so a creature that loses its counter or Equipment before resolution would wrongly find no land -- a different card."
+    }
+  ],
+  "closest_existing": ["has_counters", "enchanted_by", "modified"],
+  "confidence": "high"
+}

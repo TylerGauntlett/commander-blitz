@@ -25,8 +25,9 @@ ENTERS_BATTLEFIELD goes out. The enchant clause is the Aura's first target spec,
 read for the player it enters under. It is **not targeting**: hexproof and
 shroud do not narrow the choice; protection does, because a permanent with
 protection can't be *enchanted* by an Aura with that quality (702.16c).
-``host_named`` on the arrival op is an effect that names the host itself, with
-a following `attach` ("…attached to that token", Forum Filibuster).
+``host_named`` on the arrival op is an effect that names the host itself
+("…attached to that token", Forum Filibuster); `test_aura_named_host_check.py`
+holds that host to the same clause.
 
 The witnesses are Songbirds' Blessing (reveal_until), Armored Skyhunter
 (look_at_top), Ghoulish Impetus and Screams from Within (return_from_graveyard).
@@ -302,19 +303,14 @@ class TestTheHostNamedByTheEffect:
         {
             "op": "return_from_graveyard",
             "destination": "battlefield",
-            "host_named": True,
+            "host_named": {"zone": "battlefield", "types": ["Creature"], "controller": "opponent"},
             "objects": {"zone": "graveyard", "subtypes": ["Aura"], "count": 1},
-        },
-        {
-            "op": "attach",
-            "attachment": {"zone": "battlefield", "subtypes": ["Aura"]},
-            "objects": {"zone": "battlefield", "types": ["Creature"], "controller": "opponent"},
         },
     ]
 
-    def test_host_named_asks_nothing_and_the_attach_decides(self, builder):
-        """"…to the battlefield attached to that token": 303.4f does not apply,
-        so the only host question is the `attach` op's."""
+    def test_host_named_asks_nothing(self, builder):
+        """"…to the battlefield attached to that token": the effect names the
+        host, so 303.4f's choice is not asked."""
         game = position(builder, mine=[BEAR], theirs=[BEAR], graveyard=[AURA])
         theirs = only_oid(game, BEAR, 1)
 

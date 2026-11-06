@@ -1,0 +1,20 @@
+{
+  "card_id": "selvala_s_stampede",
+  "name": "Selvala's Stampede",
+  "oracle_text": "Council's dilemma — Starting with you, each player votes for wild or free. Reveal cards from the top of your library until you reveal a creature card for each wild vote. Put those creature cards onto the battlefield, then shuffle the rest into your library. You may put a permanent card from your hand onto the battlefield for each free vote.",
+  "blocked_sentences": [
+    "Council's dilemma — Starting with you, each player votes for wild or free.",
+    "Reveal cards from the top of your library until you reveal a creature card for each wild vote.",
+    "You may put a permanent card from your hand onto the battlefield for each free vote."
+  ],
+  "needs": [
+    {
+      "capability": "council_s_dilemma",
+      "kind": "decision",
+      "what": "a voting op: starting with the controller and proceeding in turn order, each player publicly chooses one of N named options (here 'wild' or 'free'); the op binds the tally per option (e.g. as: 'votes' giving {binding: 'votes.wild'} / {binding: 'votes.free'}) so later effects in the same spell can use each count as an amount -- here reveal_until's creature count and a repeated optional put-from-hand of a permanent card",
+      "why_existing_wont_do": "value_keys has no vote count and no op in reference casts a vote; choose_mode is one chooser picking modes, and for_each_player + choose_mode cannot accumulate a per-option tally into a value. join_forces pools mana payments, not choices. Once the tally exists, the rest looks expressible: reveal_until with amount {binding: votes.wild}, selector Creature, destination battlefield, shuffle_rest; and repeat over {binding: votes.free} of a may put_onto_battlefield of a permanent card from hand"
+    }
+  ],
+  "closest_existing": ["choose_mode", "for_each_player", "join_forces"],
+  "confidence": "high"
+}

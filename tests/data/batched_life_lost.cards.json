@@ -1,0 +1,82 @@
+{
+  "_comment": "Cards that exist only for the batched life-lost trigger test (tests/unit/triggers/test_batched_life_lost.py). Never part of a deck list. `t_bll_tally` is Emet-Selch of the Third Seat's trigger, 'whenever one or more opponents lose life', counting its firings as charge counters; `t_bll_greedy_tally` is the same trigger WITHOUT `batched`, and is the counterfactual that fires once per opponent.",
+  "cards": [
+    {
+      "id": "t_bll_tally",
+      "name": "Test One-or-More Life Tally",
+      "oracle_text": "Whenever one or more opponents lose life, put a charge counter on this enchantment.",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever one or more opponents lose life, put a charge counter on this enchantment.",
+          "trigger": {
+            "event": "life_lost",
+            "controller": "opponent",
+            "batched": true
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "charge",
+              "amount": {
+                "const": 1
+              },
+              "objects": {
+                "zone": "battlefield",
+                "self_only": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_bll_greedy_tally",
+      "name": "Test Greedy Life Tally",
+      "oracle_text": "Whenever an opponent loses life, put a charge counter on this enchantment.",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever an opponent loses life, put a charge counter on this enchantment.",
+          "trigger": {
+            "event": "life_lost",
+            "controller": "opponent"
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "charge",
+              "amount": {
+                "const": 1
+              },
+              "objects": {
+                "zone": "battlefield",
+                "self_only": true
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

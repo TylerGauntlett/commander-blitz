@@ -37,6 +37,7 @@ def _compile_targets(
     mana_cost: str | None = None,
     has_kicker: bool = False,
     has_gift: bool = False,
+    cost_options: int = 0,
 ) -> tuple[TargetSpec, ...]:
     """Compile a card's or ability's target list, with the one ordering rule.
 
@@ -193,16 +194,27 @@ def _compile_targets(
                 f"names a choice that can never be made"
             )
     _check_gift_targets(specs, where, on_spell=on_spell, has_gift=has_gift)
+    _check_tier_targets(specs, where, on_spell=on_spell, cost_options=cost_options)
     fixed = [spec for spec in specs if spec.mode is None]
-    # A gift-gated card declares one of two lists, and the ordering rule is
-    # about the refs one cast stores -- so each list has to satisfy it, not
-    # the printed union, which no cast ever declares.
+    # A gift-gated or tiered card declares one of several lists, and the
+    # ordering rule is about the refs one cast stores -- so each list has to
+    # satisfy it, not the printed union, which no cast ever declares.
     gated = any(spec.gift_promised is not None for spec in fixed)
-    for promised in (False, True) if gated else (None,):
+    tiered = any(spec.cost_option is not None for spec in fixed)
+    sides = (
+        [("gift", False), ("gift", True)]
+        if gated
+        else [("tier", n) for n in range(cost_options)]
+        if tiered
+        else [(None, None)]
+    )
+    for gate, side in sides:
         declared = [
             spec
             for spec in fixed
-            if promised is None or spec.gift_promised in (None, promised)
+            if gate is None
+            or (gate == "gift" and spec.gift_promised in (None, side))
+            or (gate == "tier" and spec.cost_option in (None, side))
         ]
         variable = [i for i, spec in enumerate(declared) if spec.variable_size]
         if len(variable) > 1:
@@ -263,6 +275,47 @@ def _check_gift_targets(
             )
 
 
+def _check_tier_targets(
+    specs: tuple[TargetSpec, ...], where: str, *, on_spell: bool, cost_options: int
+) -> None:
+    """Every restriction on a target's ``cost_option``, each a card that would
+    load wrong.
+
+    Legal at all because Tiered (702.183) chooses the tier as an additional
+    cost at 601.2b, one step before 601.2c declares the targets. Each refusal
+    is a place with no such cast, or a spelling naming a tier the card lacks.
+    """
+    for spec in specs:
+        if spec.cost_option is None:
+            continue
+        label = f"{where}.target[{spec.id}]"
+        if not on_spell:
+            raise DslError(
+                f"{label}: 'cost_option' is about a cast, and an ability's "
+                f"targets are declared without one"
+            )
+        if not 0 <= spec.cost_option < cost_options:
+            raise DslError(
+                f"{label}: cost option {spec.cost_option} does not exist -- the card "
+                f"offers {cost_options} 'additional_cost_options'"
+            )
+        if spec.mode is not None:
+            raise DslError(
+                f"{label}: a mode-owned target cannot also be owned by a "
+                f"'cost_option' -- the two choices would each decide it"
+            )
+        if spec.gift_promised is not None:
+            raise DslError(
+                f"{label}: 'cost_option' and 'gift_promised' on one card are two "
+                f"cast-time target lists -- no printing does it"
+            )
+        if spec.count_if_kicked is not None:
+            raise DslError(
+                f"{label}: 'cost_option' and 'count_if_kicked' on one target "
+                f"are two cast-time choices sizing one spec -- no printing does it"
+            )
+
+
 def _check_mode_targets(
     specs: tuple[TargetSpec, ...],
     where: str,
@@ -308,25 +361,68 @@ def _check_mode_targets(
             raise DslError(
                 f"{label}: mode {spec.mode} does not exist -- the card offers {mode_count}"
             )
-        if spec.variable_size:
+        if spec.variable_size and not isinstance(spec.count, int) and spec.count != "any":
             raise DslError(
-                f"{label}: a mode-owned target must be a fixed number -- "
-                f"`filter_legal` splits the stored refs by position and a "
-                f"caster-chosen size inside a mode leaves no way to say where "
-                f"the next mode's refs begin"
+                f"{label}: a mode-owned target's size must be printed -- a "
+                f"literal 'count' (with 'up_to' and 'min_count' if the caster "
+                f"picks how many) or 'any'; a computed count has no cast-time "
+                f"value to read"
             )
-        if spec.optional:
+        if spec.variable_size and (
+            spec.one_per_player or spec.total_mana_value is not None
+        ):
             raise DslError(
-                f"{label}: a mode-owned target cannot be 'optional' -- "
-                f"declining it is declining the mode, and 601.2b already says "
-                f"a mode with no legal target cannot be chosen"
+                f"{label}: a caster-sized mode-owned target cannot carry "
+                f"'one_per_player' or 'total_mana_value' -- the mode's targets "
+                f"are asked one spec at a time, with no check between the picks"
             )
+        if (spec.optional or spec.variable_size) and not _ends_every_declaration(
+            spec, owned
+        ):
+            # "This creature fights **up to one** target creature an opponent
+            # controls" (Summon: Magus Sisters), "return **one or two** target
+            # permanent cards" (Yuna's Decision): a declined optional stores no
+            # ref and a caster-sized spec stores as many as were picked, and
+            # `filter_legal` splits the stored refs by position, so a spec
+            # declared after either would read nothing back -- or the wrong
+            # thing. Last in every list a cast or trigger can declare, it
+            # swallows only its own refs, as a card-level variable-size spec
+            # at the end of its list does.
+            raise DslError(
+                f"{label}: an 'optional' or variable-size mode-owned target must "
+                f"be the last target declared -- the last spec of its mode, with "
+                f"no later mode owning a target -- or the refs after it land in "
+                f"the wrong bucket"
+            )
+    if any(spec.optional for spec in specs if spec.mode is None):
+        raise DslError(
+            f"{where}: a card-level 'optional' target cannot share a card with a "
+            f"mode-owned one -- the mode's refs are stored after it, and a "
+            f"declined card-level target shifts them into its bucket"
+        )
     if any(spec.variable_size for spec in specs if spec.mode is None):
         raise DslError(
             f"{where}: a card-level variable-size target cannot share a card "
             f"with a mode-owned one -- the mode's refs are stored after it, and "
             f"a caster-chosen size in front of them makes the split ambiguous"
         )
+
+
+def _ends_every_declaration(spec: TargetSpec, owned: list[TargetSpec]) -> bool:
+    """Is ``spec`` the last ref-storing spec of every list it is declared in?
+
+    `CardDef.specs_for_modes` lays a declaration out as the card-level specs,
+    then each chosen mode's specs in ascending mode index. A spec whose stored
+    size is not fixed reads back
+    correctly only when nothing is declared after it, and that holds for every
+    choice of modes exactly when it is the last spec of its own mode and no
+    later mode owns a target.  Declinable (`optional`) and caster-sized
+    (`variable_size`) specs are both of that kind.
+    """
+    assert spec.mode is not None
+    later = [o for o in owned if o.mode is not None and o.mode > spec.mode]
+    own = [o for o in owned if o.mode == spec.mode]
+    return not later and own[-1] is spec
 
 
 def _reads_context(node: Any) -> bool:
@@ -345,7 +441,7 @@ def _check_permanent_selector(model: TargetModel, label: str) -> None:
     somewhere the rest of the targeting layer does not look.
     """
     sub = model.permanent_selector or {}
-    if model.kind != "spell_or_permanent":
+    if model.kind not in ("spell_or_permanent", "spell_permanent_or_graveyard_card"):
         # Every other kind has one pool and one selector; a second would be
         # accepted and ignored.
         raise DslError(
@@ -476,6 +572,13 @@ def _compile_target(
         )
     if model.kind == "card_in_exile" and zone not in (None, "exile"):
         raise DslError(f"{label}: a 'card_in_exile' target is in exile, not in {zone!r}")
+    if model.kind == "spell_permanent_or_graveyard_card" and zone is not None:
+        # The kind names its three zones, and each half supplies its own; a
+        # `zone` here would be overwritten in every one of them.
+        raise DslError(
+            f"{label}: a 'spell_permanent_or_graveyard_card' target spans the "
+            f"stack, the battlefield and every graveyard, so it takes no 'zone'"
+        )
     if model.kind == "card_in_graveyard" and zone not in (None, "graveyard"):
         raise DslError(f"{label}: a 'card_in_graveyard' target is in a graveyard, not in {zone!r}")
     if isinstance(model.count, dict):
@@ -500,6 +603,21 @@ def _compile_target(
                     f"{label}: 'up to one target' is 'optional': true -- "
                     f"'up_to' is for a ceiling above one"
                 )
+    if model.min_count:
+        # "One, two, or three": a floor is only meaningful under a ceiling the
+        # caster picks below. Without `up_to` the count is already exact, and a
+        # floor at or above the ceiling is just that exact count spelled twice.
+        if not model.up_to or not isinstance(model.count, int):
+            raise DslError(
+                f"{label}: 'min_count' is the floor of an 'up_to' with a literal "
+                f"'count' -- 'one, two, or three' is count 3, up_to, min_count 1"
+            )
+        if not 1 <= model.min_count < model.count:
+            raise DslError(
+                f"{label}: 'min_count' {model.min_count} must be at least 1 and "
+                f"below the ceiling {model.count} -- at the ceiling it is a plain "
+                f"'count' with no 'up_to'"
+            )
     return TargetSpec(
         id=model.id,
         kind=model.kind,
@@ -514,11 +632,13 @@ def _compile_target(
             else model.count_if_kicked
         ),
         up_to=model.up_to,
+        min_count=model.min_count,
         one_per_player=model.one_per_player,
         optional=model.optional,
         total_mana_value=model.total_mana_value,
         mode=model.mode,
         gift_promised=model.gift_promised,
+        cost_option=model.cost_option,
     )
 
 

@@ -28,7 +28,10 @@ from ..zones import exile, move_object
 from .board_helpers import (
     _players,
 )
-from .context import EffectContext, ask_yes_no
+from .context import EffectContext, ask_objects, ask_x, ask_yes_no
+from .counter_removal import remove_counters_one_at_a_time
+from .ops_cards import cast_copy_paying
+from .ops_characteristics import source_bound_seat
 from .registry import register
 from .selectors import (
     choose_objects,
@@ -248,6 +251,62 @@ def op_distribute_counters(ctx: EffectContext, spec: Mapping[str, Any]):
     yield from ()
 
 
+@register("distribute_moved_counters")
+def op_distribute_moved_counters(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "You may move any number of +1/+1 counters from this creature onto
+    other creatures." -- Forgotten Ancient.
+
+    A choice made **while the effect is applied** (608.2d), not a division
+    announced on the stack: nothing is targeted, so 601.2d -- which 603.3d
+    applies to a trigger as it is put on the stack -- has no targets to divide
+    among and nothing to announce. On resolution the controller says how many
+    counters move (`ask_x`, 0 up to every ``counter`` on this permanent; 0 is
+    the "you may" declined), then which of the ``objects`` gets each one, one
+    counter at a time (`ask_objects`, purpose ``distribute``, the question
+    `distribute_counters` asks on activation). A creature never picked gets
+    none, so every split is reachable.
+
+    The counters come off this permanent once and each creature's share goes
+    on in **one** placement, so a Hardened Scales adds one per creature and a
+    "whenever counters are put" trigger fires once per creature -- the reason
+    this is not a repeated one-counter `move_counters`. Not `move_counters`
+    either, which puts the same amount on every destination, and not
+    `distribute_counters`, which only adds and needs targets. With this
+    permanent gone, or no counter on it, nothing is asked.
+    """
+    kind = str(spec.get("counter", "+1/+1"))
+    source_oid = ctx.source_oid
+    source = ctx.state.objects.get(source_oid) if source_oid is not None else None
+    if source is None or not source.on_battlefield:
+        return
+    available = source.counter(kind)
+    pool = [oid for oid in resolve_pool(ctx, spec.get("objects")) if oid != source_oid]
+    if available <= 0 or not pool:
+        return
+    name = ctx.source_name or "this permanent"
+    total = yield from ask_x(
+        ctx, f"Move how many {kind} counters from {name}?", available, ctx.controller
+    )
+    if total <= 0:
+        return
+    shares: dict[int, int] = {}
+    for left in range(total, 0, -1):
+        picked = yield from ask_objects(
+            ctx,
+            f"Move a {kind} counter from {name} onto which creature? ({left} left)",
+            pool,
+            1,
+            1,
+            ctx.controller,
+            "distribute",
+        )
+        oid = picked[0] if picked else pool[0]
+        shares[oid] = shares.get(oid, 0) + 1
+    remove_counters(ctx.state, source_oid, kind, min(total, source.counter(kind)))
+    for oid, share in shares.items():
+        add_counters(ctx.state, oid, kind, share, source=source_oid)
+
+
 @register("double_counters")
 def op_double_counters(ctx: EffectContext, spec: Mapping[str, Any]):
     """ "Double the number of each kind of counter on any number of target
@@ -277,11 +336,94 @@ def op_double_counters(ctx: EffectContext, spec: Mapping[str, Any]):
 
 @register("remove_counters")
 def op_remove_counters(ctx: EffectContext, spec: Mapping[str, Any]):
-    amount = evaluate_value(ctx, spec.get("amount", 1))
-    kind = str(spec.get("counter", "+1/+1"))
-    oids = yield from choose_objects(ctx, spec.get("objects"), "Remove counters from")
-    for oid in oids:
-        remove_counters(ctx.state, oid, kind, amount)
+    """Remove counters from each of ``objects``.
+
+    Without ``any_kind``: ``amount`` (default 1) of the one named ``counter``
+    kind (default +1/+1), clamped to what is there.
+
+    With ``any_kind`` -- Glissa Sunslayer's "remove up to three counters from
+    target permanent" -- the card names no kind, so the controller chooses, one
+    counter at a time, which kind comes off next: two -1/-1 and a loyalty is as
+    legal as three of one kind (122.1). ``amount`` is then how many in total; on
+    its own it is exactly that many, or as many as there are (609.3); with
+    ``up_to`` it is a ceiling the controller may stop short of, down to none;
+    and left out it is "any number". See `counter_removal`.
+
+    With ``all_kinds`` -- Sin, Unending Cataclysm's "remove **all counters**
+    from any number of artifacts, creatures, and enchantments" -- every counter
+    of every kind comes off each object, with nothing left to choose but the
+    objects themselves.
+
+    ``as`` binds the total number actually removed across every object, an int
+    read back with ``{"binding": ...}``: "the number of counters removed this
+    way" survives only there, since the permanents no longer carry them.
+    """
+    removed = 0
+    if spec.get("all_kinds"):
+        oids = yield from choose_objects(ctx, spec.get("objects"), "Remove all counters from")
+        for oid in oids:
+            obj = ctx.state.objects.get(oid)
+            if obj is None:
+                continue
+            for kind, there in list(obj.counters.items()):
+                if there > 0:
+                    removed += remove_counters(ctx.state, oid, kind, there)
+    elif spec.get("any_kind"):
+        most = (
+            max(0, evaluate_value(ctx, spec["amount"])) if "amount" in spec else None
+        )
+        least = 0 if most is None or spec.get("up_to") else most
+        oids = yield from choose_objects(ctx, spec.get("objects"), "Remove counters from")
+        for oid in oids:
+            removed += yield from remove_counters_one_at_a_time(
+                ctx,
+                lambda oid=oid: [oid],
+                most=most,
+                least=least,
+                chooser=ctx.controller,
+                purpose="remove_counter",
+            )
+    else:
+        amount = evaluate_value(ctx, spec.get("amount", 1))
+        kind = str(spec.get("counter", "+1/+1"))
+        oids = yield from choose_objects(ctx, spec.get("objects"), "Remove counters from")
+        for oid in oids:
+            removed += remove_counters(ctx.state, oid, kind, amount)
+    if name := spec.get("as"):
+        ctx.bindings[str(name)] = removed
+
+
+@register("remove_counters_from_among")
+def op_remove_counters_from_among(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Remove counters of any kinds from among the permanents ``objects`` names.
+
+    Eventide's Shadow -- "Remove any number of counters from among permanents
+    on the battlefield. You draw cards and lose life equal to the number of
+    counters removed this way." The effect twin of the cost of the same name
+    (Tekuthal), asking the same question one counter at a time
+    (`counter_removal`): which permanent, then which kind. The split among
+    permanents and kinds is the controller's.
+
+    ``amount`` reads as `remove_counters`' ``any_kind`` does: alone it is
+    exactly that many or as many as there are (609.3), with ``up_to`` a
+    ceiling, and left out "any number", down to none. ``as`` binds the number
+    actually removed, an int read back with ``{"binding": ...}`` -- the only
+    place "the number of counters removed this way" survives, since the
+    permanents no longer carry them.
+    """
+    most = max(0, evaluate_value(ctx, spec["amount"])) if "amount" in spec else None
+    least = 0 if most is None or spec.get("up_to") else most
+    selector = spec.get("objects")
+    removed = yield from remove_counters_one_at_a_time(
+        ctx,
+        lambda: resolve_pool(ctx, selector),
+        most=most,
+        least=least,
+        chooser=ctx.controller,
+        purpose="remove_counter",
+    )
+    if name := spec.get("as"):
+        ctx.bindings[str(name)] = removed
 
 
 @register("tap")
@@ -336,9 +478,10 @@ def op_attach(ctx: EffectContext, spec: Mapping[str, Any]):
 
     The Aura half needs no attach at all: an Aura put onto the battlefield by an
     effect that names no host chooses one as it enters (303.4f,
-    `zones.offer_aura_host`). This op is for the effect that *does* name it --
-    "…attached to that token" -- beside ``host_named`` on the arrival, and the
-    host it names is trusted (see `docs/rules-coverage.md`).
+    `zones.offer_aura_host`), and one whose effect names it -- "…attached to
+    that token" -- enters on it through ``host_named`` on the arrival, held to
+    its enchant clause (`zones.offer_named_host`). The host this op names with
+    ``attachment`` is not re-tested against the clause.
 
     ``player`` in place of ``objects`` moves **this Aura onto a player** --
     Archnemesis's "you may attach this Aura to that player". See
@@ -523,11 +666,22 @@ def op_gain_control(ctx: EffectContext, spec: Mapping[str, Any]):
     actually moved, not what was asked for, so a permanent that left in response
     -- or that was already yours, which `change_control` refuses as a no-op --
     is not one of "those creatures".
+
+    ``duration: "as_long_as_you_control_source"`` is Yuffie, Materia Hunter's
+    "gain control of target noncreature artifact for as long as you control
+    Yuffie" (611.2b): `source_bound_seat`, the clock Thancred Waters'
+    `grant_keyword` runs on, so it does nothing at all when the effect's
+    controller no longer controls the source as it would begin, and the steal
+    is handed back the moment the source leaves the battlefield or changes
+    hands (`temp_effects.end_source_bound`).
     """
     players = _players(ctx, spec.get("player", "you"))
     if not players:
         return
     duration = str(spec.get("duration", "permanent"))
+    applies, while_controller = source_bound_seat(ctx, spec)
+    if not applies:
+        return
     oids = yield from choose_objects(ctx, spec.get("objects"), "Gain control of")
     taken = [
         oid
@@ -539,6 +693,7 @@ def op_gain_control(ctx: EffectContext, spec: Mapping[str, Any]):
             source=ctx.source_oid,
             duration=duration,
             clock=ctx.controller,
+            while_controller=while_controller,
         )
     ]
     if name := spec.get("as"):
@@ -842,6 +997,11 @@ def op_cast_copy(ctx: EffectContext, spec: Mapping[str, Any]):
     ``optional`` is the printed "you **may** cast the copy", asked once per
     card. Cipher does not set it -- its own "may" is the reflexive trigger that
     got here -- so nothing gained a prompt.
+
+    ``cost`` is "you may cast the copy **by paying {3} rather than paying its
+    mana cost**" -- Blue Mage's Cane: an alternative cost (118.9), priced and
+    paid by `ops_cards.cast_copy_paying`. Always a choice, so it asks whether
+    or not ``optional`` is set, and only when the price is payable.
     """
 
     if "objects" in spec:
@@ -862,6 +1022,9 @@ def op_cast_copy(ctx: EffectContext, spec: Mapping[str, Any]):
         if player_cant_cast_while_resolving(ctx.state, ctx.controller, ctx.state.card_of(obj)):
             # A filtered lock (Narset Transcendent's emblem) stops this copy
             # alone; the total one was answered above.
+            continue
+        if "cost" in spec:
+            yield from cast_copy_paying(ctx, ctx.controller, oid, str(spec["cost"]))
             continue
         if optional and not (
             yield from ask_yes_no(

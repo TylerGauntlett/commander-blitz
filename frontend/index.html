@@ -3,6 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <!-- Installed to the Home Screen, iOS keeps the status bar's strip for itself
+         unless told the page may draw under it. `black-translucent` is that: the
+         page runs edge to edge, the bar's white text sits over the dark table,
+         and the bars that reach the clock's corner keep clear of it by the
+         `--safe-*` insets `theme.css` reads. A browser tab is unaffected. -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
     <title>Commander Blitz</title>
     <meta

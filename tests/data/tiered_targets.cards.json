@@ -1,0 +1,45 @@
+{
+  "_comment": "Cards that exist only for the tier-owned target test (tests/unit/targets/test_tiered_targets.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_limit_break` is Cloud's Limit Break: each tier of a Tiered spell declares its own targets -- exactly one tapped creature, any number of tapped creatures with different controllers, or none.",
+  "cards": [
+    {
+      "id": "t_limit_break",
+      "name": "Test Cloud's Limit Break",
+      "oracle_text": "Tiered (Choose one additional cost.)\n• Cross-Slash — {0} — Destroy target tapped creature.\n• Blade Beam — {1} — Destroy any number of target tapped creatures with different controllers.\n• Omnislash — {3}{W} — Destroy all tapped creatures.",
+      "mana_cost": "{1}{W}",
+      "types": ["Instant"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "additional_cost_options": [{ "mana": "{0}" }, { "mana": "{1}" }, { "mana": "{3}{W}" }],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "cost_option": 0,
+          "selector": { "zone": "battlefield", "types": ["Creature"], "tapped": true }
+        },
+        {
+          "id": "t2",
+          "kind": "permanent",
+          "cost_option": 1,
+          "count": "any",
+          "one_per_player": true,
+          "selector": { "zone": "battlefield", "types": ["Creature"], "tapped": true }
+        }
+      ],
+      "spell_effects": [
+        { "op": "if", "condition": { "cost_option": 0 }, "then": [{ "op": "destroy", "objects": { "target": "t1" } }] },
+        { "op": "if", "condition": { "cost_option": 1 }, "then": [{ "op": "destroy", "objects": { "target": "t2" } }] },
+        {
+          "op": "if",
+          "condition": { "cost_option": 2 },
+          "then": [
+            {
+              "op": "destroy",
+              "objects": { "zone": "battlefield", "types": ["Creature"], "tapped": true, "count": "all" }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

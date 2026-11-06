@@ -154,6 +154,11 @@ export function PlayerMat({
         .filter(Boolean)
         .join(" ")}
       data-testid={`mat-${player.pid}`}
+      // The whole mat takes a drop, not only its lanes: the seat panel and the
+      // gaps between rows are your board too (`logic/actionMatch.ts:dropPlays`).
+      // A lane inside it is found first, so a lane's own zone still wins. Only
+      // on your own mat: an opponent's has nothing of yours to land on.
+      data-dropzone={player.pid === state.seat ? `board:${player.pid}` : undefined}
     >
       {/*
         Everything that is a fact about this player rather than a permanent on

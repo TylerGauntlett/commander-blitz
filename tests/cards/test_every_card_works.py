@@ -18,6 +18,7 @@ import pytest
 
 from commanderblitz.cards.authoring.verify import (
     check_expectation,
+    spare_cards_in_hand,
     swap_in_artifact_body,
     swap_in_legendary_body,
     swap_in_tribal_body,
@@ -137,7 +138,11 @@ def build_sandbox(registry: CardRegistry, card_id: str, *, in_hand: bool = True)
         # A land rather than a spell: a castable card in hand keeps the player
         # on priority while the card under test is on the stack, and every card
         # then fails with "never left the stack".
-        builder.hand(0, [card_id, "forest"])
+        #
+        # One spare per card the additional cost discards, from the helper
+        # `verify.build_sandbox` uses, so Cathartic Reunion's "discard two
+        # cards" has its fodder in both harnesses.
+        builder.hand(0, [card_id, *["forest"] * spare_cards_in_hand(under_test)])
     return builder.build(advance=False)
 
 
@@ -390,6 +395,12 @@ class TestActivatedAbilities:
             oid = new_object(game.state, card_id, owner=0, zone=zone).oid
             if zone is Zone.BATTLEFIELD:
                 game.state.battlefield.append(oid)
+                # Oft-Nabbed Goat: "Only your opponents may activate this
+                # ability." The sandbox's player is seat 0, so the permanent
+                # sits under the opponent's control and seat 0 is the one
+                # offered it -- the only way this ability can be used at all.
+                if ability.activated_by == "opponent":
+                    game.state.objects[oid].controller = 1
             else:
                 game.state.players[0].zone_list(zone).append(oid)
             _reach_the_level(game, oid, ability)
@@ -397,10 +408,11 @@ class TestActivatedAbilities:
             _pay_the_counters(game, oid, ability)
             _afford_the_life(game, ability)
             _afford_the_energy(game, ability)
+            _afford_the_colorless(game, registry, ability)
             _provide_the_sacrifice(game, registry, ability)
             _provide_the_tap_fodder(game, registry, ability)
             _provide_the_untap_fodder(game, registry, ability)
-            _provide_the_counter_fodder(game, registry, ability)
+            _provide_the_counter_fodder(game, registry, ability, oid)
             _satisfy_the_activation_condition(game, registry, ability, oid)
             _stock_the_hand(game, ability)
             _provide_the_target(game, registry, oid, ability)
@@ -527,6 +539,26 @@ def _afford_the_energy(game: Game, ability) -> None:
         game.state.players[0].energy = max(game.state.players[0].energy, int(needed))
 
 
+def _afford_the_colorless(game: Game, registry, ability) -> None:
+    """Put out a Wastes for each {C} the ability's mana cost prints.
+
+    The mana base is the five basics, which make no colorless mana, and 107.4c
+    says {C} can be paid only with colorless mana -- so World Breaker's "{2}{C},
+    Sacrifice a land: Return this card from your graveyard to your hand" was
+    reported as unusable on a board where it was only unaffordable. The life
+    and energy helpers' argument, for the one mana symbol the basics cannot
+    make.
+    """
+    cost = ability.cost
+    mana = str(getattr(cost, "mana", "") or "") if cost is not None else ""
+    needed = mana.upper().count("{C}")
+    if not needed or "wastes" not in registry:
+        return
+    for _ in range(needed):
+        land = new_object(game.state, "wastes", owner=0, zone=Zone.BATTLEFIELD)
+        game.state.battlefield.append(land.oid)
+
+
 def _pay_the_counters(game: Game, oid: int, ability) -> None:
     """Stock the counters an ability's cost wants to remove.
 
@@ -616,11 +648,29 @@ def _provide_the_sacrifice(game: Game, registry, ability) -> None:
     count = spec.get("count", 1)
     wanted = max(1, int(count) if isinstance(count, int) else 1)
     match = _fodder_for(registry, spec, wanted)
+    # Professional Face-Breaker sacrifices *a Treasure*, and the only Treasures
+    # are tokens: no printed card has the subtype, so the creature-shaped search
+    # above finds nothing. A subtype with no card type names its own kind, so
+    # the token is the fodder.
+    if match is None and spec.get("subtypes") and not spec.get("types"):
+        wanted_subtypes = {str(s) for s in spec["subtypes"]}
+        match = next(
+            (
+                c
+                for c in sorted(registry, key=lambda c: c.id)
+                if c.is_token and wanted_subtypes & set(c.subtypes)
+            ),
+            None,
+        )
     if match is None:
         return
     for _ in range(wanted):
         fodder = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
         game.state.battlefield.append(fodder.oid)
+        # Sephiroth's Reunion sacrifices *a modified creature*: one with a
+        # counter on it is the cheapest way to be one.
+        if spec.get("modified"):
+            fodder.counters[PLUS_ONE] = 1
 
 
 def _provide_the_tap_fodder(game: Game, registry, ability) -> None:
@@ -695,7 +745,7 @@ def _provide_the_untap_fodder(game: Game, registry, ability) -> None:
         game.state.battlefield.append(fodder.oid)
 
 
-def _provide_the_counter_fodder(game: Game, registry, ability) -> None:
+def _provide_the_counter_fodder(game: Game, registry, ability, oid: int) -> None:
     """Put out a permanent carrying enough counters for a
     `remove_counters_from_among` cost.
 
@@ -710,6 +760,11 @@ def _provide_the_counter_fodder(game: Game, registry, ability) -> None:
     if not spec:
         return
     wanted = int(spec.get("count", 1) or 1)
+    if spec.get("self_only"):
+        # Gavel of the Righteous: "Equip--...remove a counter from this
+        # Equipment." The pool is the source alone, so the counters go there.
+        game.state.objects[oid].counters[PLUS_ONE] = wanted
+        return
     types = spec.get("types") or (spec.get("any_types") or ["Creature"])[:1]
     match = _fodder_for(registry, {"types": list(types)})
     if match is None:
@@ -1163,9 +1218,37 @@ def _provide_the_target(game: Game, registry, oid: int, ability) -> None:
         # was only unaimed. Tapped only when the spec asks, like the flag above.
         if spec.selector.get("tapped"):
             obj.tapped = True
+        # Liliana, Death Wielder's "-3: Destroy target creature **with a -1/-1
+        # counter on it**." No sandbox creature carries one, so the ability read
+        # as unusable when it was only unaimed. One counter of the kind
+        # `has_counters` names, and only when the spec names one.
+        kind = spec.selector.get("has_counters")
+        if isinstance(kind, str):
+            obj.add_counter(kind, 1)
+        # Together Forever's "Choose target creature **with a counter on it**":
+        # `has_counters: true` names no kind, so any one counter will do.
+        elif kind is True:
+            obj.add_counter("+1/+1", 1)
         if match.is_token:
             obj.is_token = True
         game.state.battlefield.append(obj.oid)
+        # Forge of Heroes' "Choose target commander **that entered this
+        # turn**." The question is asked of the turn ledger, not of
+        # `entered_turn`, and a prop put straight onto the battlefield emits no
+        # arrival -- so the ledger is told, only when the spec asks.
+        if spec.selector.get("entered_this_turn"):
+            from commanderblitz.engine.structs import EnteredPermanent
+
+            game.state.turn_ledger.permanents_entered.append(
+                EnteredPermanent(
+                    oid=obj.oid,
+                    controller=obj.controller,
+                    types=frozenset(match.types),
+                    subtypes=frozenset(match.subtypes),
+                    colors=frozenset(match.colors),
+                    is_token=bool(obj.is_token),
+                )
+            )
     game.state.bump_chars()
 
 
@@ -1310,6 +1393,12 @@ def _provide_the_attacker(game: Game, registry, ability) -> None:
         ),
         None,
     )
+    # Ninjutsu: "Return an **unblocked attacker** you control to hand" is a
+    # cost, not a target, and asks for the same thing -- plus blockers having
+    # been declared (509.1h), which `_walk_past_blocks` arranges.
+    bounce = getattr(ability.cost, "return_to_hand", None)
+    if wants is None and isinstance(bounce, dict) and bounce.get("attacking"):
+        wants = bounce
     if wants is None:
         return
 
@@ -1335,6 +1424,34 @@ def _provide_the_attacker(game: Game, registry, ability) -> None:
 
     if _walk_to_declare_attackers(game):
         _declare_them(game, [attacker.oid])
+        if "blocked" in wants:
+            _walk_past_blocks(game)
+
+
+def _walk_past_blocks(game: Game) -> None:
+    """Finish every block declaration empty and stop at the first priority after.
+
+    An attacker is unblocked only once blockers are declared (509.1h), so an
+    ability whose cost returns one is first activatable in the declare blockers
+    step. Nothing is blocked: the attacker this family made is the one the cost
+    wants unblocked.
+    """
+    for _ in range(40):
+        decision = game.pending()
+        combat = game.state.combat
+        if decision is None or game.over or combat is None:
+            return
+        if decision.kind is DecisionKind.PRIORITY and combat.blockers_declared:
+            return
+        wanted = (
+            ActionKind.FINISH_DECLARATION
+            if decision.kind is DecisionKind.DECLARE_BLOCKERS
+            else ActionKind.PASS
+        )
+        step = next((a for a in game.legal_actions() if a.kind is wanted), None)
+        if step is None:
+            return
+        game.apply(step)
 
 
 def _walk_to_declare_attackers(game: Game) -> bool:
