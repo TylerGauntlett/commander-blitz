@@ -70982,12 +70982,12 @@
     },
     "Diviner of Mist": {
       "edhrec_rank": 8690,
-      "gate": "template",
+      "gate": null,
       "name": "Diviner of Mist",
-      "reason": "no template for: Whenever this creature attacks, mill four cards. You may cast an instant or sorcery spell ",
+      "reason": "",
       "scryfall_id": "4e430ac6-ee63-4fb9-b1d2-bc584e6c434b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Diviner of Victory // Unwind History": {

@@ -1,0 +1,18 @@
+{
+  "card_id": "dauthi_voidwalker",
+  "name": "Dauthi Voidwalker",
+  "oracle_text": "Shadow (This creature can block or be blocked by only creatures with shadow.)\nIf a card would be put into an opponent's graveyard from anywhere, instead exile it with a void counter on it.\n{T}, Sacrifice this creature: Choose an exiled card an opponent owns with a void counter on it. You may play it this turn without paying its mana cost.",
+  "blocked_sentences": [
+    "If a card would be put into an opponent's graveyard from anywhere, instead exile it with a void counter on it."
+  ],
+  "needs": [
+    {
+      "capability": "replace_graveyard_with_counter",
+      "kind": "replacement",
+      "what": "a counter rider on the replace_graveyard static: the redirected card enters exile with N counters of a named kind on it (here one 'void' counter), so a later selector with has_counters: \"void\" over zone exile, owner opponent can find exactly the cards this replacement exiled. Only cards, not tokens (affects_token: false), and only cards an opponent owns (affects_player: \"opponent\")",
+      "why_existing_wont_do": "replace_graveyard (Leyline of the Void) takes affects_player, affects, destination and affects_token only; engine.zones' graveyard replacement returns just a destination Zone and has no way to put counters on the card as it arrives. and_create is a replace_dies-only rider and creates tokens, not counters. Without the void counter the card's activated ability (expressible as grant_playable with objects {zone: exile, owner: opponent, has_counters: \"void\"}, playable: \"this_turn\", playable_free: true) would have nothing to choose, so writing the static without the counter would silently break the second ability"
+    }
+  ],
+  "closest_existing": ["replace_graveyard", "replace_dies", "grant_playable"],
+  "confidence": "high"
+}
