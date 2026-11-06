@@ -373,6 +373,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "add_energy": ("Life & damage", "A player gets N energy counters ({E}).", "Energy"),
     "lose_all_player_counters": ("Life & damage", "Each named player loses every counter of every kind.",
                                  "A player losing all counters"),
+    "double_player_counters": ("Life & damage", "Each named player gets as many more of each kind of counter they have.",
+                               "Doubling a player's counters"),
     "prevent_damage": ("Life & damage", "Prevent damage to a player this turn; `combat_only` narrows it to combat damage, `effects` runs each time it prevents (\"prevented this way\").",
                        "Preventing all damage to a player for the turn"),
     "prevent_combat_damage": ("Life & damage", "Prevent combat damage this turn, optionally only from sources matching `by`.",

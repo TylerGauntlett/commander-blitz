@@ -13,6 +13,7 @@ from ..player import PLAYER_COUNTER_KINDS
 from ..player_statics import player_cant_gain_life
 from ..primitives import (
     add_energy,
+    add_player_counters,
     add_poison,
     damage_permanent,
     damage_player,
@@ -136,6 +137,32 @@ def op_lose_all_player_counters(ctx: EffectContext, spec: Mapping[str, Any]):
             remove_player_counters(
                 state, pid, kind, getattr(player, kind), source=ctx.source_oid
             )
+
+
+@register("double_player_counters")
+def op_double_player_counters(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Double the number of each kind of counter you have." (Aetheric
+    Amplifier's second mode)
+
+    `double_counters` for a player (122.1): for every kind in
+    `player.PLAYER_COUNTER_KINDS` the named player already has, put that many
+    more on. A placement, not a set -- the extra goes on through
+    `primitives.add_player_counters`, so Innkeeper's Talent sees an effect
+    putting N and doubles that (2 becomes 6), and the log hears
+    ``poison_added`` or ``energy_added`` with the number that arrived.
+
+    Counts are snapshotted per player before any placement, so a kind at zero
+    is nothing to double. ``player`` is required, as `lose_all_player_counters`
+    requires it: the printed sentence always names whose counters.
+    """
+    state = ctx.state
+    for pid in select_players(ctx, spec["player"]):
+        player = state.players[pid]
+        for kind, amount in [(k, getattr(player, k)) for k in PLAYER_COUNTER_KINDS]:
+            if amount > 0:
+                add_player_counters(
+                    state, pid, kind, amount, source=ctx.source_oid, by=ctx.controller
+                )
 
 
 @register("prevent_damage")

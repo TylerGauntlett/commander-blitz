@@ -13,7 +13,7 @@ from ..errors import DslError
 from ..objects import PLUS_ONE
 from ..player import PLAYER_COUNTER_KINDS
 from ..player_statics import proliferate_times
-from ..primitives import add_counters, add_energy, add_poison, remove_counters
+from ..primitives import add_counters, add_player_counters, remove_counters
 from ..structs import (
     ATTACK_MARK_DURATIONS,
     ATTACK_RESTRICTION_DURATIONS,
@@ -148,17 +148,15 @@ def _proliferate_once(ctx: EffectContext):
     ]
     for ref, kinds in plan:
         if ref.kind == "player":
-            # Through `add_poison` and `add_energy`, the funnels for a player's
+            # Through `add_player_counters`, the funnel for a player's
             # counters, so a counter replacement that reaches players
             # (Innkeeper's Talent's "...on a permanent or player") applies --
             # writing the field directly skipped it.
             for kind, amount in kinds:
-                if amount <= 0:
-                    continue
-                # Keyed, not an if/else: a kind added to PLAYER_COUNTER_KINDS
-                # without a funnel fails here instead of arriving as energy.
-                funnel = {"poison": add_poison, "energy": add_energy}[kind]
-                funnel(state, ref.id, 1, source=ctx.source_oid, by=ctx.controller)
+                if amount > 0:
+                    add_player_counters(
+                        state, ref.id, kind, 1, source=ctx.source_oid, by=ctx.controller
+                    )
             continue
         obj = state.objects.get(ref.id)
         if obj is None or not obj.on_battlefield:

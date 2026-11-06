@@ -1262,6 +1262,29 @@ def add_energy(
     return amount
 
 
+def add_player_counters(
+    state: GameState,
+    pid: int,
+    kind: str,
+    amount: int,
+    *,
+    source: int | None = None,
+    by: int | None = None,
+) -> int:
+    """Put ``amount`` counters of ``kind`` on a player, through that kind's funnel.
+
+    `remove_player_counters`' twin for an effect that names the kind only at
+    resolution (proliferate's "each kind already there", a doubling's "each
+    kind you have"): ``kind`` is one of `player.PLAYER_COUNTER_KINDS`, and the
+    placement goes through `add_poison` or `add_energy`, so counter
+    replacements that reach players apply. Keyed, not an if/else: a kind
+    added to the list without a funnel raises here instead of arriving as
+    another kind. Returns how many arrived.
+    """
+    funnel = {"poison": add_poison, "energy": add_energy}[kind]
+    return funnel(state, pid, amount, source=source, by=by)
+
+
 def pay_energy(state: GameState, pid: int, amount: int, *, source: int | None = None) -> None:
     """Spend ``amount`` of a player's energy, which `costs.can_pay` proved they have.
 

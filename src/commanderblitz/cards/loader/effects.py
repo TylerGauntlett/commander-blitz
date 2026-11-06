@@ -3188,6 +3188,21 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                     f"{where}: lose_all_player_counters removes every kind of "
                     f"counter from the player, so it takes no {key!r}"
                 )
+    if op == "double_player_counters":
+        # "Double the number of each kind of counter you have" always names
+        # whose; and it reads every kind off the player, so a narrowing key
+        # (or `objects`, which is `double_counters`') would be silently ignored.
+        if "player" not in effect:
+            raise DslError(
+                f"{where}: double_player_counters needs 'player' naming whose "
+                f"counters are doubled, e.g. 'you'"
+            )
+        for key in ("counter", "kinds", "amount", "objects"):
+            if key in effect:
+                raise DslError(
+                    f"{where}: double_player_counters doubles every kind of "
+                    f"counter the player has, so it takes no {key!r}"
+                )
     if op == "proliferate" and "objects" in effect:
         # The retired simplification's narrowing key. 701.27a is a free choice
         # over every permanent and player with a counter, which the op now asks;

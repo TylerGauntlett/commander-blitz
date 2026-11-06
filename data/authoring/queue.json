@@ -3342,12 +3342,12 @@
     },
     "Aetheric Amplifier": {
       "edhrec_rank": 2512,
-      "gate": "template",
+      "gate": null,
       "name": "Aetheric Amplifier",
-      "reason": "no template for: {4}, {T}: Choose one. Activate only as a sorcery",
+      "reason": "",
       "scryfall_id": "21c33a91-b02c-43ec-a385-aa0349928f9c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aetherize": {

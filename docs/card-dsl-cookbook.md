@@ -10445,6 +10445,33 @@ corrupted static re-reads at once) and fires `counter_removed` with `player`,
   op does not write.
 - Not a `pay_energy` cost: paying is a cost, this is an effect.
 
+## Doubling a player's counters
+
+"Double the number of each kind of counter you have" -- Aetheric Amplifier's
+second mode. For every kind the named player already has, that many more go on
+(122.1):
+
+```jsonc
+{ "op": "double_player_counters", "player": "you" }
+```
+
+`player` is required and is any player spec. The kinds are
+`player.PLAYER_COUNTER_KINDS`, each count read before anything is added, and a
+kind at zero is nothing to double. It is a placement, not a set: the extra goes
+on through `primitives.add_player_counters` (the `add_poison` and `add_energy`
+funnels), so a counter replacement that reaches players applies -- under
+Innkeeper's Talent, 2 energy becomes 6 -- and `poison_added` or `energy_added`
+fires with the number that arrived. Ten poison from a doubling is lethal like
+any other ten.
+
+- The loader refuses a missing `player`, and a `counter`, `kinds`, `amount` or
+  `objects` key, which this op would ignore.
+- Not `double_counters`, which doubles the counters on **permanents** named by
+  `objects`; a player is not one. Not `proliferate`, which adds one of each kind.
+- Not an `add_energy` and an `add_poison` written side by side: the sentence
+  says each kind, and a card listing two would miss the next kind the player
+  model carries.
+
 ## Aura swap — an exchange, not two moves
 
 ```jsonc

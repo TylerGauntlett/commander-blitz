@@ -168,6 +168,9 @@
     },
     "zone": "battlefield"
   },
+  "aetheric_amplifier": {
+    "zone": "battlefield"
+  },
   "aetherize": {
     "battlefield_count": 32,
     "hand_size": {
