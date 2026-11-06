@@ -1154,6 +1154,10 @@ class Ability:
     activate_steps: tuple[str, ...] = ()
     #: Forecast: "only once each turn", counted per (object, ability index).
     once_each_turn: bool = False
+    #: Exhaust (702.177): "activate each exhaust ability only once" -- for as
+    #: long as the object exists, counted per (object, ability index) on
+    #: `GameObject.exhausted` and reset only by a zone change (400.7).
+    exhaust: bool = False
     #: Who may activate this ability (602.1, 602.2): ``"you"`` -- the
     #: permanent's controller, the default for every activated ability --
     #: ``"opponent"`` ("Only your opponents may activate this ability",

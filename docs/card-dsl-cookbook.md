@@ -12523,6 +12523,29 @@ in response was already dropped on resolution (608.2b), so it arrives here as an
 empty pool, and the other half is not performed alone. Both keys are required,
 and `duration` is refused, because every printed exchange is permanent.
 
+## Exhaust — "Activate each exhaust ability only once"
+
+```jsonc
+// Peema Trailblazer: "Exhaust — Pay six {E}: Put two +1/+1 counters on this
+// creature. Then draw cards equal to the greatest power among creatures you control."
+{ "kind": "activated", "exhaust": true,
+  "cost": { "pay_energy": 6 },
+  "effects": [ … ] }
+```
+
+702.177. `exhaust` limits the ability to one activation for as long as the
+**object** exists. `Game._activate` records the ability's index on
+`GameObject.exhausted` as the activation happens, so an activation that is
+countered or fizzles has still been used. `legality` then stops offering it, so
+the ability is missing from `legal_actions` for every caller. A permanent that
+changes zones is a new object (400.7), and `reset_permanent_state` clears the
+record, so a blinked Peema can exhaust again.
+
+The near miss is `once_each_turn`. It lives on the turn ledger and comes back at
+cleanup, so it would let Peema draw every turn. The loader refuses `exhaust` on
+anything but an activated ability, and on a mana ability too, because the
+payment solver activates those itself and never passes the record.
+
 ## "Its activated abilities can't be activated this turn"
 
 ```jsonc

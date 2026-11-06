@@ -1,0 +1,33 @@
+{
+  "_comment": "Shapes for tests/unit/keywords/test_exhaust.py. t_exhaust_engine is Peema Trailblazer's exhaust ability reduced to the claim, beside an unlimited ability on the same permanent so the test can tell an exhausted ability from a permanent that simply cannot activate anything twice.",
+  "cards": [
+    {
+      "id": "t_exhaust_engine",
+      "name": "Test Exhaust Engine",
+      "oracle_text": "Exhaust — {0}: Put a +1/+1 counter on this creature. (Activate each exhaust ability only once.)\n{0}: You gain 1 life.",
+      "mana_cost": "{2}",
+      "types": ["Artifact", "Creature"],
+      "power": 1,
+      "toughness": 1,
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Exhaust — {0}: Put a +1/+1 counter on this creature.",
+          "cost": {"mana": "{0}"},
+          "exhaust": true,
+          "effects": [
+            {"op": "add_counters", "objects": {"zone": "battlefield", "self_only": true},
+             "counter": "+1/+1", "amount": {"const": 1}}
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "{0}: You gain 1 life.",
+          "cost": {"mana": "{0}"},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    }
+  ]
+}

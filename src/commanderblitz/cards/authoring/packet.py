@@ -636,8 +636,9 @@ def reference() -> dict:
             " `ability_keys` is what an entry in `abilities` may have. Read both"
             " before concluding a line cannot be said: `copy_spell` takes"
             " `new_targets` (\"you may choose new targets for the copy\"), an"
-            " ability takes `sorcery_speed_only`, `once_each_turn` and"
-            " `activate_steps` for printed activation limits, and"
+            " ability takes `sorcery_speed_only`, `once_each_turn`,"
+            " `activate_steps` and `exhaust` (\"activate each exhaust ability"
+            " only once\") for printed activation limits, and"
             " `mana_restriction` for \"spend this mana only to ...\". Each of"
             " those has been filed as a missing capability by a worker that had"
             " only the op *names*.",

@@ -2752,6 +2752,16 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             f"{where}: 'activate_steps' and 'once_each_turn' restrict *activating*, "
             f"so they only mean anything on an activated ability"
         )
+    if model.exhaust and (kind is not AbilityKind.ACTIVATED or model.is_mana_ability):
+        # 702.177 is a limit on activating, so on a trigger or a static it would
+        # load and be ignored. And not on a mana ability: the payment solver
+        # activates those for itself through `costs.activate_mana_ability`,
+        # which no limit recorded by `Game._activate` would ever see -- an
+        # exhaust mana ability would tap for mana every time it was needed.
+        raise DslError(
+            f"{where}: 'exhaust' restricts *activating*, so it only means anything "
+            f"on an activated ability that is not a mana ability"
+        )
     if kind is AbilityKind.ACTIVATED and _has_per_turn_modes(model.effects):
         # An activated ability's modes are answered at 602.2b by
         # `Game._ask_modes`, which never sees the strike-off or spends a mode,
@@ -3631,6 +3641,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         is_cycling=model.is_cycling,
         activate_steps=tuple(model.activate_steps),
         once_each_turn=model.once_each_turn,
+        exhaust=model.exhaust,
         activated_by=_activated_by(model, kind, active_zones, cost, where),
         threshold=threshold,
         trigger=trigger,

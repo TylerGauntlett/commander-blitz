@@ -671,6 +671,11 @@ class AbilityModel(BaseModel):
         Literal["upkeep", "draw_step", "precombat_main", "end_step"]
     ] = Field(default_factory=list)
     once_each_turn: bool = False
+    #: **Exhaust** (702.177): "Exhaust — [Cost]: [Effect]. (Activate each
+    #: exhaust ability only once.)" Once for as long as the *object* exists,
+    #: not once a turn: a permanent that leaves and comes back is a new object
+    #: (400.7) and may activate it again. Activated, non-mana abilities only.
+    exhaust: bool = False
     #: A station symbol (721): "12+ | {U}, {T}: Add {U} for each artifact you
     #: control" -- ``{"counter": "charge", "at_least": 12}``. The permanent
     #: **has** this ability only while it has that many counters; below it the

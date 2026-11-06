@@ -12125,6 +12125,10 @@
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
   },
+  "peema_trailblazer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "peer_into_the_abyss": {
     "hand_size": {
       "0": 21

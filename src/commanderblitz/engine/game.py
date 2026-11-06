@@ -1098,6 +1098,10 @@ class Game:
         # that strands mid-payment still spends the turn's allowance -- the same
         # reading `resolutions_this_turn` takes of its own event.
         state.turn_ledger.activated(oid, action.ability_index)
+        # Exhaust (702.177) is spent at the same moment and for the same
+        # reason: the activation happened, whether or not it resolves.
+        if ability.exhaust:
+            state.objects[oid].exhausted.add(action.ability_index)
         # "…if you didn't activate a loyalty ability of **a planeswalker** this
         # turn" (The Chain Veil). Counted per player at the same moment and for
         # the same reason as the line above, and only when the source is a

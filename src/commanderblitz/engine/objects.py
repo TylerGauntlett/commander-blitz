@@ -622,6 +622,14 @@ class GameObject:
     #: "until end of turn" on it lasts as long as the permanent does, and one
     #: that wore off at cleanup would be a strictly weaker card.
     granted_abilities_permanent: list[TempEffect] = field(default_factory=list)
+    #: Exhaust (702.177): the indices of this object's exhaust abilities that
+    #: have been activated. "Activate each exhaust ability only once" is a limit
+    #: on the *object*, not the turn, so it lives here rather than on
+    #: `TurnLedger` -- and it is cleared by `reset_permanent_state`, because a
+    #: permanent that changed zones is a new object (400.7) whose exhaust
+    #: abilities have never been activated. Written by `Game._activate` the
+    #: moment the activation happens, read by `legality`.
+    exhausted: set[int] = field(default_factory=set)
     #: The same thing for an animation: "Target artifact or creature ... becomes
     #: a green Elk creature with base power and toughness 3/3" -- Oko, Thief of
     #: Crowns, which prints no duration. `TempEffect(kind="animate")` entries
@@ -1293,6 +1301,8 @@ class GameObject:
         self.cast_rider = None
         self.cast_enters_with = {}
         self.granted_abilities_permanent = []
+        # 400.7: a new object's exhaust abilities are fresh (702.177).
+        self.exhausted = set()
         self.animations = []
         self.tapped = False
         self.damage = 0
@@ -1482,6 +1492,9 @@ class GameObject:
             "skip_next_untap": self.skip_next_untap,
             "suspended_by": self.suspended_by,
             "hasted_by_suspend": self.hasted_by_suspend,
+            # Only once an exhaust ability has been used, for the emblem line's
+            # reason below.
+            **({"exhausted": sorted(self.exhausted)} if self.exhausted else {}),
             # Only on an emblem, so every other object's snapshot is unchanged.
             **({"emblem": self.emblem} if self.emblem is not None else {}),
             # Only while a prevention shield stands, for the emblem line's reason.

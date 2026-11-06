@@ -199242,12 +199242,12 @@
     },
     "Peema Trailblazer": {
       "edhrec_rank": 9767,
-      "gate": "template",
+      "gate": null,
       "name": "Peema Trailblazer",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, you get that many {E}",
+      "reason": "",
       "scryfall_id": "d513e533-d3c5-45a1-a03c-2770b7b6832b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Peer Past the Veil": {

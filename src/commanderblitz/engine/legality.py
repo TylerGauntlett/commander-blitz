@@ -786,6 +786,13 @@ def _ability_aims(
         return None
     if ability.once_each_turn and state.turn_ledger.activations(oid, ability.index):
         return None
+    # Exhaust (702.177): once per *object*, so the record is on the object and
+    # not the turn ledger. An exhausted ability is simply not offered, which is
+    # what every caller of `legal_actions` -- a click, a CPU, a policy -- sees.
+    if ability.exhaust:
+        source = state.objects.get(oid)
+        if source is None or ability.index in source.exhausted:
+            return None
     # 606.3: a loyalty ability may be activated only during your own main phase
     # when the stack is empty (which `sorcery_speed_only` already covers), and
     # only if **no** loyalty ability of this permanent has been activated this
