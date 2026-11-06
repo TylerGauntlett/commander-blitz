@@ -1097,6 +1097,9 @@ def _fodder_for(
     # Ayara, First of Locthwain sacrifices "another **black** creature", and the
     # first creature by id is green.
     colors = {str(c) for c in selector.get("colors") or []}
+    # Towering Titan sacrifices "a creature **with defender**", and the first
+    # creature by id has no keywords at all.
+    keywords = {str(k) for k in selector.get("keywords") or []}
     matches = [
         c
         for c in sorted(registry, key=lambda c: c.id)
@@ -1105,6 +1108,7 @@ def _fodder_for(
         and types <= set(c.types)
         and (not subtypes or subtypes & set(c.subtypes))
         and colors <= set(c.colors)
+        and keywords <= {str(k) for k in c.keywords}
         and (min_power is None or (c.power is not None and c.power >= min_power))
         and (min_toughness is None or (c.toughness is not None and c.toughness >= min_toughness))
     ]
