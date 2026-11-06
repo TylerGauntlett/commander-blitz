@@ -5339,6 +5339,41 @@ whom, the second only the seats this one creature attacked, and both per turn
 rather than per combat. Write the keyword. A permanent holding melee twice
 triggers once, as exalted does.
 
+### Flanking
+
+    Sidar Kondo of Jamuraa — "Flanking."
+    Sidewinder Sliver — "All Sliver creatures have flanking."
+
+```jsonc
+"keywords": ["flanking"]                               // printed on the permanent
+
+{ "kind": "static", "text": "All Sliver creatures have flanking.",
+  "effect": "grant_keyword", "keywords": ["flanking"],
+  "affects": { "types": ["Creature"], "subtypes": ["Sliver"] } }
+```
+
+Exalted's shape: a `Keyword` whose content is the rules-supplied
+`carddef.FLANKING_TRIGGER`, yielded once for every battlefield permanent whose
+derived keywords include flanking. The trigger is "whenever a creature without
+flanking blocks this creature, the blocking creature gets -1/-1 until end of
+turn" (702.25a): `becomes_blocked` from `source: "self"`, then a `pump` of -1/-1
+over `{"blocking": {"binding": "self"}, "not_keywords": ["flanking"]}` — every
+creature blocking this attacker, and no other, that lacks the word. The
+exemption reads **derived** keywords, so a blocker granted flanking is exempt
+exactly as one printed with it. A `recheck: false` condition that at least one
+such blocker exists means a block made only by flanking creatures triggers
+nothing.
+
+One trigger shrinks every qualifying blocker, where the rules put one trigger
+per blocker on the stack; the board after resolution is the same.
+
+**The near miss** is that trigger printed on the card. It plays the same on the
+card that prints it, and a grant cannot hand it to a Sliver. Write the keyword.
+A permanent holding flanking twice triggers once, as exalted does, so Cavalry
+Master's "other creatures you control with flanking have flanking" (702.25b,
+each instance triggers separately) is not expressible: as a `grant_keyword` it
+would load and do nothing.
+
 ### Decayed
 
     Jadar, Ghoulcaller of Nephalia — "At the beginning of your end step, if you

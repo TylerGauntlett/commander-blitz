@@ -5927,8 +5927,10 @@ blocking it **beyond the first**", so the card does that arithmetic:
                         { "minus": [ { "binding": "blockers" }, { "const": 1 } ] } ] } }
 ```
 
-Flanking needs *which* creatures are blocking, not how many, so the `blocking`
-selector takes a binding as well as a boolean:
+Flanking (the `flanking` keyword, whose trigger the rules supply — see
+[the cookbook](card-dsl-cookbook.md#flanking)) needs *which* creatures are
+blocking, not how many, so the `blocking` selector takes a binding as well as a
+boolean:
 
 ```jsonc
 { "blocking": true }                      // blocking anything

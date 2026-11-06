@@ -1149,6 +1149,7 @@ KEYWORDS: dict[str, Entry] = {
     "exalted": ("Exalted.", "Exalted"),
     "fear": ("Fear.", "Fear, intimidate, horsemanship, shadow and nonbasic landwalk"),
     "first_strike": ("First strike.", None),
+    "flanking": ("Flanking.", "Flanking"),
     "flash": ("Flash.", None),
     "flying": ("Flying.", None),
     "forestwalk": ("Forestwalk.", H_LANDWALK),

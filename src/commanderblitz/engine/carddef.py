@@ -2064,6 +2064,46 @@ MELEE_TRIGGER = Ability(
 _RULES_ABILITIES.append(MELEE_TRIGGER)
 
 
+#: The blockers a flanking trigger shrinks: those blocking *this* attacker
+#: that lack flanking, read off derived keywords.
+_FLANKED_BLOCKERS = {"blocking": {"binding": "self"}, "not_keywords": ["flanking"]}
+
+#: Flanking's trigger (702.25a): "Whenever a creature without flanking blocks
+#: this creature, the blocking creature gets -1/-1 until end of turn."
+#:
+#: Rules-supplied for exalted's reason: Sidewinder Sliver, Agility and
+#: Jabari's Banner *grant* flanking, so the sentence cannot live on the
+#: printed card. `triggers._candidate_abilities` yields it once for every
+#: battlefield permanent whose derived keywords include flanking.
+#:
+#: One `becomes_blocked` trigger shrinking every blocker of this attacker
+#: without flanking, rather than one trigger per such blocker: the board after
+#: resolution is the same. Its condition is a "while" clause (`recheck: False`),
+#: so a block made only by creatures with flanking triggers nothing at all.
+FLANKING_TRIGGER = Ability(
+    kind=AbilityKind.TRIGGERED,
+    index=-len(_RULES_ABILITIES) - 1,
+    text="Flanking",
+    trigger=TriggerSpec(
+        event="becomes_blocked",
+        controller="you",
+        source="self",
+        condition={"cmp": ">=", "left": {"count": _FLANKED_BLOCKERS}, "right": {"const": 1}},
+        recheck=False,
+    ),
+    effects=(
+        {
+            "op": "pump",
+            "objects": _FLANKED_BLOCKERS,
+            "power": {"const": -1},
+            "toughness": {"const": -1},
+        },
+    ),
+    active_zones=(Zone.BATTLEFIELD,),
+)
+_RULES_ABILITIES.append(FLANKING_TRIGGER)
+
+
 #: Decayed's attack half (702.147a): "When it attacks, sacrifice it at end of
 #: combat."
 #:

@@ -23,7 +23,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Cost reduction](#cost-reduction) | 6 |
 | [Ability costs](#ability-costs) | 30 |
 | [Card-level costs](#card-level-costs) | 32 |
-| [Keywords](#keywords) | 44 |
+| [Keywords](#keywords) | 45 |
 | [Card types and supertypes](#card-types-and-supertypes) | 12 |
 | [Durations](#durations) | 6 |
 | [Decision kinds](#decision-kinds) | 11 |
@@ -831,6 +831,7 @@ Every keyword the `keywords` list may carry -- the engine's `Keyword` enum. Alia
 | `exalted` | Exalted. | [Exalted](card-dsl-cookbook.md#exalted) |
 | `fear` | Fear. | [Fear, intimidate, horsemanship, shadow and nonbasic landwalk](card-dsl-cookbook.md#fear-intimidate-horsemanship-shadow-and-nonbasic-landwalk) |
 | `first_strike` | First strike. | [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on) |
+| `flanking` | Flanking. | [Flanking](card-dsl-cookbook.md#flanking) |
 | `flash` | Flash. | [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on) |
 | `flying` | Flying. | [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on) |
 | `forestwalk` | Forestwalk. | [Landwalk, and global attack prohibitions](card-dsl-cookbook.md#landwalk-and-global-attack-prohibitions) |
