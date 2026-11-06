@@ -13964,6 +13964,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "saheeli_sublime_artificer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sai_master_thopterist": {
     "battlefield_count": 33,
     "hand_size": {
@@ -14015,6 +14019,10 @@
     "zone": "battlefield"
   },
   "sarkhan_dragon_ascendant": {
+    "zone": "battlefield"
+  },
+  "sarkhan_soul_aflame": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "satyr_rambler": {

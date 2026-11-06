@@ -2997,17 +2997,20 @@ granted on top:
 |---|---|
 | `add_keywords` | keywords added to the copied face, on `copying_keywords` ("and it has vigilance") |
 | `keep_abilities` | positions in the copying card's **own** printed `abilities` that the copy keeps, on `copying_own_abilities` ("and this ability") |
+| `add_types` | card types added to the copied face, on `copying_add_types` ("except it's an artifact in addition to its other types", Saheeli, Sublime Artificer) |
+| `add_supertypes` | supertypes added to the copied face, on `copying_add_supertypes` ("and it's legendary in addition to its other types", Sarkhan, Soul Aflame), so the legend rule sees the copy |
 
 `GameState.card_of` appends the kept abilities after the copied face's own, so
 the copied card's indices keep meaning what they printed, and a kept triggered
 ability fires off the copy on later turns. A new `become_copy` replaces the
 whole copy, exceptions included; a timed copy's exceptions end at cleanup with
 it. The loader holds the key set as `BECOME_COPY_EXCEPT_KEYS` and refuses an
-unknown key, an empty exception, an unknown keyword and a position the card does
-not print.
+unknown key, an empty exception, an empty list, an unknown keyword, card type or
+supertype, and a position the card does not print.
 
 The near miss is a `grant_keyword` or `grant_ability` after the copy: a layer-6
-grant, not part of what the copy is. A copy of a copy still takes only the
+grant, not part of what the copy is; likewise `animate` or `add_subtype` for a
+type, a layer-4 effect rather than a copiable value. A copy of a copy still takes only the
 copied card's printed face ([rules coverage](rules-coverage.md)).
 
 ### A permanent whose arrival is itself replaced

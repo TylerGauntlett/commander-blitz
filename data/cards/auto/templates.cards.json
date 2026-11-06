@@ -164848,6 +164848,107 @@
                 "const": 1
               },
               "op": "create_token",
+              "token": "servo_1_1_c"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a noncreature spell, create a 1/1 colorless Servo artifact creature token.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "loyalty": -2
+          },
+          "effects": [
+            {
+              "copying": {
+                "target": "t2"
+              },
+              "duration": "end_of_turn",
+              "except_": {
+                "add_types": [
+                  "Artifact"
+                ]
+              },
+              "objects": {
+                "target": "t1"
+              },
+              "op": "become_copy"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            {
+              "count": 1,
+              "id": "t2",
+              "kind": "permanent",
+              "selector": {
+                "any_types": [
+                  "Artifact",
+                  "Creature"
+                ],
+                "controller": "you",
+                "exclude_binding": "t1",
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "−2: Target artifact you control becomes a copy of another target artifact or creature you control until end of turn, except it's an artifact in addition to its other types."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "saheeli_sublime_artificer",
+      "loyalty": 5,
+      "mana_cost": "{1}{U/R}{U/R}",
+      "name": "Saheeli, Sublime Artificer",
+      "oracle_text": "Whenever you cast a noncreature spell, create a 1/1 colorless Servo artifact creature token.\n−2: Target artifact you control becomes a copy of another target artifact or creature you control until end of turn, except it's an artifact in addition to its other types.",
+      "source": "auto",
+      "subtypes": [
+        "Saheeli"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
               "token": "thopter_1_1_c_flying"
             }
           ],
@@ -165519,6 +165620,87 @@
         "Legendary"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_spells": {
+            "controller": "you",
+            "subtypes": [
+              "Dragon"
+            ]
+          },
+          "amount": {
+            "const": 1
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Dragon spells you cast cost {1} less to cast."
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "copying": {
+                    "binding": "subject"
+                  },
+                  "duration": "end_of_turn",
+                  "except_": {
+                    "add_supertypes": [
+                      "Legendary"
+                    ]
+                  },
+                  "except_name": "Sarkhan, Soul Aflame",
+                  "objects": {
+                    "self_only": true,
+                    "zone": "battlefield"
+                  },
+                  "op": "become_copy"
+                }
+              ],
+              "op": "may",
+              "prompt": "Have Sarkhan become a copy of that Dragon until end of turn?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a Dragon you control enters, you may have Sarkhan become a copy of it until end of turn, except its name is Sarkhan, Soul Aflame and it's legendary in addition to its other types.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "subtypes": [
+                "Dragon"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "sarkhan_soul_aflame",
+      "mana_cost": "{1}{U}{R}",
+      "name": "Sarkhan, Soul Aflame",
+      "oracle_text": "Dragon spells you cast cost {1} less to cast.\nWhenever a Dragon you control enters, you may have Sarkhan become a copy of it until end of turn, except its name is Sarkhan, Soul Aflame and it's legendary in addition to its other types.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Shaman"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]

@@ -615,6 +615,13 @@ class GameState:
                 copied = replace(
                     copied, supertypes=copied.supertypes - obj.copying_remove_supertypes
                 )
+            if obj.copying_add_supertypes:
+                # "…and it's legendary in addition to its other types"
+                # (Sarkhan, Soul Aflame): on the copied face, so the legend
+                # rule (704.5j) sees a Legendary copy of a nonlegendary card.
+                copied = replace(
+                    copied, supertypes=copied.supertypes | obj.copying_add_supertypes
+                )
             if obj.copying_add_types:
                 # "…except it's an artifact in addition to its other types"
                 # (Phyrexian Metamorph): on the copied face, so the copy is an

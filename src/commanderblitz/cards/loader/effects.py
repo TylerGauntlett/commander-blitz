@@ -112,9 +112,14 @@ COPY_EXCEPT_KEYS = frozenset(
 #: The keys `become_copy`'s ``except_`` (707.9b) reads: ``add_keywords``, as
 #: on an as-enters copy ("and it has vigilance"), and ``keep_abilities``,
 #: positions in the copying card's own printed ``abilities`` the copy keeps
-#: ("and this ability", Kimahri, Valiant Guardian). The name stays on
-#: ``except_name``.
-BECOME_COPY_EXCEPT_KEYS = frozenset({"add_keywords", "keep_abilities"})
+#: ("and this ability", Kimahri, Valiant Guardian); ``add_types`` and
+#: ``add_supertypes``, as `copy_permanent`'s keys of the same names ("except
+#: it's an artifact in addition to its other types", Saheeli, Sublime
+#: Artificer; "and it's legendary in addition to its other types", Sarkhan,
+#: Soul Aflame). The name stays on ``except_name``.
+BECOME_COPY_EXCEPT_KEYS = frozenset(
+    {"add_keywords", "keep_abilities", "add_types", "add_supertypes"}
+)
 
 #: The recorders whose `as` binding is a **set of seats** rather than of
 #: objects: `may` (the players who said yes) and `draw` (the players who
@@ -2594,6 +2599,18 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                     f"{where}.except_.keep_abilities: needs a non-empty list of "
                     f"positions in this card's 'abilities'"
                 )
+        for key, known, noun in (
+            ("add_types", KNOWN_TYPES, "card type"),
+            ("add_supertypes", KNOWN_SUPERTYPES, "supertype"),
+        ):
+            if key not in exception:
+                continue
+            named = exception[key]
+            if not isinstance(named, list) or not named:
+                raise DslError(f"{where}.except_.{key}: must be a non-empty list")
+            for name in named:
+                if name not in known:
+                    raise DslError(f"{where}.except_.{key}: unknown {noun} {name!r}")
     if op == "copy_permanent" and (overrides := effect.get("except_") or effect.get("except")):
         # "…except it's a white Zombie Angel with no mana cost." A misspelled
         # key here would be silently dropped, and the token would come back a

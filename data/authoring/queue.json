@@ -231312,12 +231312,12 @@
     },
     "Saheeli, Sublime Artificer": {
       "edhrec_rank": 2493,
-      "gate": "template",
+      "gate": null,
       "name": "Saheeli, Sublime Artificer",
-      "reason": "no template for: Whenever you cast a noncreature spell, create a 1/1 colorless Servo artifact creature toke",
+      "reason": "",
       "scryfall_id": "2e7329c4-5803-43f0-a4b5-306fb77923b7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Saheeli, the Gifted": {
@@ -233502,12 +233502,12 @@
     },
     "Sarkhan, Soul Aflame": {
       "edhrec_rank": 2059,
-      "gate": "template",
+      "gate": null,
       "name": "Sarkhan, Soul Aflame",
-      "reason": "no template for: Dragon spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "18484227-b96a-40fb-9788-656d00705d80",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sarkhan, the Dragonspeaker": {

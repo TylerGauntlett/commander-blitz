@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**203 cards** blocked by **183** capabilities.
+**201 cards** blocked by **181** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -51,8 +51,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [batched-combat-damage-amount](#batched-combat-damage-amount) | 1 | 3943 | value |
-| [become-copy-add-supertypes](#become-copy-add-supertypes) | 1 | 2059 | op |
-| [become-copy-add-types](#become-copy-add-types) | 1 | 2493 | op |
 | [block-restriction-relative-power](#block-restriction-relative-power) | 1 | 6993 | static_effect |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [can-block-only](#can-block-only) | 1 | 2673 | static_effect |
@@ -971,34 +969,6 @@ Blocks **1** card.
 
 - **Broodcaller Scourge** (rank 3943) — `broodcaller_scourge`
   - Whenever one or more Dragons you control deal combat damage to a player, you may put a permanent card with mana value less than or equal to that damage from your hand onto the battlefield.
-
-</details>
-
-## become-copy-add-supertypes
-
-Blocks **1** card.
-
-- **(op)** an `add_supertypes` key in `become_copy`'s `except_` (707.9b), written into the copy's copiable values the way `copy_permanent`'s except_ already honours add_supertypes, so "becomes a copy of it until end of turn, except its name is Sarkhan, Soul Aflame and it's legendary in addition to its other types" is become_copy with copying {binding: subject}, duration end_of_turn, except_name "Sarkhan, Soul Aflame" and except_ {"add_supertypes": ["Legendary"]}
-  <br>Why the existing vocabulary won't do: become_copy's except_ is checked against loader.effects.BECOME_COPY_EXCEPT_KEYS, which is only add_keywords and keep_abilities; add_supertypes exists only on copy_permanent's COPY_EXCEPT_KEYS (a token copy, not an in-place copy). Dropping the clause would make Sarkhan a non-legendary copy, so the legend rule and anything counting legends would see a different card. No op (add_subtype, animate) adds a supertype as a later effect either, and that would not be a copiable value anyway. The rest is expressible: spell_cost_reduction with affects_spells subtypes Dragon, and a permanent_enters trigger filtered to Dragons you control wrapping become_copy in a may.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Sarkhan, Soul Aflame** (rank 2059) — `sarkhan_soul_aflame`
-  - Whenever a Dragon you control enters, you may have Sarkhan become a copy of it until end of turn, except its name is Sarkhan, Soul Aflame and it's legendary in addition to its other types.
-
-</details>
-
-## become-copy-add-types
-
-Blocks **1** card.
-
-- **(op)** an `add_types` exception on `become_copy`'s `except_` (707.9b), so an in-place copy effect can write "except it's an artifact in addition to its other types" into the copiable values: `{"op": "become_copy", "objects": {"target": "t1"}, "copying": {"target": "t2"}, "duration": "end_of_turn", "except_": {"add_types": ["Artifact"]}}`
-  <br>Why the existing vocabulary won't do: `become_copy`'s `except_` accepts only `add_keywords` and `keep_abilities` (the loader's BECOME_COPY_EXCEPT_KEYS), and op_become_copy explicitly resets `copying_add_types` to None even though the object field and `state.card_of` already support it (zones.py fills it for as-enters copies). `copy_permanent` takes `add_types` but makes a new token instead of altering the target; `animate`/`add_subtype` granted afterwards would be a separate layer-4 effect rather than part of the copiable values, so a creature copy would stop being an artifact the wrong way. Without the exception, copying a creature drops the Artifact type, which changes the card.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Saheeli, Sublime Artificer** (rank 2493) — `saheeli_sublime_artificer`
-  - −2: Target artifact you control becomes a copy of another target artifact or creature you control until end of turn, except it's an artifact in addition to its other types.
 
 </details>
 

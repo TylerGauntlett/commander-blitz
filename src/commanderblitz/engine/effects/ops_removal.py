@@ -136,7 +136,10 @@ def op_become_copy(ctx: EffectContext, spec: Mapping[str, Any]):
     707.9b exceptions, written into the copiable values rather than granted on
     top: ``add_keywords`` ("and it has vigilance") and ``keep_abilities``,
     positions in the copying permanent's own printed ``abilities`` that the
-    copy keeps ("and this ability", Kimahri, Valiant Guardian). ``duration``
+    copy keeps ("and this ability", Kimahri, Valiant Guardian); ``add_types``
+    ("except it's an artifact in addition to its other types", Saheeli, Sublime
+    Artificer) and ``add_supertypes`` ("and it's legendary in addition to its
+    other types", Sarkhan, Soul Aflame). ``duration``
     defaults to ``end_of_turn``; ``permanent`` is Clone's shape, and only the
     timed form is cleared by `clear_until_eot`.
     """
@@ -159,6 +162,8 @@ def op_become_copy(ctx: EffectContext, spec: Mapping[str, Any]):
     # this effect's own exceptions are written below.
     exception = spec.get("except_") or {}
     added = exception.get("add_keywords")
+    types_added = exception.get("add_types")
+    supertypes_added = exception.get("add_supertypes")
     kept = tuple(int(i) for i in exception.get("keep_abilities") or ()) or None
     for oid in subjects:
         obj = ctx.state.objects.get(oid)
@@ -168,7 +173,8 @@ def op_become_copy(ctx: EffectContext, spec: Mapping[str, Any]):
         obj.copying_name = spec.get("except_name")
         obj.copying_keywords = frozenset(added) if added else None
         obj.copying_remove_supertypes = None
-        obj.copying_add_types = None
+        obj.copying_add_types = frozenset(types_added) if types_added else None
+        obj.copying_add_supertypes = frozenset(supertypes_added) if supertypes_added else None
         obj.copying_own_abilities = kept
         obj.copying_until_eot = until_eot
     ctx.state.bump_chars()
