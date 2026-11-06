@@ -231302,12 +231302,12 @@
     },
     "Saheeli, Radiant Creator": {
       "edhrec_rank": 9955,
-      "gate": "template",
+      "gate": null,
       "name": "Saheeli, Radiant Creator",
-      "reason": "no template for: Whenever you cast an Artificer or artifact spell, you get {E}",
+      "reason": "",
       "scryfall_id": "5fea0781-e933-47ef-9414-92c8652a7778",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Saheeli, Sublime Artificer": {
@@ -294882,12 +294882,12 @@
     },
     "Twinflame": {
       "edhrec_rank": 1261,
-      "gate": "template",
+      "gate": null,
       "name": "Twinflame",
-      "reason": "no template for: Strive — This spell costs {2}{R} more to cast for each target beyond the first",
+      "reason": "",
       "scryfall_id": "85c863ef-b266-410d-87b3-ced791f99966",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Twinflame Travelers": {
@@ -315742,12 +315742,12 @@
     },
     "Will of the Temur": {
       "edhrec_rank": 4158,
-      "gate": "template",
+      "gate": null,
       "name": "Will of the Temur",
-      "reason": "no template for: Choose one. If you control a commander as you cast this spell, you may choose both instead",
+      "reason": "",
       "scryfall_id": "c50fe0ff-6826-485a-a0cf-a8f8193bc756",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Will, Scion of Peace": {

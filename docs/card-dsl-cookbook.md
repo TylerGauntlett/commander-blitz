@@ -12563,6 +12563,7 @@ its own. So the exception rides on the **object**, as `copy_overrides`:
 | `add_supertypes` | *adds* supertypes — "except it's legendary" (Adagia, Windswept Bastion); the legend rule reads it |
 | `remove_supertypes` | *removes* supertypes — "except the token isn't legendary" (Miirym, Sentinel Wyrm; Helm of the Host; Kindred Charge) |
 | `power`, `toughness` | *replace* the base size, a pair of non-negative integers — eternalize's "4/4" |
+| `add_keywords` | *adds* keywords — "except it's a 5/5 artifact creature in addition to its other types and has haste" (Saheeli, Radiant Creator; Twinflame; Will of the Temur's flying) |
 
 The whole set is 707.9b's copiable values that a printing has asked for, and
 the loader holds it as `COPY_EXCEPT_KEYS`. `types` and `add_types` together are
@@ -12570,6 +12571,13 @@ refused (one replaces, one adds, and the order would be a guess), as are an
 empty addition or removal, half a size, and a supertype named in both
 `add_supertypes` and `remove_supertypes` (whichever way `chars` ordered the two
 would decide the card by accident).
+
+`add_keywords` takes known, unnumbered keywords (toxic N is refused: it has
+nowhere to carry its N). The keywords sit beside the printed ones before layer
+6, so a "loses all abilities" effect takes them, and a copy of the token
+inherits them, unioned with that copy's own `add_keywords`. The near miss is a
+`grant_keyword` on the `as` binding after the copy: a layer-6 grant, which a
+copy of the token would not have.
 
 `remove_supertypes` is the one subtraction in the table, and it exists for one
 printed word. "Whenever another nontoken Dragon you control enters, create a

@@ -163954,6 +163954,141 @@
               "amount": {
                 "const": 1
               },
+              "op": "add_energy"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast an Artificer or artifact spell, you get {E} (an energy counter).",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_of": [
+                {
+                  "subtypes": [
+                    "Artificer"
+                  ]
+                },
+                {
+                  "types": [
+                    "Artifact"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "ability": "saheeli_copy",
+                  "op": "reflexive_trigger"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "pay_energy": 3
+              },
+              "player": "you",
+              "prompt": "Pay {E}{E}{E} to copy a permanent you control?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of combat on your turn, you may pay {E}{E}{E}.",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        },
+        {
+          "effects": [
+            {
+              "as": "saheeli_token",
+              "controller": "you",
+              "except_": {
+                "add_keywords": [
+                  "haste"
+                ],
+                "add_types": [
+                  "Artifact",
+                  "Creature"
+                ],
+                "power": 5,
+                "toughness": 5
+              },
+              "objects": {
+                "target": "t1"
+              },
+              "op": "copy_permanent"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "saheeli_token"
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "Sacrifice it at the beginning of the next end step."
+            }
+          ],
+          "id": "saheeli_copy",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When you do, create a token that's a copy of target permanent you control, except it's a 5/5 artifact creature in addition to its other types and has haste. Sacrifice it at the beginning of the next end step."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "R",
+        "U"
+      ],
+      "id": "saheeli_radiant_creator",
+      "mana_cost": "{1}{G}{U}{R}",
+      "name": "Saheeli, Radiant Creator",
+      "oracle_text": "Whenever you cast an Artificer or artifact spell, you get {E} (an energy counter).\nAt the beginning of combat on your turn, you may pay {E}{E}{E}. When you do, create a token that's a copy of target permanent you control, except it's a 5/5 artifact creature in addition to its other types and has haste. Sacrifice it at the beginning of the next end step.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Artificer"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
               "op": "create_token",
               "token": "thopter_1_1_c_flying"
             }
@@ -210057,6 +210192,65 @@
       ]
     },
     {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "twinflame",
+      "mana_cost": "{1}{R}",
+      "name": "Twinflame",
+      "oracle_text": "Strive — This spell costs {2}{R} more to cast for each target beyond the first.\nChoose any number of target creatures you control. For each of them, create a token that's a copy of that creature, except it has haste. Exile those tokens at the beginning of the next end step.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "twinflame_tokens",
+          "controller": "you",
+          "except_": {
+            "add_keywords": [
+              "haste"
+            ]
+          },
+          "objects": {
+            "target": "t1"
+          },
+          "op": "copy_permanent"
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "binding": "twinflame_tokens"
+              },
+              "op": "exile"
+            }
+          ],
+          "op": "delay",
+          "step": "end_step",
+          "text": "Exile those tokens at the beginning of the next end step."
+        }
+      ],
+      "strive": "{2}{R}",
+      "targets": [
+        {
+          "count": "any",
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -225969,6 +226163,107 @@
               "Creature"
             ],
             "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "will_of_the_temur",
+      "mana_cost": "{5}{U}",
+      "name": "Will of the Temur",
+      "oracle_text": "Choose one. If you control a commander as you cast this spell, you may choose both instead.\n• Create a token that's a copy of target permanent, except it's a 4/4 Dragon creature with flying in addition to its other types.\n• Target player draws cards equal to the greatest mana value among permanents you control.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "controller": "you",
+                  "except_": {
+                    "add_keywords": [
+                      "flying"
+                    ],
+                    "add_subtypes": [
+                      "Dragon"
+                    ],
+                    "add_types": [
+                      "Creature"
+                    ],
+                    "power": 4,
+                    "toughness": 4
+                  },
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "copy_permanent"
+                }
+              ],
+              "label": "Create a token that's a copy of target permanent, except it's a 4/4 Dragon creature with flying in addition to its other types."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "extreme_value": {
+                      "objects": {
+                        "controller": "you",
+                        "zone": "battlefield"
+                      },
+                      "of": "mana_value",
+                      "pick": "greatest"
+                    }
+                  },
+                  "op": "draw",
+                  "player": {
+                    "target": "t2"
+                  }
+                }
+              ],
+              "label": "Target player draws cards equal to the greatest mana value among permanents you control."
+            }
+          ],
+          "op": "choose_mode",
+          "up_to_if": {
+            "condition": {
+              "exists": {
+                "controller": "you",
+                "is_commander": true,
+                "zone": "battlefield"
+              }
+            },
+            "count": 2
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "mode": 0,
+          "selector": {
+            "controller": "any",
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "t2",
+          "kind": "player",
+          "mode": 1,
+          "selector": {
+            "controller": "any"
           }
         }
       ],

@@ -91,9 +91,11 @@ from .walk import (
 #: ``types``, ``power`` and ``toughness``. Additions: ``add_types``,
 #: ``add_subtypes`` and ``add_supertypes``. Removals: ``remove_supertypes``,
 #: the only subtraction any printing asks for ("except the token isn't
-#: legendary"). And ``no_mana_cost``.
+#: legendary"). ``add_keywords``, "…and has haste" (Saheeli, Radiant Creator).
+#: And ``no_mana_cost``.
 COPY_EXCEPT_KEYS = frozenset(
     {
+        "add_keywords",
         "colors",
         "types",
         "power",
@@ -2579,6 +2581,17 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         for color in overrides.get("colors") or ():
             if color not in KNOWN_COLORS:
                 raise DslError(f"{where}.except_.colors: unknown colour {color!r}")
+        if "add_keywords" in overrides:
+            # "…except it's a 5/5 artifact creature … and has haste." Checked
+            # here because the token reads it only as it is created: a
+            # misspelt keyword would arrive as a copy without it.
+            added = overrides["add_keywords"]
+            if not isinstance(added, list) or not added:
+                raise DslError(f"{where}.except_.add_keywords: needs a non-empty list of keywords")
+            for k in added:
+                if k not in KNOWN_KEYWORDS:
+                    raise DslError(f"{where}.except_.add_keywords: unknown keyword {k!r}")
+            refuse_numbered_grant(added, f"{where}.except_.add_keywords")
         if "types" in overrides:
             # A **replacement**, unlike `add_subtypes` beside it -- "it's an
             # artifact and it loses all other card types". So an empty list is a

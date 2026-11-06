@@ -827,6 +827,13 @@ def op_copy_permanent(ctx: EffectContext, spec: Mapping[str, Any]):
         # it set -- an X/X Shark's size, an eternalized token's 4/4 -- so they
         # come along, and this copy's own exception goes on top (707.9b).
         overrides = {**(source.copy_overrides or {}), **(exception or {})}
+        if inherited := (source.copy_overrides or {}).get("add_keywords"):
+            # Keywords are an addition, so an inherited haste and this copy's
+            # flying both stand: a copy of a Twinflame token made by Will of
+            # the Temur has haste and flying.
+            overrides["add_keywords"] = sorted(
+                set(inherited) | set((exception or {}).get("add_keywords") or ())
+            )
         for pid in controllers:
             made.extend(
                 create_token(

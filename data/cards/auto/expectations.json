@@ -13922,6 +13922,10 @@
       "0": 43
     }
   },
+  "saheeli_radiant_creator": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sai_master_thopterist": {
     "battlefield_count": 33,
     "hand_size": {
@@ -17712,6 +17716,10 @@
       "graveyard"
     ]
   },
+  "twinflame": {
+    "battlefield_count": 34,
+    "zone": "graveyard"
+  },
   "twinflame_tyrant": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -19154,6 +19162,10 @@
     "library_size": {
       "0": 37
     },
+    "zone": "graveyard"
+  },
+  "will_of_the_temur": {
+    "battlefield_count": 33,
     "zone": "graveyard"
   },
   "willie_lumpkin_postman": {
