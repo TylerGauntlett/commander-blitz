@@ -18860,6 +18860,16 @@
     },
     "zone": "graveyard"
   },
+  "will_of_the_sultai": {
+    "battlefield_count": 34,
+    "graveyard_size": {
+      "0": 4
+    },
+    "library_size": {
+      "0": 37
+    },
+    "zone": "graveyard"
+  },
   "willie_lumpkin_postman": {
     "zone": "battlefield"
   },
