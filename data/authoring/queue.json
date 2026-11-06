@@ -11242,12 +11242,12 @@
     },
     "Arcades, the Strategist": {
       "edhrec_rank": 5790,
-      "gate": "template",
+      "gate": null,
       "name": "Arcades, the Strategist",
-      "reason": "no template for: Whenever a creature you control with defender enters, draw a card",
+      "reason": "",
       "scryfall_id": "89943e56-0fb0-4de3-bb3a-94b1a016d7e3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Arcane Adaptation": {
@@ -50362,12 +50362,12 @@
     },
     "Colossus of Akros": {
       "edhrec_rank": 7206,
-      "gate": "template",
+      "gate": null,
       "name": "Colossus of Akros",
-      "reason": "no template for: {10}: Monstrosity 10",
+      "reason": "",
       "scryfall_id": "3e394ffe-7460-4c59-a403-e9404b0d10c1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Colossus of Sardia": {
@@ -72272,12 +72272,12 @@
     },
     "Doran, the Siege Tower": {
       "edhrec_rank": 5268,
-      "gate": "template",
+      "gate": null,
       "name": "Doran, the Siege Tower",
-      "reason": "no template for: Each creature assigns combat damage equal to its toughness rather than its power",
+      "reason": "",
       "scryfall_id": "3e221061-7317-4cac-a909-610533c06b68",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dori, Bearer of Friends": {
@@ -127612,12 +127612,12 @@
     },
     "High Alert": {
       "edhrec_rank": 5605,
-      "gate": "template",
+      "gate": null,
       "name": "High Alert",
-      "reason": "no template for: Each creature you control assigns combat damage equal to its toughness rather than its pow",
+      "reason": "",
       "scryfall_id": "a8e333f4-7679-4f8f-a779-6806d4ffe9b4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "High Fae Negotiator": {
@@ -131002,12 +131002,12 @@
     },
     "Huatli, the Sun's Heart": {
       "edhrec_rank": 6429,
-      "gate": "template",
+      "gate": null,
       "name": "Huatli, the Sun's Heart",
-      "reason": "no template for: Each creature you control assigns combat damage equal to its toughness rather than its pow",
+      "reason": "",
       "scryfall_id": "79d05299-27bd-4826-bbdb-f24ac9a5005b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hubris": {
@@ -185522,12 +185522,12 @@
     },
     "Nethroi, Apex of Death": {
       "edhrec_rank": 5419,
-      "gate": "template",
+      "gate": null,
       "name": "Nethroi, Apex of Death",
-      "reason": "no template for: Mutate {4}{G/W}{B}{B}",
+      "reason": "",
       "scryfall_id": "04b9b58f-4c01-48a5-afaf-b8a37165a83f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Netter en-Dal": {
@@ -243902,12 +243902,12 @@
     },
     "Shield Sphere": {
       "edhrec_rank": 4051,
-      "gate": "template",
+      "gate": null,
       "name": "Shield Sphere",
-      "reason": "no template for: Whenever this creature blocks, put a -0/-1 counter on it",
+      "reason": "",
       "scryfall_id": "1730d219-a28f-4930-8088-4cfcb627f157",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shield Wall": {

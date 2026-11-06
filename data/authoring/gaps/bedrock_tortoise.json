@@ -1,0 +1,18 @@
+{
+  "card_id": "bedrock_tortoise",
+  "name": "Bedrock Tortoise",
+  "oracle_text": "During your turn, creatures you control have hexproof.\nEach creature you control with toughness greater than its power assigns combat damage equal to its toughness rather than its power.",
+  "blocked_sentences": [
+    "Each creature you control with toughness greater than its power assigns combat damage equal to its toughness rather than its power."
+  ],
+  "needs": [
+    {
+      "capability": "toughness_greater_than_power_filter",
+      "kind": "selector",
+      "what": "a static-filter key matching a creature whose own toughness is greater than its own power (a per-object comparison of the two characteristics), usable in the `affects` of a `combat_damage_by_toughness` static: {\"controller\": \"you\", \"types\": [\"Creature\"], \"toughness_greater_than_power\": true}",
+      "why_existing_wont_do": "The `combat_damage_by_toughness` static exists, but its `affects` filter can only compare `power`/`toughness` against a fixed integer (`compare_pt` takes {op, value} with a plain int); there is no static_affects_filter_key that compares an object's toughness to its own power. Dropping the clause would make every creature you control (e.g. a 5/2) assign damage by toughness, which is a different card."
+    }
+  ],
+  "closest_existing": ["combat_damage_by_toughness", "toughness"],
+  "confidence": "high"
+}

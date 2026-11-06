@@ -8075,6 +8075,94 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control with defender enters, draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "keywords": [
+                "defender"
+              ],
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "keywords": [
+              "defender"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "combat_damage_by_toughness",
+          "kind": "static",
+          "text": "Each creature you control with defender assigns combat damage equal to its toughness rather than its power and can attack as though it didn't have defender."
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "keywords": [
+              "defender"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "attack_despite_defender",
+          "kind": "static",
+          "text": "Each creature you control with defender assigns combat damage equal to its toughness rather than its power and can attack as though it didn't have defender."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "U",
+        "W"
+      ],
+      "id": "arcades_the_strategist",
+      "keywords": [
+        "flying",
+        "vigilance"
+      ],
+      "mana_cost": "{1}{G}{W}{U}",
+      "name": "Arcades, the Strategist",
+      "oracle_text": "Flying, vigilance\nWhenever a creature you control with defender enters, draw a card.\nEach creature you control with defender assigns combat damage equal to its toughness rather than its power and can attack as though it didn't have defender.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Elder",
+        "Dragon"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "link": "self",
               "objects": {
                 "any_types": [
@@ -35892,6 +35980,70 @@
     {
       "abilities": [
         {
+          "cost": {
+            "mana": "{10}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 10
+              },
+              "op": "monstrosity"
+            }
+          ],
+          "kind": "activated",
+          "text": "{10}: Monstrosity 10. (If this creature isn't monstrous, put ten +1/+1 counters on it and it becomes monstrous.)"
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "is_monstrous": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "trample"
+          ],
+          "kind": "static",
+          "text": "As long as this creature is monstrous, it has trample and can attack as though it didn't have defender."
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "is_monstrous": true
+          },
+          "effect": "attack_despite_defender",
+          "kind": "static",
+          "text": "As long as this creature is monstrous, it has trample and can attack as though it didn't have defender."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "colossus_of_akros",
+      "keywords": [
+        "defender",
+        "indestructible"
+      ],
+      "mana_cost": "{8}",
+      "name": "Colossus of Akros",
+      "oracle_text": "Defender, indestructible\n{10}: Monstrosity 10. (If this creature isn't monstrous, put ten +1/+1 counters on it and it becomes monstrous.)\nAs long as this creature is monstrous, it has trample and can attack as though it didn't have defender.",
+      "power": 10,
+      "source": "auto",
+      "subtypes": [
+        "Golem"
+      ],
+      "toughness": 10,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "controller": "any",
             "subtypes": [
@@ -49417,6 +49569,48 @@
         "Warrior"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "combat_damage_by_toughness",
+          "kind": "static",
+          "text": "Each creature assigns combat damage equal to its toughness rather than its power."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "W"
+      ],
+      "id": "doran_the_siege_tower",
+      "mana_cost": "{W}{B}{G}",
+      "name": "Doran, the Siege Tower",
+      "oracle_text": "Each creature assigns combat damage equal to its toughness rather than its power.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Treefolk",
+        "Shaman"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
@@ -88032,6 +88226,75 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "combat_damage_by_toughness",
+          "kind": "static",
+          "text": "Each creature you control assigns combat damage equal to its toughness rather than its power."
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "attack_despite_defender",
+          "kind": "static",
+          "text": "Creatures you control can attack as though they didn't have defender."
+        },
+        {
+          "cost": {
+            "mana": "{2}{W}{U}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "untap"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{2}{W}{U}: Untap target creature."
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "high_alert",
+      "mana_cost": "{1}{W}{U}",
+      "name": "High Alert",
+      "oracle_text": "Each creature you control assigns combat damage equal to its toughness rather than its power.\nCreatures you control can attack as though they didn't have defender.\n{2}{W}{U}: Untap target creature.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -90119,6 +90382,70 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "combat_damage_by_toughness",
+          "kind": "static",
+          "text": "Each creature you control assigns combat damage equal to its toughness rather than its power."
+        },
+        {
+          "cost": {
+            "loyalty": -3
+          },
+          "effects": [
+            {
+              "amount": {
+                "extreme_value": {
+                  "objects": {
+                    "controller": "you",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "of": "toughness",
+                  "pick": "greatest"
+                }
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "−3: You gain life equal to the greatest toughness among creatures you control."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "huatli_the_sun_s_heart",
+      "loyalty": 7,
+      "mana_cost": "{2}{G/W}",
+      "name": "Huatli, the Sun's Heart",
+      "oracle_text": "Each creature you control assigns combat damage equal to its toughness rather than its power.\n−3: You gain life equal to the greatest toughness among creatures you control.",
+      "source": "auto",
+      "subtypes": [
+        "Huatli"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
       ]
     },
     {
@@ -128822,6 +129149,77 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": "any",
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              },
+              "total_power": 10
+            }
+          ],
+          "text": "Whenever this creature mutates, return any number of target creature cards with total power 10 or less from your graveyard to the battlefield.",
+          "trigger": {
+            "controller": "you",
+            "event": "mutates",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "W"
+      ],
+      "id": "nethroi_apex_of_death",
+      "keywords": [
+        "deathtouch",
+        "lifelink"
+      ],
+      "mana_cost": "{2}{W}{B}{G}",
+      "mutate": "{4}{G/W}{B}{B}",
+      "name": "Nethroi, Apex of Death",
+      "oracle_text": "Mutate {4}{G/W}{B}{B} (If you cast this spell for its mutate cost, put it over or under target non-Human creature you own. They mutate into the creature on top plus all abilities from under it.)\nDeathtouch, lifelink\nWhenever this creature mutates, return any number of target creature cards with total power 10 or less from your graveyard to the battlefield.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Cat",
+        "Nightmare",
+        "Beast"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -167414,6 +167812,49 @@
       ],
       "toughness": 3,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "-0/-1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature blocks, put a -0/-1 counter on it.",
+          "trigger": {
+            "event": "blocks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "shield_sphere",
+      "keywords": [
+        "defender"
+      ],
+      "mana_cost": "{0}",
+      "name": "Shield Sphere",
+      "oracle_text": "Defender\nWhenever this creature blocks, put a -0/-1 counter on it.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Wall"
+      ],
+      "toughness": 6,
+      "types": [
+        "Artifact",
         "Creature"
       ]
     },

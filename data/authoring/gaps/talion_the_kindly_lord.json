@@ -1,0 +1,19 @@
+{
+  "card_id": "talion_the_kindly_lord",
+  "name": "Talion, the Kindly Lord",
+  "oracle_text": "Flying\nAs Talion enters, choose a number between 1 and 10.\nWhenever an opponent casts a spell with mana value, power, or toughness equal to the chosen number, that player loses 2 life and you draw a card.",
+  "blocked_sentences": [
+    "As Talion enters, choose a number between 1 and 10.",
+    "Whenever an opponent casts a spell with mana value, power, or toughness equal to the chosen number, that player loses 2 life and you draw a card."
+  ],
+  "needs": [
+    {
+      "capability": "chosen_number",
+      "kind": "engine",
+      "what": "an \"as this permanent enters, choose a number between N and M\" replacement that stores the number on the permanent for as long as it stays on the battlefield (like the existing per-permanent chosen_color / chosen_type), plus a value/filter leaf such as {\"chosen_number_of\": \"self\"} that a spell_cast trigger filter can compare a spell's mana_value, power and toughness against (any_of over the three)",
+      "why_existing_wont_do": "The choose_number op binds its result with 'as' only for the duration of the one resolving effect, so a later spell_cast trigger cannot read it; it is also an op, not an as-enters replacement, so writing it on a self_enters trigger would make the choice a trigger that can be responded to. chosen_color_of / chosen_type_of persist on the permanent but there is no numeric counterpart, and trigger_filter_keys mana_value/power/toughness take only fixed comparisons"
+    }
+  ],
+  "closest_existing": ["choose_number", "chosen_color_of", "chosen_type_of"],
+  "confidence": "high"
+}

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**172 cards** blocked by **156** capabilities.
+**177 cards** blocked by **162** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -57,6 +57,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [choose-card-type-from-list](#choose-card-type-from-list) | 1 | 611 | op |
 | [chosen-card-type-cost-reduction](#chosen-card-type-cost-reduction) | 1 | 611 | static_effect |
+| [chosen-number](#chosen-number) | 1 | 1610 | engine |
 | [combat-damage-amount-binding](#combat-damage-amount-binding) | 1 | 8933 | value |
 | [companion](#companion) | 1 | 3861 | engine |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
@@ -65,6 +66,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
 | [copy-this-spell-on-resolution](#copy-this-spell-on-resolution) | 1 | 338 | op |
 | [coven](#coven) | 1 | 1129 | value |
+| [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
 | [crime](#crime) | 1 | 2244 | trigger_event |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [delirium](#delirium) | 1 | 1799 | value |
@@ -88,8 +90,10 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [first-mate-ragavan](#first-mate-ragavan) | 1 | 7016 | token |
 | [first-x-spell-cost-reduction](#first-x-spell-cost-reduction) | 1 | 8360 | static_effect |
 | [fixed-piles-opponent-chooses](#fixed-piles-opponent-chooses) | 1 | 12369 | op |
+| [flip-coins-count](#flip-coins-count) | 1 | 6651 | value |
 | [foretold](#foretold) | 1 | 3713 | value |
 | [free-cast-by-other-player](#free-cast-by-other-player) | 1 | 11704 | op |
+| [free-cast-this-turn](#free-cast-this-turn) | 1 | 6651 | op |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
 | [gold-token](#gold-token) | 1 | 705 | token |
 | [grant-evoke](#grant-evoke) | 1 | 5749 | static_effect |
@@ -165,6 +169,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [times-attacked-this-turn](#times-attacked-this-turn) | 1 | 988 | value |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 1 | 1802 | token |
 | [total-mana-value-selection](#total-mana-value-selection) | 1 | 4244 | op |
+| [total-toughness-cost-reduction](#total-toughness-cost-reduction) | 1 | 5188 | value |
+| [toughness-greater-than-power-filter](#toughness-greater-than-power-filter) | 1 | 3557 | selector |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
 | [while-source-on-battlefield-duration](#while-source-on-battlefield-duration) | 1 | 8222 | engine |
@@ -1009,6 +1015,21 @@ Blocks **1** card.
 
 </details>
 
+## chosen-number
+
+Blocks **1** card.
+
+- **(engine)** an "as this permanent enters, choose a number between N and M" replacement that stores the number on the permanent for as long as it stays on the battlefield (like the existing per-permanent chosen_color / chosen_type), plus a value/filter leaf such as {"chosen_number_of": "self"} that a spell_cast trigger filter can compare a spell's mana_value, power and toughness against (any_of over the three)
+  <br>Why the existing vocabulary won't do: The choose_number op binds its result with 'as' only for the duration of the one resolving effect, so a later spell_cast trigger cannot read it; it is also an op, not an as-enters replacement, so writing it on a self_enters trigger would make the choice a trigger that can be responded to. chosen_color_of / chosen_type_of persist on the permanent but there is no numeric counterpart, and trigger_filter_keys mana_value/power/toughness take only fixed comparisons
+
+<details><summary>Cards waiting on this</summary>
+
+- **Talion, the Kindly Lord** (rank 1610) — `talion_the_kindly_lord`
+  - As Talion enters, choose a number between 1 and 10.
+  - Whenever an opponent casts a spell with mana value, power, or toughness equal to the chosen number, that player loses 2 life and you draw a card.
+
+</details>
+
 ## combat-damage-amount-binding
 
 Blocks **1** card.
@@ -1120,6 +1141,20 @@ Blocks **1** card.
 
 - **Augur of Autumn** (rank 1129) — `augur_of_autumn`
   - Coven — As long as you control three or more creatures with different powers, you may cast creature spells from the top of your library.
+
+</details>
+
+## crew-with-toughness
+
+Blocks **1** card.
+
+- **(static_effect)** a static on a creature (affects: self_only) that makes it count its toughness instead of its power toward the total_power of a crew cost (tap_permanents with total_power) and toward a saddle cost; saddle itself (Saddle N: tap creatures with total power N, sorcery speed, the Mount becomes saddled) must also exist for the saddle half
+  <br>Why the existing vocabulary won't do: crew_power_bonus only adds a fixed amount to power for crewing, it cannot substitute toughness for power; combat_damage_by_toughness swaps power for toughness only in combat damage assignment; no saddle mechanic exists in reference at all (no keyword, cost or op)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Interface Ace** (rank 7596) — `interface_ace`
+  - This creature saddles Mounts and crews Vehicles using its toughness rather than its power.
 
 </details>
 
@@ -1456,6 +1491,20 @@ Blocks **1** card.
 
 </details>
 
+## flip-coins-count
+
+Blocks **1** card.
+
+- **(value)** flip_coin recording its results under an `as` binding (the way roll_dice does for `rolled`), with a value reading how many of the flips made by this effect were won/lost, so "if you won five flips this way" can be an `if` on that count
+  <br>Why the existing vocabulary won't do: flip_coin takes only `effects`/`else` per single flip and records nothing; inside a `repeat` the win branch can draw and the loss branch can deal damage, but no value counts the wins afterwards. set_turn_flag on a loss is only a near miss: it persists across a second attack the same turn and so would misread a later all-wins resolution
+
+<details><summary>Cards waiting on this</summary>
+
+- **Yusri, Fortune's Flame** (rank 6651) — `yusri_fortune_s_flame`
+  - Whenever Yusri attacks, choose a number between 1 and 5. Flip that many coins. For each flip you win, draw a card. For each flip you lose, Yusri deals 2 damage to you. If you won five flips this way, you may cast spells from your hand this turn without paying their mana costs.
+
+</details>
+
 ## foretold
 
 Blocks **1** card.
@@ -1481,6 +1530,20 @@ Blocks **1** card.
 
 - **Transforming Flourish** (rank 11704) — `transforming_flourish`
   - Destroy target artifact or creature you don't control. If that permanent is destroyed this way, its controller exiles cards from the top of their library until they exile a nonland card, then they may cast that card without paying its mana cost.
+
+</details>
+
+## free-cast-this-turn
+
+Blocks **1** card.
+
+- **(op)** a one-shot op granting the effect controller a free_cast_permission (cast spells from hand without paying their mana costs) for the rest of this turn, read afresh at each cast so cards drawn later in the turn are covered
+  <br>Why the existing vocabulary won't do: free_cast_permission is a static that lasts only while its source is on the battlefield and has no duration; grant_playable with playable_free/playable_this_turn snapshots only the hand cards it sees at resolution and also covers lands, so a spell drawn later that turn would be missed
+
+<details><summary>Cards waiting on this</summary>
+
+- **Yusri, Fortune's Flame** (rank 6651) — `yusri_fortune_s_flame`
+  - Whenever Yusri attacks, choose a number between 1 and 5. Flip that many coins. For each flip you win, draw a card. For each flip you lose, Yusri deals 2 damage to you. If you won five flips this way, you may cast spells from your hand this turn without paying their mana costs.
 
 </details>
 
@@ -2546,6 +2609,34 @@ Blocks **1** card.
 
 - **Ao, the Dawn Sky** (rank 4244) — `ao_the_dawn_sky`
   - • Look at the top seven cards of your library. Put any number of nonland permanent cards with total mana value 4 or less from among them onto the battlefield. Put the rest on the bottom of your library in a random order.
+
+</details>
+
+## total-toughness-cost-reduction
+
+Blocks **1** card.
+
+- **(value)** a card-level cost_reduction key `total_toughness` taking a cost_reduction filter, reducing the spell's generic cost by the summed toughness of matching permanents ({"total_toughness": {"controller": "you", "types": ["Creature"]}})
+  <br>Why the existing vocabulary won't do: cost_reduction_keys offer amount, count, greatest_count, greatest_mana_value, total_mana_value and total_power; total_power sums power, not toughness, and count counts creatures rather than summing toughness, so either reduces by the wrong amount
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Pride of Hull Clade** (rank 5188) — `the_pride_of_hull_clade`
+  - This spell costs {X} less to cast, where X is the total toughness of creatures you control.
+
+</details>
+
+## toughness-greater-than-power-filter
+
+Blocks **1** card.
+
+- **(selector)** a static-filter key matching a creature whose own toughness is greater than its own power (a per-object comparison of the two characteristics), usable in the `affects` of a `combat_damage_by_toughness` static: {"controller": "you", "types": ["Creature"], "toughness_greater_than_power": true}
+  <br>Why the existing vocabulary won't do: The `combat_damage_by_toughness` static exists, but its `affects` filter can only compare `power`/`toughness` against a fixed integer (`compare_pt` takes {op, value} with a plain int); there is no static_affects_filter_key that compares an object's toughness to its own power. Dropping the clause would make every creature you control (e.g. a 5/2) assign damage by toughness, which is a different card.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Bedrock Tortoise** (rank 3557) — `bedrock_tortoise`
+  - Each creature you control with toughness greater than its power assigns combat damage equal to its toughness rather than its power.
 
 </details>
 

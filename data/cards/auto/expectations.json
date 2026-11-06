@@ -728,6 +728,16 @@
   "arc_reactor": {
     "zone": "battlefield"
   },
+  "arcades_the_strategist": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "arcane_bombardment": {
     "battlefield_count": 33,
     "graveyard_size": {
@@ -3033,6 +3043,17 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "colossus_of_akros": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "indestructible",
+        "defender"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "combat_calligrapher": {
     "battlefield_count": 33,
     "hand_size": {
@@ -4200,6 +4221,13 @@
   },
   "dora_milaje_elite": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "doran_the_siege_tower": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "dosan_s_oldest_chant": {
@@ -7533,6 +7561,10 @@
       "0": 3
     }
   },
+  "high_alert": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "high_market": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -7715,6 +7747,10 @@
     "zone": "battlefield"
   },
   "huatli_s_snubhorn": {
+    "zone": "battlefield"
+  },
+  "huatli_the_sun_s_heart": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "hulk_bruce_banner": {
@@ -10943,6 +10979,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "nethroi_apex_of_death": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "nettle_swine": {
@@ -14196,6 +14236,10 @@
     "zone": "battlefield"
   },
   "shield_bearer": {
+    "zone": "battlefield"
+  },
+  "shield_sphere": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "shielded_by_faith": {
