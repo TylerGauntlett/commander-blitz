@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**193 cards** blocked by **174** capabilities.
+**203 cards** blocked by **182** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -21,8 +21,10 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [put-into-graveyard-from-anywhere](#put-into-graveyard-from-anywhere) | 4 | 902 | trigger_event |
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
+| [copy-exception-set-subtypes](#copy-exception-set-subtypes) | 3 | 1740 | engine, op |
 | [omen](#omen) | 3 | 3355 | cost, engine |
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 3 | 714 | engine |
+| [add-color](#add-color) | 2 | 2040 | op |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
@@ -38,9 +40,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [venture](#venture) | 2 | 19644 | engine |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
 | [x-maximum](#x-maximum) | 2 | 1665 | engine |
+| [zombie-1-1-w](#zombie-1-1-w) | 2 | 3702 | token |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
-| [add-color](#add-color) | 1 | 3356 | op |
 | [add-mana-on-tap-any-color](#add-mana-on-tap-any-color) | 1 | 1052 | static_effect |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
@@ -82,9 +84,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [elemental-1-1-r](#elemental-1-1-r) | 1 | 811 | token |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
+| [embalm](#embalm) | 1 | 4333 | cost |
 | [enters-as-copy-add-subtypes](#enters-as-copy-add-subtypes) | 1 | 3852 | replacement |
+| [enters-as-copy-embalmed-exception](#enters-as-copy-embalmed-exception) | 1 | 4333 | replacement |
 | [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
+| [every-creature-type-everywhere](#every-creature-type-everywhere) | 1 | 494 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [exile-x-from-graveyard-cost](#exile-x-from-graveyard-cost) | 1 | 17252 | cost |
 | [exiled-this-way-lki](#exiled-this-way-lki) | 1 | 6960 | value |
@@ -102,6 +107,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
 | [gold-token](#gold-token) | 1 | 705 | token |
 | [grant-abilities-of-exiled-cards](#grant-abilities-of-exiled-cards) | 1 | 8370 | static_effect |
+| [grant-cycling-to-cards-in-hand](#grant-cycling-to-cards-in-hand) | 1 | 5169 | static_effect |
 | [grant-evoke](#grant-evoke) | 1 | 5749 | static_effect |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
 | [graveyard-cast-per-permanent-type](#graveyard-cast-per-permanent-type) | 1 | 1104 | static_effect |
@@ -167,6 +173,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [self-suspend-on-resolution](#self-suspend-on-resolution) | 1 | 2750 | engine |
+| [shapeshifter-2-2-u-changeling](#shapeshifter-2-2-u-changeling) | 1 | 494 | token |
 | [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
@@ -188,6 +195,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [x-cost-mana-restriction](#x-cost-mana-restriction) | 1 | 4046 | decision |
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 1 | 11545 | engine |
 | [x-sized-ability-targets](#x-sized-ability-targets) | 1 | 1668 | engine |
+| [zombie-warrior-4-4-b-vigilance](#zombie-warrior-4-4-b-vigilance) | 1 | 2449 | token |
 
 ## combat-only-permanent-shield
 
@@ -447,6 +455,28 @@ Blocks **4** cards.
 
 </details>
 
+## copy-exception-set-subtypes
+
+Blocks **3** cards.
+
+- **(op)** a copy_permanent `except_` key that REPLACES the copy's subtypes (e.g. `subtypes: ["Zombie"]`), so the token is a Zombie instead of its other creature types (205.1a; Gatherer ruling: "The token is a Zombie instead of its other creature types"), keeping its card types and mana cost
+  <br>Why the existing vocabulary won't do: copy_permanent's except_ (applied in characteristics._compute via copy_overrides) supports power, toughness, colors, add_subtypes, types, add_types, add_supertypes, remove_supertypes and no_mana_cost. add_subtypes is eternalize's additive shape ("Zombie Snake Wizard"), which would leave the copied creature types on the token; `types` replaces card types only. The rest of the card (begin_combat trigger, may + exile with `as`, copy_permanent from exile, grant_keyword haste on the token binding) is expressible.
+- **(engine)** A copy exception (copy_permanent `except_`) that REPLACES the copied card's creature types with the printed ones -- "except it's a 4/4 black Zombie" without "in addition to its other types" makes the token a Zombie and nothing else (205.1b, 707.9b), e.g. an `except_.subtypes: ["Zombie"]` override read in characteristics._compute beside `colors`, `power` and `toughness`
+  <br>Why the existing vocabulary won't do: The rest is expressible: a `discard` trigger with `controller: you` and `filter: {types: [Creature]}`, a `may` with `pay: {mana: {2}{U}}`, and `copy_permanent` on `{binding: subject, zone: graveyard}` with `tapped: true` and `except_` power 4 / toughness 4 / colors [B]. But the only creature-type key `copy_overrides` honours is `add_subtypes` (eternalize's 'Zombie in addition to its other types'); `types` replaces card types only and keeps subtypes. Using `add_subtypes` would leave a discarded Elf Warrior an Elf Warrior Zombie, a different card for every tribal interaction
+- **(op)** a copy_permanent except_ key that replaces the copy's creature subtypes rather than adding to them
+  <br>Why the existing vocabulary won't do: copy_permanent's except_ carries add_subtypes, which keeps the copied card's creature types; 'except it's a 4/4 black Zombie' with no 'in addition to its other types' makes the token a Zombie instead of its other creature types (205.1a), and the types override replaces card types only. Same capability as god_pharaoh_s_gift
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Scarab God** (rank 1740) — `the_scarab_god`
+  - {2}{U}{B}: Exile target creature card from a graveyard. Create a token that's a copy of it, except it's a 4/4 black Zombie.
+- **Hashaton, Scarab's Fist** (rank 3525) — `hashaton_scarab_s_fist`
+  - Whenever you discard a creature card, you may pay {2}{U}. If you do, create a tapped token that's a copy of that card, except it's a 4/4 black Zombie.
+- **God-Pharaoh's Gift** (rank 8873) — `god_pharaoh_s_gift`
+  - If you do, create a token that's a copy of that card, except it's a 4/4 black Zombie.
+
+</details>
+
 ## omen
 
 Blocks **3** cards.
@@ -488,6 +518,24 @@ Blocks **3** cards.
   - When this land enters, sacrifice it. When you do, search your library for a basic Mountain, Forest, or Plains card, put it onto the battlefield tapped, then shuffle and you gain 1 life.
 - **Maestros Theater** (rank 1257) — `maestros_theater`
   - When this land enters, sacrifice it. When you do, search your library for a basic Island, Swamp, or Mountain card, put it onto the battlefield tapped, then shuffle and you gain 1 life.
+
+</details>
+
+## add-color
+
+Blocks **2** cards.
+
+- **(op)** a one-shot effect that permanently adds a color to one permanent ("that creature is black in addition to its other colors") without touching its card types or base power/toughness, applied to the creature card the same loyalty ability just returned from the graveyard (named by the ability's target t1)
+  <br>Why the existing vocabulary won't do: add_subtype covers the Zombie half (types added, duration permanent) but writes subtypes only. animate is the only one-shot that writes colors: a non-exact animate adds its colors, but the loader refuses it without power and toughness whenever the animation includes Creature (and an empty types list defaults to Creature), so it would overwrite the returned creature's base P/T; keep_colors is legal only on an exact animation, which replaces colors and types rather than adding. The set_colors static replaces colors and lasts only while its source is on the battlefield. return_from_graveyard and put_onto_battlefield carry no color option. Same gap as necromantic_selection.
+- **(op)** a one-shot effect that permanently adds a color to one permanent ("it's black in addition to its other colors") without touching its types or power/toughness, applied to the creature card just returned by return_from_graveyard (which would also need an `as` binding so the following effect can name that one returned card)
+  <br>Why the existing vocabulary won't do: add_subtype covers the Zombie half but changes subtypes only. animate is the only one-shot that writes colors: a non-exact animate does add its colors, but the loader refuses it without power and toughness whenever the animation includes Creature (and an empty types list defaults to Creature), so it would overwrite the returned creature's base P/T; keep_colors is legal only on an exact animation, which replaces colors and types rather than adding. The set_colors static replaces colors and lasts only while its source is on the battlefield, and this sorcery exiles itself. return_from_graveyard has no `as`, so even the add_subtype half has no way to name the one returned card apart from `link`/`returned_with`, which ties it to an exiled source.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Liliana, Death's Majesty** (rank 2040) — `liliana_death_s_majesty`
+  - −3: Return target creature card from your graveyard to the battlefield. That creature is a black Zombie in addition to its other colors and types.
+- **Necromantic Selection** (rank 3356) — `necromantic_selection`
+  - It's a black Zombie in addition to its other colors and types.
 
 </details>
 
@@ -774,6 +822,24 @@ Blocks **2** cards.
 
 </details>
 
+## zombie-1-1-w
+
+Blocks **2** cards.
+
+- **(token)** a 1/1 white Zombie creature token
+  <br>Why the existing vocabulary won't do: token_ids has only black Zombies (zombie_2_2_b, zombie_2_2_b_decayed, zombie_army_0_0_b, zombie_knight_2_2_b_menace); none is a 1/1 white Zombie. The trigger itself is expressible as leaves_graveyard with batched: true, and the first line is a buff plus grant_keyword static whose affects is an any_of over subtypes Zombie and is_token, so the token is the only missing piece
+- **(token)** a 1/1 white Zombie creature token (no abilities)
+  <br>Why the existing vocabulary won't do: token_ids has only black Zombies (zombie_2_2_b, zombie_2_2_b_decayed, zombie_army_0_0_b, zombie_knight_2_2_b_menace) and other 1/1 white creature types; none is a 1/1 white Zombie. The trigger itself is expressible: ability_activated with filter {controller: opponent, zone: battlefield}, mana_ability: false, max_per_turn: 1
+
+<details><summary>Cards waiting on this</summary>
+
+- **On Wings of Gold** (rank 3702) — `on_wings_of_gold`
+  - Whenever one or more cards leave your graveyard, create a 1/1 white Zombie creature token.
+- **Wizened Mentor** (rank 7822) — `wizened_mentor`
+  - Whenever an opponent activates an ability of a permanent that isn't a mana ability, you create a 1/1 white Zombie creature token. This ability triggers only once each turn.
+
+</details>
+
 ## activate-only-as-an-instant
 
 Blocks **1** card.
@@ -800,20 +866,6 @@ Blocks **1** card.
 - **Delirium** (rank 12129) — `delirium`
   - Cast this spell only during an opponent's turn.
   - Tap target creature that player controls. That creature deals damage equal to its power to the player.
-
-</details>
-
-## add-color
-
-Blocks **1** card.
-
-- **(op)** a one-shot effect that permanently adds a color to one permanent ("it's black in addition to its other colors") without touching its types or power/toughness, applied to the creature card just returned by return_from_graveyard (which would also need an `as` binding so the following effect can name that one returned card)
-  <br>Why the existing vocabulary won't do: add_subtype covers the Zombie half but changes subtypes only. animate is the only one-shot that writes colors: a non-exact animate does add its colors, but the loader refuses it without power and toughness whenever the animation includes Creature (and an empty types list defaults to Creature), so it would overwrite the returned creature's base P/T; keep_colors is legal only on an exact animation, which replaces colors and types rather than adding. The set_colors static replaces colors and lasts only while its source is on the battlefield, and this sorcery exiles itself. return_from_graveyard has no `as`, so even the add_subtype half has no way to name the one returned card apart from `link`/`returned_with`, which ties it to an exiled source.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Necromantic Selection** (rank 3356) — `necromantic_selection`
-  - It's a black Zombie in addition to its other colors and types.
 
 </details>
 
@@ -1402,6 +1454,21 @@ Blocks **1** card.
 
 </details>
 
+## embalm
+
+Blocks **1** card.
+
+- **(cost)** a card-level `embalm` cost (702.128): an activated ability usable only from the graveyard at sorcery speed whose cost is the printed mana plus exiling the card itself from the graveyard, and whose effect creates a token that is a copy of the card except it is white, has no mana cost and is a Zombie in addition to its other types; the token must remember it was embalmed so the card's own text can read it
+  <br>Why the existing vocabulary won't do: `card_level_cost_keys` has no embalm/eternalize; `exile_self` as a cost requires the source on the battlefield, `graveyard_cost`/`flashback` cast the card rather than create a token copy of it, and `copy_permanent` copies a permanent on the battlefield, not a card in the graveyard, with no white/no-mana-cost/Zombie exception
+
+<details><summary>Cards waiting on this</summary>
+
+- **Vizier of Many Faces** (rank 4333) — `vizier_of_many_faces`
+  - You may have this creature enter as a copy of any creature on the battlefield, except if this creature was embalmed, the token has no mana cost, it's white, and it's a Zombie in addition to its other types
+  - Embalm {3}{U}{U}
+
+</details>
+
 ## enters-as-copy-add-subtypes
 
 Blocks **1** card.
@@ -1413,6 +1480,21 @@ Blocks **1** card.
 
 - **Deceptive Frostkite** (rank 3852) — `deceptive_frostkite`
   - You may have this creature enter as a copy of a creature you control with power 4 or greater, except it's a Dragon in addition to its other types and it has flying.
+
+</details>
+
+## enters-as-copy-embalmed-exception
+
+Blocks **1** card.
+
+- **(replacement)** a `self_enters_as_copy` replacement (707.9) whose `except_` is conditional on the entering object being an embalmed token: if so, the copy's copiable values become white, lose their mana cost and add the Zombie subtype (707.9b), otherwise no exception; needs an `embalmed` condition plus `set_colors`, `no_mana_cost` and `add_subtypes` exception keys
+  <br>Why the existing vocabulary won't do: The packet's reference does not list `self_enters_as_copy` at all, and the engine's enters-as-copy exception keys (add_keywords, add_types, remove_supertypes, name, enters_with) have no colour, mana-cost or subtype override and no condition; a `self_enters` trigger with `become_copy` would make the copy a later effect rather than the entering object's copiable values
+
+<details><summary>Cards waiting on this</summary>
+
+- **Vizier of Many Faces** (rank 4333) — `vizier_of_many_faces`
+  - You may have this creature enter as a copy of any creature on the battlefield, except if this creature was embalmed, the token has no mana cost, it's white, and it's a Zombie in addition to its other types
+  - Embalm {3}{U}{U}
 
 </details>
 
@@ -1442,6 +1524,21 @@ Blocks **1** card.
 - **Collective Brutality** (rank 11817) — `collective_brutality`
   - Escalate—Discard a card. (Pay this cost for each mode chosen beyond the first.)
   - • Target opponent reveals their hand. You choose an instant or sorcery card from it. That player discards that card.
+
+</details>
+
+## every-creature-type-everywhere
+
+Blocks **1** card.
+
+- **(static_effect)** a static on a permanent that makes other objects every creature type in every zone: creatures you control on the battlefield, creature spells you control on the stack, and creature cards you own in hand, library, graveyard, exile and the command zone
+  <br>Why the existing vocabulary won't do: add_subtype can cover creatures on the battlefield, but the layer pipeline applies statics to battlefield objects only; printed_creature_types and card_in_exile_characteristics honour only a card's own self_only add_subtype (a CDA such as changeling), never a grant from another permanent, so spells and cards off the battlefield would keep their printed types
+
+<details><summary>Cards waiting on this</summary>
+
+- **Maskwood Nexus** (rank 494) — `maskwood_nexus`
+  - Creatures you control are every creature type. The same is true for creature spells you control and creature cards you own that aren't on the battlefield.
+  - {3}, {T}: Create a 2/2 blue Shapeshifter creature token with changeling. (It is every creature type.)
 
 </details>
 
@@ -1690,6 +1787,20 @@ Blocks **1** card.
 
 - **Steward of the Harvest** (rank 8370) — `steward_of_the_harvest`
   - Creatures you control have all activated abilities of all land cards exiled with this creature.
+
+</details>
+
+## grant-cycling-to-cards-in-hand
+
+Blocks **1** card.
+
+- **(static_effect)** a static on a permanent that grants cycling {1}{U} (an activated ability playable from hand: pay {1}{U}, discard that card, draw a card, counting as cycling for `cycle` triggers) to each creature card in its controller's hand, while the permanent is on the battlefield
+  <br>Why the existing vocabulary won't do: The `grant_ability` static grants abilities only to permanents and a granted activated ability works on the battlefield only; `static_affects_filter_keys` has no zone key to reach cards in hand; cycling is not in `keywords`, and `is_cycling`/`discard_self` with `active_zones: ["hand"]` only describe a card's own printed cycling, not one granted by another permanent
+
+<details><summary>Cards waiting on this</summary>
+
+- **Rhet-Tomb Mystic** (rank 5169) — `rhet_tomb_mystic`
+  - Each creature card in your hand has cycling {1}{U}. ({1}{U}, Discard that card: Draw a card.)
 
 </details>
 
@@ -2616,6 +2727,21 @@ Blocks **1** card.
 
 </details>
 
+## shapeshifter-2-2-u-changeling
+
+Blocks **1** card.
+
+- **(token)** a 2/2 blue Shapeshifter creature token with changeling
+  <br>Why the existing vocabulary won't do: token_ids has only shapeshifter_1_1_c_changeling, shapeshifter_3_2_c_changeling and shapeshifter_x_x_c_changeling_deathtouch; none is a blue 2/2
+
+<details><summary>Cards waiting on this</summary>
+
+- **Maskwood Nexus** (rank 494) — `maskwood_nexus`
+  - Creatures you control are every creature type. The same is true for creature spells you control and creature cards you own that aren't on the battlefield.
+  - {3}, {T}: Create a 2/2 blue Shapeshifter creature token with changeling. (It is every creature type.)
+
+</details>
+
 ## shares-card-type-with-sacrificed
 
 Blocks **1** card.
@@ -2908,5 +3034,19 @@ Blocks **1** card.
 
 - **Shigeki, Jukai Visionary** (rank 1668) — `shigeki_jukai_visionary`
   - Channel — {X}{X}{G}{G}, Discard this card: Return X target nonlegendary cards from your graveyard to your hand.
+
+</details>
+
+## zombie-warrior-4-4-b-vigilance
+
+Blocks **1** card.
+
+- **(token)** a 4/4 black Zombie Warrior creature token with vigilance
+  <br>Why the existing vocabulary won't do: token_ids has zombie_2_2_b, zombie_2_2_b_decayed, zombie_army_0_0_b and zombie_knight_2_2_b_menace, and 4/4 Warriors only in other colours (rhino_warrior_4_4_g, angel_warrior_4_4_w_flying); none is a 4/4 black Zombie Warrior with vigilance. The spell_cast trigger with a Creature filter and create_token are otherwise sufficient, and the dies/exile line looks expressible with dies and leaves_battlefield (to_zones exile) triggers plus a may put_on_top from_top 3.
+
+<details><summary>Cards waiting on this</summary>
+
+- **God-Eternal Oketra** (rank 2449) — `god_eternal_oketra`
+  - Whenever you cast a creature spell, create a 4/4 black Zombie Warrior creature token with vigilance.
 
 </details>

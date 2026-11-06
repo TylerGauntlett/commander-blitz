@@ -1,0 +1,14 @@
+{
+  "card_id": "the_scarab_god",
+  "name": "The Scarab God",
+  "oracle_text": "At the beginning of your upkeep, each opponent loses X life and you scry X, where X is the number of Zombies you control.\n{2}{U}{B}: Exile target creature card from a graveyard. Create a token that's a copy of it, except it's a 4/4 black Zombie.\nWhen The Scarab God dies, return it to its owner's hand at the beginning of the next end step.",
+  "blocked_sentences": ["{2}{U}{B}: Exile target creature card from a graveyard. Create a token that's a copy of it, except it's a 4/4 black Zombie."],
+  "needs": [{
+    "capability": "copy_exception_set_subtypes",
+    "kind": "op",
+    "what": "a copy_permanent except_ key that replaces the copy's creature subtypes rather than adding to them",
+    "why_existing_wont_do": "copy_permanent's except_ carries add_subtypes, which keeps the copied card's creature types; 'except it's a 4/4 black Zombie' with no 'in addition to its other types' makes the token a Zombie instead of its other creature types (205.1a), and the types override replaces card types only. Same capability as god_pharaoh_s_gift"
+  }],
+  "closest_existing": ["copy_permanent"],
+  "confidence": "high"
+}

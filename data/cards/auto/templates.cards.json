@@ -899,6 +899,68 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "regenerate"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "subtypes": [
+                  "Shade",
+                  "Skeleton",
+                  "Specter",
+                  "Spirit",
+                  "Vampire",
+                  "Wraith",
+                  "Zombie"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{2}, {T}: Regenerate target Shade, Skeleton, Specter, Spirit, Vampire, Wraith, or Zombie."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "accursed_duneyard",
+      "name": "Accursed Duneyard",
+      "oracle_text": "{T}: Add {C}.\n{2}, {T}: Regenerate target Shade, Skeleton, Specter, Spirit, Vampire, Wraith, or Zombie. (The next time it would be destroyed this turn, instead tap it, remove it from combat, and heal all damage on it.)",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -18344,6 +18406,71 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "tap"
+                }
+              ],
+              "op": "may"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "any_types": [
+                  "Artifact",
+                  "Creature"
+                ],
+                "controller": "any",
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever another Zombie you control enters, you may tap target artifact or creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "subtypes": [
+                "Zombie"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "binding_mummy",
+      "mana_cost": "{1}{W}",
+      "name": "Binding Mummy",
+      "oracle_text": "Whenever another Zombie you control enters, you may tap target artifact or creature.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Zombie"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "chapter": 1,
           "effects": [
             {
@@ -28654,6 +28781,98 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile",
+              "until_leaves": true
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this enchantment enters, exile target nonland permanent an opponent controls until this enchantment leaves the battlefield.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "controller": "owner",
+              "objects": {
+                "controller": "any",
+                "exiled_with": "self",
+                "zone": "exile"
+              },
+              "op": "put_onto_battlefield"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this enchantment enters, exile target nonland permanent an opponent controls until this enchantment leaves the battlefield.",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "source": "self"
+          }
+        },
+        {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "discard_self": true,
+            "mana": "{W}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "is_cycling": true,
+          "kind": "activated",
+          "text": "Cycling {W} ({W}, Discard this card: Draw a card.)"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "cast_out",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{3}{W}",
+      "name": "Cast Out",
+      "oracle_text": "Flash\nWhen this enchantment enters, exile target nonland permanent an opponent controls until this enchantment leaves the battlefield.\nCycling {W} ({W}, Discard this card: Draw a card.)",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -36710,6 +36929,39 @@
     },
     {
       "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "commence_the_endgame",
+      "mana_cost": "{4}{U}{U}",
+      "name": "Commence the Endgame",
+      "oracle_text": "This spell can't be countered.\nDraw two cards, then amass Zombies X, where X is the number of cards in your hand. (Put X +1/+1 counters on an Army you control. It's also a Zombie. If you don't control an Army, create a 0/0 black Zombie Army creature token first.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "cards_in_hand": "you"
+          },
+          "op": "amass",
+          "subtype": "Zombie"
+        }
+      ],
+      "types": [
+        "Instant"
+      ],
+      "uncounterable": true
+    },
+    {
+      "color_identity": [
         "G"
       ],
       "colors": [
@@ -38555,6 +38807,129 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "player": {
+                    "target": "t1"
+                  },
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "graveyard"
+                }
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "count": {
+                  "player": {
+                    "target": "t1"
+                  },
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "graveyard"
+                }
+              },
+              "op": "lose_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "any"
+              }
+            }
+          ],
+          "text": "When this creature dies, you draw X cards and you lose X life, where X is the number of creature cards in target player's graveyard.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "corpse_augur",
+      "mana_cost": "{3}{B}",
+      "name": "Corpse Augur",
+      "oracle_text": "When this creature dies, you draw X cards and you lose X life, where X is the number of creature cards in target player's graveyard.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Wizard"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another creature you control enters, each opponent loses 1 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "corpse_knight",
+      "mana_cost": "{W}{B}",
+      "name": "Corpse Knight",
+      "oracle_text": "Whenever another creature you control enters, each opponent loses 1 life.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Knight"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "additional_cost": {
         "sacrifice": {
           "controller": "you",
@@ -40079,6 +40454,87 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{B}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {B}."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "corpse",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control dies, put a corpse counter on this artifact.",
+          "trigger": {
+            "controller": "you",
+            "event": "creature_dies"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{4}{B}{B}",
+            "sacrifice": {
+              "as": "sacrificed",
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "counters_on": {
+                  "counter": "corpse",
+                  "objects": {
+                    "binding": "sacrificed"
+                  }
+                }
+              },
+              "op": "create_token",
+              "token": "zombie_2_2_b_decayed"
+            }
+          ],
+          "kind": "activated",
+          "text": "{4}{B}{B}, {T}, Sacrifice this artifact: Create a 2/2 black Zombie creature token with decayed for each corpse counter on this artifact."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "crowded_crypt",
+      "mana_cost": "{2}{B}",
+      "name": "Crowded Crypt",
+      "oracle_text": "{T}: Add {B}.\nWhenever a creature you control dies, put a corpse counter on this artifact.\n{4}{B}{B}, {T}, Sacrifice this artifact: Create a 2/2 black Zombie creature token with decayed for each corpse counter on this artifact. (A creature with decayed can't block. When it attacks, sacrifice it at end of combat.)",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -42729,6 +43185,69 @@
     },
     {
       "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "damn",
+      "mana_cost": "{B}{B}",
+      "name": "Damn",
+      "oracle_text": "Destroy target creature. A creature destroyed this way can't be regenerated.\nOverload {2}{W}{W} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
+      "overload": "{2}{W}{W}",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "overloaded": true
+          },
+          "else": [
+            {
+              "no_regeneration": true,
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "op": "if",
+          "then": [
+            {
+              "no_regeneration": true,
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "destroy"
+            }
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "optional": true,
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "B"
       ],
       "colors": [
@@ -44273,6 +44792,42 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "dawn",
+      "mana_cost": "{3}{W}{W}",
+      "name": "Dawn",
+      "oracle_text": "Aftermath (Cast this spell only from your graveyard. Then exile it.)\nReturn all creature cards with power 2 or less from your graveyard to your hand.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "destination": "hand",
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "power": {
+              "op": "<=",
+              "value": {
+                "const": 2
+              }
+            },
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          },
+          "op": "return_from_graveyard"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -51749,6 +52304,46 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "dread_summons",
+      "mana_cost": "{X}{B}{B}",
+      "name": "Dread Summons",
+      "oracle_text": "Each player mills X cards. For each creature card put into a graveyard this way, you create a tapped 2/2 black Zombie creature token. (To mill a card, a player puts the top card of their library into their graveyard.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "x": true
+          },
+          "as": "milled",
+          "op": "mill",
+          "player": "each_player"
+        },
+        {
+          "amount": {
+            "count": {
+              "binding": "milled",
+              "types": [
+                "Creature"
+              ],
+              "zone": "graveyard"
+            }
+          },
+          "op": "create_token",
+          "tapped": true,
+          "token": "zombie_2_2_b"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -52889,6 +53484,43 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "dusk_dawn",
+      "mana_cost": "{2}{W}{W}",
+      "name": "Dusk // Dawn",
+      "oracle_text": "Destroy all creatures with power 3 or greater.\nAftermath (Cast this spell only from your graveyard. Then exile it.)\nReturn all creature cards with power 2 or less from your graveyard to your hand.",
+      "second_face": "dawn",
+      "second_face_zone": "graveyard",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "power": {
+              "op": ">=",
+              "value": {
+                "const": 3
+              }
+            },
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "destroy"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -68839,6 +69471,65 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "pitched",
+                  "op": "discard",
+                  "player": "you",
+                  "whole_hand": true
+                },
+                {
+                  "amount": {
+                    "count": {
+                      "binding": "pitched"
+                    }
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Discard your hand and draw that many cards?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, you may discard all the cards in your hand. If you do, draw that many cards.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "forgotten_creation",
+      "keywords": [
+        "skulk"
+      ],
+      "mana_cost": "{3}{U}",
+      "name": "Forgotten Creation",
+      "oracle_text": "Skulk (This creature can't be blocked by creatures with greater power.)\nAt the beginning of your upkeep, you may discard all the cards in your hand. If you do, draw that many cards.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Horror"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "forgotten_sentinel",
@@ -72409,6 +73100,107 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                },
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "discard",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "prompt": "Draw a card, then discard a card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a nontoken creature you control dies, you gain 1 life. Then you may draw a card. If you do, discard a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "creature_dies",
+            "filter": {
+              "is_token": false
+            }
+          }
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "count": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            },
+            "right": {
+              "const": 6
+            }
+          },
+          "cost": {
+            "mana": "{2}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "op": "search_zones",
+              "player": "you",
+              "selector": {
+                "name": "God-Pharaoh's Gift"
+              },
+              "zones": [
+                "graveyard",
+                "hand",
+                "library"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, {T}, Sacrifice this artifact: Search your graveyard, hand, and/or library for a card named God-Pharaoh's Gift and put it onto the battlefield. If you search your library this way, shuffle. Activate only if there are six or more creature cards in your graveyard."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "gate_to_the_afterlife",
+      "mana_cost": "{3}",
+      "name": "Gate to the Afterlife",
+      "oracle_text": "Whenever a nontoken creature you control dies, you gain 1 life. Then you may draw a card. If you do, discard a card.\n{2}, {T}, Sacrifice this artifact: Search your graveyard, hand, and/or library for a card named God-Pharaoh's Gift and put it onto the battlefield. If you search your library this way, shuffle. Activate only if there are six or more creature cards in your graveyard.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "dealt": "to",
               "duration": "this_turn",
               "effects": [
@@ -72822,6 +73614,95 @@
         "Spirit"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "discard_self": true,
+            "mana": "{B}{B}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "is_cycling": true,
+          "kind": "activated",
+          "text": "Cycling {B}{B} ({B}{B}, Discard this card: Draw a card.)"
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "count": {
+                      "controller": "any",
+                      "subtypes": [
+                        "Zombie"
+                      ],
+                      "zone": "battlefield"
+                    }
+                  },
+                  "op": "lose_life",
+                  "player": {
+                    "target": "t1"
+                  }
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Have target player lose life equal to the number of Zombies on the battlefield?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "any"
+              }
+            }
+          ],
+          "text": "When you cycle this card, you may have target player lose life equal to the number of Zombies on the battlefield.",
+          "trigger": {
+            "event": "cycle",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "gempalm_polluter",
+      "mana_cost": "{5}{B}",
+      "name": "Gempalm Polluter",
+      "oracle_text": "Cycling {B}{B} ({B}{B}, Discard this card: Draw a card.)\nWhen you cycle this card, you may have target player lose life equal to the number of Zombies on the battlefield.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Zombie"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -108969,6 +109850,58 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "amass",
+                  "subtype": "Zombie"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{1}"
+              },
+              "prompt": "Pay {1} to amass Zombies 2?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you discard a card, you may pay {1}. If you do, amass Zombies 2. (Put two +1/+1 counters on an Army you control. It's also a Zombie. If you don't control an Army, create a 0/0 black Zombie Army creature token first.)",
+          "trigger": {
+            "controller": "you",
+            "event": "discard"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "lazotep_chancellor",
+      "mana_cost": "{U}{B}",
+      "name": "Lazotep Chancellor",
+      "oracle_text": "Whenever you discard a card, you may pay {1}. If you do, amass Zombies 2. (Put two +1/+1 counters on an Army you control. It's also a Zombie. If you don't control an Army, create a 0/0 black Zombie Army creature token first.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Wizard"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -113673,6 +114606,119 @@
         "Soldier"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "lose_life",
+              "player": {
+                "binding": "defender"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Afflict 3",
+          "trigger": {
+            "event": "becomes_blocked",
+            "source": "self"
+          }
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Zombie"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Other Zombies you control have afflict 3."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "mill",
+              "player": "you"
+            },
+            {
+              "destination": "hand",
+              "objects": {
+                "controller": "you",
+                "count": 1,
+                "optional": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your second main phase, if a player was dealt combat damage by a Zombie this turn, mill three cards, then you may return a creature card from your graveyard to your hand.",
+          "trigger": {
+            "condition": {
+              "combat_damage_by": "Zombie"
+            },
+            "controller": "you",
+            "event": "postcombat_main"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "lose_life",
+              "player": {
+                "binding": "defender"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Afflict 3",
+          "trigger": {
+            "event": "becomes_blocked",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "lost_monarch_of_ifnir",
+      "mana_cost": "{3}{B}",
+      "name": "Lost Monarch of Ifnir",
+      "oracle_text": "Afflict 3 (Whenever this creature becomes blocked, defending player loses 3 life.)\nOther Zombies you control have afflict 3.\nAt the beginning of your second main phase, if a player was dealt combat damage by a Zombie this turn, mill three cards, then you may return a creature card from your graveyard to your hand.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Noble"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -130376,6 +131422,46 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "never_return",
+      "mana_cost": "{1}{B}{B}",
+      "name": "Never // Return",
+      "oracle_text": "Destroy target creature or planeswalker.\nAftermath (Cast this spell only from your graveyard. Then exile it.)\nExile target card from a graveyard. Create a 2/2 black Zombie creature token.",
+      "second_face": "return",
+      "second_face_zone": "graveyard",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "any_types": [
+              "Creature",
+              "Planeswalker"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -143504,6 +144590,91 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "counter": "-1/-1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, put two -1/-1 counters on target creature you control.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another Zombie you control dies, each opponent loses 1 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "creature_dies",
+            "filter": {
+              "controller": "you",
+              "exclude_self": true,
+              "subtypes": [
+                "Zombie"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "plague_belcher",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "Plague Belcher",
+      "oracle_text": "Menace\nWhen this creature enters, put two -1/-1 counters on target creature you control.\nWhenever another Zombie you control dies, each opponent loses 1 life.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Beast"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -145503,6 +146674,59 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "creatures_died_this_turn": "you"
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each end step, put X +1/+1 counters on each creature you control, where X is the number of creatures that died under your control this turn.",
+          "trigger": {
+            "controller": "any",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "priest_of_the_crossing",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{W}",
+      "name": "Priest of the Crossing",
+      "oracle_text": "Flying\nAt the beginning of each end step, put X +1/+1 counters on each creature you control, where X is the number of creatures that died under your control this turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Bird",
+        "Cleric"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -147421,6 +148645,69 @@
       "toughness": 5,
       "types": [
         "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "max": [
+                  {
+                    "count": {
+                      "controller": "you",
+                      "subtypes": [
+                        "Zombie"
+                      ],
+                      "zone": "battlefield"
+                    }
+                  },
+                  {
+                    "count": {
+                      "controller": "you",
+                      "subtypes": [
+                        "Zombie"
+                      ],
+                      "zone": "graveyard"
+                    }
+                  }
+                ]
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, draw cards equal to the number of Zombies you control or the number of Zombie cards in your graveyard, whichever is greater.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "prophet_of_the_scarab",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{4}{U}",
+      "name": "Prophet of the Scarab",
+      "oracle_text": "Vigilance\nWhen this creature enters, draw cards equal to the number of Zombies you control or the number of Zombie cards in your graveyard, whichever is greater.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Wizard"
+      ],
+      "toughness": 4,
+      "types": [
         "Creature"
       ]
     },
@@ -154552,6 +155839,93 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "choose_type",
+              "prompt": "Choose a creature type"
+            }
+          ],
+          "kind": "triggered",
+          "text": "As this enchantment enters, choose a creature type.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              {
+                "chosen_type_of": "self"
+              }
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Creatures you control of the chosen type get +1/+0.",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "each"
+                  },
+                  "op": "copy_permanent"
+                }
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "entered_this_turn": true,
+                "is_token": true,
+                "subtypes": [
+                  {
+                    "chosen_type_of": "self"
+                  }
+                ],
+                "zone": "battlefield"
+              },
+              "op": "for_each"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, for each token you control of the chosen type that entered this turn, create a token that's a copy of it.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "renewed_solidarity",
+      "mana_cost": "{2}{W}",
+      "name": "Renewed Solidarity",
+      "oracle_text": "As this enchantment enters, choose a creature type.\nCreatures you control of the chosen type get +1/+0.\nAt the beginning of your end step, for each token you control of the chosen type that entered this turn, create a token that's a copy of it.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -155842,6 +157216,48 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "return",
+      "mana_cost": "{3}{B}",
+      "name": "Return",
+      "oracle_text": "Aftermath (Cast this spell only from your graveyard. Then exile it.)\nExile target card from a graveyard. Create a 2/2 black Zombie creature token.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "exile"
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "create_token",
+          "token": "zombie_2_2_b"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "controller": "any",
+            "zone": "graveyard"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -159171,6 +160587,66 @@
       ],
       "supertypes": [
         "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "put_onto_battlefield"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": {
+                "player_count": "each_opponent"
+              },
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "subtypes": [
+                  "Zombie"
+                ],
+                "zone": "graveyard"
+              },
+              "up_to": true
+            }
+          ],
+          "text": "When this creature enters, return up to X target Zombie cards from your graveyard to the battlefield, where X is the number of opponents you have.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "rot_hulk",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{5}{B}{B}",
+      "name": "Rot Hulk",
+      "oracle_text": "Menace\nWhen this creature enters, return up to X target Zombie cards from your graveyard to the battlefield, where X is the number of opponents you have.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Zombie"
       ],
       "toughness": 5,
       "types": [
@@ -193450,6 +194926,95 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "discard",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you attack, draw a card, then discard a card.",
+          "trigger": {
+            "event": "you_attack"
+          }
+        },
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "subtypes": [
+                  "Zombie"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you draw a card, Zombies you control get +1/+1 until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "draw"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "U",
+        "W"
+      ],
+      "id": "temmet_naktamun_s_will",
+      "keywords": [
+        "vigilance",
+        "menace"
+      ],
+      "mana_cost": "{2}{W}{U}{B}",
+      "name": "Temmet, Naktamun's Will",
+      "oracle_text": "Vigilance, menace\nWhenever you attack, draw a card, then discard a card.\nWhenever you draw a card, Zombies you control get +1/+1 until end of turn.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U",
         "W"
@@ -201574,6 +203139,97 @@
     {
       "abilities": [
         {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "discard_self": true,
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "hand",
+              "op": "search_library",
+              "player": "you",
+              "reveal": true,
+              "selector": {
+                "subtypes": [
+                  "Plains"
+                ]
+              }
+            }
+          ],
+          "is_cycling": true,
+          "kind": "activated",
+          "text": "Plainscycling {2} ({2}, Discard this card: Search your library for a Plains card, reveal it, put it into your hand, then shuffle.)"
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "exile_from_graveyard": {
+              "count": 1,
+              "self_only": true
+            },
+            "mana": "{2}{W}{W}"
+          },
+          "effects": [
+            {
+              "controller": "you",
+              "except_": {
+                "add_subtypes": [
+                  "Zombie"
+                ],
+                "colors": [
+                  "B"
+                ],
+                "no_mana_cost": true,
+                "power": 4,
+                "toughness": 4
+              },
+              "objects": {
+                "controller": "any",
+                "self_only": true,
+                "zone": "exile"
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Eternalize {2}{W}{W} ({2}{W}{W}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a 4/4 black Zombie Dragon with no mana cost. Eternalize only as a sorcery.)"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "timeless_dragon",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{W}{W}",
+      "name": "Timeless Dragon",
+      "oracle_text": "Flying\nPlainscycling {2} ({2}, Discard this card: Search your library for a Plains card, reveal it, put it into your hand, then shuffle.)\nEternalize {2}{W}{W} ({2}{W}{W}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a 4/4 black Zombie Dragon with no mana cost. Eternalize only as a sorcery.)",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -206961,6 +208617,75 @@
     {
       "abilities": [
         {
+          "cost": {
+            "mana": "{B}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "regenerate"
+            }
+          ],
+          "kind": "activated",
+          "text": "{B}: Regenerate this creature. (The next time this creature would be destroyed this turn, instead tap it, remove it from combat, and heal all damage on it.)"
+        },
+        {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "discard_self": true,
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "hand",
+              "op": "search_library",
+              "player": "you",
+              "reveal": true,
+              "selector": {
+                "subtypes": [
+                  "Swamp"
+                ]
+              }
+            }
+          ],
+          "is_cycling": true,
+          "kind": "activated",
+          "text": "Swampcycling {2} ({2}, Discard this card: Search your library for a Swamp card, reveal it, put it into your hand, then shuffle.)"
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "twisted_abomination",
+      "mana_cost": "{5}{B}",
+      "name": "Twisted Abomination",
+      "oracle_text": "{B}: Regenerate this creature. (The next time this creature would be destroyed this turn, instead tap it, remove it from combat, and heal all damage on it.)\nSwampcycling {2} ({2}, Discard this card: Search your library for a Swamp card, reveal it, put it into your hand, then shuffle.)",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Mutant"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -209192,6 +210917,65 @@
       "toughness": 13,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{B}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "put_on_top"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "subtypes": [
+                  "Zombie"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "{B}, {T}: Put target Zombie card from your graveyard on top of your library."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [],
+      "id": "unholy_grotto",
+      "name": "Unholy Grotto",
+      "oracle_text": "{T}: Add {C}.\n{B}, {T}: Put target Zombie card from your graveyard on top of your library.",
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -219876,6 +221660,61 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": "each_opponent"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another Zombie you control enters, each opponent loses 1 life and you gain 1 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "subtypes": [
+                "Zombie"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "wayward_servant",
+      "mana_cost": "{W}{B}",
+      "name": "Wayward Servant",
+      "oracle_text": "Whenever another Zombie you control enters, each opponent loses 1 life and you gain 1 life.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Zombie"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -228813,6 +230652,78 @@
       "subtypes": [
         "Zombie",
         "Giant"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "any",
+            "exclude_self": true,
+            "subtypes": [
+              "Zombie"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "swampwalk"
+          ],
+          "kind": "static",
+          "text": "Other Zombie creatures have swampwalk. (They can't be blocked as long as defending player controls a Swamp.)"
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "controller": "any",
+            "exclude_self": true,
+            "subtypes": [
+              "Zombie"
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Other Zombies have \"{B}: Regenerate this permanent.\""
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "mana": "{B}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "regenerate"
+            }
+          ],
+          "kind": "activated",
+          "text": "{B}: Regenerate this permanent."
+        }
+      ],
+      "id": "zombie_master",
+      "mana_cost": "{1}{B}{B}",
+      "name": "Zombie Master",
+      "oracle_text": "Other Zombie creatures have swampwalk. (They can't be blocked as long as defending player controls a Swamp.)\nOther Zombies have \"{B}: Regenerate this permanent.\"",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Zombie"
       ],
       "toughness": 3,
       "types": [

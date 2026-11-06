@@ -926,12 +926,25 @@ def _satisfy_the_activation_condition(game: Game, registry, ability, oid: int) -
     # graveyard" (Cephalid Coliseum). A count over your own graveyard is
     # satisfied by putting that many more cards into it; Forests, because the
     # selector names no type and a land does nothing while it sits there.
+    # Gate to the Afterlife counts "six or more **creature** cards in your
+    # graveyard", and a yard of Forests counts none: a selector that names a
+    # type is stocked with the first card `_fodder_for` finds for it, and the
+    # yard is counted by what the selector accepts rather than by its size.
     if selector.get("zone") == "graveyard":
-        if selector.get("controller", "you") != "you" or selector.get("types"):
+        if selector.get("controller", "you") != "you":
             return
+        card_id = "forest"
+        if selector.get("types") or selector.get("subtypes"):
+            match = _fodder_for(registry, dict(selector))
+            if match is None:
+                return
+            card_id = match.id
         yard = game.state.players[0].graveyard
-        for _ in range(max(0, wanted - len(yard))):
-            card = new_object(game.state, "forest", owner=0, zone=Zone.GRAVEYARD)
+        have = len(yard) if card_id == "forest" else sum(
+            1 for c in yard if game.state.objects[c].def_id == card_id
+        )
+        for _ in range(max(0, wanted - have)):
+            card = new_object(game.state, card_id, owner=0, zone=Zone.GRAVEYARD)
             yard.append(card.oid)
         return
     if selector.get("zone", "battlefield") != "battlefield":

@@ -69,6 +69,10 @@
   "accorder_s_shield": {
     "zone": "battlefield"
   },
+  "accursed_duneyard": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "accursed_spirit": {
     "zone": "battlefield"
   },
@@ -1618,6 +1622,10 @@
     },
     "zone": "graveyard"
   },
+  "binding_mummy": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "binding_the_old_gods": {
     "counters": {
       "amount": 1,
@@ -2482,6 +2490,11 @@
   "cascade_bluffs": {
     "zone": "battlefield"
   },
+  "cast_out": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
   "castle_ardenvale": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -3106,6 +3119,20 @@
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
+  "commence_the_endgame": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 38
+    },
+    "tokens": {
+      "count": 1,
+      "id": "zombie_army_0_0_b"
+    },
+    "zone": "graveyard"
+  },
   "commencement_of_festivities": {
     "zone": "graveyard"
   },
@@ -3247,6 +3274,17 @@
   },
   "coretapper": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "corpse_augur": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "corpse_knight": {
+    "battlefield_count": 33,
+    "life": {
+      "1": 40
+    },
     "zone": "battlefield"
   },
   "corrupted_conviction": {
@@ -3406,6 +3444,10 @@
       "toughness": 0
     },
     "zone": "graveyard"
+  },
+  "crowded_crypt": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "crown_of_gondor": {
     "battlefield_count": 33,
@@ -3632,6 +3674,13 @@
   },
   "dakmor_scorpion": {
     "zone": "battlefield"
+  },
+  "damn": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 4
+    },
+    "zone": "graveyard"
   },
   "damnable_pact": {
     "hand_size": {
@@ -4406,6 +4455,16 @@
   "dread_statuary": {
     "zone": "battlefield"
   },
+  "dread_summons": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 23
+    },
+    "library_size": {
+      "0": 20
+    },
+    "zone": "graveyard"
+  },
   "dread_tiller": {
     "zone": "battlefield"
   },
@@ -4493,6 +4552,9 @@
   },
   "durkwood_boars": {
     "zone": "battlefield"
+  },
+  "dusk_dawn": {
+    "zone": "graveyard"
   },
   "dusk_imp": {
     "zone": "battlefield"
@@ -6011,6 +6073,13 @@
   "forgotten_cave": {
     "zone": "battlefield"
   },
+  "forgotten_creation": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "forgotten_sentinel": {
     "zone": "battlefield"
   },
@@ -6319,6 +6388,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "gate_to_the_afterlife": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "gatta_and_luzzu": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -6344,6 +6417,13 @@
     "zone": "battlefield"
   },
   "geist_of_the_moors": {
+    "zone": "battlefield"
+  },
+  "gempalm_polluter": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "gemrazer": {
@@ -9246,6 +9326,10 @@
   "lazotep_behemoth": {
     "zone": "battlefield"
   },
+  "lazotep_chancellor": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "leaden_myr": {
     "zone": "battlefield"
   },
@@ -9598,6 +9682,10 @@
     "zone": "battlefield"
   },
   "lost_leonin": {
+    "zone": "battlefield"
+  },
+  "lost_monarch_of_ifnir": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "lost_soul": {
@@ -11098,6 +11186,9 @@
   "neurok_hoversail": {
     "zone": "battlefield"
   },
+  "never_return": {
+    "zone": "graveyard"
+  },
   "neverwinter_dryad": {
     "zone": "battlefield"
   },
@@ -12132,6 +12223,9 @@
   "plague_beetle": {
     "zone": "battlefield"
   },
+  "plague_belcher": {
+    "zone": "battlefield"
+  },
   "plague_myr": {
     "zone": "battlefield"
   },
@@ -12292,6 +12386,10 @@
     },
     "zone": "battlefield"
   },
+  "priest_of_the_crossing": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "priest_of_titania": {
     "zone": "battlefield"
   },
@@ -12450,6 +12548,15 @@
     "zone": "battlefield"
   },
   "prophet_of_the_peak": {
+    "zone": "battlefield"
+  },
+  "prophet_of_the_scarab": {
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
     "zone": "battlefield"
   },
   "prophetic_prism": {
@@ -13077,6 +13184,10 @@
   "renegade_troops": {
     "zone": "battlefield"
   },
+  "renewed_solidarity": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "replication_technique": {
     "battlefield_count": 34,
     "opponent_battlefield_count": 6,
@@ -13522,6 +13633,9 @@
     "zone": "battlefield"
   },
   "rorix_bladewing": {
+    "zone": "battlefield"
+  },
+  "rot_hulk": {
     "zone": "battlefield"
   },
   "rotted_hulk": {
@@ -16320,6 +16434,10 @@
   "tekuthal_inquiry_dominus": {
     "zone": "battlefield"
   },
+  "temmet_naktamun_s_will": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "tempest_drake": {
     "zone": "battlefield"
   },
@@ -16969,6 +17087,13 @@
     "opponent_battlefield_count": 4,
     "zone": "graveyard"
   },
+  "timeless_dragon": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "timeless_lotus": {
     "zone": "battlefield"
   },
@@ -17461,6 +17586,13 @@
   "twinscroll_shaman": {
     "zone": "battlefield"
   },
+  "twisted_abomination": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "twisted_experiment": {
     "zone": [
       "battlefield",
@@ -17659,6 +17791,10 @@
     ]
   },
   "unhallowed_phalanx": {
+    "zone": "battlefield"
+  },
+  "unholy_grotto": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "unholy_strength": {
@@ -18603,6 +18739,14 @@
   "wayward_giant": {
     "zone": "battlefield"
   },
+  "wayward_servant": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "weakness": {
     "zone": [
       "battlefield",
@@ -19390,6 +19534,10 @@
     "zone": "battlefield"
   },
   "zombie_goliath": {
+    "zone": "battlefield"
+  },
+  "zombie_master": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "zombify": {
