@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**206 cards** blocked by **187** capabilities.
+**205 cards** blocked by **185** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -181,10 +181,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [starting-with-you](#starting-with-you) | 1 | 2432 | selector |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
-| [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
-| [target-spell-or-ability](#target-spell-or-ability) | 1 | 1822 | selector |
 | [targets-only-self](#targets-only-self) | 1 | 8216 | trigger_event |
 | [teammates](#teammates) | 1 | 26785 | selector |
 | [this-combat-duration](#this-combat-duration) | 1 | 9126 | op |
@@ -2838,20 +2836,6 @@ Blocks **1** card.
 
 </details>
 
-## target-ability-on-stack
-
-Blocks **1** card.
-
-- **(selector)** a target kind for an activated or triggered ability on the stack, so "target spell or ability" can bind either an ability object or a spell
-  <br>Why the existing vocabulary won't do: Target kinds are limited to permanent, spell, card_in_graveyard, card_in_exile and player (src/commanderblitz/cards/loader/vocabulary.py); a spell target cannot bind an ability on the stack, so half of "target spell or ability" is unsayable even once retargeting exists.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Deflecting Swat** (rank 75) — `deflecting_swat`
-  - You may choose new targets for target spell or ability.
-
-</details>
-
 ## target-opponent-or-planeswalker
 
 Blocks **1** card.
@@ -2877,20 +2861,6 @@ Blocks **1** card.
 
 - **Hope of Ghirapur** (rank 3240) — `hope_of_ghirapur`
   - Sacrifice Hope of Ghirapur: Until your next turn, target player who was dealt combat damage by Hope of Ghirapur this turn can't cast noncreature spells.
-
-</details>
-
-## target-spell-or-ability
-
-Blocks **1** card.
-
-- **(selector)** a single target kind whose pool spans every stack object -- spells and activated/triggered abilities on the stack together (e.g. kind "spell_or_ability", optionally narrowed by controller) -- so one instance of the word "target" can pick either a spell or a non-mana ability, and `counter` on that binding counters whichever it is
-  <br>Why the existing vocabulary won't do: Target kinds offer 'spell' and 'ability_on_stack' separately but no union of the two ('spell_or_permanent' and 'spell_permanent_or_graveyard_card' are the only multi-pool kinds, and neither covers abilities). Two target specs would make the card target twice and need both legal; a choose_mode between 'counter target spell' and 'counter target ability' is a modal card, a different choice made at a different time, not one target
-
-<details><summary>Cards waiting on this</summary>
-
-- **Disallow** (rank 1822) — `disallow`
-  - Counter target spell, activated ability, or triggered ability.
 
 </details>
 

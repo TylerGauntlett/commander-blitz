@@ -1192,6 +1192,30 @@ half is pulled off the stack uncountered into its owner's library, the owner
 choosing top or bottom under `owner_chooses`), and `return_spell_to_hand`. Any
 other op reading `objects: {"target": …}` of this kind is refused at load time.
 
+### "Target spell, activated ability, or triggered ability"
+
+```jsonc
+{ "id": "t1", "kind": "spell_or_ability", "count": 1 }
+```
+
+Disallow. One spec whose pool is every object on the stack: the spells a
+`"spell"` target offers and the abilities an `"ability_on_stack"` target
+offers, spells first. A mana ability never uses the stack (605.3b), so it is
+never a candidate. `counter` on the binding counters whichever it is: a spell
+goes to its owner's graveyard, an ability is removed from the stack and its
+effect never happens (701.6b). "Target spell or ability" (Deflecting Swat) is
+the same pool.
+
+The `selector` reads only `controller`, as `"you"` or `"opponent"` ("spell or
+ability an opponent controls"): it is the one clause a spell and an ability
+both answer. Every other clause, `ability_kind`, a Mapping `controller`,
+`total_mana_value` and `total_power` are refused at load time, since each would
+narrow one half or be read off the ability's source. `still_legal` re-checks a
+spell ref through `_spell_matches` and an ability ref through `_ability_matches`,
+the matchers `candidates` offered them through. The near miss is two specs, one
+`"spell"` and one `"ability_on_stack"`: a card that targets twice and is cast
+only with both on the stack.
+
 ### "As this enters, you may pay …"
 
 ```jsonc

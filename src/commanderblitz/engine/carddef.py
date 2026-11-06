@@ -69,7 +69,7 @@ class TargetSpec:
     id: str
     kind: str  # "permanent" | "player" | "spell" | "card_in_graveyard"
     #        | "card_in_exile" | "any" | "spell_or_permanent" | "ability_on_stack"
-    #        | "spell_permanent_or_graveyard_card"
+    #        | "spell_permanent_or_graveyard_card" | "spell_or_ability"
     selector: Mapping[str, Any] = field(default_factory=dict)
     #: A ``"spell_or_permanent"`` spec's selector for its **permanent** half,
     #: when the printed word narrows only that half -- "target spell or

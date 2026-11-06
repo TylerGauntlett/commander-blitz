@@ -1276,7 +1276,9 @@ def _cast(
     # *creature* can be cast at all (117.1a), so the Medic stops being playable
     # in its own gate. A permanent's ability wants the dummies present later --
     # when it is activated -- which is not a thing this harness does.
-    if any(spec.kind == "spell" for spec in card.targets):
+    # A `spell_or_ability` target (Disallow) wants a stack object too, and a
+    # dummy spell is one; the sandbox raises no ability for it to aim at.
+    if any(spec.kind in ("spell", "spell_or_ability") for spec in card.targets):
         add_dummy_spell(game, registry, card)
     game._advance()
 

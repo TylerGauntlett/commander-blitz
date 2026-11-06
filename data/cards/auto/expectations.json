@@ -4288,6 +4288,12 @@
     },
     "zone": "battlefield"
   },
+  "disallow": {
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "disciple_of_bolas": {
     "battlefield_count": 32,
     "graveyard_size": {

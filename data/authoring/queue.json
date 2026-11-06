@@ -69512,12 +69512,12 @@
     },
     "Disallow": {
       "edhrec_rank": 1822,
-      "gate": "template",
+      "gate": null,
       "name": "Disallow",
-      "reason": "no template for: Counter target spell, activated ability, or triggered ability",
+      "reason": "",
       "scryfall_id": "80f8aa2a-78e1-4717-a0bd-a435f4922668",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Disappear": {

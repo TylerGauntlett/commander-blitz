@@ -121,6 +121,25 @@ def candidates(
             and _ability_matches(ctx, item, spec)
         ]
 
+    if spec.kind == "spell_or_ability":
+        # "Counter target spell, activated ability, or triggered ability"
+        # (Disallow). The `spell` and `ability_on_stack` branches above pooled,
+        # spells first in printed order, each half asked through its own
+        # matcher so `still_legal` -- which re-checks by `item.is_spell` --
+        # accepts every ref offered here. A mana ability is never on the stack
+        # (605.3b), so nothing need exclude it. The loader admits only a
+        # `controller` clause, which both matchers answer alike.
+        return [
+            TargetRef.stack(item.sid)
+            for item in state.stack
+            if item.sid != exclude_sid
+            and (
+                _spell_matches(ctx, item, spec)
+                if item.is_spell
+                else _ability_matches(ctx, item, spec)
+            )
+        ]
+
     if spec.kind == "spell_or_permanent":
         # "Target spell or nonland permanent an opponent controls." One
         # instance of the word "target" whose legal choices live in two zones,
@@ -864,6 +883,9 @@ def still_legal(
             # above is the fizzle -- which is the printed behaviour: a Camera
             # activation whose target ability resolved first does nothing.
             return not item.is_spell and _ability_matches(ctx, item, spec)
+        if spec.kind == "spell_or_ability" and not item.is_spell:
+            # The ability half, re-checked by the matcher it was offered by.
+            return _ability_matches(ctx, item, spec)
         if not item.is_spell:
             return False
         # 608.2b re-checks every target as the spell resolves, and the selector
@@ -871,6 +893,9 @@ def still_legal(
         # held against a creature spell would still counter it after the spell
         # stopped being a creature spell.
         return _spell_matches(ctx, item, spec)
+    if spec.kind == "spell_or_ability":
+        # Its pool is the stack alone; an object ref was never offered by it.
+        return False
     obj = state.objects.get(ref.id)
     if obj is None:
         return False

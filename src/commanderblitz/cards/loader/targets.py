@@ -500,6 +500,23 @@ def _compile_target(
         validate_selector(
             {k: v for k, v in model.selector.items() if k != "ability_kind"}, label
         )
+    elif model.kind == "spell_or_ability":
+        # Two pools with one selector: a spell answers through `matches`, an
+        # ability through `_ability_matches`, which reads `controller` as
+        # "you" or "opponent" and nothing else. Any other clause would narrow
+        # the spell half alone, or be read as the ability's source's face.
+        extra = set(model.selector) - {"controller"}
+        if extra:
+            raise DslError(
+                f"{label}: a 'spell_or_ability' target reads only 'controller', "
+                f"not {sorted(extra)}"
+            )
+        who = model.selector.get("controller")
+        if who is not None and who not in ("you", "opponent"):
+            raise DslError(
+                f"{label}.controller: a 'spell_or_ability' target takes "
+                f"'you' or 'opponent', got {who!r}"
+            )
     else:
         validate_selector(model.selector, label)
     controller_clause = model.selector.get("controller")
@@ -552,7 +569,7 @@ def _compile_target(
                 f"{label}: 'total_mana_value' is a cap on the picks together, "
                 f"so {model.total_mana_value} would allow nothing to be chosen"
             )
-        if model.kind in ("player", "spell"):
+        if model.kind in ("player", "spell", "spell_or_ability"):
             # A player has no mana value, and a spell's is the one thing about
             # it that is already on the stack -- neither card exists, and the
             # clause would be read against zero for every candidate.
@@ -569,7 +586,7 @@ def _compile_target(
                 f"{label}: 'total_power' is a cap on the picks together, "
                 f"and {model.total_power} is below anything a card prints"
             )
-        if model.kind in ("player", "spell"):
+        if model.kind in ("player", "spell", "spell_or_ability"):
             raise DslError(
                 f"{label}: 'total_power' caps the power of the objects chosen, "
                 f"which a {model.kind!r} target does not have"

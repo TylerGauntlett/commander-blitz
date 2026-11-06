@@ -294,6 +294,14 @@ class TargetModel(BaseModel):
         #: different things at all -- an ability on the stack is not a spell and
         #: has no card behind it, only a source, an index and its bindings.
         "ability_on_stack",
+        #: "Counter target **spell, activated ability, or triggered ability**"
+        #: (Disallow). One instance of the word "target" whose pool is every
+        #: object on the stack: the `"spell"` pool and the `"ability_on_stack"`
+        #: pool together, spells first. A mana ability never uses the stack
+        #: (605.3b), so it is never a candidate. The `selector` takes only
+        #: `controller` (``"you"`` or ``"opponent"``), the one clause both a
+        #: spell and an ability can answer.
+        "spell_or_ability",
     ]
     #: "…any number of target creature cards **with total mana value 6 or
     #: less**" (Phoenix, Warden of Fire). A cap on the picks **together**, not
