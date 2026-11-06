@@ -5,7 +5,7 @@ area: decks
 effort: L
 impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
-depends_on: []
+depends_on: [experience-counters, graveyard-arrival-trigger]
 status: proposed
 rank: 26
 ---
@@ -19,6 +19,12 @@ coming-soon shell on the shelf: its row `tdc_sultai_arisen` is in
 `python scripts/sync_precons.py --missing tdc_sultai_arisen` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+Two of those capabilities are rules subsystems the engine does not have
+([rules-coverage.md](../rules-coverage.md#not-implemented)): Meren of Clan
+Nel Toth gives and reads experience counters, and Colossal Grave-Reaver and
+Crawling Sensation trigger on cards put into a graveyard from the library or
+from anywhere, which is the unlisted mill trigger. The deck waits on the
+items that build them.
 
 ## The change
 

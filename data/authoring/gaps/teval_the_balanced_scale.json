@@ -1,0 +1,18 @@
+{
+  "card_id": "teval_the_balanced_scale",
+  "name": "Teval, the Balanced Scale",
+  "oracle_text": "Flying\nWhenever Teval attacks, mill three cards. Then you may return a land card from your graveyard to the battlefield tapped.\nWhenever one or more cards leave your graveyard, create a 2/2 black Zombie Druid creature token.",
+  "blocked_sentences": [
+    "Whenever one or more cards leave your graveyard, create a 2/2 black Zombie Druid creature token."
+  ],
+  "needs": [
+    {
+      "capability": "token_zombie_druid_2_2_b",
+      "kind": "token",
+      "what": "a 2/2 black Zombie Druid creature token (no abilities)",
+      "why_existing_wont_do": "token_ids has zombie_2_2_b (a 2/2 black Zombie, missing the Druid subtype) but no Zombie Druid; the leaves_graveyard trigger event with batched already covers \"one or more cards leave your graveyard\", so only the token is missing"
+    }
+  ],
+  "closest_existing": ["zombie_2_2_b"],
+  "confidence": "high"
+}

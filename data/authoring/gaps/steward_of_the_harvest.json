@@ -1,0 +1,16 @@
+{
+  "card_id": "steward_of_the_harvest",
+  "name": "Steward of the Harvest",
+  "oracle_text": "When this creature enters, exile up to three target land cards from your graveyard.\nCreatures you control have all activated abilities of all land cards exiled with this creature.",
+  "blocked_sentences": [
+    "Creatures you control have all activated abilities of all land cards exiled with this creature."
+  ],
+  "needs": [{
+    "capability": "grant_abilities_of_exiled_cards",
+    "kind": "static_effect",
+    "what": "a static ability that gives each permanent matching its `affects` filter every activated ability (mana abilities included) printed on the cards matching an `exiled_with: self` selector, read live from exile so the set changes as cards are exiled with the source, and ending when the source leaves the battlefield",
+    "why_existing_wont_do": "The `grant_ability` static only hands over a fixed ability written in the card's own `grantable_abilities` by index, so it cannot borrow abilities from whatever cards happen to be exiled; `imprint_characteristics` reads an exiled card but copies only power, toughness and creature types (Duplicant), never abilities; `exiled_with` exists only as an effect selector key, not in `static_filter_keys`"
+  }],
+  "closest_existing": ["grant_ability", "imprint_characteristics"],
+  "confidence": "high"
+}

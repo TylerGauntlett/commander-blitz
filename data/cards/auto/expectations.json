@@ -160,6 +160,15 @@
   "affa_protector": {
     "zone": "battlefield"
   },
+  "afterlife_from_the_loam": {
+    "graveyard_size": {
+      "0": 1
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "aftermath_analyst": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -2630,6 +2639,10 @@
       "0": 43
     }
   },
+  "cephalid_coliseum": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "cerodon_yearling": {
     "zone": "battlefield"
   },
@@ -3071,6 +3084,10 @@
     },
     "zone": "battlefield"
   },
+  "command_beacon": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "commander_s_insight": {
     "zone": "graveyard"
   },
@@ -3410,6 +3427,10 @@
     "zone": "graveyard"
   },
   "crypt_ghast": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "crypt_of_agadeem": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -4143,6 +4164,13 @@
     },
     "zone": "battlefield"
   },
+  "disciple_of_bolas": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "zone": "battlefield"
+  },
   "dismal_backwater": {
     "life": {
       "0": 41
@@ -4183,6 +4211,10 @@
     ]
   },
   "divine_visitation": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "diviner_of_mist": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -4405,6 +4437,10 @@
     "zone": "battlefield"
   },
   "drowned_secrets": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "drownyard_temple": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -5821,6 +5857,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "floral_evoker": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "florian_voldaren_scion": {
     "granted": {
       "count": 1,
@@ -5898,6 +5938,18 @@
   },
   "foot_soldiers": {
     "zone": "battlefield"
+  },
+  "forbidden_alchemy": {
+    "graveyard_size": {
+      "0": 6
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 36
+    },
+    "zone": "graveyard"
   },
   "forbidden_orchard": {
     "battlefield_count": 33,
@@ -6864,6 +6916,12 @@
   "granitic_titan": {
     "zone": "battlefield"
   },
+  "grapple_with_the_past": {
+    "library_size": {
+      "0": 37
+    },
+    "zone": "graveyard"
+  },
   "grappler_spider": {
     "zone": "battlefield"
   },
@@ -7029,6 +7087,12 @@
       "kind": "-1/-1"
     },
     "zone": "battlefield"
+  },
+  "grisly_salvage": {
+    "library_size": {
+      "0": 35
+    },
+    "zone": "graveyard"
   },
   "grixis_panorama": {
     "zone": "battlefield"
@@ -7371,6 +7435,10 @@
     "zone": "battlefield"
   },
   "hedron_archive": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "hedron_crab": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -8507,6 +8575,10 @@
   "jungle_weaver": {
     "zone": "battlefield"
   },
+  "junji_the_midnight_sky": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "juri_master_of_the_revue": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -8865,6 +8937,13 @@
   },
   "kirol_history_buff_pack_a_punch": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "kishla_skimmer": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "kismet": {
@@ -9249,6 +9328,15 @@
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
+  "life_from_the_loam": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "lifeblood_hydra": {
     "battlefield_count": 33,
     "counters": {
@@ -9363,6 +9451,13 @@
   "lita_little_orphan_amphibian": {
     "zone": "battlefield"
   },
+  "living_death": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "zone": "graveyard"
+  },
   "living_laser": {
     "zone": "battlefield"
   },
@@ -9446,6 +9541,10 @@
     "zone": "battlefield"
   },
   "lord_jyscal_guado": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "lord_of_extinction": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -11165,6 +11264,9 @@
     "opponent_battlefield_count": 4,
     "zone": "graveyard"
   },
+  "noxious_gearhulk": {
+    "zone": "battlefield"
+  },
   "noxious_ghoul": {
     "zone": "battlefield"
   },
@@ -11178,6 +11280,13 @@
     "battlefield_count": 33,
     "life": {
       "0": 40
+    },
+    "zone": "battlefield"
+  },
+  "nyx_weaver": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
     },
     "zone": "battlefield"
   },
@@ -11265,6 +11374,10 @@
       "0": 40
     },
     "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
+  "ob_nixilis_the_fallen": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "ob_nixilis_the_hate_twisted": {
@@ -11946,6 +12059,13 @@
   },
   "phyrexian_metamorph": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "phyrexian_reclamation": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40
+    },
     "zone": "battlefield"
   },
   "phyrexian_tower": {
@@ -12788,6 +12908,10 @@
   "reason_believe": {
     "zone": "graveyard"
   },
+  "reassembling_skeleton": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "reconnaissance_mission": {
     "battlefield_count": 33,
     "hand_size": {
@@ -13313,6 +13437,16 @@
     "zone": "battlefield"
   },
   "river_kaijin": {
+    "zone": "battlefield"
+  },
+  "river_kelpie": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
     "zone": "battlefield"
   },
   "river_of_tears": {
@@ -14630,6 +14764,13 @@
   },
   "skrelv_s_hive": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "skull_prophet": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "skullclamp": {
@@ -16085,6 +16226,10 @@
   "tarnished_citadel": {
     "zone": "battlefield"
   },
+  "tasigur_the_golden_fang": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "tasseled_dromedary": {
     "zone": "battlefield"
   },
@@ -16825,6 +16970,16 @@
     "zone": "graveyard"
   },
   "timeless_lotus": {
+    "zone": "battlefield"
+  },
+  "timeless_witness": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 1
+    },
+    "hand_size": {
+      "0": 2
+    },
     "zone": "battlefield"
   },
   "tin_street_dodger": {
@@ -17959,6 +18114,16 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "victimize": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "vigilance": {
     "zone": [
       "battlefield",
@@ -18695,6 +18860,16 @@
     },
     "zone": "graveyard"
   },
+  "will_of_the_sultai": {
+    "battlefield_count": 34,
+    "graveyard_size": {
+      "0": 4
+    },
+    "library_size": {
+      "0": 37
+    },
+    "zone": "graveyard"
+  },
   "willie_lumpkin_postman": {
     "zone": "battlefield"
   },
@@ -18911,6 +19086,10 @@
     "zone": "battlefield"
   },
   "wolf_cove_villager": {
+    "zone": "battlefield"
+  },
+  "wonder": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "wooded_bastion": {

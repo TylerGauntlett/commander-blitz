@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**177 cards** blocked by **162** capabilities.
+**193 cards** blocked by **174** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -18,7 +18,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
 | [copy-exception-ability](#copy-exception-ability) | 4 | 1261 | op |
+| [put-into-graveyard-from-anywhere](#put-into-graveyard-from-anywhere) | 4 | 902 | trigger_event |
 | [station](#station) | 4 | 1695 | engine |
+| [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
 | [omen](#omen) | 3 | 3355 | cost, engine |
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 3 | 714 | engine |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
@@ -32,13 +34,13 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [escape](#escape) | 2 | 388 | engine, static_effect |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
-| [put-into-graveyard-from-anywhere](#put-into-graveyard-from-anywhere) | 2 | 902 | trigger_event |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [venture](#venture) | 2 | 19644 | engine |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
 | [x-maximum](#x-maximum) | 2 | 1665 | engine |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
+| [add-color](#add-color) | 1 | 3356 | op |
 | [add-mana-on-tap-any-color](#add-mana-on-tap-any-color) | 1 | 1052 | static_effect |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
@@ -53,6 +55,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [can-block-only](#can-block-only) | 1 | 2673 | static_effect |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cards-exiled-trigger](#cards-exiled-trigger) | 1 | 1303 | trigger_event |
+| [cards-to-your-graveyard-from-zones-this-turn](#cards-to-your-graveyard-from-zones-this-turn) | 1 | 7412 | value |
 | [cast-from-hand-result](#cast-from-hand-result) | 1 | 7016 | op |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [choose-card-type-from-list](#choose-card-type-from-list) | 1 | 611 | op |
@@ -83,7 +86,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
+| [exile-x-from-graveyard-cost](#exile-x-from-graveyard-cost) | 1 | 17252 | cost |
 | [exiled-this-way-lki](#exiled-this-way-lki) | 1 | 6960 | value |
+| [experience-counters](#experience-counters) | 1 | 1480 | engine |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
 | [filtered-discard](#filtered-discard) | 1 | 9279 | op |
@@ -96,9 +101,11 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [free-cast-this-turn](#free-cast-this-turn) | 1 | 6651 | op |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
 | [gold-token](#gold-token) | 1 | 705 | token |
+| [grant-abilities-of-exiled-cards](#grant-abilities-of-exiled-cards) | 1 | 8370 | static_effect |
 | [grant-evoke](#grant-evoke) | 1 | 5749 | static_effect |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
 | [graveyard-cast-per-permanent-type](#graveyard-cast-per-permanent-type) | 1 | 1104 | static_effect |
+| [graveyard-cast-permission-additional-cost](#graveyard-cast-permission-additional-cost) | 1 | 7356 | static_effect |
 | [graveyard-play-grants-ability](#graveyard-play-grants-ability) | 1 | 3531 | static_effect |
 | [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 1 | 3531 | static_effect |
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
@@ -114,6 +121,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [lure](#lure) | 1 | 31502 | static_effect |
 | [mana-ability-leading-rider](#mana-ability-leading-rider) | 1 | 4080 | engine |
 | [mana-cant-pay-generic](#mana-cant-pay-generic) | 1 | 3861 | value |
+| [mana-restriction-cast-from-zone](#mana-restriction-cast-from-zone) | 1 | 9291 | engine |
 | [mana-spent-enters-with-counters](#mana-spent-enters-with-counters) | 1 | 653 | replacement |
 | [mana-spent-trigger-on-activation](#mana-spent-trigger-on-activation) | 1 | 4444 | trigger_event |
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
@@ -146,10 +154,14 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [remove-x-counters-cost](#remove-x-counters-cost) | 1 | 5399 | cost |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
 | [replace-dies-link](#replace-dies-link) | 1 | 2740 | replacement |
+| [replace-graveyard-with-counter](#replace-graveyard-with-counter) | 1 | 386 | replacement |
 | [retrace](#retrace) | 1 | 5451 | engine |
 | [reveal-from-hand](#reveal-from-hand) | 1 | 3623 | cost |
+| [reveal-until-rest-to-graveyard](#reveal-until-rest-to-graveyard) | 1 | 1606 | op |
+| [sacrifice-multiple-distinct](#sacrifice-multiple-distinct) | 1 | 1918 | cost |
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
+| [salamander-warrior-4-3-u](#salamander-warrior-4-3-u) | 1 | 3395 | token |
 | [sandbox-graveyard-spell-prop](#sandbox-graveyard-spell-prop) | 1 | 5082 | engine |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
@@ -167,7 +179,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [this-combat-duration](#this-combat-duration) | 1 | 9126 | op |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
 | [times-attacked-this-turn](#times-attacked-this-turn) | 1 | 988 | value |
-| [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 1 | 1802 | token |
 | [total-mana-value-selection](#total-mana-value-selection) | 1 | 4244 | op |
 | [total-toughness-cost-reduction](#total-toughness-cost-reduction) | 1 | 5188 | value |
 | [toughness-greater-than-power-filter](#toughness-greater-than-power-filter) | 1 | 3557 | selector |
@@ -176,6 +187,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [while-source-on-battlefield-duration](#while-source-on-battlefield-duration) | 1 | 8222 | engine |
 | [x-cost-mana-restriction](#x-cost-mana-restriction) | 1 | 4046 | decision |
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 1 | 11545 | engine |
+| [x-sized-ability-targets](#x-sized-ability-targets) | 1 | 1668 | engine |
 
 ## combat-only-permanent-shield
 
@@ -349,6 +361,32 @@ Blocks **4** cards.
 
 </details>
 
+## put-into-graveyard-from-anywhere
+
+Blocks **4** cards.
+
+- **(trigger_event)** a trigger event that fires whenever a card matching a filter (here: a land card, any owner) is put into a graveyard from ANY zone -- battlefield, hand (discard), library (mill), stack -- usable on an ability with active_zones ["graveyard"] so the card triggers while it sits in its owner's graveyard (Ashen Ghoul / Vengevine style recursion)
+  <br>Why the existing vocabulary won't do: leaves_battlefield with to_zones ["graveyard"] only sees permanents leaving the battlefield (a sacrificed or destroyed land) and misses discarded, milled and countered-from-stack cards; discard covers only the hand; dies is creatures only; there is no mill or generic zone-change-to-graveyard event in trigger_events. The may-pay {G}{G} and return_to_hand halves are expressible once the event exists.
+- **(trigger_event)** a trigger event that fires when cards matching a filter (here: creature cards, owner = you) are put into a graveyard, narrowed by `from_zones: ["library"]` (mill, surveil, self-mill costs), with `batched: true` so one simultaneous move of several creature cards triggers once ("one or more"), and binding the batch of moved cards so the effect can be `put_onto_battlefield` over exactly one of THEM chosen by the controller ("put one of them"), still in the graveyard on resolution
+  <br>Why the existing vocabulary won't do: trigger_events has no zone-change-to-graveyard event: leaves_battlefield only sees permanents leaving the battlefield, dies is battlefield creatures, discard is the hand, leaves_graveyard is the reverse direction; the trigger's from_zones key is read only for spell_cast and land_played. Without the event there is also no binding for 'them', so a put_onto_battlefield over any creature card in the graveyard would wrongly reach creature cards milled earlier. The Flying keyword and the enters-or-attacks mill three (self_enters + attacks triggers with mill) are expressible today.
+- **(trigger_event)** a trigger event that fires when one or more cards matching a filter (here: land cards, owner = you) are put into a graveyard from ANY zone -- battlefield, hand (discard), library (mill, surveil), stack -- supporting `batched: true` so one simultaneous move of several land cards triggers once, and `max_per_turn: 1` for "for the first time each turn"
+  <br>Why the existing vocabulary won't do: trigger_events has no generic zone-change-to-graveyard event: leaves_battlefield with to_zones ["graveyard"] (and dies) only sees permanents leaving the battlefield and misses milled and discarded land cards, which is what this card's own upkeep mill feeds; discard covers only the hand; leaves_graveyard is the opposite direction. The upkeep `may` + `mill` line and the insect_1_1_g token are expressible today.
+- **(trigger_event)** a trigger event that fires when a card matching a filter (here: a land card, owner = you) is put into a graveyard from ANY zone -- battlefield (sacrifice/destroy), hand (discard), library (mill, surveil), stack -- and supports `batched: true` so that several land cards moved by one event (a mill of three lands, a discard of two lands) trigger it exactly once ("one or more")
+  <br>Why the existing vocabulary won't do: leaves_battlefield with to_zones ["graveyard"] sees only permanents leaving the battlefield and misses discarded, milled and surveilled land cards, which are the card's whole engine (Gitrog + discard/dredge loops); discard covers only the hand and carries no card-type filter on the moved card from library; there is no mill or generic zone-change-to-graveyard event in trigger_events. Combining leaves_battlefield and discard triggers would still miss mill/surveil and would trigger twice for a single simultaneous event that moves lands from two zones. The draw half is a plain draw op once the event exists. The upkeep 'sacrifice unless you sacrifice a land' and extra_land_drops lines are expressible today.
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Gitrog Monster** (rank 902) — `the_gitrog_monster`
+  - Whenever one or more land cards are put into your graveyard from anywhere, draw a card.
+- **Colossal Grave-Reaver** (rank 1942) — `colossal_grave_reaver`
+  - Whenever one or more creature cards are put into your graveyard from your library, put one of them onto the battlefield.
+- **Crawling Sensation** (rank 3007) — `crawling_sensation`
+  - Whenever one or more land cards are put into your graveyard from anywhere for the first time each turn, create a 1/1 green Insect creature token.
+- **Centaur Vinecrasher** (rank 10988) — `centaur_vinecrasher`
+  - Whenever a land card is put into a graveyard from anywhere, you may pay {G}{G}. If you do, return this card from your graveyard to your hand.
+
+</details>
+
 ## station
 
 Blocks **4** cards.
@@ -380,6 +418,32 @@ Blocks **4** cards.
   - Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 8+.)
   - 1+ | At the beginning of combat on your turn, put your choice of a +1/+1 counter or two charge counters on up to one other target artifact.
   - 8+ | Flying
+
+</details>
+
+## token-zombie-druid-2-2-b
+
+Blocks **4** cards.
+
+- **(token)** a 2/2 black Zombie Druid creature token
+  <br>Why the existing vocabulary won't do: token_ids has zombie_2_2_b, a 2/2 black Zombie with no Druid subtype; rule 111.4 makes a token exactly what its effect says. The rest of the card is expressible: an upkeep trigger with surveil 1, and the activated ability's cost {tap: true} with a condition of is_your_turn plus a cmp of cards_from_graveyard_this_turn > 0
+- **(token)** a 2/2 black Zombie Druid creature token
+  <br>Why the existing vocabulary won't do: token_ids has zombie_2_2_b, a 2/2 black Zombie with no Druid subtype; rule 111.4 makes a token exactly what its effect says. The rest of the card is expressible: leaves_graveyard for the trigger and choose_mode with once_each "turn" for "choose one that hasn't been chosen this turn"
+- **(token)** a 2/2 black Zombie Druid creature token (no abilities)
+  <br>Why the existing vocabulary won't do: token_ids has zombie_2_2_b (a 2/2 black Zombie, missing the Druid subtype) but no Zombie Druid; the leaves_graveyard trigger event with batched already covers "one or more cards leave your graveyard", so only the token is missing
+- **(token)** a 2/2 black Zombie Druid creature token
+  <br>Why the existing vocabulary won't do: token_ids has zombie_2_2_b (a 2/2 black Zombie, no Druid subtype) and other Zombie variants, but no Zombie Druid
+
+<details><summary>Cards waiting on this</summary>
+
+- **Teval's Judgment** (rank 1802) — `teval_s_judgment`
+  - • Create a 2/2 black Zombie Druid creature token.
+- **Teval, the Balanced Scale** (rank 2727) — `teval_the_balanced_scale`
+  - Whenever one or more cards leave your graveyard, create a 2/2 black Zombie Druid creature token.
+- **Welcome the Dead** (rank 7412) — `welcome_the_dead`
+  - Create X tapped 2/2 black Zombie Druid creature tokens, where X is the number of cards that were put into your graveyard from your hand or library this turn.
+- **Essence Anchor** (rank 8833) — `essence_anchor`
+  - {T}: Create a 2/2 black Zombie Druid creature token. Activate only during your turn and only if a card left your graveyard this turn.
 
 </details>
 
@@ -635,24 +699,6 @@ Blocks **2** cards.
 
 </details>
 
-## put-into-graveyard-from-anywhere
-
-Blocks **2** cards.
-
-- **(trigger_event)** a trigger event that fires whenever a card matching a filter (here: a land card, any owner) is put into a graveyard from ANY zone -- battlefield, hand (discard), library (mill), stack -- usable on an ability with active_zones ["graveyard"] so the card triggers while it sits in its owner's graveyard (Ashen Ghoul / Vengevine style recursion)
-  <br>Why the existing vocabulary won't do: leaves_battlefield with to_zones ["graveyard"] only sees permanents leaving the battlefield (a sacrificed or destroyed land) and misses discarded, milled and countered-from-stack cards; discard covers only the hand; dies is creatures only; there is no mill or generic zone-change-to-graveyard event in trigger_events. The may-pay {G}{G} and return_to_hand halves are expressible once the event exists.
-- **(trigger_event)** a trigger event that fires when a card matching a filter (here: a land card, owner = you) is put into a graveyard from ANY zone -- battlefield (sacrifice/destroy), hand (discard), library (mill, surveil), stack -- and supports `batched: true` so that several land cards moved by one event (a mill of three lands, a discard of two lands) trigger it exactly once ("one or more")
-  <br>Why the existing vocabulary won't do: leaves_battlefield with to_zones ["graveyard"] sees only permanents leaving the battlefield and misses discarded, milled and surveilled land cards, which are the card's whole engine (Gitrog + discard/dredge loops); discard covers only the hand and carries no card-type filter on the moved card from library; there is no mill or generic zone-change-to-graveyard event in trigger_events. Combining leaves_battlefield and discard triggers would still miss mill/surveil and would trigger twice for a single simultaneous event that moves lands from two zones. The draw half is a plain draw op once the event exists. The upkeep 'sacrifice unless you sacrifice a land' and extra_land_drops lines are expressible today.
-
-<details><summary>Cards waiting on this</summary>
-
-- **The Gitrog Monster** (rank 902) — `the_gitrog_monster`
-  - Whenever one or more land cards are put into your graveyard from anywhere, draw a card.
-- **Centaur Vinecrasher** (rank 10988) — `centaur_vinecrasher`
-  - Whenever a land card is put into a graveyard from anywhere, you may pay {G}{G}. If you do, return this card from your graveyard to your hand.
-
-</details>
-
 ## targeted-discard
 
 Blocks **2** cards.
@@ -754,6 +800,20 @@ Blocks **1** card.
 - **Delirium** (rank 12129) — `delirium`
   - Cast this spell only during an opponent's turn.
   - Tap target creature that player controls. That creature deals damage equal to its power to the player.
+
+</details>
+
+## add-color
+
+Blocks **1** card.
+
+- **(op)** a one-shot effect that permanently adds a color to one permanent ("it's black in addition to its other colors") without touching its types or power/toughness, applied to the creature card just returned by return_from_graveyard (which would also need an `as` binding so the following effect can name that one returned card)
+  <br>Why the existing vocabulary won't do: add_subtype covers the Zombie half but changes subtypes only. animate is the only one-shot that writes colors: a non-exact animate does add its colors, but the loader refuses it without power and toughness whenever the animation includes Creature (and an empty types list defaults to Creature), so it would overwrite the returned creature's base P/T; keep_colors is legal only on an exact animation, which replaces colors and types rather than adding. The set_colors static replaces colors and lasts only while its source is on the battlefield, and this sorcery exiles itself. return_from_graveyard has no `as`, so even the add_subtype half has no way to name the one returned card apart from `link`/`returned_with`, which ties it to an exiled source.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Necromantic Selection** (rank 3356) — `necromantic_selection`
+  - It's a black Zombie in addition to its other colors and types.
 
 </details>
 
@@ -952,6 +1012,20 @@ Blocks **1** card.
 
 - **Laelia, the Blade Reforged** (rank 1303) — `laelia_the_blade_reforged`
   - Whenever one or more cards are put into exile from your library and/or your graveyard, put a +1/+1 counter on Laelia.
+
+</details>
+
+## cards-to-your-graveyard-from-zones-this-turn
+
+Blocks **1** card.
+
+- **(value)** a value counting the cards put into a given player's graveyard this turn, restricted to cards that came from named zones (here: your graveyard, from your hand or library), e.g. {"cards_to_graveyard_this_turn": {"player": "you", "from_zones": ["hand", "library"]}}, read off a per-player, per-origin-zone tally in the TurnLedger
+  <br>Why the existing vocabulary won't do: cards_to_graveyard_this_turn returns ledger.cards_to_graveyard, one turn-wide integer over every graveyard at the table and from every zone (battlefield deaths included), and takes no player or zone spec; cards_discarded_this_turn misses milled cards and self-mill from library; count over your graveyard counts what was already there
+
+<details><summary>Cards waiting on this</summary>
+
+- **Welcome the Dead** (rank 7412) — `welcome_the_dead`
+  - Create X tapped 2/2 black Zombie Druid creature tokens, where X is the number of cards that were put into your graveyard from your hand or library this turn.
 
 </details>
 
@@ -1386,6 +1460,20 @@ Blocks **1** card.
 
 </details>
 
+## exile-x-from-graveyard-cost
+
+Blocks **1** card.
+
+- **(cost)** an activated-ability cost that exiles exactly X cards from your graveyard, X being the number announced for the ability's {X} mana (the graveyard analogue of discard_x / pay_life_x / loyalty_x), with legality bounding X by the cards in the graveyard
+  <br>Why the existing vocabulary won't do: The exile_from_graveyard cost takes only a fixed integer count (engine costs._graveyard_pool and pay do int(spec.pop('count', 1))), so it cannot read the announced X; discard_x, pay_life_x and loyalty_x are the X-sized costs that exist, and none exiles from the graveyard. Exiling with the exile op in the effects would move the payment to resolution and let the ability be activated with an empty graveyard
+
+<details><summary>Cards waiting on this</summary>
+
+- **Necropolis Fiend** (rank 17252) — `necropolis_fiend`
+  - {X}, {T}, Exile X cards from your graveyard: Target creature gets -X/-X until end of turn.
+
+</details>
+
 ## exiled-this-way-lki
 
 Blocks **1** card.
@@ -1397,6 +1485,21 @@ Blocks **1** card.
 
 - **Oversimplify** (rank 6960) — `oversimplify`
   - Exile all creatures. Each player creates a 0/0 green and blue Fractal creature token and puts a number of +1/+1 counters on it equal to the total power of creatures they controlled that were exiled this way.
+
+</details>
+
+## experience-counters
+
+Blocks **1** card.
+
+- **(engine)** an experience counter kind on players (122.1): a PlayerState field listed in PLAYER_COUNTER_KINDS so proliferate and lose_all_player_counters see it, an op that gives a player N experience counters (like add_poison/add_energy), and a value that reads how many experience counters a player has, for comparison against mana_value_of a target
+  <br>Why the existing vocabulary won't do: PLAYER_COUNTER_KINDS carries only poison and energy; add_poison and add_energy are fixed to those kinds, add_counters puts counters on objects not players, and counters_on reads object counters, so neither giving nor reading an experience counter can be said. Substituting energy would let other energy cards spend Meren's experience, a different card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Meren of Clan Nel Toth** (rank 1480) — `meren_of_clan_nel_toth`
+  - Whenever another creature you control dies, you get an experience counter.
+  - At the beginning of your end step, choose target creature card in your graveyard. If that card's mana value is less than or equal to the number of experience counters you have, return it to the battlefield. Otherwise, put it into your hand.
 
 </details>
 
@@ -1576,6 +1679,20 @@ Blocks **1** card.
 
 </details>
 
+## grant-abilities-of-exiled-cards
+
+Blocks **1** card.
+
+- **(static_effect)** a static ability that gives each permanent matching its `affects` filter every activated ability (mana abilities included) printed on the cards matching an `exiled_with: self` selector, read live from exile so the set changes as cards are exiled with the source, and ending when the source leaves the battlefield
+  <br>Why the existing vocabulary won't do: The `grant_ability` static only hands over a fixed ability written in the card's own `grantable_abilities` by index, so it cannot borrow abilities from whatever cards happen to be exiled; `imprint_characteristics` reads an exiled card but copies only power, toughness and creature types (Duplicant), never abilities; `exiled_with` exists only as an effect selector key, not in `static_filter_keys`
+
+<details><summary>Cards waiting on this</summary>
+
+- **Steward of the Harvest** (rank 8370) — `steward_of_the_harvest`
+  - Creatures you control have all activated abilities of all land cards exiled with this creature.
+
+</details>
+
 ## grant-evoke
 
 Blocks **1** card.
@@ -1615,6 +1732,20 @@ Blocks **1** card.
 
 - **Muldrotha, the Gravetide** (rank 1104) — `muldrotha_the_gravetide`
   - During each of your turns, you may play a land and cast a permanent spell of each permanent type from your graveyard
+
+</details>
+
+## graveyard-cast-permission-additional-cost
+
+Blocks **1** card.
+
+- **(static_effect)** an additional cost carried on a battlefield-granted cast_from_graveyard permission, charged to the spell cast through it: here 'exile three other cards from your graveyard' (an exile_from_graveyard cost of 3 cards excluding the spell itself), paid on top of the spell's own mana cost, alongside affects_spells {types: [Creature]}, static_max_per_turn 1 and a your-turn-only condition
+  <br>Why the existing vocabulary won't do: The cast_from_graveyard static (Edgar, Master Machinist shape) carries affects_spells, static_max_per_turn, enters_tapped and grants_flashback but no cost of any kind; graveyard_additional_cost and graveyard_cost are card-level keys priced on the card being cast, not imposed by another permanent's permission; exile_from_graveyard exists only in cost_keys for activated abilities. Writing the permission without the exile would make Kotis a strictly better, free recursion engine than printed.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Kotis, Sibsig Champion** (rank 7356) — `kotis_sibsig_champion`
+  - Once during each of your turns, you may cast a creature spell from your graveyard by exiling three other cards from your graveyard in addition to paying its other costs.
 
 </details>
 
@@ -1829,6 +1960,20 @@ Blocks **1** card.
 - **Jegantha, the Wellspring** (rank 3861) — `jegantha_the_wellspring`
   - Companion — No card in your starting deck has more than one of the same mana symbol in its mana cost. (If this card is your chosen companion, you may put it into your hand from outside the game for {3} as a sorcery.)
   - {T}: Add {W}{U}{B}{R}{G}. This mana can't be spent to pay generic mana costs.
+
+</details>
+
+## mana-restriction-cast-from-zone
+
+Blocks **1** card.
+
+- **(engine)** a mana_restriction cast-half predicate on the zone the spell is cast from, e.g. {"cast": [[{"from_zone": "graveyard"}]]}, so the mana pays only for a spell being cast from its controller's graveyard (flashback, escape, graveyard_cast and cast_from_graveyard permissions), carried on SpendPurpose as the spell's origin zone
+  <br>Why the existing vocabulary won't do: mana_restriction groups (engine/mana.py compile_restriction / RestrictionGroup) match only type/subtype names, 'not' names, and the predicates in RESTRICTION_PREDICATES (mana_value, x_in_mana_cost); SpendPurpose carries no origin zone. 'any' on the cast half would fund every spell, a strictly better card, and no name or predicate can say 'from your graveyard'
+
+<details><summary>Cards waiting on this</summary>
+
+- **Lord of the Forsaken** (rank 9291) — `lord_of_the_forsaken`
+  - Pay 1 life: Add {C}. Spend this mana only to cast a spell from your graveyard.
 
 </details>
 
@@ -2287,6 +2432,20 @@ Blocks **1** card.
 
 </details>
 
+## replace-graveyard-with-counter
+
+Blocks **1** card.
+
+- **(replacement)** a counter rider on the replace_graveyard static: the redirected card enters exile with N counters of a named kind on it (here one 'void' counter), so a later selector with has_counters: "void" over zone exile, owner opponent can find exactly the cards this replacement exiled. Only cards, not tokens (affects_token: false), and only cards an opponent owns (affects_player: "opponent")
+  <br>Why the existing vocabulary won't do: replace_graveyard (Leyline of the Void) takes affects_player, affects, destination and affects_token only; engine.zones' graveyard replacement returns just a destination Zone and has no way to put counters on the card as it arrives. and_create is a replace_dies-only rider and creates tokens, not counters. Without the void counter the card's activated ability (expressible as grant_playable with objects {zone: exile, owner: opponent, has_counters: "void"}, playable: "this_turn", playable_free: true) would have nothing to choose, so writing the static without the counter would silently break the second ability
+
+<details><summary>Cards waiting on this</summary>
+
+- **Dauthi Voidwalker** (rank 386) — `dauthi_voidwalker`
+  - If a card would be put into an opponent's graveyard from anywhere, instead exile it with a void counter on it.
+
+</details>
+
 ## retrace
 
 Blocks **1** card.
@@ -2315,6 +2474,34 @@ Blocks **1** card.
 
 </details>
 
+## reveal-until-rest-to-graveyard
+
+Blocks **1** card.
+
+- **(op)** a remainder destination on `reveal_until` (e.g. `rest_to: "graveyard"`) so the revealed cards walked past before the match are put into their owner's graveyard together with the match (`destination: "graveyard"`), as one move -- "reveals cards from the top of their library until they reveal a land card, then puts those cards into their graveyard" (Consuming Aberration, Mind Funeral's kin with no count)
+  <br>Why the existing vocabulary won't do: `op_reveal_until` (ops_cards.py) moves only the hits to `destination`; the non-matching revealed cards either go to the bottom in a random order (`rest_to_bottom`, defaulted on) or are shuffled back (`shuffle_rest`), and switching both off leaves them on top -- there is no key sending them to the graveyard. `look_at_top` has `rest_to` but a fixed window, not an unbounded 'until'. `repeat_while` around `mill` 1 with an `as` binding and a 'not a land' condition is an approximation: it is a mill (701.13), so it fires mill triggers and `replace_mill` the printed reveal never does, moves the cards one at a time instead of together, and is capped at the 100-iteration guard. The first sentence is expressible (static `set_pt` self_only with `count` of `{controller: opponent, zone: graveyard}` on both power and toughness, as Haughty Djinn does), and the trigger is a plain `spell_cast` with `controller: you` over `for_each_player each_opponent`; only the reveal-and-bin is blocked.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Consuming Aberration** (rank 1606) — `consuming_aberration`
+  - Whenever you cast a spell, each opponent reveals cards from the top of their library until they reveal a land card, then puts those cards into their graveyard.
+
+</details>
+
+## sacrifice-multiple-distinct
+
+Blocks **1** card.
+
+- **(cost)** an activated-ability cost that sacrifices several permanents each matching its own selector (here one Swamp AND one Forest), payable only when every part can be met by a distinct permanent; e.g. `sacrifice` accepting a list of selectors
+  <br>Why the existing vocabulary won't do: The `sacrifice` cost key takes one selector plus `count` (costs.py `_sacrifice_pool`); `count: 2` with `any_of` Swamp/Forest would also accept two Swamps or two Forests, which is a different (looser) cost. The rest of the line is expressible: `active_zones: ["graveyard"]` with a `return_to_hand` of `self_only`.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Jarad, Golgari Lich Lord** (rank 1918) — `jarad_golgari_lich_lord`
+  - Sacrifice a Swamp and a Forest: Return this card from your graveyard to your hand.
+
+</details>
+
 ## sacrificed-source-counters
 
 Blocks **1** card.
@@ -2340,6 +2527,20 @@ Blocks **1** card.
 
 - **Evendo Brushrazer** (rank 4225) — `evendo_brushrazer`
   - During your turn, as long as you've sacrificed a nontoken permanent this turn, you may play cards exiled with this creature.
+
+</details>
+
+## salamander-warrior-4-3-u
+
+Blocks **1** card.
+
+- **(token)** a 4/3 blue Salamander Warrior creature token (no abilities), created under the exiled creature's controller
+  <br>Why the existing vocabulary won't do: token_ids has no Salamander Warrior token; the only 4/3 is vampire_demon_4_3_wb_flying, which is a different token. The rest of the card (exile with up_to target, create_token with controller, encore via active_zones graveyard + exile_from_graveyard cost as Angel of Indemnity does) is expressible
+
+<details><summary>Cards waiting on this</summary>
+
+- **Amphin Mutineer** (rank 3395) — `amphin_mutineer`
+  - When this creature enters, exile up to one target non-Salamander creature. That creature's controller creates a 4/3 blue Salamander Warrior creature token.
 
 </details>
 
@@ -2584,20 +2785,6 @@ Blocks **1** card.
 
 </details>
 
-## token-zombie-druid-2-2-b
-
-Blocks **1** card.
-
-- **(token)** a 2/2 black Zombie Druid creature token
-  <br>Why the existing vocabulary won't do: token_ids has zombie_2_2_b, a 2/2 black Zombie with no Druid subtype; rule 111.4 makes a token exactly what its effect says. The rest of the card is expressible: leaves_graveyard for the trigger and choose_mode with once_each "turn" for "choose one that hasn't been chosen this turn"
-
-<details><summary>Cards waiting on this</summary>
-
-- **Teval's Judgment** (rank 1802) — `teval_s_judgment`
-  - • Create a 2/2 black Zombie Druid creature token.
-
-</details>
-
 ## total-mana-value-selection
 
 Blocks **1** card.
@@ -2707,5 +2894,19 @@ Blocks **1** card.
 
 - **Entrancing Melody** (rank 11545) — `entrancing_melody`
   - Gain control of target creature with mana value X.
+
+</details>
+
+## x-sized-ability-targets
+
+Blocks **1** card.
+
+- **(engine)** An activated ability whose target COUNT is the announced X from its own {X} mana cost (targets: [{count: {"x": true}, kind: card_in_graveyard, ...}]) -- legality must enumerate one activation per payable X with exactly X targets, as it already does for spells (TargetSpec.x_sized via Game._ask_x_sized_targets) and for abilities whose target SELECTOR reads X
+  <br>Why the existing vocabulary won't do: legality._targets_read_x only checks whether a target's selector mentions X (_mentions_x on spec.selector), never spec.count, so an ability with count {"x": true} is enumerated once with targeting.target_count evaluating the count from bindings that carry no x -- it sizes to 0 and the ability always returns nothing. The x_sized path in game.py covers card.targets (spells) only, and no shipped activated ability uses an X-sized target count
+
+<details><summary>Cards waiting on this</summary>
+
+- **Shigeki, Jukai Visionary** (rank 1668) — `shigeki_jukai_visionary`
+  - Channel — {X}{X}{G}{G}, Discard this card: Return X target nonlegendary cards from your graveyard to your hand.
 
 </details>

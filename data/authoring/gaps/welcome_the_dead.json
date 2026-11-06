@@ -1,0 +1,24 @@
+{
+  "card_id": "welcome_the_dead",
+  "name": "Welcome the Dead",
+  "oracle_text": "Draw two cards, then discard a card and you lose 2 life. Create X tapped 2/2 black Zombie Druid creature tokens, where X is the number of cards that were put into your graveyard from your hand or library this turn.\nFlashback {5}{B} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+  "blocked_sentences": [
+    "Create X tapped 2/2 black Zombie Druid creature tokens, where X is the number of cards that were put into your graveyard from your hand or library this turn."
+  ],
+  "needs": [
+    {
+      "capability": "cards_to_your_graveyard_from_zones_this_turn",
+      "kind": "value",
+      "what": "a value counting the cards put into a given player's graveyard this turn, restricted to cards that came from named zones (here: your graveyard, from your hand or library), e.g. {\"cards_to_graveyard_this_turn\": {\"player\": \"you\", \"from_zones\": [\"hand\", \"library\"]}}, read off a per-player, per-origin-zone tally in the TurnLedger",
+      "why_existing_wont_do": "cards_to_graveyard_this_turn returns ledger.cards_to_graveyard, one turn-wide integer over every graveyard at the table and from every zone (battlefield deaths included), and takes no player or zone spec; cards_discarded_this_turn misses milled cards and self-mill from library; count over your graveyard counts what was already there"
+    },
+    {
+      "capability": "token_zombie_druid_2_2_b",
+      "kind": "token",
+      "what": "a 2/2 black Zombie Druid creature token",
+      "why_existing_wont_do": "token_ids has zombie_2_2_b (a 2/2 black Zombie, no Druid subtype) and other Zombie variants, but no Zombie Druid"
+    }
+  ],
+  "closest_existing": ["cards_to_graveyard_this_turn", "cards_discarded_this_turn", "zombie_2_2_b"],
+  "confidence": "high"
+}

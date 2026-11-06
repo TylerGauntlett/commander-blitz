@@ -414,7 +414,7 @@ class TestActivatedAbilities:
             _provide_the_untap_fodder(game, registry, ability)
             _provide_the_counter_fodder(game, registry, ability, oid)
             _satisfy_the_activation_condition(game, registry, ability, oid)
-            _stock_the_hand(game, ability)
+            _stock_the_hand(game, registry, ability)
             _provide_the_target(game, registry, oid, ability)
             for other in game.state.battlefield:
                 game.state.objects[other].entered_turn = 0
@@ -921,9 +921,21 @@ def _satisfy_the_activation_condition(game: Game, registry, ability, oid: int) -
     if "count" not in left:
         return
     selector = left["count"]
+    wanted = int(right["const"])
+    # Threshold -- "activate only if there are seven or more cards in your
+    # graveyard" (Cephalid Coliseum). A count over your own graveyard is
+    # satisfied by putting that many more cards into it; Forests, because the
+    # selector names no type and a land does nothing while it sits there.
+    if selector.get("zone") == "graveyard":
+        if selector.get("controller", "you") != "you" or selector.get("types"):
+            return
+        yard = game.state.players[0].graveyard
+        for _ in range(max(0, wanted - len(yard))):
+            card = new_object(game.state, "forest", owner=0, zone=Zone.GRAVEYARD)
+            yard.append(card.oid)
+        return
     if selector.get("zone", "battlefield") != "battlefield":
         return
-    wanted = int(right["const"])
     match = _fodder_for(registry, selector, wanted)
     if match is None:
         return
@@ -1119,19 +1131,34 @@ def _fodder_for(
     return matches[0]
 
 
-def _stock_the_hand(game: Game, ability) -> None:
+def _stock_the_hand(game: Game, registry, ability) -> None:
     """Give the player the cards a discard cost wants to throw away.
 
     Third of the same family as `_pay_the_counters` and `_provide_the_sacrifice`:
     the sandbox's job is that "not activatable" only ever means the ability is
     broken. Nezahal's blink costs three cards and the board arrives with an
     empty hand.
+
+    Floral Evoker discards "a **creature** card", and a hand of Forests pays
+    nothing: a cost with a `discard_selector` is stocked with the first card
+    `_fodder_for` finds for it, and the hand is counted by what the selector
+    accepts rather than by its size.
     """
     cost = ability.cost
     needed = int(getattr(cost, "discard", 0) or 0) if cost else 0
+    if not needed:
+        return
+    selector = getattr(cost, "discard_selector", None)
+    card_id = "forest"
+    if selector and selector.get("types"):
+        match = _fodder_for(registry, dict(selector))
+        if match is None:
+            return
+        card_id = match.id
     hand = game.state.players[0].hand
-    while len(hand) < needed:
-        card = new_object(game.state, "forest", owner=0, zone=Zone.HAND)
+    fits = sum(1 for h in hand if game.state.objects[h].def_id == card_id)
+    for _ in range(needed - (fits if selector else len(hand))):
+        card = new_object(game.state, card_id, owner=0, zone=Zone.HAND)
         hand.append(card.oid)
 
 
