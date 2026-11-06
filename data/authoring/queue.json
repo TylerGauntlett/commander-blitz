@@ -199222,12 +199222,12 @@
     },
     "Peema Aether-Seer": {
       "edhrec_rank": 12851,
-      "gate": "template",
+      "gate": null,
       "name": "Peema Aether-Seer",
-      "reason": "no template for: When this creature enters, you get an amount of {E} equal to the greatest power among crea",
+      "reason": "",
       "scryfall_id": "deaad8d1-9a60-4a65-8f20-53d83be09619",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Peema Outrider": {

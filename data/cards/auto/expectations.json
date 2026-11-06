@@ -12125,6 +12125,10 @@
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
   },
+  "peema_aether_seer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "peema_trailblazer": {
     "battlefield_count": 33,
     "zone": "battlefield"

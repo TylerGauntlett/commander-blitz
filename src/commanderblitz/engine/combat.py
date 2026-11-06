@@ -295,12 +295,21 @@ def unmet_block_requirements(state: GameState, defender: int) -> list[int]:
     A creature blocking *something else* has still not met this requirement:
     the obligation names one attacker, and rule 509.1c requires the declaration
     to satisfy the maximum number of requirements it can.
+
+    The second kind, "blocks this turn if able" (`must_block_any`), names no
+    attacker, so any block meets it; see :func:`block_any_required`. One
+    creature can carry both, and blocking the named attacker meets both, which
+    is why `legal_blocks` narrowing a provoked creature to its attacker never
+    costs the other requirement anything.
     """
     combat = state.combat
     if combat is None:
         return []
     unmet: list[int] = []
     for oid in state.battlefield:
+        if block_any_required(state, oid, defender) and not _is_blocking(state, oid):
+            unmet.append(oid)
+            continue
         obj = state.objects.get(oid)
         if obj is None or obj.must_block is None or obj.controller != defender:
             continue
@@ -318,12 +327,56 @@ def unmet_block_requirements(state: GameState, defender: int) -> list[int]:
     return unmet
 
 
+def block_any_required(state: GameState, oid: int, defender: int) -> bool:
+    """Must this creature block *something* in this combat, and can it?
+
+    "Target creature blocks this turn if able" (Peema Aether-Seer): a
+    requirement that names no attacker, so blocking any of them obeys it
+    (509.1c), and one that lasts the turn, so it binds every combat in it --
+    `discharge_block_requirements` leaves it alone and the turn number on the
+    creature is what ends it.
+
+    "…if able" is asked per attacker, as the named requirement asks it:
+    `can_block` with ``ignore_existing``, and no block tax owed (509.1c).
+    Menace is the one declaration-wide restriction that can make a per-pair
+    "able" a lie -- a creature alone cannot block a menacing attacker, and
+    `drop_illegal_blocks` would not retract that block -- so a menacing
+    attacker counts only when a second creature of the same player could
+    block it beside this one.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or obj.must_block_any_turn != state.turn or obj.controller != defender:
+        return False
+    combat = state.combat
+    if combat is None or block_taxed(state, oid):
+        return False
+    for attacker in combat.attackers:
+        if attacker in combat.removed:
+            continue
+        if not can_block(state, oid, attacker, defender, ignore_existing=True):
+            continue
+        if Keyword.MENACE.value in chars(state, attacker).keywords and not any(
+            other != oid and can_block(state, other, attacker, defender, ignore_existing=True)
+            for other in state.battlefield
+        ):
+            continue
+        return True
+    return False
+
+
+def _is_blocking(state: GameState, oid: int) -> bool:
+    combat = state.combat
+    return combat is not None and oid in combat.blockers and oid not in combat.removed
+
+
 def discharge_block_requirements(state: GameState) -> None:
     """Spend every block requirement once blockers are locked in.
 
     Unconditionally, whether or not it was met -- "if able" means a creature
     that could not block owed nothing, and leaving the flag set would compel
-    the *next* combat, which no printed provoke says.
+    the *next* combat, which no printed provoke says. Only the named,
+    one-combat kind: "blocks this turn if able" binds a second combat this turn
+    too, and expires by its turn number (`block_any_required`).
     """
     for oid in state.battlefield:
         obj = state.objects.get(oid)

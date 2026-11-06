@@ -4913,6 +4913,33 @@ The `cant_attack_you` static is the near miss and is scoped to the seat of the
 permanent printing it: granted to another player's creature, "you" would be
 that creature's own controller.
 
+## Block requirements
+
+    Peema Aether-Seer — "Pay {E}{E}{E}: Target creature blocks this turn if able."
+
+```jsonc
+{ "op": "must_block_any", "objects": { "target": "t1" } }
+```
+
+Two ops, because a block requirement either names what to block or does not, and
+the two carry different data on different clocks:
+
+| | |
+|---|---|
+| `must_block` | provoke and the lure family — "blocks **this creature** this combat if able". Records the attacker (`attacker`, defaulting to the ability's source) on the blocker; `combat.discharge_block_requirements` spends it when blockers lock in |
+| `must_block_any` | "blocks this turn if able" — no attacker, so blocking any creature attacking its controller obeys it (509.1c), and it binds **every** combat this turn. Records the turn number (`GameObject.must_block_any_turn`); nothing spends it, and the next turn ends it |
+
+Both are enforced by `combat.unmet_block_requirements`, which withholds "Done
+blocking" while an able creature owes a block, so the CPU is held to them by the
+same legal actions a human is offered. "If able" is `combat.block_any_required`:
+`can_block` with `ignore_existing` against some attacker, no block tax owed
+(509.1c), and a menacing attacker counts only when a second creature of the same
+player could block it beside this one. Neither op untaps — provoke's untap is
+its own `untap` op before `must_block`. A creature carrying both is narrowed to
+the named attacker by `legal_blocks`, which obeys both at once. The loader
+refuses `must_block_any` without `objects` or with an `attacker`; "blocks this
+creature this turn" is a near miss neither op says.
+
 ## Goad
 
     Taunt from the Rampart — "Goad all creatures your opponents control. Until

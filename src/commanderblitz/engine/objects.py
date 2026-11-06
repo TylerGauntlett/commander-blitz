@@ -985,6 +985,14 @@ class GameObject:
     #: combat and cleared when blockers are locked in, so unlike
     #: ``must_attack`` there is no duration to carry.
     must_block: int | None = None
+    #: "Target creature blocks this turn if able" (Peema Aether-Seer): the
+    #: turn number in which this creature must block -- *any* attacker -- in
+    #: every combat, or None. The other half of a block requirement, and why it
+    #: is not :attr:`must_block`: it names no attacker, so any block meets it,
+    #: and "this turn" spans every combat in the turn, so nothing spends it when
+    #: blockers lock in. A turn number rather than a bool so it expires on its
+    #: own when the turn ends, with no cleanup hook to forget.
+    must_block_any_turn: int | None = None
     #: Detain (701.30a): "until **your** next turn, that permanent can't attack
     #: or block and its activated abilities can't be activated". The pid of the
     #: player who detained it, cleared by that player's own untap step.
@@ -1272,6 +1280,7 @@ class GameObject:
         """Wipe everything that only means something on the battlefield."""
         self.must_attack = None
         self.must_block = None
+        self.must_block_any_turn = None
         self.detained_by = None
         # A permanent that left and came back is a new object (400.7), so it is
         # no longer the creature anybody goaded -- blink your own goaded

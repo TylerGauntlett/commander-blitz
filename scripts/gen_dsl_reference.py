@@ -267,6 +267,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "must_attack_player": ("Board", "Creatures attack a named player each combat if able, until the end of your next turn or this turn.",
                            '"…attacks that player each combat if able"'),
     "must_block": ("Board", "Creatures block this turn if able.", None),
+    "must_block_any": ("Board", "Creatures block (any attacker) in every combat this turn if able.",
+                       "Block requirements"),
     "cant_attack_player": ("Board", "Creatures (a player's, or named `objects`) can't attack a player (or only their walkers of a subtype) until a duration ends.",
                            '"That player can\'t attack you"'),
     "attack_tax": ("Board", "Until your next turn (or this turn), creatures can't attack you unless their controller pays a mana cost for each (the timed form of the static).",

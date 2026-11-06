@@ -481,6 +481,30 @@ def op_must_block(ctx: EffectContext, spec: Mapping[str, Any]):
     yield from ()
 
 
+@register("must_block_any")
+def op_must_block_any(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Target creature blocks this turn if able." (Peema Aether-Seer)
+
+    The other block requirement, and a separate op from `must_block` because it
+    carries neither of that op's data. It names no attacker -- blocking any
+    creature attacking its controller obeys it (509.1c) -- and it lasts the
+    turn, so a second combat this turn is compelled too, where provoke is
+    spent when blockers lock in.
+
+    Recorded as the turn number on the creature (`must_block_any_turn`),
+    enforced in the same place as provoke (`combat.unmet_block_requirements`,
+    through `blocks_valid`), with "if able" asked by
+    `combat.block_any_required`. It does not untap the creature: a tapped
+    creature is simply excused, which is the printed card.
+    """
+    for oid in resolve_pool(ctx, spec.get("objects") or {}):
+        obj = ctx.state.objects.get(oid)
+        if obj is None or not obj.on_battlefield:
+            continue
+        obj.must_block_any_turn = ctx.state.turn
+    yield from ()
+
+
 @register("must_attack")
 def op_must_attack(ctx: EffectContext, spec: Mapping[str, Any]):
     """ "Target creature attacks during its controller's next combat phase if able."

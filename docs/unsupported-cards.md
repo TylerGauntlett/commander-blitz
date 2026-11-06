@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**207 cards** blocked by **188** capabilities.
+**206 cards** blocked by **187** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -55,7 +55,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [become-copy-add-types](#become-copy-add-types) | 1 | 2493 | op |
 | [block-restriction-relative-power](#block-restriction-relative-power) | 1 | 6993 | static_effect |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
-| [blocks-if-able](#blocks-if-able) | 1 | 12851 | op |
 | [can-block-only](#can-block-only) | 1 | 2673 | static_effect |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cards-exiled-trigger](#cards-exiled-trigger) | 1 | 1303 | trigger_event |
@@ -1034,20 +1033,6 @@ Blocks **1** card.
 - **Goblin Snowman** (rank 21010) — `goblin_snowman`
   - Whenever this creature blocks, prevent all combat damage that would be dealt to and dealt by it this turn.
   - {T}: This creature deals 1 damage to target creature it's blocking.
-
-</details>
-
-## blocks-if-able
-
-Blocks **1** card.
-
-- **(op)** a one-shot op placing an until-end-of-turn requirement on a target creature that it block (any attacker of its controller's choice) in every combat this turn if able -- no specific attacker named
-  <br>Why the existing vocabulary won't do: must_block always names the attacker to block (defaulting to the ability's source, i.e. provoke/lure-this-creature) and is spent after one combat by finish_blockers; using it would force the target to block Peema specifically and only in the next combat. attacks_if_able / must_attack are the attack-side mirror only, and no static or op expresses a generic block requirement
-
-<details><summary>Cards waiting on this</summary>
-
-- **Peema Aether-Seer** (rank 12851) — `peema_aether_seer`
-  - Pay {E}{E}{E}: Target creature blocks this turn if able.
 
 </details>
 
