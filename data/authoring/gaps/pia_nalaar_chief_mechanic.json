@@ -13,7 +13,7 @@
       "why_existing_wont_do": "token_ids has the_blackjack_3_3_c_flying_crew2, a Vehicle with flying and crew 2 but a fixed 3/3 named The Blackjack; substituting it would give the token the wrong name"
     },
     {
-      "capability": "pay_any_amount_of_energy",
+      "capability": "variable_energy_payment",
       "kind": "decision",
       "what": "a `may` that lets the player pay any amount (1..their energy) of {E} and binds the amount paid, so the effect can read it as X",
       "why_existing_wont_do": "may.any_amount is documented only for a mana symbol (\"pay any amount of {R}\"); pay_energy exists as a fixed cost but nothing documents a variable energy payment bound as a value"
