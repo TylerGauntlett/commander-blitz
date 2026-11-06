@@ -9169,12 +9169,15 @@ copiable values its creating effect sets (111.4, 707.2):
 ```
 
 The token is written **0/0 with `"variable_pt": true`** in `tokens.cards.json`,
-the way its token card prints `*/*`. The loader holds both directions: the pair
+the way its token card prints `*/*`. A Vehicle token can be one too (301.7: it
+has a size without being a creature) -- Pia Nalaar's X/X Nalaar Aetherjet,
+whose crew is an `animate` with `keep_pt` so that crewing it keeps the size it
+was made at. The loader holds both directions: the pair
 is refused on a token without the flag, a flagged token is refused without the
 pair (it would arrive 0/0 and die), one half alone is refused, and a
 `create_instead` or `and_create` cannot name a flagged token, since a
 replacement names its token by id alone. The flag itself needs a 0/0 creature
-token.
+or Vehicle token.
 
 The near misses are each a different card. A 0/0 given X +1/+1 counters (the
 Fractal shape) is what proliferate, -1/-1 counters and "creatures with counters"
@@ -10347,6 +10350,49 @@ spell, so every other spell is a permanent spell.
   leaving the battlefield between offer and charge cannot change what is billed.
 - Not `free_cast_permission`, which waives the cost rather than replacing it,
   and not `alternative_cost`, which only the card that prints it has.
+
+### "You may pay one or more {E}" — a variable energy payment
+
+Inside a `may`'s `pay`, the energy price need not be printed. Two shapes, one
+key:
+
+```jsonc
+// Territorial Aetherkite: "Then you may pay one or more {E}. When you do, this
+//                          creature deals that much damage to each other creature."
+{ "op": "may", "pay": { "pay_energy": 1 },
+  "any_amount": { "as": "paid" },
+  "effects": [ { "op": "reflexive_trigger", "ability": "kite_burn" } ] }
+// …and the reflexive ability deals { "binding": "paid" }.
+
+// Confiscation Coup: "…then you may pay an amount of {E} equal to that
+//                     permanent's mana value. If you do, gain control of it."
+{ "op": "may", "pay": { "pay_energy": { "mana_value_of": { "target": "t1" } } },
+  "effects": [ { "op": "gain_control", "objects": { "target": "t1" } } ] }
+```
+
+- **Chosen** — `any_amount` beside exactly `{"pay_energy": 1}`. After the yes
+  the player is asked `choose_x` from **1** up to the energy they have, and
+  exactly that much is paid; `any_amount.as` binds the amount paid for the
+  effects to read ("that many", "where X is the amount of {E} paid this way").
+  With no energy the `may` is not asked; with one there is no count to choose.
+  0 is never offered: the no is how a player pays none.
+- **Computed** — `pay_energy` as a value expression, read as the `may`
+  resolves with its targets and bindings in hand and fixed to a whole number
+  before the affordability check, as `pay_life` is. 107.14: more energy than
+  the player has is not offered and the `effects` do not run; a price of 0 is
+  always paid. The amount is the expression, so the effects read the same
+  expression if they need the number.
+
+Refused at load: `any_amount` beside a `pay_energy` other than 1 (`2` would
+charge pairs and bind a count that is not the energy), beside any other cost,
+or beside a computed `pay_energy` (chosen or computed, not both); a malformed
+expression. A computed `pay_energy` belongs to a resolving `may` only: an
+activated ability's cost, an additional cost or a granted alternative cost
+takes a whole number, because legality prices those before any effect has run.
+
+The near miss is a fixed `pay_energy`, which spends one amount whatever the
+player has or the target costs, and `choose_number`, which nothing bounds by
+the player's energy.
 
 ## A player losing all counters
 

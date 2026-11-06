@@ -143,7 +143,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `unblockable` | Board |  | Creatures can't be blocked this turn (optionally except by blockers matching a filter, or only by opponents' creatures with `by_opponents`). | [The unblockable op — the same wire, read from the attacker's end](card-dsl-cookbook.md#the-unblockable-op--the-same-wire-read-from-the-attackers-end) |
 | `untap` | Board |  | Untap permanents. | [Untapping on somebody else's turn](card-dsl-cookbook.md#untapping-on-somebody-elses-turn) |
 | `add_subtype` | Modify |  | Permanents gain a subtype in addition to their others, for good or for a duration. | ["It becomes a Vampire in addition to its other types"](card-dsl-cookbook.md#it-becomes-a-vampire-in-addition-to-its-other-types) |
-| `animate` | Modify |  | A permanent becomes a creature, or another type (types, P/T, colors), for a duration; `exact` replaces, `keep_colors` keeps the colours, a non-creature animation may omit P/T. | [Creature-lands](card-dsl-cookbook.md#creature-lands) |
+| `animate` | Modify |  | A permanent becomes a creature, or another type (types, P/T, colors), for a duration; `exact` replaces, `keep_colors` keeps the colours, a non-creature animation may omit P/T, `keep_pt` keeps a Vehicle's own size. | [Creature-lands](card-dsl-cookbook.md#creature-lands) |
 | `become_level` | Modify |  | A Class becomes level N. | [Classes](card-dsl-cookbook.md#classes) |
 | `change_text` | Modify |  | Replace one creature type or color word with another in its text. | [change_text — "replacing all instances of one creature type"](card-dsl-cookbook.md#change_text--replacing-all-instances-of-one-creature-type) |
 | `grant_keyword` | Modify |  | Permanents gain keywords for a duration; `as_long_as_you_control_source` lasts while you control the source. | [How long a granted keyword lasts](card-dsl-cookbook.md#how-long-a-granted-keyword-lasts) |
@@ -764,7 +764,7 @@ Every field an activated ability's `cost` (or a `may`'s `pay`) may carry -- the 
 | `mana` | A mana cost. | [Costs](card-dsl.md#costs) |
 | `mana_reduction` | A reduction applied to this ability's mana cost. | [An activated ability that gets cheaper](card-dsl-cookbook.md#an-activated-ability-that-gets-cheaper) |
 | `mill` | Mill N cards off your own library. | [mill — a cost, and never an effect](card-dsl.md#mill--a-cost-and-never-an-effect) |
-| `pay_energy` | Pay N energy ({E}). | [Energy](card-dsl-cookbook.md#energy) |
+| `pay_energy` | Pay N energy ({E}); inside `may`, a value expression, or 1 counted by `any_amount`. | ["You may pay one or more {E}" — a variable energy payment](card-dsl-cookbook.md#you-may-pay-one-or-more-e--a-variable-energy-payment) |
 | `pay_life` | Pay N life, or a value expression (inside `may`, read with the effect's bindings). | ["You may pay that much life. If you do…"](card-dsl-cookbook.md#you-may-pay-that-much-life-if-you-do) |
 | `pay_life_x` | Pay X life, X announced. | [Costs](card-dsl.md#costs) |
 | `put_counters` | Put N counters of a kind on the source. | [put_counters — counters on the source, paid on activation](card-dsl.md#put_counters--counters-on-the-source-paid-on-activation) |

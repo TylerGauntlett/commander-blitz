@@ -1059,15 +1059,16 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         raise DslError(f"{where}: creatures need power and toughness")
     if model.variable_pt and not (
         model.is_token
-        and CardType.CREATURE.value in model.types
+        and (CardType.CREATURE.value in model.types or "Vehicle" in model.subtypes)
         and (model.power, model.toughness) == (0, 0)
     ):
         # The X/X token's size is the creating effect's, so its definition says
         # nothing about it: written 0/0, the base `create_token`'s ``power`` and
-        # ``toughness`` replace. Anywhere else the flag would mark a size that
-        # nothing ever sets.
+        # ``toughness`` replace. A Vehicle has a size without being a creature
+        # (301.7) -- Pia Nalaar's X/X Nalaar Aetherjet. Anywhere else the flag
+        # would mark a size that nothing ever sets.
         raise DslError(
-            f"{where}: 'variable_pt' marks an X/X creature token, written 0/0"
+            f"{where}: 'variable_pt' marks an X/X creature or Vehicle token, written 0/0"
         )
 
     # The same sentence for a battle (310.3), and refused rather than defaulted

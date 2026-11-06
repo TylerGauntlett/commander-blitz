@@ -51662,12 +51662,12 @@
     },
     "Confiscation Coup": {
       "edhrec_rank": 7567,
-      "gate": "template",
+      "gate": null,
       "name": "Confiscation Coup",
-      "reason": "no template for: Choose target artifact or creature. You get {E}{E}{E}{E} , then you may pay an amount of {",
+      "reason": "",
       "scryfall_id": "fdd39363-34f0-4bb7-9537-69a47789a3b4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Conflagrate": {
@@ -202112,12 +202112,12 @@
     },
     "Pia Nalaar, Chief Mechanic": {
       "edhrec_rank": 12627,
-      "gate": "template",
+      "gate": null,
       "name": "Pia Nalaar, Chief Mechanic",
-      "reason": "no template for: Whenever one or more artifact creatures you control deal combat damage to a player, you ge",
+      "reason": "",
       "scryfall_id": "f4b46b1f-0cfe-42cc-aac5-e6912b2f9fd2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pia Nalaar, Consul of Revival": {
@@ -214762,12 +214762,12 @@
     },
     "Rampaging Aetherhood": {
       "edhrec_rank": 8637,
-      "gate": "template",
+      "gate": null,
       "name": "Rampaging Aetherhood",
-      "reason": "no template for: Trample, ward {2}",
+      "reason": "",
       "scryfall_id": "b1f36e04-3500-410b-a07c-28a280b5a0fc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rampaging Brontodon": {
@@ -278442,12 +278442,12 @@
     },
     "Territorial Aetherkite": {
       "edhrec_rank": 11470,
-      "gate": "template",
+      "gate": null,
       "name": "Territorial Aetherkite",
-      "reason": "no template for: When this creature enters, you get {E}{E} . Then you may pay one or more {E}. When you do,",
+      "reason": "",
       "scryfall_id": "0713f2e0-31be-4cd9-818f-538757913d8d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Territorial Allosaurus": {

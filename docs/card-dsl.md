@@ -4456,6 +4456,14 @@ rather than taking every creature that could have helped.
 `count` and `total_power` together are refused: they are two different questions,
 and a card giving both would be paid by whichever was checked first.
 
+A Vehicle whose size is not printed -- an X/X token like the Nalaar Aetherjet,
+sized by the effect that made it -- crews with `"keep_pt": true` in place of
+`power` and `toughness`: "becomes an artifact creature" (702.122a) and keeps its
+own base size, so a second crew or a +1/+1 counter does not move it. `keep_pt`
+is refused beside `power` or `toughness`, on anything but `objects` `self_only`,
+and on a card with no printed power and toughness; an animation into a creature
+without it still needs both.
+
 ### Crews Vehicles as though its power were N greater
 
 ```jsonc

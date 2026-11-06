@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**215 cards** blocked by **194** capabilities.
+**211 cards** blocked by **192** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -20,7 +20,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [put-into-graveyard-from-anywhere](#put-into-graveyard-from-anywhere) | 4 | 902 | trigger_event |
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
-| [variable-energy-payment](#variable-energy-payment) | 4 | 7567 | cost, decision |
 | [copy-exception-set-subtypes](#copy-exception-set-subtypes) | 3 | 1740 | engine, op |
 | [omen](#omen) | 3 | 3355 | cost, engine |
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 3 | 714 | engine |
@@ -145,7 +144,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mode-owned-variable-targets-mid-declaration](#mode-owned-variable-targets-mid-declaration) | 1 | 16968 | engine |
 | [modified](#modified) | 1 | 831 | selector |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
-| [nalaar-aetherjet-token](#nalaar-aetherjet-token) | 1 | 12627 | token |
 | [no-mana-cost](#no-mana-cost) | 1 | 2978 | engine |
 | [nontoken-creatures-died-this-turn](#nontoken-creatures-died-this-turn) | 1 | 3951 | value |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
@@ -438,32 +436,6 @@ Blocks **4** cards.
   - Create X tapped 2/2 black Zombie Druid creature tokens, where X is the number of cards that were put into your graveyard from your hand or library this turn.
 - **Essence Anchor** (rank 8833) — `essence_anchor`
   - {T}: Create a 2/2 black Zombie Druid creature token. Activate only during your turn and only if a card left your graveyard this turn.
-
-</details>
-
-## variable-energy-payment
-
-Blocks **4** cards.
-
-- **(cost)** a `may` whose `pay.pay_energy` is a value expression read at resolution (here `mana_value_of` the target t1), fixed to an integer before the affordability check, the way `pay.pay_life` already accepts a value expression (Niv-Mizzet, Ghost Counsel)
-  <br>Why the existing vocabulary won't do: Cost.pay_energy is an int in schema.py/carddef.py, so only a printed fixed energy price loads; `pay.times` scales only the mana half of a `may` cost (ops_control.op_may), and `any_amount` lets the player choose the count rather than fixing it to the target's mana value. add_energy and gain_control themselves are already expressible
-- **(decision)** a `may` that lets the player pay any amount (1..their energy) of {E} and binds the amount paid, so the effect can read it as X
-  <br>Why the existing vocabulary won't do: may.any_amount is documented only for a mana symbol ("pay any amount of {R}"); pay_energy exists as a fixed cost but nothing documents a variable energy payment bound as a value
-- **(cost)** a `may` that lets the player announce how many {E} to pay, from 1 up to their current energy, charges exactly that much energy, and binds the count (e.g. `any_amount: {"as": "paid"}` accepted beside `pay: {"pay_energy": 1}`) so a following `add_counters` can read `{"binding": "paid"}` as the number of +1/+1 counters
-  <br>Why the existing vocabulary won't do: `may.any_amount` is the right shape but loader/effects._validate_pay_any_amount refuses any `pay` other than exactly one coloured or {C} mana symbol, and op_may scales only the mana half of the cost; Cost.pay_energy is a fixed int (carddef.py), so no value expression or chosen amount can price it; `choose_number` cannot bound its max by the player's energy because no value key reads a player's energy count. Trample, ward {2}, the upkeep trigger and add_energy with power_of self are otherwise expressible
-- **(cost)** a `may` that lets the player announce how many {E} to pay, from 1 up to their current energy, charges exactly that much energy, and binds the count (e.g. `any_amount: {"as": "paid"}` accepted beside `pay: {"pay_energy": 1}`) so a following `reflexive_trigger` can deal `{"binding": "paid"}` damage to each other creature
-  <br>Why the existing vocabulary won't do: `may.any_amount` is the right shape (it is exactly Leyline Tyrant's reflexive "when you do, deals that much damage"), but loader/effects._validate_pay_any_amount refuses any `pay` other than exactly one coloured or {C} mana symbol; Cost.pay_energy is a fixed int, so a fixed `pay_energy: 1` or `2` would drop the choice of amount. Flying, haste, the ETB trigger, `add_energy` 2 and `damage` to each other creature are otherwise expressible
-
-<details><summary>Cards waiting on this</summary>
-
-- **Confiscation Coup** (rank 7567) — `confiscation_coup`
-  - You get {E}{E}{E}{E} (four energy counters), then you may pay an amount of {E} equal to that permanent's mana value.
-- **Rampaging Aetherhood** (rank 8637) — `rampaging_aetherhood`
-  - At the beginning of your upkeep, you get an amount of {E} (energy counters) equal to this creature's power. Then you may pay one or more {E}. If you do, put that many +1/+1 counters on this creature.
-- **Territorial Aetherkite** (rank 11470) — `territorial_aetherkite`
-  - When this creature enters, you get {E}{E} (two energy counters). Then you may pay one or more {E}. When you do, this creature deals that much damage to each other creature.
-- **Pia Nalaar, Chief Mechanic** (rank 12627) — `pia_nalaar_chief_mechanic`
-  - At the beginning of your end step, you may pay one or more {E}. If you do, create an X/X colorless Vehicle artifact token named Nalaar Aetherjet with flying and crew 2, where X is the amount of {E} paid this way.
 
 </details>
 
@@ -2344,20 +2316,6 @@ Blocks **1** card.
 - **Goldbug, Humanity's Ally // Goldbug, Scrappy Scout** (rank 11641) — `goldbug_humanity_s_ally_goldbug_scrappy_scout`
   - More Than Meets the Eye {W}{U} (You may cast this card converted for {W}{U}.)
   - Living metal (During your turn, this Vehicle is also a creature.)
-
-</details>
-
-## nalaar-aetherjet-token
-
-Blocks **1** card.
-
-- **(token)** a 0/0 (X/X, sized by create_token power/toughness) colorless Vehicle artifact token named Nalaar Aetherjet with flying and crew 2
-  <br>Why the existing vocabulary won't do: token_ids has the_blackjack_3_3_c_flying_crew2, a Vehicle with flying and crew 2 but a fixed 3/3 named The Blackjack; substituting it would give the token the wrong name
-
-<details><summary>Cards waiting on this</summary>
-
-- **Pia Nalaar, Chief Mechanic** (rank 12627) — `pia_nalaar_chief_mechanic`
-  - At the beginning of your end step, you may pay one or more {E}. If you do, create an X/X colorless Vehicle artifact token named Nalaar Aetherjet with flying and crew 2, where X is the amount of {E} paid this way.
 
 </details>
 

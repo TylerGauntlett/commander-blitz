@@ -343,7 +343,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "grant_protection": ("Modify", "Permanents or players gain protection for a duration.",
                          "Granting protection"),
     "set_pt": ("Modify", "Set base power and toughness for a duration.", None),
-    "animate": ("Modify", "A permanent becomes a creature, or another type (types, P/T, colors), for a duration; `exact` replaces, `keep_colors` keeps the colours, a non-creature animation may omit P/T.",
+    "animate": ("Modify", "A permanent becomes a creature, or another type (types, P/T, colors), for a duration; `exact` replaces, `keep_colors` keeps the colours, a non-creature animation may omit P/T, `keep_pt` keeps a Vehicle's own size.",
                 "Creature-lands"),
     "add_subtype": ("Modify", "Permanents gain a subtype in addition to their others, "
                     "for good or for a duration.",
@@ -1038,7 +1038,8 @@ ABILITY_COSTS: dict[str, Entry] = {
     "mana": ("A mana cost.", None),
     "mana_reduction": ("A reduction applied to this ability's mana cost.", H_CHEAPER),
     "mill": ("Mill N cards off your own library.", "`mill` — a cost, and never an effect"),
-    "pay_energy": ("Pay N energy ({E}).", "Energy"),
+    "pay_energy": ("Pay N energy ({E}); inside `may`, a value expression, or 1 counted by `any_amount`.",
+                   '"You may pay one or more {E}" — a variable energy payment'),
     "pay_life": ("Pay N life, or a value expression (inside `may`, read with the effect's bindings).",
                  '"You may pay that much life. If you do…"'),
     "pay_life_x": ("Pay X life, X announced.", None),

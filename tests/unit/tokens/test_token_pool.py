@@ -861,6 +861,115 @@ class TestSetzersBlackjackIsALegendaryFlyingVehicle:
         assert "Vehicle" not in pilot.subtypes
 
 
+class TestPiasAetherjetIsAnXXFlyingVehicle:
+    """Pia Nalaar, Chief Mechanic: *"create an **X/X colorless Vehicle artifact
+    token named Nalaar Aetherjet with flying and crew 2**, where X is the amount
+    of {E} paid this way."*
+
+    The Blackjack is the near miss: the same flying crew-2 Vehicle, but a fixed
+    3/3, legendary, and named something else. The Aetherjet's size is the
+    creating effect's (111.4), so it is written 0/0 with `variable_pt`, and its
+    crew keeps that size (`keep_pt`) instead of naming one -- crewing it twice,
+    or with a counter on it, must not move the base the token was made at.
+    """
+
+    TOKEN = "nalaar_aetherjet_x_x_c_flying_crew2"
+
+    def test_it_is_a_nonlegendary_colorless_flying_vehicle_sized_by_its_maker(self, pool):
+        token = pool.get(self.TOKEN)
+        assert token is not None and token.is_token
+        assert token.name == "Nalaar Aetherjet"
+        assert not token.supertypes
+        assert list(token.types) == ["Artifact"]
+        assert list(token.subtypes) == ["Vehicle"]
+        assert (token.power, token.toughness) == (0, 0) and token.variable_pt
+        assert not token.colors and not token.color_identity
+        assert list(token.keywords) == ["flying"]
+        assert not token.is_creature
+
+    def test_the_blackjack_is_still_a_separate_fixed_size_token(self, pool):
+        blackjack = pool.get("the_blackjack_3_3_c_flying_crew2")
+        assert (blackjack.power, blackjack.toughness) == (3, 3)
+        assert not blackjack.variable_pt
+
+    def _jet(self, builder, x: int, counters: int = 0):
+        """The token as `create_token` leaves an X/X: its base size in
+        `copy_overrides`, which is where the creating effect's values live."""
+        b = builder(players=2).battlefield(0, [self.TOKEN, "grizzly_bears", "grizzly_bears"])
+        (jet,) = [o.oid for o in b.state.objects.values() if o.def_id == self.TOKEN]
+        b.state.objects[jet].copy_overrides = {"power": x, "toughness": x}
+        if counters:
+            b.state.objects[jet].counters["+1/+1"] = counters
+        return b.build(), jet
+
+    def _crew(self, game, jet: int) -> None:
+        game.apply(
+            next(
+                a
+                for a in game.legal_actions()
+                if a.kind is ActionKind.ACTIVATE and a.source == jet
+            )
+        )
+        settle_completely(game)
+
+    def test_crewed_it_is_the_size_it_was_made_at(self, builder):
+        game, jet = self._jet(builder, 4)
+        assert "Creature" not in chars(game.state, jet).types
+        self._crew(game, jet)
+        assert {"Artifact", "Creature"} <= chars(game.state, jet).types
+        assert pt(game, jet) == (4, 4)
+        assert "flying" in keywords(game, jet)
+
+    def test_crewing_it_again_does_not_move_the_base(self, builder):
+        game, jet = self._jet(builder, 4, counters=1)
+        self._crew(game, jet)
+        assert pt(game, jet) == (5, 5)
+        self._crew(game, jet)
+        assert pt(game, jet) == (5, 5)
+
+    @staticmethod
+    def _crew_with(animate: dict) -> None:
+        from commanderblitz.cards.loader import compile_card
+        from commanderblitz.cards.schema import CardModel
+
+        compile_card(
+            CardModel.model_validate(
+                {
+                    "id": "t_bad_jet", "name": "Bad Jet", "oracle_text": "Crew 2",
+                    "mana_cost": "{2}", "types": ["Artifact"], "subtypes": ["Vehicle"],
+                    "power": 3, "toughness": 3,
+                    "abilities": [{
+                        "kind": "activated", "text": "Crew 2",
+                        "cost": {"tap_permanents": {"controller": "you", "total_power": 2,
+                                                    "types": ["Creature"]}},
+                        "effects": [{"op": "animate", "types": ["Creature"], **animate}],
+                    }],
+                }
+            )
+        )
+
+    def test_keep_pt_with_a_size_is_refused(self):
+        from commanderblitz.engine.errors import DslError
+
+        with pytest.raises(DslError, match="keep_pt"):
+            self._crew_with({"objects": {"self_only": True, "zone": "battlefield"},
+                             "keep_pt": True, "power": {"const": 3},
+                             "toughness": {"const": 3}})
+
+    def test_keep_pt_on_anything_but_itself_is_refused(self):
+        from commanderblitz.engine.errors import DslError
+
+        with pytest.raises(DslError, match="self_only"):
+            self._crew_with({"objects": {"zone": "battlefield", "subtypes": ["Vehicle"]},
+                             "keep_pt": True})
+
+    def test_a_creature_animation_with_no_size_is_still_refused(self):
+        from commanderblitz.engine.errors import DslError
+
+        with pytest.raises(DslError, match="power"):
+            self._crew_with({"objects": {"self_only": True, "zone": "battlefield"}})
+
+
 class TestEzurisPredationMakesPhyrexianBeasts:
     """Ezuri's Predation: *"create a 4/4 green **Phyrexian** Beast creature
     token."*

@@ -3182,6 +3182,54 @@
       ]
     },
     {
+      "id": "nalaar_aetherjet_x_x_c_flying_crew2",
+      "name": "Nalaar Aetherjet",
+      "oracle_text": "X/X colorless Vehicle artifact token named Nalaar Aetherjet with flying and crew 2.",
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [
+        "Vehicle"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "variable_pt": true,
+      "keywords": [
+        "flying"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Crew 2",
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 2,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "animate",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "keep_pt": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "thopter_1_1_c_flying",
       "name": "Thopter Token",
       "oracle_text": "1/1 colorless Thopter artifact creature token with flying.",

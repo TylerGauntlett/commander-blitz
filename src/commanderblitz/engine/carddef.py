@@ -388,8 +388,11 @@ class Cost:
     #: payment of X life into X payments of one, and describes an *optional*
     #: cost paid a number of times rather than one mandatory announced number.
     pay_life_x: bool = False
-    #: "Pay {E}{E}": energy counters off the payer (107.14).
-    pay_energy: int = 0
+    #: "Pay {E}{E}": energy counters off the payer (107.14). A mapping is a
+    #: value expression only a resolving `may` reads -- Confiscation Coup's
+    #: "pay an amount of {E} equal to that permanent's mana value" -- and
+    #: `op_may` fixes it to an integer before anything prices it.
+    pay_energy: int | Mapping[str, Any] = 0
     remove_counters: Mapping[str, Any] | None = None
     #: "{T}, **Put a page counter on this artifact**: Scry 1." -- Mazemind
     #: Tome. ``{"counter": kind, "amount": N}`` put on the source as the
@@ -520,7 +523,11 @@ class Cost:
             ),
             mill=int(spec.get("mill", 0) or 0),
             pay_life_x=bool(spec.get("pay_life_x")),
-            pay_energy=int(spec.get("pay_energy", 0) or 0),
+            pay_energy=(
+                dict(spec["pay_energy"])
+                if isinstance(spec.get("pay_energy"), Mapping)
+                else int(spec.get("pay_energy", 0) or 0)
+            ),
             exile_self=bool(spec.get("exile_self")),
             exile_from_hand=(
                 dict(spec["exile_from_hand"]) if spec.get("exile_from_hand") else None
@@ -638,7 +645,10 @@ class Cost:
             amount = self.pay_life if isinstance(self.pay_life, int) else "X"
             parts.append(f"Pay {amount} life")
         if self.pay_energy:
-            parts.append("Pay " + "{E}" * self.pay_energy)
+            if isinstance(self.pay_energy, int):
+                parts.append("Pay " + "{E}" * self.pay_energy)
+            else:
+                parts.append("Pay X {E}")
         if self.remove_counters:
             parts.append("Remove counters")
         if self.put_counters:

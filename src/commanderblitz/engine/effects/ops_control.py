@@ -97,6 +97,15 @@ def op_may(ctx: EffectContext, spec: Mapping[str, Any]):
     this effect's context, so ``{"binding": "amount"}`` is the life the trigger
     saw gained, and fixed to an integer before the affordability check: 119.4
     refuses more life than the player has, and 0 life is always payable.
+
+    Energy is the same two shapes. A ``pay_energy`` value expression is "you
+    may pay **an amount of {E} equal to** that permanent's mana value" --
+    Confiscation Coup -- read and fixed exactly as ``pay_life`` is: 107.14
+    refuses more energy than the player has, and 0 is always payable. And
+    ``any_amount`` beside ``pay: {"pay_energy": 1}`` is "you may pay **one or
+    more** {E}" -- Territorial Aetherkite, Rampaging Aetherhood: the count is
+    energy, from 1 up to what the player has, and ``any_amount.as`` binds the
+    amount paid.
     """
 
     players = select_players(ctx, spec.get("player", "you"))
@@ -120,6 +129,9 @@ def op_may(ctx: EffectContext, spec: Mapping[str, Any]):
         return
 
     life_spec = cost.pay_life if cost is not None and isinstance(cost.pay_life, Mapping) else None
+    energy_spec = (
+        cost.pay_energy if cost is not None and isinstance(cost.pay_energy, Mapping) else None
+    )
 
     # The same guard `repeat` uses: one pathological board must not hang a game.
     for _ in range(100):
@@ -133,6 +145,13 @@ def op_may(ctx: EffectContext, spec: Mapping[str, Any]):
             # price (118.4, 119.4: no more than you have; 0 is always paid).
             # Inside the loop, so a `repeat` re-reads it each time.
             cost = replace(cost, pay_life=max(0, int(evaluate_value(ctx, life_spec))))
+        if cost is not None and energy_spec is not None:
+            # "Pay an amount of {E} equal to that permanent's mana value" --
+            # Confiscation Coup. The life case's reasoning exactly: read with
+            # this effect's bindings and targets, and fixed before `can_pay`
+            # so the check and the charge see one price (107.14: no more than
+            # you have; 0 is always paid).
+            cost = replace(cost, pay_energy=max(0, int(evaluate_value(ctx, energy_spec))))
         # A resolving ability's price is neither a cast nor an activation, so
         # restricted mana pays it only when its `other` half says so (ward and
         # the Vibranium token, against "spend this only to cast" mana).
@@ -167,7 +186,11 @@ def op_may(ctx: EffectContext, spec: Mapping[str, Any]):
                 # even one is payable now, and paying none is not paying.
                 yield from execute(ctx, spec.get("else") or [])
                 return
-            charged = replace(cost, mana=cost.mana.scaled(count))
+            if cost.pay_energy:
+                # "Pay one or more {E}": the count *is* the energy.
+                charged = replace(cost, pay_energy=count)
+            else:
+                charged = replace(cost, mana=cost.mana.scaled(count))
         if charged is not None:
             paid = yield from pay(
                 ctx.state, chooser, charged, ctx.source_oid, x=x, purpose=OTHER_PAYMENT
@@ -263,8 +286,21 @@ def _announce_amount(
     not paying: a "when you do" must not fire off {0}. With exactly one
     payable, `ask_x` does not ask. Read after the yes, as `_announce_x` is,
     because mana abilities activated in between change the ceiling.
+
+    An energy payment ("you may pay one or more {E}") is counted in energy:
+    the ceiling is the energy the player has (107.14, never borrowed), and no
+    mana source can raise it.
     """
 
+    if cost.pay_energy:
+        energy = ctx.state.players[chooser].energy
+        if energy <= 0:
+            return 0
+        prompt = str(
+            amount_spec.get("prompt")
+            or f"How much {{E}} to pay for {ctx.source_name or 'the effect'}?"
+        )
+        return (yield from ask_x(ctx, prompt, energy, chooser, min_x=1))
     pool = ctx.state.players[chooser].mana_pool.spendable(OTHER_PAYMENT)
     sources = mana_sources(ctx.state, chooser, purpose=OTHER_PAYMENT)
     affordable = max_affordable_times(cost.mana, pool, sources)

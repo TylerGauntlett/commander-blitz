@@ -371,7 +371,10 @@ def _validate_pay_any_amount(effect: Mapping[str, Any], where: str) -> None:
 
     The ``pay`` is **exactly one coloured (or {C}) symbol and nothing else**,
     because the announced count multiplies it: ``{R}`` at three is
-    ``{R}{R}{R}``. A generic ``{1}`` there is "any amount of mana", which is
+    ``{R}{R}{R}``. Or it is **exactly** ``{"pay_energy": 1}``: "you may pay one
+    or more {E}" (Territorial Aetherkite), the count being the energy paid --
+    ``pay_energy: 2`` would charge pairs and bind a count that is not the
+    energy. A generic ``{1}`` there is "any amount of mana", which is
     ``{X}`` and the ``x`` key; ``{R}{R}`` would charge pairs; a life or
     sacrifice beside it would be multiplied or charged once, and no printing
     says which.
@@ -394,18 +397,26 @@ def _validate_pay_any_amount(effect: Mapping[str, Any], where: str) -> None:
     if not (isinstance(spec.get("as"), str) and spec["as"]):
         raise DslError(f"{where}.any_amount.as: a binding name for the amount paid is required")
     pay_spec = effect["pay"]
-    if extra := {k for k, v in pay_spec.items() if v not in (None, False, 0)} - {"mana"}:
-        raise DslError(
-            f"{where}.any_amount: the payment is one mana symbol and nothing else; "
-            f"'pay' also has {sorted(extra)}"
-        )
-    mana = ManaCost.parse(pay_spec.get("mana"))
-    if mana.generic or mana.x_count or mana.hybrid or sum(mana.colored) != 1:
-        raise DslError(
-            f"{where}.any_amount: 'pay.mana' must be exactly one coloured or {{C}} symbol "
-            f"(\"{{R}}\"), not {pay_spec.get('mana')!r} -- any amount of generic mana is "
-            f"'{{X}}' with 'x'"
-        )
+    if pay_spec.get("pay_energy"):
+        priced = {k for k, v in pay_spec.items() if v not in (None, False, 0, "")}
+        if priced != {"pay_energy"} or pay_spec["pay_energy"] != 1:
+            raise DslError(
+                f"{where}.any_amount: an energy payment is 'pay': {{'pay_energy': 1}} and "
+                f"nothing else -- the count is the energy paid; got {dict(pay_spec)!r}"
+            )
+    else:
+        if extra := {k for k, v in pay_spec.items() if v not in (None, False, 0)} - {"mana"}:
+            raise DslError(
+                f"{where}.any_amount: the payment is one mana symbol and nothing else; "
+                f"'pay' also has {sorted(extra)}"
+            )
+        mana = ManaCost.parse(pay_spec.get("mana"))
+        if mana.generic or mana.x_count or mana.hybrid or sum(mana.colored) != 1:
+            raise DslError(
+                f"{where}.any_amount: 'pay.mana' must be exactly one coloured or {{C}} "
+                f"symbol (\"{{R}}\"), or 'pay_energy' 1, not {pay_spec.get('mana')!r} -- "
+                f"any amount of generic mana is '{{X}}' with 'x'"
+            )
     if "x" in effect:
         raise DslError(f"{where}.any_amount: cannot be combined with 'x'")
     if effect.get("repeat"):
@@ -1217,10 +1228,28 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # card that draws for {2} into one that draws free.
         if not isinstance(effect["pay"], dict):
             raise DslError(f"{where}: 'pay' must be an object")
+        energy = effect["pay"].get("pay_energy")
         try:
-            CostModel.model_validate(effect["pay"])
+            # A computed energy price is a resolving `may`'s alone (op_may
+            # fixes it before pricing), so `CostModel` keeps `pay_energy` an
+            # integer for every other cost and the expression is checked here.
+            CostModel.model_validate(
+                {**effect["pay"], "pay_energy": 0}
+                if isinstance(energy, dict)
+                else effect["pay"]
+            )
         except Exception as exc:  # pydantic ValidationError
             raise DslError(f"{where}: bad 'pay' cost: {exc}") from exc
+        if isinstance(energy, dict):
+            # "Pay an amount of {E} equal to that permanent's mana value" --
+            # Confiscation Coup. Validated so a misspelt expression is a load
+            # error rather than a price of 0 and a free "if you do".
+            validate_value(energy, f"{where}.pay.pay_energy")
+            if "any_amount" in effect:
+                raise DslError(
+                    f"{where}.any_amount: the amount is chosen or computed, not both -- "
+                    f"'any_amount' counts a 'pay_energy' of exactly 1"
+                )
         if "any_amount" in effect:
             _validate_pay_any_amount(effect, where)
         # A payment has to buy *something*, but there are two things it can buy.
@@ -4193,12 +4222,32 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # no size to name: "target creature becomes a Treasure artifact ... and
         # loses all other card types" (Vraska, Betrayal's Sting). Its base
         # power and toughness are left alone. Both keys or neither, always.
+        #
+        # The other is `keep_pt`: crew's "becomes an artifact creature"
+        # (702.122a) on a Vehicle whose size is its own -- the X/X Nalaar
+        # Aetherjet, sized by the effect that made it (301.7, 111.4). It says
+        # out loud that the size is deliberately left alone, and the linking
+        # pass holds it to a source that has a printed power and toughness.
         sized = ("power" in effect, "toughness" in effect)
         becomes_creature = "Creature" in (effect.get("types") or ("Creature",))
-        if sized != (True, True) and (becomes_creature or any(sized)):
+        keep_pt = effect.get("keep_pt", False)
+        if not isinstance(keep_pt, bool):
+            raise DslError(f"{where}: animate's 'keep_pt' is true or false")
+        if keep_pt and any(sized):
+            raise DslError(
+                f"{where}: 'keep_pt' keeps the permanent's own size, so there is no "
+                f"'power' or 'toughness' to give as well"
+            )
+        if keep_pt and not (
+            isinstance(effect.get("objects"), Mapping) and effect["objects"].get("self_only")
+        ):
+            raise DslError(
+                f"{where}: 'keep_pt' animates the Vehicle itself ('objects' self_only)"
+            )
+        if not keep_pt and sized != (True, True) and (becomes_creature or any(sized)):
             raise DslError(
                 f"{where}: animate needs 'power' and 'toughness' (only an "
-                f"animation into a non-creature may leave out both)"
+                f"animation into a non-creature, or a 'keep_pt' one, may leave out both)"
             )
         keep_colors = effect.get("keep_colors", False)
         if not isinstance(keep_colors, bool):

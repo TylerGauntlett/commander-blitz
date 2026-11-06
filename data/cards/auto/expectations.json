@@ -3224,6 +3224,9 @@
   "conduit_pylons": {
     "zone": "battlefield"
   },
+  "confiscation_coup": {
+    "zone": "graveyard"
+  },
   "conformer_shuriken": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -12272,6 +12275,9 @@
     },
     "zone": "battlefield"
   },
+  "pia_nalaar_chief_mechanic": {
+    "zone": "battlefield"
+  },
   "piercing_exhale": {
     "library_size": {
       "0": 40
@@ -12991,6 +12997,9 @@
     "zone": "graveyard"
   },
   "ramirez_depietro": {
+    "zone": "battlefield"
+  },
+  "rampaging_aetherhood": {
     "zone": "battlefield"
   },
   "rampaging_hippo": {
@@ -16712,6 +16721,9 @@
     "zone": "exile"
   },
   "terrian_world_tyrant": {
+    "zone": "battlefield"
+  },
+  "territorial_aetherkite": {
     "zone": "battlefield"
   },
   "territorial_roc": {

@@ -38144,6 +38144,64 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "confiscation_coup",
+      "mana_cost": "{3}{U}{U}",
+      "name": "Confiscation Coup",
+      "oracle_text": "Choose target artifact or creature. You get {E}{E}{E}{E} (four energy counters), then you may pay an amount of {E} equal to that permanent's mana value. If you do, gain control of it.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 4
+          },
+          "op": "add_energy"
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "gain_control"
+            }
+          ],
+          "op": "may",
+          "pay": {
+            "pay_energy": {
+              "mana_value_of": {
+                "target": "t1"
+              }
+            }
+          },
+          "player": "you",
+          "prompt": "Pay {E} equal to that permanent's mana value to gain control of it?"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "ability": 0,
@@ -145073,6 +145131,93 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "add_energy"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more artifact creatures you control deal combat damage to a player, you get {E}{E} (two energy counters).",
+          "trigger": {
+            "controller": "you",
+            "event": "creatures_deal_combat_damage",
+            "filter": {
+              "types": [
+                "Artifact",
+                "Creature"
+              ]
+            },
+            "per_player": true
+          }
+        },
+        {
+          "effects": [
+            {
+              "any_amount": {
+                "as": "paid_energy"
+              },
+              "effects": [
+                {
+                  "op": "create_token",
+                  "power": {
+                    "binding": "paid_energy"
+                  },
+                  "token": "nalaar_aetherjet_x_x_c_flying_crew2",
+                  "toughness": {
+                    "binding": "paid_energy"
+                  }
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "pay_energy": 1
+              },
+              "player": "you",
+              "prompt": "Pay one or more {E} to create an X/X Nalaar Aetherjet?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, you may pay one or more {E}. If you do, create an X/X colorless Vehicle artifact token named Nalaar Aetherjet with flying and crew 2, where X is the amount of {E} paid this way.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "R",
+        "U"
+      ],
+      "id": "pia_nalaar_chief_mechanic",
+      "mana_cost": "{G}{U}{R}",
+      "name": "Pia Nalaar, Chief Mechanic",
+      "oracle_text": "Whenever one or more artifact creatures you control deal combat damage to a player, you get {E}{E} (two energy counters).\nAt the beginning of your end step, you may pay one or more {E}. If you do, create an X/X colorless Vehicle artifact token named Nalaar Aetherjet with flying and crew 2, where X is the amount of {E} paid this way.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Artificer"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "additional_cost": {
         "behold": {
           "subtypes": [
@@ -153664,6 +153809,85 @@
         "Legendary"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "cost": {
+            "mana": "{2}"
+          },
+          "effect": "ward",
+          "kind": "static",
+          "text": "Trample, ward {2}"
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "self": true
+                }
+              },
+              "op": "add_energy"
+            },
+            {
+              "any_amount": {
+                "as": "paid_energy"
+              },
+              "effects": [
+                {
+                  "amount": {
+                    "binding": "paid_energy"
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "add_counters"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "pay_energy": 1
+              },
+              "player": "you",
+              "prompt": "Pay one or more {E} to put that many +1/+1 counters on Rampaging Aetherhood?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, you get an amount of {E} (energy counters) equal to this creature's power. Then you may pay one or more {E}. If you do, put that many +1/+1 counters on this creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "rampaging_aetherhood",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{4}{G}",
+      "name": "Rampaging Aetherhood",
+      "oracle_text": "Trample, ward {2}\nAt the beginning of your upkeep, you get an amount of {E} (energy counters) equal to this creature's power. Then you may pay one or more {E}. If you do, put that many +1/+1 counters on this creature.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Snake",
+        "Hydra"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -198352,6 +198576,89 @@
         "Legendary"
       ],
       "toughness": 7,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "add_energy"
+            },
+            {
+              "any_amount": {
+                "as": "paid_energy"
+              },
+              "effects": [
+                {
+                  "ability": "territorial_aetherkite_burn",
+                  "op": "reflexive_trigger"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "pay_energy": 1
+              },
+              "player": "you",
+              "prompt": "Pay one or more {E} for Territorial Aetherkite to deal that much damage to each other creature?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, you get {E}{E} (two energy counters). Then you may pay one or more {E}.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "paid_energy"
+              },
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "damage"
+            }
+          ],
+          "id": "territorial_aetherkite_burn",
+          "kind": "reflexive",
+          "text": "When you do, this creature deals that much damage to each other creature."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "territorial_aetherkite",
+      "keywords": [
+        "flying",
+        "haste"
+      ],
+      "mana_cost": "{4}{R}{R}",
+      "name": "Territorial Aetherkite",
+      "oracle_text": "Flying, haste\nWhen this creature enters, you get {E}{E} (two energy counters). Then you may pay one or more {E}. When you do, this creature deals that much damage to each other creature.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Cat",
+        "Dragon"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]

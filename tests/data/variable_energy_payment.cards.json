@@ -1,0 +1,53 @@
+{
+  "_comment": "Shapes for tests/unit/costs/test_variable_energy_payment.py. t_energy_font is Territorial Aetherkite's chosen payment on a tap ability: you may pay one or more {E}, and gain that much life. t_energy_coup is Confiscation Coup's computed one without the energy gain: you may pay {E} equal to the target creature's mana value, and if you do, gain control of it.",
+  "cards": [
+    {
+      "id": "t_energy_font",
+      "name": "Test Energy Font",
+      "oracle_text": "{T}: You may pay one or more {E}. If you do, you gain that much life.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: You may pay one or more {E}. If you do, you gain that much life.",
+          "cost": {"tap": true},
+          "effects": [
+            {
+              "op": "may",
+              "player": "you",
+              "pay": {"pay_energy": 1},
+              "any_amount": {"as": "paid"},
+              "effects": [{"op": "gain_life", "player": "you", "amount": {"binding": "paid"}}]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_energy_coup",
+      "name": "Test Energy Coup",
+      "oracle_text": "Choose target creature. You may pay an amount of {E} equal to its mana value. If you do, gain control of it.",
+      "mana_cost": "{3}{U}",
+      "types": ["Sorcery"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "selector": {"types": ["Creature"], "zone": "battlefield"}
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "may",
+          "player": "you",
+          "pay": {"pay_energy": {"mana_value_of": {"target": "t1"}}},
+          "effects": [{"op": "gain_control", "objects": {"target": "t1"}}]
+        }
+      ]
+    }
+  ]
+}

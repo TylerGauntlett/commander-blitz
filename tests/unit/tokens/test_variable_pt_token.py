@@ -141,6 +141,7 @@ class TestTheToken:
                 SHARK,
                 "dragon_illusion_x_x_r_flying_haste",
                 "illusion_x_x_u",
+                "nalaar_aetherjet_x_x_c_flying_crew2",
                 "shapeshifter_x_x_c_changeling_deathtouch",
             ]
         )
@@ -279,10 +280,22 @@ class TestTheLoader:
             "is_token": True,
             "variable_pt": True,
         }
-        with pytest.raises(DslError, match="X/X creature token"):
+        with pytest.raises(DslError, match="X/X creature or Vehicle token"):
             compile_card(CardModel.model_validate(bad))
-        with pytest.raises(DslError, match="X/X creature token"):
+        with pytest.raises(DslError, match="X/X creature or Vehicle token"):
             compile_card(CardModel.model_validate({**bad, "power": 0, "toughness": 0, "is_token": False}))
+
+    def test_a_vehicle_token_may_carry_it_and_another_artifact_may_not(self):
+        """301.7: a Vehicle has a size without being a creature (the Nalaar
+        Aetherjet); an artifact that is neither has no size to fix."""
+        vehicle = {
+            "id": "probe_vehicle", "name": "Probe Vehicle", "types": ["Artifact"],
+            "subtypes": ["Vehicle"], "power": 0, "toughness": 0,
+            "is_token": True, "variable_pt": True,
+        }
+        compile_card(CardModel.model_validate(vehicle))
+        with pytest.raises(DslError, match="X/X creature or Vehicle token"):
+            compile_card(CardModel.model_validate({**vehicle, "subtypes": ["Equipment"]}))
 
     def test_a_replacement_cannot_create_it(self):
         """``create_instead`` names a token by id alone, with no size to give it."""
