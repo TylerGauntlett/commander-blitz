@@ -65,6 +65,22 @@ TRIGGER_EVENTS: dict[str, str] = {
     "dies": EventType.DIES,
     "leaves_battlefield": EventType.LEAVES_BATTLEFIELD,
     "leaves_graveyard": EventType.LEAVES_GRAVEYARD,
+    #: "Whenever a land card is put into a graveyard **from anywhere**" -- The
+    #: Gitrog Monster, Centaur Vinecrasher; "…from anywhere other than the
+    #: battlefield" (Syr Konrad) is `from_zones` naming every other zone. One
+    #: event per card, fired by `zones.move_object` once the move is final.
+    #:
+    #: `leaves_battlefield` with `to_zones: ["graveyard"]` and `dies` are the
+    #: near misses and see only a permanent leaving play: a milled, discarded,
+    #: surveilled or countered card never was one. `discard` sees only the
+    #: hand, and a discard trigger beside a dies trigger still misses a mill
+    #: and fires twice for one simultaneous move across two zones.
+    #:
+    #: The subject is the card that arrived (`OBJECT_SUBJECT_TRIGGERS`), the
+    #: actor the graveyard's owner (`_actor`), and `batched` groups one
+    #: simultaneous move, binding every matching card in it as `moved`
+    #: ("put one of **them** onto the battlefield", Colossal Grave-Reaver).
+    "put_into_graveyard": EventType.PUT_INTO_GRAVEYARD,
     "land_played": EventType.LAND_PLAYED,
     "spell_cast": EventType.SPELL_CAST,
     #: "Magecraft -- Whenever you cast **or copy** an instant or sorcery spell…"
@@ -391,6 +407,14 @@ TRIGGER_EVENTS: dict[str, str] = {
     "state": "state",
 }
 
+#: The zones a card can be put into a graveyard **from** -- what a
+#: `put_into_graveyard` trigger's ``from_zones`` may name. Every zone but a
+#: graveyard: a move between graveyards is not one `move_object` makes, and a
+#: card already in one is not "put into" it.
+GRAVEYARD_ORIGIN_ZONES = frozenset(
+    {"library", "hand", "battlefield", "stack", "exile", "command"}
+)
+
 #: The DSL name of a state trigger -- see the `TRIGGER_EVENTS` row.
 STATE_TRIGGER = "state"
 
@@ -416,7 +440,7 @@ STATE_TRIGGER = "state"
 #: step (510.2, `combat.deal_combat_damage`; first strike is its own step) or
 #: one effect op. It is the one batched event whose ``amount`` is **summed**:
 #: every later event in the batch adds its damage to the queued trigger's
-#: ``amount`` (`_joins_batched_damage`), so Hercules, Olympian Hero blocked by
+#: ``amount`` (`_joins_batch`), so Hercules, Olympian Hero blocked by
 #: two creatures is dealt damage once, for both blockers' damage together.
 #:
 #: `discard` takes it from `replacements.discard`: one call is one discard
@@ -437,6 +461,15 @@ STATE_TRIGGER = "state"
 #: opponent's cannot use up the firing. Unlike `dealt_damage` nothing is
 #: summed: the batch spans players, so the bindings (`amount`, `event_player`)
 #: are the first matching loss's.
+#:
+#: `put_into_graveyard` takes it from the effect op, cost payment or discard
+#: that moved the cards (`state.event_batch`, read by `zones.move_object`):
+#: "mill three" is one batch, so The Gitrog Monster's "whenever one or more
+#: land cards are put into your graveyard" draws once for two milled lands.
+#: Like `dealt_damage` a later event joins the firing it belongs to
+#: (`_joins_batch`): each matching card is appended to the queued trigger's
+#: `moved` binding, so "put one of **them**" chooses among exactly the cards
+#: that qualified, and never a card that was already in the graveyard.
 BATCHED_EVENTS = frozenset(
     {
         "permanent_enters",
@@ -446,6 +479,7 @@ BATCHED_EVENTS = frozenset(
         "dealt_damage",
         "discard",
         "life_lost",
+        "put_into_graveyard",
     }
 )
 
@@ -467,6 +501,10 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         # `discard`. Without this the filter had no subject and matched nothing,
         # so the trigger silently never fired.
         "leaves_graveyard",
+        # The card that arrived, so a filter may ask what it was -- "a **land
+        # card**", "a **creature card**". Asked of the printed face in the
+        # graveyard, exactly as `discard` and `leaves_graveyard` are.
+        "put_into_graveyard",
         "spell_cast",
         # The *original* spell, which is what `put_copy_on_stack` puts on the
         # event as `source`. A filter on a magecraft trigger therefore asks
@@ -827,7 +865,7 @@ def _collect_one(
     assert spec is not None
     if not _matches(state, obj, spec, event):
         return
-    if _joins_batched_damage(state, obj, ability, event):
+    if _joins_batch(state, obj, ability, event):
         return
     _queue(state, obj, ability, event)
     if obj.controller in doubled:
@@ -1598,8 +1636,9 @@ ORDINAL_FILTER_KEYS = frozenset(
 def _played_from(
     state: GameState, dsl_event: str, event: GameEvent, subject_oid: int | None
 ) -> str | None:
-    """The zone a cast spell or a played land came from, for `from_zones`."""
-    if dsl_event == "land_played":
+    """The zone a cast spell, a played land or a card put into a graveyard came
+    from, for `from_zones`."""
+    if dsl_event in ("land_played", "put_into_graveyard"):
         return event.data.get("from_zone")
     obj = state.objects.get(subject_oid) if subject_oid is not None else None
     return obj.cast_from_zone if obj is not None else None
@@ -1732,6 +1771,12 @@ def event_bindings(
             bindings[key] = event.data[key]
     if spec.event == "creatures_deal_combat_damage" and spec.filter is not None:
         bindings["damagers"] = _matching_damagers(state, obj, spec, event)
+    if spec.event == "put_into_graveyard" and subject is not None:
+        # "…put one of **them** onto the battlefield" (Colossal Grave-Reaver).
+        # A list from the start, so a batched firing can grow it as the rest of
+        # its simultaneous group arrives (`_joins_batch`); an unbatched one is
+        # the one card. Read with `{"binding": "moved"}`.
+        bindings["moved"] = [subject]
     return bindings
 
 
@@ -1969,7 +2014,11 @@ def _actor(
     # who **flipped**, and the event's `source` is the card whose effect made
     # the flip -- on a flip one player's card makes another player take, a
     # subject read off it would be the wrong seat.
-    if dsl_event in ("land_played", "spell_cast", "spell_copied", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target", "becomes_monarch", "ability_activated", "damage_prevented", "creatures_attack_player", "creatures_deal_combat_damage", "searches_library", "wins_coin_flip"):
+    # `put_into_graveyard` is listed for `discard`'s reason: the clause asks
+    # **whose graveyard** ("put into your graveyard"), which is the owner the
+    # event carries (400.3), and never whoever controlled the card before it
+    # arrived -- a stolen creature dying goes to its owner's yard.
+    if dsl_event in ("land_played", "spell_cast", "spell_copied", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target", "becomes_monarch", "ability_activated", "damage_prevented", "creatures_attack_player", "creatures_deal_combat_damage", "searches_library", "wins_coin_flip", "put_into_graveyard"):
         return event.player
     # `deals_damage_to_player` is here beside the combat-only trigger it
     # generalises, and for the same reason: `event.player` on a damage event is
@@ -2586,8 +2635,8 @@ def _queue(state: GameState, obj: GameObject, ability: Ability, event: GameEvent
     # differently. `x` is carried through so "enters with X counters" can read
     # what was paid.
     bindings = event_bindings(state, obj, spec, event)
-    if batched_key is not None and spec.event == "dealt_damage":
-        # What `_joins_batched_damage` finds this firing by.
+    if batched_key is not None and spec.event in JOINED_BATCH_EVENTS:
+        # What `_joins_batch` finds this firing by.
         bindings["batch"] = batched_key[2]
 
     card = state.card_of(obj)
@@ -2620,10 +2669,24 @@ def _queue(state: GameState, obj: GameObject, ability: Ability, event: GameEvent
     )
 
 
-def _joins_batched_damage(
+#: The batched events whose later members are folded into the firing their
+#: batch already queued, rather than merely swallowed: `dealt_damage` sums its
+#: ``amount``, `put_into_graveyard` appends its card to ``moved``.
+JOINED_BATCH_EVENTS = frozenset({"dealt_damage", "put_into_graveyard"})
+
+
+def _joins_batch(
     state: GameState, obj: GameObject, ability: Ability, event: GameEvent
 ) -> bool:
-    """Fold a later event's damage into the batched `dealt_damage` firing it joins.
+    """Fold a later event into the batched firing it joins.
+
+    On `put_into_graveyard` the card that arrived is appended to every pending
+    copy's ``moved`` binding -- the rest of "one or more creature cards", so
+    "one of them" can name it. The same timing argument as for damage below: a
+    batch is one effect op, cost payment or discard, all moved before anything
+    is put on the stack.
+
+    On `dealt_damage`:
 
     "Put **that many** +1/+1 counters on him" -- Hercules, Olympian Hero. One
     combat damage step is one damage event (510.2) however many creatures deal
@@ -2638,13 +2701,14 @@ def _joins_batched_damage(
     put on the stack.
     """
     spec = ability.trigger
-    if spec is None or not spec.batched or spec.event != "dealt_damage":
+    if spec is None or not spec.batched or spec.event not in JOINED_BATCH_EVENTS:
         return False
     batch = event.data.get("batch")
     if batch is None or (obj.oid, ability.index, batch) not in state.batched_triggers:
         return False
     granted_by, ability_index = _granter_of(state, obj, ability)
     amount = int(event.data.get("amount", 0))
+    arrived = _subject_oid(spec.event, event)
     for pending in state.pending_triggers:
         if (
             pending.source_oid == obj.oid
@@ -2652,7 +2716,13 @@ def _joins_batched_damage(
             and pending.granted_by == granted_by
             and pending.bindings.get("batch") == batch
         ):
-            pending.bindings["amount"] = int(pending.bindings.get("amount", 0)) + amount
+            if spec.event == "dealt_damage":
+                pending.bindings["amount"] = int(pending.bindings.get("amount", 0)) + amount
+            elif arrived is not None:
+                moved = list(pending.bindings.get("moved") or ())
+                if arrived not in moved:
+                    moved.append(arrived)
+                pending.bindings["moved"] = moved
     return True
 
 

@@ -1,0 +1,142 @@
+{
+  "_comment": "Cards that exist only for the put-into-graveyard trigger test (tests/unit/triggers/test_put_into_graveyard.py). Never part of a deck list. `t_land_drinker` is The Gitrog Monster's draw, batched; `t_greedy_land_drinker` the same trigger WITHOUT `batched`, the counterfactual. `t_grave_pinger` is Syr Konrad's middle clause; `t_grave_reaver` Colossal Grave-Reaver's batch-bound reanimation; `t_grave_returner` a Centaur Vinecrasher shape that listens from its own graveyard.",
+  "cards": [
+    {
+      "id": "t_land_drinker",
+      "name": "Test Land Drinker",
+      "oracle_text": "Whenever one or more land cards are put into your graveyard from anywhere, draw a card.",
+      "mana_cost": "{2}{B}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Frog", "Horror"],
+      "power": 3,
+      "toughness": 3,
+      "colors": ["B", "G"],
+      "color_identity": ["B", "G"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever one or more land cards are put into your graveyard from anywhere, draw a card.",
+          "trigger": {
+            "event": "put_into_graveyard",
+            "controller": "you",
+            "batched": true,
+            "filter": {"types": ["Land"]}
+          },
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_greedy_land_drinker",
+      "name": "Test Greedy Land Drinker",
+      "oracle_text": "Whenever a land card is put into your graveyard from anywhere, draw a card.",
+      "mana_cost": "{2}{B}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Frog", "Horror"],
+      "power": 3,
+      "toughness": 3,
+      "colors": ["B", "G"],
+      "color_identity": ["B", "G"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a land card is put into your graveyard from anywhere, draw a card.",
+          "trigger": {
+            "event": "put_into_graveyard",
+            "controller": "you",
+            "filter": {"types": ["Land"]}
+          },
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_grave_pinger",
+      "name": "Test Grave Pinger",
+      "oracle_text": "Whenever a creature card is put into a graveyard from anywhere other than the battlefield, this creature deals 1 damage to each opponent.",
+      "mana_cost": "{3}{B}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Knight"],
+      "power": 5,
+      "toughness": 4,
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a creature card is put into a graveyard from anywhere other than the battlefield, this creature deals 1 damage to each opponent.",
+          "trigger": {
+            "event": "put_into_graveyard",
+            "controller": "any",
+            "from_zones": ["library", "hand", "stack", "exile", "command"],
+            "filter": {"types": ["Creature"]}
+          },
+          "effects": [{"op": "damage", "player": "each_opponent", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_grave_reaver",
+      "name": "Test Grave Reaver",
+      "oracle_text": "Whenever one or more creature cards are put into your graveyard from your library, put one of them onto the battlefield.",
+      "mana_cost": "{5}{B}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Giant"],
+      "power": 7,
+      "toughness": 6,
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever one or more creature cards are put into your graveyard from your library, put one of them onto the battlefield.",
+          "trigger": {
+            "event": "put_into_graveyard",
+            "controller": "you",
+            "batched": true,
+            "from_zones": ["library"],
+            "filter": {"types": ["Creature"]}
+          },
+          "effects": [
+            {
+              "op": "put_onto_battlefield",
+              "objects": {
+                "binding": "moved",
+                "zone": "graveyard",
+                "count": 1,
+                "chooser": "controller"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_grave_returner",
+      "name": "Test Grave Returner",
+      "oracle_text": "Whenever a land card is put into a graveyard from anywhere, return this card from your graveyard to your hand.",
+      "mana_cost": "{3}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Centaur"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a land card is put into a graveyard from anywhere, return this card from your graveyard to your hand.",
+          "active_zones": ["graveyard"],
+          "trigger": {
+            "event": "put_into_graveyard",
+            "controller": "any",
+            "filter": {"types": ["Land"]}
+          },
+          "effects": [
+            {"op": "return_to_hand", "objects": {"zone": "graveyard", "self_only": true}}
+          ]
+        }
+      ]
+    }
+  ]
+}

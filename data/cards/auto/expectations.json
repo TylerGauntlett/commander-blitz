@@ -2731,6 +2731,10 @@
       "0": 43
     }
   },
+  "centaur_vinecrasher": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "cephalid_coliseum": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -3127,6 +3131,15 @@
     "life": {
       "0": 43
     }
+  },
+  "colossal_grave_reaver": {
+    "graveyard_size": {
+      "0": 5
+    },
+    "library_size": {
+      "0": 37
+    },
+    "zone": "battlefield"
   },
   "colossal_majesty": {
     "battlefield_count": 33,
@@ -16487,6 +16500,10 @@
     },
     "zone": "graveyard"
   },
+  "syr_konrad_the_grim": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "szarel_genesis_shepherd": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -17024,6 +17041,10 @@
       "0": 40,
       "1": 40
     },
+    "zone": "battlefield"
+  },
+  "the_gitrog_monster": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "the_goose_mother": {

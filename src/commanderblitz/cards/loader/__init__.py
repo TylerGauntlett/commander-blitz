@@ -73,6 +73,7 @@ from commanderblitz.engine.sagas import LORE, SAGA
 from commanderblitz.engine.structs import CONVOKED_BINDING
 from commanderblitz.engine.triggers import (
     BATCHED_EVENTS,
+    GRAVEYARD_ORIGIN_ZONES,
     ORDINAL_FILTER_KEYS,
     STATE_TRIGGER,
     TRIGGER_EVENTS,
@@ -3288,20 +3289,27 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                     f"from {sorted(departures)}, got {model.trigger.to_zones!r}"
                 )
         if model.trigger.from_zones is not None:
-            # "Whenever you play a card from exile." Only a cast and a land
-            # drop record where the card was played from, so anywhere else
-            # this would be a filter that never applies.
-            if model.trigger.event not in ("spell_cast", "land_played"):
+            # "Whenever you play a card from exile." Only a cast, a land drop
+            # and a card put into a graveyard record where the card came from,
+            # so anywhere else this would be a filter that never applies.
+            if model.trigger.event not in ("spell_cast", "land_played", "put_into_graveyard"):
                 raise DslError(
-                    f"{where}: 'from_zones' narrows a spell_cast or land_played "
-                    f"trigger to where the card was played from, and means "
-                    f"nothing on {model.trigger.event!r}"
+                    f"{where}: 'from_zones' narrows a spell_cast, land_played or "
+                    f"put_into_graveyard trigger to where the card came from, "
+                    f"and means nothing on {model.trigger.event!r}"
                 )
-            origins = CAST_ORIGIN_ZONES
+            # "…put into a graveyard from anywhere other than the battlefield"
+            # (Syr Konrad) names every zone but one, and a card can arrive from
+            # any zone except a graveyard itself.
+            origins = (
+                GRAVEYARD_ORIGIN_ZONES
+                if model.trigger.event == "put_into_graveyard"
+                else CAST_ORIGIN_ZONES
+            )
             bad = [z for z in model.trigger.from_zones if z not in origins]
             if bad or not model.trigger.from_zones:
                 raise DslError(
-                    f"{where}: 'from_zones' names zones a card can be played "
+                    f"{where}: 'from_zones' names zones a card can come "
                     f"from, from {sorted(origins)}, got {model.trigger.from_zones!r}"
                 )
         _validate_state_trigger(model, where)

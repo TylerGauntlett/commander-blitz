@@ -32215,6 +32215,84 @@
     {
       "abilities": [
         {
+          "active_zones": [
+            "graveyard"
+          ],
+          "effects": [
+            {
+              "effects": [
+                {
+                  "destination": "hand",
+                  "objects": {
+                    "self_only": true,
+                    "zone": "graveyard"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{G}{G}"
+              },
+              "player": "you",
+              "prompt": "Pay {G}{G} to return Centaur Vinecrasher from your graveyard to your hand?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a land card is put into a graveyard from anywhere, you may pay {G}{G}. If you do, return this card from your graveyard to your hand.",
+          "trigger": {
+            "controller": "any",
+            "event": "put_into_graveyard",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "centaur_vinecrasher",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{3}{G}",
+      "name": "Centaur Vinecrasher",
+      "oracle_text": "Trample\nThis creature enters with a number of +1/+1 counters on it equal to the number of land cards in all graveyards.\nWhenever a land card is put into a graveyard from anywhere, you may pay {G}{G}. If you do, return this card from your graveyard to your hand.",
+      "power": 1,
+      "replacements": [
+        {
+          "amount": {
+            "count": {
+              "controller": "any",
+              "types": [
+                "Land"
+              ],
+              "zone": "graveyard"
+            }
+          },
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Plant",
+        "Centaur"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -37464,6 +37542,96 @@
         "Badger"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "mill",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature enters or attacks, mill three cards.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "mill",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature enters or attacks, mill three cards.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "binding": "moved",
+                "chooser": "controller",
+                "count": 1,
+                "zone": "graveyard"
+              },
+              "op": "put_onto_battlefield"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more creature cards are put into your graveyard from your library, put one of them onto the battlefield.",
+          "trigger": {
+            "batched": true,
+            "controller": "you",
+            "event": "put_into_graveyard",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            },
+            "from_zones": [
+              "library"
+            ]
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "colossal_grave_reaver",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{6}{B}{G}",
+      "name": "Colossal Grave-Reaver",
+      "oracle_text": "Flying\nWhenever this creature enters or attacks, mill three cards.\nWhenever one or more creature cards are put into your graveyard from your library, put one of them onto the battlefield.",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 6,
       "types": [
         "Creature"
       ]
@@ -195236,6 +195404,120 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another creature dies, or a creature card is put into a graveyard from anywhere other than the battlefield, or a creature card leaves your graveyard, Syr Konrad deals 1 damage to each opponent.",
+          "trigger": {
+            "controller": "any",
+            "event": "creature_dies",
+            "filter": {
+              "exclude_self": true
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another creature dies, or a creature card is put into a graveyard from anywhere other than the battlefield, or a creature card leaves your graveyard, Syr Konrad deals 1 damage to each opponent.",
+          "trigger": {
+            "controller": "any",
+            "event": "put_into_graveyard",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            },
+            "from_zones": [
+              "library",
+              "hand",
+              "stack",
+              "exile",
+              "command"
+            ]
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another creature dies, or a creature card is put into a graveyard from anywhere other than the battlefield, or a creature card leaves your graveyard, Syr Konrad deals 1 damage to each opponent.",
+          "trigger": {
+            "controller": "you",
+            "event": "leaves_graveyard",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{1}{B}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "mill",
+              "player": "each_player"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{B}: Each player mills a card. (They each put the top card of their library into their graveyard.)"
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "syr_konrad_the_grim",
+      "mana_cost": "{3}{B}{B}",
+      "name": "Syr Konrad, the Grim",
+      "oracle_text": "Whenever another creature dies, or a creature card is put into a graveyard from anywhere other than the battlefield, or a creature card leaves your graveyard, Syr Konrad deals 1 damage to each opponent.\n{1}{B}: Each player mills a card. (They each put the top card of their library into their graveyard.)",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_player": "you",
           "effect": "play_lands_from_graveyard",
           "kind": "static",
@@ -202762,6 +203044,130 @@
         "Legendary"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "condition": {
+                "exists": {
+                  "controller": "you",
+                  "types": [
+                    "Land"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "else": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "if",
+              "then": [
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "chooser": "controller",
+                        "controller": "you",
+                        "count": 1,
+                        "types": [
+                          "Land"
+                        ],
+                        "zone": "battlefield"
+                      },
+                      "op": "sacrifice"
+                    }
+                  ],
+                  "else": [
+                    {
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "sacrifice"
+                    }
+                  ],
+                  "op": "may",
+                  "player": "you",
+                  "prompt": "Sacrifice a land to keep The Gitrog Monster?"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, sacrifice The Gitrog Monster unless you sacrifice a land.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep",
+            "source": "self"
+          }
+        },
+        {
+          "affects_player": "you",
+          "amount": {
+            "const": 1
+          },
+          "effect": "extra_land_drops",
+          "kind": "static",
+          "text": "You may play an additional land on each of your turns."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more land cards are put into your graveyard from anywhere, draw a card.",
+          "trigger": {
+            "batched": true,
+            "controller": "you",
+            "event": "put_into_graveyard",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "the_gitrog_monster",
+      "keywords": [
+        "deathtouch"
+      ],
+      "mana_cost": "{3}{B}{G}",
+      "name": "The Gitrog Monster",
+      "oracle_text": "Deathtouch\nAt the beginning of your upkeep, sacrifice The Gitrog Monster unless you sacrifice a land.\nYou may play an additional land on each of your turns.\nWhenever one or more land cards are put into your graveyard from anywhere, draw a card.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Frog",
+        "Horror"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
       "types": [
         "Creature"
       ]

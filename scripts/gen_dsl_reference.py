@@ -814,6 +814,8 @@ TRIGGER_EVENT_DESCRIPTIONS: dict[str, Entry] = {
     "permanent_enters": ("A permanent enters the battlefield.", None),
     "postcombat_main": ("At the beginning of the postcombat main phase.", None),
     "precombat_main": ("At the beginning of the precombat main phase.", None),
+    "put_into_graveyard": ("A card is put into a graveyard from any zone; `from_zones` narrows the origin, `batched` fires once per simultaneous move and binds its matching cards as `moved`.",
+                           "Put into a graveyard from anywhere — `put_into_graveyard`"),
     "sacrificed": ("A permanent is sacrificed.", None),
     "searches_library": ("A player searches a library.", None),
     "self_enters": ("This permanent enters the battlefield.", None),

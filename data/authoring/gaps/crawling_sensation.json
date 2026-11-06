@@ -5,12 +5,19 @@
   "blocked_sentences": [
     "Whenever one or more land cards are put into your graveyard from anywhere for the first time each turn, create a 1/1 green Insect creature token."
   ],
-  "needs": [{
-    "capability": "put_into_graveyard_from_anywhere",
-    "kind": "trigger_event",
-    "what": "a trigger event that fires when one or more cards matching a filter (here: land cards, owner = you) are put into a graveyard from ANY zone -- battlefield, hand (discard), library (mill, surveil), stack -- supporting `batched: true` so one simultaneous move of several land cards triggers once, and `max_per_turn: 1` for \"for the first time each turn\"",
-    "why_existing_wont_do": "trigger_events has no generic zone-change-to-graveyard event: leaves_battlefield with to_zones [\"graveyard\"] (and dies) only sees permanents leaving the battlefield and misses milled and discarded land cards, which is what this card's own upkeep mill feeds; discard covers only the hand; leaves_graveyard is the opposite direction. The upkeep `may` + `mill` line and the insect_1_1_g token are expressible today."
-  }],
-  "closest_existing": ["leaves_battlefield", "discard", "cards_to_graveyard_this_turn"],
+  "needs": [
+    {
+      "capability": "first_land_to_your_graveyard_each_turn",
+      "kind": "trigger_event",
+      "what": "an ordinal on `put_into_graveyard` (like `nth` on `draw` and `spell_cast`): a per-player turn-ledger count of the simultaneous groups that put one or more cards matching the trigger's filter (here: land cards) into that player's graveyard, so `nth: 1` fires on the first such group of the turn and never on a later one -- including when the first group happened before this enchantment was on the battlefield",
+      "why_existing_wont_do": "`put_into_graveyard` with `batched: true`, `controller: \"you\"` and `filter: {\"types\": [\"Land\"]}` expresses \"whenever one or more land cards are put into your graveyard from anywhere\" exactly, but \"for the first time each turn\" is not `max_per_turn: 1`: the cap counts this permanent's own firings, so a Crawling Sensation cast after a land was already milled or discarded that turn would still make an Insect. `nth` is read only on draw and spell_cast, and `cards_to_graveyard_this_turn` is a bare count over every graveyard and every card type. The upkeep `may` + `mill` line and insect_1_1_g are expressible today."
+    }
+  ],
+  "closest_existing": [
+    "put_into_graveyard",
+    "max_per_turn",
+    "nth",
+    "cards_to_graveyard_this_turn"
+  ],
   "confidence": "high"
 }

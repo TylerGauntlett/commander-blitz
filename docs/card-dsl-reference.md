@@ -15,7 +15,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 69 |
 | [Conditions](#conditions) | 34 |
-| [Trigger events](#trigger-events) | 49 |
+| [Trigger events](#trigger-events) | 50 |
 | [Trigger filters](#trigger-filters) | 36 |
 | [Static effects](#static-effects) | 94 |
 | [Player-wide statics](#player-wide-statics) | 45 |
@@ -37,7 +37,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
 | [Card-level face keys](#card-level-face-keys) | 6 |
 | [Card-level rider keys](#card-level-rider-keys) | 18 |
-| [Engine events](#engine-events) | 77 |
+| [Engine events](#engine-events) | 78 |
 
 ## Effect ops
 
@@ -473,6 +473,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `permanent_enters` | `enters_battlefield` | A permanent enters the battlefield. | [Triggers](card-dsl.md#triggers) |
 | `postcombat_main` | `postcombat_main` | At the beginning of the postcombat main phase. | [Triggers](card-dsl.md#triggers) |
 | `precombat_main` | `precombat_main` | At the beginning of the precombat main phase. | [Triggers](card-dsl.md#triggers) |
+| `put_into_graveyard` | `put_into_graveyard` | A card is put into a graveyard from any zone; `from_zones` narrows the origin, `batched` fires once per simultaneous move and binds its matching cards as `moved`. | [Put into a graveyard from anywhere — put_into_graveyard](card-dsl-cookbook.md#put-into-a-graveyard-from-anywhere--put_into_graveyard) |
 | `sacrificed` | `sacrificed` | A permanent is sacrificed. | [Triggers](card-dsl.md#triggers) |
 | `searches_library` | `library_searched` | A player searches a library. | [Triggers](card-dsl.md#triggers) |
 | `self_enters` | `enters_battlefield` | This permanent enters the battlefield. | [Triggers](card-dsl.md#triggers) |
@@ -1175,6 +1176,7 @@ Every `EventType` the engine emits, and which trigger events listen to it. An ev
 | `poison_added` |  |  | [Triggers](card-dsl.md#triggers) |
 | `postcombat_main` | `postcombat_main` |  | [Triggers](card-dsl.md#triggers) |
 | `precombat_main` | `precombat_main` |  | [Triggers](card-dsl.md#triggers) |
+| `put_into_graveyard` | `put_into_graveyard` |  | [Triggers](card-dsl.md#triggers) |
 | `sacrificed` | `sacrificed` |  | [Triggers](card-dsl.md#triggers) |
 | `spell_cast` | `spell_cast` |  | [Triggers](card-dsl.md#triggers) |
 | `spell_copied` | `spell_copied` |  | [Triggers](card-dsl.md#triggers) |

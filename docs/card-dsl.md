@@ -5031,7 +5031,7 @@ and the filter keys are
     "mana_ability": false,           // `ability_activated` only: exclude mana abilities
     "targeted_by": "spell",          // `becomes_target` only: a spell, an ability, or an activated ability
     "to_zones": ["graveyard", "exile"], // `leaves_battlefield` only: where it went
-    "from_zones": ["exile"]          // `spell_cast` / `land_played` only: where it was played from
+    "from_zones": ["exile"]          // `spell_cast` / `land_played` / `put_into_graveyard` only: where it came from
   },
   "effects": [ ... ]
 }
@@ -5099,10 +5099,18 @@ The trigger fires only when the zone the card was played from is in the list. A
 spell answers with the origin `stack.push_spell` stamps on it
 (`GameObject.cast_from_zone`), because 601.2a has already moved it to the stack
 when SPELL_CAST fires; a land drop carries `from_zone` on its LAND_PLAYED
-payload. It is allowed on those two events only, and names zones a card is
-played from (`library`, `hand`, `graveyard`, `exile`, `command`). A filter's
-`zone: "exile"` is the near miss: it reads where the subject is *now*, the stack
-or the battlefield, and never matches.
+payload. On those two events it names zones a card is played from (`library`,
+`hand`, `graveyard`, `exile`, `command`). A filter's `zone: "exile"` is the near
+miss: it reads where the subject is *now*, the stack or the battlefield, and
+never matches.
+
+On `put_into_graveyard` it is where the card was put into the graveyard from,
+the `from_zone` `zones.move_object` puts on the event, out of
+`triggers.GRAVEYARD_ORIGIN_ZONES` (`library`, `hand`, `battlefield`, `stack`,
+`exile`, `command`). "From anywhere" is the key omitted; "from anywhere other
+than the battlefield" (Syr Konrad) lists every origin but `battlefield`; "from
+your library" (Colossal Grave-Reaver) is `["library"]`. See
+["Put into a graveyard from anywhere"](card-dsl-cookbook.md#put-into-a-graveyard-from-anywhere--put_into_graveyard).
 
 `self_enters` and `permanent_enters` are the *same* engine event, separated only
 by `source: "self"` — so the loader supplies it for `self_enters` rather than
@@ -5344,7 +5352,7 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `life_lost` · `you_attack` · `creatures_attack_player` ·
 `creatures_deal_combat_damage` · `becomes_monstrous` · `becomes_level` ·
 `becomes_monarch` ·
-`counter_placed` · `sacrificed` · `leaves_graveyard` · `token_created` · `draw` · `discard` · `cycle` ·
+`counter_placed` · `sacrificed` · `leaves_graveyard` · `put_into_graveyard` · `token_created` · `draw` · `discard` · `cycle` ·
 `ability_activated` · `damage_prevented` · `deals_damage_to_player` ·
 `searches_library` · `wins_coin_flip` · `state`
 

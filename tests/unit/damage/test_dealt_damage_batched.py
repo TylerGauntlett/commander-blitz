@@ -12,7 +12,7 @@ Hercules is dealt damage once, for all of it. ``batched`` on `dealt_damage`
 groups by the ``batch`` `primitives.damage_permanent` now puts on the event --
 the combat damage step (`combat.deal_combat_damage`), or the effect op -- and
 every later event of the group adds its damage to the queued firing's
-``amount`` (`triggers._joins_batched_damage`).
+``amount`` (`triggers._joins_batch`).
 
 What each reading rests on, and each has a test class:
 
