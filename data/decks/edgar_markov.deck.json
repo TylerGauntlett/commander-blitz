@@ -61,12 +61,6 @@
       "set_code": "tdc",
       "collector_number": "105"
     },
-    "authority_of_the_consuls": {
-      "scryfall_id": "324b2f55-1e09-490e-8f7e-bfde85a91ac4",
-      "artist": "Lake Hurwitz",
-      "set_code": "kld",
-      "collector_number": "5"
-    },
     "baron_bertram_graywater": {
       "scryfall_id": "e9da18b4-1efc-44b7-8001-a2cfd44c69bf",
       "artist": "Johan Grenier",
@@ -180,12 +174,6 @@
       "artist": "Bram Sels",
       "set_code": "lcc",
       "collector_number": "70"
-    },
-    "clavileno_first_of_the_blessed": {
-      "scryfall_id": "9f55b648-b1ec-407a-a0c7-7647755793d1",
-      "artist": "Matt Stewart",
-      "set_code": "lcc",
-      "collector_number": "2"
     },
     "clever_concealment": {
       "scryfall_id": "41d45a8a-ea1d-4fbc-86d2-5d6340f3b639",
@@ -307,6 +295,12 @@
       "set_code": "fdn",
       "collector_number": "61"
     },
+    "idol_of_oblivion": {
+      "scryfall_id": "cbc25725-1485-4d98-abe1-906520f868d8",
+      "artist": "Piotr Dura",
+      "set_code": "tdc",
+      "collector_number": "319"
+    },
     "impact_tremors": {
       "scryfall_id": "e23cf8e0-0983-4495-ad3e-8b0c3e706115",
       "artist": "Matteo Marjoram",
@@ -330,6 +324,12 @@
       "artist": "Zezhou Chen",
       "set_code": "lcc",
       "collector_number": "275"
+    },
+    "malakir_bloodwitch": {
+      "scryfall_id": "be917193-f4ab-485d-aac2-826db6a08275",
+      "artist": "Shelly Wan",
+      "set_code": "c17",
+      "collector_number": "116"
     },
     "malakir_rebirth_malakir_mire": {
       "scryfall_id": "609d3ecf-f88d-4268-a8d3-4bf2bcf5df60",
@@ -529,6 +529,12 @@
       "set_code": "c17",
       "collector_number": "8"
     },
+    "vampire_gourmand": {
+      "scryfall_id": "917514c0-9cd5-4b97-85b9-c4f753560ad4",
+      "artist": "Chris Rallis",
+      "set_code": "fdn",
+      "collector_number": "74"
+    },
     "vault_of_the_archangel": {
       "scryfall_id": "8f203f04-bd73-4d88-bb5e-aab63507dbd1",
       "artist": "John Avon",
@@ -540,12 +546,6 @@
       "artist": "Bastien L. Deharme",
       "set_code": "mkm",
       "collector_number": "110"
-    },
-    "village_rites": {
-      "scryfall_id": "2841339b-faef-407d-9838-d03fe80e6294",
-      "artist": "Igor Kieryluk",
-      "set_code": "lcc",
-      "collector_number": "212"
     },
     "viscera_seer": {
       "scryfall_id": "d0f3a502-064e-4700-a730-2e86f985bbc3",
@@ -590,9 +590,6 @@
     },
     {
       "id": "arcane_signet"
-    },
-    {
-      "id": "authority_of_the_consuls"
     },
     {
       "id": "baron_bertram_graywater"
@@ -652,9 +649,6 @@
       "id": "charismatic_conqueror"
     },
     {
-      "id": "clavileno_first_of_the_blessed"
-    },
-    {
       "id": "clever_concealment"
     },
     {
@@ -712,6 +706,9 @@
       "id": "high_society_hunter"
     },
     {
+      "id": "idol_of_oblivion"
+    },
+    {
       "id": "impact_tremors"
     },
     {
@@ -722,6 +719,9 @@
     },
     {
       "id": "legion_lieutenant"
+    },
+    {
+      "id": "malakir_bloodwitch"
     },
     {
       "id": "malakir_rebirth_malakir_mire"
@@ -825,13 +825,13 @@
       "id": "teferi_s_protection"
     },
     {
+      "id": "vampire_gourmand"
+    },
+    {
       "id": "vault_of_the_archangel"
     },
     {
       "id": "vein_ripper"
-    },
-    {
-      "id": "village_rites"
     },
     {
       "id": "viscera_seer"

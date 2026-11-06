@@ -53,6 +53,12 @@
       "set_code": "tdc",
       "collector_number": "109"
     },
+    "angel_of_vitality": {
+      "scryfall_id": "dbb38f33-9f51-48cb-9f69-9a62f2c4b907",
+      "artist": "Johannes Voss",
+      "set_code": "fdc",
+      "collector_number": "13"
+    },
     "angelic_field_marshal": {
       "scryfall_id": "b4f751ad-336d-479a-b63c-d2d193a42ccf",
       "artist": "Scott Murphy",
@@ -77,11 +83,23 @@
       "set_code": "fdc",
       "collector_number": "17"
     },
+    "authority_of_the_consuls": {
+      "scryfall_id": "42ce2d7f-5924-47c0-b5ed-dacf9f9617a0",
+      "artist": "Lake Hurwitz",
+      "set_code": "fdn",
+      "collector_number": "137"
+    },
     "avacyn_angel_of_hope": {
       "scryfall_id": "a0519776-3d86-4f7d-9c3b-71c1dfbf7e12",
       "artist": "Jason Chan",
       "set_code": "2xm",
       "collector_number": "8"
+    },
+    "battle_angels_of_tyr": {
+      "scryfall_id": "4c91dbf4-94fa-45d0-b8ed-a778b11d789b",
+      "artist": "Fajareka Setiawan",
+      "set_code": "clb",
+      "collector_number": "9"
     },
     "bishop_of_wings": {
       "scryfall_id": "e4a34101-1be3-44ae-b709-f0398998d4c4",
@@ -118,18 +136,6 @@
       "artist": "Denman Rooke",
       "set_code": "fdc",
       "collector_number": "21"
-    },
-    "dawn_of_hope": {
-      "scryfall_id": "a02540fc-42ee-4f61-99c8-efdd1a70373c",
-      "artist": "Sung Choi",
-      "set_code": "scd",
-      "collector_number": "17"
-    },
-    "dazzling_angel": {
-      "scryfall_id": "a1a8cc0d-c2ac-4dfe-a0a1-996bfadb7d54",
-      "artist": "Daneen Wilkerson",
-      "set_code": "fdc",
-      "collector_number": "24"
     },
     "drannith_magistrate": {
       "scryfall_id": "98b0a4a8-9319-451b-9b79-b0bca7a41e91",
@@ -263,11 +269,23 @@
       "set_code": "fra",
       "collector_number": "322"
     },
+    "land_tax": {
+      "scryfall_id": "c70d3706-9d28-49ac-8718-4a516413e727",
+      "artist": "Chuck Lukacs",
+      "set_code": "soc",
+      "collector_number": "153"
+    },
     "lightning_greaves": {
       "scryfall_id": "779abd27-985f-4bb9-9330-38d49bf52903",
       "artist": "Luisa J. Preissler",
       "set_code": "fic",
       "collector_number": "349"
+    },
+    "luminarch_ascension": {
+      "scryfall_id": "b3770d86-4496-4c06-aab1-2917cfec100e",
+      "artist": "Michael Komarck",
+      "set_code": "a25",
+      "collector_number": "23"
     },
     "lyra_archangel_of_dawn": {
       "scryfall_id": "86a3866e-68a8-402c-baf0-1908e98e3995",
@@ -298,12 +316,6 @@
       "artist": "Arthur Yuan",
       "set_code": "ltr",
       "collector_number": "256"
-    },
-    "mind_stone": {
-      "scryfall_id": "62901ae9-98dd-466b-8358-f5abd765b3c0",
-      "artist": "Adam Rex",
-      "set_code": "fdc",
-      "collector_number": "271"
     },
     "norn_s_choirmaster": {
       "scryfall_id": "c7459da4-1081-4550-88c4-936f3662c5c8",
@@ -370,12 +382,6 @@
       "artist": "Livia Prima",
       "set_code": "fdc",
       "collector_number": "47"
-    },
-    "seraph_of_the_sword": {
-      "scryfall_id": "3dbfbdba-52d0-4b49-8c86-8f1686e2285b",
-      "artist": "Jaime Jones",
-      "set_code": "fdc",
-      "collector_number": "48"
     },
     "seraph_sanctuary": {
       "scryfall_id": "cef8e044-6cc0-4988-9d5f-bf9a0ab1c66f",
@@ -472,12 +478,6 @@
       "artist": "Ben Hill",
       "set_code": "fdc",
       "collector_number": "57"
-    },
-    "youthful_valkyrie": {
-      "scryfall_id": "9577d16a-e6ed-4d98-b90f-2abfc9b9586a",
-      "artist": "Anna Steinbauer",
-      "set_code": "fdc",
-      "collector_number": "58"
     }
   },
   "cards": [
@@ -489,6 +489,9 @@
     },
     {
       "id": "angel_of_invention"
+    },
+    {
+      "id": "angel_of_vitality"
     },
     {
       "id": "angelic_field_marshal"
@@ -503,7 +506,13 @@
       "id": "archangel_of_tithes"
     },
     {
+      "id": "authority_of_the_consuls"
+    },
+    {
       "id": "avacyn_angel_of_hope"
+    },
+    {
+      "id": "battle_angels_of_tyr"
     },
     {
       "id": "bishop_of_wings"
@@ -522,12 +531,6 @@
     },
     {
       "id": "court_of_grace"
-    },
-    {
-      "id": "dawn_of_hope"
-    },
-    {
-      "id": "dazzling_angel"
     },
     {
       "id": "drannith_magistrate"
@@ -593,7 +596,13 @@
       "id": "kindred_judgment"
     },
     {
+      "id": "land_tax"
+    },
+    {
       "id": "lightning_greaves"
+    },
+    {
+      "id": "luminarch_ascension"
     },
     {
       "id": "lyra_dawnbringer"
@@ -609,9 +618,6 @@
     },
     {
       "id": "minas_tirith"
-    },
-    {
-      "id": "mind_stone"
     },
     {
       "id": "norn_s_choirmaster"
@@ -649,9 +655,6 @@
     },
     {
       "id": "seraph_sanctuary"
-    },
-    {
-      "id": "seraph_of_the_sword"
     },
     {
       "id": "serra_the_benevolent"
@@ -697,9 +700,6 @@
     },
     {
       "id": "wojek_investigator"
-    },
-    {
-      "id": "youthful_valkyrie"
     }
   ]
 }
