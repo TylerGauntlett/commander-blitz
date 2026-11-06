@@ -28212,12 +28212,12 @@
     },
     "Blood Seeker": {
       "edhrec_rank": 2610,
-      "gate": "template",
+      "gate": null,
       "name": "Blood Seeker",
-      "reason": "no template for: Whenever a creature an opponent controls enters, you may have that player lose 1 life",
+      "reason": "",
       "scryfall_id": "fe88cbee-5f6c-47e0-8a84-192c4c2ca984",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Blood Servitor": {
@@ -33172,12 +33172,12 @@
     },
     "Brash Taunter": {
       "edhrec_rank": 795,
-      "gate": "template",
+      "gate": null,
       "name": "Brash Taunter",
-      "reason": "no template for: Whenever this creature is dealt damage, it deals that much damage to target opponent",
+      "reason": "",
       "scryfall_id": "275f8721-a6e5-489b-851f-1676aad5ec39",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Brass Gnat": {
@@ -64532,12 +64532,12 @@
     },
     "Decree of Pain": {
       "edhrec_rank": 1338,
-      "gate": "template",
+      "gate": null,
       "name": "Decree of Pain",
-      "reason": "no template for: Destroy all creatures. They can't be regenerated. Draw a card for each creature destroyed ",
+      "reason": "",
       "scryfall_id": "bd594aeb-f5cc-4435-8ea8-c35c5824b58c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Decree of Savagery": {
@@ -83432,12 +83432,12 @@
     },
     "Enchanter's Bane": {
       "edhrec_rank": 9581,
-      "gate": "template",
+      "gate": null,
       "name": "Enchanter's Bane",
-      "reason": "no template for: At the beginning of your end step, target enchantment deals damage equal to its mana value",
+      "reason": "",
       "scryfall_id": "3f053af0-9a08-44e5-be57-6d0fabfde31a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Enchantment Alteration": {

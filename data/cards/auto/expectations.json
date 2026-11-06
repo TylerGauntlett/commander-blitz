@@ -1869,6 +1869,10 @@
     },
     "zone": "graveyard"
   },
+  "blood_seeker": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "bloodfire_expert": {
     "zone": "battlefield"
   },
@@ -2149,6 +2153,10 @@
     "zone": "graveyard"
   },
   "brambleweft_behemoth": {
+    "zone": "battlefield"
+  },
+  "brash_taunter": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "brass_infiniscope": {
@@ -4049,6 +4057,17 @@
     },
     "zone": "graveyard"
   },
+  "decree_of_pain": {
+    "battlefield_count": 30,
+    "hand_size": {
+      "0": 5
+    },
+    "library_size": {
+      "0": 36
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
+  },
   "deekah_fractal_theorist": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -4987,6 +5006,10 @@
     "library_size": {
       "0": 36
     },
+    "zone": "battlefield"
+  },
+  "enchanter_s_bane": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "encroaching_dragonstorm": {
