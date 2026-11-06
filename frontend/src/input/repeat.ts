@@ -69,7 +69,7 @@ export const STICK = {
 
 const lerp = (a: number, b: number, t: number): number => a + (b - a) * t;
 
-export const clamp01 = (n: number): number => (n < 0 ? 0 : n > 1 ? 1 : n);
+export const clamp01 = (n: number): number => Math.min(Math.max(n, 0), 1);
 
 /**
  * Where a stick magnitude sits on the ramp: 0 is a nudge, 1 is a full shove.

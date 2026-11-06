@@ -43,7 +43,7 @@ export interface Device {
  * viewport from its screen by the same subtraction.
  */
 const IOS_SAFARI_UA =
-  "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.6 Mobile/15E148 Safari/604.1";
+  "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Mobile/15E148 Safari/604.1";
 
 const IPHONE_15: Device = {
   id: "iphone15",
@@ -84,7 +84,7 @@ export const PHONES: readonly Device[] = [
     screen: { width: 412, height: 915 },
     deviceScaleFactor: 2.625,
     userAgent:
-      "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.8010.12 Mobile Safari/537.36",
+      "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Mobile Safari/537.36",
   },
   {
     id: "iphoneduo",
