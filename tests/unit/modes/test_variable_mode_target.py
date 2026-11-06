@@ -18,10 +18,12 @@ a different card:
 
 The hazard is the one `optional` mode targets have: `filter_legal` splits the
 stored refs spec by spec, and a caster-sized spec stores as many as were
-picked. So the loader admits one only where it ends every declaration -- the
-last spec of its mode, no later mode owning a target -- and these tests pin
-that boundary (see also `TestTheLoaderRefusals` in test_modal_targets.py and
-test_modal_triggered_targets.py) and the behaviour it buys.
+picked. So `CardDef.specs_for_modes` stores it after every fixed-size spec,
+and the loader admits one such spec per card -- these tests pin that boundary
+(see also `TestTheLoaderRefusals` in test_modal_targets.py and
+test_modal_triggered_targets.py, and test_modal_variable_size_targets.py for a
+caster-sized spec in a mode *before* another target-owning one) and the
+behaviour it buys.
 """
 
 from __future__ import annotations
@@ -166,7 +168,7 @@ class TestTheLoaderBoundary:
     def test_the_last_target_declared_loads(self):
         self.compile(json_card(RECALL))
 
-    def test_not_last_when_a_later_mode_owns_a_target(self):
+    def test_before_a_later_modes_target_it_is_stored_last(self):
         card = json_card(RECALL)
         card["targets"][0]["mode"] = 0
         card["targets"].append(
@@ -183,8 +185,10 @@ class TestTheLoaderBoundary:
             [{"op": "return_from_graveyard", "destination": "hand",
               "objects": {"target": "later"}}],
         )
-        with pytest.raises(DslError, match="must be the last target declared"):
-            self.compile(card)
+        compiled = compile_card(CardModel.model_validate(card))
+        assert [spec.id for spec in compiled.specs_for_modes((0, 1))][-1] == (
+            card["targets"][0]["id"]
+        )
 
     def test_a_cross_pick_rule_is_refused(self):
         card = json_card(RECALL)

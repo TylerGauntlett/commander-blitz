@@ -22,7 +22,7 @@ from commanderblitz.cards.registry import default_registry
 
 from . import legality, sba, stack, suspend, triggers, turn
 from .actions import GENERATOR_DECISIONS, Action, DecisionOption, PendingDecision
-from .carddef import Cost
+from .carddef import Cost, stored_mode_specs
 from .casting import (
     GRAVEYARD_CAST_SLOT,
     MORPH_COST,
@@ -1744,10 +1744,11 @@ class Game:
         """Declare the chosen modes' own targets -- 601.2c, in the printed order.
 
         Runs immediately after :meth:`_ask_modes` and before the spell is paid
-        for, which is exactly where 601.2 puts it.  Returns the refs to append
-        to the cast action's own, in **ascending mode index**: resolution
-        rebuilds the same list with `CardDef.specs_for_modes`, and
-        `targeting.filter_legal` splits stored refs by position, so the two
+        for, which is exactly where 601.2 puts it.  Asked in **ascending mode
+        index**; returned, to append to the cast action's own refs, in the
+        order `CardDef.specs_for_modes` lists the specs -- fixed-size ones in
+        mode order, the one sizeless spec last. Resolution rebuilds that list,
+        and `targeting.filter_legal` splits stored refs by position, so the two
         orders have to be one order.
 
         Every mode that reaches here had a legal target when :meth:`_ask_modes`
@@ -1761,7 +1762,7 @@ class Game:
         ctx = EffectContext(
             state=state, controller=pid, source_oid=oid, source_name=card.name
         )
-        out: list[TargetRef] = []
+        declared: dict[str, tuple[TargetRef, ...]] = {}
         for index in sorted(modes):
             for spec in card.mode_targets.get(index, ()):
                 # A ref already taken by an earlier mode is **not** struck off.
@@ -1782,8 +1783,8 @@ class Game:
                     # Decision) -- a size the caster picks, from `min_count`
                     # through the printed ceiling. `loader.targets._check_mode_targets`
                     # admits only a printed size (a literal or "any"), and only
-                    # where the spec ends every declaration, so however many
-                    # refs it stores, `filter_legal` hands them all to it.
+                    # one such spec, stored last -- so however many refs it
+                    # stores, `filter_legal` hands them all to it.
                     ceiling = (
                         len(options) if count == "any" else min(int(count), len(options))
                     )
@@ -1792,15 +1793,19 @@ class Game:
                     # An int by construction: the loader refuses a computed
                     # size on a mode-owned spec. "Up to one target" --
                     # `optional` -- is declinable whether or not there is
-                    # something to point at, and the same last-declared rule
+                    # something to point at, and the same stored-last rule
                     # makes storing no ref for it shift nothing.
                     ceiling = int(count)
                     floor = 0 if spec.optional else ceiling
                 chosen = yield from ask_targets(
                     ctx, f"Target for {card.name}", options, floor, ceiling, pid
                 )
-                out.extend(chosen)
-        return tuple(out)
+                declared[spec.id] = tuple(chosen)
+        return tuple(
+            ref
+            for spec in stored_mode_specs(card.mode_targets, modes)
+            for ref in declared.get(spec.id, ())
+        )
 
     def _ask_deferred_targets(
         self, pid: int, card, oid: int, spec, chosen, *, x: int = 0

@@ -101,12 +101,17 @@ def _compile_targets(
             raise DslError(f"{where}: two targets share the id {spec.id!r}")
         seen.add(spec.id)
     for spec in specs:
-        # A per-player cap is a constraint on how many of a *variable-size*
-        # choice may share a controller. On a fixed-size spec it either changes
+        # A per-player cap is a constraint on how many of a *caster-sized*
+        # choice may share a controller: "any number of …, no two controlled by
+        # the same player" (`count: "any"`), or under a printed ceiling, "up to
+        # two target artifacts and/or enchantments controlled by different
+        # players" (Protector of the Wastes, `count: 2, up_to: true`). On an
+        # exact size, or `optional`'s "exactly N, or none", it either changes
         # nothing or makes the spec unsatisfiable, and both are silent.
-        if spec.one_per_player and spec.count != "any":
+        if spec.one_per_player and not (spec.count == "any" or spec.up_to):
             raise DslError(
-                f"{where}: 'one_per_player' needs 'count': 'any' -- "
+                f"{where}: 'one_per_player' needs a size the caster picks -- "
+                f"'count': 'any', or a ceiling ('count': N with 'up_to': true); "
                 f"it caps a variable-size choice, and a fixed one has no room to cap"
             )
         if (
@@ -368,32 +373,39 @@ def _check_mode_targets(
                 f"picks how many) or 'any'; a computed count has no cast-time "
                 f"value to read"
             )
-        if spec.variable_size and (
-            spec.one_per_player or spec.total_mana_value is not None
-        ):
+        if spec.variable_size and spec.constrains_the_set:
             raise DslError(
                 f"{label}: a caster-sized mode-owned target cannot carry "
-                f"'one_per_player' or 'total_mana_value' -- the mode's targets "
-                f"are asked one spec at a time, with no check between the picks"
+                f"'one_per_player', 'total_mana_value' or 'total_power' -- the "
+                f"mode's targets are asked one spec at a time, with no check "
+                f"between the picks"
             )
-        if (spec.optional or spec.variable_size) and not _ends_every_declaration(
-            spec, owned
-        ):
-            # "This creature fights **up to one** target creature an opponent
-            # controls" (Summon: Magus Sisters), "return **one or two** target
-            # permanent cards" (Yuna's Decision): a declined optional stores no
-            # ref and a caster-sized spec stores as many as were picked, and
-            # `filter_legal` splits the stored refs by position, so a spec
-            # declared after either would read nothing back -- or the wrong
-            # thing. Last in every list a cast or trigger can declare, it
-            # swallows only its own refs, as a card-level variable-size spec
-            # at the end of its list does.
-            raise DslError(
-                f"{label}: an 'optional' or variable-size mode-owned target must "
-                f"be the last target declared -- the last spec of its mode, with "
-                f"no later mode owning a target -- or the refs after it land in "
-                f"the wrong bucket"
-            )
+    # "This creature fights **up to one** target creature an opponent controls"
+    # (Summon: Magus Sisters), "return **one or two** target permanent cards"
+    # (Yuna's Decision), "**any number of** target opponents" in Will of the
+    # Abzan's *first* bullet: a declined optional stores no ref and a
+    # caster-sized spec stores as many as were picked, so `filter_legal` can
+    # only split one off as "whatever is left". `CardDef.specs_for_modes`
+    # therefore stores it last, after every fixed-size spec of every chosen
+    # mode -- which is unambiguous for exactly one such spec per list.
+    sizeless = [spec for spec in owned if spec.optional or spec.variable_size]
+    if len(sizeless) > 1:
+        raise DslError(
+            f"{where}: at most one 'optional' or caster-sized mode-owned target "
+            f"per card -- {', '.join(repr(s.id) for s in sizeless)} each store as "
+            f"many refs as were picked, and two of them in one declaration "
+            f"leave no way to say where the first one ends"
+        )
+    for last in sizeless:
+        for other in specs:
+            if other is not last and _names_target(other.selector, last.id):
+                # Stored last, it is enumerated after every other spec, so one
+                # reading its answer would be asked with no answer to read.
+                raise DslError(
+                    f"{where}.target[{other.id}]: its selector names {last.id!r}, "
+                    f"an 'optional' or caster-sized mode-owned target -- that one "
+                    f"is stored after every other target, so nothing can read it"
+                )
     if any(spec.optional for spec in specs if spec.mode is None):
         raise DslError(
             f"{where}: a card-level 'optional' target cannot share a card with a "
@@ -408,21 +420,15 @@ def _check_mode_targets(
         )
 
 
-def _ends_every_declaration(spec: TargetSpec, owned: list[TargetSpec]) -> bool:
-    """Is ``spec`` the last ref-storing spec of every list it is declared in?
-
-    `CardDef.specs_for_modes` lays a declaration out as the card-level specs,
-    then each chosen mode's specs in ascending mode index. A spec whose stored
-    size is not fixed reads back
-    correctly only when nothing is declared after it, and that holds for every
-    choice of modes exactly when it is the last spec of its own mode and no
-    later mode owns a target.  Declinable (`optional`) and caster-sized
-    (`variable_size`) specs are both of that kind.
-    """
-    assert spec.mode is not None
-    later = [o for o in owned if o.mode is not None and o.mode > spec.mode]
-    own = [o for o in owned if o.mode == spec.mode]
-    return not later and own[-1] is spec
+def _names_target(node: Any, target_id: str) -> bool:
+    """Does this selector name the sibling target ``target_id``?"""
+    if isinstance(node, Mapping):
+        if node.get("target") == target_id:
+            return True
+        return any(_names_target(v, target_id) for v in node.values())
+    if isinstance(node, (list, tuple)):
+        return any(_names_target(v, target_id) for v in node)
+    return False
 
 
 def _reads_context(node: Any) -> bool:
@@ -554,6 +560,20 @@ def _compile_target(
                 f"{label}: 'total_mana_value' caps the mana value of the objects "
                 f"chosen, which a {model.kind!r} target does not have"
             )
+    if model.total_power is not None:
+        if model.total_power < 0:
+            # Zero is a real cap -- a 0/1 Wall's card passes it -- but below
+            # zero only a creature with negative power could ever be chosen,
+            # which is not a sentence any card prints.
+            raise DslError(
+                f"{label}: 'total_power' is a cap on the picks together, "
+                f"and {model.total_power} is below anything a card prints"
+            )
+        if model.kind in ("player", "spell"):
+            raise DslError(
+                f"{label}: 'total_power' caps the power of the objects chosen, "
+                f"which a {model.kind!r} target does not have"
+            )
 
     if model.permanent_selector is not None:
         _check_permanent_selector(model, label)
@@ -636,6 +656,7 @@ def _compile_target(
         one_per_player=model.one_per_player,
         optional=model.optional,
         total_mana_value=model.total_mana_value,
+        total_power=model.total_power,
         mode=model.mode,
         gift_promised=model.gift_promised,
         cost_option=model.cost_option,

@@ -618,8 +618,8 @@ def _choose_each_target(
     legal single target, through the same `ask_targets` shape a mode-owned
     target uses, and the client draws it as cards to toggle.
 
-    A spec with a cross-target rule (one per player, a total mana value) keeps
-    the subset enumeration, which is the only thing that can check it. So does
+    A spec with a cross-target rule (one per player, a total mana value or
+    power -- `TargetSpec.constrains_the_set`) keeps the subset enumeration, which is the only thing that can check it. So does
     ``optional`` with a count above one -- "exactly N, or none" forbids the
     sizes in between, and a min/max pick cannot say that.
     """
@@ -627,7 +627,7 @@ def _choose_each_target(
     if len(specs) != 1:
         return None
     spec = specs[0]
-    if spec.one_per_player or spec.total_mana_value is not None:
+    if spec.constrains_the_set:
         return None
     count = target_count(state, trig.controller, spec, trig.source_oid, bindings=trig.bindings)
     if count != "any" and (not isinstance(count, int) or count < 2 or spec.optional):

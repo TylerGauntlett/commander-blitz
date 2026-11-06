@@ -1,0 +1,18 @@
+{
+  "card_id": "interface_ace",
+  "name": "Interface Ace",
+  "oracle_text": "This creature saddles Mounts and crews Vehicles using its toughness rather than its power.\nWhenever this creature becomes tapped during your turn, untap it. This ability triggers only once each turn.",
+  "blocked_sentences": [
+    "This creature saddles Mounts and crews Vehicles using its toughness rather than its power."
+  ],
+  "needs": [
+    {
+      "capability": "crew_with_toughness",
+      "kind": "static_effect",
+      "what": "a static on a creature (affects: self_only) that makes it count its toughness instead of its power toward the total_power of a crew cost (tap_permanents with total_power) and toward a saddle cost; saddle itself (Saddle N: tap creatures with total power N, sorcery speed, the Mount becomes saddled) must also exist for the saddle half",
+      "why_existing_wont_do": "crew_power_bonus only adds a fixed amount to power for crewing, it cannot substitute toughness for power; combat_damage_by_toughness swaps power for toughness only in combat damage assignment; no saddle mechanic exists in reference at all (no keyword, cost or op)"
+    }
+  ],
+  "closest_existing": ["crew_power_bonus", "combat_damage_by_toughness"],
+  "confidence": "high"
+}

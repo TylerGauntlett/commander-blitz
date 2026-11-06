@@ -19,6 +19,7 @@ from .carddef import (
     DECAYED_TRIGGER,
     DETHRONE_TRIGGER,
     EXALTED_TRIGGER,
+    FLANKING_TRIGGER,
     MELEE_TRIGGER,
     Ability,
     TriggerSpec,
@@ -1205,6 +1206,10 @@ def _candidate_abilities(state: GameState, event: GameEvent):
         # Melee (702.121): the same shape again, for Titania's granted melee.
         if not obj.face_down and has_keyword(state, oid, Keyword.MELEE.value):
             yield obj, MELEE_TRIGGER
+        # Flanking (702.25): the same shape, for Sidewinder Sliver's granted
+        # flanking; the trigger reads the word again on each blocker.
+        if not obj.face_down and has_keyword(state, oid, Keyword.FLANKING.value):
+            yield obj, FLANKING_TRIGGER
         # Decayed (702.147): the same shape, so a granted decayed listens too;
         # the trigger only schedules the sacrifice, at end of combat.
         if not obj.face_down and has_keyword(state, oid, Keyword.DECAYED.value):

@@ -10,15 +10,18 @@ track "the new object", which the curated decks avoid.
 
 from __future__ import annotations
 
+import re
 from collections.abc import Mapping
 from dataclasses import dataclass, field
+from functools import lru_cache
 from typing import Any
 
 from .enums import Step, Zone
 from .mana import ManaOrigin
 from .structs import AttackMark, CastRider, PermanentShield, TempEffect
 
-#: Counter kinds the engine understands specially.  Anything else is inert data.
+#: Counter kinds the engine understands specially.  Anything else is inert data,
+#: except a P/T-modifying spelling (`pt_counter`), which any kind may be.
 PLUS_ONE = "+1/+1"
 MINUS_ONE = "-1/-1"
 #: Not a counter kind but the word a *reader* uses for every kind summed --
@@ -52,6 +55,31 @@ STUN = "stun"
 #: as good as several. Read by `zones.move_object`, which every departure goes
 #: through, so destruction, sacrifice and 0 toughness are all covered.
 FINALITY = "finality"
+#: The spelling of a **P/T-modifying counter** (122.1a, 613.4c): a signed
+#: number, a slash and a signed number, both signs written -- "+1/+1", "-0/-1",
+#: "+1/+0", "-2/-2". Each spelling is its own kind (122.1); the sign on a zero
+#: is part of the printed name and changes nothing about its size.
+PT_COUNTER_RE = re.compile(r"([+-])(\d+)/([+-])(\d+)")
+
+
+@lru_cache(maxsize=256)
+def pt_counter(kind: str) -> tuple[int, int] | None:
+    """The (power, toughness) one counter of ``kind`` adds, or None.
+
+    613.4c reads *every* counter of the form +X/+Y or -X/-Y in the counters
+    layer, not only the two kinds 704.5q annihilates. Wall of Roots' "-0/-1"
+    counter lowers toughness by one and power by nothing; a "+1/+0" counter is
+    a power counter that is not a +1/+1 counter, so it neither annihilates with
+    a -1/-1 counter nor counts for "a creature with a +1/+1 counter on it".
+    """
+    match = PT_COUNTER_RE.fullmatch(kind)
+    if match is None:
+        return None
+    psign, power, tsign, toughness = match.groups()
+    return (
+        int(power) * (-1 if psign == "-" else 1),
+        int(toughness) * (-1 if tsign == "-" else 1),
+    )
 
 
 @dataclass

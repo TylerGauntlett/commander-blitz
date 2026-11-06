@@ -51,6 +51,7 @@ from commanderblitz.engine.structs import (
     TOKEN_MULTIPLIER_DURATIONS,
     UNBLOCKABLE_DURATIONS,
 )
+from commanderblitz.engine.temp_effects import COMBAT_RULE_GRANTS
 from commanderblitz.engine.triggers import (
     OBJECT_SUBJECT_TRIGGERS,
     RECIPIENT_KEYS,
@@ -1514,6 +1515,25 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             for name in names:
                 if name not in KNOWN_TYPES:
                     raise DslError(f"{where}: unknown card type {name!r} in {key!r}")
+    if op == "choose_number":
+        # The number exists only as its binding, read by a value expression's
+        # `{"binding": …}` -- without 'as' the answer is thrown away and the
+        # comparison reads 0. The bounds are the printed range, both literal.
+        if not effect.get("as"):
+            raise DslError(
+                f"{where}: choose_number needs an 'as' -- the chosen number is "
+                f"only reachable through the binding it is stored under"
+            )
+        if "max" not in effect:
+            raise DslError(f"{where}: choose_number needs a 'max' -- the printed upper bound")
+        low, high = effect.get("min", 0), effect["max"]
+        for key, bound in (("min", low), ("max", high)):
+            if not isinstance(bound, int) or isinstance(bound, bool) or bound < 0:
+                raise DslError(
+                    f"{where}: choose_number '{key}' is a non-negative integer, got {bound!r}"
+                )
+        if high < low:
+            raise DslError(f"{where}: choose_number 'max' {high} is below 'min' {low}")
     if op == "choose_player":
         # The chosen seat exists only as the binding it is written to -- nothing
         # else on the card can reach it -- so an omitted 'as' is a prompt whose
@@ -1961,6 +1981,22 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}: unknown cant_block duration {effect['duration']!r} "
                 f"(implemented: {sorted(BLOCK_PROHIBITION_DURATIONS)})"
+            )
+    if op in COMBAT_RULE_GRANTS:
+        # A grant written onto the creatures found as it resolves, so there is
+        # nothing to grant without `objects` -- an absent one would load and
+        # change no creature. One clock only: every printed line says "this
+        # turn" or "until end of turn", and a longer one would be a different
+        # card that reads the same.
+        if not effect.get("objects"):
+            raise DslError(
+                f"{where}: {op} needs 'objects' (the creatures it applies to, "
+                f"found when it resolves)"
+            )
+        if str(effect.get("duration", "this_turn")) != "this_turn":
+            raise DslError(
+                f"{where}: {op} lasts until end of turn; 'duration' may only be "
+                f"'this_turn', got {effect['duration']!r}"
             )
     if op == "unblockable":
         # `objects` is required and there is no wildcard shorthand, which is the
@@ -2744,6 +2780,23 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             f"{where}: 'choose_permanents' only marks permanents, so it needs an "
             f"'as' for something later to read"
         )
+    if "max_total_power" in effect:
+        # Slaughter the Strong's "any number … with total power 4 or less".
+        # Only `choose_permanents` reads it; on another op it would load and
+        # take everything. The ceiling is the whole constraint, so the pool is
+        # "any number" -- a fixed count beside it is two limits nothing printed
+        # says. (`count: "any"` already refuses `random`.)
+        if op != "choose_permanents":
+            raise DslError(
+                f"{where}: 'max_total_power' caps a choose_permanents choice, not {op!r}"
+            )
+        validate_value(effect["max_total_power"], f"{where}.max_total_power")
+        objects = effect.get("objects")
+        if not isinstance(objects, Mapping) or objects.get("count") != "any":
+            raise DslError(
+                f"{where}: 'max_total_power' chooses any number under the ceiling, "
+                f"so its 'objects' needs count: \"any\""
+            )
     if op == "create_token" and "token" not in effect:
         raise DslError(f"{where}: create_token needs a 'token' id")
     if op == "create_token" and ("power" in effect) != ("toughness" in effect):

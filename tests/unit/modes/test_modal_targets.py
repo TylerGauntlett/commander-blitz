@@ -284,7 +284,11 @@ class TestTheLoaderRefusals:
         return card
 
     def compile(self, card):
-        compile_card(CardModel.model_validate(card))
+        return compile_card(CardModel.model_validate(card))
+
+    def stored(self, card) -> list[str]:
+        """The spec ids in the order a cast choosing both modes stores refs."""
+        return [spec.id for spec in self.compile(card).specs_for_modes((0, 1))]
 
     def test_the_shape_it_is_meant_to_allow_still_loads(self):
         self.compile(self.base())
@@ -300,10 +304,11 @@ class TestTheLoaderRefusals:
         with pytest.raises(DslError, match="top-level 'choose_mode'"):
             self.compile(card)
 
-    def test_a_caster_chosen_size_before_another_modes_target(self):
+    def test_a_caster_chosen_size_before_another_modes_target_is_stored_last(self):
         """It stores as many refs as were picked, so a later mode's ref would be
-        read back into its bucket. Last, it loads -- see
-        tests/unit/modes/test_variable_mode_target.py."""
+        read back into its bucket -- which is why `CardDef.specs_for_modes`
+        stores it after every fixed-size spec. See
+        tests/unit/modes/test_modal_variable_size_targets.py."""
         card = self.base()
         card["targets"][0]["count"] = 2
         card["targets"][0]["up_to"] = True
@@ -318,12 +323,13 @@ class TestTheLoaderRefusals:
         card["spell_effects"][0]["modes"][1]["effects"] = [
             {"op": "return_to_hand", "objects": {"target": "b"}}
         ]
-        with pytest.raises(DslError, match="must be the last target declared"):
-            self.compile(card)
+        stored = self.stored(card)
+        assert stored == ["b", "a"]
 
-    def test_an_optional_mode_owned_target_before_another_modes_target(self):
+    def test_an_optional_mode_owned_target_before_another_modes_target_is_stored_last(self):
         """A declined one stores no ref, so a later mode's ref would be read
-        back into its bucket. See tests/unit/modes/test_optional_mode_target.py."""
+        back into its bucket -- unless it is stored last. See
+        tests/unit/modes/test_optional_mode_target.py."""
         card = self.base()
         card["targets"][0]["optional"] = True
         card["targets"].append(
@@ -337,7 +343,26 @@ class TestTheLoaderRefusals:
         card["spell_effects"][0]["modes"][1]["effects"] = [
             {"op": "return_to_hand", "objects": {"target": "b"}}
         ]
-        with pytest.raises(DslError, match="must be the last target declared"):
+        assert self.stored(card) == ["b", "a"]
+
+    def test_two_sizeless_mode_owned_targets_are_refused(self):
+        """Both chosen, two caster-picked sizes share one flat tuple and no
+        position says where the first ends."""
+        card = self.base()
+        card["targets"][0]["optional"] = True
+        card["targets"].append(
+            {
+                "id": "b",
+                "kind": "card_in_graveyard",
+                "mode": 1,
+                "optional": True,
+                "selector": {"zone": "graveyard", "types": ["Land"]},
+            }
+        )
+        card["spell_effects"][0]["modes"][1]["effects"] = [
+            {"op": "return_to_hand", "objects": {"target": "b"}}
+        ]
+        with pytest.raises(DslError, match="at most one 'optional' or caster-sized"):
             self.compile(card)
 
     def test_a_variable_card_level_target_beside_a_mode_owned_one(self):

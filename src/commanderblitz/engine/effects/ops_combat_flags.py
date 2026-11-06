@@ -29,6 +29,7 @@ from ..temp_effects import (
     forbid_sacrifice,
     goad_creature,
     grant_cant_be_sacrificed,
+    grant_combat_rule,
     make_unblockable,
     require_attack_on,
     require_attack_player,
@@ -928,6 +929,42 @@ def op_unblockable(ctx: EffectContext, spec: Mapping[str, Any]):
         opponents_only=bool(spec.get("by_opponents", False)),
     )
     yield from ()
+
+
+@register("attack_despite_defender")
+def op_attack_despite_defender(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Target creature with defender can attack this turn as though it didn't
+    have defender." (Assault Formation, Walking Bulwark, Wakestone Gargoyle.)
+
+    The timed form of the `attack_despite_defender` static, read by the same
+    predicate, `player_statics.defender_waived`. ``objects`` is resolved now --
+    Wakestone Gargoyle's "creatures you control with defender" is the group
+    found as it resolves (611.2c), so a wall that enters later stays a wall --
+    and each carries the grant until end of turn.
+
+    The near miss is `lose_keyword`: the creature keeps defender, so a
+    "creature with defender" filter and an anthem for walls still see it.
+    """
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Attack despite defender")
+    grant_combat_rule(ctx.state, oids, "attack_despite_defender", source=ctx.source_oid)
+
+
+@register("combat_damage_by_toughness")
+def op_combat_damage_by_toughness(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Until end of turn, target creature … assigns combat damage equal to its
+    toughness rather than its power." (Walking Bulwark.)
+
+    The timed form of the `combat_damage_by_toughness` static (510.1a's
+    substitution), read by the same predicate,
+    `player_statics.assigns_damage_by_toughness`. ``objects`` is resolved now
+    and each creature found carries the grant until end of turn (611.2c); the
+    loader admits no other ``duration``.
+
+    The near misses change the creature's power, which every other reader --
+    a fight, "power 4 or greater", a sacrificed creature's power -- would see.
+    """
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Assign damage by toughness")
+    grant_combat_rule(ctx.state, oids, "combat_damage_by_toughness", source=ctx.source_oid)
 
 
 @register("cant_sacrifice")

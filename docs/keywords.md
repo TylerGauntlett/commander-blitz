@@ -270,7 +270,7 @@ This is the long tail, and where the build order comes from.
 | Fading | free | `upkeep` trigger with an `if` on `counters_on` — "if you can't" is an ordinary comparison, and the sacrifice is the `else` | — |
 | Fateseal | free | `scry` with `player` naming whose library and `chooser` naming who decides | — |
 | Fear | shipped | `Keyword`, read in `combat.can_block` against the blocker's **derived** types and colors | `fear` |
-| Flanking | free | `becomes_blocked` trigger, then `pump` over `{"blocking": {"binding": "self"}}` filtered `not_keywords` | — |
+| Flanking | shipped | `Keyword`, whose trigger `carddef.FLANKING_TRIGGER` the rules supply once per permanent with the keyword: `becomes_blocked` from itself, then `pump` -1/-1 over `{"blocking": {"binding": "self"}, "not_keywords": ["flanking"]}`, with a `recheck: false` condition that one such blocker exists. A keyword for exalted's reason, and because the exemption reads the word on the blocker: Sidewinder Sliver grants it — cashed by `test_flanking.py` | `flanking` |
 | Flashback | shipped | card-level field; an alternative cost offered only from the owner's graveyard, exiling instead of returning | `flashback` |
 | Flip | free | `back_face` plus the `transform` op, both shipped for Bloodline Keeper — 711 is a DFC whose difference is which way the cardboard turns | `back_face` |
 | Forecast | shipped | `active_zones: ["hand"]` plus `activate_steps` and `once_each_turn`, which is the fourth way to satisfy the guard | — |

@@ -765,6 +765,70 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{3}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "duration": "this_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "unblockable"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "power": {
+                  "op": "<=",
+                  "value": {
+                    "const": 3
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{3}, {T}: Target creature with power 3 or less can't be blocked this turn."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "access_tunnel",
+      "name": "Access Tunnel",
+      "oracle_text": "{T}: Add {C}.\n{3}, {T}: Target creature with power 3 or less can't be blocked this turn.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -7746,6 +7810,113 @@
           },
           "effects": [
             {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color."
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "extreme_value": {
+                  "objects": {
+                    "controller": "you",
+                    "exclude_self": true,
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "of": "toughness",
+                  "pick": "greatest"
+                }
+              },
+              "any_one_color": true,
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add X mana of any one color, where X is the greatest toughness among other creatures you control."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "arbor_adherent",
+      "mana_cost": "{3}{G}",
+      "name": "Arbor Adherent",
+      "oracle_text": "{T}: Add one mana of any color.\n{T}: Add X mana of any one color, where X is the greatest toughness among other creatures you control.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Dog",
+        "Druid"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
               "objects": {
                 "target": "t1"
               },
@@ -7897,6 +8068,94 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control with defender enters, draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "keywords": [
+                "defender"
+              ],
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "keywords": [
+              "defender"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "combat_damage_by_toughness",
+          "kind": "static",
+          "text": "Each creature you control with defender assigns combat damage equal to its toughness rather than its power and can attack as though it didn't have defender."
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "keywords": [
+              "defender"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "attack_despite_defender",
+          "kind": "static",
+          "text": "Each creature you control with defender assigns combat damage equal to its toughness rather than its power and can attack as though it didn't have defender."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "U",
+        "W"
+      ],
+      "id": "arcades_the_strategist",
+      "keywords": [
+        "flying",
+        "vigilance"
+      ],
+      "mana_cost": "{1}{G}{W}{U}",
+      "name": "Arcades, the Strategist",
+      "oracle_text": "Flying, vigilance\nWhenever a creature you control with defender enters, draw a card.\nEach creature you control with defender assigns combat damage equal to its toughness rather than its power and can attack as though it didn't have defender.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Elder",
+        "Dragon"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -11251,6 +11510,92 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "combat_damage_by_toughness",
+          "kind": "static",
+          "text": "Each creature you control assigns combat damage equal to its toughness rather than its power."
+        },
+        {
+          "cost": {
+            "mana": "{G}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "attack_despite_defender"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "keywords": [
+                  "defender"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{G}: Target creature with defender can attack this turn as though it didn't have defender."
+        },
+        {
+          "cost": {
+            "mana": "{2}{G}"
+          },
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 0
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{G}: Creatures you control get +0/+1 until end of turn."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "assault_formation",
+      "mana_cost": "{1}{G}",
+      "name": "Assault Formation",
+      "oracle_text": "Each creature you control assigns combat damage equal to its toughness rather than its power.\n{G}: Target creature with defender can attack this turn as though it didn't have defender.\n{2}{G}: Creatures you control get +0/+1 until end of turn.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -13613,6 +13958,65 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "keywords": [
+                    "defender"
+                  ],
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "add_mana",
+              "split": [
+                "W",
+                "U",
+                "B",
+                "R",
+                "G"
+              ]
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add X mana in any combination of colors, where X is the number of creatures you control with defender."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "axebane_guardian",
+      "keywords": [
+        "defender"
+      ],
+      "mana_cost": "{2}{G}",
+      "name": "Axebane Guardian",
+      "oracle_text": "Defender\n{T}: Add X mana in any combination of colors, where X is the number of creatures you control with defender.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Druid"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -14173,6 +14577,84 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ]
+          },
+          "condition": {
+            "is_your_turn": true
+          },
+          "effect": "combat_damage_by_toughness",
+          "kind": "static",
+          "text": "During your turn, each creature assigns combat damage equal to its toughness rather than its power."
+        },
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "pump",
+              "power": {
+                "const": 0
+              },
+              "toughness": {
+                "cards_in_hand": "you"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 100,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "up_to": true
+            }
+          ],
+          "text": "Whenever Baldin attacks, up to one hundred target creatures each get +0/+X until end of turn, where X is the number of cards in your hand.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "baldin_century_herdmaster",
+      "mana_cost": "{4}{W}{W}",
+      "name": "Baldin, Century Herdmaster",
+      "oracle_text": "During your turn, each creature assigns combat damage equal to its toughness rather than its power.\nWhenever Baldin attacks, up to one hundred target creatures each get +0/+X until end of turn, where X is the number of cards in your hand.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 7,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -17077,6 +17559,65 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "skulk"
+          ],
+          "kind": "static",
+          "text": "Creatures you control have skulk. (They can't be blocked by creatures with greater power.)"
+        },
+        {
+          "cost": {
+            "mana": "{4}{W}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "{4}{W}: Creatures you control get +1/+1 until end of turn."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "behind_the_scenes",
+      "mana_cost": "{2}{B}",
+      "name": "Behind the Scenes",
+      "oracle_text": "Creatures you control have skulk. (They can't be blocked by creatures with greater power.)\n{4}{W}: Creatures you control get +1/+1 until end of turn.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -17608,6 +18149,104 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "life_gained_this_turn": "you"
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            },
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "target": "t2"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            {
+              "count": 1,
+              "id": "t2",
+              "kind": "card_in_graveyard",
+              "optional": true,
+              "selector": {
+                "controller": "you",
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "life_lost_this_turn": "you"
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "At the beginning of your end step, put a number of +1/+1 counters on up to one other target creature you control equal to the amount of life you gained this turn. Return up to one target creature card with mana value less than or equal to the amount of life you lost this turn from your graveyard to the battlefield.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "W"
+      ],
+      "id": "betor_ancestor_s_voice",
+      "keywords": [
+        "flying",
+        "lifelink"
+      ],
+      "mana_cost": "{2}{W}{B}{G}",
+      "name": "Betor, Ancestor's Voice",
+      "oracle_text": "Flying, lifelink\nAt the beginning of your end step, put a number of +1/+1 counters on up to one other target creature you control equal to the amount of life you gained this turn. Return up to one target creature card with mana value less than or equal to the amount of life you lost this turn from your graveyard to the battlefield.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Dragon"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -19268,6 +19907,58 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{2}{B}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "keywords": [
+                    "defender"
+                  ],
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "lose_life",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{B}, {T}: Each opponent loses X life, where X is the number of creatures with defender you control."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "blight_pile",
+      "keywords": [
+        "defender"
+      ],
+      "mana_cost": "{1}{B}",
+      "name": "Blight Pile",
+      "oracle_text": "Defender\n{2}{B}, {T}: Each opponent loses X life, where X is the number of creatures with defender you control.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -26400,6 +27091,78 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "cost": {
+            "mana": "{2}"
+          },
+          "effect": "ward",
+          "kind": "static",
+          "text": "Flying, ward {2}"
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "toughness_of": {
+                      "binding": "each"
+                    }
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "binding": "each"
+                  },
+                  "op": "add_counters"
+                }
+              ],
+              "objects": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "for_each"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, put a number of +1/+1 counters on each other creature you control equal to that creature's toughness.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "canopy_gargantuan",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{5}{G}{G}",
+      "name": "Canopy Gargantuan",
+      "oracle_text": "Flying, ward {2}\nAt the beginning of your upkeep, put a number of +1/+1 counters on each other creature you control equal to that creature's toughness.",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 7,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -34652,6 +35415,105 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "link": true,
+                  "objects": {
+                    "binding": "subject"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Exile it with Colfenor's Urn?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature with toughness 4 or greater is put into your graveyard from the battlefield, you may exile it.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "toughness_had": true
+              },
+              "right": {
+                "const": 4
+              }
+            },
+            "controller": "any",
+            "event": "creature_dies",
+            "filter": {
+              "owner": "you"
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "as": "sacrificed",
+              "objects": {
+                "self_only": true
+              },
+              "op": "sacrifice"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "binding": "sacrificed"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "objects": {
+                    "controller": "any",
+                    "count": "all",
+                    "exiled_with": "self",
+                    "zone": "exile"
+                  },
+                  "op": "put_onto_battlefield"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of the end step, if three or more cards have been exiled with this artifact, sacrifice it. If you do, return those cards to the battlefield under their owner's control.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "controller": "any",
+                  "exiled_with": "self",
+                  "zone": "exile"
+                }
+              },
+              "right": {
+                "const": 3
+              }
+            },
+            "controller": "any",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "colfenor_s_urn",
+      "mana_cost": "{3}",
+      "name": "Colfenor's Urn",
+      "oracle_text": "Whenever a creature with toughness 4 or greater is put into your graveyard from the battlefield, you may exile it.\nAt the beginning of the end step, if three or more cards have been exiled with this artifact, sacrifice it. If you do, return those cards to the battlefield under their owner's control.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -35113,6 +35975,70 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{10}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 10
+              },
+              "op": "monstrosity"
+            }
+          ],
+          "kind": "activated",
+          "text": "{10}: Monstrosity 10. (If this creature isn't monstrous, put ten +1/+1 counters on it and it becomes monstrous.)"
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "is_monstrous": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "trample"
+          ],
+          "kind": "static",
+          "text": "As long as this creature is monstrous, it has trample and can attack as though it didn't have defender."
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "is_monstrous": true
+          },
+          "effect": "attack_despite_defender",
+          "kind": "static",
+          "text": "As long as this creature is monstrous, it has trample and can attack as though it didn't have defender."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "colossus_of_akros",
+      "keywords": [
+        "defender",
+        "indestructible"
+      ],
+      "mana_cost": "{8}",
+      "name": "Colossus of Akros",
+      "oracle_text": "Defender, indestructible\n{10}: Monstrosity 10. (If this creature isn't monstrous, put ten +1/+1 counters on it and it becomes monstrous.)\nAs long as this creature is monstrous, it has trample and can attack as though it didn't have defender.",
+      "power": 10,
+      "source": "auto",
+      "subtypes": [
+        "Golem"
+      ],
+      "toughness": 10,
+      "types": [
+        "Artifact",
+        "Creature"
       ]
     },
     {
@@ -38245,6 +39171,53 @@
       ],
       "toughness": 4,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "haste"
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}: Creatures you control gain haste until end of turn."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "crashing_drawbridge",
+      "keywords": [
+        "defender"
+      ],
+      "mana_cost": "{2}",
+      "name": "Crashing Drawbridge",
+      "oracle_text": "Defender\n{T}: Creatures you control gain haste until end of turn.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Wall"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact",
         "Creature"
       ]
     },
@@ -48596,6 +49569,48 @@
         "Warrior"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "combat_damage_by_toughness",
+          "kind": "static",
+          "text": "Each creature assigns combat damage equal to its toughness rather than its power."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "W"
+      ],
+      "id": "doran_the_siege_tower",
+      "mana_cost": "{W}{B}{G}",
+      "name": "Doran, the Siege Tower",
+      "oracle_text": "Each creature assigns combat damage equal to its toughness rather than its power.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Treefolk",
+        "Shaman"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
@@ -58953,6 +59968,47 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "expel_the_interlopers",
+      "mana_cost": "{3}{W}{W}",
+      "name": "Expel the Interlopers",
+      "oracle_text": "Choose a number between 0 and 10. Destroy all creatures with power greater than or equal to the chosen number.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "chosen",
+          "max": 10,
+          "min": 0,
+          "op": "choose_number"
+        },
+        {
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "power": {
+              "op": ">=",
+              "value": {
+                "binding": "chosen"
+              }
+            },
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "destroy"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -62030,6 +63086,94 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "combat_damage_by_toughness",
+          "kind": "static",
+          "text": "Each creature you control assigns combat damage equal to its toughness rather than its power."
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "attack_despite_defender",
+          "kind": "static",
+          "text": "Creatures you control can attack as though they didn't have defender."
+        },
+        {
+          "cost": {
+            "mana": "{3}",
+            "sacrifice": {
+              "as": "sacrificed",
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "toughness_of": {
+                  "binding": "sacrificed"
+                }
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "power_of": {
+                  "binding": "sacrificed"
+                }
+              },
+              "op": "discard",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}, {T}, Sacrifice another creature: Draw cards equal to the sacrificed creature's toughness, then discard cards equal to its power."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "W"
+      ],
+      "id": "felothar_the_steadfast",
+      "mana_cost": "{1}{W}{B}{G}",
+      "name": "Felothar the Steadfast",
+      "oracle_text": "Each creature you control assigns combat damage equal to its toughness rather than its power.\nCreatures you control can attack as though they didn't have defender.\n{3}, {T}, Sacrifice another creature: Draw cards equal to the sacrificed creature's toughness, then discard cards equal to its power.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -87082,6 +88226,75 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "combat_damage_by_toughness",
+          "kind": "static",
+          "text": "Each creature you control assigns combat damage equal to its toughness rather than its power."
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "attack_despite_defender",
+          "kind": "static",
+          "text": "Creatures you control can attack as though they didn't have defender."
+        },
+        {
+          "cost": {
+            "mana": "{2}{W}{U}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "untap"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{2}{W}{U}: Untap target creature."
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "high_alert",
+      "mana_cost": "{1}{W}{U}",
+      "name": "High Alert",
+      "oracle_text": "Each creature you control assigns combat damage equal to its toughness rather than its power.\nCreatures you control can attack as though they didn't have defender.\n{2}{W}{U}: Untap target creature.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -88760,6 +89973,49 @@
         {
           "effects": [
             {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "create_token",
+              "token": "insect_1_1_g_flying_deathtouch"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature is dealt damage, create that many 1/1 green Insect creature tokens with flying and deathtouch.",
+          "trigger": {
+            "event": "dealt_damage",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "hornet_nest",
+      "keywords": [
+        "defender"
+      ],
+      "mana_cost": "{2}{G}",
+      "name": "Hornet Nest",
+      "oracle_text": "Defender (This creature can't attack.)\nWhenever this creature is dealt damage, create that many 1/1 green Insect creature tokens with flying and deathtouch. (Any amount of damage a creature with deathtouch deals to a creature is enough to destroy it.)",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Insect"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "all_kinds": true,
               "from_had_counters": true,
               "objects": {
@@ -89126,6 +90382,70 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "combat_damage_by_toughness",
+          "kind": "static",
+          "text": "Each creature you control assigns combat damage equal to its toughness rather than its power."
+        },
+        {
+          "cost": {
+            "loyalty": -3
+          },
+          "effects": [
+            {
+              "amount": {
+                "extreme_value": {
+                  "objects": {
+                    "controller": "you",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "of": "toughness",
+                  "pick": "greatest"
+                }
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "−3: You gain life equal to the greatest toughness among creatures you control."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "huatli_the_sun_s_heart",
+      "loyalty": 7,
+      "mana_cost": "{2}{G/W}",
+      "name": "Huatli, the Sun's Heart",
+      "oracle_text": "Each creature you control assigns combat damage equal to its toughness rather than its power.\n−3: You gain life equal to the greatest toughness among creatures you control.",
+      "source": "auto",
+      "subtypes": [
+        "Huatli"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
       ]
     },
     {
@@ -91009,6 +92329,63 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "toughness_of": {
+                  "binding": "subject"
+                }
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control deals combat damage to a player, you gain life equal to that creature's toughness.",
+          "trigger": {
+            "controller": "you",
+            "event": "deals_combat_damage_to_player",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "ikra_shidiqi_the_usurper",
+      "keywords": [
+        "menace",
+        "partner"
+      ],
+      "mana_cost": "{3}{B}{G}",
+      "name": "Ikra Shidiqi, the Usurper",
+      "oracle_text": "Menace\nWhenever a creature you control deals combat damage to a player, you gain life equal to that creature's toughness.\nPartner (You can have two commanders if both have partner.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Snake",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 7,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -92411,6 +93788,62 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "lose_life",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, if you gained 3 or more life this turn, each opponent loses 3 life.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "life_gained_this_turn": "you"
+              },
+              "right": {
+                "const": 3
+              }
+            },
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "indulging_patrician",
+      "keywords": [
+        "flying",
+        "lifelink"
+      ],
+      "mana_cost": "{1}{W}{B}",
+      "name": "Indulging Patrician",
+      "oracle_text": "Flying\nLifelink (Damage dealt by this creature also causes you to gain that much life.)\nAt the beginning of your end step, if you gained 3 or more life this turn, each opponent loses 3 life.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Noble"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -96618,6 +98051,54 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Landfall — Whenever a land you control enters, you gain 1 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "jaddi_offshoot",
+      "keywords": [
+        "defender"
+      ],
+      "mana_cost": "{G}",
+      "name": "Jaddi Offshoot",
+      "oracle_text": "Defender\nLandfall — Whenever a land you control enters, you gain 1 life.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Plant"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -96743,6 +98224,87 @@
       "toughness": 5,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "max": [
+                  {
+                    "minus": [
+                      {
+                        "power_of": {
+                          "binding": "subject"
+                        }
+                      },
+                      {
+                        "toughness_of": {
+                          "binding": "subject"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "minus": [
+                      {
+                        "toughness_of": {
+                          "binding": "subject"
+                        }
+                      },
+                      {
+                        "power_of": {
+                          "binding": "subject"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "op": "lose_life",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "Whenever a creature you control enters, target opponent loses life equal to the difference between that creature's power and its toughness.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "jaws_of_defeat",
+      "mana_cost": "{3}{B}",
+      "name": "Jaws of Defeat",
+      "oracle_text": "Whenever a creature you control enters, target opponent loses life equal to the difference between that creature's power and its toughness.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -127587,6 +129149,77 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": "any",
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              },
+              "total_power": 10
+            }
+          ],
+          "text": "Whenever this creature mutates, return any number of target creature cards with total power 10 or less from your graveyard to the battlefield.",
+          "trigger": {
+            "controller": "you",
+            "event": "mutates",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "W"
+      ],
+      "id": "nethroi_apex_of_death",
+      "keywords": [
+        "deathtouch",
+        "lifelink"
+      ],
+      "mana_cost": "{2}{W}{B}{G}",
+      "mutate": "{4}{G/W}{B}{B}",
+      "name": "Nethroi, Apex of Death",
+      "oracle_text": "Mutate {4}{G/W}{B}{B} (If you cast this spell for its mutate cost, put it over or under target non-Human creature you own. They mutate into the creature on top plus all abilities from under it.)\nDeathtouch, lifelink\nWhenever this creature mutates, return any number of target creature cards with total power 10 or less from your graveyard to the battlefield.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Cat",
+        "Nightmare",
+        "Beast"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -130168,6 +131801,47 @@
       ],
       "toughness": 2,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, you gain 1 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "nyx_fleece_ram",
+      "mana_cost": "{1}{W}",
+      "name": "Nyx-Fleece Ram",
+      "oracle_text": "At the beginning of your upkeep, you gain 1 life.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Sheep"
+      ],
+      "toughness": 5,
+      "types": [
+        "Enchantment",
         "Creature"
       ]
     },
@@ -144703,6 +146377,112 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 2,
+              "id": "t1",
+              "kind": "permanent",
+              "one_per_player": true,
+              "selector": {
+                "any_types": [
+                  "Artifact",
+                  "Enchantment"
+                ],
+                "controller": "any",
+                "zone": "battlefield"
+              },
+              "up_to": true
+            }
+          ],
+          "text": "When this creature enters or becomes monstrous, exile up to two target artifacts and/or enchantments controlled by different players.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 2,
+              "id": "t1",
+              "kind": "permanent",
+              "one_per_player": true,
+              "selector": {
+                "any_types": [
+                  "Artifact",
+                  "Enchantment"
+                ],
+                "controller": "any",
+                "zone": "battlefield"
+              },
+              "up_to": true
+            }
+          ],
+          "text": "When this creature enters or becomes monstrous, exile up to two target artifacts and/or enchantments controlled by different players.",
+          "trigger": {
+            "event": "becomes_monstrous",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{4}{W}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "monstrosity"
+            }
+          ],
+          "kind": "activated",
+          "text": "{4}{W}: Monstrosity 3. (If this creature isn't monstrous, put three +1/+1 counters on it and it becomes monstrous.)"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "protector_of_the_wastes",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{W}{W}",
+      "name": "Protector of the Wastes",
+      "oracle_text": "Flying\nWhen this creature enters or becomes monstrous, exile up to two target artifacts and/or enchantments controlled by different players.\n{4}{W}: Monstrosity 3. (If this creature isn't monstrous, put three +1/+1 counters on it and it becomes monstrous.)",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "mana": "{2}{U}",
             "tap": true
@@ -148248,6 +150028,105 @@
         "Hydra"
       ],
       "toughness": 0,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "wall_1_3_w_defender"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature enters or attacks, create a 1/3 white Wall creature token with defender.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "wall_1_3_w_defender"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature enters or attacks, create a 1/3 white Wall creature token with defender.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "count": 1,
+                  "destination": "battlefield",
+                  "op": "search_library",
+                  "player": "you",
+                  "selector": {
+                    "supertypes": [
+                      "Basic"
+                    ],
+                    "types": [
+                      "Land"
+                    ]
+                  },
+                  "shuffle": true,
+                  "tapped": true
+                }
+              ],
+              "op": "may"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control with defender dies, you may search your library for a basic land card, put that card onto the battlefield tapped, then shuffle.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "keywords_had": "defender"
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "controller": "you",
+            "event": "creature_dies"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "rampart_architect",
+      "mana_cost": "{3}{G}",
+      "name": "Rampart Architect",
+      "oracle_text": "Whenever this creature enters or attacks, create a 1/3 white Wall creature token with defender.\nWhenever a creature you control with defender dies, you may search your library for a basic land card, put that card onto the battlefield tapped, then shuffle.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Elephant",
+        "Advisor"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -152734,6 +154613,48 @@
     },
     {
       "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "exiles_itself": true,
+      "id": "reunion_of_the_house",
+      "mana_cost": "{5}{W}{W}",
+      "name": "Reunion of the House",
+      "oracle_text": "Return any number of target creature cards with total power 10 or less from your graveyard to the battlefield. Exile Reunion of the House.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "you",
+          "destination": "battlefield",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "return_from_graveyard"
+        }
+      ],
+      "targets": [
+        {
+          "count": "any",
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          },
+          "total_power": 10
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "U"
       ],
       "colors": [
@@ -153180,6 +155101,40 @@
         "Soldier"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "effect": "replace_life_gain",
+          "gain_multiplier": 2,
+          "kind": "static",
+          "text": "If you would gain life, you gain twice that much life instead."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "rhox_faithmender",
+      "keywords": [
+        "lifelink"
+      ],
+      "mana_cost": "{3}{W}",
+      "name": "Rhox Faithmender",
+      "oracle_text": "Lifelink (Damage dealt by this creature also causes you to gain that much life.)\nIf you would gain life, you gain twice that much life instead.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Rhino",
+        "Monk"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
@@ -161958,6 +163913,37 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "you"
+          },
+          "effect": "untap_during_each_untap_step",
+          "kind": "static",
+          "text": "Untap all permanents you control during each other player's untap step."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "seedborn_muse",
+      "mana_cost": "{3}{G}{G}",
+      "name": "Seedborn Muse",
+      "oracle_text": "Untap all permanents you control during each other player's untap step.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Spirit"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "effects": [
@@ -164211,6 +166197,90 @@
     {
       "abilities": [
         {
+          "affects_player": "you",
+          "effect": "player_hexproof",
+          "kind": "static",
+          "text": "You, planeswalkers you control, and other creatures you control have hexproof."
+        },
+        {
+          "affects": {
+            "any_of": [
+              {
+                "types": [
+                  "Planeswalker"
+                ]
+              },
+              {
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ]
+              }
+            ],
+            "controller": "you"
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "hexproof"
+          ],
+          "kind": "static",
+          "text": "You, planeswalkers you control, and other creatures you control have hexproof."
+        },
+        {
+          "cost": {
+            "mana": "{4}{G}{G}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "text": "{4}{G}{G}: Put a +1/+1 counter on each creature you control."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "shalai_voice_of_plenty",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{W}",
+      "name": "Shalai, Voice of Plenty",
+      "oracle_text": "Flying\nYou, planeswalkers you control, and other creatures you control have hexproof.\n{4}{G}{G}: Put a +1/+1 counter on each creature you control.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Angel"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -165742,6 +167812,49 @@
       ],
       "toughness": 3,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "-0/-1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature blocks, put a -0/-1 counter on it.",
+          "trigger": {
+            "event": "blocks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "shield_sphere",
+      "keywords": [
+        "defender"
+      ],
+      "mana_cost": "{0}",
+      "name": "Shield Sphere",
+      "oracle_text": "Defender\nWhenever this creature blocks, put a -0/-1 counter on it.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Wall"
+      ],
+      "toughness": 6,
+      "types": [
+        "Artifact",
         "Creature"
       ]
     },
@@ -167959,6 +170072,64 @@
         "Warrior"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "any",
+            "power": {
+              "op": "<=",
+              "value": 2
+            },
+            "types": [
+              "Creature"
+            ]
+          },
+          "blockers": {
+            "controller": "opponent",
+            "not_keywords": [
+              "flying",
+              "reach"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "block_restriction",
+          "kind": "static",
+          "text": "Creatures your opponents control without flying or reach can't block creatures with power 2 or less."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "sidar_kondo_of_jamuraa",
+      "keywords": [
+        "flanking",
+        "partner"
+      ],
+      "mana_cost": "{2}{G}{W}",
+      "name": "Sidar Kondo of Jamuraa",
+      "oracle_text": "Flanking (Whenever a creature without flanking blocks this creature, the blocking creature gets -1/-1 until end of turn.)\nCreatures your opponents control without flying or reach can't block creatures with power 2 or less.\nPartner (You can have two commanders if both have partner.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
@@ -171023,6 +173194,62 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "slaughter_the_strong",
+      "mana_cost": "{1}{W}{W}",
+      "name": "Slaughter the Strong",
+      "oracle_text": "Each player chooses any number of creatures they control with total power 4 or less, then sacrifices all other creatures they control.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "as": "kept",
+              "max_total_power": 4,
+              "objects": {
+                "chooser": {
+                  "binding": "each_player"
+                },
+                "controller": {
+                  "binding": "each_player"
+                },
+                "count": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "choose_permanents",
+              "prompt": "Keep creatures with total power 4 or less"
+            }
+          ],
+          "op": "for_each_player",
+          "players": "each_player"
+        },
+        {
+          "chooser": "none",
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "exclude_binding": "kept",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "sacrifice"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -177032,6 +179259,148 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "pay_life": 1,
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "owner": "you",
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{T}, Pay 1 life: Destroy target permanent you own."
+        },
+        {
+          "cost": {
+            "pay_life": 2,
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}, Pay 2 life: Add one mana of any color."
+        },
+        {
+          "cost": {
+            "pay_life": 3,
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "proliferate"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Pay 3 life: Proliferate."
+        },
+        {
+          "cost": {
+            "pay_life": 4,
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Pay 4 life: Draw a card."
+        },
+        {
+          "cost": {
+            "mana": "{5}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "untap"
+            }
+          ],
+          "kind": "activated",
+          "text": "{5}: Untap this artifact."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "staff_of_compleation",
+      "mana_cost": "{3}",
+      "name": "Staff of Compleation",
+      "oracle_text": "{T}, Pay 1 life: Destroy target permanent you own.\n{T}, Pay 2 life: Add one mana of any color.\n{T}, Pay 3 life: Proliferate.\n{T}, Pay 4 life: Draw a card.\n{5}: Untap this artifact.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -197775,6 +200144,101 @@
         {
           "effects": [
             {
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "minus": [
+                  {
+                    "const": 0
+                  },
+                  {
+                    "toughness_of": {
+                      "binding": "tipped_snap"
+                    }
+                  }
+                ]
+              },
+              "toughness": {
+                "minus": [
+                  {
+                    "const": 0
+                  },
+                  {
+                    "toughness_of": {
+                      "binding": "tipped_snap"
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "id": "tip_the_scales_shrink",
+          "kind": "reflexive",
+          "text": "When you do, all creatures get -X/-X until end of turn, where X is the sacrificed creature's toughness."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "tip_the_scales",
+      "mana_cost": "{2}{B}",
+      "name": "Tip the Scales",
+      "oracle_text": "Sacrifice a creature. When you do, all creatures get -X/-X until end of turn, where X is the sacrificed creature's toughness.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "tipped",
+          "objects": {
+            "controller": "you",
+            "count": 1,
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "sacrifice",
+          "snapshot": "tipped_snap"
+        },
+        {
+          "condition": {
+            "cmp": ">",
+            "left": {
+              "count": {
+                "binding": "tipped"
+              }
+            },
+            "right": {
+              "const": 0
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "ability": "tip_the_scales_shrink",
+              "op": "reflexive_trigger"
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 3
               },
@@ -199518,6 +201982,56 @@
     },
     {
       "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "tower_defense",
+      "mana_cost": "{1}{G}",
+      "name": "Tower Defense",
+      "oracle_text": "Creatures you control get +0/+5 and gain reach until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "pump",
+          "power": {
+            "const": 0
+          },
+          "toughness": {
+            "const": 5
+          }
+        },
+        {
+          "duration": "until_end_of_turn",
+          "keywords": [
+            "reach"
+          ],
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "grant_keyword"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "B",
         "U",
         "W"
@@ -199565,6 +202079,80 @@
         "Beast"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "keywords": [
+                "defender"
+              ],
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "keywords": [
+                "trample"
+              ],
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "text": "Sacrifice a creature with defender: All creatures gain trample until end of turn."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "towering_titan",
+      "mana_cost": "{4}{G}{G}",
+      "name": "Towering Titan",
+      "oracle_text": "This creature enters with X +1/+1 counters on it, where X is the total toughness of other creatures you control.\nSacrifice a creature with defender: All creatures gain trample until end of turn.",
+      "power": 0,
+      "replacements": [
+        {
+          "amount": {
+            "toughness_of": {
+              "objects": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          },
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Giant"
+      ],
+      "toughness": 0,
       "types": [
         "Creature"
       ]
@@ -200528,6 +203116,45 @@
       "mana_cost": "{3}{B}",
       "name": "Tree of Perdition",
       "oracle_text": "Defender\n{T}: Exchange target opponent's life total with this creature's toughness.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Plant"
+      ],
+      "toughness": 13,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "exchange_life_total",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}: Exchange your life total with this creature's toughness."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "tree_of_redemption",
+      "keywords": [
+        "defender"
+      ],
+      "mana_cost": "{3}{G}",
+      "name": "Tree of Redemption",
+      "oracle_text": "Defender\n{T}: Exchange your life total with this creature's toughness.",
       "power": 0,
       "source": "auto",
       "subtypes": [
@@ -213349,6 +215976,56 @@
     {
       "abilities": [
         {
+          "cost": {
+            "mana": "{1}{W}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "keywords": [
+                  "defender"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "attack_despite_defender"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{W}: Creatures you control with defender can attack this turn as though they didn't have defender."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "wakestone_gargoyle",
+      "keywords": [
+        "defender",
+        "flying"
+      ],
+      "mana_cost": "{3}{W}",
+      "name": "Wakestone Gargoyle",
+      "oracle_text": "Defender, flying\n{1}{W}: Creatures you control with defender can attack this turn as though they didn't have defender.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Gargoyle"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "objects": {
@@ -213538,6 +216215,77 @@
         "Construct"
       ],
       "toughness": 0,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "haste"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "attack_despite_defender"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "combat_damage_by_toughness"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "keywords": [
+                  "defender"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{2}: Until end of turn, target creature with defender gains haste, can attack as though it didn't have defender, and assigns combat damage equal to its toughness rather than its power. Activate only as a sorcery."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "walking_bulwark",
+      "keywords": [
+        "defender"
+      ],
+      "mana_cost": "{1}",
+      "name": "Walking Bulwark",
+      "oracle_text": "Defender\n{2}: Until end of turn, target creature with defender gains haste, can attack as though it didn't have defender, and assigns combat damage equal to its toughness rather than its power. Activate only as a sorcery.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Golem"
+      ],
+      "toughness": 3,
       "types": [
         "Artifact",
         "Creature"
@@ -213757,6 +216505,87 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you gain life, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "you_gain_life"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{5}{B}{B}",
+            "sacrifice": {
+              "as": "sacrificed",
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "binding": "sacrificed"
+                }
+              },
+              "op": "lose_life",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player"
+            }
+          ],
+          "text": "{5}{B}{B}, Sacrifice this creature: Target player loses X life, where X is this creature's power."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "wall_of_limbs",
+      "keywords": [
+        "defender"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "Wall of Limbs",
+      "oracle_text": "Defender (This creature can't attack.)\nWhenever you gain life, put a +1/+1 counter on this creature.\n{5}{B}{B}, Sacrifice this creature: Target player loses X life, where X is this creature's power.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Wall"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -213801,6 +216630,119 @@
         "Wall"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "power_of": {
+                      "target": "t1"
+                    }
+                  },
+                  "op": "gain_life",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Gain life equal to the target creature's power?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "At the beginning of your end step, you may gain life equal to the power of target creature you control.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "wall_of_reverence",
+      "keywords": [
+        "defender",
+        "flying"
+      ],
+      "mana_cost": "{3}{W}",
+      "name": "Wall of Reverence",
+      "oracle_text": "Defender, flying\nAt the beginning of your end step, you may gain life equal to the power of target creature you control.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Wall"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "put_counters": {
+              "amount": 1,
+              "counter": "-0/-1"
+            }
+          },
+          "effects": [
+            {
+              "mana": "{G}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "once_each_turn": true,
+          "text": "Put a -0/-1 counter on this creature: Add {G}. Activate only once each turn."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "wall_of_roots",
+      "keywords": [
+        "defender"
+      ],
+      "mana_cost": "{1}{G}",
+      "name": "Wall of Roots",
+      "oracle_text": "Defender\nPut a -0/-1 counter on this creature: Add {G}. Activate only once each turn.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Plant",
+        "Wall"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
@@ -215277,6 +218219,72 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "defending": "attacked_you_last_turn",
+          "effect": "attack_despite_defender",
+          "kind": "static",
+          "text": "This creature can attack players who attacked you during their last turn as though it didn't have defender."
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "pump",
+              "power": {
+                "const": 3
+              },
+              "toughness": {
+                "const": 3
+              }
+            },
+            {
+              "keywords": [
+                "indestructible"
+              ],
+              "objects": {
+                "self_only": true
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, it gets +3/+3 and gains indestructible until end of turn.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "weathered_sentinels",
+      "keywords": [
+        "defender",
+        "reach",
+        "vigilance",
+        "trample"
+      ],
+      "mana_cost": "{3}",
+      "name": "Weathered Sentinels",
+      "oracle_text": "Defender, reach, vigilance, trample\nThis creature can attack players who attacked you during their last turn as though it didn't have defender.\nWhenever this creature attacks, it gets +3/+3 and gains indestructible until end of turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Wall"
+      ],
+      "toughness": 5,
+      "types": [
+        "Artifact",
+        "Creature"
       ]
     },
     {
@@ -217427,6 +220435,116 @@
     },
     {
       "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "will_of_the_abzan",
+      "mana_cost": "{3}{B}",
+      "name": "Will of the Abzan",
+      "oracle_text": "Choose one. If you control a commander as you cast this spell, you may choose both instead.\n• Any number of target opponents each sacrifice a creature with the greatest power among creatures that player controls and lose 3 life.\n• Return target creature card from your graveyard to the battlefield.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "chooser": "owner",
+                        "controller": {
+                          "binding": "each_player"
+                        },
+                        "count": 1,
+                        "extreme": {
+                          "of": "power",
+                          "pick": "greatest"
+                        },
+                        "types": [
+                          "Creature"
+                        ],
+                        "zone": "battlefield"
+                      },
+                      "op": "sacrifice"
+                    },
+                    {
+                      "amount": {
+                        "const": 3
+                      },
+                      "op": "lose_life",
+                      "player": {
+                        "binding": "each_player"
+                      }
+                    }
+                  ],
+                  "op": "for_each_player",
+                  "players": {
+                    "target": "foes"
+                  }
+                }
+              ],
+              "label": "Any number of target opponents each sacrifice a creature with the greatest power among creatures that player controls and lose 3 life."
+            },
+            {
+              "effects": [
+                {
+                  "controller": "you",
+                  "destination": "battlefield",
+                  "objects": {
+                    "target": "back"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ],
+              "label": "Return target creature card from your graveyard to the battlefield."
+            }
+          ],
+          "op": "choose_mode",
+          "up_to_if": {
+            "condition": {
+              "exists": {
+                "controller": "you",
+                "is_commander": true,
+                "zone": "battlefield"
+              }
+            },
+            "count": 2
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": "any",
+          "id": "foes",
+          "kind": "player",
+          "mode": 0,
+          "selector": {
+            "controller": "opponent"
+          }
+        },
+        {
+          "id": "back",
+          "kind": "card_in_graveyard",
+          "mode": 1,
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "R"
       ],
       "colors": [
@@ -218623,6 +221741,84 @@
       "source": "auto",
       "subtypes": [
         "Angel"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "keywords": [
+                    "defender"
+                  ],
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "bird_1_1_w_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, create a 1/1 white Bird creature token with flying for each creature with defender you control.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "op": "create_token",
+              "token": "bird_1_1_w_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another creature you control with defender enters, create a 1/1 white Bird creature token with flying.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "keywords": [
+                "defender"
+              ],
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "wingmantle_chaplain",
+      "keywords": [
+        "defender"
+      ],
+      "mana_cost": "{3}{W}",
+      "name": "Wingmantle Chaplain",
+      "oracle_text": "Defender\nWhen this creature enters, create a 1/1 white Bird creature token with flying for each creature with defender you control.\nWhenever another creature you control with defender enters, create a 1/1 white Bird creature token with flying.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Cleric"
       ],
       "toughness": 3,
       "types": [

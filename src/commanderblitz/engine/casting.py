@@ -1539,7 +1539,7 @@ def deferred_target_spec(
 
     - strive, which charges per target beyond the first;
     - a targeting tax on the board (Kasmina's mana, Terror of the Peaks' life);
-    - a cap *between* the picks (total mana value) or one per player, which
+    - a cap *between* the picks (total mana value or power) or one per player, which
       the decision's independent toggles cannot express;
     - a spec reading a sibling's answer, which needs the sibling first.
 
@@ -1554,8 +1554,7 @@ def deferred_target_spec(
     )
     if (
         not many
-        or spec.one_per_player
-        or spec.total_mana_value is not None
+        or spec.constrains_the_set
         or spec.mode is not None
     ):
         return None

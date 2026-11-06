@@ -488,6 +488,18 @@ STATIC_EFFECTS = frozenset(
         # prohibition, so unlike every other static here its `affects`
         # routinely names creatures its own controller does not control.
         "cant_attack",
+        # Felothar: "creatures you control can attack as though they didn't have
+        # defender", and Weathered Sentinels' per-defender form (`defending`).
+        # Read by `combat.can_attack` and `attack_target_forbidden`. Not
+        # `lose_keyword`: the creature keeps defender for every other reader.
+        "attack_despite_defender",
+        # Doran, Assault Formation, Felothar, Baldin: "each creature you control
+        # assigns combat damage equal to its toughness rather than its power"
+        # (510.1a). Read by `player_statics.assigns_damage_by_toughness` from
+        # `combat.combat_damage_amount`, not by the characteristics pipeline:
+        # power itself is unchanged for every other reader, so `buff` and
+        # `set_pt` would print a different card.
+        "combat_damage_by_toughness",
         # Unleash, and the "can't block" printed on aggressive commons. The
         # mirror of `cant_attack`, read by `combat.can_block`, and a static
         # rather than a keyword for the same reason `block_restriction` is: a
@@ -1441,6 +1453,14 @@ STATIC_CONDITION_HEADS = (
 #: look at it. A layered static reading it would read another static's output,
 #: which ADR 0001 refuses.
 STATIC_DERIVED_CONDITION_EFFECTS = frozenset({"cant_attack", "cant_block"})
+
+#: Each word a static's ``defending`` may take, and the one effect it is a
+#: clause of. Read relative to the static's controller by
+#: `player_statics._defending_seats`.
+DEFENDING_WORDS = {
+    "opponent_most_life": "attacks_if_able",
+    "attacked_you_last_turn": "attack_despite_defender",
+}
 
 #: The static effects whose reader evaluates the condition once per affected
 #: permanent, and so may carry the `AFFECTED_CONTROLLER` player spec. Anywhere

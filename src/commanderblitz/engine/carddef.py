@@ -126,8 +126,9 @@ class TargetSpec:
     #: cast at all (601.2c). ``0`` is plain "up to N".
     min_count: int = 0
     #: At most one chosen object per controller -- "for each player, up to one
-    #: target permanent that player controls". Only meaningful with
-    #: ``count == "any"``.
+    #: target permanent that player controls". Only on a caster-sized spec:
+    #: ``count == "any"``, or an `up_to` ceiling ("up to two target artifacts
+    #: controlled by different players").
     one_per_player: bool = False
     optional: bool = False
     #: A cap on the combined mana value of everything chosen for this spec --
@@ -138,6 +139,13 @@ class TargetSpec:
     #: isolation, and `mana_value: {"op": "<=", "value": 6}` is a different and
     #: far wider card -- six one-drops pass it. ``None`` for no cap.
     total_mana_value: int | None = None
+    #: The same cap on the combined **power** of everything chosen -- "any
+    #: number of target creature cards **with total power 10 or less**"
+    #: (Reunion of the House). A battlefield object's power is its live
+    #: one; a card anywhere else has the power it has in that zone, which is
+    #: the printed number with its own characteristic-defining ability applied
+    #: (604.3) -- see `targeting._within_total_power`. ``None`` for no cap.
+    total_power: int | None = None
     #: The index of the **mode** that owns this target, or ``None`` for the
     #: ordinary card-level kind.  "Choose up to two. Return those cards from
     #: your graveyard to your hand. * Target artifact card. * Target creature
@@ -182,6 +190,23 @@ class TargetSpec:
         if not {"controller", "owner", "player"} & set(half):
             half["controller"] = "any"
         return half
+
+    @property
+    def constrains_the_set(self) -> bool:
+        """Does this spec carry a rule *between* its picks?
+
+        `one_per_player`, `total_mana_value` and `total_power` are facts about
+        the chosen set rather than about any one object in it, so only the
+        subset enumeration in `targeting._spec_options` can check them. Every
+        path that would ask for the picks one toggle at a time instead --
+        `casting.deferred_target_spec`, `stack._choose_each_target`, a
+        mode-owned declaration -- reads this and keeps the enumeration.
+        """
+        return (
+            self.one_per_player
+            or self.total_mana_value is not None
+            or self.total_power is not None
+        )
 
     @property
     def variable_size(self) -> bool:
@@ -872,21 +897,45 @@ def _specs_for_modes(
     mode_targets: Mapping[int, tuple[TargetSpec, ...]],
     modes: Sequence[int],
 ) -> tuple[TargetSpec, ...]:
-    """The specs one declaration actually used: the flat list, then the modes'.
+    """The specs one declaration actually used, in the order its refs are stored.
 
     One function for a card and for an ability, because the ordering is the
     whole content and two copies of it is two chances to disagree:
     `targeting.filter_legal` splits the stored refs **by position**, so
     whatever declared the targets and whatever re-checks them on resolution
-    have to walk the modes in the same order -- ascending mode index, which is
-    the printed order 700.2e executes them in.
+    have to walk the same list.
+
+    The flat list, then the chosen modes' **fixed-size** specs in ascending
+    mode index (the printed order 700.2e executes them in), then the one
+    **sizeless** mode-owned spec -- `optional` or caster-sized -- whichever
+    mode owns it. A sizeless spec stores as many refs as were picked, so it can
+    only be split off as "whatever is left", which is the end of the list. Will
+    of the Abzan's "any number of target opponents" is its *first* bullet, and
+    laid out in printed order it would swallow the second bullet's graveyard
+    card. `loader.targets._check_mode_targets` admits one sizeless mode-owned
+    spec per list, and none a sibling's selector names, so this order is
+    unambiguous and every linked spec still follows what it reads.
+
+    Only the storage moves: `Game._ask_mode_targets` and a trigger's
+    declaration still ask in printed mode order and store in this one.
     """
     if not mode_targets:
         return base
-    extra: list[TargetSpec] = []
+    return tuple(base) + stored_mode_specs(mode_targets, modes)
+
+
+def stored_mode_specs(
+    mode_targets: Mapping[int, tuple[TargetSpec, ...]], modes: Sequence[int]
+) -> tuple[TargetSpec, ...]:
+    """The chosen modes' own specs in storage order -- `_specs_for_modes`
+    without the flat list in front: fixed-size specs in ascending mode index,
+    then the sizeless one."""
+    fixed: list[TargetSpec] = []
+    sizeless: list[TargetSpec] = []
     for index in sorted(modes):
-        extra.extend(mode_targets.get(index, ()))
-    return tuple(base) + tuple(extra)
+        for spec in mode_targets.get(index, ()):
+            (sizeless if spec.optional or spec.variable_size else fixed).append(spec)
+    return tuple(fixed) + tuple(sizeless)
 
 
 @dataclass(frozen=True)
@@ -1625,11 +1674,12 @@ class CardDef:
     ) -> tuple[TargetSpec, ...]:
         """The target specs a cast of this spell actually declared.
 
-        Card-level specs first, then one mode's specs after another in
-        **ascending mode index** -- the order `Game._ask_mode_targets` asked
-        them in, and the only order that matters: `targeting.filter_legal`
-        splits the stored refs by position, so resolution has to rebuild the
-        same list the cast built or every ref lands in the wrong bucket.
+        Card-level specs first, then the chosen modes' specs in **ascending
+        mode index**, the one sizeless mode-owned spec last -- the order
+        `Game._ask_mode_targets` stores them in (see `_specs_for_modes`), and
+        the only order that matters: `targeting.filter_legal` splits the
+        stored refs by position, so resolution has to rebuild the same list the
+        cast built or every ref lands in the wrong bucket.
 
         A card with no mode-owned targets returns :attr:`targets` unchanged,
         which is every card in the pool but the modal ones.
@@ -2062,6 +2112,46 @@ MELEE_TRIGGER = Ability(
     active_zones=(Zone.BATTLEFIELD,),
 )
 _RULES_ABILITIES.append(MELEE_TRIGGER)
+
+
+#: The blockers a flanking trigger shrinks: those blocking *this* attacker
+#: that lack flanking, read off derived keywords.
+_FLANKED_BLOCKERS = {"blocking": {"binding": "self"}, "not_keywords": ["flanking"]}
+
+#: Flanking's trigger (702.25a): "Whenever a creature without flanking blocks
+#: this creature, the blocking creature gets -1/-1 until end of turn."
+#:
+#: Rules-supplied for exalted's reason: Sidewinder Sliver, Agility and
+#: Jabari's Banner *grant* flanking, so the sentence cannot live on the
+#: printed card. `triggers._candidate_abilities` yields it once for every
+#: battlefield permanent whose derived keywords include flanking.
+#:
+#: One `becomes_blocked` trigger shrinking every blocker of this attacker
+#: without flanking, rather than one trigger per such blocker: the board after
+#: resolution is the same. Its condition is a "while" clause (`recheck: False`),
+#: so a block made only by creatures with flanking triggers nothing at all.
+FLANKING_TRIGGER = Ability(
+    kind=AbilityKind.TRIGGERED,
+    index=-len(_RULES_ABILITIES) - 1,
+    text="Flanking",
+    trigger=TriggerSpec(
+        event="becomes_blocked",
+        controller="you",
+        source="self",
+        condition={"cmp": ">=", "left": {"count": _FLANKED_BLOCKERS}, "right": {"const": 1}},
+        recheck=False,
+    ),
+    effects=(
+        {
+            "op": "pump",
+            "objects": _FLANKED_BLOCKERS,
+            "power": {"const": -1},
+            "toughness": {"const": -1},
+        },
+    ),
+    active_zones=(Zone.BATTLEFIELD,),
+)
+_RULES_ABILITIES.append(FLANKING_TRIGGER)
 
 
 #: Decayed's attack half (702.147a): "When it attacks, sacrifice it at end of

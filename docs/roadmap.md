@@ -59,7 +59,6 @@ each heading; this table is generated from them.
 | [World Shaper (Edge of Eternities Commander)](#world-shaper-edge-of-eternities-commander) | L | high | Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number | 0 |
 | [Jeskai Striker (Tarkir: Dragonstorm Commander)](#jeskai-striker-tarkir-dragonstorm-commander) | M | high | Divided damage that may hit players | 0 |
 | [Temur Roar (Tarkir: Dragonstorm Commander)](#temur-roar-tarkir-dragonstorm-commander) | M | high | Divided damage from a triggered or activated ability, Divided damage that may hit players, Voting: will of the council and council's dilemma | 0 |
-| [Abzan Armor (Tarkir: Dragonstorm Commander)](#abzan-armor-tarkir-dragonstorm-commander) | L | high | nothing | 0 |
 | [Sultai Arisen (Tarkir: Dragonstorm Commander)](#sultai-arisen-tarkir-dragonstorm-commander) | L | high | nothing | 0 |
 | [Eternal Might (Aetherdrift Commander)](#eternal-might-aetherdrift-commander) | L | high | nothing | 0 |
 | [Living Energy (Aetherdrift Commander)](#living-energy-aetherdrift-commander) | L | high | nothing | 0 |
@@ -134,6 +133,7 @@ each heading; this table is generated from them.
 | [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) | L | high | Outcomes as data, Replays and sharing, Difficulty | 0 |
 | [Difficulty](#difficulty) | S | medium | nothing | 1 |
 | [Gate the debug endpoint](#gate-the-debug-endpoint) | S | medium | nothing | 0 |
+| [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) | S | medium | nothing | 0 |
 | [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) | S | medium | nothing | 0 |
 | [Why a press is refused](#why-a-press-is-refused) | S | medium | nothing | 0 |
 | [Divided damage that may hit players](#divided-damage-that-may-hit-players) | M | medium | nothing | 3 |
@@ -163,80 +163,80 @@ same list, and `/extend-roadmap` starts at the top of it.
 **Ready now, best first:**
 
 1. [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) — L, high
-2. [Abzan Armor (Tarkir: Dragonstorm Commander)](#abzan-armor-tarkir-dragonstorm-commander) — L, high
-3. [Sultai Arisen (Tarkir: Dragonstorm Commander)](#sultai-arisen-tarkir-dragonstorm-commander) — L, high
-4. [Eternal Might (Aetherdrift Commander)](#eternal-might-aetherdrift-commander) — L, high
-5. [Living Energy (Aetherdrift Commander)](#living-energy-aetherdrift-commander) — L, high
-6. [Endless Punishment (Duskmourn: House of Horror Commander)](#endless-punishment-duskmourn-house-of-horror-commander) — L, high
-7. [Death Toll (Duskmourn: House of Horror Commander)](#death-toll-duskmourn-house-of-horror-commander) — L, high
-8. [Jump Scare! (Duskmourn: House of Horror Commander)](#jump-scare-duskmourn-house-of-horror-commander) — L, high
-9. [Miracle Worker (Duskmourn: House of Horror Commander)](#miracle-worker-duskmourn-house-of-horror-commander) — L, high
-10. [Animated Army (Bloomburrow Commander)](#animated-army-bloomburrow-commander) — M, high
-11. [Family Matters (Bloomburrow Commander)](#family-matters-bloomburrow-commander) — L, high
-12. [Peace Offering (Bloomburrow Commander)](#peace-offering-bloomburrow-commander) — L, high
-13. [Squirreled Away (Bloomburrow Commander)](#squirreled-away-bloomburrow-commander) — L, high
-14. [Creative Energy (Modern Horizons 3 Commander)](#creative-energy-modern-horizons-3-commander) — L, high
-15. [Graveyard Overdrive (Modern Horizons 3 Commander)](#graveyard-overdrive-modern-horizons-3-commander) — L, high
-16. [Tricky Terrain (Modern Horizons 3 Commander)](#tricky-terrain-modern-horizons-3-commander) — L, high
-17. [Eldrazi Incursion (Modern Horizons 3 Commander)](#eldrazi-incursion-modern-horizons-3-commander) — L, high
-18. [Quick Draw (Outlaws of Thunder Junction Commander)](#quick-draw-outlaws-of-thunder-junction-commander) — M, high
-19. [Desert Bloom (Outlaws of Thunder Junction Commander)](#desert-bloom-outlaws-of-thunder-junction-commander) — L, high
-20. [Grand Larceny (Outlaws of Thunder Junction Commander)](#grand-larceny-outlaws-of-thunder-junction-commander) — L, high
-21. [Most Wanted (Outlaws of Thunder Junction Commander)](#most-wanted-outlaws-of-thunder-junction-commander) — L, high
-22. [Hail, Caesar (Fallout)](#hail-caesar-fallout) — L, high
-23. [Scrappy Survivors (Fallout)](#scrappy-survivors-fallout) — L, high
-24. [Science! (Fallout)](#science-fallout) — L, high
-25. [Mutant Menace (Fallout)](#mutant-menace-fallout) — L, high
-26. [Deep Clue Sea (Murders at Karlov Manor Commander)](#deep-clue-sea-murders-at-karlov-manor-commander) — L, high
-27. [Revenant Recon (Murders at Karlov Manor Commander)](#revenant-recon-murders-at-karlov-manor-commander) — L, high
-28. [Blame Game (Murders at Karlov Manor Commander)](#blame-game-murders-at-karlov-manor-commander) — L, high
-29. [Deadly Disguise (Murders at Karlov Manor Commander)](#deadly-disguise-murders-at-karlov-manor-commander) — L, high
-30. [Blood Rites (The Lost Caverns of Ixalan Commander)](#blood-rites-the-lost-caverns-of-ixalan-commander) — M, high
-31. [Veloci-Ramp-Tor (The Lost Caverns of Ixalan Commander)](#veloci-ramp-tor-the-lost-caverns-of-ixalan-commander) — L, high
-32. [Ahoy Mateys (The Lost Caverns of Ixalan Commander)](#ahoy-mateys-the-lost-caverns-of-ixalan-commander) — L, high
-33. [Explorers of the Deep (The Lost Caverns of Ixalan Commander)](#explorers-of-the-deep-the-lost-caverns-of-ixalan-commander) — L, high
-34. [Masters of Evil (Doctor Who)](#masters-of-evil-doctor-who) — L, high
-35. [Paradox Power (Doctor Who)](#paradox-power-doctor-who) — L, high
-36. [Blast from the Past (Doctor Who)](#blast-from-the-past-doctor-who) — L, high
-37. [Timey-Wimey (Doctor Who)](#timey-wimey-doctor-who) — L, high
-38. [Fae Dominion (Wilds of Eldraine Commander)](#fae-dominion-wilds-of-eldraine-commander) — L, high
-39. [Virtue and Valor (Wilds of Eldraine Commander)](#virtue-and-valor-wilds-of-eldraine-commander) — L, high
-40. [Riders of Rohan (Tales of Middle-earth Commander)](#riders-of-rohan-tales-of-middle-earth-commander) — S, high
-41. [Food and Fellowship (Tales of Middle-earth Commander)](#food-and-fellowship-tales-of-middle-earth-commander) — L, high
-42. [Elven Council (Tales of Middle-earth Commander)](#elven-council-tales-of-middle-earth-commander) — L, high
-43. [The Hosts of Mordor (Tales of Middle-earth Commander)](#the-hosts-of-mordor-tales-of-middle-earth-commander) — L, high
-44. [Cavalry Charge (March of the Machine Commander)](#cavalry-charge-march-of-the-machine-commander) — L, high
-45. [Divine Convocation (March of the Machine Commander)](#divine-convocation-march-of-the-machine-commander) — L, high
-46. [Tinker Time (March of the Machine Commander)](#tinker-time-march-of-the-machine-commander) — L, high
-47. [Growing Threat (March of the Machine Commander)](#growing-threat-march-of-the-machine-commander) — L, high
-48. [Call for Backup (March of the Machine Commander)](#call-for-backup-march-of-the-machine-commander) — L, high
-49. [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander) — M, high
-50. [Corrupting Influence (Phyrexia: All Will Be One Commander)](#corrupting-influence-phyrexia-all-will-be-one-commander) — L, high
-51. [Draconic Destruction (Starter Commander Decks)](#draconic-destruction-starter-commander-decks) — M, high
-52. [Grave Danger (Starter Commander Decks)](#grave-danger-starter-commander-decks) — M, high
-53. [First Flight (Starter Commander Decks)](#first-flight-starter-commander-decks) — M, high
-54. [Chaos Incarnate (Starter Commander Decks)](#chaos-incarnate-starter-commander-decks) — M, high
-55. [Token Triumph (Starter Commander Decks)](#token-triumph-starter-commander-decks) — L, high
-56. [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) — M, high
-57. [Mishra's Burnished Banner (The Brothers' War Commander)](#mishras-burnished-banner-the-brothers-war-commander) — L, high
-58. [Forces of the Imperium (Warhammer 40,000 Commander)](#forces-of-the-imperium-warhammer-40000-commander) — L, high
-59. [The Ruinous Powers (Warhammer 40,000 Commander)](#the-ruinous-powers-warhammer-40000-commander) — L, high
-60. [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) — L, high
-61. [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) — L, high
-62. [Legends' Legacy (Dominaria United Commander)](#legends-legacy-dominaria-united-commander) — L, high
-63. [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — L, high
-64. [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — L, high
-65. [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — L, high
-66. [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — L, high
-67. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
-68. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
-69. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
-70. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
-71. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
-72. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
-73. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
-74. [Difficulty](#difficulty) — S, medium
-75. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+2. [Sultai Arisen (Tarkir: Dragonstorm Commander)](#sultai-arisen-tarkir-dragonstorm-commander) — L, high
+3. [Eternal Might (Aetherdrift Commander)](#eternal-might-aetherdrift-commander) — L, high
+4. [Living Energy (Aetherdrift Commander)](#living-energy-aetherdrift-commander) — L, high
+5. [Endless Punishment (Duskmourn: House of Horror Commander)](#endless-punishment-duskmourn-house-of-horror-commander) — L, high
+6. [Death Toll (Duskmourn: House of Horror Commander)](#death-toll-duskmourn-house-of-horror-commander) — L, high
+7. [Jump Scare! (Duskmourn: House of Horror Commander)](#jump-scare-duskmourn-house-of-horror-commander) — L, high
+8. [Miracle Worker (Duskmourn: House of Horror Commander)](#miracle-worker-duskmourn-house-of-horror-commander) — L, high
+9. [Animated Army (Bloomburrow Commander)](#animated-army-bloomburrow-commander) — M, high
+10. [Family Matters (Bloomburrow Commander)](#family-matters-bloomburrow-commander) — L, high
+11. [Peace Offering (Bloomburrow Commander)](#peace-offering-bloomburrow-commander) — L, high
+12. [Squirreled Away (Bloomburrow Commander)](#squirreled-away-bloomburrow-commander) — L, high
+13. [Creative Energy (Modern Horizons 3 Commander)](#creative-energy-modern-horizons-3-commander) — L, high
+14. [Graveyard Overdrive (Modern Horizons 3 Commander)](#graveyard-overdrive-modern-horizons-3-commander) — L, high
+15. [Tricky Terrain (Modern Horizons 3 Commander)](#tricky-terrain-modern-horizons-3-commander) — L, high
+16. [Eldrazi Incursion (Modern Horizons 3 Commander)](#eldrazi-incursion-modern-horizons-3-commander) — L, high
+17. [Quick Draw (Outlaws of Thunder Junction Commander)](#quick-draw-outlaws-of-thunder-junction-commander) — M, high
+18. [Desert Bloom (Outlaws of Thunder Junction Commander)](#desert-bloom-outlaws-of-thunder-junction-commander) — L, high
+19. [Grand Larceny (Outlaws of Thunder Junction Commander)](#grand-larceny-outlaws-of-thunder-junction-commander) — L, high
+20. [Most Wanted (Outlaws of Thunder Junction Commander)](#most-wanted-outlaws-of-thunder-junction-commander) — L, high
+21. [Hail, Caesar (Fallout)](#hail-caesar-fallout) — L, high
+22. [Scrappy Survivors (Fallout)](#scrappy-survivors-fallout) — L, high
+23. [Science! (Fallout)](#science-fallout) — L, high
+24. [Mutant Menace (Fallout)](#mutant-menace-fallout) — L, high
+25. [Deep Clue Sea (Murders at Karlov Manor Commander)](#deep-clue-sea-murders-at-karlov-manor-commander) — L, high
+26. [Revenant Recon (Murders at Karlov Manor Commander)](#revenant-recon-murders-at-karlov-manor-commander) — L, high
+27. [Blame Game (Murders at Karlov Manor Commander)](#blame-game-murders-at-karlov-manor-commander) — L, high
+28. [Deadly Disguise (Murders at Karlov Manor Commander)](#deadly-disguise-murders-at-karlov-manor-commander) — L, high
+29. [Blood Rites (The Lost Caverns of Ixalan Commander)](#blood-rites-the-lost-caverns-of-ixalan-commander) — M, high
+30. [Veloci-Ramp-Tor (The Lost Caverns of Ixalan Commander)](#veloci-ramp-tor-the-lost-caverns-of-ixalan-commander) — L, high
+31. [Ahoy Mateys (The Lost Caverns of Ixalan Commander)](#ahoy-mateys-the-lost-caverns-of-ixalan-commander) — L, high
+32. [Explorers of the Deep (The Lost Caverns of Ixalan Commander)](#explorers-of-the-deep-the-lost-caverns-of-ixalan-commander) — L, high
+33. [Masters of Evil (Doctor Who)](#masters-of-evil-doctor-who) — L, high
+34. [Paradox Power (Doctor Who)](#paradox-power-doctor-who) — L, high
+35. [Blast from the Past (Doctor Who)](#blast-from-the-past-doctor-who) — L, high
+36. [Timey-Wimey (Doctor Who)](#timey-wimey-doctor-who) — L, high
+37. [Fae Dominion (Wilds of Eldraine Commander)](#fae-dominion-wilds-of-eldraine-commander) — L, high
+38. [Virtue and Valor (Wilds of Eldraine Commander)](#virtue-and-valor-wilds-of-eldraine-commander) — L, high
+39. [Riders of Rohan (Tales of Middle-earth Commander)](#riders-of-rohan-tales-of-middle-earth-commander) — S, high
+40. [Food and Fellowship (Tales of Middle-earth Commander)](#food-and-fellowship-tales-of-middle-earth-commander) — L, high
+41. [Elven Council (Tales of Middle-earth Commander)](#elven-council-tales-of-middle-earth-commander) — L, high
+42. [The Hosts of Mordor (Tales of Middle-earth Commander)](#the-hosts-of-mordor-tales-of-middle-earth-commander) — L, high
+43. [Cavalry Charge (March of the Machine Commander)](#cavalry-charge-march-of-the-machine-commander) — L, high
+44. [Divine Convocation (March of the Machine Commander)](#divine-convocation-march-of-the-machine-commander) — L, high
+45. [Tinker Time (March of the Machine Commander)](#tinker-time-march-of-the-machine-commander) — L, high
+46. [Growing Threat (March of the Machine Commander)](#growing-threat-march-of-the-machine-commander) — L, high
+47. [Call for Backup (March of the Machine Commander)](#call-for-backup-march-of-the-machine-commander) — L, high
+48. [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander) — M, high
+49. [Corrupting Influence (Phyrexia: All Will Be One Commander)](#corrupting-influence-phyrexia-all-will-be-one-commander) — L, high
+50. [Draconic Destruction (Starter Commander Decks)](#draconic-destruction-starter-commander-decks) — M, high
+51. [Grave Danger (Starter Commander Decks)](#grave-danger-starter-commander-decks) — M, high
+52. [First Flight (Starter Commander Decks)](#first-flight-starter-commander-decks) — M, high
+53. [Chaos Incarnate (Starter Commander Decks)](#chaos-incarnate-starter-commander-decks) — M, high
+54. [Token Triumph (Starter Commander Decks)](#token-triumph-starter-commander-decks) — L, high
+55. [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) — M, high
+56. [Mishra's Burnished Banner (The Brothers' War Commander)](#mishras-burnished-banner-the-brothers-war-commander) — L, high
+57. [Forces of the Imperium (Warhammer 40,000 Commander)](#forces-of-the-imperium-warhammer-40000-commander) — L, high
+58. [The Ruinous Powers (Warhammer 40,000 Commander)](#the-ruinous-powers-warhammer-40000-commander) — L, high
+59. [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) — L, high
+60. [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) — L, high
+61. [Legends' Legacy (Dominaria United Commander)](#legends-legacy-dominaria-united-commander) — L, high
+62. [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — L, high
+63. [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — L, high
+64. [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — L, high
+65. [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — L, high
+66. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
+67. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
+68. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
+69. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
+70. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
+71. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
+72. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
+73. [Difficulty](#difficulty) — S, medium
+74. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+75. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
 76. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
 77. [Why a press is refused](#why-a-press-is-refused) — S, medium
 78. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
@@ -1300,55 +1300,6 @@ Temur Roar ships native, card for card, as one batch of
 2. One `/extend-dsl` run per capability the gap records name, in the order
    the most cards elsewhere in the catalog wait on it.
 3. Re-author until `--missing` is empty, then `--write-deck tdc_temur_roar`, the
-   dossier and the archetype, and the deck joins `PRECONS` in
-   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
-4. One `/author-cards` wave over the pending cards the new capabilities reach.
-
-It does not touch another precon's deck.
-
-#### Gate
-
-`tests/cards/test_precon_imports.py` over the new deck; one unit test under
-`tests/unit/` per capability; the manifest test and
-`tests/server/test_upcoming_precons.py` still green; and the sampled
-whole-game test able to draw the deck.
-
-#### Decisions
-
-- **Scope:** this precon only, taken to 100% in one pull request titled
-  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
-- **The editorial fields:** the run writes the dossier and picks the closest
-  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
-  archetype that visibly misplays the deck is a new item.
-- **A capability that needs a rules subsystem the engine does not have**
-  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
-  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
-  this item back to `proposed`, and opens the pull request with the cards and
-  capabilities done so far. This item stays until the deck is whole.
-
-### Abzan Armor (Tarkir: Dragonstorm Commander)
-
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
-
-#### Today
-
-Abzan Armor, the Tarkir: Dragonstorm Commander precon released 2025-04-11, is a
-coming-soon shell on the shelf: its row `tdc_abzan_armor` is in
-`data/decks/sources.json` and there is no `data/decks/tdc_abzan_armor.deck.json`, so
-`GET /api/precons/upcoming` serves it.
-`python scripts/sync_precons.py --missing tdc_abzan_armor` lists the cards the engine
-lacks, and the gap records in `data/authoring/gaps/` name the capability each
-attempted card waits on.
-
-#### The change
-
-Abzan Armor ships native, card for card, as one batch of
-[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
-
-1. `/author-cards` by name over the `--missing` list.
-2. One `/extend-dsl` run per capability the gap records name, in the order
-   the most cards elsewhere in the catalog wait on it.
-3. Re-author until `--missing` is empty, then `--write-deck tdc_abzan_armor`, the
    dossier and the archetype, and the deck joins `PRECONS` in
    `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
 4. One `/author-cards` wave over the pending cards the new capabilities reach.
@@ -5512,6 +5463,61 @@ the debt page becomes a seeded position in `tests/ai/strategy/` that the new
 pilot must get right. The baseline heuristic stays the opponent `verify.py`
 gates on until a checkpoint has beaten it across the board for long enough
 to be trusted.
+
+### The CPU attacks with defenders that may attack
+
+Effort **S** · Impact **medium**, every game the Abzan Armor CPU plays leaves its whole board at home · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+The engine lets a creature with defender attack under the
+`attack_despite_defender` static and op (`player_statics.defender_waived`,
+read by `combat.can_attack`), and makes a creature deal combat damage equal
+to its toughness under `combat_damage_by_toughness`
+(`combat.combat_damage_amount`). The CPU's board reading predates both:
+`ai/strategy/board.py`'s `can_attack_soon` and `ready_attackers` treat every
+creature with defender as unable to attack, and `power` sizes every attack,
+so `lethal_on_board`, `crack_back` and `GoWide.attack_value` count a 0/4 wall
+as a creature that deals nothing. Abzan Armor ships on the `go_wide`
+archetype with Felothar the Steadfast as its commander, so its CPU declines
+the attacks its whole deck is built to make. `HARMFUL_COUNTERS` in
+`ai/agents/heuristic_agent.py` and `ai/strategy/decks/atraxa_praetors_voice.py`
+lists only `-1/-1` and `stun`, so the CPU proliferates a `-0/-1` counter on
+its own Wall of Roots.
+
+#### The change
+
+The CPU reads the same two rules the engine applies, through the engine's own
+answers rather than a copy of them ([architecture.md](architecture.md)):
+
+1. `board.can_attack_soon` and `board.ready_attackers` ask
+   `player_statics.defender_waived` instead of the defender keyword alone.
+2. A `board.combat_damage` helper returns `combat.combat_damage_amount` for a
+   creature, and `lethal_on_board`, `crack_back`, `incoming_unblocked` and
+   `GoWide.attack_value` size attacks with it instead of `power`.
+3. `HARMFUL_COUNTERS` becomes a predicate over `objects.pt_counter` that
+   names every counter kind lowering power or toughness, shared by both
+   readers.
+
+It adds no archetype and no deck strategy module.
+
+#### Gate
+
+Tests under `tests/ai/`: a position with Felothar and a board of walls in
+which the `go_wide` CPU declares the walls as attackers and counts their
+toughness toward lethal; the same board without Felothar, where it declares
+none; and a proliferate choice that leaves a `-0/-1` counter on its own
+permanent alone.
+
+#### Open questions
+
+- **Scope of the damage helper.** Should every power-based reading in
+  `ai/strategy/` move to the helper, or only the attack and lethal readers
+  named above? Recommended: only those named, since blocking and removal
+  scoring read power for reasons this item does not change.
+- **The Abzan Armor archetype.** Keep `go_wide`, or add a dedicated
+  archetype once the board reading is right? Recommended: keep `go_wide`
+  and measure first; a new archetype is its own item.
 
 ## Matchmaking
 

@@ -1,0 +1,47 @@
+{
+  "_comment": "Cards that exist only for tests/unit/targets/test_one_per_player_capped.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_wastes_guard` is Protector of the Wastes' enters trigger: up to two targets, no two controlled by the same player -- a ceiling the card prints AND the different-controllers rule. `t_opp_trinket` and `t_opp_sigil` are a vanilla artifact and a vanilla enchantment to aim it at.",
+  "cards": [
+    {
+      "id": "t_wastes_guard",
+      "name": "Test Wastes Guard",
+      "oracle_text": "When this creature enters, exile up to two target artifacts and/or enchantments controlled by different players.",
+      "mana_cost": "{1}",
+      "types": ["Creature"],
+      "subtypes": ["Dragon"],
+      "power": 5,
+      "toughness": 3,
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "trigger": {"event": "self_enters", "source": "self"},
+          "text": "When this creature enters, exile up to two target artifacts and/or enchantments controlled by different players.",
+          "targets": [
+            {"id": "t1", "kind": "permanent", "count": 2, "up_to": true,
+             "one_per_player": true,
+             "selector": {"zone": "battlefield", "controller": "any",
+                          "any_types": ["Artifact", "Enchantment"]}}
+          ],
+          "effects": [
+            {"op": "exile", "objects": {"target": "t1"}}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_opp_trinket",
+      "name": "Test Wastes Trinket",
+      "oracle_text": "",
+      "mana_cost": "{1}",
+      "types": ["Artifact"]
+    },
+    {
+      "id": "t_opp_sigil",
+      "name": "Test Wastes Sigil",
+      "oracle_text": "",
+      "mana_cost": "{1}",
+      "types": ["Enchantment"]
+    }
+  ]
+}

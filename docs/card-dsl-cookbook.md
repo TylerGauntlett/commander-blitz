@@ -4565,6 +4565,102 @@ turn boundary a flickered permanent coming back still protected is a line a
 player can actually take. Both are read through the one predicate
 `temp_effects.sacrifice_forbidden`.
 
+## Combat damage equal to toughness
+
+    Felothar the Steadfast — "Each creature you control assigns combat damage
+                              equal to its toughness rather than its power."
+    Baldin, Century Herdmaster — "During your turn, each creature assigns combat
+                                  damage equal to its toughness rather than its power."
+    Walking Bulwark — "{2}: Until end of turn, target creature with defender …
+                       assigns combat damage equal to its toughness rather than
+                       its power."
+
+A substitution in rule 510.1a and nowhere else: the creature's power is
+unchanged for every other reader. It is a static and an op of the same name.
+
+```jsonc
+// Felothar, Assault Formation: the static, `affects` defaulting to your creatures
+{ "kind": "static", "effect": "combat_damage_by_toughness",
+  "affects": { "types": ["Creature"] } }
+
+// Baldin: every creature, any controller, while it is the static's controller's turn
+{ "kind": "static", "effect": "combat_damage_by_toughness",
+  "affects": { "controller": "any", "types": ["Creature"] },
+  "condition": { "is_your_turn": true } }
+
+// Walking Bulwark: the timed form on what the ability targeted
+{ "op": "combat_damage_by_toughness", "objects": { "target": "t1" } }
+```
+
+The static's `affects` is required (a missing filter matches nothing) and is
+read off each creature as it now is, so an animated land counts as a creature.
+Its `condition` is asked per creature. The op's `objects` is required and
+resolved as it resolves (611.2c); each creature found carries a
+`TempEffect(kind="combat_damage_by_toughness")` until end of turn, and `duration`
+may only be `this_turn`, its default.
+
+Both are read by `player_statics.assigns_damage_by_toughness`, which
+`combat.combat_damage_amount` asks for every attacker and blocker. The amount it
+returns is what the lethal-first walk and trample divide (510.1c); a blocker's
+lethal damage is still its own toughness less its damage. A creature with
+toughness 0 or less assigns nothing.
+
+The near misses are `buff` and `set_pt`, which change power itself — a fight,
+"power 4 or greater" and Felothar's own "discard cards equal to its power" would
+all read the changed number — and `replace_damage`, which scales an amount
+already computed from power.
+
+## Attacking as though it didn't have defender
+
+    Felothar the Steadfast — "Creatures you control can attack as though they
+                              didn't have defender."
+    Assault Formation — "{G}: Target creature with defender can attack this turn
+                         as though it didn't have defender."
+    Wakestone Gargoyle — "{1}{W}: Creatures you control with defender can attack
+                          this turn as though they didn't have defender."
+    Weathered Sentinels — "This creature can attack players who attacked you
+                           during their last turn as though it didn't have defender."
+
+The creature keeps defender for every other purpose — a "creature with defender"
+filter, an anthem for walls — so `lose_keyword` is the wrong op. It is a static
+and an op of the same name.
+
+```jsonc
+// Felothar
+{ "kind": "static", "effect": "attack_despite_defender",
+  "affects": { "types": ["Creature"] } }
+
+// Weathered Sentinels: only players who attacked you during their last turn
+{ "kind": "static", "effect": "attack_despite_defender",
+  "affects": { "self_only": true }, "defending": "attacked_you_last_turn" }
+
+// Assault Formation, Walking Bulwark: the creature the ability targeted
+{ "op": "attack_despite_defender", "objects": { "target": "t1" } }
+
+// Wakestone Gargoyle: the group found as it resolves
+{ "op": "attack_despite_defender",
+  "objects": { "zone": "battlefield", "controller": "you",
+               "types": ["Creature"], "keywords": ["defender"] } }
+```
+
+The static's `affects` is required and read off each creature as it now is.
+`defending: "attacked_you_last_turn"` names the opponents whose last completed
+turn included an attack on the static's controller (`GameState.attacked_last_turn`,
+seats only, 506.2); the creature may attack those players and none of their
+planeswalkers or battles, and with none of them left it cannot attack. Without
+`defending` it may attack anything it otherwise could. The word is refused on any
+other static, and `opponent_most_life` is refused here.
+
+The op's `objects` is required and resolved as it resolves (611.2c), so a wall
+that enters afterwards is not covered; each creature found carries a
+`TempEffect(kind="attack_despite_defender")` until end of turn, and `duration` may
+only be `this_turn`, its default.
+
+Both are read by `player_statics.defender_waived`, which `combat.can_attack`
+asks of a creature with defender and `combat.attack_target_forbidden` asks per
+defending player. It lifts defender only: summoning sickness, tapping and every
+other restriction still apply, so Walking Bulwark grants haste in a separate op.
+
 ## Attack requirements
 
     Trench Behemoth — "Landfall — Whenever a land you control enters, target
@@ -5338,6 +5434,41 @@ a `player_count` over `attacked_by`: the first counts who attacked rather than
 whom, the second only the seats this one creature attacked, and both per turn
 rather than per combat. Write the keyword. A permanent holding melee twice
 triggers once, as exalted does.
+
+### Flanking
+
+    Sidar Kondo of Jamuraa — "Flanking."
+    Sidewinder Sliver — "All Sliver creatures have flanking."
+
+```jsonc
+"keywords": ["flanking"]                               // printed on the permanent
+
+{ "kind": "static", "text": "All Sliver creatures have flanking.",
+  "effect": "grant_keyword", "keywords": ["flanking"],
+  "affects": { "types": ["Creature"], "subtypes": ["Sliver"] } }
+```
+
+Exalted's shape: a `Keyword` whose content is the rules-supplied
+`carddef.FLANKING_TRIGGER`, yielded once for every battlefield permanent whose
+derived keywords include flanking. The trigger is "whenever a creature without
+flanking blocks this creature, the blocking creature gets -1/-1 until end of
+turn" (702.25a): `becomes_blocked` from `source: "self"`, then a `pump` of -1/-1
+over `{"blocking": {"binding": "self"}, "not_keywords": ["flanking"]}` — every
+creature blocking this attacker, and no other, that lacks the word. The
+exemption reads **derived** keywords, so a blocker granted flanking is exempt
+exactly as one printed with it. A `recheck: false` condition that at least one
+such blocker exists means a block made only by flanking creatures triggers
+nothing.
+
+One trigger shrinks every qualifying blocker, where the rules put one trigger
+per blocker on the stack; the board after resolution is the same.
+
+**The near miss** is that trigger printed on the card. It plays the same on the
+card that prints it, and a grant cannot hand it to a Sliver. Write the keyword.
+A permanent holding flanking twice triggers once, as exalted does, so Cavalry
+Master's "other creatures you control with flanking have flanking" (702.25b,
+each instance triggers separately) is not expressible: as a `grant_keyword` it
+would load and do nothing.
 
 ### Decayed
 
@@ -10034,6 +10165,34 @@ Two consequences worth knowing before writing a card with one:
   making counters the one *visible* kind of grant would be the inconsistency.
   Effect selectors read derived characteristics on the battlefield and do see it.
 
+## P/T counters — "Put a -0/-1 counter on this creature"
+
+```jsonc
+// Wall of Roots: "Put a -0/-1 counter on this creature: Add {G}.
+// Activate only once each turn."
+{ "kind": "activated", "is_mana_ability": true, "once_each_turn": true,
+  "cost": { "put_counters": { "counter": "-0/-1", "amount": 1 } },
+  "effects": [ { "op": "add_mana", "mana": "{G}" } ] }
+```
+
+Rule 613.4c applies every counter of the form +X/+Y or -X/-Y in layer 7c, so
+any counter kind spelled that way changes power and toughness:
+`objects.pt_counter` reads the kind and `characteristics._compute` adds each
+one in the counters step. `"+1/+0"` raises power only, `"-0/-1"` lowers
+toughness only, `"+2/+2"` is two of each. Every op, cost and replacement that
+takes a `counter` kind takes one of these.
+
+Each spelling is its own kind (122.1). 704.5q's annihilation names exactly
++1/+1 and -1/-1, so a `"+1/+0"` sits beside a `"-0/-1"` and neither is removed;
+"a creature with a +1/+1 counter on it" does not see a `"+2/+2"`. That is the
+reason the near miss is wrong: Wall of Roots written with `"-1/-1"` loses power
+it does not have and has its counter cancelled by the first +1/+1 counter.
+
+**The spelling is exact, with both signs written.** The loader folds a near
+miss — `"-0/-1 counter"`, `"0/-1"`, a typographic minus — onto the canonical
+form and refuses it with that form in the message, the same guard keyword
+counters get.
+
 ## Shield counters — the other counter kind the engine reads
 
 ```jsonc
@@ -10408,6 +10567,31 @@ Its binding **accumulates**, which is what makes the per-type quota sayable.
 `count` is one flat number over a pool `types` filters uniformly, so a single
 choice of four would happily keep four creatures; four choices sharing one name
 keep one of each, and the single `exclude_binding` on the sweep spares them all.
+
+#### `max_total_power` — a ceiling on the chosen set's sum
+
+```jsonc
+// Slaughter the Strong — each player keeps creatures with total power 4 or less.
+{ "op": "for_each_player", "players": "each_player", "effects": [
+    { "op": "choose_permanents", "as": "kept", "max_total_power": 4,
+      "prompt": "Keep creatures with total power 4 or less",
+      "objects": { "zone": "battlefield", "controller": { "binding": "each_player" },
+                   "types": ["Creature"], "count": "any",
+                   "chooser": { "binding": "each_player" } } } ] },
+{ "op": "sacrifice", "chooser": "none",
+  "objects": { "zone": "battlefield", "controller": "any", "types": ["Creature"],
+               "count": "all", "exclude_binding": "kept" } }
+```
+
+`max_total_power` (a value expression) caps the **sum** of the live power of
+what is chosen. It is asked one permanent at a time, the way crew's
+`total_power` is paid: each question offers only what still fits under what is
+left, and the chooser may stop whenever they like. Power is not clamped, so a
+negative-power creature makes room for the next pick. The loader requires
+`count: "any"` on its `objects` and refuses the key on any other op. The near
+miss is a per-creature `power: {"op": "<=", "value": 4}` filter, which keeps
+two 4/4s where the printed card keeps one. The sweep is a `sacrifice`, so an
+indestructible creature that was not kept still goes.
 
 ### `may`'s `as`, and `except` on a player spec
 
@@ -10814,9 +10998,24 @@ reads the wrong refs back on resolution. The spell would fizzle, or hit the
 wrong permanent, depending on how many targets the caster declined. One spec
 that swallows whatever was chosen cannot have that bug.
 
-Needs `count: "any"`; refused at load time otherwise, because on a fixed-size
-spec the cap either changes nothing or makes the spec unsatisfiable, and both
-are silent.
+**Under a printed ceiling.** "Exile **up to two** target artifacts and/or
+enchantments **controlled by different players**" (Protector of the Wastes) is
+the same rule with the card's own ceiling:
+
+```jsonc
+{"id": "t1", "kind": "permanent", "count": 2, "up_to": true,
+ "one_per_player": true,
+ "selector": {"controller": "any", "any_types": ["Artifact", "Enchantment"]}}
+```
+
+The subset enumeration applies both — at most two, pairwise different
+controllers, every size from none up. `count: "any"` alone is the near miss: at
+a pod of four it exiles up to four.
+
+Needs a size the caster picks — `count: "any"`, or `up_to` with a ceiling;
+refused at load time otherwise (an exact `count`, or `optional`'s "exactly N, or
+none"), because on a fixed-size spec the cap either changes nothing or makes the
+spec unsatisfiable, and both are silent.
 
 ## "…with total mana value 6 or less" — a cap on the picks together
 
@@ -10850,6 +11049,34 @@ targets have partly gone does not have its arithmetic redone.
 A cap of zero is refused — a spec that can only ever choose nothing, printed as
 though it chose something — as is one on a `player` or `spell` target, neither
 of which has a mana value for it to add up.
+
+## "…with total power 10 or less" — the same cap, summing power
+
+Reunion of the House:
+
+```jsonc
+{ "id": "t1", "kind": "card_in_graveyard", "count": "any",
+  "total_power": 10,
+  "selector": { "zone": "graveyard", "controller": "you",
+                "types": ["Creature"] } }
+```
+
+`total_mana_value`'s sibling, one characteristic over, checked in the same
+place: a subset whose powers add up past the cap is never offered, so the
+choice is refused as it is made (601.2c). `power: {"op": "<=", "value": 10}` in
+the selector is the near miss, and it is "each of these has power 10 or less" —
+a graveyard of 6/6s at once.
+
+**Which power** (`targeting._within_total_power`): a permanent's live power,
+every layer applied; a card in any other zone has the power it has *there* —
+the printed number with the card's own characteristic-defining ability applied,
+because 604.3 has a CDA function in every zone. A `*/*` card in a graveyard
+counts as its CDA's number, not the 0 printed beside the star. Nothing else
+reaches a graveyard card: anthems, counters and pumps apply to permanents.
+
+Not re-checked on resolution, for the reason `total_mana_value` is not. A
+negative cap is refused (zero is a real cap: a 0/1 passes it), as is one on a
+`player` or `spell` target.
 
 ## "Any number of target creatures"
 
@@ -11106,8 +11333,9 @@ target tuple, so its targets are fixed before `Game._activate` asks which mode.
 | `mode` without a single top-level `choose_mode` | a nested or repeated one is answered on resolution, with nothing left to declare a target in |
 | `mode` out of range | the card does not print that bullet |
 | a computed count on a mode-owned spec | a spell's is declared before anything it could read exists; a mode-owned size must be printed — a literal `count` (with `up_to` / `min_count`) or `"any"` |
-| `one_per_player` or `total_mana_value` on a caster-sized mode-owned spec | a spell's mode targets are asked one spec at a time by `Game._ask_mode_targets`, with no check between the picks |
-| `optional`, `up_to` or `"any"` on a mode-owned spec that is not the last target declared — not the last spec of its mode, or a later mode owns a target | a declined or caster-sized target stores no fixed number of refs, so `filter_legal` would read the next spec's ref into its bucket |
+| `one_per_player`, `total_mana_value` or `total_power` on a caster-sized mode-owned spec | a spell's mode targets are asked one spec at a time by `Game._ask_mode_targets`, with no check between the picks |
+| a second `optional`, `up_to` or `"any"` mode-owned spec on the same card | a declined or caster-sized target stores no fixed number of refs, so it is stored last (`CardDef.specs_for_modes`), and two of them in one declaration leave no position to split them at |
+| a target whose selector names that sizeless spec | stored last, the sizeless spec is enumerated after every other target, so nothing can read its answer |
 | a variable-size or `optional` *card-level* spec on the same card | the mode's refs are stored after it, so a caster-chosen size or a declined target in front of them makes the split ambiguous |
 
 ### "Up to one target" inside a mode
@@ -11127,9 +11355,8 @@ creature an opponent controls". `optional: true` on a mode-owned spec is
 the last tuple, and `Game._ask_mode_targets` asks a spell's with a floor of
 zero. Because declaring nothing is a legal declaration, the mode stays on offer
 (601.2b) — and in a `random` mode's pool — with nothing to target, where a fixed
-`count: 1` would strike it and force the target whenever one exists. The loader
-admits it only as **the last target declared**: the last spec of its mode, with
-no later mode owning a target, so a declined one shifts no ref after it.
+`count: 1` would strike it and force the target whenever one exists. It is
+**stored last** — see "Where a sizeless mode target is stored" below.
 
 ### "One or two targets" inside a mode
 
@@ -11151,9 +11378,33 @@ offers every subset largest first through `enumerate_target_tuples`. The mode
 is on offer only while the floor can be met (601.2b), so with one permanent
 card in the graveyard the bullet returns that one, where a fixed `count: 2`
 would strike it; a card-level `up_to` target would instead be declared — and
-need a legal choice — under the targetless bullet too. The same
-**last-target-declared** rule as `optional` applies, for the same positional
-reason.
+need a legal choice — under the targetless bullet too. It is **stored last**,
+as an `optional` one is.
+
+### Where a sizeless mode target is stored
+
+Will of the Abzan's *first* bullet owns "any number of target opponents" and
+its second "target creature card from your graveyard":
+
+```jsonc
+"targets": [
+  {"id": "foes", "kind": "player", "mode": 0, "count": "any",
+   "selector": {"controller": "opponent"}},
+  {"id": "back", "kind": "card_in_graveyard", "mode": 1,
+   "selector": {"zone": "graveyard", "controller": "you", "types": ["Creature"]}}
+]
+```
+
+The stored refs are one flat tuple that `filter_legal` splits spec by spec, and
+a declined or caster-sized spec can only be split off as "whatever is left". So
+`CardDef.specs_for_modes` lays a declaration out as the card-level specs, the
+chosen modes' **fixed-size** specs in printed mode order, then the one
+**sizeless** (`optional`, `up_to` or `"any"`) mode-owned spec, whichever mode
+owns it. The questions are still asked in printed mode order
+(`Game._ask_mode_targets`, a trigger as it goes on the stack); only the storage
+moves, and every reader of the stored refs walks the same list. The loader
+admits one sizeless mode-owned spec per card, and none a sibling's selector
+names.
 
 ## "Target creature phases out"
 
@@ -13067,6 +13318,34 @@ every zone, plus "Another card name": a library holds only its owner's cards
 (400.3), so every other printed name has one outcome — it matches nothing — and
 that is a real choice. No new `DecisionKind`: `ask_mode`, tagged
 `choose_card_name`; the heuristic agent names what its library holds most of.
+
+## "Choose a number"
+
+    Expel the Interlopers — "Choose a number between 0 and 10. Destroy all
+    creatures with power greater than or equal to the chosen number."
+
+```jsonc
+{ "op": "choose_number", "as": "chosen", "min": 0, "max": 10 },
+{ "op": "destroy",
+  "objects": { "zone": "battlefield", "controller": "any", "types": ["Creature"],
+               "power": { "op": ">=", "value": { "binding": "chosen" } },
+               "count": "all" } }
+```
+
+Binds the chosen **integer** under `as`, which is required; any value
+expression reads it as `{"binding": …}`, so it stands wherever a number does —
+a selector's `power`/`toughness`/`mana_value` comparison, an `amount`. `min`
+(default 0) and `max` (required) are the printed bounds, both inclusive and
+both non-negative integer literals; the loader refuses a missing `max`, a
+non-literal bound and `max` below `min`. A range of one number asks nothing.
+
+The number is chosen by the controller **on resolution**. The near miss is a
+`choose_mode` with one mode per number, and it is a different card: a
+top-level `choose_mode` is answered as the spell is cast (601.2b), which makes
+the spell modal (700.2) and announces the number on the stack. No new
+`DecisionKind`: `ask_mode`, tagged `choose_number`, the label at ordinal `i`
+being `min + i`. Not `ask_x` — every seat answers `CHOOSE_X` with its maximum,
+and the largest number is the one that destroys nothing.
 
 ## "Choose a color"
 

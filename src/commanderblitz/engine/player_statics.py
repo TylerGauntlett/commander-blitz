@@ -902,6 +902,87 @@ def attack_defender_forbidden(
     return False
 
 
+def defender_waived(state: GameState, oid: int) -> frozenset[int] | None:
+    """May this creature attack as though it didn't have defender -- and whom?
+
+    Felothar's "creatures you control can attack as though they didn't have
+    defender", Assault Formation's and Wakestone Gargoyle's timed form, and
+    Weathered Sentinels' "can attack players who attacked you during their last
+    turn as though it didn't have defender". The creature keeps the keyword for
+    every other reader -- a "creature with defender" filter, an anthem for
+    walls -- which is why `lose_keyword` cannot say any of them.
+
+    ``None`` means no waiver applies. `ALL_DEFENDERS` means any attack the
+    creature could otherwise make: a `TempEffect(kind="attack_despite_defender")`
+    on it (the op), or a static with no ``defending``. Otherwise the seats a
+    ``defending`` static names, relative to its controller -- the creature may
+    attack only those players, and none of their planeswalkers or battles.
+    Several statics' seats are united; an unrestricted waiver beats them all.
+
+    `affects` is read off the creature as it now is (``derived``): attacking is
+    no layer, so a wall that became a creature this turn is one of "creatures
+    you control".
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return None
+    if any(temp.kind == "attack_despite_defender" for temp in obj.until_eot):
+        return ALL_DEFENDERS
+    seats: set[int] = set()
+    found = False
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "attack_despite_defender":
+            continue
+        if not _matches(state, obj, source_obj, static.get("affects"), derived=True):
+            continue
+        if not _static_active(state, source_obj, static, affected=obj):
+            continue
+        word = static.get("defending")
+        if word is None:
+            return ALL_DEFENDERS
+        found = True
+        seats |= _defending_seats(state, source_obj.controller, str(word))
+    return frozenset(seats) if found else None
+
+
+#: `defender_waived`'s answer for a waiver naming nobody: every player.
+ALL_DEFENDERS: frozenset[int] = frozenset({-1})
+
+
+def assigns_damage_by_toughness(state: GameState, oid: int) -> bool:
+    """Does this creature assign combat damage equal to its toughness?
+
+    Rule 510.1a: "each creature assigns combat damage equal to its power",
+    unless an effect says it "assigns combat damage equal to its toughness
+    rather than its power" -- Doran, Assault Formation, Felothar the Steadfast,
+    and Baldin, Century Herdmaster's "during your turn, each creature …". A
+    substitution at assignment and nothing else: the creature's power is
+    untouched for every other reader, which is why neither `buff` nor `set_pt`
+    can say it.
+
+    Two sources. The timed one is a `TempEffect(kind="combat_damage_by_toughness")`
+    on the creature (Walking Bulwark, the op of the same name). The continuous
+    one is the `combat_damage_by_toughness` static, its `affects` read off the
+    creature as it now is (``derived``): combat damage is no layer, so a land
+    animated into a creature this turn is one of "each creature you control".
+    The static's `condition` is asked per creature, Baldin's ``is_your_turn``
+    measured against the static's own controller.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return False
+    if any(temp.kind == "combat_damage_by_toughness" for temp in obj.until_eot):
+        return True
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "combat_damage_by_toughness":
+            continue
+        if _matches(
+            state, obj, source_obj, static.get("affects"), derived=True
+        ) and _static_active(state, source_obj, static, affected=obj):
+            return True
+    return False
+
+
 def any_defender_attack_prohibition(state: GameState) -> bool:
     """Is there a ``cant_attack_you`` static on the battlefield at all?
 
@@ -1724,7 +1805,12 @@ def _defending_seats(state: GameState, pid: int, word: str) -> frozenset[int]:
             return frozenset()
         top = max(state.players[p].life for p in opponents)
         return frozenset(p for p in opponents if state.players[p].life == top)
-    raise ValueError(f"unknown attacks_if_able defending {word!r}")  # pragma: no cover
+    if word == "attacked_you_last_turn":
+        # Each opponent's last completed turn, seats only (506.2): the record
+        # `turn._cleanup_step` keeps for Avenge and the condition of that name.
+        record = state.attacked_last_turn
+        return frozenset(p for p in opponents if p in record and pid in record[p][1])
+    raise ValueError(f"unknown static defending {word!r}")  # pragma: no cover
 
 
 def untap_also(state: GameState, active_pid: int) -> list[int]:

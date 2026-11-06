@@ -134,6 +134,7 @@ from .vocabulary import (  # noqa: F401
     COST_REDUCTION_ZONES,
     COUNTERS_ON_ARRIVAL_OPS,
     DEFENDING_TRIGGERS,
+    DEFENDING_WORDS,
     DELAYED_TRIGGER_KEYS,
     FIRST_ACTIVATION_TARGETING_KEYS,
     FREE_CAST_FILTER_KEYS,
@@ -4210,6 +4211,23 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: {model.effect} needs an 'affects' filter -- "
             f'{{"self_only": true}} for the creature that carries it'
         )
+    if model.effect == "attack_despite_defender" and model.affects is None:
+        # A missing filter matches nothing: the waiver would load and let no
+        # wall attack. Weathered Sentinels' is `{"self_only": true}`, Felothar's
+        # `{"types": ["Creature"]}`.
+        raise DslError(
+            f"{where}: attack_despite_defender needs an 'affects' filter -- "
+            f'{{"self_only": true}}, or {{"types": ["Creature"]}} for creatures you control'
+        )
+    if model.effect == "combat_damage_by_toughness" and model.affects is None:
+        # A missing filter matches nothing, so the substitution would load,
+        # print and change no creature's damage. Every printed one names its
+        # creatures: `{"types": ["Creature"]}` for "each creature you control",
+        # with `controller: "any"` for Baldin's "each creature".
+        raise DslError(
+            f"{where}: combat_damage_by_toughness needs an 'affects' filter -- "
+            f'e.g. {{"types": ["Creature"]}} for each creature you control'
+        )
     if model.effect == "cant_attack_you" and model.affects is None:
         # Same refusal, one step further: a missing filter matches nothing, so a
         # filterless `cant_attack_you` is a wall nobody bounces off. And the
@@ -5491,12 +5509,15 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: 'or_planeswalkers' only means anything on an attack_tax, "
             f"not on {model.effect!r}"
         )
-    if model.defending is not None and model.effect != "attacks_if_able":
+    if model.defending is not None and model.effect != DEFENDING_WORDS[model.defending]:
         # "...attacks <that player> each combat if able" is a clause of the
-        # attack requirement and of nothing else; on any other static it would
-        # load, print and change nothing.
+        # attack requirement, and "can attack players who attacked you during
+        # their last turn" a clause of the defender waiver; each word belongs to
+        # its one effect, and anywhere else it would load, print and change
+        # nothing.
         raise DslError(
-            f"{where}: 'defending' only means anything on an attacks_if_able, "
+            f"{where}: 'defending' only means anything on an "
+            f"{DEFENDING_WORDS[model.defending]} when it is {model.defending!r}, "
             f"not on {model.effect!r}"
         )
     if model.player_only and model.effect != "cant_attack_you":

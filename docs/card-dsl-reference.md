@@ -10,20 +10,20 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 164 |
+| [Effect ops](#effect-ops) | 167 |
 | [Selectors](#selectors) | 74 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 69 |
 | [Conditions](#conditions) | 34 |
 | [Trigger events](#trigger-events) | 49 |
 | [Trigger filters](#trigger-filters) | 36 |
-| [Static effects](#static-effects) | 92 |
+| [Static effects](#static-effects) | 94 |
 | [Player-wide statics](#player-wide-statics) | 45 |
-| [Grantable statics](#grantable-statics) | 41 |
+| [Grantable statics](#grantable-statics) | 43 |
 | [Cost reduction](#cost-reduction) | 6 |
 | [Ability costs](#ability-costs) | 30 |
 | [Card-level costs](#card-level-costs) | 32 |
-| [Keywords](#keywords) | 44 |
+| [Keywords](#keywords) | 45 |
 | [Card types and supertypes](#card-types-and-supertypes) | 12 |
 | [Durations](#durations) | 6 |
 | [Decision kinds](#decision-kinds) | 11 |
@@ -82,6 +82,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `airbend` | Board | yes | Airbend: exile and let owners cast for {2}; `as` records the pool. | [Airbend — "exile them, and their owners may cast them for {2}"](card-dsl-cookbook.md#airbend--exile-them-and-their-owners-may-cast-them-for-2) |
 | `amass` | Board | yes | Amass [subtype] N: N +1/+1 counters on an Army creature you control, creating a 0/0 black Army token first if none; it becomes that subtype too. | [amass — "Amass Zombies N"](card-dsl-cookbook.md#amass--amass-zombies-n) |
 | `attach` | Board |  | Attach an Aura, Equipment or Fortification to a permanent; with `player`, move this Aura onto one player (701.3). | [Auras and Equipment](card-dsl-cookbook.md#auras-and-equipment) |
+| `attack_despite_defender` | Board |  | Until end of turn, creatures can attack as though they didn't have defender, keeping the keyword. | [Attacking as though it didn't have defender](card-dsl-cookbook.md#attacking-as-though-it-didnt-have-defender) |
 | `attack_tax` | Board |  | Until your next turn (or this turn), creatures can't attack you unless their controller pays a mana cost for each (the timed form of the static). | [Pricing an attack rather than forbidding it](card-dsl.md#pricing-an-attack-rather-than-forbidding-it) |
 | `aura_swap` | Board |  | Exchange the source for an Aura card in hand. | [Aura swap — an exchange, not two moves](card-dsl-cookbook.md#aura-swap--an-exchange-not-two-moves) |
 | `become_copy` | Board |  | A permanent becomes a copy of another. | [A permanent that enters as a copy](card-dsl.md#a-permanent-that-enters-as-a-copy) |
@@ -90,6 +91,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `cant_block` | Board |  | Creatures can't block this turn. | [The cant_block op — the same sentence with a clock](card-dsl-cookbook.md#the-cant_block-op--the-same-sentence-with-a-clock) |
 | `cant_sacrifice` | Board |  | Permanents can't be sacrificed for a duration. | [The cant_sacrifice op — a prohibition on a game action, not a zone change](card-dsl-cookbook.md#the-cant_sacrifice-op--a-prohibition-on-a-game-action-not-a-zone-change) |
 | `cast_copy` | Board |  | Cast a copy of an encoded or linked card, free or for a `cost` instead. | [Casting a copy for a printed price](card-dsl-cookbook.md#casting-a-copy-for-a-printed-price) |
+| `combat_damage_by_toughness` | Board |  | Until end of turn, creatures assign combat damage equal to their toughness rather than their power. | [Combat damage equal to toughness](card-dsl-cookbook.md#combat-damage-equal-to-toughness) |
 | `copy_permanent` | Board | yes | Create a token copy of a permanent; `as` records the copies. | [Token copies](card-dsl-cookbook.md#token-copies) |
 | `create_token` | Board | yes | Create N tokens by id; `as` records them; `power`/`toughness` size an X/X token. | [An X/X token — "create an X/X blue Shark creature token"](card-dsl-cookbook.md#an-xx-token--create-an-xx-blue-shark-creature-token) |
 | `destroy` | Board | yes | Destroy permanents; `no_regeneration` forbids regeneration; `as` records what was destroyed. | [Effect ops](card-dsl.md#effect-ops) |
@@ -195,7 +197,8 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `choose_card_name` | Control flow | yes | Choose a card name; `as` records it. | ["Choose a card name"](card-dsl-cookbook.md#choose-a-card-name) |
 | `choose_color` | Control flow |  | Choose a color, readable later; `except_colors` removes colors from the offer. | ["Choose a color"](card-dsl-cookbook.md#choose-a-color) |
 | `choose_mode` | Control flow |  | Choose one or more modes and run them. | [Modal spells with a target](card-dsl-cookbook.md#modal-spells-with-a-target) |
-| `choose_permanents` | Control flow | yes | Mark permanents without acting on them; `as` records them. | [choose_permanents — marking without acting](card-dsl-cookbook.md#choose_permanents--marking-without-acting) |
+| `choose_number` | Control flow | yes | Choose an integer in a printed range on resolution; `as` records it. | ["Choose a number"](card-dsl-cookbook.md#choose-a-number) |
+| `choose_permanents` | Control flow | yes | Mark permanents without acting on them; `as` records them; `max_total_power` caps the chosen set's total power. | [choose_permanents — marking without acting](card-dsl-cookbook.md#choose_permanents--marking-without-acting) |
 | `choose_player` | Control flow | yes | Choose a player; `as` records the seat. | [Effect ops](card-dsl.md#effect-ops) |
 | `choose_type` | Control flow |  | Choose a creature, permanent or card type (`of`), readable later. | ["Choose a creature type"](card-dsl-cookbook.md#choose-a-creature-type) |
 | `delay` | Control flow |  | Run effects at the beginning of a named later step. | [Delayed triggers — "at the beginning of the next …"](card-dsl-cookbook.md#delayed-triggers--at-the-beginning-of-the-next-) |
@@ -534,6 +537,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `add_mana_on_tap` | yes |  | Whenever a matching permanent is tapped for mana, add extra mana. | [Static abilities](card-dsl.md#static-abilities) |
 | `add_subtype` |  | yes | Matching permanents have an extra subtype. | ["…is the chosen type in addition to its other types"](card-dsl-cookbook.md#is-the-chosen-type-in-addition-to-its-other-types) |
 | `all_damage_wither` |  |  | All damage to creatures, from every source, is dealt as -1/-1 counters. | ["All damage is dealt as though its source had wither"](card-dsl-cookbook.md#all-damage-is-dealt-as-though-its-source-had-wither) |
+| `attack_despite_defender` |  | yes | Matching creatures can attack as though they didn't have defender (`defending`: only the players it names). | [Attacking as though it didn't have defender](card-dsl-cookbook.md#attacking-as-though-it-didnt-have-defender) |
 | `attack_tax` |  | yes | Matching creatures can't attack unless their controller pays (`x_per_attacker`: {X} read off each attacker). | [Pricing an attack rather than forbidding it](card-dsl.md#pricing-an-attack-rather-than-forbidding-it) |
 | `attacks_if_able` |  | yes | Matching creatures attack each combat if able (`defending`: only a named player obeys it). | [The continuous form](card-dsl-cookbook.md#the-continuous-form) |
 | `black_mana_as_phyrexian` | yes |  | The player may pay life for each {B} in a cost. | [black_mana_as_phyrexian — K'rrik's "For each {B} in a cost"](card-dsl-cookbook.md#black_mana_as_phyrexian--krriks-for-each-b-in-a-cost) |
@@ -558,6 +562,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `cast_from_graveyard` | yes |  | The player may cast matching spells from their graveyard; with `active_zones: ["graveyard"]`, the card may cast itself from there. | [Casting from the graveyard](card-dsl-cookbook.md#casting-from-the-graveyard) |
 | `cast_from_library_top` | yes |  | The player may cast spells from the top of their library: for life with `pay_life_instead`, or matching `affects_spells` at the printed cost, granting `cast_gains_keywords` to what is cast that way. | [Static abilities](card-dsl.md#static-abilities) |
 | `cast_only_at_sorcery_speed` | yes |  | The player may cast matching spells only at sorcery speed. | [Static abilities](card-dsl.md#static-abilities) |
+| `combat_damage_by_toughness` |  | yes | Matching creatures assign combat damage equal to their toughness rather than their power. | [Combat damage equal to toughness](card-dsl-cookbook.md#combat-damage-equal-to-toughness) |
 | `crew_power_bonus` |  | yes | Matching creatures crew as though their power were N greater. | [Crews Vehicles as though its power were N greater](card-dsl.md#crews-vehicles-as-though-its-power-were-n-greater) |
 | `damage_cant_be_prevented` |  |  | No damage can be prevented: every prevention effect is skipped. | ["Damage can't be prevented"](card-dsl-cookbook.md#damage-cant-be-prevented) |
 | `damage_life_floor` | yes |  | Damage can't reduce the player's life below N. | [Damage can't take you below 1](card-dsl-cookbook.md#damage-cant-take-you-below-1) |
@@ -683,6 +688,7 @@ The static effects a `grant_ability` static may hand to another permanent. Defin
 | `ability_cost_reduction` | Activated abilities of a class (`equip`, or `any` beside `targeting`) cost less; `first_during_your_turn` limits it to your first matching activation of your turn. | [A static that discounts another permanent's activated ability](card-dsl.md#a-static-that-discounts-another-permanents-activated-ability) |
 | `activate_loyalty_as_though_instant` | The player may activate loyalty abilities any time they could cast an instant. | [grant_ability as a static, and where the line now runs](card-dsl-cookbook.md#grant_ability-as-a-static-and-where-the-line-now-runs) |
 | `add_subtype` | Matching permanents have an extra subtype. | ["…is the chosen type in addition to its other types"](card-dsl-cookbook.md#is-the-chosen-type-in-addition-to-its-other-types) |
+| `attack_despite_defender` | Matching creatures can attack as though they didn't have defender (`defending`: only the players it names). | [Attacking as though it didn't have defender](card-dsl-cookbook.md#attacking-as-though-it-didnt-have-defender) |
 | `attack_tax` | Matching creatures can't attack unless their controller pays (`x_per_attacker`: {X} read off each attacker). | [Pricing an attack rather than forbidding it](card-dsl.md#pricing-an-attack-rather-than-forbidding-it) |
 | `attacks_if_able` | Matching creatures attack each combat if able (`defending`: only a named player obeys it). | [The continuous form](card-dsl-cookbook.md#the-continuous-form) |
 | `block_restriction` | Matching creatures can't block, or can only block under a rule. | [Block restrictions](card-dsl-cookbook.md#block-restrictions) |
@@ -695,6 +701,7 @@ The static effects a `grant_ability` static may hand to another permanent. Defin
 | `cant_block_alone` | Matching creatures can't block alone. | [Can't attack or block alone](card-dsl-cookbook.md#cant-attack-or-block-alone) |
 | `cant_have_counters` | Matching permanents can't have counters of the kind put on them. | [cant_have_counters — a placement that doesn't happen](card-dsl-cookbook.md#cant_have_counters--a-placement-that-doesnt-happen) |
 | `cant_sacrifice` | Matching permanents can't be sacrificed. | [Forbidding a sacrifice, continuously](card-dsl.md#forbidding-a-sacrifice-continuously) |
+| `combat_damage_by_toughness` | Matching creatures assign combat damage equal to their toughness rather than their power. | [Combat damage equal to toughness](card-dsl-cookbook.md#combat-damage-equal-to-toughness) |
 | `crew_power_bonus` | Matching creatures crew as though their power were N greater. | [Crews Vehicles as though its power were N greater](card-dsl.md#crews-vehicles-as-though-its-power-were-n-greater) |
 | `double_triggers` | Matching permanents' triggered abilities trigger an additional time. | [double_triggers, and its two axes](card-dsl.md#double_triggers-and-its-two-axes) |
 | `enters_tapped` | Matching permanents enter tapped. | [grant_ability as a static, and where the line now runs](card-dsl-cookbook.md#grant_ability-as-a-static-and-where-the-line-now-runs) |
@@ -830,6 +837,7 @@ Every keyword the `keywords` list may carry -- the engine's `Keyword` enum. Alia
 | `exalted` | Exalted. | [Exalted](card-dsl-cookbook.md#exalted) |
 | `fear` | Fear. | [Fear, intimidate, horsemanship, shadow and nonbasic landwalk](card-dsl-cookbook.md#fear-intimidate-horsemanship-shadow-and-nonbasic-landwalk) |
 | `first_strike` | First strike. | [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on) |
+| `flanking` | Flanking. | [Flanking](card-dsl-cookbook.md#flanking) |
 | `flash` | Flash. | [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on) |
 | `flying` | Flying. | [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on) |
 | `forestwalk` | Forestwalk. | [Landwalk, and global attack prohibitions](card-dsl-cookbook.md#landwalk-and-global-attack-prohibitions) |

@@ -1,0 +1,821 @@
+{
+  "id": "tdc_abzan_armor",
+  "name": "Abzan Armor",
+  "commanders": [
+    "felothar_the_steadfast"
+  ],
+  "color_identity": [
+    "B",
+    "G",
+    "W"
+  ],
+  "source": "precon",
+  "release": {
+    "set_code": "TDC",
+    "set_name": "Tarkir: Dragonstorm Commander",
+    "date": "2025-04-11"
+  },
+  "notes": "Tarkir: Dragonstorm Commander precon, card for card (https://mtgjson.com/api/v5/decks/AbzanArmor_TDC.json).",
+  "tags": [
+    "Defenders",
+    "Toughness matters",
+    "Ramp",
+    "Lifegain"
+  ],
+  "strategy": "Felothar the Steadfast turns a wall of defenders into an army: every creature you control deals combat damage equal to its toughness and may attack as though it had no defender, so Wall of Omens, Wall of Blossoms, Overgrown Battlement and Axebane Guardian draw, ramp and then swing. Assault Formation, Baldin, Century Herdmaster and Walking Bulwark do the same job a second time, Tower Defense and Canopy Gargantuan raise the toughness that now matters, and Towering Titan arrives with a +1/+1 counter for every point of toughness already on the board. Arbor Adherent, Axebane Guardian, Overgrown Battlement and Wall of Roots ramp off the same bodies, Rampart Architect and Hornet Nest keep making more of them, and Wall of Reverence, Rhox Faithmender and Indulging Patrician turn the toughness into life and drain. Swords to Plowshares, Infernal Grasp, Anguished Unmaking and Despark answer threats, Expel the Interlopers and Slaughter the Strong sweep the board while the low-power walls survive, and Reunion of the House brings the cheap ones back.",
+  "archetype": "go_wide",
+  "printings": {
+    "access_tunnel": {
+      "scryfall_id": "4bef5957-71a4-4fe0-b2ce-dff8e8690bd9",
+      "artist": "Alayna Danner",
+      "set_code": "tdc",
+      "collector_number": "337"
+    },
+    "anguished_unmaking": {
+      "scryfall_id": "c7ce164c-3437-440c-b462-acca491bfd91",
+      "artist": "Wesley Burt",
+      "set_code": "tdc",
+      "collector_number": "279"
+    },
+    "arasta_of_the_endless_web": {
+      "scryfall_id": "95a87b4e-f0ea-457c-9517-4acf313c4ca6",
+      "artist": "Sam Rowan",
+      "set_code": "tdc",
+      "collector_number": "244"
+    },
+    "arbor_adherent": {
+      "scryfall_id": "57d0502f-5ae8-40b6-9f2b-cd4418016219",
+      "artist": "Christina Kraus",
+      "set_code": "tdc",
+      "collector_number": "42"
+    },
+    "arboreal_grazer": {
+      "scryfall_id": "9eb7b2ae-a364-485b-ae75-10dbb0af5541",
+      "artist": "Jason Rainville",
+      "set_code": "tdc",
+      "collector_number": "245"
+    },
+    "arcane_signet": {
+      "scryfall_id": "935644d4-a140-4f24-b8ab-d5e79a682a9b",
+      "artist": "Racrufi",
+      "set_code": "tdc",
+      "collector_number": "105"
+    },
+    "assault_formation": {
+      "scryfall_id": "40452217-9d8c-48e7-b5b4-2740b97bea2a",
+      "artist": "Kieran Yanner",
+      "set_code": "tdc",
+      "collector_number": "246"
+    },
+    "axebane_guardian": {
+      "scryfall_id": "f0282af2-9b3f-4335-92ea-9db9267e8cd2",
+      "artist": "Slawomir Maniak",
+      "set_code": "tdc",
+      "collector_number": "248"
+    },
+    "baldin_century_herdmaster": {
+      "scryfall_id": "fc018483-69a7-4c4c-adfe-44071f53a7de",
+      "artist": "Zoltan Boros",
+      "set_code": "tdc",
+      "collector_number": "110"
+    },
+    "behind_the_scenes": {
+      "scryfall_id": "514d1c07-e559-49c7-a95c-2fa55fa65042",
+      "artist": "David Gaillet",
+      "set_code": "tdc",
+      "collector_number": "172"
+    },
+    "betor_ancestor_s_voice": {
+      "scryfall_id": "2e261489-8dde-4594-8868-69f432f03d03",
+      "artist": "Lius Lasahido",
+      "set_code": "tdc",
+      "collector_number": "1"
+    },
+    "blight_pile": {
+      "scryfall_id": "9dd5bcec-b766-41cd-8809-eeec7e31b39c",
+      "artist": "Olivier Bernard",
+      "set_code": "tdc",
+      "collector_number": "174"
+    },
+    "bojuka_bog": {
+      "scryfall_id": "38834333-f9ea-43a8-b00a-17935d59eaea",
+      "artist": "Howard Lyon",
+      "set_code": "tdc",
+      "collector_number": "341"
+    },
+    "canopy_gargantuan": {
+      "scryfall_id": "87736547-7534-4f0a-86e0-be9b0428be1e",
+      "artist": "John Tedrick",
+      "set_code": "tdc",
+      "collector_number": "45"
+    },
+    "canopy_vista": {
+      "scryfall_id": "c2a85a8e-28bb-4899-a922-13a03dec844c",
+      "artist": "Adam Paquette",
+      "set_code": "tdc",
+      "collector_number": "343"
+    },
+    "carven_caryatid": {
+      "scryfall_id": "f65260d1-9802-4e46-95d3-9d6c2e211338",
+      "artist": "Jim Nelson",
+      "set_code": "tdc",
+      "collector_number": "250"
+    },
+    "colfenor_s_urn": {
+      "scryfall_id": "753c8720-b45c-47a0-8f25-87813660d14e",
+      "artist": "Jim Pavelec",
+      "set_code": "tdc",
+      "collector_number": "315"
+    },
+    "command_tower": {
+      "scryfall_id": "5fc770b6-03ac-45c3-a2ca-bd508096384e",
+      "artist": "Marina Ortega Lorente",
+      "set_code": "tdc",
+      "collector_number": "107"
+    },
+    "crashing_drawbridge": {
+      "scryfall_id": "018257cf-8981-4691-92ab-6a33f77c9680",
+      "artist": "Mark Behm",
+      "set_code": "tdc",
+      "collector_number": "316"
+    },
+    "deceptive_landscape": {
+      "scryfall_id": "ba863744-929b-43f3-a773-342ba3437b18",
+      "artist": "Erikas Perl",
+      "set_code": "tdc",
+      "collector_number": "356"
+    },
+    "despark": {
+      "scryfall_id": "f37a4bc1-3702-44d7-8b29-dca99b563c6b",
+      "artist": "Slawomir Maniak",
+      "set_code": "tdc",
+      "collector_number": "284"
+    },
+    "dragonlord_dromoka": {
+      "scryfall_id": "4452d99e-23c2-408d-9eb8-ef31aefafa9d",
+      "artist": "Eric Deschamps",
+      "set_code": "tdc",
+      "collector_number": "286"
+    },
+    "evolving_wilds": {
+      "scryfall_id": "62209251-4118-4843-895b-46afb7284c75",
+      "artist": "Leon Tukker",
+      "set_code": "tdm",
+      "collector_number": "255"
+    },
+    "exotic_orchard": {
+      "scryfall_id": "c2ea2395-4518-4683-8eed-59c43fb3328a",
+      "artist": "Steven Belledin",
+      "set_code": "tdc",
+      "collector_number": "360"
+    },
+    "expel_the_interlopers": {
+      "scryfall_id": "bbdf088c-3067-4df2-92f7-95fed5b304b8",
+      "artist": "Andreas Zafiratos",
+      "set_code": "tdc",
+      "collector_number": "115"
+    },
+    "faeburrow_elder": {
+      "scryfall_id": "4d7fc4e6-e229-431f-8f8d-8464fb410724",
+      "artist": "Raoul Vitale",
+      "set_code": "tdc",
+      "collector_number": "289"
+    },
+    "feed_the_swarm": {
+      "scryfall_id": "a776f96b-01bf-430a-b1ad-9f4651070610",
+      "artist": "Andrey Kuzinskiy",
+      "set_code": "tdc",
+      "collector_number": "180"
+    },
+    "felothar_the_steadfast": {
+      "scryfall_id": "2c3549f6-25df-4ea7-84ad-922ccd4af6b2",
+      "artist": "Zoltan Boros",
+      "set_code": "tdc",
+      "collector_number": "4"
+    },
+    "forest": {
+      "scryfall_id": "8100bceb-ffba-487a-bb45-4fe2a156a8dc",
+      "artist": "Jesper Ejsing",
+      "set_code": "tdm",
+      "collector_number": "285"
+    },
+    "fortified_village": {
+      "scryfall_id": "4a0aeb3a-923a-4b97-9d27-ea7e0b57de75",
+      "artist": "Cliff Childs",
+      "set_code": "tdc",
+      "collector_number": "366"
+    },
+    "hornet_nest": {
+      "scryfall_id": "cc4693c6-f532-4726-b51a-21b04f820448",
+      "artist": "Adam Paquette",
+      "set_code": "tdc",
+      "collector_number": "259"
+    },
+    "ikra_shidiqi_the_usurper": {
+      "scryfall_id": "a6fd7a8c-e0cd-4fb5-b492-8f3ef7579682",
+      "artist": "Anastasia Ovchinnikova",
+      "set_code": "tdc",
+      "collector_number": "100"
+    },
+    "indomitable_ancients": {
+      "scryfall_id": "a4e20d78-8c01-40ed-bc69-89d4d5028552",
+      "artist": "Pete Venters",
+      "set_code": "tdc",
+      "collector_number": "121"
+    },
+    "indulging_patrician": {
+      "scryfall_id": "a2c1765c-0054-4c9f-a6b3-5e54189b44c3",
+      "artist": "Miranda Meeks",
+      "set_code": "tdc",
+      "collector_number": "292"
+    },
+    "infernal_grasp": {
+      "scryfall_id": "a8b6ef8c-3c8c-4b37-9122-6188591e3a65",
+      "artist": "Naomi Baker",
+      "set_code": "tdc",
+      "collector_number": "182"
+    },
+    "isolated_chapel": {
+      "scryfall_id": "2358a441-4ef7-469c-bb9c-c6ff4d719658",
+      "artist": "Richard Wright",
+      "set_code": "tdc",
+      "collector_number": "373"
+    },
+    "jaddi_offshoot": {
+      "scryfall_id": "3ed79f15-beeb-4157-a567-eac0772f950a",
+      "artist": "Daarken",
+      "set_code": "tdc",
+      "collector_number": "260"
+    },
+    "jaws_of_defeat": {
+      "scryfall_id": "c495f3bf-86a4-4d2f-821f-c01515f084c9",
+      "artist": "Andreas Zafiratos",
+      "set_code": "tdc",
+      "collector_number": "27"
+    },
+    "nyx_fleece_ram": {
+      "scryfall_id": "771fcea9-1007-4ff6-8000-99017978ac1c",
+      "artist": "Hasani Claxton",
+      "set_code": "tdc",
+      "collector_number": "126"
+    },
+    "orzhov_signet": {
+      "scryfall_id": "90894726-1940-4291-a05c-b85cefbfa344",
+      "artist": "Martina Pilcerova",
+      "set_code": "tdc",
+      "collector_number": "323"
+    },
+    "overgrown_battlement": {
+      "scryfall_id": "680f6308-4469-4565-873e-40fb5aaef27d",
+      "artist": "Franz Vohwinkel",
+      "set_code": "tdc",
+      "collector_number": "264"
+    },
+    "overgrown_farmland": {
+      "scryfall_id": "644fb0ed-f434-4cc4-b7e9-a60db5ece2b7",
+      "artist": "Jonas De Ro",
+      "set_code": "tdc",
+      "collector_number": "381"
+    },
+    "path_of_ancestry": {
+      "scryfall_id": "b8504812-fcf5-47d3-977d-1d9a11231fd0",
+      "artist": "Alayna Danner",
+      "set_code": "tdc",
+      "collector_number": "382"
+    },
+    "plains": {
+      "scryfall_id": "12cff32a-a365-43ee-a196-8ce32b3bb9fd",
+      "artist": "John Avon",
+      "set_code": "tdm",
+      "collector_number": "277"
+    },
+    "protector_of_the_wastes": {
+      "scryfall_id": "fd68208b-761f-4aa0-bc8e-59977d784211",
+      "artist": "Zezhou Chen",
+      "set_code": "tdc",
+      "collector_number": "14"
+    },
+    "radiant_grove": {
+      "scryfall_id": "466fd4e6-f1dd-40c9-92df-1da48ab729d6",
+      "artist": "Lorenzo Lanfranconi",
+      "set_code": "tdc",
+      "collector_number": "385"
+    },
+    "rampart_architect": {
+      "scryfall_id": "20f533fc-51d0-49bd-afcc-81b8b3ff9749",
+      "artist": "Eelis Kyttanen",
+      "set_code": "tdc",
+      "collector_number": "47"
+    },
+    "reunion_of_the_house": {
+      "scryfall_id": "71e4a360-89dd-4f25-9b85-75d0b131e208",
+      "artist": "Quintin Gleim",
+      "set_code": "tdc",
+      "collector_number": "15"
+    },
+    "rhox_faithmender": {
+      "scryfall_id": "c79a8938-aae6-42ff-888c-2783e11a8d4f",
+      "artist": "Wesley Burt",
+      "set_code": "tdc",
+      "collector_number": "128"
+    },
+    "sandsteppe_citadel": {
+      "scryfall_id": "47f47e7f-39ba-4807-8e32-7262a61dfbba",
+      "artist": "Diego Gisbert",
+      "set_code": "tdm",
+      "collector_number": "266"
+    },
+    "seedborn_muse": {
+      "scryfall_id": "76f58441-5674-4f1e-af9b-94e14ab7e619",
+      "artist": "Adam Rex",
+      "set_code": "tdc",
+      "collector_number": "268"
+    },
+    "selesnya_signet": {
+      "scryfall_id": "4e21a028-0f06-4124-bd0f-04989a1f9481",
+      "artist": "Raoul Vitale",
+      "set_code": "tdc",
+      "collector_number": "324"
+    },
+    "shadrix_silverquill": {
+      "scryfall_id": "23111dba-89f4-4663-aca6-953a209e1bd9",
+      "artist": "Raymond Swanland",
+      "set_code": "tdc",
+      "collector_number": "302"
+    },
+    "shalai_voice_of_plenty": {
+      "scryfall_id": "53876046-cdb8-4157-96cd-7832d3ad2549",
+      "artist": "Victor Adame Minguez",
+      "set_code": "tdc",
+      "collector_number": "130"
+    },
+    "sidar_kondo_of_jamuraa": {
+      "scryfall_id": "755cf134-e91e-4aa4-be44-b7a53a7f9e20",
+      "artist": "Ryan Alexander Lee",
+      "set_code": "tdc",
+      "collector_number": "303"
+    },
+    "slaughter_the_strong": {
+      "scryfall_id": "9b4a42d9-4568-414d-8caf-9a7c33073059",
+      "artist": "Randy Vargas",
+      "set_code": "tdc",
+      "collector_number": "131"
+    },
+    "sol_ring": {
+      "scryfall_id": "7b0ccfd4-f118-4497-9c5a-54cf12000e16",
+      "artist": "Leon Tukker",
+      "set_code": "tdc",
+      "collector_number": "106"
+    },
+    "staff_of_compleation": {
+      "scryfall_id": "0c475639-1368-4e29-adeb-8973e343bca5",
+      "artist": "Igor Krstic",
+      "set_code": "tdc",
+      "collector_number": "326"
+    },
+    "sungrass_prairie": {
+      "scryfall_id": "8005828b-807a-43fc-98aa-20f76c47662c",
+      "artist": "Ron Spencer",
+      "set_code": "tdc",
+      "collector_number": "397"
+    },
+    "sunpetal_grove": {
+      "scryfall_id": "565b4aaa-1990-4cb2-b519-2c0b1c9d5d18",
+      "artist": "Dimitar Marinski",
+      "set_code": "tdc",
+      "collector_number": "399"
+    },
+    "swamp": {
+      "scryfall_id": "f0bfdb9e-318f-4acd-9fbd-41b98a8875d6",
+      "artist": "Alexander Ostrowski",
+      "set_code": "tdm",
+      "collector_number": "281"
+    },
+    "swiftfoot_boots": {
+      "scryfall_id": "1969b151-3192-4d35-80ca-c4e180601ec8",
+      "artist": "Svetlin Velinov",
+      "set_code": "tdc",
+      "collector_number": "328"
+    },
+    "swords_to_plowshares": {
+      "scryfall_id": "f87cf997-14b5-4a2c-a7d1-34b7de6561a2",
+      "artist": "Jesper Ejsing",
+      "set_code": "tdc",
+      "collector_number": "134"
+    },
+    "sylvan_caryatid": {
+      "scryfall_id": "2662837c-3837-4da9-80b4-79edb0b6c289",
+      "artist": "Chase Stone",
+      "set_code": "tdc",
+      "collector_number": "272"
+    },
+    "temple_of_malady": {
+      "scryfall_id": "e60eb891-c06b-4a98-be3c-73e244405b45",
+      "artist": "Titus Lunter",
+      "set_code": "tdc",
+      "collector_number": "403"
+    },
+    "temple_of_plenty": {
+      "scryfall_id": "de1f7e5e-a503-4f99-91a1-2fdabb7d5e89",
+      "artist": "Chris Ostrowski",
+      "set_code": "tdc",
+      "collector_number": "405"
+    },
+    "temple_of_silence": {
+      "scryfall_id": "41393bce-01c1-4268-907e-de0fa8a76719",
+      "artist": "Adam Paquette",
+      "set_code": "tdc",
+      "collector_number": "406"
+    },
+    "tip_the_scales": {
+      "scryfall_id": "00b492ca-9cba-4d51-91b9-41430c6933a1",
+      "artist": "Volkan Baǵa",
+      "set_code": "tdc",
+      "collector_number": "29"
+    },
+    "tower_defense": {
+      "scryfall_id": "adacc68a-0bc5-49ee-b5f8-d61024952ce9",
+      "artist": "Craig J Spearing",
+      "set_code": "tdc",
+      "collector_number": "275"
+    },
+    "towering_titan": {
+      "scryfall_id": "2f75be32-0e5a-4d4f-93b4-149892df381c",
+      "artist": "Victor Adame Minguez",
+      "set_code": "tdc",
+      "collector_number": "276"
+    },
+    "tree_of_redemption": {
+      "scryfall_id": "4f55dae2-e6b4-4498-8abd-86d9717691f4",
+      "artist": "Chris Rahn",
+      "set_code": "tdc",
+      "collector_number": "97"
+    },
+    "twilight_mire": {
+      "scryfall_id": "f0be6226-fd9f-4214-8a81-c563744991c4",
+      "artist": "Rob Alexander",
+      "set_code": "tdc",
+      "collector_number": "409"
+    },
+    "wakestone_gargoyle": {
+      "scryfall_id": "4d5f0939-6b99-401d-99c9-e4339a9c5822",
+      "artist": "Jim Murray",
+      "set_code": "tdc",
+      "collector_number": "137"
+    },
+    "walking_bulwark": {
+      "scryfall_id": "33e94caa-30cb-4f38-b240-7893dd2dc94d",
+      "artist": "Jonas De Ro",
+      "set_code": "tdc",
+      "collector_number": "334"
+    },
+    "wall_of_blossoms": {
+      "scryfall_id": "df901113-e273-4fe0-a264-8e9e26e70905",
+      "artist": "Heather Hudson",
+      "set_code": "tdc",
+      "collector_number": "277"
+    },
+    "wall_of_limbs": {
+      "scryfall_id": "9b87e9a8-17d5-49dd-9c69-7c080c089320",
+      "artist": "Yeong-Hao Han",
+      "set_code": "tdc",
+      "collector_number": "200"
+    },
+    "wall_of_omens": {
+      "scryfall_id": "3d134bb2-17ec-4e65-976e-f06fa983f3fb",
+      "artist": "James Paick",
+      "set_code": "tdc",
+      "collector_number": "138"
+    },
+    "wall_of_reverence": {
+      "scryfall_id": "f23e6f3f-4776-4015-8ee8-8e679ec7ce02",
+      "artist": "Wayne Reynolds",
+      "set_code": "tdc",
+      "collector_number": "139"
+    },
+    "wall_of_roots": {
+      "scryfall_id": "e4e7d3b7-9b0c-463d-975c-ef81d7fd8dad",
+      "artist": "Matt Stewart",
+      "set_code": "tdc",
+      "collector_number": "278"
+    },
+    "weathered_sentinels": {
+      "scryfall_id": "24a3df0f-071e-4639-b425-9f65ec6d4fc0",
+      "artist": "Jakub Kasper",
+      "set_code": "tdc",
+      "collector_number": "336"
+    },
+    "welcoming_vampire": {
+      "scryfall_id": "35a69bb5-b8e6-4558-9563-10c7a3662f93",
+      "artist": "Lorenzo Mastroianni",
+      "set_code": "tdc",
+      "collector_number": "140"
+    },
+    "will_of_the_abzan": {
+      "scryfall_id": "e7e92b6b-ec63-477b-8a83-18c0e52615cc",
+      "artist": "Yigit Koroglu",
+      "set_code": "tdc",
+      "collector_number": "31"
+    },
+    "wingmantle_chaplain": {
+      "scryfall_id": "9ab1ed2c-f248-4d2a-a0c3-6c7763f71a93",
+      "artist": "Miranda Meeks",
+      "set_code": "tdc",
+      "collector_number": "141"
+    },
+    "woodland_cemetery": {
+      "scryfall_id": "49fd1af7-b53c-4347-a912-7493aa6e55c3",
+      "artist": "Christine Choi",
+      "set_code": "tdc",
+      "collector_number": "412"
+    },
+    "zetalpa_primal_dawn": {
+      "scryfall_id": "78c71a23-8e73-406e-bbd0-4474c17c1d04",
+      "artist": "Chris Rallis",
+      "set_code": "tdc",
+      "collector_number": "142"
+    }
+  },
+  "cards": [
+    {
+      "id": "access_tunnel"
+    },
+    {
+      "id": "anguished_unmaking"
+    },
+    {
+      "id": "arasta_of_the_endless_web"
+    },
+    {
+      "id": "arbor_adherent"
+    },
+    {
+      "id": "arboreal_grazer"
+    },
+    {
+      "id": "arcane_signet"
+    },
+    {
+      "id": "assault_formation"
+    },
+    {
+      "id": "axebane_guardian"
+    },
+    {
+      "id": "baldin_century_herdmaster"
+    },
+    {
+      "id": "behind_the_scenes"
+    },
+    {
+      "id": "betor_ancestor_s_voice"
+    },
+    {
+      "id": "blight_pile"
+    },
+    {
+      "id": "bojuka_bog"
+    },
+    {
+      "id": "canopy_gargantuan"
+    },
+    {
+      "id": "canopy_vista"
+    },
+    {
+      "id": "carven_caryatid"
+    },
+    {
+      "id": "colfenor_s_urn"
+    },
+    {
+      "id": "command_tower"
+    },
+    {
+      "id": "crashing_drawbridge"
+    },
+    {
+      "id": "deceptive_landscape"
+    },
+    {
+      "id": "despark"
+    },
+    {
+      "id": "dragonlord_dromoka"
+    },
+    {
+      "id": "evolving_wilds"
+    },
+    {
+      "id": "exotic_orchard"
+    },
+    {
+      "id": "expel_the_interlopers"
+    },
+    {
+      "id": "faeburrow_elder"
+    },
+    {
+      "id": "feed_the_swarm"
+    },
+    {
+      "id": "forest",
+      "qty": 7
+    },
+    {
+      "id": "fortified_village"
+    },
+    {
+      "id": "hornet_nest"
+    },
+    {
+      "id": "ikra_shidiqi_the_usurper"
+    },
+    {
+      "id": "indomitable_ancients"
+    },
+    {
+      "id": "indulging_patrician"
+    },
+    {
+      "id": "infernal_grasp"
+    },
+    {
+      "id": "isolated_chapel"
+    },
+    {
+      "id": "jaddi_offshoot"
+    },
+    {
+      "id": "jaws_of_defeat"
+    },
+    {
+      "id": "nyx_fleece_ram"
+    },
+    {
+      "id": "orzhov_signet"
+    },
+    {
+      "id": "overgrown_battlement"
+    },
+    {
+      "id": "overgrown_farmland"
+    },
+    {
+      "id": "path_of_ancestry"
+    },
+    {
+      "id": "plains",
+      "qty": 6
+    },
+    {
+      "id": "protector_of_the_wastes"
+    },
+    {
+      "id": "radiant_grove"
+    },
+    {
+      "id": "rampart_architect"
+    },
+    {
+      "id": "reunion_of_the_house"
+    },
+    {
+      "id": "rhox_faithmender"
+    },
+    {
+      "id": "sandsteppe_citadel"
+    },
+    {
+      "id": "seedborn_muse"
+    },
+    {
+      "id": "selesnya_signet"
+    },
+    {
+      "id": "shadrix_silverquill"
+    },
+    {
+      "id": "shalai_voice_of_plenty"
+    },
+    {
+      "id": "sidar_kondo_of_jamuraa"
+    },
+    {
+      "id": "slaughter_the_strong"
+    },
+    {
+      "id": "sol_ring"
+    },
+    {
+      "id": "staff_of_compleation"
+    },
+    {
+      "id": "sungrass_prairie"
+    },
+    {
+      "id": "sunpetal_grove"
+    },
+    {
+      "id": "swamp",
+      "qty": 5
+    },
+    {
+      "id": "swiftfoot_boots"
+    },
+    {
+      "id": "swords_to_plowshares"
+    },
+    {
+      "id": "sylvan_caryatid"
+    },
+    {
+      "id": "temple_of_malady"
+    },
+    {
+      "id": "temple_of_plenty"
+    },
+    {
+      "id": "temple_of_silence"
+    },
+    {
+      "id": "tip_the_scales"
+    },
+    {
+      "id": "tower_defense"
+    },
+    {
+      "id": "towering_titan"
+    },
+    {
+      "id": "tree_of_redemption"
+    },
+    {
+      "id": "twilight_mire"
+    },
+    {
+      "id": "wakestone_gargoyle"
+    },
+    {
+      "id": "walking_bulwark"
+    },
+    {
+      "id": "wall_of_blossoms"
+    },
+    {
+      "id": "wall_of_limbs"
+    },
+    {
+      "id": "wall_of_omens"
+    },
+    {
+      "id": "wall_of_reverence"
+    },
+    {
+      "id": "wall_of_roots"
+    },
+    {
+      "id": "weathered_sentinels"
+    },
+    {
+      "id": "welcoming_vampire"
+    },
+    {
+      "id": "will_of_the_abzan"
+    },
+    {
+      "id": "wingmantle_chaplain"
+    },
+    {
+      "id": "woodland_cemetery"
+    },
+    {
+      "id": "zetalpa_primal_dawn"
+    }
+  ],
+  "ratings": {
+    "speed": 2,
+    "complexity": 3,
+    "interaction": 3,
+    "resilience": 3,
+    "pilot": 3
+  },
+  "signature": [
+    {
+      "card_id": "felothar_the_steadfast",
+      "why": "Every creature you control deals damage equal to its toughness and attacks as though it had no defender."
+    },
+    {
+      "card_id": "towering_titan",
+      "why": "Enters with a +1/+1 counter for every point of toughness among your other creatures, and a spare wall gives the team trample."
+    },
+    {
+      "card_id": "assault_formation",
+      "why": "A second Felothar for toughness damage, and a pump that adds the toughness this deck now swings with."
+    },
+    {
+      "card_id": "slaughter_the_strong",
+      "why": "Everyone keeps only 4 total power, and a board of 0-power walls keeps almost everything."
+    }
+  ]
+}

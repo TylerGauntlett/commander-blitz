@@ -302,6 +302,13 @@ class TargetModel(BaseModel):
     #: "<=", "value": 6}` is a different and much wider card -- six one-drops
     #: pass it and are six mana of creatures.
     total_mana_value: int | None = None
+    #: "…any number of target creature cards **with total power 10 or less**"
+    #: (Reunion of the House). `total_mana_value`'s sibling, summing power: a
+    #: battlefield object's live power, and for a card in any other zone the
+    #: power it has there -- printed, with its own characteristic-defining
+    #: ability applied (604.3). A per-card `power` selector clause is the
+    #: near miss and a far wider card.
+    total_power: int | None = None
     selector: dict[str, Any] = Field(default_factory=dict)
     #: The selector the **permanent half** of a ``"spell_or_permanent"`` target
     #: takes instead of `selector` -- "return target **spell or creature**"
@@ -369,7 +376,10 @@ class TargetModel(BaseModel):
     #: player controls." The same set of legal choices as "any number of target
     #: nonland permanents, no two controlled by the same player" -- which is
     #: what this says, and why it is a constraint on the *combination* rather
-    #: than one spec per seat. Requires ``count: "any"``.
+    #: than one spec per seat. Requires a size the caster picks: ``count:
+    #: "any"``, or a printed ceiling (``count: N, up_to: true``) -- "exile **up
+    #: to two** target artifacts and/or enchantments controlled by different
+    #: players" (Protector of the Wastes).
     one_per_player: bool = False
     optional: bool = False
     #: "Choose up to two. Return those cards from your graveyard to your hand.
@@ -966,7 +976,13 @@ class AbilityModel(BaseModel):
     #: any attack obeys it. With it, only an attack on one of those players
     #: does -- not on a planeswalker or battle they control (506.2) -- and
     #: while none of them can be attacked it compels nothing.
-    defending: Literal["opponent_most_life"] | None = None
+    #:
+    #: ``attack_despite_defender``: the only players the creature may attack
+    #: despite defender -- Weathered Sentinels' "can attack **players who
+    #: attacked you during their last turn**" is ``"attacked_you_last_turn"``.
+    #: Not their planeswalkers or battles (506.2). Omitted, it may attack
+    #: anything it otherwise could.
+    defending: Literal["opponent_most_life", "attacked_you_last_turn"] | None = None
     #: ``replace_token_creation``: which token is about to be made. A filter on
     #: a *printed face* and not on `affects`, which picks out permanents on the
     #: battlefield: the token this asks about does not exist yet, has no

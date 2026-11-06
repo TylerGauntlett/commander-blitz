@@ -1,0 +1,80 @@
+{
+  "_comment": "Shapes for tests/unit/keywords/test_flanking.py. t_fk_flanker carries flanking as a printed keyword; t_fk_sliver is Sidewinder Sliver's grant line on a 2/2 Sliver, handing flanking to every Sliver including t_fk_sliver_bear; t_fk_squire is a 1/1 the -1/-1 kills; t_fk_blanker takes every ability from its controller's opponents' creatures.",
+  "cards": [
+    {
+      "id": "t_fk_flanker",
+      "name": "Test Flanking Knight",
+      "oracle_text": "Flanking (Whenever a creature without flanking blocks this creature, the blocking creature gets -1/-1 until end of turn.)",
+      "mana_cost": "{1}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Knight"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "power": 2,
+      "toughness": 2,
+      "keywords": ["flanking"]
+    },
+    {
+      "id": "t_fk_sliver",
+      "name": "Test Flanking Sliver",
+      "oracle_text": "All Sliver creatures have flanking.",
+      "mana_cost": "{1}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Sliver"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "All Sliver creatures have flanking.",
+          "effect": "grant_keyword",
+          "keywords": ["flanking"],
+          "affects": {"types": ["Creature"], "subtypes": ["Sliver"]}
+        }
+      ]
+    },
+    {
+      "id": "t_fk_sliver_bear",
+      "name": "Test Plain Sliver",
+      "oracle_text": "",
+      "mana_cost": "{1}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Sliver"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "power": 2,
+      "toughness": 2
+    },
+    {
+      "id": "t_fk_squire",
+      "name": "Test Flanked Squire",
+      "oracle_text": "",
+      "mana_cost": "{W}",
+      "types": ["Creature"],
+      "subtypes": ["Human"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "power": 1,
+      "toughness": 1
+    },
+    {
+      "id": "t_fk_blanker",
+      "name": "Test Ability Blanker",
+      "oracle_text": "Creatures your opponents control lose all abilities.",
+      "mana_cost": "{2}{U}",
+      "types": ["Enchantment"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures your opponents control lose all abilities.",
+          "effect": "lose_all_abilities",
+          "affects": {"controller": "opponent", "types": ["Creature"]}
+        }
+      ]
+    }
+  ]
+}

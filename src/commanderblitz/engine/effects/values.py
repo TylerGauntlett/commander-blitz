@@ -44,6 +44,7 @@ forms::
 
 from __future__ import annotations
 
+import re
 from collections.abc import Mapping
 from typing import Any
 
@@ -1267,6 +1268,27 @@ def validate_mana_symbols(spec: Any, where: str, *, validate_objects: Any = None
     validate_objects(spec["objects"], f"{where}.objects")
 
 
+def _pt_counter_spelling(kind: str) -> str | None:
+    """The canonical spelling of a near-P/T counter kind, or None if it is not one.
+
+    Folds a typographic minus, spaces, a trailing "counter(s)" and a missing
+    sign ("0/-1" is "+0/-1") onto the form `objects.PT_COUNTER_RE` reads.
+    """
+    text = kind.strip().lower().replace("\u2212", "-").replace("\u2013", "-")
+    for suffix in (" counters", " counter"):
+        if text.endswith(suffix):
+            text = text[: -len(suffix)]
+    text = "".join(text.split())
+    match = _NEAR_PT_COUNTER_RE.fullmatch(text)
+    if match is None:
+        return None
+    psign, power, tsign, toughness = match.groups()
+    return f"{psign or '+'}{power}/{tsign or '+'}{toughness}"
+
+
+_NEAR_PT_COUNTER_RE = re.compile(r"([+-]?)(\d+)/([+-]?)(\d+)")
+
+
 def validate_counter_kind(kind: Any, where: str) -> None:
     """Refuse a counter kind that *nearly* names one the engine acts on (122.1c).
 
@@ -1292,6 +1314,16 @@ def validate_counter_kind(kind: Any, where: str) -> None:
     """
     if not isinstance(kind, str) or not kind:
         raise DslError(f"{where}: a counter kind must be a non-empty string, got {kind!r}")
+    pt_spelling = _pt_counter_spelling(kind)
+    if pt_spelling is not None and pt_spelling != kind:
+        # A P/T counter (613.4c) is read off its exact spelling by
+        # `objects.pt_counter`: "-0/-1 counter", "0/-1" or a typographic minus
+        # would be a tally on a Wall of Roots that never shrinks.
+        raise DslError(
+            f"{where}: write a P/T counter as {pt_spelling!r}, not {kind!r}. A counter "
+            f"of the form +X/+Y or -X/-Y changes power and toughness (613.4c) and the "
+            f"lookup is exact, with both signs written"
+        )
     normalised = kind.strip().lower().replace("-", " ").replace("_", " ")
     for suffix in (" counters", " counter"):
         if normalised.endswith(suffix):

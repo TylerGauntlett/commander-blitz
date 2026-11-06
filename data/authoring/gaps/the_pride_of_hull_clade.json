@@ -1,0 +1,20 @@
+{
+  "card_id": "the_pride_of_hull_clade",
+  "name": "The Pride of Hull Clade",
+  "oracle_text": "This spell costs {X} less to cast, where X is the total toughness of creatures you control.\nDefender\n{2}{U}{U}: Until end of turn, target creature you control gets +1/+0, gains \"Whenever this creature deals combat damage to a player, draw cards equal to its toughness,\" and can attack as though it didn't have defender.",
+  "blocked_sentences": [
+    "This spell costs {X} less to cast, where X is the total toughness of creatures you control."
+  ],
+  "needs": [
+    {
+      "capability": "total_toughness_cost_reduction",
+      "kind": "value",
+      "what": "a card-level cost_reduction key `total_toughness` taking a cost_reduction filter, reducing the spell's generic cost by the summed toughness of matching permanents ({\"total_toughness\": {\"controller\": \"you\", \"types\": [\"Creature\"]}})",
+      "why_existing_wont_do": "cost_reduction_keys offer amount, count, greatest_count, greatest_mana_value, total_mana_value and total_power; total_power sums power, not toughness, and count counts creatures rather than summing toughness, so either reduces by the wrong amount"
+    }
+  ],
+  "closest_existing": [
+    "total_power"
+  ],
+  "confidence": "high"
+}

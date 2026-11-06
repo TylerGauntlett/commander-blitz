@@ -761,14 +761,61 @@ def op_choose_permanents(ctx: EffectContext, spec: Mapping[str, Any]):
     a uniformly filtered pool, so one choice cannot express "at most one of each
     of four types" and would happily take four creatures. The `sacrifice` that
     follows then spares all four with a single `exclude_binding`.
+
+    ``max_total_power`` caps the **sum** of the chosen set's power: Slaughter
+    the Strong's "any number of creatures they control with total power 4 or
+    less". See :func:`_choose_within_total_power`.
     """
-    picked = yield from choose_objects(
-        ctx, spec.get("objects"), str(spec.get("prompt") or "Choose"), "choose_permanents"
-    )
+    if "max_total_power" in spec:
+        picked = yield from _choose_within_total_power(ctx, spec)
+    else:
+        picked = yield from choose_objects(
+            ctx, spec.get("objects"), str(spec.get("prompt") or "Choose"), "choose_permanents"
+        )
     if name := spec.get("as"):
         previous = ctx.bindings.get(str(name))
         earlier = list(previous) if isinstance(previous, list) else []
         ctx.bindings[str(name)] = earlier + list(picked)
+
+
+def _choose_within_total_power(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Any number of the pool, so long as their total power is at most the ceiling.
+
+    Asked one permanent at a time, the way crew's `total_power` cost is paid
+    (`costs.pay`): `ask_objects` takes counts, not sums, so one subset question
+    could be answered over the ceiling. Each question offers only what still
+    fits under what is left, and the chooser may stop at any point.
+
+    Live power (`chars`), not clamped: a negative-power creature lowers the
+    total, and a set that is legal only because of one is still reachable --
+    choose it first. Every prefix of a legal set taken in ascending power is
+    itself under the ceiling, so asking in steps loses no answer the printed
+    card allows and admits none it does not.
+
+    The selector's `count` is `"any"` (the loader holds it); its `chooser`
+    names who answers, through `pick_from_pool`'s ordinary vocabulary.
+    """
+    selector = spec.get("objects") or {}
+    pool = resolve_pool(ctx, selector)
+    budget = evaluate_value(ctx, spec["max_total_power"])
+    prompt = str(spec.get("prompt") or "Choose")
+    one_more = {**selector, "count": 1, "optional": True}
+    picked: list[int] = []
+
+    def power(oid: int) -> int:
+        return chars(ctx.state, oid).power
+
+    while True:
+        fits = [oid for oid in pool if oid not in picked and power(oid) <= budget]
+        if not fits:
+            return picked
+        chosen = yield from pick_from_pool(
+            ctx, fits, one_more, f"{prompt} ({budget} power left)", "choose_permanents"
+        )
+        if not chosen:
+            return picked
+        picked.append(chosen[0])
+        budget -= power(chosen[0])
 
 
 @register("regenerate")

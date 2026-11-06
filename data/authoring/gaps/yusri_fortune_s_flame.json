@@ -1,0 +1,24 @@
+{
+  "card_id": "yusri_fortune_s_flame",
+  "name": "Yusri, Fortune's Flame",
+  "oracle_text": "Flying\nWhenever Yusri attacks, choose a number between 1 and 5. Flip that many coins. For each flip you win, draw a card. For each flip you lose, Yusri deals 2 damage to you. If you won five flips this way, you may cast spells from your hand this turn without paying their mana costs.",
+  "blocked_sentences": [
+    "Whenever Yusri attacks, choose a number between 1 and 5. Flip that many coins. For each flip you win, draw a card. For each flip you lose, Yusri deals 2 damage to you. If you won five flips this way, you may cast spells from your hand this turn without paying their mana costs."
+  ],
+  "needs": [
+    {
+      "capability": "flip_coins_count",
+      "kind": "value",
+      "what": "flip_coin recording its results under an `as` binding (the way roll_dice does for `rolled`), with a value reading how many of the flips made by this effect were won/lost, so \"if you won five flips this way\" can be an `if` on that count",
+      "why_existing_wont_do": "flip_coin takes only `effects`/`else` per single flip and records nothing; inside a `repeat` the win branch can draw and the loss branch can deal damage, but no value counts the wins afterwards. set_turn_flag on a loss is only a near miss: it persists across a second attack the same turn and so would misread a later all-wins resolution"
+    },
+    {
+      "capability": "free_cast_this_turn",
+      "kind": "op",
+      "what": "a one-shot op granting the effect controller a free_cast_permission (cast spells from hand without paying their mana costs) for the rest of this turn, read afresh at each cast so cards drawn later in the turn are covered",
+      "why_existing_wont_do": "free_cast_permission is a static that lasts only while its source is on the battlefield and has no duration; grant_playable with playable_free/playable_this_turn snapshots only the hand cards it sees at resolution and also covers lands, so a spell drawn later that turn would be missed"
+    }
+  ],
+  "closest_existing": ["flip_coin", "repeat", "choose_number", "grant_playable", "free_cast_permission"],
+  "confidence": "high"
+}

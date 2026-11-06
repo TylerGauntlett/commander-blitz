@@ -325,6 +325,14 @@ class Keyword(str, Enum):
     #: supplied by the rules for every permanent with the keyword; its count is
     #: the `opponents_attacked_this_combat` value, read on resolution.
     MELEE = "melee"
+    #: Flanking (702.25a).  "Whenever a creature without flanking blocks this
+    #: creature, the blocking creature gets -1/-1 until end of turn."
+    #: Exalted's shape and for exalted's reason: Sidewinder Sliver, Agility and
+    #: Jabari's Banner grant it, so it has to be a `Keyword` that triggers --
+    #: and the trigger's own exemption reads the word on the *blocker*, which
+    #: only a keyword can be asked.  The trigger is `carddef.FLANKING_TRIGGER`,
+    #: supplied by the rules for every permanent with the keyword.
+    FLANKING = "flanking"
     #: Decayed (702.147a).  "This creature can't block.  When it attacks,
     #: sacrifice it at end of combat."  Two rules under one word, and a
     #: `Keyword` rather than a `cant_block` static plus a printed attack
