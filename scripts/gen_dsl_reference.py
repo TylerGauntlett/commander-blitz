@@ -282,6 +282,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                     "The `unblockable` op — the same wire, read from the attacker's end"),
     "cant_sacrifice": ("Board", "Permanents can't be sacrificed for a duration.",
                        "The `cant_sacrifice` op — a prohibition on a *game action*, not a zone change"),
+    "combat_damage_by_toughness": ("Board", "Until end of turn, creatures assign combat damage equal to their toughness rather than their power.",
+                                   "Combat damage equal to toughness"),
     "move_counters": ("Board", "Move counters from one permanent to another: one named kind, every kind (`all_kinds`, from a leave trigger's or a sacrifice cost's record with `from_had_counters`), N counters of kinds the controller picks (`any_kind`), or with `any_number` as many of each kind as the controller chooses.",
                       "Moving a counter of any kind — `move_counters` with `any_kind`"),
     "set_flag": ("Board", "Write a word on the source for the game (renowned, …).", H_EXERTED),
@@ -848,6 +850,9 @@ STATICS: dict[str, Entry] = {
                         "(`player_only`: you alone).",
                         "Forbidding an attack on you rather than pricing it"),
     "cant_block": ("Matching creatures can't block.", H_LANDWALK),
+    "combat_damage_by_toughness": ("Matching creatures assign combat damage equal to their "
+                                   "toughness rather than their power.",
+                                   "Combat damage equal to toughness"),
     "cant_block_alone": ("Matching creatures can't block alone.", "Can't attack or block **alone**"),
     "cant_cast_spells": ("The player can't cast matching spells.", None),
     "cant_cast_spells_from_zones": ("The player can't cast spells from the listed zones.",

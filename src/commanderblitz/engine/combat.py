@@ -23,6 +23,7 @@ from .events import EventType
 from .mana import OTHER_PAYMENT, ManaCost
 from .player_statics import (
     any_defender_attack_prohibition,
+    assigns_damage_by_toughness,
     attack_alone_forbidden,
     attack_compelled,
     attack_defender_forbidden,
@@ -1589,7 +1590,7 @@ def deal_combat_damage(
             continue
         if not _deals_damage_this_step(state, blocker_oid, first_strike_step):
             continue
-        power = chars(state, blocker_oid).power
+        power = combat_damage_amount(state, blocker_oid)
         if power <= 0:
             continue
         # A creature blocking a **band** has several attackers to divide its
@@ -1944,6 +1945,20 @@ def _divide(
     return out
 
 
+def combat_damage_amount(state: GameState, oid: int) -> int:
+    """How much combat damage this creature assigns (510.1a).
+
+    Its power, or its toughness under "assigns combat damage equal to its
+    toughness rather than its power" (`player_statics.assigns_damage_by_toughness`).
+    The one place an amount is read, for attackers and blockers alike, so the
+    lethal-first walk and trample's excess (510.1c) divide the substituted
+    amount; what counts as lethal for a *blocker* is still its own toughness
+    less its damage.
+    """
+    c = chars(state, oid)
+    return c.toughness if assigns_damage_by_toughness(state, oid) else c.power
+
+
 def _in_combat(state: GameState, oid: int) -> bool:
     combat = state.combat
     if combat is None or oid in combat.removed:
@@ -1955,7 +1970,7 @@ def _in_combat(state: GameState, oid: int) -> bool:
 def _attacker_assignments(state: GameState, attacker_oid: int) -> list[DamageAssignment]:
     combat = state.combat
     assert combat is not None
-    power = chars(state, attacker_oid).power
+    power = combat_damage_amount(state, attacker_oid)
     if power <= 0:
         return []
 

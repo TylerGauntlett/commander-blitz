@@ -840,6 +840,37 @@ def grant_cant_be_sacrificed(
     return granted
 
 
+#: The combat-rule changes a resolving effect writes onto a creature until end of
+#: turn, each a `TempEffect.kind` read by one predicate rather than by `chars`:
+#: they are permissions and substitutions, not characteristics.
+COMBAT_RULE_GRANTS = frozenset({"combat_damage_by_toughness"})
+
+
+def grant_combat_rule(
+    state: GameState, objects: Iterable[int], kind: str, source: int | None = None
+) -> list[int]:
+    """Write one of `COMBAT_RULE_GRANTS` onto each creature named, until end of turn.
+
+    Walking Bulwark: "until end of turn, target creature … assigns combat damage
+    equal to its toughness rather than its power". The set is the one found as
+    the effect resolved (611.2c): each creature carries its own entry, so one
+    that enters afterwards is not covered, and one that leaves sheds it with
+    the rest of `until_eot` (400.7). `primitives.clear_until_eot` ends it.
+
+    Only permanents on the battlefield get it. Returns the oids that did.
+    """
+    if kind not in COMBAT_RULE_GRANTS:  # pragma: no cover - the ops pass constants
+        raise ValueError(f"unknown combat rule grant {kind!r}")
+    granted = []
+    for oid in dict.fromkeys(objects):
+        obj = state.objects.get(oid)
+        if obj is None or not obj.on_battlefield:
+            continue
+        obj.until_eot.append(TempEffect(kind=kind, source=source))
+        granted.append(oid)
+    return granted
+
+
 def sacrifice_forbidden(state: GameState, oid: int) -> bool:
     """Whether ``oid`` may not be sacrificed right now (701.17b).
 

@@ -4210,6 +4210,15 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: {model.effect} needs an 'affects' filter -- "
             f'{{"self_only": true}} for the creature that carries it'
         )
+    if model.effect == "combat_damage_by_toughness" and model.affects is None:
+        # A missing filter matches nothing, so the substitution would load,
+        # print and change no creature's damage. Every printed one names its
+        # creatures: `{"types": ["Creature"]}` for "each creature you control",
+        # with `controller: "any"` for Baldin's "each creature".
+        raise DslError(
+            f"{where}: combat_damage_by_toughness needs an 'affects' filter -- "
+            f'e.g. {{"types": ["Creature"]}} for each creature you control'
+        )
     if model.effect == "cant_attack_you" and model.affects is None:
         # Same refusal, one step further: a missing filter matches nothing, so a
         # filterless `cant_attack_you` is a wall nobody bounces off. And the

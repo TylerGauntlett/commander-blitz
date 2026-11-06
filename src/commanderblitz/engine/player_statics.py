@@ -902,6 +902,40 @@ def attack_defender_forbidden(
     return False
 
 
+def assigns_damage_by_toughness(state: GameState, oid: int) -> bool:
+    """Does this creature assign combat damage equal to its toughness?
+
+    Rule 510.1a: "each creature assigns combat damage equal to its power",
+    unless an effect says it "assigns combat damage equal to its toughness
+    rather than its power" -- Doran, Assault Formation, Felothar the Steadfast,
+    and Baldin, Century Herdmaster's "during your turn, each creature …". A
+    substitution at assignment and nothing else: the creature's power is
+    untouched for every other reader, which is why neither `buff` nor `set_pt`
+    can say it.
+
+    Two sources. The timed one is a `TempEffect(kind="combat_damage_by_toughness")`
+    on the creature (Walking Bulwark, the op of the same name). The continuous
+    one is the `combat_damage_by_toughness` static, its `affects` read off the
+    creature as it now is (``derived``): combat damage is no layer, so a land
+    animated into a creature this turn is one of "each creature you control".
+    The static's `condition` is asked per creature, Baldin's ``is_your_turn``
+    measured against the static's own controller.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return False
+    if any(temp.kind == "combat_damage_by_toughness" for temp in obj.until_eot):
+        return True
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "combat_damage_by_toughness":
+            continue
+        if _matches(
+            state, obj, source_obj, static.get("affects"), derived=True
+        ) and _static_active(state, source_obj, static, affected=obj):
+            return True
+    return False
+
+
 def any_defender_attack_prohibition(state: GameState) -> bool:
     """Is there a ``cant_attack_you`` static on the battlefield at all?
 

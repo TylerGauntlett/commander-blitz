@@ -17,9 +17,9 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Conditions](#conditions) | 34 |
 | [Trigger events](#trigger-events) | 49 |
 | [Trigger filters](#trigger-filters) | 36 |
-| [Static effects](#static-effects) | 92 |
+| [Static effects](#static-effects) | 93 |
 | [Player-wide statics](#player-wide-statics) | 45 |
-| [Grantable statics](#grantable-statics) | 41 |
+| [Grantable statics](#grantable-statics) | 42 |
 | [Cost reduction](#cost-reduction) | 6 |
 | [Ability costs](#ability-costs) | 30 |
 | [Card-level costs](#card-level-costs) | 32 |
@@ -90,6 +90,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `cant_block` | Board |  | Creatures can't block this turn. | [The cant_block op — the same sentence with a clock](card-dsl-cookbook.md#the-cant_block-op--the-same-sentence-with-a-clock) |
 | `cant_sacrifice` | Board |  | Permanents can't be sacrificed for a duration. | [The cant_sacrifice op — a prohibition on a game action, not a zone change](card-dsl-cookbook.md#the-cant_sacrifice-op--a-prohibition-on-a-game-action-not-a-zone-change) |
 | `cast_copy` | Board |  | Cast a copy of an encoded or linked card, free or for a `cost` instead. | [Casting a copy for a printed price](card-dsl-cookbook.md#casting-a-copy-for-a-printed-price) |
+| `combat_damage_by_toughness` | Board |  | Until end of turn, creatures assign combat damage equal to their toughness rather than their power. | [Combat damage equal to toughness](card-dsl-cookbook.md#combat-damage-equal-to-toughness) |
 | `copy_permanent` | Board | yes | Create a token copy of a permanent; `as` records the copies. | [Token copies](card-dsl-cookbook.md#token-copies) |
 | `create_token` | Board | yes | Create N tokens by id; `as` records them; `power`/`toughness` size an X/X token. | [An X/X token — "create an X/X blue Shark creature token"](card-dsl-cookbook.md#an-xx-token--create-an-xx-blue-shark-creature-token) |
 | `destroy` | Board | yes | Destroy permanents; `no_regeneration` forbids regeneration; `as` records what was destroyed. | [Effect ops](card-dsl.md#effect-ops) |
@@ -559,6 +560,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `cast_from_graveyard` | yes |  | The player may cast matching spells from their graveyard; with `active_zones: ["graveyard"]`, the card may cast itself from there. | [Casting from the graveyard](card-dsl-cookbook.md#casting-from-the-graveyard) |
 | `cast_from_library_top` | yes |  | The player may cast spells from the top of their library: for life with `pay_life_instead`, or matching `affects_spells` at the printed cost, granting `cast_gains_keywords` to what is cast that way. | [Static abilities](card-dsl.md#static-abilities) |
 | `cast_only_at_sorcery_speed` | yes |  | The player may cast matching spells only at sorcery speed. | [Static abilities](card-dsl.md#static-abilities) |
+| `combat_damage_by_toughness` |  | yes | Matching creatures assign combat damage equal to their toughness rather than their power. | [Combat damage equal to toughness](card-dsl-cookbook.md#combat-damage-equal-to-toughness) |
 | `crew_power_bonus` |  | yes | Matching creatures crew as though their power were N greater. | [Crews Vehicles as though its power were N greater](card-dsl.md#crews-vehicles-as-though-its-power-were-n-greater) |
 | `damage_cant_be_prevented` |  |  | No damage can be prevented: every prevention effect is skipped. | ["Damage can't be prevented"](card-dsl-cookbook.md#damage-cant-be-prevented) |
 | `damage_life_floor` | yes |  | Damage can't reduce the player's life below N. | [Damage can't take you below 1](card-dsl-cookbook.md#damage-cant-take-you-below-1) |
@@ -696,6 +698,7 @@ The static effects a `grant_ability` static may hand to another permanent. Defin
 | `cant_block_alone` | Matching creatures can't block alone. | [Can't attack or block alone](card-dsl-cookbook.md#cant-attack-or-block-alone) |
 | `cant_have_counters` | Matching permanents can't have counters of the kind put on them. | [cant_have_counters — a placement that doesn't happen](card-dsl-cookbook.md#cant_have_counters--a-placement-that-doesnt-happen) |
 | `cant_sacrifice` | Matching permanents can't be sacrificed. | [Forbidding a sacrifice, continuously](card-dsl.md#forbidding-a-sacrifice-continuously) |
+| `combat_damage_by_toughness` | Matching creatures assign combat damage equal to their toughness rather than their power. | [Combat damage equal to toughness](card-dsl-cookbook.md#combat-damage-equal-to-toughness) |
 | `crew_power_bonus` | Matching creatures crew as though their power were N greater. | [Crews Vehicles as though its power were N greater](card-dsl.md#crews-vehicles-as-though-its-power-were-n-greater) |
 | `double_triggers` | Matching permanents' triggered abilities trigger an additional time. | [double_triggers, and its two axes](card-dsl.md#double_triggers-and-its-two-axes) |
 | `enters_tapped` | Matching permanents enter tapped. | [grant_ability as a static, and where the line now runs](card-dsl-cookbook.md#grant_ability-as-a-static-and-where-the-line-now-runs) |

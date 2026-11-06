@@ -4565,6 +4565,51 @@ turn boundary a flickered permanent coming back still protected is a line a
 player can actually take. Both are read through the one predicate
 `temp_effects.sacrifice_forbidden`.
 
+## Combat damage equal to toughness
+
+    Felothar the Steadfast — "Each creature you control assigns combat damage
+                              equal to its toughness rather than its power."
+    Baldin, Century Herdmaster — "During your turn, each creature assigns combat
+                                  damage equal to its toughness rather than its power."
+    Walking Bulwark — "{2}: Until end of turn, target creature with defender …
+                       assigns combat damage equal to its toughness rather than
+                       its power."
+
+A substitution in rule 510.1a and nowhere else: the creature's power is
+unchanged for every other reader. It is a static and an op of the same name.
+
+```jsonc
+// Felothar, Assault Formation: the static, `affects` defaulting to your creatures
+{ "kind": "static", "effect": "combat_damage_by_toughness",
+  "affects": { "types": ["Creature"] } }
+
+// Baldin: every creature, any controller, while it is the static's controller's turn
+{ "kind": "static", "effect": "combat_damage_by_toughness",
+  "affects": { "controller": "any", "types": ["Creature"] },
+  "condition": { "is_your_turn": true } }
+
+// Walking Bulwark: the timed form on what the ability targeted
+{ "op": "combat_damage_by_toughness", "objects": { "target": "t1" } }
+```
+
+The static's `affects` is required (a missing filter matches nothing) and is
+read off each creature as it now is, so an animated land counts as a creature.
+Its `condition` is asked per creature. The op's `objects` is required and
+resolved as it resolves (611.2c); each creature found carries a
+`TempEffect(kind="combat_damage_by_toughness")` until end of turn, and `duration`
+may only be `this_turn`, its default.
+
+Both are read by `player_statics.assigns_damage_by_toughness`, which
+`combat.combat_damage_amount` asks for every attacker and blocker. The amount it
+returns is what the lethal-first walk and trample divide (510.1c); a blocker's
+lethal damage is still its own toughness less its damage. A creature with
+toughness 0 or less assigns nothing.
+
+The near misses are `buff` and `set_pt`, which change power itself — a fight,
+"power 4 or greater" and Felothar's own "discard cards equal to its power" would
+all read the changed number — and `replace_damage`, which scales an amount
+already computed from power.
+
 ## Attack requirements
 
     Trench Behemoth — "Landfall — Whenever a land you control enters, target

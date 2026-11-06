@@ -1,0 +1,77 @@
+{
+  "_comment": "Shapes for tests/unit/combat/test_combat_damage_by_toughness.py. t_cdt_formation is Assault Formation's and Felothar's first line alone; t_cdt_herdmaster is Baldin's ('during your turn, each creature ...'); t_cdt_brace is Walking Bulwark's damage clause as a timed op on a target; t_cdt_tower is a 1/5 trampler, so power and toughness differ in both directions the tests read.",
+  "cards": [
+    {
+      "id": "t_cdt_formation",
+      "name": "Test Toughness Formation",
+      "oracle_text": "Each creature you control assigns combat damage equal to its toughness rather than its power.",
+      "mana_cost": "{1}{G}",
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "types": ["Enchantment"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Each creature you control assigns combat damage equal to its toughness rather than its power.",
+          "effect": "combat_damage_by_toughness",
+          "affects": {"types": ["Creature"]}
+        }
+      ]
+    },
+    {
+      "id": "t_cdt_herdmaster",
+      "name": "Test Toughness Herdmaster",
+      "oracle_text": "During your turn, each creature assigns combat damage equal to its toughness rather than its power.",
+      "mana_cost": "{2}{W}",
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "types": ["Creature"],
+      "subtypes": ["Human"],
+      "power": 1,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "During your turn, each creature assigns combat damage equal to its toughness rather than its power.",
+          "effect": "combat_damage_by_toughness",
+          "affects": {"controller": "any", "types": ["Creature"]},
+          "condition": {"is_your_turn": true}
+        }
+      ]
+    },
+    {
+      "id": "t_cdt_brace",
+      "name": "Test Toughness Brace",
+      "oracle_text": "{T}: Until end of turn, target creature assigns combat damage equal to its toughness rather than its power.",
+      "mana_cost": "{1}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Until end of turn, target creature assigns combat damage equal to its toughness rather than its power.",
+          "cost": {"tap": true},
+          "targets": [
+            {"id": "t1", "kind": "permanent", "selector": {"zone": "battlefield", "types": ["Creature"]}}
+          ],
+          "effects": [
+            {"op": "combat_damage_by_toughness", "objects": {"target": "t1"}}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_cdt_tower",
+      "name": "Test Toughness Tower",
+      "oracle_text": "Trample",
+      "mana_cost": "{2}{G}",
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "types": ["Creature"],
+      "subtypes": ["Treefolk"],
+      "power": 1,
+      "toughness": 5,
+      "keywords": ["trample"],
+      "abilities": []
+    }
+  ]
+}

@@ -51,6 +51,7 @@ from commanderblitz.engine.structs import (
     TOKEN_MULTIPLIER_DURATIONS,
     UNBLOCKABLE_DURATIONS,
 )
+from commanderblitz.engine.temp_effects import COMBAT_RULE_GRANTS
 from commanderblitz.engine.triggers import (
     OBJECT_SUBJECT_TRIGGERS,
     RECIPIENT_KEYS,
@@ -1980,6 +1981,22 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}: unknown cant_block duration {effect['duration']!r} "
                 f"(implemented: {sorted(BLOCK_PROHIBITION_DURATIONS)})"
+            )
+    if op in COMBAT_RULE_GRANTS:
+        # A grant written onto the creatures found as it resolves, so there is
+        # nothing to grant without `objects` -- an absent one would load and
+        # change no creature. One clock only: every printed line says "this
+        # turn" or "until end of turn", and a longer one would be a different
+        # card that reads the same.
+        if not effect.get("objects"):
+            raise DslError(
+                f"{where}: {op} needs 'objects' (the creatures it applies to, "
+                f"found when it resolves)"
+            )
+        if str(effect.get("duration", "this_turn")) != "this_turn":
+            raise DslError(
+                f"{where}: {op} lasts until end of turn; 'duration' may only be "
+                f"'this_turn', got {effect['duration']!r}"
             )
     if op == "unblockable":
         # `objects` is required and there is no wildcard shorthand, which is the
