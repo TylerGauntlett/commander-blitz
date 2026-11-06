@@ -267,7 +267,7 @@ printed values
   -> keyword grants (statics, then keyword counters)
   -> P/T setting effects
   -> P/T modifying effects (anthems)
-  -> +1/+1 and -1/-1 counters
+  -> P/T counters (any +X/+Y or -X/-Y)
   -> until-end-of-turn pumps
 ```
 

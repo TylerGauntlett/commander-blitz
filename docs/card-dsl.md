@@ -4222,7 +4222,10 @@ nothing to read.
 ```
 
 `counter` is the kind (required, checked by the same near-miss rule as every
-other counter kind) and `amount` a positive literal, defaulting to one. The
+other counter kind) and `amount` a positive literal, defaulting to one. A P/T
+kind is a size change like any other counter of its kind: Wall of Roots'
+`"-0/-1"` shrinks the wall as the mana is made (see [P/T
+counters](card-dsl-cookbook.md#pt-counters--put-a--0-1-counter-on-this-creature)). The
 counters go on the ability's own permanent as the ability is activated (602.2b),
 so they are there while it waits on the stack and stay whether it resolves or
 not. The loader refuses the key anywhere but an activated ability's cost: an

@@ -1,0 +1,40 @@
+{
+  "_comment": "Cards that exist only for tests/unit/counters/test_pt_counters.py. Never part of a deck list. t_ptc_wall is Wall of Roots under a test name: a 0/5 defender whose mana ability's cost is a -0/-1 counter on itself, once each turn. t_ptc_bear is a vanilla 2/2 to put other P/T counter kinds on.",
+  "cards": [
+    {
+      "id": "t_ptc_wall",
+      "name": "Test Root Wall",
+      "oracle_text": "Defender\nPut a -0/-1 counter on this creature: Add {G}. Activate only once each turn.",
+      "mana_cost": "{1}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Plant", "Wall"],
+      "power": 0,
+      "toughness": 5,
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "keywords": ["defender"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Put a -0/-1 counter on this creature: Add {G}. Activate only once each turn.",
+          "cost": {"put_counters": {"counter": "-0/-1", "amount": 1}},
+          "effects": [{"op": "add_mana", "mana": "{G}"}],
+          "is_mana_ability": true,
+          "once_each_turn": true
+        }
+      ]
+    },
+    {
+      "id": "t_ptc_bear",
+      "name": "Test P/T Counter Bear",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Bear"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["G"],
+      "color_identity": ["G"]
+    }
+  ]
+}

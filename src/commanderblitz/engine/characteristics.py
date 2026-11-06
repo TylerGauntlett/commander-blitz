@@ -4,7 +4,7 @@ Real Magic resolves continuous effects through seven numbered layers with
 timestamps and dependency analysis.  This engine applies a *fixed order* instead:
 
     printed -> subtype grants -> keyword grants (statics, then keyword counters)
-    -> P/T setting -> P/T modifying -> +1/+1 and -1/-1 counters
+    -> P/T setting -> P/T modifying -> P/T counters (any +X/+Y or -X/-Y)
     -> until-end-of-turn pumps
 
 Counters are read in **two** places, and deliberately: a +1/+1 counter is a
@@ -89,7 +89,7 @@ from .carddef import Ability, CardDef, ward_ability
 from .enums import KEYWORD_COUNTERS, SUBTYPE_CLASS, Keyword, Zone
 from .errors import DslError
 from .mana import ManaOrigin, printed_cost_is
-from .objects import ANY_COUNTER_KIND, MINUS_ONE, PLUS_ONE, TIME_COUNTER, GameObject
+from .objects import ANY_COUNTER_KIND, PLUS_ONE, TIME_COUNTER, GameObject, pt_counter
 from .structs import PROTECTION_COLORLESS, PROTECTION_EVERYTHING, Characteristics
 from .text_change import apply_to_ability
 from .text_change import apply_to_subtypes as apply_text_changes
@@ -764,13 +764,18 @@ def _compute(state: GameState, oid: int) -> Characteristics:
                 power += _static_value(state, static.get("power"), source_obj)
                 toughness += _static_value(state, static.get("toughness"), source_obj)
 
-        # 5. +1/+1 and -1/-1 counters -- the *size* half of reading the
+        # 5. P/T-modifying counters (613.4c) -- the *size* half of reading the
         #    counters. The ability half is layer 2b, and the two are apart on
-        #    purpose; see the note there.
-        plus = obj.counter(PLUS_ONE)
-        minus = obj.counter(MINUS_ONE)
-        power += plus - minus
-        toughness += plus - minus
+        #    purpose; see the note there. Every "+X/+Y" / "-X/-Y" kind counts,
+        #    not just +1/+1 and -1/-1: Wall of Roots' "-0/-1" counter is a real
+        #    toughness change, gone with the counters rather than with the
+        #    wall's abilities. Only 704.5q's annihilation is limited to the
+        #    +1/+1 and -1/-1 pair, and that lives in `sba`.
+        for kind, amount in obj.counters.items():
+            delta = pt_counter(kind) if amount > 0 else None
+            if delta is not None:
+                power += delta[0] * amount
+                toughness += delta[1] * amount
 
         # 6. until end of turn
         for temp in obj.until_eot:

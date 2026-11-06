@@ -10034,6 +10034,34 @@ Two consequences worth knowing before writing a card with one:
   making counters the one *visible* kind of grant would be the inconsistency.
   Effect selectors read derived characteristics on the battlefield and do see it.
 
+## P/T counters — "Put a -0/-1 counter on this creature"
+
+```jsonc
+// Wall of Roots: "Put a -0/-1 counter on this creature: Add {G}.
+// Activate only once each turn."
+{ "kind": "activated", "is_mana_ability": true, "once_each_turn": true,
+  "cost": { "put_counters": { "counter": "-0/-1", "amount": 1 } },
+  "effects": [ { "op": "add_mana", "mana": "{G}" } ] }
+```
+
+Rule 613.4c applies every counter of the form +X/+Y or -X/-Y in layer 7c, so
+any counter kind spelled that way changes power and toughness:
+`objects.pt_counter` reads the kind and `characteristics._compute` adds each
+one in the counters step. `"+1/+0"` raises power only, `"-0/-1"` lowers
+toughness only, `"+2/+2"` is two of each. Every op, cost and replacement that
+takes a `counter` kind takes one of these.
+
+Each spelling is its own kind (122.1). 704.5q's annihilation names exactly
++1/+1 and -1/-1, so a `"+1/+0"` sits beside a `"-0/-1"` and neither is removed;
+"a creature with a +1/+1 counter on it" does not see a `"+2/+2"`. That is the
+reason the near miss is wrong: Wall of Roots written with `"-1/-1"` loses power
+it does not have and has its counter cancelled by the first +1/+1 counter.
+
+**The spelling is exact, with both signs written.** The loader folds a near
+miss — `"-0/-1 counter"`, `"0/-1"`, a typographic minus — onto the canonical
+form and refuses it with that form in the message, the same guard keyword
+counters get.
+
 ## Shield counters — the other counter kind the engine reads
 
 ```jsonc
