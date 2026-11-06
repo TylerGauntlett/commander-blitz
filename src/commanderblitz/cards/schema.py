@@ -302,6 +302,13 @@ class TargetModel(BaseModel):
     #: "<=", "value": 6}` is a different and much wider card -- six one-drops
     #: pass it and are six mana of creatures.
     total_mana_value: int | None = None
+    #: "…any number of target creature cards **with total power 10 or less**"
+    #: (Reunion of the House). `total_mana_value`'s sibling, summing power: a
+    #: battlefield object's live power, and for a card in any other zone the
+    #: power it has there -- printed, with its own characteristic-defining
+    #: ability applied (604.3). A per-card `power` selector clause is the
+    #: near miss and a far wider card.
+    total_power: int | None = None
     selector: dict[str, Any] = Field(default_factory=dict)
     #: The selector the **permanent half** of a ``"spell_or_permanent"`` target
     #: takes instead of `selector` -- "return target **spell or creature**"

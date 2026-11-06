@@ -1,0 +1,41 @@
+{
+  "_comment": "Cards that exist only for the total-power test (tests/unit/targets/test_total_power.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_reunion` is Reunion of the House's first sentence: a cap on the picks' power TOGETHER. `t_each_ten` is the counterfactual -- the same line read as a cap on each of them, which is what a selector clause can say and is a much wider card.",
+  "cards": [
+    {
+      "id": "t_reunion",
+      "name": "Test Reunion",
+      "oracle_text": "Return any number of target creature cards with total power 10 or less from your graveyard to the battlefield.",
+      "mana_cost": "{1}",
+      "types": ["Sorcery"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "targets": [
+        {"id": "t1", "kind": "card_in_graveyard", "count": "any",
+         "total_power": 10,
+         "selector": {"zone": "graveyard", "controller": "you", "types": ["Creature"]}}
+      ],
+      "spell_effects": [
+        {"op": "return_from_graveyard", "destination": "battlefield",
+         "controller": "you", "objects": {"target": "t1"}}
+      ]
+    },
+    {
+      "id": "t_each_ten",
+      "name": "Test Each Ten",
+      "oracle_text": "Return any number of target creature cards with power 10 or less from your graveyard to the battlefield.",
+      "mana_cost": "{1}",
+      "types": ["Sorcery"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "targets": [
+        {"id": "t1", "kind": "card_in_graveyard", "count": "any",
+         "selector": {"zone": "graveyard", "controller": "you", "types": ["Creature"],
+                      "power": {"op": "<=", "value": {"const": 10}}}}
+      ],
+      "spell_effects": [
+        {"op": "return_from_graveyard", "destination": "battlefield",
+         "controller": "you", "objects": {"target": "t1"}}
+      ]
+    }
+  ]
+}

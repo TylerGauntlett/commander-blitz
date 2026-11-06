@@ -368,13 +368,12 @@ def _check_mode_targets(
                 f"picks how many) or 'any'; a computed count has no cast-time "
                 f"value to read"
             )
-        if spec.variable_size and (
-            spec.one_per_player or spec.total_mana_value is not None
-        ):
+        if spec.variable_size and spec.constrains_the_set:
             raise DslError(
                 f"{label}: a caster-sized mode-owned target cannot carry "
-                f"'one_per_player' or 'total_mana_value' -- the mode's targets "
-                f"are asked one spec at a time, with no check between the picks"
+                f"'one_per_player', 'total_mana_value' or 'total_power' -- the "
+                f"mode's targets are asked one spec at a time, with no check "
+                f"between the picks"
             )
         if (spec.optional or spec.variable_size) and not _ends_every_declaration(
             spec, owned
@@ -554,6 +553,20 @@ def _compile_target(
                 f"{label}: 'total_mana_value' caps the mana value of the objects "
                 f"chosen, which a {model.kind!r} target does not have"
             )
+    if model.total_power is not None:
+        if model.total_power < 0:
+            # Zero is a real cap -- a 0/1 Wall's card passes it -- but below
+            # zero only a creature with negative power could ever be chosen,
+            # which is not a sentence any card prints.
+            raise DslError(
+                f"{label}: 'total_power' is a cap on the picks together, "
+                f"and {model.total_power} is below anything a card prints"
+            )
+        if model.kind in ("player", "spell"):
+            raise DslError(
+                f"{label}: 'total_power' caps the power of the objects chosen, "
+                f"which a {model.kind!r} target does not have"
+            )
 
     if model.permanent_selector is not None:
         _check_permanent_selector(model, label)
@@ -636,6 +649,7 @@ def _compile_target(
         one_per_player=model.one_per_player,
         optional=model.optional,
         total_mana_value=model.total_mana_value,
+        total_power=model.total_power,
         mode=model.mode,
         gift_promised=model.gift_promised,
         cost_option=model.cost_option,

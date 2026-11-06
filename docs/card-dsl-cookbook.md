@@ -11035,6 +11035,34 @@ A cap of zero is refused — a spec that can only ever choose nothing, printed a
 though it chose something — as is one on a `player` or `spell` target, neither
 of which has a mana value for it to add up.
 
+## "…with total power 10 or less" — the same cap, summing power
+
+Reunion of the House:
+
+```jsonc
+{ "id": "t1", "kind": "card_in_graveyard", "count": "any",
+  "total_power": 10,
+  "selector": { "zone": "graveyard", "controller": "you",
+                "types": ["Creature"] } }
+```
+
+`total_mana_value`'s sibling, one characteristic over, checked in the same
+place: a subset whose powers add up past the cap is never offered, so the
+choice is refused as it is made (601.2c). `power: {"op": "<=", "value": 10}` in
+the selector is the near miss, and it is "each of these has power 10 or less" —
+a graveyard of 6/6s at once.
+
+**Which power** (`targeting._within_total_power`): a permanent's live power,
+every layer applied; a card in any other zone has the power it has *there* —
+the printed number with the card's own characteristic-defining ability applied,
+because 604.3 has a CDA function in every zone. A `*/*` card in a graveyard
+counts as its CDA's number, not the 0 printed beside the star. Nothing else
+reaches a graveyard card: anthems, counters and pumps apply to permanents.
+
+Not re-checked on resolution, for the reason `total_mana_value` is not. A
+negative cap is refused (zero is a real cap: a 0/1 passes it), as is one on a
+`player` or `spell` target.
+
 ## "Any number of target creatures"
 
 ```jsonc
@@ -11290,7 +11318,7 @@ target tuple, so its targets are fixed before `Game._activate` asks which mode.
 | `mode` without a single top-level `choose_mode` | a nested or repeated one is answered on resolution, with nothing left to declare a target in |
 | `mode` out of range | the card does not print that bullet |
 | a computed count on a mode-owned spec | a spell's is declared before anything it could read exists; a mode-owned size must be printed — a literal `count` (with `up_to` / `min_count`) or `"any"` |
-| `one_per_player` or `total_mana_value` on a caster-sized mode-owned spec | a spell's mode targets are asked one spec at a time by `Game._ask_mode_targets`, with no check between the picks |
+| `one_per_player`, `total_mana_value` or `total_power` on a caster-sized mode-owned spec | a spell's mode targets are asked one spec at a time by `Game._ask_mode_targets`, with no check between the picks |
 | `optional`, `up_to` or `"any"` on a mode-owned spec that is not the last target declared — not the last spec of its mode, or a later mode owns a target | a declined or caster-sized target stores no fixed number of refs, so `filter_legal` would read the next spec's ref into its bucket |
 | a variable-size or `optional` *card-level* spec on the same card | the mode's refs are stored after it, so a caster-chosen size or a declined target in front of them makes the split ambiguous |
 

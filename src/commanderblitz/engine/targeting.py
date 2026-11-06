@@ -16,7 +16,13 @@ from dataclasses import replace
 from typing import TYPE_CHECKING, Any
 
 from .carddef import TargetSpec
-from .characteristics import chars, player_protected_from, protected_from, protection_from
+from .characteristics import (
+    card_in_exile_characteristics,
+    chars,
+    player_protected_from,
+    protected_from,
+    protection_from,
+)
 from .effects.context import EffectContext
 from .effects.selectors import matches, resolve_pool, select_players
 from .effects.values import evaluate_value
@@ -491,6 +497,54 @@ def _within_total(
         total += state.card_of(obj).mana_value
     return total <= cap
 
+
+def _within_total_power(
+    state: GameState, refs: Sequence[TargetRef], cap: int | None
+) -> bool:
+    """Do these picks' powers add up to ``cap`` or less? -- "any number of
+    target creature cards with **total power 10 or less**" (Reunion of the
+    House).
+
+    `_within_total`'s sibling, one characteristic over, and in the same slot
+    for the same reason: a fact about the chosen set that no selector clause,
+    evaluated one candidate at a time, can state.
+
+    **Which power.** A permanent's is its live one, `chars` -- every layer
+    applied, as any other reader of a battlefield creature's power gets. A card
+    anywhere else has the power it has *in that zone*: the printed number, with
+    the card's own characteristic-defining ability applied, because 604.3 has a
+    CDA function in every zone -- a `*/*` card in a graveyard is a number there,
+    not the 0 printed beside the star. `card_in_exile_characteristics` is the
+    one reader that answers that for a card off the battlefield. Nothing else
+    reaches a graveyard card: anthems, counters and pumps apply to permanents.
+
+    Not re-checked on resolution, for `_within_total`'s reason.
+    """
+    if cap is None:
+        return True
+    total = 0
+    for ref in refs:
+        if ref.kind != "object":
+            continue
+        obj = state.objects.get(ref.id)
+        if obj is None:
+            continue
+        if obj.on_battlefield:
+            total += chars(state, ref.id).power
+        else:
+            total += card_in_exile_characteristics(state, obj)[0]
+    return total <= cap
+
+
+def _set_rules_hold(state: GameState, spec: TargetSpec, refs: Sequence[TargetRef]) -> bool:
+    """Every rule *between* a spec's picks -- `TargetSpec.constrains_the_set`."""
+    return (
+        (not spec.one_per_player or _one_each(state, refs))
+        and _within_total(state, refs, spec.total_mana_value)
+        and _within_total_power(state, refs, spec.total_power)
+    )
+
+
 def _spec_options(
     state: GameState,
     controller: int,
@@ -560,8 +614,7 @@ def _spec_options(
                 tuple(c)
                 for size in range(ceiling, max(floor, 1) - 1, -1)
                 for c in itertools.combinations(options, size)
-                if (not spec.one_per_player or _one_each(state, c))
-                and _within_total(state, c, spec.total_mana_value)
+                if _set_rules_hold(state, spec, c)
             ),
             _room(limit, tail),
         )
@@ -576,7 +629,7 @@ def _spec_options(
         combos = [
             tuple(c)
             for c in itertools.combinations(options, min(count, len(options)))
-            if _within_total(state, c, spec.total_mana_value)
+            if _set_rules_hold(state, spec, c)
         ]
         if not combos and not spec.optional:
             return []

@@ -138,6 +138,13 @@ class TargetSpec:
     #: isolation, and `mana_value: {"op": "<=", "value": 6}` is a different and
     #: far wider card -- six one-drops pass it. ``None`` for no cap.
     total_mana_value: int | None = None
+    #: The same cap on the combined **power** of everything chosen -- "any
+    #: number of target creature cards **with total power 10 or less**"
+    #: (Reunion of the House). A battlefield object's power is its live
+    #: one; a card anywhere else has the power it has in that zone, which is
+    #: the printed number with its own characteristic-defining ability applied
+    #: (604.3) -- see `targeting._within_total_power`. ``None`` for no cap.
+    total_power: int | None = None
     #: The index of the **mode** that owns this target, or ``None`` for the
     #: ordinary card-level kind.  "Choose up to two. Return those cards from
     #: your graveyard to your hand. * Target artifact card. * Target creature
@@ -182,6 +189,23 @@ class TargetSpec:
         if not {"controller", "owner", "player"} & set(half):
             half["controller"] = "any"
         return half
+
+    @property
+    def constrains_the_set(self) -> bool:
+        """Does this spec carry a rule *between* its picks?
+
+        `one_per_player`, `total_mana_value` and `total_power` are facts about
+        the chosen set rather than about any one object in it, so only the
+        subset enumeration in `targeting._spec_options` can check them. Every
+        path that would ask for the picks one toggle at a time instead --
+        `casting.deferred_target_spec`, `stack._choose_each_target`, a
+        mode-owned declaration -- reads this and keeps the enumeration.
+        """
+        return (
+            self.one_per_player
+            or self.total_mana_value is not None
+            or self.total_power is not None
+        )
 
     @property
     def variable_size(self) -> bool:
