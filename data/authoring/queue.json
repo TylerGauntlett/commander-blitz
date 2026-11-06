@@ -56602,12 +56602,12 @@
     },
     "Crowded Crypt": {
       "edhrec_rank": 2403,
-      "gate": "template",
+      "gate": null,
       "name": "Crowded Crypt",
-      "reason": "no template for: Whenever a creature you control dies, put a corpse counter on this artifact",
+      "reason": "",
       "scryfall_id": "d6539667-d082-4f8e-919a-c1882545baea",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Crown of Ascension": {
@@ -60212,12 +60212,12 @@
     },
     "Damn": {
       "edhrec_rank": 337,
-      "gate": "template",
+      "gate": null,
       "name": "Damn",
-      "reason": "no template for: Destroy target creature. A creature destroyed this way can't be regenerated",
+      "reason": "",
       "scryfall_id": "483b64f7-bec5-4800-bdd4-6b303c5ec20e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Damnable Pact": {
@@ -74462,12 +74462,12 @@
     },
     "Dread Summons": {
       "edhrec_rank": 3681,
-      "gate": "template",
+      "gate": null,
       "name": "Dread Summons",
-      "reason": "no template for: Each player mills X cards. For each creature card put into a graveyard this way, you creat",
+      "reason": "",
       "scryfall_id": "4d1c1c36-869c-4964-a185-7a9c3a043b2d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dread Tiller": {
@@ -77022,12 +77022,12 @@
     },
     "Dusk // Dawn": {
       "edhrec_rank": 935,
-      "gate": "template",
+      "gate": null,
       "name": "Dusk // Dawn",
-      "reason": "no template for: Destroy all creatures with power 3 or greater",
+      "reason": "",
       "scryfall_id": "b75c309f-b48f-46c6-aef7-7e7ca64da262",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dusk Charger": {
@@ -100512,12 +100512,12 @@
     },
     "Forgotten Creation": {
       "edhrec_rank": 3397,
-      "gate": "template",
+      "gate": null,
       "name": "Forgotten Creation",
-      "reason": "no template for: At the beginning of your upkeep, you may discard all the cards in your hand. If you do, dr",
+      "reason": "",
       "scryfall_id": "2ff3a5b6-b39a-45d0-a8f5-1447776bfe74",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Forgotten Harvest": {
@@ -105662,12 +105662,12 @@
     },
     "Gate to the Afterlife": {
       "edhrec_rank": 11226,
-      "gate": "template",
+      "gate": null,
       "name": "Gate to the Afterlife",
-      "reason": "no template for: Whenever a nontoken creature you control dies, you gain 1 life. Then you may draw a card. ",
+      "reason": "",
       "scryfall_id": "4949afaa-e512-4d2e-aeca-a3e4d37b1335",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gatebreaker Ram": {

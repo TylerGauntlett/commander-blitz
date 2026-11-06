@@ -40459,6 +40459,87 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{B}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {B}."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "corpse",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control dies, put a corpse counter on this artifact.",
+          "trigger": {
+            "controller": "you",
+            "event": "creature_dies"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{4}{B}{B}",
+            "sacrifice": {
+              "as": "sacrificed",
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "counters_on": {
+                  "counter": "corpse",
+                  "objects": {
+                    "binding": "sacrificed"
+                  }
+                }
+              },
+              "op": "create_token",
+              "token": "zombie_2_2_b_decayed"
+            }
+          ],
+          "kind": "activated",
+          "text": "{4}{B}{B}, {T}, Sacrifice this artifact: Create a 2/2 black Zombie creature token with decayed for each corpse counter on this artifact."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "crowded_crypt",
+      "mana_cost": "{2}{B}",
+      "name": "Crowded Crypt",
+      "oracle_text": "{T}: Add {B}.\nWhenever a creature you control dies, put a corpse counter on this artifact.\n{4}{B}{B}, {T}, Sacrifice this artifact: Create a 2/2 black Zombie creature token with decayed for each corpse counter on this artifact. (A creature with decayed can't block. When it attacks, sacrifice it at end of combat.)",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -43104,6 +43185,69 @@
     },
     {
       "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "damn",
+      "mana_cost": "{B}{B}",
+      "name": "Damn",
+      "oracle_text": "Destroy target creature. A creature destroyed this way can't be regenerated.\nOverload {2}{W}{W} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
+      "overload": "{2}{W}{W}",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "overloaded": true
+          },
+          "else": [
+            {
+              "no_regeneration": true,
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "op": "if",
+          "then": [
+            {
+              "no_regeneration": true,
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "destroy"
+            }
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "optional": true,
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "B"
       ],
       "colors": [
@@ -44648,6 +44792,42 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "dawn",
+      "mana_cost": "{3}{W}{W}",
+      "name": "Dawn",
+      "oracle_text": "Aftermath (Cast this spell only from your graveyard. Then exile it.)\nReturn all creature cards with power 2 or less from your graveyard to your hand.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "destination": "hand",
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "power": {
+              "op": "<=",
+              "value": {
+                "const": 2
+              }
+            },
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          },
+          "op": "return_from_graveyard"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -52124,6 +52304,46 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "dread_summons",
+      "mana_cost": "{X}{B}{B}",
+      "name": "Dread Summons",
+      "oracle_text": "Each player mills X cards. For each creature card put into a graveyard this way, you create a tapped 2/2 black Zombie creature token. (To mill a card, a player puts the top card of their library into their graveyard.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "x": true
+          },
+          "as": "milled",
+          "op": "mill",
+          "player": "each_player"
+        },
+        {
+          "amount": {
+            "count": {
+              "binding": "milled",
+              "types": [
+                "Creature"
+              ],
+              "zone": "graveyard"
+            }
+          },
+          "op": "create_token",
+          "tapped": true,
+          "token": "zombie_2_2_b"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -53264,6 +53484,43 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "dusk_dawn",
+      "mana_cost": "{2}{W}{W}",
+      "name": "Dusk // Dawn",
+      "oracle_text": "Destroy all creatures with power 3 or greater.\nAftermath (Cast this spell only from your graveyard. Then exile it.)\nReturn all creature cards with power 2 or less from your graveyard to your hand.",
+      "second_face": "dawn",
+      "second_face_zone": "graveyard",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "power": {
+              "op": ">=",
+              "value": {
+                "const": 3
+              }
+            },
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "destroy"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -69214,6 +69471,65 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "pitched",
+                  "op": "discard",
+                  "player": "you",
+                  "whole_hand": true
+                },
+                {
+                  "amount": {
+                    "count": {
+                      "binding": "pitched"
+                    }
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Discard your hand and draw that many cards?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, you may discard all the cards in your hand. If you do, draw that many cards.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "forgotten_creation",
+      "keywords": [
+        "skulk"
+      ],
+      "mana_cost": "{3}{U}",
+      "name": "Forgotten Creation",
+      "oracle_text": "Skulk (This creature can't be blocked by creatures with greater power.)\nAt the beginning of your upkeep, you may discard all the cards in your hand. If you do, draw that many cards.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Horror"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "forgotten_sentinel",
@@ -72777,6 +73093,107 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                },
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "discard",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "prompt": "Draw a card, then discard a card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a nontoken creature you control dies, you gain 1 life. Then you may draw a card. If you do, discard a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "creature_dies",
+            "filter": {
+              "is_token": false
+            }
+          }
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "count": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            },
+            "right": {
+              "const": 6
+            }
+          },
+          "cost": {
+            "mana": "{2}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "op": "search_zones",
+              "player": "you",
+              "selector": {
+                "name": "God-Pharaoh's Gift"
+              },
+              "zones": [
+                "graveyard",
+                "hand",
+                "library"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, {T}, Sacrifice this artifact: Search your graveyard, hand, and/or library for a card named God-Pharaoh's Gift and put it onto the battlefield. If you search your library this way, shuffle. Activate only if there are six or more creature cards in your graveyard."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "gate_to_the_afterlife",
+      "mana_cost": "{3}",
+      "name": "Gate to the Afterlife",
+      "oracle_text": "Whenever a nontoken creature you control dies, you gain 1 life. Then you may draw a card. If you do, discard a card.\n{2}, {T}, Sacrifice this artifact: Search your graveyard, hand, and/or library for a card named God-Pharaoh's Gift and put it onto the battlefield. If you search your library this way, shuffle. Activate only if there are six or more creature cards in your graveyard.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {

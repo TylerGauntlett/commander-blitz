@@ -3445,6 +3445,10 @@
     },
     "zone": "graveyard"
   },
+  "crowded_crypt": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "crown_of_gondor": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -3670,6 +3674,13 @@
   },
   "dakmor_scorpion": {
     "zone": "battlefield"
+  },
+  "damn": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 4
+    },
+    "zone": "graveyard"
   },
   "damnable_pact": {
     "hand_size": {
@@ -4444,6 +4455,16 @@
   "dread_statuary": {
     "zone": "battlefield"
   },
+  "dread_summons": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 23
+    },
+    "library_size": {
+      "0": 20
+    },
+    "zone": "graveyard"
+  },
   "dread_tiller": {
     "zone": "battlefield"
   },
@@ -4531,6 +4552,9 @@
   },
   "durkwood_boars": {
     "zone": "battlefield"
+  },
+  "dusk_dawn": {
+    "zone": "graveyard"
   },
   "dusk_imp": {
     "zone": "battlefield"
@@ -6049,6 +6073,13 @@
   "forgotten_cave": {
     "zone": "battlefield"
   },
+  "forgotten_creation": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "forgotten_sentinel": {
     "zone": "battlefield"
   },
@@ -6354,6 +6385,10 @@
     "zone": "battlefield"
   },
   "gary_clone": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "gate_to_the_afterlife": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
