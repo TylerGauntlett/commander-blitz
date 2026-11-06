@@ -1,0 +1,18 @@
+{
+  "card_id": "jarad_golgari_lich_lord",
+  "name": "Jarad, Golgari Lich Lord",
+  "oracle_text": "Jarad gets +1/+1 for each creature card in your graveyard.\n{1}{B}{G}, Sacrifice another creature: Each opponent loses life equal to the sacrificed creature's power.\nSacrifice a Swamp and a Forest: Return this card from your graveyard to your hand.",
+  "blocked_sentences": [
+    "Sacrifice a Swamp and a Forest: Return this card from your graveyard to your hand."
+  ],
+  "needs": [
+    {
+      "capability": "sacrifice_multiple_distinct",
+      "kind": "cost",
+      "what": "an activated-ability cost that sacrifices several permanents each matching its own selector (here one Swamp AND one Forest), payable only when every part can be met by a distinct permanent; e.g. `sacrifice` accepting a list of selectors",
+      "why_existing_wont_do": "The `sacrifice` cost key takes one selector plus `count` (costs.py `_sacrifice_pool`); `count: 2` with `any_of` Swamp/Forest would also accept two Swamps or two Forests, which is a different (looser) cost. The rest of the line is expressible: `active_zones: [\"graveyard\"]` with a `return_to_hand` of `self_only`."
+    }
+  ],
+  "closest_existing": ["sacrifice"],
+  "confidence": "high"
+}

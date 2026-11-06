@@ -100698,6 +100698,109 @@
         {
           "effects": [
             {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 2
+                      },
+                      "op": "discard",
+                      "player": "each_opponent"
+                    },
+                    {
+                      "amount": {
+                        "const": 2
+                      },
+                      "op": "lose_life",
+                      "player": "each_opponent"
+                    }
+                  ],
+                  "label": "Each opponent discards two cards and loses 2 life."
+                },
+                {
+                  "effects": [
+                    {
+                      "controller": "you",
+                      "objects": {
+                        "target": "t1"
+                      },
+                      "op": "put_onto_battlefield"
+                    },
+                    {
+                      "amount": {
+                        "const": 2
+                      },
+                      "op": "lose_life",
+                      "player": "you"
+                    }
+                  ],
+                  "label": "Put target non-Dragon creature card from a graveyard onto the battlefield under your control. You lose 2 life."
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "mode": 1,
+              "selector": {
+                "controller": "any",
+                "not_subtypes": [
+                  "Dragon"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When Junji dies, choose one —\n• Each opponent discards two cards and loses 2 life.\n• Put target non-Dragon creature card from a graveyard onto the battlefield under your control. You lose 2 life.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "junji_the_midnight_sky",
+      "keywords": [
+        "flying",
+        "menace"
+      ],
+      "mana_cost": "{3}{B}{B}",
+      "name": "Junji, the Midnight Sky",
+      "oracle_text": "Flying, menace\nWhen Junji dies, choose one —\n• Each opponent discards two cards and loses 2 life.\n• Put target non-Dragon creature card from a graveyard onto the battlefield under your control. You lose 2 life.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Dragon",
+        "Spirit"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 1
               },
@@ -105565,6 +105668,56 @@
         "Legendary"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a card leaves your graveyard during your turn, draw a card. This ability triggers only once each turn.",
+          "trigger": {
+            "condition": {
+              "is_your_turn": true
+            },
+            "controller": "you",
+            "event": "leaves_graveyard",
+            "max_per_turn": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "kishla_skimmer",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{G}{U}",
+      "name": "Kishla Skimmer",
+      "oracle_text": "Flying\nWhenever a card leaves your graveyard during your turn, draw a card. This ability triggers only once each turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Bird",
+        "Scout"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -111487,6 +111640,55 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "living_death",
+      "mana_cost": "{3}{B}{B}",
+      "name": "Living Death",
+      "oracle_text": "Each player exiles all creature cards from their graveyard, then sacrifices all creatures they control, then puts all cards they exiled this way onto the battlefield.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "exiled",
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          },
+          "op": "exile"
+        },
+        {
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "sacrifice"
+        },
+        {
+          "controller": "owner",
+          "objects": {
+            "binding": "exiled",
+            "zone": "exile"
+          },
+          "op": "put_onto_battlefield"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {

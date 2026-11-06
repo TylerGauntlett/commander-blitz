@@ -1,0 +1,18 @@
+{
+  "card_id": "kotis_sibsig_champion",
+  "name": "Kotis, Sibsig Champion",
+  "oracle_text": "Once during each of your turns, you may cast a creature spell from your graveyard by exiling three other cards from your graveyard in addition to paying its other costs.\nWhenever one or more creatures you control enter, if one or more of them entered from a graveyard or was cast from a graveyard, put two +1/+1 counters on Kotis.",
+  "blocked_sentences": [
+    "Once during each of your turns, you may cast a creature spell from your graveyard by exiling three other cards from your graveyard in addition to paying its other costs."
+  ],
+  "needs": [
+    {
+      "capability": "graveyard_cast_permission_additional_cost",
+      "kind": "static_effect",
+      "what": "an additional cost carried on a battlefield-granted cast_from_graveyard permission, charged to the spell cast through it: here 'exile three other cards from your graveyard' (an exile_from_graveyard cost of 3 cards excluding the spell itself), paid on top of the spell's own mana cost, alongside affects_spells {types: [Creature]}, static_max_per_turn 1 and a your-turn-only condition",
+      "why_existing_wont_do": "The cast_from_graveyard static (Edgar, Master Machinist shape) carries affects_spells, static_max_per_turn, enters_tapped and grants_flashback but no cost of any kind; graveyard_additional_cost and graveyard_cost are card-level keys priced on the card being cast, not imposed by another permanent's permission; exile_from_graveyard exists only in cost_keys for activated abilities. Writing the permission without the exile would make Kotis a strictly better, free recursion engine than printed."
+    }
+  ],
+  "closest_existing": ["cast_from_graveyard", "graveyard_additional_cost", "exile_from_graveyard"],
+  "confidence": "high"
+}

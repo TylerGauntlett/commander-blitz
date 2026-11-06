@@ -144512,12 +144512,12 @@
     },
     "Junji, the Midnight Sky": {
       "edhrec_rank": 1218,
-      "gate": "template",
+      "gate": null,
       "name": "Junji, the Midnight Sky",
-      "reason": "no template for: When Junji dies, choose one —",
+      "reason": "",
       "scryfall_id": "1050fea7-307b-47fb-94f4-36f5cb481b2b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Junk Diver": {
@@ -149642,12 +149642,12 @@
     },
     "Kishla Skimmer": {
       "edhrec_rank": 5067,
-      "gate": "template",
+      "gate": null,
       "name": "Kishla Skimmer",
-      "reason": "no template for: Whenever a card leaves your graveyard during your turn, draw a card. This ability triggers",
+      "reason": "",
       "scryfall_id": "b5f1acb0-d73e-4814-8158-3645daf5c4cc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kishla Trawlers": {
@@ -159682,12 +159682,12 @@
     },
     "Living Death": {
       "edhrec_rank": 465,
-      "gate": "template",
+      "gate": null,
       "name": "Living Death",
-      "reason": "no template for: Each player exiles all creature cards from their graveyard, then sacrifices all creatures ",
+      "reason": "",
       "scryfall_id": "825534a6-bc39-4f6c-ace7-3894452b143e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Living Destiny": {
