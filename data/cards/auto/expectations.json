@@ -16226,6 +16226,10 @@
   "tarnished_citadel": {
     "zone": "battlefield"
   },
+  "tasigur_the_golden_fang": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "tasseled_dromedary": {
     "zone": "battlefield"
   },
@@ -16966,6 +16970,16 @@
     "zone": "graveyard"
   },
   "timeless_lotus": {
+    "zone": "battlefield"
+  },
+  "timeless_witness": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 1
+    },
+    "hand_size": {
+      "0": 2
+    },
     "zone": "battlefield"
   },
   "tin_street_dodger": {
@@ -18099,6 +18113,16 @@
   "vicious_conquistador": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "victimize": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
   },
   "vigilance": {
     "zone": [

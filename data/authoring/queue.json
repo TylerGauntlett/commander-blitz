@@ -275472,12 +275472,12 @@
     },
     "Tasigur, the Golden Fang": {
       "edhrec_rank": 7785,
-      "gate": "template",
+      "gate": null,
       "name": "Tasigur, the Golden Fang",
-      "reason": "no template for: Delve",
+      "reason": "",
       "scryfall_id": "1683cb7f-9623-4ab8-8f88-f8255dac352c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Task Force": {
@@ -287592,12 +287592,12 @@
     },
     "Timeless Witness": {
       "edhrec_rank": 1272,
-      "gate": "template",
+      "gate": null,
       "name": "Timeless Witness",
-      "reason": "no template for: When this creature enters, return target card from your graveyard to your hand",
+      "reason": "",
       "scryfall_id": "8a0f47b0-2254-4df2-b3dc-74c1d3811d2f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Timeline Culler": {
@@ -304362,12 +304362,12 @@
     },
     "Victimize": {
       "edhrec_rank": 128,
-      "gate": "template",
+      "gate": null,
       "name": "Victimize",
-      "reason": "no template for: Choose two target creature cards in your graveyard. Sacrifice a creature. If you do, retur",
+      "reason": "",
       "scryfall_id": "fdc741fe-b2ac-4bc8-96b5-aeb1b63cc2f0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Victor Mancha, Runaway": {
