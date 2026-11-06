@@ -42582,12 +42582,12 @@
     },
     "Cephalid Coliseum": {
       "edhrec_rank": 853,
-      "gate": "template",
+      "gate": null,
       "name": "Cephalid Coliseum",
-      "reason": "no template for: Threshold — {U}, {T}, Sacrifice this land: Target player draws three cards, then discards ",
+      "reason": "",
       "scryfall_id": "2cb9c743-8793-48e6-bb3d-0d9b76fd1a62",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cephalid Constable": {
@@ -50632,12 +50632,12 @@
     },
     "Command Beacon": {
       "edhrec_rank": 182,
-      "gate": "template",
+      "gate": null,
       "name": "Command Beacon",
-      "reason": "no template for: {T}, Sacrifice this land: Put your commander into your hand from the command zone",
+      "reason": "",
       "scryfall_id": "2670653e-fcaa-46e3-b3bf-cb8e8b981a9c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Command Bridge": {

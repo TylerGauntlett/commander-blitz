@@ -2630,6 +2630,10 @@
       "0": 43
     }
   },
+  "cephalid_coliseum": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "cerodon_yearling": {
     "zone": "battlefield"
   },
@@ -3069,6 +3073,10 @@
     "library_size": {
       "0": 37
     },
+    "zone": "battlefield"
+  },
+  "command_beacon": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "commander_s_insight": {
