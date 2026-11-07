@@ -4042,6 +4042,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "deathreap_ritual": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "debilitating_injury": {
     "zone": [
       "battlefield",
@@ -4161,6 +4168,19 @@
     "zone": "graveyard"
   },
   "delighted_halfling": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "deluge_of_doom": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
+  "demolisher_spawn": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

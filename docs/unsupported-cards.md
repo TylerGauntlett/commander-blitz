@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**212 cards** blocked by **194** capabilities.
+**213 cards** blocked by **196** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -78,6 +78,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [damage-player-or-planeswalker](#damage-player-or-planeswalker) | 1 | 5120 | op |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [delayed-creature-dies](#delayed-creature-dies) | 1 | 1661 | trigger_event |
+| [demon-token-5-5-b-flying](#demon-token-5-5-b-flying) | 1 | 7993 | token |
 | [devil-token](#devil-token) | 1 | 4163 | token |
 | [devotion](#devotion) | 1 | 2401 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
@@ -200,6 +201,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [total-mana-value-selection](#total-mana-value-selection) | 1 | 4244 | op |
 | [total-toughness-cost-reduction](#total-toughness-cost-reduction) | 1 | 5188 | value |
 | [toughness-greater-than-power-filter](#toughness-greater-than-power-filter) | 1 | 3557 | selector |
+| [two-share-all-card-types](#two-share-all-card-types) | 1 | 7993 | value |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
 | [unlock-door](#unlock-door) | 1 | 4163 | trigger_event |
@@ -1382,6 +1384,20 @@ Blocks **1** card.
 
 - **Massacre Girl** (rank 1661) — `massacre_girl`
   - Whenever a creature dies this turn, each creature other than Massacre Girl gets -1/-1 until end of turn.
+
+</details>
+
+## demon-token-5-5-b-flying
+
+Blocks **1** card.
+
+- **(token)** a 5/5 black Demon creature token with flying
+  <br>Why the existing vocabulary won't do: token_ids holds no 5/5 black Demon; the nearest are dragon_5_5_r_flying (wrong type and colour) and vampire_demon_4_3_wb_flying (wrong size, colours and types)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Demonic Covenant** (rank 7993) — `demonic_covenant`
+  - At the beginning of your end step, create a 5/5 black Demon creature token with flying, then mill two cards. If two cards that share all their card types were milled this way, sacrifice this enchantment.
 
 </details>
 
@@ -3128,6 +3144,20 @@ Blocks **1** card.
 
 - **Bedrock Tortoise** (rank 3557) — `bedrock_tortoise`
   - Each creature you control with toughness greater than its power assigns combat damage equal to its toughness rather than its power.
+
+</details>
+
+## two-share-all-card-types
+
+Blocks **1** card.
+
+- **(value)** a condition over the cards a `mill` bound with `as` that is true when two of them have exactly the same set of card types (e.g. both Land, both Creature, both Artifact Creature) -- the card-type twin of `two_share_a_color`
+  <br>Why the existing vocabulary won't do: condition_keys has `two_share_a_color` (colour, and sharing any rather than all) and the selector key `shares_a_type_with` (sharing at least one type, not all of them); neither compares the full card-type sets of two milled cards
+
+<details><summary>Cards waiting on this</summary>
+
+- **Demonic Covenant** (rank 7993) — `demonic_covenant`
+  - At the beginning of your end step, create a 5/5 black Demon creature token with flying, then mill two cards. If two cards that share all their card types were milled this way, sacrifice this enchantment.
 
 </details>
 

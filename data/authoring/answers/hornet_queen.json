@@ -1,0 +1,31 @@
+{
+  "card": {
+    "id": "hornet_queen",
+    "name": "Hornet Queen",
+    "oracle_text": "Flying, deathtouch\nWhen this creature enters, create four 1/1 green Insect creature tokens with flying and deathtouch.",
+    "mana_cost": "{4}{G}{G}{G}",
+    "types": ["Creature"],
+    "subtypes": ["Insect"],
+    "colors": ["G"],
+    "color_identity": ["G"],
+    "power": 2,
+    "toughness": 2,
+    "keywords": ["flying", "deathtouch"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature enters, create four 1/1 green Insect creature tokens with flying and deathtouch.",
+        "trigger": {"event": "self_enters", "source": "self"},
+        "effects": [
+          {"op": "create_token", "token": "insect_1_1_g_flying_deathtouch", "amount": {"const": 4}}
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "tokens": {"id": "insect_1_1_g_flying_deathtouch", "count": 4},
+    "battlefield_count": 37,
+    "granted": {"keywords": ["flying", "deathtouch"], "count": 5}
+  }
+}

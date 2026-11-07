@@ -64052,12 +64052,12 @@
     },
     "Deathreap Ritual": {
       "edhrec_rank": 2033,
-      "gate": "template",
+      "gate": null,
       "name": "Deathreap Ritual",
-      "reason": "no template for: Morbid — At the beginning of each end step, if a creature died this turn, you may draw a c",
+      "reason": "",
       "scryfall_id": "4980879b-87a4-4e5a-9f29-9136f022d849",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deathrender": {
@@ -65842,12 +65842,12 @@
     },
     "Deluge of Doom": {
       "edhrec_rank": 10038,
-      "gate": "template",
+      "gate": null,
       "name": "Deluge of Doom",
-      "reason": "no template for: All creatures get -X/-X until end of turn, where X is the number of card types among cards",
+      "reason": "",
       "scryfall_id": "948927b2-087a-4f57-844e-68fc8ab01bc0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Delusions of Mediocrity": {
@@ -65982,12 +65982,12 @@
     },
     "Demolisher Spawn": {
       "edhrec_rank": 5974,
-      "gate": "template",
+      "gate": null,
       "name": "Demolisher Spawn",
-      "reason": "no template for: Delirium — Whenever this creature attacks, if there are four or more card types among card",
+      "reason": "",
       "scryfall_id": "16b97600-e4cf-4b9e-8f2d-2eb74298eb54",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Demolition Field": {

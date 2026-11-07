@@ -47541,6 +47541,58 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "prompt": "Draw a card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Morbid — At the beginning of each end step, if a creature died this turn, you may draw a card.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "creatures_died_this_turn": "all"
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "controller": "any",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "deathreap_ritual",
+      "mana_cost": "{2}{B}{G}",
+      "name": "Deathreap Ritual",
+      "oracle_text": "Morbid — At the beginning of each end step, if a creature died this turn, you may draw a card.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -48978,6 +49030,139 @@
       ],
       "toughness": 2,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "deluge_of_doom",
+      "mana_cost": "{2}{B}",
+      "name": "Deluge of Doom",
+      "oracle_text": "All creatures get -X/-X until end of turn, where X is the number of card types among cards in your graveyard.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "pump",
+          "power": {
+            "minus": [
+              {
+                "const": 0
+              },
+              {
+                "distinct": {
+                  "objects": {
+                    "controller": "you",
+                    "zone": "graveyard"
+                  },
+                  "of": "card_type"
+                }
+              }
+            ]
+          },
+          "toughness": {
+            "minus": [
+              {
+                "const": 0
+              },
+              {
+                "distinct": {
+                  "objects": {
+                    "controller": "you",
+                    "zone": "graveyard"
+                  },
+                  "of": "card_type"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "attacking": true,
+                "controller": "any",
+                "count": "all",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 4
+              },
+              "toughness": {
+                "const": 4
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Delirium — Whenever this creature attacks, if there are four or more card types among cards in your graveyard, other attacking creatures get +4/+4 until end of turn.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "distinct": {
+                  "objects": {
+                    "controller": "you",
+                    "zone": "graveyard"
+                  },
+                  "of": "card_type"
+                }
+              },
+              "right": {
+                "const": 4
+              }
+            },
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "demolisher_spawn",
+      "keywords": [
+        "trample",
+        "haste"
+      ],
+      "mana_cost": "{5}{G}{G}",
+      "name": "Demolisher Spawn",
+      "oracle_text": "Trample, haste\nDelirium — Whenever this creature attacks, if there are four or more card types among cards in your graveyard, other attacking creatures get +4/+4 until end of turn.",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Horror"
+      ],
+      "toughness": 7,
+      "types": [
+        "Enchantment",
         "Creature"
       ]
     },

@@ -1,0 +1,24 @@
+{
+  "card_id": "demonic_covenant",
+  "name": "Demonic Covenant",
+  "oracle_text": "Whenever one or more Demons you control attack a player, you draw a card and lose 1 life.\nAt the beginning of your end step, create a 5/5 black Demon creature token with flying, then mill two cards. If two cards that share all their card types were milled this way, sacrifice this enchantment.",
+  "blocked_sentences": [
+    "At the beginning of your end step, create a 5/5 black Demon creature token with flying, then mill two cards. If two cards that share all their card types were milled this way, sacrifice this enchantment."
+  ],
+  "needs": [
+    {
+      "capability": "demon_token_5_5_b_flying",
+      "kind": "token",
+      "what": "a 5/5 black Demon creature token with flying",
+      "why_existing_wont_do": "token_ids holds no 5/5 black Demon; the nearest are dragon_5_5_r_flying (wrong type and colour) and vampire_demon_4_3_wb_flying (wrong size, colours and types)"
+    },
+    {
+      "capability": "two_share_all_card_types",
+      "kind": "value",
+      "what": "a condition over the cards a `mill` bound with `as` that is true when two of them have exactly the same set of card types (e.g. both Land, both Creature, both Artifact Creature) -- the card-type twin of `two_share_a_color`",
+      "why_existing_wont_do": "condition_keys has `two_share_a_color` (colour, and sharing any rather than all) and the selector key `shares_a_type_with` (sharing at least one type, not all of them); neither compares the full card-type sets of two milled cards"
+    }
+  ],
+  "closest_existing": ["two_share_a_color", "shares_a_type_with", "mill"],
+  "confidence": "high"
+}
