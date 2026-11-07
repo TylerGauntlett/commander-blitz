@@ -1,0 +1,14 @@
+{
+  "card_id": "scroll_of_fate",
+  "name": "Scroll of Fate",
+  "oracle_text": "{T}: Manifest a card from your hand. (Put that card onto the battlefield face down as a 2/2 creature. Turn it face up any time for its mana cost if it's a creature card.)",
+  "blocked_sentences": ["{T}: Manifest a card from your hand"],
+  "needs": [{
+    "capability": "manifest",
+    "kind": "op",
+    "what": "a source selector on the manifest op (e.g. `from: \"hand\"` plus a chooser), so the controller chooses a card from their hand and it is put onto the battlefield face down as a manifested 2/2, turnable face up for its mana cost if it is a creature card (701.34)",
+    "why_existing_wont_do": "op_manifest takes only amount, cloak and player and always manifests library[0]; put_onto_battlefield can move a card from hand but has no face_down option, and look_at_top's face_down is exile privacy from the library, not the 707 face-down 2/2"
+  }],
+  "closest_existing": ["manifest", "put_onto_battlefield"],
+  "confidence": "high"
+}

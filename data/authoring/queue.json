@@ -215622,12 +215622,12 @@
     },
     "Rashmi, Eternities Crafter": {
       "edhrec_rank": 3533,
-      "gate": "template",
+      "gate": null,
       "name": "Rashmi, Eternities Crafter",
-      "reason": "no template for: Whenever you cast your first spell each turn, reveal the top card of your library. You may",
+      "reason": "",
       "scryfall_id": "e553935f-d8d8-4b98-ab4a-5a2eea3f3626",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rasputin Dreamweaver": {
@@ -221952,12 +221952,12 @@
     },
     "Retreat to Coralhelm": {
       "edhrec_rank": 1768,
-      "gate": "template",
+      "gate": null,
       "name": "Retreat to Coralhelm",
-      "reason": "no template for: Landfall — Whenever a land you control enters, choose one —",
+      "reason": "",
       "scryfall_id": "cf8246c1-1db2-409f-9440-222d6dc78297",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Retreat to Emeria": {
@@ -245592,12 +245592,12 @@
     },
     "Shriekwood Devourer": {
       "edhrec_rank": 5431,
-      "gate": "template",
+      "gate": null,
       "name": "Shriekwood Devourer",
-      "reason": "no template for: Whenever you attack with one or more creatures, untap up to X lands, where X is the greate",
+      "reason": "",
       "scryfall_id": "3796eccf-513e-41fe-be5b-aae3b476615b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shrike Force": {

@@ -13381,6 +13381,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "rashmi_eternities_crafter": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "raucous_audience": {
     "zone": "battlefield"
   },
@@ -13776,6 +13783,13 @@
     "life": {
       "0": 46
     }
+  },
+  "retreat_to_coralhelm": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "retreat_to_kazandu": {
     "zone": "battlefield"
@@ -15115,6 +15129,10 @@
       "0": 3
     },
     "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
+  "shriekwood_devourer": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "shrike_force": {

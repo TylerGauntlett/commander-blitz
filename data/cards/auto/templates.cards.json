@@ -158429,6 +158429,88 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "rashmi_cast",
+              "cast_free": true,
+              "objects": {
+                "count": 1,
+                "mana_value": {
+                  "op": "<",
+                  "value": {
+                    "mana_value_of": {
+                      "binding": "subject"
+                    }
+                  }
+                },
+                "optional": true
+              },
+              "op": "look_at_top"
+            },
+            {
+              "condition": {
+                "not": {
+                  "exists": {
+                    "binding": "rashmi_cast"
+                  }
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "destination": "hand",
+                  "objects": {
+                    "count": "all"
+                  },
+                  "op": "look_at_top"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast your first spell each turn, reveal the top card of your library. You may cast it without paying its mana cost if it's a spell with lesser mana value. If you don't cast it, put it into your hand.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "nth": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "rashmi_eternities_crafter",
+      "mana_cost": "{2}{G}{U}",
+      "name": "Rashmi, Eternities Crafter",
+      "oracle_text": "Whenever you cast your first spell each turn, reveal the top card of your library. You may cast it without paying its mana cost if it's a spell with lesser mana value. If you don't cast it, put it into your hand.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Druid"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -162576,6 +162658,102 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "effects": [
+                        {
+                          "objects": {
+                            "target": "t1"
+                          },
+                          "op": "tap"
+                        }
+                      ],
+                      "else": [
+                        {
+                          "effects": [
+                            {
+                              "objects": {
+                                "target": "t1"
+                              },
+                              "op": "untap"
+                            }
+                          ],
+                          "op": "may",
+                          "prompt": "Untap target creature?"
+                        }
+                      ],
+                      "op": "may",
+                      "prompt": "Tap target creature?"
+                    }
+                  ],
+                  "label": "You may tap or untap target creature."
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "scry",
+                      "player": "you"
+                    }
+                  ],
+                  "label": "Scry 1."
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "mode": 0,
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Landfall — Whenever a land you control enters, choose one —\n• You may tap or untap target creature.\n• Scry 1. (Look at the top card of your library. You may put that card on the bottom.)",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "retreat_to_coralhelm",
+      "mana_cost": "{2}{U}",
+      "name": "Retreat to Coralhelm",
+      "oracle_text": "Landfall — Whenever a land you control enters, choose one —\n• You may tap or untap target creature.\n• Scry 1. (Look at the top card of your library. You may put that card on the bottom.)",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -178511,6 +178689,61 @@
         "Elemental"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "count": {
+                  "extreme_value": {
+                    "objects": {
+                      "binding": "attackers"
+                    },
+                    "of": "power",
+                    "pick": "greatest"
+                  }
+                },
+                "optional": true,
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "untap"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you attack with one or more creatures, untap up to X lands, where X is the greatest power among those creatures.",
+          "trigger": {
+            "controller": "you",
+            "event": "you_attack"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "shriekwood_devourer",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{5}{G}{G}",
+      "name": "Shriekwood Devourer",
+      "oracle_text": "Trample\nWhenever you attack with one or more creatures, untap up to X lands, where X is the greatest power among those creatures.",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Treefolk"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**229 cards** blocked by **214** capabilities.
+**232 cards** blocked by **217** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -153,6 +153,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mana-spent-enters-with-counters](#mana-spent-enters-with-counters) | 1 | 653 | replacement |
 | [mana-spent-trigger-on-activation](#mana-spent-trigger-on-activation) | 1 | 4444 | trigger_event |
 | [mana-tap-trigger-damage-rider](#mana-tap-trigger-damage-rider) | 1 | 7929 | static_effect |
+| [manifest](#manifest) | 1 | 3975 | op |
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
 | [modal-variable-targets](#modal-variable-targets) | 1 | 4339 | engine |
@@ -198,6 +199,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
 | [salamander-warrior-4-3-u](#salamander-warrior-4-3-u) | 1 | 3395 | token |
+| [sandbox-graveyard-fodder](#sandbox-graveyard-fodder) | 1 | 16681 | engine |
 | [sandbox-graveyard-spell-prop](#sandbox-graveyard-spell-prop) | 1 | 5082 | engine |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
@@ -224,6 +226,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
 | [while-source-on-battlefield-duration](#while-source-on-battlefield-duration) | 1 | 8222 | engine |
+| [wurm-5-5-g](#wurm-5-5-g) | 1 | 2294 | token |
 | [x-cost-mana-restriction](#x-cost-mana-restriction) | 1 | 4046 | decision |
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 1 | 11545 | engine |
 | [x-sized-ability-targets](#x-sized-ability-targets) | 1 | 1668 | engine |
@@ -2536,6 +2539,20 @@ Blocks **1** card.
 
 </details>
 
+## manifest
+
+Blocks **1** card.
+
+- **(op)** a source selector on the manifest op (e.g. `from: "hand"` plus a chooser), so the controller chooses a card from their hand and it is put onto the battlefield face down as a manifested 2/2, turnable face up for its mana cost if it is a creature card (701.34)
+  <br>Why the existing vocabulary won't do: op_manifest takes only amount, cloak and player and always manifests library[0]; put_onto_battlefield can move a card from hand but has no face_down option, and look_at_top's face_down is exile privacy from the library, not the 707 face-down 2/2
+
+<details><summary>Cards waiting on this</summary>
+
+- **Scroll of Fate** (rank 3975) — `scroll_of_fate`
+  - {T}: Manifest a card from your hand
+
+</details>
+
 ## may-pay-named-cost
 
 Blocks **1** card.
@@ -3177,6 +3194,20 @@ Blocks **1** card.
 
 </details>
 
+## sandbox-graveyard-fodder
+
+Blocks **1** card.
+
+- **(engine)** The card itself is expressible: keywords [flying], additional_cost {"exile_from_graveyard": {"types": ["Creature"], "count": 3}}, and a static {"effect": "cast_from_graveyard", "active_zones": ["graveyard"], "affects_player": "you", "text": "You may cast this card from your graveyard."}. What is missing is a verification sandbox that can cast it: build_sandbox (cards/authoring/verify.py) puts only two creature cards in your graveyard (OWN_GRAVEYARD_ROLES), so an additional cost exiling N creature cards from the graveyard with N > 2 is never payable and gate 4 rejects the card as 'not playable in the sandbox'. Needs graveyard fodder scaled to additional_cost.exile_from_graveyard.count, the way spare_cards_in_hand scales spare Forests to additional_cost.discard.
+  <br>Why the existing vocabulary won't do: Verified with author_cards.py --collect --dry-run: the answer above loads and is rejected only at the playable gate (offered just Pass/Play land). spare_cards_in_hand covers discard additional costs only; nothing adds graveyard creature cards for an exile_from_graveyard additional cost.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Skaab Ruinator** (rank 16681) — `skaab_ruinator`
+  - As an additional cost to cast this spell, exile three creature cards from your graveyard.
+
+</details>
+
 ## sandbox-graveyard-spell-prop
 
 Blocks **1** card.
@@ -3544,6 +3575,20 @@ Blocks **1** card.
 
 - **Opportunistic Dragon** (rank 8222) — `opportunistic_dragon`
   - When this creature enters, choose target Human or artifact an opponent controls. For as long as this creature remains on the battlefield, gain control of that permanent, it loses all abilities, and it can't attack or block.
+
+</details>
+
+## wurm-5-5-g
+
+Blocks **1** card.
+
+- **(token)** a 5/5 green Wurm creature token with no abilities (token id wurm_5_5_g)
+  <br>Why the existing vocabulary won't do: token_ids has no Wurm token at all; the nearest 5/5s are dragon_5_5_r_flying and elemental_5_5_rg, which differ in colour, creature type and (for the Dragon) flying. The rest of the card is expressible: the first line is a cant_attack_you static with affects {"controller": "any", "keywords": ["flying"]} (planeswalkers are covered by default, no player_only), and the trigger is end_step with controller you feeding create_token.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Sandwurm Convergence** (rank 2294) — `sandwurm_convergence`
+  - At the beginning of your end step, create a 5/5 green Wurm creature token.
 
 </details>
 

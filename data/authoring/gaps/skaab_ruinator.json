@@ -1,0 +1,18 @@
+{
+  "card_id": "skaab_ruinator",
+  "name": "Skaab Ruinator",
+  "oracle_text": "As an additional cost to cast this spell, exile three creature cards from your graveyard.\nFlying\nYou may cast this card from your graveyard.",
+  "blocked_sentences": [
+    "As an additional cost to cast this spell, exile three creature cards from your graveyard."
+  ],
+  "needs": [
+    {
+      "capability": "sandbox_graveyard_fodder",
+      "kind": "engine",
+      "what": "The card itself is expressible: keywords [flying], additional_cost {\"exile_from_graveyard\": {\"types\": [\"Creature\"], \"count\": 3}}, and a static {\"effect\": \"cast_from_graveyard\", \"active_zones\": [\"graveyard\"], \"affects_player\": \"you\", \"text\": \"You may cast this card from your graveyard.\"}. What is missing is a verification sandbox that can cast it: build_sandbox (cards/authoring/verify.py) puts only two creature cards in your graveyard (OWN_GRAVEYARD_ROLES), so an additional cost exiling N creature cards from the graveyard with N > 2 is never payable and gate 4 rejects the card as 'not playable in the sandbox'. Needs graveyard fodder scaled to additional_cost.exile_from_graveyard.count, the way spare_cards_in_hand scales spare Forests to additional_cost.discard.",
+      "why_existing_wont_do": "Verified with author_cards.py --collect --dry-run: the answer above loads and is rejected only at the playable gate (offered just Pass/Play land). spare_cards_in_hand covers discard additional costs only; nothing adds graveyard creature cards for an exile_from_graveyard additional cost."
+    }
+  ],
+  "closest_existing": ["additional_cost", "exile_from_graveyard", "cast_from_graveyard"],
+  "confidence": "high"
+}

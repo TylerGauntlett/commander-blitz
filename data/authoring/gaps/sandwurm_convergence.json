@@ -1,0 +1,18 @@
+{
+  "card_id": "sandwurm_convergence",
+  "name": "Sandwurm Convergence",
+  "oracle_text": "Creatures with flying can't attack you or planeswalkers you control.\nAt the beginning of your end step, create a 5/5 green Wurm creature token.",
+  "blocked_sentences": [
+    "At the beginning of your end step, create a 5/5 green Wurm creature token."
+  ],
+  "needs": [
+    {
+      "capability": "wurm_5_5_g",
+      "kind": "token",
+      "what": "a 5/5 green Wurm creature token with no abilities (token id wurm_5_5_g)",
+      "why_existing_wont_do": "token_ids has no Wurm token at all; the nearest 5/5s are dragon_5_5_r_flying and elemental_5_5_rg, which differ in colour, creature type and (for the Dragon) flying. The rest of the card is expressible: the first line is a cant_attack_you static with affects {\"controller\": \"any\", \"keywords\": [\"flying\"]} (planeswalkers are covered by default, no player_only), and the trigger is end_step with controller you feeding create_token."
+    }
+  ],
+  "closest_existing": ["elemental_5_5_rg", "dragon_5_5_r_flying"],
+  "confidence": "high"
+}
