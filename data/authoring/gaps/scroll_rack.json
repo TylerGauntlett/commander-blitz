@@ -1,0 +1,18 @@
+{
+  "card_id": "scroll_rack",
+  "name": "Scroll Rack",
+  "oracle_text": "{1}, {T}: Exile any number of cards from your hand face down. Put that many cards from the top of your library into your hand. Then look at the exiled cards and put them on top of your library in any order.",
+  "blocked_sentences": [
+    "{1}, {T}: Exile any number of cards from your hand face down. Put that many cards from the top of your library into your hand. Then look at the exiled cards and put them on top of your library in any order."
+  ],
+  "needs": [
+    {
+      "capability": "exile_face_down",
+      "kind": "op",
+      "what": "a `face_down` option on the `exile` op so cards chosen from a hand (any number, `count: \"any\"`) are exiled hidden from every player but their owner, recorded with `as` so a later `look_at_top` (amount `{\"count\": {\"binding\": ...}}`, destination hand) and `put_on_top` with `any_order` can read them back",
+      "why_existing_wont_do": "`exile` carries `as` and `link` but no `face_down`; the only face-down exile is `look_at_top`'s `face_down`, which exiles from the top of a library, not from a hand. Exiling face up would reveal the chosen hand cards to the opponent, and skipping the exile (tucking the hand cards first) would put them where the following put-into-hand step takes them straight back"
+    }
+  ],
+  "closest_existing": ["exile", "look_at_top", "put_on_top"],
+  "confidence": "high"
+}

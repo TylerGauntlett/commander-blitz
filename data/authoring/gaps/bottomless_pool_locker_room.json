@@ -1,0 +1,30 @@
+{
+  "card_id": "bottomless_pool_locker_room",
+  "name": "Bottomless Pool // Locker Room",
+  "oracle_text": "When you unlock this door, return up to one target creature to its owner's hand.\n(You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)\nWhenever one or more creatures you control deal combat damage to a player, draw a card.\n(You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)",
+  "blocked_sentences": [
+    "When you unlock this door, return up to one target creature to its owner's hand.",
+    "(You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)",
+    "Whenever one or more creatures you control deal combat damage to a player, draw a card."
+  ],
+  "needs": [
+    {
+      "capability": "rooms",
+      "kind": "engine",
+      "what": "Room split permanents (rule 709.5): one card with two doors (Bottomless Pool {U}, Locker Room {4}{U}), castable as either half; the cast door enters unlocked and the other locked; a locked door's abilities are inactive; a sorcery-speed special action pays a locked door's mana cost to unlock it; name and mana value read only unlocked doors",
+      "why_existing_wont_do": "card_level_face_keys offers second_face/back_face, where the cast half becomes the whole object; nothing keeps both doors on one permanent with per-door locked/unlocked state, and no special action unlocks a door. Locker Room's batched creatures_deal_combat_damage trigger is otherwise expressible but must only work while that door is unlocked"
+    },
+    {
+      "capability": "unlock_door",
+      "kind": "trigger_event",
+      "what": "a trigger event 'when you unlock this door' firing when this door becomes unlocked, both when the door is cast (enters unlocked) and when unlocked later by the special action",
+      "why_existing_wont_do": "self_enters misses a later unlock and fires even when this door enters locked; trigger_events has no unlock event"
+    }
+  ],
+  "closest_existing": [
+    "second_face",
+    "self_enters",
+    "creatures_deal_combat_damage"
+  ],
+  "confidence": "high"
+}

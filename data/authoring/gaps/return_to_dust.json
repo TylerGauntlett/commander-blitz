@@ -1,0 +1,18 @@
+{
+  "card_id": "return_to_dust",
+  "name": "Return to Dust",
+  "oracle_text": "Exile target artifact or enchantment. If you cast this spell during your main phase, you may exile up to one other target artifact or enchantment.",
+  "blocked_sentences": [
+    "If you cast this spell during your main phase, you may exile up to one other target artifact or enchantment."
+  ],
+  "needs": [
+    {
+      "capability": "target_if_cast_during",
+      "kind": "selector",
+      "what": "a target spec that is declared only when the spell is cast during a given phase -- e.g. `cast_during: \"your_main\"` on a card-level target (count 1, up_to, distinct from the first target), so a second 'up to one other target artifact or enchantment' exists only when the spell is cast in your main phase (601.2c)",
+      "why_existing_wont_do": "The `cast_during` condition exists but only as an `if` read at resolution. Target specs can be gated by `mode`, `cost_option`, `gift_promised` and `count_if_kicked`, none of which reads the phase the spell was cast in. Declaring an always-available optional second target and exiling it inside `if cast_during` would let the caster target a second permanent at instant speed outside the main phase (triggering ward, becomes_target and heroic-style effects) -- a different card."
+    }
+  ],
+  "closest_existing": ["count_if_kicked", "cast_during", "gift_promised"],
+  "confidence": "high"
+}

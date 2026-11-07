@@ -1,0 +1,31 @@
+{
+  "card_id": "cramped_vents_access_maze",
+  "name": "Cramped Vents // Access Maze",
+  "oracle_text": "When you unlock this door, this Room deals 6 damage to target creature an opponent controls. You gain life equal to the excess damage dealt this way.\n(You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)\nOnce during each of your turns, you may cast a spell from your hand by paying life equal to its mana value rather than paying its mana cost.\n(You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)",
+  "blocked_sentences": [
+    "When you unlock this door, this Room deals 6 damage to target creature an opponent controls. You gain life equal to the excess damage dealt this way.",
+    "(You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)",
+    "Once during each of your turns, you may cast a spell from your hand by paying life equal to its mana value rather than paying its mana cost."
+  ],
+  "needs": [
+    {
+      "capability": "rooms",
+      "kind": "engine",
+      "what": "Room split permanents (rule 709.5): a card with two door halves, each with its own name and mana cost ({3}{B} Cramped Vents, {5}{B}{B} Access Maze), castable as either half; the cast half enters unlocked, the other locked; a locked door's abilities are inactive (so Access Maze's once-per-turn pay-life alternative cost applies only while that door is unlocked); a sorcery-speed special action pays a locked door's mana cost to unlock it; the permanent's name/cost reflect only unlocked doors",
+      "why_existing_wont_do": "second_face is a split/adventure/MDFC half that is cast instead of the front and then is the whole object; nothing keeps both halves on one permanent with per-half locked/unlocked state, and no special action unlocks a half"
+    },
+    {
+      "capability": "unlock_door",
+      "kind": "trigger_event",
+      "what": "a trigger event 'when you unlock this door' that fires when this door becomes unlocked, both when the half is cast (enters unlocked) and when unlocked later by the special action",
+      "why_existing_wont_do": "self_enters fires only on entering, missing a later unlock, and would fire even when this door enters locked because the other half was cast; trigger_events has no unlock event"
+    }
+  ],
+  "closest_existing": [
+    "second_face",
+    "self_enters",
+    "granted_alternative_cost",
+    "damage.excess_to"
+  ],
+  "confidence": "high"
+}

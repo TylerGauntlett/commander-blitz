@@ -1954,6 +1954,18 @@ def _covered(card: CardDef, line: str) -> bool:
     if card.mayhem and card.flashback is not None and stripped.lower().startswith("mayhem "):
         return _declares_printed_cost(stripped[len("mayhem ") :], card.flashback.mana)
 
+    # "Miracle {1}{B} (You may cast this card for its miracle cost when you draw
+    # it if it's the first card you drew this turn.)" -- warp's shape once more:
+    # the line is the price, carried by the card-level `miracle` field, and read
+    # by the draw replacement `replacements._miracle` (702.94a), which reveals
+    # the card and offers the cast. No AbilityModel can honestly carry it, and no
+    # shipped card used the field -- the only miracle in the pool was the
+    # `grant_miracle` static, whose own `text` claims its line -- so a printed
+    # miracle card failed gate 3 with exactly this line left over. Strict for
+    # warp's reason: a card declaring `{0}` cannot claim a printed `{1}{B}`.
+    if card.miracle is not None and stripped.lower().startswith("miracle "):
+        return _declares_printed_cost(stripped[len("miracle ") :], card.miracle)
+
     # "Escape—{3}{B}{B}, Exile four other cards from your graveyard." -- the
     # graveyard-cost slot once more, with escape's destination (the card goes
     # where it normally would, so `graveyard_cast_exiles` is False and it is not

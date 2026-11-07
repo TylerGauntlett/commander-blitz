@@ -8172,12 +8172,12 @@
     },
     "Ancient Cellarspawn": {
       "edhrec_rank": 2467,
-      "gate": "template",
+      "gate": null,
       "name": "Ancient Cellarspawn",
-      "reason": "no template for: Each spell you cast that's a Demon, Horror, or Nightmare costs {1} less to cast",
+      "reason": "",
       "scryfall_id": "27e2477d-4f04-408d-8c39-8a886ac81f44",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ancient Copper Dragon": {
@@ -11982,12 +11982,12 @@
     },
     "Archetype of Imagination": {
       "edhrec_rank": 1821,
-      "gate": "template",
+      "gate": null,
       "name": "Archetype of Imagination",
-      "reason": "no template for: Creatures you control have flying",
+      "reason": "",
       "scryfall_id": "204972f7-8111-4e7d-97c4-53bcdc222230",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Archfiend of Depravity": {
@@ -16392,12 +16392,12 @@
     },
     "Auramancer": {
       "edhrec_rank": 4254,
-      "gate": "template",
+      "gate": null,
       "name": "Auramancer",
-      "reason": "no template for: When this creature enters, you may return target enchantment card from your graveyard to y",
+      "reason": "",
       "scryfall_id": "d0957032-6d98-4cac-889b-890e9bfe1f86",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Auramancer's Guise": {
@@ -32882,12 +32882,12 @@
     },
     "Brainstone": {
       "edhrec_rank": 4819,
-      "gate": "template",
+      "gate": null,
       "name": "Brainstone",
-      "reason": "no template for: {2}, {T}, Sacrifice this artifact: Draw three cards, then put two cards from your hand on ",
+      "reason": "",
       "scryfall_id": "6e86ad39-2a90-466d-b188-056216429f4e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Brainstorm": {
@@ -67872,12 +67872,12 @@
     },
     "Devastation Tide": {
       "edhrec_rank": 3921,
-      "gate": "template",
+      "gate": null,
       "name": "Devastation Tide",
-      "reason": "no template for: Return all nonland permanents to their owners' hands",
+      "reason": "",
       "scryfall_id": "2d493bd6-af71-45be-bd4c-1d8f94bca19e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deviant Glee": {
@@ -68362,12 +68362,12 @@
     },
     "Diabolic Vision": {
       "edhrec_rank": 7343,
-      "gate": "template",
+      "gate": null,
       "name": "Diabolic Vision",
-      "reason": "no template for: Look at the top five cards of your library. Put one of them into your hand and the rest on",
+      "reason": "",
       "scryfall_id": "c360753a-af32-4f1d-a1c7-c3f3c075ecc0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Diamond City": {
@@ -68792,12 +68792,12 @@
     },
     "Dimir Aqueduct": {
       "edhrec_rank": 355,
-      "gate": "template",
+      "gate": null,
       "name": "Dimir Aqueduct",
-      "reason": "no template for: When this land enters, return a land you control to its owner's hand",
+      "reason": "",
       "scryfall_id": "84bf9d60-64b8-4209-acfe-e07eefc6bf1f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dimir Charm": {
@@ -74762,12 +74762,12 @@
     },
     "Dream Eater": {
       "edhrec_rank": 9091,
-      "gate": "template",
+      "gate": null,
       "name": "Dream Eater",
-      "reason": "no template for: When this creature enters, surveil 4. When you do, you may return target nonland permanent",
+      "reason": "",
       "scryfall_id": "c721d449-fc77-4d86-8baf-158181e37087",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dream Fighter": {
@@ -89072,12 +89072,12 @@
     },
     "Extravagant Replication": {
       "edhrec_rank": 1765,
-      "gate": "template",
+      "gate": null,
       "name": "Extravagant Replication",
-      "reason": "no template for: At the beginning of your upkeep, create a token that's a copy of another target nonland pe",
+      "reason": "",
       "scryfall_id": "6a41dfae-bc7e-4105-8f7e-fd0109197ad8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Extravagant Spirit": {
@@ -121412,12 +121412,12 @@
     },
     "Halimar Depths": {
       "edhrec_rank": 1289,
-      "gate": "template",
+      "gate": null,
       "name": "Halimar Depths",
-      "reason": "no template for: When this land enters, look at the top three cards of your library, then put them back in ",
+      "reason": "",
       "scryfall_id": "638e752c-fcfc-4277-ab93-943d0195e351",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Halimar Excavator": {
@@ -121512,12 +121512,12 @@
     },
     "Hall of Heliod's Generosity": {
       "edhrec_rank": 416,
-      "gate": "template",
+      "gate": null,
       "name": "Hall of Heliod's Generosity",
-      "reason": "no template for: {1}{W}, {T}: Put target enchantment card from your graveyard on top of your library",
+      "reason": "",
       "scryfall_id": "f08dfd99-59fa-4a6c-bd69-c647f639de4d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hall of Oracles": {
@@ -157682,12 +157682,12 @@
     },
     "Life Insurance": {
       "edhrec_rank": 5701,
-      "gate": "template",
+      "gate": null,
       "name": "Life Insurance",
-      "reason": "no template for: Extort",
+      "reason": "",
       "scryfall_id": "60e1921e-6c98-4c60-88f4-8fbb6f30236e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Life Matrix": {
@@ -171932,12 +171932,12 @@
     },
     "Mesa Enchantress": {
       "edhrec_rank": 796,
-      "gate": "template",
+      "gate": null,
       "name": "Mesa Enchantress",
-      "reason": "no template for: Whenever you cast an enchantment spell, you may draw a card",
+      "reason": "",
       "scryfall_id": "c4f9e9fc-8b89-40ee-9b20-10e4a23e6333",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mesa Falcon": {
@@ -172252,12 +172252,12 @@
     },
     "Metamorphosis Fanatic": {
       "edhrec_rank": 2906,
-      "gate": "template",
+      "gate": null,
       "name": "Metamorphosis Fanatic",
-      "reason": "no template for: When this creature enters, return up to one target creature card from your graveyard to th",
+      "reason": "",
       "scryfall_id": "16448d95-ee21-4def-b880-26f6f159c213",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Metastatic Evangel": {
@@ -175432,12 +175432,12 @@
     },
     "Mirrormade": {
       "edhrec_rank": 1169,
-      "gate": "template",
+      "gate": null,
       "name": "Mirrormade",
-      "reason": "no template for: You may have this enchantment enter as a copy of any artifact or enchantment on the battle",
+      "reason": "",
       "scryfall_id": "a26cbfbe-fbb8-4804-b065-ab2c42ddad9b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mirrormere Guardian": {
@@ -178612,12 +178612,12 @@
     },
     "Moon-Blessed Cleric": {
       "edhrec_rank": 1929,
-      "gate": "template",
+      "gate": null,
       "name": "Moon-Blessed Cleric",
-      "reason": "no template for: Divine Intervention — When this creature enters, you may search your library for an enchan",
+      "reason": "",
       "scryfall_id": "0555e095-8c6f-4436-80fe-99b641fad2df",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Moon-Boy, Dino Rider": {
@@ -186712,12 +186712,12 @@
     },
     "Nightmare Shepherd": {
       "edhrec_rank": 4200,
-      "gate": "template",
+      "gate": null,
       "name": "Nightmare Shepherd",
-      "reason": "no template for: Whenever another nontoken creature you control dies, you may exile it. If you do, create a",
+      "reason": "",
       "scryfall_id": "c03c1ad6-3122-4267-80d6-94ecf1ff3884",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nightmare Sower": {
@@ -192822,12 +192822,12 @@
     },
     "Ondu Spiritdancer": {
       "edhrec_rank": 1585,
-      "gate": "template",
+      "gate": null,
       "name": "Ondu Spiritdancer",
-      "reason": "no template for: Whenever an enchantment you control enters, you may create a token that's a copy of it. Do",
+      "reason": "",
       "scryfall_id": "ee1c6432-54d7-4b57-a554-f7194d74e03c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ondu War Cleric": {
@@ -195352,12 +195352,12 @@
     },
     "Otherworldly Gaze": {
       "edhrec_rank": 2529,
-      "gate": "template",
+      "gate": null,
       "name": "Otherworldly Gaze",
-      "reason": "no template for: Flashback {1}{U}",
+      "reason": "",
       "scryfall_id": "dc5f5440-3867-4b0a-b233-2d3b8b8b443a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Otherworldly Journey": {
@@ -201092,12 +201092,12 @@
     },
     "Phenomenon Investigators": {
       "edhrec_rank": 16377,
-      "gate": "template",
+      "gate": null,
       "name": "Phenomenon Investigators",
-      "reason": "no template for: As this creature enters, choose Believe or Doubt",
+      "reason": "",
       "scryfall_id": "0c3dfaeb-7a84-4463-bebe-501634f13945",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pheres-Band Brawler": {
@@ -205242,12 +205242,12 @@
     },
     "Portent": {
       "edhrec_rank": 4014,
-      "gate": "template",
+      "gate": null,
       "name": "Portent",
-      "reason": "no template for: Look at the top three cards of target player's library, then put them back in any order. Y",
+      "reason": "",
       "scryfall_id": "5b360632-9c81-4b9c-8b9f-ac0b51c974a0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Portent Tracker": {
@@ -208252,12 +208252,12 @@
     },
     "Prognostic Sphinx": {
       "edhrec_rank": 10242,
-      "gate": "template",
+      "gate": null,
       "name": "Prognostic Sphinx",
-      "reason": "no template for: Discard a card: This creature gains hexproof until end of turn. Tap it",
+      "reason": "",
       "scryfall_id": "d9d36763-2975-4b5c-aeda-2d0159cb5191",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Prohibit": {
@@ -218702,12 +218702,12 @@
     },
     "Redress Fate": {
       "edhrec_rank": 3551,
-      "gate": "template",
+      "gate": null,
       "name": "Redress Fate",
-      "reason": "no template for: Return all artifact and enchantment cards from your graveyard to the battlefield",
+      "reason": "",
       "scryfall_id": "19f56096-f692-4719-af38-6a4955f2b65c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Redrock Sentinel": {
@@ -218972,12 +218972,12 @@
     },
     "Reforge the Soul": {
       "edhrec_rank": 1691,
-      "gate": "template",
+      "gate": null,
       "name": "Reforge the Soul",
-      "reason": "no template for: Each player discards their hand, then draws seven cards",
+      "reason": "",
       "scryfall_id": "1c3509c6-2ae7-45be-8ac9-4d14d69db32f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Refraction Trap": {
@@ -240132,12 +240132,12 @@
     },
     "Sensei's Divining Top": {
       "edhrec_rank": 227,
-      "gate": "template",
+      "gate": null,
       "name": "Sensei's Divining Top",
-      "reason": "no template for: {1}: Look at the top three cards of your library, then put them back in any order",
+      "reason": "",
       "scryfall_id": "f421a21a-763f-479b-bcc3-2abae29098d7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Senseless Rage": {
@@ -246812,12 +246812,12 @@
     },
     "Sigil of the Empty Throne": {
       "edhrec_rank": 1322,
-      "gate": "template",
+      "gate": null,
       "name": "Sigil of the Empty Throne",
-      "reason": "no template for: Whenever you cast an enchantment spell, create a 4/4 white Angel creature token with flyin",
+      "reason": "",
       "scryfall_id": "6875be24-1515-488f-a899-929c8e480dfd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sigil of the Nayan Gods": {
@@ -253822,12 +253822,12 @@
     },
     "Soaring Lightbringer": {
       "edhrec_rank": 3876,
-      "gate": "template",
+      "gate": null,
       "name": "Soaring Lightbringer",
-      "reason": "no template for: Other enchantment creatures you control have flying",
+      "reason": "",
       "scryfall_id": "1933e212-213f-461f-aeb5-4a86a4dae003",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Soaring Sandwing": {
@@ -260092,12 +260092,12 @@
     },
     "Spirit-Sister's Call": {
       "edhrec_rank": 12135,
-      "gate": "template",
+      "gate": null,
       "name": "Spirit-Sister's Call",
-      "reason": "no template for: At the beginning of your end step, choose target permanent card in your graveyard. You may",
+      "reason": "",
       "scryfall_id": "bc495d03-9340-47cd-afc2-82a1677e69df",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spiritcall Enthusiast // Scrollboost": {
@@ -273752,12 +273752,12 @@
     },
     "Tainted Field": {
       "edhrec_rank": 430,
-      "gate": "template",
+      "gate": null,
       "name": "Tainted Field",
-      "reason": "no template for: {T}: Add {W} or {B}. Activate only if you control a Swamp",
+      "reason": "",
       "scryfall_id": "c6eeab6f-a738-4005-91c2-a5f81df5c569",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tainted Indulgence": {
@@ -273772,12 +273772,12 @@
     },
     "Tainted Isle": {
       "edhrec_rank": 500,
-      "gate": "template",
+      "gate": null,
       "name": "Tainted Isle",
-      "reason": "no template for: {T}: Add {U} or {B}. Activate only if you control a Swamp",
+      "reason": "",
       "scryfall_id": "70e8e7e2-e9ea-4358-805e-c5110c8d8443",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tainted Observer": {
@@ -276952,12 +276952,12 @@
     },
     "Telling Time": {
       "edhrec_rank": 5607,
-      "gate": "template",
+      "gate": null,
       "name": "Telling Time",
-      "reason": "no template for: Look at the top three cards of your library. Put one of those cards into your hand, one on",
+      "reason": "",
       "scryfall_id": "6c47bcb9-69a2-40ac-bb8f-2b3c808096d9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Temmet, Naktamun's Will": {
@@ -277472,12 +277472,12 @@
     },
     "Temporal Mastery": {
       "edhrec_rank": 2593,
-      "gate": "template",
+      "gate": null,
       "name": "Temporal Mastery",
-      "reason": "no template for: Take an extra turn after this one. Exile",
+      "reason": "",
       "scryfall_id": "0f46a800-b443-461d-87e0-5587249a42d8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Temporal Spring": {
@@ -278252,12 +278252,12 @@
     },
     "Terminus": {
       "edhrec_rank": 4861,
-      "gate": "template",
+      "gate": null,
       "name": "Terminus",
-      "reason": "no template for: Put all creatures on the bottom of their owners' libraries",
+      "reason": "",
       "scryfall_id": "4c53c684-37f9-4b95-88be-a42b9600c47c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Teroh's Faithful": {
@@ -280522,12 +280522,12 @@
     },
     "The Eldest Reborn": {
       "edhrec_rank": 1906,
-      "gate": "template",
+      "gate": null,
       "name": "The Eldest Reborn",
-      "reason": "no template for: I — Each opponent sacrifices a creature or planeswalker of their choice",
+      "reason": "",
       "scryfall_id": "4d29351e-5608-40e8-8220-6c9635d48ad4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Eleventh Doctor": {
@@ -283652,12 +283652,12 @@
     },
     "Thirst for Meaning": {
       "edhrec_rank": 8081,
-      "gate": "template",
+      "gate": null,
       "name": "Thirst for Meaning",
-      "reason": "no template for: Draw three cards. Then discard two cards unless you discard an enchantment card",
+      "reason": "",
       "scryfall_id": "b91bd773-b36b-4a7a-a9e4-3a07cff90646",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thirsting Axe": {
@@ -300022,12 +300022,12 @@
     },
     "Utter End": {
       "edhrec_rank": 1631,
-      "gate": "template",
+      "gate": null,
       "name": "Utter End",
-      "reason": "no template for: Exile target nonland permanent",
+      "reason": "",
       "scryfall_id": "1819a0af-0775-431d-9637-13f8f10830f5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Utter Insignificance": {

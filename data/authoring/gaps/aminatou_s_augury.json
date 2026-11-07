@@ -1,0 +1,22 @@
+{
+  "card_id": "aminatou_s_augury",
+  "name": "Aminatou's Augury",
+  "oracle_text": "Exile the top eight cards of your library. You may put a land card from among them onto the battlefield. Until end of turn, for each nonland card type, you may cast a spell of that type from among the exiled cards without paying its mana cost.",
+  "blocked_sentences": [
+    "Until end of turn, for each nonland card type, you may cast a spell of that type from among the exiled cards without paying its mana cost."
+  ],
+  "needs": [
+    {
+      "capability": "free_cast_one_per_card_type",
+      "kind": "engine",
+      "what": "a playable-from-exile free-cast permission (on exile / look_at_top / grant_playable) capped at one spell per nonland card type for the turn: the permission ledger tracks which of Artifact, Battle, Creature, Enchantment, Instant, Kindred, Planeswalker and Sorcery have been used, and a spell with several card types (an artifact creature) is cast as one chosen unused type, consuming only that one",
+      "why_existing_wont_do": "exile/look_at_top carry playable_this_turn + playable_free, which would let every exiled nonland card be cast free (strictly better than printed); grant_playable's `limit` is a single per-source count ('a spell', Locke), stored as playable_group = source, with no notion of per-card-type buckets, so it would cap the whole grant at N spells regardless of type"
+    }
+  ],
+  "closest_existing": [
+    "grant_playable",
+    "look_at_top",
+    "exile"
+  ],
+  "confidence": "high"
+}

@@ -10,22 +10,23 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**230 cards** blocked by **215** capabilities.
+**247 cards** blocked by **230** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
 | [put-into-graveyard-from-anywhere](#put-into-graveyard-from-anywhere) | 7 | 256 | trigger_event |
+| [rooms](#rooms) | 6 | 4163 | engine |
+| [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
+| [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 4 | 714 | engine |
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
 | [copy-exception-set-subtypes](#copy-exception-set-subtypes) | 3 | 1740 | engine, op |
+| [escape](#escape) | 3 | 388 | engine, static_effect |
 | [omen](#omen) | 3 | 3355 | cost, engine |
 | [random-player-choice](#random-player-choice) | 3 | 5120 | op |
-| [rooms](#rooms) | 3 | 4163 | engine |
-| [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 3 | 714 | engine |
-| [unlock-door](#unlock-door) | 3 | 4163 | trigger_event |
 | [add-color](#add-color) | 2 | 2040 | op |
 | [basic-land-type-mana](#basic-land-type-mana) | 2 | 73 | engine |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
@@ -35,9 +36,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [copy-exception-ability](#copy-exception-ability) | 2 | 6941 | op |
 | [council-s-dilemma](#council-s-dilemma) | 2 | 4067 | decision |
+| [devotion](#devotion) | 2 | 2401 | value |
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 2 | 2389 | engine |
-| [escape](#escape) | 2 | 388 | engine, static_effect |
 | [face-down-filter](#face-down-filter) | 2 | 5772 | selector |
 | [manifest-dread](#manifest-dread) | 2 | 5772 | op |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
@@ -51,10 +52,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [zombie-1-1-w](#zombie-1-1-w) | 2 | 3702 | token |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
+| [add-card-type-to-spells](#add-card-type-to-spells) | 1 | 4178 | static_effect |
 | [add-mana-on-tap-any-color](#add-mana-on-tap-any-color) | 1 | 1052 | static_effect |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
+| [attack-tax-x-count](#attack-tax-x-count) | 1 | 671 | value |
 | [attacking-opponents-of-player](#attacking-opponents-of-player) | 1 | 705 | selector |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
 | [batched-combat-damage-amount](#batched-combat-damage-amount) | 1 | 3943 | value |
@@ -68,6 +71,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cards-to-your-graveyard-from-zones-this-turn](#cards-to-your-graveyard-from-zones-this-turn) | 1 | 7412 | value |
 | [cast-from-hand-result](#cast-from-hand-result) | 1 | 7016 | op |
 | [cast-from-library-top-additional-cost](#cast-from-library-top-additional-cost) | 1 | 5828 | static_effect |
+| [cast-from-library-top-unrestricted](#cast-from-library-top-unrestricted) | 1 | 1913 | static_effect |
 | [cast-restriction-self](#cast-restriction-self) | 1 | 2559 | engine |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [cast-trigger-reads-x](#cast-trigger-reads-x) | 1 | 3909 | value |
@@ -90,7 +94,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [delayed-creature-dies](#delayed-creature-dies) | 1 | 1661 | trigger_event |
 | [demon-token-5-5-b-flying](#demon-token-5-5-b-flying) | 1 | 7993 | token |
 | [devil-token](#devil-token) | 1 | 4163 | token |
-| [devotion](#devotion) | 1 | 2401 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [distribute-counters-spell](#distribute-counters-spell) | 1 | 6993 | op |
 | [divided-damage-on-activated](#divided-damage-on-activated) | 1 | 13459 | engine |
@@ -106,7 +109,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [every-creature-type-everywhere](#every-creature-type-everywhere) | 1 | 494 | static_effect |
+| [exile-bottom-of-library](#exile-bottom-of-library) | 1 | 4763 | selector |
 | [exile-cards-with-card-types-among-them](#exile-cards-with-card-types-among-them) | 1 | 9107 | selector |
+| [exile-face-down](#exile-face-down) | 1 | 1363 | op |
 | [exile-permanent-cost](#exile-permanent-cost) | 1 | 6544 | cost |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [exile-x-from-graveyard-cost](#exile-x-from-graveyard-cost) | 1 | 17252 | cost |
@@ -119,17 +124,23 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [first-mate-ragavan](#first-mate-ragavan) | 1 | 7016 | token |
 | [first-x-spell-cost-reduction](#first-x-spell-cost-reduction) | 1 | 8360 | static_effect |
 | [fixed-piles-opponent-chooses](#fixed-piles-opponent-chooses) | 1 | 12369 | op |
+| [flash-if-targets](#flash-if-targets) | 1 | 1651 | engine |
 | [flip-coins-count](#flip-coins-count) | 1 | 6651 | value |
 | [foretold](#foretold) | 1 | 3713 | value |
 | [free-cast-by-other-player](#free-cast-by-other-player) | 1 | 11704 | op |
+| [free-cast-once-per-turn](#free-cast-once-per-turn) | 1 | 1913 | static_effect |
+| [free-cast-one-per-card-type](#free-cast-one-per-card-type) | 1 | 2521 | engine |
 | [free-cast-this-turn](#free-cast-this-turn) | 1 | 6651 | op |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
+| [fully-unlock-room](#fully-unlock-room) | 1 | 3452 | trigger_event |
 | [goad-without-goaded](#goad-without-goaded) | 1 | 973 | op |
 | [gold-token](#gold-token) | 1 | 705 | token |
 | [grant-abilities-of-exiled-cards](#grant-abilities-of-exiled-cards) | 1 | 8370 | static_effect |
 | [grant-cycling-to-cards-in-hand](#grant-cycling-to-cards-in-hand) | 1 | 5169 | static_effect |
 | [grant-evoke](#grant-evoke) | 1 | 5749 | static_effect |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
+| [granted-alternative-cost-life-equal-to-mana-value](#granted-alternative-cost-life-equal-to-mana-value) | 1 | 3022 | static_effect |
+| [granted-miracle-from-mana-cost](#granted-miracle-from-mana-cost) | 1 | 5025 | static_effect |
 | [graveyard-cast-per-permanent-type](#graveyard-cast-per-permanent-type) | 1 | 1104 | static_effect |
 | [graveyard-cast-permission-additional-cost](#graveyard-cast-permission-additional-cost) | 1 | 7356 | static_effect |
 | [graveyard-play-grants-ability](#graveyard-play-grants-ability) | 1 | 3531 | static_effect |
@@ -157,6 +168,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [manifest-from-hand](#manifest-from-hand) | 1 | 3975 | op |
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
+| [miracle-x](#miracle-x) | 1 | 4945 | engine |
 | [modal-variable-targets](#modal-variable-targets) | 1 | 4339 | engine |
 | [mode-owned-variable-targets](#mode-owned-variable-targets) | 1 | 6294 | engine |
 | [mode-owned-variable-targets-mid-declaration](#mode-owned-variable-targets-mid-declaration) | 1 | 16968 | engine |
@@ -170,6 +182,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [play-cost-paid-card](#play-cost-paid-card) | 1 | 6544 | op |
 | [play-lands-from-graveyard-filtered](#play-lands-from-graveyard-filtered) | 1 | 3993 | static_effect |
 | [playable-condition-opponent-lost-life](#playable-condition-opponent-lost-life) | 1 | 4478 | engine |
+| [playable-spell-type-restriction](#playable-spell-type-restriction) | 1 | 4763 | op |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-mana-ability-until-end-of-turn](#player-mana-ability-until-end-of-turn) | 1 | 12705 | op |
 | [players-attacked-last-combat](#players-attacked-last-combat) | 1 | 6681 | value |
@@ -207,7 +220,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [static-greatest-power-in-graveyard](#static-greatest-power-in-graveyard) | 1 | 10492 | value |
+| [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
+| [target-if-cast-during](#target-if-cast-during) | 1 | 1524 | selector |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
 | [targets-only-self](#targets-only-self) | 1 | 8216 | trigger_event |
@@ -383,6 +398,88 @@ Blocks **7** cards.
 
 </details>
 
+## rooms
+
+Blocks **6** cards.
+
+- **(engine)** Room split permanents (rule 709.5): one card with two doors (Bottomless Pool {U}, Locker Room {4}{U}), castable as either half; the cast door enters unlocked and the other locked; a locked door's abilities are inactive; a sorcery-speed special action pays a locked door's mana cost to unlock it; name and mana value read only unlocked doors
+  <br>Why the existing vocabulary won't do: card_level_face_keys offers second_face/back_face, where the cast half becomes the whole object; nothing keeps both doors on one permanent with per-door locked/unlocked state, and no special action unlocks a door. Locker Room's batched creatures_deal_combat_damage trigger is otherwise expressible but must only work while that door is unlocked
+- **(engine)** Room split permanents (rule 709.5): a card with two door halves, each with its own name and mana cost ({3}{B} Cramped Vents, {5}{B}{B} Access Maze), castable as either half; the cast half enters unlocked, the other locked; a locked door's abilities are inactive (so Access Maze's once-per-turn pay-life alternative cost applies only while that door is unlocked); a sorcery-speed special action pays a locked door's mana cost to unlock it; the permanent's name/cost reflect only unlocked doors
+  <br>Why the existing vocabulary won't do: second_face is a split/adventure/MDFC half that is cast instead of the front and then is the whole object; nothing keeps both halves on one permanent with per-half locked/unlocked state, and no special action unlocks a half
+- **(engine)** Room split permanents (rule 709.5): one card with two doors (Experimental Lab {3}{G}, Staff Room {2}{G}), castable as either half; the cast door enters unlocked and the other locked; a locked door's abilities are inactive; a sorcery-speed special action pays a locked door's mana cost to unlock it; name and mana value read only unlocked doors
+  <br>Why the existing vocabulary won't do: card_level_face_keys offers second_face/back_face, where the cast half becomes the whole object; nothing keeps both doors on one permanent with per-door locked/unlocked state, and no special action unlocks a door. Staff Room's static trigger must only work while that door is unlocked
+- **(engine)** Room split permanents (rule 709.5): a card with two door halves, each with its own name and mana cost ({1}{B} Polluted Cistern, {4}{B} Dim Oubliette), castable as either half; the cast half enters unlocked, the other locked; a locked door's abilities are inactive; a sorcery-speed special action pays a locked door's mana cost to unlock it; the permanent's name/cost reflect only unlocked doors
+  <br>Why the existing vocabulary won't do: second_face is a split/adventure/MDFC half that is cast instead of the front and then is the whole object; nothing keeps both halves on one permanent with per-half locked/unlocked state, and no special action unlocks a half
+- **(engine)** Room split permanents (rule 709.5): one card with two doors (Secret Arcade {4}{W}, Dusty Parlor {2}{W}), castable as either half; the cast door enters unlocked and the other locked; a locked door's abilities are inactive; a sorcery-speed special action pays a locked door's mana cost to unlock it; name and mana value read only unlocked doors
+  <br>Why the existing vocabulary won't do: card_level_face_keys offers second_face/back_face, where the cast half becomes the whole object; nothing keeps both doors on one permanent with per-door locked/unlocked state, and no special action unlocks a door. Dusty Parlor's spell_cast trigger (filter types Enchantment, add_counters by mana_value_of the subject on an up_to target creature) is otherwise expressible but must only work while that door is unlocked
+- **(engine)** Room split permanents (rule 709.5): a card with two door halves, each with its own name and mana cost, castable as either half; the cast half enters unlocked, the other locked; a locked door's abilities are inactive; a sorcery-speed special action pays a locked door's mana cost to unlock it; the permanent's name/cost reflect only unlocked doors
+  <br>Why the existing vocabulary won't do: second_face is a split/adventure/MDFC half that is cast instead of the front and then is the whole object; nothing keeps both halves on one permanent with per-half locked/unlocked state, and no special action unlocks a half
+
+<details><summary>Cards waiting on this</summary>
+
+- **Spiked Corridor // Torture Pit** (rank 4163) — `spiked_corridor_torture_pit`
+  - When you unlock this door, create three 1/1 red Devil creature tokens with "When this token dies, it deals 1 damage to any target."
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - If a source you control would deal noncombat damage to an opponent, it deals that much damage plus 2 instead.
+- **Secret Arcade // Dusty Parlor** (rank 4178) — `secret_arcade_dusty_parlor`
+  - Nonland permanents you control and permanent spells you control are enchantments in addition to their other types.
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - Whenever you cast an enchantment spell, put a number of +1/+1 counters equal to that spell's mana value on up to one target creature.
+- **Bottomless Pool // Locker Room** (rank 5897) — `bottomless_pool_locker_room`
+  - When you unlock this door, return up to one target creature to its owner's hand.
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - Whenever one or more creatures you control deal combat damage to a player, draw a card.
+- **Polluted Cistern // Dim Oubliette** (rank 6299) — `polluted_cistern_dim_oubliette`
+  - Whenever one or more cards are put into your graveyard from your library, each opponent loses 1 life for each card type among those cards.
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - When you unlock this door, mill three cards, then return a creature card from your graveyard to the battlefield.
+- **Cramped Vents // Access Maze** (rank 7052) — `cramped_vents_access_maze`
+  - When you unlock this door, this Room deals 6 damage to target creature an opponent controls. You gain life equal to the excess damage dealt this way.
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - Once during each of your turns, you may cast a spell from your hand by paying life equal to its mana value rather than paying its mana cost.
+- **Experimental Lab // Staff Room** (rank 8930) — `experimental_lab_staff_room`
+  - When you unlock this door, manifest dread, then put two +1/+1 counters and a trample counter on that creature.
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - Whenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it.
+
+</details>
+
+## unlock-door
+
+Blocks **5** cards.
+
+- **(trigger_event)** a trigger event 'when you unlock this door' firing when this door becomes unlocked, both when the door is cast (enters unlocked) and when unlocked later by the special action
+  <br>Why the existing vocabulary won't do: self_enters misses a later unlock and fires even when this door enters locked; trigger_events has no unlock event
+- **(trigger_event)** a trigger event 'when you unlock this door' that fires when this door becomes unlocked, both when the half is cast (enters unlocked) and when unlocked later by the special action
+  <br>Why the existing vocabulary won't do: self_enters fires only on entering, missing a later unlock, and would fire even when this door enters locked because the other half was cast; trigger_events has no unlock event
+- **(trigger_event)** a trigger event 'when you unlock this door' that fires when this door becomes unlocked, both when the half is cast (enters unlocked) and when unlocked later by the special action
+  <br>Why the existing vocabulary won't do: self_enters fires only on entering, missing a later unlock, and fires even when this door enters locked because the other half was cast; trigger_events has no unlock event
+
+<details><summary>Cards waiting on this</summary>
+
+- **Spiked Corridor // Torture Pit** (rank 4163) — `spiked_corridor_torture_pit`
+  - When you unlock this door, create three 1/1 red Devil creature tokens with "When this token dies, it deals 1 damage to any target."
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - If a source you control would deal noncombat damage to an opponent, it deals that much damage plus 2 instead.
+- **Bottomless Pool // Locker Room** (rank 5897) — `bottomless_pool_locker_room`
+  - When you unlock this door, return up to one target creature to its owner's hand.
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - Whenever one or more creatures you control deal combat damage to a player, draw a card.
+- **Polluted Cistern // Dim Oubliette** (rank 6299) — `polluted_cistern_dim_oubliette`
+  - Whenever one or more cards are put into your graveyard from your library, each opponent loses 1 life for each card type among those cards.
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - When you unlock this door, mill three cards, then return a creature card from your graveyard to the battlefield.
+- **Cramped Vents // Access Maze** (rank 7052) — `cramped_vents_access_maze`
+  - When you unlock this door, this Room deals 6 damage to target creature an opponent controls. You gain life equal to the excess damage dealt this way.
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - Once during each of your turns, you may cast a spell from your hand by paying life equal to its mana value rather than paying its mana cost.
+- **Experimental Lab // Staff Room** (rank 8930) — `experimental_lab_staff_room`
+  - When you unlock this door, manifest dread, then put two +1/+1 counters and a trample counter on that creature.
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - Whenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it.
+
+</details>
+
 ## x-in-mana-cost-trigger-filter
 
 Blocks **5** cards.
@@ -412,6 +509,26 @@ Blocks **5** cards.
   - Whenever you cast your first spell with {X} in its mana cost each turn, put X +1/+1 counters on Nev.
 - **Lattice Library** (rank 10607) — `lattice_library`
   - When this enchantment enters and whenever you cast your first spell with {X} in its mana cost each turn, create a 0/0 green and blue Fractal creature token. Put a number of +1/+1 counters on it equal to the number of study counters on this enchantment.
+
+</details>
+
+## self-sacrificing-permanent-gate
+
+Blocks **4** cards.
+
+- **(engine)** authoring gate 4 accepting a permanent whose own printed enters trigger sacrifices it, so the card ends in the graveyard as printed; the card is expressible today (a self_enters sacrifice of self_only, then a reflexive_trigger that fetches a basic and gains 1 life) and the DSL needs nothing new
+  <br>Why the existing vocabulary won't do: verify._play_once allows a permanent to end only on the battlefield (an Aura also in the graveyard), and tests/cards/test_authoring.py::TestASelfLegalTriggerIsExercisedAgainstTheBoard::test_a_permanent_that_genuinely_vanishes_is_still_rejected pins that a creature whose text is 'When this creature enters, sacrifice it.' must still fail, so widening the gate is a decision for the owner rather than a card fix
+
+<details><summary>Cards waiting on this</summary>
+
+- **Riveteers Overlook** (rank 714) — `riveteers_overlook`
+  - When this land enters, sacrifice it. When you do, search your library for a basic Swamp, Mountain, or Forest card, put it onto the battlefield tapped, then shuffle and you gain 1 life.
+- **Cabaretti Courtyard** (rank 963) — `cabaretti_courtyard`
+  - When this land enters, sacrifice it. When you do, search your library for a basic Mountain, Forest, or Plains card, put it onto the battlefield tapped, then shuffle and you gain 1 life.
+- **Maestros Theater** (rank 1257) — `maestros_theater`
+  - When this land enters, sacrifice it. When you do, search your library for a basic Island, Swamp, or Mountain card, put it onto the battlefield tapped, then shuffle and you gain 1 life.
+- **Obscura Storefront** (rank 1616) — `obscura_storefront`
+  - When this land enters, sacrifice it. When you do, search your library for a basic Plains, Island, or Swamp card, put it onto the battlefield tapped, then shuffle and you gain 1 life.
 
 </details>
 
@@ -497,6 +614,30 @@ Blocks **3** cards.
 
 </details>
 
+## escape
+
+Blocks **3** cards.
+
+- **(static_effect)** a granted escape permission: a `cast_from_graveyard`-style static (here `affects_spells: {"types": ["Enchantment"]}`) whose granted cast charges an additional cost on top of the card's own mana cost -- `exile_from_graveyard: {"count": 3}` where 'other' excludes the card being escaped, not the granting permanent -- priced and paid when the granted spell is cast, with no per-turn cap (the exile is the brake), and marking the spell as escaped (702.138) rather than exiling it on resolution, so an escaped enchantment returns to the graveyard and can escape again
+  <br>Why the existing vocabulary won't do: `cast_from_graveyard` grants the cast at the printed cost only, carries no additional-cost rider, and the loader requires `static_max_per_turn`, which this card does not print. The card-level `graveyard_cost` / `graveyard_additional_cost` slot is escape and can carry `exile_from_graveyard`, but it is set on the escaping card itself at load time; nothing writes a cost onto other cards. `grant_graveyard_cast` only takes `affects_spells`, `any_graveyard` and `grants_flashback` (flashback exiles the card, escape does not). `grant_keyword` has no escape keyword. Same blocker as underworld_breach.
+- **(static_effect)** an additional-cost rider on the `cast_from_graveyard` static -- a Cost charged on top of the granted spell's own mana cost, drawn from `cost_keys`, so this card's static can carry `exile_from_graveyard: {"count": 3, "exclude_self": true}`. It must be priced and paid by `legality.graveyard_cast_permission` / `Game._cast` at the moment the granted spell is cast (the way `chosen_additional` charges a card's own `additional_cost`), and `exclude_self` has to mean the card being escaped, not the permanent granting the permission -- otherwise a three-card graveyard pays for the escape with the escaping card itself.
+  <br>Why the existing vocabulary won't do: `cast_from_graveyard` is the only static that lets a card out of a graveyard and it grants the cast at the card's printed cost with no price attached. Its whole rider vocabulary is `enters_tapped`, `arrived_this_turn_from` and `affects_spells`; the one cost field on any permission static is `pay_life_instead`, which belongs to `cast_from_library_top`, swaps mana for life rather than adding to it, and cannot express an exile. The card-level `graveyard_cost` / `flashback` slot *is* escape and does carry `exile_from_graveyard` with `exclude_self` -- but it is a field on the escaping card itself, set at load time, and Underworld Breach hands escape to cards it has never seen. There is no op or static that writes a cost onto another card, and `grant_keyword` knows only the 34 ability keywords, none of which is escape.
+- **(static_effect)** an unbounded `cast_from_graveyard` permission -- `static_max_per_turn` made optional (or given an explicit unlimited spelling) for permissions whose price is itself the rate limit, with `legality.graveyard_cast_permission` skipping the `GRAVEYARD_CAST_SLOT` ledger check instead of defaulting `cap` to 1. Underworld Breach prints no cap at all; the three exiled cards per cast are the whole brake.
+  <br>Why the existing vocabulary won't do: The loader hard-refuses `cast_from_graveyard` without `static_max_per_turn` (`if not model.static_max_per_turn`), on the stated grounds that a permission with no rate limit is an unbounded engine rather than a printed line -- which is true of Edgar, Master Machinist's "once during each of your turns" and exactly false of this card. Every accepted value is a finite integer, so any number I could write would be a cap this card does not print: the card is a storm/loop enabler and an invented ceiling is the approximation, not a rounding of one.
+- **(engine)** a verification sandbox that can cast an escape card for its escape cost from the graveyard (the card in the graveyard plus at least five other cards there), or an argued exception in the playable gate for a creature whose own 'sacrifice it unless it escaped' trigger lawfully bins it when cast from hand
+  <br>Why the existing vocabulary won't do: Every line is expressible: graveyard_cost {mana: {G}{G}{U}{U}, exile_from_graveyard: {count: 5, exclude_self: true}} + graveyard_cast: graveyard, a self_enters trigger with if {escaped: false} -> sacrifice self_only, and self_enters/attacks triggers with gain_life 3, draw 1, may put_onto_battlefield a land from hand. A dry run of verify() passes schema/compile/residual but fails the playable gate: '_cast' always casts from hand via build_sandbox (graveyard holds only 2 cards, so escape is unpayable), Uro correctly sacrifices itself, and _play_once allows a permanent only on the battlefield. Its docstring forbids widening that set and says the fix is a sandbox role, not a weaker gate. Dropping or inverting the sacrifice clause would be an approximation.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Underworld Breach** (rank 388) — `underworld_breach`
+  - Each nonland card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard.
+- **Uro, Titan of Nature's Wrath** (rank 1514) — `uro_titan_of_nature_s_wrath`
+  - When Uro enters, sacrifice it unless it escaped.
+- **The Master of Keys** (rank 4992) — `the_master_of_keys`
+  - Each enchantment card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard. (You may cast cards from your graveyard for their escape cost.)
+
+</details>
+
 ## omen
 
 Blocks **3** cards.
@@ -542,80 +683,6 @@ Blocks **3** cards.
   - At the beginning of combat on your turn, choose an opponent at random that this creature didn't attack during your last combat. This creature attacks that player this combat if able. If you can't choose an opponent this way, tap this creature.
 - **Ursine Monstrosity** (rank 9663) — `ursine_monstrosity`
   - At the beginning of combat on your turn, mill a card and choose an opponent at random. This creature attacks that player this combat if able. Until end of turn, this creature gains indestructible and gets +1/+1 for each card type among cards in your graveyard.
-
-</details>
-
-## rooms
-
-Blocks **3** cards.
-
-- **(engine)** Room split permanents (rule 709.5): one card with two doors (Experimental Lab {3}{G}, Staff Room {2}{G}), castable as either half; the cast door enters unlocked and the other locked; a locked door's abilities are inactive; a sorcery-speed special action pays a locked door's mana cost to unlock it; name and mana value read only unlocked doors
-  <br>Why the existing vocabulary won't do: card_level_face_keys offers second_face/back_face, where the cast half becomes the whole object; nothing keeps both doors on one permanent with per-door locked/unlocked state, and no special action unlocks a door. Staff Room's static trigger must only work while that door is unlocked
-- **(engine)** Room split permanents (rule 709.5): a card with two door halves, each with its own name and mana cost ({1}{B} Polluted Cistern, {4}{B} Dim Oubliette), castable as either half; the cast half enters unlocked, the other locked; a locked door's abilities are inactive; a sorcery-speed special action pays a locked door's mana cost to unlock it; the permanent's name/cost reflect only unlocked doors
-  <br>Why the existing vocabulary won't do: second_face is a split/adventure/MDFC half that is cast instead of the front and then is the whole object; nothing keeps both halves on one permanent with per-half locked/unlocked state, and no special action unlocks a half
-- **(engine)** Room split permanents (rule 709.5): a card with two door halves, each with its own name and mana cost, castable as either half; the cast half enters unlocked, the other locked; a locked door's abilities are inactive; a sorcery-speed special action pays a locked door's mana cost to unlock it; the permanent's name/cost reflect only unlocked doors
-  <br>Why the existing vocabulary won't do: second_face is a split/adventure/MDFC half that is cast instead of the front and then is the whole object; nothing keeps both halves on one permanent with per-half locked/unlocked state, and no special action unlocks a half
-
-<details><summary>Cards waiting on this</summary>
-
-- **Spiked Corridor // Torture Pit** (rank 4163) — `spiked_corridor_torture_pit`
-  - When you unlock this door, create three 1/1 red Devil creature tokens with "When this token dies, it deals 1 damage to any target."
-  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
-  - If a source you control would deal noncombat damage to an opponent, it deals that much damage plus 2 instead.
-- **Polluted Cistern // Dim Oubliette** (rank 6299) — `polluted_cistern_dim_oubliette`
-  - Whenever one or more cards are put into your graveyard from your library, each opponent loses 1 life for each card type among those cards.
-  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
-  - When you unlock this door, mill three cards, then return a creature card from your graveyard to the battlefield.
-- **Experimental Lab // Staff Room** (rank 8930) — `experimental_lab_staff_room`
-  - When you unlock this door, manifest dread, then put two +1/+1 counters and a trample counter on that creature.
-  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
-  - Whenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it.
-
-</details>
-
-## self-sacrificing-permanent-gate
-
-Blocks **3** cards.
-
-- **(engine)** authoring gate 4 accepting a permanent whose own printed enters trigger sacrifices it, so the card ends in the graveyard as printed; the card is expressible today (a self_enters sacrifice of self_only, then a reflexive_trigger that fetches a basic and gains 1 life) and the DSL needs nothing new
-  <br>Why the existing vocabulary won't do: verify._play_once allows a permanent to end only on the battlefield (an Aura also in the graveyard), and tests/cards/test_authoring.py::TestASelfLegalTriggerIsExercisedAgainstTheBoard::test_a_permanent_that_genuinely_vanishes_is_still_rejected pins that a creature whose text is 'When this creature enters, sacrifice it.' must still fail, so widening the gate is a decision for the owner rather than a card fix
-
-<details><summary>Cards waiting on this</summary>
-
-- **Riveteers Overlook** (rank 714) — `riveteers_overlook`
-  - When this land enters, sacrifice it. When you do, search your library for a basic Swamp, Mountain, or Forest card, put it onto the battlefield tapped, then shuffle and you gain 1 life.
-- **Cabaretti Courtyard** (rank 963) — `cabaretti_courtyard`
-  - When this land enters, sacrifice it. When you do, search your library for a basic Mountain, Forest, or Plains card, put it onto the battlefield tapped, then shuffle and you gain 1 life.
-- **Maestros Theater** (rank 1257) — `maestros_theater`
-  - When this land enters, sacrifice it. When you do, search your library for a basic Island, Swamp, or Mountain card, put it onto the battlefield tapped, then shuffle and you gain 1 life.
-
-</details>
-
-## unlock-door
-
-Blocks **3** cards.
-
-- **(trigger_event)** a trigger event 'when you unlock this door' firing when this door becomes unlocked, both when the door is cast (enters unlocked) and when unlocked later by the special action
-  <br>Why the existing vocabulary won't do: self_enters misses a later unlock and fires even when this door enters locked; trigger_events has no unlock event
-- **(trigger_event)** a trigger event 'when you unlock this door' that fires when this door becomes unlocked, both when the half is cast (enters unlocked) and when unlocked later by the special action
-  <br>Why the existing vocabulary won't do: self_enters fires only on entering, missing a later unlock, and would fire even when this door enters locked because the other half was cast; trigger_events has no unlock event
-- **(trigger_event)** a trigger event 'when you unlock this door' that fires when this door becomes unlocked, both when the half is cast (enters unlocked) and when unlocked later by the special action
-  <br>Why the existing vocabulary won't do: self_enters fires only on entering, missing a later unlock, and fires even when this door enters locked because the other half was cast; trigger_events has no unlock event
-
-<details><summary>Cards waiting on this</summary>
-
-- **Spiked Corridor // Torture Pit** (rank 4163) — `spiked_corridor_torture_pit`
-  - When you unlock this door, create three 1/1 red Devil creature tokens with "When this token dies, it deals 1 damage to any target."
-  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
-  - If a source you control would deal noncombat damage to an opponent, it deals that much damage plus 2 instead.
-- **Polluted Cistern // Dim Oubliette** (rank 6299) — `polluted_cistern_dim_oubliette`
-  - Whenever one or more cards are put into your graveyard from your library, each opponent loses 1 life for each card type among those cards.
-  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
-  - When you unlock this door, mill three cards, then return a creature card from your graveyard to the battlefield.
-- **Experimental Lab // Staff Room** (rank 8930) — `experimental_lab_staff_room`
-  - When you unlock this door, manifest dread, then put two +1/+1 counters and a trample counter on that creature.
-  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
-  - Whenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it.
 
 </details>
 
@@ -787,6 +854,24 @@ Blocks **2** cards.
 
 </details>
 
+## devotion
+
+Blocks **2** cards.
+
+- **(value)** a static value for devotion to two colours (rule 700.5a): the number of mana symbols in the mana costs of permanents you control that are white OR black, where a hybrid {W/B} pip counts once, not twice -- e.g. mana_symbols accepting a list `of: ["W", "B"]` that counts each pip at most once if it contains any listed colour
+  <br>Why the existing vocabulary won't do: mana_symbols takes a single colour in `of` (validate_mana_symbols refuses anything else), and summing mana_symbols of W plus mana_symbols of B double-counts every {W/B} hybrid pip because Requirement.symbols_of in engine/mana.py counts a hybrid pip for each of its colours; no static value subtracts hybrid pips, so the God would become a creature too early
+- **(value)** a static value for devotion to two colours (rule 700.5a): the number of mana symbols in the mana costs of permanents you control that are black OR red, where a hybrid {B/R} pip counts once, not twice -- e.g. mana_symbols accepting a list `of: ["B", "R"]` that counts each pip at most once if it contains any listed colour
+  <br>Why the existing vocabulary won't do: mana_symbols takes a single colour in `of` (validate_mana_symbols refuses anything else), and summing mana_symbols of B plus mana_symbols of R double-counts every {B/R} hybrid pip because symbols_of in engine/mana.py counts a hybrid pip for each of its colours; no static value subtracts hybrid pips, so the God would become a creature too early
+
+<details><summary>Cards waiting on this</summary>
+
+- **Mogis, God of Slaughter** (rank 2401) — `mogis_god_of_slaughter`
+  - As long as your devotion to black and red is less than seven, Mogis isn't a creature.
+- **Athreos, Shroud-Veiled** (rank 3082) — `athreos_shroud_veiled`
+  - As long as your devotion to white and black is less than seven, Athreos isn't a creature.
+
+</details>
+
 ## divided-damage-any-target
 
 Blocks **2** cards.
@@ -820,26 +905,6 @@ Blocks **2** cards.
   - When this creature enters, it deals 4 damage divided as you choose among any number of target creatures and/or planeswalkers.
 - **Dragonlord Atarka** (rank 4563) — `dragonlord_atarka`
   - When Dragonlord Atarka enters, it deals 5 damage divided as you choose among any number of target creatures and/or planeswalkers your opponents control.
-
-</details>
-
-## escape
-
-Blocks **2** cards.
-
-- **(static_effect)** an additional-cost rider on the `cast_from_graveyard` static -- a Cost charged on top of the granted spell's own mana cost, drawn from `cost_keys`, so this card's static can carry `exile_from_graveyard: {"count": 3, "exclude_self": true}`. It must be priced and paid by `legality.graveyard_cast_permission` / `Game._cast` at the moment the granted spell is cast (the way `chosen_additional` charges a card's own `additional_cost`), and `exclude_self` has to mean the card being escaped, not the permanent granting the permission -- otherwise a three-card graveyard pays for the escape with the escaping card itself.
-  <br>Why the existing vocabulary won't do: `cast_from_graveyard` is the only static that lets a card out of a graveyard and it grants the cast at the card's printed cost with no price attached. Its whole rider vocabulary is `enters_tapped`, `arrived_this_turn_from` and `affects_spells`; the one cost field on any permission static is `pay_life_instead`, which belongs to `cast_from_library_top`, swaps mana for life rather than adding to it, and cannot express an exile. The card-level `graveyard_cost` / `flashback` slot *is* escape and does carry `exile_from_graveyard` with `exclude_self` -- but it is a field on the escaping card itself, set at load time, and Underworld Breach hands escape to cards it has never seen. There is no op or static that writes a cost onto another card, and `grant_keyword` knows only the 34 ability keywords, none of which is escape.
-- **(static_effect)** an unbounded `cast_from_graveyard` permission -- `static_max_per_turn` made optional (or given an explicit unlimited spelling) for permissions whose price is itself the rate limit, with `legality.graveyard_cast_permission` skipping the `GRAVEYARD_CAST_SLOT` ledger check instead of defaulting `cap` to 1. Underworld Breach prints no cap at all; the three exiled cards per cast are the whole brake.
-  <br>Why the existing vocabulary won't do: The loader hard-refuses `cast_from_graveyard` without `static_max_per_turn` (`if not model.static_max_per_turn`), on the stated grounds that a permission with no rate limit is an unbounded engine rather than a printed line -- which is true of Edgar, Master Machinist's "once during each of your turns" and exactly false of this card. Every accepted value is a finite integer, so any number I could write would be a cap this card does not print: the card is a storm/loop enabler and an invented ceiling is the approximation, not a rounding of one.
-- **(engine)** a verification sandbox that can cast an escape card for its escape cost from the graveyard (the card in the graveyard plus at least five other cards there), or an argued exception in the playable gate for a creature whose own 'sacrifice it unless it escaped' trigger lawfully bins it when cast from hand
-  <br>Why the existing vocabulary won't do: Every line is expressible: graveyard_cost {mana: {G}{G}{U}{U}, exile_from_graveyard: {count: 5, exclude_self: true}} + graveyard_cast: graveyard, a self_enters trigger with if {escaped: false} -> sacrifice self_only, and self_enters/attacks triggers with gain_life 3, draw 1, may put_onto_battlefield a land from hand. A dry run of verify() passes schema/compile/residual but fails the playable gate: '_cast' always casts from hand via build_sandbox (graveyard holds only 2 cards, so escape is unpayable), Uro correctly sacrifices itself, and _play_once allows a permanent only on the battlefield. Its docstring forbids widening that set and says the fix is a sandbox role, not a weaker gate. Dropping or inverting the sacrifice clause would be an approximation.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Underworld Breach** (rank 388) — `underworld_breach`
-  - Each nonland card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard.
-- **Uro, Titan of Nature's Wrath** (rank 1514) — `uro_titan_of_nature_s_wrath`
-  - When Uro enters, sacrifice it unless it escaped.
 
 </details>
 
@@ -1079,6 +1144,22 @@ Blocks **1** card.
 
 </details>
 
+## add-card-type-to-spells
+
+Blocks **1** card.
+
+- **(static_effect)** a static that adds a card type in addition to other types to permanent spells you control on the stack as well as to nonland permanents you control ('Nonland permanents you control and permanent spells you control are enchantments in addition to their other types'), so the added Enchantment type is seen by spell_cast triggers and spell filters
+  <br>Why the existing vocabulary won't do: set_types replaces types rather than adding, add_subtype adds subtypes, and static affects filters read battlefield permanents only; nothing changes the card types of a spell on the stack
+
+<details><summary>Cards waiting on this</summary>
+
+- **Secret Arcade // Dusty Parlor** (rank 4178) — `secret_arcade_dusty_parlor`
+  - Nonland permanents you control and permanent spells you control are enchantments in addition to their other types.
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - Whenever you cast an enchantment spell, put a number of +1/+1 counters equal to that spell's mana value on up to one target creature.
+
+</details>
+
 ## add-mana-on-tap-any-color
 
 Blocks **1** card.
@@ -1132,6 +1213,20 @@ Blocks **1** card.
 
 - **Witchbane Orb** (rank 16177) — `witchbane_orb`
   - When this artifact enters, destroy all Curses attached to you
+
+</details>
+
+## attack-tax-x-count
+
+Blocks **1** card.
+
+- **(value)** an attack_tax static whose {X} per attacking creature is a static value read off the tax's controller's board at declaration -- here {"count": {"zone": "battlefield", "controller": "you", "types": ["Enchantment"]}} -- e.g. x_per_attacker accepting a static_value_keys amount (count) instead of only a property of the attacker
+  <br>Why the existing vocabulary won't do: attack_tax with or_planeswalkers covers the shape, but its cost is a fixed mana string and an {X} price is refused unless x_per_attacker is present, which the loader (_validate_tax_x) restricts to one leaf, 'counters', read off the attacking creature (Nils, Discipline Enforcer); nothing lets X be the number of enchantments the defending player controls, and a fixed {N} would be wrong as the enchantment count changes
+
+<details><summary>Cards waiting on this</summary>
+
+- **Sphere of Safety** (rank 671) — `sphere_of_safety`
+  - Creatures can't attack you or planeswalkers you control unless their controller pays {X} for each of those creatures, where X is the number of enchantments you control.
 
 </details>
 
@@ -1318,6 +1413,21 @@ Blocks **1** card.
 
 - **Into the Pit** (rank 5828) — `into_the_pit`
   - You may cast spells from the top of your library by sacrificing a nonland permanent in addition to paying their other costs.
+
+</details>
+
+## cast-from-library-top-unrestricted
+
+Blocks **1** card.
+
+- **(static_effect)** a cast_from_library_top permission with no price swap and no spell filter: every spell on top of your library castable at its printed cost (Future Sight's line), which the loader currently refuses
+  <br>Why the existing vocabulary won't do: cast_from_library_top requires either pay_life_instead (Bolas's Citadel) or an affects_spells filter (Thundermane Dragon); the loader raises a DslError on the bare permission, and any filter matching all spells would be a workaround for a deliberate guard rather than the printed card
+
+<details><summary>Cards waiting on this</summary>
+
+- **One with the Multiverse** (rank 1913) — `one_with_the_multiverse`
+  - You may play lands and cast spells from the top of your library.
+  - Once during each of your turns, you may cast a spell from your hand or the top of your library without paying its mana cost.
 
 </details>
 
@@ -1640,20 +1750,6 @@ Blocks **1** card.
 
 </details>
 
-## devotion
-
-Blocks **1** card.
-
-- **(value)** a static value for devotion to two colours (rule 700.5a): the number of mana symbols in the mana costs of permanents you control that are black OR red, where a hybrid {B/R} pip counts once, not twice -- e.g. mana_symbols accepting a list `of: ["B", "R"]` that counts each pip at most once if it contains any listed colour
-  <br>Why the existing vocabulary won't do: mana_symbols takes a single colour in `of` (validate_mana_symbols refuses anything else), and summing mana_symbols of B plus mana_symbols of R double-counts every {B/R} hybrid pip because symbols_of in engine/mana.py counts a hybrid pip for each of its colours; no static value subtracts hybrid pips, so the God would become a creature too early
-
-<details><summary>Cards waiting on this</summary>
-
-- **Mogis, God of Slaughter** (rank 2401) — `mogis_god_of_slaughter`
-  - As long as your devotion to black and red is less than seven, Mogis isn't a creature.
-
-</details>
-
 ## discard-your-hand
 
 Blocks **1** card.
@@ -1870,6 +1966,20 @@ Blocks **1** card.
 
 </details>
 
+## exile-bottom-of-library
+
+Blocks **1** card.
+
+- **(selector)** a library selector (or an exile/look_at_top option) that picks the BOTTOM N cards of a player's library -- e.g. `from_bottom: 1` on a library-zone selector -- so "exile the bottom card of each opponent's library" takes exactly that card
+  <br>Why the existing vocabulary won't do: No selector key reads library position: `extreme` ranks only power/toughness/mana_value, look_at_top and reveal_until read from the top, and the only `bottom` in the DSL is put_on_top's destination and tucks_itself; a library selector with count 1 would let the player pick any card or take the top one
+
+<details><summary>Cards waiting on this</summary>
+
+- **Arvinox, the Mind Flail** (rank 4763) — `arvinox_the_mind_flail`
+  - At the beginning of your end step, exile the bottom card of each opponent's library face down. For as long as those cards remain exiled, you may look at them, you may cast permanent spells from among them, and you may spend mana as though it were mana of any color to cast those spells.
+
+</details>
+
 ## exile-cards-with-card-types-among-them
 
 Blocks **1** card.
@@ -1881,6 +1991,20 @@ Blocks **1** card.
 
 - **Winter, Cynical Opportunist** (rank 9107) — `winter_cynical_opportunist`
   - Delirium — At the beginning of your end step, you may exile any number of cards from your graveyard with four or more card types among them. If you do, put a permanent card from among them onto the battlefield with a finality counter on it.
+
+</details>
+
+## exile-face-down
+
+Blocks **1** card.
+
+- **(op)** a `face_down` option on the `exile` op so cards chosen from a hand (any number, `count: "any"`) are exiled hidden from every player but their owner, recorded with `as` so a later `look_at_top` (amount `{"count": {"binding": ...}}`, destination hand) and `put_on_top` with `any_order` can read them back
+  <br>Why the existing vocabulary won't do: `exile` carries `as` and `link` but no `face_down`; the only face-down exile is `look_at_top`'s `face_down`, which exiles from the top of a library, not from a hand. Exiling face up would reveal the chosen hand cards to the opponent, and skipping the exile (tucking the hand cards first) would put them where the following put-into-hand step takes them straight back
+
+<details><summary>Cards waiting on this</summary>
+
+- **Scroll Rack** (rank 1363) — `scroll_rack`
+  - {1}, {T}: Exile any number of cards from your hand face down. Put that many cards from the top of your library into your hand. Then look at the exiled cards and put them on top of your library in any order.
 
 </details>
 
@@ -2061,6 +2185,20 @@ Blocks **1** card.
 
 </details>
 
+## flash-if-targets
+
+Blocks **1** card.
+
+- **(engine)** a card-level conditional flash permission whose condition reads the targets chosen for the spell itself: the card may be cast at instant speed only when its chosen target (here the Aura's enchant target) matches a selector such as `is_commander: true`. The cast must allow the card to be begun outside sorcery timing, then verify at target selection (601.2c) that the target matches, and reject/rewind the cast if it does not -- the same shape Ranger's Guile-style 'if it targets' riders and Nature's Way/Savage Smash-adjacent 'cast as though it had flash if' printings need
+  <br>Why the existing vocabulary won't do: `flash` is unconditional; the `cast_as_though_flash` static is a player-wide permission whose `affects_spells` filter reads only the printed characteristics of the face being cast and whose `condition` reads the board (static_condition_keys), never the spell's chosen targets; `grant_flash_permission` is a one-shot op from another source. `casting._timing_ok` decides timing from the CardDef and player statics before targets exist, so nothing can make timing depend on what the spell targets. Writing plain `flash` would be strictly better than the printed card (instant-speed Aura on any creature)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Timely Ward** (rank 1651) — `timely_ward`
+  - You may cast this spell as though it had flash if it targets a commander.
+
+</details>
+
 ## flip-coins-count
 
 Blocks **1** card.
@@ -2103,6 +2241,35 @@ Blocks **1** card.
 
 </details>
 
+## free-cast-once-per-turn
+
+Blocks **1** card.
+
+- **(static_effect)** a free_cast_permission metered once during each of your turns, covering any spell cast from hand or from the top of your library (no type filter), with the use counted across both zones
+  <br>Why the existing vocabulary won't do: free_cast_permission requires an affects_spells filter (empty reads as Omniscience), accepts only from_zone 'hand', and has no max_per_turn or your-turn-only rate limit -- static_max_per_turn is compiled only for cast_from_graveyard
+
+<details><summary>Cards waiting on this</summary>
+
+- **One with the Multiverse** (rank 1913) — `one_with_the_multiverse`
+  - You may play lands and cast spells from the top of your library.
+  - Once during each of your turns, you may cast a spell from your hand or the top of your library without paying its mana cost.
+
+</details>
+
+## free-cast-one-per-card-type
+
+Blocks **1** card.
+
+- **(engine)** a playable-from-exile free-cast permission (on exile / look_at_top / grant_playable) capped at one spell per nonland card type for the turn: the permission ledger tracks which of Artifact, Battle, Creature, Enchantment, Instant, Kindred, Planeswalker and Sorcery have been used, and a spell with several card types (an artifact creature) is cast as one chosen unused type, consuming only that one
+  <br>Why the existing vocabulary won't do: exile/look_at_top carry playable_this_turn + playable_free, which would let every exiled nonland card be cast free (strictly better than printed); grant_playable's `limit` is a single per-source count ('a spell', Locke), stored as playable_group = source, with no notion of per-card-type buckets, so it would cap the whole grant at N spells regardless of type
+
+<details><summary>Cards waiting on this</summary>
+
+- **Aminatou's Augury** (rank 2521) — `aminatou_s_augury`
+  - Until end of turn, for each nonland card type, you may cast a spell of that type from among the exiled cards without paying its mana cost.
+
+</details>
+
 ## free-cast-this-turn
 
 Blocks **1** card.
@@ -2129,6 +2296,21 @@ Blocks **1** card.
 - **Quintorius, Loremaster** (rank 8925) — `quintorius_loremaster`
   - At the beginning of your end step, exile target noncreature, nonland card from your graveyard. Create a 3/2 red and white Spirit creature token.
   - {1}{R}{W}, {T}, Sacrifice a Spirit: Choose target card exiled with Quintorius. You may cast that card this turn without paying its mana cost. If that spell would be put into a graveyard, put it on the bottom of its owner's library instead.
+
+</details>
+
+## fully-unlock-room
+
+Blocks **1** card.
+
+- **(trigger_event)** a trigger event 'whenever you fully unlock a Room' (Eerie), firing when a Room you control has both of its doors unlocked, whether the second door is unlocked by the special action or the Room is otherwise made fully unlocked; it depends on the Room engine support filed as `rooms`
+  <br>Why the existing vocabulary won't do: trigger_events has no unlock event and the engine has no Room permanents; self_enters + permanent_enters (enchantment, exclude_self) cover the enters half of Eerie as Doomwake Giant does, and `tap` + `add_counters` (counter: stun) on an up-to-one creature target cover the effect, but dropping the Room clause would make the card strictly narrower
+
+<details><summary>Cards waiting on this</summary>
+
+- **Fear of Sleep Paralysis** (rank 3452) — `fear_of_sleep_paralysis`
+  - Eerie — Whenever this creature or another enchantment you control enters and whenever you fully unlock a Room, tap up to one target creature and put a stun counter on it.
+  - Stun counters can't be removed from permanents your opponents control. (They won't untap if they have stun counters.)
 
 </details>
 
@@ -2213,6 +2395,34 @@ Blocks **1** card.
 
 - **The Book of Exalted Deeds** (rank 3589) — `the_book_of_exalted_deeds`
   - {W}{W}{W}, {T}, Exile The Book of Exalted Deeds: Put an enlightened counter on target Angel. It gains "You can't lose the game and your opponents can't win the game." Activate only as a sorcery.
+
+</details>
+
+## granted-alternative-cost-life-equal-to-mana-value
+
+Blocks **1** card.
+
+- **(static_effect)** a player-wide static granting an alternative cost to enchantment spells you cast, priced as life equal to the spell's own mana value, usable only during your turn and at most once per turn (counted per source, spent only when the alternative cost is actually used)
+  <br>Why the existing vocabulary won't do: granted_alternative_cost takes a fixed cost spec with integer values (casting.py coerces each to int), so it cannot charge pay_life equal to the spell's mana value, and it neither reads static_max_per_turn nor gates on your turn; pay_life_instead charges life equal to mana value but exists only on cast_from_library_top, which is a zone permission, not a hand-cast alternative cost; free_cast_permission is free and unlimited
+
+<details><summary>Cards waiting on this</summary>
+
+- **Demon of Fate's Design** (rank 3022) — `demon_of_fate_s_design`
+  - Once during each of your turns, you may cast an enchantment spell by paying life equal to its mana value rather than paying its mana cost.
+
+</details>
+
+## granted-miracle-from-mana-cost
+
+Blocks **1** card.
+
+- **(static_effect)** a grant_miracle static whose miracle cost is relative to each granted card's own mana cost -- the card's printed mana cost with {4} of generic removed (never below zero generic, coloured pips kept) -- rather than one fixed price string
+  <br>Why the existing vocabulary won't do: grant_miracle's miracle_cost is a single fixed mana string (Molecule Man's "{0}") that player_statics.granted_miracle_cost returns verbatim for every matching card; there is no way to say 'this card's mana cost minus {4}'. spell_cost_reduction discounts every cast of enchantments, not only the miracle cast, and grant_warp/granted_alternative_cost are likewise fixed prices offered at any cast
+
+<details><summary>Cards waiting on this</summary>
+
+- **Aminatou, Veil Piercer** (rank 5025) — `aminatou_veil_piercer`
+  - Each enchantment card in your hand has miracle. Its miracle cost is equal to its mana cost reduced by {4}.
 
 </details>
 
@@ -2600,6 +2810,20 @@ Blocks **1** card.
 
 </details>
 
+## miracle-x
+
+Blocks **1** card.
+
+- **(engine)** a miracle cost containing {X}: when the miracle cast is offered on the draw, the player chooses X (bounded by what they can pay), pays {X}{W}{W} with that X, and the spell goes on the stack with item.x set so 'Create X ... tokens' reads the chosen value
+  <br>Why the existing vocabulary won't do: The card-level `miracle` rider is accepted, but replacements._offer_cast builds Cost(mana=cost) and calls stack.push_spell without an `x`, so X defaults to 0: the miracle cast would pay only {W}{W} and create zero Angels, the card's whole point. No shipped miracle card has an X cost (only Molecule Man's granted {0})
+
+<details><summary>Cards waiting on this</summary>
+
+- **Entreat the Angels** (rank 4945) — `entreat_the_angels`
+  - Miracle {X}{W}{W} (You may cast this card for its miracle cost when you draw it if it's the first card you drew this turn.)
+
+</details>
+
 ## modal-variable-targets
 
 Blocks **1** card.
@@ -2785,6 +3009,20 @@ Blocks **1** card.
 
 - **Theater of Horrors** (rank 4478) — `theater_of_horrors`
   - During your turn, if an opponent lost life this turn, you may play lands and cast spells from among cards exiled with this enchantment.
+
+</details>
+
+## playable-spell-type-restriction
+
+Blocks **1** card.
+
+- **(op)** a restriction on an exile/grant_playable permission so the exiled cards may only be CAST as permanent spells (Artifact, Creature, Enchantment, Planeswalker, Battle) -- no land play and no instant/sorcery cast -- e.g. `playable_types: ["Artifact", "Battle", "Creature", "Enchantment", "Planeswalker"]` with `playable_cast_only: true`
+  <br>Why the existing vocabulary won't do: exile's `playable: "while_exiled"` with `any_color: true` and `face_down` covers the duration, the look and the any-colour mana, but the permission it sets (obj.playable_by in grant_playable/exile) has no type filter, so it would also let you play an exiled land and cast an exiled instant or sorcery
+
+<details><summary>Cards waiting on this</summary>
+
+- **Arvinox, the Mind Flail** (rank 4763) — `arvinox_the_mind_flail`
+  - At the beginning of your end step, exile the bottom card of each opponent's library face down. For as long as those cards remain exiled, you may look at them, you may cast permanent spells from among them, and you may spend mana as though it were mana of any color to cast those spells.
 
 </details>
 
@@ -3314,6 +3552,21 @@ Blocks **1** card.
 
 </details>
 
+## stun-counters-cant-be-removed
+
+Blocks **1** card.
+
+- **(static_effect)** a static that stops stun counters being removed from permanents matching `affects` (here controller: opponent) by any means: the 122.1d untap replacement in `primitives.untap_or_stun` must no longer spend the counter (so the permanent stays tapped and keeps it), and remove_counters / move_counters / costs that remove stun counters from such permanents must remove none
+  <br>Why the existing vocabulary won't do: `cant_have_counters` stops counters being put on, not removed; `skip_untap_step` / `untap_limit` change untapping wholesale rather than keeping the stun counter in place, and no static_effects entry intercepts counter removal
+
+<details><summary>Cards waiting on this</summary>
+
+- **Fear of Sleep Paralysis** (rank 3452) — `fear_of_sleep_paralysis`
+  - Eerie — Whenever this creature or another enchantment you control enters and whenever you fully unlock a Room, tap up to one target creature and put a stun counter on it.
+  - Stun counters can't be removed from permanents your opponents control. (They won't untap if they have stun counters.)
+
+</details>
+
 ## sunburst
 
 Blocks **1** card.
@@ -3325,6 +3578,20 @@ Blocks **1** card.
 
 - **Lux Artillery** (rank 3735) — `lux_artillery`
   - Whenever you cast an artifact creature spell, it gains sunburst. (It enters with a +1/+1 counter on it for each color of mana spent to cast it.)
+
+</details>
+
+## target-if-cast-during
+
+Blocks **1** card.
+
+- **(selector)** a target spec that is declared only when the spell is cast during a given phase -- e.g. `cast_during: "your_main"` on a card-level target (count 1, up_to, distinct from the first target), so a second 'up to one other target artifact or enchantment' exists only when the spell is cast in your main phase (601.2c)
+  <br>Why the existing vocabulary won't do: The `cast_during` condition exists but only as an `if` read at resolution. Target specs can be gated by `mode`, `cost_option`, `gift_promised` and `count_if_kicked`, none of which reads the phase the spell was cast in. Declaring an always-available optional second target and exiling it inside `if cast_during` would let the caster target a second permanent at instant speed outside the main phase (triggering ward, becomes_target and heroic-style effects) -- a different card.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Return to Dust** (rank 1524) — `return_to_dust`
+  - If you cast this spell during your main phase, you may exile up to one other target artifact or enchantment.
 
 </details>
 
