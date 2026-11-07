@@ -1,0 +1,28 @@
+{
+  "card_id": "they_came_from_the_pipes",
+  "name": "They Came from the Pipes",
+  "oracle_text": "When this enchantment enters, manifest dread twice. (To manifest dread, look at the top two cards of your library. Put one onto the battlefield face down as a 2/2 creature and the other into your graveyard. Turn it face up any time for its mana cost if it's a creature card.)\nWhenever a face-down creature you control enters, draw a card.",
+  "blocked_sentences": [
+    "When this enchantment enters, manifest dread twice. (To manifest dread, look at the top two cards of your library. Put one onto the battlefield face down as a 2/2 creature and the other into your graveyard. Turn it face up any time for its mana cost if it's a creature card.)",
+    "Whenever a face-down creature you control enters, draw a card."
+  ],
+  "needs": [
+    {
+      "capability": "manifest_dread",
+      "kind": "op",
+      "what": "Manifest dread (701.62): look at the top two cards of your library, choose one to put onto the battlefield face down as a manifested 2/2 creature (turnable face up for its mana cost if a creature card), and put the other into your graveyard; repeatable via amount (\"twice\" performs the whole look-choose-manifest-bin sequence two separate times)",
+      "why_existing_wont_do": "The `manifest` op carries only amount, cloak and player and manifests the top card blind with no look-at-two choice or graveyard half; `look_at_top` has `face_down` but the engine honours it only for exile destinations (ops_cards.py), so it cannot put a chosen card onto the battlefield as a manifested 2/2"
+    },
+    {
+      "capability": "face_down_filter",
+      "kind": "selector",
+      "what": "A trigger filter key (e.g. `face_down: true`) on `permanent_enters` matching a creature that enters the battlefield face down (manifested, cloaked, manifested dread or morphed)",
+      "why_existing_wont_do": "`trigger_filter_keys` has controller, types, is_token etc. but nothing reading the 707 face-down state, so `permanent_enters` with controller you and types Creature would also draw for every face-up creature"
+    }
+  ],
+  "closest_existing": [
+    "manifest",
+    "look_at_top"
+  ],
+  "confidence": "high"
+}

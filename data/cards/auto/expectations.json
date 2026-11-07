@@ -17597,6 +17597,13 @@
     },
     "zone": "battlefield"
   },
+  "thunderfoot_baloth": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "thundering_falls": {
     "zone": "battlefield"
   },
@@ -18073,6 +18080,11 @@
     "zone": "battlefield"
   },
   "trusty_machete": {
+    "zone": "battlefield"
+  },
+  "trygon_predator": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
   "tundra": {

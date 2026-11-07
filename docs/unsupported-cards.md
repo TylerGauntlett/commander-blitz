@@ -10,22 +10,23 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**232 cards** blocked by **217** capabilities.
+**236 cards** blocked by **219** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
 | [put-into-graveyard-from-anywhere](#put-into-graveyard-from-anywhere) | 6 | 256 | trigger_event |
+| [manifest-dread](#manifest-dread) | 5 | 5590 | op |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
 | [copy-exception-set-subtypes](#copy-exception-set-subtypes) | 3 | 1740 | engine, op |
-| [manifest-dread](#manifest-dread) | 3 | 6774 | op |
 | [omen](#omen) | 3 | 3355 | cost, engine |
 | [random-player-choice](#random-player-choice) | 3 | 5120 | op |
 | [rooms](#rooms) | 3 | 4163 | engine |
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 3 | 714 | engine |
+| [turned-face-up-trigger](#turned-face-up-trigger) | 3 | 5680 | trigger_event |
 | [unlock-door](#unlock-door) | 3 | 4163 | trigger_event |
 | [add-color](#add-color) | 2 | 2040 | op |
 | [basic-land-type-mana](#basic-land-type-mana) | 2 | 73 | engine |
@@ -40,6 +41,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 2 | 2389 | engine |
 | [escape](#escape) | 2 | 388 | engine, static_effect |
 | [face-down](#face-down) | 2 | 6544 | selector |
+| [face-down-filter](#face-down-filter) | 2 | 5590 | selector |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
@@ -380,6 +382,40 @@ Blocks **6** cards.
 
 </details>
 
+## manifest-dread
+
+Blocks **5** cards.
+
+- **(op)** manifest dread (701.62a): look at the top two cards of your library, choose one and put it onto the battlefield face down as a 2/2 manifested creature (turnable face up for its mana cost if it is a creature card), and put the other into your graveyard -- either a `dread: true` flag on the `manifest` op or a `manifest_dread` op
+  <br>Why the existing vocabulary won't do: `manifest` (amount, cloak, player) always manifests the top card with no choice and no second card to the graveyard; `look_at_top` can choose one of two and send the rest to the graveyard, but its `face_down` only means private exile and it cannot put a card onto the battlefield as a face-down manifested 2/2. Chaining mill + manifest would pick the wrong card with no choice.
+- **(op)** manifest dread (701.62): look at the top two cards of your library, manifest one of them, put the other into your graveyard; then refer to the manifested creature as 'that creature' so following effects can put two +1/+1 counters and a trample counter on it
+  <br>Why the existing vocabulary won't do: manifest takes only amount/cloak/player: no look-at-two-choose-one with the other milled, and no way to reference the manifested object afterwards; no trample keyword counter kind appears in the reference
+- **(op)** manifest dread (701.62a): look at the top two cards of your library, choose one and put it onto the battlefield face down as a 2/2 manifested creature (turnable face up for its mana cost if it is a creature card), and put the other into your graveyard -- either a `dread: true` flag on the `manifest` op or a `manifest_dread` op
+  <br>Why the existing vocabulary won't do: `manifest` (amount, cloak, player) always manifests the top card with no choice and sends no second card to the graveyard; `look_at_top` can choose one of two and send the rest to the graveyard, but its `face_down` means private exile and it cannot put a card onto the battlefield as a face-down manifested 2/2
+- **(op)** manifest dread (701.62): look at the top two cards of your library, choose one and manifest it (face-down 2/2, turnable face up for its mana cost if a creature card), put the other into your graveyard
+  <br>Why the existing vocabulary won't do: The `manifest` op takes only amount, cloak and player and manifests the top card(s) with no choice; it cannot look at two, pick one and send the rest to the graveyard. `look_at_top` can pick and send rest_to graveyard and has face_down, but its face_down does not make a manifested 2/2 that can be turned up for its mana cost, so composing them would be an approximation
+- **(op)** Manifest dread (701.62): look at the top two cards of your library, choose one to put onto the battlefield face down as a manifested 2/2 creature (turnable face up for its mana cost if a creature card), and put the other into your graveyard; repeatable via amount ("twice" performs the whole look-choose-manifest-bin sequence two separate times)
+  <br>Why the existing vocabulary won't do: The `manifest` op carries only amount, cloak and player and manifests the top card blind with no look-at-two choice or graveyard half; `look_at_top` has `face_down` but the engine honours it only for exile destinations (ops_cards.py), so it cannot put a chosen card onto the battlefield as a manifested 2/2
+
+<details><summary>Cards waiting on this</summary>
+
+- **They Came from the Pipes** (rank 5590) — `they_came_from_the_pipes`
+  - When this enchantment enters, manifest dread twice. (To manifest dread, look at the top two cards of your library. Put one onto the battlefield face down as a 2/2 creature and the other into your graveyard. Turn it face up any time for its mana cost if it's a creature card.)
+  - Whenever a face-down creature you control enters, draw a card.
+- **Curator Beastie** (rank 6774) — `curator_beastie`
+  - Whenever this creature enters or attacks, manifest dread. (Look at the top two cards of your library. Put one onto the battlefield face down as a 2/2 creature and the other into your graveyard. Turn it face up any time for its mana cost if it's a creature card.)
+- **Experimental Lab // Staff Room** (rank 8930) — `experimental_lab_staff_room`
+  - When you unlock this door, manifest dread, then put two +1/+1 counters and a trample counter on that creature.
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - Whenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it.
+- **Glitch Interpreter** (rank 10013) — `glitch_interpreter`
+  - When this creature enters, if you control no face-down permanents, return this creature to its owner's hand and manifest dread.
+- **Growing Dread** (rank 10701) — `growing_dread`
+  - When this enchantment enters, manifest dread
+  - Whenever you turn a permanent face up, put a +1/+1 counter on it
+
+</details>
+
 ## x-in-mana-cost-trigger-filter
 
 Blocks **5** cards.
@@ -494,30 +530,6 @@ Blocks **3** cards.
 
 </details>
 
-## manifest-dread
-
-Blocks **3** cards.
-
-- **(op)** manifest dread (701.62a): look at the top two cards of your library, choose one and put it onto the battlefield face down as a 2/2 manifested creature (turnable face up for its mana cost if it is a creature card), and put the other into your graveyard -- either a `dread: true` flag on the `manifest` op or a `manifest_dread` op
-  <br>Why the existing vocabulary won't do: `manifest` (amount, cloak, player) always manifests the top card with no choice and no second card to the graveyard; `look_at_top` can choose one of two and send the rest to the graveyard, but its `face_down` only means private exile and it cannot put a card onto the battlefield as a face-down manifested 2/2. Chaining mill + manifest would pick the wrong card with no choice.
-- **(op)** manifest dread (701.62): look at the top two cards of your library, manifest one of them, put the other into your graveyard; then refer to the manifested creature as 'that creature' so following effects can put two +1/+1 counters and a trample counter on it
-  <br>Why the existing vocabulary won't do: manifest takes only amount/cloak/player: no look-at-two-choose-one with the other milled, and no way to reference the manifested object afterwards; no trample keyword counter kind appears in the reference
-- **(op)** manifest dread (701.62a): look at the top two cards of your library, choose one and put it onto the battlefield face down as a 2/2 manifested creature (turnable face up for its mana cost if it is a creature card), and put the other into your graveyard -- either a `dread: true` flag on the `manifest` op or a `manifest_dread` op
-  <br>Why the existing vocabulary won't do: `manifest` (amount, cloak, player) always manifests the top card with no choice and sends no second card to the graveyard; `look_at_top` can choose one of two and send the rest to the graveyard, but its `face_down` means private exile and it cannot put a card onto the battlefield as a face-down manifested 2/2
-
-<details><summary>Cards waiting on this</summary>
-
-- **Curator Beastie** (rank 6774) — `curator_beastie`
-  - Whenever this creature enters or attacks, manifest dread. (Look at the top two cards of your library. Put one onto the battlefield face down as a 2/2 creature and the other into your graveyard. Turn it face up any time for its mana cost if it's a creature card.)
-- **Experimental Lab // Staff Room** (rank 8930) — `experimental_lab_staff_room`
-  - When you unlock this door, manifest dread, then put two +1/+1 counters and a trample counter on that creature.
-  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
-  - Whenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it.
-- **Glitch Interpreter** (rank 10013) — `glitch_interpreter`
-  - When this creature enters, if you control no face-down permanents, return this creature to its owner's hand and manifest dread.
-
-</details>
-
 ## omen
 
 Blocks **3** cards.
@@ -609,6 +621,30 @@ Blocks **3** cards.
   - When this land enters, sacrifice it. When you do, search your library for a basic Mountain, Forest, or Plains card, put it onto the battlefield tapped, then shuffle and you gain 1 life.
 - **Maestros Theater** (rank 1257) — `maestros_theater`
   - When this land enters, sacrifice it. When you do, search your library for a basic Island, Swamp, or Mountain card, put it onto the battlefield tapped, then shuffle and you gain 1 life.
+
+</details>
+
+## turned-face-up-trigger
+
+Blocks **3** cards.
+
+- **(trigger_event)** a trigger event fired when a player turns a permanent face up (the engine already emits `turned_face_up` with player and source in Game._turn_face_up), filterable by the player who turned it (`controller: you`), binding the turned permanent as the subject so an effect can put a +1/+1 counter on it
+  <br>Why the existing vocabulary won't do: `trigger_events` has no face-up event; `permanent_enters` does not fire on turning face up (the permanent never re-enters), and nothing else in the list observes a face-down permanent becoming face up
+- **(trigger_event)** a trigger event fired when a permanent is turned face up (morph, disguise, manifest, cloak), filterable by controller ('a permanent you control') and binding the turned-up permanent as the subject so the effect can read it (intervening-if 'if it's a creature', then an optional fight between it and a target creature you don't control)
+  <br>Why the existing vocabulary won't do: trigger_events has no face-up event; the engine emits a 'turned_face_up' event from Game._turn_face_up but no trigger can listen to it. permanent_enters does not fire on turning face up, since the permanent never changes zones
+- **(trigger_event)** a trigger event fired when a permanent is turned face up (morph/megamorph/disguise unmorph, manifest/cloak turned up), filterable by controller, binding the turned-up permanent as subject so an intervening 'if it's a creature' check and a pump on it can follow
+  <br>Why the existing vocabulary won't do: trigger_events has permanent_enters, becomes_tapped, mutates, becomes_monstrous etc. but nothing for turning face up; turning a permanent face up is not an enters event, so permanent_enters cannot stand in
+
+<details><summary>Cards waiting on this</summary>
+
+- **Trail of Mystery** (rank 5680) — `trail_of_mystery`
+  - Whenever a face-down creature you control enters, you may search your library for a basic land card, reveal it, put it into your hand, then shuffle.
+  - Whenever a permanent you control is turned face up, if it's a creature, it gets +2/+2 until end of turn.
+- **Temur War Shaman** (rank 7930) — `temur_war_shaman`
+  - Whenever a permanent you control is turned face up, if it's a creature, you may have it fight target creature you don't control.
+- **Growing Dread** (rank 10701) — `growing_dread`
+  - When this enchantment enters, manifest dread
+  - Whenever you turn a permanent face up, put a +1/+1 counter on it
 
 </details>
 
@@ -879,6 +915,26 @@ Blocks **2** cards.
   - Exile a face-down permanent you control face up: You may play that card this turn. (You still pay its costs. Timing rules still apply.)
 - **Glitch Interpreter** (rank 10013) — `glitch_interpreter`
   - When this creature enters, if you control no face-down permanents, return this creature to its owner's hand and manifest dread.
+
+</details>
+
+## face-down-filter
+
+Blocks **2** cards.
+
+- **(selector)** A trigger filter key (e.g. `face_down: true`) on `permanent_enters` matching a creature that enters the battlefield face down (manifested, cloaked, manifested dread or morphed)
+  <br>Why the existing vocabulary won't do: `trigger_filter_keys` has controller, types, is_token etc. but nothing reading the 707 face-down state, so `permanent_enters` with controller you and types Creature would also draw for every face-up creature
+- **(selector)** a trigger/selector filter key matching face-down permanents (e.g. `face_down: true`) so permanent_enters can be narrowed to 'a face-down creature you control enters'
+  <br>Why the existing vocabulary won't do: face_down exists only as an op option on look_at_top/search ops (putting a card face down); trigger_filter_keys and selector_keys have no face-down predicate, and filtering on types: [Creature] alone would also fire for every face-up creature
+
+<details><summary>Cards waiting on this</summary>
+
+- **They Came from the Pipes** (rank 5590) — `they_came_from_the_pipes`
+  - When this enchantment enters, manifest dread twice. (To manifest dread, look at the top two cards of your library. Put one onto the battlefield face down as a 2/2 creature and the other into your graveyard. Turn it face up any time for its mana cost if it's a creature card.)
+  - Whenever a face-down creature you control enters, draw a card.
+- **Trail of Mystery** (rank 5680) — `trail_of_mystery`
+  - Whenever a face-down creature you control enters, you may search your library for a basic land card, reveal it, put it into your hand, then shuffle.
+  - Whenever a permanent you control is turned face up, if it's a creature, it gets +2/+2 until end of turn.
 
 </details>
 

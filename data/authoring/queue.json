@@ -286132,12 +286132,12 @@
     },
     "Thunderfoot Baloth": {
       "edhrec_rank": 1998,
-      "gate": "template",
+      "gate": null,
       "name": "Thunderfoot Baloth",
-      "reason": "no template for: Lieutenant — As long as you control your commander, this creature gets +2/+2 and other cre",
+      "reason": "",
       "scryfall_id": "80c1b1ea-2459-4986-8846-4db916d6b771",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thunderhawk Gunship": {
@@ -293792,12 +293792,12 @@
     },
     "Trygon Predator": {
       "edhrec_rank": 3347,
-      "gate": "template",
+      "gate": null,
       "name": "Trygon Predator",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, you may destroy target artifact or",
+      "reason": "",
       "scryfall_id": "cdb88a22-8086-4bf7-89e8-cce929440dd8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Trygon Prime": {
