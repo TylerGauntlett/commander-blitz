@@ -22572,12 +22572,12 @@
     },
     "Beanstalk Giant // Fertile Footsteps": {
       "edhrec_rank": 2274,
-      "gate": "template",
+      "gate": null,
       "name": "Beanstalk Giant // Fertile Footsteps",
-      "reason": "no template for: Beanstalk Giant's power and toughness are each equal to the number of lands you control",
+      "reason": "",
       "scryfall_id": "71096773-69dd-4fb7-a088-e0fe096eaf6b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Beanstalk Wurm // Plant Beans": {
@@ -37482,12 +37482,12 @@
     },
     "Cackling Counterpart": {
       "edhrec_rank": 2895,
-      "gate": "template",
+      "gate": null,
       "name": "Cackling Counterpart",
-      "reason": "no template for: Create a token that's a copy of target creature you control",
+      "reason": "",
       "scryfall_id": "29306076-b48b-4dd5-959f-12e7a38b3800",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cackling Fiend": {
@@ -47042,12 +47042,12 @@
     },
     "Citanul Hierophants": {
       "edhrec_rank": 7434,
-      "gate": "template",
+      "gate": null,
       "name": "Citanul Hierophants",
-      "reason": "no template for: Creatures you control have \"{T}: Add {G}.\"",
+      "reason": "",
       "scryfall_id": "f378ee17-bf8b-4a83-b42e-86da10817dba",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Citanul Stalwart": {

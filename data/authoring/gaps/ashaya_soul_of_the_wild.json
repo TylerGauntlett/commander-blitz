@@ -1,0 +1,14 @@
+{
+  "card_id": "ashaya_soul_of_the_wild",
+  "name": "Ashaya, Soul of the Wild",
+  "oracle_text": "Ashaya's power and toughness are each equal to the number of lands you control.\nNontoken creatures you control are Forest lands in addition to their other types. (They're still affected by summoning sickness.)",
+  "blocked_sentences": ["Nontoken creatures you control are Forest lands in addition to their other types. (They're still affected by summoning sickness.)"],
+  "needs": [{
+    "capability": "basic_land_type_mana",
+    "kind": "engine",
+    "what": "Rule 305.6 -- a permanent with a basic land type has the matching intrinsic mana ability ({T}: Add {G} for Forest) by virtue of carrying the subtype, derived in the characteristics pipeline (characteristics.abilities_of) so that a Forest subtype granted by a static brings {T}: Add {G} with it, visible to legality, the payment solver and activation (and still subject to summoning sickness on a creature, 302.6).",
+    "why_existing_wont_do": "The type change itself is sayable: the `add_subtype` static carries `types` as well as `subtypes` (characteristics.py layer-4 grant loop does `types.update(static.get(\"types\"))`), so {\"effect\": \"add_subtype\", \"affects\": {\"controller\": \"you\", \"types\": [\"Creature\"], \"is_token\": false}, \"types\": [\"Land\"], \"subtypes\": [\"Forest\"]} would make each nontoken creature a 'Creature Land -- Forest', and the first sentence is a self_only `set_pt` reading a count of lands you control. But the engine never derives a mana ability from a basic land subtype -- Forest's {T}: Add {G} is printed on the basic card in data/cards/basics.cards.json, and abilities_of returns printed plus statics-granted abilities only. So every creature would read as a Forest land and none could tap for {G}, which is the whole reason the card is played. A `grant_ability` static handing out {T}: Add {G} is unprinted text and the residual gate would have no line for it to claim. Same open gap as urborg_tomb_of_yawgmoth (and Dryad of the Ilysian Grove / Yavimaya, which already ship inert)."
+  }],
+  "closest_existing": ["add_subtype", "grant_ability", "set_pt"],
+  "confidence": "high"
+}

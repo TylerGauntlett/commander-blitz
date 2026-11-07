@@ -1558,6 +1558,10 @@
   "bayou_dragonfly": {
     "zone": "battlefield"
   },
+  "beanstalk_giant_fertile_footsteps": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "bear_cub": {
     "zone": "battlefield"
   },
@@ -2372,6 +2376,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "cackling_counterpart": {
+    "battlefield_count": 33,
+    "zone": "graveyard"
+  },
   "caelorna_coral_tyrant": {
     "zone": "battlefield"
   },
@@ -2962,6 +2970,13 @@
       "id": "wizard_0_1_b_noncreature_ping"
     },
     "zone": "graveyard"
+  },
+  "citanul_hierophants": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "city_of_brass": {
     "battlefield_count": 33,
