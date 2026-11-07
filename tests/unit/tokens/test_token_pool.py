@@ -2225,9 +2225,11 @@ class TestTheMiracleWorkerTokens:
         assert not token.abilities
 
     def test_the_glimmer_is_a_white_one_one_enchantment_creature(self, pool):
-        """Soaring Lightbringer: *"create a 1/1 white Glimmer enchantment
-        creature token. It gains flying until end of turn."* The flying is
-        granted after creation, so the token itself prints no keyword."""
+        """Soaring Lightbringer: *"Whenever you attack a player, create a 1/1
+        white Glimmer enchantment creature token that's tapped and attacking
+        that player."* Its flying comes from the Lightbringer's own static
+        ("other enchantment creatures you control have flying"), so the token
+        itself prints no keyword."""
         token = pool.get("glimmer_1_1_w_enchantment")
         assert token is not None and token.is_token and token.is_creature
         assert (token.power, token.toughness) == (1, 1)
