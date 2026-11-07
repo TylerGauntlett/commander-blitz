@@ -87763,6 +87763,104 @@
     {
       "abilities": [
         {
+          "ability": 0,
+          "affects": {
+            "controller": "any",
+            "exclude_self": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Other creatures have \"Whenever this creature attacks, you may have it fight Grothama, All-Devouring.\""
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "damage_dealt_to_this_turn": {
+                      "by": {
+                        "binding": "each_player"
+                      },
+                      "to": {
+                        "self": true
+                      }
+                    }
+                  },
+                  "op": "draw",
+                  "player": {
+                    "binding": "each_player"
+                  }
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Grothama leaves the battlefield, each player draws cards equal to the amount of damage dealt to Grothama this turn by sources they controlled.",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "fight",
+                  "other": {
+                    "granter": true
+                  }
+                }
+              ],
+              "op": "may",
+              "prompt": "Have it fight Grothama, All-Devouring?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, you may have it fight Grothama, All-Devouring.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "grothama_all_devouring",
+      "mana_cost": "{3}{G}{G}",
+      "name": "Grothama, All-Devouring",
+      "oracle_text": "Other creatures have \"Whenever this creature attacks, you may have it fight Grothama, All-Devouring.\"\nWhen Grothama leaves the battlefield, each player draws cards equal to the amount of damage dealt to Grothama this turn by sources they controlled.",
+      "power": 10,
+      "source": "auto",
+      "subtypes": [
+        "Wurm"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 8,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "mana": "{1}{G}"
           },

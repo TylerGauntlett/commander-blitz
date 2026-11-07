@@ -119002,12 +119002,12 @@
     },
     "Grothama, All-Devouring": {
       "edhrec_rank": 6714,
-      "gate": "template",
+      "gate": null,
       "name": "Grothama, All-Devouring",
-      "reason": "no template for: Other creatures have \"Whenever this creature attacks, you may have it fight .\"",
+      "reason": "",
       "scryfall_id": "08b5301b-9f3c-4fb2-a308-a47a16c08fc0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ground Assault": {

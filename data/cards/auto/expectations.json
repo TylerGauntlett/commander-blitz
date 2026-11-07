@@ -7558,6 +7558,16 @@
   "grizzly_bears": {
     "zone": "battlefield"
   },
+  "grothama_all_devouring": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "groundskeeper": {
     "battlefield_count": 33,
     "zone": "battlefield"
