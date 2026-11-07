@@ -149406,6 +149406,135 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "flag": "believe",
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "set_flag"
+                    }
+                  ],
+                  "label": "Believe"
+                },
+                {
+                  "effects": [
+                    {
+                      "flag": "doubt",
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "set_flag"
+                    }
+                  ],
+                  "label": "Doubt"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "triggered",
+          "text": "As this creature enters, choose Believe or Doubt.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "horror_2_2_b_enchantment"
+            }
+          ],
+          "kind": "triggered",
+          "text": "• Believe — Whenever a nontoken creature you control dies, create a 2/2 black Horror enchantment creature token.",
+          "trigger": {
+            "condition": {
+              "has_flag": "believe"
+            },
+            "controller": "you",
+            "event": "creature_dies",
+            "filter": {
+              "is_token": false
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "chooser": "controller",
+                    "controller": "any",
+                    "count": 1,
+                    "not_types": [
+                      "Land"
+                    ],
+                    "owner": "you",
+                    "zone": "battlefield"
+                  },
+                  "op": "return_to_hand"
+                },
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Return a nonland permanent you own to your hand? If you do, draw a card."
+            }
+          ],
+          "kind": "triggered",
+          "text": "• Doubt — At the beginning of your end step, you may return a nonland permanent you own to your hand. If you do, draw a card.",
+          "trigger": {
+            "condition": {
+              "has_flag": "doubt"
+            },
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "phenomenon_investigators",
+      "mana_cost": "{2}{U}{B}",
+      "name": "Phenomenon Investigators",
+      "oracle_text": "As this creature enters, choose Believe or Doubt.\n• Believe — Whenever a nontoken creature you control dies, create a 2/2 black Horror enchantment creature token.\n• Doubt — At the beginning of your end step, you may return a nonland permanent you own to your hand. If you do, draw a card.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Detective"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -154845,6 +154974,76 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "discard": 1
+          },
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "hexproof"
+              ],
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "tap"
+            }
+          ],
+          "kind": "activated",
+          "text": "Discard a card: This creature gains hexproof until end of turn. Tap it."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "scry",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, scry 3.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "prognostic_sphinx",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{U}{U}",
+      "name": "Prognostic Sphinx",
+      "oracle_text": "Flying\nDiscard a card: This creature gains hexproof until end of turn. Tap it.\nWhenever this creature attacks, scry 3.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Sphinx"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -161350,6 +161549,39 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "redress_fate",
+      "mana_cost": "{6}{W}{W}",
+      "miracle": "{3}{W}",
+      "name": "Redress Fate",
+      "oracle_text": "Return all artifact and enchantment cards from your graveyard to the battlefield.\nMiracle {3}{W} (You may cast this card for its miracle cost when you draw it if it's the first card you drew this turn.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "you",
+          "destination": "battlefield",
+          "objects": {
+            "any_types": [
+              "Artifact",
+              "Enchantment"
+            ],
+            "controller": "you",
+            "count": "all",
+            "zone": "graveyard"
+          },
+          "op": "return_from_graveyard"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -180942,6 +181174,47 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "angel_4_4_w_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast an enchantment spell, create a 4/4 white Angel creature token with flying.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "types": [
+                "Enchantment"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "sigil_of_the_empty_throne",
+      "mana_cost": "{3}{W}{W}",
+      "name": "Sigil of the Empty Throne",
+      "oracle_text": "Whenever you cast an enchantment spell, create a 4/4 white Angel creature token with flying.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {

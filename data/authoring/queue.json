@@ -201092,12 +201092,12 @@
     },
     "Phenomenon Investigators": {
       "edhrec_rank": 16377,
-      "gate": "template",
+      "gate": null,
       "name": "Phenomenon Investigators",
-      "reason": "no template for: As this creature enters, choose Believe or Doubt",
+      "reason": "",
       "scryfall_id": "0c3dfaeb-7a84-4463-bebe-501634f13945",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pheres-Band Brawler": {
@@ -208252,12 +208252,12 @@
     },
     "Prognostic Sphinx": {
       "edhrec_rank": 10242,
-      "gate": "template",
+      "gate": null,
       "name": "Prognostic Sphinx",
-      "reason": "no template for: Discard a card: This creature gains hexproof until end of turn. Tap it",
+      "reason": "",
       "scryfall_id": "d9d36763-2975-4b5c-aeda-2d0159cb5191",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Prohibit": {
@@ -218702,12 +218702,12 @@
     },
     "Redress Fate": {
       "edhrec_rank": 3551,
-      "gate": "template",
+      "gate": null,
       "name": "Redress Fate",
-      "reason": "no template for: Return all artifact and enchantment cards from your graveyard to the battlefield",
+      "reason": "",
       "scryfall_id": "19f56096-f692-4719-af38-6a4955f2b65c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Redrock Sentinel": {
@@ -246812,12 +246812,12 @@
     },
     "Sigil of the Empty Throne": {
       "edhrec_rank": 1322,
-      "gate": "template",
+      "gate": null,
       "name": "Sigil of the Empty Throne",
-      "reason": "no template for: Whenever you cast an enchantment spell, create a 4/4 white Angel creature token with flyin",
+      "reason": "",
       "scryfall_id": "6875be24-1515-488f-a899-929c8e480dfd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sigil of the Nayan Gods": {

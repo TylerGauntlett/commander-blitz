@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**243 cards** blocked by **225** capabilities.
+**245 cards** blocked by **226** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -24,6 +24,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
 | [copy-exception-set-subtypes](#copy-exception-set-subtypes) | 3 | 1740 | engine, op |
+| [look-at-top-rest-any-order](#look-at-top-rest-any-order) | 3 | 1289 | op |
 | [omen](#omen) | 3 | 3355 | cost, engine |
 | [random-player-choice](#random-player-choice) | 3 | 5120 | op |
 | [add-color](#add-color) | 2 | 2040 | op |
@@ -40,7 +41,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 2 | 2389 | engine |
 | [escape](#escape) | 2 | 388 | engine, static_effect |
 | [face-down-filter](#face-down-filter) | 2 | 5772 | selector |
-| [look-at-top-rest-any-order](#look-at-top-rest-any-order) | 2 | 1289 | op |
 | [manifest-dread](#manifest-dread) | 2 | 5772 | op |
 | [miracle](#miracle) | 2 | 4945 | engine, static_effect |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
@@ -218,6 +218,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [static-greatest-power-in-graveyard](#static-greatest-power-in-graveyard) | 1 | 10492 | value |
 | [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
+| [target-if-cast-during](#target-if-cast-during) | 1 | 1524 | selector |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
 | [targets-only-self](#targets-only-self) | 1 | 8216 | trigger_event |
@@ -603,6 +604,28 @@ Blocks **3** cards.
 
 </details>
 
+## look-at-top-rest-any-order
+
+Blocks **3** cards.
+
+- **(op)** A remainder option on look_at_top (e.g. rest_to_top_any_order: true) that, after the picked card is taken, lets the resolving player arrange the cards looked at and not taken in any order on top of their library (rule 401.4 ordering choice, as put_on_top's any_order does via _in_owners_order)
+  <br>Why the existing vocabulary won't do: look_at_top with destination hand and count 1 leaves the untaken cards on top in their original order, so the player never gets the printed choice of order; rest_to_bottom sends them to the bottom in random order, rest_to only names a zone with no ordering; put_on_top has any_order but cannot name 'the rest' because look_at_top's `as` binds only the taken cards; scry orders the top but also allows bottoming, which is a different card
+- **(op)** A way for look_at_top to put the cards looked at and not taken back on top of the library in an order the resolving player chooses (rule 401.4, as put_on_top's any_order does via _in_owners_order) -- here with nothing taken at all: look at the top three, reorder them, put all three back on top
+  <br>Why the existing vocabulary won't do: look_at_top leaves untaken cards on top in their original order, so the printed ordering choice never happens; rest_to_bottom sends them to the bottom in random order and rest_to only names a zone; put_on_top has any_order but no selector can name 'the top three cards of your library' and look_at_top's `as` binds only cards it moved; scry orders the top but also allows bottoming any of them, which is a strictly better card (Ponder's shipped scry spelling is that approximation)
+- **(op)** A way for look_at_top to put the cards looked at and not taken back on top of the library in an order the resolving player chooses (rule 401.4, as put_on_top's any_order does via _in_owners_order) -- here with nothing taken: look at the top three of a TARGET player's library (player: {"target": "t1"}), and the caster (not the library's owner) reorders all three back on top
+  <br>Why the existing vocabulary won't do: look_at_top leaves untaken cards on top in their original order, so the printed ordering choice never happens; rest_to_bottom sends them to the bottom in random order and rest_to only names a zone; put_on_top has any_order but no selector names 'the top three cards of that library', and its any_order asks the owner rather than the caster; scry orders the top but also allows bottoming, a strictly better card (Ponder's shipped scry spelling is that approximation). The rest is expressible: 'You may have that player shuffle' is may + shuffle with player {"target": "t1"}, and the draw is delay with step upkeep (as Arcane Denial)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Halimar Depths** (rank 1289) — `halimar_depths`
+  - When this land enters, look at the top three cards of your library, then put them back in any order.
+- **Portent** (rank 4014) — `portent`
+  - Look at the top three cards of target player's library, then put them back in any order.
+- **Diabolic Vision** (rank 7343) — `diabolic_vision`
+  - Put one of them into your hand and the rest on top of your library in any order.
+
+</details>
+
 ## omen
 
 Blocks **3** cards.
@@ -908,24 +931,6 @@ Blocks **2** cards.
   - Landfall — Whenever a land you control enters, manifest dread if this is the first time this ability has resolved this turn. Otherwise, you may turn a permanent you control face up
 - **Primordial Mist** (rank 6544) — `primordial_mist`
   - Exile a face-down permanent you control face up: You may play that card this turn. (You still pay its costs. Timing rules still apply.)
-
-</details>
-
-## look-at-top-rest-any-order
-
-Blocks **2** cards.
-
-- **(op)** A remainder option on look_at_top (e.g. rest_to_top_any_order: true) that, after the picked card is taken, lets the resolving player arrange the cards looked at and not taken in any order on top of their library (rule 401.4 ordering choice, as put_on_top's any_order does via _in_owners_order)
-  <br>Why the existing vocabulary won't do: look_at_top with destination hand and count 1 leaves the untaken cards on top in their original order, so the player never gets the printed choice of order; rest_to_bottom sends them to the bottom in random order, rest_to only names a zone with no ordering; put_on_top has any_order but cannot name 'the rest' because look_at_top's `as` binds only the taken cards; scry orders the top but also allows bottoming, which is a different card
-- **(op)** A way for look_at_top to put the cards looked at and not taken back on top of the library in an order the resolving player chooses (rule 401.4, as put_on_top's any_order does via _in_owners_order) -- here with nothing taken at all: look at the top three, reorder them, put all three back on top
-  <br>Why the existing vocabulary won't do: look_at_top leaves untaken cards on top in their original order, so the printed ordering choice never happens; rest_to_bottom sends them to the bottom in random order and rest_to only names a zone; put_on_top has any_order but no selector can name 'the top three cards of your library' and look_at_top's `as` binds only cards it moved; scry orders the top but also allows bottoming any of them, which is a strictly better card (Ponder's shipped scry spelling is that approximation)
-
-<details><summary>Cards waiting on this</summary>
-
-- **Halimar Depths** (rank 1289) — `halimar_depths`
-  - When this land enters, look at the top three cards of your library, then put them back in any order.
-- **Diabolic Vision** (rank 7343) — `diabolic_vision`
-  - Put one of them into your hand and the rest on top of your library in any order.
 
 </details>
 
@@ -3513,6 +3518,20 @@ Blocks **1** card.
 
 - **Lux Artillery** (rank 3735) — `lux_artillery`
   - Whenever you cast an artifact creature spell, it gains sunburst. (It enters with a +1/+1 counter on it for each color of mana spent to cast it.)
+
+</details>
+
+## target-if-cast-during
+
+Blocks **1** card.
+
+- **(selector)** a target spec that is declared only when the spell is cast during a given phase -- e.g. `cast_during: "your_main"` on a card-level target (count 1, up_to, distinct from the first target), so a second 'up to one other target artifact or enchantment' exists only when the spell is cast in your main phase (601.2c)
+  <br>Why the existing vocabulary won't do: The `cast_during` condition exists but only as an `if` read at resolution. Target specs can be gated by `mode`, `cost_option`, `gift_promised` and `count_if_kicked`, none of which reads the phase the spell was cast in. Declaring an always-available optional second target and exiling it inside `if cast_during` would let the caster target a second permanent at instant speed outside the main phase (triggering ward, becomes_target and heroic-style effects) -- a different card.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Return to Dust** (rank 1524) — `return_to_dust`
+  - If you cast this spell during your main phase, you may exile up to one other target artifact or enchantment.
 
 </details>
 

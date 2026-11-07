@@ -1,0 +1,18 @@
+{
+  "card_id": "portent",
+  "name": "Portent",
+  "oracle_text": "Look at the top three cards of target player's library, then put them back in any order. You may have that player shuffle.\nDraw a card at the beginning of the next turn's upkeep.",
+  "blocked_sentences": [
+    "Look at the top three cards of target player's library, then put them back in any order."
+  ],
+  "needs": [
+    {
+      "capability": "look_at_top_rest_any_order",
+      "kind": "op",
+      "what": "A way for look_at_top to put the cards looked at and not taken back on top of the library in an order the resolving player chooses (rule 401.4, as put_on_top's any_order does via _in_owners_order) -- here with nothing taken: look at the top three of a TARGET player's library (player: {\"target\": \"t1\"}), and the caster (not the library's owner) reorders all three back on top",
+      "why_existing_wont_do": "look_at_top leaves untaken cards on top in their original order, so the printed ordering choice never happens; rest_to_bottom sends them to the bottom in random order and rest_to only names a zone; put_on_top has any_order but no selector names 'the top three cards of that library', and its any_order asks the owner rather than the caster; scry orders the top but also allows bottoming, a strictly better card (Ponder's shipped scry spelling is that approximation). The rest is expressible: 'You may have that player shuffle' is may + shuffle with player {\"target\": \"t1\"}, and the draw is delay with step upkeep (as Arcane Denial)"
+    }
+  ],
+  "closest_existing": ["look_at_top", "put_on_top", "scry"],
+  "confidence": "high"
+}

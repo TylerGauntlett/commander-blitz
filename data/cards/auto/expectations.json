@@ -12665,6 +12665,10 @@
   "pharika_s_chosen": {
     "zone": "battlefield"
   },
+  "phenomenon_investigators": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "pheres_band_centaurs": {
     "zone": "battlefield"
   },
@@ -13096,6 +13100,13 @@
   },
   "progenitor_s_icon": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "prognostic_sphinx": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "promise_of_loyalty": {
@@ -13663,6 +13674,13 @@
   "redoubled_stormsinger": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "redress_fate": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "zone": "graveyard"
   },
   "redwood_treefolk": {
     "zone": "battlefield"
@@ -15367,6 +15385,13 @@
   },
   "sighted_caste_sorcerer": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "sigil_of_the_empty_throne": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "sigiled_behemoth": {
