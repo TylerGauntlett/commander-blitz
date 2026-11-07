@@ -10030,6 +10030,10 @@
   "llanowar_dead": {
     "zone": "battlefield"
   },
+  "llanowar_loamspeaker": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "llanowar_tribe": {
     "zone": "battlefield"
   },
@@ -13047,6 +13051,13 @@
     },
     "zone": "battlefield"
   },
+  "primeval_bounty": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "primeval_herald": {
     "zone": "battlefield"
   },
@@ -13201,6 +13212,10 @@
     "hand_size": {
       "0": 2
     }
+  },
+  "prosperous_bandit": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "prosperous_thief": {
     "battlefield_count": 33,

@@ -1,0 +1,18 @@
+{
+  "card_id": "pyreswipe_hawk",
+  "name": "Pyreswipe Hawk",
+  "oracle_text": "Flying, haste\nWhenever this creature attacks, it gets +X/+0 until end of turn, where X is the greatest mana value among artifacts you control.\nWhenever you expend 6, gain control of up to one target artifact for as long as you control this creature. (You expend 6 as you spend your sixth total mana to cast spells during a turn.)",
+  "blocked_sentences": [
+    "Whenever you expend 6, gain control of up to one target artifact for as long as you control this creature. (You expend 6 as you spend your sixth total mana to cast spells during a turn.)"
+  ],
+  "needs": [
+    {
+      "capability": "expend",
+      "kind": "trigger_event",
+      "what": "a trigger event that fires once per turn when the controller's running total of mana spent to cast spells this turn reaches N (expend 4 / expend 6 / expend 8), carrying the threshold N as a trigger key; requires the engine to track per-player total mana spent on spells each turn",
+      "why_existing_wont_do": "trigger_events has spell_cast (fires per spell, not on a cumulative mana threshold) and no value_keys entry reads total mana spent on spells this turn (mana_spent_of reads one spell, spells_cast_this_turn counts spells); a spell_cast trigger with a condition would also fire again on later spells and miss mana crossing the threshold mid-cast. The gain_control half is fine: duration as_long_as_you_control_source already exists."
+    }
+  ],
+  "closest_existing": ["spell_cast", "mana_spent_of", "spells_cast_this_turn"],
+  "confidence": "high"
+}

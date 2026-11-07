@@ -160062,12 +160062,12 @@
     },
     "Llanowar Loamspeaker": {
       "edhrec_rank": 3822,
-      "gate": "template",
+      "gate": null,
       "name": "Llanowar Loamspeaker",
-      "reason": "no template for: {T}: Target land you control becomes a 3/3 Elemental creature with haste until end of turn",
+      "reason": "",
       "scryfall_id": "0dba8ffb-b7b1-411e-90c5-070b7a888e3f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Llanowar Mentor": {
@@ -207182,12 +207182,12 @@
     },
     "Primeval Bounty": {
       "edhrec_rank": 2162,
-      "gate": "template",
+      "gate": null,
       "name": "Primeval Bounty",
-      "reason": "no template for: Whenever you cast a creature spell, create a 3/3 green Beast creature token",
+      "reason": "",
       "scryfall_id": "332c9742-dc3b-48e5-8736-7724fae1b4c4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Primeval Force": {
@@ -208582,12 +208582,12 @@
     },
     "Prosperous Bandit": {
       "edhrec_rank": 5285,
-      "gate": "template",
+      "gate": null,
       "name": "Prosperous Bandit",
-      "reason": "no template for: Offspring {1}",
+      "reason": "",
       "scryfall_id": "383bde13-c24c-4c3c-bc10-72287aae74de",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Prosperous Innkeeper": {
