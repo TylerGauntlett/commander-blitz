@@ -64,7 +64,7 @@ each heading; this table is generated from them.
 | [Endless Punishment (Duskmourn: House of Horror Commander)](#endless-punishment-duskmourn-house-of-horror-commander) | L | high | A trigger for cards put into a graveyard, Rooms: two doors on one permanent, and the unlock action | 0 |
 | [Death Toll (Duskmourn: House of Horror Commander)](#death-toll-duskmourn-house-of-horror-commander) | L | high | A trigger for cards put into a graveyard, Rooms: two doors on one permanent, and the unlock action | 0 |
 | [Jump Scare! (Duskmourn: House of Horror Commander)](#jump-scare-duskmourn-house-of-horror-commander) | L | high | A trigger for cards put into a graveyard, Rooms: two doors on one permanent, and the unlock action | 0 |
-| [Miracle Worker (Duskmourn: House of Horror Commander)](#miracle-worker-duskmourn-house-of-horror-commander) | L | high | nothing | 0 |
+| [Miracle Worker (Duskmourn: House of Horror Commander)](#miracle-worker-duskmourn-house-of-horror-commander) | L | high | Rooms: two doors on one permanent, and the unlock action | 0 |
 | [Animated Army (Bloomburrow Commander)](#animated-army-bloomburrow-commander) | M | high | nothing | 0 |
 | [Family Matters (Bloomburrow Commander)](#family-matters-bloomburrow-commander) | L | high | nothing | 0 |
 | [Peace Offering (Bloomburrow Commander)](#peace-offering-bloomburrow-commander) | L | high | nothing | 0 |
@@ -136,8 +136,8 @@ each heading; this table is generated from them.
 | [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) | S | medium | nothing | 0 |
 | [Why a press is refused](#why-a-press-is-refused) | S | medium | nothing | 0 |
 | [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) | M | medium | nothing | 4 |
+| [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) | M | medium | nothing | 4 |
 | [Divided damage that may hit players](#divided-damage-that-may-hit-players) | M | medium | nothing | 3 |
-| [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) | M | medium | nothing | 3 |
 | [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) | M | medium | nothing | 2 |
 | [Outcomes as data](#outcomes-as-data) | M | medium | nothing | 2 |
 | [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) | M | medium | nothing | 2 |
@@ -162,8 +162,6 @@ Derived from the properties: an item is **ready** when nothing it depends
 on is still on this page, and the ready items are ranked by impact, then
 rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
-
-**In progress:** [Miracle Worker (Duskmourn: House of Horror Commander)](#miracle-worker-duskmourn-house-of-horror-commander).
 
 **Ready now, best first:**
 
@@ -238,8 +236,8 @@ same list, and `/extend-roadmap` starts at the top of it.
 69. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
 70. [Why a press is refused](#why-a-press-is-refused) — S, medium
 71. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
-72. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
-73. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
+72. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
+73. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
 74. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
 75. [Outcomes as data](#outcomes-as-data) — M, medium
 76. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
@@ -272,6 +270,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Endless Punishment (Duskmourn: House of Horror Commander)](#endless-punishment-duskmourn-house-of-horror-commander) — [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard), [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action)
 - [Death Toll (Duskmourn: House of Horror Commander)](#death-toll-duskmourn-house-of-horror-commander) — [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard), [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action)
 - [Jump Scare! (Duskmourn: House of Horror Commander)](#jump-scare-duskmourn-house-of-horror-commander) — [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard), [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action)
+- [Miracle Worker (Duskmourn: House of Horror Commander)](#miracle-worker-duskmourn-house-of-horror-commander) — [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -499,71 +498,6 @@ gates pass, and the generated DSL reference lists the new trigger event.
   `ZONE_CHANGE` beside `LEAVES_GRAVEYARD`, and the mill line moves from "not
   implemented" to the implemented table in rules-coverage.md.
 
-### Divided damage that may hit players
-
-Effort **M** · Impact **medium**, every 'divided as you choose among any number of targets' burn spell waits on it, Magma Opus and Arc Lightning among them · Depends on nothing · Awaiting decisions.
-
-#### Today
-
-Divided damage (601.2d) is announced as the spell is cast and dealt on
-resolution, but only among permanents. `cards.loader` refuses a `damage`
-effect with `divided` whose target spec is not `kind: "permanent"`;
-`Game._ask_damage_division` keeps only the declared targets whose kind is
-`"object"` and walks them through `_divide`, which asks one object at a time
-through `ask_objects`; and `effects.ops_life._damage_divided` deals each share
-with `damage_permanent`. [rules-coverage.md](rules-coverage.md#not-implemented)
-lists "dividing damage among players or any target" as not implemented.
-
-So every "deals N damage divided as you choose among any number of targets"
-spell is unwritable, because a player is a legal target of it. Magma Opus,
-in the Prismari Artistry precon, is the card that found it; Arc Lightning and
-Fireball's divided mode are the same sentence. Its gap record is
-`data/authoring/gaps/magma_opus.json`.
-
-#### The change
-
-1. The division carries players. `_ask_damage_division` divides over every
-   declared target of the spec, object or player, and the shares on the stack
-   item's `bindings["distribution"]` name which is which, so a player and a
-   permanent with the same number are never confused.
-2. The question asked while dividing offers players beside objects. Placing
-   one more point is one choice among the declared targets; `ask_objects`
-   names objects only, so this is either a target-shaped ask or a decision kind
-   of its own (an open question below).
-3. `_damage_divided` deals a player's share as damage to that player from the
-   source, with everything damage to a player already implies (lifelink,
-   infect, commander damage from a commander source, prevention), and a share
-   for a player who left the game or became an illegal target is lost (608.2b).
-4. The loader accepts `divided` over a spec of `kind: "any"` and
-   `kind: "player"`. The verifier's auto-answer table answers the new question,
-   or `/author-cards` hangs.
-5. Harvest: Magma Opus, then the catalog's other divided-among-any-targets
-   cards through the template tier with `--retry` and one `/author-cards` wave.
-
-It does not touch divided combat damage (510.1c) or `distribute_counters`,
-whose objects are always permanents.
-
-#### Gate
-
-A unit test under `tests/unit/` for divided damage over players and
-permanents together: the announcement on casting, each share dealt on
-resolution, a player's share lost when that player is no longer a legal
-target, lifelink and commander damage counted per share, and the loader
-accepting `kind: "any"` while still refusing divided damage on an ability. The
-verifier's auto-answer test covers the new question, and Magma Opus's six
-gates pass.
-
-#### Open questions
-
-- **How the division is asked.** Extend `ask_objects` to accept player
-  targets, or add a decision kind for "one more point to which target"?
-  Recommended: a target-shaped ask built on the existing target references,
-  because the client already renders a player as a target, and a new decision
-  kind would need its frontend label and an e2e path for no new rule.
-- **Is it an ADR.** Recommended: no; it widens an existing announcement
-  (601.2d) without changing what is announced or when, and the line in
-  rules-coverage.md moves from "not implemented" to the implemented table.
-
 ### Rooms: two doors on one permanent, and the unlock action
 
 Effort **M** · Impact **medium**, every Room card waits on it, and Endless Punishment cannot ship native without Spiked Corridor // Torture Pit · Depends on nothing · ADR first · Awaiting decisions.
@@ -643,6 +577,71 @@ generated DSL reference lists the new event.
   token and the noncombat `replace_damage` key so Spiked Corridor // Torture
   Pit ships in it? Recommended: plus both, since each is small and the card
   is the gate.
+
+### Divided damage that may hit players
+
+Effort **M** · Impact **medium**, every 'divided as you choose among any number of targets' burn spell waits on it, Magma Opus and Arc Lightning among them · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+Divided damage (601.2d) is announced as the spell is cast and dealt on
+resolution, but only among permanents. `cards.loader` refuses a `damage`
+effect with `divided` whose target spec is not `kind: "permanent"`;
+`Game._ask_damage_division` keeps only the declared targets whose kind is
+`"object"` and walks them through `_divide`, which asks one object at a time
+through `ask_objects`; and `effects.ops_life._damage_divided` deals each share
+with `damage_permanent`. [rules-coverage.md](rules-coverage.md#not-implemented)
+lists "dividing damage among players or any target" as not implemented.
+
+So every "deals N damage divided as you choose among any number of targets"
+spell is unwritable, because a player is a legal target of it. Magma Opus,
+in the Prismari Artistry precon, is the card that found it; Arc Lightning and
+Fireball's divided mode are the same sentence. Its gap record is
+`data/authoring/gaps/magma_opus.json`.
+
+#### The change
+
+1. The division carries players. `_ask_damage_division` divides over every
+   declared target of the spec, object or player, and the shares on the stack
+   item's `bindings["distribution"]` name which is which, so a player and a
+   permanent with the same number are never confused.
+2. The question asked while dividing offers players beside objects. Placing
+   one more point is one choice among the declared targets; `ask_objects`
+   names objects only, so this is either a target-shaped ask or a decision kind
+   of its own (an open question below).
+3. `_damage_divided` deals a player's share as damage to that player from the
+   source, with everything damage to a player already implies (lifelink,
+   infect, commander damage from a commander source, prevention), and a share
+   for a player who left the game or became an illegal target is lost (608.2b).
+4. The loader accepts `divided` over a spec of `kind: "any"` and
+   `kind: "player"`. The verifier's auto-answer table answers the new question,
+   or `/author-cards` hangs.
+5. Harvest: Magma Opus, then the catalog's other divided-among-any-targets
+   cards through the template tier with `--retry` and one `/author-cards` wave.
+
+It does not touch divided combat damage (510.1c) or `distribute_counters`,
+whose objects are always permanents.
+
+#### Gate
+
+A unit test under `tests/unit/` for divided damage over players and
+permanents together: the announcement on casting, each share dealt on
+resolution, a player's share lost when that player is no longer a legal
+target, lifelink and commander damage counted per share, and the loader
+accepting `kind: "any"` while still refusing divided damage on an ability. The
+verifier's auto-answer test covers the new question, and Magma Opus's six
+gates pass.
+
+#### Open questions
+
+- **How the division is asked.** Extend `ask_objects` to accept player
+  targets, or add a decision kind for "one more point to which target"?
+  Recommended: a target-shaped ask built on the existing target references,
+  because the client already renders a player as a target, and a new decision
+  kind would need its frontend label and an e2e path for no new rule.
+- **Is it an ADR.** Recommended: no; it widens an existing announcement
+  (601.2d) without changing what is announced or when, and the line in
+  rules-coverage.md moves from "not implemented" to the implemented table.
 
 ### Divided damage from a triggered or activated ability
 
@@ -1888,7 +1887,7 @@ whole-game test able to draw the deck.
 
 ### Miracle Worker (Duskmourn: House of Horror Commander)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing · **In progress**.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action).
 
 #### Today
 
