@@ -13326,6 +13326,11 @@
       "0": 41
     }
   },
+  "pyreswipe_hawk": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "pyretic_ritual": {
     "graveyard_size": {
       "0": 3
@@ -17243,6 +17248,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "teapot_slinger": {
+    "battlefield_count": 33,
+    "life": {
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "tectonic_giant": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -18280,6 +18292,13 @@
     "zone": "battlefield"
   },
   "trailblazer_s_boots": {
+    "zone": "battlefield"
+  },
+  "trailtracker_scout": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "trained_armodon": {
@@ -19624,6 +19643,13 @@
     "zone": "battlefield"
   },
   "wandering_tombshell": {
+    "zone": "battlefield"
+  },
+  "wandertale_mentor": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "wanderwine_hub": {

@@ -210712,12 +210712,12 @@
     },
     "Pyreswipe Hawk": {
       "edhrec_rank": 8845,
-      "gate": "template",
+      "gate": null,
       "name": "Pyreswipe Hawk",
-      "reason": "no template for: Whenever this creature attacks, it gets +X/+0 until end of turn, where X is the greatest m",
+      "reason": "",
       "scryfall_id": "0cf88f89-9490-4477-b632-85c513e8c749",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pyretic Charge": {
@@ -276072,12 +276072,12 @@
     },
     "Teapot Slinger": {
       "edhrec_rank": 8383,
-      "gate": "template",
+      "gate": null,
       "name": "Teapot Slinger",
-      "reason": "no template for: Whenever you expend 4, this creature deals 2 damage to each opponent",
+      "reason": "",
       "scryfall_id": "30506844-349f-4b68-8cc1-d028c1611cc7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tear Asunder": {
@@ -290842,12 +290842,12 @@
     },
     "Trailtracker Scout": {
       "edhrec_rank": 3287,
-      "gate": "template",
+      "gate": null,
       "name": "Trailtracker Scout",
-      "reason": "no template for: Whenever you expend 8, return up to one target permanent card from your graveyard to your ",
+      "reason": "",
       "scryfall_id": "36ee967a-3cac-4fff-b616-ec2557c676f2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Train of Thought": {
@@ -310152,12 +310152,12 @@
     },
     "Wandertale Mentor": {
       "edhrec_rank": 4616,
-      "gate": "template",
+      "gate": null,
       "name": "Wandertale Mentor",
-      "reason": "no template for: Whenever you expend 4, put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "8c399a55-d02e-41ed-b827-8784b738c118",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wanderwine Distracter": {
