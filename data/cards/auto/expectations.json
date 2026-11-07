@@ -8247,6 +8247,10 @@
   "hussar_patrol": {
     "zone": "battlefield"
   },
+  "hydra_omnivore": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "hydra_troopers": {
     "zone": "battlefield"
   },
@@ -9129,6 +9133,17 @@
   },
   "kefnet_s_monument": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "kefnet_the_mindful": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "flying",
+        "indestructible"
+      ]
+    },
     "zone": "battlefield"
   },
   "keiga_the_tide_star": {

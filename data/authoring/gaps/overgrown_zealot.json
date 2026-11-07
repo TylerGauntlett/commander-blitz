@@ -1,0 +1,18 @@
+{
+  "card_id": "overgrown_zealot",
+  "name": "Overgrown Zealot",
+  "oracle_text": "{T}: Add one mana of any color.\n{T}: Add two mana of any one color. Spend this mana only to turn permanents face up.",
+  "blocked_sentences": [
+    "{T}: Add two mana of any one color. Spend this mana only to turn permanents face up."
+  ],
+  "needs": [
+    {
+      "capability": "mana_restriction_turn_face_up",
+      "kind": "value",
+      "what": "a mana_restriction purpose meaning 'only to turn permanents face up' (the morph/megamorph/disguise/manifest/cloak special action, 116.2b), e.g. {\"face_up\": \"any\"}, with Game._turn_face_up paying under that purpose instead of the generic OTHER_PAYMENT, so the mana pays a face-up cost and nothing else",
+      "why_existing_wont_do": "compile_restriction knows only 'cast', 'activate' and 'other'. 'other' takes only 'any' and covers every non-cast, non-activation payment (ward, attack taxes, 'you may pay'), so it is strictly broader than the printed text; and a restriction with neither 'cast' nor 'activate' is refused as permitting nothing. _turn_face_up pays with purpose=OTHER_PAYMENT, so no restriction can single out the face-up action. The mana half itself (add_mana with any_one_color and amount 2) is expressible."
+    }
+  ],
+  "closest_existing": ["mana_restriction", "morph"],
+  "confidence": "high"
+}

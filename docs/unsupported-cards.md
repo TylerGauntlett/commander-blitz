@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**225 cards** blocked by **209** capabilities.
+**229 cards** blocked by **214** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -39,9 +39,11 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 2 | 2389 | engine |
 | [escape](#escape) | 2 | 388 | engine, static_effect |
+| [face-down](#face-down) | 2 | 6544 | selector |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
+| [turned-face-up](#turned-face-up) | 2 | 6493 | trigger_event |
 | [venture](#venture) | 2 | 19644 | engine |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
 | [x-maximum](#x-maximum) | 2 | 1665 | engine |
@@ -79,6 +81,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
 | [copy-this-spell-on-resolution](#copy-this-spell-on-resolution) | 1 | 338 | op |
+| [counter-exile-free-cast](#counter-exile-free-cast) | 1 | 7605 | op |
 | [coven](#coven) | 1 | 1129 | value |
 | [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
 | [crime](#crime) | 1 | 2244 | trigger_event |
@@ -104,12 +107,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [every-creature-type-everywhere](#every-creature-type-everywhere) | 1 | 494 | static_effect |
 | [exile-cards-with-card-types-among-them](#exile-cards-with-card-types-among-them) | 1 | 9107 | selector |
+| [exile-permanent-cost](#exile-permanent-cost) | 1 | 6544 | cost |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [exile-x-from-graveyard-cost](#exile-x-from-graveyard-cost) | 1 | 17252 | cost |
 | [exiled-this-way-lki](#exiled-this-way-lki) | 1 | 6960 | value |
 | [experience-counters](#experience-counters) | 1 | 1480 | engine |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
-| [face-down](#face-down) | 1 | 10013 | selector |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
 | [filtered-discard](#filtered-discard) | 1 | 9279 | op |
 | [first-mate-ragavan](#first-mate-ragavan) | 1 | 7016 | token |
@@ -146,6 +149,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mana-ability-leading-rider](#mana-ability-leading-rider) | 1 | 4080 | engine |
 | [mana-cant-pay-generic](#mana-cant-pay-generic) | 1 | 3861 | value |
 | [mana-restriction-cast-from-zone](#mana-restriction-cast-from-zone) | 1 | 9291 | engine |
+| [mana-restriction-turn-face-up](#mana-restriction-turn-face-up) | 1 | 6766 | value |
 | [mana-spent-enters-with-counters](#mana-spent-enters-with-counters) | 1 | 653 | replacement |
 | [mana-spent-trigger-on-activation](#mana-spent-trigger-on-activation) | 1 | 4444 | trigger_event |
 | [mana-tap-trigger-damage-rider](#mana-tap-trigger-damage-rider) | 1 | 7929 | static_effect |
@@ -162,12 +166,14 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [odd-or-even](#odd-or-even) | 1 | 8504 | selector |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
+| [play-cost-paid-card](#play-cost-paid-card) | 1 | 6544 | op |
 | [play-lands-from-graveyard-filtered](#play-lands-from-graveyard-filtered) | 1 | 3993 | static_effect |
 | [playable-condition-opponent-lost-life](#playable-condition-opponent-lost-life) | 1 | 4478 | engine |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-mana-ability-until-end-of-turn](#player-mana-ability-until-end-of-turn) | 1 | 12705 | op |
 | [players-attacked-last-combat](#players-attacked-last-combat) | 1 | 6681 | value |
 | [plot](#plot) | 1 | 7506 | op |
+| [power-parity](#power-parity) | 1 | 10846 | value |
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
 | [prime-number](#prime-number) | 1 | 11527 | value |
 | [primo-the-indivisible](#primo-the-indivisible) | 1 | 11527 | token |
@@ -214,7 +220,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [toughness-greater-than-power-filter](#toughness-greater-than-power-filter) | 1 | 3557 | selector |
 | [treefolk-x-x-g-reach-land-count](#treefolk-x-x-g-reach-land-count) | 1 | 2396 | token |
 | [turn-face-up-effect](#turn-face-up-effect) | 1 | 8930 | op |
-| [turned-face-up](#turned-face-up) | 1 | 6493 | trigger_event |
 | [two-share-all-card-types](#two-share-all-card-types) | 1 | 7993 | value |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
@@ -856,6 +861,24 @@ Blocks **2** cards.
 
 </details>
 
+## face-down
+
+Blocks **2** cards.
+
+- **(selector)** a selector/condition key matching face-down permanents (manifested, cloaked, morphed, disguised), so the intervening-if "if you control no face-down permanents" is an `exists` negated over `{zone: battlefield, controller: you, face_down: true}`
+  <br>Why the existing vocabulary won't do: `selector_keys` and `trigger_filter_keys` have no face-down key; `face_down` exists only as an option on library/exile ops meaning private exile, not as a property a selector can read on a permanent
+- **(selector)** a selector key matching face-down permanents (manifested, cloaked, morphed, disguised), e.g. `{zone: battlefield, controller: you, face_down: true}`, usable in the cost filter
+  <br>Why the existing vocabulary won't do: `selector_keys` has no face-down key; `face_down` exists only as an option on library/exile ops meaning private exile, not as a property a selector can read on a permanent
+
+<details><summary>Cards waiting on this</summary>
+
+- **Primordial Mist** (rank 6544) — `primordial_mist`
+  - Exile a face-down permanent you control face up: You may play that card this turn. (You still pay its costs. Timing rules still apply.)
+- **Glitch Interpreter** (rank 10013) — `glitch_interpreter`
+  - When this creature enters, if you control no face-down permanents, return this creature to its owner's hand and manifest dread.
+
+</details>
+
 ## opening-hand-ability
 
 Blocks **2** cards.
@@ -910,6 +933,24 @@ Blocks **2** cards.
   - • Target opponent reveals their hand. You choose an instant or sorcery card from it. That player discards that card.
 - **Toll of the Invasion** (rank 20219) — `toll_of_the_invasion`
   - Target opponent reveals their hand. You choose a nonland card from it. That player discards that card.
+
+</details>
+
+## turned-face-up
+
+Blocks **2** cards.
+
+- **(trigger_event)** a trigger event for a permanent being turned face up (filterable by controller: 'a permanent you control'), usable by a triggered ability with active_zones ["graveyard"] on the card itself
+  <br>Why the existing vocabulary won't do: The engine's _turn_face_up emits a 'turned_face_up' event, but it is not in the packet's trigger_events vocabulary, so no card can trigger on it; becomes_untapped/permanent_enters/counter_placed are different events (a megamorph counter would miss plain morphs and manifests)
+- **(trigger_event)** a trigger event for this permanent being turned face up (source: self), so a morph creature's 'When this creature is turned face up, ...' ability goes on the stack when its morph cost is paid
+  <br>Why the existing vocabulary won't do: The engine's _turn_face_up emits a 'turned_face_up' event, but it is not in the packet's trigger_events vocabulary, so no triggered ability can listen for it; self_enters does not fire on turning face up (the permanent is already on the battlefield), and ability_activated / becomes_untapped are different events
+
+<details><summary>Cards waiting on this</summary>
+
+- **Deathmist Raptor** (rank 6493) — `deathmist_raptor`
+  - Whenever a permanent you control is turned face up, you may return this card from your graveyard to the battlefield face up or face down.
+- **Kheru Spellsnatcher** (rank 7605) — `kheru_spellsnatcher`
+  - When this creature is turned face up, counter target spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard. You may cast that card without paying its mana cost for as long as it remains exiled.
 
 </details>
 
@@ -1463,6 +1504,20 @@ Blocks **1** card.
 
 </details>
 
+## counter-exile-free-cast
+
+Blocks **1** card.
+
+- **(op)** counter target spell, exiling it instead of the graveyard, and give the trigger's controller permission to cast that exiled card without paying its mana cost for as long as it remains exiled (playable: while_exiled, playable_free: true on the countered card)
+  <br>Why the existing vocabulary won't do: counter carries exiles and as, but its op_options list no playable / playable_free; it may be expressible as counter (exiles, as) followed by grant_playable with playable_free and playable 'while_exiled' over the bound card, but that is unverified and moot until the trigger event exists
+
+<details><summary>Cards waiting on this</summary>
+
+- **Kheru Spellsnatcher** (rank 7605) — `kheru_spellsnatcher`
+  - When this creature is turned face up, counter target spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard. You may cast that card without paying its mana cost for as long as it remains exiled.
+
+</details>
+
 ## coven
 
 Blocks **1** card.
@@ -1821,6 +1876,20 @@ Blocks **1** card.
 
 </details>
 
+## exile-permanent-cost
+
+Blocks **1** card.
+
+- **(cost)** an activated-ability cost that exiles a permanent you control matching a selector (here a face-down one, exiled face up), bound with `as` so the ability's effects can read the exiled card -- the exile counterpart of `sacrifice`
+  <br>Why the existing vocabulary won't do: `cost_keys` exile only the source (`exile_self`), a card from hand (`exile_from_hand`, `exile_self_from_hand`) or a card from the graveyard (`exile_from_graveyard`); nothing exiles another permanent from the battlefield as a cost, and moving it into an `exile` op would shift payment to resolution and let the ability be activated without a face-down permanent
+
+<details><summary>Cards waiting on this</summary>
+
+- **Primordial Mist** (rank 6544) — `primordial_mist`
+  - Exile a face-down permanent you control face up: You may play that card this turn. (You still pay its costs. Timing rules still apply.)
+
+</details>
+
 ## exile-target-spell
 
 Blocks **1** card.
@@ -1891,20 +1960,6 @@ Blocks **1** card.
 - **Final Fortune** (rank 1512) — `final_fortune`
   - Take an extra turn after this one.
   - At the beginning of that turn's end step, you lose the game.
-
-</details>
-
-## face-down
-
-Blocks **1** card.
-
-- **(selector)** a selector/condition key matching face-down permanents (manifested, cloaked, morphed, disguised), so the intervening-if "if you control no face-down permanents" is an `exists` negated over `{zone: battlefield, controller: you, face_down: true}`
-  <br>Why the existing vocabulary won't do: `selector_keys` and `trigger_filter_keys` have no face-down key; `face_down` exists only as an option on library/exile ops meaning private exile, not as a property a selector can read on a permanent
-
-<details><summary>Cards waiting on this</summary>
-
-- **Glitch Interpreter** (rank 10013) — `glitch_interpreter`
-  - When this creature enters, if you control no face-down permanents, return this creature to its owner's hand and manifest dread.
 
 </details>
 
@@ -2425,6 +2480,20 @@ Blocks **1** card.
 
 </details>
 
+## mana-restriction-turn-face-up
+
+Blocks **1** card.
+
+- **(value)** a mana_restriction purpose meaning 'only to turn permanents face up' (the morph/megamorph/disguise/manifest/cloak special action, 116.2b), e.g. {"face_up": "any"}, with Game._turn_face_up paying under that purpose instead of the generic OTHER_PAYMENT, so the mana pays a face-up cost and nothing else
+  <br>Why the existing vocabulary won't do: compile_restriction knows only 'cast', 'activate' and 'other'. 'other' takes only 'any' and covers every non-cast, non-activation payment (ward, attack taxes, 'you may pay'), so it is strictly broader than the printed text; and a restriction with neither 'cast' nor 'activate' is refused as permitting nothing. _turn_face_up pays with purpose=OTHER_PAYMENT, so no restriction can single out the face-up action. The mana half itself (add_mana with any_one_color and amount 2) is expressible.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Overgrown Zealot** (rank 6766) — `overgrown_zealot`
+  - {T}: Add two mana of any one color. Spend this mana only to turn permanents face up.
+
+</details>
+
 ## mana-spent-enters-with-counters
 
 Blocks **1** card.
@@ -2655,6 +2724,20 @@ Blocks **1** card.
 
 </details>
 
+## play-cost-paid-card
+
+Blocks **1** card.
+
+- **(op)** "You may play that card this turn" over the card the cost exiled: `grant_playable` with `playable_this_turn` over a binding produced by the exile cost
+  <br>Why the existing vocabulary won't do: `grant_playable` can grant the permission, but no cost produces a binding naming the exiled card for it to read; `exile` with `playable_this_turn` would exile on resolution rather than as the cost
+
+<details><summary>Cards waiting on this</summary>
+
+- **Primordial Mist** (rank 6544) — `primordial_mist`
+  - Exile a face-down permanent you control face up: You may play that card this turn. (You still pay its costs. Timing rules still apply.)
+
+</details>
+
 ## play-lands-from-graveyard-filtered
 
 Blocks **1** card.
@@ -2736,6 +2819,21 @@ Blocks **1** card.
 
 - **Jace Reawakened** (rank 7506) — `jace_reawakened`
   - +1: You may exile a nonland card with mana value 3 or less from your hand. If you do, it becomes plotted.
+
+</details>
+
+## power-parity
+
+Blocks **1** card.
+
+- **(value)** a static condition that asks whether the source permanent's current power is even or odd -- e.g. a `power` filter clause `{"parity": "even"|"odd"}` usable under `exists` with `self_only`, or a static value `power_of` self plus a parity/modulo predicate for `cmp` -- so a `cast_as_though_flash` static can switch on Kianne's power parity
+  <br>Why the existing vocabulary won't do: `cast_as_though_flash` exists as a static effect and `exists` + `self_only` + `power` is a legal static condition, but the `power` filter clause (`compare_pt`) only takes `{op, value}` comparisons against a fixed integer, and `static_value_keys` has no power-of-self reader or modulo; the only parity predicate in the engine is `parity` on die rolls (`ROLL_PARITIES`). Writing a fixed set of `power` equalities would be wrong for unbounded power
+
+<details><summary>Cards waiting on this</summary>
+
+- **Kianne, Corrupted Memory** (rank 10846) — `kianne_corrupted_memory`
+  - As long as Kianne's power is even, you may cast noncreature spells as though they had flash.
+  - As long as Kianne's power is odd, you may cast creature spells as though they had flash.
 
 </details>
 
@@ -3390,20 +3488,6 @@ Blocks **1** card.
   - When you unlock this door, manifest dread, then put two +1/+1 counters and a trample counter on that creature.
   - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
   - Whenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it.
-
-</details>
-
-## turned-face-up
-
-Blocks **1** card.
-
-- **(trigger_event)** a trigger event for a permanent being turned face up (filterable by controller: 'a permanent you control'), usable by a triggered ability with active_zones ["graveyard"] on the card itself
-  <br>Why the existing vocabulary won't do: The engine's _turn_face_up emits a 'turned_face_up' event, but it is not in the packet's trigger_events vocabulary, so no card can trigger on it; becomes_untapped/permanent_enters/counter_placed are different events (a megamorph counter would miss plain morphs and manifests)
-
-<details><summary>Cards waiting on this</summary>
-
-- **Deathmist Raptor** (rank 6493) — `deathmist_raptor`
-  - Whenever a permanent you control is turned face up, you may return this card from your graveyard to the battlefield face up or face down.
 
 </details>
 

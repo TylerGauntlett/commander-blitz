@@ -132202,12 +132202,12 @@
     },
     "Hydra Omnivore": {
       "edhrec_rank": 3964,
-      "gate": "template",
+      "gate": null,
       "name": "Hydra Omnivore",
-      "reason": "no template for: Whenever this creature deals combat damage to an opponent, it deals that much damage to ea",
+      "reason": "",
       "scryfall_id": "a6abde7a-da2a-4631-9db6-9d0ffe1e1105",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hydra Trainer": {
@@ -147612,12 +147612,12 @@
     },
     "Kefnet the Mindful": {
       "edhrec_rank": 7265,
-      "gate": "template",
+      "gate": null,
       "name": "Kefnet the Mindful",
-      "reason": "no template for: Kefnet can't attack or block unless you have seven or more cards in hand",
+      "reason": "",
       "scryfall_id": "ca06ae1a-4080-450a-8ff0-ad6aafd8f04c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kefnet's Last Word": {

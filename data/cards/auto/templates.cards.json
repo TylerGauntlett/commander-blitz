@@ -96529,6 +96529,65 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "damage",
+              "player": {
+                "except": "you",
+                "not": {
+                  "binding": "defender"
+                }
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to an opponent, it deals that much damage to each other opponent.",
+          "trigger": {
+            "condition": {
+              "cmp": "<",
+              "left": {
+                "player_count": {
+                  "except": "you",
+                  "not": {
+                    "binding": "defender"
+                  }
+                }
+              },
+              "right": {
+                "player_count": "each_opponent"
+              }
+            },
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "hydra_omnivore",
+      "mana_cost": "{4}{G}{G}",
+      "name": "Hydra Omnivore",
+      "oracle_text": "Whenever this creature deals combat damage to an opponent, it deals that much damage to each other opponent.",
+      "power": 8,
+      "source": "auto",
+      "subtypes": [
+        "Hydra"
+      ],
+      "toughness": 8,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -107878,6 +107937,115 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "not": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "controller": "you",
+                  "zone": "hand"
+                }
+              },
+              "right": {
+                "const": 7
+              }
+            }
+          },
+          "effect": "cant_attack",
+          "kind": "static",
+          "text": "Kefnet can't attack or block unless you have seven or more cards in hand."
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "not": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "controller": "you",
+                  "zone": "hand"
+                }
+              },
+              "right": {
+                "const": 7
+              }
+            }
+          },
+          "effect": "cant_block",
+          "kind": "static",
+          "text": "Kefnet can't attack or block unless you have seven or more cards in hand."
+        },
+        {
+          "cost": {
+            "mana": "{3}{U}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "chooser": "controller",
+                    "controller": "you",
+                    "count": 1,
+                    "types": [
+                      "Land"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "return_to_hand"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Return a land you control to its owner's hand?"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}{U}: Draw a card, then you may return a land you control to its owner's hand."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "kefnet_the_mindful",
+      "keywords": [
+        "flying",
+        "indestructible"
+      ],
+      "mana_cost": "{2}{U}",
+      "name": "Kefnet the Mindful",
+      "oracle_text": "Flying, indestructible\nKefnet can't attack or block unless you have seven or more cards in hand.\n{3}{U}: Draw a card, then you may return a land you control to its owner's hand.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "God"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
       ]
     },
     {

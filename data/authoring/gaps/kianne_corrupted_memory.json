@@ -1,0 +1,19 @@
+{
+  "card_id": "kianne_corrupted_memory",
+  "name": "Kianne, Corrupted Memory",
+  "oracle_text": "As long as Kianne's power is even, you may cast noncreature spells as though they had flash.\nAs long as Kianne's power is odd, you may cast creature spells as though they had flash.\nWhenever you draw a card, put a +1/+1 counter on Kianne.",
+  "blocked_sentences": [
+    "As long as Kianne's power is even, you may cast noncreature spells as though they had flash.",
+    "As long as Kianne's power is odd, you may cast creature spells as though they had flash."
+  ],
+  "needs": [
+    {
+      "capability": "power_parity",
+      "kind": "value",
+      "what": "a static condition that asks whether the source permanent's current power is even or odd -- e.g. a `power` filter clause `{\"parity\": \"even\"|\"odd\"}` usable under `exists` with `self_only`, or a static value `power_of` self plus a parity/modulo predicate for `cmp` -- so a `cast_as_though_flash` static can switch on Kianne's power parity",
+      "why_existing_wont_do": "`cast_as_though_flash` exists as a static effect and `exists` + `self_only` + `power` is a legal static condition, but the `power` filter clause (`compare_pt`) only takes `{op, value}` comparisons against a fixed integer, and `static_value_keys` has no power-of-self reader or modulo; the only parity predicate in the engine is `parity` on die rolls (`ROLL_PARITIES`). Writing a fixed set of `power` equalities would be wrong for unbounded power"
+    }
+  ],
+  "closest_existing": ["cast_as_though_flash", "exists", "compare_pt", "roll_dice parity"],
+  "confidence": "high"
+}
