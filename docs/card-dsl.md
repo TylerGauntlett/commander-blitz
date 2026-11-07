@@ -5363,7 +5363,7 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `becomes_monarch` ·
 `counter_placed` · `sacrificed` · `leaves_graveyard` · `token_created` · `draw` · `discard` · `cycle` ·
 `ability_activated` · `damage_prevented` · `deals_damage_to_player` ·
-`searches_library` · `wins_coin_flip` · `state`
+`searches_library` · `wins_coin_flip` · `turned_face_up` · `state`
 
 ### `state` — "When there are four or more page counters on this artifact"
 

@@ -155,6 +155,7 @@ export function changeBeat(ctx: EventContext): boolean {
     // redraws in place. Held longer than an ETB so the change reads as a play
     // rather than as a rendering glitch.
     case "transformed":
+    case "turned_face_up":
     case "control_changed":
       push({
         hold: 480,

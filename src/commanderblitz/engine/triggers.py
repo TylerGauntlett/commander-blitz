@@ -187,6 +187,21 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: the one carrying the ability, so `source: "self"` means this creature.
     "mutates": EventType.MUTATED,
     "becomes_monstrous": EventType.BECAME_MONSTROUS,
+    #: "When this creature is turned face up, …" (Kheru Spellsnatcher) with
+    #: `source: "self"`, and "Whenever a permanent you control is turned face
+    #: up, …" (Trail of Mystery, Temur War Shaman, Deathmist Raptor from the
+    #: graveyard) with `controller: "you"`. One event per permanent turned up
+    #: by morph, megamorph or manifest (702.37e, 701.34a), fired by
+    #: `Game._turn_face_up`, the one place a permanent is turned face up.
+    #:
+    #: The subject is the permanent (see `OBJECT_SUBJECT_TRIGGERS`), read after
+    #: the shell is gone, so a `filter` asks what the card *is* rather than
+    #: what the 2/2 was, and `{"binding": "subject"}` is "it".
+    #:
+    #: `self_enters` and `permanent_enters` are the near misses and fire on the
+    #: wrong moment: the permanent entered face down, long before, and turning
+    #: it up is not entering (708.8). `counter_placed` catches megamorph alone.
+    "turned_face_up": EventType.TURNED_FACE_UP,
     #: "When this Class becomes level 2" (716.4). Always `source: "self"` --
     #: the loader supplies it -- and always with the `level` it waits for, which
     #: is compared against the event exactly as `chapter` is.
@@ -492,6 +507,9 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         # newcomer's printed trigger is answered by the host's oid.
         "mutates",
         "becomes_monstrous",
+        # The permanent turned face up, so `source: "self"` is "when *this*
+        # creature is turned face up" and a filter asks about the face-up card.
+        "turned_face_up",
         # The Class whose level changed, so the supplied `source: "self"` means
         # *this* Class and not every Class on the table.
         "becomes_level",

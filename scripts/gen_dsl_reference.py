@@ -826,6 +826,8 @@ TRIGGER_EVENT_DESCRIPTIONS: dict[str, Entry] = {
     "spell_copied": ("A spell is copied (magecraft's other half).",
                      "`spell_copied`, and why magecraft is two abilities"),
     "token_created": ("A token is created.", None),
+    "turned_face_up": ("A face-down permanent is turned face up; the subject is that permanent, face up.",
+                       '"When this creature is turned face up"'),
     "upkeep": ("At the beginning of the upkeep.", None),
     "wins_coin_flip": ("A player wins a coin flip (705); a lost flip fires nothing.",
                        '"Whenever you win a coin flip"'),

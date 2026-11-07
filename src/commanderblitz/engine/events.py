@@ -153,6 +153,17 @@ class EventType:
     #: mutation goes through it.
     MUTATED = "mutated"
     BECAME_MONSTROUS = "became_monstrous"
+    #: A face-down permanent was turned face up (702.37e, 701.34a, 708.8).
+    #: ``source`` and ``data["oid"]`` are the permanent, ``player`` the player
+    #: who turned it -- always its controller, since only the controller may --
+    #: and ``data["card"]`` the card now showing.
+    #:
+    #: Its own type for `TRANSFORMED`'s reason: the permanent changes no zone,
+    #: so no enters or zone-change event says that the 2/2 shell on the board
+    #: is now a different card. Fired by `Game._turn_face_up` after the shell
+    #: is gone and any megamorph counter is on, so "When this creature is
+    #: turned face up" is printed on a permanent that can already hear it.
+    TURNED_FACE_UP = "turned_face_up"
     #: A Class's level **became** a number (716.4). ``source`` and
     #: ``data["oid"]`` are the Class, ``data["level"]`` the level it is now.
     #:

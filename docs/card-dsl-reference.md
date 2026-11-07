@@ -15,7 +15,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 69 |
 | [Conditions](#conditions) | 34 |
-| [Trigger events](#trigger-events) | 49 |
+| [Trigger events](#trigger-events) | 50 |
 | [Trigger filters](#trigger-filters) | 36 |
 | [Static effects](#static-effects) | 94 |
 | [Player-wide statics](#player-wide-statics) | 45 |
@@ -37,7 +37,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
 | [Card-level face keys](#card-level-face-keys) | 6 |
 | [Card-level rider keys](#card-level-rider-keys) | 19 |
-| [Engine events](#engine-events) | 77 |
+| [Engine events](#engine-events) | 78 |
 
 ## Effect ops
 
@@ -480,6 +480,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `spell_copied` | `spell_copied` | A spell is copied (magecraft's other half). | [spell_copied, and why magecraft is two abilities](card-dsl.md#spell_copied-and-why-magecraft-is-two-abilities) |
 | `state` | `state` | A state holds (603.8): the trigger's `state` condition; no event. | [state — "When there are four or more page counters on this artifact"](card-dsl.md#state--when-there-are-four-or-more-page-counters-on-this-artifact) |
 | `token_created` | `token_created` | A token is created. | [Triggers](card-dsl.md#triggers) |
+| `turned_face_up` | `turned_face_up` | A face-down permanent is turned face up; the subject is that permanent, face up. | ["When this creature is turned face up"](card-dsl-cookbook.md#when-this-creature-is-turned-face-up) |
 | `upkeep` | `upkeep` | At the beginning of the upkeep. | [Triggers](card-dsl.md#triggers) |
 | `wins_coin_flip` | `coin_flipped` | A player wins a coin flip (705); a lost flip fires nothing. | ["Whenever you win a coin flip"](card-dsl-cookbook.md#whenever-you-win-a-coin-flip) |
 | `you_attack` | `attackers_declared` | You attack with one or more creatures. | ["Whenever you attack"](card-dsl-cookbook.md#whenever-you-attack) |
@@ -1193,6 +1194,7 @@ Every `EventType` the engine emits, and which trigger events listen to it. An ev
 | `transformed` |  |  | [Triggers](card-dsl.md#triggers) |
 | `turn_began` |  |  | [Triggers](card-dsl.md#triggers) |
 | `turn_skipped` |  |  | [Triggers](card-dsl.md#triggers) |
+| `turned_face_up` | `turned_face_up` |  | [Triggers](card-dsl.md#triggers) |
 | `untapped` | `becomes_untapped` |  | [Triggers](card-dsl.md#triggers) |
 | `upkeep` | `upkeep` |  | [Triggers](card-dsl.md#triggers) |
 | `zone_change` |  |  | [Triggers](card-dsl.md#triggers) |

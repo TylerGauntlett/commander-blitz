@@ -3941,6 +3941,50 @@ creature is still affected by both. And "any time you have priority" is here an
 ordinary activation rather than a special action, which is observable only to
 something that could respond to it, and nothing can.
 
+## "When this creature is turned face up"
+
+```jsonc
+// Kheru Spellsnatcher — "When this creature is turned face up, …"
+{ "kind": "triggered",
+  "trigger": { "event": "turned_face_up", "source": "self" },
+  "effects": [ … ] }
+
+// Growing Dread — "Whenever you turn a permanent face up, put a +1/+1 counter
+// on it."
+{ "kind": "triggered",
+  "trigger": { "event": "turned_face_up", "controller": "you" },
+  "effects": [
+    { "op": "add_counters", "counter": "+1/+1", "amount": { "const": 1 },
+      "objects": { "binding": "subject", "zone": "battlefield" } } ] }
+
+// Deathmist Raptor — "Whenever a permanent you control is turned face up, …",
+// heard from the graveyard.
+{ "kind": "triggered", "active_zones": ["graveyard"],
+  "trigger": { "event": "turned_face_up", "controller": "you" },
+  "effects": [ … ] }
+```
+
+The `turned_face_up` trigger event fires once each time a face-down permanent is
+turned face up, by morph, megamorph or manifest (702.37e, 701.34a). Its subject
+is that permanent **as it is now, face up**: `filter` asks what the card is (a
+`types: ["Creature"]` or `subtypes` filter reads the turned-up card, never the
+2/2 shell), `controller: "you"` asks who controls it, and `{"binding":
+"subject"}` is "it". Only a permanent's controller can turn it face up, so "a
+permanent you control is turned face up" and "you turn a permanent face up" are
+the same `controller: "you"`.
+
+`source: "self"` is "when **this** creature is turned face up". The ability is
+printed on the hidden card, and the shell has no abilities while it is down, so
+it is heard only because the event fires after the permanent is already face up.
+A card cast face up never fires it: it was never turned up.
+
+A megamorph's counter is already on when the event fires, so a "put a +1/+1
+counter on it" rider adds to it rather than racing it.
+
+`self_enters` and `permanent_enters` are the near misses and fire at the wrong
+moment: the permanent entered face down, and turning it up is not entering
+(708.8). `counter_placed` catches megamorph alone and misses morph and manifest.
+
 ## Cipher — the third direction an exile link can point
 
 ```jsonc
