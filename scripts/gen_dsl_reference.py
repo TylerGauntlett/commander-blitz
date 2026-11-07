@@ -417,6 +417,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     # ---- Stack -----------------------------------------------------------
     "counter": ("Stack", "Counter a spell or ability; `exiles` sends a spell it countered to exile instead of its owner's graveyard, `as` binds the cards it countered.",
                 H_COUNTER_TO_EXILE),
+    "uncounterable_this_turn": ("Stack", "Until end of turn, the controller's spells matching `affects_spells` (`cast`: only ones they cast; `next_spell`: only the next one) can't be countered; outlives its source.",
+                                '"Creature spells you cast this turn can\'t be countered"'),
     "copy_spell": ("Stack", "Copy a spell; `new_targets` lets the copy be re-aimed.",
                    '"You may choose new targets for the copy"'),
     "grant_plot": ("Stack", "Plot a card: exile it, castable free on a later turn.", "Plot"),

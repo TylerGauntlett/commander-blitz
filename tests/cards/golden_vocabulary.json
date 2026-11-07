@@ -1061,6 +1061,7 @@
   "two_piles",
   "unattach",
   "unblockable",
+  "uncounterable_this_turn",
   "untap",
   "win_game"
  ]

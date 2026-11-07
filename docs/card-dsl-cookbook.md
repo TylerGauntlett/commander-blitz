@@ -7601,6 +7601,47 @@ The near miss is `grant_ability` of a `replace_token_creation` static to the
 walker: that would end the moment the walker left, which the printed effect
 does not, and the loader refuses granting a player-wide static anyway.
 
+## "Creature spells you cast this turn can't be countered"
+
+```jsonc
+// Domri, Anarch of Bolas's +1, after its add_mana
+{ "op": "uncounterable_this_turn", "affects_spells": { "types": ["Creature"] }, "cast": true }
+// Veil of Summer's second sentence
+{ "op": "uncounterable_this_turn" }
+// Insist: "The next creature spell you cast this turn can't be countered."
+{ "op": "uncounterable_this_turn", "affects_spells": { "types": ["Creature"] }, "next_spell": true }
+```
+
+The one-shot, timed form of the `spells_cant_be_countered` static, for
+`multiply_token_creation`'s reason: a loyalty ability or an instant leaves no
+permanent to carry a static, and the effect must outlive its source and end
+with the turn. It writes an `UncounterableGrant` for the resolving controller;
+the `counter` op asks it beside the static, and the cleanup step sweeps it.
+
+- **`affects_spells`** is the static's printed-face filter (`types`,
+  `any_types`, `subtypes`, `colors`, …). Omitted, it covers every spell the
+  player controls. `controller` is refused: the seat is always the resolving
+  controller, because every printed sentence says "you". A chosen type or
+  colour is substituted as the effect resolves.
+- **`cast`** is the word "cast" in "spells you cast this turn": a copy the
+  player controls was never cast (707.10), so it is not covered. Veil of
+  Summer's "spells you control" omits it.
+- **`next_spell`** is "the next … spell you cast this turn": the first matching
+  cast binds the grant to that spell (`GameState._tally`'s SPELL_CAST arm, the
+  fold `grant_flash_permission`'s `next_spell` is spent by), and the grant then
+  covers that spell for as long as it is on the stack and nothing else. A cast
+  the filter misses leaves it waiting.
+- **`duration`** is optional and is `"this_turn"`.
+- **It is asked at the counter, not at the grant** (611.2c: it modifies a rule,
+  not a characteristic). A matching spell cast later this turn is covered, and
+  so is one the player already had on the stack — which is what Veil of Summer
+  cast in response to a counterspell is for.
+
+"Can't be countered **by blue or black spells**" (Autumn's Veil) is narrower
+than anything this op says and is refused (`by`, `countered_by`) rather than
+loaded as the stronger card. The near miss is `mana_uncounterable`, which covers
+only the spell that mana paid for and only on a mana ability.
+
 ## "If a player would lose life, they lose twice that much instead"
 
 ```jsonc

@@ -38,8 +38,12 @@ from .structs import (
     TriggerInstance,
     TurnLedger,
     Unblockable,
+    UncounterableGrant,
 )
-from .temp_effects import consume_next_spell_flash_permissions
+from .temp_effects import (
+    bind_next_spell_uncounterable_grants,
+    consume_next_spell_flash_permissions,
+)
 
 if TYPE_CHECKING:  # pragma: no cover
     from commanderblitz.cards.registry import CardRegistry
@@ -454,6 +458,12 @@ class GameState:
     #: flash" -- see :class:`structs.FlashPermission`. Read by
     #: `casting._timing_ok`; empty in every game that plays none of these.
     flash_permissions: list[FlashPermission] = field(default_factory=list)
+    #: "Creature spells you cast this turn can't be countered" -- see
+    #: :class:`structs.UncounterableGrant`. The timed twin of the
+    #: `spells_cant_be_countered` static, read by the `counter` op beside it
+    #: and swept in the cleanup step; empty in every game that plays none of
+    #: these.
+    uncounterable_grants: list[UncounterableGrant] = field(default_factory=list)
     #: "Until your next turn, your opponents can't cast spells from anywhere
     #: other than their hands" -- see :class:`structs.CastLock`.
     #:
@@ -1092,6 +1102,12 @@ class GameState:
                 # reason `nth` is: every cast path passes through this fold.
                 if self.flash_permissions and (spell := data.get("oid")) in self.objects:
                     consume_next_spell_flash_permissions(self, pid, self.card(spell))
+                # "The next creature spell you cast this turn can't be
+                # countered" (Insist) -- bound to the spell by the same fold.
+                if self.uncounterable_grants and (spell := data.get("oid")) in self.objects:
+                    bind_next_spell_uncounterable_grants(
+                        self, pid, self.card(spell), data.get("sid")
+                    )
                 # The count is a static's input (`spells_cast_this_turn`, Captain
                 # Mar-Vell's "as long as an opponent has cast a spell this
                 # turn"), and `chars` caches per `char_version`.

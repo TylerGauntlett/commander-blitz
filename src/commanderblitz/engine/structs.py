@@ -1144,6 +1144,57 @@ class TokenMultiplier:
     source: int | None = None
 
 
+#: The durations an `UncounterableGrant` may carry. "This turn" is the only one
+#: printed on a card that installs one.
+UNCOUNTERABLE_GRANT_DURATIONS = ("this_turn",)
+
+
+@dataclass(frozen=True)
+class UncounterableGrant:
+    """"Creature spells you cast this turn can't be countered." -- Domri,
+    Anarch of Bolas's +1. Rules 611.2a, 611.2c, 701.6a.
+
+    The timed twin of a `spells_cant_be_countered` static, and the difference
+    is who holds it -- `TokenMultiplier`'s argument exactly. A static is read
+    off a permanent for as long as that permanent is on the battlefield; this
+    is the continuous effect a *resolved* ability or spell created (611.2a), so
+    it belongs to the table and keeps applying after the walker has died or
+    Veil of Summer has gone to the graveyard.
+
+    It modifies a rule rather than a characteristic, so 611.2c lets it reach
+    objects that did not exist as it resolved: it is asked whenever a `counter`
+    op tries, of whatever spell is on the stack then. A spell its player
+    already had on the stack is covered too, which is what Veil of Summer cast
+    in response to a counterspell is for.
+
+    ``affects_spells`` is the static's printed-face filter, with the chosen
+    type and colour already substituted from the source as it resolved. The
+    seat is ``player``, never the filter's: every printed sentence says "you".
+
+    ``cast`` is "spells you **cast**" (Domri) rather than "spells you
+    **control**" (Veil of Summer): a copy was never cast (707.10), so it is
+    not covered. ``next_spell`` is "the next creature spell you cast this turn"
+    (Insist, Overmaster): the first matching cast **binds** the grant to its
+    stack item (``sid``) and from then on the grant covers that spell alone --
+    see `temp_effects.bind_next_spell_uncounterable_grants`.
+    """
+
+    #: Whose spells are covered. Fixed as the effect resolves.
+    player: int
+    #: The printed-face filter; ``None`` covers every spell of the player's.
+    affects_spells: Mapping[str, Any] | None = None
+    #: Only spells the player cast, not copies they control.
+    cast: bool = False
+    #: Single-use: the first matching cast binds the grant to that spell.
+    next_spell: bool = False
+    #: For a bound ``next_spell`` grant: the stack item it now covers.
+    sid: int | None = None
+    duration: str = "this_turn"
+    #: The object whose ability installed it, for the log. Not part of the
+    #: lifetime.
+    source: int | None = None
+
+
 LIFE_LOCK_DURATIONS =("this_turn", "until_your_next_turn")
 
 
