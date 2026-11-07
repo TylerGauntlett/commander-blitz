@@ -2186,3 +2186,23 @@ class TestTheAbzanArmorTokens:
     def test_the_colorless_wall_is_still_zero_power_with_reach(self, pool):
         wall = pool.get("wall_0_3_c_defender_reach")
         assert wall.power == 0 and not wall.colors and "reach" in wall.keywords
+
+
+class TestTheJumpScareTokens:
+    """Sandwurm Convergence: *"create a 5/5 green Wurm creature token."* No
+    keyword, which is what separates it from the near miss beside it: the
+    red-green Elemental is the pool's other vanilla 5/5."""
+
+    def test_the_wurm_is_a_green_five_five_with_no_keywords(self, pool):
+        token = pool.get("wurm_5_5_g")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (5, 5)
+        assert sorted(token.colors) == ["G"]
+        assert list(token.subtypes) == ["Wurm"]
+        assert not token.keywords
+        assert not token.abilities
+
+    def test_the_red_green_five_five_is_still_an_elemental(self, pool):
+        other = pool.get("elemental_5_5_rg")
+        assert list(other.subtypes) == ["Elemental"]
+        assert sorted(other.colors) == ["G", "R"]

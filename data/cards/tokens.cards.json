@@ -4286,6 +4286,26 @@
       "colors": [],
       "color_identity": [],
       "is_token": true
+    },
+    {
+      "id": "wurm_5_5_g",
+      "name": "Wurm Token",
+      "oracle_text": "5/5 green Wurm creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Wurm"
+      ],
+      "power": 5,
+      "toughness": 5,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true
     }
   ]
 }
