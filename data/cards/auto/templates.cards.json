@@ -39819,6 +39819,126 @@
       ]
     },
     {
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "convert_to_slime",
+      "mana_cost": "{3}{B}{G}",
+      "name": "Convert to Slime",
+      "oracle_text": "Destroy up to one target artifact, up to one target creature, and up to one target enchantment.\nDelirium — Then if there are four or more card types among cards in your graveyard, create an X/X green Ooze creature token, where X is the total mana value of permanents destroyed this way.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "destroyed",
+          "objects": {
+            "union": [
+              {
+                "target": "t1"
+              },
+              {
+                "target": "t2"
+              },
+              {
+                "target": "t3"
+              }
+            ]
+          },
+          "op": "destroy"
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "distinct": {
+                "objects": {
+                  "controller": "you",
+                  "zone": "graveyard"
+                },
+                "of": "card_type"
+              }
+            },
+            "right": {
+              "const": 4
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "player": "you",
+              "power": {
+                "mana_value_of": {
+                  "objects": {
+                    "binding": "destroyed"
+                  }
+                }
+              },
+              "token": "ooze_x_x_g",
+              "toughness": {
+                "mana_value_of": {
+                  "objects": {
+                    "binding": "destroyed"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "optional": true,
+          "selector": {
+            "controller": "any",
+            "types": [
+              "Artifact"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "t2",
+          "kind": "permanent",
+          "optional": true,
+          "selector": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "t3",
+          "kind": "permanent",
+          "optional": true,
+          "selector": {
+            "controller": "any",
+            "types": [
+              "Enchantment"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {

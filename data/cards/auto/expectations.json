@@ -3338,6 +3338,14 @@
   "contingency_plan": {
     "zone": "graveyard"
   },
+  "convert_to_slime": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 4
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
+  },
   "cooperation": {
     "zone": [
       "battlefield",

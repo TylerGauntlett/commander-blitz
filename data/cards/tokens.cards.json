@@ -1883,6 +1883,27 @@
       "is_token": true
     },
     {
+      "id": "ooze_x_x_g",
+      "name": "Ooze Token",
+      "oracle_text": "X/X green Ooze creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Ooze"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "variable_pt": true,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true
+    },
+    {
       "id": "illusion_1_1_u_flying",
       "name": "Illusion",
       "oracle_text": "1/1 blue Illusion creature token with flying.",

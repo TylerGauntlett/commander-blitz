@@ -52912,12 +52912,12 @@
     },
     "Convert to Slime": {
       "edhrec_rank": 8801,
-      "gate": "template",
+      "gate": null,
       "name": "Convert to Slime",
-      "reason": "no template for: Destroy up to one target artifact, up to one target creature, and up to one target enchant",
+      "reason": "",
       "scryfall_id": "03f67156-0a79-43ee-8b7d-5a788a2107f6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Converter Beast": {
