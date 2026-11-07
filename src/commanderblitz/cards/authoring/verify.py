@@ -528,7 +528,9 @@ def build_sandbox(registry: CardRegistry, card_id: str, *, in_hand: bool = True)
             "island",
         ],
     )
-    builder.graveyard(0, _props(registry, OWN_GRAVEYARD_ROLES))
+    builder.graveyard(
+        0, _props(registry, OWN_GRAVEYARD_ROLES + spare_graveyard_roles(under_test))
+    )
     # Forty cards, and the **second** one is deliberately not a land. The pile
     # used to be forty basic lands, which made Cultivator Colossus -- "put a
     # land card from your hand onto the battlefield, draw a card, and repeat
@@ -595,6 +597,31 @@ def spare_cards_in_hand(card: CardDef | None) -> int:
     if card is None or card.additional_cost is None:
         return 1
     return max(1, card.additional_cost.discard)
+
+
+def spare_graveyard_roles(card: CardDef | None) -> tuple[str, ...]:
+    """Extra creature cards for the sandbox graveyard, for ``card``'s own cost.
+
+    None, unless the card's additional cost exiles more creature cards from
+    your graveyard than :data:`OWN_GRAVEYARD_ROLES` holds. Skaab Ruinator's
+    "exile three creature cards from your graveyard" is never payable against
+    two, so gate 4 would reject a card it cannot cast rather than one that is
+    wrong -- the same trap :func:`spare_cards_in_hand` closes for discard.
+
+    Added only when the cost needs them, so every other card's graveyard stays
+    at two and no authored `graveyard_size` moves.
+    """
+    cost = card.additional_cost if card is not None else None
+    selector = cost.exile_from_graveyard if cost is not None else None
+    if not selector:
+        return ()
+    types = selector.get("types")
+    if types is not None and list(types) != ["Creature"]:
+        return ()
+    needed = selector.get("count", 1)
+    if not isinstance(needed, int):
+        return ()
+    return ("small_creature",) * max(0, needed - len(OWN_GRAVEYARD_ROLES))
 
 
 #: The spells every card with a `kind: "spell"` target finds on the stack.
