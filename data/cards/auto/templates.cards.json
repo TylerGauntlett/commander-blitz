@@ -77110,6 +77110,48 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, create a token that's a copy of this creature.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "giant_adephage",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{5}{G}{G}",
+      "name": "Giant Adephage",
+      "oracle_text": "Trample\nWhenever this creature deals combat damage to a player, create a token that's a copy of this creature.",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Insect"
+      ],
+      "toughness": 7,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -93996,6 +94038,50 @@
       "name": "Hornet Nest",
       "oracle_text": "Defender (This creature can't attack.)\nWhenever this creature is dealt damage, create that many 1/1 green Insect creature tokens with flying and deathtouch. (Any amount of damage a creature with deathtouch deals to a creature is enough to destroy it.)",
       "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Insect"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "create_token",
+              "token": "insect_1_1_g_flying_deathtouch"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, create four 1/1 green Insect creature tokens with flying and deathtouch.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "hornet_queen",
+      "keywords": [
+        "flying",
+        "deathtouch"
+      ],
+      "mana_cost": "{4}{G}{G}{G}",
+      "name": "Hornet Queen",
+      "oracle_text": "Flying, deathtouch\nWhen this creature enters, create four 1/1 green Insect creature tokens with flying and deathtouch.",
+      "power": 2,
       "source": "auto",
       "subtypes": [
         "Insect"
@@ -128353,6 +128439,120 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "mill",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "graveyard"
+                }
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, mill three cards, then put a +1/+1 counter on this creature for each creature card in your graveyard",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "moldgraf_millipede",
+      "mana_cost": "{4}{G}",
+      "name": "Moldgraf Millipede",
+      "oracle_text": "When this creature enters, mill three cards, then put a +1/+1 counter on this creature for each creature card in your graveyard. (To mill three cards, put the top three cards of your library into your graveyard.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Insect",
+        "Horror"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "exile"
+            },
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "controller": "you",
+                "count": 2,
+                "random": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, exile it, then return two creature cards at random from your graveyard to the battlefield.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "moldgraf_monstrosity",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{4}{G}{G}{G}",
+      "name": "Moldgraf Monstrosity",
+      "oracle_text": "Trample\nWhen this creature dies, exile it, then return two creature cards at random from your graveyard to the battlefield.",
+      "power": 8,
+      "source": "auto",
+      "subtypes": [
+        "Insect"
+      ],
+      "toughness": 8,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_player": "you",
           "affects_spells": {
             "not_types": [
@@ -130549,6 +130749,39 @@
       "toughness": 6,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "mulch",
+      "mana_cost": "{1}{G}",
+      "name": "Mulch",
+      "oracle_text": "Reveal the top four cards of your library. Put all land cards revealed this way into your hand and the rest into your graveyard.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 4
+          },
+          "destination": "hand",
+          "objects": {
+            "count": "all",
+            "types": [
+              "Land"
+            ]
+          },
+          "op": "look_at_top",
+          "player": "you",
+          "rest_to": "graveyard"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -138514,6 +138747,113 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, put a +1/+1 counter on target creature.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Delirium — At the beginning of each opponent's upkeep, if there are four or more card types among cards in your graveyard, put a +1/+1 counter on target creature.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "distinct": {
+                  "objects": {
+                    "controller": "you",
+                    "zone": "graveyard"
+                  },
+                  "of": "card_type"
+                }
+              },
+              "right": {
+                "const": 4
+              }
+            },
+            "controller": "opponent",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "obsessive_skinner",
+      "mana_cost": "{1}{G}",
+      "name": "Obsessive Skinner",
+      "oracle_text": "When this creature enters, put a +1/+1 counter on target creature.\nDelirium — At the beginning of each opponent's upkeep, if there are four or more card types among cards in your graveyard, put a +1/+1 counter on target creature.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Rogue"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
       ]
     },
     {

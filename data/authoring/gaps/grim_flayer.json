@@ -1,0 +1,16 @@
+{
+  "card_id": "grim_flayer",
+  "name": "Grim Flayer",
+  "oracle_text": "Trample\nWhenever this creature deals combat damage to a player, surveil 3. (Look at the top three cards of your library, then put any number of them into your graveyard and the rest on top of your library in any order.)\nDelirium — This creature gets +2/+2 as long as there are four or more card types among cards in your graveyard.",
+  "blocked_sentences": [
+    "Delirium — This creature gets +2/+2 as long as there are four or more card types among cards in your graveyard."
+  ],
+  "needs": [{
+    "capability": "delirium",
+    "kind": "value",
+    "what": "a static-ability value counting the distinct card types among cards in your graveyard (the `distinct` value with `of: card_type` over `{zone: graveyard, controller: you}`), usable in a static's `condition` cmp so a `buff` static with `affects: {self_only: true}` and +2/+2 switches on at four or more",
+    "why_existing_wont_do": "`distinct` exists in `value_keys` (Demolisher Spawn's trigger condition and Shifting Woodland's activation condition use it) but is not in `static_value_keys`, and no `static_condition_keys` entry reads graveyard card types; `count` gives the number of cards, not of distinct types"
+  }],
+  "closest_existing": ["distinct", "count", "buff"],
+  "confidence": "high"
+}

@@ -6693,6 +6693,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "giant_adephage": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "giant_cockroach": {
     "zone": "battlefield"
   },
@@ -8054,6 +8058,14 @@
   },
   "hornet_nest": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "hornet_queen": {
+    "battlefield_count": 37,
+    "tokens": {
+      "count": 4,
+      "id": "insect_1_1_g_flying_deathtouch"
+    },
     "zone": "battlefield"
   },
   "host_of_the_hereafter": {
@@ -10906,6 +10918,23 @@
     },
     "zone": "battlefield"
   },
+  "moldgraf_millipede": {
+    "counters": {
+      "amount": 2,
+      "kind": "+1/+1"
+    },
+    "graveyard_size": {
+      "0": 5
+    },
+    "library_size": {
+      "0": 37
+    },
+    "zone": "battlefield"
+  },
+  "moldgraf_monstrosity": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "molecule_man": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -11122,6 +11151,18 @@
   },
   "mugato": {
     "zone": "battlefield"
+  },
+  "mulch": {
+    "graveyard_size": {
+      "0": 4
+    },
+    "hand_size": {
+      "0": 4
+    },
+    "library_size": {
+      "0": 36
+    },
+    "zone": "graveyard"
   },
   "mulldrifter": {
     "battlefield_count": 33,
@@ -11757,6 +11798,10 @@
     "library_size": {
       "0": 40
     },
+    "zone": "battlefield"
+  },
+  "obsessive_skinner": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "obsianus_golem": {

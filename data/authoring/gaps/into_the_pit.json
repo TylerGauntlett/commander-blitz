@@ -1,0 +1,18 @@
+{
+  "card_id": "into_the_pit",
+  "name": "Into the Pit",
+  "oracle_text": "You may look at the top card of your library any time.\nYou may cast spells from the top of your library by sacrificing a nonland permanent in addition to paying their other costs.",
+  "blocked_sentences": [
+    "You may cast spells from the top of your library by sacrificing a nonland permanent in addition to paying their other costs."
+  ],
+  "needs": [
+    {
+      "capability": "cast_from_library_top_additional_cost",
+      "kind": "static_effect",
+      "what": "a `cast_from_library_top` static that carries an additional cost imposed on every spell cast through it -- here a `sacrifice` cost of one nonland permanent ({\"sacrifice\": {\"not_types\": [\"Land\"]}}) paid on top of the spell's own mana and additional costs (601.2b/601.2h), with no affects_spells filter and no pay_life_instead",
+      "why_existing_wont_do": "`cast_from_library_top` carries only `pay_life_instead` (Bolas's Citadel's alternative price), `affects_spells` and `cast_gains_keywords`; the loader compiles `cost` onto a static only for `spell_cost_increase` and `granted_alternative_cost`, and refuses a filterless, unpriced `cast_from_library_top`. Nothing lets the permission demand a sacrifice as an additional cost, and writing it without the price would be every spell castable off the top for free extra -- a much stronger card"
+    }
+  ],
+  "closest_existing": ["cast_from_library_top", "look_at_library_top", "granted_alternative_cost"],
+  "confidence": "high"
+}

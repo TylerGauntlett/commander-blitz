@@ -108332,12 +108332,12 @@
     },
     "Giant Adephage": {
       "edhrec_rank": 2499,
-      "gate": "template",
+      "gate": null,
       "name": "Giant Adephage",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, create a token that's a copy of th",
+      "reason": "",
       "scryfall_id": "893b22a7-b46c-4473-8d88-11ddf4406af1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Giant Albatross": {
@@ -130102,12 +130102,12 @@
     },
     "Hornet Queen": {
       "edhrec_rank": 1687,
-      "gate": "template",
+      "gate": null,
       "name": "Hornet Queen",
-      "reason": "no template for: When this creature enters, create four 1/1 green Insect creature tokens with flying and de",
+      "reason": "",
       "scryfall_id": "b2af9184-df81-413b-abcf-331c4471e6d4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hornet Sting": {
@@ -177452,22 +177452,22 @@
     },
     "Moldgraf Millipede": {
       "edhrec_rank": 9309,
-      "gate": "template",
+      "gate": null,
       "name": "Moldgraf Millipede",
-      "reason": "no template for: When this creature enters, mill three cards, then put a +1/+1 counter on this creature for",
+      "reason": "",
       "scryfall_id": "3a163ec7-4c9a-4d45-965c-e5ddeb07a3e0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Moldgraf Monstrosity": {
       "edhrec_rank": 7555,
-      "gate": "template",
+      "gate": null,
       "name": "Moldgraf Monstrosity",
-      "reason": "no template for: When this creature dies, exile it, then return two creature cards at random from your grav",
+      "reason": "",
       "scryfall_id": "714ba062-f8ae-4ae6-a1c2-8fa093cc0fb2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Moldgraf Scavenger": {
@@ -180692,12 +180692,12 @@
     },
     "Mulch": {
       "edhrec_rank": 4610,
-      "gate": "template",
+      "gate": null,
       "name": "Mulch",
-      "reason": "no template for: Reveal the top four cards of your library. Put all land cards revealed this way into your ",
+      "reason": "",
       "scryfall_id": "9f6afdab-b41f-4713-b74a-e90e8bbbaf0a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Muldrotha, the Gravetide": {
@@ -190782,12 +190782,12 @@
     },
     "Obsessive Skinner": {
       "edhrec_rank": 13905,
-      "gate": "template",
+      "gate": null,
       "name": "Obsessive Skinner",
-      "reason": "no template for: When this creature enters, put a +1/+1 counter on target creature",
+      "reason": "",
       "scryfall_id": "a4276c32-e3f8-45e0-8202-43410b1f3d2e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Obsessive Stitcher": {

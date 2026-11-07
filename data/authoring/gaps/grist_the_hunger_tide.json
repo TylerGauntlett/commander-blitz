@@ -1,0 +1,39 @@
+{
+  "card_id": "grist_the_hunger_tide",
+  "name": "Grist, the Hunger Tide",
+  "oracle_text": "As long as Grist isn't on the battlefield, it's a 1/1 Insect creature in addition to its other types.\n+1: Create a 1/1 black and green Insect creature token, then mill a card. If an Insect card was milled this way, put a loyalty counter on Grist and repeat this process.\n−2: You may sacrifice a creature. When you do, destroy target creature or planeswalker.\n−5: Each opponent loses life equal to the number of creature cards in your graveyard.",
+  "blocked_sentences": [
+    "As long as Grist isn't on the battlefield, it's a 1/1 Insect creature in addition to its other types.",
+    "+1: Create a 1/1 black and green Insect creature token, then mill a card. If an Insect card was milled this way, put a loyalty counter on Grist and repeat this process."
+  ],
+  "needs": [
+    {
+      "capability": "insect_token_bg",
+      "kind": "token",
+      "what": "a 1/1 black and green Insect creature token (e.g. insect_1_1_bg)",
+      "why_existing_wont_do": "token_ids has insect_1_1_g (green only), insect_1_1_b_flying (black, flying) and the black-green pest_1_1_bg / worm_1_1_bg, but no black-green Insect with no abilities; a near token would be the wrong colour or creature type"
+    },
+    {
+      "capability": "repeat_while",
+      "kind": "op",
+      "what": "a loop op that repeats a block of effects while a condition read after each iteration holds: create token, mill one card bound as 'milled', and if the milled card has subtype Insect, add a loyalty counter to self and run the block again; stops when a non-Insect is milled or the library is empty",
+      "why_existing_wont_do": "repeat takes only a fixed amount and effects, and if runs its branch once; nothing re-enters the block conditionally on the outcome of the previous pass"
+    },
+    {
+      "capability": "characteristics_outside_battlefield",
+      "kind": "static_effect",
+      "what": "a characteristic-defining static that works in every zone except the battlefield (hand, library, graveyard, exile, stack, command) and adds the Creature type, Insect subtype and base 1/1, so the card is a creature card in the graveyard and a creature spell when cast from the command zone",
+      "why_existing_wont_do": "set_types / set_creature_types / set_pt are battlefield statics over permanents; active_zones lets a static be gathered from other zones, but there is no evidence that type or P/T changes from it are applied to the card's own characteristics in hand, graveyard, library, stack or command zone, nor any way to say 'every zone but the battlefield'"
+    }
+  ],
+  "closest_existing": [
+    "repeat",
+    "if",
+    "mill",
+    "set_types",
+    "set_pt",
+    "active_zones",
+    "insect_1_1_g"
+  ],
+  "confidence": "high"
+}

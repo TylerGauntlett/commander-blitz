@@ -1,0 +1,61 @@
+{
+  "card": {
+    "id": "ishkanah_grafwidow",
+    "name": "Ishkanah, Grafwidow",
+    "oracle_text": "Reach\nDelirium — When Ishkanah enters, if there are four or more card types among cards in your graveyard, create three 1/2 green Spider creature tokens with reach.\n{6}{B}: Target opponent loses 1 life for each Spider you control.",
+    "mana_cost": "{4}{G}",
+    "types": ["Creature"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Spider"],
+    "power": 3,
+    "toughness": 5,
+    "colors": ["G"],
+    "color_identity": ["B", "G"],
+    "keywords": ["reach"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Delirium — When Ishkanah enters, if there are four or more card types among cards in your graveyard, create three 1/2 green Spider creature tokens with reach.",
+        "trigger": {
+          "event": "self_enters",
+          "source": "self",
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "distinct": {
+                "objects": {"controller": "you", "zone": "graveyard"},
+                "of": "card_type"
+              }
+            },
+            "right": {"const": 4}
+          }
+        },
+        "effects": [
+          {"op": "create_token", "token": "spider_1_2_g_reach", "amount": {"const": 3}}
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{6}{B}: Target opponent loses 1 life for each Spider you control.",
+        "cost": {"mana": "{6}{B}"},
+        "targets": [
+          {"id": "t1", "kind": "player", "count": 1, "selector": {"controller": "opponent"}}
+        ],
+        "effects": [
+          {
+            "op": "lose_life",
+            "player": {"target": "t1"},
+            "amount": {
+              "count": {"zone": "battlefield", "controller": "you", "subtypes": ["Spider"]}
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "life": {"0": 40, "1": 40}
+  }
+}

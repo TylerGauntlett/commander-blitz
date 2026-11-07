@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**213 cards** blocked by **196** capabilities.
+**217 cards** blocked by **200** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -18,6 +18,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
 | [put-into-graveyard-from-anywhere](#put-into-graveyard-from-anywhere) | 5 | 256 | trigger_event |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
+| [delirium](#delirium) | 4 | 1799 | value |
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
 | [copy-exception-set-subtypes](#copy-exception-set-subtypes) | 3 | 1740 | engine, op |
@@ -31,7 +32,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [copy-exception-ability](#copy-exception-ability) | 2 | 6941 | op |
 | [council-s-dilemma](#council-s-dilemma) | 2 | 4067 | decision |
-| [delirium](#delirium) | 2 | 1799 | value |
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 2 | 2389 | engine |
 | [escape](#escape) | 2 | 388 | engine, static_effect |
@@ -60,8 +60,10 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cards-exiled-trigger](#cards-exiled-trigger) | 1 | 1303 | trigger_event |
 | [cards-to-your-graveyard-from-zones-this-turn](#cards-to-your-graveyard-from-zones-this-turn) | 1 | 7412 | value |
 | [cast-from-hand-result](#cast-from-hand-result) | 1 | 7016 | op |
+| [cast-from-library-top-additional-cost](#cast-from-library-top-additional-cost) | 1 | 5828 | static_effect |
 | [cast-restriction-self](#cast-restriction-self) | 1 | 2559 | engine |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
+| [characteristics-outside-battlefield](#characteristics-outside-battlefield) | 1 | 1924 | static_effect |
 | [choose-card-type-from-list](#choose-card-type-from-list) | 1 | 611 | op |
 | [chosen-card-type-cost-reduction](#chosen-card-type-cost-reduction) | 1 | 611 | static_effect |
 | [chosen-number](#chosen-number) | 1 | 1610 | engine |
@@ -124,6 +126,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
 | [harmonize](#harmonize) | 1 | 7442 | cost |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
+| [insect-token-bg](#insect-token-bg) | 1 | 1924 | token |
 | [karox-bladewing](#karox-bladewing) | 1 | 8889 | token |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
 | [kicker](#kicker) | 1 | 868 | selector |
@@ -170,6 +173,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [remove-x-counters-cost](#remove-x-counters-cost) | 1 | 5399 | cost |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
+| [repeat-while](#repeat-while) | 1 | 1924 | op |
 | [replace-damage-noncombat](#replace-damage-noncombat) | 1 | 4163 | static_effect |
 | [replace-dies-link](#replace-dies-link) | 1 | 2740 | replacement |
 | [replace-graveyard-with-counter](#replace-graveyard-with-counter) | 1 | 386 | replacement |
@@ -384,6 +388,32 @@ Blocks **5** cards.
   - Whenever you cast your first spell with {X} in its mana cost each turn, put X +1/+1 counters on Nev.
 - **Lattice Library** (rank 10607) — `lattice_library`
   - When this enchantment enters and whenever you cast your first spell with {X} in its mana cost each turn, create a 0/0 green and blue Fractal creature token. Put a number of +1/+1 counters on it equal to the number of study counters on this enchantment.
+
+</details>
+
+## delirium
+
+Blocks **4** cards.
+
+- **(value)** a static-ability value counting the distinct card types among cards in your graveyard (the `distinct` value with `of: card_type` over `{zone: graveyard, controller: you}`), usable in a static's `condition` cmp so a `grant_keyword` static with `affects: {self_only: true}` can switch deathtouch on at four or more
+  <br>Why the existing vocabulary won't do: `distinct` exists in `value_keys` (Shifting Woodland's activated-ability condition uses it) but is not in `static_value_keys`, and no `static_condition_keys` entry reads graveyard card types; `count` gives the number of cards, not of distinct types
+- **(value)** a static-legal counting leaf for the number of *distinct card types* among the cards in a zone -- the natural spelling being `{"distinct": {"of": "card_type", "objects": {"zone": "graveyard", "controller": "you"}}}`, i.e. a third `DISTINCT_OF` entry beside `power` and `basic_land_type` (src/commanderblitz/engine/effects/values.py, DISTINCT_OF) that counts the union of `card.types` over the pool, plus admission of `distinct` into `STATIC_VALUE_KEYS` (src/commanderblitz/cards/loader/vocabulary.py) so a static `condition`'s `cmp` can hold it. That one leaf turns on every delirium card at once -- the printed clause is always "four or more card types among cards in your graveyard" -- and the same leaf reads "the number of card types among cards in your graveyard" on the effect side (Traverse the Ulvenwald, Emrakul's Evangel-style scaling), so it wants to land in `VALUE_KEYS` too.
+  <br>Why the existing vocabulary won't do: `count` is the closest and is the wrong measurement: it counts *objects* matching a filter, so a graveyard of four creature cards reads 4 and satisfies a `>= 4` that delirium must reject, while a graveyard of one instant, one land, one artifact and one creature also reads 4 and passes by coincidence. That is the same distinction `values.py` already spells out for domain -- "five Forests are five and not one". `distinct` is the leaf that does count distinct values, but it is blocked twice over: its `DISTINCT_OF` allows only `power` (coven) and `basic_land_type` (domain), with no card-type entry, and it is absent from `STATIC_VALUE_KEYS` -- which is `{const, count, mana_symbols, counters_on, permanents_entered_this_turn}` plus the life and per-player leaves -- so even with a card-type entry it could not be named inside a static's `condition`. The `zone: graveyard` support in static counting filters that makes Threshold (Nimble Mongoose, `count` >= 7) and Hellbent expressible therefore reaches the graveyard but cannot ask what is in it. The remaining temptation is to enumerate: `any` of `all`-of-`exists` nodes over every 4-subset of the card types, which is 126 branches for nine types, silently wrong the moment a tenth type is printed, and an approximation rather than the sentence. Only this clause is blocked -- the first line, "Whenever you cast a noncreature spell, surveil 1", is a plain `spell_cast` trigger filtered `not_types: ["Creature"]` with the `surveil` op, and the consequences of the delirium clause (`buff` +2/+2, `grant_keyword` flying, `attacks_if_able`) are all present static effects -- so no partial answer was written.
+- **(value)** a static-ability value counting the distinct card types among cards in your graveyard (the `distinct` value with `of: card_type` over `{zone: graveyard, controller: you}`), usable in a static's `condition` cmp so a `buff` static with `affects: {self_only: true}`, power 2 and toughness 2 switches on at four or more
+  <br>Why the existing vocabulary won't do: `distinct` is in `value_keys` (Demolisher Spawn's trigger condition and Shifting Woodland's activation condition use it) but not in `static_value_keys`, so a static's `condition` cmp cannot read it; `count` gives the number of cards, not of distinct types, and `static_filter_keys` has no `zone` to point an `exists` at the graveyard per type
+- **(value)** a static-ability value counting the distinct card types among cards in your graveyard (the `distinct` value with `of: card_type` over `{zone: graveyard, controller: you}`), usable in a static's `condition` cmp so a `buff` static with `affects: {self_only: true}` and +2/+2 switches on at four or more
+  <br>Why the existing vocabulary won't do: `distinct` exists in `value_keys` (Demolisher Spawn's trigger condition and Shifting Woodland's activation condition use it) but is not in `static_value_keys`, and no `static_condition_keys` entry reads graveyard card types; `count` gives the number of cards, not of distinct types
+
+<details><summary>Cards waiting on this</summary>
+
+- **Dragon's Rage Channeler** (rank 1799) — `dragon_s_rage_channeler`
+  - Delirium — As long as there are four or more card types among cards in your graveyard, this creature gets +2/+2, has flying, and attacks each combat if able.
+- **Gnarlwood Dryad** (rank 8507) — `gnarlwood_dryad`
+  - Delirium — This creature gets +2/+2 as long as there are four or more card types among cards in your graveyard.
+- **Deathcap Cultivator** (rank 9177) — `deathcap_cultivator`
+  - Delirium — This creature has deathtouch as long as there are four or more card types among cards in your graveyard.
+- **Grim Flayer** (rank 10829) — `grim_flayer`
+  - Delirium — This creature gets +2/+2 as long as there are four or more card types among cards in your graveyard.
 
 </details>
 
@@ -660,24 +690,6 @@ Blocks **2** cards.
   - Council's dilemma — Starting with you, each player votes for past or present.
   - You mill a card for each past vote, then Fateful Tempest deals damage to each opponent equal to the total mana value of cards milled this way.
   - Exile the top card of your library for each present vote.
-
-</details>
-
-## delirium
-
-Blocks **2** cards.
-
-- **(value)** a static-ability value counting the distinct card types among cards in your graveyard (the `distinct` value with `of: card_type` over `{zone: graveyard, controller: you}`), usable in a static's `condition` cmp so a `grant_keyword` static with `affects: {self_only: true}` can switch deathtouch on at four or more
-  <br>Why the existing vocabulary won't do: `distinct` exists in `value_keys` (Shifting Woodland's activated-ability condition uses it) but is not in `static_value_keys`, and no `static_condition_keys` entry reads graveyard card types; `count` gives the number of cards, not of distinct types
-- **(value)** a static-legal counting leaf for the number of *distinct card types* among the cards in a zone -- the natural spelling being `{"distinct": {"of": "card_type", "objects": {"zone": "graveyard", "controller": "you"}}}`, i.e. a third `DISTINCT_OF` entry beside `power` and `basic_land_type` (src/commanderblitz/engine/effects/values.py, DISTINCT_OF) that counts the union of `card.types` over the pool, plus admission of `distinct` into `STATIC_VALUE_KEYS` (src/commanderblitz/cards/loader/vocabulary.py) so a static `condition`'s `cmp` can hold it. That one leaf turns on every delirium card at once -- the printed clause is always "four or more card types among cards in your graveyard" -- and the same leaf reads "the number of card types among cards in your graveyard" on the effect side (Traverse the Ulvenwald, Emrakul's Evangel-style scaling), so it wants to land in `VALUE_KEYS` too.
-  <br>Why the existing vocabulary won't do: `count` is the closest and is the wrong measurement: it counts *objects* matching a filter, so a graveyard of four creature cards reads 4 and satisfies a `>= 4` that delirium must reject, while a graveyard of one instant, one land, one artifact and one creature also reads 4 and passes by coincidence. That is the same distinction `values.py` already spells out for domain -- "five Forests are five and not one". `distinct` is the leaf that does count distinct values, but it is blocked twice over: its `DISTINCT_OF` allows only `power` (coven) and `basic_land_type` (domain), with no card-type entry, and it is absent from `STATIC_VALUE_KEYS` -- which is `{const, count, mana_symbols, counters_on, permanents_entered_this_turn}` plus the life and per-player leaves -- so even with a card-type entry it could not be named inside a static's `condition`. The `zone: graveyard` support in static counting filters that makes Threshold (Nimble Mongoose, `count` >= 7) and Hellbent expressible therefore reaches the graveyard but cannot ask what is in it. The remaining temptation is to enumerate: `any` of `all`-of-`exists` nodes over every 4-subset of the card types, which is 126 branches for nine types, silently wrong the moment a tenth type is printed, and an approximation rather than the sentence. Only this clause is blocked -- the first line, "Whenever you cast a noncreature spell, surveil 1", is a plain `spell_cast` trigger filtered `not_types: ["Creature"]` with the `surveil` op, and the consequences of the delirium clause (`buff` +2/+2, `grant_keyword` flying, `attacks_if_able`) are all present static effects -- so no partial answer was written.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Dragon's Rage Channeler** (rank 1799) — `dragon_s_rage_channeler`
-  - Delirium — As long as there are four or more card types among cards in your graveyard, this creature gets +2/+2, has flying, and attacks each combat if able.
-- **Deathcap Cultivator** (rank 9177) — `deathcap_cultivator`
-  - Delirium — This creature has deathtouch as long as there are four or more card types among cards in your graveyard.
 
 </details>
 
@@ -1127,6 +1139,20 @@ Blocks **1** card.
 
 </details>
 
+## cast-from-library-top-additional-cost
+
+Blocks **1** card.
+
+- **(static_effect)** a `cast_from_library_top` static that carries an additional cost imposed on every spell cast through it -- here a `sacrifice` cost of one nonland permanent ({"sacrifice": {"not_types": ["Land"]}}) paid on top of the spell's own mana and additional costs (601.2b/601.2h), with no affects_spells filter and no pay_life_instead
+  <br>Why the existing vocabulary won't do: `cast_from_library_top` carries only `pay_life_instead` (Bolas's Citadel's alternative price), `affects_spells` and `cast_gains_keywords`; the loader compiles `cost` onto a static only for `spell_cost_increase` and `granted_alternative_cost`, and refuses a filterless, unpriced `cast_from_library_top`. Nothing lets the permission demand a sacrifice as an additional cost, and writing it without the price would be every spell castable off the top for free extra -- a much stronger card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Into the Pit** (rank 5828) — `into_the_pit`
+  - You may cast spells from the top of your library by sacrificing a nonland permanent in addition to paying their other costs.
+
+</details>
+
 ## cast-restriction-self
 
 Blocks **1** card.
@@ -1155,6 +1181,21 @@ Blocks **1** card.
   - Cast this spell only during combat before blockers are declared.
   - X can't be greater than the number of snow lands you control.
   - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
+
+</details>
+
+## characteristics-outside-battlefield
+
+Blocks **1** card.
+
+- **(static_effect)** a characteristic-defining static that works in every zone except the battlefield (hand, library, graveyard, exile, stack, command) and adds the Creature type, Insect subtype and base 1/1, so the card is a creature card in the graveyard and a creature spell when cast from the command zone
+  <br>Why the existing vocabulary won't do: set_types / set_creature_types / set_pt are battlefield statics over permanents; active_zones lets a static be gathered from other zones, but there is no evidence that type or P/T changes from it are applied to the card's own characteristics in hand, graveyard, library, stack or command zone, nor any way to say 'every zone but the battlefield'
+
+<details><summary>Cards waiting on this</summary>
+
+- **Grist, the Hunger Tide** (rank 1924) — `grist_the_hunger_tide`
+  - As long as Grist isn't on the battlefield, it's a 1/1 Insect creature in addition to its other types.
+  - +1: Create a 1/1 black and green Insect creature token, then mill a card. If an Insect card was milled this way, put a loyalty counter on Grist and repeat this process.
 
 </details>
 
@@ -2049,6 +2090,21 @@ Blocks **1** card.
 
 </details>
 
+## insect-token-bg
+
+Blocks **1** card.
+
+- **(token)** a 1/1 black and green Insect creature token (e.g. insect_1_1_bg)
+  <br>Why the existing vocabulary won't do: token_ids has insect_1_1_g (green only), insect_1_1_b_flying (black, flying) and the black-green pest_1_1_bg / worm_1_1_bg, but no black-green Insect with no abilities; a near token would be the wrong colour or creature type
+
+<details><summary>Cards waiting on this</summary>
+
+- **Grist, the Hunger Tide** (rank 1924) — `grist_the_hunger_tide`
+  - As long as Grist isn't on the battlefield, it's a 1/1 Insect creature in addition to its other types.
+  - +1: Create a 1/1 black and green Insect creature token, then mill a card. If an Insect card was milled this way, put a loyalty counter on Grist and repeat this process.
+
+</details>
+
 ## karox-bladewing
 
 Blocks **1** card.
@@ -2701,6 +2757,21 @@ Blocks **1** card.
 
 - **Scolding Administrator** (rank 18369) — `scolding_administrator`
   - Repartee — Whenever you cast an instant or sorcery spell that targets a creature, put a +1/+1 counter on this creature.
+
+</details>
+
+## repeat-while
+
+Blocks **1** card.
+
+- **(op)** a loop op that repeats a block of effects while a condition read after each iteration holds: create token, mill one card bound as 'milled', and if the milled card has subtype Insect, add a loyalty counter to self and run the block again; stops when a non-Insect is milled or the library is empty
+  <br>Why the existing vocabulary won't do: repeat takes only a fixed amount and effects, and if runs its branch once; nothing re-enters the block conditionally on the outcome of the previous pass
+
+<details><summary>Cards waiting on this</summary>
+
+- **Grist, the Hunger Tide** (rank 1924) — `grist_the_hunger_tide`
+  - As long as Grist isn't on the battlefield, it's a 1/1 Insect creature in addition to its other types.
+  - +1: Create a 1/1 black and green Insect creature token, then mill a card. If an Insect card was milled this way, put a loyalty counter on Grist and repeat this process.
 
 </details>
 
