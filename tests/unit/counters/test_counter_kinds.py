@@ -159,8 +159,8 @@ class TestTheLoader:
             compile_card(stadium({"distinct": {"of": "counter_kinds", "objects": {"self_only": True}}}))
 
     def test_a_static_may_not_read_it(self):
-        """`distinct` stays out of the static value whitelist, this `of` included."""
+        """A static reads `distinct` only as delirium's printed card types, so this `of` is refused."""
         from commanderblitz.cards.loader.statics import _validate_static_value
 
-        with pytest.raises(DslError, match="static values may only use"):
+        with pytest.raises(DslError, match="can only read 'card_type'"):
             _validate_static_value(KINDS_ON_IT, "test")

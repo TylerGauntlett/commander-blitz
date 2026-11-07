@@ -1,0 +1,18 @@
+{
+  "card_id": "carrion_grub",
+  "name": "Carrion Grub",
+  "oracle_text": "This creature gets +X/+0, where X is the greatest power among creature cards in your graveyard.\nWhen this creature enters, mill four cards. (Put the top four cards of your library into your graveyard.)",
+  "blocked_sentences": [
+    "This creature gets +X/+0, where X is the greatest power among creature cards in your graveyard."
+  ],
+  "needs": [
+    {
+      "capability": "static_greatest_power_in_graveyard",
+      "kind": "value",
+      "what": "a static value leaf reading the greatest printed power among cards matched by a static counting filter in a non-battlefield zone (here: creature cards in your graveyard), so a self-only buff can be sized by it; an empty pool is 0",
+      "why_existing_wont_do": "The static `extreme_value` leaf (Dragon Man) has the right shape -- objects with zone: graveyard, pick: greatest -- but `_validate_static_extreme_value` in cards/loader/statics.py refuses any `of` other than mana_value, because battlefield power is a layer output. A graveyard card's power is its printed power and is a pipeline input, so the leaf could accept `of: power` when every branch's zone is off the battlefield. `power_of` and the effect-side `extreme_value` are not static value keys, and a self_enters pump would go stale as the graveyard changes"
+    }
+  ],
+  "closest_existing": ["extreme_value", "buff"],
+  "confidence": "high"
+}

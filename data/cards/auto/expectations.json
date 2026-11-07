@@ -2329,6 +2329,10 @@
     },
     "zone": "graveyard"
   },
+  "burnished_hart": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "burrowing": {
     "zone": [
       "battlefield",
@@ -2717,6 +2721,16 @@
       "0": 2
     },
     "zone": "graveyard"
+  },
+  "cemetery_tampering": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "battlefield"
   },
   "centaur_courser": {
     "zone": "battlefield"
@@ -3322,6 +3336,14 @@
     "zone": "graveyard"
   },
   "contingency_plan": {
+    "zone": "graveyard"
+  },
+  "convert_to_slime": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 4
+    },
+    "opponent_battlefield_count": 4,
     "zone": "graveyard"
   },
   "cooperation": {
@@ -3970,6 +3992,16 @@
       "graveyard"
     ]
   },
+  "deadbridge_chant": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 12
+    },
+    "library_size": {
+      "0": 30
+    },
+    "zone": "battlefield"
+  },
   "deadeye_harpooner": {
     "zone": "battlefield"
   },
@@ -4008,6 +4040,13 @@
   "deathbloom_gardener": {
     "zone": "battlefield"
   },
+  "deathcap_cultivator": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "deathcap_glade": {
     "zone": "battlefield"
   },
@@ -4016,6 +4055,13 @@
   },
   "deathless_knight": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "deathreap_ritual": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "debilitating_injury": {
@@ -4137,6 +4183,19 @@
     "zone": "graveyard"
   },
   "delighted_halfling": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "deluge_of_doom": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
+  "demolisher_spawn": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -4476,6 +4535,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "dragon_s_rage_channeler": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "dragon_sniper": {
@@ -6649,6 +6712,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "giant_adephage": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "giant_cockroach": {
     "zone": "battlefield"
   },
@@ -6917,6 +6984,13 @@
     "zone": "battlefield"
   },
   "gnarled_mass": {
+    "zone": "battlefield"
+  },
+  "gnarlwood_dryad": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "gnoll_hunter": {
@@ -7306,6 +7380,13 @@
   },
   "grim_backwoods": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "grim_flayer": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
     "zone": "battlefield"
   },
   "grim_initiate": {
@@ -8012,6 +8093,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "hornet_queen": {
+    "battlefield_count": 37,
+    "tokens": {
+      "count": 4,
+      "id": "insect_1_1_g_flying_deathtouch"
+    },
+    "zone": "battlefield"
+  },
   "host_of_the_hereafter": {
     "battlefield_count": 33,
     "counters": {
@@ -8380,6 +8469,14 @@
   "insatiable_harpy": {
     "zone": "battlefield"
   },
+  "inscription_of_abundance": {
+    "life": {
+      "0": 44,
+      "1": 40
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
   "insight_engine": {
     "battlefield_count": 33,
     "hand_size": {
@@ -8560,6 +8657,14 @@
     "zone": "battlefield"
   },
   "isamaru_hound_of_konda": {
+    "zone": "battlefield"
+  },
+  "ishkanah_grafwidow": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
     "zone": "battlefield"
   },
   "isochron_scepter": {
@@ -10862,6 +10967,23 @@
     },
     "zone": "battlefield"
   },
+  "moldgraf_millipede": {
+    "counters": {
+      "amount": 2,
+      "kind": "+1/+1"
+    },
+    "graveyard_size": {
+      "0": 5
+    },
+    "library_size": {
+      "0": 37
+    },
+    "zone": "battlefield"
+  },
+  "moldgraf_monstrosity": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "molecule_man": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -11078,6 +11200,18 @@
   },
   "mugato": {
     "zone": "battlefield"
+  },
+  "mulch": {
+    "graveyard_size": {
+      "0": 4
+    },
+    "hand_size": {
+      "0": 4
+    },
+    "library_size": {
+      "0": 36
+    },
+    "zone": "graveyard"
   },
   "mulldrifter": {
     "battlefield_count": 33,
@@ -11713,6 +11847,10 @@
     "library_size": {
       "0": 40
     },
+    "zone": "battlefield"
+  },
+  "obsessive_skinner": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "obsianus_golem": {
@@ -12768,6 +12906,18 @@
     "battlefield_count": 33,
     "hand_size": {
       "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "professor_onyx": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 5,
+      "kind": "loyalty"
+    },
+    "life": {
+      "0": 40,
+      "1": 40
     },
     "zone": "battlefield"
   },
@@ -16393,6 +16543,10 @@
     "opponent_battlefield_count": 5,
     "zone": "exile"
   },
+  "suspicious_bookcase": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "swab_goblin": {
     "zone": "battlefield"
   },
@@ -16525,6 +16679,10 @@
     "zone": "graveyard"
   },
   "tainted_peak": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "tainted_wood": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -18648,6 +18806,11 @@
   "vigilant_baloth": {
     "zone": "battlefield"
   },
+  "vile_mutilator": {
+    "battlefield_count": 32,
+    "opponent_battlefield_count": 4,
+    "zone": "battlefield"
+  },
   "vilis_broker_of_blood": {
     "battlefield_count": 33,
     "hand_size": {
@@ -19215,6 +19378,16 @@
     },
     "opponent_battlefield_count": 4,
     "zone": "graveyard"
+  },
+  "whip_of_erebos": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 2,
+      "keywords": [
+        "lifelink"
+      ]
+    },
+    "zone": "battlefield"
   },
   "whiptail_wurm": {
     "zone": "battlefield"

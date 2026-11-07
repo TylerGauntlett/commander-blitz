@@ -193,12 +193,12 @@ class TestTheLoaderGuards:
         Both readings are of derived characteristics, so a static's `condition`
         or value reading this would switch on another static's *output* — which
         is the dependency the fixed-order pipeline cannot have. The static value
-        language is a whitelist, so it already refuses it; this pins that it
-        stays refused.
+        language admits `distinct` for delirium's printed card types alone, so
+        this pins that coven stays refused.
         """
         from commanderblitz.cards.loader.statics import _validate_static_value
 
-        with pytest.raises(DslError, match="static values may only use"):
+        with pytest.raises(DslError, match="can only read 'card_type'"):
             _validate_static_value(coven(), "test")
 
     def test_an_unknown_key_is_refused(self):

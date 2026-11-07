@@ -1777,6 +1777,17 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
         if not values:
             return 0
         return max(values) if spec.get("pick", "greatest") == "greatest" else min(values)
+    if "distinct" in expr:
+        # Delirium: "four or more card types among cards in your graveyard". The
+        # union of the printed types off a counting filter the loader holds off
+        # the battlefield, where a card has no continuous effects to apply -- a
+        # pipeline input on `extreme_value`'s terms, read the way the effect
+        # side's `distinct` reads ``card_type``.
+        spec = expr["distinct"]
+        types: set[str] = set()
+        for obj in _matching_objects(state, spec.get("objects") or {}, source):
+            types |= set(state.card_of(obj).types)
+        return len(types)
     if "min_life_of" in expr:
         pids = _static_players(state, source, expr["min_life_of"])
         return min_life([state.players[p].life for p in pids])

@@ -1683,6 +1683,31 @@ class TestSkyclaveApparitionsIllusionIsAPlainXXBlue:
         assert (other.power, other.toughness) == (1, 1)
 
 
+class TestConvertToSlimesOozeIsAPlainXXGreen:
+    """Convert to Slime: *"create an **X/X green Ooze** creature token, where X
+    is the total mana value of the permanents destroyed this way."*
+
+    Written 0/0 with `variable_pt`, like the Illusion beside it. The pool's
+    only green 0/0 is the green-blue Fractal, which is the wrong colour and
+    creature type; it does not stand in.
+    """
+
+    def test_it_is_a_variable_green_ooze_with_no_abilities(self, pool):
+        token = pool.get("ooze_x_x_g")
+        assert token is not None and token.is_token and token.is_creature
+        assert token.variable_pt
+        assert (token.power, token.toughness) == (0, 0)
+        assert sorted(token.colors) == ["G"]
+        assert list(token.types) == ["Creature"]
+        assert list(token.subtypes) == ["Ooze"]
+        assert not token.keywords and not token.abilities
+
+    def test_the_fractal_is_still_a_separate_green_blue_token(self, pool):
+        other = pool.get("fractal_0_0_gu")
+        assert sorted(other.colors) == ["G", "U"]
+        assert list(other.subtypes) == ["Fractal"]
+
+
 class TestWitherbloomsPestGainsLifeWhenItDies:
     """Beledros Witherbloom, Blight Mound and the Witherbloom precon: *"create a
     **1/1 black and green Pest** creature token with 'When this token dies, you

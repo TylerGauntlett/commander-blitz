@@ -142,6 +142,7 @@ class TestTheToken:
                 "dragon_illusion_x_x_r_flying_haste",
                 "illusion_x_x_u",
                 "nalaar_aetherjet_x_x_c_flying_crew2",
+                "ooze_x_x_g",
                 "shapeshifter_x_x_c_changeling_deathtouch",
             ]
         )

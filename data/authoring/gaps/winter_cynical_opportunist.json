@@ -1,0 +1,18 @@
+{
+  "card_id": "winter_cynical_opportunist",
+  "name": "Winter, Cynical Opportunist",
+  "oracle_text": "Deathtouch\nWhenever Winter attacks, mill three cards.\nDelirium — At the beginning of your end step, you may exile any number of cards from your graveyard with four or more card types among them. If you do, put a permanent card from among them onto the battlefield with a finality counter on it.",
+  "blocked_sentences": [
+    "Delirium — At the beginning of your end step, you may exile any number of cards from your graveyard with four or more card types among them. If you do, put a permanent card from among them onto the battlefield with a finality counter on it."
+  ],
+  "needs": [
+    {
+      "capability": "exile_cards_with_card_types_among_them",
+      "kind": "selector",
+      "what": "a player choice of any number of cards from their own graveyard constrained as a SET: the union of the chosen cards' card types must be at least N (four here); the chosen cards are exiled and bound (as) so a following effect can pick one permanent card from among exactly those, put it onto the battlefield with a finality counter, and the 'if you do' branch runs only when the exile happened",
+      "why_existing_wont_do": "exile/search_zones take a per-card selector (types, any_types, count) with no constraint over the chosen set's combined card types; the `distinct` value can count types after the fact but cannot restrict what the player may choose; choose_permanents (with max_total_power) is the only set-constrained chooser and it reads the battlefield only; a cost key exile_from_graveyard is a fixed-count cost, not a resolution-time optional set with a type-union floor"
+    }
+  ],
+  "closest_existing": ["exile", "search_zones", "choose_permanents", "put_onto_battlefield", "distinct"],
+  "confidence": "high"
+}

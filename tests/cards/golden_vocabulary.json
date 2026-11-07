@@ -650,6 +650,7 @@
    "count",
    "counters_on",
    "creatures_died_this_turn",
+   "distinct",
    "extreme_value",
    "greatest_commander_mana_value",
    "mana_symbols",

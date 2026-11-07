@@ -3899,14 +3899,31 @@ key is refused on any other `of`. **Not** `each_color_among`, which loops once
 per color and has no way to reach a resolved spell.
 
 Domain and coven read **derived** characteristics — an anthem changes who has
-coven, "all lands are Islands" changes what counts for domain — which is also
-why this leaf is absent from the *static* condition language, where reading it
-would make one static depend on another's output. **`card_type` reads the
-printed face**, and that is not an inconsistency: delirium counts cards in a
-*graveyard*, where there are no continuous effects to apply, so asking `chars`
-would be answering a question about a permanent for something that is not one.
-It is the same reading `characteristics._count_matching` already takes off the
-battlefield.
+coven, "all lands are Islands" changes what counts for domain. **`card_type`
+reads the printed face**, and that is not an inconsistency: delirium counts
+cards in a *graveyard*, where there are no continuous effects to apply, so
+asking `chars` would be answering a question about a permanent for something
+that is not one. It is the same reading `characteristics._count_matching`
+already takes off the battlefield.
+
+That difference is why a *static* may hold `distinct` only as
+`of: "card_type"` over a counting filter off the battlefield — Grim Flayer's
+"gets +2/+2 as long as there are four or more card types among cards in your
+graveyard":
+
+```jsonc
+{ "kind": "static", "effect": "buff", "affects": { "self_only": true },
+  "power": { "const": 2 }, "toughness": { "const": 2 },
+  "condition": { "cmp": ">=",
+                 "left": { "distinct": { "of": "card_type",
+                                         "objects": { "zone": "graveyard", "controller": "you" } } },
+                 "right": { "const": 4 } } }
+```
+
+A printed face is a pipeline input; every other `of`, and a battlefield pool,
+would read another static's output, and the loader refuses them. **Not** an
+`upkeep` or `self_enters` trigger with the same `cmp`, which asks once where the
+card asks continuously.
 
 `objects` is required. An empty selector is every permanent in the game, so
 domain would count an opponent's basics and coven their creatures — and both

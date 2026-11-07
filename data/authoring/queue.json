@@ -36742,12 +36742,12 @@
     },
     "Burnished Hart": {
       "edhrec_rank": 479,
-      "gate": "template",
+      "gate": null,
       "name": "Burnished Hart",
-      "reason": "no template for: {3}, Sacrifice this creature: Search your library for up to two basic land cards, put them",
+      "reason": "",
       "scryfall_id": "7c990878-50e6-4443-91b6-99c31f85be98",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Burnout": {
@@ -42332,12 +42332,12 @@
     },
     "Cemetery Tampering": {
       "edhrec_rank": 2760,
-      "gate": "template",
+      "gate": null,
       "name": "Cemetery Tampering",
-      "reason": "no template for: Hideaway 5",
+      "reason": "",
       "scryfall_id": "b6d4cf14-c43e-454b-ae76-3678617067f8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cenn's Enlistment": {
@@ -52912,12 +52912,12 @@
     },
     "Convert to Slime": {
       "edhrec_rank": 8801,
-      "gate": "template",
+      "gate": null,
       "name": "Convert to Slime",
-      "reason": "no template for: Destroy up to one target artifact, up to one target creature, and up to one target enchant",
+      "reason": "",
       "scryfall_id": "03f67156-0a79-43ee-8b7d-5a788a2107f6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Converter Beast": {
@@ -62852,12 +62852,12 @@
     },
     "Deadbridge Chant": {
       "edhrec_rank": 3257,
-      "gate": "template",
+      "gate": null,
       "name": "Deadbridge Chant",
-      "reason": "no template for: When this enchantment enters, mill ten cards",
+      "reason": "",
       "scryfall_id": "e67b8f21-c173-4d1d-8224-2eba4bcc6975",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deadbridge Goliath": {
@@ -63792,12 +63792,12 @@
     },
     "Deathcap Cultivator": {
       "edhrec_rank": 9177,
-      "gate": "template",
+      "gate": null,
       "name": "Deathcap Cultivator",
-      "reason": "no template for: Delirium — This creature has deathtouch as long as there are four or more card types among",
+      "reason": "",
       "scryfall_id": "17f9339a-d327-4239-a0d8-12f7ff58982b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deathcap Glade": {
@@ -64052,12 +64052,12 @@
     },
     "Deathreap Ritual": {
       "edhrec_rank": 2033,
-      "gate": "template",
+      "gate": null,
       "name": "Deathreap Ritual",
-      "reason": "no template for: Morbid — At the beginning of each end step, if a creature died this turn, you may draw a c",
+      "reason": "",
       "scryfall_id": "4980879b-87a4-4e5a-9f29-9136f022d849",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deathrender": {
@@ -65842,12 +65842,12 @@
     },
     "Deluge of Doom": {
       "edhrec_rank": 10038,
-      "gate": "template",
+      "gate": null,
       "name": "Deluge of Doom",
-      "reason": "no template for: All creatures get -X/-X until end of turn, where X is the number of card types among cards",
+      "reason": "",
       "scryfall_id": "948927b2-087a-4f57-844e-68fc8ab01bc0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Delusions of Mediocrity": {
@@ -65982,12 +65982,12 @@
     },
     "Demolisher Spawn": {
       "edhrec_rank": 5974,
-      "gate": "template",
+      "gate": null,
       "name": "Demolisher Spawn",
-      "reason": "no template for: Delirium — Whenever this creature attacks, if there are four or more card types among card",
+      "reason": "",
       "scryfall_id": "16b97600-e4cf-4b9e-8f2d-2eb74298eb54",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Demolition Field": {
@@ -73432,12 +73432,12 @@
     },
     "Dragon's Rage Channeler": {
       "edhrec_rank": 1799,
-      "gate": "template",
+      "gate": null,
       "name": "Dragon's Rage Channeler",
-      "reason": "no template for: Whenever you cast a noncreature spell, surveil 1",
+      "reason": "",
       "scryfall_id": "2429510d-ce59-472d-b0df-5e6b7cdf63af",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dragon's Smile": {
@@ -108332,12 +108332,12 @@
     },
     "Giant Adephage": {
       "edhrec_rank": 2499,
-      "gate": "template",
+      "gate": null,
       "name": "Giant Adephage",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, create a token that's a copy of th",
+      "reason": "",
       "scryfall_id": "893b22a7-b46c-4473-8d88-11ddf4406af1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Giant Albatross": {
@@ -111972,12 +111972,12 @@
     },
     "Gnarlwood Dryad": {
       "edhrec_rank": 8507,
-      "gate": "template",
+      "gate": null,
       "name": "Gnarlwood Dryad",
-      "reason": "no template for: Delirium — This creature gets +2/+2 as long as there are four or more card types among car",
+      "reason": "",
       "scryfall_id": "8eae5e38-49ee-49ef-87ca-7b570d9ca2b8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gnashing of Teeth": {
@@ -118142,12 +118142,12 @@
     },
     "Grim Flayer": {
       "edhrec_rank": 10829,
-      "gate": "template",
+      "gate": null,
       "name": "Grim Flayer",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, surveil 3",
+      "reason": "",
       "scryfall_id": "b29e5af4-feb6-485a-a631-bfc42fa1b13a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Grim Flowering": {
@@ -130102,12 +130102,12 @@
     },
     "Hornet Queen": {
       "edhrec_rank": 1687,
-      "gate": "template",
+      "gate": null,
       "name": "Hornet Queen",
-      "reason": "no template for: When this creature enters, create four 1/1 green Insect creature tokens with flying and de",
+      "reason": "",
       "scryfall_id": "b2af9184-df81-413b-abcf-331c4471e6d4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hornet Sting": {
@@ -137402,12 +137402,12 @@
     },
     "Inscription of Abundance": {
       "edhrec_rank": 2316,
-      "gate": "template",
+      "gate": null,
       "name": "Inscription of Abundance",
-      "reason": "no template for: Kicker {2}{G}",
+      "reason": "",
       "scryfall_id": "d0429a79-af7a-4de1-be3a-773498cfdc22",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Inscription of Insight": {
@@ -140442,12 +140442,12 @@
     },
     "Ishkanah, Grafwidow": {
       "edhrec_rank": 6691,
-      "gate": "template",
+      "gate": null,
       "name": "Ishkanah, Grafwidow",
-      "reason": "no template for: Delirium — When Ishkanah enters, if there are four or more card types among cards in your ",
+      "reason": "",
       "scryfall_id": "2a61bad1-f212-4d9b-8422-8ec548b8155c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Isildur's Fateful Strike": {
@@ -177452,22 +177452,22 @@
     },
     "Moldgraf Millipede": {
       "edhrec_rank": 9309,
-      "gate": "template",
+      "gate": null,
       "name": "Moldgraf Millipede",
-      "reason": "no template for: When this creature enters, mill three cards, then put a +1/+1 counter on this creature for",
+      "reason": "",
       "scryfall_id": "3a163ec7-4c9a-4d45-965c-e5ddeb07a3e0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Moldgraf Monstrosity": {
       "edhrec_rank": 7555,
-      "gate": "template",
+      "gate": null,
       "name": "Moldgraf Monstrosity",
-      "reason": "no template for: When this creature dies, exile it, then return two creature cards at random from your grav",
+      "reason": "",
       "scryfall_id": "714ba062-f8ae-4ae6-a1c2-8fa093cc0fb2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Moldgraf Scavenger": {
@@ -180692,12 +180692,12 @@
     },
     "Mulch": {
       "edhrec_rank": 4610,
-      "gate": "template",
+      "gate": null,
       "name": "Mulch",
-      "reason": "no template for: Reveal the top four cards of your library. Put all land cards revealed this way into your ",
+      "reason": "",
       "scryfall_id": "9f6afdab-b41f-4713-b74a-e90e8bbbaf0a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Muldrotha, the Gravetide": {
@@ -190782,12 +190782,12 @@
     },
     "Obsessive Skinner": {
       "edhrec_rank": 13905,
-      "gate": "template",
+      "gate": null,
       "name": "Obsessive Skinner",
-      "reason": "no template for: When this creature enters, put a +1/+1 counter on target creature",
+      "reason": "",
       "scryfall_id": "a4276c32-e3f8-45e0-8202-43410b1f3d2e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Obsessive Stitcher": {
@@ -208112,12 +208112,12 @@
     },
     "Professor Onyx": {
       "edhrec_rank": 2385,
-      "gate": "template",
+      "gate": null,
       "name": "Professor Onyx",
-      "reason": "no template for: Magecraft — Whenever you cast or copy an instant or sorcery spell, each opponent loses 2 l",
+      "reason": "",
       "scryfall_id": "b8d8e608-6de4-4b90-aeb7-d060d1f44844",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Professor Zei, Anthropologist": {
@@ -271272,12 +271272,12 @@
     },
     "Suspicious Bookcase": {
       "edhrec_rank": 4979,
-      "gate": "template",
+      "gate": null,
       "name": "Suspicious Bookcase",
-      "reason": "no template for: {3}, {T}: Target creature can't be blocked this turn",
+      "reason": "",
       "scryfall_id": "09af9bc0-1c73-4d16-8116-b76ad23c6b8f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Suspicious Detonation": {
@@ -273872,12 +273872,12 @@
     },
     "Tainted Wood": {
       "edhrec_rank": 423,
-      "gate": "template",
+      "gate": null,
       "name": "Tainted Wood",
-      "reason": "no template for: {T}: Add {B} or {G}. Activate only if you control a Swamp",
+      "reason": "",
       "scryfall_id": "3da7ab6b-b10a-4786-b1eb-92de7e66690e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Taj-Nar Swordsmith": {
@@ -304722,12 +304722,12 @@
     },
     "Vile Mutilator": {
       "edhrec_rank": 6543,
-      "gate": "template",
+      "gate": null,
       "name": "Vile Mutilator",
-      "reason": "no template for: When this creature enters, each opponent sacrifices a nontoken enchantment of their choice",
+      "reason": "",
       "scryfall_id": "383fe040-98bb-40f3-b809-48c429b83f47",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vile Rebirth": {
@@ -313842,12 +313842,12 @@
     },
     "Whip of Erebos": {
       "edhrec_rank": 710,
-      "gate": "template",
+      "gate": null,
       "name": "Whip of Erebos",
-      "reason": "no template for: Creatures you control have lifelink",
+      "reason": "",
       "scryfall_id": "b738612f-4e78-4b19-9392-6c074956d6e4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Whip-Spine Drake": {
