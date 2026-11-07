@@ -1,0 +1,18 @@
+{
+  "card_id": "athreos_shroud_veiled",
+  "name": "Athreos, Shroud-Veiled",
+  "oracle_text": "Indestructible\nAs long as your devotion to white and black is less than seven, Athreos isn't a creature.\nAt the beginning of your end step, put a coin counter on another target creature.\nWhenever a creature with a coin counter on it dies or is put into exile, return that card to the battlefield under your control.",
+  "blocked_sentences": [
+    "As long as your devotion to white and black is less than seven, Athreos isn't a creature."
+  ],
+  "needs": [
+    {
+      "capability": "devotion",
+      "kind": "value",
+      "what": "a static value for devotion to two colours (rule 700.5a): the number of mana symbols in the mana costs of permanents you control that are white OR black, where a hybrid {W/B} pip counts once, not twice -- e.g. mana_symbols accepting a list `of: [\"W\", \"B\"]` that counts each pip at most once if it contains any listed colour",
+      "why_existing_wont_do": "mana_symbols takes a single colour in `of` (validate_mana_symbols refuses anything else), and summing mana_symbols of W plus mana_symbols of B double-counts every {W/B} hybrid pip because Requirement.symbols_of in engine/mana.py counts a hybrid pip for each of its colours; no static value subtracts hybrid pips, so the God would become a creature too early"
+    }
+  ],
+  "closest_existing": ["mana_symbols", "sum", "set_types"],
+  "confidence": "high"
+}

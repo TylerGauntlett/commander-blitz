@@ -1,0 +1,24 @@
+{
+  "card_id": "arvinox_the_mind_flail",
+  "name": "Arvinox, the Mind Flail",
+  "oracle_text": "Arvinox isn't a creature unless you control three or more permanents you don't own.\nAt the beginning of your end step, exile the bottom card of each opponent's library face down. For as long as those cards remain exiled, you may look at them, you may cast permanent spells from among them, and you may spend mana as though it were mana of any color to cast those spells.",
+  "blocked_sentences": [
+    "At the beginning of your end step, exile the bottom card of each opponent's library face down. For as long as those cards remain exiled, you may look at them, you may cast permanent spells from among them, and you may spend mana as though it were mana of any color to cast those spells."
+  ],
+  "needs": [
+    {
+      "capability": "exile_bottom_of_library",
+      "kind": "selector",
+      "what": "a library selector (or an exile/look_at_top option) that picks the BOTTOM N cards of a player's library -- e.g. `from_bottom: 1` on a library-zone selector -- so \"exile the bottom card of each opponent's library\" takes exactly that card",
+      "why_existing_wont_do": "No selector key reads library position: `extreme` ranks only power/toughness/mana_value, look_at_top and reveal_until read from the top, and the only `bottom` in the DSL is put_on_top's destination and tucks_itself; a library selector with count 1 would let the player pick any card or take the top one"
+    },
+    {
+      "capability": "playable_spell_type_restriction",
+      "kind": "op",
+      "what": "a restriction on an exile/grant_playable permission so the exiled cards may only be CAST as permanent spells (Artifact, Creature, Enchantment, Planeswalker, Battle) -- no land play and no instant/sorcery cast -- e.g. `playable_types: [\"Artifact\", \"Battle\", \"Creature\", \"Enchantment\", \"Planeswalker\"]` with `playable_cast_only: true`",
+      "why_existing_wont_do": "exile's `playable: \"while_exiled\"` with `any_color: true` and `face_down` covers the duration, the look and the any-colour mana, but the permission it sets (obj.playable_by in grant_playable/exile) has no type filter, so it would also let you play an exiled land and cast an exiled instant or sorcery"
+    }
+  ],
+  "closest_existing": ["exile", "grant_playable", "look_at_top", "set_types"],
+  "confidence": "high"
+}

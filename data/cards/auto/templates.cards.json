@@ -6147,6 +6147,99 @@
     {
       "abilities": [
         {
+          "affects_spells": {
+            "controller": "you",
+            "subtypes": [
+              "Demon",
+              "Horror",
+              "Nightmare"
+            ]
+          },
+          "amount": {
+            "const": 1
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Each spell you cast that's a Demon, Horror, or Nightmare costs {1} less to cast."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "minus": [
+                  {
+                    "mana_value_of": {
+                      "binding": "subject"
+                    }
+                  },
+                  {
+                    "mana_spent_of": {
+                      "binding": "subject"
+                    }
+                  }
+                ]
+              },
+              "op": "lose_life",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "Whenever you cast a spell, if the amount of mana spent to cast it was less than its mana value, target opponent loses life equal to the difference.",
+          "trigger": {
+            "condition": {
+              "cmp": "<",
+              "left": {
+                "mana_spent_of": {
+                  "binding": "subject"
+                }
+              },
+              "right": {
+                "mana_value_of": {
+                  "binding": "subject"
+                }
+              }
+            },
+            "controller": "you",
+            "event": "spell_cast"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "ancient_cellarspawn",
+      "mana_cost": "{1}{B}{B}",
+      "name": "Ancient Cellarspawn",
+      "oracle_text": "Each spell you cast that's a Demon, Horror, or Nightmare costs {1} less to cast.\nWhenever you cast a spell, if the amount of mana spent to cast it was less than its mana value, target opponent loses life equal to the difference.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Horror"
+      ],
+      "toughness": 3,
+      "types": [
+        "Enchantment",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "as": "d20",
@@ -9644,6 +9737,59 @@
       "subtypes": [
         "Human",
         "Soldier"
+      ],
+      "toughness": 2,
+      "types": [
+        "Enchantment",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying"
+          ],
+          "kind": "static",
+          "text": "Creatures you control have flying."
+        },
+        {
+          "affects": {
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "lose_keyword",
+          "keywords": [
+            "flying"
+          ],
+          "kind": "static",
+          "text": "Creatures your opponents control lose flying and can't have or gain flying."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "archetype_of_imagination",
+      "mana_cost": "{4}{U}{U}",
+      "name": "Archetype of Imagination",
+      "oracle_text": "Creatures you control have flying.\nCreatures your opponents control lose flying and can't have or gain flying.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
       ],
       "toughness": 2,
       "types": [
@@ -13334,6 +13480,68 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "destination": "hand",
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Return the targeted enchantment card from your graveyard to your hand?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Enchantment"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When this creature enters, you may return target enchantment card from your graveyard to your hand.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "auramancer",
+      "mana_cost": "{2}{W}",
+      "name": "Auramancer",
+      "oracle_text": "When this creature enters, you may return target enchantment card from your graveyard to your hand.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -25107,6 +25315,52 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{2}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "any_order": true,
+              "objects": {
+                "controller": "you",
+                "count": 2,
+                "zone": "hand"
+              },
+              "op": "put_on_top"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, {T}, Sacrifice this artifact: Draw three cards, then put two cards from your hand on top of your library in any order."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "brainstone",
+      "mana_cost": "{1}",
+      "name": "Brainstone",
+      "oracle_text": "{2}, {T}, Sacrifice this artifact: Draw three cards, then put two cards from your hand on top of your library in any order.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {

@@ -528,6 +528,14 @@
   "ancient_carp": {
     "zone": "battlefield"
   },
+  "ancient_cellarspawn": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "ancient_copper_dragon": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -871,6 +879,14 @@
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
+  "archetype_of_imagination": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "archfiend_of_depravity": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -1168,6 +1184,16 @@
     "zone": "battlefield"
   },
   "auntie_s_hovel": {
+    "zone": "battlefield"
+  },
+  "auramancer": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "auron_venerated_guardian": {
@@ -2137,6 +2163,13 @@
       "0": 37
     },
     "zone": "graveyard"
+  },
+  "brainstone": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "brainstorm": {
     "hand_size": {

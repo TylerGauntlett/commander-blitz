@@ -8172,12 +8172,12 @@
     },
     "Ancient Cellarspawn": {
       "edhrec_rank": 2467,
-      "gate": "template",
+      "gate": null,
       "name": "Ancient Cellarspawn",
-      "reason": "no template for: Each spell you cast that's a Demon, Horror, or Nightmare costs {1} less to cast",
+      "reason": "",
       "scryfall_id": "27e2477d-4f04-408d-8c39-8a886ac81f44",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ancient Copper Dragon": {
@@ -11982,12 +11982,12 @@
     },
     "Archetype of Imagination": {
       "edhrec_rank": 1821,
-      "gate": "template",
+      "gate": null,
       "name": "Archetype of Imagination",
-      "reason": "no template for: Creatures you control have flying",
+      "reason": "",
       "scryfall_id": "204972f7-8111-4e7d-97c4-53bcdc222230",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Archfiend of Depravity": {
@@ -16392,12 +16392,12 @@
     },
     "Auramancer": {
       "edhrec_rank": 4254,
-      "gate": "template",
+      "gate": null,
       "name": "Auramancer",
-      "reason": "no template for: When this creature enters, you may return target enchantment card from your graveyard to y",
+      "reason": "",
       "scryfall_id": "d0957032-6d98-4cac-889b-890e9bfe1f86",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Auramancer's Guise": {
@@ -32882,12 +32882,12 @@
     },
     "Brainstone": {
       "edhrec_rank": 4819,
-      "gate": "template",
+      "gate": null,
       "name": "Brainstone",
-      "reason": "no template for: {2}, {T}, Sacrifice this artifact: Draw three cards, then put two cards from your hand on ",
+      "reason": "",
       "scryfall_id": "6e86ad39-2a90-466d-b188-056216429f4e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Brainstorm": {
@@ -157684,7 +157684,7 @@
       "edhrec_rank": 5701,
       "gate": "template",
       "name": "Life Insurance",
-      "reason": "no template for: Extort",
+      "reason": "no template for: Whenever a nontoken creature dies, you lose 1 life and create a Treasure token",
       "scryfall_id": "60e1921e-6c98-4c60-88f4-8fbb6f30236e",
       "source": "",
       "status": "pending",
