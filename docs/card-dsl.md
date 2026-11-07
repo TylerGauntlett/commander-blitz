@@ -6195,6 +6195,14 @@ characteristics — the loader rejects anything else. See
   "power": { "const": 1 }, "toughness": { "const": 1 } }
 ```
 
+`not_subtypes` is the negation of `subtypes` — "each other **non-Human**
+creature you control" (Grumgully, the Generous) — read off the same set: the
+printed subtypes with text changes applied, plus any an effect recorded on the
+object, so a creature made a Human is spared like a printed one. `not_types`
+is a complement over card types and says something else; an `any_of` over
+every other creature type is not a finite spelling of it. Cost-reduction
+filters read it too.
+
 Effects: `buff` · `grant_keyword` · `set_pt` ·
 [`add_subtype`](card-dsl-cookbook.md#is-the-chosen-type-in-addition-to-its-other-types) · `set_types` ·
 `block_restriction` · `prevent_damage` · [`prevent_all_but`](card-dsl-cookbook.md#prevent-all-but-n-of-that-damage) ·

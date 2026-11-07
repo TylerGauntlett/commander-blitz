@@ -1,0 +1,32 @@
+{
+  "_comment": "Cards that exist only for tests/unit/statics/test_static_not_subtypes.py. Never part of a deck list. t_ns_lord is the non-Human anthem shape of Grumgully, the Generous; t_ns_human is a vanilla Human; t_ns_rite costs {1} less for each non-Human creature you control.",
+  "cards": [
+    {
+      "id": "t_ns_lord",
+      "name": "Test Non-Human Lord",
+      "oracle_text": "Other non-Human creatures you control get +1/+1.",
+      "mana_cost": "{2}{G}",
+      "types": ["Enchantment"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Other non-Human creatures you control get +1/+1.",
+          "effect": "buff",
+          "affects": {"types": ["Creature"], "controller": "you", "not_subtypes": ["Human"], "exclude_self": true},
+          "power": {"const": 1},
+          "toughness": {"const": 1}
+        }
+      ]
+    },
+    {
+      "id": "t_ns_human",
+      "name": "Test Human Soldier",
+      "oracle_text": "",
+      "mana_cost": "{1}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Soldier"],
+      "power": 2,
+      "toughness": 2
+    }
+  ]
+}

@@ -27,7 +27,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Card types and supertypes](#card-types-and-supertypes) | 12 |
 | [Durations](#durations) | 6 |
 | [Decision kinds](#decision-kinds) | 11 |
-| [Static filter keys](#static-filter-keys) | 32 |
+| [Static filter keys](#static-filter-keys) | 33 |
 | [Static conditions](#static-conditions) | 14 |
 | [Static values](#static-values) | 20 |
 | [Spell filter keys](#spell-filter-keys) | 12 |
@@ -952,6 +952,7 @@ The subset of the selector language a static's `affects` may use -- printed char
 | `mana_cost` | Printed mana cost is one of these. | [Static abilities](card-dsl.md#static-abilities) |
 | `modified` | Is modified: a counter, an Equipment by its printed face, or your Aura (`true` only). | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `not_keywords` | Has none of these keywords. | [Static abilities](card-dsl.md#static-abilities) |
+| `not_subtypes` | Has none of these subtypes. | [Static abilities](card-dsl.md#static-abilities) |
 | `not_supertypes` | Has none of these supertypes ("nonbasic"). | [Static abilities](card-dsl.md#static-abilities) |
 | `not_types` | Has none of these card types ("noncreature"). | [Static abilities](card-dsl.md#static-abilities) |
 | `owner` | Owned by `you`/`opponent`/`any` or a player spec. | [Static abilities](card-dsl.md#static-abilities) |

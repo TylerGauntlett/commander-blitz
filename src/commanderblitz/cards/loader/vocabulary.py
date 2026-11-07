@@ -1103,6 +1103,11 @@ STATIC_FILTER_KEYS = frozenset(
         "any_types",
         "not_types",
         "subtypes",
+        # "Each other **non-Human** creature you control…" (Grumgully, the
+        # Generous). The negation of `subtypes`, which the effect-side selector
+        # language always had; read off the same printed-plus-recorded set, so
+        # it is as safe here as `subtypes` is.
+        "not_subtypes",
         "supertypes",
         "colors",
         # "**Colorless** creatures you control get +2/+2" (Forsaken Monument).
