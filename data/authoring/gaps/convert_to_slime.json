@@ -1,0 +1,18 @@
+{
+  "card_id": "convert_to_slime",
+  "name": "Convert to Slime",
+  "oracle_text": "Destroy up to one target artifact, up to one target creature, and up to one target enchantment.\nDelirium — Then if there are four or more card types among cards in your graveyard, create an X/X green Ooze creature token, where X is the total mana value of permanents destroyed this way.",
+  "blocked_sentences": [
+    "Delirium — Then if there are four or more card types among cards in your graveyard, create an X/X green Ooze creature token, where X is the total mana value of permanents destroyed this way."
+  ],
+  "needs": [
+    {
+      "capability": "ooze_x_x_g",
+      "kind": "token",
+      "what": "a 0/0 green Ooze creature token (no abilities), id e.g. `ooze_x_x_g`, whose size is set at creation by `create_token`'s `power`/`toughness` -- here X/X, X being the total mana value of the permanents the spell destroyed",
+      "why_existing_wont_do": "token_ids is a closed list and holds no green Ooze at all; the only green 0/0 is `fractal_0_0_gu`, which is a green-blue Fractal, and the other X/X tokens (`illusion_x_x_u`, `shark_x_x_u_flying`, `dragon_illusion_x_x_r_flying_haste`, `shapeshifter_x_x_c_changeling_deathtouch`) are the wrong colour and creature type. The rest of the line looks expressible once the token exists: the delirium test as an `if` on `cmp` of `{\"distinct\": {\"of\": \"card_type\", \"objects\": {\"zone\": \"graveyard\", \"controller\": \"you\"}}}` >= 4 (DISTINCT_OF now carries `card_type`), the three up-to-one targets on `destroy` with `as` binding what was destroyed, and X as a `sum` of `mana_value_of` over that binding -- the worker should confirm `destroy`'s `as` binds only the permanents actually destroyed (an indestructible target must contribute 0) when authoring."
+    }
+  ],
+  "closest_existing": ["fractal_0_0_gu", "illusion_x_x_u", "create_token", "distinct"],
+  "confidence": "high"
+}

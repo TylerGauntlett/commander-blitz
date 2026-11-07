@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**209 cards** blocked by **192** capabilities.
+**212 cards** blocked by **194** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -31,6 +31,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [copy-exception-ability](#copy-exception-ability) | 2 | 6941 | op |
 | [council-s-dilemma](#council-s-dilemma) | 2 | 4067 | decision |
+| [delirium](#delirium) | 2 | 1799 | value |
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 2 | 2389 | engine |
 | [escape](#escape) | 2 | 388 | engine, static_effect |
@@ -77,7 +78,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [damage-player-or-planeswalker](#damage-player-or-planeswalker) | 1 | 5120 | op |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [delayed-creature-dies](#delayed-creature-dies) | 1 | 1661 | trigger_event |
-| [delirium](#delirium) | 1 | 1799 | value |
 | [devil-token](#devil-token) | 1 | 4163 | token |
 | [devotion](#devotion) | 1 | 2401 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
@@ -150,6 +150,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [nontoken-creatures-died-this-turn](#nontoken-creatures-died-this-turn) | 1 | 3951 | value |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [odd-or-even](#odd-or-even) | 1 | 8504 | selector |
+| [ooze-x-x-g](#ooze-x-x-g) | 1 | 8801 | token |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
 | [playable-condition-opponent-lost-life](#playable-condition-opponent-lost-life) | 1 | 4478 | engine |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
@@ -187,6 +188,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
+| [static-greatest-power-in-graveyard](#static-greatest-power-in-graveyard) | 1 | 10492 | value |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
@@ -656,6 +658,24 @@ Blocks **2** cards.
   - Council's dilemma — Starting with you, each player votes for past or present.
   - You mill a card for each past vote, then Fateful Tempest deals damage to each opponent equal to the total mana value of cards milled this way.
   - Exile the top card of your library for each present vote.
+
+</details>
+
+## delirium
+
+Blocks **2** cards.
+
+- **(value)** a static-ability value counting the distinct card types among cards in your graveyard (the `distinct` value with `of: card_type` over `{zone: graveyard, controller: you}`), usable in a static's `condition` cmp so a `grant_keyword` static with `affects: {self_only: true}` can switch deathtouch on at four or more
+  <br>Why the existing vocabulary won't do: `distinct` exists in `value_keys` (Shifting Woodland's activated-ability condition uses it) but is not in `static_value_keys`, and no `static_condition_keys` entry reads graveyard card types; `count` gives the number of cards, not of distinct types
+- **(value)** a static-legal counting leaf for the number of *distinct card types* among the cards in a zone -- the natural spelling being `{"distinct": {"of": "card_type", "objects": {"zone": "graveyard", "controller": "you"}}}`, i.e. a third `DISTINCT_OF` entry beside `power` and `basic_land_type` (src/commanderblitz/engine/effects/values.py, DISTINCT_OF) that counts the union of `card.types` over the pool, plus admission of `distinct` into `STATIC_VALUE_KEYS` (src/commanderblitz/cards/loader/vocabulary.py) so a static `condition`'s `cmp` can hold it. That one leaf turns on every delirium card at once -- the printed clause is always "four or more card types among cards in your graveyard" -- and the same leaf reads "the number of card types among cards in your graveyard" on the effect side (Traverse the Ulvenwald, Emrakul's Evangel-style scaling), so it wants to land in `VALUE_KEYS` too.
+  <br>Why the existing vocabulary won't do: `count` is the closest and is the wrong measurement: it counts *objects* matching a filter, so a graveyard of four creature cards reads 4 and satisfies a `>= 4` that delirium must reject, while a graveyard of one instant, one land, one artifact and one creature also reads 4 and passes by coincidence. That is the same distinction `values.py` already spells out for domain -- "five Forests are five and not one". `distinct` is the leaf that does count distinct values, but it is blocked twice over: its `DISTINCT_OF` allows only `power` (coven) and `basic_land_type` (domain), with no card-type entry, and it is absent from `STATIC_VALUE_KEYS` -- which is `{const, count, mana_symbols, counters_on, permanents_entered_this_turn}` plus the life and per-player leaves -- so even with a card-type entry it could not be named inside a static's `condition`. The `zone: graveyard` support in static counting filters that makes Threshold (Nimble Mongoose, `count` >= 7) and Hellbent expressible therefore reaches the graveyard but cannot ask what is in it. The remaining temptation is to enumerate: `any` of `all`-of-`exists` nodes over every 4-subset of the card types, which is 126 branches for nine types, silently wrong the moment a tenth type is printed, and an approximation rather than the sentence. Only this clause is blocked -- the first line, "Whenever you cast a noncreature spell, surveil 1", is a plain `spell_cast` trigger filtered `not_types: ["Creature"]` with the `surveil` op, and the consequences of the delirium clause (`buff` +2/+2, `grant_keyword` flying, `attacks_if_able`) are all present static effects -- so no partial answer was written.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Dragon's Rage Channeler** (rank 1799) — `dragon_s_rage_channeler`
+  - Delirium — As long as there are four or more card types among cards in your graveyard, this creature gets +2/+2, has flying, and attacks each combat if able.
+- **Deathcap Cultivator** (rank 9177) — `deathcap_cultivator`
+  - Delirium — This creature has deathtouch as long as there are four or more card types among cards in your graveyard.
 
 </details>
 
@@ -1362,20 +1382,6 @@ Blocks **1** card.
 
 - **Massacre Girl** (rank 1661) — `massacre_girl`
   - Whenever a creature dies this turn, each creature other than Massacre Girl gets -1/-1 until end of turn.
-
-</details>
-
-## delirium
-
-Blocks **1** card.
-
-- **(value)** a static-legal counting leaf for the number of *distinct card types* among the cards in a zone -- the natural spelling being `{"distinct": {"of": "card_type", "objects": {"zone": "graveyard", "controller": "you"}}}`, i.e. a third `DISTINCT_OF` entry beside `power` and `basic_land_type` (src/commanderblitz/engine/effects/values.py, DISTINCT_OF) that counts the union of `card.types` over the pool, plus admission of `distinct` into `STATIC_VALUE_KEYS` (src/commanderblitz/cards/loader/vocabulary.py) so a static `condition`'s `cmp` can hold it. That one leaf turns on every delirium card at once -- the printed clause is always "four or more card types among cards in your graveyard" -- and the same leaf reads "the number of card types among cards in your graveyard" on the effect side (Traverse the Ulvenwald, Emrakul's Evangel-style scaling), so it wants to land in `VALUE_KEYS` too.
-  <br>Why the existing vocabulary won't do: `count` is the closest and is the wrong measurement: it counts *objects* matching a filter, so a graveyard of four creature cards reads 4 and satisfies a `>= 4` that delirium must reject, while a graveyard of one instant, one land, one artifact and one creature also reads 4 and passes by coincidence. That is the same distinction `values.py` already spells out for domain -- "five Forests are five and not one". `distinct` is the leaf that does count distinct values, but it is blocked twice over: its `DISTINCT_OF` allows only `power` (coven) and `basic_land_type` (domain), with no card-type entry, and it is absent from `STATIC_VALUE_KEYS` -- which is `{const, count, mana_symbols, counters_on, permanents_entered_this_turn}` plus the life and per-player leaves -- so even with a card-type entry it could not be named inside a static's `condition`. The `zone: graveyard` support in static counting filters that makes Threshold (Nimble Mongoose, `count` >= 7) and Hellbent expressible therefore reaches the graveyard but cannot ask what is in it. The remaining temptation is to enumerate: `any` of `all`-of-`exists` nodes over every 4-subset of the card types, which is 126 branches for nine types, silently wrong the moment a tenth type is printed, and an approximation rather than the sentence. Only this clause is blocked -- the first line, "Whenever you cast a noncreature spell, surveil 1", is a plain `spell_cast` trigger filtered `not_types: ["Creature"]` with the `surveil` op, and the consequences of the delirium clause (`buff` +2/+2, `grant_keyword` flying, `attacks_if_able`) are all present static effects -- so no partial answer was written.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Dragon's Rage Channeler** (rank 1799) — `dragon_s_rage_channeler`
-  - Delirium — As long as there are four or more card types among cards in your graveyard, this creature gets +2/+2, has flying, and attacks each combat if able.
 
 </details>
 
@@ -2414,6 +2420,20 @@ Blocks **1** card.
 
 </details>
 
+## ooze-x-x-g
+
+Blocks **1** card.
+
+- **(token)** a 0/0 green Ooze creature token (no abilities), id e.g. `ooze_x_x_g`, whose size is set at creation by `create_token`'s `power`/`toughness` -- here X/X, X being the total mana value of the permanents the spell destroyed
+  <br>Why the existing vocabulary won't do: token_ids is a closed list and holds no green Ooze at all; the only green 0/0 is `fractal_0_0_gu`, which is a green-blue Fractal, and the other X/X tokens (`illusion_x_x_u`, `shark_x_x_u_flying`, `dragon_illusion_x_x_r_flying_haste`, `shapeshifter_x_x_c_changeling_deathtouch`) are the wrong colour and creature type. The rest of the line looks expressible once the token exists: the delirium test as an `if` on `cmp` of `{"distinct": {"of": "card_type", "objects": {"zone": "graveyard", "controller": "you"}}}` >= 4 (DISTINCT_OF now carries `card_type`), the three up-to-one targets on `destroy` with `as` binding what was destroyed, and X as a `sum` of `mana_value_of` over that binding -- the worker should confirm `destroy`'s `as` binds only the permanents actually destroyed (an indestructible target must contribute 0) when authoring.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Convert to Slime** (rank 8801) — `convert_to_slime`
+  - Delirium — Then if there are four or more card types among cards in your graveyard, create an X/X green Ooze creature token, where X is the total mana value of permanents destroyed this way.
+
+</details>
+
 ## opponent-choice-of-payment
 
 Blocks **1** card.
@@ -2940,6 +2960,20 @@ Blocks **1** card.
 - **Mindbreak Trap** (rank 539) — `mindbreak_trap`
   - If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.
   - Exile any number of target spells.
+
+</details>
+
+## static-greatest-power-in-graveyard
+
+Blocks **1** card.
+
+- **(value)** a static value leaf reading the greatest printed power among cards matched by a static counting filter in a non-battlefield zone (here: creature cards in your graveyard), so a self-only buff can be sized by it; an empty pool is 0
+  <br>Why the existing vocabulary won't do: The static `extreme_value` leaf (Dragon Man) has the right shape -- objects with zone: graveyard, pick: greatest -- but `_validate_static_extreme_value` in cards/loader/statics.py refuses any `of` other than mana_value, because battlefield power is a layer output. A graveyard card's power is its printed power and is a pipeline input, so the leaf could accept `of: power` when every branch's zone is off the battlefield. `power_of` and the effect-side `extreme_value` are not static value keys, and a self_enters pump would go stale as the graveyard changes
+
+<details><summary>Cards waiting on this</summary>
+
+- **Carrion Grub** (rank 10492) — `carrion_grub`
+  - This creature gets +X/+0, where X is the greatest power among creature cards in your graveyard.
 
 </details>
 

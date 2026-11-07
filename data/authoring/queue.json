@@ -36742,12 +36742,12 @@
     },
     "Burnished Hart": {
       "edhrec_rank": 479,
-      "gate": "template",
+      "gate": null,
       "name": "Burnished Hart",
-      "reason": "no template for: {3}, Sacrifice this creature: Search your library for up to two basic land cards, put them",
+      "reason": "",
       "scryfall_id": "7c990878-50e6-4443-91b6-99c31f85be98",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Burnout": {
@@ -42332,12 +42332,12 @@
     },
     "Cemetery Tampering": {
       "edhrec_rank": 2760,
-      "gate": "template",
+      "gate": null,
       "name": "Cemetery Tampering",
-      "reason": "no template for: Hideaway 5",
+      "reason": "",
       "scryfall_id": "b6d4cf14-c43e-454b-ae76-3678617067f8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cenn's Enlistment": {
@@ -62852,12 +62852,12 @@
     },
     "Deadbridge Chant": {
       "edhrec_rank": 3257,
-      "gate": "template",
+      "gate": null,
       "name": "Deadbridge Chant",
-      "reason": "no template for: When this enchantment enters, mill ten cards",
+      "reason": "",
       "scryfall_id": "e67b8f21-c173-4d1d-8224-2eba4bcc6975",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deadbridge Goliath": {
