@@ -881,6 +881,18 @@ def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
         # the selector filtered out of the pool, which were still looked at.
         if spec.get("rest_to_bottom", False):
             _bottom_in_random_order(ctx, pid, [oid for oid in top if oid not in taken])
+        # "…then put them back in any order" (Halimar Depths, Portent) and "put
+        # the rest on top of your library in any order" (Diabolic Vision). Left
+        # alone the rest stay on top in the order they were found, which is
+        # "look at" and nothing more; `scry` is the near miss in the other
+        # direction, since it may also bottom them, which the card does not
+        # allow. **The resolving player** arranges them, not the library's
+        # owner: Portent looks at *target player's* library and "you" put the
+        # cards back.
+        if spec.get("rest_any_order", False):
+            yield from _top_in_chosen_order(
+                ctx, pid, [oid for oid in top if oid not in taken]
+            )
         # "Then put all cards exiled this way **that weren't cast** into your
         # graveyard" -- Epic Experiment. The same remainder, sent somewhere
         # other than the bottom of the library. Without it the leftovers stay on
@@ -2961,6 +2973,36 @@ def op_put_on_top(ctx: EffectContext, spec: Mapping[str, Any]):
                 )
     if name := spec.get("as"):
         ctx.bindings[str(name)] = moved
+
+
+def _top_in_chosen_order(ctx: EffectContext, pid: int, oids: list[int]):
+    """Put cards still on top of ``pid``'s library back on top in the order the
+    resolving player chooses.
+
+    The order is asked the way `_in_owners_order` asks it -- one card at a time,
+    "the last card is the top card" -- and with no new decision kind. Only the
+    cards still in the library are arranged: one the op already moved is gone,
+    and one a replacement sent elsewhere is not the op's to put back.
+    """
+    library = ctx.state.players[pid].library
+    remaining = [oid for oid in oids if oid in library]
+    if len(remaining) < 2:
+        return
+    chooser = ctx.controller
+    prompt = "Put on top of the library next (the last card is the top card)"
+    placed: list[int] = []
+    while len(remaining) > 1:
+        picked = yield from ask_objects(ctx, prompt, remaining, 1, 1, chooser, "library_order")
+        if not picked:  # pragma: no cover - a count of one always answers
+            break
+        placed.append(picked[0])
+        remaining.remove(picked[0])
+    placed.extend(remaining)
+    for oid in placed:
+        library.remove(oid)
+    # Each card goes on top of the one before, so the last placed is the top.
+    library[:0] = list(reversed(placed))
+    ctx.state.emit("reorder_top", player=pid, count=len(placed))
 
 
 def _in_owners_order(ctx: EffectContext, oids: list[int], bottom: bool):

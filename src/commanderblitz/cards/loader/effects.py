@@ -1696,6 +1696,23 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}: look_at_top 'link' is a boolean and needs destination 'exile'"
             )
+        # "…then put them back in any order." Beside another instruction for
+        # "the rest" it would arrange cards that op had already sent away, or
+        # that a shuffle then scatters: two different remainders, and a card
+        # prints one.
+        if "rest_any_order" in effect:
+            if not isinstance(effect["rest_any_order"], bool):
+                raise DslError(f"{where}: look_at_top 'rest_any_order' is a boolean")
+            clashing = [
+                key
+                for key in ("rest_to_bottom", "rest_to", "shuffle")
+                if effect.get(key) and effect["rest_any_order"]
+            ]
+            if clashing:
+                raise DslError(
+                    f"{where}: look_at_top 'rest_any_order' puts the rest back on "
+                    f"top; it takes no {sorted(clashing)}"
+                )
     if op == "reveal_until":
         # The selector *is* the "until", so an omitted one is not a smaller
         # version of the card -- an empty selector matches the very first card

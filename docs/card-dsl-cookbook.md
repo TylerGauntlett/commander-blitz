@@ -14930,3 +14930,25 @@ outcome tables of the AFR block ("1—9 … 10—19 … 20"). The `dice_rolled` 
 exists and carries `results` and `sides`, so the trigger is a name in
 `TRIGGER_EVENTS` away; the outcome tables are a banding construct on top of it
 and are their own capability.
+
+## "Then put them back in any order" — `rest_any_order`
+
+```jsonc
+// Halimar Depths -- "look at the top three cards of your library, then put
+// them back in any order."
+{ "op": "look_at_top", "amount": 3, "objects": { "count": 0 }, "rest_any_order": true }
+
+// Diabolic Vision -- "Put one of them into your hand and the rest on top of
+// your library in any order."
+{ "op": "look_at_top", "amount": 5, "objects": { "count": 1 },
+  "destination": "hand", "rest_any_order": true }
+```
+
+Without the key the cards not taken stay on top in the order they were found,
+which is a look and nothing more. `scry` is the near miss the other way: it may
+also bottom them, which none of these cards allows. The order is asked one card
+at a time, the last card placed being the top, and **the resolving player**
+asks it — Portent looks at *target player's* library and "you" put the cards
+back, so `player: "opponent"` changes whose library and not who arranges it.
+The loader refuses the key beside `rest_to_bottom`, `rest_to` or `shuffle`,
+each a different instruction for the same remainder.
