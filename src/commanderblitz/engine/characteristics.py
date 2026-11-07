@@ -1500,6 +1500,8 @@ def _static_active(
     source: GameObject,
     static: Mapping[str, Any],
     affected: GameObject | None = None,
+    *,
+    derived: bool = False,
 ) -> bool:
     """Is this static's "as long as..." clause currently true?
 
@@ -1510,23 +1512,38 @@ def _static_active(
     the per-permanent reader asks again with each. The whole tree is deferred,
     not just the leaf, so a ``not`` or an ``all`` around it is evaluated once,
     correctly, by that reader.
+
+    ``derived`` is the other way to say "outside the pipeline": a player-wide
+    reader with no permanent to apply the static to, which runs at legality and
+    never inside `chars` -- `player_statics.player_casts_as_though_flash`
+    (Kianne, Corrupted Memory's "as long as Kianne's power is even"). With it
+    an `exists_derived` leaf is evaluated rather than deferred.
     """
     condition = static.get("condition")
     if not condition:
         return True
     # A condition reading derived characteristics is deferred on the same
     # terms, and it is what keeps the pipeline acyclic: every walk inside
-    # `chars` asks with no permanent, so `exists_derived` is only ever
-    # evaluated by `attack_forbidden` and `block_forbidden`, outside it.
+    # `chars` asks with no permanent and without ``derived``, so
+    # `exists_derived` is only ever evaluated by the readers of
+    # `loader.vocabulary.STATIC_DERIVED_CONDITION_EFFECTS`, outside it.
     if affected is None and (
-        static_condition_names_affected(condition) or static_condition_reads_derived(condition)
+        static_condition_names_affected(condition)
+        or (not derived and static_condition_reads_derived(condition))
     ):
         return True
-    return _condition_met(state, source, condition, affected)
+    return _condition_met(
+        state, source, condition, affected, derived=derived or affected is not None
+    )
 
 
 def _condition_met(
-    state: GameState, source: GameObject, cond: Any, affected: GameObject | None = None
+    state: GameState,
+    source: GameObject,
+    cond: Any,
+    affected: GameObject | None = None,
+    *,
+    derived: bool = False,
 ) -> bool:
     """Evaluate a static's condition tree.
 
@@ -1553,19 +1570,24 @@ def _condition_met(
         have = source.counter(str(spec.get("counter", PLUS_ONE)))
         return _compare(str(spec.get("op", ">=")), have, int(spec.get("amount", 1)))
     if "all" in cond:
-        return all(_condition_met(state, source, c, affected) for c in cond["all"])
+        return all(
+            _condition_met(state, source, c, affected, derived=derived) for c in cond["all"]
+        )
     if "any" in cond:
-        return any(_condition_met(state, source, c, affected) for c in cond["any"])
+        return any(
+            _condition_met(state, source, c, affected, derived=derived) for c in cond["any"]
+        )
     if "not" in cond:
-        return not _condition_met(state, source, cond["not"], affected)
+        return not _condition_met(state, source, cond["not"], affected, derived=derived)
     if "exists" in cond:
         return _count_matching(state, cond["exists"], source) > 0
     if "exists_derived" in cond:
         # Rhonas's "unless you control another creature with power 4 or
-        # greater": current power, pumps and counters included. Only reached
-        # with a permanent in hand -- `_static_active` defers it otherwise --
-        # which is to say only outside the pipeline.
-        if affected is None:
+        # greater": current power, pumps and counters included; Kianne's "as
+        # long as Kianne's power is even". Only reached with a permanent in
+        # hand or from a ``derived`` reader -- `_static_active` defers it
+        # otherwise -- which is to say only outside the pipeline.
+        if not derived and affected is None:
             raise DslError("static condition 'exists_derived' asked inside the pipeline")
         spec = cond["exists_derived"] or {}
         return any(
@@ -1656,6 +1678,31 @@ def _compare(op: str, left: int, right: int) -> bool:
         raise DslError(f"unknown comparison operator {op!r}") from None
 
 
+#: What a numeric filter clause's ``parity`` may name: ``{"parity": "even"}``.
+PARITIES = ("even", "odd")
+
+
+def parity_matches(value: int, spec: Any) -> bool | None:
+    """A numeric clause's parity form, or ``None`` when ``spec`` is not one.
+
+    "Creatures with even power", "as long as Kianne's power is odd": a number
+    is odd or even by its remainder mod 2, and zero is even (Zimone's
+    Hypothesis prints the reminder). Python's ``%`` answers 1 for a negative
+    odd number, so a -1/1 reads odd as the rules have it.
+
+    One function for every reader of the ``power``/``toughness``/``mana_value``
+    clause -- this module's two, `effects.selectors._compare` and
+    `triggers._compare` -- so a clause the loader admits in one place cannot
+    mean "parity" there and fall through to a defaulted ``>= 0`` in another.
+    """
+    if not isinstance(spec, Mapping) or "parity" not in spec:
+        return None
+    parity = spec["parity"]
+    if parity not in PARITIES:
+        raise DslError(f"bad parity {parity!r} (one of {list(PARITIES)})")
+    return value % 2 == PARITIES.index(parity)
+
+
 def compare_pt(value: int, spec: Any) -> bool:
     """A filter's ``power``/``toughness`` clause: ``{"op": ">=", "value": 4}``.
 
@@ -1679,6 +1726,8 @@ def compare_pt(value: int, spec: Any) -> bool:
         return value == spec
     if not isinstance(spec, Mapping):
         raise DslError(f"bad power/toughness comparison {spec!r}")
+    if (parity := parity_matches(value, spec)) is not None:
+        return parity
     return _compare(str(spec.get("op", ">=")), value, int(spec.get("value", 0)))
 
 
@@ -2341,6 +2390,8 @@ def _compare_printed(value: int, spec: Any) -> bool:
     """The static twin of `effects.selectors._compare`, over literal numbers only."""
     if isinstance(spec, int):
         return value == spec
+    if (parity := parity_matches(value, spec)) is not None:
+        return parity
     other = int(spec.get("value", 0))
     op = spec.get("op", ">=")
     if op == ">=":

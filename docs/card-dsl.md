@@ -6487,7 +6487,7 @@ Each node names **exactly one** form:
 | `{"has_flag": "mardu"}` | whether `set_flag` wrote that word on the source — a Siege's chosen mode |
 | `{"top_of_library": filter}` | matches the **one** card on top of a library, on its printed face |
 | `{"is_monarch": player}` | whether that player is the monarch — `you`, `opponent`, `each_player`, or `affected_controller` (below) |
-| `{"exists_derived": filter}` | does a permanent match on its **current** characteristics — `cant_attack` and `cant_block` only (below) |
+| `{"exists_derived": filter}` | does a permanent match on its **current** characteristics — `cant_attack`, `cant_block` and `cast_as_though_flash` only (below) |
 
 `has_flag` is how "As this enchantment enters, choose Mardu or Jeskai" switches
 a **static** mode on. The choice is a `self_enters` trigger whose `choose_mode`
@@ -6528,8 +6528,11 @@ power 4 or greater", and the creature its own ability pumps to 5 has to count:
 
 `_static_active` defers a tree holding it, as it defers `affected_controller`,
 and `attack_forbidden` and `block_forbidden` ask it once per creature at
-declaration, outside the pipeline. The loader refuses it on every other effect,
-and off the battlefield.
+declaration, outside the pipeline. `cast_as_though_flash` is the third reader:
+`player_casts_as_though_flash` is asked at cast legality, never by a layer, and
+walks with `derived`, so Kianne, Corrupted Memory reads its own power with its
+counters on — [Odd or even](card-dsl-cookbook.md#odd-or-even--parity). The
+loader refuses it on every other effect, and off the battlefield.
 A condition on an object static is evaluated in `_battlefield_statics`, *before*
 the first layer applies, so counters, printed characteristics, zone contents and
 whose turn it is are all safe — no layer can change whether another static is switched on, and

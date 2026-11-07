@@ -17,12 +17,14 @@ from collections.abc import Generator, Mapping
 from typing import TYPE_CHECKING, Any
 
 from ..characteristics import (
+    PARITIES,
     _base_pt,
     chars,
     creature_types_of,
     enchanted_by,
     has_counters_matches,
     is_equipped,
+    parity_matches,
     resolve_chosen_subtypes,
 )
 from ..enums import PERMANENT_TYPES, CardType, Supertype, Zone
@@ -1393,6 +1395,8 @@ def _compare(value: int, spec: Any, ctx: EffectContext) -> bool:
         return value == spec
     if not isinstance(spec, Mapping):
         raise DslError(f"bad comparison spec {spec!r}")
+    if (parity := parity_matches(value, spec)) is not None:
+        return parity
     op = spec.get("op", ">=")
     other = evaluate_value(ctx, spec.get("value", 0))
     if op == ">=":
@@ -1924,6 +1928,36 @@ def validate_attached_to_key(filt: Any, where: str) -> None:
         )
 
 
+#: The numeric clauses `_compare` reads, and so the ones that take ``parity``.
+PARITY_CLAUSE_KEYS = ("power", "toughness", "base_power", "base_toughness", "mana_value")
+
+
+def validate_parity_clauses(selector: Any, where: str) -> None:
+    """``{"parity": "even"}`` on a numeric clause: one of `PARITIES`, alone.
+
+    "Each creature with power of the chosen quality" (Zimone's Hypothesis).
+    Alone, because the parity form is not a comparison: an ``op`` or a
+    ``value`` beside it would be read by nothing, and a misspelt parity read as
+    neither would make the clause match nothing -- or, in a reader that
+    defaulted, everything.
+    """
+    if not isinstance(selector, Mapping):
+        return
+    for key in PARITY_CLAUSE_KEYS:
+        spec = selector.get(key)
+        if not isinstance(spec, Mapping) or "parity" not in spec:
+            continue
+        if set(spec) != {"parity"}:
+            raise DslError(
+                f"{where}.{key}: 'parity' stands alone -- {{'parity': 'even'}} -- "
+                f"not beside {sorted(set(spec) - {'parity'})}"
+            )
+        if spec["parity"] not in PARITIES:
+            raise DslError(
+                f"{where}.{key}.parity: one of {list(PARITIES)}, got {spec['parity']!r}"
+            )
+
+
 def validate_selector(selector: Any, where: str) -> None:
     """Load-time check that a selector uses only known keys."""
     if selector is None:
@@ -2066,6 +2100,7 @@ def validate_selector(selector: Any, where: str) -> None:
             f"the creature (701.38); it names no goader"
         )
     validate_face_down_key(selector, where)
+    validate_parity_clauses(selector, where)
     # A bare `true` is the tempting spelling -- it is how `attacking` is written
     # -- and it would name nobody: the key is *which* player, and a boolean read
     # as a word matches no branch, so every creature would silently fail it.

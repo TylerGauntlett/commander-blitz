@@ -13668,6 +13668,59 @@ every zone, plus "Another card name": a library holds only its owner's cards
 that is a real choice. No new `DecisionKind`: `ask_mode`, tagged
 `choose_card_name`; the heuristic agent names what its library holds most of.
 
+## Odd or even — `parity`
+
+    Kianne, Corrupted Memory — "As long as Kianne's power is even, you may cast
+    noncreature spells as though they had flash. As long as Kianne's power is
+    odd, you may cast creature spells as though they had flash."
+
+```jsonc
+{ "kind": "static", "effect": "cast_as_though_flash", "affects_player": "you",
+  "affects_spells": { "not_types": ["Creature"] },
+  "condition": { "exists_derived": { "self_only": true, "power": { "parity": "even" } } } },
+{ "kind": "static", "effect": "cast_as_though_flash", "affects_player": "you",
+  "affects_spells": { "types": ["Creature"] },
+  "condition": { "exists_derived": { "self_only": true, "power": { "parity": "odd" } } } }
+```
+
+`{"parity": "even"}` or `{"parity": "odd"}` is the third form of a numeric
+clause, beside a bare integer and `{"op", "value"}`. It stands alone — an `op`
+or `value` beside it is refused — and any other word is refused at load. A
+number is even when its remainder mod 2 is 0: zero is even, -1 is odd
+(`characteristics.parity_matches`). The clauses that take it are the ones every
+comparison reader shares: `power`, `toughness`, `base_power`, `base_toughness`
+and `mana_value` in a selector or trigger filter, `power` and `toughness` in a
+static filter. A run of equalities is the near miss, and a wrong one: power has
+no upper bound.
+
+Kianne's condition is `exists_derived`, not `exists`. A static's `exists` reads
+base power, so the 2/2 would read even for ever while its draw trigger stacks
+counters on it. `exists_derived` reads current power, and `cast_as_though_flash`
+may carry it because its reader runs at cast legality, outside the layer
+pipeline ([`exists_derived`](card-dsl.md#static-abilities)).
+
+    Zimone's Hypothesis — "You may put a +1/+1 counter on a creature. Then
+    choose odd or even. Return each creature with power of the chosen quality
+    to its owner's hand. (Zero is even.)"
+
+```jsonc
+{ "op": "add_counters", "counter": "+1/+1", "amount": { "const": 1 },
+  "objects": { "zone": "battlefield", "controller": "any", "types": ["Creature"],
+               "count": 1, "optional": true } },
+{ "op": "choose_mode", "chooser": "you", "modes": [
+  { "label": "Odd", "effects": [ { "op": "return_to_hand",
+      "objects": { "zone": "battlefield", "controller": "any", "types": ["Creature"],
+                   "power": { "parity": "odd" }, "count": "all" } } ] },
+  { "label": "Even", "effects": [ { "op": "return_to_hand",
+      "objects": { "zone": "battlefield", "controller": "any", "types": ["Creature"],
+                   "power": { "parity": "even" }, "count": "all" } } ] } ] }
+```
+
+"Then choose" is a choice made on resolution, after the counter. `chooser:
+"you"` is what puts it there: a top-level `choose_mode` without a chooser is
+answered as the spell is cast (601.2b), which would make the spell modal and
+announce the parity on the stack ([`chooser`](#chooser--when-somebody-else-picks-the-mode)).
+
 ## "Choose a number"
 
     Expel the Interlopers — "Choose a number between 0 and 10. Destroy all

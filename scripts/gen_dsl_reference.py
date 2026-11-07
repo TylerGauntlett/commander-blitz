@@ -530,7 +530,7 @@ SELECTORS: dict[str, Entry] = {
     "is_token": ("Is (or is not) a token.", None),
     "keywords": ("Has all of these keywords.", None),
     "mana_cost": ("Printed mana cost is one of these.", None),
-    "mana_value": ("A comparison on mana value.", None),
+    "mana_value": ("A comparison on mana value, or its `parity`.", "Odd or even — `parity`"),
     "min_colors": ("Has at least N colors (\"multicolored\").", '"Multicolored" — `min_colors`'),
     "colorless": ("Has no colors (105.2c); true only.", '"Colorless" — `colorless`'),
     "modified": ("Is modified (equipped, enchanted by you, or has counters).", None),
@@ -551,7 +551,7 @@ SELECTORS: dict[str, Entry] = {
     "player": ("Whose zone to walk (for hand, library, graveyard, exile).", None),
     "returned_with": ("Put onto the battlefield by the named source's linked return.",
                       "An Aura that enchants a card in a graveyard — Animate Dead"),
-    "power": ("A comparison on live power.",
+    "power": ("A comparison on live power, or its `parity` (`{\"parity\": \"even\"}`, zero even).",
               "`power` / `toughness` — a *derived* characteristic, read at a fixed layer"),
     "random": ("Pick at random rather than by choice; on a triggered ability's one target spec, the target is drawn at random.",
                '"Target … chosen at random"'),
@@ -572,7 +572,7 @@ SELECTORS: dict[str, Entry] = {
     "supertypes": ("Has one of these supertypes.", None),
     "tapped": ("Is (or is not) tapped.", None),
     "target": ("The objects a target id chose.", None),
-    "toughness": ("A comparison on live toughness.",
+    "toughness": ("A comparison on live toughness, or its `parity`.",
                   "`power` / `toughness` — a *derived* characteristic, read at a fixed layer"),
     "types": ("Has all of these card types.", None),
     "union": ("One pool made of several zones' selectors.", "One choice across two zones — `union`"),
@@ -765,7 +765,8 @@ STATIC_VALUE_EXTRAS: dict[str, Entry] = {
 
 STATIC_CONDITION_EXTRAS: dict[str, Entry] = {
     "counters": ("The source has (or lacks) counters of a kind.", None),
-    "exists_derived": ("A permanent with these current characteristics exists (cant_attack, cant_block only).",
+    "exists_derived": ("A permanent with these current characteristics exists "
+                       "(cant_attack, cant_block, cast_as_though_flash only).",
                        None),
     "is_attached": ("The source is attached to something.", None),
     "is_monstrous": ("The source is monstrous (701.37b).", H_MONSTROSITY),

@@ -1455,11 +1455,12 @@ STATIC_CONDITION_HEADS = (
 
 #: The static effects whose condition may read *derived* characteristics
 #: (`exists_derived`). Their readers -- `player_statics.attack_forbidden` and
-#: `block_forbidden` -- ask at declaration, one creature at a time and outside
-#: the characteristics pipeline, so the derived board is finished when they
-#: look at it. A layered static reading it would read another static's output,
-#: which ADR 0001 refuses.
-STATIC_DERIVED_CONDITION_EFFECTS = frozenset({"cant_attack", "cant_block"})
+#: `block_forbidden` at declaration, one creature at a time, and
+#: `player_casts_as_though_flash` at cast legality -- ask outside the
+#: characteristics pipeline, so the derived board is finished when they look at
+#: it. A layered static reading it would read another static's output, which
+#: ADR 0001 refuses.
+STATIC_DERIVED_CONDITION_EFFECTS = frozenset({"cant_attack", "cant_block", "cast_as_though_flash"})
 
 #: Each word a static's ``defending`` may take, and the one effect it is a
 #: clause of. Read relative to the static's controller by

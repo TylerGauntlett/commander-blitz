@@ -503,7 +503,8 @@
   ],
   "STATIC_DERIVED_CONDITION_EFFECTS": [
    "cant_attack",
-   "cant_block"
+   "cant_block",
+   "cast_as_though_flash"
   ],
   "STATIC_EFFECTS": [
    "ability_cost_reduction",

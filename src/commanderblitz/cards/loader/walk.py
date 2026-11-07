@@ -15,6 +15,7 @@ from commanderblitz.engine.effects.selectors import (
     validate_colorless_key,
     validate_enchanted_by_key,
     validate_has_counters_key,
+    validate_parity_clauses,
 )
 from commanderblitz.engine.effects.values import (
     validate_counter_kind,
@@ -59,9 +60,10 @@ def _check_mana_cost_key(filt: Any, where: str) -> None:
 def _check_pt_keys(filt: Any, where: str) -> None:
     """``power``/``toughness`` in a static filter is a comparison, not a size.
 
-    ``{"op": ">=", "value": 4}``, or a bare integer meaning equality -- the
-    spelling `selectors._compare` and `triggers._compare` already take, so the
-    clause reads the same wherever it is written.
+    ``{"op": ">=", "value": 4}``, a bare integer meaning equality, or
+    ``{"parity": "even"|"odd"}`` -- the spelling `selectors._compare` and
+    `triggers._compare` already take, so the clause reads the same wherever it
+    is written.
 
     Static filters are validated by key set alone, which is why this check has
     to exist: ``"power": 4`` is fine, but ``"power": {"amount": 4}`` would load,
@@ -84,6 +86,11 @@ def _check_pt_keys(filt: Any, where: str) -> None:
                 f"or a bare integer, got {spec!r}"
             )
         if not isinstance(spec, Mapping):
+            continue
+        if "parity" in spec:
+            # "As long as Kianne's power is even": the remainder mod 2, zero
+            # even, and no comparison beside it -- see `parity_matches`.
+            validate_parity_clauses({key: spec}, where)
             continue
         unknown = set(spec) - {"op", "value"}
         if unknown:

@@ -40,6 +40,7 @@ from .characteristics import (
     granted_wards,
     has_counters_matches,
     has_keyword,
+    parity_matches,
     resolve_chosen_subtypes,
 )
 from .characteristics import _matches as _static_matches
@@ -2544,6 +2545,8 @@ def _origin_matches(
 
 
 def _compare(value: int, spec: Mapping[str, Any]) -> bool:
+    if (parity := parity_matches(value, spec)) is not None:
+        return parity
     op = spec.get("op", ">=")
     other = spec.get("value", 0)
     if isinstance(other, Mapping):

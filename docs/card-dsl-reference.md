@@ -261,7 +261,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `is_token` | Is (or is not) a token. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `keywords` | Has all of these keywords. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `mana_cost` | Printed mana cost is one of these. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
-| `mana_value` | A comparison on mana value. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
+| `mana_value` | A comparison on mana value, or its `parity`. | [Odd or even — parity](card-dsl-cookbook.md#odd-or-even--parity) |
 | `min_colors` | Has at least N colors ("multicolored"). | ["Multicolored" — min_colors](card-dsl.md#multicolored--min_colors) |
 | `modified` | Is modified (equipped, enchanted by you, or has counters). | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `name` | Named exactly this, or the name under a binding. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
@@ -277,7 +277,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `paid_by` | A spell paid with mana from the named source. | ["When that mana is spent to cast…"](card-dsl-cookbook.md#when-that-mana-is-spent-to-cast) |
 | `phased_out_with` | Phased out by the named source. | ["…phases out until this enchantment leaves the battlefield"](card-dsl-cookbook.md#phases-out-until-this-enchantment-leaves-the-battlefield) |
 | `player` | Whose zone to walk (for hand, library, graveyard, exile). | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
-| `power` | A comparison on live power. | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
+| `power` | A comparison on live power, or its `parity` (`{"parity": "even"}`, zero even). | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
 | `random` | Pick at random rather than by choice; on a triggered ability's one target spec, the target is drawn at random. | ["Target … chosen at random"](card-dsl.md#target--chosen-at-random) |
 | `returned_with` | Put onto the battlefield by the named source's linked return. | [An Aura that enchants a card in a graveyard — Animate Dead](card-dsl-cookbook.md#an-aura-that-enchants-a-card-in-a-graveyard--animate-dead) |
 | `self_only` | This permanent only. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
@@ -291,7 +291,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `supertypes` | Has one of these supertypes. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `tapped` | Is (or is not) tapped. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `target` | The objects a target id chose. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
-| `toughness` | A comparison on live toughness. | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
+| `toughness` | A comparison on live toughness, or its `parity`. | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
 | `types` | Has all of these card types. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `union` | One pool made of several zones' selectors. | [One choice across two zones — union](card-dsl-cookbook.md#one-choice-across-two-zones--union) |
 | `was_attached_to` | Attached, as the same object, to the permanent a sacrifice cost's `as` recorded, when it was paid (608.2h). | [Zack Fair — what a sacrificed source had](card-dsl.md#zack-fair--what-a-sacrificed-source-had) |
@@ -515,20 +515,20 @@ The subset of the selector language a trigger's `filter` may use. The loader ref
 | `is_token` | Is (or is not) a token. | [Triggers](card-dsl.md#triggers) |
 | `keywords` | Has all of these keywords. | [Triggers](card-dsl.md#triggers) |
 | `mana_cost` | Printed mana cost is one of these. | [Triggers](card-dsl.md#triggers) |
-| `mana_value` | A comparison on mana value. | [Triggers](card-dsl.md#triggers) |
+| `mana_value` | A comparison on mana value, or its `parity`. | [Odd or even — parity](card-dsl-cookbook.md#odd-or-even--parity) |
 | `min_colors` | Has at least N colors ("multicolored"). | ["Multicolored" — min_colors](card-dsl.md#multicolored--min_colors) |
 | `not_supertypes` | Has none of these supertypes ("nonbasic"). | [Triggers](card-dsl.md#triggers) |
 | `not_types` | Has none of these card types ("noncreature"). | [Triggers](card-dsl.md#triggers) |
 | `owner` | Owned by `you`/`opponent`/`any` or a player spec. | [Triggers](card-dsl.md#triggers) |
 | `paid_by` | A spell paid with mana from the named source. | ["When that mana is spent to cast…"](card-dsl-cookbook.md#when-that-mana-is-spent-to-cast) |
-| `power` | A comparison on live power. | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
+| `power` | A comparison on live power, or its `parity` (`{"parity": "even"}`, zero even). | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
 | `self_only` | This permanent only. | [Triggers](card-dsl.md#triggers) |
 | `shares_a_creature_type_with` | Shares a creature type with the named object. | ["…that shares a creature type with this creature"](card-dsl-cookbook.md#that-shares-a-creature-type-with-this-creature) |
 | `shares_a_type_with_commander` | Shares a creature type with your commander. | ["…that shares a creature type with your commander"](card-dsl-cookbook.md#that-shares-a-creature-type-with-your-commander) |
 | `subtypes` | Has one of these subtypes. | [Triggers](card-dsl.md#triggers) |
 | `supertypes` | Has one of these supertypes. | [Triggers](card-dsl.md#triggers) |
 | `tapped` | Is (or is not) tapped. | [Triggers](card-dsl.md#triggers) |
-| `toughness` | A comparison on live toughness. | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
+| `toughness` | A comparison on live toughness, or its `parity`. | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
 | `types` | Has all of these card types. | [Triggers](card-dsl.md#triggers) |
 | `zone` | Which zone to look in. | [Triggers](card-dsl.md#triggers) |
 
@@ -957,12 +957,12 @@ The subset of the selector language a static's `affects` may use -- printed char
 | `owner` | Owned by `you`/`opponent`/`any` or a player spec. | [Static abilities](card-dsl.md#static-abilities) |
 | `paired` | Is paired (soulbond). | [Soulbond — a relationship that is not attachment](card-dsl-cookbook.md#soulbond--a-relationship-that-is-not-attachment) |
 | `paired_with_source` | Paired with the static's own source. | [Soulbond — a relationship that is not attachment](card-dsl-cookbook.md#soulbond--a-relationship-that-is-not-attachment) |
-| `power` | A comparison on live power. | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
+| `power` | A comparison on live power, or its `parity` (`{"parity": "even"}`, zero even). | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
 | `self_only` | This permanent only. | [Static abilities](card-dsl.md#static-abilities) |
 | `subtypes` | Has one of these subtypes. | [Static abilities](card-dsl.md#static-abilities) |
 | `supertypes` | Has one of these supertypes. | [Static abilities](card-dsl.md#static-abilities) |
 | `tapped` | Is (or is not) tapped. | [Static abilities](card-dsl.md#static-abilities) |
-| `toughness` | A comparison on live toughness. | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
+| `toughness` | A comparison on live toughness, or its `parity`. | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
 | `types` | Has all of these card types. | [Static abilities](card-dsl.md#static-abilities) |
 
 ## Static conditions
@@ -976,7 +976,7 @@ What a static's "as long as …" `condition` may ask. Defined under ["As long as
 | `cmp` | Compare `left` and `right` values with `op`. | ["As long as…"](card-dsl.md#as-long-as) |
 | `counters` | The source has (or lacks) counters of a kind. | ["As long as…"](card-dsl.md#as-long-as) |
 | `exists` | A selector finds at least one object. | ["As long as…"](card-dsl.md#as-long-as) |
-| `exists_derived` | A permanent with these current characteristics exists (cant_attack, cant_block only). | ["As long as…"](card-dsl.md#as-long-as) |
+| `exists_derived` | A permanent with these current characteristics exists (cant_attack, cant_block, cast_as_though_flash only). | ["As long as…"](card-dsl.md#as-long-as) |
 | `has_city_s_blessing` | The player has the city's blessing (ascend). | [Ascend](card-dsl-cookbook.md#ascend) |
 | `has_flag` | The source carries a word written by `set_flag`. | ["If this creature hasn't been exerted this turn"](card-dsl-cookbook.md#if-this-creature-hasnt-been-exerted-this-turn) |
 | `is_attached` | The source is attached to something. | ["As long as…"](card-dsl.md#as-long-as) |
