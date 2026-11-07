@@ -14329,6 +14329,10 @@
   "rogue_s_passage": {
     "zone": "battlefield"
   },
+  "rolling_hamsphere": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "root_maze": {
     "zone": "battlefield"
   },

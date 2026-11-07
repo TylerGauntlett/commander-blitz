@@ -1842,6 +1842,26 @@
       ]
     },
     {
+      "id": "hamster_1_1_r",
+      "name": "Hamster Token",
+      "oracle_text": "1/1 red Hamster creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Hamster"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "is_token": true
+    },
+    {
       "id": "hero_1_1_c",
       "name": "Hero Token",
       "oracle_text": "",

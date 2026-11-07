@@ -2263,3 +2263,16 @@ class TestTheAnimatedArmyTokens:
         other = pool.get("cat_2_2_w")
         assert sorted(other.colors) == ["W"]
         assert list(other.subtypes) == ["Cat"]
+
+    def test_the_hamster_is_a_red_one_one(self, pool):
+        """Rolling Hamsphere: *"create three 1/1 red Hamster creature tokens,
+        then it deals X damage ... where X is the number of Hamsters you
+        control."* The subtype is the load-bearing part: the Vehicle counts
+        Hamsters, so the pool's 1/1 red Goblin is not a stand-in."""
+        token = pool.get("hamster_1_1_r")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (1, 1)
+        assert sorted(token.colors) == ["R"]
+        assert list(token.subtypes) == ["Hamster"]
+        assert not token.keywords
+        assert not token.abilities

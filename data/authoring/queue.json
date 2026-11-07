@@ -226862,12 +226862,12 @@
     },
     "Rolling Hamsphere": {
       "edhrec_rank": 4061,
-      "gate": "template",
+      "gate": null,
       "name": "Rolling Hamsphere",
-      "reason": "no template for: This Vehicle gets +1/+1 for each Hamster you control",
+      "reason": "",
       "scryfall_id": "04d6e7f2-fb69-477c-b4f1-8a97485dbf32",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rolling Spoil": {
