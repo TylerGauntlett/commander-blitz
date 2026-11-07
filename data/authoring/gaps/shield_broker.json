@@ -1,0 +1,18 @@
+{
+  "card_id": "shield_broker",
+  "name": "Shield Broker",
+  "oracle_text": "When this creature enters, put a shield counter on target noncommander creature you don't control. You gain control of that creature for as long as it has a shield counter on it. (If it would be dealt damage or destroyed, remove a shield counter from it instead.)",
+  "blocked_sentences": [
+    "You gain control of that creature for as long as it has a shield counter on it."
+  ],
+  "needs": [
+    {
+      "capability": "control_while_has_counter",
+      "kind": "op",
+      "what": "a gain_control duration bound to a counter on the stolen permanent: control lasts for as long as that permanent has at least one counter of a named kind (here shield), and is handed back the moment the last such counter is removed (e.g. by the shield counter's own damage/destroy replacement), like `{\"op\": \"gain_control\", \"duration\": \"while_has_counter\", \"counter\": \"shield\"}`",
+      "why_existing_wont_do": "gain_control's duration is closed to CONTROL_DURATIONS (permanent, until_end_of_turn, end_of_your_next_turn, as_long_as_you_control_source); none ends on counter removal. 'permanent' would be a strictly stronger steal. The counter-bound end exists only for cant_attack_player's `counter` key (the vow-counter attack mark), not for control changes"
+    }
+  ],
+  "closest_existing": ["gain_control", "cant_attack_player"],
+  "confidence": "high"
+}

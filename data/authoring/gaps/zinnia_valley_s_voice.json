@@ -1,0 +1,18 @@
+{
+  "card_id": "zinnia_valley_s_voice",
+  "name": "Zinnia, Valley's Voice",
+  "oracle_text": "Flying\nZinnia gets +X/+0, where X is the number of other creatures you control with base power 1.\nCreature spells you cast gain offspring {2} as you cast them. (You may pay an additional {2} as you cast a creature spell. If you do, when that creature enters, create a 1/1 token copy of it.)",
+  "blocked_sentences": [
+    "Creature spells you cast gain offspring {2} as you cast them. (You may pay an additional {2} as you cast a creature spell. If you do, when that creature enters, create a 1/1 token copy of it.)"
+  ],
+  "needs": [
+    {
+      "capability": "offspring",
+      "kind": "keyword",
+      "what": "The offspring {N} keyword (702.175): an optional additional cost paid as the creature spell is cast, and, if it was paid, an enters trigger creating a token copy of that permanent that is 1/1; plus a static effect that grants offspring {2} to creature spells its controller casts, on the stack, as they are cast",
+      "why_existing_wont_do": "offspring appears nowhere in the reference: not in keywords, card_level_cost_keys or static_effects. The closest cast-time grants, grant_warp and grant_miracle, give their own fixed mechanics to spells, and grant_keyword only reaches permanents, so neither can give a spell an optional additional cost that leaves a cast-time 'paid' flag for a 1/1 token-copy enters trigger to read"
+    }
+  ],
+  "closest_existing": ["grant_warp", "grant_miracle", "grant_keyword"],
+  "confidence": "high"
+}

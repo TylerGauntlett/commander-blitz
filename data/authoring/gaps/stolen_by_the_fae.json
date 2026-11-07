@@ -1,0 +1,14 @@
+{
+  "card_id": "stolen_by_the_fae",
+  "name": "Stolen by the Fae",
+  "oracle_text": "Return target creature with mana value X to its owner's hand. You create X 1/1 blue Faerie creature tokens with flying.",
+  "blocked_sentences": ["Return target creature with mana value X to its owner's hand."],
+  "needs": [{
+    "capability": "x_dependent_spell_targets",
+    "kind": "engine",
+    "what": "Casting a spell whose target selector reads the announced X (\"target creature with mana value X\") must announce X before declaring targets (601.2b before 601.2c): offer one cast action per payable X, each carrying the targets legal at that X, the way legality._ability_aims already does for activated abilities via _targets_read_x",
+    "why_existing_wont_do": "The card is otherwise expressible (target selector mana_value {op: '=', value: {x: true}}, return_to_hand on t1, create_token faerie_1_1_u_flying with amount {x: true}), but casting._cast_actions enumerates a spell's targets with x=0 and CHOOSE_X is asked only after targets are fixed; _targets_read_x is consulted for activated abilities only. Verified with verify(): unplayable in the sandbox (offered only Pass / Play Forest), since no creature has mana value 0"
+  }],
+  "closest_existing": ["entrancing_melody", "tamiyo_compleated_sage"],
+  "confidence": "high"
+}

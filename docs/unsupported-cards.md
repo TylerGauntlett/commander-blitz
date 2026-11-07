@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**254 cards** blocked by **235** capabilities.
+**258 cards** blocked by **238** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -49,6 +49,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [turn-face-up](#turn-face-up) | 2 | 5772 | op |
 | [venture](#venture) | 2 | 19644 | engine |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
+| [x-dependent-spell-targets](#x-dependent-spell-targets) | 2 | 5182 | engine |
 | [x-maximum](#x-maximum) | 2 | 1665 | engine |
 | [zombie-1-1-w](#zombie-1-1-w) | 2 | 3702 | token |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
@@ -83,9 +84,11 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [companion](#companion) | 1 | 3861 | engine |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [conditional-play-exiled-with-source](#conditional-play-exiled-with-source) | 1 | 4225 | static_effect |
+| [control-while-has-counter](#control-while-has-counter) | 1 | 10319 | op |
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
 | [copy-this-spell-on-resolution](#copy-this-spell-on-resolution) | 1 | 338 | op |
+| [cost-reduction-per-attacker-this-turn](#cost-reduction-per-attacker-this-turn) | 1 | 9578 | value |
 | [coven](#coven) | 1 | 1129 | value |
 | [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
 | [crime](#crime) | 1 | 2244 | trigger_event |
@@ -180,6 +183,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [noncombat-damage-trigger](#noncombat-damage-trigger) | 1 | 6793 | trigger_event |
 | [nontoken-creatures-died-this-turn](#nontoken-creatures-died-this-turn) | 1 | 3951 | value |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
+| [offspring](#offspring) | 1 | 6566 | keyword |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
 | [phyrexian-golem-token](#phyrexian-golem-token) | 1 | 4583 | token |
 | [play-cost-paid-card](#play-cost-paid-card) | 1 | 6544 | op |
@@ -246,7 +250,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [while-source-on-battlefield-duration](#while-source-on-battlefield-duration) | 1 | 8222 | engine |
 | [wurm-5-5-g-trample](#wurm-5-5-g-trample) | 1 | 2387 | token |
 | [x-cost-mana-restriction](#x-cost-mana-restriction) | 1 | 4046 | decision |
-| [x-dependent-spell-targets](#x-dependent-spell-targets) | 1 | 11545 | engine |
 | [x-sized-ability-targets](#x-sized-ability-targets) | 1 | 1668 | engine |
 | [zombie-warrior-4-4-b-vigilance](#zombie-warrior-4-4-b-vigilance) | 1 | 2449 | token |
 
@@ -1105,6 +1108,24 @@ Blocks **2** cards.
 
 </details>
 
+## x-dependent-spell-targets
+
+Blocks **2** cards.
+
+- **(engine)** Casting a spell whose target selector reads the announced X ("target creature with mana value X") must announce X before declaring targets (601.2b before 601.2c): offer one cast action per payable X, each carrying the targets legal at that X, the way legality._ability_aims already does for activated abilities via _targets_read_x
+  <br>Why the existing vocabulary won't do: The selector itself is expressible (mana_value {op: '=', value: {x: true}} with gain_control on the target), but casting._cast_variant enumerates a spell's targets with x=0 and CHOOSE_X is asked only after the targets are fixed; _targets_read_x is consulted for activated abilities only. Verified: the card is unplayable in the sandbox (no creature has mana value 0), and in play it could only ever target a mana value 0 creature and then pick a mismatched X
+- **(engine)** Casting a spell whose target selector reads the announced X ("target creature with mana value X") must announce X before declaring targets (601.2b before 601.2c): offer one cast action per payable X, each carrying the targets legal at that X, the way legality._ability_aims already does for activated abilities via _targets_read_x
+  <br>Why the existing vocabulary won't do: The card is otherwise expressible (target selector mana_value {op: '=', value: {x: true}}, return_to_hand on t1, create_token faerie_1_1_u_flying with amount {x: true}), but casting._cast_actions enumerates a spell's targets with x=0 and CHOOSE_X is asked only after targets are fixed; _targets_read_x is consulted for activated abilities only. Verified with verify(): unplayable in the sandbox (offered only Pass / Play Forest), since no creature has mana value 0
+
+<details><summary>Cards waiting on this</summary>
+
+- **Stolen by the Fae** (rank 5182) — `stolen_by_the_fae`
+  - Return target creature with mana value X to its owner's hand.
+- **Entrancing Melody** (rank 11545) — `entrancing_melody`
+  - Gain control of target creature with mana value X.
+
+</details>
+
 ## x-maximum
 
 Blocks **2** cards.
@@ -1607,6 +1628,20 @@ Blocks **1** card.
 
 </details>
 
+## control-while-has-counter
+
+Blocks **1** card.
+
+- **(op)** a gain_control duration bound to a counter on the stolen permanent: control lasts for as long as that permanent has at least one counter of a named kind (here shield), and is handed back the moment the last such counter is removed (e.g. by the shield counter's own damage/destroy replacement), like `{"op": "gain_control", "duration": "while_has_counter", "counter": "shield"}`
+  <br>Why the existing vocabulary won't do: gain_control's duration is closed to CONTROL_DURATIONS (permanent, until_end_of_turn, end_of_your_next_turn, as_long_as_you_control_source); none ends on counter removal. 'permanent' would be a strictly stronger steal. The counter-bound end exists only for cant_attack_player's `counter` key (the vow-counter attack mark), not for control changes
+
+<details><summary>Cards waiting on this</summary>
+
+- **Shield Broker** (rank 10319) — `shield_broker`
+  - You gain control of that creature for as long as it has a shield counter on it.
+
+</details>
+
 ## convoke
 
 Blocks **1** card.
@@ -1646,6 +1681,20 @@ Blocks **1** card.
 
 - **Sevinne's Reclamation** (rank 338) — `sevinne_s_reclamation`
   - If this spell was cast from a graveyard, you may copy this spell and may choose a new target for the copy.
+
+</details>
+
+## cost-reduction-per-attacker-this-turn
+
+Blocks **1** card.
+
+- **(value)** a card-level cost_reduction shape that counts every creature (any controller) that attacked this turn, read from the turn ledger's attacker oids rather than the board -- e.g. a cost_reduction key taking a value expression such as attackers_this_turn over all players, or attacked_this_turn added to cost_reduction_filter_keys with the count reading the ledger so attackers that died or left still count
+  <br>Why the existing vocabulary won't do: cost_reduction accepts only amount/count/greatest_count/total_power/total_mana_value/greatest_mana_value; count's filter keys have 'attacking' (only creatures still attacking now, so zero in a postcombat main phase and missing attackers that died) but not 'attacked_this_turn', and the value 'attackers_this_turn' exists only in value_keys, which cost_reduction cannot read
+
+<details><summary>Cards waiting on this</summary>
+
+- **Rowdy Research** (rank 9578) — `rowdy_research`
+  - This spell costs {1} less to cast for each creature that attacked this turn.
 
 </details>
 
@@ -2995,6 +3044,20 @@ Blocks **1** card.
 
 </details>
 
+## offspring
+
+Blocks **1** card.
+
+- **(keyword)** The offspring {N} keyword (702.175): an optional additional cost paid as the creature spell is cast, and, if it was paid, an enters trigger creating a token copy of that permanent that is 1/1; plus a static effect that grants offspring {2} to creature spells its controller casts, on the stack, as they are cast
+  <br>Why the existing vocabulary won't do: offspring appears nowhere in the reference: not in keywords, card_level_cost_keys or static_effects. The closest cast-time grants, grant_warp and grant_miracle, give their own fixed mechanics to spells, and grant_keyword only reaches permanents, so neither can give a spell an optional additional cost that leaves a cast-time 'paid' flag for a 1/1 token-copy enters trigger to read
+
+<details><summary>Cards waiting on this</summary>
+
+- **Zinnia, Valley's Voice** (rank 6566) — `zinnia_valley_s_voice`
+  - Creature spells you cast gain offspring {2} as you cast them. (You may pay an additional {2} as you cast a creature spell. If you do, when that creature enters, create a 1/1 token copy of it.)
+
+</details>
+
 ## opponent-choice-of-payment
 
 Blocks **1** card.
@@ -3928,20 +3991,6 @@ Blocks **1** card.
 
 - **Elementalist's Palette** (rank 4046) — `elementalist_s_palette`
   - {T}: Add {C} for each charge counter on this artifact. Spend this mana only on costs that contain {X}.
-
-</details>
-
-## x-dependent-spell-targets
-
-Blocks **1** card.
-
-- **(engine)** Casting a spell whose target selector reads the announced X ("target creature with mana value X") must announce X before declaring targets (601.2b before 601.2c): offer one cast action per payable X, each carrying the targets legal at that X, the way legality._ability_aims already does for activated abilities via _targets_read_x
-  <br>Why the existing vocabulary won't do: The selector itself is expressible (mana_value {op: '=', value: {x: true}} with gain_control on the target), but casting._cast_variant enumerates a spell's targets with x=0 and CHOOSE_X is asked only after the targets are fixed; _targets_read_x is consulted for activated abilities only. Verified: the card is unplayable in the sandbox (no creature has mana value 0), and in play it could only ever target a mana value 0 creature and then pick a mismatched X
-
-<details><summary>Cards waiting on this</summary>
-
-- **Entrancing Melody** (rank 11545) — `entrancing_melody`
-  - Gain control of target creature with mana value X.
 
 </details>
 

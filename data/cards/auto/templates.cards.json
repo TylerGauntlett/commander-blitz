@@ -196250,6 +196250,64 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "exiles_itself": true,
+      "id": "storm_of_souls",
+      "mana_cost": "{4}{W}{W}",
+      "name": "Storm of Souls",
+      "oracle_text": "Return all creature cards from your graveyard to the battlefield. Each of them is a 1/1 Spirit with flying in addition to its other types. Exile Storm of Souls.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "you",
+          "destination": "battlefield",
+          "link": true,
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          },
+          "op": "return_from_graveyard"
+        },
+        {
+          "duration": "permanent",
+          "keywords": [
+            "flying"
+          ],
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "returned_with": "self",
+            "zone": "battlefield"
+          },
+          "op": "animate",
+          "power": {
+            "const": 1
+          },
+          "subtypes": [
+            "Spirit"
+          ],
+          "toughness": {
+            "const": 1
+          },
+          "types": [
+            "Creature"
+          ]
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -210049,6 +210107,61 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "any_of": [
+              {
+                "power": {
+                  "op": "<=",
+                  "value": 1
+                }
+              },
+              {
+                "toughness": {
+                  "op": "<=",
+                  "value": 1
+                }
+              }
+            ],
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "blockers": {
+            "controller": "any"
+          },
+          "effect": "block_restriction",
+          "kind": "static",
+          "text": "Creatures you control with power or toughness 1 or less can't be blocked."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "tetsuko_umezawa_fugitive",
+      "mana_cost": "{1}{U}",
+      "name": "Tetsuko Umezawa, Fugitive",
+      "oracle_text": "Creatures you control with power or toughness 1 or less can't be blocked.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Rogue"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -214015,6 +214128,59 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "thopter_1_1_c_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, create a 1/1 colorless Thopter artifact creature token with flying.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Artifact",
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "haste"
+          ],
+          "kind": "static",
+          "text": "Artifact creatures you control have haste."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "thopter_engineer",
+      "mana_cost": "{2}{R}",
+      "name": "Thopter Engineer",
+      "oracle_text": "When this creature enters, create a 1/1 colorless Thopter artifact creature token with flying.\nArtifact creatures you control have haste. (They can attack and {T} as soon as they come under your control.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Artificer"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {

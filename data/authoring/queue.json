@@ -266012,12 +266012,12 @@
     },
     "Storm of Souls": {
       "edhrec_rank": 4817,
-      "gate": "template",
+      "gate": null,
       "name": "Storm of Souls",
-      "reason": "no template for: Return all creature cards from your graveyard to the battlefield. Each of them is a 1/1 Sp",
+      "reason": "",
       "scryfall_id": "675b26d6-8cfc-4c46-b396-7af8978f8caa",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Storm of Steel": {
@@ -278862,12 +278862,12 @@
     },
     "Tetsuko Umezawa, Fugitive": {
       "edhrec_rank": 1596,
-      "gate": "template",
+      "gate": null,
       "name": "Tetsuko Umezawa, Fugitive",
-      "reason": "no template for: Creatures you control with power or toughness 1 or less can't be blocked",
+      "reason": "",
       "scryfall_id": "d32f3fb7-df52-4cef-8686-c11f7360cfd9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tetsuko Umezawa, Pursuer": {
@@ -283792,12 +283792,12 @@
     },
     "Thopter Engineer": {
       "edhrec_rank": 7502,
-      "gate": "template",
+      "gate": null,
       "name": "Thopter Engineer",
-      "reason": "no template for: When this creature enters, create a 1/1 colorless Thopter artifact creature token with fly",
+      "reason": "",
       "scryfall_id": "2933e3df-0cba-4e4b-87f9-70e56093da91",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thopter Fabricator": {

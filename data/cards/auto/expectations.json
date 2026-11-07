@@ -16679,6 +16679,13 @@
     },
     "zone": "battlefield"
   },
+  "storm_of_souls": {
+    "battlefield_count": 34,
+    "graveyard_size": {
+      "0": 0
+    },
+    "zone": "exile"
+  },
   "storm_queen_of_wakanda": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -17690,6 +17697,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "tetsuko_umezawa_fugitive": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "tezzeret_s_gambit": {
     "hand_size": {
       "0": 3
@@ -17978,6 +17989,20 @@
       "0": 37
     },
     "zone": "graveyard"
+  },
+  "thopter_engineer": {
+    "battlefield_count": 34,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "haste"
+      ]
+    },
+    "tokens": {
+      "count": 1,
+      "id": "thopter_1_1_c_flying"
+    },
+    "zone": "battlefield"
   },
   "thopter_fabricator": {
     "battlefield_count": 33,
