@@ -98912,6 +98912,141 @@
       ]
     },
     {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "inscription_of_abundance",
+      "kicker": "{2}{G}",
+      "mana_cost": "{1}{G}",
+      "name": "Inscription of Abundance",
+      "oracle_text": "Kicker {2}{G}\nChoose one. If this spell was kicked, choose any number instead.\n• Put two +1/+1 counters on target creature.\n• Target player gains X life, where X is the greatest power among creatures they control.\n• Target creature you control fights target creature you don't control.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "target": "grown"
+                  },
+                  "op": "add_counters"
+                }
+              ],
+              "label": "Put two +1/+1 counters on target creature."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "extreme_value": {
+                      "objects": {
+                        "controller": {
+                          "target": "gainer"
+                        },
+                        "types": [
+                          "Creature"
+                        ],
+                        "zone": "battlefield"
+                      },
+                      "of": "power",
+                      "pick": "greatest"
+                    }
+                  },
+                  "op": "gain_life",
+                  "player": {
+                    "target": "gainer"
+                  }
+                }
+              ],
+              "label": "Target player gains X life, where X is the greatest power among creatures they control."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "mine"
+                  },
+                  "op": "fight",
+                  "other": {
+                    "target": "theirs"
+                  }
+                }
+              ],
+              "label": "Target creature you control fights target creature you don't control."
+            }
+          ],
+          "op": "choose_mode",
+          "up_to_if": {
+            "condition": {
+              "kicked": true
+            },
+            "count": 3
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "grown",
+          "kind": "permanent",
+          "mode": 0,
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "gainer",
+          "kind": "player",
+          "mode": 1,
+          "selector": {
+            "controller": "any"
+          }
+        },
+        {
+          "count": 1,
+          "id": "mine",
+          "kind": "permanent",
+          "mode": 2,
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "theirs",
+          "kind": "permanent",
+          "mode": 2,
+          "selector": {
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -100944,6 +101079,102 @@
         "Legendary"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "create_token",
+              "token": "spider_1_2_g_reach"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Delirium — When Ishkanah enters, if there are four or more card types among cards in your graveyard, create three 1/2 green Spider creature tokens with reach.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "distinct": {
+                  "objects": {
+                    "controller": "you",
+                    "zone": "graveyard"
+                  },
+                  "of": "card_type"
+                }
+              },
+              "right": {
+                "const": 4
+              }
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{6}{B}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Spider"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "lose_life",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "{6}{B}: Target opponent loses 1 life for each Spider you control."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "ishkanah_grafwidow",
+      "keywords": [
+        "reach"
+      ],
+      "mana_cost": "{4}{G}",
+      "name": "Ishkanah, Grafwidow",
+      "oracle_text": "Reach\nDelirium — When Ishkanah enters, if there are four or more card types among cards in your graveyard, create three 1/2 green Spider creature tokens with reach.\n{6}{B}: Target opponent loses 1 life for each Spider you control.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Spider"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
@@ -194819,6 +195050,60 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{3}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "duration": "this_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "unblockable"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{3}, {T}: Target creature can't be blocked this turn."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "suspicious_bookcase",
+      "keywords": [
+        "defender"
+      ],
+      "mana_cost": "{2}",
+      "name": "Suspicious Bookcase",
+      "oracle_text": "Defender\n{3}, {T}: Target creature can't be blocked this turn.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Wall"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -196493,6 +196778,78 @@
       "id": "tainted_peak",
       "name": "Tainted Peak",
       "oracle_text": "{T}: Add {C}.\n{T}: Add {B} or {R}. Activate only if you control a Swamp.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "condition": {
+            "exists": {
+              "controller": "you",
+              "subtypes": [
+                "Swamp"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "B"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "G"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {B} or {G}. Activate only if you control a Swamp."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [],
+      "id": "tainted_wood",
+      "name": "Tainted Wood",
+      "oracle_text": "{T}: Add {C}.\n{T}: Add {B} or {G}. Activate only if you control a Swamp.",
       "source": "auto",
       "types": [
         "Land"
@@ -222265,6 +222622,98 @@
       "source": "auto",
       "subtypes": [
         "Beast"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "chooser": {
+                      "binding": "each_player"
+                    },
+                    "controller": {
+                      "binding": "each_player"
+                    },
+                    "count": 1,
+                    "is_token": false,
+                    "types": [
+                      "Enchantment"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "chooser": {
+                      "binding": "each_player"
+                    },
+                    "controller": {
+                      "binding": "each_player"
+                    },
+                    "count": 1,
+                    "is_token": false,
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, each opponent sacrifices a nontoken enchantment of their choice, then sacrifices a nontoken creature of their choice.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "additional_cost": {
+        "sacrifice": {
+          "any_types": [
+            "Creature",
+            "Enchantment"
+          ],
+          "controller": "you"
+        }
+      },
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "vile_mutilator",
+      "keywords": [
+        "flying",
+        "trample"
+      ],
+      "mana_cost": "{5}{B}{B}",
+      "name": "Vile Mutilator",
+      "oracle_text": "As an additional cost to cast this spell, sacrifice a creature or enchantment.\nFlying, trample\nWhen this creature enters, each opponent sacrifices a nontoken enchantment of their choice, then sacrifices a nontoken creature of their choice.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Demon"
       ],
       "toughness": 5,
       "types": [

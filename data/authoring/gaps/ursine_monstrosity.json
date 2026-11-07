@@ -1,0 +1,22 @@
+{
+  "card_id": "ursine_monstrosity",
+  "name": "Ursine Monstrosity",
+  "oracle_text": "Trample\nAt the beginning of combat on your turn, mill a card and choose an opponent at random. This creature attacks that player this combat if able. Until end of turn, this creature gains indestructible and gets +1/+1 for each card type among cards in your graveyard.",
+  "blocked_sentences": [
+    "At the beginning of combat on your turn, mill a card and choose an opponent at random. This creature attacks that player this combat if able. Until end of turn, this creature gains indestructible and gets +1/+1 for each card type among cards in your graveyard."
+  ],
+  "needs": [
+    {
+      "capability": "random_player_choice",
+      "kind": "op",
+      "what": "choose_player with random: true -- the engine picks uniformly at random among the eligible players (each opponent still in the game) and binds the result under `as`, asking nobody, so must_attack_player can read it as {\"binding\": ...} as its defender",
+      "why_existing_wont_do": "choose_player takes only as, players and prompt and always asks the controller via ask_player; select_players has no random spelling, and `random` exists only on object selectors, choose_mode and discard. A controller-chosen opponent or each_opponent is a different card in a pod. The rest of the trigger (begin_combat, mill, must_attack_player, grant_keyword indestructible, pump by distinct card_type over your graveyard) is expressible"
+    }
+  ],
+  "closest_existing": [
+    "choose_player",
+    "must_attack_player",
+    "begin_combat"
+  ],
+  "confidence": "high"
+}

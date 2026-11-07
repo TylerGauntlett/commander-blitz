@@ -10,19 +10,20 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**217 cards** blocked by **200** capabilities.
+**223 cards** blocked by **204** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
-| [put-into-graveyard-from-anywhere](#put-into-graveyard-from-anywhere) | 5 | 256 | trigger_event |
+| [put-into-graveyard-from-anywhere](#put-into-graveyard-from-anywhere) | 6 | 256 | trigger_event |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
 | [delirium](#delirium) | 4 | 1799 | value |
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
 | [copy-exception-set-subtypes](#copy-exception-set-subtypes) | 3 | 1740 | engine, op |
 | [omen](#omen) | 3 | 3355 | cost, engine |
+| [random-player-choice](#random-player-choice) | 3 | 5120 | op |
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 3 | 714 | engine |
 | [add-color](#add-color) | 2 | 2040 | op |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
@@ -37,8 +38,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [escape](#escape) | 2 | 388 | engine, static_effect |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
-| [random-player-choice](#random-player-choice) | 2 | 5120 | op |
+| [rooms](#rooms) | 2 | 4163 | engine |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
+| [unlock-door](#unlock-door) | 2 | 4163 | trigger_event |
 | [venture](#venture) | 2 | 19644 | engine |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
 | [x-maximum](#x-maximum) | 2 | 1665 | engine |
@@ -58,6 +60,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [can-block-only](#can-block-only) | 1 | 2673 | static_effect |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cards-exiled-trigger](#cards-exiled-trigger) | 1 | 1303 | trigger_event |
+| [cards-put-into-graveyard-from-library](#cards-put-into-graveyard-from-library) | 1 | 6299 | trigger_event |
 | [cards-to-your-graveyard-from-zones-this-turn](#cards-to-your-graveyard-from-zones-this-turn) | 1 | 7412 | value |
 | [cast-from-hand-result](#cast-from-hand-result) | 1 | 7016 | op |
 | [cast-from-library-top-additional-cost](#cast-from-library-top-additional-cost) | 1 | 5828 | static_effect |
@@ -98,6 +101,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [every-creature-type-everywhere](#every-creature-type-everywhere) | 1 | 494 | static_effect |
+| [exile-cards-with-card-types-among-them](#exile-cards-with-card-types-among-them) | 1 | 9107 | selector |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [exile-x-from-graveyard-cost](#exile-x-from-graveyard-cost) | 1 | 17252 | cost |
 | [exiled-this-way-lki](#exiled-this-way-lki) | 1 | 6960 | value |
@@ -156,6 +160,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [odd-or-even](#odd-or-even) | 1 | 8504 | selector |
 | [ooze-x-x-g](#ooze-x-x-g) | 1 | 8801 | token |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
+| [play-lands-from-graveyard-filtered](#play-lands-from-graveyard-filtered) | 1 | 3993 | static_effect |
 | [playable-condition-opponent-lost-life](#playable-condition-opponent-lost-life) | 1 | 4478 | engine |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-mana-ability-until-end-of-turn](#player-mana-ability-until-end-of-turn) | 1 | 12705 | op |
@@ -180,7 +185,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [retrace](#retrace) | 1 | 5451 | engine |
 | [reveal-from-hand](#reveal-from-hand) | 1 | 3623 | cost |
 | [reveal-until-rest-to-graveyard](#reveal-until-rest-to-graveyard) | 1 | 1606 | op |
-| [rooms](#rooms) | 1 | 4163 | engine |
 | [sacrifice-multiple-distinct](#sacrifice-multiple-distinct) | 1 | 1918 | cost |
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
@@ -205,10 +209,10 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [total-mana-value-selection](#total-mana-value-selection) | 1 | 4244 | op |
 | [total-toughness-cost-reduction](#total-toughness-cost-reduction) | 1 | 5188 | value |
 | [toughness-greater-than-power-filter](#toughness-greater-than-power-filter) | 1 | 3557 | selector |
+| [treefolk-x-x-g-reach-land-count](#treefolk-x-x-g-reach-land-count) | 1 | 2396 | token |
 | [two-share-all-card-types](#two-share-all-card-types) | 1 | 7993 | value |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
-| [unlock-door](#unlock-door) | 1 | 4163 | trigger_event |
 | [while-source-on-battlefield-duration](#while-source-on-battlefield-duration) | 1 | 8222 | engine |
 | [x-cost-mana-restriction](#x-cost-mana-restriction) | 1 | 4046 | decision |
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 1 | 11545 | engine |
@@ -331,7 +335,7 @@ Blocks **8** cards.
 
 ## put-into-graveyard-from-anywhere
 
-Blocks **5** cards.
+Blocks **6** cards.
 
 - **(trigger_event)** a trigger event that fires whenever a card matching a filter (here: a land card, any owner) is put into a graveyard from ANY zone -- battlefield, hand (discard), library (mill), stack -- usable on an ability with active_zones ["graveyard"] so the card triggers while it sits in its owner's graveyard (Ashen Ghoul / Vengevine style recursion)
   <br>Why the existing vocabulary won't do: leaves_battlefield with to_zones ["graveyard"] only sees permanents leaving the battlefield (a sacrificed or destroyed land) and misses discarded, milled and countered-from-stack cards; discard covers only the hand; dies is creatures only; there is no mill or generic zone-change-to-graveyard event in trigger_events. The may-pay {G}{G} and return_to_hand halves are expressible once the event exists.
@@ -339,6 +343,8 @@ Blocks **5** cards.
   <br>Why the existing vocabulary won't do: trigger_events has no zone-change-to-graveyard event: leaves_battlefield only sees permanents leaving the battlefield, dies is battlefield creatures, discard is the hand, leaves_graveyard is the reverse direction; the trigger's from_zones key is read only for spell_cast and land_played. Without the event there is also no binding for 'them', so a put_onto_battlefield over any creature card in the graveyard would wrongly reach creature cards milled earlier. The Flying keyword and the enters-or-attacks mill three (self_enters + attacks triggers with mill) are expressible today.
 - **(trigger_event)** a trigger event that fires when one or more cards matching a filter (here: land cards, owner = you) are put into a graveyard from ANY zone -- battlefield, hand (discard), library (mill, surveil), stack -- supporting `batched: true` so one simultaneous move of several land cards triggers once, and `max_per_turn: 1` for "for the first time each turn"
   <br>Why the existing vocabulary won't do: trigger_events has no generic zone-change-to-graveyard event: leaves_battlefield with to_zones ["graveyard"] (and dies) only sees permanents leaving the battlefield and misses milled and discarded land cards, which is what this card's own upkeep mill feeds; discard covers only the hand; leaves_graveyard is the opposite direction. The upkeep `may` + `mill` line and the insect_1_1_g token are expressible today.
+- **(trigger_event)** a trigger event that fires once per card matching a filter (here: a land card, owner = you, i.e. into YOUR graveyard) put into a graveyard from ANY zone -- battlefield, hand (discard), library (mill, surveil), stack -- unbatched, so milling two lands gains 2 life
+  <br>Why the existing vocabulary won't do: trigger_events has no generic zone-change-to-graveyard event: leaves_battlefield with to_zones ["graveyard"] only sees permanents leaving the battlefield and misses milled and discarded land cards, which this card's own {2}{G} mill ability is built to feed; discard covers only the hand; dies is creatures/permanents dying; leaves_graveyard is the opposite direction. The {2}{G}: mill 1 activated ability and the gain_life effect are expressible today.
 - **(trigger_event)** a trigger event that fires whenever a card matching a filter (here: a creature card, any owner, any graveyard) is put into a graveyard, with a from_zones/except-battlefield clause so it can be narrowed to arrivals from anywhere other than the battlefield -- hand (discard), library (mill), stack (countered or resolved), exile, command zone
   <br>Why the existing vocabulary won't do: The other two clauses are expressible (`creature_dies` / `dies` with exclude_self, and `leaves_graveyard` filtered to creature cards you own), but there is no zone-change-to-graveyard event in trigger_events: `discard` covers only the hand, `dies` and `leaves_battlefield` only the battlefield, and there is no mill event; the trigger's `from_zones` key is read only for spell_cast and land_played. Writing just the two expressible clauses would silently drop the milled/discarded-creature half, which is the card's main engine with its own {1}{B} mill ability.
 - **(trigger_event)** a trigger event that fires when a card matching a filter (here: a land card, owner = you) is put into a graveyard from ANY zone -- battlefield (sacrifice/destroy), hand (discard), library (mill, surveil), stack -- and supports `batched: true` so that several land cards moved by one event (a mill of three lands, a discard of two lands) trigger it exactly once ("one or more")
@@ -356,6 +362,8 @@ Blocks **5** cards.
   - Whenever one or more land cards are put into your graveyard from anywhere for the first time each turn, create a 1/1 green Insect creature token.
 - **Centaur Vinecrasher** (rank 10988) — `centaur_vinecrasher`
   - Whenever a land card is put into a graveyard from anywhere, you may pay {G}{G}. If you do, return this card from your graveyard to your hand.
+- **Skola Grovedancer** (rank 12300) — `skola_grovedancer`
+  - Whenever a land card is put into your graveyard from anywhere, you gain 1 life.
 
 </details>
 
@@ -522,6 +530,28 @@ Blocks **3** cards.
   - Flush Out -- Sorcery - Omen, {1}{R}: <the Omen half's rules text, absent from the packet and from the local catalog> (Then shuffle this card into its owner's library.)
 - **Whirlwing Stormbrood // Dynamic Soar** (rank 6636) — `whirlwing_stormbrood_dynamic_soar`
   - Dynamic Soar -- Sorcery - Omen, {2}{G}: Put three +1/+1 counters on target creature you control. (Then shuffle this card into its owner's library.)
+
+</details>
+
+## random-player-choice
+
+Blocks **3** cards.
+
+- **(op)** choose_player with random: true -- the engine picks uniformly at random among the eligible players and binds the result (as), with an else branch when no player is eligible
+  <br>Why the existing vocabulary won't do: choose_player takes only as, players and prompt, so the controller chooses; random exists on choose_mode and discard but not on a player choice
+- **(op)** choose_player with random: true -- the engine picks uniformly at random among the eligible players (each opponent still in the game) and binds the result under `as`, asking nobody, so must_attack_player can read it as {"binding": ...} as its defender
+  <br>Why the existing vocabulary won't do: choose_player takes only as, players and prompt and always asks the controller via ask_player; select_players has no random spelling, and `random` exists only on object selectors, choose_mode and discard. A controller-chosen opponent or each_opponent is a different card in a pod. The rest of the trigger (begin_combat, mill, must_attack_player, grant_keyword indestructible, pump by distinct card_type over your graveyard) is expressible
+- **(op)** choose_player with random: true -- the engine picks uniformly at random among the eligible players (here each opponent still in the game) and binds the result under `as`, asking nobody
+  <br>Why the existing vocabulary won't do: choose_player takes only as, players and prompt and always asks the controller (ask_player); `random` exists on selectors over objects, choose_mode and discard but not on a player choice, so 'each_opponent' or a chosen opponent would both be a different card in a pod
+
+<details><summary>Cards waiting on this</summary>
+
+- **Vial Smasher the Fierce** (rank 5120) — `vial_smasher_the_fierce`
+  - Whenever you cast your first spell each turn, choose an opponent at random. Vial Smasher deals damage equal to that spell's mana value to that player or a planeswalker that player controls.
+- **Territorial Hellkite** (rank 6681) — `territorial_hellkite`
+  - At the beginning of combat on your turn, choose an opponent at random that this creature didn't attack during your last combat. This creature attacks that player this combat if able. If you can't choose an opponent this way, tap this creature.
+- **Ursine Monstrosity** (rank 9663) — `ursine_monstrosity`
+  - At the beginning of combat on your turn, mill a card and choose an opponent at random. This creature attacks that player this combat if able. Until end of turn, this creature gains indestructible and gets +1/+1 for each card type among cards in your graveyard.
 
 </details>
 
@@ -787,21 +817,25 @@ Blocks **2** cards.
 
 </details>
 
-## random-player-choice
+## rooms
 
 Blocks **2** cards.
 
-- **(op)** choose_player with random: true -- the engine picks uniformly at random among the eligible players and binds the result (as), with an else branch when no player is eligible
-  <br>Why the existing vocabulary won't do: choose_player takes only as, players and prompt, so the controller chooses; random exists on choose_mode and discard but not on a player choice
-- **(op)** choose_player with random: true -- the engine picks uniformly at random among the eligible players (here each opponent still in the game) and binds the result under `as`, asking nobody
-  <br>Why the existing vocabulary won't do: choose_player takes only as, players and prompt and always asks the controller (ask_player); `random` exists on selectors over objects, choose_mode and discard but not on a player choice, so 'each_opponent' or a chosen opponent would both be a different card in a pod
+- **(engine)** Room split permanents (rule 709.5): a card with two door halves, each with its own name and mana cost ({1}{B} Polluted Cistern, {4}{B} Dim Oubliette), castable as either half; the cast half enters unlocked, the other locked; a locked door's abilities are inactive; a sorcery-speed special action pays a locked door's mana cost to unlock it; the permanent's name/cost reflect only unlocked doors
+  <br>Why the existing vocabulary won't do: second_face is a split/adventure/MDFC half that is cast instead of the front and then is the whole object; nothing keeps both halves on one permanent with per-half locked/unlocked state, and no special action unlocks a half
+- **(engine)** Room split permanents (rule 709.5): a card with two door halves, each with its own name and mana cost, castable as either half; the cast half enters unlocked, the other locked; a locked door's abilities are inactive; a sorcery-speed special action pays a locked door's mana cost to unlock it; the permanent's name/cost reflect only unlocked doors
+  <br>Why the existing vocabulary won't do: second_face is a split/adventure/MDFC half that is cast instead of the front and then is the whole object; nothing keeps both halves on one permanent with per-half locked/unlocked state, and no special action unlocks a half
 
 <details><summary>Cards waiting on this</summary>
 
-- **Vial Smasher the Fierce** (rank 5120) — `vial_smasher_the_fierce`
-  - Whenever you cast your first spell each turn, choose an opponent at random. Vial Smasher deals damage equal to that spell's mana value to that player or a planeswalker that player controls.
-- **Territorial Hellkite** (rank 6681) — `territorial_hellkite`
-  - At the beginning of combat on your turn, choose an opponent at random that this creature didn't attack during your last combat. This creature attacks that player this combat if able. If you can't choose an opponent this way, tap this creature.
+- **Spiked Corridor // Torture Pit** (rank 4163) — `spiked_corridor_torture_pit`
+  - When you unlock this door, create three 1/1 red Devil creature tokens with "When this token dies, it deals 1 damage to any target."
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - If a source you control would deal noncombat damage to an opponent, it deals that much damage plus 2 instead.
+- **Polluted Cistern // Dim Oubliette** (rank 6299) — `polluted_cistern_dim_oubliette`
+  - Whenever one or more cards are put into your graveyard from your library, each opponent loses 1 life for each card type among those cards.
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - When you unlock this door, mill three cards, then return a creature card from your graveyard to the battlefield.
 
 </details>
 
@@ -821,6 +855,28 @@ Blocks **2** cards.
   - • Target opponent reveals their hand. You choose an instant or sorcery card from it. That player discards that card.
 - **Toll of the Invasion** (rank 20219) — `toll_of_the_invasion`
   - Target opponent reveals their hand. You choose a nonland card from it. That player discards that card.
+
+</details>
+
+## unlock-door
+
+Blocks **2** cards.
+
+- **(trigger_event)** a trigger event 'when you unlock this door' that fires when this door becomes unlocked, both when the half is cast (enters unlocked) and when unlocked later by the special action
+  <br>Why the existing vocabulary won't do: self_enters fires only on entering, missing a later unlock, and would fire even when this door enters locked because the other half was cast; trigger_events has no unlock event
+- **(trigger_event)** a trigger event 'when you unlock this door' that fires when this door becomes unlocked, both when the half is cast (enters unlocked) and when unlocked later by the special action
+  <br>Why the existing vocabulary won't do: self_enters fires only on entering, missing a later unlock, and fires even when this door enters locked because the other half was cast; trigger_events has no unlock event
+
+<details><summary>Cards waiting on this</summary>
+
+- **Spiked Corridor // Torture Pit** (rank 4163) — `spiked_corridor_torture_pit`
+  - When you unlock this door, create three 1/1 red Devil creature tokens with "When this token dies, it deals 1 damage to any target."
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - If a source you control would deal noncombat damage to an opponent, it deals that much damage plus 2 instead.
+- **Polluted Cistern // Dim Oubliette** (rank 6299) — `polluted_cistern_dim_oubliette`
+  - Whenever one or more cards are put into your graveyard from your library, each opponent loses 1 life for each card type among those cards.
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - When you unlock this door, mill three cards, then return a creature card from your graveyard to the battlefield.
 
 </details>
 
@@ -1108,6 +1164,22 @@ Blocks **1** card.
 
 - **Laelia, the Blade Reforged** (rank 1303) — `laelia_the_blade_reforged`
   - Whenever one or more cards are put into exile from your library and/or your graveyard, put a +1/+1 counter on Laelia.
+
+</details>
+
+## cards-put-into-graveyard-from-library
+
+Blocks **1** card.
+
+- **(trigger_event)** a batched trigger 'whenever one or more cards are put into your graveyard from your library' (mill, surveil, self-discard-from-library effects), binding the batch so the effect can read {distinct: card types among those cards} as a lose_life amount for each_opponent
+  <br>Why the existing vocabulary won't do: leaves_graveyard is the opposite direction, leaves_battlefield/dies with to_zones cover only permanents, and no trigger event watches a library-to-graveyard move or exposes the moved cards as a batch for the distinct value
+
+<details><summary>Cards waiting on this</summary>
+
+- **Polluted Cistern // Dim Oubliette** (rank 6299) — `polluted_cistern_dim_oubliette`
+  - Whenever one or more cards are put into your graveyard from your library, each opponent loses 1 life for each card type among those cards.
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - When you unlock this door, mill three cards, then return a creature card from your graveyard to the battlefield.
 
 </details>
 
@@ -1685,6 +1757,20 @@ Blocks **1** card.
 - **Maskwood Nexus** (rank 494) — `maskwood_nexus`
   - Creatures you control are every creature type. The same is true for creature spells you control and creature cards you own that aren't on the battlefield.
   - {3}, {T}: Create a 2/2 blue Shapeshifter creature token with changeling. (It is every creature type.)
+
+</details>
+
+## exile-cards-with-card-types-among-them
+
+Blocks **1** card.
+
+- **(selector)** a player choice of any number of cards from their own graveyard constrained as a SET: the union of the chosen cards' card types must be at least N (four here); the chosen cards are exiled and bound (as) so a following effect can pick one permanent card from among exactly those, put it onto the battlefield with a finality counter, and the 'if you do' branch runs only when the exile happened
+  <br>Why the existing vocabulary won't do: exile/search_zones take a per-card selector (types, any_types, count) with no constraint over the chosen set's combined card types; the `distinct` value can count types after the fact but cannot restrict what the player may choose; choose_permanents (with max_total_power) is the only set-constrained chooser and it reads the battlefield only; a cost key exile_from_graveyard is a fixed-count cost, not a resolution-time optional set with a type-union floor
+
+<details><summary>Cards waiting on this</summary>
+
+- **Winter, Cynical Opportunist** (rank 9107) — `winter_cynical_opportunist`
+  - Delirium — At the beginning of your end step, you may exile any number of cards from your graveyard with four or more card types among them. If you do, put a permanent card from among them onto the battlefield with a finality counter on it.
 
 </details>
 
@@ -2522,6 +2608,20 @@ Blocks **1** card.
 
 </details>
 
+## play-lands-from-graveyard-filtered
+
+Blocks **1** card.
+
+- **(static_effect)** a land-filter on the player-wide play_lands_from_graveyard static (e.g. an affects_cards selector with subtypes: ["Forest"]) so the land drop offers only matching lands from the graveyard; still one land drop per turn
+  <br>Why the existing vocabulary won't do: play_lands_from_graveyard is a yes/no permission (player_statics.player_plays_lands_from_graveyard), and legality._land_actions then offers every land in the graveyard; it cannot be narrowed by land subtype, so using it would let Titania play Plains, Islands and nonbasic lands from the graveyard too. cast_from_graveyard takes an affects_spells filter but covers spells only, never a land play
+
+<details><summary>Cards waiting on this</summary>
+
+- **Titania, Nature's Force** (rank 3993) — `titania_nature_s_force`
+  - You may play Forests from your graveyard.
+
+</details>
+
 ## playable-condition-opponent-lost-life
 
 Blocks **1** card.
@@ -2859,22 +2959,6 @@ Blocks **1** card.
 
 - **Consuming Aberration** (rank 1606) — `consuming_aberration`
   - Whenever you cast a spell, each opponent reveals cards from the top of their library until they reveal a land card, then puts those cards into their graveyard.
-
-</details>
-
-## rooms
-
-Blocks **1** card.
-
-- **(engine)** Room split permanents (rule 709.5): a card with two door halves, each with its own name and mana cost, castable as either half; the cast half enters unlocked, the other locked; a locked door's abilities are inactive; a sorcery-speed special action pays a locked door's mana cost to unlock it; the permanent's name/cost reflect only unlocked doors
-  <br>Why the existing vocabulary won't do: second_face is a split/adventure/MDFC half that is cast instead of the front and then is the whole object; nothing keeps both halves on one permanent with per-half locked/unlocked state, and no special action unlocks a half
-
-<details><summary>Cards waiting on this</summary>
-
-- **Spiked Corridor // Torture Pit** (rank 4163) — `spiked_corridor_torture_pit`
-  - When you unlock this door, create three 1/1 red Devil creature tokens with "When this token dies, it deals 1 damage to any target."
-  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
-  - If a source you control would deal noncombat damage to an opponent, it deals that much damage plus 2 instead.
 
 </details>
 
@@ -3218,6 +3302,20 @@ Blocks **1** card.
 
 </details>
 
+## treefolk-x-x-g-reach-land-count
+
+Blocks **1** card.
+
+- **(token)** a 0/0 green Treefolk creature token with reach and the characteristic-defining static "This token's power and toughness are each equal to the number of lands you control." (set_pt from a count of lands you control, read continuously)
+  <br>Why the existing vocabulary won't do: token_ids has no Treefolk token; the nearest is elemental_x_x_gw_creature_count, which is a green white Elemental counting creatures rather than lands and has no reach. create_token's power/toughness options fix the size at creation and would not track lands entering or leaving. The other three loyalty lines (look_at_top with a Land selector to hand and rest_to graveyard; put_onto_battlefield of any number of land cards from hand tapped; return_to_hand of permanent cards from graveyard plus an emblem with the no_hand_limit static) look expressible
+
+<details><summary>Cards waiting on this</summary>
+
+- **Wrenn and Seven** (rank 2396) — `wrenn_and_seven`
+  - −3: Create a green Treefolk creature token with reach and "This token's power and toughness are each equal to the number of lands you control."
+
+</details>
+
 ## two-share-all-card-types
 
 Blocks **1** card.
@@ -3257,22 +3355,6 @@ Blocks **1** card.
 
 - **Suppressor Skyguard** (rank 9126) — `suppressor_skyguard`
   - Whenever a player attacks you, if that player has another opponent who isn't being attacked, prevent all combat damage that would be dealt to you this combat.
-
-</details>
-
-## unlock-door
-
-Blocks **1** card.
-
-- **(trigger_event)** a trigger event 'when you unlock this door' that fires when this door becomes unlocked, both when the half is cast (enters unlocked) and when unlocked later by the special action
-  <br>Why the existing vocabulary won't do: self_enters fires only on entering, missing a later unlock, and fires even when this door enters locked because the other half was cast; trigger_events has no unlock event
-
-<details><summary>Cards waiting on this</summary>
-
-- **Spiked Corridor // Torture Pit** (rank 4163) — `spiked_corridor_torture_pit`
-  - When you unlock this door, create three 1/1 red Devil creature tokens with "When this token dies, it deals 1 damage to any target."
-  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
-  - If a source you control would deal noncombat damage to an opponent, it deals that much damage plus 2 instead.
 
 </details>
 

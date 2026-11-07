@@ -137402,12 +137402,12 @@
     },
     "Inscription of Abundance": {
       "edhrec_rank": 2316,
-      "gate": "template",
+      "gate": null,
       "name": "Inscription of Abundance",
-      "reason": "no template for: Kicker {2}{G}",
+      "reason": "",
       "scryfall_id": "d0429a79-af7a-4de1-be3a-773498cfdc22",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Inscription of Insight": {
@@ -140442,12 +140442,12 @@
     },
     "Ishkanah, Grafwidow": {
       "edhrec_rank": 6691,
-      "gate": "template",
+      "gate": null,
       "name": "Ishkanah, Grafwidow",
-      "reason": "no template for: Delirium — When Ishkanah enters, if there are four or more card types among cards in your ",
+      "reason": "",
       "scryfall_id": "2a61bad1-f212-4d9b-8422-8ec548b8155c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Isildur's Fateful Strike": {
@@ -271272,12 +271272,12 @@
     },
     "Suspicious Bookcase": {
       "edhrec_rank": 4979,
-      "gate": "template",
+      "gate": null,
       "name": "Suspicious Bookcase",
-      "reason": "no template for: {3}, {T}: Target creature can't be blocked this turn",
+      "reason": "",
       "scryfall_id": "09af9bc0-1c73-4d16-8116-b76ad23c6b8f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Suspicious Detonation": {
@@ -273872,12 +273872,12 @@
     },
     "Tainted Wood": {
       "edhrec_rank": 423,
-      "gate": "template",
+      "gate": null,
       "name": "Tainted Wood",
-      "reason": "no template for: {T}: Add {B} or {G}. Activate only if you control a Swamp",
+      "reason": "",
       "scryfall_id": "3da7ab6b-b10a-4786-b1eb-92de7e66690e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Taj-Nar Swordsmith": {
@@ -304722,12 +304722,12 @@
     },
     "Vile Mutilator": {
       "edhrec_rank": 6543,
-      "gate": "template",
+      "gate": null,
       "name": "Vile Mutilator",
-      "reason": "no template for: When this creature enters, each opponent sacrifices a nontoken enchantment of their choice",
+      "reason": "",
       "scryfall_id": "383fe040-98bb-40f3-b809-48c429b83f47",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vile Rebirth": {

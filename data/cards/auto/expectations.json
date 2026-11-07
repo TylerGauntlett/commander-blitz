@@ -8436,6 +8436,14 @@
   "insatiable_harpy": {
     "zone": "battlefield"
   },
+  "inscription_of_abundance": {
+    "life": {
+      "0": 44,
+      "1": 40
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
   "insight_engine": {
     "battlefield_count": 33,
     "hand_size": {
@@ -8616,6 +8624,14 @@
     "zone": "battlefield"
   },
   "isamaru_hound_of_konda": {
+    "zone": "battlefield"
+  },
+  "ishkanah_grafwidow": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
     "zone": "battlefield"
   },
   "isochron_scepter": {
@@ -16482,6 +16498,10 @@
     "opponent_battlefield_count": 5,
     "zone": "exile"
   },
+  "suspicious_bookcase": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "swab_goblin": {
     "zone": "battlefield"
   },
@@ -16614,6 +16634,10 @@
     "zone": "graveyard"
   },
   "tainted_peak": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "tainted_wood": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -18735,6 +18759,11 @@
     ]
   },
   "vigilant_baloth": {
+    "zone": "battlefield"
+  },
+  "vile_mutilator": {
+    "battlefield_count": 32,
+    "opponent_battlefield_count": 4,
     "zone": "battlefield"
   },
   "vilis_broker_of_blood": {
