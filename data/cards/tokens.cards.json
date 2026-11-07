@@ -441,6 +441,26 @@
       "is_token": true
     },
     {
+      "id": "cat_2_2_g",
+      "name": "Cat Token",
+      "oracle_text": "2/2 green Cat creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Cat"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true
+    },
+    {
       "id": "cat_beast_2_2_w",
       "name": "Cat Beast Token",
       "oracle_text": "",
