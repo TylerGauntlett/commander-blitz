@@ -67,6 +67,7 @@ from .primitives import (
 )
 from .replacements import discard as discard_with_replacements
 from .temp_effects import sacrifice_forbidden
+from .triggers import fire
 from .zones import bounce as bounce_object
 from .zones import exile as exile_object
 from .zones import sacrifice as sacrifice_object
@@ -2204,12 +2205,32 @@ def pay_mana(
         # when it has an additional cost, and "how much mana was spent to cast
         # it" is all of them.
         obj.mana_spent += req.total
-    state.emit(
+    if record_colors_on is None:
+        state.emit(
+            EventType.MANA_SPENT,
+            player=pid,
+            amount=req.total,
+            colors=sorted(spent.colors),
+            sources=sorted(spent.sources),
+        )
+        return True
+    # Mana spent **to cast a spell** -- `record_colors_on` is set by exactly the
+    # cast paths (`Game._cast`, a resolving "cast it, paying its mana cost", a
+    # cast copy), and every mana payment toward one, additional costs
+    # included, comes through here. Marked `for_spell` so the ledger folds it
+    # into expend's total, carrying the total `before` it so an `expend`
+    # trigger can ask whether this payment crossed its N (`_crosses_nth`).
+    # Fired rather than only logged, because expend listens to it; an
+    # activation's payment stays a bare log line, which is all it ever was.
+    fire(
+        state,
         EventType.MANA_SPENT,
         player=pid,
         amount=req.total,
         colors=sorted(spent.colors),
         sources=sorted(spent.sources),
+        for_spell=True,
+        before=state.turn_ledger.mana_spent_on_spells.get(pid, 0),
     )
     return True
 

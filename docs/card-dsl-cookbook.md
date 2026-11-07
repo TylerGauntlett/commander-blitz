@@ -764,6 +764,38 @@ sometimes a mapping (`{"except": …}`). The id recorded is the face that was
 **cast** — a disturb cast turns the card over inside `push_spell`, and the half
 that was cast is the half the condition asks about.
 
+### Expend — "Whenever you expend N"
+
+```jsonc
+// Pyreswipe Hawk, Bark-Knuckle Boxer: "Whenever you expend 4, …"
+{ "event": "expend", "nth": 4 }
+// Trailtracker Scout: "Whenever you expend 8, …"
+{ "event": "expend", "nth": 8 }
+```
+
+"You expend 4 as you spend your fourth total mana to cast spells during a
+turn." `nth` is the N, and the trigger fires on the one payment that carries
+the player's spell-mana total for the turn from below N to N or more — the
+crossing `nth` already asks of `counter_placed`. So one 5-mana spell expends 4,
+a 2-mana spell followed by another expends it on the second, and nothing spent
+afterwards that turn expends 4 again. One payment can cross several N at once,
+and each N's trigger fires.
+
+The total is `TurnLedger.mana_spent_on_spells`, folded off the `MANA_SPENT`
+event `costs.pay_mana` fires for a payment toward a **cast**: the mana cost and
+every additional cost's mana (kicker, multikicker, spree), a cast copy's, and
+"cast it, paying its mana cost". An activated ability's mana is not spent to
+cast a spell and never counts; a spell cast without paying its mana cost spends
+nothing. The ledger clears at cleanup with the rest of it.
+
+`controller` reads as on any trigger, `"you"` by default. The loader refuses an
+`expend` without a positive integer `nth`, and one with a `filter` or `source`,
+which a payment has no subject for. The near miss is a `condition` on a
+spell-mana total with `max_per_turn: 1`: it is re-asked on resolution (603.4)
+after a later spell moved the total, and it fires for a permanent that arrived
+after the Nth mana was already spent. Cashed by
+`tests/unit/triggers/test_expend.py`.
+
 ### Copying a spell for each commander cast
 
 ```jsonc

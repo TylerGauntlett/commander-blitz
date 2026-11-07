@@ -2085,6 +2085,14 @@ class TurnLedger:
     #: Spells cast this turn, per caster.  Storm counts every spell cast before
     #: it by anybody, which is the sum.
     spells_cast: dict[int, int] = field(default_factory=dict)
+    #: Mana each player has spent **to cast spells** this turn: player id ->
+    #: total. Expend -- "you expend 4 as you spend your fourth total mana to
+    #: cast spells during a turn" (Pyreswipe Hawk). Folded off the MANA_SPENT
+    #: events `costs.pay_mana` marks ``for_spell``, which is every payment
+    #: toward a cast (the mana cost, kicker and every other additional cost's
+    #: mana, a cast copy's) and never an activation's, so an ability's {2}
+    #: expends nothing. A free cast pays no mana and adds nothing.
+    mana_spent_on_spells: dict[int, int] = field(default_factory=dict)
     #: **What** was cast, per caster -- the printed id of each spell, in cast
     #: order. Beside the count rather than replacing it, because storm asks only
     #: "how many" and paying a list's length for every storm copy is worse than
@@ -2378,6 +2386,7 @@ class TurnLedger:
         self.life_gains.clear()
         self.life_losses.clear()
         self.spells_cast.clear()
+        self.mana_spent_on_spells.clear()
         self.spells_cast_ids.clear()
         self.combat_damage_types.clear()
         self.ability_activations.clear()

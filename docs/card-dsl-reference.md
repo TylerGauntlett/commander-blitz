@@ -15,7 +15,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 69 |
 | [Conditions](#conditions) | 34 |
-| [Trigger events](#trigger-events) | 50 |
+| [Trigger events](#trigger-events) | 51 |
 | [Trigger filters](#trigger-filters) | 37 |
 | [Static effects](#static-effects) | 94 |
 | [Player-wide statics](#player-wide-statics) | 45 |
@@ -467,6 +467,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `draw` | `draw` | A player draws a card. | [Triggers](card-dsl.md#triggers) |
 | `draw_step` | `draw_step` | At the beginning of the draw step. | [Triggers](card-dsl.md#triggers) |
 | `end_step` | `end_step` | At the beginning of the end step. | [Triggers](card-dsl.md#triggers) |
+| `expend` | `mana_spent` | You expend N (`nth`): the spell payment that takes your mana spent to cast spells this turn to N or more. | [Expend — "Whenever you expend N"](card-dsl-cookbook.md#expend--whenever-you-expend-n) |
 | `land_played` | `land_played` | A land is played. | [Triggers](card-dsl.md#triggers) |
 | `leaves_battlefield` | `leaves_battlefield` | A permanent leaves the battlefield. | [Triggers](card-dsl.md#triggers) |
 | `leaves_graveyard` | `leaves_graveyard` | A card leaves a graveyard. | [Triggers](card-dsl.md#triggers) |
@@ -1175,7 +1176,7 @@ Every `EventType` the engine emits, and which trigger events listen to it. An ev
 | `life_lost` | `life_lost` |  | [Triggers](card-dsl.md#triggers) |
 | `mana_added` |  |  | [Triggers](card-dsl.md#triggers) |
 | `mana_emptied` |  |  | [Triggers](card-dsl.md#triggers) |
-| `mana_spent` |  |  | [Triggers](card-dsl.md#triggers) |
+| `mana_spent` | `expend` |  | [Triggers](card-dsl.md#triggers) |
 | `mill` |  |  | [Triggers](card-dsl.md#triggers) |
 | `mulligan_taken` |  |  | [Triggers](card-dsl.md#triggers) |
 | `mutated` | `mutates` |  | [Triggers](card-dsl.md#triggers) |

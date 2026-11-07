@@ -3208,18 +3208,38 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             "life_lost",
             "attacks",
             "counter_placed",
+            "expend",
         ):
             # Same reasoning as `counter` and `mana_ability` above: only `draw`,
             # `spell_cast`, `you_gain_life`, `life_lost` and `attacks` carry an
-            # ordinal, and `counter_placed` the count before the placement, so
+            # ordinal, and `counter_placed` and `expend` the count before the
+            # placement or payment, so
             # accepting it elsewhere would look like "your second card each
             # turn" and be a restriction that never matches -- an ability that
             # silently never fires.
             raise DslError(
                 f"{where}: 'nth' only means anything on a draw, spell_cast or "
                 f"you_gain_life trigger, or a life_lost trigger, or an attacks "
-                f"trigger, or a counter_placed trigger, not on {model.trigger.event!r}"
+                f"trigger, or a counter_placed or expend trigger, not on "
+                f"{model.trigger.event!r}"
             )
+        if model.trigger.event == "expend":
+            # "Whenever you expend 4": the N is the whole trigger. Without it
+            # the ability would fire on no payment at all -- or, read the wide
+            # way, on every one -- and neither is a printed card. A `filter` or
+            # `source` would be matched against a subject a payment does not
+            # have, so the ability would load and never fire.
+            nth = model.trigger.nth
+            if isinstance(nth, bool) or not isinstance(nth, int) or nth < 1:
+                raise DslError(
+                    f"{where}: an expend trigger needs 'nth', the N of \"whenever "
+                    f"you expend N\", as a positive integer"
+                )
+            if model.trigger.filter or model.trigger.source is not None:
+                raise DslError(
+                    f"{where}: an expend trigger counts mana, which has no subject "
+                    f"for 'filter' or 'source' to ask about"
+                )
         if (
             model.trigger.nth is not None
             and model.trigger.event == "counter_placed"

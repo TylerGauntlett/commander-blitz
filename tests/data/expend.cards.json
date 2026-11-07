@@ -1,0 +1,102 @@
+{
+  "_comment": "Cards for tests/unit/triggers/test_expend.py. `t_expend_four` and `t_expend_eight` are Pyreswipe Hawk's and Trailtracker Scout's trigger shape with a +1/+1 counter for an effect, so a count of counters is a count of firings. The spells are colorless-generic so mountains pay them; `t_expend_rock` is an activated ability with a mana cost, which expends nothing.",
+  "cards": [
+    {
+      "id": "t_expend_four",
+      "name": "Test Expend Four",
+      "oracle_text": "Whenever you expend 4, put a +1/+1 counter on this creature. (You expend 4 as you spend your fourth total mana to cast spells during a turn.)",
+      "mana_cost": "{1}",
+      "types": ["Creature"],
+      "subtypes": ["Bird"],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you expend 4, put a +1/+1 counter on this creature.",
+          "trigger": {"event": "expend", "nth": 4},
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": {"const": 1},
+              "objects": {"zone": "battlefield", "self_only": true}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_expend_eight",
+      "name": "Test Expend Eight",
+      "oracle_text": "Whenever you expend 8, put a +1/+1 counter on this creature. (You expend 8 as you spend your eighth total mana to cast spells during a turn.)",
+      "mana_cost": "{1}",
+      "types": ["Creature"],
+      "subtypes": ["Rabbit"],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you expend 8, put a +1/+1 counter on this creature.",
+          "trigger": {"event": "expend", "nth": 8},
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": {"const": 1},
+              "objects": {"zone": "battlefield", "self_only": true}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_expend_two",
+      "name": "Test Two-Mana Rite",
+      "oracle_text": "You gain 1 life.",
+      "mana_cost": "{2}",
+      "types": ["Instant"],
+      "spell_effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+    },
+    {
+      "id": "t_expend_five",
+      "name": "Test Five-Mana Rite",
+      "oracle_text": "You gain 1 life.",
+      "mana_cost": "{5}",
+      "types": ["Instant"],
+      "spell_effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+    },
+    {
+      "id": "t_expend_kicked",
+      "name": "Test Kicked Rite",
+      "oracle_text": "Kicker {3}\nYou gain 1 life. If this spell was kicked, you gain 1 more life.",
+      "mana_cost": "{1}",
+      "kicker": "{3}",
+      "types": ["Instant"],
+      "spell_effects": [
+        {"op": "gain_life", "player": "you", "amount": {"const": 1}},
+        {
+          "op": "if",
+          "condition": {"kicked": true},
+          "then": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_expend_rock",
+      "name": "Test Expend Rock",
+      "oracle_text": "{4}: You gain 1 life.",
+      "mana_cost": "{1}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{4}: You gain 1 life.",
+          "cost": {"mana": "{4}"},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    }
+  ]
+}

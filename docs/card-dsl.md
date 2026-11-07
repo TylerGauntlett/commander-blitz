@@ -5214,7 +5214,7 @@ failed match never queues, so an opponent's placement does not spend a
 ```
 
 `nth` is "whenever you draw your **second** card each turn", and it is legal only
-on a `draw`, a `spell_cast`, a `you_gain_life`, a `life_lost`, an `attacks` or a `counter_placed` trigger. `draw_cards` puts the ordinal of each draw on the event —
+on a `draw`, a `spell_cast`, a `you_gain_life`, a `life_lost`, an `attacks`, a `counter_placed` or an `expend` trigger (where it is required; see the cookbook's expend section). `draw_cards` puts the ordinal of each draw on the event —
 1 for the draw step's card, 2 for the next one — and this compares against it.
 
 ```jsonc

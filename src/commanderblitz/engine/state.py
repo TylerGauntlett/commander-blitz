@@ -1048,6 +1048,13 @@ class GameState:
             # and where it has gone since -- does not matter.
             if pid is not None:
                 ledger.cards_discarded[pid] = ledger.cards_discarded.get(pid, 0) + 1
+        elif event.type == EventType.MANA_SPENT:
+            # Expend's running total -- see `TurnLedger.mana_spent_on_spells`.
+            # Only a payment toward a cast is marked `for_spell`; an
+            # activation's mana is not "mana to cast spells".
+            if pid is not None and data.get("for_spell"):
+                spent = ledger.mana_spent_on_spells
+                spent[pid] = spent.get(pid, 0) + int(data.get("amount", 0))
         elif event.type == EventType.SPELL_CAST:
             if pid is not None:
                 ledger.spells_cast[pid] = ledger.spells_cast.get(pid, 0) + 1

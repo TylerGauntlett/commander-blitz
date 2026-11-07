@@ -814,6 +814,8 @@ TRIGGER_EVENT_DESCRIPTIONS: dict[str, Entry] = {
     "draw": ("A player draws a card.", None),
     "draw_step": ("At the beginning of the draw step.", None),
     "end_step": ("At the beginning of the end step.", None),
+    "expend": ("You expend N (`nth`): the spell payment that takes your mana spent to cast spells this turn to N or more.",
+               'Expend — "Whenever you expend N"'),
     "land_played": ("A land is played.", None),
     "leaves_battlefield": ("A permanent leaves the battlefield.", None),
     "leaves_graveyard": ("A card leaves a graveyard.", None),
