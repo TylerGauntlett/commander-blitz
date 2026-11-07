@@ -63,7 +63,7 @@ each heading; this table is generated from them.
 | [Eternal Might (Aetherdrift Commander)](#eternal-might-aetherdrift-commander) | L | high | Cycling granted to cards in hand | 0 |
 | [Endless Punishment (Duskmourn: House of Horror Commander)](#endless-punishment-duskmourn-house-of-horror-commander) | L | high | A trigger for cards put into a graveyard, Rooms: two doors on one permanent, and the unlock action | 0 |
 | [Death Toll (Duskmourn: House of Horror Commander)](#death-toll-duskmourn-house-of-horror-commander) | L | high | A trigger for cards put into a graveyard, Rooms: two doors on one permanent, and the unlock action | 0 |
-| [Jump Scare! (Duskmourn: House of Horror Commander)](#jump-scare-duskmourn-house-of-horror-commander) | L | high | nothing | 0 |
+| [Jump Scare! (Duskmourn: House of Horror Commander)](#jump-scare-duskmourn-house-of-horror-commander) | L | high | A trigger for cards put into a graveyard, Rooms: two doors on one permanent, and the unlock action | 0 |
 | [Miracle Worker (Duskmourn: House of Horror Commander)](#miracle-worker-duskmourn-house-of-horror-commander) | L | high | nothing | 0 |
 | [Animated Army (Bloomburrow Commander)](#animated-army-bloomburrow-commander) | M | high | nothing | 0 |
 | [Family Matters (Bloomburrow Commander)](#family-matters-bloomburrow-commander) | L | high | nothing | 0 |
@@ -135,11 +135,11 @@ each heading; this table is generated from them.
 | [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) | S | medium | nothing | 0 |
 | [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) | S | medium | nothing | 0 |
 | [Why a press is refused](#why-a-press-is-refused) | S | medium | nothing | 0 |
-| [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) | M | medium | nothing | 3 |
+| [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) | M | medium | nothing | 4 |
 | [Divided damage that may hit players](#divided-damage-that-may-hit-players) | M | medium | nothing | 3 |
+| [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) | M | medium | nothing | 3 |
 | [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) | M | medium | nothing | 2 |
 | [Outcomes as data](#outcomes-as-data) | M | medium | nothing | 2 |
-| [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) | M | medium | nothing | 2 |
 | [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) | M | medium | nothing | 2 |
 | [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) | M | medium | nothing | 2 |
 | [Brackets, derived from the list](#brackets-derived-from-the-list) | M | medium | nothing | 1 |
@@ -162,8 +162,6 @@ Derived from the properties: an item is **ready** when nothing it depends
 on is still on this page, and the ready items are ranked by impact, then
 rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
-
-**In progress:** [Jump Scare! (Duskmourn: House of Horror Commander)](#jump-scare-duskmourn-house-of-horror-commander).
 
 **Ready now, best first:**
 
@@ -240,9 +238,9 @@ same list, and `/extend-roadmap` starts at the top of it.
 71. [Why a press is refused](#why-a-press-is-refused) — S, medium
 72. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
 73. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
-74. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
-75. [Outcomes as data](#outcomes-as-data) — M, medium
-76. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
+74. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
+75. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
+76. [Outcomes as data](#outcomes-as-data) — M, medium
 77. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
 78. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
 79. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
@@ -272,6 +270,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Eternal Might (Aetherdrift Commander)](#eternal-might-aetherdrift-commander) — [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand)
 - [Endless Punishment (Duskmourn: House of Horror Commander)](#endless-punishment-duskmourn-house-of-horror-commander) — [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard), [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action)
 - [Death Toll (Duskmourn: House of Horror Commander)](#death-toll-duskmourn-house-of-horror-commander) — [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard), [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action)
+- [Jump Scare! (Duskmourn: House of Horror Commander)](#jump-scare-duskmourn-house-of-horror-commander) — [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard), [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -564,82 +563,6 @@ gates pass.
   (601.2d) without changing what is announced or when, and the line in
   rules-coverage.md moves from "not implemented" to the implemented table.
 
-### Divided damage from a triggered or activated ability
-
-Effort **M** · Impact **medium**, every creature whose enters or attack trigger divides its damage waits on it, Fury and Inferno Titan among them · Depends on nothing · Awaiting decisions.
-
-#### Today
-
-Divided damage (601.2d) is announced on one line only: as a spell is cast.
-`Game._ask_damage_division` reads `engine.division.divided_damage(card)`,
-which walks `card.spell_effects`, and is called from `Game._cast`; the split
-rides on the stack item's `bindings["distribution"]` and
-`effects.ops_life._damage_divided` deals it on resolution.
-`cards.loader._check_division_homes` refuses `damage` with `divided` anywhere
-else ("only supported as a top-level effect of a spell"), and
-[rules-coverage.md](rules-coverage.md#not-implemented) lists dividing
-damage "on an ability" as not implemented.
-
-The ability-level twin already exists for counters: `distribute_counters` on
-an activated ability is divided by `Game._ask_distribution` at activation
-(602.2b applying 601.2d), composed from `ask_objects` with no decision kind of
-its own. A triggered ability chooses its modes and targets in
-`stack._choose_trigger_targets` as it is put on the stack (603.3d), and
-nothing there asks for a division.
-
-So "When this creature enters, it deals 4 damage divided as you choose among
-any number of target creatures and/or planeswalkers" is unwritable. Fury, in
-the Dance of the Elements precon, is the card that found it; its gap record is
-`data/authoring/gaps/fury.json`.
-
-#### The change
-
-1. The trigger line divides. Where `stack` puts a triggered ability on the
-   stack and has chosen its targets, a `damage` effect with `divided` among
-   the ability's top-level effects is divided over the targets just declared,
-   through the same walk `_ask_damage_division` uses, and stored on the stack
-   item's `bindings["distribution"]` so `_damage_divided` resolves it
-   unchanged. The amount is read then (601.2d via 603.3d).
-2. The activation line divides damage the way it already divides counters:
-   `Game._ask_distribution` takes divided `damage` beside
-   `distribute_counters`.
-3. `_check_division_homes` accepts divided damage as a top-level effect of a
-   triggered or activated ability whose spec targets objects, and still
-   refuses it nested in a branch, where no announcement exists.
-4. The verifier's auto-answer table answers the division on the trigger line,
-   or `/author-cards` hangs on Fury.
-5. Harvest: Fury (which also waits on evoke with a non-mana cost) and the
-   catalog's other divided-damage triggers through the template tier with
-   `--retry` and one `/author-cards` wave.
-
-It does not let the division include players: that is
-[divided-damage-any-target](divided-damage-any-target.md), which this item
-neither needs nor blocks. Inferno Titan needs both.
-
-#### Gate
-
-A unit test under `tests/unit/` for divided damage on a trigger and on an
-activation: the division asked as the trigger goes on the stack and before a
-response is possible, each share dealt on resolution, an illegal target's share
-lost (608.2b), the forced split asking nothing, and the loader accepting the
-top-level ability home while still refusing a nested one. The verifier's
-auto-answer test covers the trigger-line question, and the harvested cards pass
-their six gates.
-
-#### Open questions
-
-- **Where the trigger's division is asked.** In `stack` beside
-  `_choose_trigger_targets`, or by handing the trigger to the same
-  `Game` helper the cast and activation lines use? Recommended: one shared
-  helper called from all three lines, because the walk and its purpose tag are
-  already shared and a third copy would drift.
-- **Is it an ADR.** Recommended: no; it applies the existing announcement
-  (601.2d) on the two lines 602.2b and 603.3d already send it to, and the
-  rules-coverage.md line moves to the implemented table.
-- **Scope of the harvest.** Fury only, or every divided-damage trigger the
-  template tier can then read? Recommended: one template-tier `--retry` and
-  one `/author-cards` wave, the precon items' convention.
-
 ### Rooms: two doors on one permanent, and the unlock action
 
 Effort **M** · Impact **medium**, every Room card waits on it, and Endless Punishment cannot ship native without Spiked Corridor // Torture Pit · Depends on nothing · ADR first · Awaiting decisions.
@@ -719,6 +642,82 @@ generated DSL reference lists the new event.
   token and the noncombat `replace_damage` key so Spiked Corridor // Torture
   Pit ships in it? Recommended: plus both, since each is small and the card
   is the gate.
+
+### Divided damage from a triggered or activated ability
+
+Effort **M** · Impact **medium**, every creature whose enters or attack trigger divides its damage waits on it, Fury and Inferno Titan among them · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+Divided damage (601.2d) is announced on one line only: as a spell is cast.
+`Game._ask_damage_division` reads `engine.division.divided_damage(card)`,
+which walks `card.spell_effects`, and is called from `Game._cast`; the split
+rides on the stack item's `bindings["distribution"]` and
+`effects.ops_life._damage_divided` deals it on resolution.
+`cards.loader._check_division_homes` refuses `damage` with `divided` anywhere
+else ("only supported as a top-level effect of a spell"), and
+[rules-coverage.md](rules-coverage.md#not-implemented) lists dividing
+damage "on an ability" as not implemented.
+
+The ability-level twin already exists for counters: `distribute_counters` on
+an activated ability is divided by `Game._ask_distribution` at activation
+(602.2b applying 601.2d), composed from `ask_objects` with no decision kind of
+its own. A triggered ability chooses its modes and targets in
+`stack._choose_trigger_targets` as it is put on the stack (603.3d), and
+nothing there asks for a division.
+
+So "When this creature enters, it deals 4 damage divided as you choose among
+any number of target creatures and/or planeswalkers" is unwritable. Fury, in
+the Dance of the Elements precon, is the card that found it; its gap record is
+`data/authoring/gaps/fury.json`.
+
+#### The change
+
+1. The trigger line divides. Where `stack` puts a triggered ability on the
+   stack and has chosen its targets, a `damage` effect with `divided` among
+   the ability's top-level effects is divided over the targets just declared,
+   through the same walk `_ask_damage_division` uses, and stored on the stack
+   item's `bindings["distribution"]` so `_damage_divided` resolves it
+   unchanged. The amount is read then (601.2d via 603.3d).
+2. The activation line divides damage the way it already divides counters:
+   `Game._ask_distribution` takes divided `damage` beside
+   `distribute_counters`.
+3. `_check_division_homes` accepts divided damage as a top-level effect of a
+   triggered or activated ability whose spec targets objects, and still
+   refuses it nested in a branch, where no announcement exists.
+4. The verifier's auto-answer table answers the division on the trigger line,
+   or `/author-cards` hangs on Fury.
+5. Harvest: Fury (which also waits on evoke with a non-mana cost) and the
+   catalog's other divided-damage triggers through the template tier with
+   `--retry` and one `/author-cards` wave.
+
+It does not let the division include players: that is
+[divided-damage-any-target](divided-damage-any-target.md), which this item
+neither needs nor blocks. Inferno Titan needs both.
+
+#### Gate
+
+A unit test under `tests/unit/` for divided damage on a trigger and on an
+activation: the division asked as the trigger goes on the stack and before a
+response is possible, each share dealt on resolution, an illegal target's share
+lost (608.2b), the forced split asking nothing, and the loader accepting the
+top-level ability home while still refusing a nested one. The verifier's
+auto-answer test covers the trigger-line question, and the harvested cards pass
+their six gates.
+
+#### Open questions
+
+- **Where the trigger's division is asked.** In `stack` beside
+  `_choose_trigger_targets`, or by handing the trigger to the same
+  `Game` helper the cast and activation lines use? Recommended: one shared
+  helper called from all three lines, because the walk and its purpose tag are
+  already shared and a third copy would drift.
+- **Is it an ADR.** Recommended: no; it applies the existing announcement
+  (601.2d) on the two lines 602.2b and 603.3d already send it to, and the
+  rules-coverage.md line moves to the implemented table.
+- **Scope of the harvest.** Fury only, or every divided-damage trigger the
+  template tier can then read? Recommended: one template-tier `--retry` and
+  one `/author-cards` wave, the precon items' convention.
 
 ### Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number
 
@@ -1839,7 +1838,7 @@ whole-game test able to draw the deck.
 
 ### Jump Scare! (Duskmourn: House of Horror Commander)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing · **In progress**.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard), [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action).
 
 #### Today
 
