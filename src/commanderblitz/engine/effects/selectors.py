@@ -487,6 +487,19 @@ SELECTOR_KEYS = frozenset(
         # "…the creature this card is encoded on" -- cipher, the same shape as
         # `haunted_by` and answered the same way, off the ability source.
         "encoded_by",
+        #: "Other creatures have 'Whenever this creature attacks, you may have
+        #: it fight **Grothama, All-Devouring**'" -- the permanent whose static
+        #: (or one-shot `grant_ability`) handed over the resolving ability,
+        #: read off `EffectContext.granted_by`. `true` only.
+        #:
+        #: `self_only` is the near miss and is the other creature: inside a
+        #: granted ability `self` is the recipient. A `name` selector is the
+        #: other near miss and matches a second Grothama, which granted
+        #: nothing. Searches the battlefield by default like any selector, so
+        #: a granter that has left matches nothing. The loader holds it to the
+        #: effects of a `grantable_abilities` trigger or activated ability,
+        #: the only place an ability has a granter.
+        "granter",
     }
 )
 
@@ -898,6 +911,8 @@ def matches(
     if selector.get("exclude_self") and oid == ctx.source_oid:
         return False
     if selector.get("self_only") and oid != ctx.source_oid:
+        return False
+    if selector.get("granter") and (ctx.granted_by is None or oid != ctx.granted_by):
         return False
     # "…put a +1/+1 counter on **equipped creature**." Blade of the Bloodchief.
     # `attached` had existed only in `STATIC_FILTER_KEYS`, where
@@ -2001,6 +2016,10 @@ def validate_selector(selector: Any, where: str) -> None:
                 f"snapshot records one player, so only 'you', 'opponent' and 'any' "
                 f"can be asked of it"
             )
+    if "granter" in selector and selector["granter"] is not True:
+        # `false` would load as "every permanent but the granter" -- printed
+        # on nothing, and on an ungranted ability it would be everything.
+        raise DslError(f"{where}: granter must be true, got {selector['granter']!r}")
     if "convoked" in selector and selector["convoked"] is not True:
         # "That didn't convoke this spell" is printed on nothing, and `false`
         # would load as "every creature" -- the opposite of the card.

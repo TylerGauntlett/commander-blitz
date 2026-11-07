@@ -316,6 +316,8 @@ def _object_matches(
         return False
     if (want := filt.get("subtypes")) and not set(want) & set(subtypes):
         return False
+    if (want := filt.get("not_subtypes")) and set(want) & set(subtypes):
+        return False
     if (want := filt.get("supertypes")) and not set(want).issubset(supertypes):
         return False
     if (want := filt.get("colors")) and not set(want) & set(colors):

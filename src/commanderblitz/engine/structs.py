@@ -17,6 +17,7 @@ if TYPE_CHECKING:  # pragma: no cover
     # docstring is about: `carddef` is a leaf, but the point of `structs` is
     # that it needs nothing.
     from .carddef import TriggerSpec
+    from .mana import ManaOrigin
 
 TargetKind = Literal["object", "player", "stack"]
 
@@ -1143,6 +1144,57 @@ class TokenMultiplier:
     source: int | None = None
 
 
+#: The durations an `UncounterableGrant` may carry. "This turn" is the only one
+#: printed on a card that installs one.
+UNCOUNTERABLE_GRANT_DURATIONS = ("this_turn",)
+
+
+@dataclass(frozen=True)
+class UncounterableGrant:
+    """"Creature spells you cast this turn can't be countered." -- Domri,
+    Anarch of Bolas's +1. Rules 611.2a, 611.2c, 701.6a.
+
+    The timed twin of a `spells_cant_be_countered` static, and the difference
+    is who holds it -- `TokenMultiplier`'s argument exactly. A static is read
+    off a permanent for as long as that permanent is on the battlefield; this
+    is the continuous effect a *resolved* ability or spell created (611.2a), so
+    it belongs to the table and keeps applying after the walker has died or
+    Veil of Summer has gone to the graveyard.
+
+    It modifies a rule rather than a characteristic, so 611.2c lets it reach
+    objects that did not exist as it resolved: it is asked whenever a `counter`
+    op tries, of whatever spell is on the stack then. A spell its player
+    already had on the stack is covered too, which is what Veil of Summer cast
+    in response to a counterspell is for.
+
+    ``affects_spells`` is the static's printed-face filter, with the chosen
+    type and colour already substituted from the source as it resolved. The
+    seat is ``player``, never the filter's: every printed sentence says "you".
+
+    ``cast`` is "spells you **cast**" (Domri) rather than "spells you
+    **control**" (Veil of Summer): a copy was never cast (707.10), so it is
+    not covered. ``next_spell`` is "the next creature spell you cast this turn"
+    (Insist, Overmaster): the first matching cast **binds** the grant to its
+    stack item (``sid``) and from then on the grant covers that spell alone --
+    see `temp_effects.bind_next_spell_uncounterable_grants`.
+    """
+
+    #: Whose spells are covered. Fixed as the effect resolves.
+    player: int
+    #: The printed-face filter; ``None`` covers every spell of the player's.
+    affects_spells: Mapping[str, Any] | None = None
+    #: Only spells the player cast, not copies they control.
+    cast: bool = False
+    #: Single-use: the first matching cast binds the grant to that spell.
+    next_spell: bool = False
+    #: For a bound ``next_spell`` grant: the stack item it now covers.
+    sid: int | None = None
+    duration: str = "this_turn"
+    #: The object whose ability installed it, for the log. Not part of the
+    #: lifetime.
+    source: int | None = None
+
+
 LIFE_LOCK_DURATIONS =("this_turn", "until_your_next_turn")
 
 
@@ -2057,6 +2109,26 @@ class TurnLedger:
     #: loses the type afterwards still dealt the damage as one. Never cleared
     #: per oid -- the record is about the damage, not about any object.
     players_dealt_combat_damage_by_subtype: dict[str, set[int]] = field(default_factory=dict)
+    #: Damage dealt to each **permanent** this turn, split by who controlled
+    #: the source: victim oid -> {source controller: amount}. "Each player
+    #: draws cards equal to the amount of damage dealt to Grothama this turn
+    #: by sources they controlled" -- Grothama, All-Devouring, which asks as
+    #: Grothama leaves the battlefield and its marked damage goes with it.
+    #:
+    #: Folded off DAMAGE_DEALT, which `damage_permanent` fires only for damage
+    #: actually dealt -- after prevention and replacement, wither's -1/-1
+    #: counters and damage to a planeswalker or battle included (120.3). The
+    #: controller is the source's as the damage is dealt (120.1, 608.2h), read
+    #: off the object then, so a creature stolen later in the turn does not
+    #: carry its damage across; ``None`` for damage with no source object.
+    #: `GameState.damage_ledger` is the near miss: it records who, never how
+    #: much.
+    #:
+    #: Cleared for an oid when that oid **enters** the battlefield, the
+    #: `players_dealt_combat_damage_by` rule: a permanent that comes back is a
+    #: new object nothing has damaged (400.7), while a leaves-the-battlefield
+    #: trigger of the old one still reads what was dealt to it.
+    damage_to_permanents: dict[int, dict[int | None, int]] = field(default_factory=dict)
     #: Damage dealt to each player this turn.
     damage_taken: dict[int, int] = field(default_factory=dict)
     #: Life *lost* by each player this turn, which is the wider question: a
@@ -2085,6 +2157,14 @@ class TurnLedger:
     #: Spells cast this turn, per caster.  Storm counts every spell cast before
     #: it by anybody, which is the sum.
     spells_cast: dict[int, int] = field(default_factory=dict)
+    #: Mana each player has spent **to cast spells** this turn: player id ->
+    #: total. Expend -- "you expend 4 as you spend your fourth total mana to
+    #: cast spells during a turn" (Pyreswipe Hawk). Folded off the MANA_SPENT
+    #: events `costs.pay_mana` marks ``for_spell``, which is every payment
+    #: toward a cast (the mana cost, kicker and every other additional cost's
+    #: mana, a cast copy's) and never an activation's, so an ability's {2}
+    #: expends nothing. A free cast pays no mana and adds nothing.
+    mana_spent_on_spells: dict[int, int] = field(default_factory=dict)
     #: **What** was cast, per caster -- the printed id of each spell, in cast
     #: order. Beside the count rather than replacing it, because storm asks only
     #: "how many" and paying a list's length for every storm copy is worse than
@@ -2099,6 +2179,17 @@ class TurnLedger:
     #: disturb cast turns the card over inside `push_spell`, and the half that
     #: was cast is the half the condition is asking about.
     spells_cast_ids: dict[int, list[str]] = field(default_factory=dict)
+    #: What paid for each of those spells, index for index with
+    #: `spells_cast_ids`: the cast object's `mana_spent_traits` at the instant
+    #: of the cast (an empty set for a free cast).
+    #:
+    #: Rain of Riches is why it exists: "the first spell you cast each turn
+    #: **that mana from a Treasure was spent to cast**" counts a run of earlier
+    #: spells by how they were paid for, and those spells have left the stack
+    #: -- and their Treasures the game -- by the time a later one is cast. The
+    #: printed id beside it cannot say it, so the snapshot is kept here, where
+    #: `triggers._spell_ordinal` reads it.
+    spells_cast_mana: dict[int, list[frozenset[ManaOrigin]]] = field(default_factory=dict)
     #: Cards put into any graveyard from anywhere this turn -- discards, mills,
     #: resolved instants and sorceries and deaths alike. Tokens are excluded
     #: because they are not cards. **Not** gravestorm's count, which is the
@@ -2372,13 +2463,16 @@ class TurnLedger:
         self.taps_by_permanent.clear()
         self.players_dealt_combat_damage_by.clear()
         self.players_dealt_combat_damage_by_subtype.clear()
+        self.damage_to_permanents.clear()
         self.damage_taken.clear()
         self.life_lost.clear()
         self.life_gained.clear()
         self.life_gains.clear()
         self.life_losses.clear()
         self.spells_cast.clear()
+        self.mana_spent_on_spells.clear()
         self.spells_cast_ids.clear()
+        self.spells_cast_mana.clear()
         self.combat_damage_types.clear()
         self.ability_activations.clear()
         self.loyalty_activations.clear()

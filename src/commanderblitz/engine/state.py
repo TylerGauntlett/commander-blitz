@@ -38,8 +38,12 @@ from .structs import (
     TriggerInstance,
     TurnLedger,
     Unblockable,
+    UncounterableGrant,
 )
-from .temp_effects import consume_next_spell_flash_permissions
+from .temp_effects import (
+    bind_next_spell_uncounterable_grants,
+    consume_next_spell_flash_permissions,
+)
 
 if TYPE_CHECKING:  # pragma: no cover
     from commanderblitz.cards.registry import CardRegistry
@@ -454,6 +458,12 @@ class GameState:
     #: flash" -- see :class:`structs.FlashPermission`. Read by
     #: `casting._timing_ok`; empty in every game that plays none of these.
     flash_permissions: list[FlashPermission] = field(default_factory=list)
+    #: "Creature spells you cast this turn can't be countered" -- see
+    #: :class:`structs.UncounterableGrant`. The timed twin of the
+    #: `spells_cant_be_countered` static, read by the `counter` op beside it
+    #: and swept in the cleanup step; empty in every game that plays none of
+    #: these.
+    uncounterable_grants: list[UncounterableGrant] = field(default_factory=list)
     #: "Until your next turn, your opponents can't cast spells from anywhere
     #: other than their hands" -- see :class:`structs.CastLock`.
     #:
@@ -955,6 +965,8 @@ class GameState:
             # `TurnLedger.players_dealt_combat_damage_by` for the
             # last-known-information case that ordering keeps.
             ledger.players_dealt_combat_damage_by.pop(data.get("oid"), None)
+            # Nothing has damaged a new object either.
+            ledger.damage_to_permanents.pop(data.get("oid"), None)
             if obj is not None:
                 c = chars(self, obj.oid)
                 ledger.permanents_entered.append(
@@ -994,6 +1006,13 @@ class GameState:
                 # count every burn spell twice -- and doing it only here was
                 # already wrong for infect, which deals damage to a player and
                 # costs them no life at all.
+            elif data.get("to") == "permanent" and data.get("oid") is not None:
+                # Grothama's "by sources they controlled": split by the
+                # source's controller as the damage is dealt, which is now.
+                dealt_by = self.objects.get(event.source) if event.source is not None else None
+                dealer = dealt_by.controller if dealt_by is not None else None
+                split = ledger.damage_to_permanents.setdefault(int(data["oid"]), {})
+                split[dealer] = split.get(dealer, 0) + int(data.get("amount") or 0)
         elif event.type == EventType.COMBAT_DAMAGE_TO_PLAYER:
             # Prowl. Recorded here rather than at the primitive for the reason
             # every other tally is, and read off *derived* subtypes while the
@@ -1048,6 +1067,13 @@ class GameState:
             # and where it has gone since -- does not matter.
             if pid is not None:
                 ledger.cards_discarded[pid] = ledger.cards_discarded.get(pid, 0) + 1
+        elif event.type == EventType.MANA_SPENT:
+            # Expend's running total -- see `TurnLedger.mana_spent_on_spells`.
+            # Only a payment toward a cast is marked `for_spell`; an
+            # activation's mana is not "mana to cast spells".
+            if pid is not None and data.get("for_spell"):
+                spent = ledger.mana_spent_on_spells
+                spent[pid] = spent.get(pid, 0) + int(data.get("amount", 0))
         elif event.type == EventType.SPELL_CAST:
             if pid is not None:
                 ledger.spells_cast[pid] = ledger.spells_cast.get(pid, 0) + 1
@@ -1055,6 +1081,14 @@ class GameState:
                 # rather than about a count. `card` is the face that was cast.
                 if (cast_id := data.get("card")) is not None:
                     ledger.spells_cast_ids.setdefault(pid, []).append(str(cast_id))
+                    # And how it was paid for, index for index, for "the first
+                    # spell … that mana from a Treasure was spent to cast"
+                    # (Rain of Riches). Every cast path pays before it fires
+                    # SPELL_CAST, so the spell already carries its traits.
+                    spell_obj = self.objects.get(data.get("oid"))
+                    ledger.spells_cast_mana.setdefault(pid, []).append(
+                        spell_obj.mana_spent_traits if spell_obj is not None else frozenset()
+                    )
                     # The same fact with no turn boundary on it, for "…this
                     # game". Written beside the per-turn list rather than in a
                     # second fold, so the two cannot disagree about what counted
@@ -1077,6 +1111,12 @@ class GameState:
                 # reason `nth` is: every cast path passes through this fold.
                 if self.flash_permissions and (spell := data.get("oid")) in self.objects:
                     consume_next_spell_flash_permissions(self, pid, self.card(spell))
+                # "The next creature spell you cast this turn can't be
+                # countered" (Insist) -- bound to the spell by the same fold.
+                if self.uncounterable_grants and (spell := data.get("oid")) in self.objects:
+                    bind_next_spell_uncounterable_grants(
+                        self, pid, self.card(spell), data.get("sid")
+                    )
                 # The count is a static's input (`spells_cast_this_turn`, Captain
                 # Mar-Vell's "as long as an opponent has cast a spell this
                 # turn"), and `chars` caches per `char_version`.

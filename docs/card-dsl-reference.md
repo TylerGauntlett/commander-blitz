@@ -10,12 +10,12 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 170 |
-| [Selectors](#selectors) | 75 |
+| [Effect ops](#effect-ops) | 171 |
+| [Selectors](#selectors) | 76 |
 | [Player specs](#player-specs) | 9 |
-| [Values](#values) | 69 |
+| [Values](#values) | 70 |
 | [Conditions](#conditions) | 34 |
-| [Trigger events](#trigger-events) | 50 |
+| [Trigger events](#trigger-events) | 51 |
 | [Trigger filters](#trigger-filters) | 37 |
 | [Static effects](#static-effects) | 94 |
 | [Player-wide statics](#player-wide-statics) | 45 |
@@ -27,7 +27,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Card types and supertypes](#card-types-and-supertypes) | 12 |
 | [Durations](#durations) | 6 |
 | [Decision kinds](#decision-kinds) | 11 |
-| [Static filter keys](#static-filter-keys) | 32 |
+| [Static filter keys](#static-filter-keys) | 34 |
 | [Static conditions](#static-conditions) | 14 |
 | [Static values](#static-values) | 20 |
 | [Spell filter keys](#spell-filter-keys) | 12 |
@@ -192,6 +192,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `reflexive_trigger` | Stack |  | "When you do": queue a trigger off the preceding effect. | ["When you do" — reflexive triggered abilities](card-dsl-cookbook.md#when-you-do--reflexive-triggered-abilities) |
 | `return_spell_to_hand` | Stack |  | Return a spell from the stack to its owner's hand. | [Doing something to a spell that is not countering it](card-dsl.md#doing-something-to-a-spell-that-is-not-countering-it) |
 | `spell_enters_with_counters` | Stack |  | Promise a spell's permanent counters it enters with. | [Promising counters to the permanent a spell becomes](card-dsl.md#promising-counters-to-the-permanent-a-spell-becomes) |
+| `uncounterable_this_turn` | Stack |  | Until end of turn, the controller's spells matching `affects_spells` (`cast`: only ones they cast; `next_spell`: only the next one) can't be countered; outlives its source. | ["Creature spells you cast this turn can't be countered"](card-dsl-cookbook.md#creature-spells-you-cast-this-turn-cant-be-countered) |
 | `extra_combat` | Turn structure |  | An additional combat phase (and main phase) this turn. | [An additional combat phase](card-dsl-cookbook.md#an-additional-combat-phase) |
 | `extra_turn` | Turn structure |  | A player takes an extra turn after this one. | [An extra turn](card-dsl-cookbook.md#an-extra-turn) |
 | `choose_blockers` | Combat decisions |  | Decide blocks on another player's behalf. | [Effect ops](card-dsl.md#effect-ops) |
@@ -255,6 +256,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `extreme` | The greatest/least of power, toughness or mana value in the pool. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `face_down` | A permanent that is face down (`true`) or face up (`false`), 708.2; not in a static's filters, nor on a departure trigger. | ["Face-down creatures" — face_down](card-dsl-cookbook.md#face-down-creatures--face_down) |
 | `goaded` | Is (or is not) goaded, by anyone (701.38). | ["Goaded creatures" — goaded](card-dsl-cookbook.md#goaded-creatures--goaded) |
+| `granter` | The permanent that granted the resolving ability (`self` there is the recipient); true only, and only in a granted trigger's or activated ability's effects. | ["…fight Grothama" — granter](card-dsl-cookbook.md#fight-grothama--granter) |
 | `has_counters` | Has counters on it: `true` any kind, or one named kind. | [has_counters — "with counters on them"](card-dsl.md#has_counters--with-counters-on-them) |
 | `haunted_by` | Haunted by the named card. | [Haunt — the exile link pointing the other way](card-dsl-cookbook.md#haunt--the-exile-link-pointing-the-other-way) |
 | `is_commander` | Is (or is not) a commander. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
@@ -343,6 +345,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `counters_put_this_turn` | Counters the player put on permanents this turn, by recipient types, kind or one recipient (`on`). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `creatures_died_this_turn` | Creatures that died this turn (morbid). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `creatures_you_control` | Creatures the player controls. | [Value expressions](card-dsl.md#value-expressions) |
+| `damage_dealt_to_this_turn` | Damage dealt this turn to one permanent (`to`, an object reference), by sources a player spec (`by`) controlled as it was dealt; readable after the permanent has left. | ["…damage dealt to Grothama this turn by sources they controlled"](card-dsl.md#damage-dealt-to-grothama-this-turn-by-sources-they-controlled) |
 | `damage_taken_this_turn` | Damage the player was dealt this turn, summed over a plural spec (bloodthirst). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `distinct` | Distinct values of a quality among a pool (domain, coven, delirium, colors, kinds of counters, names). | [Counting different values rather than objects](card-dsl.md#counting-different-values-rather-than-objects) |
 | `extreme_value` | The greatest/least of a quality in a pool, as one number. | [Value expressions](card-dsl.md#value-expressions) |
@@ -467,6 +470,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `draw` | `draw` | A player draws a card. | [Triggers](card-dsl.md#triggers) |
 | `draw_step` | `draw_step` | At the beginning of the draw step. | [Triggers](card-dsl.md#triggers) |
 | `end_step` | `end_step` | At the beginning of the end step. | [Triggers](card-dsl.md#triggers) |
+| `expend` | `mana_spent` | You expend N (`nth`): the spell payment that takes your mana spent to cast spells this turn to N or more. | [Expend — "Whenever you expend N"](card-dsl-cookbook.md#expend--whenever-you-expend-n) |
 | `land_played` | `land_played` | A land is played. | [Triggers](card-dsl.md#triggers) |
 | `leaves_battlefield` | `leaves_battlefield` | A permanent leaves the battlefield. | [Triggers](card-dsl.md#triggers) |
 | `leaves_graveyard` | `leaves_graveyard` | A card leaves a graveyard. | [Triggers](card-dsl.md#triggers) |
@@ -950,8 +954,10 @@ The subset of the selector language a static's `affects` may use -- printed char
 | `is_token` | Is (or is not) a token. | [Static abilities](card-dsl.md#static-abilities) |
 | `keywords` | Has all of these keywords. | [Static abilities](card-dsl.md#static-abilities) |
 | `mana_cost` | Printed mana cost is one of these. | [Static abilities](card-dsl.md#static-abilities) |
+| `mana_value` | A comparison on mana value, or its `parity`. | [Odd or even — parity](card-dsl-cookbook.md#odd-or-even--parity) |
 | `modified` | Is modified: a counter, an Equipment by its printed face, or your Aura (`true` only). | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `not_keywords` | Has none of these keywords. | [Static abilities](card-dsl.md#static-abilities) |
+| `not_subtypes` | Has none of these subtypes. | [Static abilities](card-dsl.md#static-abilities) |
 | `not_supertypes` | Has none of these supertypes ("nonbasic"). | [Static abilities](card-dsl.md#static-abilities) |
 | `not_types` | Has none of these card types ("noncreature"). | [Static abilities](card-dsl.md#static-abilities) |
 | `owner` | Owned by `you`/`opponent`/`any` or a player spec. | [Static abilities](card-dsl.md#static-abilities) |
@@ -1173,7 +1179,7 @@ Every `EventType` the engine emits, and which trigger events listen to it. An ev
 | `life_lost` | `life_lost` |  | [Triggers](card-dsl.md#triggers) |
 | `mana_added` |  |  | [Triggers](card-dsl.md#triggers) |
 | `mana_emptied` |  |  | [Triggers](card-dsl.md#triggers) |
-| `mana_spent` |  |  | [Triggers](card-dsl.md#triggers) |
+| `mana_spent` | `expend` |  | [Triggers](card-dsl.md#triggers) |
 | `mill` |  |  | [Triggers](card-dsl.md#triggers) |
 | `mulligan_taken` |  |  | [Triggers](card-dsl.md#triggers) |
 | `mutated` | `mutates` |  | [Triggers](card-dsl.md#triggers) |

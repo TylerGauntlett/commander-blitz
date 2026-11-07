@@ -57,6 +57,34 @@ def _check_mana_cost_key(filt: Any, where: str) -> None:
         validate_printed_cost_list(filt["mana_cost"], where)
 
 
+def check_literal_mana_value_key(filt: Any, where: str) -> None:
+    """``mana_value`` in a static filter is a literal comparison.
+
+    A number, ``{"op": "<=", "value": 3}`` with a literal number, or
+    ``{"parity": "odd"}`` -- the shapes `characteristics._compare_printed` reads. Static filters are
+    validated by key set alone, so without this ``{"amount": 4}`` would load,
+    default its value to 0 and match every permanent with ``>=``.
+    """
+    if not isinstance(filt, Mapping) or "mana_value" not in filt:
+        return
+    wanted = filt["mana_value"]
+    ok = isinstance(wanted, int) and not isinstance(wanted, bool)
+    if isinstance(wanted, Mapping) and "parity" in wanted:
+        ok = set(wanted) == {"parity"} and wanted["parity"] in ("even", "odd")
+    elif isinstance(wanted, Mapping):
+        value = wanted.get("value")
+        ok = (
+            set(wanted) <= {"op", "value"}
+            and wanted.get("op", ">=") in ("<", "<=", ">", ">=", "=", "==", "!=")
+            and isinstance(value, int)
+            and not isinstance(value, bool)
+        )
+    if not ok:
+        raise DslError(
+            f"{where}.mana_value: a number, or {{'op': '>=', 'value': 4}} with a literal number"
+        )
+
+
 def _check_pt_keys(filt: Any, where: str) -> None:
     """``power``/``toughness`` in a static filter is a comparison, not a size.
 

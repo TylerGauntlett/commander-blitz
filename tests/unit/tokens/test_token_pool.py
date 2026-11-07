@@ -2243,3 +2243,36 @@ class TestTheMiracleWorkerTokens:
         other = pool.get("zombie_2_2_b")
         assert list(other.subtypes) == ["Zombie"]
         assert "Enchantment" not in other.types
+
+
+class TestTheAnimatedArmyTokens:
+    """Esika's Chariot: *"When Esika's Chariot enters, create two 2/2 green Cat
+    creature tokens."* The pool's 2/2 Cat is white, and a deck that counts
+    green permanents or green creatures sees the difference (111.4)."""
+
+    def test_the_cat_is_a_green_two_two(self, pool):
+        token = pool.get("cat_2_2_g")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (2, 2)
+        assert sorted(token.colors) == ["G"]
+        assert list(token.subtypes) == ["Cat"]
+        assert not token.keywords
+        assert not token.abilities
+
+    def test_the_white_cat_is_still_white(self, pool):
+        other = pool.get("cat_2_2_w")
+        assert sorted(other.colors) == ["W"]
+        assert list(other.subtypes) == ["Cat"]
+
+    def test_the_hamster_is_a_red_one_one(self, pool):
+        """Rolling Hamsphere: *"create three 1/1 red Hamster creature tokens,
+        then it deals X damage ... where X is the number of Hamsters you
+        control."* The subtype is the load-bearing part: the Vehicle counts
+        Hamsters, so the pool's 1/1 red Goblin is not a stand-in."""
+        token = pool.get("hamster_1_1_r")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (1, 1)
+        assert sorted(token.colors) == ["R"]
+        assert list(token.subtypes) == ["Hamster"]
+        assert not token.keywords
+        assert not token.abilities

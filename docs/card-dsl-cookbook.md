@@ -764,6 +764,38 @@ sometimes a mapping (`{"except": …}`). The id recorded is the face that was
 **cast** — a disturb cast turns the card over inside `push_spell`, and the half
 that was cast is the half the condition asks about.
 
+### Expend — "Whenever you expend N"
+
+```jsonc
+// Pyreswipe Hawk, Bark-Knuckle Boxer: "Whenever you expend 4, …"
+{ "event": "expend", "nth": 4 }
+// Trailtracker Scout: "Whenever you expend 8, …"
+{ "event": "expend", "nth": 8 }
+```
+
+"You expend 4 as you spend your fourth total mana to cast spells during a
+turn." `nth` is the N, and the trigger fires on the one payment that carries
+the player's spell-mana total for the turn from below N to N or more — the
+crossing `nth` already asks of `counter_placed`. So one 5-mana spell expends 4,
+a 2-mana spell followed by another expends it on the second, and nothing spent
+afterwards that turn expends 4 again. One payment can cross several N at once,
+and each N's trigger fires.
+
+The total is `TurnLedger.mana_spent_on_spells`, folded off the `MANA_SPENT`
+event `costs.pay_mana` fires for a payment toward a **cast**: the mana cost and
+every additional cost's mana (kicker, multikicker, spree), a cast copy's, and
+"cast it, paying its mana cost". An activated ability's mana is not spent to
+cast a spell and never counts; a spell cast without paying its mana cost spends
+nothing. The ledger clears at cleanup with the rest of it.
+
+`controller` reads as on any trigger, `"you"` by default. The loader refuses an
+`expend` without a positive integer `nth`, and one with a `filter` or `source`,
+which a payment has no subject for. The near miss is a `condition` on a
+spell-mana total with `max_per_turn: 1`: it is re-asked on resolution (603.4)
+after a later spell moved the total, and it fires for a permanent that arrived
+after the Nth mana was already spent. Cashed by
+`tests/unit/triggers/test_expend.py`.
+
 ### Copying a spell for each commander cast
 
 ```jsonc
@@ -7569,6 +7601,47 @@ The near miss is `grant_ability` of a `replace_token_creation` static to the
 walker: that would end the moment the walker left, which the printed effect
 does not, and the loader refuses granting a player-wide static anyway.
 
+## "Creature spells you cast this turn can't be countered"
+
+```jsonc
+// Domri, Anarch of Bolas's +1, after its add_mana
+{ "op": "uncounterable_this_turn", "affects_spells": { "types": ["Creature"] }, "cast": true }
+// Veil of Summer's second sentence
+{ "op": "uncounterable_this_turn" }
+// Insist: "The next creature spell you cast this turn can't be countered."
+{ "op": "uncounterable_this_turn", "affects_spells": { "types": ["Creature"] }, "next_spell": true }
+```
+
+The one-shot, timed form of the `spells_cant_be_countered` static, for
+`multiply_token_creation`'s reason: a loyalty ability or an instant leaves no
+permanent to carry a static, and the effect must outlive its source and end
+with the turn. It writes an `UncounterableGrant` for the resolving controller;
+the `counter` op asks it beside the static, and the cleanup step sweeps it.
+
+- **`affects_spells`** is the static's printed-face filter (`types`,
+  `any_types`, `subtypes`, `colors`, …). Omitted, it covers every spell the
+  player controls. `controller` is refused: the seat is always the resolving
+  controller, because every printed sentence says "you". A chosen type or
+  colour is substituted as the effect resolves.
+- **`cast`** is the word "cast" in "spells you cast this turn": a copy the
+  player controls was never cast (707.10), so it is not covered. Veil of
+  Summer's "spells you control" omits it.
+- **`next_spell`** is "the next … spell you cast this turn": the first matching
+  cast binds the grant to that spell (`GameState._tally`'s SPELL_CAST arm, the
+  fold `grant_flash_permission`'s `next_spell` is spent by), and the grant then
+  covers that spell for as long as it is on the stack and nothing else. A cast
+  the filter misses leaves it waiting.
+- **`duration`** is optional and is `"this_turn"`.
+- **It is asked at the counter, not at the grant** (611.2c: it modifies a rule,
+  not a characteristic). A matching spell cast later this turn is covered, and
+  so is one the player already had on the stack — which is what Veil of Summer
+  cast in response to a counterspell is for.
+
+"Can't be countered **by blue or black spells**" (Autumn's Veil) is narrower
+than anything this op says and is refused (`by`, `countered_by`) rather than
+loaded as the stronger card. The near miss is `mana_uncounterable`, which covers
+only the spell that mana paid for and only on a mana ability.
+
 ## "If a player would lose life, they lose twice that much instead"
 
 ```jsonc
@@ -13897,6 +13970,39 @@ granted to — Malakir Rebirth — and two things make that work:
   written before the reset, cleared as the object next enters the battlefield.
 - The leave-the-battlefield branch of `triggers._candidates` pairs its walk of
   printed abilities with `granted_abilities`, as every other branch does.
+
+## "…fight Grothama" — `granter`
+
+Grothama, All-Devouring — *Other creatures have "Whenever this creature attacks,
+you may have it fight Grothama, All-Devouring."*
+
+```jsonc
+"grantable_abilities": [
+  { "kind": "triggered",
+    "text": "Whenever this creature attacks, you may have it fight Grothama, All-Devouring.",
+    "trigger": { "event": "attacks", "source": "self" },
+    "effects": [ { "op": "may", "prompt": "Have it fight Grothama?",
+                   "effects": [ { "op": "fight", "objects": { "self_only": true },
+                                  "other": { "granter": true } } ] } ] }
+],
+"abilities": [
+  { "kind": "static", "effect": "grant_ability", "ability": 0,
+    "affects": { "types": ["Creature"], "controller": "any", "exclude_self": true } }
+]
+```
+
+Inside a granted ability `self` is the **recipient**, so the card's own name
+there needs its own word. `{"granter": true}` is the permanent the resolving
+ability was granted by — `StackItem.granted_by`, carried onto
+`EffectContext.granted_by` — searched on the battlefield like any selector, so a
+granter that has left matches nothing and the fight does not happen (701.12c). A
+`name` selector is the near miss: it also finds a second Grothama, which granted
+nothing.
+
+`true` only. The loader holds it to the **effects** of a triggered or non-mana
+activated ability in `grantable_abilities`: a printed ability or a spell has no
+granter, and a target, trigger condition, cost, mana ability or granted static is
+read before (or without) a resolution that knows it.
 
 ## "When you do" — reflexive triggered abilities
 

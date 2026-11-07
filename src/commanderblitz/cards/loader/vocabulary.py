@@ -1103,6 +1103,11 @@ STATIC_FILTER_KEYS = frozenset(
         "any_types",
         "not_types",
         "subtypes",
+        # "Each other **non-Human** creature you control…" (Grumgully, the
+        # Generous). The negation of `subtypes`, which the effect-side selector
+        # language always had; read off the same printed-plus-recorded set, so
+        # it is as safe here as `subtypes` is.
+        "not_subtypes",
         "supertypes",
         "colors",
         # "**Colorless** creatures you control get +2/+2" (Forsaken Monument).
@@ -1246,7 +1251,12 @@ STATIC_FILTER_KEYS = frozenset(
 #: inputs (`characteristics.is_modified_printed`). Affects only, because the
 #: matcher behind `affects` is the one that answers it; the cost-reduction,
 #: trigger and spell filters that share `STATIC_FILTER_KEYS` have their own.
-STATIC_AFFECTS_FILTER_KEYS = STATIC_FILTER_KEYS | {"any_of", "modified"}
+#: ``mana_value`` is affects-only: "each artifact you control **with mana value
+#: 4 or greater**" (Bello, Bard of the Brambles). The printed mana value with X
+#: as 0 (202.3e), which no layer moves -- as printed as `mana_cost` -- written
+#: as the cast lock's literal comparison, because a face matched alone has no
+#: context to evaluate a value spec against.
+STATIC_AFFECTS_FILTER_KEYS = STATIC_FILTER_KEYS | {"any_of", "modified", "mana_value"}
 
 #: Who a filter's ``owner`` (or ``controller``) may name, relative to the source.
 _FILTER_PLAYERS = ("you", "opponent")

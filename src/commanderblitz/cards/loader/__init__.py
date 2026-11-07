@@ -192,6 +192,7 @@ from .walk import (
     _mentions_pair,
     _refuse_granted_chosen_qualities,
     _walk_effect_specs,
+    check_literal_mana_value_key,
     reads_placed_kind,
     uses_source_bound_duration,
 )
@@ -868,6 +869,49 @@ def _check_as_cast(model: CardModel, where: str) -> None:
             )
 
 
+def _reads_granter(tree: Any) -> bool:
+    """Does anything in this tree carry the ``granter`` selector key?"""
+    if isinstance(tree, Mapping):
+        return "granter" in tree or any(_reads_granter(v) for v in tree.values())
+    if isinstance(tree, (list, tuple)):
+        return any(_reads_granter(v) for v in tree)
+    return False
+
+
+def _check_granter_homes(model: CardModel, where: str) -> None:
+    """``{"granter": true}`` only in the effects of a granted trigger or
+    activated ability.
+
+    The granter is `StackItem.granted_by`, which only an ability resolving
+    out of some permanent's ``grantable_abilities`` has. Anywhere else the key
+    loads and matches nothing: on a printed ability or a spell there is no
+    granter; in a target spec, a trigger condition or a cost the ability is
+    not resolving yet, so the context that knows the granter does not exist;
+    a granted mana ability resolves at once off its activation (605.3a), and a
+    granted static is not resolving at all. Each is a card whose "fight
+    Grothama" silently fights nobody, so each is refused.
+    """
+    dump = model.model_dump(exclude_none=True)
+    grantable = dump.pop("grantable_abilities", None) or []
+    if _reads_granter(dump):
+        raise DslError(
+            f"{where}: 'granter' names the permanent that granted an ability, and "
+            f"only the effects of one of this card's grantable_abilities have one"
+        )
+    for i, ability in enumerate(grantable):
+        if ability.get("kind") in ("triggered", "activated") and not ability.get(
+            "is_mana_ability"
+        ):
+            ability.pop("effects", None)
+        if _reads_granter(ability):
+            raise DslError(
+                f"{where}.grantable_abilities[{i}]: 'granter' is read as the "
+                f"ability resolves, so only the effects of a granted triggered or "
+                f"non-mana activated ability may name it -- not its targets, "
+                f"trigger, cost or a static"
+            )
+
+
 def _check_distribution_homes(model: CardModel, where: str) -> None:
     """``distribute_counters`` only where its division can be announced.
 
@@ -1161,6 +1205,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     _check_distribution_homes(model, where)
     _check_division_homes(model, where)
     _check_as_cast(model, where)
+    _check_granter_homes(model, where)
 
     for i, replacement in enumerate(model.replacements):
         if replacement.event == "self_enters_prepared" and model.prepared_face is None:
@@ -3207,18 +3252,38 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             "life_lost",
             "attacks",
             "counter_placed",
+            "expend",
         ):
             # Same reasoning as `counter` and `mana_ability` above: only `draw`,
             # `spell_cast`, `you_gain_life`, `life_lost` and `attacks` carry an
-            # ordinal, and `counter_placed` the count before the placement, so
+            # ordinal, and `counter_placed` and `expend` the count before the
+            # placement or payment, so
             # accepting it elsewhere would look like "your second card each
             # turn" and be a restriction that never matches -- an ability that
             # silently never fires.
             raise DslError(
                 f"{where}: 'nth' only means anything on a draw, spell_cast or "
                 f"you_gain_life trigger, or a life_lost trigger, or an attacks "
-                f"trigger, or a counter_placed trigger, not on {model.trigger.event!r}"
+                f"trigger, or a counter_placed or expend trigger, not on "
+                f"{model.trigger.event!r}"
             )
+        if model.trigger.event == "expend":
+            # "Whenever you expend 4": the N is the whole trigger. Without it
+            # the ability would fire on no payment at all -- or, read the wide
+            # way, on every one -- and neither is a printed card. A `filter` or
+            # `source` would be matched against a subject a payment does not
+            # have, so the ability would load and never fire.
+            nth = model.trigger.nth
+            if isinstance(nth, bool) or not isinstance(nth, int) or nth < 1:
+                raise DslError(
+                    f"{where}: an expend trigger needs 'nth', the N of \"whenever "
+                    f"you expend N\", as a positive integer"
+                )
+            if model.trigger.filter or model.trigger.source is not None:
+                raise DslError(
+                    f"{where}: an expend trigger counts mana, which has no subject "
+                    f"for 'filter' or 'source' to ask about"
+                )
         if (
             model.trigger.nth is not None
             and model.trigger.event == "counter_placed"
@@ -3247,14 +3312,34 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         ):
             # "Their first noncreature spell" counts the caster's earlier spells
             # this turn against the filter, and those have left the stack: only
-            # their printed faces can be asked. A key that reads board state
+            # their printed faces, and what the turn ledger kept of their
+            # payment (`paid_by`), can be asked. A key that reads board state
             # would be checked on this spell and ignored on the ones before it,
             # so the run would be counted against a different filter than the
             # one that fires the ability.
             raise DslError(
                 f"{where}: 'nth' on a spell_cast trigger counts earlier spells by "
-                f"their printed faces, so its filter cannot use {sorted(unordinal)} "
+                f"their printed faces and what paid for them, so its filter cannot "
+                f"use {sorted(unordinal)} "
                 f"(allowed: {sorted(ORDINAL_FILTER_KEYS)})"
+            )
+        if (
+            model.trigger.nth is not None
+            and model.trigger.event == "spell_cast"
+            and model.trigger.filter
+            and "paid_by" in model.trigger.filter
+            and not isinstance(model.trigger.filter["paid_by"], Mapping)
+        ):
+            # "The first spell … that mana from a Treasure was spent to cast"
+            # counts earlier spells by what the ledger kept of their payment:
+            # the *kind* of each source (`TurnLedger.spells_cast_mana`). The oid
+            # form ("self") names one object, which the ledger does not follow
+            # across its zone changes, so it is refused rather than half-read.
+            raise DslError(
+                f"{where}: 'nth' on a spell_cast trigger counts earlier spells' "
+                f"payments by the kind of source, so 'paid_by' must be a selector "
+                f"(e.g. {{\"subtypes\": [\"Treasure\"]}}), not "
+                f"{model.trigger.filter['paid_by']!r}"
             )
 
         if (
@@ -3839,6 +3924,7 @@ def _check_static_affects(filt: Mapping[str, Any], where: str, path: str) -> Non
     if not top:
         # The top level is checked by the caller's loop over every filter key.
         _check_mana_cost_key(filt, path)
+        check_literal_mana_value_key(filt, path)
         _check_pt_keys(filt, path)
         validate_colorless_key(filt, path)
         validate_enchanted_by_key(filt, path)
@@ -4185,6 +4271,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
 
     for key in ("affects", "blockers", "cause_filter", "affects_spells"):
         _check_mana_cost_key(getattr(model, key, None), f"{where}.{key}")
+        if key == "affects":
+            check_literal_mana_value_key(model.affects, f"{where}.affects")
         # `power`/`toughness` is a comparison wherever a static filter names
         # one, and `affects_spells` is in this list for the same reason it is
         # in the line above: a key its own set does not carry cannot appear, so
