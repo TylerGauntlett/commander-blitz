@@ -27,12 +27,17 @@
       "why_existing_wont_do": "manifest takes only amount/cloak/player: no look-at-two-choose-one with the other milled, and no way to reference the manifested object afterwards; no trample keyword counter kind appears in the reference"
     },
     {
-      "capability": "turn_face_up_effect",
+      "capability": "turn_face_up",
       "kind": "op",
       "what": "an effect op that turns a face-down permanent (the triggering creature) face up, offered as a choose_mode alternative to putting a +1/+1 counter on it",
       "why_existing_wont_do": "turning face up exists only as the special action for face-down permanents; ops has no effect that turns a referenced creature face up"
     }
   ],
-  "closest_existing": ["second_face", "self_enters", "manifest", "deals_combat_damage_to_player"],
+  "closest_existing": [
+    "second_face",
+    "self_enters",
+    "manifest",
+    "deals_combat_damage_to_player"
+  ],
   "confidence": "high"
 }

@@ -13,12 +13,16 @@
       "why_existing_wont_do": "`manifest` (amount, cloak, player) always manifests the top card with no choice and sends no second card to the graveyard; `look_at_top` can choose one of two and send the rest to the graveyard, but its `face_down` means private exile and it cannot put a card onto the battlefield as a face-down manifested 2/2"
     },
     {
-      "capability": "face_down",
+      "capability": "face_down_filter",
       "kind": "selector",
       "what": "a selector/condition key matching face-down permanents (manifested, cloaked, morphed, disguised), so the intervening-if \"if you control no face-down permanents\" is an `exists` negated over `{zone: battlefield, controller: you, face_down: true}`",
       "why_existing_wont_do": "`selector_keys` and `trigger_filter_keys` have no face-down key; `face_down` exists only as an option on library/exile ops meaning private exile, not as a property a selector can read on a permanent"
     }
   ],
-  "closest_existing": ["manifest", "look_at_top", "return_to_hand"],
+  "closest_existing": [
+    "manifest",
+    "look_at_top",
+    "return_to_hand"
+  ],
   "confidence": "high"
 }

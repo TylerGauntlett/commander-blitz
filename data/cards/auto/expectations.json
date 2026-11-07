@@ -19596,6 +19596,10 @@
   "wild_wanderer": {
     "zone": "battlefield"
   },
+  "wilderness_reclamation": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "wildslayer_elves": {
     "zone": "battlefield"
   },

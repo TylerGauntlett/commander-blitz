@@ -1,0 +1,18 @@
+{
+  "card_id": "yedora_grave_gardener",
+  "name": "Yedora, Grave Gardener",
+  "oracle_text": "Whenever another nontoken creature you control dies, you may return it to the battlefield face down under its owner's control. It's a Forest land. (It has no other types or abilities.)",
+  "blocked_sentences": [
+    "Whenever another nontoken creature you control dies, you may return it to the battlefield face down under its owner's control. It's a Forest land."
+  ],
+  "needs": [
+    {
+      "capability": "return_face_down",
+      "kind": "op",
+      "what": "return the dying card from the graveyard to the battlefield face down under its owner's control, with the face-down characteristics overridden to a Forest land (type Land, subtype Forest, no name, no mana cost, colorless, no other types or abilities, so it taps for {G} via the Forest's intrinsic mana ability) rather than the usual face-down 2/2 creature; e.g. a `face_down: {\"types\": [\"Land\"], \"subtypes\": [\"Forest\"]}` option on return_from_graveyard / put_onto_battlefield, with the card revealed if it leaves the battlefield",
+      "why_existing_wont_do": "return_from_graveyard and put_onto_battlefield have no face_down option (face_down exists only on look_at_top/reveal_until/search_library, meaning private exile); manifest only takes library cards and makes a 2/2 creature; returning it face up then `animate` with exact types Land/Forest would keep its name, mana cost, colors and mana value and so is a different card"
+    }
+  ],
+  "closest_existing": ["return_from_graveyard", "animate", "manifest"],
+  "confidence": "high"
+}

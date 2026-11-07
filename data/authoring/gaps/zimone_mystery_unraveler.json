@@ -1,0 +1,30 @@
+{
+  "card_id": "zimone_mystery_unraveler",
+  "name": "Zimone, Mystery Unraveler",
+  "oracle_text": "Landfall — Whenever a land you control enters, manifest dread if this is the first time this ability has resolved this turn. Otherwise, you may turn a permanent you control face up. (To manifest dread, look at the top two cards of your library. Put one onto the battlefield face down as a 2/2 creature and the other into your graveyard. Turn it face up any time for its mana cost if it's a creature card.)",
+  "blocked_sentences": [
+    "Landfall — Whenever a land you control enters, manifest dread if this is the first time this ability has resolved this turn. Otherwise, you may turn a permanent you control face up"
+  ],
+  "needs": [
+    {
+      "capability": "manifest_dread",
+      "kind": "op",
+      "what": "manifest dread (701.62): look at the top two cards of your library, choose one and manifest it (face-down 2/2, turnable face up for its mana cost if a creature card), put the other into your graveyard",
+      "why_existing_wont_do": "The `manifest` op takes only amount, cloak and player and manifests the top card(s) with no choice; it cannot look at two, pick one and send the rest to the graveyard. `look_at_top` has face_down and rest_to, but its face_down does not make a manifested 2/2 that can be turned up for its mana cost, so composing them would be an approximation"
+    },
+    {
+      "capability": "turn_face_up",
+      "kind": "op",
+      "what": "an effect op that turns a chosen face-down permanent its controller controls face up without paying any cost (optional via `may`), reusing the engine's Game._turn_face_up path so turned-face-up events fire, with the choice limited to face-down permanents you control",
+      "why_existing_wont_do": "No op in `ops` turns a permanent face up; `transform` flips double-faced cards, not face-down morphs/manifests, and the face-up action exists only as the paid special action, not as an effect a resolving ability can perform"
+    },
+    {
+      "capability": "face_down_filter",
+      "kind": "selector",
+      "what": "a selector key matching face-down permanents (`face_down: true`), so 'turn a permanent you control face up' offers only permanents that are face down",
+      "why_existing_wont_do": "`selector_keys` has no face-down key; `face_down` appears only as an option on look_at_top/reveal_until/search_zones for putting cards onto the battlefield, not as a filter on existing permanents"
+    }
+  ],
+  "closest_existing": ["manifest", "look_at_top", "transform", "set_turn_flag", "has_turn_flag"],
+  "confidence": "high"
+}

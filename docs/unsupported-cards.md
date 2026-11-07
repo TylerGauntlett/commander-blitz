@@ -10,14 +10,16 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**236 cards** blocked by **219** capabilities.
+**240 cards** blocked by **217** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
-| [put-into-graveyard-from-anywhere](#put-into-graveyard-from-anywhere) | 6 | 256 | trigger_event |
-| [manifest-dread](#manifest-dread) | 5 | 5590 | op |
+| [put-into-graveyard-from-anywhere](#put-into-graveyard-from-anywhere) | 7 | 256 | trigger_event |
+| [face-down-filter](#face-down-filter) | 6 | 5559 | selector |
+| [manifest-dread](#manifest-dread) | 6 | 5590 | op |
+| [turned-face-up-trigger](#turned-face-up-trigger) | 5 | 5680 | trigger_event |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
@@ -26,7 +28,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [random-player-choice](#random-player-choice) | 3 | 5120 | op |
 | [rooms](#rooms) | 3 | 4163 | engine |
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 3 | 714 | engine |
-| [turned-face-up-trigger](#turned-face-up-trigger) | 3 | 5680 | trigger_event |
 | [unlock-door](#unlock-door) | 3 | 4163 | trigger_event |
 | [add-color](#add-color) | 2 | 2040 | op |
 | [basic-land-type-mana](#basic-land-type-mana) | 2 | 73 | engine |
@@ -40,12 +41,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 2 | 2389 | engine |
 | [escape](#escape) | 2 | 388 | engine, static_effect |
-| [face-down](#face-down) | 2 | 6544 | selector |
-| [face-down-filter](#face-down-filter) | 2 | 5590 | selector |
+| [odd-or-even](#odd-or-even) | 2 | 8504 | selector, value |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
+| [return-face-down](#return-face-down) | 2 | 3081 | op |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
-| [turned-face-up](#turned-face-up) | 2 | 6493 | trigger_event |
+| [turn-face-up](#turn-face-up) | 2 | 5772 | op |
 | [venture](#venture) | 2 | 19644 | engine |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
 | [x-maximum](#x-maximum) | 2 | 1665 | engine |
@@ -155,7 +156,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mana-spent-enters-with-counters](#mana-spent-enters-with-counters) | 1 | 653 | replacement |
 | [mana-spent-trigger-on-activation](#mana-spent-trigger-on-activation) | 1 | 4444 | trigger_event |
 | [mana-tap-trigger-damage-rider](#mana-tap-trigger-damage-rider) | 1 | 7929 | static_effect |
-| [manifest](#manifest) | 1 | 3975 | op |
+| [manifest-from-hand](#manifest-from-hand) | 1 | 3975 | op |
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
 | [modal-variable-targets](#modal-variable-targets) | 1 | 4339 | engine |
@@ -167,7 +168,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [noncombat-damage-trigger](#noncombat-damage-trigger) | 1 | 6793 | trigger_event |
 | [nontoken-creatures-died-this-turn](#nontoken-creatures-died-this-turn) | 1 | 3951 | value |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
-| [odd-or-even](#odd-or-even) | 1 | 8504 | selector |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
 | [play-cost-paid-card](#play-cost-paid-card) | 1 | 6544 | op |
 | [play-lands-from-graveyard-filtered](#play-lands-from-graveyard-filtered) | 1 | 3993 | static_effect |
@@ -176,7 +176,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [player-mana-ability-until-end-of-turn](#player-mana-ability-until-end-of-turn) | 1 | 12705 | op |
 | [players-attacked-last-combat](#players-attacked-last-combat) | 1 | 6681 | value |
 | [plot](#plot) | 1 | 7506 | op |
-| [power-parity](#power-parity) | 1 | 10846 | value |
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
 | [prime-number](#prime-number) | 1 | 11527 | value |
 | [primo-the-indivisible](#primo-the-indivisible) | 1 | 11527 | token |
@@ -194,7 +193,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [replace-dies-link](#replace-dies-link) | 1 | 2740 | replacement |
 | [replace-graveyard-with-counter](#replace-graveyard-with-counter) | 1 | 386 | replacement |
 | [retrace](#retrace) | 1 | 5451 | engine |
-| [return-face-down](#return-face-down) | 1 | 6493 | op |
 | [reveal-from-hand](#reveal-from-hand) | 1 | 3623 | cost |
 | [reveal-until-rest-to-graveyard](#reveal-until-rest-to-graveyard) | 1 | 1606 | op |
 | [sacrifice-multiple-distinct](#sacrifice-multiple-distinct) | 1 | 1918 | cost |
@@ -223,12 +221,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [total-toughness-cost-reduction](#total-toughness-cost-reduction) | 1 | 5188 | value |
 | [toughness-greater-than-power-filter](#toughness-greater-than-power-filter) | 1 | 3557 | selector |
 | [treefolk-x-x-g-reach-land-count](#treefolk-x-x-g-reach-land-count) | 1 | 2396 | token |
-| [turn-face-up-effect](#turn-face-up-effect) | 1 | 8930 | op |
 | [two-share-all-card-types](#two-share-all-card-types) | 1 | 7993 | value |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
 | [while-source-on-battlefield-duration](#while-source-on-battlefield-duration) | 1 | 8222 | engine |
 | [wurm-5-5-g](#wurm-5-5-g) | 1 | 2294 | token |
+| [wurm-5-5-g-trample](#wurm-5-5-g-trample) | 1 | 2387 | token |
 | [x-cost-mana-restriction](#x-cost-mana-restriction) | 1 | 4046 | decision |
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 1 | 11545 | engine |
 | [x-sized-ability-targets](#x-sized-ability-targets) | 1 | 1668 | engine |
@@ -350,7 +348,7 @@ Blocks **8** cards.
 
 ## put-into-graveyard-from-anywhere
 
-Blocks **6** cards.
+Blocks **7** cards.
 
 - **(trigger_event)** a trigger event that fires whenever a card matching a filter (here: a land card, any owner) is put into a graveyard from ANY zone -- battlefield, hand (discard), library (mill), stack -- usable on an ability with active_zones ["graveyard"] so the card triggers while it sits in its owner's graveyard (Ashen Ghoul / Vengevine style recursion)
   <br>Why the existing vocabulary won't do: leaves_battlefield with to_zones ["graveyard"] only sees permanents leaving the battlefield (a sacrificed or destroyed land) and misses discarded, milled and countered-from-stack cards; discard covers only the hand; dies is creatures only; there is no mill or generic zone-change-to-graveyard event in trigger_events. The may-pay {G}{G} and return_to_hand halves are expressible once the event exists.
@@ -364,6 +362,8 @@ Blocks **6** cards.
   <br>Why the existing vocabulary won't do: The other two clauses are expressible (`creature_dies` / `dies` with exclude_self, and `leaves_graveyard` filtered to creature cards you own), but there is no zone-change-to-graveyard event in trigger_events: `discard` covers only the hand, `dies` and `leaves_battlefield` only the battlefield, and there is no mill event; the trigger's `from_zones` key is read only for spell_cast and land_played. Writing just the two expressible clauses would silently drop the milled/discarded-creature half, which is the card's main engine with its own {1}{B} mill ability.
 - **(trigger_event)** a trigger event that fires when a card matching a filter (here: a land card, owner = you) is put into a graveyard from ANY zone -- battlefield (sacrifice/destroy), hand (discard), library (mill, surveil), stack -- and supports `batched: true` so that several land cards moved by one event (a mill of three lands, a discard of two lands) trigger it exactly once ("one or more")
   <br>Why the existing vocabulary won't do: leaves_battlefield with to_zones ["graveyard"] sees only permanents leaving the battlefield and misses discarded, milled and surveilled land cards, which are the card's whole engine (Gitrog + discard/dredge loops); discard covers only the hand and carries no card-type filter on the moved card from library; there is no mill or generic zone-change-to-graveyard event in trigger_events. Combining leaves_battlefield and discard triggers would still miss mill/surveil and would trigger twice for a single simultaneous event that moves lands from two zones. The draw half is a plain draw op once the event exists. The upkeep 'sacrifice unless you sacrifice a land' and extra_land_drops lines are expressible today.
+- **(trigger_event)** a self trigger that fires when this card is put into a graveyard from ANY zone (battlefield, hand via discard, library via mill/surveil, stack via counter), so the triggered ability works from the graveyard and can shuffle the card (bound as the trigger subject) into its owner's library -- the Eldrazi titan clause shared by Emrakul, Ulamog and Kozilek
+  <br>Why the existing vocabulary won't do: `trigger_events` has `dies` and `leaves_battlefield` (with `to_zones`), which only see the battlefield and miss discard, mill and a countered spell -- the cases the clause exists for. `discard` covers only the hand. No event observes a card arriving in a graveyard from the library or stack, and no `card_level_rider_keys` entry (`tucks_itself` is a resolving spell's own fate) replaces it. Writing only the `dies` half would make a different card that stays in the graveyard when milled or discarded.
 
 <details><summary>Cards waiting on this</summary>
 
@@ -373,6 +373,9 @@ Blocks **6** cards.
   - Whenever one or more land cards are put into your graveyard from anywhere, draw a card.
 - **Colossal Grave-Reaver** (rank 1942) — `colossal_grave_reaver`
   - Whenever one or more creature cards are put into your graveyard from your library, put one of them onto the battlefield.
+- **Worldspine Wurm** (rank 2387) — `worldspine_wurm`
+  - When this creature dies, create three 5/5 green Wurm creature tokens with trample.
+  - When Worldspine Wurm is put into a graveyard from anywhere, shuffle it into its owner's library.
 - **Crawling Sensation** (rank 3007) — `crawling_sensation`
   - Whenever one or more land cards are put into your graveyard from anywhere for the first time each turn, create a 1/1 green Insect creature token.
 - **Centaur Vinecrasher** (rank 10988) — `centaur_vinecrasher`
@@ -382,9 +385,45 @@ Blocks **6** cards.
 
 </details>
 
+## face-down-filter
+
+Blocks **6** cards.
+
+- **(selector)** a selector/condition key matching face-down permanents (manifested, cloaked, morphed, disguised), so the intervening-if "if you control no face-down permanents" is an `exists` negated over `{zone: battlefield, controller: you, face_down: true}`
+  <br>Why the existing vocabulary won't do: `selector_keys` and `trigger_filter_keys` have no face-down key; `face_down` exists only as an option on library/exile ops meaning private exile, not as a property a selector can read on a permanent
+- **(selector)** a selector key matching face-down permanents (manifested, cloaked, morphed, disguised), e.g. `{zone: battlefield, controller: you, face_down: true}`, usable in the cost filter
+  <br>Why the existing vocabulary won't do: `selector_keys` has no face-down key; `face_down` exists only as an option on library/exile ops meaning private exile, not as a property a selector can read on a permanent
+- **(selector)** A trigger filter key (e.g. `face_down: true`) on `permanent_enters` matching a creature that enters the battlefield face down (manifested, cloaked, manifested dread or morphed)
+  <br>Why the existing vocabulary won't do: `trigger_filter_keys` has controller, types, is_token etc. but nothing reading the 707 face-down state, so `permanent_enters` with controller you and types Creature would also draw for every face-up creature
+- **(selector)** a trigger/selector filter key matching face-down permanents (e.g. `face_down: true`) so permanent_enters can be narrowed to 'a face-down creature you control enters'
+  <br>Why the existing vocabulary won't do: face_down exists only as an op option on look_at_top/search ops (putting a card face down); trigger_filter_keys and selector_keys have no face-down predicate, and filtering on types: [Creature] alone would also fire for every face-up creature
+- **(selector)** a selector key that matches permanents by face-up/face-down status (e.g. `face_down: false` for "face-up creatures"), so an effect's objects can be narrowed to face-up nontoken creatures you control and exclude manifested/cloaked/morphed face-down permanents
+  <br>Why the existing vocabulary won't do: selector_keys has `is_token`, `types` and `controller` but nothing reads face-down status; `face_down` exists only as an option on zone-moving ops (exile, look_at_top, search_library), not as a filter. Using `is_token: false` alone would also grant the dies-trigger to face-down manifests, a different card
+- **(selector)** a selector key matching face-down permanents (`face_down: true`), so 'turn a permanent you control face up' offers only permanents that are face down
+  <br>Why the existing vocabulary won't do: `selector_keys` has no face-down key; `face_down` appears only as an option on look_at_top/reveal_until/search_zones for putting cards onto the battlefield, not as a filter on existing permanents
+
+<details><summary>Cards waiting on this</summary>
+
+- **Whisperwood Elemental** (rank 5559) — `whisperwood_elemental`
+  - Sacrifice this creature: Until end of turn, face-up nontoken creatures you control gain "When this creature dies, manifest the top card of your library."
+- **They Came from the Pipes** (rank 5590) — `they_came_from_the_pipes`
+  - When this enchantment enters, manifest dread twice. (To manifest dread, look at the top two cards of your library. Put one onto the battlefield face down as a 2/2 creature and the other into your graveyard. Turn it face up any time for its mana cost if it's a creature card.)
+  - Whenever a face-down creature you control enters, draw a card.
+- **Trail of Mystery** (rank 5680) — `trail_of_mystery`
+  - Whenever a face-down creature you control enters, you may search your library for a basic land card, reveal it, put it into your hand, then shuffle.
+  - Whenever a permanent you control is turned face up, if it's a creature, it gets +2/+2 until end of turn.
+- **Zimone, Mystery Unraveler** (rank 5772) — `zimone_mystery_unraveler`
+  - Landfall — Whenever a land you control enters, manifest dread if this is the first time this ability has resolved this turn. Otherwise, you may turn a permanent you control face up
+- **Primordial Mist** (rank 6544) — `primordial_mist`
+  - Exile a face-down permanent you control face up: You may play that card this turn. (You still pay its costs. Timing rules still apply.)
+- **Glitch Interpreter** (rank 10013) — `glitch_interpreter`
+  - When this creature enters, if you control no face-down permanents, return this creature to its owner's hand and manifest dread.
+
+</details>
+
 ## manifest-dread
 
-Blocks **5** cards.
+Blocks **6** cards.
 
 - **(op)** manifest dread (701.62a): look at the top two cards of your library, choose one and put it onto the battlefield face down as a 2/2 manifested creature (turnable face up for its mana cost if it is a creature card), and put the other into your graveyard -- either a `dread: true` flag on the `manifest` op or a `manifest_dread` op
   <br>Why the existing vocabulary won't do: `manifest` (amount, cloak, player) always manifests the top card with no choice and no second card to the graveyard; `look_at_top` can choose one of two and send the rest to the graveyard, but its `face_down` only means private exile and it cannot put a card onto the battlefield as a face-down manifested 2/2. Chaining mill + manifest would pick the wrong card with no choice.
@@ -396,12 +435,16 @@ Blocks **5** cards.
   <br>Why the existing vocabulary won't do: The `manifest` op takes only amount, cloak and player and manifests the top card(s) with no choice; it cannot look at two, pick one and send the rest to the graveyard. `look_at_top` can pick and send rest_to graveyard and has face_down, but its face_down does not make a manifested 2/2 that can be turned up for its mana cost, so composing them would be an approximation
 - **(op)** Manifest dread (701.62): look at the top two cards of your library, choose one to put onto the battlefield face down as a manifested 2/2 creature (turnable face up for its mana cost if a creature card), and put the other into your graveyard; repeatable via amount ("twice" performs the whole look-choose-manifest-bin sequence two separate times)
   <br>Why the existing vocabulary won't do: The `manifest` op carries only amount, cloak and player and manifests the top card blind with no look-at-two choice or graveyard half; `look_at_top` has `face_down` but the engine honours it only for exile destinations (ops_cards.py), so it cannot put a chosen card onto the battlefield as a manifested 2/2
+- **(op)** manifest dread (701.62): look at the top two cards of your library, choose one and manifest it (face-down 2/2, turnable face up for its mana cost if a creature card), put the other into your graveyard
+  <br>Why the existing vocabulary won't do: The `manifest` op takes only amount, cloak and player and manifests the top card(s) with no choice; it cannot look at two, pick one and send the rest to the graveyard. `look_at_top` has face_down and rest_to, but its face_down does not make a manifested 2/2 that can be turned up for its mana cost, so composing them would be an approximation
 
 <details><summary>Cards waiting on this</summary>
 
 - **They Came from the Pipes** (rank 5590) — `they_came_from_the_pipes`
   - When this enchantment enters, manifest dread twice. (To manifest dread, look at the top two cards of your library. Put one onto the battlefield face down as a 2/2 creature and the other into your graveyard. Turn it face up any time for its mana cost if it's a creature card.)
   - Whenever a face-down creature you control enters, draw a card.
+- **Zimone, Mystery Unraveler** (rank 5772) — `zimone_mystery_unraveler`
+  - Landfall — Whenever a land you control enters, manifest dread if this is the first time this ability has resolved this turn. Otherwise, you may turn a permanent you control face up
 - **Curator Beastie** (rank 6774) — `curator_beastie`
   - Whenever this creature enters or attacks, manifest dread. (Look at the top two cards of your library. Put one onto the battlefield face down as a 2/2 creature and the other into your graveyard. Turn it face up any time for its mana cost if it's a creature card.)
 - **Experimental Lab // Staff Room** (rank 8930) — `experimental_lab_staff_room`
@@ -410,6 +453,38 @@ Blocks **5** cards.
   - Whenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it.
 - **Glitch Interpreter** (rank 10013) — `glitch_interpreter`
   - When this creature enters, if you control no face-down permanents, return this creature to its owner's hand and manifest dread.
+- **Growing Dread** (rank 10701) — `growing_dread`
+  - When this enchantment enters, manifest dread
+  - Whenever you turn a permanent face up, put a +1/+1 counter on it
+
+</details>
+
+## turned-face-up-trigger
+
+Blocks **5** cards.
+
+- **(trigger_event)** a trigger event for a permanent being turned face up (filterable by controller: 'a permanent you control'), usable by a triggered ability with active_zones ["graveyard"] on the card itself
+  <br>Why the existing vocabulary won't do: The engine's _turn_face_up emits a 'turned_face_up' event, but it is not in the packet's trigger_events vocabulary, so no card can trigger on it; becomes_untapped/permanent_enters/counter_placed are different events (a megamorph counter would miss plain morphs and manifests)
+- **(trigger_event)** a trigger event fired when a player turns a permanent face up (the engine already emits `turned_face_up` with player and source in Game._turn_face_up), filterable by the player who turned it (`controller: you`), binding the turned permanent as the subject so an effect can put a +1/+1 counter on it
+  <br>Why the existing vocabulary won't do: `trigger_events` has no face-up event; `permanent_enters` does not fire on turning face up (the permanent never re-enters), and nothing else in the list observes a face-down permanent becoming face up
+- **(trigger_event)** a trigger event for this permanent being turned face up (source: self), so a morph creature's 'When this creature is turned face up, ...' ability goes on the stack when its morph cost is paid
+  <br>Why the existing vocabulary won't do: The engine's _turn_face_up emits a 'turned_face_up' event, but it is not in the packet's trigger_events vocabulary, so no triggered ability can listen for it; self_enters does not fire on turning face up (the permanent is already on the battlefield), and ability_activated / becomes_untapped are different events
+- **(trigger_event)** a trigger event fired when a permanent is turned face up (morph, disguise, manifest, cloak), filterable by controller ('a permanent you control') and binding the turned-up permanent as the subject so the effect can read it (intervening-if 'if it's a creature', then an optional fight between it and a target creature you don't control)
+  <br>Why the existing vocabulary won't do: trigger_events has no face-up event; the engine emits a 'turned_face_up' event from Game._turn_face_up but no trigger can listen to it. permanent_enters does not fire on turning face up, since the permanent never changes zones
+- **(trigger_event)** a trigger event fired when a permanent is turned face up (morph/megamorph/disguise unmorph, manifest/cloak turned up), filterable by controller, binding the turned-up permanent as subject so an intervening 'if it's a creature' check and a pump on it can follow
+  <br>Why the existing vocabulary won't do: trigger_events has permanent_enters, becomes_tapped, mutates, becomes_monstrous etc. but nothing for turning face up; turning a permanent face up is not an enters event, so permanent_enters cannot stand in
+
+<details><summary>Cards waiting on this</summary>
+
+- **Trail of Mystery** (rank 5680) — `trail_of_mystery`
+  - Whenever a face-down creature you control enters, you may search your library for a basic land card, reveal it, put it into your hand, then shuffle.
+  - Whenever a permanent you control is turned face up, if it's a creature, it gets +2/+2 until end of turn.
+- **Deathmist Raptor** (rank 6493) — `deathmist_raptor`
+  - Whenever a permanent you control is turned face up, you may return this card from your graveyard to the battlefield face up or face down.
+- **Kheru Spellsnatcher** (rank 7605) — `kheru_spellsnatcher`
+  - When this creature is turned face up, counter target spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard. You may cast that card without paying its mana cost for as long as it remains exiled.
+- **Temur War Shaman** (rank 7930) — `temur_war_shaman`
+  - Whenever a permanent you control is turned face up, if it's a creature, you may have it fight target creature you don't control.
 - **Growing Dread** (rank 10701) — `growing_dread`
   - When this enchantment enters, manifest dread
   - Whenever you turn a permanent face up, put a +1/+1 counter on it
@@ -621,30 +696,6 @@ Blocks **3** cards.
   - When this land enters, sacrifice it. When you do, search your library for a basic Mountain, Forest, or Plains card, put it onto the battlefield tapped, then shuffle and you gain 1 life.
 - **Maestros Theater** (rank 1257) — `maestros_theater`
   - When this land enters, sacrifice it. When you do, search your library for a basic Island, Swamp, or Mountain card, put it onto the battlefield tapped, then shuffle and you gain 1 life.
-
-</details>
-
-## turned-face-up-trigger
-
-Blocks **3** cards.
-
-- **(trigger_event)** a trigger event fired when a player turns a permanent face up (the engine already emits `turned_face_up` with player and source in Game._turn_face_up), filterable by the player who turned it (`controller: you`), binding the turned permanent as the subject so an effect can put a +1/+1 counter on it
-  <br>Why the existing vocabulary won't do: `trigger_events` has no face-up event; `permanent_enters` does not fire on turning face up (the permanent never re-enters), and nothing else in the list observes a face-down permanent becoming face up
-- **(trigger_event)** a trigger event fired when a permanent is turned face up (morph, disguise, manifest, cloak), filterable by controller ('a permanent you control') and binding the turned-up permanent as the subject so the effect can read it (intervening-if 'if it's a creature', then an optional fight between it and a target creature you don't control)
-  <br>Why the existing vocabulary won't do: trigger_events has no face-up event; the engine emits a 'turned_face_up' event from Game._turn_face_up but no trigger can listen to it. permanent_enters does not fire on turning face up, since the permanent never changes zones
-- **(trigger_event)** a trigger event fired when a permanent is turned face up (morph/megamorph/disguise unmorph, manifest/cloak turned up), filterable by controller, binding the turned-up permanent as subject so an intervening 'if it's a creature' check and a pump on it can follow
-  <br>Why the existing vocabulary won't do: trigger_events has permanent_enters, becomes_tapped, mutates, becomes_monstrous etc. but nothing for turning face up; turning a permanent face up is not an enters event, so permanent_enters cannot stand in
-
-<details><summary>Cards waiting on this</summary>
-
-- **Trail of Mystery** (rank 5680) — `trail_of_mystery`
-  - Whenever a face-down creature you control enters, you may search your library for a basic land card, reveal it, put it into your hand, then shuffle.
-  - Whenever a permanent you control is turned face up, if it's a creature, it gets +2/+2 until end of turn.
-- **Temur War Shaman** (rank 7930) — `temur_war_shaman`
-  - Whenever a permanent you control is turned face up, if it's a creature, you may have it fight target creature you don't control.
-- **Growing Dread** (rank 10701) — `growing_dread`
-  - When this enchantment enters, manifest dread
-  - Whenever you turn a permanent face up, put a +1/+1 counter on it
 
 </details>
 
@@ -900,41 +951,22 @@ Blocks **2** cards.
 
 </details>
 
-## face-down
+## odd-or-even
 
 Blocks **2** cards.
 
-- **(selector)** a selector/condition key matching face-down permanents (manifested, cloaked, morphed, disguised), so the intervening-if "if you control no face-down permanents" is an `exists` negated over `{zone: battlefield, controller: you, face_down: true}`
-  <br>Why the existing vocabulary won't do: `selector_keys` and `trigger_filter_keys` have no face-down key; `face_down` exists only as an option on library/exile ops meaning private exile, not as a property a selector can read on a permanent
-- **(selector)** a selector key matching face-down permanents (manifested, cloaked, morphed, disguised), e.g. `{zone: battlefield, controller: you, face_down: true}`, usable in the cost filter
-  <br>Why the existing vocabulary won't do: `selector_keys` has no face-down key; `face_down` exists only as an option on library/exile ops meaning private exile, not as a property a selector can read on a permanent
+- **(value)** a static condition that asks whether the source permanent's current power is even or odd -- e.g. a `power` filter clause `{"parity": "even"|"odd"}` usable under `exists` with `self_only`, or a static value `power_of` self plus a parity/modulo predicate for `cmp` -- so a `cast_as_though_flash` static can switch on Kianne's power parity
+  <br>Why the existing vocabulary won't do: `cast_as_though_flash` exists as a static effect and `exists` + `self_only` + `power` is a legal static condition, but the `power` filter clause (`compare_pt`) only takes `{op, value}` comparisons against a fixed integer, and `static_value_keys` has no power-of-self reader or modulo; the only parity predicate in the engine is `parity` on die rolls (`ROLL_PARITIES`). Writing a fixed set of `power` equalities would be wrong for unbounded power
+- **(selector)** a selector comparison on a creature's live power (and, for sibling cards, mana value) that matches by parity -- e.g. power: {"parity": "odd"|"even"} with zero even, or {"parity": {"binding": "chosen"}} reading a resolution-time 'choose odd or even' decision
+  <br>Why the existing vocabulary won't do: The selector `power` key goes through selectors._compare, which only knows >=, <=, >, <, ==, != against a value; parity exists only for die rolls (`rolled` with `parity` in values.py). A choose_mode with an any_of list of power == 0, 2, 4 ... would be a finite approximation of an unbounded set.
 
 <details><summary>Cards waiting on this</summary>
 
-- **Primordial Mist** (rank 6544) — `primordial_mist`
-  - Exile a face-down permanent you control face up: You may play that card this turn. (You still pay its costs. Timing rules still apply.)
-- **Glitch Interpreter** (rank 10013) — `glitch_interpreter`
-  - When this creature enters, if you control no face-down permanents, return this creature to its owner's hand and manifest dread.
-
-</details>
-
-## face-down-filter
-
-Blocks **2** cards.
-
-- **(selector)** A trigger filter key (e.g. `face_down: true`) on `permanent_enters` matching a creature that enters the battlefield face down (manifested, cloaked, manifested dread or morphed)
-  <br>Why the existing vocabulary won't do: `trigger_filter_keys` has controller, types, is_token etc. but nothing reading the 707 face-down state, so `permanent_enters` with controller you and types Creature would also draw for every face-up creature
-- **(selector)** a trigger/selector filter key matching face-down permanents (e.g. `face_down: true`) so permanent_enters can be narrowed to 'a face-down creature you control enters'
-  <br>Why the existing vocabulary won't do: face_down exists only as an op option on look_at_top/search ops (putting a card face down); trigger_filter_keys and selector_keys have no face-down predicate, and filtering on types: [Creature] alone would also fire for every face-up creature
-
-<details><summary>Cards waiting on this</summary>
-
-- **They Came from the Pipes** (rank 5590) — `they_came_from_the_pipes`
-  - When this enchantment enters, manifest dread twice. (To manifest dread, look at the top two cards of your library. Put one onto the battlefield face down as a 2/2 creature and the other into your graveyard. Turn it face up any time for its mana cost if it's a creature card.)
-  - Whenever a face-down creature you control enters, draw a card.
-- **Trail of Mystery** (rank 5680) — `trail_of_mystery`
-  - Whenever a face-down creature you control enters, you may search your library for a basic land card, reveal it, put it into your hand, then shuffle.
-  - Whenever a permanent you control is turned face up, if it's a creature, it gets +2/+2 until end of turn.
+- **Zimone's Hypothesis** (rank 8504) — `zimone_s_hypothesis`
+  - Then choose odd or even. Return each creature with power of the chosen quality to its owner's hand. (Zero is even.)
+- **Kianne, Corrupted Memory** (rank 10846) — `kianne_corrupted_memory`
+  - As long as Kianne's power is even, you may cast noncreature spells as though they had flash.
+  - As long as Kianne's power is odd, you may cast creature spells as though they had flash.
 
 </details>
 
@@ -976,6 +1008,24 @@ Blocks **2** cards.
 
 </details>
 
+## return-face-down
+
+Blocks **2** cards.
+
+- **(op)** return_from_graveyard to the battlefield with the controller's choice of face up or face down (a face-down 2/2 that can later be turned face up for its morph cost)
+  <br>Why the existing vocabulary won't do: return_from_graveyard takes controller/counters/destination/tapped but has no face_down option; face_down exists only on look_at_top/reveal_until/search_library, and manifest puts library cards, not this card from the graveyard
+- **(op)** return the dying card from the graveyard to the battlefield face down under its owner's control, with the face-down characteristics overridden to a Forest land (type Land, subtype Forest, no name, no mana cost, colorless, no other types or abilities, so it taps for {G} via the Forest's intrinsic mana ability) rather than the usual face-down 2/2 creature; e.g. a `face_down: {"types": ["Land"], "subtypes": ["Forest"]}` option on return_from_graveyard / put_onto_battlefield, with the card revealed if it leaves the battlefield
+  <br>Why the existing vocabulary won't do: return_from_graveyard and put_onto_battlefield have no face_down option (face_down exists only on look_at_top/reveal_until/search_library, meaning private exile); manifest only takes library cards and makes a 2/2 creature; returning it face up then `animate` with exact types Land/Forest would keep its name, mana cost, colors and mana value and so is a different card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Yedora, Grave Gardener** (rank 3081) — `yedora_grave_gardener`
+  - Whenever another nontoken creature you control dies, you may return it to the battlefield face down under its owner's control. It's a Forest land.
+- **Deathmist Raptor** (rank 6493) — `deathmist_raptor`
+  - Whenever a permanent you control is turned face up, you may return this card from your graveyard to the battlefield face up or face down.
+
+</details>
+
 ## targeted-discard
 
 Blocks **2** cards.
@@ -995,21 +1045,23 @@ Blocks **2** cards.
 
 </details>
 
-## turned-face-up
+## turn-face-up
 
 Blocks **2** cards.
 
-- **(trigger_event)** a trigger event for a permanent being turned face up (filterable by controller: 'a permanent you control'), usable by a triggered ability with active_zones ["graveyard"] on the card itself
-  <br>Why the existing vocabulary won't do: The engine's _turn_face_up emits a 'turned_face_up' event, but it is not in the packet's trigger_events vocabulary, so no card can trigger on it; becomes_untapped/permanent_enters/counter_placed are different events (a megamorph counter would miss plain morphs and manifests)
-- **(trigger_event)** a trigger event for this permanent being turned face up (source: self), so a morph creature's 'When this creature is turned face up, ...' ability goes on the stack when its morph cost is paid
-  <br>Why the existing vocabulary won't do: The engine's _turn_face_up emits a 'turned_face_up' event, but it is not in the packet's trigger_events vocabulary, so no triggered ability can listen for it; self_enters does not fire on turning face up (the permanent is already on the battlefield), and ability_activated / becomes_untapped are different events
+- **(op)** an effect op that turns a face-down permanent (the triggering creature) face up, offered as a choose_mode alternative to putting a +1/+1 counter on it
+  <br>Why the existing vocabulary won't do: turning face up exists only as the special action for face-down permanents; ops has no effect that turns a referenced creature face up
+- **(op)** an effect op that turns a chosen face-down permanent its controller controls face up without paying any cost (optional via `may`), reusing the engine's Game._turn_face_up path so turned-face-up events fire, with the choice limited to face-down permanents you control
+  <br>Why the existing vocabulary won't do: No op in `ops` turns a permanent face up; `transform` flips double-faced cards, not face-down morphs/manifests, and the face-up action exists only as the paid special action, not as an effect a resolving ability can perform
 
 <details><summary>Cards waiting on this</summary>
 
-- **Deathmist Raptor** (rank 6493) — `deathmist_raptor`
-  - Whenever a permanent you control is turned face up, you may return this card from your graveyard to the battlefield face up or face down.
-- **Kheru Spellsnatcher** (rank 7605) — `kheru_spellsnatcher`
-  - When this creature is turned face up, counter target spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard. You may cast that card without paying its mana cost for as long as it remains exiled.
+- **Zimone, Mystery Unraveler** (rank 5772) — `zimone_mystery_unraveler`
+  - Landfall — Whenever a land you control enters, manifest dread if this is the first time this ability has resolved this turn. Otherwise, you may turn a permanent you control face up
+- **Experimental Lab // Staff Room** (rank 8930) — `experimental_lab_staff_room`
+  - When you unlock this door, manifest dread, then put two +1/+1 counters and a trample counter on that creature.
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - Whenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it.
 
 </details>
 
@@ -2595,7 +2647,7 @@ Blocks **1** card.
 
 </details>
 
-## manifest
+## manifest-from-hand
 
 Blocks **1** card.
 
@@ -2767,20 +2819,6 @@ Blocks **1** card.
 
 </details>
 
-## odd-or-even
-
-Blocks **1** card.
-
-- **(selector)** a selector comparison on a creature's live power (and, for sibling cards, mana value) that matches by parity -- e.g. power: {"parity": "odd"|"even"} with zero even, or {"parity": {"binding": "chosen"}} reading a resolution-time 'choose odd or even' decision
-  <br>Why the existing vocabulary won't do: The selector `power` key goes through selectors._compare, which only knows >=, <=, >, <, ==, != against a value; parity exists only for die rolls (`rolled` with `parity` in values.py). A choose_mode with an any_of list of power == 0, 2, 4 ... would be a finite approximation of an unbounded set.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Zimone's Hypothesis** (rank 8504) — `zimone_s_hypothesis`
-  - Then choose odd or even. Return each creature with power of the chosen quality to its owner's hand. (Zero is even.)
-
-</details>
-
 ## opponent-choice-of-payment
 
 Blocks **1** card.
@@ -2892,21 +2930,6 @@ Blocks **1** card.
 
 - **Jace Reawakened** (rank 7506) — `jace_reawakened`
   - +1: You may exile a nonland card with mana value 3 or less from your hand. If you do, it becomes plotted.
-
-</details>
-
-## power-parity
-
-Blocks **1** card.
-
-- **(value)** a static condition that asks whether the source permanent's current power is even or odd -- e.g. a `power` filter clause `{"parity": "even"|"odd"}` usable under `exists` with `self_only`, or a static value `power_of` self plus a parity/modulo predicate for `cmp` -- so a `cast_as_though_flash` static can switch on Kianne's power parity
-  <br>Why the existing vocabulary won't do: `cast_as_though_flash` exists as a static effect and `exists` + `self_only` + `power` is a legal static condition, but the `power` filter clause (`compare_pt`) only takes `{op, value}` comparisons against a fixed integer, and `static_value_keys` has no power-of-self reader or modulo; the only parity predicate in the engine is `parity` on die rolls (`ROLL_PARITIES`). Writing a fixed set of `power` equalities would be wrong for unbounded power
-
-<details><summary>Cards waiting on this</summary>
-
-- **Kianne, Corrupted Memory** (rank 10846) — `kianne_corrupted_memory`
-  - As long as Kianne's power is even, you may cast noncreature spells as though they had flash.
-  - As long as Kianne's power is odd, you may cast creature spells as though they had flash.
 
 </details>
 
@@ -3149,20 +3172,6 @@ Blocks **1** card.
 
 - **Throes of Chaos** (rank 5451) — `throes_of_chaos`
   - Retrace (You may cast this card from your graveyard by discarding a land card in addition to paying its other costs.)
-
-</details>
-
-## return-face-down
-
-Blocks **1** card.
-
-- **(op)** return_from_graveyard to the battlefield with the controller's choice of face up or face down (a face-down 2/2 that can later be turned face up for its morph cost)
-  <br>Why the existing vocabulary won't do: return_from_graveyard takes controller/counters/destination/tapped but has no face_down option; face_down exists only on look_at_top/reveal_until/search_library, and manifest puts library cards, not this card from the graveyard
-
-<details><summary>Cards waiting on this</summary>
-
-- **Deathmist Raptor** (rank 6493) — `deathmist_raptor`
-  - Whenever a permanent you control is turned face up, you may return this card from your graveyard to the battlefield face up or face down.
 
 </details>
 
@@ -3562,22 +3571,6 @@ Blocks **1** card.
 
 </details>
 
-## turn-face-up-effect
-
-Blocks **1** card.
-
-- **(op)** an effect op that turns a face-down permanent (the triggering creature) face up, offered as a choose_mode alternative to putting a +1/+1 counter on it
-  <br>Why the existing vocabulary won't do: turning face up exists only as the special action for face-down permanents; ops has no effect that turns a referenced creature face up
-
-<details><summary>Cards waiting on this</summary>
-
-- **Experimental Lab // Staff Room** (rank 8930) — `experimental_lab_staff_room`
-  - When you unlock this door, manifest dread, then put two +1/+1 counters and a trample counter on that creature.
-  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
-  - Whenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it.
-
-</details>
-
 ## two-share-all-card-types
 
 Blocks **1** card.
@@ -3645,6 +3638,21 @@ Blocks **1** card.
 
 - **Sandwurm Convergence** (rank 2294) — `sandwurm_convergence`
   - At the beginning of your end step, create a 5/5 green Wurm creature token.
+
+</details>
+
+## wurm-5-5-g-trample
+
+Blocks **1** card.
+
+- **(token)** a 5/5 green Wurm creature token with trample
+  <br>Why the existing vocabulary won't do: `token_ids` has no Wurm token at all; the only 5/5 tokens are dragon_5_5_r_flying and elemental_5_5_rg, which differ in color, creature type and keyword. The `dies` trigger and `create_token` with `amount: {"const": 3}` are otherwise ready.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Worldspine Wurm** (rank 2387) — `worldspine_wurm`
+  - When this creature dies, create three 5/5 green Wurm creature tokens with trample.
+  - When Worldspine Wurm is put into a graveyard from anywhere, shuffle it into its owner's library.
 
 </details>
 

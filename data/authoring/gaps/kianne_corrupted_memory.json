@@ -8,12 +8,17 @@
   ],
   "needs": [
     {
-      "capability": "power_parity",
+      "capability": "odd_or_even",
       "kind": "value",
       "what": "a static condition that asks whether the source permanent's current power is even or odd -- e.g. a `power` filter clause `{\"parity\": \"even\"|\"odd\"}` usable under `exists` with `self_only`, or a static value `power_of` self plus a parity/modulo predicate for `cmp` -- so a `cast_as_though_flash` static can switch on Kianne's power parity",
       "why_existing_wont_do": "`cast_as_though_flash` exists as a static effect and `exists` + `self_only` + `power` is a legal static condition, but the `power` filter clause (`compare_pt`) only takes `{op, value}` comparisons against a fixed integer, and `static_value_keys` has no power-of-self reader or modulo; the only parity predicate in the engine is `parity` on die rolls (`ROLL_PARITIES`). Writing a fixed set of `power` equalities would be wrong for unbounded power"
     }
   ],
-  "closest_existing": ["cast_as_though_flash", "exists", "compare_pt", "roll_dice parity"],
+  "closest_existing": [
+    "cast_as_though_flash",
+    "exists",
+    "compare_pt",
+    "roll_dice parity"
+  ],
   "confidence": "high"
 }

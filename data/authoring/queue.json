@@ -315372,12 +315372,12 @@
     },
     "Wilderness Reclamation": {
       "edhrec_rank": 930,
-      "gate": "template",
+      "gate": null,
       "name": "Wilderness Reclamation",
-      "reason": "no template for: At the beginning of your end step, untap all lands you control",
+      "reason": "",
       "scryfall_id": "5e6c0cb4-f17d-48ae-9bbf-9498505a23b0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wildest Dreams": {

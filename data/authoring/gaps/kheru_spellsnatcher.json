@@ -7,7 +7,7 @@
   ],
   "needs": [
     {
-      "capability": "turned_face_up",
+      "capability": "turned_face_up_trigger",
       "kind": "trigger_event",
       "what": "a trigger event for this permanent being turned face up (source: self), so a morph creature's 'When this creature is turned face up, ...' ability goes on the stack when its morph cost is paid",
       "why_existing_wont_do": "The engine's _turn_face_up emits a 'turned_face_up' event, but it is not in the packet's trigger_events vocabulary, so no triggered ability can listen for it; self_enters does not fire on turning face up (the permanent is already on the battlefield), and ability_activated / becomes_untapped are different events"
@@ -19,6 +19,11 @@
       "why_existing_wont_do": "counter carries exiles and as, but its op_options list no playable / playable_free; it may be expressible as counter (exiles, as) followed by grant_playable with playable_free and playable 'while_exiled' over the bound card, but that is unverified and moot until the trigger event exists"
     }
   ],
-  "closest_existing": ["morph", "counter", "grant_playable", "self_enters"],
+  "closest_existing": [
+    "morph",
+    "counter",
+    "grant_playable",
+    "self_enters"
+  ],
   "confidence": "high"
 }
