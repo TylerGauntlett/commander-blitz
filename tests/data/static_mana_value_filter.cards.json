@@ -1,0 +1,24 @@
+{
+  "_comment": "Cards that exist only for tests/unit/statics/test_static_mana_value_filter.py. Never part of a deck list. t_mv_lord is the mana-value half of Bello, Bard of the Brambles' filter; the three artifacts sit either side of it.",
+  "cards": [
+    {
+      "id": "t_mv_lord",
+      "name": "Test Mana Value Lord",
+      "oracle_text": "Artifacts you control with mana value 4 or greater have indestructible.",
+      "mana_cost": "{2}{G}",
+      "types": ["Enchantment"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Artifacts you control with mana value 4 or greater have indestructible.",
+          "effect": "grant_keyword",
+          "affects": {"types": ["Artifact"], "controller": "you", "mana_value": {"op": ">=", "value": 4}},
+          "keywords": ["indestructible"]
+        }
+      ]
+    },
+    {"id": "t_mv_four", "name": "Test Four Rock", "oracle_text": "", "mana_cost": "{4}", "types": ["Artifact"]},
+    {"id": "t_mv_three", "name": "Test Three Rock", "oracle_text": "", "mana_cost": "{3}", "types": ["Artifact"]},
+    {"id": "t_mv_x", "name": "Test X Rock", "oracle_text": "", "mana_cost": "{X}{X}{1}", "types": ["Artifact"]}
+  ]
+}

@@ -192,6 +192,7 @@ from .walk import (
     _mentions_pair,
     _refuse_granted_chosen_qualities,
     _walk_effect_specs,
+    check_literal_mana_value_key,
     reads_placed_kind,
     uses_source_bound_duration,
 )
@@ -3839,6 +3840,7 @@ def _check_static_affects(filt: Mapping[str, Any], where: str, path: str) -> Non
     if not top:
         # The top level is checked by the caller's loop over every filter key.
         _check_mana_cost_key(filt, path)
+        check_literal_mana_value_key(filt, path)
         _check_pt_keys(filt, path)
         validate_colorless_key(filt, path)
         validate_enchanted_by_key(filt, path)
@@ -4185,6 +4187,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
 
     for key in ("affects", "blockers", "cause_filter", "affects_spells"):
         _check_mana_cost_key(getattr(model, key, None), f"{where}.{key}")
+        if key == "affects":
+            check_literal_mana_value_key(model.affects, f"{where}.affects")
         # `power`/`toughness` is a comparison wherever a static filter names
         # one, and `affects_spells` is in this list for the same reason it is
         # in the line above: a key its own set does not carry cannot appear, so

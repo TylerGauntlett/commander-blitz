@@ -27,7 +27,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Card types and supertypes](#card-types-and-supertypes) | 12 |
 | [Durations](#durations) | 6 |
 | [Decision kinds](#decision-kinds) | 11 |
-| [Static filter keys](#static-filter-keys) | 33 |
+| [Static filter keys](#static-filter-keys) | 34 |
 | [Static conditions](#static-conditions) | 14 |
 | [Static values](#static-values) | 20 |
 | [Spell filter keys](#spell-filter-keys) | 12 |
@@ -950,6 +950,7 @@ The subset of the selector language a static's `affects` may use -- printed char
 | `is_token` | Is (or is not) a token. | [Static abilities](card-dsl.md#static-abilities) |
 | `keywords` | Has all of these keywords. | [Static abilities](card-dsl.md#static-abilities) |
 | `mana_cost` | Printed mana cost is one of these. | [Static abilities](card-dsl.md#static-abilities) |
+| `mana_value` | A comparison on mana value, or its `parity`. | [Odd or even — parity](card-dsl-cookbook.md#odd-or-even--parity) |
 | `modified` | Is modified: a counter, an Equipment by its printed face, or your Aura (`true` only). | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `not_keywords` | Has none of these keywords. | [Static abilities](card-dsl.md#static-abilities) |
 | `not_subtypes` | Has none of these subtypes. | [Static abilities](card-dsl.md#static-abilities) |

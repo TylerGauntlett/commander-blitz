@@ -6203,6 +6203,12 @@ is a complement over card types and says something else; an `any_of` over
 every other creature type is not a finite spelling of it. Cost-reduction
 filters read it too.
 
+`mana_value` in `affects` is a threshold over the printed mana value — "each
+artifact you control **with mana value 4 or greater**" (Bello, Bard of the
+Brambles) — with {X} as 0 (202.3e). A literal number for equality,
+`{ "op": ">=", "value": 4 }`, or `{ "parity": "odd" }`; anything else is
+refused at load. `mana_cost` is the near miss: it matches exact printed costs.
+
 Effects: `buff` · `grant_keyword` · `set_pt` ·
 [`add_subtype`](card-dsl-cookbook.md#is-the-chosen-type-in-addition-to-its-other-types) · `set_types` ·
 `block_restriction` · `prevent_damage` · [`prevent_all_but`](card-dsl-cookbook.md#prevent-all-but-n-of-that-damage) ·
