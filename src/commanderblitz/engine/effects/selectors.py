@@ -17,12 +17,14 @@ from collections.abc import Generator, Mapping
 from typing import TYPE_CHECKING, Any
 
 from ..characteristics import (
+    PARITIES,
     _base_pt,
     chars,
     creature_types_of,
     enchanted_by,
     has_counters_matches,
     is_equipped,
+    parity_matches,
     resolve_chosen_subtypes,
 )
 from ..enums import PERMANENT_TYPES, CardType, Supertype, Zone
@@ -465,6 +467,19 @@ SELECTOR_KEYS = frozenset(
         #: is not a question any printed filter asks, and a word here would
         #: read as a boolean and pass silently, so the loader refuses one.
         "goaded",
+        #: "If you control no **face-down** permanents" (Glitch Interpreter),
+        #: "**face-up** nontoken creatures you control" (Whisperwood
+        #: Elemental). Whether the permanent is face down (708.2) -- morphed,
+        #: megamorphed, manifested, cloaked -- read off `GameObject.face_down`:
+        #: `true` is face down, `false` face up. A boolean only, and a
+        #: permanent's status only: a card in any other zone is neither, so the
+        #: loader refuses the key beside a `zone` that is not the battlefield.
+        #:
+        #: The rest of the selector already sees the 2/2 shell, because on the
+        #: battlefield it reads derived characteristics and `chars` returns
+        #: `FACE_DOWN_CHARS` for a face-down permanent. `types: ["Creature"]`
+        #: is therefore the shell's type line and matches a manifested land.
+        "face_down",
         # "When the creature this card haunts dies…" -- a trigger filter only,
         # answered off the ability's source, which is the card sitting in exile
         # with the link on it. The haunted creature carries no record of it.
@@ -1242,6 +1257,13 @@ def matches(
     # ever goaded, so a card elsewhere never is.
     if "goaded" in selector and bool(goaders(state, oid)) != bool(selector["goaded"]):
         return False
+    # "…face-down permanents" / "face-up nontoken creatures" (708.2). Only a
+    # permanent is ever face down -- `reset_permanent_state` clears the flag on
+    # the way out -- so the battlefield test is a guard, not a second rule.
+    if "face_down" in selector and bool(obj.face_down and obj.on_battlefield) != bool(
+        selector["face_down"]
+    ):
+        return False
     if (blocking := selector.get("blocking")) is not None:
         if isinstance(blocking, Mapping) and "binding" in blocking:
             # "…blocked by a creature without flanking": *which* attacker it is
@@ -1373,6 +1395,8 @@ def _compare(value: int, spec: Any, ctx: EffectContext) -> bool:
         return value == spec
     if not isinstance(spec, Mapping):
         raise DslError(f"bad comparison spec {spec!r}")
+    if (parity := parity_matches(value, spec)) is not None:
+        return parity
     op = spec.get("op", ">=")
     other = evaluate_value(ctx, spec.get("value", 0))
     if op == ">=":
@@ -1757,6 +1781,30 @@ def validate_colorless_key(filt: Any, where: str) -> None:
         )
 
 
+def validate_face_down_key(filt: Any, where: str) -> None:
+    """``face_down`` is ``true`` or ``false``, about a permanent.
+
+    A boolean, because every other value would be read through ``bool()`` and
+    pass silently -- ``"you"`` would mean ``true``. And only beside the
+    battlefield: face down is a permanent's status (708.2), cleared as it
+    leaves, so ``{"zone": "graveyard", "face_down": false}`` would quietly be
+    every card there and ``true`` would be none.
+    """
+    if not isinstance(filt, Mapping) or "face_down" not in filt:
+        return
+    if not isinstance(filt["face_down"], bool):
+        raise DslError(
+            f"{where}: 'face_down' is true (face down) or false (face up), "
+            f"got {filt['face_down']!r}"
+        )
+    zone = filt.get("zone")
+    if zone is not None and zone != "battlefield":
+        raise DslError(
+            f"{where}: 'face_down' asks about a permanent (708.2); a card in the "
+            f"{zone} is neither face down nor face up"
+        )
+
+
 #: The keys an ``enchanted_by`` filter may put on the Auras themselves.
 ENCHANTED_BY_KEYS = frozenset({"controller"})
 
@@ -1878,6 +1926,36 @@ def validate_attached_to_key(filt: Any, where: str) -> None:
             f"{where}.attached_to.zone: a permanent is attached to a permanent, "
             f"on the battlefield"
         )
+
+
+#: The numeric clauses `_compare` reads, and so the ones that take ``parity``.
+PARITY_CLAUSE_KEYS = ("power", "toughness", "base_power", "base_toughness", "mana_value")
+
+
+def validate_parity_clauses(selector: Any, where: str) -> None:
+    """``{"parity": "even"}`` on a numeric clause: one of `PARITIES`, alone.
+
+    "Each creature with power of the chosen quality" (Zimone's Hypothesis).
+    Alone, because the parity form is not a comparison: an ``op`` or a
+    ``value`` beside it would be read by nothing, and a misspelt parity read as
+    neither would make the clause match nothing -- or, in a reader that
+    defaulted, everything.
+    """
+    if not isinstance(selector, Mapping):
+        return
+    for key in PARITY_CLAUSE_KEYS:
+        spec = selector.get(key)
+        if not isinstance(spec, Mapping) or "parity" not in spec:
+            continue
+        if set(spec) != {"parity"}:
+            raise DslError(
+                f"{where}.{key}: 'parity' stands alone -- {{'parity': 'even'}} -- "
+                f"not beside {sorted(set(spec) - {'parity'})}"
+            )
+        if spec["parity"] not in PARITIES:
+            raise DslError(
+                f"{where}.{key}.parity: one of {list(PARITIES)}, got {spec['parity']!r}"
+            )
 
 
 def validate_selector(selector: Any, where: str) -> None:
@@ -2021,6 +2099,8 @@ def validate_selector(selector: Any, where: str) -> None:
             f"{where}: 'goaded' is true or false -- whether anyone has goaded "
             f"the creature (701.38); it names no goader"
         )
+    validate_face_down_key(selector, where)
+    validate_parity_clauses(selector, where)
     # A bare `true` is the tempting spelling -- it is how `attacking` is written
     # -- and it would name nobody: the key is *which* player, and a boolean read
     # as a word matches no branch, so every creature would silently fail it.

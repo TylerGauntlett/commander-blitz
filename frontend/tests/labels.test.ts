@@ -135,6 +135,21 @@ describe("describeEvent", () => {
     );
   });
 
+  it("says who turned a permanent face up, and what it was", () => {
+    // No zone change happens, so without this line the 2/2 on the board
+    // becomes a different card with nothing in the log to say why.
+    expect(
+      describeEvent(
+        event({ type: "turned_face_up", player: 1, data: { card: "ultron_unlimited" } }),
+        names,
+        0,
+      ),
+    ).toBe("AI 1 turns Ultron Unlimited face up");
+    expect(describeEvent(event({ type: "turned_face_up", player: 0 }), names, 0)).toBe(
+      "You turn a permanent face up",
+    );
+  });
+
   it("says who searched a library, and whose", () => {
     // The shuffle that ends a search emits nothing and an empty search moves no
     // card, so without this line Archivist of Oghma's life and card arrive with

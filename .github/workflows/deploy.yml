@@ -352,7 +352,10 @@ jobs:
     name: arena and live server
     needs: lint
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # The arena and every precon's own-strategy games grow with the pool and
+    # the shelf, the way `python` does above; at 30 the two filled the budget
+    # on main and a slower runner tipped them over it.
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v7
         with:

@@ -22572,12 +22572,12 @@
     },
     "Beanstalk Giant // Fertile Footsteps": {
       "edhrec_rank": 2274,
-      "gate": "template",
+      "gate": null,
       "name": "Beanstalk Giant // Fertile Footsteps",
-      "reason": "no template for: Beanstalk Giant's power and toughness are each equal to the number of lands you control",
+      "reason": "",
       "scryfall_id": "71096773-69dd-4fb7-a088-e0fe096eaf6b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Beanstalk Wurm // Plant Beans": {
@@ -37482,12 +37482,12 @@
     },
     "Cackling Counterpart": {
       "edhrec_rank": 2895,
-      "gate": "template",
+      "gate": null,
       "name": "Cackling Counterpart",
-      "reason": "no template for: Create a token that's a copy of target creature you control",
+      "reason": "",
       "scryfall_id": "29306076-b48b-4dd5-959f-12e7a38b3800",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cackling Fiend": {
@@ -47042,12 +47042,12 @@
     },
     "Citanul Hierophants": {
       "edhrec_rank": 7434,
-      "gate": "template",
+      "gate": null,
       "name": "Citanul Hierophants",
-      "reason": "no template for: Creatures you control have \"{T}: Add {G}.\"",
+      "reason": "",
       "scryfall_id": "f378ee17-bf8b-4a83-b42e-86da10817dba",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Citanul Stalwart": {
@@ -70082,12 +70082,12 @@
     },
     "Disorienting Choice": {
       "edhrec_rank": 6043,
-      "gate": "template",
+      "gate": null,
       "name": "Disorienting Choice",
-      "reason": "no template for: For each opponent, choose up to one target artifact or enchantment that player controls. F",
+      "reason": "",
       "scryfall_id": "69a6433f-b832-4edc-bf74-2bed59cb4e20",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Disowned Ancestor": {
@@ -109302,12 +109302,12 @@
     },
     "Giggling Skitterspike": {
       "edhrec_rank": 2208,
-      "gate": "template",
+      "gate": null,
       "name": "Giggling Skitterspike",
-      "reason": "no template for: Whenever this creature attacks, blocks, or becomes the target of a spell, it deals damage ",
+      "reason": "",
       "scryfall_id": "a7360ffb-5a45-490f-9adf-d540a404e64d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gila Courser": {
@@ -117392,12 +117392,12 @@
     },
     "Greater Tanuki": {
       "edhrec_rank": 6937,
-      "gate": "template",
+      "gate": null,
       "name": "Greater Tanuki",
-      "reason": "no template for: Channel — {2}{G}, Discard this card: Search your library for a basic land card, put it ont",
+      "reason": "",
       "scryfall_id": "65a193bb-22f3-4732-93cd-877cd8c8417c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Greater Werewolf": {
@@ -119192,12 +119192,12 @@
     },
     "Growing Dread": {
       "edhrec_rank": 10701,
-      "gate": "template",
+      "gate": null,
       "name": "Growing Dread",
-      "reason": "no template for: When this enchantment enters, manifest dread",
+      "reason": "",
       "scryfall_id": "5479ac50-8335-4c6a-be99-750a44e24f25",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Growing Ranks": {
@@ -132202,12 +132202,12 @@
     },
     "Hydra Omnivore": {
       "edhrec_rank": 3964,
-      "gate": "template",
+      "gate": null,
       "name": "Hydra Omnivore",
-      "reason": "no template for: Whenever this creature deals combat damage to an opponent, it deals that much damage to ea",
+      "reason": "",
       "scryfall_id": "a6abde7a-da2a-4631-9db6-9d0ffe1e1105",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hydra Trainer": {
@@ -147612,12 +147612,12 @@
     },
     "Kefnet the Mindful": {
       "edhrec_rank": 7265,
-      "gate": "template",
+      "gate": null,
       "name": "Kefnet the Mindful",
-      "reason": "no template for: Kefnet can't attack or block unless you have seven or more cards in hand",
+      "reason": "",
       "scryfall_id": "ca06ae1a-4080-450a-8ff0-ad6aafd8f04c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kefnet's Last Word": {
@@ -148532,12 +148532,12 @@
     },
     "Kheru Spellsnatcher": {
       "edhrec_rank": 7605,
-      "gate": "template",
+      "gate": null,
       "name": "Kheru Spellsnatcher",
-      "reason": "no template for: Morph {4}{U}{U}",
+      "reason": "",
       "scryfall_id": "610f4f2b-e5ed-463b-9d9b-0f7b3f3e99c8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Khorvath Brightflame": {
@@ -148572,12 +148572,12 @@
     },
     "Kianne, Corrupted Memory": {
       "edhrec_rank": 10846,
-      "gate": "template",
+      "gate": null,
       "name": "Kianne, Corrupted Memory",
-      "reason": "no template for: As long as Kianne's power is even, you may cast noncreature spells as though they had flas",
+      "reason": "",
       "scryfall_id": "d970c966-9a89-4c4c-ac73-8cf8fffe7721",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kianne, Dean of Substance // Imbraham, Dean of Theory": {
@@ -215622,12 +215622,12 @@
     },
     "Rashmi, Eternities Crafter": {
       "edhrec_rank": 3533,
-      "gate": "template",
+      "gate": null,
       "name": "Rashmi, Eternities Crafter",
-      "reason": "no template for: Whenever you cast your first spell each turn, reveal the top card of your library. You may",
+      "reason": "",
       "scryfall_id": "e553935f-d8d8-4b98-ab4a-5a2eea3f3626",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rasputin Dreamweaver": {
@@ -221952,12 +221952,12 @@
     },
     "Retreat to Coralhelm": {
       "edhrec_rank": 1768,
-      "gate": "template",
+      "gate": null,
       "name": "Retreat to Coralhelm",
-      "reason": "no template for: Landfall — Whenever a land you control enters, choose one —",
+      "reason": "",
       "scryfall_id": "cf8246c1-1db2-409f-9440-222d6dc78297",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Retreat to Emeria": {
@@ -232802,12 +232802,12 @@
     },
     "Sandwurm Convergence": {
       "edhrec_rank": 2294,
-      "gate": "template",
+      "gate": null,
       "name": "Sandwurm Convergence",
-      "reason": "no template for: Creatures with flying can't attack you or planeswalkers you control",
+      "reason": "",
       "scryfall_id": "3ad9cb61-4072-449b-9b32-83e2192cb292",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sangrite Backlash": {
@@ -245592,12 +245592,12 @@
     },
     "Shriekwood Devourer": {
       "edhrec_rank": 5431,
-      "gate": "template",
+      "gate": null,
       "name": "Shriekwood Devourer",
-      "reason": "no template for: Whenever you attack with one or more creatures, untap up to X lands, where X is the greate",
+      "reason": "",
       "scryfall_id": "3796eccf-513e-41fe-be5b-aae3b476615b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shrike Force": {
@@ -248972,12 +248972,12 @@
     },
     "Skaab Ruinator": {
       "edhrec_rank": 16681,
-      "gate": "template",
+      "gate": null,
       "name": "Skaab Ruinator",
-      "reason": "no template for: As an additional cost to cast this spell, exile three creature cards from your graveyard",
+      "reason": "",
       "scryfall_id": "668d4e90-61d3-4064-b867-6ac7a49a7d59",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Skaab Wrangler": {
@@ -277772,12 +277772,12 @@
     },
     "Temur War Shaman": {
       "edhrec_rank": 7930,
-      "gate": "template",
+      "gate": null,
       "name": "Temur War Shaman",
-      "reason": "no template for: When this creature enters, manifest the top card of your library",
+      "reason": "",
       "scryfall_id": "24824ccd-d470-49eb-a07d-2fc0de817766",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tenacious Dead": {
@@ -283302,12 +283302,12 @@
     },
     "They Came from the Pipes": {
       "edhrec_rank": 5590,
-      "gate": "template",
+      "gate": null,
       "name": "They Came from the Pipes",
-      "reason": "no template for: When this enchantment enters, manifest dread twice",
+      "reason": "",
       "scryfall_id": "541fc8eb-dba2-4d2b-9df2-9380c8c37e21",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "They Went This Way": {
@@ -286132,12 +286132,12 @@
     },
     "Thunderfoot Baloth": {
       "edhrec_rank": 1998,
-      "gate": "template",
+      "gate": null,
       "name": "Thunderfoot Baloth",
-      "reason": "no template for: Lieutenant — As long as you control your commander, this creature gets +2/+2 and other cre",
+      "reason": "",
       "scryfall_id": "80c1b1ea-2459-4986-8846-4db916d6b771",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thunderhawk Gunship": {
@@ -290792,12 +290792,12 @@
     },
     "Trail of Mystery": {
       "edhrec_rank": 5680,
-      "gate": "template",
+      "gate": null,
       "name": "Trail of Mystery",
-      "reason": "no template for: Whenever a face-down creature you control enters, you may search your library for a basic ",
+      "reason": "",
       "scryfall_id": "56271ec9-5e41-47d3-ac76-d0743fb399cc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Trailblazer": {
@@ -293792,12 +293792,12 @@
     },
     "Trygon Predator": {
       "edhrec_rank": 3347,
-      "gate": "template",
+      "gate": null,
       "name": "Trygon Predator",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, you may destroy target artifact or",
+      "reason": "",
       "scryfall_id": "cdb88a22-8086-4bf7-89e8-cce929440dd8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Trygon Prime": {
@@ -314352,12 +314352,12 @@
     },
     "Whisperwood Elemental": {
       "edhrec_rank": 5559,
-      "gate": "template",
+      "gate": null,
       "name": "Whisperwood Elemental",
-      "reason": "no template for: At the beginning of your end step, manifest the top card of your library",
+      "reason": "",
       "scryfall_id": "f522f32d-e510-4128-98ae-d3c0f684b899",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "White Auracite": {
@@ -315372,12 +315372,12 @@
     },
     "Wilderness Reclamation": {
       "edhrec_rank": 930,
-      "gate": "template",
+      "gate": null,
       "name": "Wilderness Reclamation",
-      "reason": "no template for: At the beginning of your end step, untap all lands you control",
+      "reason": "",
       "scryfall_id": "5e6c0cb4-f17d-48ae-9bbf-9498505a23b0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wildest Dreams": {
@@ -322782,12 +322782,12 @@
     },
     "Zimone's Hypothesis": {
       "edhrec_rank": 8504,
-      "gate": "template",
+      "gate": null,
       "name": "Zimone's Hypothesis",
-      "reason": "no template for: You may put a +1/+1 counter on a creature. Then choose odd or even. Return each creature w",
+      "reason": "",
       "scryfall_id": "f91afbaf-e035-47cd-b493-0d5817fefa76",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Zimone, All-Questioning": {

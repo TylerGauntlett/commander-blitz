@@ -1616,7 +1616,16 @@ class Game:
             # Megamorph (702.109a), and the only difference between the two
             # words.
             add_counters(state, obj.oid, PLUS_ONE, 1, source=obj.oid)
-        state.emit("turned_face_up", player=pid, source=obj.oid, card=card.id)
+        # `fire`, not `emit`: "When this creature is turned face up" and
+        # "Whenever a permanent you control is turned face up" listen here.
+        triggers.fire(
+            state,
+            EventType.TURNED_FACE_UP,
+            player=pid,
+            source=obj.oid,
+            oid=obj.oid,
+            card=card.id,
+        )
 
     def _ask_splices(
         self, pid: int, card, oid: int

@@ -1,0 +1,35 @@
+{
+  "card_id": "primordial_mist",
+  "name": "Primordial Mist",
+  "oracle_text": "At the beginning of your end step, you may manifest the top card of your library. (Put it onto the battlefield face down as a 2/2 creature. Turn it face up any time for its mana cost if it's a creature card.)\nExile a face-down permanent you control face up: You may play that card this turn. (You still pay its costs. Timing rules still apply.)",
+  "blocked_sentences": [
+    "Exile a face-down permanent you control face up: You may play that card this turn. (You still pay its costs. Timing rules still apply.)"
+  ],
+  "needs": [
+    {
+      "capability": "exile_permanent_cost",
+      "kind": "cost",
+      "what": "an activated-ability cost that exiles a permanent you control matching a selector (here a face-down one, exiled face up), bound with `as` so the ability's effects can read the exiled card -- the exile counterpart of `sacrifice`",
+      "why_existing_wont_do": "`cost_keys` exile only the source (`exile_self`), a card from hand (`exile_from_hand`, `exile_self_from_hand`) or a card from the graveyard (`exile_from_graveyard`); nothing exiles another permanent from the battlefield as a cost, and moving it into an `exile` op would shift payment to resolution and let the ability be activated without a face-down permanent"
+    },
+    {
+      "capability": "face_down_filter",
+      "kind": "selector",
+      "what": "a selector key matching face-down permanents (manifested, cloaked, morphed, disguised), e.g. `{zone: battlefield, controller: you, face_down: true}`, usable in the cost filter",
+      "why_existing_wont_do": "`selector_keys` has no face-down key; `face_down` exists only as an option on library/exile ops meaning private exile, not as a property a selector can read on a permanent"
+    },
+    {
+      "capability": "play_cost_paid_card",
+      "kind": "op",
+      "what": "\"You may play that card this turn\" over the card the cost exiled: `grant_playable` with `playable_this_turn` over a binding produced by the exile cost",
+      "why_existing_wont_do": "`grant_playable` can grant the permission, but no cost produces a binding naming the exiled card for it to read; `exile` with `playable_this_turn` would exile on resolution rather than as the cost"
+    }
+  ],
+  "closest_existing": [
+    "manifest",
+    "sacrifice",
+    "exile_from_graveyard",
+    "grant_playable"
+  ],
+  "confidence": "high"
+}

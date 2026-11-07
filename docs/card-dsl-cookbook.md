@@ -3941,6 +3941,145 @@ creature is still affected by both. And "any time you have priority" is here an
 ordinary activation rather than a special action, which is observable only to
 something that could respond to it, and nothing can.
 
+## "When this creature is turned face up"
+
+```jsonc
+// Kheru Spellsnatcher — "When this creature is turned face up, …"
+{ "kind": "triggered",
+  "trigger": { "event": "turned_face_up", "source": "self" },
+  "effects": [ … ] }
+
+// Growing Dread — "Whenever you turn a permanent face up, put a +1/+1 counter
+// on it."
+{ "kind": "triggered",
+  "trigger": { "event": "turned_face_up", "controller": "you" },
+  "effects": [
+    { "op": "add_counters", "counter": "+1/+1", "amount": { "const": 1 },
+      "objects": { "binding": "subject", "zone": "battlefield" } } ] }
+
+// Deathmist Raptor — "Whenever a permanent you control is turned face up, …",
+// heard from the graveyard.
+{ "kind": "triggered", "active_zones": ["graveyard"],
+  "trigger": { "event": "turned_face_up", "controller": "you" },
+  "effects": [ … ] }
+```
+
+The `turned_face_up` trigger event fires once each time a face-down permanent is
+turned face up, by morph, megamorph or manifest (702.37e, 701.34a). Its subject
+is that permanent **as it is now, face up**: `filter` asks what the card is (a
+`types: ["Creature"]` or `subtypes` filter reads the turned-up card, never the
+2/2 shell), `controller: "you"` asks who controls it, and `{"binding":
+"subject"}` is "it". Only a permanent's controller can turn it face up, so "a
+permanent you control is turned face up" and "you turn a permanent face up" are
+the same `controller: "you"`.
+
+`source: "self"` is "when **this** creature is turned face up". The ability is
+printed on the hidden card, and the shell has no abilities while it is down, so
+it is heard only because the event fires after the permanent is already face up.
+A card cast face up never fires it: it was never turned up.
+
+A megamorph's counter is already on when the event fires, so a "put a +1/+1
+counter on it" rider adds to it rather than racing it.
+
+`self_enters` and `permanent_enters` are the near misses and fire at the wrong
+moment: the permanent entered face down, and turning it up is not entering
+(708.8). `counter_placed` catches megamorph alone and misses morph and manifest.
+
+## "Face-down creatures" — `face_down`
+
+```jsonc
+// They Came from the Pipes — "Whenever a face-down creature you control
+// enters, draw a card."
+{ "kind": "triggered",
+  "trigger": { "event": "permanent_enters", "controller": "you",
+               "filter": { "types": ["Creature"], "face_down": true } },
+  "effects": [ { "op": "draw", "amount": { "const": 1 } } ] }
+
+// Glitch Interpreter — "When this creature enters, if you control no
+// face-down permanents, …"
+{ "kind": "triggered",
+  "trigger": { "event": "self_enters", "source": "self",
+               "condition": { "not": { "exists": {
+                 "zone": "battlefield", "controller": "you", "face_down": true } } } },
+  "effects": [ … ] }
+
+// Whisperwood Elemental — "face-up nontoken creatures you control gain …"
+{ "op": "grant_ability", "duration": "end_of_turn", …,
+  "objects": { "zone": "battlefield", "controller": "you", "types": ["Creature"],
+               "is_token": false, "face_down": false, "count": "all" } }
+```
+
+`face_down` is a selector and trigger-filter key: `true` matches a permanent
+that is face down (708.2) — morphed, megamorphed, manifested or cloaked — and
+`false` one that is face up. It is a boolean, and it asks about a permanent:
+the loader refuses any other value, and refuses the key beside a `zone` that is
+not the battlefield, where a card is neither.
+
+The rest of the filter sees the **2/2 shell**. A selector on the battlefield
+reads `chars`, and a trigger filter reads a card face that is the shell while
+the permanent is face down (`characteristics.face_down_face`): a Creature with
+no name, colour, subtypes, keywords or mana cost. So `types: ["Creature"]`
+matches a manifested land, `types: ["Land"]` does not, and a subtype filter
+never matches a face-down permanent.
+
+A morph or manifest **enters** face down: it is marked before the enters event
+fires, so "a face-down creature enters" hears it, landfall does not hear a
+manifested land, and the hidden card's own "when this enters" stays silent,
+because the shell has no abilities. Turning it face up is not entering (708.8);
+that is the `turned_face_up` event.
+
+Two places refuse the key:
+
+| | |
+|---|---|
+| a static's filters — `affects`, `blockers`, `targeting`, `damage_source`, `cause_filter`, cost reductions, counting conditions | They match a permanent's **printed** face, which for a face-down permanent is the hidden card, so the shell's type line is not what they would see; and `chars` returns the shell before any static applies, so an `affects` naming face-down permanents would never reach one |
+| a trigger on a departure — `dies`, `creature_dies`, `leaves_battlefield`, `sacrificed` | The filter is asked after the permanent has left and been revealed (708.9), when nothing is face down |
+
+`is_token: false` is the near miss for "face-up nontoken": it keeps every
+manifest, which is a card and not a token.
+
+## Manifest dread
+
+```jsonc
+// Growing Dread — "When this enchantment enters, manifest dread."
+{ "op": "manifest_dread" }
+
+// They Came from the Pipes — "manifest dread twice"
+{ "op": "manifest_dread", "amount": { "const": 2 } }
+
+// Experimental Lab — "manifest dread, then put two +1/+1 counters … on that
+// creature"
+{ "op": "manifest_dread", "as": "dread" },
+{ "op": "add_counters", "counter": "+1/+1", "amount": { "const": 2 },
+  "objects": { "binding": "dread", "zone": "battlefield" } }
+```
+
+`manifest_dread` is 701.62a: the player looks at the top two cards of their
+library, manifests the one they choose and puts the other into their graveyard.
+The manifest half is `manifest`'s placement, so the permanent is the same 2/2
+shell, enters face down before its enters event fires, and turns up for the
+hidden card's mana cost only if it is a creature card (701.34c).
+
+| Key | Meaning |
+|---|---|
+| `player` | Whose library, and who chooses. Default `"you"`. |
+| `amount` | How many times the whole action is performed, default 1. Each repetition looks at what the previous one left. |
+| `as` | Binds the manifested permanents, one per repetition that found a card, for "that creature". Never the card put into the graveyard. |
+
+The choice is a `choose_objects` decision with `purpose: "manifest_dread"`. With
+one card in the library that card is manifested without a question and nothing
+goes to the graveyard; with none, nothing happens, and no player loses, because
+manifest dread draws nothing. The graveyard card is put there by an ordinary
+move, so graveyard replacements apply to it and a graveyard count sees it.
+
+The loader refuses `cloak`, `objects`, `selector`, `destination`,
+`destinations`, `rest_to`, `rest_to_bottom` and `face_down`: 701.62a fixes the
+pool, the two destinations and the shell.
+
+`manifest` is the near miss: it manifests the top card without a choice and
+puts nothing into the graveyard. `look_at_top` with `rest_to: "graveyard"`
+chooses and bins, but cannot put a card onto the battlefield face down.
+
 ## Cipher — the third direction an exile link can point
 
 ```jsonc
@@ -13528,6 +13667,59 @@ every zone, plus "Another card name": a library holds only its owner's cards
 (400.3), so every other printed name has one outcome — it matches nothing — and
 that is a real choice. No new `DecisionKind`: `ask_mode`, tagged
 `choose_card_name`; the heuristic agent names what its library holds most of.
+
+## Odd or even — `parity`
+
+    Kianne, Corrupted Memory — "As long as Kianne's power is even, you may cast
+    noncreature spells as though they had flash. As long as Kianne's power is
+    odd, you may cast creature spells as though they had flash."
+
+```jsonc
+{ "kind": "static", "effect": "cast_as_though_flash", "affects_player": "you",
+  "affects_spells": { "not_types": ["Creature"] },
+  "condition": { "exists_derived": { "self_only": true, "power": { "parity": "even" } } } },
+{ "kind": "static", "effect": "cast_as_though_flash", "affects_player": "you",
+  "affects_spells": { "types": ["Creature"] },
+  "condition": { "exists_derived": { "self_only": true, "power": { "parity": "odd" } } } }
+```
+
+`{"parity": "even"}` or `{"parity": "odd"}` is the third form of a numeric
+clause, beside a bare integer and `{"op", "value"}`. It stands alone — an `op`
+or `value` beside it is refused — and any other word is refused at load. A
+number is even when its remainder mod 2 is 0: zero is even, -1 is odd
+(`characteristics.parity_matches`). The clauses that take it are the ones every
+comparison reader shares: `power`, `toughness`, `base_power`, `base_toughness`
+and `mana_value` in a selector or trigger filter, `power` and `toughness` in a
+static filter. A run of equalities is the near miss, and a wrong one: power has
+no upper bound.
+
+Kianne's condition is `exists_derived`, not `exists`. A static's `exists` reads
+base power, so the 2/2 would read even for ever while its draw trigger stacks
+counters on it. `exists_derived` reads current power, and `cast_as_though_flash`
+may carry it because its reader runs at cast legality, outside the layer
+pipeline ([`exists_derived`](card-dsl.md#static-abilities)).
+
+    Zimone's Hypothesis — "You may put a +1/+1 counter on a creature. Then
+    choose odd or even. Return each creature with power of the chosen quality
+    to its owner's hand. (Zero is even.)"
+
+```jsonc
+{ "op": "add_counters", "counter": "+1/+1", "amount": { "const": 1 },
+  "objects": { "zone": "battlefield", "controller": "any", "types": ["Creature"],
+               "count": 1, "optional": true } },
+{ "op": "choose_mode", "chooser": "you", "modes": [
+  { "label": "Odd", "effects": [ { "op": "return_to_hand",
+      "objects": { "zone": "battlefield", "controller": "any", "types": ["Creature"],
+                   "power": { "parity": "odd" }, "count": "all" } } ] },
+  { "label": "Even", "effects": [ { "op": "return_to_hand",
+      "objects": { "zone": "battlefield", "controller": "any", "types": ["Creature"],
+                   "power": { "parity": "even" }, "count": "all" } } ] } ] }
+```
+
+"Then choose" is a choice made on resolution, after the counter. `chooser:
+"you"` is what puts it there: a top-level `choose_mode` without a chooser is
+answered as the spell is cast (601.2b), which would make the spell modal and
+announce the parity on the stack ([`chooser`](#chooser--when-somebody-else-picks-the-mode)).
 
 ## "Choose a number"
 

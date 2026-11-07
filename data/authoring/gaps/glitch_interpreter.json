@@ -1,0 +1,22 @@
+{
+  "card_id": "glitch_interpreter",
+  "name": "Glitch Interpreter",
+  "oracle_text": "When this creature enters, if you control no face-down permanents, return this creature to its owner's hand and manifest dread.\nWhenever one or more colorless creatures you control deal combat damage to a player, draw a card.",
+  "blocked_sentences": [
+    "When this creature enters, if you control no face-down permanents, return this creature to its owner's hand and manifest dread."
+  ],
+  "needs": [
+    {
+      "capability": "self_bounce_playable_gate",
+      "kind": "engine",
+      "what": "the authoring verifier's playable gate (`verify.py`, the `allowed` zone set for permanents) must accept a permanent that ends in its owner's hand because its own enters trigger returned it there, as printed. The card is now fully expressible -- trigger `self_enters` with condition `{\"not\":{\"exists\":{\"zone\":\"battlefield\",\"controller\":\"you\",\"face_down\":true}}}`, effects `[{\"op\":\"return_to_hand\",\"objects\":{\"self_only\":true,\"zone\":\"battlefield\"}},{\"op\":\"manifest_dread\"}]`, and the second line as `creatures_deal_combat_damage` with `controller: you`, `filter: {colorless: true}`, `per_player: true` -- and the dry run shows it behaving correctly, but gate 4 rejects it with \"glitch_interpreter is a permanent but ended in hand\". The sandbox has no face-down permanent, so the intervening-if is true and the bounce lawfully happens every run. A narrow, declared exception (e.g. the card's own self_enters trigger contains `return_to_hand` of `self_only`) in the style of the existing `is_aura` / `exiles_itself` / `tucks_itself` carve-outs would admit it; expectation would then be zone hand, hand_size 2, library_size 38, graveyard_size 3, battlefield_count 33",
+      "why_existing_wont_do": "The gate allows only BATTLEFIELD for a non-Aura permanent; there is no card-level rider declaring that a permanent returns itself to hand, and no sandbox role that puts a face-down permanent on your board to make the intervening-if false. Writing the card without the bounce, or with a condition that never holds, would be an approximation"
+    }
+  ],
+  "closest_existing": [
+    "manifest_dread",
+    "face_down",
+    "return_to_hand"
+  ],
+  "confidence": "high"
+}

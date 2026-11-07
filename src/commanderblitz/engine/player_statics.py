@@ -36,7 +36,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 def _active_player_statics(
-    state: GameState, effect: str
+    state: GameState, effect: str, *, derived: bool = False
 ) -> Iterator[tuple[GameObject, Mapping[str, Any]]]:
     """Every *active* player-wide ``effect`` static on the battlefield, with its source.
 
@@ -71,6 +71,10 @@ def _active_player_statics(
     `_battlefield_statics`, and this one has its own walk and so needs its own
     line. An emblem is only ever in the command zone (114.1), so a player-wide
     emblem static that this walk did not see would load clean and grant nothing.
+
+    ``derived`` lets a condition read current characteristics (`exists_derived`),
+    passed only by the readers of an effect in
+    `loader.vocabulary.STATIC_DERIVED_CONDITION_EFFECTS`; see `_static_active`.
     """
     for oid in state.battlefield:
         obj = state.objects.get(oid)
@@ -93,7 +97,7 @@ def _active_player_statics(
                 # way. Gravecrawler's graveyard-only permission is printed on a
                 # creature, and on the battlefield it is not the card's to use.
                 continue
-            if not _static_active(state, obj, static):
+            if not _static_active(state, obj, static, derived=derived):
                 continue
             yield obj, static
     for player in state.players:
@@ -113,7 +117,7 @@ def _active_player_statics(
                     # here, and letting it through would be the inverse of the
                     # printed card, exactly as it is for Anger on the battlefield.
                     continue
-                if not _static_active(state, obj, static):
+                if not _static_active(state, obj, static, derived=derived):
                     continue
                 yield obj, static
 
@@ -2201,8 +2205,14 @@ def player_casts_as_though_flash(
     so it answers only when ``card`` -- the face being cast -- is passed and
     matches the printed filter. `_timing_ok` always passes it; asked without
     one, only an unfiltered permission answers.
+
+    **A condition on current characteristics**, `exists_derived`, is Kianne,
+    Corrupted Memory: "as long as Kianne's power is even, you may cast
+    noncreature spells as though they had flash" reads Kianne's power with its
+    counters. This runs at legality, never inside `chars`, so the walk asks
+    with ``derived`` and the board it reads is finished.
     """
-    for obj, static in _active_player_statics(state, "cast_as_though_flash"):
+    for obj, static in _active_player_statics(state, "cast_as_though_flash", derived=True):
         if not _reaches_player(obj, static, pid):
             continue
         filt = static.get("affects_spells")

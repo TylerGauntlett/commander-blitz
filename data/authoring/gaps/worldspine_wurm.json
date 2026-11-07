@@ -1,0 +1,25 @@
+{
+  "card_id": "worldspine_wurm",
+  "name": "Worldspine Wurm",
+  "oracle_text": "Trample\nWhen this creature dies, create three 5/5 green Wurm creature tokens with trample.\nWhen Worldspine Wurm is put into a graveyard from anywhere, shuffle it into its owner's library.",
+  "blocked_sentences": [
+    "When this creature dies, create three 5/5 green Wurm creature tokens with trample.",
+    "When Worldspine Wurm is put into a graveyard from anywhere, shuffle it into its owner's library."
+  ],
+  "needs": [
+    {
+      "capability": "wurm_5_5_g_trample",
+      "kind": "token",
+      "what": "a 5/5 green Wurm creature token with trample",
+      "why_existing_wont_do": "`token_ids` has no Wurm token at all; the only 5/5 tokens are dragon_5_5_r_flying and elemental_5_5_rg, which differ in color, creature type and keyword. The `dies` trigger and `create_token` with `amount: {\"const\": 3}` are otherwise ready."
+    },
+    {
+      "capability": "put_into_graveyard_from_anywhere",
+      "kind": "trigger_event",
+      "what": "a self trigger that fires when this card is put into a graveyard from ANY zone (battlefield, hand via discard, library via mill/surveil, stack via counter), so the triggered ability works from the graveyard and can shuffle the card (bound as the trigger subject) into its owner's library -- the Eldrazi titan clause shared by Emrakul, Ulamog and Kozilek",
+      "why_existing_wont_do": "`trigger_events` has `dies` and `leaves_battlefield` (with `to_zones`), which only see the battlefield and miss discard, mill and a countered spell -- the cases the clause exists for. `discard` covers only the hand. No event observes a card arriving in a graveyard from the library or stack, and no `card_level_rider_keys` entry (`tucks_itself` is a resolving spell's own fate) replaces it. Writing only the `dies` half would make a different card that stays in the graveyard when milled or discarded."
+    }
+  ],
+  "closest_existing": ["dies", "leaves_battlefield", "discard", "tucks_itself"],
+  "confidence": "high"
+}

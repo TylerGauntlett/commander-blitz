@@ -10,21 +10,24 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**219 cards** blocked by **203** capabilities.
+**230 cards** blocked by **215** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
-| [put-into-graveyard-from-anywhere](#put-into-graveyard-from-anywhere) | 6 | 256 | trigger_event |
+| [put-into-graveyard-from-anywhere](#put-into-graveyard-from-anywhere) | 7 | 256 | trigger_event |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
 | [copy-exception-set-subtypes](#copy-exception-set-subtypes) | 3 | 1740 | engine, op |
 | [omen](#omen) | 3 | 3355 | cost, engine |
 | [random-player-choice](#random-player-choice) | 3 | 5120 | op |
+| [rooms](#rooms) | 3 | 4163 | engine |
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 3 | 714 | engine |
+| [unlock-door](#unlock-door) | 3 | 4163 | trigger_event |
 | [add-color](#add-color) | 2 | 2040 | op |
+| [basic-land-type-mana](#basic-land-type-mana) | 2 | 73 | engine |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
@@ -35,11 +38,13 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 2 | 2389 | engine |
 | [escape](#escape) | 2 | 388 | engine, static_effect |
+| [face-down-filter](#face-down-filter) | 2 | 5772 | selector |
+| [manifest-dread](#manifest-dread) | 2 | 5772 | op |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
-| [rooms](#rooms) | 2 | 4163 | engine |
+| [return-face-down](#return-face-down) | 2 | 3081 | op |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
-| [unlock-door](#unlock-door) | 2 | 4163 | trigger_event |
+| [turn-face-up](#turn-face-up) | 2 | 5772 | op |
 | [venture](#venture) | 2 | 19644 | engine |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
 | [x-maximum](#x-maximum) | 2 | 1665 | engine |
@@ -52,13 +57,13 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [attacking-opponents-of-player](#attacking-opponents-of-player) | 1 | 705 | selector |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
-| [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [batched-combat-damage-amount](#batched-combat-damage-amount) | 1 | 3943 | value |
 | [block-restriction-relative-power](#block-restriction-relative-power) | 1 | 6993 | static_effect |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [can-block-only](#can-block-only) | 1 | 2673 | static_effect |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cards-exiled-trigger](#cards-exiled-trigger) | 1 | 1303 | trigger_event |
+| [cards-in-hand-static-value](#cards-in-hand-static-value) | 1 | 2085 | value |
 | [cards-put-into-graveyard-from-library](#cards-put-into-graveyard-from-library) | 1 | 6299 | trigger_event |
 | [cards-to-your-graveyard-from-zones-this-turn](#cards-to-your-graveyard-from-zones-this-turn) | 1 | 7412 | value |
 | [cast-from-hand-result](#cast-from-hand-result) | 1 | 7016 | op |
@@ -102,11 +107,13 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [every-creature-type-everywhere](#every-creature-type-everywhere) | 1 | 494 | static_effect |
 | [exile-cards-with-card-types-among-them](#exile-cards-with-card-types-among-them) | 1 | 9107 | selector |
+| [exile-permanent-cost](#exile-permanent-cost) | 1 | 6544 | cost |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [exile-x-from-graveyard-cost](#exile-x-from-graveyard-cost) | 1 | 17252 | cost |
 | [exiled-this-way-lki](#exiled-this-way-lki) | 1 | 6960 | value |
 | [experience-counters](#experience-counters) | 1 | 1480 | engine |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
+| [face-down-counters-pt](#face-down-counters-pt) | 1 | 6774 | engine |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
 | [filtered-discard](#filtered-discard) | 1 | 9279 | op |
 | [first-mate-ragavan](#first-mate-ragavan) | 1 | 7016 | token |
@@ -143,9 +150,11 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mana-ability-leading-rider](#mana-ability-leading-rider) | 1 | 4080 | engine |
 | [mana-cant-pay-generic](#mana-cant-pay-generic) | 1 | 3861 | value |
 | [mana-restriction-cast-from-zone](#mana-restriction-cast-from-zone) | 1 | 9291 | engine |
+| [mana-restriction-turn-face-up](#mana-restriction-turn-face-up) | 1 | 6766 | value |
 | [mana-spent-enters-with-counters](#mana-spent-enters-with-counters) | 1 | 653 | replacement |
 | [mana-spent-trigger-on-activation](#mana-spent-trigger-on-activation) | 1 | 4444 | trigger_event |
 | [mana-tap-trigger-damage-rider](#mana-tap-trigger-damage-rider) | 1 | 7929 | static_effect |
+| [manifest-from-hand](#manifest-from-hand) | 1 | 3975 | op |
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
 | [modal-variable-targets](#modal-variable-targets) | 1 | 4339 | engine |
@@ -157,8 +166,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [noncombat-damage-trigger](#noncombat-damage-trigger) | 1 | 6793 | trigger_event |
 | [nontoken-creatures-died-this-turn](#nontoken-creatures-died-this-turn) | 1 | 3951 | value |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
-| [odd-or-even](#odd-or-even) | 1 | 8504 | selector |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
+| [play-cost-paid-card](#play-cost-paid-card) | 1 | 6544 | op |
 | [play-lands-from-graveyard-filtered](#play-lands-from-graveyard-filtered) | 1 | 3993 | static_effect |
 | [playable-condition-opponent-lost-life](#playable-condition-opponent-lost-life) | 1 | 4478 | engine |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
@@ -192,6 +201,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
+| [self-bounce-playable-gate](#self-bounce-playable-gate) | 1 | 10013 | engine |
 | [shapeshifter-2-2-u-changeling](#shapeshifter-2-2-u-changeling) | 1 | 494 | token |
 | [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
@@ -209,10 +219,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [total-toughness-cost-reduction](#total-toughness-cost-reduction) | 1 | 5188 | value |
 | [toughness-greater-than-power-filter](#toughness-greater-than-power-filter) | 1 | 3557 | selector |
 | [treefolk-x-x-g-reach-land-count](#treefolk-x-x-g-reach-land-count) | 1 | 2396 | token |
+| [turned-face-up-trigger](#turned-face-up-trigger) | 1 | 6493 | trigger_event |
 | [two-share-all-card-types](#two-share-all-card-types) | 1 | 7993 | value |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
 | [while-source-on-battlefield-duration](#while-source-on-battlefield-duration) | 1 | 8222 | engine |
+| [wurm-5-5-g-trample](#wurm-5-5-g-trample) | 1 | 2387 | token |
 | [x-cost-mana-restriction](#x-cost-mana-restriction) | 1 | 4046 | decision |
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 1 | 11545 | engine |
 | [x-sized-ability-targets](#x-sized-ability-targets) | 1 | 1668 | engine |
@@ -334,7 +346,7 @@ Blocks **8** cards.
 
 ## put-into-graveyard-from-anywhere
 
-Blocks **6** cards.
+Blocks **7** cards.
 
 - **(trigger_event)** a trigger event that fires whenever a card matching a filter (here: a land card, any owner) is put into a graveyard from ANY zone -- battlefield, hand (discard), library (mill), stack -- usable on an ability with active_zones ["graveyard"] so the card triggers while it sits in its owner's graveyard (Ashen Ghoul / Vengevine style recursion)
   <br>Why the existing vocabulary won't do: leaves_battlefield with to_zones ["graveyard"] only sees permanents leaving the battlefield (a sacrificed or destroyed land) and misses discarded, milled and countered-from-stack cards; discard covers only the hand; dies is creatures only; there is no mill or generic zone-change-to-graveyard event in trigger_events. The may-pay {G}{G} and return_to_hand halves are expressible once the event exists.
@@ -348,6 +360,8 @@ Blocks **6** cards.
   <br>Why the existing vocabulary won't do: The other two clauses are expressible (`creature_dies` / `dies` with exclude_self, and `leaves_graveyard` filtered to creature cards you own), but there is no zone-change-to-graveyard event in trigger_events: `discard` covers only the hand, `dies` and `leaves_battlefield` only the battlefield, and there is no mill event; the trigger's `from_zones` key is read only for spell_cast and land_played. Writing just the two expressible clauses would silently drop the milled/discarded-creature half, which is the card's main engine with its own {1}{B} mill ability.
 - **(trigger_event)** a trigger event that fires when a card matching a filter (here: a land card, owner = you) is put into a graveyard from ANY zone -- battlefield (sacrifice/destroy), hand (discard), library (mill, surveil), stack -- and supports `batched: true` so that several land cards moved by one event (a mill of three lands, a discard of two lands) trigger it exactly once ("one or more")
   <br>Why the existing vocabulary won't do: leaves_battlefield with to_zones ["graveyard"] sees only permanents leaving the battlefield and misses discarded, milled and surveilled land cards, which are the card's whole engine (Gitrog + discard/dredge loops); discard covers only the hand and carries no card-type filter on the moved card from library; there is no mill or generic zone-change-to-graveyard event in trigger_events. Combining leaves_battlefield and discard triggers would still miss mill/surveil and would trigger twice for a single simultaneous event that moves lands from two zones. The draw half is a plain draw op once the event exists. The upkeep 'sacrifice unless you sacrifice a land' and extra_land_drops lines are expressible today.
+- **(trigger_event)** a self trigger that fires when this card is put into a graveyard from ANY zone (battlefield, hand via discard, library via mill/surveil, stack via counter), so the triggered ability works from the graveyard and can shuffle the card (bound as the trigger subject) into its owner's library -- the Eldrazi titan clause shared by Emrakul, Ulamog and Kozilek
+  <br>Why the existing vocabulary won't do: `trigger_events` has `dies` and `leaves_battlefield` (with `to_zones`), which only see the battlefield and miss discard, mill and a countered spell -- the cases the clause exists for. `discard` covers only the hand. No event observes a card arriving in a graveyard from the library or stack, and no `card_level_rider_keys` entry (`tucks_itself` is a resolving spell's own fate) replaces it. Writing only the `dies` half would make a different card that stays in the graveyard when milled or discarded.
 
 <details><summary>Cards waiting on this</summary>
 
@@ -357,6 +371,9 @@ Blocks **6** cards.
   - Whenever one or more land cards are put into your graveyard from anywhere, draw a card.
 - **Colossal Grave-Reaver** (rank 1942) — `colossal_grave_reaver`
   - Whenever one or more creature cards are put into your graveyard from your library, put one of them onto the battlefield.
+- **Worldspine Wurm** (rank 2387) — `worldspine_wurm`
+  - When this creature dies, create three 5/5 green Wurm creature tokens with trample.
+  - When Worldspine Wurm is put into a graveyard from anywhere, shuffle it into its owner's library.
 - **Crawling Sensation** (rank 3007) — `crawling_sensation`
   - Whenever one or more land cards are put into your graveyard from anywhere for the first time each turn, create a 1/1 green Insect creature token.
 - **Centaur Vinecrasher** (rank 10988) — `centaur_vinecrasher`
@@ -528,6 +545,34 @@ Blocks **3** cards.
 
 </details>
 
+## rooms
+
+Blocks **3** cards.
+
+- **(engine)** Room split permanents (rule 709.5): one card with two doors (Experimental Lab {3}{G}, Staff Room {2}{G}), castable as either half; the cast door enters unlocked and the other locked; a locked door's abilities are inactive; a sorcery-speed special action pays a locked door's mana cost to unlock it; name and mana value read only unlocked doors
+  <br>Why the existing vocabulary won't do: card_level_face_keys offers second_face/back_face, where the cast half becomes the whole object; nothing keeps both doors on one permanent with per-door locked/unlocked state, and no special action unlocks a door. Staff Room's static trigger must only work while that door is unlocked
+- **(engine)** Room split permanents (rule 709.5): a card with two door halves, each with its own name and mana cost ({1}{B} Polluted Cistern, {4}{B} Dim Oubliette), castable as either half; the cast half enters unlocked, the other locked; a locked door's abilities are inactive; a sorcery-speed special action pays a locked door's mana cost to unlock it; the permanent's name/cost reflect only unlocked doors
+  <br>Why the existing vocabulary won't do: second_face is a split/adventure/MDFC half that is cast instead of the front and then is the whole object; nothing keeps both halves on one permanent with per-half locked/unlocked state, and no special action unlocks a half
+- **(engine)** Room split permanents (rule 709.5): a card with two door halves, each with its own name and mana cost, castable as either half; the cast half enters unlocked, the other locked; a locked door's abilities are inactive; a sorcery-speed special action pays a locked door's mana cost to unlock it; the permanent's name/cost reflect only unlocked doors
+  <br>Why the existing vocabulary won't do: second_face is a split/adventure/MDFC half that is cast instead of the front and then is the whole object; nothing keeps both halves on one permanent with per-half locked/unlocked state, and no special action unlocks a half
+
+<details><summary>Cards waiting on this</summary>
+
+- **Spiked Corridor // Torture Pit** (rank 4163) — `spiked_corridor_torture_pit`
+  - When you unlock this door, create three 1/1 red Devil creature tokens with "When this token dies, it deals 1 damage to any target."
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - If a source you control would deal noncombat damage to an opponent, it deals that much damage plus 2 instead.
+- **Polluted Cistern // Dim Oubliette** (rank 6299) — `polluted_cistern_dim_oubliette`
+  - Whenever one or more cards are put into your graveyard from your library, each opponent loses 1 life for each card type among those cards.
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - When you unlock this door, mill three cards, then return a creature card from your graveyard to the battlefield.
+- **Experimental Lab // Staff Room** (rank 8930) — `experimental_lab_staff_room`
+  - When you unlock this door, manifest dread, then put two +1/+1 counters and a trample counter on that creature.
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - Whenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it.
+
+</details>
+
 ## self-sacrificing-permanent-gate
 
 Blocks **3** cards.
@@ -546,6 +591,34 @@ Blocks **3** cards.
 
 </details>
 
+## unlock-door
+
+Blocks **3** cards.
+
+- **(trigger_event)** a trigger event 'when you unlock this door' firing when this door becomes unlocked, both when the door is cast (enters unlocked) and when unlocked later by the special action
+  <br>Why the existing vocabulary won't do: self_enters misses a later unlock and fires even when this door enters locked; trigger_events has no unlock event
+- **(trigger_event)** a trigger event 'when you unlock this door' that fires when this door becomes unlocked, both when the half is cast (enters unlocked) and when unlocked later by the special action
+  <br>Why the existing vocabulary won't do: self_enters fires only on entering, missing a later unlock, and would fire even when this door enters locked because the other half was cast; trigger_events has no unlock event
+- **(trigger_event)** a trigger event 'when you unlock this door' that fires when this door becomes unlocked, both when the half is cast (enters unlocked) and when unlocked later by the special action
+  <br>Why the existing vocabulary won't do: self_enters fires only on entering, missing a later unlock, and fires even when this door enters locked because the other half was cast; trigger_events has no unlock event
+
+<details><summary>Cards waiting on this</summary>
+
+- **Spiked Corridor // Torture Pit** (rank 4163) — `spiked_corridor_torture_pit`
+  - When you unlock this door, create three 1/1 red Devil creature tokens with "When this token dies, it deals 1 damage to any target."
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - If a source you control would deal noncombat damage to an opponent, it deals that much damage plus 2 instead.
+- **Polluted Cistern // Dim Oubliette** (rank 6299) — `polluted_cistern_dim_oubliette`
+  - Whenever one or more cards are put into your graveyard from your library, each opponent loses 1 life for each card type among those cards.
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - When you unlock this door, mill three cards, then return a creature card from your graveyard to the battlefield.
+- **Experimental Lab // Staff Room** (rank 8930) — `experimental_lab_staff_room`
+  - When you unlock this door, manifest dread, then put two +1/+1 counters and a trample counter on that creature.
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - Whenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it.
+
+</details>
+
 ## add-color
 
 Blocks **2** cards.
@@ -561,6 +634,24 @@ Blocks **2** cards.
   - −3: Return target creature card from your graveyard to the battlefield. That creature is a black Zombie in addition to its other colors and types.
 - **Necromantic Selection** (rank 3356) — `necromantic_selection`
   - It's a black Zombie in addition to its other colors and types.
+
+</details>
+
+## basic-land-type-mana
+
+Blocks **2** cards.
+
+- **(engine)** Rule 305.6 -- a permanent with a basic land type has the matching intrinsic mana ability ({T}: Add {G} for Forest) by virtue of carrying the subtype, derived in the characteristics pipeline (characteristics.abilities_of) so that a Forest subtype granted by a static brings {T}: Add {G} with it, visible to legality, the payment solver and activation (and still subject to summoning sickness on a creature, 302.6).
+  <br>Why the existing vocabulary won't do: The type change itself is sayable: the `add_subtype` static carries `types` as well as `subtypes` (characteristics.py layer-4 grant loop does `types.update(static.get("types"))`), so {"effect": "add_subtype", "affects": {"controller": "you", "types": ["Creature"], "is_token": false}, "types": ["Land"], "subtypes": ["Forest"]} would make each nontoken creature a 'Creature Land -- Forest', and the first sentence is a self_only `set_pt` reading a count of lands you control. But the engine never derives a mana ability from a basic land subtype -- Forest's {T}: Add {G} is printed on the basic card in data/cards/basics.cards.json, and abilities_of returns printed plus statics-granted abilities only. So every creature would read as a Forest land and none could tap for {G}, which is the whole reason the card is played. A `grant_ability` static handing out {T}: Add {G} is unprinted text and the residual gate would have no line for it to claim. Same open gap as urborg_tomb_of_yawgmoth (and Dryad of the Ilysian Grove / Yavimaya, which already ship inert).
+- **(engine)** Rule 305.6 -- a land with a basic land type has the corresponding intrinsic mana ability ({T}: Add {W}/{U}/{B}/{R}/{G}) by virtue of carrying the subtype, derived in the characteristics pipeline (characteristics.abilities_of) rather than printed on the card, so that a subtype a static ability *grants* brings the mana ability with it. The derived ability must be visible to legality, the payment solver and activation, exactly as the `grant_ability` static already is.
+  <br>Why the existing vocabulary won't do: The static effect `add_subtype` says the printed sentence exactly -- {"effect": "add_subtype", "affects": {"types": ["Land"], "controller": "any"}, "subtypes": ["Swamp"]} -- but the engine never derives a mana ability from a subtype. data/cards/basics.cards.json prints "{T}: Add {B}" on Swamp as an ordinary ability, and characteristics.abilities_of returns the printed list plus statics-granted abilities only; nothing consults subtypes. So the static loads clean, every land on the board correctly reads "Land -- Swamp", and not one of them can tap for {B} -- the whole reason the card is played. Urborg itself would also be a land with no mana ability at all, since its {T}: Add {B} is likewise only the 305.6 consequence of being a Swamp. The nearest workaround, a `grant_ability` static handing every land a {T}: Add {B} ability, is not what the card says: it would leave the lands not actually Swamps (invisible to swampwalk, domain, Swamp-fetching searches, and any "nonbasic land" test) while adding an ability the printed line never mentions, and the residual gate would have no printed sentence for it to claim. Dryad of the Ilysian Grove (data/cards/auto/templates.cards.json) already ships with the same construction and the same silent inertness, so closing this fixes both.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Urborg, Tomb of Yawgmoth** (rank 73) — `urborg_tomb_of_yawgmoth`
+  - Each land is a Swamp in addition to its other land types.
+- **Ashaya, Soul of the Wild** (rank 817) — `ashaya_soul_of_the_wild`
+  - Nontoken creatures you control are Forest lands in addition to their other types. (They're still affected by summoning sickness.)
 
 </details>
 
@@ -752,6 +843,44 @@ Blocks **2** cards.
 
 </details>
 
+## face-down-filter
+
+Blocks **2** cards.
+
+- **(selector)** a selector key matching face-down permanents (manifested, cloaked, morphed, disguised), e.g. `{zone: battlefield, controller: you, face_down: true}`, usable in the cost filter
+  <br>Why the existing vocabulary won't do: `selector_keys` has no face-down key; `face_down` exists only as an option on library/exile ops meaning private exile, not as a property a selector can read on a permanent
+- **(selector)** a selector key matching face-down permanents (`face_down: true`), so 'turn a permanent you control face up' offers only permanents that are face down
+  <br>Why the existing vocabulary won't do: `selector_keys` has no face-down key; `face_down` appears only as an option on look_at_top/reveal_until/search_zones for putting cards onto the battlefield, not as a filter on existing permanents
+
+<details><summary>Cards waiting on this</summary>
+
+- **Zimone, Mystery Unraveler** (rank 5772) — `zimone_mystery_unraveler`
+  - Landfall — Whenever a land you control enters, manifest dread if this is the first time this ability has resolved this turn. Otherwise, you may turn a permanent you control face up
+- **Primordial Mist** (rank 6544) — `primordial_mist`
+  - Exile a face-down permanent you control face up: You may play that card this turn. (You still pay its costs. Timing rules still apply.)
+
+</details>
+
+## manifest-dread
+
+Blocks **2** cards.
+
+- **(op)** manifest dread (701.62): look at the top two cards of your library, manifest one of them, put the other into your graveyard; then refer to the manifested creature as 'that creature' so following effects can put two +1/+1 counters and a trample counter on it
+  <br>Why the existing vocabulary won't do: manifest takes only amount/cloak/player: no look-at-two-choose-one with the other milled, and no way to reference the manifested object afterwards; no trample keyword counter kind appears in the reference
+- **(op)** manifest dread (701.62): look at the top two cards of your library, choose one and manifest it (face-down 2/2, turnable face up for its mana cost if a creature card), put the other into your graveyard
+  <br>Why the existing vocabulary won't do: The `manifest` op takes only amount, cloak and player and manifests the top card(s) with no choice; it cannot look at two, pick one and send the rest to the graveyard. `look_at_top` has face_down and rest_to, but its face_down does not make a manifested 2/2 that can be turned up for its mana cost, so composing them would be an approximation
+
+<details><summary>Cards waiting on this</summary>
+
+- **Zimone, Mystery Unraveler** (rank 5772) — `zimone_mystery_unraveler`
+  - Landfall — Whenever a land you control enters, manifest dread if this is the first time this ability has resolved this turn. Otherwise, you may turn a permanent you control face up
+- **Experimental Lab // Staff Room** (rank 8930) — `experimental_lab_staff_room`
+  - When you unlock this door, manifest dread, then put two +1/+1 counters and a trample counter on that creature.
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - Whenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it.
+
+</details>
+
 ## opening-hand-ability
 
 Blocks **2** cards.
@@ -790,25 +919,21 @@ Blocks **2** cards.
 
 </details>
 
-## rooms
+## return-face-down
 
 Blocks **2** cards.
 
-- **(engine)** Room split permanents (rule 709.5): a card with two door halves, each with its own name and mana cost ({1}{B} Polluted Cistern, {4}{B} Dim Oubliette), castable as either half; the cast half enters unlocked, the other locked; a locked door's abilities are inactive; a sorcery-speed special action pays a locked door's mana cost to unlock it; the permanent's name/cost reflect only unlocked doors
-  <br>Why the existing vocabulary won't do: second_face is a split/adventure/MDFC half that is cast instead of the front and then is the whole object; nothing keeps both halves on one permanent with per-half locked/unlocked state, and no special action unlocks a half
-- **(engine)** Room split permanents (rule 709.5): a card with two door halves, each with its own name and mana cost, castable as either half; the cast half enters unlocked, the other locked; a locked door's abilities are inactive; a sorcery-speed special action pays a locked door's mana cost to unlock it; the permanent's name/cost reflect only unlocked doors
-  <br>Why the existing vocabulary won't do: second_face is a split/adventure/MDFC half that is cast instead of the front and then is the whole object; nothing keeps both halves on one permanent with per-half locked/unlocked state, and no special action unlocks a half
+- **(op)** return_from_graveyard to the battlefield with the controller's choice of face up or face down (a face-down 2/2 that can later be turned face up for its morph cost)
+  <br>Why the existing vocabulary won't do: return_from_graveyard takes controller/counters/destination/tapped but has no face_down option; face_down exists only on look_at_top/reveal_until/search_library, and manifest puts library cards, not this card from the graveyard
+- **(op)** return the dying card from the graveyard to the battlefield face down under its owner's control, with the face-down characteristics overridden to a Forest land (type Land, subtype Forest, no name, no mana cost, colorless, no other types or abilities, so it taps for {G} via the Forest's intrinsic mana ability) rather than the usual face-down 2/2 creature; e.g. a `face_down: {"types": ["Land"], "subtypes": ["Forest"]}` option on return_from_graveyard / put_onto_battlefield, with the card revealed if it leaves the battlefield
+  <br>Why the existing vocabulary won't do: return_from_graveyard and put_onto_battlefield have no face_down option (face_down exists only on look_at_top/reveal_until/search_library, meaning private exile); manifest only takes library cards and makes a 2/2 creature; returning it face up then `animate` with exact types Land/Forest would keep its name, mana cost, colors and mana value and so is a different card
 
 <details><summary>Cards waiting on this</summary>
 
-- **Spiked Corridor // Torture Pit** (rank 4163) — `spiked_corridor_torture_pit`
-  - When you unlock this door, create three 1/1 red Devil creature tokens with "When this token dies, it deals 1 damage to any target."
-  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
-  - If a source you control would deal noncombat damage to an opponent, it deals that much damage plus 2 instead.
-- **Polluted Cistern // Dim Oubliette** (rank 6299) — `polluted_cistern_dim_oubliette`
-  - Whenever one or more cards are put into your graveyard from your library, each opponent loses 1 life for each card type among those cards.
-  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
-  - When you unlock this door, mill three cards, then return a creature card from your graveyard to the battlefield.
+- **Yedora, Grave Gardener** (rank 3081) — `yedora_grave_gardener`
+  - Whenever another nontoken creature you control dies, you may return it to the battlefield face down under its owner's control. It's a Forest land.
+- **Deathmist Raptor** (rank 6493) — `deathmist_raptor`
+  - Whenever a permanent you control is turned face up, you may return this card from your graveyard to the battlefield face up or face down.
 
 </details>
 
@@ -831,25 +956,23 @@ Blocks **2** cards.
 
 </details>
 
-## unlock-door
+## turn-face-up
 
 Blocks **2** cards.
 
-- **(trigger_event)** a trigger event 'when you unlock this door' that fires when this door becomes unlocked, both when the half is cast (enters unlocked) and when unlocked later by the special action
-  <br>Why the existing vocabulary won't do: self_enters fires only on entering, missing a later unlock, and would fire even when this door enters locked because the other half was cast; trigger_events has no unlock event
-- **(trigger_event)** a trigger event 'when you unlock this door' that fires when this door becomes unlocked, both when the half is cast (enters unlocked) and when unlocked later by the special action
-  <br>Why the existing vocabulary won't do: self_enters fires only on entering, missing a later unlock, and fires even when this door enters locked because the other half was cast; trigger_events has no unlock event
+- **(op)** an effect op that turns a face-down permanent (the triggering creature) face up, offered as a choose_mode alternative to putting a +1/+1 counter on it
+  <br>Why the existing vocabulary won't do: turning face up exists only as the special action for face-down permanents; ops has no effect that turns a referenced creature face up
+- **(op)** an effect op that turns a chosen face-down permanent its controller controls face up without paying any cost (optional via `may`), reusing the engine's Game._turn_face_up path so turned-face-up events fire, with the choice limited to face-down permanents you control
+  <br>Why the existing vocabulary won't do: No op in `ops` turns a permanent face up; `transform` flips double-faced cards, not face-down morphs/manifests, and the face-up action exists only as the paid special action, not as an effect a resolving ability can perform
 
 <details><summary>Cards waiting on this</summary>
 
-- **Spiked Corridor // Torture Pit** (rank 4163) — `spiked_corridor_torture_pit`
-  - When you unlock this door, create three 1/1 red Devil creature tokens with "When this token dies, it deals 1 damage to any target."
+- **Zimone, Mystery Unraveler** (rank 5772) — `zimone_mystery_unraveler`
+  - Landfall — Whenever a land you control enters, manifest dread if this is the first time this ability has resolved this turn. Otherwise, you may turn a permanent you control face up
+- **Experimental Lab // Staff Room** (rank 8930) — `experimental_lab_staff_room`
+  - When you unlock this door, manifest dread, then put two +1/+1 counters and a trample counter on that creature.
   - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
-  - If a source you control would deal noncombat damage to an opponent, it deals that much damage plus 2 instead.
-- **Polluted Cistern // Dim Oubliette** (rank 6299) — `polluted_cistern_dim_oubliette`
-  - Whenever one or more cards are put into your graveyard from your library, each opponent loses 1 life for each card type among those cards.
-  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
-  - When you unlock this door, mill three cards, then return a creature card from your graveyard to the battlefield.
+  - Whenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it.
 
 </details>
 
@@ -1040,20 +1163,6 @@ Blocks **1** card.
 
 </details>
 
-## basic-land-type-mana
-
-Blocks **1** card.
-
-- **(engine)** Rule 305.6 -- a land with a basic land type has the corresponding intrinsic mana ability ({T}: Add {W}/{U}/{B}/{R}/{G}) by virtue of carrying the subtype, derived in the characteristics pipeline (characteristics.abilities_of) rather than printed on the card, so that a subtype a static ability *grants* brings the mana ability with it. The derived ability must be visible to legality, the payment solver and activation, exactly as the `grant_ability` static already is.
-  <br>Why the existing vocabulary won't do: The static effect `add_subtype` says the printed sentence exactly -- {"effect": "add_subtype", "affects": {"types": ["Land"], "controller": "any"}, "subtypes": ["Swamp"]} -- but the engine never derives a mana ability from a subtype. data/cards/basics.cards.json prints "{T}: Add {B}" on Swamp as an ordinary ability, and characteristics.abilities_of returns the printed list plus statics-granted abilities only; nothing consults subtypes. So the static loads clean, every land on the board correctly reads "Land -- Swamp", and not one of them can tap for {B} -- the whole reason the card is played. Urborg itself would also be a land with no mana ability at all, since its {T}: Add {B} is likewise only the 305.6 consequence of being a Swamp. The nearest workaround, a `grant_ability` static handing every land a {T}: Add {B} ability, is not what the card says: it would leave the lands not actually Swamps (invisible to swampwalk, domain, Swamp-fetching searches, and any "nonbasic land" test) while adding an ability the printed line never mentions, and the residual gate would have no printed sentence for it to claim. Dryad of the Ilysian Grove (data/cards/auto/templates.cards.json) already ships with the same construction and the same silent inertness, so closing this fixes both.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Urborg, Tomb of Yawgmoth** (rank 73) — `urborg_tomb_of_yawgmoth`
-  - Each land is a Swamp in addition to its other land types.
-
-</details>
-
 ## batched-combat-damage-amount
 
 Blocks **1** card.
@@ -1137,6 +1246,20 @@ Blocks **1** card.
 
 - **Laelia, the Blade Reforged** (rank 1303) — `laelia_the_blade_reforged`
   - Whenever one or more cards are put into exile from your library and/or your graveyard, put a +1/+1 counter on Laelia.
+
+</details>
+
+## cards-in-hand-static-value
+
+Blocks **1** card.
+
+- **(value)** `cards_in_hand` (the number of cards in a player's hand, here "you") as a static value leaf, so a characteristic-defining `set_pt` static with `affects: {self_only: true}` can set power and toughness to it continuously as the hand changes
+  <br>Why the existing vocabulary won't do: `cards_in_hand` exists in `value_keys` (one-shot effect amounts) but not in `static_value_keys`, and a static magnitude outside that list is a load error; `count` reads permanents on the battlefield, not cards in hand, and a one-shot `set_pt`/`pump` would not track the hand size
+
+<details><summary>Cards waiting on this</summary>
+
+- **Body of Knowledge** (rank 2085) — `body_of_knowledge`
+  - Body of Knowledge's power and toughness are each equal to the number of cards in your hand.
 
 </details>
 
@@ -1761,6 +1884,20 @@ Blocks **1** card.
 
 </details>
 
+## exile-permanent-cost
+
+Blocks **1** card.
+
+- **(cost)** an activated-ability cost that exiles a permanent you control matching a selector (here a face-down one, exiled face up), bound with `as` so the ability's effects can read the exiled card -- the exile counterpart of `sacrifice`
+  <br>Why the existing vocabulary won't do: `cost_keys` exile only the source (`exile_self`), a card from hand (`exile_from_hand`, `exile_self_from_hand`) or a card from the graveyard (`exile_from_graveyard`); nothing exiles another permanent from the battlefield as a cost, and moving it into an `exile` op would shift payment to resolution and let the ability be activated without a face-down permanent
+
+<details><summary>Cards waiting on this</summary>
+
+- **Primordial Mist** (rank 6544) — `primordial_mist`
+  - Exile a face-down permanent you control face up: You may play that card this turn. (You still pay its costs. Timing rules still apply.)
+
+</details>
+
 ## exile-target-spell
 
 Blocks **1** card.
@@ -1831,6 +1968,20 @@ Blocks **1** card.
 - **Final Fortune** (rank 1512) — `final_fortune`
   - Take an extra turn after this one.
   - At the beginning of that turn's end step, you lose the game.
+
+</details>
+
+## face-down-counters-pt
+
+Blocks **1** card.
+
+- **(engine)** a face-down permanent must be subject to counters and to statics about arriving permanents: (1) `enters_with_additional_counters` must apply to a face-down arrival (manifest / manifest dread / cloak), matching its filter against the face-down characteristics (colorless 2/2 creature, 708.2) so a manifested-dread permanent under Curator Beastie enters with two +1/+1 counters; (2) +1/+1 counters on a face-down permanent must modify its power/toughness (layer 7c applies over the 708.2 2/2 shell), so it is a 4/4
+  <br>Why the existing vocabulary won't do: Tested: with Curator Beastie on the battlefield (static `enters_with_additional_counters`, affects {controller: you, types: [Creature], colorless: true}), manifest dread puts the chosen card onto the battlefield face down with 0 +1/+1 counters, so the static is not applied to the face-down entrant (`zones._board_additional_counters` is not applied to the manifest arrival); and forcing two +1/+1 counters onto the face-down permanent still leaves `chars` at 2/2, because `chars` returns FACE_DOWN_CHARS before any static or counter is layered (rules-coverage 'Face-down permanents are a bare shell'). `manifest_dread` itself now works; this sentence is what blocks the card.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Curator Beastie** (rank 6774) — `curator_beastie`
+  - Colorless creatures you control enter with two additional +1/+1 counters on them.
 
 </details>
 
@@ -2351,6 +2502,20 @@ Blocks **1** card.
 
 </details>
 
+## mana-restriction-turn-face-up
+
+Blocks **1** card.
+
+- **(value)** a mana_restriction purpose meaning 'only to turn permanents face up' (the morph/megamorph/disguise/manifest/cloak special action, 116.2b), e.g. {"face_up": "any"}, with Game._turn_face_up paying under that purpose instead of the generic OTHER_PAYMENT, so the mana pays a face-up cost and nothing else
+  <br>Why the existing vocabulary won't do: compile_restriction knows only 'cast', 'activate' and 'other'. 'other' takes only 'any' and covers every non-cast, non-activation payment (ward, attack taxes, 'you may pay'), so it is strictly broader than the printed text; and a restriction with neither 'cast' nor 'activate' is refused as permitting nothing. _turn_face_up pays with purpose=OTHER_PAYMENT, so no restriction can single out the face-up action. The mana half itself (add_mana with any_one_color and amount 2) is expressible.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Overgrown Zealot** (rank 6766) — `overgrown_zealot`
+  - {T}: Add two mana of any one color. Spend this mana only to turn permanents face up.
+
+</details>
+
 ## mana-spent-enters-with-counters
 
 Blocks **1** card.
@@ -2390,6 +2555,20 @@ Blocks **1** card.
 
 - **Barbflare Gremlin** (rank 7929) — `barbflare_gremlin`
   - Whenever a player taps a land for mana, if this creature is tapped, that player adds one mana of any type that land produced. Then that land deals 1 damage to that player.
+
+</details>
+
+## manifest-from-hand
+
+Blocks **1** card.
+
+- **(op)** a source selector on the manifest op (e.g. `from: "hand"` plus a chooser), so the controller chooses a card from their hand and it is put onto the battlefield face down as a manifested 2/2, turnable face up for its mana cost if it is a creature card (701.34)
+  <br>Why the existing vocabulary won't do: op_manifest takes only amount, cloak and player and always manifests library[0]; put_onto_battlefield can move a card from hand but has no face_down option, and look_at_top's face_down is exile privacy from the library, not the 707 face-down 2/2
+
+<details><summary>Cards waiting on this</summary>
+
+- **Scroll of Fate** (rank 3975) — `scroll_of_fate`
+  - {T}: Manifest a card from your hand
 
 </details>
 
@@ -2551,20 +2730,6 @@ Blocks **1** card.
 
 </details>
 
-## odd-or-even
-
-Blocks **1** card.
-
-- **(selector)** a selector comparison on a creature's live power (and, for sibling cards, mana value) that matches by parity -- e.g. power: {"parity": "odd"|"even"} with zero even, or {"parity": {"binding": "chosen"}} reading a resolution-time 'choose odd or even' decision
-  <br>Why the existing vocabulary won't do: The selector `power` key goes through selectors._compare, which only knows >=, <=, >, <, ==, != against a value; parity exists only for die rolls (`rolled` with `parity` in values.py). A choose_mode with an any_of list of power == 0, 2, 4 ... would be a finite approximation of an unbounded set.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Zimone's Hypothesis** (rank 8504) — `zimone_s_hypothesis`
-  - Then choose odd or even. Return each creature with power of the chosen quality to its owner's hand. (Zero is even.)
-
-</details>
-
 ## opponent-choice-of-payment
 
 Blocks **1** card.
@@ -2578,6 +2743,20 @@ Blocks **1** card.
   - Cast this spell only during combat before blockers are declared.
   - X can't be greater than the number of snow lands you control.
   - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
+
+</details>
+
+## play-cost-paid-card
+
+Blocks **1** card.
+
+- **(op)** "You may play that card this turn" over the card the cost exiled: `grant_playable` with `playable_this_turn` over a binding produced by the exile cost
+  <br>Why the existing vocabulary won't do: `grant_playable` can grant the permission, but no cost produces a binding naming the exiled card for it to read; `exile` with `playable_this_turn` would exile on resolution rather than as the cost
+
+<details><summary>Cards waiting on this</summary>
+
+- **Primordial Mist** (rank 6544) — `primordial_mist`
+  - Exile a face-down permanent you control face up: You may play that card this turn. (You still pay its costs. Timing rules still apply.)
 
 </details>
 
@@ -3049,6 +3228,20 @@ Blocks **1** card.
 
 </details>
 
+## self-bounce-playable-gate
+
+Blocks **1** card.
+
+- **(engine)** the authoring verifier's playable gate (`verify.py`, the `allowed` zone set for permanents) must accept a permanent that ends in its owner's hand because its own enters trigger returned it there, as printed. The card is now fully expressible -- trigger `self_enters` with condition `{"not":{"exists":{"zone":"battlefield","controller":"you","face_down":true}}}`, effects `[{"op":"return_to_hand","objects":{"self_only":true,"zone":"battlefield"}},{"op":"manifest_dread"}]`, and the second line as `creatures_deal_combat_damage` with `controller: you`, `filter: {colorless: true}`, `per_player: true` -- and the dry run shows it behaving correctly, but gate 4 rejects it with "glitch_interpreter is a permanent but ended in hand". The sandbox has no face-down permanent, so the intervening-if is true and the bounce lawfully happens every run. A narrow, declared exception (e.g. the card's own self_enters trigger contains `return_to_hand` of `self_only`) in the style of the existing `is_aura` / `exiles_itself` / `tucks_itself` carve-outs would admit it; expectation would then be zone hand, hand_size 2, library_size 38, graveyard_size 3, battlefield_count 33
+  <br>Why the existing vocabulary won't do: The gate allows only BATTLEFIELD for a non-Aura permanent; there is no card-level rider declaring that a permanent returns itself to hand, and no sandbox role that puts a face-down permanent on your board to make the intervening-if false. Writing the card without the bounce, or with a condition that never holds, would be an approximation
+
+<details><summary>Cards waiting on this</summary>
+
+- **Glitch Interpreter** (rank 10013) — `glitch_interpreter`
+  - When this creature enters, if you control no face-down permanents, return this creature to its owner's hand and manifest dread.
+
+</details>
+
 ## shapeshifter-2-2-u-changeling
 
 Blocks **1** card.
@@ -3289,6 +3482,20 @@ Blocks **1** card.
 
 </details>
 
+## turned-face-up-trigger
+
+Blocks **1** card.
+
+- **(trigger_event)** a trigger event for a permanent being turned face up (filterable by controller: 'a permanent you control'), usable by a triggered ability with active_zones ["graveyard"] on the card itself
+  <br>Why the existing vocabulary won't do: The engine's _turn_face_up emits a 'turned_face_up' event, but it is not in the packet's trigger_events vocabulary, so no card can trigger on it; becomes_untapped/permanent_enters/counter_placed are different events (a megamorph counter would miss plain morphs and manifests)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Deathmist Raptor** (rank 6493) — `deathmist_raptor`
+  - Whenever a permanent you control is turned face up, you may return this card from your graveyard to the battlefield face up or face down.
+
+</details>
+
 ## two-share-all-card-types
 
 Blocks **1** card.
@@ -3342,6 +3549,21 @@ Blocks **1** card.
 
 - **Opportunistic Dragon** (rank 8222) — `opportunistic_dragon`
   - When this creature enters, choose target Human or artifact an opponent controls. For as long as this creature remains on the battlefield, gain control of that permanent, it loses all abilities, and it can't attack or block.
+
+</details>
+
+## wurm-5-5-g-trample
+
+Blocks **1** card.
+
+- **(token)** a 5/5 green Wurm creature token with trample
+  <br>Why the existing vocabulary won't do: `token_ids` has no Wurm token at all; the only 5/5 tokens are dragon_5_5_r_flying and elemental_5_5_rg, which differ in color, creature type and keyword. The `dies` trigger and `create_token` with `amount: {"const": 3}` are otherwise ready.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Worldspine Wurm** (rank 2387) — `worldspine_wurm`
+  - When this creature dies, create three 5/5 green Wurm creature tokens with trample.
+  - When Worldspine Wurm is put into a graveyard from anywhere, shuffle it into its owner's library.
 
 </details>
 

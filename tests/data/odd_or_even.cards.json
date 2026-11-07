@@ -1,0 +1,110 @@
+{
+  "_comment": "Shapes for tests/unit/statics/test_odd_or_even.py. t_oe_kianne is Kianne, Corrupted Memory's two flash lines on a 2/2 with no draw trigger, so counters put by the test are the only thing moving its power. t_oe_hypothesis is Zimone's Hypothesis. t_oe_wall is a 0/3, the zero that is even; t_oe_one and t_oe_two are a 1/1 and a 2/2.",
+  "cards": [
+    {
+      "id": "t_oe_kianne",
+      "name": "Test Parity Kianne",
+      "oracle_text": "As long as this creature's power is even, you may cast noncreature spells as though they had flash.\nAs long as this creature's power is odd, you may cast creature spells as though they had flash.",
+      "mana_cost": "{2}{G}{U}",
+      "types": ["Creature"],
+      "supertypes": ["Legendary"],
+      "subtypes": ["Illusion"],
+      "colors": ["G", "U"],
+      "color_identity": ["G", "U"],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "As long as this creature's power is even, you may cast noncreature spells as though they had flash.",
+          "effect": "cast_as_though_flash",
+          "affects_player": "you",
+          "affects_spells": {"not_types": ["Creature"]},
+          "condition": {"exists_derived": {"self_only": true, "power": {"parity": "even"}}}
+        },
+        {
+          "kind": "static",
+          "text": "As long as this creature's power is odd, you may cast creature spells as though they had flash.",
+          "effect": "cast_as_though_flash",
+          "affects_player": "you",
+          "affects_spells": {"types": ["Creature"]},
+          "condition": {"exists_derived": {"self_only": true, "power": {"parity": "odd"}}}
+        }
+      ]
+    },
+    {
+      "id": "t_oe_hypothesis",
+      "name": "Test Parity Hypothesis",
+      "oracle_text": "You may put a +1/+1 counter on a creature. Then choose odd or even. Return each creature with power of the chosen quality to its owner's hand. (Zero is even.)",
+      "mana_cost": "{3}{U}{U}",
+      "types": ["Sorcery"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "spell_effects": [
+        {
+          "op": "add_counters",
+          "counter": "+1/+1",
+          "amount": {"const": 1},
+          "objects": {"zone": "battlefield", "controller": "any", "types": ["Creature"],
+                      "count": 1, "optional": true}
+        },
+        {
+          "op": "choose_mode",
+          "chooser": "you",
+          "modes": [
+            {
+              "label": "Odd",
+              "effects": [
+                {
+                  "op": "return_to_hand",
+                  "objects": {"zone": "battlefield", "controller": "any", "types": ["Creature"],
+                              "power": {"parity": "odd"}, "count": "all"}
+                }
+              ]
+            },
+            {
+              "label": "Even",
+              "effects": [
+                {
+                  "op": "return_to_hand",
+                  "objects": {"zone": "battlefield", "controller": "any", "types": ["Creature"],
+                              "power": {"parity": "even"}, "count": "all"}
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_oe_wall",
+      "name": "Test Parity Wall",
+      "oracle_text": "",
+      "mana_cost": "{1}",
+      "types": ["Creature"],
+      "subtypes": ["Wall"],
+      "power": 0,
+      "toughness": 3
+    },
+    {
+      "id": "t_oe_one",
+      "name": "Test Parity One",
+      "oracle_text": "",
+      "mana_cost": "{1}",
+      "types": ["Creature"],
+      "subtypes": ["Rat"],
+      "power": 1,
+      "toughness": 1
+    },
+    {
+      "id": "t_oe_two",
+      "name": "Test Parity Two",
+      "oracle_text": "",
+      "mana_cost": "{2}",
+      "types": ["Creature"],
+      "subtypes": ["Bear"],
+      "power": 2,
+      "toughness": 2
+    }
+  ]
+}

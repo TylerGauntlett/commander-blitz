@@ -2379,6 +2379,17 @@ state: a card in a graveyard has a printed P/T, but no printed line asks a
 counting filter about it yet, and `static_zone_filter_keys` stays the list of
 what a card outside the battlefield actually has.
 
+#### `face_down` — board state the static filters refuse
+
+Face-down status is board state no layer writes, so `tapped`'s licence would
+admit it; it stays out of the static filter language for a different reason.
+Those filters match a face-down permanent against its **printed** face, which
+is the hidden card, so `{"face_down": true, "types": ["Creature"]}` would miss
+a manifested land; and `chars` returns the 2/2 shell before any static applies,
+so an `affects` naming face-down permanents would never reach one. The selector
+and trigger filters, which see the shell, take the key:
+["Face-down creatures" — `face_down`](card-dsl-cookbook.md#face-down-creatures--face_down).
+
 ### Counting the mana that was actually spent
 
 `{"colors_of_mana_spent": true}` is sunburst and converge, and it reads how a
@@ -5363,7 +5374,7 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `becomes_monarch` ·
 `counter_placed` · `sacrificed` · `leaves_graveyard` · `token_created` · `draw` · `discard` · `cycle` ·
 `ability_activated` · `damage_prevented` · `deals_damage_to_player` ·
-`searches_library` · `wins_coin_flip` · `state`
+`searches_library` · `wins_coin_flip` · `turned_face_up` · `state`
 
 ### `state` — "When there are four or more page counters on this artifact"
 
@@ -6476,7 +6487,7 @@ Each node names **exactly one** form:
 | `{"has_flag": "mardu"}` | whether `set_flag` wrote that word on the source — a Siege's chosen mode |
 | `{"top_of_library": filter}` | matches the **one** card on top of a library, on its printed face |
 | `{"is_monarch": player}` | whether that player is the monarch — `you`, `opponent`, `each_player`, or `affected_controller` (below) |
-| `{"exists_derived": filter}` | does a permanent match on its **current** characteristics — `cant_attack` and `cant_block` only (below) |
+| `{"exists_derived": filter}` | does a permanent match on its **current** characteristics — `cant_attack`, `cant_block` and `cast_as_though_flash` only (below) |
 
 `has_flag` is how "As this enchantment enters, choose Mardu or Jeskai" switches
 a **static** mode on. The choice is a `self_enters` trigger whose `choose_mode`
@@ -6517,8 +6528,11 @@ power 4 or greater", and the creature its own ability pumps to 5 has to count:
 
 `_static_active` defers a tree holding it, as it defers `affected_controller`,
 and `attack_forbidden` and `block_forbidden` ask it once per creature at
-declaration, outside the pipeline. The loader refuses it on every other effect,
-and off the battlefield.
+declaration, outside the pipeline. `cast_as_though_flash` is the third reader:
+`player_casts_as_though_flash` is asked at cast legality, never by a layer, and
+walks with `derived`, so Kianne, Corrupted Memory reads its own power with its
+counters on — [Odd or even](card-dsl-cookbook.md#odd-or-even--parity). The
+loader refuses it on every other effect, and off the battlefield.
 A condition on an object static is evaluated in `_battlefield_statics`, *before*
 the first layer applies, so counters, printed characteristics, zone contents and
 whose turn it is are all safe — no layer can change whether another static is switched on, and

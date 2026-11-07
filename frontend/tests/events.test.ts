@@ -179,6 +179,19 @@ describe("beatsFor", () => {
     expect(beat.text).toBe("Ultron Unlimited connives");
   });
 
+  it("redraws a permanent turned face up in place", () => {
+    // `transformed`'s beat: the card changes without moving, and a "when this
+    // is turned face up" trigger follows it.
+    const [beat] = beatsFor(
+      [event("turned_face_up", { card: "ultron_unlimited" }, { player: 1, source: 12 })],
+      NAMES,
+      undefined,
+      0,
+    );
+    expect(beat).toMatchObject({ hold: 480, sound: "chime" });
+    expect(beat.text).toBe("Edgar AI turns Ultron Unlimited face up");
+  });
+
   it("gives a library search its own beat and line", () => {
     // `beatsFor` and `describeEvent` are parallel switches with parallel
     // `default`s; a search left out of this one would be dropped from the

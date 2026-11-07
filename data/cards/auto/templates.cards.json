@@ -18231,6 +18231,56 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Land"
+              ]
+            }
+          },
+          "text": "Beanstalk Giant's power and toughness are each equal to the number of lands you control.",
+          "toughness": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "adventure": true,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "beanstalk_giant_fertile_footsteps",
+      "mana_cost": "{6}{G}",
+      "name": "Beanstalk Giant // Fertile Footsteps",
+      "oracle_text": "Beanstalk Giant's power and toughness are each equal to the number of lands you control.",
+      "power": 0,
+      "second_face": "fertile_footsteps_beanstalk_giant",
+      "second_face_zone": "hand",
+      "source": "auto",
+      "subtypes": [
+        "Giant"
+      ],
+      "toughness": 0,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -27963,6 +28013,48 @@
       "colors": [
         "U"
       ],
+      "flashback": {
+        "mana": "{5}{U}{U}"
+      },
+      "id": "cackling_counterpart",
+      "mana_cost": "{1}{U}{U}",
+      "name": "Cackling Counterpart",
+      "oracle_text": "Create a token that's a copy of target creature you control.\nFlashback {5}{U}{U} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "you",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "copy_permanent"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
       "id": "caelorna_coral_tyrant",
       "mana_cost": "{1}{U}",
       "name": "Caelorna, Coral Tyrant",
@@ -35292,6 +35384,58 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "ability": 0,
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Creatures you control have \"{T}: Add {G}.\""
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{G}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G}."
+        }
+      ],
+      "id": "citanul_hierophants",
+      "mana_cost": "{3}{G}",
+      "name": "Citanul Hierophants",
+      "oracle_text": "Creatures you control have \"{T}: Add {G}.\"",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Druid"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -51775,6 +51919,96 @@
     },
     {
       "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "disorienting_choice",
+      "mana_cost": "{3}{G}",
+      "name": "Disorienting Choice",
+      "oracle_text": "For each opponent, choose up to one target artifact or enchantment that player controls. For each permanent chosen this way, its controller may exile it. Then if one or more of the chosen permanents are still on the battlefield, you search your library for up to that many land cards, put them onto the battlefield tapped, then shuffle.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "each"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "op": "may",
+              "player": {
+                "controller_of": "each"
+              },
+              "prompt": "Exile it?"
+            }
+          ],
+          "objects": {
+            "target": "t1"
+          },
+          "op": "for_each"
+        },
+        {
+          "condition": {
+            "cmp": ">",
+            "left": {
+              "count": {
+                "target": "t1",
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 0
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "count": {
+                "count": {
+                  "target": "t1",
+                  "zone": "battlefield"
+                }
+              },
+              "destination": "battlefield",
+              "op": "search_library",
+              "selector": {
+                "types": [
+                  "Land"
+                ]
+              },
+              "tapped": true
+            }
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "count": "any",
+          "id": "t1",
+          "kind": "permanent",
+          "one_per_player": true,
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Enchantment"
+            ],
+            "controller": "opponent",
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "W"
       ],
       "colors": [
@@ -67244,6 +67478,41 @@
       ]
     },
     {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "fertile_footsteps_beanstalk_giant",
+      "mana_cost": "{2}{G}",
+      "name": "Fertile Footsteps",
+      "oracle_text": "Search your library for a basic land card, put it onto the battlefield, then shuffle.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "destination": "battlefield",
+          "op": "search_library",
+          "player": "you",
+          "selector": {
+            "supertypes": [
+              "Basic"
+            ],
+            "types": [
+              "Land"
+            ]
+          }
+        }
+      ],
+      "subtypes": [
+        "Adventure"
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -78418,6 +78687,103 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "self": true
+                }
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, blocks, or becomes the target of a spell, it deals damage equal to its power to each opponent.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "self": true
+                }
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, blocks, or becomes the target of a spell, it deals damage equal to its power to each opponent.",
+          "trigger": {
+            "event": "blocks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "self": true
+                }
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, blocks, or becomes the target of a spell, it deals damage equal to its power to each opponent.",
+          "trigger": {
+            "controller": "any",
+            "event": "becomes_target",
+            "source": "self",
+            "targeted_by": "spell"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{5}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 5
+              },
+              "op": "monstrosity"
+            }
+          ],
+          "kind": "activated",
+          "text": "{5}: Monstrosity 5. (If this creature isn't monstrous, put five +1/+1 counters on it and it becomes monstrous.)"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "giggling_skitterspike",
+      "keywords": [
+        "indestructible"
+      ],
+      "mana_cost": "{4}",
+      "name": "Giggling Skitterspike",
+      "oracle_text": "Indestructible\nWhenever this creature attacks, blocks, or becomes the target of a spell, it deals damage equal to its power to each opponent.\n{5}: Monstrosity 5. (If this creature isn't monstrous, put five +1/+1 counters on it and it becomes monstrous.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Toy"
+      ],
+      "toughness": 1,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -84817,6 +85183,63 @@
     {
       "abilities": [
         {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "discard_self": true,
+            "mana": "{2}{G}"
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ]
+              },
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "text": "Channel — {2}{G}, Discard this card: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "greater_tanuki",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{4}{G}{G}",
+      "name": "Greater Tanuki",
+      "oracle_text": "Trample\nChannel — {2}{G}, Discard this card: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Dog"
+      ],
+      "toughness": 5,
+      "types": [
+        "Enchantment",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -85997,6 +86420,62 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "manifest_dread"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this enchantment enters, manifest dread.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "binding": "subject",
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you turn a permanent face up, put a +1/+1 counter on it.",
+          "trigger": {
+            "controller": "you",
+            "event": "turned_face_up"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "growing_dread",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{G}{U}",
+      "name": "Growing Dread",
+      "oracle_text": "Flash\nWhen this enchantment enters, manifest dread. (Look at the top two cards of your library. Put one onto the battlefield face down as a 2/2 creature and the other into your graveyard. Turn it face up any time for its mana cost if it's a creature card.)\nWhenever you turn a permanent face up, put a +1/+1 counter on it.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -96101,6 +96580,65 @@
         "Knight"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "damage",
+              "player": {
+                "except": "you",
+                "not": {
+                  "binding": "defender"
+                }
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to an opponent, it deals that much damage to each other opponent.",
+          "trigger": {
+            "condition": {
+              "cmp": "<",
+              "left": {
+                "player_count": {
+                  "except": "you",
+                  "not": {
+                    "binding": "defender"
+                  }
+                }
+              },
+              "right": {
+                "player_count": "each_opponent"
+              }
+            },
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "hydra_omnivore",
+      "mana_cost": "{4}{G}{G}",
+      "name": "Hydra Omnivore",
+      "oracle_text": "Whenever this creature deals combat damage to an opponent, it deals that much damage to each other opponent.",
+      "power": 8,
+      "source": "auto",
+      "subtypes": [
+        "Hydra"
+      ],
+      "toughness": 8,
       "types": [
         "Creature"
       ]
@@ -107460,6 +107998,115 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "not": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "controller": "you",
+                  "zone": "hand"
+                }
+              },
+              "right": {
+                "const": 7
+              }
+            }
+          },
+          "effect": "cant_attack",
+          "kind": "static",
+          "text": "Kefnet can't attack or block unless you have seven or more cards in hand."
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "not": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "controller": "you",
+                  "zone": "hand"
+                }
+              },
+              "right": {
+                "const": 7
+              }
+            }
+          },
+          "effect": "cant_block",
+          "kind": "static",
+          "text": "Kefnet can't attack or block unless you have seven or more cards in hand."
+        },
+        {
+          "cost": {
+            "mana": "{3}{U}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "chooser": "controller",
+                    "controller": "you",
+                    "count": 1,
+                    "types": [
+                      "Land"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "return_to_hand"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Return a land you control to its owner's hand?"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}{U}: Draw a card, then you may return a land you control to its owner's hand."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "kefnet_the_mindful",
+      "keywords": [
+        "flying",
+        "indestructible"
+      ],
+      "mana_cost": "{2}{U}",
+      "name": "Kefnet the Mindful",
+      "oracle_text": "Flying, indestructible\nKefnet can't attack or block unless you have seven or more cards in hand.\n{3}{U}: Draw a card, then you may return a land you control to its owner's hand.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "God"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "objects": {
@@ -108232,6 +108879,150 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "countered",
+              "exiles": true,
+              "op": "counter",
+              "target": "t1"
+            },
+            {
+              "objects": {
+                "binding": "countered",
+                "zone": "exile"
+              },
+              "op": "grant_playable",
+              "playable": "while_exiled",
+              "playable_free": true
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "spell",
+              "selector": {}
+            }
+          ],
+          "text": "When this creature is turned face up, counter target spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard. You may cast that card without paying its mana cost for as long as it remains exiled.",
+          "trigger": {
+            "event": "turned_face_up",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "kheru_spellsnatcher",
+      "mana_cost": "{3}{U}",
+      "morph": "{4}{U}{U}",
+      "name": "Kheru Spellsnatcher",
+      "oracle_text": "Morph {4}{U}{U} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)\nWhen this creature is turned face up, counter target spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard. You may cast that card without paying its mana cost for as long as it remains exiled.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Snake",
+        "Wizard"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "affects_spells": {
+            "not_types": [
+              "Creature"
+            ]
+          },
+          "condition": {
+            "exists_derived": {
+              "power": {
+                "parity": "even"
+              },
+              "self_only": true
+            }
+          },
+          "effect": "cast_as_though_flash",
+          "kind": "static",
+          "text": "As long as Kianne's power is even, you may cast noncreature spells as though they had flash."
+        },
+        {
+          "affects_player": "you",
+          "affects_spells": {
+            "types": [
+              "Creature"
+            ]
+          },
+          "condition": {
+            "exists_derived": {
+              "power": {
+                "parity": "odd"
+              },
+              "self_only": true
+            }
+          },
+          "effect": "cast_as_though_flash",
+          "kind": "static",
+          "text": "As long as Kianne's power is odd, you may cast creature spells as though they had flash."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you draw a card, put a +1/+1 counter on Kianne.",
+          "trigger": {
+            "controller": "you",
+            "event": "draw"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "kianne_corrupted_memory",
+      "mana_cost": "{2}{G}{U}",
+      "name": "Kianne, Corrupted Memory",
+      "oracle_text": "As long as Kianne's power is even, you may cast noncreature spells as though they had flash.\nAs long as Kianne's power is odd, you may cast creature spells as though they had flash.\nWhenever you draw a card, put a +1/+1 counter on Kianne.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Illusion"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -157838,6 +158629,88 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "rashmi_cast",
+              "cast_free": true,
+              "objects": {
+                "count": 1,
+                "mana_value": {
+                  "op": "<",
+                  "value": {
+                    "mana_value_of": {
+                      "binding": "subject"
+                    }
+                  }
+                },
+                "optional": true
+              },
+              "op": "look_at_top"
+            },
+            {
+              "condition": {
+                "not": {
+                  "exists": {
+                    "binding": "rashmi_cast"
+                  }
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "destination": "hand",
+                  "objects": {
+                    "count": "all"
+                  },
+                  "op": "look_at_top"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast your first spell each turn, reveal the top card of your library. You may cast it without paying its mana cost if it's a spell with lesser mana value. If you don't cast it, put it into your hand.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "nth": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "rashmi_eternities_crafter",
+      "mana_cost": "{2}{G}{U}",
+      "name": "Rashmi, Eternities Crafter",
+      "oracle_text": "Whenever you cast your first spell each turn, reveal the top card of your library. You may cast it without paying its mana cost if it's a spell with lesser mana value. If you don't cast it, put it into your hand.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Druid"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -161985,6 +162858,102 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "effects": [
+                        {
+                          "objects": {
+                            "target": "t1"
+                          },
+                          "op": "tap"
+                        }
+                      ],
+                      "else": [
+                        {
+                          "effects": [
+                            {
+                              "objects": {
+                                "target": "t1"
+                              },
+                              "op": "untap"
+                            }
+                          ],
+                          "op": "may",
+                          "prompt": "Untap target creature?"
+                        }
+                      ],
+                      "op": "may",
+                      "prompt": "Tap target creature?"
+                    }
+                  ],
+                  "label": "You may tap or untap target creature."
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "scry",
+                      "player": "you"
+                    }
+                  ],
+                  "label": "Scry 1."
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "mode": 0,
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Landfall — Whenever a land you control enters, choose one —\n• You may tap or untap target creature.\n• Scry 1. (Look at the top card of your library. You may put that card on the bottom.)",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "retreat_to_coralhelm",
+      "mana_cost": "{2}{U}",
+      "name": "Retreat to Coralhelm",
+      "oracle_text": "Landfall — Whenever a land you control enters, choose one —\n• You may tap or untap target creature.\n• Scry 1. (Look at the top card of your library. You may put that card on the bottom.)",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -168394,6 +169363,56 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "any",
+            "keywords": [
+              "flying"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "cant_attack_you",
+          "kind": "static",
+          "text": "Creatures with flying can't attack you or planeswalkers you control."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "wurm_5_5_g"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, create a 5/5 green Wurm creature token.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "sandwurm_convergence",
+      "mana_cost": "{6}{G}{G}",
+      "name": "Sandwurm Convergence",
+      "oracle_text": "Creatures with flying can't attack you or planeswalkers you control.\nAt the beginning of your end step, create a 5/5 green Wurm creature token.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -177925,6 +178944,61 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "count": {
+                  "extreme_value": {
+                    "objects": {
+                      "binding": "attackers"
+                    },
+                    "of": "power",
+                    "pick": "greatest"
+                  }
+                },
+                "optional": true,
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "untap"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you attack with one or more creatures, untap up to X lands, where X is the greatest power among those creatures.",
+          "trigger": {
+            "controller": "you",
+            "event": "you_attack"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "shriekwood_devourer",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{5}{G}{G}",
+      "name": "Shriekwood Devourer",
+      "oracle_text": "Trample\nWhenever you attack with one or more creatures, untap up to X lands, where X is the greatest power among those creatures.",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Treefolk"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -180400,6 +181474,50 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "affects_player": "you",
+          "effect": "cast_from_graveyard",
+          "kind": "static",
+          "text": "You may cast this card from your graveyard."
+        }
+      ],
+      "additional_cost": {
+        "exile_from_graveyard": {
+          "count": 3,
+          "types": [
+            "Creature"
+          ]
+        }
+      },
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "skaab_ruinator",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{U}{U}",
+      "name": "Skaab Ruinator",
+      "oracle_text": "As an additional cost to cast this spell, exile three creature cards from your graveyard.\nFlying\nYou may cast this card from your graveyard.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Horror"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -202647,6 +203765,91 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 1
+              },
+              "op": "manifest",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, manifest the top card of your library.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "subject"
+                  },
+                  "op": "fight",
+                  "other": {
+                    "target": "t1"
+                  }
+                }
+              ],
+              "op": "may",
+              "prompt": "Have it fight target creature you don't control?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever a permanent you control is turned face up, if it's a creature, you may have it fight target creature you don't control.",
+          "trigger": {
+            "controller": "you",
+            "event": "turned_face_up",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "temur_war_shaman",
+      "mana_cost": "{4}{G}{G}",
+      "name": "Temur War Shaman",
+      "oracle_text": "When this creature enters, manifest the top card of your library. (Put that card onto the battlefield face down as a 2/2 creature. Turn it face up any time for its mana cost if it's a creature card.)\nWhenever a permanent you control is turned face up, if it's a creature, you may have it fight target creature you don't control.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Shaman"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "op": "create_token",
               "token": "saproling_1_1_g"
             }
@@ -207061,6 +208264,62 @@
           "effects": [
             {
               "amount": {
+                "const": 2
+              },
+              "op": "manifest_dread"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this enchantment enters, manifest dread twice. (To manifest dread, look at the top two cards of your library. Put one onto the battlefield face down as a 2/2 creature and the other into your graveyard. Turn it face up any time for its mana cost if it's a creature card.)",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a face-down creature you control enters, draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "face_down": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "they_came_from_the_pipes",
+      "mana_cost": "{4}{U}",
+      "name": "They Came from the Pipes",
+      "oracle_text": "When this enchantment enters, manifest dread twice. (To manifest dread, look at the top two cards of your library. Put one onto the battlefield face down as a 2/2 creature and the other into your graveyard. Turn it face up any time for its mana cost if it's a creature card.)\nWhenever a face-down creature you control enters, draw a card.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
                 "power_of": {
                   "target": "t1"
                 }
@@ -208978,6 +210237,100 @@
         "Drake"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "exists": {
+              "controller": "you",
+              "is_commander": true,
+              "owner": "you"
+            }
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Lieutenant — As long as you control your commander, this creature gets +2/+2 and other creatures you control get +2/+2 and have trample.",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "condition": {
+            "exists": {
+              "controller": "you",
+              "is_commander": true,
+              "owner": "you"
+            }
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Lieutenant — As long as you control your commander, this creature gets +2/+2 and other creatures you control get +2/+2 and have trample.",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "condition": {
+            "exists": {
+              "controller": "you",
+              "is_commander": true,
+              "owner": "you"
+            }
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "trample"
+          ],
+          "kind": "static",
+          "text": "Lieutenant — As long as you control your commander, this creature gets +2/+2 and other creatures you control get +2/+2 and have trample."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "thunderfoot_baloth",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{4}{G}{G}",
+      "name": "Thunderfoot Baloth",
+      "oracle_text": "Trample\nLieutenant — As long as you control your commander, this creature gets +2/+2 and other creatures you control get +2/+2 and have trample.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Beast"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
@@ -212339,6 +213692,101 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "count": {
+                    "const": 1
+                  },
+                  "destination": "hand",
+                  "op": "search_library",
+                  "player": "you",
+                  "reveal": true,
+                  "selector": {
+                    "supertypes": [
+                      "Basic"
+                    ],
+                    "types": [
+                      "Land"
+                    ]
+                  }
+                },
+                {
+                  "op": "shuffle",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Search for a basic land?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a face-down creature you control enters, you may search your library for a basic land card, reveal it, put it into your hand, then shuffle.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "face_down": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "binding": "subject",
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 2
+              },
+              "toughness": {
+                "const": 2
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a permanent you control is turned face up, if it's a creature, it gets +2/+2 until end of turn.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "binding": "subject",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "controller": "you",
+            "event": "turned_face_up"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "trail_of_mystery",
+      "mana_cost": "{1}{G}",
+      "name": "Trail of Mystery",
+      "oracle_text": "Whenever a face-down creature you control enters, you may search your library for a basic land card, reveal it, put it into your hand, then shuffle.\nWhenever a permanent you control is turned face up, if it's a creature, it gets +2/+2 until end of turn.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -214134,6 +215582,73 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "destroy"
+                }
+              ],
+              "op": "may",
+              "prompt": "Destroy the targeted artifact or enchantment?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "any_types": [
+                  "Artifact",
+                  "Enchantment"
+                ],
+                "controller": {
+                  "binding": "event_player"
+                },
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever this creature deals combat damage to a player, you may destroy target artifact or enchantment that player controls.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "trygon_predator",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{G}{U}",
+      "name": "Trygon Predator",
+      "oracle_text": "Flying\nWhenever this creature deals combat damage to a player, you may destroy target artifact or enchantment that player controls.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Beast"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -230143,6 +231658,95 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 1
+              },
+              "op": "manifest",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, manifest the top card of your library. (Put it onto the battlefield face down as a 2/2 creature. Turn it face up any time for its mana cost if it's a creature card.)",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        },
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "ability": 0,
+              "duration": "until_end_of_turn",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "face_down": false,
+                "is_token": false,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_ability"
+            }
+          ],
+          "kind": "activated",
+          "text": "Sacrifice this creature: Until end of turn, face-up nontoken creatures you control gain \"When this creature dies, manifest the top card of your library.\""
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "manifest",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, manifest the top card of your library.",
+          "trigger": {
+            "controller": "any",
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "whisperwood_elemental",
+      "mana_cost": "{3}{G}{G}",
+      "name": "Whisperwood Elemental",
+      "oracle_text": "At the beginning of your end step, manifest the top card of your library. (Put it onto the battlefield face down as a 2/2 creature. Turn it face up any time for its mana cost if it's a creature card.)\nSacrifice this creature: Until end of turn, face-up nontoken creatures you control gain \"When this creature dies, manifest the top card of your library.\"",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Elemental"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "objects": {
                 "target": "t1"
               },
@@ -230939,6 +232543,45 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "untap"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, untap all lands you control.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "wilderness_reclamation",
+      "mana_cost": "{3}{G}",
+      "name": "Wilderness Reclamation",
+      "oracle_text": "At the beginning of your end step, untap all lands you control.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -237585,6 +239228,84 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "zimone_s_hypothesis",
+      "mana_cost": "{3}{U}{U}",
+      "name": "Zimone's Hypothesis",
+      "oracle_text": "You may put a +1/+1 counter on a creature. Then choose odd or even. Return each creature with power of the chosen quality to its owner's hand. (Zero is even.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "counter": "+1/+1",
+          "objects": {
+            "controller": "any",
+            "count": 1,
+            "optional": true,
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "add_counters"
+        },
+        {
+          "chooser": "you",
+          "modes": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "controller": "any",
+                    "count": "all",
+                    "power": {
+                      "parity": "odd"
+                    },
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "return_to_hand"
+                }
+              ],
+              "label": "Odd"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "controller": "any",
+                    "count": "all",
+                    "power": {
+                      "parity": "even"
+                    },
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "return_to_hand"
+                }
+              ],
+              "label": "Even"
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {

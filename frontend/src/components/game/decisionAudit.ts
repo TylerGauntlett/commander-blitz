@@ -564,6 +564,14 @@ export const DECISION_AUDIT: readonly DecisionRow[] = [
   },
   {
     kind: "choose_objects",
+    purpose: "manifest_dread",
+    asks: "Which of the top two cards to manifest; the other goes to the graveyard",
+    of: "library",
+    today: ["dialog"],
+    journeys: ["PickFromTheLibrary"],
+  },
+  {
+    kind: "choose_objects",
     purpose: "scry_bottom",
     asks: "Which scried cards go to the bottom",
     of: "library",

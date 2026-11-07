@@ -2109,6 +2109,16 @@ def _enter_battlefield(
         else:
             attach_to_player(state, obj.oid, seat)
 
+    # 708.2: a morph or a manifest **enters** face down -- it is never on the
+    # battlefield face up, so the arrival event must already see the shell.
+    # `stack._place_after_resolution` and `ops_counters.op_manifest` mark it
+    # again after the move; marking it here, before ENTERS_BATTLEFIELD, is
+    # what lets "whenever a face-down creature enters" match it, keeps
+    # "whenever a land enters" from hearing a manifested land, and silences
+    # the hidden card's own enters abilities, which it does not have.
+    if obj.pending_face_down or cause == "manifest":
+        obj.face_down = True
+
     state.bump_chars()
     fire(
         state,

@@ -233,6 +233,42 @@ class TestTheSandboxHandFeedsADiscardCost:
         assert self._hand(hand_written, DIVINATION) == ["auto_test_divination", "forest"]
 
 
+class TestTheSandboxGraveyardFeedsAnExileCost:
+    """Creature fodder for an additional cost that exiles creature cards from
+    your graveyard, beyond the two the sandbox always holds.
+
+    Skaab Ruinator's "exile three creature cards from your graveyard" was
+    never payable against two, so gate 4 rejected a card it could not cast.
+    """
+
+    RUINATOR = {
+        **DIVINATION,
+        "id": "auto_test_ruinator",
+        "name": "Auto Test Ruinator",
+        "oracle_text": "As an additional cost to cast this spell, exile three creature cards from your graveyard.\nDraw two cards.",
+        "additional_cost": {"exile_from_graveyard": {"types": ["Creature"], "count": 3}},
+    }
+
+    def _graveyard(self, pool: CardRegistry, payload: dict) -> list[str]:
+        card = V.compile_card(V.CardModel.model_validate(payload))
+        merged = V.CardRegistry({**{c.id: c for c in pool}, card.id: card})
+        game = V.build_sandbox(merged, card.id)
+        return [game.state.objects[oid].def_id for oid in game.state.players[0].graveyard]
+
+    def test_a_three_card_exile_gets_a_third_creature(self, hand_written):
+        graveyard = self._graveyard(hand_written, self.RUINATOR)
+        assert len(graveyard) == 3
+        assert all(hand_written.get(c).is_creature for c in graveyard)
+
+    def test_the_card_passes_every_gate(self, hand_written):
+        # The spare Forest stays and Divination's two draws join it.
+        verdict = V.verify(self.RUINATOR, {"hand_size": {"0": 3}}, hand_written)
+        assert verdict.failed_gate is None, verdict.reason
+
+    def test_every_other_card_keeps_two(self, hand_written):
+        assert len(self._graveyard(hand_written, DIVINATION)) == 2
+
+
 class TestTheSandboxIsUsable:
     def test_it_builds_from_whatever_pool_it_is_given(self, pool):
         """No dependency on test-only fixture cards.

@@ -503,7 +503,8 @@
   ],
   "STATIC_DERIVED_CONDITION_EFFECTS": [
    "cant_attack",
-   "cant_block"
+   "cant_block",
+   "cast_as_though_flash"
   ],
   "STATIC_EFFECTS": [
    "ability_cost_reduction",
@@ -995,6 +996,7 @@
   "lose_keyword",
   "lose_life",
   "manifest",
+  "manifest_dread",
   "may",
   "meld",
   "mill",

@@ -1,0 +1,110 @@
+{
+ "_comment": "Shapes for tests/unit/effects/test_manifest_dread.py. t_md_dread is Growing Dread's 'When this enchantment enters, manifest dread' alone; t_md_twice is They Came from the Pipes' 'manifest dread twice'; t_md_lab is Experimental Lab's 'manifest dread, then put two +1/+1 counters on that creature', the `as` binding naming the manifested permanent.",
+ "cards": [
+  {
+   "id": "t_md_dread",
+   "name": "Test Dread",
+   "oracle_text": "When this enchantment enters, manifest dread.",
+   "mana_cost": "{1}{G}",
+   "types": [
+    "Enchantment"
+   ],
+   "colors": [
+    "G"
+   ],
+   "color_identity": [
+    "G"
+   ],
+   "abilities": [
+    {
+     "kind": "triggered",
+     "text": "When this enchantment enters, manifest dread.",
+     "trigger": {
+      "event": "self_enters",
+      "source": "self"
+     },
+     "effects": [
+      {
+       "op": "manifest_dread"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t_md_twice",
+   "name": "Test Dread Twice",
+   "oracle_text": "When this enchantment enters, manifest dread twice.",
+   "mana_cost": "{1}{G}",
+   "types": [
+    "Enchantment"
+   ],
+   "colors": [
+    "G"
+   ],
+   "color_identity": [
+    "G"
+   ],
+   "abilities": [
+    {
+     "kind": "triggered",
+     "text": "When this enchantment enters, manifest dread twice.",
+     "trigger": {
+      "event": "self_enters",
+      "source": "self"
+     },
+     "effects": [
+      {
+       "op": "manifest_dread",
+       "amount": {
+        "const": 2
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t_md_lab",
+   "name": "Test Dread Lab",
+   "oracle_text": "When this enchantment enters, manifest dread, then put two +1/+1 counters on that creature.",
+   "mana_cost": "{1}{G}",
+   "types": [
+    "Enchantment"
+   ],
+   "colors": [
+    "G"
+   ],
+   "color_identity": [
+    "G"
+   ],
+   "abilities": [
+    {
+     "kind": "triggered",
+     "text": "When this enchantment enters, manifest dread, then put two +1/+1 counters on that creature.",
+     "trigger": {
+      "event": "self_enters",
+      "source": "self"
+     },
+     "effects": [
+      {
+       "op": "manifest_dread",
+       "as": "dread"
+      },
+      {
+       "op": "add_counters",
+       "counter": "+1/+1",
+       "amount": {
+        "const": 2
+       },
+       "objects": {
+        "binding": "dread",
+        "zone": "battlefield"
+       }
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

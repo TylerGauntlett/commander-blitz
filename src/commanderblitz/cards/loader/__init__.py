@@ -76,6 +76,7 @@ from commanderblitz.engine.triggers import (
     ORDINAL_FILTER_KEYS,
     STATE_TRIGGER,
     TRIGGER_EVENTS,
+    validate_face_down_trigger,
     validate_trigger_filter,
 )
 
@@ -3052,6 +3053,9 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             )
         validate_selector(model.trigger.filter, f"{where}.trigger.filter")
         validate_trigger_filter(model.trigger.filter, f"{where}.trigger.filter")
+        validate_face_down_trigger(
+            model.trigger.event, model.trigger.filter, f"{where}.trigger.filter"
+        )
         if isinstance((model.trigger.filter or {}).get("attacking_player"), dict):
             # Nothing is bound when a trigger filter is asked, so "attacking
             # the player in binding X" would match nothing and the trigger

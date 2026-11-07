@@ -1,0 +1,139 @@
+{
+  "_comment": "Shapes for tests/unit/triggers/test_face_down_filter.py. t_fdf_pipes is They Came from the Pipes' 'Whenever a face-down creature you control enters', reduced to a draw; t_fdf_faceup_watch is its negation, gaining life. t_fdf_landfall is a bare landfall trigger, so a test can show a manifested land enters as the 2/2 shell and not as a land. t_fdf_glitch is Glitch Interpreter's intervening-if 'if you control no face-down permanents', reduced to a draw. t_fdf_whisper is Whisperwood Elemental's 'face-up nontoken creatures you control' as a one-shot pump. t_fdf_etb_morph is a morph creature with an enters trigger of its own, which a face-down arrival must not fire.",
+  "cards": [
+    {
+      "id": "t_fdf_pipes",
+      "name": "Test Face-Down Pipes",
+      "oracle_text": "Whenever a face-down creature you control enters, draw a card.",
+      "mana_cost": "{2}{U}",
+      "types": ["Enchantment"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a face-down creature you control enters, draw a card.",
+          "trigger": {
+            "event": "permanent_enters",
+            "controller": "you",
+            "filter": {"types": ["Creature"], "face_down": true}
+          },
+          "effects": [{"op": "draw", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_fdf_faceup_watch",
+      "name": "Test Face-Up Watch",
+      "oracle_text": "Whenever a face-up creature you control enters, you gain 1 life.",
+      "mana_cost": "{W}",
+      "types": ["Enchantment"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a face-up creature you control enters, you gain 1 life.",
+          "trigger": {
+            "event": "permanent_enters",
+            "controller": "you",
+            "filter": {"types": ["Creature"], "face_down": false}
+          },
+          "effects": [{"op": "gain_life", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_fdf_landfall",
+      "name": "Test Face-Down Landfall",
+      "oracle_text": "Whenever a land you control enters, you gain 1 life.",
+      "mana_cost": "{G}",
+      "types": ["Enchantment"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a land you control enters, you gain 1 life.",
+          "trigger": {
+            "event": "permanent_enters",
+            "controller": "you",
+            "filter": {"types": ["Land"]}
+          },
+          "effects": [{"op": "gain_life", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_fdf_glitch",
+      "name": "Test Glitch Interpreter",
+      "oracle_text": "When this creature enters, if you control no face-down permanents, draw a card.",
+      "mana_cost": "{G}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Wizard"],
+      "power": 1,
+      "toughness": 1,
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature enters, if you control no face-down permanents, draw a card.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self",
+            "condition": {
+              "not": {"exists": {"zone": "battlefield", "controller": "you", "face_down": true}}
+            }
+          },
+          "effects": [{"op": "draw", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_fdf_whisper",
+      "name": "Test Whisperwood Rite",
+      "oracle_text": "Face-up nontoken creatures you control get +1/+1 until end of turn.",
+      "mana_cost": "{G}",
+      "types": ["Sorcery"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "spell_effects": [
+        {
+          "op": "pump",
+          "objects": {
+            "zone": "battlefield",
+            "controller": "you",
+            "types": ["Creature"],
+            "is_token": false,
+            "face_down": false,
+            "count": "all"
+          },
+          "power": {"const": 1},
+          "toughness": {"const": 1}
+        }
+      ]
+    },
+    {
+      "id": "t_fdf_etb_morph",
+      "name": "Test Enters Morph",
+      "oracle_text": "When this creature enters, draw a card.\nMorph {G} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)",
+      "mana_cost": "{3}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Elf"],
+      "power": 3,
+      "toughness": 3,
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "morph": "{G}",
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature enters, draw a card.",
+          "trigger": {"event": "self_enters", "source": "self"},
+          "effects": [{"op": "draw", "amount": {"const": 1}}]
+        }
+      ]
+    }
+  ]
+}

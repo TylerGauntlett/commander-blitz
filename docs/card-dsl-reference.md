@@ -10,13 +10,13 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 169 |
-| [Selectors](#selectors) | 74 |
+| [Effect ops](#effect-ops) | 170 |
+| [Selectors](#selectors) | 75 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 69 |
 | [Conditions](#conditions) | 34 |
-| [Trigger events](#trigger-events) | 49 |
-| [Trigger filters](#trigger-filters) | 36 |
+| [Trigger events](#trigger-events) | 50 |
+| [Trigger filters](#trigger-filters) | 37 |
 | [Static effects](#static-effects) | 94 |
 | [Player-wide statics](#player-wide-statics) | 45 |
 | [Grantable statics](#grantable-statics) | 43 |
@@ -37,7 +37,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
 | [Card-level face keys](#card-level-face-keys) | 6 |
 | [Card-level rider keys](#card-level-rider-keys) | 19 |
-| [Engine events](#engine-events) | 77 |
+| [Engine events](#engine-events) | 78 |
 
 ## Effect ops
 
@@ -113,6 +113,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `incubate` | Board | yes | Incubate N: create a double-faced Incubator artifact token with N +1/+1 counters on it, which transforms for {2} into a 0/0 Phyrexian artifact creature. | [incubate — "Incubate N"](card-dsl-cookbook.md#incubate--incubate-n) |
 | `lock_abilities` | Board |  | Its activated abilities can't be activated this turn. | ["Its activated abilities can't be activated this turn"](card-dsl-cookbook.md#its-activated-abilities-cant-be-activated-this-turn) |
 | `manifest` | Board |  | Manifest the top card of a library face down as a 2/2. | [Face-down permanents — morph, megamorph and manifest](card-dsl-cookbook.md#face-down-permanents--morph-megamorph-and-manifest) |
+| `manifest_dread` | Board | yes | Manifest dread: look at the top two cards, manifest one, put the other into the graveyard; `as` records the manifest. | [Manifest dread](card-dsl-cookbook.md#manifest-dread) |
 | `meld` | Board |  | Meld the source with its named partner into one permanent. | [Meld — mutate's merged permanent, with the pair fixed by the card](card-dsl-cookbook.md#meld--mutates-merged-permanent-with-the-pair-fixed-by-the-card) |
 | `monstrosity` | Board |  | Monstrosity N: become monstrous with N +1/+1 counters. | [Monstrosity, and holding creatures down](card-dsl-cookbook.md#monstrosity-and-holding-creatures-down) |
 | `move_counters` | Board |  | Move counters from one permanent to another: one named kind, every kind (`all_kinds`, from a leave trigger's or a sacrifice cost's record with `from_had_counters`), N counters of kinds the controller picks (`any_kind`), or with `any_number` as many of each kind as the controller chooses. | [Moving a counter of any kind — move_counters with any_kind](card-dsl.md#moving-a-counter-of-any-kind--move_counters-with-any_kind) |
@@ -252,6 +253,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `exclude_self` | Not this permanent ("other"). | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `exiled_with` | Exiled with the named source. | [Targeting a card in exile](card-dsl-cookbook.md#targeting-a-card-in-exile) |
 | `extreme` | The greatest/least of power, toughness or mana value in the pool. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
+| `face_down` | A permanent that is face down (`true`) or face up (`false`), 708.2; not in a static's filters, nor on a departure trigger. | ["Face-down creatures" — face_down](card-dsl-cookbook.md#face-down-creatures--face_down) |
 | `goaded` | Is (or is not) goaded, by anyone (701.38). | ["Goaded creatures" — goaded](card-dsl-cookbook.md#goaded-creatures--goaded) |
 | `has_counters` | Has counters on it: `true` any kind, or one named kind. | [has_counters — "with counters on them"](card-dsl.md#has_counters--with-counters-on-them) |
 | `haunted_by` | Haunted by the named card. | [Haunt — the exile link pointing the other way](card-dsl-cookbook.md#haunt--the-exile-link-pointing-the-other-way) |
@@ -259,7 +261,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `is_token` | Is (or is not) a token. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `keywords` | Has all of these keywords. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `mana_cost` | Printed mana cost is one of these. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
-| `mana_value` | A comparison on mana value. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
+| `mana_value` | A comparison on mana value, or its `parity`. | [Odd or even — parity](card-dsl-cookbook.md#odd-or-even--parity) |
 | `min_colors` | Has at least N colors ("multicolored"). | ["Multicolored" — min_colors](card-dsl.md#multicolored--min_colors) |
 | `modified` | Is modified (equipped, enchanted by you, or has counters). | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `name` | Named exactly this, or the name under a binding. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
@@ -275,7 +277,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `paid_by` | A spell paid with mana from the named source. | ["When that mana is spent to cast…"](card-dsl-cookbook.md#when-that-mana-is-spent-to-cast) |
 | `phased_out_with` | Phased out by the named source. | ["…phases out until this enchantment leaves the battlefield"](card-dsl-cookbook.md#phases-out-until-this-enchantment-leaves-the-battlefield) |
 | `player` | Whose zone to walk (for hand, library, graveyard, exile). | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
-| `power` | A comparison on live power. | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
+| `power` | A comparison on live power, or its `parity` (`{"parity": "even"}`, zero even). | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
 | `random` | Pick at random rather than by choice; on a triggered ability's one target spec, the target is drawn at random. | ["Target … chosen at random"](card-dsl.md#target--chosen-at-random) |
 | `returned_with` | Put onto the battlefield by the named source's linked return. | [An Aura that enchants a card in a graveyard — Animate Dead](card-dsl-cookbook.md#an-aura-that-enchants-a-card-in-a-graveyard--animate-dead) |
 | `self_only` | This permanent only. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
@@ -289,7 +291,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `supertypes` | Has one of these supertypes. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `tapped` | Is (or is not) tapped. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `target` | The objects a target id chose. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
-| `toughness` | A comparison on live toughness. | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
+| `toughness` | A comparison on live toughness, or its `parity`. | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
 | `types` | Has all of these card types. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `union` | One pool made of several zones' selectors. | [One choice across two zones — union](card-dsl-cookbook.md#one-choice-across-two-zones--union) |
 | `was_attached_to` | Attached, as the same object, to the permanent a sacrifice cost's `as` recorded, when it was paid (608.2h). | [Zack Fair — what a sacrificed source had](card-dsl.md#zack-fair--what-a-sacrificed-source-had) |
@@ -480,6 +482,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `spell_copied` | `spell_copied` | A spell is copied (magecraft's other half). | [spell_copied, and why magecraft is two abilities](card-dsl.md#spell_copied-and-why-magecraft-is-two-abilities) |
 | `state` | `state` | A state holds (603.8): the trigger's `state` condition; no event. | [state — "When there are four or more page counters on this artifact"](card-dsl.md#state--when-there-are-four-or-more-page-counters-on-this-artifact) |
 | `token_created` | `token_created` | A token is created. | [Triggers](card-dsl.md#triggers) |
+| `turned_face_up` | `turned_face_up` | A face-down permanent is turned face up; the subject is that permanent, face up. | ["When this creature is turned face up"](card-dsl-cookbook.md#when-this-creature-is-turned-face-up) |
 | `upkeep` | `upkeep` | At the beginning of the upkeep. | [Triggers](card-dsl.md#triggers) |
 | `wins_coin_flip` | `coin_flipped` | A player wins a coin flip (705); a lost flip fires nothing. | ["Whenever you win a coin flip"](card-dsl-cookbook.md#whenever-you-win-a-coin-flip) |
 | `you_attack` | `attackers_declared` | You attack with one or more creatures. | ["Whenever you attack"](card-dsl-cookbook.md#whenever-you-attack) |
@@ -504,6 +507,7 @@ The subset of the selector language a trigger's `filter` may use. The loader ref
 | `encoded_by` | Cards encoded on the named creature (cipher). | [Cipher — the third direction an exile link can point](card-dsl-cookbook.md#cipher--the-third-direction-an-exile-link-can-point) |
 | `entered_this_turn` | Entered the battlefield this turn. | [entered_this_turn — the same fact asked of one permanent](card-dsl.md#entered_this_turn--the-same-fact-asked-of-one-permanent) |
 | `exclude_self` | Not this permanent ("other"). | [Triggers](card-dsl.md#triggers) |
+| `face_down` | A permanent that is face down (`true`) or face up (`false`), 708.2; not in a static's filters, nor on a departure trigger. | ["Face-down creatures" — face_down](card-dsl-cookbook.md#face-down-creatures--face_down) |
 | `goaded` | Is (or is not) goaded, by anyone (701.38). | ["Goaded creatures" — goaded](card-dsl-cookbook.md#goaded-creatures--goaded) |
 | `has_counters` | Has counters on it: `true` any kind, or one named kind. | [has_counters — "with counters on them"](card-dsl.md#has_counters--with-counters-on-them) |
 | `haunted_by` | Haunted by the named card. | [Haunt — the exile link pointing the other way](card-dsl-cookbook.md#haunt--the-exile-link-pointing-the-other-way) |
@@ -511,20 +515,20 @@ The subset of the selector language a trigger's `filter` may use. The loader ref
 | `is_token` | Is (or is not) a token. | [Triggers](card-dsl.md#triggers) |
 | `keywords` | Has all of these keywords. | [Triggers](card-dsl.md#triggers) |
 | `mana_cost` | Printed mana cost is one of these. | [Triggers](card-dsl.md#triggers) |
-| `mana_value` | A comparison on mana value. | [Triggers](card-dsl.md#triggers) |
+| `mana_value` | A comparison on mana value, or its `parity`. | [Odd or even — parity](card-dsl-cookbook.md#odd-or-even--parity) |
 | `min_colors` | Has at least N colors ("multicolored"). | ["Multicolored" — min_colors](card-dsl.md#multicolored--min_colors) |
 | `not_supertypes` | Has none of these supertypes ("nonbasic"). | [Triggers](card-dsl.md#triggers) |
 | `not_types` | Has none of these card types ("noncreature"). | [Triggers](card-dsl.md#triggers) |
 | `owner` | Owned by `you`/`opponent`/`any` or a player spec. | [Triggers](card-dsl.md#triggers) |
 | `paid_by` | A spell paid with mana from the named source. | ["When that mana is spent to cast…"](card-dsl-cookbook.md#when-that-mana-is-spent-to-cast) |
-| `power` | A comparison on live power. | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
+| `power` | A comparison on live power, or its `parity` (`{"parity": "even"}`, zero even). | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
 | `self_only` | This permanent only. | [Triggers](card-dsl.md#triggers) |
 | `shares_a_creature_type_with` | Shares a creature type with the named object. | ["…that shares a creature type with this creature"](card-dsl-cookbook.md#that-shares-a-creature-type-with-this-creature) |
 | `shares_a_type_with_commander` | Shares a creature type with your commander. | ["…that shares a creature type with your commander"](card-dsl-cookbook.md#that-shares-a-creature-type-with-your-commander) |
 | `subtypes` | Has one of these subtypes. | [Triggers](card-dsl.md#triggers) |
 | `supertypes` | Has one of these supertypes. | [Triggers](card-dsl.md#triggers) |
 | `tapped` | Is (or is not) tapped. | [Triggers](card-dsl.md#triggers) |
-| `toughness` | A comparison on live toughness. | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
+| `toughness` | A comparison on live toughness, or its `parity`. | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
 | `types` | Has all of these card types. | [Triggers](card-dsl.md#triggers) |
 | `zone` | Which zone to look in. | [Triggers](card-dsl.md#triggers) |
 
@@ -953,12 +957,12 @@ The subset of the selector language a static's `affects` may use -- printed char
 | `owner` | Owned by `you`/`opponent`/`any` or a player spec. | [Static abilities](card-dsl.md#static-abilities) |
 | `paired` | Is paired (soulbond). | [Soulbond — a relationship that is not attachment](card-dsl-cookbook.md#soulbond--a-relationship-that-is-not-attachment) |
 | `paired_with_source` | Paired with the static's own source. | [Soulbond — a relationship that is not attachment](card-dsl-cookbook.md#soulbond--a-relationship-that-is-not-attachment) |
-| `power` | A comparison on live power. | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
+| `power` | A comparison on live power, or its `parity` (`{"parity": "even"}`, zero even). | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
 | `self_only` | This permanent only. | [Static abilities](card-dsl.md#static-abilities) |
 | `subtypes` | Has one of these subtypes. | [Static abilities](card-dsl.md#static-abilities) |
 | `supertypes` | Has one of these supertypes. | [Static abilities](card-dsl.md#static-abilities) |
 | `tapped` | Is (or is not) tapped. | [Static abilities](card-dsl.md#static-abilities) |
-| `toughness` | A comparison on live toughness. | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
+| `toughness` | A comparison on live toughness, or its `parity`. | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
 | `types` | Has all of these card types. | [Static abilities](card-dsl.md#static-abilities) |
 
 ## Static conditions
@@ -972,7 +976,7 @@ What a static's "as long as …" `condition` may ask. Defined under ["As long as
 | `cmp` | Compare `left` and `right` values with `op`. | ["As long as…"](card-dsl.md#as-long-as) |
 | `counters` | The source has (or lacks) counters of a kind. | ["As long as…"](card-dsl.md#as-long-as) |
 | `exists` | A selector finds at least one object. | ["As long as…"](card-dsl.md#as-long-as) |
-| `exists_derived` | A permanent with these current characteristics exists (cant_attack, cant_block only). | ["As long as…"](card-dsl.md#as-long-as) |
+| `exists_derived` | A permanent with these current characteristics exists (cant_attack, cant_block, cast_as_though_flash only). | ["As long as…"](card-dsl.md#as-long-as) |
 | `has_city_s_blessing` | The player has the city's blessing (ascend). | [Ascend](card-dsl-cookbook.md#ascend) |
 | `has_flag` | The source carries a word written by `set_flag`. | ["If this creature hasn't been exerted this turn"](card-dsl-cookbook.md#if-this-creature-hasnt-been-exerted-this-turn) |
 | `is_attached` | The source is attached to something. | ["As long as…"](card-dsl.md#as-long-as) |
@@ -1193,6 +1197,7 @@ Every `EventType` the engine emits, and which trigger events listen to it. An ev
 | `transformed` |  |  | [Triggers](card-dsl.md#triggers) |
 | `turn_began` |  |  | [Triggers](card-dsl.md#triggers) |
 | `turn_skipped` |  |  | [Triggers](card-dsl.md#triggers) |
+| `turned_face_up` | `turned_face_up` |  | [Triggers](card-dsl.md#triggers) |
 | `untapped` | `becomes_untapped` |  | [Triggers](card-dsl.md#triggers) |
 | `upkeep` | `upkeep` |  | [Triggers](card-dsl.md#triggers) |
 | `zone_change` |  |  | [Triggers](card-dsl.md#triggers) |

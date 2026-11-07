@@ -1558,6 +1558,10 @@
   "bayou_dragonfly": {
     "zone": "battlefield"
   },
+  "beanstalk_giant_fertile_footsteps": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "bear_cub": {
     "zone": "battlefield"
   },
@@ -2372,6 +2376,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "cackling_counterpart": {
+    "battlefield_count": 33,
+    "zone": "graveyard"
+  },
   "caelorna_coral_tyrant": {
     "zone": "battlefield"
   },
@@ -2962,6 +2970,13 @@
       "id": "wizard_0_1_b_noncreature_ping"
     },
     "zone": "graveyard"
+  },
+  "citanul_hierophants": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "city_of_brass": {
     "battlefield_count": 33,
@@ -4396,6 +4411,10 @@
     "zone": "graveyard"
   },
   "dismember": {
+    "zone": "graveyard"
+  },
+  "disorienting_choice": {
+    "opponent_battlefield_count": 5,
     "zone": "graveyard"
   },
   "dispatch": {
@@ -6795,6 +6814,14 @@
   "gigantosaurus": {
     "zone": "battlefield"
   },
+  "giggling_skitterspike": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "gilacorn": {
     "zone": "battlefield"
   },
@@ -7320,6 +7347,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "greater_tanuki": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "greatsword": {
     "zone": "battlefield"
   },
@@ -7421,6 +7452,16 @@
   },
   "groundskeeper": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "growing_dread": {
+    "battlefield_count": 34,
+    "graveyard_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 38
+    },
     "zone": "battlefield"
   },
   "gruesome_deformity": {
@@ -8214,6 +8255,10 @@
     "zone": "battlefield"
   },
   "hussar_patrol": {
+    "zone": "battlefield"
+  },
+  "hydra_omnivore": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "hydra_troopers": {
@@ -9100,6 +9145,17 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "kefnet_the_mindful": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "flying",
+        "indestructible"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "keiga_the_tide_star": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -9149,6 +9205,20 @@
   },
   "kher_keep": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "kheru_spellsnatcher": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "kianne_corrupted_memory": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "killian_decisive_mentor": {
@@ -13335,6 +13405,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "rashmi_eternities_crafter": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "raucous_audience": {
     "zone": "battlefield"
   },
@@ -13730,6 +13807,13 @@
     "life": {
       "0": 46
     }
+  },
+  "retreat_to_coralhelm": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "retreat_to_kazandu": {
     "zone": "battlefield"
@@ -14265,6 +14349,10 @@
     "zone": "battlefield"
   },
   "sandsteppe_citadel": {
+    "zone": "battlefield"
+  },
+  "sandwurm_convergence": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "sangrite_backlash": {
@@ -15071,6 +15159,10 @@
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
+  "shriekwood_devourer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "shrike_force": {
     "zone": "battlefield"
   },
@@ -15321,6 +15413,13 @@
   },
   "sixth_sense": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "skaab_ruinator": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 0
+    },
     "zone": "battlefield"
   },
   "skeletal_crocodile": {
@@ -17030,6 +17129,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "temur_war_shaman": {
+    "battlefield_count": 34,
+    "library_size": {
+      "0": 39
+    },
+    "zone": "battlefield"
+  },
   "tendershoot_dryad": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -17335,6 +17441,19 @@
     },
     "zone": "battlefield"
   },
+  "they_came_from_the_pipes": {
+    "battlefield_count": 35,
+    "graveyard_size": {
+      "0": 4
+    },
+    "hand_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 34
+    },
+    "zone": "battlefield"
+  },
   "thickest_in_the_thicket": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -17527,6 +17646,13 @@
     "zone": "battlefield"
   },
   "thunderclap_drake": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "thunderfoot_baloth": {
     "battlefield_count": 33,
     "hand_size": {
       "0": 1
@@ -17836,6 +17962,10 @@
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
   },
+  "trail_of_mystery": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "trailblazer_s_boots": {
     "zone": "battlefield"
   },
@@ -18009,6 +18139,11 @@
     "zone": "battlefield"
   },
   "trusty_machete": {
+    "zone": "battlefield"
+  },
+  "trygon_predator": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
   "tundra": {
@@ -19435,6 +19570,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "whisperwood_elemental": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "white_auracite": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 5,
@@ -19518,6 +19657,10 @@
     "zone": "battlefield"
   },
   "wild_wanderer": {
+    "zone": "battlefield"
+  },
+  "wilderness_reclamation": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "wildslayer_elves": {
@@ -20059,6 +20202,15 @@
   "zimone_quandrix_prodigy": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "zimone_s_hypothesis": {
+    "battlefield_count": 31,
+    "hand_size": {
+      "0": 2,
+      "1": 1
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
   },
   "zodiac_dog": {
     "zone": "battlefield"

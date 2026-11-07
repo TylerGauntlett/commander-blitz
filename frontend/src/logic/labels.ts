@@ -405,6 +405,10 @@ export function describeEvent(
     // the board becomes a different card with nothing in the log to say why.
     case "transformed":
       return `${card ?? "A permanent"} transforms`;
+    // A face-down permanent turned face up (morph, manifest). No zone change
+    // either, and this is the moment "when this is turned face up" triggers off.
+    case "turned_face_up":
+      return `${who} ${v("turn", "turns")} ${card ?? "a permanent"} face up`;
     /*
      * The crown changing hands.
      *

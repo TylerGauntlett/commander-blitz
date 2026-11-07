@@ -1087,6 +1087,13 @@ LIBRARY_TOP_CAST_FILTER_KEYS = (SPELL_FILTER_KEYS - {"controller"}) | {"power", 
 #: Keys a *static* ability's filter may use.  Deliberately smaller than the full
 #: selector language: static filters are matched against printed characteristics
 #: so that no static can depend on another static's output.
+#:
+#: ``face_down`` is not here, though no layer writes it. These filters read a
+#: face-down permanent's printed face -- the hidden card -- so beside `types` it
+#: would answer about the card and not the 2/2 shell (708.2); and `chars`
+#: returns the shell before any static applies, so an `affects` naming
+#: face-down permanents would load and reach none. Admitting it means reading
+#: the shell in `characteristics._matches` and every reader below first.
 STATIC_FILTER_KEYS = frozenset(
     {
         "exclude_self",
@@ -1448,11 +1455,12 @@ STATIC_CONDITION_HEADS = (
 
 #: The static effects whose condition may read *derived* characteristics
 #: (`exists_derived`). Their readers -- `player_statics.attack_forbidden` and
-#: `block_forbidden` -- ask at declaration, one creature at a time and outside
-#: the characteristics pipeline, so the derived board is finished when they
-#: look at it. A layered static reading it would read another static's output,
-#: which ADR 0001 refuses.
-STATIC_DERIVED_CONDITION_EFFECTS = frozenset({"cant_attack", "cant_block"})
+#: `block_forbidden` at declaration, one creature at a time, and
+#: `player_casts_as_though_flash` at cast legality -- ask outside the
+#: characteristics pipeline, so the derived board is finished when they look at
+#: it. A layered static reading it would read another static's output, which
+#: ADR 0001 refuses.
+STATIC_DERIVED_CONDITION_EFFECTS = frozenset({"cant_attack", "cant_block", "cast_as_though_flash"})
 
 #: Each word a static's ``defending`` may take, and the one effect it is a
 #: clause of. Read relative to the static's controller by

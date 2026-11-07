@@ -34,11 +34,13 @@ from .characteristics import (
     creature_types_of,
     enchanted_by,
     enchanted_by_answer,
+    face_down_face,
     granted_abilities,
     granted_ability_origin,
     granted_wards,
     has_counters_matches,
     has_keyword,
+    parity_matches,
     resolve_chosen_subtypes,
 )
 from .characteristics import _matches as _static_matches
@@ -187,6 +189,21 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: the one carrying the ability, so `source: "self"` means this creature.
     "mutates": EventType.MUTATED,
     "becomes_monstrous": EventType.BECAME_MONSTROUS,
+    #: "When this creature is turned face up, …" (Kheru Spellsnatcher) with
+    #: `source: "self"`, and "Whenever a permanent you control is turned face
+    #: up, …" (Trail of Mystery, Temur War Shaman, Deathmist Raptor from the
+    #: graveyard) with `controller: "you"`. One event per permanent turned up
+    #: by morph, megamorph or manifest (702.37e, 701.34a), fired by
+    #: `Game._turn_face_up`, the one place a permanent is turned face up.
+    #:
+    #: The subject is the permanent (see `OBJECT_SUBJECT_TRIGGERS`), read after
+    #: the shell is gone, so a `filter` asks what the card *is* rather than
+    #: what the 2/2 was, and `{"binding": "subject"}` is "it".
+    #:
+    #: `self_enters` and `permanent_enters` are the near misses and fire on the
+    #: wrong moment: the permanent entered face down, long before, and turning
+    #: it up is not entering (708.8). `counter_placed` catches megamorph alone.
+    "turned_face_up": EventType.TURNED_FACE_UP,
     #: "When this Class becomes level 2" (716.4). Always `source: "self"` --
     #: the loader supplies it -- and always with the `level` it waits for, which
     #: is compared against the event exactly as `chapter` is.
@@ -492,6 +509,9 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         # newcomer's printed trigger is answered by the host's oid.
         "mutates",
         "becomes_monstrous",
+        # The permanent turned face up, so `source: "self"` is "when *this*
+        # creature is turned face up" and a filter asks about the face-up card.
+        "turned_face_up",
         # The Class whose level changed, so the supplied `source: "self"` means
         # *this* Class and not every Class on the table.
         "becomes_level",
@@ -2039,6 +2059,7 @@ TRIGGER_FILTER_KEYS = frozenset(
         "tapped",
         "has_counters",
         "goaded",
+        "face_down",
         "enchanted_by",
         "entered_this_turn",
         "attacking_player",
@@ -2103,6 +2124,26 @@ def validate_trigger_filter(filt: Mapping[str, Any] | None, where: str) -> None:
             validate_trigger_filter(branch, here)
 
 
+def validate_face_down_trigger(event: str, filt: Mapping[str, Any] | None, where: str) -> None:
+    """Refuse ``face_down`` in the filter of a trigger on a departure.
+
+    "Whenever a face-down creature dies" is asked of a permanent that has
+    already left, and `reset_permanent_state` cleared `face_down` on its way
+    out (it is revealed as it leaves, 708.9). Read live, ``true`` would never
+    fire and ``false`` would fire for every creature, so the key is refused on
+    the `LOOK_BACK_EVENTS` rather than answered wrongly. Arrivals and every
+    event about a permanent still in play read it as it stands.
+    """
+    if TRIGGER_EVENTS.get(event) not in LOOK_BACK_EVENTS or not filt:
+        return
+    branches = [filt, *(b for b in filt.get("any_of") or () if isinstance(b, Mapping))]
+    if any("face_down" in branch for branch in branches):
+        raise DslError(
+            f"{where}: 'face_down' cannot be read on {event!r} -- the permanent "
+            f"has left the battlefield, revealed (708.9), before the filter is asked"
+        )
+
+
 def matches_card_filter(
     state: GameState,
     oid: int,
@@ -2124,6 +2165,13 @@ def matches_card_filter(
     if obj is None:
         return False
     card = state.card_of(obj)
+    # 708.2: a face-down permanent is the 2/2 shell, whatever card is under it,
+    # to every key below that reads the face -- "a face-down **creature**
+    # enters" matches a manifested land, and "whenever a land enters" does not.
+    # `card_of` answers with the hidden card because turning it up needs it.
+    face_down = obj.face_down and obj.on_battlefield
+    if face_down:
+        card = face_down_face(card)
 
     # "…a creature spell of the chosen type." The same substitution the static
     # filters do, because Vanquisher's Banner asks the question from both.
@@ -2377,6 +2425,14 @@ def matches_card_filter(
     # `goaders` reads the goad op's mark and the `goaded` static alike.
     if "goaded" in filt and bool(goaders(state, oid)) != bool(filt["goaded"]):
         return False
+    # "Whenever a **face-down** creature you control enters" (They Came from
+    # the Pipes, Trail of Mystery). Live object state, sound for `tapped`'s
+    # reason: `zones._enter_battlefield` marks a morph or a manifest face down
+    # before it fires ENTERS_BATTLEFIELD, so the arrival is heard as what it
+    # is. Never on a departure, where the flag is already cleared: the loader
+    # refuses the key on those events (`validate_face_down_trigger`).
+    if "face_down" in filt and face_down != bool(filt["face_down"]):
+        return False
     # "…creatures **enchanted by an Aura you control**" -- live board state,
     # sound for `goaded`'s reason: asked once, as the event fires, about a
     # creature that is still on the battlefield. "You" is the ability's
@@ -2419,7 +2475,10 @@ def matches_card_filter(
     # `SELECTOR_KEYS`, so a key this function did not read would load and
     # trigger on every cost.
     wanted_cost = filt.get("mana_cost")
-    if wanted_cost is not None and not has_printed_cost(state, oid, wanted_cost):
+    if wanted_cost is not None and (
+        face_down or not has_printed_cost(state, oid, wanted_cost)
+    ):
+        # The shell has no mana cost at all (708.2), so it has none of them.
         return False
     # Power and toughness are read off the board when the subject is still on
     # it, and off the printed face otherwise. Everything above this line is a
@@ -2486,6 +2545,8 @@ def _origin_matches(
 
 
 def _compare(value: int, spec: Mapping[str, Any]) -> bool:
+    if (parity := parity_matches(value, spec)) is not None:
+        return parity
     op = spec.get("op", ">=")
     other = spec.get("value", 0)
     if isinstance(other, Mapping):

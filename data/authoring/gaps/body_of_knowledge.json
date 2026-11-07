@@ -1,0 +1,18 @@
+{
+  "card_id": "body_of_knowledge",
+  "name": "Body of Knowledge",
+  "oracle_text": "Body of Knowledge's power and toughness are each equal to the number of cards in your hand.\nYou have no maximum hand size.\nWhenever this creature is dealt damage, draw that many cards.",
+  "blocked_sentences": [
+    "Body of Knowledge's power and toughness are each equal to the number of cards in your hand."
+  ],
+  "needs": [
+    {
+      "capability": "cards_in_hand_static_value",
+      "kind": "value",
+      "what": "`cards_in_hand` (the number of cards in a player's hand, here \"you\") as a static value leaf, so a characteristic-defining `set_pt` static with `affects: {self_only: true}` can set power and toughness to it continuously as the hand changes",
+      "why_existing_wont_do": "`cards_in_hand` exists in `value_keys` (one-shot effect amounts) but not in `static_value_keys`, and a static magnitude outside that list is a load error; `count` reads permanents on the battlefield, not cards in hand, and a one-shot `set_pt`/`pump` would not track the hand size"
+    }
+  ],
+  "closest_existing": ["set_pt", "cards_in_hand", "count"],
+  "confidence": "high"
+}

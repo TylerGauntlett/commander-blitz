@@ -1,0 +1,161 @@
+{
+  "_comment": "Shapes for tests/unit/triggers/test_turned_face_up.py. t_tfu_snatcher is Kheru Spellsnatcher's 'When this creature is turned face up' on a cheap morph, reduced to a bare draw so the test measures the trigger and not the counterspell. t_tfu_dread is Growing Dread's 'Whenever you turn a permanent face up, put a +1/+1 counter on it'. t_tfu_beast_trail narrows the same trigger with a subtype filter, so a test can show the filter reads the face-up card rather than the 2/2 shell. t_tfu_raptor is Deathmist Raptor's graveyard watcher, reduced to a draw.",
+  "cards": [
+    {
+      "id": "t_tfu_snatcher",
+      "name": "Test Face-Up Snatcher",
+      "oracle_text": "When this creature is turned face up, draw a card.\nMorph {G} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)",
+      "mana_cost": "{2}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Wizard"
+      ],
+      "power": 2,
+      "toughness": 3,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "morph": "{G}",
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature is turned face up, draw a card.",
+          "trigger": {
+            "event": "turned_face_up",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_tfu_dread",
+      "name": "Test Face-Up Dread",
+      "oracle_text": "Whenever you turn a permanent face up, put a +1/+1 counter on it.",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you turn a permanent face up, put a +1/+1 counter on it.",
+          "trigger": {
+            "event": "turned_face_up",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": {
+                "const": 1
+              },
+              "objects": {
+                "binding": "subject",
+                "zone": "battlefield"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_tfu_beast_trail",
+      "name": "Test Beast Trail",
+      "oracle_text": "Whenever a Beast you control is turned face up, draw a card.",
+      "mana_cost": "{G}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a Beast you control is turned face up, draw a card.",
+          "trigger": {
+            "event": "turned_face_up",
+            "controller": "you",
+            "filter": {
+              "subtypes": [
+                "Beast"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_tfu_raptor",
+      "name": "Test Graveyard Raptor",
+      "oracle_text": "Whenever a permanent you control is turned face up, draw a card. This ability triggers only while this card is in your graveyard.",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Dinosaur"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "active_zones": [
+            "graveyard"
+          ],
+          "text": "Whenever a permanent you control is turned face up, draw a card.",
+          "trigger": {
+            "event": "turned_face_up",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
