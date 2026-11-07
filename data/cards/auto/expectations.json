@@ -346,6 +346,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "alchemist_s_talent": {
+    "battlefield_count": 35,
+    "tokens": {
+      "count": 2,
+      "id": "treasure_token"
+    },
+    "zone": "battlefield"
+  },
   "alena_kessig_trapper": {
     "zone": "battlefield"
   },
@@ -1691,6 +1699,10 @@
     },
     "zone": "graveyard"
   },
+  "berserkers_onslaught": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "bespoke_battlewagon": {
     "battlefield_count": 33,
     "hand_size": {
@@ -2265,6 +2277,10 @@
     "zone": "graveyard"
   },
   "brightblade_stoat": {
+    "zone": "battlefield"
+  },
+  "brightcap_badger_fungus_frolic": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "brilliant_plan": {

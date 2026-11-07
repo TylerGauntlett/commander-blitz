@@ -5842,12 +5842,12 @@
     },
     "Alchemist's Talent": {
       "edhrec_rank": 2203,
-      "gate": "template",
+      "gate": null,
       "name": "Alchemist's Talent",
-      "reason": "no template for: {1}{R}: Level 2",
+      "reason": "",
       "scryfall_id": "2fb8dace-c604-40fc-bbd4-5add5deb041a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Alchemist's Vial": {
@@ -24122,12 +24122,12 @@
     },
     "Berserkers' Onslaught": {
       "edhrec_rank": 2335,
-      "gate": "template",
+      "gate": null,
       "name": "Berserkers' Onslaught",
-      "reason": "no template for: Attacking creatures you control have double strike",
+      "reason": "",
       "scryfall_id": "83c64ec3-ad6d-45d8-a44a-fd557d1ad2bf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Berta, Wise Extrapolator": {
@@ -34232,12 +34232,12 @@
     },
     "Brightcap Badger // Fungus Frolic": {
       "edhrec_rank": 3467,
-      "gate": "template",
+      "gate": null,
       "name": "Brightcap Badger // Fungus Frolic",
-      "reason": "no template for: Each Fungus and Saproling you control has \"{T}: Add {G}.\"",
+      "reason": "",
       "scryfall_id": "0e843102-b8cc-4bc8-872e-79924197f4cc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Brightclimb Pathway // Grimclimb Pathway": {

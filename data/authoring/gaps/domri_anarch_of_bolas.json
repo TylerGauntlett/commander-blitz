@@ -1,0 +1,18 @@
+{
+  "card_id": "domri_anarch_of_bolas",
+  "name": "Domri, Anarch of Bolas",
+  "oracle_text": "Creatures you control get +1/+0.\n+1: Add {R} or {G}. Creature spells you cast this turn can't be countered.\n−2: Target creature you control fights target creature you don't control.",
+  "blocked_sentences": [
+    "+1: Add {R} or {G}. Creature spells you cast this turn can't be countered."
+  ],
+  "needs": [
+    {
+      "capability": "uncounterable_this_turn",
+      "kind": "op",
+      "what": "a one-shot effect op that, on resolution, creates a player-scoped continuous effect lasting until end of turn: spells matching a filter (here creature spells) that the controller casts this turn can't be countered. It must outlive its source, so it keeps working if Domri leaves the battlefield after the ability resolves",
+      "why_existing_wont_do": "`spells_cant_be_countered` exists only as a static ability, read from permanents on the battlefield (`_shielded_by_a_static`), with no duration, so it would last only while Domri is out and forever rather than this turn. Static conditions have no `has_turn_flag`, so a `set_turn_flag` plus conditioned static cannot gate it either. `mana_uncounterable` covers only the spell this ability's mana pays for, and it is a mana-ability key; a loyalty ability is not a mana ability, and the printed text covers every creature spell cast this turn regardless of how it was paid for. The card-level `uncounterable` rider is the card about itself"
+    }
+  ],
+  "closest_existing": ["spells_cant_be_countered", "mana_uncounterable", "set_turn_flag"],
+  "confidence": "high"
+}
