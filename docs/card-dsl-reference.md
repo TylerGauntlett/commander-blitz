@@ -11,12 +11,12 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | Family | Count |
 |---|---|
 | [Effect ops](#effect-ops) | 169 |
-| [Selectors](#selectors) | 74 |
+| [Selectors](#selectors) | 75 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 69 |
 | [Conditions](#conditions) | 34 |
 | [Trigger events](#trigger-events) | 50 |
-| [Trigger filters](#trigger-filters) | 36 |
+| [Trigger filters](#trigger-filters) | 37 |
 | [Static effects](#static-effects) | 94 |
 | [Player-wide statics](#player-wide-statics) | 45 |
 | [Grantable statics](#grantable-statics) | 43 |
@@ -252,6 +252,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `exclude_self` | Not this permanent ("other"). | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `exiled_with` | Exiled with the named source. | [Targeting a card in exile](card-dsl-cookbook.md#targeting-a-card-in-exile) |
 | `extreme` | The greatest/least of power, toughness or mana value in the pool. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
+| `face_down` | A permanent that is face down (`true`) or face up (`false`), 708.2; not in a static's filters, nor on a departure trigger. | ["Face-down creatures" — face_down](card-dsl-cookbook.md#face-down-creatures--face_down) |
 | `goaded` | Is (or is not) goaded, by anyone (701.38). | ["Goaded creatures" — goaded](card-dsl-cookbook.md#goaded-creatures--goaded) |
 | `has_counters` | Has counters on it: `true` any kind, or one named kind. | [has_counters — "with counters on them"](card-dsl.md#has_counters--with-counters-on-them) |
 | `haunted_by` | Haunted by the named card. | [Haunt — the exile link pointing the other way](card-dsl-cookbook.md#haunt--the-exile-link-pointing-the-other-way) |
@@ -505,6 +506,7 @@ The subset of the selector language a trigger's `filter` may use. The loader ref
 | `encoded_by` | Cards encoded on the named creature (cipher). | [Cipher — the third direction an exile link can point](card-dsl-cookbook.md#cipher--the-third-direction-an-exile-link-can-point) |
 | `entered_this_turn` | Entered the battlefield this turn. | [entered_this_turn — the same fact asked of one permanent](card-dsl.md#entered_this_turn--the-same-fact-asked-of-one-permanent) |
 | `exclude_self` | Not this permanent ("other"). | [Triggers](card-dsl.md#triggers) |
+| `face_down` | A permanent that is face down (`true`) or face up (`false`), 708.2; not in a static's filters, nor on a departure trigger. | ["Face-down creatures" — face_down](card-dsl-cookbook.md#face-down-creatures--face_down) |
 | `goaded` | Is (or is not) goaded, by anyone (701.38). | ["Goaded creatures" — goaded](card-dsl-cookbook.md#goaded-creatures--goaded) |
 | `has_counters` | Has counters on it: `true` any kind, or one named kind. | [has_counters — "with counters on them"](card-dsl.md#has_counters--with-counters-on-them) |
 | `haunted_by` | Haunted by the named card. | [Haunt — the exile link pointing the other way](card-dsl-cookbook.md#haunt--the-exile-link-pointing-the-other-way) |

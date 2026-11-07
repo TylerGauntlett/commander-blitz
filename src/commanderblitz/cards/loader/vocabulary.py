@@ -1087,6 +1087,13 @@ LIBRARY_TOP_CAST_FILTER_KEYS = (SPELL_FILTER_KEYS - {"controller"}) | {"power", 
 #: Keys a *static* ability's filter may use.  Deliberately smaller than the full
 #: selector language: static filters are matched against printed characteristics
 #: so that no static can depend on another static's output.
+#:
+#: ``face_down`` is not here, though no layer writes it. These filters read a
+#: face-down permanent's printed face -- the hidden card -- so beside `types` it
+#: would answer about the card and not the 2/2 shell (708.2); and `chars`
+#: returns the shell before any static applies, so an `affects` naming
+#: face-down permanents would load and reach none. Admitting it means reading
+#: the shell in `characteristics._matches` and every reader below first.
 STATIC_FILTER_KEYS = frozenset(
     {
         "exclude_self",

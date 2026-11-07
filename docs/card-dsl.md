@@ -2379,6 +2379,17 @@ state: a card in a graveyard has a printed P/T, but no printed line asks a
 counting filter about it yet, and `static_zone_filter_keys` stays the list of
 what a card outside the battlefield actually has.
 
+#### `face_down` — board state the static filters refuse
+
+Face-down status is board state no layer writes, so `tapped`'s licence would
+admit it; it stays out of the static filter language for a different reason.
+Those filters match a face-down permanent against its **printed** face, which
+is the hidden card, so `{"face_down": true, "types": ["Creature"]}` would miss
+a manifested land; and `chars` returns the 2/2 shell before any static applies,
+so an `affects` naming face-down permanents would never reach one. The selector
+and trigger filters, which see the shell, take the key:
+["Face-down creatures" — `face_down`](card-dsl-cookbook.md#face-down-creatures--face_down).
+
 ### Counting the mana that was actually spent
 
 `{"colors_of_mana_spent": true}` is sunburst and converge, and it reads how a

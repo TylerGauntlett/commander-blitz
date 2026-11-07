@@ -88,7 +88,7 @@ from typing import TYPE_CHECKING, Any
 from .carddef import Ability, CardDef, ward_ability
 from .enums import KEYWORD_COUNTERS, SUBTYPE_CLASS, Keyword, Zone
 from .errors import DslError
-from .mana import ManaOrigin, printed_cost_is
+from .mana import ManaCost, ManaOrigin, printed_cost_is
 from .objects import ANY_COUNTER_KIND, PLUS_ONE, TIME_COUNTER, GameObject, pt_counter
 from .structs import PROTECTION_COLORLESS, PROTECTION_EVERYTHING, Characteristics
 from .text_change import apply_to_ability
@@ -231,6 +231,31 @@ FACE_DOWN_CHARS = Characteristics(
     keywords=frozenset(),
     colors=frozenset(),
 )
+
+
+def face_down_face(card: CardDef) -> CardDef:
+    """``card`` as a reader of printed faces must see it while it is face down.
+
+    `FACE_DOWN_CHARS` written onto the card: a 2/2 Creature with no name, no
+    mana cost, no colour, no subtypes, supertypes or keywords (708.2). For the
+    filters that read a card face rather than `chars` -- a trigger filter does,
+    because its subject is often gone -- so "a face-down creature enters" and
+    "whenever a land enters" both see the shell a manifested land is, not the
+    land underneath it.
+    """
+    return dataclasses.replace(
+        card,
+        name="",
+        mana_cost=ManaCost(),
+        melded_mana_value=None,
+        power=FACE_DOWN_CHARS.power,
+        toughness=FACE_DOWN_CHARS.toughness,
+        types=FACE_DOWN_CHARS.types,
+        subtypes=FACE_DOWN_CHARS.subtypes,
+        supertypes=FACE_DOWN_CHARS.supertypes,
+        keywords=FACE_DOWN_CHARS.keywords,
+        colors=FACE_DOWN_CHARS.colors,
+    )
 
 
 def last_exiled_creature_card(state: GameState, source: GameObject) -> GameObject | None:

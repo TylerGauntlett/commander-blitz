@@ -3985,6 +3985,59 @@ counter on it" rider adds to it rather than racing it.
 moment: the permanent entered face down, and turning it up is not entering
 (708.8). `counter_placed` catches megamorph alone and misses morph and manifest.
 
+## "Face-down creatures" — `face_down`
+
+```jsonc
+// They Came from the Pipes — "Whenever a face-down creature you control
+// enters, draw a card."
+{ "kind": "triggered",
+  "trigger": { "event": "permanent_enters", "controller": "you",
+               "filter": { "types": ["Creature"], "face_down": true } },
+  "effects": [ { "op": "draw", "amount": { "const": 1 } } ] }
+
+// Glitch Interpreter — "When this creature enters, if you control no
+// face-down permanents, …"
+{ "kind": "triggered",
+  "trigger": { "event": "self_enters", "source": "self",
+               "condition": { "not": { "exists": {
+                 "zone": "battlefield", "controller": "you", "face_down": true } } } },
+  "effects": [ … ] }
+
+// Whisperwood Elemental — "face-up nontoken creatures you control gain …"
+{ "op": "grant_ability", "duration": "end_of_turn", …,
+  "objects": { "zone": "battlefield", "controller": "you", "types": ["Creature"],
+               "is_token": false, "face_down": false, "count": "all" } }
+```
+
+`face_down` is a selector and trigger-filter key: `true` matches a permanent
+that is face down (708.2) — morphed, megamorphed, manifested or cloaked — and
+`false` one that is face up. It is a boolean, and it asks about a permanent:
+the loader refuses any other value, and refuses the key beside a `zone` that is
+not the battlefield, where a card is neither.
+
+The rest of the filter sees the **2/2 shell**. A selector on the battlefield
+reads `chars`, and a trigger filter reads a card face that is the shell while
+the permanent is face down (`characteristics.face_down_face`): a Creature with
+no name, colour, subtypes, keywords or mana cost. So `types: ["Creature"]`
+matches a manifested land, `types: ["Land"]` does not, and a subtype filter
+never matches a face-down permanent.
+
+A morph or manifest **enters** face down: it is marked before the enters event
+fires, so "a face-down creature enters" hears it, landfall does not hear a
+manifested land, and the hidden card's own "when this enters" stays silent,
+because the shell has no abilities. Turning it face up is not entering (708.8);
+that is the `turned_face_up` event.
+
+Two places refuse the key:
+
+| | |
+|---|---|
+| a static's filters — `affects`, `blockers`, `targeting`, `damage_source`, `cause_filter`, cost reductions, counting conditions | They match a permanent's **printed** face, which for a face-down permanent is the hidden card, so the shell's type line is not what they would see; and `chars` returns the shell before any static applies, so an `affects` naming face-down permanents would never reach one |
+| a trigger on a departure — `dies`, `creature_dies`, `leaves_battlefield`, `sacrificed` | The filter is asked after the permanent has left and been revealed (708.9), when nothing is face down |
+
+`is_token: false` is the near miss for "face-up nontoken": it keeps every
+manifest, which is a card and not a token.
+
 ## Cipher — the third direction an exile link can point
 
 ```jsonc
