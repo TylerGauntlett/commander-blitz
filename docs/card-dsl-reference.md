@@ -13,7 +13,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Effect ops](#effect-ops) | 171 |
 | [Selectors](#selectors) | 76 |
 | [Player specs](#player-specs) | 9 |
-| [Values](#values) | 69 |
+| [Values](#values) | 70 |
 | [Conditions](#conditions) | 34 |
 | [Trigger events](#trigger-events) | 51 |
 | [Trigger filters](#trigger-filters) | 37 |
@@ -345,6 +345,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `counters_put_this_turn` | Counters the player put on permanents this turn, by recipient types, kind or one recipient (`on`). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `creatures_died_this_turn` | Creatures that died this turn (morbid). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `creatures_you_control` | Creatures the player controls. | [Value expressions](card-dsl.md#value-expressions) |
+| `damage_dealt_to_this_turn` | Damage dealt this turn to one permanent (`to`, an object reference), by sources a player spec (`by`) controlled as it was dealt; readable after the permanent has left. | ["…damage dealt to Grothama this turn by sources they controlled"](card-dsl.md#damage-dealt-to-grothama-this-turn-by-sources-they-controlled) |
 | `damage_taken_this_turn` | Damage the player was dealt this turn, summed over a plural spec (bloodthirst). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `distinct` | Distinct values of a quality among a pool (domain, coven, delirium, colors, kinds of counters, names). | [Counting different values rather than objects](card-dsl.md#counting-different-values-rather-than-objects) |
 | `extreme_value` | The greatest/least of a quality in a pool, as one number. | [Value expressions](card-dsl.md#value-expressions) |

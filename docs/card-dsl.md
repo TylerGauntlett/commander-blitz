@@ -3850,6 +3850,33 @@ and keep their count.
 | `set_turn_flag` / `has_turn_flag` written by the trigger | Remembers only the taps this trigger saw, so a creature tapped before the Captain entered, or while its trigger was not armed, is untapped on its second tap |
 | `max_per_turn: 1` | Caps the *ability's* firings across every creature, so the second creature tapped in a turn is never untapped |
 
+### "…damage dealt to Grothama this turn by sources they controlled"
+
+```jsonc
+// Grothama, All-Devouring: "When Grothama leaves the battlefield, each player
+// draws cards equal to the amount of damage dealt to Grothama this turn by
+// sources they controlled."
+"trigger": { "event": "leaves_battlefield", "source": "self" },
+"effects": [ { "op": "for_each_player", "players": "each_player", "effects": [
+  { "op": "draw", "player": { "binding": "each_player" },
+    "amount": { "damage_dealt_to_this_turn": {
+      "to": { "self": true }, "by": { "binding": "each_player" } } } } ] } ]
+```
+
+`damage_dealt_to_this_turn` is the damage dealt this turn to **one permanent**,
+read off `TurnLedger.damage_to_permanents`. `to` is an object reference, the
+shape `times_tapped_this_turn` takes; `by` is a player spec naming whose sources
+count, and omitted counts every source. Each amount is filed under the source's
+controller **as the damage was dealt** and is the damage actually dealt, after
+prevention and replacement (120.3, 608.2h): a creature stolen afterwards does not
+move its blow to the thief, and a prevented blow is not there at all.
+
+The ledger is keyed by oid and outlives the permanent's marked damage, which
+`reset_permanent_state` wipes on the way out, so the permanent's own
+leaves-the-battlefield trigger reads it. It is cleared for an oid when that oid
+next **enters** the battlefield (400.7), and at cleanup with the rest of the
+turn. `damage_taken_this_turn` is the near miss and counts damage to players.
+
 ### Counting different values rather than objects
 
 `{"distinct": …}` is domain, coven and delirium, and they are one leaf rather

@@ -965,6 +965,8 @@ class GameState:
             # `TurnLedger.players_dealt_combat_damage_by` for the
             # last-known-information case that ordering keeps.
             ledger.players_dealt_combat_damage_by.pop(data.get("oid"), None)
+            # Nothing has damaged a new object either.
+            ledger.damage_to_permanents.pop(data.get("oid"), None)
             if obj is not None:
                 c = chars(self, obj.oid)
                 ledger.permanents_entered.append(
@@ -1004,6 +1006,13 @@ class GameState:
                 # count every burn spell twice -- and doing it only here was
                 # already wrong for infect, which deals damage to a player and
                 # costs them no life at all.
+            elif data.get("to") == "permanent" and data.get("oid") is not None:
+                # Grothama's "by sources they controlled": split by the
+                # source's controller as the damage is dealt, which is now.
+                dealt_by = self.objects.get(event.source) if event.source is not None else None
+                dealer = dealt_by.controller if dealt_by is not None else None
+                split = ledger.damage_to_permanents.setdefault(int(data["oid"]), {})
+                split[dealer] = split.get(dealer, 0) + int(data.get("amount") or 0)
         elif event.type == EventType.COMBAT_DAMAGE_TO_PLAYER:
             # Prowl. Recorded here rather than at the primitive for the reason
             # every other tally is, and read off *derived* subtypes while the

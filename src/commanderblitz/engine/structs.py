@@ -2109,6 +2109,26 @@ class TurnLedger:
     #: loses the type afterwards still dealt the damage as one. Never cleared
     #: per oid -- the record is about the damage, not about any object.
     players_dealt_combat_damage_by_subtype: dict[str, set[int]] = field(default_factory=dict)
+    #: Damage dealt to each **permanent** this turn, split by who controlled
+    #: the source: victim oid -> {source controller: amount}. "Each player
+    #: draws cards equal to the amount of damage dealt to Grothama this turn
+    #: by sources they controlled" -- Grothama, All-Devouring, which asks as
+    #: Grothama leaves the battlefield and its marked damage goes with it.
+    #:
+    #: Folded off DAMAGE_DEALT, which `damage_permanent` fires only for damage
+    #: actually dealt -- after prevention and replacement, wither's -1/-1
+    #: counters and damage to a planeswalker or battle included (120.3). The
+    #: controller is the source's as the damage is dealt (120.1, 608.2h), read
+    #: off the object then, so a creature stolen later in the turn does not
+    #: carry its damage across; ``None`` for damage with no source object.
+    #: `GameState.damage_ledger` is the near miss: it records who, never how
+    #: much.
+    #:
+    #: Cleared for an oid when that oid **enters** the battlefield, the
+    #: `players_dealt_combat_damage_by` rule: a permanent that comes back is a
+    #: new object nothing has damaged (400.7), while a leaves-the-battlefield
+    #: trigger of the old one still reads what was dealt to it.
+    damage_to_permanents: dict[int, dict[int | None, int]] = field(default_factory=dict)
     #: Damage dealt to each player this turn.
     damage_taken: dict[int, int] = field(default_factory=dict)
     #: Life *lost* by each player this turn, which is the wider question: a
@@ -2443,6 +2463,7 @@ class TurnLedger:
         self.taps_by_permanent.clear()
         self.players_dealt_combat_damage_by.clear()
         self.players_dealt_combat_damage_by_subtype.clear()
+        self.damage_to_permanents.clear()
         self.damage_taken.clear()
         self.life_lost.clear()
         self.life_gained.clear()

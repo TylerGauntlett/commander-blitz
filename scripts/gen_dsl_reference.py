@@ -643,6 +643,8 @@ VALUES: dict[str, Entry] = {
     "modified_creatures_died_this_turn": ("Creatures that died this turn while modified (700.9).", H_LEDGER),
     "creatures_you_control": ("Creatures the player controls.", None),
     "damage_taken_this_turn": ("Damage the player was dealt this turn, summed over a plural spec (bloodthirst).", H_LEDGER),
+    "damage_dealt_to_this_turn": ("Damage dealt this turn to one permanent (`to`, an object reference), by sources a player spec (`by`) controlled as it was dealt; readable after the permanent has left.",
+                                  '"…damage dealt to Grothama this turn by sources they controlled"'),
     "most_sharing_a_name": ("The largest group in a pool sharing one name.", "Value expressions"),
     "distinct": ("Distinct values of a quality among a pool (domain, coven, delirium, colors, kinds of counters, names).",
                  "Counting different values rather than objects"),
