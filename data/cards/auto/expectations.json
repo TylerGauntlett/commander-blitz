@@ -13503,6 +13503,14 @@
   "raiding_nightstalker": {
     "zone": "battlefield"
   },
+  "rain_of_riches": {
+    "battlefield_count": 35,
+    "tokens": {
+      "count": 2,
+      "id": "treasure_token"
+    },
+    "zone": "battlefield"
+  },
   "rain_slicked_copse": {
     "zone": "battlefield"
   },

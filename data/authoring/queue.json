@@ -213642,12 +213642,12 @@
     },
     "Rain of Riches": {
       "edhrec_rank": 1572,
-      "gate": "template",
+      "gate": null,
       "name": "Rain of Riches",
-      "reason": "no template for: When this enchantment enters, create two Treasure tokens",
+      "reason": "",
       "scryfall_id": "299f81b5-20eb-465b-bd36-2acd80a4f37c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rain of Rust": {
