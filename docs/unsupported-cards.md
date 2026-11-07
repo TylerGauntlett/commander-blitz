@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**234 cards** blocked by **216** capabilities.
+**230 cards** blocked by **215** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -18,8 +18,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
 | [put-into-graveyard-from-anywhere](#put-into-graveyard-from-anywhere) | 7 | 256 | trigger_event |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
-| [face-down-filter](#face-down-filter) | 4 | 5559 | selector |
-| [manifest-dread](#manifest-dread) | 4 | 5772 | op |
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
 | [copy-exception-set-subtypes](#copy-exception-set-subtypes) | 3 | 1740 | engine, op |
@@ -40,12 +38,13 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 2 | 2389 | engine |
 | [escape](#escape) | 2 | 388 | engine, static_effect |
+| [face-down-filter](#face-down-filter) | 2 | 5772 | selector |
+| [manifest-dread](#manifest-dread) | 2 | 5772 | op |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
 | [return-face-down](#return-face-down) | 2 | 3081 | op |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [turn-face-up](#turn-face-up) | 2 | 5772 | op |
-| [turned-face-up-trigger](#turned-face-up-trigger) | 2 | 6493 | trigger_event |
 | [venture](#venture) | 2 | 19644 | engine |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
 | [x-maximum](#x-maximum) | 2 | 1665 | engine |
@@ -83,7 +82,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
 | [copy-this-spell-on-resolution](#copy-this-spell-on-resolution) | 1 | 338 | op |
-| [counter-exile-free-cast](#counter-exile-free-cast) | 1 | 7605 | op |
 | [coven](#coven) | 1 | 1129 | value |
 | [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
 | [crime](#crime) | 1 | 2244 | trigger_event |
@@ -115,6 +113,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exiled-this-way-lki](#exiled-this-way-lki) | 1 | 6960 | value |
 | [experience-counters](#experience-counters) | 1 | 1480 | engine |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
+| [face-down-counters-pt](#face-down-counters-pt) | 1 | 6774 | engine |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
 | [filtered-discard](#filtered-discard) | 1 | 9279 | op |
 | [first-mate-ragavan](#first-mate-ragavan) | 1 | 7016 | token |
@@ -198,11 +197,11 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
 | [salamander-warrior-4-3-u](#salamander-warrior-4-3-u) | 1 | 3395 | token |
-| [sandbox-graveyard-fodder](#sandbox-graveyard-fodder) | 1 | 16681 | engine |
 | [sandbox-graveyard-spell-prop](#sandbox-graveyard-spell-prop) | 1 | 5082 | engine |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
+| [self-bounce-playable-gate](#self-bounce-playable-gate) | 1 | 10013 | engine |
 | [shapeshifter-2-2-u-changeling](#shapeshifter-2-2-u-changeling) | 1 | 494 | token |
 | [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
@@ -220,11 +219,11 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [total-toughness-cost-reduction](#total-toughness-cost-reduction) | 1 | 5188 | value |
 | [toughness-greater-than-power-filter](#toughness-greater-than-power-filter) | 1 | 3557 | selector |
 | [treefolk-x-x-g-reach-land-count](#treefolk-x-x-g-reach-land-count) | 1 | 2396 | token |
+| [turned-face-up-trigger](#turned-face-up-trigger) | 1 | 6493 | trigger_event |
 | [two-share-all-card-types](#two-share-all-card-types) | 1 | 7993 | value |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
 | [while-source-on-battlefield-duration](#while-source-on-battlefield-duration) | 1 | 8222 | engine |
-| [wurm-5-5-g](#wurm-5-5-g) | 1 | 2294 | token |
 | [wurm-5-5-g-trample](#wurm-5-5-g-trample) | 1 | 2387 | token |
 | [x-cost-mana-restriction](#x-cost-mana-restriction) | 1 | 4046 | decision |
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 1 | 11545 | engine |
@@ -413,60 +412,6 @@ Blocks **5** cards.
   - Whenever you cast your first spell with {X} in its mana cost each turn, put X +1/+1 counters on Nev.
 - **Lattice Library** (rank 10607) — `lattice_library`
   - When this enchantment enters and whenever you cast your first spell with {X} in its mana cost each turn, create a 0/0 green and blue Fractal creature token. Put a number of +1/+1 counters on it equal to the number of study counters on this enchantment.
-
-</details>
-
-## face-down-filter
-
-Blocks **4** cards.
-
-- **(selector)** a selector/condition key matching face-down permanents (manifested, cloaked, morphed, disguised), so the intervening-if "if you control no face-down permanents" is an `exists` negated over `{zone: battlefield, controller: you, face_down: true}`
-  <br>Why the existing vocabulary won't do: `selector_keys` and `trigger_filter_keys` have no face-down key; `face_down` exists only as an option on library/exile ops meaning private exile, not as a property a selector can read on a permanent
-- **(selector)** a selector key matching face-down permanents (manifested, cloaked, morphed, disguised), e.g. `{zone: battlefield, controller: you, face_down: true}`, usable in the cost filter
-  <br>Why the existing vocabulary won't do: `selector_keys` has no face-down key; `face_down` exists only as an option on library/exile ops meaning private exile, not as a property a selector can read on a permanent
-- **(selector)** a selector key that matches permanents by face-up/face-down status (e.g. `face_down: false` for "face-up creatures"), so an effect's objects can be narrowed to face-up nontoken creatures you control and exclude manifested/cloaked/morphed face-down permanents
-  <br>Why the existing vocabulary won't do: selector_keys has `is_token`, `types` and `controller` but nothing reads face-down status; `face_down` exists only as an option on zone-moving ops (exile, look_at_top, search_library), not as a filter. Using `is_token: false` alone would also grant the dies-trigger to face-down manifests, a different card
-- **(selector)** a selector key matching face-down permanents (`face_down: true`), so 'turn a permanent you control face up' offers only permanents that are face down
-  <br>Why the existing vocabulary won't do: `selector_keys` has no face-down key; `face_down` appears only as an option on look_at_top/reveal_until/search_zones for putting cards onto the battlefield, not as a filter on existing permanents
-
-<details><summary>Cards waiting on this</summary>
-
-- **Whisperwood Elemental** (rank 5559) — `whisperwood_elemental`
-  - Sacrifice this creature: Until end of turn, face-up nontoken creatures you control gain "When this creature dies, manifest the top card of your library."
-- **Zimone, Mystery Unraveler** (rank 5772) — `zimone_mystery_unraveler`
-  - Landfall — Whenever a land you control enters, manifest dread if this is the first time this ability has resolved this turn. Otherwise, you may turn a permanent you control face up
-- **Primordial Mist** (rank 6544) — `primordial_mist`
-  - Exile a face-down permanent you control face up: You may play that card this turn. (You still pay its costs. Timing rules still apply.)
-- **Glitch Interpreter** (rank 10013) — `glitch_interpreter`
-  - When this creature enters, if you control no face-down permanents, return this creature to its owner's hand and manifest dread.
-
-</details>
-
-## manifest-dread
-
-Blocks **4** cards.
-
-- **(op)** manifest dread (701.62a): look at the top two cards of your library, choose one and put it onto the battlefield face down as a 2/2 manifested creature (turnable face up for its mana cost if it is a creature card), and put the other into your graveyard -- either a `dread: true` flag on the `manifest` op or a `manifest_dread` op
-  <br>Why the existing vocabulary won't do: `manifest` (amount, cloak, player) always manifests the top card with no choice and no second card to the graveyard; `look_at_top` can choose one of two and send the rest to the graveyard, but its `face_down` only means private exile and it cannot put a card onto the battlefield as a face-down manifested 2/2. Chaining mill + manifest would pick the wrong card with no choice.
-- **(op)** manifest dread (701.62): look at the top two cards of your library, manifest one of them, put the other into your graveyard; then refer to the manifested creature as 'that creature' so following effects can put two +1/+1 counters and a trample counter on it
-  <br>Why the existing vocabulary won't do: manifest takes only amount/cloak/player: no look-at-two-choose-one with the other milled, and no way to reference the manifested object afterwards; no trample keyword counter kind appears in the reference
-- **(op)** manifest dread (701.62a): look at the top two cards of your library, choose one and put it onto the battlefield face down as a 2/2 manifested creature (turnable face up for its mana cost if it is a creature card), and put the other into your graveyard -- either a `dread: true` flag on the `manifest` op or a `manifest_dread` op
-  <br>Why the existing vocabulary won't do: `manifest` (amount, cloak, player) always manifests the top card with no choice and sends no second card to the graveyard; `look_at_top` can choose one of two and send the rest to the graveyard, but its `face_down` means private exile and it cannot put a card onto the battlefield as a face-down manifested 2/2
-- **(op)** manifest dread (701.62): look at the top two cards of your library, choose one and manifest it (face-down 2/2, turnable face up for its mana cost if a creature card), put the other into your graveyard
-  <br>Why the existing vocabulary won't do: The `manifest` op takes only amount, cloak and player and manifests the top card(s) with no choice; it cannot look at two, pick one and send the rest to the graveyard. `look_at_top` has face_down and rest_to, but its face_down does not make a manifested 2/2 that can be turned up for its mana cost, so composing them would be an approximation
-
-<details><summary>Cards waiting on this</summary>
-
-- **Zimone, Mystery Unraveler** (rank 5772) — `zimone_mystery_unraveler`
-  - Landfall — Whenever a land you control enters, manifest dread if this is the first time this ability has resolved this turn. Otherwise, you may turn a permanent you control face up
-- **Curator Beastie** (rank 6774) — `curator_beastie`
-  - Whenever this creature enters or attacks, manifest dread. (Look at the top two cards of your library. Put one onto the battlefield face down as a 2/2 creature and the other into your graveyard. Turn it face up any time for its mana cost if it's a creature card.)
-- **Experimental Lab // Staff Room** (rank 8930) — `experimental_lab_staff_room`
-  - When you unlock this door, manifest dread, then put two +1/+1 counters and a trample counter on that creature.
-  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
-  - Whenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it.
-- **Glitch Interpreter** (rank 10013) — `glitch_interpreter`
-  - When this creature enters, if you control no face-down permanents, return this creature to its owner's hand and manifest dread.
 
 </details>
 
@@ -898,6 +843,44 @@ Blocks **2** cards.
 
 </details>
 
+## face-down-filter
+
+Blocks **2** cards.
+
+- **(selector)** a selector key matching face-down permanents (manifested, cloaked, morphed, disguised), e.g. `{zone: battlefield, controller: you, face_down: true}`, usable in the cost filter
+  <br>Why the existing vocabulary won't do: `selector_keys` has no face-down key; `face_down` exists only as an option on library/exile ops meaning private exile, not as a property a selector can read on a permanent
+- **(selector)** a selector key matching face-down permanents (`face_down: true`), so 'turn a permanent you control face up' offers only permanents that are face down
+  <br>Why the existing vocabulary won't do: `selector_keys` has no face-down key; `face_down` appears only as an option on look_at_top/reveal_until/search_zones for putting cards onto the battlefield, not as a filter on existing permanents
+
+<details><summary>Cards waiting on this</summary>
+
+- **Zimone, Mystery Unraveler** (rank 5772) — `zimone_mystery_unraveler`
+  - Landfall — Whenever a land you control enters, manifest dread if this is the first time this ability has resolved this turn. Otherwise, you may turn a permanent you control face up
+- **Primordial Mist** (rank 6544) — `primordial_mist`
+  - Exile a face-down permanent you control face up: You may play that card this turn. (You still pay its costs. Timing rules still apply.)
+
+</details>
+
+## manifest-dread
+
+Blocks **2** cards.
+
+- **(op)** manifest dread (701.62): look at the top two cards of your library, manifest one of them, put the other into your graveyard; then refer to the manifested creature as 'that creature' so following effects can put two +1/+1 counters and a trample counter on it
+  <br>Why the existing vocabulary won't do: manifest takes only amount/cloak/player: no look-at-two-choose-one with the other milled, and no way to reference the manifested object afterwards; no trample keyword counter kind appears in the reference
+- **(op)** manifest dread (701.62): look at the top two cards of your library, choose one and manifest it (face-down 2/2, turnable face up for its mana cost if a creature card), put the other into your graveyard
+  <br>Why the existing vocabulary won't do: The `manifest` op takes only amount, cloak and player and manifests the top card(s) with no choice; it cannot look at two, pick one and send the rest to the graveyard. `look_at_top` has face_down and rest_to, but its face_down does not make a manifested 2/2 that can be turned up for its mana cost, so composing them would be an approximation
+
+<details><summary>Cards waiting on this</summary>
+
+- **Zimone, Mystery Unraveler** (rank 5772) — `zimone_mystery_unraveler`
+  - Landfall — Whenever a land you control enters, manifest dread if this is the first time this ability has resolved this turn. Otherwise, you may turn a permanent you control face up
+- **Experimental Lab // Staff Room** (rank 8930) — `experimental_lab_staff_room`
+  - When you unlock this door, manifest dread, then put two +1/+1 counters and a trample counter on that creature.
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - Whenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it.
+
+</details>
+
 ## opening-hand-ability
 
 Blocks **2** cards.
@@ -990,24 +973,6 @@ Blocks **2** cards.
   - When you unlock this door, manifest dread, then put two +1/+1 counters and a trample counter on that creature.
   - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
   - Whenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it.
-
-</details>
-
-## turned-face-up-trigger
-
-Blocks **2** cards.
-
-- **(trigger_event)** a trigger event for a permanent being turned face up (filterable by controller: 'a permanent you control'), usable by a triggered ability with active_zones ["graveyard"] on the card itself
-  <br>Why the existing vocabulary won't do: The engine's _turn_face_up emits a 'turned_face_up' event, but it is not in the packet's trigger_events vocabulary, so no card can trigger on it; becomes_untapped/permanent_enters/counter_placed are different events (a megamorph counter would miss plain morphs and manifests)
-- **(trigger_event)** a trigger event for this permanent being turned face up (source: self), so a morph creature's 'When this creature is turned face up, ...' ability goes on the stack when its morph cost is paid
-  <br>Why the existing vocabulary won't do: The engine's _turn_face_up emits a 'turned_face_up' event, but it is not in the packet's trigger_events vocabulary, so no triggered ability can listen for it; self_enters does not fire on turning face up (the permanent is already on the battlefield), and ability_activated / becomes_untapped are different events
-
-<details><summary>Cards waiting on this</summary>
-
-- **Deathmist Raptor** (rank 6493) — `deathmist_raptor`
-  - Whenever a permanent you control is turned face up, you may return this card from your graveyard to the battlefield face up or face down.
-- **Kheru Spellsnatcher** (rank 7605) — `kheru_spellsnatcher`
-  - When this creature is turned face up, counter target spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard. You may cast that card without paying its mana cost for as long as it remains exiled.
 
 </details>
 
@@ -1561,20 +1526,6 @@ Blocks **1** card.
 
 </details>
 
-## counter-exile-free-cast
-
-Blocks **1** card.
-
-- **(op)** counter target spell, exiling it instead of the graveyard, and give the trigger's controller permission to cast that exiled card without paying its mana cost for as long as it remains exiled (playable: while_exiled, playable_free: true on the countered card)
-  <br>Why the existing vocabulary won't do: counter carries exiles and as, but its op_options list no playable / playable_free; it may be expressible as counter (exiles, as) followed by grant_playable with playable_free and playable 'while_exiled' over the bound card, but that is unverified and moot until the trigger event exists
-
-<details><summary>Cards waiting on this</summary>
-
-- **Kheru Spellsnatcher** (rank 7605) — `kheru_spellsnatcher`
-  - When this creature is turned face up, counter target spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard. You may cast that card without paying its mana cost for as long as it remains exiled.
-
-</details>
-
 ## coven
 
 Blocks **1** card.
@@ -2017,6 +1968,20 @@ Blocks **1** card.
 - **Final Fortune** (rank 1512) — `final_fortune`
   - Take an extra turn after this one.
   - At the beginning of that turn's end step, you lose the game.
+
+</details>
+
+## face-down-counters-pt
+
+Blocks **1** card.
+
+- **(engine)** a face-down permanent must be subject to counters and to statics about arriving permanents: (1) `enters_with_additional_counters` must apply to a face-down arrival (manifest / manifest dread / cloak), matching its filter against the face-down characteristics (colorless 2/2 creature, 708.2) so a manifested-dread permanent under Curator Beastie enters with two +1/+1 counters; (2) +1/+1 counters on a face-down permanent must modify its power/toughness (layer 7c applies over the 708.2 2/2 shell), so it is a 4/4
+  <br>Why the existing vocabulary won't do: Tested: with Curator Beastie on the battlefield (static `enters_with_additional_counters`, affects {controller: you, types: [Creature], colorless: true}), manifest dread puts the chosen card onto the battlefield face down with 0 +1/+1 counters, so the static is not applied to the face-down entrant (`zones._board_additional_counters` is not applied to the manifest arrival); and forcing two +1/+1 counters onto the face-down permanent still leaves `chars` at 2/2, because `chars` returns FACE_DOWN_CHARS before any static or counter is layered (rules-coverage 'Face-down permanents are a bare shell'). `manifest_dread` itself now works; this sentence is what blocks the card.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Curator Beastie** (rank 6774) — `curator_beastie`
+  - Colorless creatures you control enter with two additional +1/+1 counters on them.
 
 </details>
 
@@ -3205,20 +3170,6 @@ Blocks **1** card.
 
 </details>
 
-## sandbox-graveyard-fodder
-
-Blocks **1** card.
-
-- **(engine)** The card itself is expressible: keywords [flying], additional_cost {"exile_from_graveyard": {"types": ["Creature"], "count": 3}}, and a static {"effect": "cast_from_graveyard", "active_zones": ["graveyard"], "affects_player": "you", "text": "You may cast this card from your graveyard."}. What is missing is a verification sandbox that can cast it: build_sandbox (cards/authoring/verify.py) puts only two creature cards in your graveyard (OWN_GRAVEYARD_ROLES), so an additional cost exiling N creature cards from the graveyard with N > 2 is never payable and gate 4 rejects the card as 'not playable in the sandbox'. Needs graveyard fodder scaled to additional_cost.exile_from_graveyard.count, the way spare_cards_in_hand scales spare Forests to additional_cost.discard.
-  <br>Why the existing vocabulary won't do: Verified with author_cards.py --collect --dry-run: the answer above loads and is rejected only at the playable gate (offered just Pass/Play land). spare_cards_in_hand covers discard additional costs only; nothing adds graveyard creature cards for an exile_from_graveyard additional cost.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Skaab Ruinator** (rank 16681) — `skaab_ruinator`
-  - As an additional cost to cast this spell, exile three creature cards from your graveyard.
-
-</details>
-
 ## sandbox-graveyard-spell-prop
 
 Blocks **1** card.
@@ -3274,6 +3225,20 @@ Blocks **1** card.
 - **Intuition** (rank 1971) — `intuition`
   - Target opponent chooses one.
   - Put that card into your hand and the rest into your graveyard.
+
+</details>
+
+## self-bounce-playable-gate
+
+Blocks **1** card.
+
+- **(engine)** the authoring verifier's playable gate (`verify.py`, the `allowed` zone set for permanents) must accept a permanent that ends in its owner's hand because its own enters trigger returned it there, as printed. The card is now fully expressible -- trigger `self_enters` with condition `{"not":{"exists":{"zone":"battlefield","controller":"you","face_down":true}}}`, effects `[{"op":"return_to_hand","objects":{"self_only":true,"zone":"battlefield"}},{"op":"manifest_dread"}]`, and the second line as `creatures_deal_combat_damage` with `controller: you`, `filter: {colorless: true}`, `per_player: true` -- and the dry run shows it behaving correctly, but gate 4 rejects it with "glitch_interpreter is a permanent but ended in hand". The sandbox has no face-down permanent, so the intervening-if is true and the bounce lawfully happens every run. A narrow, declared exception (e.g. the card's own self_enters trigger contains `return_to_hand` of `self_only`) in the style of the existing `is_aura` / `exiles_itself` / `tucks_itself` carve-outs would admit it; expectation would then be zone hand, hand_size 2, library_size 38, graveyard_size 3, battlefield_count 33
+  <br>Why the existing vocabulary won't do: The gate allows only BATTLEFIELD for a non-Aura permanent; there is no card-level rider declaring that a permanent returns itself to hand, and no sandbox role that puts a face-down permanent on your board to make the intervening-if false. Writing the card without the bounce, or with a condition that never holds, would be an approximation
+
+<details><summary>Cards waiting on this</summary>
+
+- **Glitch Interpreter** (rank 10013) — `glitch_interpreter`
+  - When this creature enters, if you control no face-down permanents, return this creature to its owner's hand and manifest dread.
 
 </details>
 
@@ -3517,6 +3482,20 @@ Blocks **1** card.
 
 </details>
 
+## turned-face-up-trigger
+
+Blocks **1** card.
+
+- **(trigger_event)** a trigger event for a permanent being turned face up (filterable by controller: 'a permanent you control'), usable by a triggered ability with active_zones ["graveyard"] on the card itself
+  <br>Why the existing vocabulary won't do: The engine's _turn_face_up emits a 'turned_face_up' event, but it is not in the packet's trigger_events vocabulary, so no card can trigger on it; becomes_untapped/permanent_enters/counter_placed are different events (a megamorph counter would miss plain morphs and manifests)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Deathmist Raptor** (rank 6493) — `deathmist_raptor`
+  - Whenever a permanent you control is turned face up, you may return this card from your graveyard to the battlefield face up or face down.
+
+</details>
+
 ## two-share-all-card-types
 
 Blocks **1** card.
@@ -3570,20 +3549,6 @@ Blocks **1** card.
 
 - **Opportunistic Dragon** (rank 8222) — `opportunistic_dragon`
   - When this creature enters, choose target Human or artifact an opponent controls. For as long as this creature remains on the battlefield, gain control of that permanent, it loses all abilities, and it can't attack or block.
-
-</details>
-
-## wurm-5-5-g
-
-Blocks **1** card.
-
-- **(token)** a 5/5 green Wurm creature token with no abilities (token id wurm_5_5_g)
-  <br>Why the existing vocabulary won't do: token_ids has no Wurm token at all; the nearest 5/5s are dragon_5_5_r_flying and elemental_5_5_rg, which differ in colour, creature type and (for the Dragon) flying. The rest of the card is expressible: the first line is a cant_attack_you static with affects {"controller": "any", "keywords": ["flying"]} (planeswalkers are covered by default, no player_only), and the trigger is end_step with controller you feeding create_token.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Sandwurm Convergence** (rank 2294) — `sandwurm_convergence`
-  - At the beginning of your end step, create a 5/5 green Wurm creature token.
 
 </details>
 

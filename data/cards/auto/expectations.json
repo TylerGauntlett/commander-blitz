@@ -9207,6 +9207,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "kheru_spellsnatcher": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "kianne_corrupted_memory": {
     "battlefield_count": 33,
     "hand_size": {
@@ -14344,6 +14351,10 @@
   "sandsteppe_citadel": {
     "zone": "battlefield"
   },
+  "sandwurm_convergence": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sangrite_backlash": {
     "zone": [
       "battlefield",
@@ -15402,6 +15413,13 @@
   },
   "sixth_sense": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "skaab_ruinator": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 0
+    },
     "zone": "battlefield"
   },
   "skeletal_crocodile": {
@@ -19549,6 +19567,10 @@
     "zone": "battlefield"
   },
   "whispersilk_cloak": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "whisperwood_elemental": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

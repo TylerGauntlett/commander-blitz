@@ -108884,6 +108884,64 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "as": "countered",
+              "exiles": true,
+              "op": "counter",
+              "target": "t1"
+            },
+            {
+              "objects": {
+                "binding": "countered",
+                "zone": "exile"
+              },
+              "op": "grant_playable",
+              "playable": "while_exiled",
+              "playable_free": true
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "spell",
+              "selector": {}
+            }
+          ],
+          "text": "When this creature is turned face up, counter target spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard. You may cast that card without paying its mana cost for as long as it remains exiled.",
+          "trigger": {
+            "event": "turned_face_up",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "kheru_spellsnatcher",
+      "mana_cost": "{3}{U}",
+      "morph": "{4}{U}{U}",
+      "name": "Kheru Spellsnatcher",
+      "oracle_text": "Morph {4}{U}{U} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)\nWhen this creature is turned face up, counter target spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard. You may cast that card without paying its mana cost for as long as it remains exiled.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Snake",
+        "Wizard"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_player": "you",
           "affects_spells": {
             "not_types": [
@@ -169311,6 +169369,56 @@
       "abilities": [
         {
           "affects": {
+            "controller": "any",
+            "keywords": [
+              "flying"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "cant_attack_you",
+          "kind": "static",
+          "text": "Creatures with flying can't attack you or planeswalkers you control."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "wurm_5_5_g"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, create a 5/5 green Wurm creature token.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "sandwurm_convergence",
+      "mana_cost": "{6}{G}{G}",
+      "name": "Sandwurm Convergence",
+      "oracle_text": "Creatures with flying can't attack you or planeswalkers you control.\nAt the beginning of your end step, create a 5/5 green Wurm creature token.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
             "attached": true
           },
           "effect": "buff",
@@ -181366,6 +181474,50 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "affects_player": "you",
+          "effect": "cast_from_graveyard",
+          "kind": "static",
+          "text": "You may cast this card from your graveyard."
+        }
+      ],
+      "additional_cost": {
+        "exile_from_graveyard": {
+          "count": 3,
+          "types": [
+            "Creature"
+          ]
+        }
+      },
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "skaab_ruinator",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{U}{U}",
+      "name": "Skaab Ruinator",
+      "oracle_text": "As an additional cost to cast this spell, exile three creature cards from your graveyard.\nFlying\nYou may cast this card from your graveyard.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Horror"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -231499,6 +231651,95 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "manifest",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, manifest the top card of your library. (Put it onto the battlefield face down as a 2/2 creature. Turn it face up any time for its mana cost if it's a creature card.)",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        },
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "ability": 0,
+              "duration": "until_end_of_turn",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "face_down": false,
+                "is_token": false,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_ability"
+            }
+          ],
+          "kind": "activated",
+          "text": "Sacrifice this creature: Until end of turn, face-up nontoken creatures you control gain \"When this creature dies, manifest the top card of your library.\""
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "manifest",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, manifest the top card of your library.",
+          "trigger": {
+            "controller": "any",
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "whisperwood_elemental",
+      "mana_cost": "{3}{G}{G}",
+      "name": "Whisperwood Elemental",
+      "oracle_text": "At the beginning of your end step, manifest the top card of your library. (Put it onto the battlefield face down as a 2/2 creature. Turn it face up any time for its mana cost if it's a creature card.)\nSacrifice this creature: Until end of turn, face-up nontoken creatures you control gain \"When this creature dies, manifest the top card of your library.\"",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Elemental"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
       ]
     },
     {

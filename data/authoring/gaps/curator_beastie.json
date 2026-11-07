@@ -3,14 +3,19 @@
   "name": "Curator Beastie",
   "oracle_text": "Reach\nColorless creatures you control enter with two additional +1/+1 counters on them.\nWhenever this creature enters or attacks, manifest dread. (Look at the top two cards of your library. Put one onto the battlefield face down as a 2/2 creature and the other into your graveyard. Turn it face up any time for its mana cost if it's a creature card.)",
   "blocked_sentences": [
-    "Whenever this creature enters or attacks, manifest dread. (Look at the top two cards of your library. Put one onto the battlefield face down as a 2/2 creature and the other into your graveyard. Turn it face up any time for its mana cost if it's a creature card.)"
+    "Colorless creatures you control enter with two additional +1/+1 counters on them."
   ],
-  "needs": [{
-    "capability": "manifest_dread",
-    "kind": "op",
-    "what": "manifest dread (701.62a): look at the top two cards of your library, choose one and put it onto the battlefield face down as a 2/2 manifested creature (turnable face up for its mana cost if it is a creature card), and put the other into your graveyard -- either a `dread: true` flag on the `manifest` op or a `manifest_dread` op",
-    "why_existing_wont_do": "`manifest` (amount, cloak, player) always manifests the top card with no choice and no second card to the graveyard; `look_at_top` can choose one of two and send the rest to the graveyard, but its `face_down` only means private exile and it cannot put a card onto the battlefield as a face-down manifested 2/2. Chaining mill + manifest would pick the wrong card with no choice."
-  }],
-  "closest_existing": ["manifest", "look_at_top"],
+  "needs": [
+    {
+      "capability": "face_down_counters_pt",
+      "kind": "engine",
+      "what": "a face-down permanent must be subject to counters and to statics about arriving permanents: (1) `enters_with_additional_counters` must apply to a face-down arrival (manifest / manifest dread / cloak), matching its filter against the face-down characteristics (colorless 2/2 creature, 708.2) so a manifested-dread permanent under Curator Beastie enters with two +1/+1 counters; (2) +1/+1 counters on a face-down permanent must modify its power/toughness (layer 7c applies over the 708.2 2/2 shell), so it is a 4/4",
+      "why_existing_wont_do": "Tested: with Curator Beastie on the battlefield (static `enters_with_additional_counters`, affects {controller: you, types: [Creature], colorless: true}), manifest dread puts the chosen card onto the battlefield face down with 0 +1/+1 counters, so the static is not applied to the face-down entrant (`zones._board_additional_counters` is not applied to the manifest arrival); and forcing two +1/+1 counters onto the face-down permanent still leaves `chars` at 2/2, because `chars` returns FACE_DOWN_CHARS before any static or counter is layered (rules-coverage 'Face-down permanents are a bare shell'). `manifest_dread` itself now works; this sentence is what blocks the card."
+    }
+  ],
+  "closest_existing": [
+    "enters_with_additional_counters",
+    "manifest_dread"
+  ],
   "confidence": "high"
 }

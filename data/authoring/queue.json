@@ -148532,12 +148532,12 @@
     },
     "Kheru Spellsnatcher": {
       "edhrec_rank": 7605,
-      "gate": "template",
+      "gate": null,
       "name": "Kheru Spellsnatcher",
-      "reason": "no template for: Morph {4}{U}{U}",
+      "reason": "",
       "scryfall_id": "610f4f2b-e5ed-463b-9d9b-0f7b3f3e99c8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Khorvath Brightflame": {
@@ -232802,12 +232802,12 @@
     },
     "Sandwurm Convergence": {
       "edhrec_rank": 2294,
-      "gate": "template",
+      "gate": null,
       "name": "Sandwurm Convergence",
-      "reason": "no template for: Creatures with flying can't attack you or planeswalkers you control",
+      "reason": "",
       "scryfall_id": "3ad9cb61-4072-449b-9b32-83e2192cb292",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sangrite Backlash": {
@@ -248972,12 +248972,12 @@
     },
     "Skaab Ruinator": {
       "edhrec_rank": 16681,
-      "gate": "template",
+      "gate": null,
       "name": "Skaab Ruinator",
-      "reason": "no template for: As an additional cost to cast this spell, exile three creature cards from your graveyard",
+      "reason": "",
       "scryfall_id": "668d4e90-61d3-4064-b867-6ac7a49a7d59",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Skaab Wrangler": {
@@ -314352,12 +314352,12 @@
     },
     "Whisperwood Elemental": {
       "edhrec_rank": 5559,
-      "gate": "template",
+      "gate": null,
       "name": "Whisperwood Elemental",
-      "reason": "no template for: At the beginning of your end step, manifest the top card of your library",
+      "reason": "",
       "scryfall_id": "f522f32d-e510-4128-98ae-d3c0f684b899",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "White Auracite": {
