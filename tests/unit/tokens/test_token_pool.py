@@ -2276,3 +2276,54 @@ class TestTheAnimatedArmyTokens:
         assert list(token.subtypes) == ["Hamster"]
         assert not token.keywords
         assert not token.abilities
+
+
+class TestTheFamilyMattersTokens:
+    """Three tokens the Family Matters precon names that the pool had only as
+    near misses (111.4)."""
+
+    def test_the_phyrexian_golem_is_a_colorless_three_three_artifact(self, pool):
+        """Blade Splicer: *"create a 3/3 colorless Phyrexian Golem artifact
+        creature token."* The Phyrexian type is the load-bearing part: a card
+        that counts Phyrexians sees it, and the plain Golem is not one."""
+        token = pool.get("phyrexian_golem_3_3_c_artifact")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (3, 3)
+        assert not token.colors
+        assert sorted(token.types) == ["Artifact", "Creature"]
+        assert sorted(token.subtypes) == ["Golem", "Phyrexian"]
+        assert not token.keywords
+        assert not token.abilities
+
+    def test_the_plain_golem_is_still_not_phyrexian(self, pool):
+        other = pool.get("golem_3_3_c_artifact")
+        assert list(other.subtypes) == ["Golem"]
+
+    def test_the_rabbit_is_a_white_one_one(self, pool):
+        """Jacked Rabbit: *"create a number of 1/1 white Rabbit creature
+        tokens."* Bloomburrow counts Rabbits, so the pool's 1/1 white Cat
+        and Dog are not stand-ins."""
+        token = pool.get("rabbit_1_1_w")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (1, 1)
+        assert sorted(token.colors) == ["W"]
+        assert list(token.subtypes) == ["Rabbit"]
+        assert not token.keywords
+        assert not token.abilities
+
+    def test_the_storm_crow_is_a_blue_one_two_flier(self, pool):
+        """Murmuration: *"create a 1/2 blue Bird creature token with flying
+        named Storm Crow."* Its toughness and name are what the pool's 2/2
+        blue Bird and 1/1 vigilant Bird lack."""
+        token = pool.get("storm_crow_1_2_u_flying")
+        assert token is not None and token.is_token and token.is_creature
+        assert token.name == "Storm Crow"
+        assert (token.power, token.toughness) == (1, 2)
+        assert sorted(token.colors) == ["U"]
+        assert list(token.subtypes) == ["Bird"]
+        assert list(token.keywords) == ["flying"]
+        assert not token.abilities
+
+    def test_the_two_two_blue_bird_is_still_a_separate_token(self, pool):
+        other = pool.get("bird_2_2_u_flying")
+        assert (other.power, other.toughness) == (2, 2)
