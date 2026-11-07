@@ -85942,12 +85942,12 @@
     },
     "Esika's Chariot": {
       "edhrec_rank": 2964,
-      "gate": "template",
+      "gate": null,
       "name": "Esika's Chariot",
-      "reason": "no template for: When enters, create two 2/2 green Cat creature tokens",
+      "reason": "",
       "scryfall_id": "bf333864-1299-43a4-a03f-5df98b7498e8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Esika, God of the Tree // The Prismatic Bridge": {
@@ -86462,12 +86462,12 @@
     },
     "Etali, Primal Storm": {
       "edhrec_rank": 262,
-      "gate": "template",
+      "gate": null,
       "name": "Etali, Primal Storm",
-      "reason": "no template for: Whenever Etali attacks, exile the top card of each player's library, then you may cast any",
+      "reason": "",
       "scryfall_id": "28d02e4b-4da8-4304-bce3-b4c273462106",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Etali, Primal Storm // Etali, Primal Storm": {
@@ -87232,12 +87232,12 @@
     },
     "Evercoat Ursine": {
       "edhrec_rank": 5545,
-      "gate": "template",
+      "gate": null,
       "name": "Evercoat Ursine",
-      "reason": "no template for: Hideaway 3, hideaway 3",
+      "reason": "",
       "scryfall_id": "b299d768-b171-47e5-b69d-82ce13917c43",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Everdawn Champion": {
@@ -116292,12 +116292,12 @@
     },
     "Gratuitous Violence": {
       "edhrec_rank": 1494,
-      "gate": "template",
+      "gate": null,
       "name": "Gratuitous Violence",
-      "reason": "no template for: If a creature you control would deal damage to a permanent or player, it deals double that",
+      "reason": "",
       "scryfall_id": "e89024c5-eef5-468c-92b4-e53dd212909c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gravblade Heavy": {

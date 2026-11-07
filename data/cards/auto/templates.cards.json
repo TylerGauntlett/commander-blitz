@@ -62567,6 +62567,108 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "create_token",
+              "token": "cat_2_2_g"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Esika's Chariot enters, create two 2/2 green Cat creature tokens.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "is_token": true,
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever Esika's Chariot attacks, create a token that's a copy of target token you control.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 4,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 4
+              },
+              "toughness": {
+                "const": 4
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 4"
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "esika_s_chariot",
+      "mana_cost": "{3}{G}",
+      "name": "Esika's Chariot",
+      "oracle_text": "When Esika's Chariot enters, create two 2/2 green Cat creature tokens.\nWhenever Esika's Chariot attacks, create a token that's a copy of target token you control.\nCrew 4",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "U",
         "W"
@@ -62894,6 +62996,65 @@
         "Legendary"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "etali_exiled",
+              "destination": "exile",
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "player": "each_player"
+            },
+            {
+              "objects": {
+                "binding": "etali_exiled",
+                "count": "any",
+                "not_types": [
+                  "Land"
+                ]
+              },
+              "op": "play_exiled"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Etali attacks, exile the top card of each player's library, then you may cast any number of spells from among those cards without paying their mana costs.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "etali_primal_storm",
+      "mana_cost": "{4}{R}{R}",
+      "name": "Etali, Primal Storm",
+      "oracle_text": "Whenever Etali attacks, exile the top card of each player's library, then you may cast any number of spells from among those cards without paying their mana costs.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Elder",
+        "Dinosaur"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
       "types": [
         "Creature"
       ]
@@ -63568,6 +63729,87 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "hideaway"
+            },
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "hideaway"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Hideaway 3, hideaway 3 (When this creature enters, look at the top three cards of your library, exile one face down, then put the rest on the bottom in a random order. Then do it again.)",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "controller": "any",
+                    "count": 1,
+                    "exiled_with": "self",
+                    "zone": "exile"
+                  },
+                  "op": "play_exiled"
+                }
+              ],
+              "op": "may",
+              "prompt": "Play one of the exiled cards without paying its mana cost?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, if there are cards exiled with it, you may play one of them without paying its mana cost.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "controller": "any",
+                "exiled_with": "self",
+                "zone": "exile"
+              }
+            },
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "evercoat_ursine",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{4}{G}",
+      "name": "Evercoat Ursine",
+      "oracle_text": "Trample\nHideaway 3, hideaway 3 (When this creature enters, look at the top three cards of your library, exile one face down, then put the rest on the bottom in a random order. Then do it again.)\nWhenever this creature deals combat damage to a player, if there are cards exiled with it, you may play one of them without paying its mana cost.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Elemental",
+        "Bear"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -85099,6 +85341,36 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "damage_multiplier": 2,
+          "damage_source": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "replace_damage",
+          "kind": "static",
+          "text": "If a creature you control would deal damage to a permanent or player, it deals double that damage instead."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "gratuitous_violence",
+      "mana_cost": "{2}{R}{R}{R}",
+      "name": "Gratuitous Violence",
+      "oracle_text": "If a creature you control would deal damage to a permanent or player, it deals double that damage instead.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {

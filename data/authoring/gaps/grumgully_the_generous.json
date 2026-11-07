@@ -1,0 +1,14 @@
+{
+  "card_id": "grumgully_the_generous",
+  "name": "Grumgully, the Generous",
+  "oracle_text": "Each other non-Human creature you control enters with an additional +1/+1 counter on it.",
+  "blocked_sentences": ["Each other non-Human creature you control enters with an additional +1/+1 counter on it."],
+  "needs": [{
+    "capability": "static_not_subtypes",
+    "kind": "selector",
+    "what": "a negated subtype key (`not_subtypes`, e.g. [\"Human\"]) in a static ability's `affects` filter, so `enters_with_additional_counters` can apply to each other creature you control that is not a Human",
+    "why_existing_wont_do": "`enters_with_additional_counters` with affects {controller: you, exclude_self: true, types: [Creature]} covers everything except the non-Human clause; `static_affects_filter_keys` has `subtypes` (positive only), `not_types` and `not_supertypes`, but no `not_subtypes` (the effect-side selector has it, the static matcher `characteristics._matches_printed` does not), and `any_of` cannot express a complement over the open-ended set of creature types"
+  }],
+  "closest_existing": ["enters_with_additional_counters", "not_types", "not_supertypes"],
+  "confidence": "high"
+}

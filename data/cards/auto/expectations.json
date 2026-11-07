@@ -5332,6 +5332,9 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "esika_s_chariot": {
+    "zone": "battlefield"
+  },
   "esper_cormorants": {
     "zone": "battlefield"
   },
@@ -5346,6 +5349,10 @@
     "zone": "graveyard"
   },
   "estinien_varlineau": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "etali_primal_storm": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -5416,6 +5423,13 @@
       "0": 40
     },
     "zone": "graveyard"
+  },
+  "evercoat_ursine": {
+    "battlefield_count": 33,
+    "library_size": {
+      "0": 38
+    },
+    "zone": "battlefield"
   },
   "everdawn_champion": {
     "battlefield_count": 33,
@@ -7346,6 +7360,10 @@
     "zone": "battlefield"
   },
   "grateful_apparition": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "gratuitous_violence": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

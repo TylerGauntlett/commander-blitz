@@ -1,0 +1,25 @@
+{
+  "card_id": "grothama_all_devouring",
+  "name": "Grothama, All-Devouring",
+  "oracle_text": "Other creatures have \"Whenever this creature attacks, you may have it fight Grothama, All-Devouring.\"\nWhen Grothama leaves the battlefield, each player draws cards equal to the amount of damage dealt to Grothama this turn by sources they controlled.",
+  "blocked_sentences": [
+    "When Grothama leaves the battlefield, each player draws cards equal to the amount of damage dealt to Grothama this turn by sources they controlled.",
+    "Other creatures have \"Whenever this creature attacks, you may have it fight Grothama, All-Devouring.\""
+  ],
+  "needs": [
+    {
+      "capability": "damage_dealt_to_permanent_by_player_this_turn",
+      "kind": "value",
+      "what": "a value expression reading the total damage dealt this turn to a specific permanent (the source, readable after it has left the battlefield, i.e. from a per-turn damage ledger keyed by object) by sources controlled by a given player, usable inside for_each_player with the iterated player as the controller (so each player draws their own share)",
+      "why_existing_wont_do": "damage_taken_this_turn and max_damage_taken_this_turn count damage dealt to players only, not to a permanent, and neither splits by the controller of the damage source; snapshot/toughness_had/power_had read characteristics, not damage received"
+    },
+    {
+      "capability": "granter_reference",
+      "kind": "selector",
+      "what": "a selector, usable inside a granted triggered ability's effects, that names the permanent that granted the ability (the grant_ability static's source), so the granted trigger can say 'fight Grothama' with fight.other pointing at the granter rather than at 'self' (which on a granted trigger is the recipient)",
+      "why_existing_wont_do": "grantable_abilities supports triggered abilities, but inside them 'self' is the recipient; the only way to reach Grothama is a name selector, which would also match a second Grothama (e.g. a copy controlled by another player) and is not the object that granted the ability"
+    }
+  ],
+  "closest_existing": ["grant_ability", "fight", "for_each_player", "damage_taken_this_turn"],
+  "confidence": "high"
+}
