@@ -1,0 +1,25 @@
+{
+  "card_id": "one_with_the_multiverse",
+  "name": "One with the Multiverse",
+  "oracle_text": "You may look at the top card of your library any time.\nYou may play lands and cast spells from the top of your library.\nOnce during each of your turns, you may cast a spell from your hand or the top of your library without paying its mana cost.",
+  "blocked_sentences": [
+    "You may play lands and cast spells from the top of your library.",
+    "Once during each of your turns, you may cast a spell from your hand or the top of your library without paying its mana cost."
+  ],
+  "needs": [
+    {
+      "capability": "cast_from_library_top_unrestricted",
+      "kind": "static_effect",
+      "what": "a cast_from_library_top permission with no price swap and no spell filter: every spell on top of your library castable at its printed cost (Future Sight's line), which the loader currently refuses",
+      "why_existing_wont_do": "cast_from_library_top requires either pay_life_instead (Bolas's Citadel) or an affects_spells filter (Thundermane Dragon); the loader raises a DslError on the bare permission, and any filter matching all spells would be a workaround for a deliberate guard rather than the printed card"
+    },
+    {
+      "capability": "free_cast_once_per_turn",
+      "kind": "static_effect",
+      "what": "a free_cast_permission metered once during each of your turns, covering any spell cast from hand or from the top of your library (no type filter), with the use counted across both zones",
+      "why_existing_wont_do": "free_cast_permission requires an affects_spells filter (empty reads as Omniscience), accepts only from_zone 'hand', and has no max_per_turn or your-turn-only rate limit -- static_max_per_turn is compiled only for cast_from_graveyard"
+    }
+  ],
+  "closest_existing": ["cast_from_library_top", "free_cast_permission", "look_at_library_top", "play_lands_from_library_top"],
+  "confidence": "high"
+}

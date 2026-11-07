@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**241 cards** blocked by **223** capabilities.
+**243 cards** blocked by **225** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -20,12 +20,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [rooms](#rooms) | 5 | 4163 | engine |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
+| [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 4 | 714 | engine |
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
 | [copy-exception-set-subtypes](#copy-exception-set-subtypes) | 3 | 1740 | engine, op |
 | [omen](#omen) | 3 | 3355 | cost, engine |
 | [random-player-choice](#random-player-choice) | 3 | 5120 | op |
-| [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 3 | 714 | engine |
 | [add-color](#add-color) | 2 | 2040 | op |
 | [basic-land-type-mana](#basic-land-type-mana) | 2 | 73 | engine |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
@@ -71,6 +71,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cards-to-your-graveyard-from-zones-this-turn](#cards-to-your-graveyard-from-zones-this-turn) | 1 | 7412 | value |
 | [cast-from-hand-result](#cast-from-hand-result) | 1 | 7016 | op |
 | [cast-from-library-top-additional-cost](#cast-from-library-top-additional-cost) | 1 | 5828 | static_effect |
+| [cast-from-library-top-unrestricted](#cast-from-library-top-unrestricted) | 1 | 1913 | static_effect |
 | [cast-restriction-self](#cast-restriction-self) | 1 | 2559 | engine |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [cast-trigger-reads-x](#cast-trigger-reads-x) | 1 | 3909 | value |
@@ -125,6 +126,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [flip-coins-count](#flip-coins-count) | 1 | 6651 | value |
 | [foretold](#foretold) | 1 | 3713 | value |
 | [free-cast-by-other-player](#free-cast-by-other-player) | 1 | 11704 | op |
+| [free-cast-once-per-turn](#free-cast-once-per-turn) | 1 | 1913 | static_effect |
 | [free-cast-one-per-card-type](#free-cast-one-per-card-type) | 1 | 2521 | engine |
 | [free-cast-this-turn](#free-cast-this-turn) | 1 | 6651 | op |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
@@ -499,6 +501,26 @@ Blocks **5** cards.
 
 </details>
 
+## self-sacrificing-permanent-gate
+
+Blocks **4** cards.
+
+- **(engine)** authoring gate 4 accepting a permanent whose own printed enters trigger sacrifices it, so the card ends in the graveyard as printed; the card is expressible today (a self_enters sacrifice of self_only, then a reflexive_trigger that fetches a basic and gains 1 life) and the DSL needs nothing new
+  <br>Why the existing vocabulary won't do: verify._play_once allows a permanent to end only on the battlefield (an Aura also in the graveyard), and tests/cards/test_authoring.py::TestASelfLegalTriggerIsExercisedAgainstTheBoard::test_a_permanent_that_genuinely_vanishes_is_still_rejected pins that a creature whose text is 'When this creature enters, sacrifice it.' must still fail, so widening the gate is a decision for the owner rather than a card fix
+
+<details><summary>Cards waiting on this</summary>
+
+- **Riveteers Overlook** (rank 714) — `riveteers_overlook`
+  - When this land enters, sacrifice it. When you do, search your library for a basic Swamp, Mountain, or Forest card, put it onto the battlefield tapped, then shuffle and you gain 1 life.
+- **Cabaretti Courtyard** (rank 963) — `cabaretti_courtyard`
+  - When this land enters, sacrifice it. When you do, search your library for a basic Mountain, Forest, or Plains card, put it onto the battlefield tapped, then shuffle and you gain 1 life.
+- **Maestros Theater** (rank 1257) — `maestros_theater`
+  - When this land enters, sacrifice it. When you do, search your library for a basic Island, Swamp, or Mountain card, put it onto the battlefield tapped, then shuffle and you gain 1 life.
+- **Obscura Storefront** (rank 1616) — `obscura_storefront`
+  - When this land enters, sacrifice it. When you do, search your library for a basic Plains, Island, or Swamp card, put it onto the battlefield tapped, then shuffle and you gain 1 life.
+
+</details>
+
 ## station
 
 Blocks **4** cards.
@@ -626,24 +648,6 @@ Blocks **3** cards.
   - At the beginning of combat on your turn, choose an opponent at random that this creature didn't attack during your last combat. This creature attacks that player this combat if able. If you can't choose an opponent this way, tap this creature.
 - **Ursine Monstrosity** (rank 9663) — `ursine_monstrosity`
   - At the beginning of combat on your turn, mill a card and choose an opponent at random. This creature attacks that player this combat if able. Until end of turn, this creature gains indestructible and gets +1/+1 for each card type among cards in your graveyard.
-
-</details>
-
-## self-sacrificing-permanent-gate
-
-Blocks **3** cards.
-
-- **(engine)** authoring gate 4 accepting a permanent whose own printed enters trigger sacrifices it, so the card ends in the graveyard as printed; the card is expressible today (a self_enters sacrifice of self_only, then a reflexive_trigger that fetches a basic and gains 1 life) and the DSL needs nothing new
-  <br>Why the existing vocabulary won't do: verify._play_once allows a permanent to end only on the battlefield (an Aura also in the graveyard), and tests/cards/test_authoring.py::TestASelfLegalTriggerIsExercisedAgainstTheBoard::test_a_permanent_that_genuinely_vanishes_is_still_rejected pins that a creature whose text is 'When this creature enters, sacrifice it.' must still fail, so widening the gate is a decision for the owner rather than a card fix
-
-<details><summary>Cards waiting on this</summary>
-
-- **Riveteers Overlook** (rank 714) — `riveteers_overlook`
-  - When this land enters, sacrifice it. When you do, search your library for a basic Swamp, Mountain, or Forest card, put it onto the battlefield tapped, then shuffle and you gain 1 life.
-- **Cabaretti Courtyard** (rank 963) — `cabaretti_courtyard`
-  - When this land enters, sacrifice it. When you do, search your library for a basic Mountain, Forest, or Plains card, put it onto the battlefield tapped, then shuffle and you gain 1 life.
-- **Maestros Theater** (rank 1257) — `maestros_theater`
-  - When this land enters, sacrifice it. When you do, search your library for a basic Island, Swamp, or Mountain card, put it onto the battlefield tapped, then shuffle and you gain 1 life.
 
 </details>
 
@@ -1400,6 +1404,21 @@ Blocks **1** card.
 
 - **Into the Pit** (rank 5828) — `into_the_pit`
   - You may cast spells from the top of your library by sacrificing a nonland permanent in addition to paying their other costs.
+
+</details>
+
+## cast-from-library-top-unrestricted
+
+Blocks **1** card.
+
+- **(static_effect)** a cast_from_library_top permission with no price swap and no spell filter: every spell on top of your library castable at its printed cost (Future Sight's line), which the loader currently refuses
+  <br>Why the existing vocabulary won't do: cast_from_library_top requires either pay_life_instead (Bolas's Citadel) or an affects_spells filter (Thundermane Dragon); the loader raises a DslError on the bare permission, and any filter matching all spells would be a workaround for a deliberate guard rather than the printed card
+
+<details><summary>Cards waiting on this</summary>
+
+- **One with the Multiverse** (rank 1913) — `one_with_the_multiverse`
+  - You may play lands and cast spells from the top of your library.
+  - Once during each of your turns, you may cast a spell from your hand or the top of your library without paying its mana cost.
 
 </details>
 
@@ -2182,6 +2201,21 @@ Blocks **1** card.
 
 - **Transforming Flourish** (rank 11704) — `transforming_flourish`
   - Destroy target artifact or creature you don't control. If that permanent is destroyed this way, its controller exiles cards from the top of their library until they exile a nonland card, then they may cast that card without paying its mana cost.
+
+</details>
+
+## free-cast-once-per-turn
+
+Blocks **1** card.
+
+- **(static_effect)** a free_cast_permission metered once during each of your turns, covering any spell cast from hand or from the top of your library (no type filter), with the use counted across both zones
+  <br>Why the existing vocabulary won't do: free_cast_permission requires an affects_spells filter (empty reads as Omniscience), accepts only from_zone 'hand', and has no max_per_turn or your-turn-only rate limit -- static_max_per_turn is compiled only for cast_from_graveyard
+
+<details><summary>Cards waiting on this</summary>
+
+- **One with the Multiverse** (rank 1913) — `one_with_the_multiverse`
+  - You may play lands and cast spells from the top of your library.
+  - Once during each of your turns, you may cast a spell from your hand or the top of your library without paying its mana cost.
 
 </details>
 

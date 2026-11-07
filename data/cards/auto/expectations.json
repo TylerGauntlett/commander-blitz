@@ -10862,6 +10862,13 @@
     },
     "zone": "battlefield"
   },
+  "metamorphosis_fanatic": {
+    "battlefield_count": 34,
+    "graveyard_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "metastatic_evangel": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -11719,6 +11726,10 @@
   "nightguard_patrol": {
     "zone": "battlefield"
   },
+  "nightmare_shepherd": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "nightshade_dryad": {
     "zone": "battlefield"
   },
@@ -12152,6 +12163,10 @@
   "ondu_giant": {
     "zone": "battlefield"
   },
+  "ondu_spiritdancer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "one_with_the_machine": {
     "hand_size": {
       "0": 1
@@ -12272,6 +12287,12 @@
       "0": 1
     },
     "zone": "battlefield"
+  },
+  "otherworldly_gaze": {
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
   },
   "oubliette": {
     "battlefield_count": 32,

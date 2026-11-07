@@ -172252,12 +172252,12 @@
     },
     "Metamorphosis Fanatic": {
       "edhrec_rank": 2906,
-      "gate": "residual",
+      "gate": null,
       "name": "Metamorphosis Fanatic",
-      "reason": "printed text not represented: Miracle {1}{B}",
+      "reason": "",
       "scryfall_id": "16448d95-ee21-4def-b880-26f6f159c213",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Metastatic Evangel": {
@@ -186712,12 +186712,12 @@
     },
     "Nightmare Shepherd": {
       "edhrec_rank": 4200,
-      "gate": "template",
+      "gate": null,
       "name": "Nightmare Shepherd",
-      "reason": "no template for: Whenever another nontoken creature you control dies, you may exile it. If you do, create a",
+      "reason": "",
       "scryfall_id": "c03c1ad6-3122-4267-80d6-94ecf1ff3884",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nightmare Sower": {
@@ -192822,12 +192822,12 @@
     },
     "Ondu Spiritdancer": {
       "edhrec_rank": 1585,
-      "gate": "template",
+      "gate": null,
       "name": "Ondu Spiritdancer",
-      "reason": "no template for: Whenever an enchantment you control enters, you may create a token that's a copy of it. Do",
+      "reason": "",
       "scryfall_id": "ee1c6432-54d7-4b57-a554-f7194d74e03c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ondu War Cleric": {
@@ -195352,12 +195352,12 @@
     },
     "Otherworldly Gaze": {
       "edhrec_rank": 2529,
-      "gate": "template",
+      "gate": null,
       "name": "Otherworldly Gaze",
-      "reason": "no template for: Flashback {1}{U}",
+      "reason": "",
       "scryfall_id": "dc5f5440-3867-4b0a-b233-2d3b8b8b443a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Otherworldly Journey": {
