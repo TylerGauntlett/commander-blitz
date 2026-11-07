@@ -20,7 +20,7 @@
     },
     {
       "id": "t_ns_human",
-      "name": "Test Human Soldier",
+      "name": "Test Non-Human Filter Human",
       "oracle_text": "",
       "mana_cost": "{1}{W}",
       "types": ["Creature"],
