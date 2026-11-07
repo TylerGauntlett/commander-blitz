@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**223 cards** blocked by **204** capabilities.
+**224 cards** blocked by **205** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -66,6 +66,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-from-library-top-additional-cost](#cast-from-library-top-additional-cost) | 1 | 5828 | static_effect |
 | [cast-restriction-self](#cast-restriction-self) | 1 | 2559 | engine |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
+| [cast-trigger-reads-x](#cast-trigger-reads-x) | 1 | 3909 | value |
 | [characteristics-outside-battlefield](#characteristics-outside-battlefield) | 1 | 1924 | static_effect |
 | [choose-card-type-from-list](#choose-card-type-from-list) | 1 | 611 | op |
 | [chosen-card-type-cost-reduction](#chosen-card-type-cost-reduction) | 1 | 611 | static_effect |
@@ -1253,6 +1254,20 @@ Blocks **1** card.
   - Cast this spell only during combat before blockers are declared.
   - X can't be greater than the number of snow lands you control.
   - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
+
+</details>
+
+## cast-trigger-reads-x
+
+Blocks **1** card.
+
+- **(value)** a "When you cast this spell" trigger (spell_cast, source self, active_zones ["stack"]) whose effects can read the X announced for the spell that triggered it, so reveal_until can take amount {"x": true} as "until you reveal X creature cards"
+  <br>Why the existing vocabulary won't do: The value {"x": true} on a triggered ability reads trig.bindings["x"], which triggers.event_bindings fills from obj.cast_x; cast_x is written only in stack.resolve when the spell resolves, and the SPELL_CAST event payload fired by Game._cast carries no x key (EVENT_BINDING_KEYS forwards x only for cycle). So at cast time the trigger reads 0 and reveals nothing. Approximating X through mana_spent_of minus the printed {B}{G} is wrong under cost reductions or alternative costs. The rest of the card is expressible: reveal_until with objects {types: [Creature]}, destination graveyard and its default random bottoming, and a set_pt static counting {controller: you, types: [Creature], zone: graveyard}
+
+<details><summary>Cards waiting on this</summary>
+
+- **Old Stickfingers** (rank 3909) — `old_stickfingers`
+  - When you cast this spell, reveal cards from the top of your library until you reveal X creature cards.
 
 </details>
 

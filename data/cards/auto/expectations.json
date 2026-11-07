@@ -19334,6 +19334,16 @@
     "opponent_battlefield_count": 4,
     "zone": "graveyard"
   },
+  "whip_of_erebos": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 2,
+      "keywords": [
+        "lifelink"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "whiptail_wurm": {
     "zone": "battlefield"
   },

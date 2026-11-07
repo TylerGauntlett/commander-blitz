@@ -208112,12 +208112,12 @@
     },
     "Professor Onyx": {
       "edhrec_rank": 2385,
-      "gate": "template",
+      "gate": "schema",
       "name": "Professor Onyx",
-      "reason": "no template for: Magecraft — Whenever you cast or copy an instant or sorcery spell, each opponent loses 2 l",
+      "reason": "1 validation error for CardModel",
       "scryfall_id": "b8d8e608-6de4-4b90-aeb7-d060d1f44844",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Professor Zei, Anthropologist": {
@@ -313842,12 +313842,12 @@
     },
     "Whip of Erebos": {
       "edhrec_rank": 710,
-      "gate": "template",
+      "gate": null,
       "name": "Whip of Erebos",
-      "reason": "no template for: Creatures you control have lifelink",
+      "reason": "",
       "scryfall_id": "b738612f-4e78-4b19-9392-6c074956d6e4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Whip-Spine Drake": {
