@@ -7567,6 +7567,10 @@
       "graveyard"
     ]
   },
+  "grumgully_the_generous": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "gruul_guildgate": {
     "zone": "battlefield"
   },
@@ -16136,6 +16140,11 @@
   "spiked_baloth": {
     "zone": "battlefield"
   },
+  "spine_of_ish_sah": {
+    "battlefield_count": 32,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "spined_karok": {
     "zone": "battlefield"
   },
@@ -16362,6 +16371,11 @@
   "starnheim_aspirant": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "starstorm": {
+    "battlefield_count": 30,
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
   },
   "staunch_defenders": {
     "life": {
@@ -16773,6 +16787,10 @@
     "zone": "battlefield"
   },
   "sunastian_falconer": {
+    "zone": "battlefield"
+  },
+  "sunbird_s_invocation": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "sunblade_angel": {
@@ -19953,6 +19971,10 @@
     "zone": "battlefield"
   },
   "wilderness_reclamation": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "wildsear_scouring_maw": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

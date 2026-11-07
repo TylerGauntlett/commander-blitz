@@ -119392,12 +119392,12 @@
     },
     "Grumgully, the Generous": {
       "edhrec_rank": 4234,
-      "gate": "template",
+      "gate": null,
       "name": "Grumgully, the Generous",
-      "reason": "no template for: Each other non-Human creature you control enters with an additional +1/+1 counter on it",
+      "reason": "",
       "scryfall_id": "d8d7ac51-450e-473e-93e1-3fa9b3b6e2d4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Grunn, the Lonely King": {
@@ -259412,12 +259412,12 @@
     },
     "Spine of Ish Sah": {
       "edhrec_rank": 2508,
-      "gate": "template",
+      "gate": null,
       "name": "Spine of Ish Sah",
-      "reason": "no template for: When this artifact enters, destroy target permanent",
+      "reason": "",
       "scryfall_id": "033b1ee0-494f-4881-8bdf-f9436d58fd66",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spinebiter": {
@@ -263052,12 +263052,12 @@
     },
     "Starstorm": {
       "edhrec_rank": 2965,
-      "gate": "template",
+      "gate": null,
       "name": "Starstorm",
-      "reason": "no template for: deals X damage to each creature",
+      "reason": "",
       "scryfall_id": "a5f3ab82-2a24-4c6c-bdd9-f2bd5adca144",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Start // Finish": {
@@ -269412,12 +269412,12 @@
     },
     "Sunbird's Invocation": {
       "edhrec_rank": 1851,
-      "gate": "template",
+      "gate": null,
       "name": "Sunbird's Invocation",
-      "reason": "no template for: Whenever you cast a spell from your hand, reveal the top X cards of your library, where X ",
+      "reason": "",
       "scryfall_id": "1512eddf-7a24-4f0a-967f-85e51cc08907",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sunblade Angel": {
@@ -315522,12 +315522,12 @@
     },
     "Wildsear, Scouring Maw": {
       "edhrec_rank": 3408,
-      "gate": "template",
+      "gate": null,
       "name": "Wildsear, Scouring Maw",
-      "reason": "no template for: Enchantment spells you cast from your hand have cascade",
+      "reason": "",
       "scryfall_id": "48494ef9-5eb3-4b55-ad1d-b32bbed89ca5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wildsize": {

@@ -87600,6 +87600,52 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "not_subtypes": [
+              "Human"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "amount": 1,
+          "counter": "+1/+1",
+          "effect": "enters_with_additional_counters",
+          "kind": "static",
+          "text": "Each other non-Human creature you control enters with an additional +1/+1 counter on it."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "grumgully_the_generous",
+      "mana_cost": "{1}{R}{G}",
+      "name": "Grumgully, the Generous",
+      "oracle_text": "Each other non-Human creature you control enters with an additional +1/+1 counter on it.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Goblin",
+        "Shaman"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -189758,6 +189804,65 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this artifact enters, destroy target permanent.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "destination": "hand",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this artifact is put into a graveyard from the battlefield, return it to its owner's hand.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "spine_of_ish_sah",
+      "mana_cost": "{7}",
+      "name": "Spine of Ish Sah",
+      "oracle_text": "When this artifact enters, destroy target permanent.\nWhen this artifact is put into a graveyard from the battlefield, return it to its owner's hand.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -192493,6 +192598,58 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "discard_self": true,
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "Cycling {3}"
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "starstorm",
+      "mana_cost": "{X}{R}{R}",
+      "name": "Starstorm",
+      "oracle_text": "Starstorm deals X damage to each creature.\nCycling {3} ({3}, Discard this card: Draw a card.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "x": true
+          },
+          "objects": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ]
+          },
+          "op": "damage"
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -198170,6 +198327,60 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "mana_value_of": {
+                  "binding": "subject"
+                }
+              },
+              "cast_free": true,
+              "objects": {
+                "count": 1,
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "mana_value_of": {
+                      "binding": "subject"
+                    }
+                  }
+                },
+                "optional": true
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a spell from your hand, reveal the top X cards of your library, where X is that spell's mana value. You may cast a spell with mana value X or less from among cards revealed this way without paying its mana cost. Put the rest on the bottom of your library in a random order.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "from_zones": [
+              "hand"
+            ]
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "sunbird_s_invocation",
+      "mana_cost": "{5}{R}",
+      "name": "Sunbird's Invocation",
+      "oracle_text": "Whenever you cast a spell from your hand, reveal the top X cards of your library, where X is that spell's mana value. You may cast a spell with mana value X or less from among cards revealed this way without paying its mana cost. Put the rest on the bottom of your library in a random order.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -235542,6 +235753,64 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "max_mana_value": {
+                "mana_value_of": {
+                  "binding": "subject"
+                }
+              },
+              "op": "cascade"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Enchantment spells you cast from your hand have cascade. (Whenever you cast an enchantment spell from your hand, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "types": [
+                "Enchantment"
+              ]
+            },
+            "from_zones": [
+              "hand"
+            ]
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "wildsear_scouring_maw",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{3}{R}{G}",
+      "name": "Wildsear, Scouring Maw",
+      "oracle_text": "Trample\nEnchantment spells you cast from your hand have cascade. (Whenever you cast an enchantment spell from your hand, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Elemental",
+        "Wolf"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
       ]
     },
     {
