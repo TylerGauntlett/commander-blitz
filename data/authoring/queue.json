@@ -122202,12 +122202,12 @@
     },
     "Hanged Executioner": {
       "edhrec_rank": 6490,
-      "gate": "template",
+      "gate": null,
       "name": "Hanged Executioner",
-      "reason": "no template for: When this creature enters, create a 1/1 white Spirit creature token with flying",
+      "reason": "",
       "scryfall_id": "2791a28a-30fa-4f1a-9f05-f3db155b6f06",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hankyu": {
@@ -134012,12 +134012,12 @@
     },
     "Illusory Ambusher": {
       "edhrec_rank": 11004,
-      "gate": "template",
+      "gate": null,
       "name": "Illusory Ambusher",
-      "reason": "no template for: Whenever this creature is dealt damage, draw that many cards",
+      "reason": "",
       "scryfall_id": "e4f6a399-a5af-4f8a-ac57-c26fd3fb033b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Illusory Angel": {
@@ -142362,12 +142362,12 @@
     },
     "Jazal Goldmane": {
       "edhrec_rank": 3581,
-      "gate": "template",
+      "gate": null,
       "name": "Jazal Goldmane",
-      "reason": "no template for: {3}{W}{W}: Attacking creatures you control get +X/+X until end of turn, where X is the num",
+      "reason": "",
       "scryfall_id": "5aa8f635-c638-4207-8631-f6b5185f8696",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jecht, Reluctant Guardian // Braska's Final Aeon": {
@@ -144552,12 +144552,12 @@
     },
     "Junk Winder": {
       "edhrec_rank": 1810,
-      "gate": "template",
+      "gate": null,
       "name": "Junk Winder",
-      "reason": "no template for: Affinity for tokens",
+      "reason": "",
       "scryfall_id": "0ee1b75a-18e3-43ce-a1db-b27fd1771279",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Junkblade Bruiser": {

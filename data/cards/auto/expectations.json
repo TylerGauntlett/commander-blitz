@@ -7843,6 +7843,9 @@
     },
     "zone": "battlefield"
   },
+  "hanged_executioner": {
+    "zone": "battlefield"
+  },
   "hapatra_vizier_of_poisons": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -8556,6 +8559,13 @@
       "0": 41
     }
   },
+  "illusory_ambusher": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "ilysian_caryatid": {
     "zone": "battlefield"
   },
@@ -9032,6 +9042,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "jazal_goldmane": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "jedit_ojanen": {
     "zone": "battlefield"
   },
@@ -9176,6 +9190,10 @@
     "zone": "battlefield"
   },
   "junji_the_midnight_sky": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "junk_winder": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
