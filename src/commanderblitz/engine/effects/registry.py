@@ -112,6 +112,11 @@ RECORDING_OPS = frozenset(
         #: "you gain life equal to the life lost this way" (Gray Merchant of
         #: Asphodel) and extort's "that much life". See `ops_life.op_lose_life`.
         "lose_life",
+        #: The permanents manifested -- "manifest dread, then put two +1/+1
+        #: counters on **that creature**" (Experimental Lab). A list, one oid per
+        #: manifest dread that found a card, empty for an empty library. Not the
+        #: card put into the graveyard. See `ops_counters.op_manifest_dread`.
+        "manifest_dread",
         #: The only recorder whose binding is a **set of seats**: `may` writes
         #: the players who said yes, read back with the `{"binding": …}` player
         #: spec. Snort's "each opponent who discarded their hand this way" is

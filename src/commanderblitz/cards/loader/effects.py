@@ -1582,6 +1582,26 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             )
         if "players" in effect:
             _validate_player_spec(effect["players"], f"{where}.players", target_kinds)
+    if op == "manifest_dread":
+        # 701.62a fixes the whole action: the top two, one manifested, the other
+        # to the graveyard. A key borrowed from `manifest` or `look_at_top`
+        # would load and be ignored -- a filtered pool, a second destination or
+        # a cloaked shell is a different card from the printed one.
+        for key in (
+            "cloak",
+            "objects",
+            "selector",
+            "destination",
+            "destinations",
+            "rest_to",
+            "rest_to_bottom",
+            "face_down",
+        ):
+            if key in effect:
+                raise DslError(
+                    f"{where}: manifest_dread looks at the top two cards, manifests "
+                    f"one and puts the other into the graveyard; it takes no {key!r}"
+                )
     if op == "look_at_top":
         # The depth is the card. Without an amount the op would look at one
         # card and Through the Forest Gate would silently become a cantrip,

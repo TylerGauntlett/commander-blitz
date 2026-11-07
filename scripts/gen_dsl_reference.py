@@ -317,6 +317,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "cast_copy": ("Board", "Cast a copy of an encoded or linked card, free or for a `cost` instead.",
                   "Casting a copy for a printed price"),
     "manifest": ("Board", "Manifest the top card of a library face down as a 2/2.", H_MORPH),
+    "manifest_dread": ("Board", "Manifest dread: look at the top two cards, manifest one, put the other "
+                       "into the graveyard; `as` records the manifest.", "Manifest dread"),
     "meld": ("Board", "Meld the source with its named partner into one permanent.", H_MELD),
     "phase_out": ("Board", "Permanents phase out.", '"Target creature phases out"'),
     "regenerate": ("Board", "Regenerate permanents (a shield for the turn).",

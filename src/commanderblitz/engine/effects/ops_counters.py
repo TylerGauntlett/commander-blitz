@@ -971,17 +971,85 @@ def op_manifest(ctx: EffectContext, spec: Mapping[str, Any]):
         for _ in range(amount):
             if not library:
                 break
-            oid = library[0]
-            obj = ctx.state.objects[oid]
-            obj.controller = pid
-            move_object(ctx.state, oid, Zone.BATTLEFIELD, cause="manifest")
-            # After the move: `reset_permanent_state` clears it on the way in,
-            # which is right for every other permanent and wrong for this one.
-            obj.face_down = True
-            obj.cloaked = cloak
-            obj.revealed_to.add(pid)
-            ctx.state.bump_chars()
-            ctx.state.emit("cloaked" if cloak else "manifested", player=pid, source=oid)
+            _manifest_card(ctx, pid, library[0], cloak=cloak)
+
+
+def _manifest_card(ctx: EffectContext, pid: int, oid: int, *, cloak: bool = False) -> None:
+    """Put library card ``oid`` onto the battlefield face down under ``pid``.
+
+    The one placement `manifest` and `manifest_dread` share. The `"manifest"`
+    cause is what `zones._enter_battlefield` reads to mark the card face down
+    *before* its enters event fires (708.2), so the arrival is heard as the
+    2/2 shell and never as the card underneath.
+    """
+    obj = ctx.state.objects[oid]
+    obj.controller = pid
+    move_object(ctx.state, oid, Zone.BATTLEFIELD, cause="manifest")
+    # After the move: `reset_permanent_state` clears it on the way in,
+    # which is right for every other permanent and wrong for this one.
+    obj.face_down = True
+    obj.cloaked = cloak
+    obj.revealed_to.add(pid)
+    ctx.state.bump_chars()
+    ctx.state.emit("cloaked" if cloak else "manifested", player=pid, source=oid)
+
+
+@register("manifest_dread")
+def op_manifest_dread(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Rule 701.62a — "look at the top two cards of your library, then
+    manifest one of them and put the other into your graveyard".
+
+    The manifest half is `manifest`'s own placement (:func:`_manifest_card`),
+    so the permanent is the same 2/2 shell, enters face down before its enters
+    event fires, and turns up for the hidden card's mana cost only if it is a
+    creature card (701.34c). What dread adds is a **choice** and a **second
+    card**: the player picks which of the two to manifest, and the other goes
+    to the graveyard -- a card put there, which "cards in your graveyard"
+    counts and a graveyard replacement (Rest in Peace) redirects.
+
+    Its own op rather than a ``dread`` flag on `manifest`: `manifest` asks
+    nothing and moves one card, and dread is a different keyword action
+    (701.62, not 701.34) with a decision and a graveyard half. A flag would
+    also make ``cloak`` beside it a combination no card prints.
+
+    The pick is `ask_objects` to the manifesting player over the cards looked
+    at, so a forced pick asks nothing: with **one card** in the library that
+    card is manifested and nothing is put into the graveyard; with **none**,
+    nothing happens -- manifest dread is not a draw, so an empty library loses
+    nobody the game.
+
+    ``amount`` repeats the whole action -- "manifest dread twice" is two looks,
+    two picks, the second made from the library the first left. ``as`` binds
+    the manifested permanents (a list, empty if the library was), which is
+    "that creature" in "manifest dread, then put two +1/+1 counters on that
+    creature" (Experimental Lab).
+    """
+    amount = max(1, evaluate_value(ctx, spec.get("amount", 1)))
+    manifested: list[int] = []
+    for pid in _players(ctx, spec.get("player", "you")):
+        library = ctx.state.players[pid].library
+        for _ in range(amount):
+            looked = list(library[:2])
+            if not looked:
+                break
+            picked = yield from ask_objects(
+                ctx, "Manifest dread: manifest which card?", looked, 1, 1, pid, "manifest_dread"
+            )
+            chosen = picked[0]
+            _manifest_card(ctx, pid, chosen)
+            manifested.append(chosen)
+            for oid in looked:
+                if oid != chosen and oid in library:
+                    move_object(
+                        ctx.state,
+                        oid,
+                        Zone.GRAVEYARD,
+                        to_player=pid,
+                        cause="manifest_dread",
+                        by=ctx.source_oid,
+                    )
+    if name := spec.get("as"):
+        ctx.bindings[str(name)] = manifested
 
 
 @register("encode")

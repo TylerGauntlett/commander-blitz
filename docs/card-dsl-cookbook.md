@@ -4038,6 +4038,48 @@ Two places refuse the key:
 `is_token: false` is the near miss for "face-up nontoken": it keeps every
 manifest, which is a card and not a token.
 
+## Manifest dread
+
+```jsonc
+// Growing Dread — "When this enchantment enters, manifest dread."
+{ "op": "manifest_dread" }
+
+// They Came from the Pipes — "manifest dread twice"
+{ "op": "manifest_dread", "amount": { "const": 2 } }
+
+// Experimental Lab — "manifest dread, then put two +1/+1 counters … on that
+// creature"
+{ "op": "manifest_dread", "as": "dread" },
+{ "op": "add_counters", "counter": "+1/+1", "amount": { "const": 2 },
+  "objects": { "binding": "dread", "zone": "battlefield" } }
+```
+
+`manifest_dread` is 701.62a: the player looks at the top two cards of their
+library, manifests the one they choose and puts the other into their graveyard.
+The manifest half is `manifest`'s placement, so the permanent is the same 2/2
+shell, enters face down before its enters event fires, and turns up for the
+hidden card's mana cost only if it is a creature card (701.34c).
+
+| Key | Meaning |
+|---|---|
+| `player` | Whose library, and who chooses. Default `"you"`. |
+| `amount` | How many times the whole action is performed, default 1. Each repetition looks at what the previous one left. |
+| `as` | Binds the manifested permanents, one per repetition that found a card, for "that creature". Never the card put into the graveyard. |
+
+The choice is a `choose_objects` decision with `purpose: "manifest_dread"`. With
+one card in the library that card is manifested without a question and nothing
+goes to the graveyard; with none, nothing happens, and no player loses, because
+manifest dread draws nothing. The graveyard card is put there by an ordinary
+move, so graveyard replacements apply to it and a graveyard count sees it.
+
+The loader refuses `cloak`, `objects`, `selector`, `destination`,
+`destinations`, `rest_to`, `rest_to_bottom` and `face_down`: 701.62a fixes the
+pool, the two destinations and the shell.
+
+`manifest` is the near miss: it manifests the top card without a choice and
+puts nothing into the graveyard. `look_at_top` with `rest_to: "graveyard"`
+chooses and bins, but cannot put a card onto the battlefield face down.
+
 ## Cipher — the third direction an exile link can point
 
 ```jsonc
