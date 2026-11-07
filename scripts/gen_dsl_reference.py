@@ -521,6 +521,8 @@ SELECTORS: dict[str, Entry] = {
     "was_attached_to": ("Attached, as the same object, to the permanent a sacrifice cost's `as` recorded, when it was paid (608.2h).",
                         "Zack Fair — what a sacrificed source had"),
     "extreme": ("The greatest/least of power, toughness or mana value in the pool.", None),
+    "granter": ("The permanent that granted the resolving ability (`self` there is the recipient); true only, and only in a granted trigger's or activated ability's effects.",
+                '"…fight Grothama" — `granter`'),
     "goaded": ("Is (or is not) goaded, by anyone (701.38).",
                '"Goaded creatures" — `goaded`'),
     "face_down": ("A permanent that is face down (`true`) or face up (`false`), 708.2; "

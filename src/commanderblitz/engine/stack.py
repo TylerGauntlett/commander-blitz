@@ -1467,6 +1467,7 @@ def _resolve_ability(state: GameState, item: StackItem) -> Generator[Any, list[i
         modes_answered=item.modes_answered,
         source_name=card.name if card else item.description,
         source_def_id=card.id if card else "",
+        granted_by=item.granted_by,
     )
 
     # Intervening-if clauses are checked again on resolution (rule 603.4); a

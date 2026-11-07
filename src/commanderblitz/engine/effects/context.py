@@ -68,6 +68,12 @@ class EffectContext:
     #: removes only grants older than this. Filled from the state on
     #: construction, and carried along by `dataclasses.replace`.
     began_at: int = -1
+    #: The permanent whose ``grantable_abilities`` the resolving ability came
+    #: from -- `StackItem.granted_by` -- or ``None`` for an ability its source
+    #: prints. Read by the ``{"granter": true}`` selector: Grothama,
+    #: All-Devouring's 'Other creatures have "…fight Grothama"' names the
+    #: granter from inside an ability whose ``self`` is the recipient.
+    granted_by: int | None = None
 
     def __post_init__(self) -> None:
         if self.began_at < 0:

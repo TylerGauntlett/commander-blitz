@@ -13971,6 +13971,39 @@ granted to — Malakir Rebirth — and two things make that work:
 - The leave-the-battlefield branch of `triggers._candidates` pairs its walk of
   printed abilities with `granted_abilities`, as every other branch does.
 
+## "…fight Grothama" — `granter`
+
+Grothama, All-Devouring — *Other creatures have "Whenever this creature attacks,
+you may have it fight Grothama, All-Devouring."*
+
+```jsonc
+"grantable_abilities": [
+  { "kind": "triggered",
+    "text": "Whenever this creature attacks, you may have it fight Grothama, All-Devouring.",
+    "trigger": { "event": "attacks", "source": "self" },
+    "effects": [ { "op": "may", "prompt": "Have it fight Grothama?",
+                   "effects": [ { "op": "fight", "objects": { "self_only": true },
+                                  "other": { "granter": true } } ] } ] }
+],
+"abilities": [
+  { "kind": "static", "effect": "grant_ability", "ability": 0,
+    "affects": { "types": ["Creature"], "controller": "any", "exclude_self": true } }
+]
+```
+
+Inside a granted ability `self` is the **recipient**, so the card's own name
+there needs its own word. `{"granter": true}` is the permanent the resolving
+ability was granted by — `StackItem.granted_by`, carried onto
+`EffectContext.granted_by` — searched on the battlefield like any selector, so a
+granter that has left matches nothing and the fight does not happen (701.12c). A
+`name` selector is the near miss: it also finds a second Grothama, which granted
+nothing.
+
+`true` only. The loader holds it to the **effects** of a triggered or non-mana
+activated ability in `grantable_abilities`: a printed ability or a spell has no
+granter, and a target, trigger condition, cost, mana ability or granted static is
+read before (or without) a resolution that knows it.
+
 ## "When you do" — reflexive triggered abilities
 
 Espers to Magicite — *"Exile each opponent's graveyard. **When you do**, choose

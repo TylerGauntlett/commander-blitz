@@ -869,6 +869,49 @@ def _check_as_cast(model: CardModel, where: str) -> None:
             )
 
 
+def _reads_granter(tree: Any) -> bool:
+    """Does anything in this tree carry the ``granter`` selector key?"""
+    if isinstance(tree, Mapping):
+        return "granter" in tree or any(_reads_granter(v) for v in tree.values())
+    if isinstance(tree, (list, tuple)):
+        return any(_reads_granter(v) for v in tree)
+    return False
+
+
+def _check_granter_homes(model: CardModel, where: str) -> None:
+    """``{"granter": true}`` only in the effects of a granted trigger or
+    activated ability.
+
+    The granter is `StackItem.granted_by`, which only an ability resolving
+    out of some permanent's ``grantable_abilities`` has. Anywhere else the key
+    loads and matches nothing: on a printed ability or a spell there is no
+    granter; in a target spec, a trigger condition or a cost the ability is
+    not resolving yet, so the context that knows the granter does not exist;
+    a granted mana ability resolves at once off its activation (605.3a), and a
+    granted static is not resolving at all. Each is a card whose "fight
+    Grothama" silently fights nobody, so each is refused.
+    """
+    dump = model.model_dump(exclude_none=True)
+    grantable = dump.pop("grantable_abilities", None) or []
+    if _reads_granter(dump):
+        raise DslError(
+            f"{where}: 'granter' names the permanent that granted an ability, and "
+            f"only the effects of one of this card's grantable_abilities have one"
+        )
+    for i, ability in enumerate(grantable):
+        if ability.get("kind") in ("triggered", "activated") and not ability.get(
+            "is_mana_ability"
+        ):
+            ability.pop("effects", None)
+        if _reads_granter(ability):
+            raise DslError(
+                f"{where}.grantable_abilities[{i}]: 'granter' is read as the "
+                f"ability resolves, so only the effects of a granted triggered or "
+                f"non-mana activated ability may name it -- not its targets, "
+                f"trigger, cost or a static"
+            )
+
+
 def _check_distribution_homes(model: CardModel, where: str) -> None:
     """``distribute_counters`` only where its division can be announced.
 
@@ -1162,6 +1205,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     _check_distribution_homes(model, where)
     _check_division_homes(model, where)
     _check_as_cast(model, where)
+    _check_granter_homes(model, where)
 
     for i, replacement in enumerate(model.replacements):
         if replacement.event == "self_enters_prepared" and model.prepared_face is None:
