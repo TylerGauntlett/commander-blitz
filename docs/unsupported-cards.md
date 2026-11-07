@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**247 cards** blocked by **230** capabilities.
+**249 cards** blocked by **232** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -156,6 +156,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
 | [living-metal](#living-metal) | 1 | 11641 | keyword |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
+| [look-at-top-attacking](#look-at-top-attacking) | 1 | 7846 | op |
 | [lose-the-game](#lose-the-game) | 1 | 1512 | op |
 | [lure](#lure) | 1 | 31502 | static_effect |
 | [mana-ability-leading-rider](#mana-ability-leading-rider) | 1 | 4080 | engine |
@@ -179,6 +180,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [nontoken-creatures-died-this-turn](#nontoken-creatures-died-this-turn) | 1 | 3951 | value |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
+| [phyrexian-golem-token](#phyrexian-golem-token) | 1 | 4583 | token |
 | [play-cost-paid-card](#play-cost-paid-card) | 1 | 6544 | op |
 | [play-lands-from-graveyard-filtered](#play-lands-from-graveyard-filtered) | 1 | 3993 | static_effect |
 | [playable-condition-opponent-lost-life](#playable-condition-opponent-lost-life) | 1 | 4478 | engine |
@@ -2639,6 +2641,20 @@ Blocks **1** card.
 
 </details>
 
+## look-at-top-attacking
+
+Blocks **1** card.
+
+- **(op)** an `attacking` (and `or_planeswalker`) key on `look_at_top` -- the same `_attacking_player` contract `put_onto_battlefield` and `create_token` honour -- so a creature card a library look puts onto the battlefield with `destination: "battlefield"`, `tapped: true` enters attacking (508.4: its controller picks the defender, here the seat Arthur attacks). Its `as` binding then feeds a `delay` with `step: "end_of_combat"` holding `return_to_hand` over that binding, and `rest_to_bottom` covers the random-order remainder. Shared by Winota, Joiner of Forces and similar 'look at the top N, put one onto the battlefield tapped and attacking' cards
+  <br>Why the existing vocabulary won't do: `look_at_top`'s op_options carry `tapped` and `destination` but no `attacking`, and `_move_found` (ops_cards.py) moves the card with `tapped` only -- it never registers it with combat. Splitting it into `look_at_top` (destination `library_top`, `as`) then `put_onto_battlefield` with `attacking: true` over the binding is a composition no shipped card uses: `move_object` back onto the library may re-identify the object so the binding misses, and the `rest_to_bottom` happens before the creature leaves, so it rests on an unproven chain rather than the printed single action. The trigger half ('Arthur and at least one other creature attack') looks expressible as an `attacks`/`source: self` trigger with a `cmp` condition counting `attacking` creatures you control with `exclude_self` >= 1, and the end-of-combat return is `delay` step `end_of_combat` -- only the attacking arrival is missing
+
+<details><summary>Cards waiting on this</summary>
+
+- **Arthur, Marigold Knight** (rank 7846) — `arthur_marigold_knight`
+  - Whenever Arthur and at least one other creature attack, look at the top six cards of your library. You may put a creature card from among them onto the battlefield tapped and attacking. Put the rest on the bottom of your library in a random order. Return that creature to its owner's hand at end of combat
+
+</details>
+
 ## lose-the-game
 
 Blocks **1** card.
@@ -2967,6 +2983,20 @@ Blocks **1** card.
   - Cast this spell only during combat before blockers are declared.
   - X can't be greater than the number of snow lands you control.
   - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
+
+</details>
+
+## phyrexian-golem-token
+
+Blocks **1** card.
+
+- **(token)** a 3/3 colorless Phyrexian Golem artifact creature token (subtypes Phyrexian and Golem), e.g. id phyrexian_golem_3_3_c_artifact
+  <br>Why the existing vocabulary won't do: token_ids has golem_3_3_c_artifact, a 3/3 colorless Golem artifact creature whose subtypes are only ["Golem"]; it lacks the Phyrexian creature type, so Phyrexian-matters cards would miscount it. The other line, "Golems you control have first strike", is expressible as a grant_keyword static with affects {controller: you, subtypes: [Golem]}
+
+<details><summary>Cards waiting on this</summary>
+
+- **Blade Splicer** (rank 4583) — `blade_splicer`
+  - When this creature enters, create a 3/3 colorless Phyrexian Golem artifact creature token.
 
 </details>
 

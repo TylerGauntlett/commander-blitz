@@ -2952,12 +2952,12 @@
     },
     "Aether Channeler": {
       "edhrec_rank": 1537,
-      "gate": "template",
+      "gate": null,
       "name": "Aether Channeler",
-      "reason": "no template for: When this creature enters, choose one —",
+      "reason": "",
       "scryfall_id": "d5859a42-5a82-47db-9f1d-ffe3f2b61a02",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aether Charge": {
@@ -3722,12 +3722,12 @@
     },
     "Agate Instigator": {
       "edhrec_rank": 1171,
-      "gate": "template",
+      "gate": null,
       "name": "Agate Instigator",
-      "reason": "no template for: Offspring {1}{R}",
+      "reason": "",
       "scryfall_id": "163c093e-9b6f-497d-a167-cfee1dbc5106",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Agate-Blade Assassin": {
@@ -32132,12 +32132,12 @@
     },
     "Boss's Chauffeur": {
       "edhrec_rank": 6354,
-      "gate": "template",
+      "gate": null,
       "name": "Boss's Chauffeur",
-      "reason": "no template for: This creature enters with a number of +1/+1 counters on it equal to one plus the number of",
+      "reason": "",
       "scryfall_id": "8936a2b6-4b00-4d74-bebb-a76d6f6b09b1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bot Bashing Time": {
@@ -37802,12 +37802,12 @@
     },
     "Calamity of Cinders": {
       "edhrec_rank": 6485,
-      "gate": "template",
+      "gate": null,
       "name": "Calamity of Cinders",
-      "reason": "no template for: Convoke",
+      "reason": "",
       "scryfall_id": "97c72d4b-a5d4-4f68-bbcd-b7ed0326fc1c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Calamity of the Titans": {

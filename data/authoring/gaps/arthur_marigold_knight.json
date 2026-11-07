@@ -1,0 +1,18 @@
+{
+  "card_id": "arthur_marigold_knight",
+  "name": "Arthur, Marigold Knight",
+  "oracle_text": "Haste\nWhenever Arthur and at least one other creature attack, look at the top six cards of your library. You may put a creature card from among them onto the battlefield tapped and attacking. Put the rest on the bottom of your library in a random order. Return that creature to its owner's hand at end of combat.",
+  "blocked_sentences": [
+    "Whenever Arthur and at least one other creature attack, look at the top six cards of your library. You may put a creature card from among them onto the battlefield tapped and attacking. Put the rest on the bottom of your library in a random order. Return that creature to its owner's hand at end of combat"
+  ],
+  "needs": [
+    {
+      "capability": "look_at_top_attacking",
+      "kind": "op",
+      "what": "an `attacking` (and `or_planeswalker`) key on `look_at_top` -- the same `_attacking_player` contract `put_onto_battlefield` and `create_token` honour -- so a creature card a library look puts onto the battlefield with `destination: \"battlefield\"`, `tapped: true` enters attacking (508.4: its controller picks the defender, here the seat Arthur attacks). Its `as` binding then feeds a `delay` with `step: \"end_of_combat\"` holding `return_to_hand` over that binding, and `rest_to_bottom` covers the random-order remainder. Shared by Winota, Joiner of Forces and similar 'look at the top N, put one onto the battlefield tapped and attacking' cards",
+      "why_existing_wont_do": "`look_at_top`'s op_options carry `tapped` and `destination` but no `attacking`, and `_move_found` (ops_cards.py) moves the card with `tapped` only -- it never registers it with combat. Splitting it into `look_at_top` (destination `library_top`, `as`) then `put_onto_battlefield` with `attacking: true` over the binding is a composition no shipped card uses: `move_object` back onto the library may re-identify the object so the binding misses, and the `rest_to_bottom` happens before the creature leaves, so it rests on an unproven chain rather than the printed single action. The trigger half ('Arthur and at least one other creature attack') looks expressible as an `attacks`/`source: self` trigger with a `cmp` condition counting `attacking` creatures you control with `exclude_self` >= 1, and the end-of-combat return is `delay` step `end_of_combat` -- only the attacking arrival is missing"
+    }
+  ],
+  "closest_existing": ["look_at_top", "put_onto_battlefield", "delay"],
+  "confidence": "high"
+}

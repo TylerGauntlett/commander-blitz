@@ -135,6 +135,14 @@
   "aeronaut_s_wings": {
     "zone": "battlefield"
   },
+  "aether_channeler": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "bird_1_1_w_flying"
+    },
+    "zone": "battlefield"
+  },
   "aether_gale": {
     "battlefield_count": 30,
     "hand_size": {
@@ -218,6 +226,9 @@
   },
   "aftermath_analyst": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "agate_instigator": {
     "zone": "battlefield"
   },
   "age_of_ultron": {
@@ -2154,6 +2165,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "boss_s_chauffeur": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 3,
+      "kind": "+1/+1"
+    },
+    "zone": "battlefield"
+  },
   "botanical_sanctum": {
     "zone": "battlefield"
   },
@@ -2455,6 +2474,10 @@
   "cait_sith_fortune_teller": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "calamity_of_cinders": {
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
   },
   "caldera_lake": {
     "zone": "battlefield"
