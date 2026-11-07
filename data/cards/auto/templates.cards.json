@@ -53345,6 +53345,129 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": 1,
+          "text": "Creatures you control get +1/+0.",
+          "toughness": 0
+        },
+        {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            },
+            {
+              "affects_spells": {
+                "types": [
+                  "Creature"
+                ]
+              },
+              "cast": true,
+              "op": "uncounterable_this_turn"
+            }
+          ],
+          "kind": "activated",
+          "text": "+1: Add {R} or {G}. Creature spells you cast this turn can't be countered."
+        },
+        {
+          "cost": {
+            "loyalty": -2
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "mine"
+              },
+              "op": "fight",
+              "other": {
+                "target": "theirs"
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "mine",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            {
+              "count": 1,
+              "id": "theirs",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "−2: Target creature you control fights target creature you don't control."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "domri_anarch_of_bolas",
+      "loyalty": 3,
+      "mana_cost": "{1}{R}{G}",
+      "name": "Domri, Anarch of Bolas",
+      "oracle_text": "Creatures you control get +1/+0.\n+1: Add {R} or {G}. Creature spells you cast this turn can't be countered.\n−2: Target creature you control fights target creature you don't control.",
+      "source": "auto",
+      "subtypes": [
+        "Domri"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

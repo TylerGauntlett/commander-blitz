@@ -4540,6 +4540,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "domri_anarch_of_bolas": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "donatello_mutant_mechanic": {
     "battlefield_count": 33,
     "zone": "battlefield"

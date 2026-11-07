@@ -71692,12 +71692,12 @@
     },
     "Domri, Anarch of Bolas": {
       "edhrec_rank": 2644,
-      "gate": "template",
+      "gate": null,
       "name": "Domri, Anarch of Bolas",
-      "reason": "no template for: Creatures you control get +1/+0",
+      "reason": "",
       "scryfall_id": "c3aa2926-050c-460d-b26d-e44a39258dcc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Domri, Chaos Bringer": {
