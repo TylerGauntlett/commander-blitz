@@ -10,21 +10,20 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**245 cards** blocked by **226** capabilities.
+**244 cards** blocked by **227** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
 | [put-into-graveyard-from-anywhere](#put-into-graveyard-from-anywhere) | 7 | 256 | trigger_event |
-| [rooms](#rooms) | 5 | 4163 | engine |
+| [rooms](#rooms) | 6 | 4163 | engine |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 4 | 714 | engine |
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
 | [copy-exception-set-subtypes](#copy-exception-set-subtypes) | 3 | 1740 | engine, op |
-| [look-at-top-rest-any-order](#look-at-top-rest-any-order) | 3 | 1289 | op |
 | [omen](#omen) | 3 | 3355 | cost, engine |
 | [random-player-choice](#random-player-choice) | 3 | 5120 | op |
 | [add-color](#add-color) | 2 | 2040 | op |
@@ -54,10 +53,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [zombie-1-1-w](#zombie-1-1-w) | 2 | 3702 | token |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
+| [add-card-type-to-spells](#add-card-type-to-spells) | 1 | 4178 | static_effect |
 | [add-mana-on-tap-any-color](#add-mana-on-tap-any-color) | 1 | 1052 | static_effect |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
+| [attack-tax-x-count](#attack-tax-x-count) | 1 | 671 | value |
 | [attacking-opponents-of-player](#attacking-opponents-of-player) | 1 | 705 | selector |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
 | [batched-combat-damage-amount](#batched-combat-damage-amount) | 1 | 3943 | value |
@@ -396,7 +397,7 @@ Blocks **7** cards.
 
 ## rooms
 
-Blocks **5** cards.
+Blocks **6** cards.
 
 - **(engine)** Room split permanents (rule 709.5): one card with two doors (Bottomless Pool {U}, Locker Room {4}{U}), castable as either half; the cast door enters unlocked and the other locked; a locked door's abilities are inactive; a sorcery-speed special action pays a locked door's mana cost to unlock it; name and mana value read only unlocked doors
   <br>Why the existing vocabulary won't do: card_level_face_keys offers second_face/back_face, where the cast half becomes the whole object; nothing keeps both doors on one permanent with per-door locked/unlocked state, and no special action unlocks a door. Locker Room's batched creatures_deal_combat_damage trigger is otherwise expressible but must only work while that door is unlocked
@@ -406,6 +407,8 @@ Blocks **5** cards.
   <br>Why the existing vocabulary won't do: card_level_face_keys offers second_face/back_face, where the cast half becomes the whole object; nothing keeps both doors on one permanent with per-door locked/unlocked state, and no special action unlocks a door. Staff Room's static trigger must only work while that door is unlocked
 - **(engine)** Room split permanents (rule 709.5): a card with two door halves, each with its own name and mana cost ({1}{B} Polluted Cistern, {4}{B} Dim Oubliette), castable as either half; the cast half enters unlocked, the other locked; a locked door's abilities are inactive; a sorcery-speed special action pays a locked door's mana cost to unlock it; the permanent's name/cost reflect only unlocked doors
   <br>Why the existing vocabulary won't do: second_face is a split/adventure/MDFC half that is cast instead of the front and then is the whole object; nothing keeps both halves on one permanent with per-half locked/unlocked state, and no special action unlocks a half
+- **(engine)** Room split permanents (rule 709.5): one card with two doors (Secret Arcade {4}{W}, Dusty Parlor {2}{W}), castable as either half; the cast door enters unlocked and the other locked; a locked door's abilities are inactive; a sorcery-speed special action pays a locked door's mana cost to unlock it; name and mana value read only unlocked doors
+  <br>Why the existing vocabulary won't do: card_level_face_keys offers second_face/back_face, where the cast half becomes the whole object; nothing keeps both doors on one permanent with per-door locked/unlocked state, and no special action unlocks a door. Dusty Parlor's spell_cast trigger (filter types Enchantment, add_counters by mana_value_of the subject on an up_to target creature) is otherwise expressible but must only work while that door is unlocked
 - **(engine)** Room split permanents (rule 709.5): a card with two door halves, each with its own name and mana cost, castable as either half; the cast half enters unlocked, the other locked; a locked door's abilities are inactive; a sorcery-speed special action pays a locked door's mana cost to unlock it; the permanent's name/cost reflect only unlocked doors
   <br>Why the existing vocabulary won't do: second_face is a split/adventure/MDFC half that is cast instead of the front and then is the whole object; nothing keeps both halves on one permanent with per-half locked/unlocked state, and no special action unlocks a half
 
@@ -415,6 +418,10 @@ Blocks **5** cards.
   - When you unlock this door, create three 1/1 red Devil creature tokens with "When this token dies, it deals 1 damage to any target."
   - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
   - If a source you control would deal noncombat damage to an opponent, it deals that much damage plus 2 instead.
+- **Secret Arcade // Dusty Parlor** (rank 4178) — `secret_arcade_dusty_parlor`
+  - Nonland permanents you control and permanent spells you control are enchantments in addition to their other types.
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - Whenever you cast an enchantment spell, put a number of +1/+1 counters equal to that spell's mana value on up to one target creature.
 - **Bottomless Pool // Locker Room** (rank 5897) — `bottomless_pool_locker_room`
   - When you unlock this door, return up to one target creature to its owner's hand.
   - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
@@ -601,28 +608,6 @@ Blocks **3** cards.
   - Whenever you discard a creature card, you may pay {2}{U}. If you do, create a tapped token that's a copy of that card, except it's a 4/4 black Zombie.
 - **God-Pharaoh's Gift** (rank 8873) — `god_pharaoh_s_gift`
   - If you do, create a token that's a copy of that card, except it's a 4/4 black Zombie.
-
-</details>
-
-## look-at-top-rest-any-order
-
-Blocks **3** cards.
-
-- **(op)** A remainder option on look_at_top (e.g. rest_to_top_any_order: true) that, after the picked card is taken, lets the resolving player arrange the cards looked at and not taken in any order on top of their library (rule 401.4 ordering choice, as put_on_top's any_order does via _in_owners_order)
-  <br>Why the existing vocabulary won't do: look_at_top with destination hand and count 1 leaves the untaken cards on top in their original order, so the player never gets the printed choice of order; rest_to_bottom sends them to the bottom in random order, rest_to only names a zone with no ordering; put_on_top has any_order but cannot name 'the rest' because look_at_top's `as` binds only the taken cards; scry orders the top but also allows bottoming, which is a different card
-- **(op)** A way for look_at_top to put the cards looked at and not taken back on top of the library in an order the resolving player chooses (rule 401.4, as put_on_top's any_order does via _in_owners_order) -- here with nothing taken at all: look at the top three, reorder them, put all three back on top
-  <br>Why the existing vocabulary won't do: look_at_top leaves untaken cards on top in their original order, so the printed ordering choice never happens; rest_to_bottom sends them to the bottom in random order and rest_to only names a zone; put_on_top has any_order but no selector can name 'the top three cards of your library' and look_at_top's `as` binds only cards it moved; scry orders the top but also allows bottoming any of them, which is a strictly better card (Ponder's shipped scry spelling is that approximation)
-- **(op)** A way for look_at_top to put the cards looked at and not taken back on top of the library in an order the resolving player chooses (rule 401.4, as put_on_top's any_order does via _in_owners_order) -- here with nothing taken: look at the top three of a TARGET player's library (player: {"target": "t1"}), and the caster (not the library's owner) reorders all three back on top
-  <br>Why the existing vocabulary won't do: look_at_top leaves untaken cards on top in their original order, so the printed ordering choice never happens; rest_to_bottom sends them to the bottom in random order and rest_to only names a zone; put_on_top has any_order but no selector names 'the top three cards of that library', and its any_order asks the owner rather than the caster; scry orders the top but also allows bottoming, a strictly better card (Ponder's shipped scry spelling is that approximation). The rest is expressible: 'You may have that player shuffle' is may + shuffle with player {"target": "t1"}, and the draw is delay with step upkeep (as Arcane Denial)
-
-<details><summary>Cards waiting on this</summary>
-
-- **Halimar Depths** (rank 1289) — `halimar_depths`
-  - When this land enters, look at the top three cards of your library, then put them back in any order.
-- **Portent** (rank 4014) — `portent`
-  - Look at the top three cards of target player's library, then put them back in any order.
-- **Diabolic Vision** (rank 7343) — `diabolic_vision`
-  - Put one of them into your hand and the rest on top of your library in any order.
 
 </details>
 
@@ -1170,6 +1155,22 @@ Blocks **1** card.
 
 </details>
 
+## add-card-type-to-spells
+
+Blocks **1** card.
+
+- **(static_effect)** a static that adds a card type in addition to other types to permanent spells you control on the stack as well as to nonland permanents you control ('Nonland permanents you control and permanent spells you control are enchantments in addition to their other types'), so the added Enchantment type is seen by spell_cast triggers and spell filters
+  <br>Why the existing vocabulary won't do: set_types replaces types rather than adding, add_subtype adds subtypes, and static affects filters read battlefield permanents only; nothing changes the card types of a spell on the stack
+
+<details><summary>Cards waiting on this</summary>
+
+- **Secret Arcade // Dusty Parlor** (rank 4178) — `secret_arcade_dusty_parlor`
+  - Nonland permanents you control and permanent spells you control are enchantments in addition to their other types.
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - Whenever you cast an enchantment spell, put a number of +1/+1 counters equal to that spell's mana value on up to one target creature.
+
+</details>
+
 ## add-mana-on-tap-any-color
 
 Blocks **1** card.
@@ -1223,6 +1224,20 @@ Blocks **1** card.
 
 - **Witchbane Orb** (rank 16177) — `witchbane_orb`
   - When this artifact enters, destroy all Curses attached to you
+
+</details>
+
+## attack-tax-x-count
+
+Blocks **1** card.
+
+- **(value)** an attack_tax static whose {X} per attacking creature is a static value read off the tax's controller's board at declaration -- here {"count": {"zone": "battlefield", "controller": "you", "types": ["Enchantment"]}} -- e.g. x_per_attacker accepting a static_value_keys amount (count) instead of only a property of the attacker
+  <br>Why the existing vocabulary won't do: attack_tax with or_planeswalkers covers the shape, but its cost is a fixed mana string and an {X} price is refused unless x_per_attacker is present, which the loader (_validate_tax_x) restricts to one leaf, 'counters', read off the attacking creature (Nils, Discipline Enforcer); nothing lets X be the number of enchantments the defending player controls, and a fixed {N} would be wrong as the enchantment count changes
+
+<details><summary>Cards waiting on this</summary>
+
+- **Sphere of Safety** (rank 671) — `sphere_of_safety`
+  - Creatures can't attack you or planeswalkers you control unless their controller pays {X} for each of those creatures, where X is the number of enchantments you control.
 
 </details>
 

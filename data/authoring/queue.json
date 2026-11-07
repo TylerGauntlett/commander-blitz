@@ -260092,12 +260092,12 @@
     },
     "Spirit-Sister's Call": {
       "edhrec_rank": 12135,
-      "gate": "template",
+      "gate": null,
       "name": "Spirit-Sister's Call",
-      "reason": "no template for: At the beginning of your end step, choose target permanent card in your graveyard. You may",
+      "reason": "",
       "scryfall_id": "bc495d03-9340-47cd-afc2-82a1677e69df",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spiritcall Enthusiast // Scrollboost": {
@@ -273752,12 +273752,12 @@
     },
     "Tainted Field": {
       "edhrec_rank": 430,
-      "gate": "template",
+      "gate": null,
       "name": "Tainted Field",
-      "reason": "no template for: {T}: Add {W} or {B}. Activate only if you control a Swamp",
+      "reason": "",
       "scryfall_id": "c6eeab6f-a738-4005-91c2-a5f81df5c569",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tainted Indulgence": {
@@ -273772,12 +273772,12 @@
     },
     "Tainted Isle": {
       "edhrec_rank": 500,
-      "gate": "template",
+      "gate": null,
       "name": "Tainted Isle",
-      "reason": "no template for: {T}: Add {U} or {B}. Activate only if you control a Swamp",
+      "reason": "",
       "scryfall_id": "70e8e7e2-e9ea-4358-805e-c5110c8d8443",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tainted Observer": {

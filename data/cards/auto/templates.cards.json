@@ -189054,6 +189054,110 @@
         {
           "effects": [
             {
+              "as": "chosen",
+              "op": "snapshot",
+              "target": "t1"
+            },
+            {
+              "effects": [
+                {
+                  "as": "call_sacrificed",
+                  "objects": {
+                    "controller": "you",
+                    "count": 1,
+                    "shares_permanent_type_with": "chosen",
+                    "zone": "battlefield"
+                  },
+                  "op": "sacrifice"
+                },
+                {
+                  "condition": {
+                    "cmp": ">",
+                    "left": {
+                      "count": {
+                        "binding": "call_sacrificed"
+                      }
+                    },
+                    "right": {
+                      "const": 0
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "controller": "you",
+                      "destination": "battlefield",
+                      "link": true,
+                      "objects": {
+                        "target": "t1"
+                      },
+                      "op": "return_from_graveyard"
+                    },
+                    {
+                      "destination": "exile",
+                      "objects": {
+                        "count": "all",
+                        "returned_with": "self",
+                        "zone": "battlefield"
+                      },
+                      "op": "replace_leaves_battlefield"
+                    }
+                  ]
+                }
+              ],
+              "op": "may",
+              "prompt": "Sacrifice a permanent that shares a card type with the chosen card?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "any_types": [
+                  "Artifact",
+                  "Battle",
+                  "Creature",
+                  "Enchantment",
+                  "Land",
+                  "Planeswalker"
+                ],
+                "controller": "you",
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "At the beginning of your end step, choose target permanent card in your graveyard. You may sacrifice a permanent that shares a card type with the chosen card. If you do, return the chosen card from your graveyard to the battlefield and it gains \"If this permanent would leave the battlefield, exile it instead of putting it anywhere else.\"",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "spirit_sister_s_call",
+      "mana_cost": "{3}{W}{B}",
+      "name": "Spirit-Sister's Call",
+      "oracle_text": "At the beginning of your end step, choose target permanent card in your graveyard. You may sacrifice a permanent that shares a card type with the chosen card. If you do, return the chosen card from your graveyard to the battlefield and it gains \"If this permanent would leave the battlefield, exile it instead of putting it anywhere else.\"",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 1
               },
@@ -199699,6 +199803,150 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "condition": {
+            "exists": {
+              "controller": "you",
+              "subtypes": [
+                "Swamp"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "W"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "B"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {W} or {B}. Activate only if you control a Swamp."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [],
+      "id": "tainted_field",
+      "name": "Tainted Field",
+      "oracle_text": "{T}: Add {C}.\n{T}: Add {W} or {B}. Activate only if you control a Swamp.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "condition": {
+            "exists": {
+              "controller": "you",
+              "subtypes": [
+                "Swamp"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "U"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "B"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {U} or {B}. Activate only if you control a Swamp."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [],
+      "id": "tainted_isle",
+      "name": "Tainted Isle",
+      "oracle_text": "{T}: Add {C}.\n{T}: Add {U} or {B}. Activate only if you control a Swamp.",
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {

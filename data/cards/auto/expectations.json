@@ -16081,6 +16081,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "spirit_sister_s_call": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "spirited_companion": {
     "hand_size": {
       "0": 2
@@ -16904,6 +16908,14 @@
   },
   "taigam_s_scheming": {
     "zone": "graveyard"
+  },
+  "tainted_field": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "tainted_isle": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "tainted_peak": {
     "battlefield_count": 33,
