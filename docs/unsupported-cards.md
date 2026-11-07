@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**252 cards** blocked by **233** capabilities.
+**254 cards** blocked by **235** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -104,6 +104,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
 | [embalm](#embalm) | 1 | 4333 | cost |
+| [entered-without-being-cast](#entered-without-being-cast) | 1 | 7379 | selector |
 | [enters-as-copy-add-subtypes](#enters-as-copy-add-subtypes) | 1 | 3852 | replacement |
 | [enters-as-copy-embalmed-exception](#enters-as-copy-embalmed-exception) | 1 | 4333 | replacement |
 | [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
@@ -223,6 +224,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [static-greatest-power-in-graveyard](#static-greatest-power-in-graveyard) | 1 | 10492 | value |
+| [storm-crow-token](#storm-crow-token) | 1 | 4110 | token |
 | [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
 | [target-if-cast-during](#target-if-cast-during) | 1 | 1524 | selector |
@@ -1901,6 +1903,20 @@ Blocks **1** card.
 - **Vizier of Many Faces** (rank 4333) — `vizier_of_many_faces`
   - You may have this creature enter as a copy of any creature on the battlefield, except if this creature was embalmed, the token has no mana cost, it's white, and it's a Zombie in addition to its other types
   - Embalm {3}{U}{U}
+
+</details>
+
+## entered-without-being-cast
+
+Blocks **1** card.
+
+- **(selector)** a trigger filter / condition on a permanent_enters trigger asking whether the ENTERING permanent (not the trigger's source) arrived by resolving as a cast spell -- the entered_by_cast flag on that object -- so "whenever another creature you control enters, if it wasn't cast" fires for tokens, reanimation, blinks, put-onto-battlefield effects and not for creatures cast from any zone
+  <br>Why the existing vocabulary won't do: The was_cast condition reads the ability's own source and the loader restricts it to self_enters triggers (WAS_CAST_TRIGGERS), explicitly refusing it on permanent_enters because there it would answer about this creature, not the one that entered; trigger_keys' not_cause refuses a single named cause and misses reanimation, blinks and Show and Tell; trigger_filter_keys and selector_keys have no cast/entered-by-cast key. Dropping the clause would make every cast creature grow and unblock this one.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Rapid Augmenter** (rank 7379) — `rapid_augmenter`
+  - Whenever another creature you control enters, if it wasn't cast, put a +1/+1 counter on this creature and this creature can't be blocked this turn.
 
 </details>
 
@@ -3602,6 +3618,20 @@ Blocks **1** card.
 
 - **Carrion Grub** (rank 10492) — `carrion_grub`
   - This creature gets +X/+0, where X is the greatest power among creature cards in your graveyard.
+
+</details>
+
+## storm-crow-token
+
+Blocks **1** card.
+
+- **(token)** a 1/2 blue Bird creature token with flying named Storm Crow
+  <br>Why the existing vocabulary won't do: token_ids has bird_1_1_u_flying_vigilance, bird_1_1_w_flying, bird_2_2_u_flying and bird_soldier_4_4_w_flying, but no 1/2 blue flying Bird, and none named Storm Crow. The rest of the sentence is expressible: an end_step trigger with create_token whose amount is the spells_cast_this_turn value; the first line is a buff plus grant_keyword static on Birds you control
+
+<details><summary>Cards waiting on this</summary>
+
+- **Murmuration** (rank 4110) — `murmuration`
+  - At the beginning of your end step, for each spell you've cast this turn, create a 1/2 blue Bird creature token with flying named Storm Crow.
 
 </details>
 

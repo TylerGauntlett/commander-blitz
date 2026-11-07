@@ -13045,6 +13045,16 @@
     },
     "zone": "graveyard"
   },
+  "plumecreed_escort": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "hexproof"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "plumeveil": {
     "zone": "battlefield"
   },
@@ -13052,6 +13062,13 @@
     "zone": "battlefield"
   },
   "polluted_mire": {
+    "zone": "battlefield"
+  },
+  "pollywog_prodigy": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "pond_prophet": {
@@ -14150,6 +14167,10 @@
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
+  "restoration_angel": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "restoration_magic": {
     "granted": {
       "count": 1,
@@ -14507,6 +14528,10 @@
     "zone": "battlefield"
   },
   "rorix_bladewing": {
+    "zone": "battlefield"
+  },
+  "rose_room_treasurer": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "rot_hulk": {

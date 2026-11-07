@@ -154150,6 +154150,66 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "keyword": "hexproof",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, target creature you control gains hexproof until end of turn.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "plumecreed_escort",
+      "keywords": [
+        "flash",
+        "flying"
+      ],
+      "mana_cost": "{1}{U}",
+      "name": "Plumecreed Escort",
+      "oracle_text": "Flash\nFlying\nWhen this creature enters, target creature you control gains hexproof until end of turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Bird",
+        "Scout"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U",
         "W"
@@ -154271,6 +154331,126 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "condition": {
+                "any": [
+                  {
+                    "cmp": ">",
+                    "left": {
+                      "power_of": {
+                        "binding": "subject"
+                      }
+                    },
+                    "right": {
+                      "power_of": {
+                        "self": true
+                      }
+                    }
+                  },
+                  {
+                    "cmp": ">",
+                    "left": {
+                      "toughness_of": {
+                        "binding": "subject"
+                      }
+                    },
+                    "right": {
+                      "toughness_of": {
+                        "self": true
+                      }
+                    }
+                  }
+                ]
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "add_counters"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Evolve (Whenever a creature you control enters, if that creature has greater power or toughness than this creature, put a +1/+1 counter on this creature.)",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent casts a noncreature spell with mana value less than this creature's power, draw a card.",
+          "trigger": {
+            "condition": {
+              "cmp": "<",
+              "left": {
+                "mana_value_of": {
+                  "binding": "subject"
+                }
+              },
+              "right": {
+                "power_of": {
+                  "self": true
+                }
+              }
+            },
+            "controller": "opponent",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "pollywog_prodigy",
+      "mana_cost": "{1}{U}",
+      "name": "Pollywog Prodigy",
+      "oracle_text": "Evolve (Whenever a creature you control enters, if that creature has greater power or toughness than this creature, put a +1/+1 counter on this creature.)\nWhenever an opponent casts a noncreature spell with mana value less than this creature's power, draw a card.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Frog",
+        "Wizard"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -166671,6 +166851,81 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "restored",
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "exile"
+                },
+                {
+                  "controller": "you",
+                  "objects": {
+                    "binding": "restored",
+                    "zone": "exile"
+                  },
+                  "op": "put_onto_battlefield"
+                }
+              ],
+              "op": "may",
+              "prompt": "Exile the target creature, then return it to the battlefield under your control?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "not_subtypes": [
+                  "Angel"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, you may exile target non-Angel creature you control, then return that card to the battlefield under your control.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "restoration_angel",
+      "keywords": [
+        "flash",
+        "flying"
+      ],
+      "mana_cost": "{3}{W}",
+      "name": "Restoration Angel",
+      "oracle_text": "Flash\nFlying\nWhen this creature enters, you may exile target non-Angel creature you control, then return that card to the battlefield under your control.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Angel"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "additional_cost_options": [
         {
           "mana": "{0}"
@@ -170717,6 +170972,107 @@
         "Legendary"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "condition": {
+                "cmp": "<=",
+                "left": {
+                  "resolutions_this_turn": "self"
+                },
+                "right": {
+                  "const": 2
+                }
+              },
+              "else": [
+                {
+                  "effects": [
+                    {
+                      "ability": "rose_room_treasurer_burn",
+                      "op": "reflexive_trigger"
+                    }
+                  ],
+                  "op": "may",
+                  "pay": {
+                    "mana": "{X}"
+                  },
+                  "player": "you",
+                  "prompt": "Pay {X} for Rose Room Treasurer to deal X damage to any target?",
+                  "x": {
+                    "as": "paid_x"
+                  }
+                }
+              ],
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "create_token",
+                  "token": "treasure_token"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Alliance — Whenever another creature you control enters, create a Treasure token if this is the first or second time this ability has resolved this turn. Otherwise, you may pay {X}.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "paid_x"
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "id": "rose_room_treasurer_burn",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any"
+            }
+          ],
+          "text": "When you do, this creature deals X damage to any target."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "rose_room_treasurer",
+      "mana_cost": "{3}{R}",
+      "name": "Rose Room Treasurer",
+      "oracle_text": "Alliance — Whenever another creature you control enters, create a Treasure token if this is the first or second time this ability has resolved this turn. Otherwise, you may pay {X}. When you do, this creature deals X damage to any target.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Ogre",
+        "Warrior"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]

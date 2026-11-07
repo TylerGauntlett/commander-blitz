@@ -204402,12 +204402,12 @@
     },
     "Plumecreed Escort": {
       "edhrec_rank": 4280,
-      "gate": "template",
+      "gate": null,
       "name": "Plumecreed Escort",
-      "reason": "no template for: When this creature enters, target creature you control gains hexproof until end of turn",
+      "reason": "",
       "scryfall_id": "f71320ed-2f30-49ce-bcb0-19aebba3f0e8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Plumecreed Mentor": {
@@ -204852,12 +204852,12 @@
     },
     "Pollywog Prodigy": {
       "edhrec_rank": 1106,
-      "gate": "template",
+      "gate": null,
       "name": "Pollywog Prodigy",
-      "reason": "no template for: Evolve",
+      "reason": "",
       "scryfall_id": "292158eb-cef0-4807-a38f-c5686064b95a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pollywog Symbiote": {
@@ -221682,12 +221682,12 @@
     },
     "Restoration Angel": {
       "edhrec_rank": 1364,
-      "gate": "template",
+      "gate": null,
       "name": "Restoration Angel",
-      "reason": "no template for: When this creature enters, you may exile target non-Angel creature you control, then retur",
+      "reason": "",
       "scryfall_id": "6ebb5601-9ecd-4643-bcc7-e5663a471773",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Restoration Gearsmith": {
@@ -227612,12 +227612,12 @@
     },
     "Rose Room Treasurer": {
       "edhrec_rank": 3543,
-      "gate": "template",
+      "gate": null,
       "name": "Rose Room Treasurer",
-      "reason": "no template for: Alliance — Whenever another creature you control enters, create a Treasure token if this i",
+      "reason": "",
       "scryfall_id": "a13c1103-91d0-4aef-8ece-e7ceb25ffdfb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rose Tyler": {
