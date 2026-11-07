@@ -1868,6 +1868,20 @@
   "blade_of_the_sixth_pride": {
     "zone": "battlefield"
   },
+  "blade_splicer": {
+    "battlefield_count": 34,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "first_strike"
+      ]
+    },
+    "tokens": {
+      "count": 1,
+      "id": "phyrexian_golem_3_3_c_artifact"
+    },
+    "zone": "battlefield"
+  },
   "bladed_pinions": {
     "zone": "battlefield"
   },
@@ -9008,6 +9022,20 @@
     },
     "zone": "battlefield"
   },
+  "jacked_rabbit": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 20,
+      "kind": "+1/+1"
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "battlefield"
+  },
   "jackhammer": {
     "zone": "battlefield"
   },
@@ -11598,6 +11626,10 @@
     "zone": "battlefield"
   },
   "murkfiend_liege": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "murmuration": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

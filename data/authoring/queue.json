@@ -25992,12 +25992,12 @@
     },
     "Blade Splicer": {
       "edhrec_rank": 4583,
-      "gate": "template",
+      "gate": null,
       "name": "Blade Splicer",
-      "reason": "no template for: When this creature enters, create a 3/3 colorless Phyrexian Golem artifact creature token",
+      "reason": "",
       "scryfall_id": "8ea1a510-ec87-4c93-bcf2-0c91738b008f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Blade of Selves": {
@@ -141572,12 +141572,12 @@
     },
     "Jacked Rabbit": {
       "edhrec_rank": 2086,
-      "gate": "template",
+      "gate": null,
       "name": "Jacked Rabbit",
-      "reason": "no template for: Ravenous",
+      "reason": "",
       "scryfall_id": "2c695df6-6bf2-4e6b-8500-e3116137ca27",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jackhammer": {
@@ -181172,12 +181172,12 @@
     },
     "Murmuration": {
       "edhrec_rank": 4110,
-      "gate": "template",
+      "gate": null,
       "name": "Murmuration",
-      "reason": "no template for: Birds you control get +1/+1 and have vigilance",
+      "reason": "",
       "scryfall_id": "561c9c4e-942e-40e8-b5f2-ac709a502f18",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Murmuring Bosk": {

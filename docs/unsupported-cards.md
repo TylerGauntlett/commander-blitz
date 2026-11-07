@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**258 cards** blocked by **238** capabilities.
+**255 cards** blocked by **235** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -185,7 +185,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [offspring](#offspring) | 1 | 6566 | keyword |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
-| [phyrexian-golem-token](#phyrexian-golem-token) | 1 | 4583 | token |
 | [play-cost-paid-card](#play-cost-paid-card) | 1 | 6544 | op |
 | [play-lands-from-graveyard-filtered](#play-lands-from-graveyard-filtered) | 1 | 3993 | static_effect |
 | [playable-condition-opponent-lost-life](#playable-condition-opponent-lost-life) | 1 | 4478 | engine |
@@ -200,7 +199,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [proliferate-binding](#proliferate-binding) | 1 | 957 | op |
 | [protection-from-multicolored](#protection-from-multicolored) | 1 | 1516 | static_effect |
 | [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
-| [rabbit-1-1-w](#rabbit-1-1-w) | 1 | 2086 | token |
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
 | [random-order-bottom](#random-order-bottom) | 1 | 1343 | op |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
@@ -228,7 +226,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [static-greatest-power-in-graveyard](#static-greatest-power-in-graveyard) | 1 | 10492 | value |
-| [storm-crow-token](#storm-crow-token) | 1 | 4110 | token |
 | [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
 | [target-if-cast-during](#target-if-cast-during) | 1 | 1524 | selector |
@@ -3074,20 +3071,6 @@ Blocks **1** card.
 
 </details>
 
-## phyrexian-golem-token
-
-Blocks **1** card.
-
-- **(token)** a 3/3 colorless Phyrexian Golem artifact creature token (subtypes Phyrexian and Golem), e.g. id phyrexian_golem_3_3_c_artifact
-  <br>Why the existing vocabulary won't do: token_ids has golem_3_3_c_artifact, a 3/3 colorless Golem artifact creature whose subtypes are only ["Golem"]; it lacks the Phyrexian creature type, so Phyrexian-matters cards would miscount it. The other line, "Golems you control have first strike", is expressible as a grant_keyword static with affects {controller: you, subtypes: [Golem]}
-
-<details><summary>Cards waiting on this</summary>
-
-- **Blade Splicer** (rank 4583) — `blade_splicer`
-  - When this creature enters, create a 3/3 colorless Phyrexian Golem artifact creature token.
-
-</details>
-
 ## play-cost-paid-card
 
 Blocks **1** card.
@@ -3281,20 +3264,6 @@ Blocks **1** card.
 
 - **Braids, Arisen Nightmare** (rank 291) — `braids_arisen_nightmare`
   - If you do, each opponent may sacrifice a permanent of their choice that shares a card type with it. For each opponent who doesn't, that player loses 2 life and you draw a card.
-
-</details>
-
-## rabbit-1-1-w
-
-Blocks **1** card.
-
-- **(token)** a 1/1 white Rabbit creature token with no abilities (token id rabbit_1_1_w)
-  <br>Why the existing vocabulary won't do: token_ids is a closed list and has no Rabbit; the nearest 1/1 white tokens (cat_1_1_w, dog_1_1_w, human_1_1_w, soldier_1_1_w) carry the wrong creature type, which matters for Rabbit typal payoffs. The rest of the line is expressible: an attacks trigger with create_token whose amount is power_of self, and Ravenous via a self_enters_with_counters replacement of X +1/+1 counters plus a self_enters trigger conditioned on x >= 5 that draws a card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Jacked Rabbit** (rank 2086) — `jacked_rabbit`
-  - Whenever this creature attacks, create a number of 1/1 white Rabbit creature tokens equal to this creature's power.
 
 </details>
 
@@ -3681,20 +3650,6 @@ Blocks **1** card.
 
 - **Carrion Grub** (rank 10492) — `carrion_grub`
   - This creature gets +X/+0, where X is the greatest power among creature cards in your graveyard.
-
-</details>
-
-## storm-crow-token
-
-Blocks **1** card.
-
-- **(token)** a 1/2 blue Bird creature token with flying named Storm Crow
-  <br>Why the existing vocabulary won't do: token_ids has bird_1_1_u_flying_vigilance, bird_1_1_w_flying, bird_2_2_u_flying and bird_soldier_4_4_w_flying, but no 1/2 blue flying Bird, and none named Storm Crow. The rest of the sentence is expressible: an end_step trigger with create_token whose amount is the spells_cast_this_turn value; the first line is a buff plus grant_keyword static on Birds you control
-
-<details><summary>Cards waiting on this</summary>
-
-- **Murmuration** (rank 4110) — `murmuration`
-  - At the beginning of your end step, for each spell you've cast this turn, create a 1/2 blue Bird creature token with flying named Storm Crow.
 
 </details>
 
