@@ -1,0 +1,14 @@
+{
+  "card_id": "rowdy_research",
+  "name": "Rowdy Research",
+  "oracle_text": "This spell costs {1} less to cast for each creature that attacked this turn.\nDraw three cards.",
+  "blocked_sentences": ["This spell costs {1} less to cast for each creature that attacked this turn."],
+  "needs": [{
+    "capability": "cost_reduction_per_attacker_this_turn",
+    "kind": "value",
+    "what": "a card-level cost_reduction shape that counts every creature (any controller) that attacked this turn, read from the turn ledger's attacker oids rather than the board -- e.g. a cost_reduction key taking a value expression such as attackers_this_turn over all players, or attacked_this_turn added to cost_reduction_filter_keys with the count reading the ledger so attackers that died or left still count",
+    "why_existing_wont_do": "cost_reduction accepts only amount/count/greatest_count/total_power/total_mana_value/greatest_mana_value; count's filter keys have 'attacking' (only creatures still attacking now, so zero in a postcombat main phase and missing attackers that died) but not 'attacked_this_turn', and the value 'attackers_this_turn' exists only in value_keys, which cost_reduction cannot read"
+  }],
+  "closest_existing": ["cost_reduction.count", "attackers_this_turn", "attacked_this_turn selector"],
+  "confidence": "high"
+}

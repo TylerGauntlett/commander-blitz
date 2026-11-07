@@ -1,0 +1,18 @@
+{
+  "card_id": "rapid_augmenter",
+  "name": "Rapid Augmenter",
+  "oracle_text": "Haste\nWhenever another creature you control with base power 1 enters, it gains haste until end of turn.\nWhenever another creature you control enters, if it wasn't cast, put a +1/+1 counter on this creature and this creature can't be blocked this turn.",
+  "blocked_sentences": [
+    "Whenever another creature you control enters, if it wasn't cast, put a +1/+1 counter on this creature and this creature can't be blocked this turn."
+  ],
+  "needs": [
+    {
+      "capability": "entered_without_being_cast",
+      "kind": "selector",
+      "what": "a trigger filter / condition on a permanent_enters trigger asking whether the ENTERING permanent (not the trigger's source) arrived by resolving as a cast spell -- the entered_by_cast flag on that object -- so \"whenever another creature you control enters, if it wasn't cast\" fires for tokens, reanimation, blinks, put-onto-battlefield effects and not for creatures cast from any zone",
+      "why_existing_wont_do": "The was_cast condition reads the ability's own source and the loader restricts it to self_enters triggers (WAS_CAST_TRIGGERS), explicitly refusing it on permanent_enters because there it would answer about this creature, not the one that entered; trigger_keys' not_cause refuses a single named cause and misses reanimation, blinks and Show and Tell; trigger_filter_keys and selector_keys have no cast/entered-by-cast key. Dropping the clause would make every cast creature grow and unblock this one."
+    }
+  ],
+  "closest_existing": ["was_cast", "not_cause", "unblockable", "add_counters"],
+  "confidence": "high"
+}

@@ -1,0 +1,22 @@
+{
+  "card_id": "inferno_titan",
+  "name": "Inferno Titan",
+  "oracle_text": "{R}: This creature gets +1/+0 until end of turn.\nWhenever this creature enters or attacks, it deals 3 damage divided as you choose among one, two, or three targets.",
+  "blocked_sentences": [
+    "Whenever this creature enters or attacks, it deals 3 damage divided as you choose among one, two, or three targets."
+  ],
+  "needs": [
+    {
+      "capability": "divided_damage_on_trigger",
+      "kind": "engine",
+      "what": "`damage` with `divided` inside a triggered ability's effects (self_enters and attacks triggers), with the division announced when the trigger is put on the stack and its targets chosen (603.3d / 601.2d), over an ability-level target spec of 'one, two, or three targets' that are ANY targets -- creatures, planeswalkers, battles and players -- each dealt at least one",
+      "why_existing_wont_do": "`damage.divided` exists, but `loader._check_division_homes` refuses it anywhere but a top-level spell effect ('divided damage is only supported as a top-level effect of a spell'), because `Game._ask_damage_division` is only called from `Game._cast` and `engine.division.divided_damage` reads only `card.spell_effects`. It also requires the divided spec to have kind `permanent`, and `ops_life._damage_divided` only calls `damage_permanent`, so a player can never receive a share. `distribute_counters` is the activated-ability-only analogue and divides counters, not damage; fixed per-target `damage` effects would fix the target count and the split, an approximation"
+    }
+  ],
+  "closest_existing": [
+    "damage.divided",
+    "distribute_counters",
+    "pump"
+  ],
+  "confidence": "high"
+}

@@ -602,6 +602,24 @@
       "is_token": true
     },
     {
+      "id": "phyrexian_golem_3_3_c_artifact",
+      "name": "Phyrexian Golem Token",
+      "oracle_text": "3/3 colorless Phyrexian Golem artifact creature token.",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Phyrexian",
+        "Golem"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true
+    },
+    {
       "id": "golem_3_3_c_enchantment_artifact",
       "name": "Golem Token",
       "oracle_text": "3/3 colorless Golem enchantment artifact creature token.",
@@ -2432,6 +2450,29 @@
         "U"
       ],
       "is_token": true
+    },
+    {
+      "id": "storm_crow_1_2_u_flying",
+      "name": "Storm Crow",
+      "oracle_text": "1/2 blue Bird creature token with flying named Storm Crow.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bird"
+      ],
+      "power": 1,
+      "toughness": 2,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "is_token": true,
+      "keywords": [
+        "flying"
+      ]
     },
     {
       "id": "kor_ally_1_1_w",
@@ -4307,6 +4348,26 @@
       ],
       "color_identity": [
         "B"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "rabbit_1_1_w",
+      "name": "Rabbit Token",
+      "oracle_text": "1/1 white Rabbit creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Rabbit"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
       ],
       "is_token": true
     },

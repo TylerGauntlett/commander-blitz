@@ -5,7 +5,7 @@ area: decks
 effort: L
 impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
-depends_on: []
+depends_on: [divided-damage-on-abilities, divided-damage-any-target]
 status: proposed
 rank: 34
 ---
@@ -19,6 +19,11 @@ coming-soon shell on the shelf: its row `blc_family_matters` is in
 `python scripts/sync_precons.py --missing blc_family_matters` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+One of those capabilities is a rules subsystem the engine does not have
+([rules-coverage.md](../rules-coverage.md#not-implemented)): Inferno Titan's
+enters-or-attacks trigger deals 3 damage divided among one, two or three
+targets, which is divided damage on an ability and among any target. The deck
+waits on the items that build both.
 
 ## The change
 

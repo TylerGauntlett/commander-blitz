@@ -135,6 +135,14 @@
   "aeronaut_s_wings": {
     "zone": "battlefield"
   },
+  "aether_channeler": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "bird_1_1_w_flying"
+    },
+    "zone": "battlefield"
+  },
   "aether_gale": {
     "battlefield_count": 30,
     "hand_size": {
@@ -218,6 +226,9 @@
   },
   "aftermath_analyst": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "agate_instigator": {
     "zone": "battlefield"
   },
   "age_of_ultron": {
@@ -1857,6 +1868,20 @@
   "blade_of_the_sixth_pride": {
     "zone": "battlefield"
   },
+  "blade_splicer": {
+    "battlefield_count": 34,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "first_strike"
+      ]
+    },
+    "tokens": {
+      "count": 1,
+      "id": "phyrexian_golem_3_3_c_artifact"
+    },
+    "zone": "battlefield"
+  },
   "bladed_pinions": {
     "zone": "battlefield"
   },
@@ -2152,6 +2177,14 @@
   },
   "boseiju_who_endures": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "boss_s_chauffeur": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 3,
+      "kind": "+1/+1"
+    },
     "zone": "battlefield"
   },
   "botanical_sanctum": {
@@ -2455,6 +2488,10 @@
   "cait_sith_fortune_teller": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "calamity_of_cinders": {
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
   },
   "caldera_lake": {
     "zone": "battlefield"
@@ -2944,6 +2981,18 @@
   "charity_extractor": {
     "zone": "battlefield"
   },
+  "chart_a_course": {
+    "graveyard_size": {
+      "0": 4
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "graveyard"
+  },
   "chasm_skulker": {
     "battlefield_count": 33,
     "hand_size": {
@@ -3039,6 +3088,19 @@
       "id": "wizard_0_1_b_noncreature_ping"
     },
     "zone": "graveyard"
+  },
+  "circuit_mender": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "life": {
+      "0": 42
+    },
+    "zone": "battlefield"
   },
   "citanul_hierophants": {
     "battlefield_count": 33,
@@ -3154,6 +3216,19 @@
     "battlefield_count": 32,
     "opponent_battlefield_count": 6,
     "zone": "graveyard"
+  },
+  "cloudblazer": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 38
+    },
+    "life": {
+      "0": 42
+    },
+    "zone": "battlefield"
   },
   "cloudcrown_oak": {
     "zone": "battlefield"
@@ -4374,6 +4449,10 @@
     "opponent_battlefield_count": 2,
     "zone": "graveyard"
   },
+  "devilish_valet": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "devilthorn_fox": {
     "zone": "battlefield"
   },
@@ -4913,6 +4992,10 @@
     "zone": "battlefield"
   },
   "eccentric_pestfinder_turn_stones": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "echoing_assault": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -7774,6 +7857,9 @@
     },
     "zone": "battlefield"
   },
+  "hanged_executioner": {
+    "zone": "battlefield"
+  },
   "hapatra_vizier_of_poisons": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -8487,6 +8573,13 @@
       "0": 41
     }
   },
+  "illusory_ambusher": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "ilysian_caryatid": {
     "zone": "battlefield"
   },
@@ -8929,6 +9022,20 @@
     },
     "zone": "battlefield"
   },
+  "jacked_rabbit": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 20,
+      "kind": "+1/+1"
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "battlefield"
+  },
   "jackhammer": {
     "zone": "battlefield"
   },
@@ -8960,6 +9067,10 @@
     "zone": "battlefield"
   },
   "jaws_of_defeat": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "jazal_goldmane": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -9107,6 +9218,10 @@
     "zone": "battlefield"
   },
   "junji_the_midnight_sky": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "junk_winder": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -11514,6 +11629,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "murmuration": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "murmuring_bosk": {
     "zone": "battlefield"
   },
@@ -12958,6 +13077,16 @@
     },
     "zone": "graveyard"
   },
+  "plumecreed_escort": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "hexproof"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "plumeveil": {
     "zone": "battlefield"
   },
@@ -12965,6 +13094,13 @@
     "zone": "battlefield"
   },
   "polluted_mire": {
+    "zone": "battlefield"
+  },
+  "pollywog_prodigy": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "pond_prophet": {
@@ -14063,6 +14199,10 @@
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
+  "restoration_angel": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "restoration_magic": {
     "granted": {
       "count": 1,
@@ -14420,6 +14560,10 @@
     "zone": "battlefield"
   },
   "rorix_bladewing": {
+    "zone": "battlefield"
+  },
+  "rose_room_treasurer": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "rot_hulk": {
@@ -16567,6 +16711,13 @@
     },
     "zone": "battlefield"
   },
+  "storm_of_souls": {
+    "battlefield_count": 34,
+    "graveyard_size": {
+      "0": 0
+    },
+    "zone": "exile"
+  },
   "storm_queen_of_wakanda": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -17578,6 +17729,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "tetsuko_umezawa_fugitive": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "tezzeret_s_gambit": {
     "hand_size": {
       "0": 3
@@ -17866,6 +18021,20 @@
       "0": 37
     },
     "zone": "graveyard"
+  },
+  "thopter_engineer": {
+    "battlefield_count": 34,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "haste"
+      ]
+    },
+    "tokens": {
+      "count": 1,
+      "id": "thopter_1_1_c_flying"
+    },
+    "zone": "battlefield"
   },
   "thopter_fabricator": {
     "battlefield_count": 33,

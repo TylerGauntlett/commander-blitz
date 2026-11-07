@@ -2952,12 +2952,12 @@
     },
     "Aether Channeler": {
       "edhrec_rank": 1537,
-      "gate": "template",
+      "gate": null,
       "name": "Aether Channeler",
-      "reason": "no template for: When this creature enters, choose one —",
+      "reason": "",
       "scryfall_id": "d5859a42-5a82-47db-9f1d-ffe3f2b61a02",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aether Charge": {
@@ -3722,12 +3722,12 @@
     },
     "Agate Instigator": {
       "edhrec_rank": 1171,
-      "gate": "template",
+      "gate": null,
       "name": "Agate Instigator",
-      "reason": "no template for: Offspring {1}{R}",
+      "reason": "",
       "scryfall_id": "163c093e-9b6f-497d-a167-cfee1dbc5106",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Agate-Blade Assassin": {
@@ -25992,12 +25992,12 @@
     },
     "Blade Splicer": {
       "edhrec_rank": 4583,
-      "gate": "template",
+      "gate": null,
       "name": "Blade Splicer",
-      "reason": "no template for: When this creature enters, create a 3/3 colorless Phyrexian Golem artifact creature token",
+      "reason": "",
       "scryfall_id": "8ea1a510-ec87-4c93-bcf2-0c91738b008f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Blade of Selves": {
@@ -32132,12 +32132,12 @@
     },
     "Boss's Chauffeur": {
       "edhrec_rank": 6354,
-      "gate": "template",
+      "gate": null,
       "name": "Boss's Chauffeur",
-      "reason": "no template for: This creature enters with a number of +1/+1 counters on it equal to one plus the number of",
+      "reason": "",
       "scryfall_id": "8936a2b6-4b00-4d74-bebb-a76d6f6b09b1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bot Bashing Time": {
@@ -37802,12 +37802,12 @@
     },
     "Calamity of Cinders": {
       "edhrec_rank": 6485,
-      "gate": "template",
+      "gate": null,
       "name": "Calamity of Cinders",
-      "reason": "no template for: Convoke",
+      "reason": "",
       "scryfall_id": "97c72d4b-a5d4-4f68-bbcd-b7ed0326fc1c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Calamity of the Titans": {
@@ -45032,12 +45032,12 @@
     },
     "Chart a Course": {
       "edhrec_rank": 1926,
-      "gate": "template",
+      "gate": null,
       "name": "Chart a Course",
-      "reason": "no template for: Draw two cards. Then discard a card unless you attacked this turn",
+      "reason": "",
       "scryfall_id": "4685fb39-e6cb-4c0a-9398-8eba6f2f4010",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chartooth Cougar": {
@@ -46932,12 +46932,12 @@
     },
     "Circuit Mender": {
       "edhrec_rank": 2167,
-      "gate": "template",
+      "gate": null,
       "name": "Circuit Mender",
-      "reason": "no template for: When this creature leaves the battlefield, draw a card",
+      "reason": "",
       "scryfall_id": "e572c156-3b1b-4b89-b9aa-5992aaa01d4c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Circuitous Route": {
@@ -48802,12 +48802,12 @@
     },
     "Cloudblazer": {
       "edhrec_rank": 3442,
-      "gate": "template",
+      "gate": null,
       "name": "Cloudblazer",
-      "reason": "no template for: When this creature enters, you gain 2 life and draw two cards",
+      "reason": "",
       "scryfall_id": "a9c966ab-0d92-4fa7-8a91-1f77089d8fc7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cloudbound Moogle": {
@@ -67912,12 +67912,12 @@
     },
     "Devilish Valet": {
       "edhrec_rank": 3354,
-      "gate": "template",
+      "gate": null,
       "name": "Devilish Valet",
-      "reason": "no template for: Alliance — Whenever another creature you control enters, double this creature's power unti",
+      "reason": "",
       "scryfall_id": "991eca84-5562-40e1-bc63-12dc469779b6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Devils' Playground": {
@@ -79112,12 +79112,12 @@
     },
     "Echoing Assault": {
       "edhrec_rank": 3158,
-      "gate": "template",
+      "gate": null,
       "name": "Echoing Assault",
-      "reason": "no template for: Creature tokens you control have menace",
+      "reason": "",
       "scryfall_id": "3213bfee-c0a0-49a2-9080-cdaa09b414c5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Echoing Boon": {
@@ -122202,12 +122202,12 @@
     },
     "Hanged Executioner": {
       "edhrec_rank": 6490,
-      "gate": "template",
+      "gate": null,
       "name": "Hanged Executioner",
-      "reason": "no template for: When this creature enters, create a 1/1 white Spirit creature token with flying",
+      "reason": "",
       "scryfall_id": "2791a28a-30fa-4f1a-9f05-f3db155b6f06",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hankyu": {
@@ -134012,12 +134012,12 @@
     },
     "Illusory Ambusher": {
       "edhrec_rank": 11004,
-      "gate": "template",
+      "gate": null,
       "name": "Illusory Ambusher",
-      "reason": "no template for: Whenever this creature is dealt damage, draw that many cards",
+      "reason": "",
       "scryfall_id": "e4f6a399-a5af-4f8a-ac57-c26fd3fb033b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Illusory Angel": {
@@ -141572,12 +141572,12 @@
     },
     "Jacked Rabbit": {
       "edhrec_rank": 2086,
-      "gate": "template",
+      "gate": null,
       "name": "Jacked Rabbit",
-      "reason": "no template for: Ravenous",
+      "reason": "",
       "scryfall_id": "2c695df6-6bf2-4e6b-8500-e3116137ca27",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jackhammer": {
@@ -142362,12 +142362,12 @@
     },
     "Jazal Goldmane": {
       "edhrec_rank": 3581,
-      "gate": "template",
+      "gate": null,
       "name": "Jazal Goldmane",
-      "reason": "no template for: {3}{W}{W}: Attacking creatures you control get +X/+X until end of turn, where X is the num",
+      "reason": "",
       "scryfall_id": "5aa8f635-c638-4207-8631-f6b5185f8696",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jecht, Reluctant Guardian // Braska's Final Aeon": {
@@ -144552,12 +144552,12 @@
     },
     "Junk Winder": {
       "edhrec_rank": 1810,
-      "gate": "template",
+      "gate": null,
       "name": "Junk Winder",
-      "reason": "no template for: Affinity for tokens",
+      "reason": "",
       "scryfall_id": "0ee1b75a-18e3-43ce-a1db-b27fd1771279",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Junkblade Bruiser": {
@@ -181172,12 +181172,12 @@
     },
     "Murmuration": {
       "edhrec_rank": 4110,
-      "gate": "template",
+      "gate": null,
       "name": "Murmuration",
-      "reason": "no template for: Birds you control get +1/+1 and have vigilance",
+      "reason": "",
       "scryfall_id": "561c9c4e-942e-40e8-b5f2-ac709a502f18",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Murmuring Bosk": {
@@ -204402,12 +204402,12 @@
     },
     "Plumecreed Escort": {
       "edhrec_rank": 4280,
-      "gate": "template",
+      "gate": null,
       "name": "Plumecreed Escort",
-      "reason": "no template for: When this creature enters, target creature you control gains hexproof until end of turn",
+      "reason": "",
       "scryfall_id": "f71320ed-2f30-49ce-bcb0-19aebba3f0e8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Plumecreed Mentor": {
@@ -204852,12 +204852,12 @@
     },
     "Pollywog Prodigy": {
       "edhrec_rank": 1106,
-      "gate": "template",
+      "gate": null,
       "name": "Pollywog Prodigy",
-      "reason": "no template for: Evolve",
+      "reason": "",
       "scryfall_id": "292158eb-cef0-4807-a38f-c5686064b95a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pollywog Symbiote": {
@@ -221682,12 +221682,12 @@
     },
     "Restoration Angel": {
       "edhrec_rank": 1364,
-      "gate": "template",
+      "gate": null,
       "name": "Restoration Angel",
-      "reason": "no template for: When this creature enters, you may exile target non-Angel creature you control, then retur",
+      "reason": "",
       "scryfall_id": "6ebb5601-9ecd-4643-bcc7-e5663a471773",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Restoration Gearsmith": {
@@ -227612,12 +227612,12 @@
     },
     "Rose Room Treasurer": {
       "edhrec_rank": 3543,
-      "gate": "template",
+      "gate": null,
       "name": "Rose Room Treasurer",
-      "reason": "no template for: Alliance — Whenever another creature you control enters, create a Treasure token if this i",
+      "reason": "",
       "scryfall_id": "a13c1103-91d0-4aef-8ece-e7ceb25ffdfb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rose Tyler": {
@@ -266012,12 +266012,12 @@
     },
     "Storm of Souls": {
       "edhrec_rank": 4817,
-      "gate": "template",
+      "gate": null,
       "name": "Storm of Souls",
-      "reason": "no template for: Return all creature cards from your graveyard to the battlefield. Each of them is a 1/1 Sp",
+      "reason": "",
       "scryfall_id": "675b26d6-8cfc-4c46-b396-7af8978f8caa",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Storm of Steel": {
@@ -278862,12 +278862,12 @@
     },
     "Tetsuko Umezawa, Fugitive": {
       "edhrec_rank": 1596,
-      "gate": "template",
+      "gate": null,
       "name": "Tetsuko Umezawa, Fugitive",
-      "reason": "no template for: Creatures you control with power or toughness 1 or less can't be blocked",
+      "reason": "",
       "scryfall_id": "d32f3fb7-df52-4cef-8686-c11f7360cfd9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tetsuko Umezawa, Pursuer": {
@@ -283792,12 +283792,12 @@
     },
     "Thopter Engineer": {
       "edhrec_rank": 7502,
-      "gate": "template",
+      "gate": null,
       "name": "Thopter Engineer",
-      "reason": "no template for: When this creature enters, create a 1/1 colorless Thopter artifact creature token with fly",
+      "reason": "",
       "scryfall_id": "2933e3df-0cba-4e4b-87f9-70e56093da91",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thopter Fabricator": {

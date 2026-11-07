@@ -1,0 +1,18 @@
+{
+  "card_id": "fortune_teller_s_talent",
+  "name": "Fortune Teller's Talent",
+  "oracle_text": "(Gain the next level as a sorcery to add its ability.)\nYou may look at the top card of your library any time.\n{3}{U}: Level 2\nAs long as you've cast a spell this turn, you may play cards from the top of your library.\n{2}{U}: Level 3\nSpells you cast from anywhere other than your hand cost {2} less to cast.",
+  "blocked_sentences": [
+    "As long as you've cast a spell this turn, you may play cards from the top of your library."
+  ],
+  "needs": [
+    {
+      "capability": "cast_from_library_top_unrestricted",
+      "kind": "static_effect",
+      "what": "a cast_from_library_top permission with no price swap and no spell filter: every spell on top of your library castable at its printed cost (Future Sight's line), here gated by a static condition {cmp: '>', left: {spells_cast_this_turn: 'you'}, right: {const: 0}} and paired with play_lands_from_library_top under the same condition",
+      "why_existing_wont_do": "cast_from_library_top requires pay_life_instead (Bolas's Citadel) or an affects_spells filter (Thundermane Dragon); the loader raises a DslError on the bare permission, player_statics.library_top_cast_permissions fails closed on an empty filter, and a catch-all filter such as not_types [Land] would be a workaround for a deliberate guard rather than the printed card. Everything else on the card (look_at_library_top, the level lines, the condition, play_lands_from_library_top, the level-3 spell_cost_reduction with not_from_zone hand) is expressible"
+    }
+  ],
+  "closest_existing": ["cast_from_library_top", "play_lands_from_library_top", "look_at_library_top"],
+  "confidence": "high"
+}

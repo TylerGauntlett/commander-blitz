@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**247 cards** blocked by **230** capabilities.
+**255 cards** blocked by **235** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -24,6 +24,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
 | [copy-exception-set-subtypes](#copy-exception-set-subtypes) | 3 | 1740 | engine, op |
+| [divided-damage-on-trigger](#divided-damage-on-trigger) | 3 | 2389 | engine |
 | [escape](#escape) | 3 | 388 | engine, static_effect |
 | [omen](#omen) | 3 | 3355 | cost, engine |
 | [random-player-choice](#random-player-choice) | 3 | 5120 | op |
@@ -31,6 +32,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [basic-land-type-mana](#basic-land-type-mana) | 2 | 73 | engine |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
+| [cast-from-library-top-unrestricted](#cast-from-library-top-unrestricted) | 2 | 1913 | static_effect |
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
 | [cast-trigger-x](#cast-trigger-x) | 2 | 1521 | engine, value |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
@@ -38,7 +40,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [council-s-dilemma](#council-s-dilemma) | 2 | 4067 | decision |
 | [devotion](#devotion) | 2 | 2401 | value |
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
-| [divided-damage-on-trigger](#divided-damage-on-trigger) | 2 | 2389 | engine |
 | [face-down-filter](#face-down-filter) | 2 | 5772 | selector |
 | [manifest-dread](#manifest-dread) | 2 | 5772 | op |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
@@ -48,6 +49,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [turn-face-up](#turn-face-up) | 2 | 5772 | op |
 | [venture](#venture) | 2 | 19644 | engine |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
+| [x-dependent-spell-targets](#x-dependent-spell-targets) | 2 | 5182 | engine |
 | [x-maximum](#x-maximum) | 2 | 1665 | engine |
 | [zombie-1-1-w](#zombie-1-1-w) | 2 | 3702 | token |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
@@ -71,7 +73,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cards-to-your-graveyard-from-zones-this-turn](#cards-to-your-graveyard-from-zones-this-turn) | 1 | 7412 | value |
 | [cast-from-hand-result](#cast-from-hand-result) | 1 | 7016 | op |
 | [cast-from-library-top-additional-cost](#cast-from-library-top-additional-cost) | 1 | 5828 | static_effect |
-| [cast-from-library-top-unrestricted](#cast-from-library-top-unrestricted) | 1 | 1913 | static_effect |
 | [cast-restriction-self](#cast-restriction-self) | 1 | 2559 | engine |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [cast-trigger-reads-x](#cast-trigger-reads-x) | 1 | 3909 | value |
@@ -83,9 +84,11 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [companion](#companion) | 1 | 3861 | engine |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [conditional-play-exiled-with-source](#conditional-play-exiled-with-source) | 1 | 4225 | static_effect |
+| [control-while-has-counter](#control-while-has-counter) | 1 | 10319 | op |
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
 | [copy-this-spell-on-resolution](#copy-this-spell-on-resolution) | 1 | 338 | op |
+| [cost-reduction-per-attacker-this-turn](#cost-reduction-per-attacker-this-turn) | 1 | 9578 | value |
 | [coven](#coven) | 1 | 1129 | value |
 | [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
 | [crime](#crime) | 1 | 2244 | trigger_event |
@@ -104,6 +107,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
 | [embalm](#embalm) | 1 | 4333 | cost |
+| [entered-without-being-cast](#entered-without-being-cast) | 1 | 7379 | selector |
 | [enters-as-copy-add-subtypes](#enters-as-copy-add-subtypes) | 1 | 3852 | replacement |
 | [enters-as-copy-embalmed-exception](#enters-as-copy-embalmed-exception) | 1 | 4333 | replacement |
 | [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
@@ -156,6 +160,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
 | [living-metal](#living-metal) | 1 | 11641 | keyword |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
+| [look-at-top-attacking](#look-at-top-attacking) | 1 | 7846 | op |
 | [lose-the-game](#lose-the-game) | 1 | 1512 | op |
 | [lure](#lure) | 1 | 31502 | static_effect |
 | [mana-ability-leading-rider](#mana-ability-leading-rider) | 1 | 4080 | engine |
@@ -178,6 +183,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [noncombat-damage-trigger](#noncombat-damage-trigger) | 1 | 6793 | trigger_event |
 | [nontoken-creatures-died-this-turn](#nontoken-creatures-died-this-turn) | 1 | 3951 | value |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
+| [offspring](#offspring) | 1 | 6566 | keyword |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
 | [play-cost-paid-card](#play-cost-paid-card) | 1 | 6544 | op |
 | [play-lands-from-graveyard-filtered](#play-lands-from-graveyard-filtered) | 1 | 3993 | static_effect |
@@ -241,7 +247,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [while-source-on-battlefield-duration](#while-source-on-battlefield-duration) | 1 | 8222 | engine |
 | [wurm-5-5-g-trample](#wurm-5-5-g-trample) | 1 | 2387 | token |
 | [x-cost-mana-restriction](#x-cost-mana-restriction) | 1 | 4046 | decision |
-| [x-dependent-spell-targets](#x-dependent-spell-targets) | 1 | 11545 | engine |
 | [x-sized-ability-targets](#x-sized-ability-targets) | 1 | 1668 | engine |
 | [zombie-warrior-4-4-b-vigilance](#zombie-warrior-4-4-b-vigilance) | 1 | 2449 | token |
 
@@ -614,6 +619,28 @@ Blocks **3** cards.
 
 </details>
 
+## divided-damage-on-trigger
+
+Blocks **3** cards.
+
+- **(engine)** `damage` with `divided` inside a triggered ability's effects, with the division announced when the trigger is put on the stack and its targets chosen (603.3d / 601.2d), over an ability-level target spec of 'any number of target creatures and/or planeswalkers your opponents control' capped at one target per point of damage
+  <br>Why the existing vocabulary won't do: `damage.divided` exists, but `loader._check_division_homes` refuses it anywhere but a top-level spell effect ('divided damage is only supported as a top-level effect of a spell'), because the division is only announced from `Game._cast` and `engine.division.divided_damage` reads only `card.spell_effects`. `distribute_counters` is the activated-ability-only analogue and divides counters, not damage; fixed per-target `damage` effects would fix the target count and the split, an approximation
+- **(engine)** `damage` with `divided` inside a triggered ability's effects, with the division announced when the trigger is put on the stack and its targets chosen (603.3d / 601.2d), over an ability-level target spec of 'any number of target creatures and/or planeswalkers' capped at one target per point of damage
+  <br>Why the existing vocabulary won't do: `damage.divided` exists, but `loader._check_division_homes` refuses it anywhere but a top-level spell effect ('divided damage is only supported as a top-level effect of a spell'), because `Game._ask_damage_division` is only called from `Game._cast` and `engine.division.divided_damage` reads only `card.spell_effects`. `distribute_counters` is the activated-ability-only analogue and divides counters, not damage; splitting into fixed per-target `damage` effects would fix the target count and the split, an approximation
+- **(engine)** `damage` with `divided` inside a triggered ability's effects (self_enters and attacks triggers), with the division announced when the trigger is put on the stack and its targets chosen (603.3d / 601.2d), over an ability-level target spec of 'one, two, or three targets' that are ANY targets -- creatures, planeswalkers, battles and players -- each dealt at least one
+  <br>Why the existing vocabulary won't do: `damage.divided` exists, but `loader._check_division_homes` refuses it anywhere but a top-level spell effect ('divided damage is only supported as a top-level effect of a spell'), because `Game._ask_damage_division` is only called from `Game._cast` and `engine.division.divided_damage` reads only `card.spell_effects`. It also requires the divided spec to have kind `permanent`, and `ops_life._damage_divided` only calls `damage_permanent`, so a player can never receive a share. `distribute_counters` is the activated-ability-only analogue and divides counters, not damage; fixed per-target `damage` effects would fix the target count and the split, an approximation
+
+<details><summary>Cards waiting on this</summary>
+
+- **Fury** (rank 2389) — `fury`
+  - When this creature enters, it deals 4 damage divided as you choose among any number of target creatures and/or planeswalkers.
+- **Inferno Titan** (rank 2982) — `inferno_titan`
+  - Whenever this creature enters or attacks, it deals 3 damage divided as you choose among one, two, or three targets.
+- **Dragonlord Atarka** (rank 4563) — `dragonlord_atarka`
+  - When Dragonlord Atarka enters, it deals 5 damage divided as you choose among any number of target creatures and/or planeswalkers your opponents control.
+
+</details>
+
 ## escape
 
 Blocks **3** cards.
@@ -758,6 +785,25 @@ Blocks **2** cards.
 
 </details>
 
+## cast-from-library-top-unrestricted
+
+Blocks **2** cards.
+
+- **(static_effect)** a cast_from_library_top permission with no price swap and no spell filter: every spell on top of your library castable at its printed cost (Future Sight's line), here gated by a static condition {cmp: '>', left: {spells_cast_this_turn: 'you'}, right: {const: 0}} and paired with play_lands_from_library_top under the same condition
+  <br>Why the existing vocabulary won't do: cast_from_library_top requires pay_life_instead (Bolas's Citadel) or an affects_spells filter (Thundermane Dragon); the loader raises a DslError on the bare permission, player_statics.library_top_cast_permissions fails closed on an empty filter, and a catch-all filter such as not_types [Land] would be a workaround for a deliberate guard rather than the printed card. Everything else on the card (look_at_library_top, the level lines, the condition, play_lands_from_library_top, the level-3 spell_cost_reduction with not_from_zone hand) is expressible
+- **(static_effect)** a cast_from_library_top permission with no price swap and no spell filter: every spell on top of your library castable at its printed cost (Future Sight's line), which the loader currently refuses
+  <br>Why the existing vocabulary won't do: cast_from_library_top requires either pay_life_instead (Bolas's Citadel) or an affects_spells filter (Thundermane Dragon); the loader raises a DslError on the bare permission, and any filter matching all spells would be a workaround for a deliberate guard rather than the printed card
+
+<details><summary>Cards waiting on this</summary>
+
+- **One with the Multiverse** (rank 1913) — `one_with_the_multiverse`
+  - You may play lands and cast spells from the top of your library.
+  - Once during each of your turns, you may cast a spell from your hand or the top of your library without paying its mana cost.
+- **Fortune Teller's Talent** (rank 3755) — `fortune_teller_s_talent`
+  - As long as you've cast a spell this turn, you may play cards from the top of your library.
+
+</details>
+
 ## cast-only-during-opponents-turn
 
 Blocks **2** cards.
@@ -887,24 +933,6 @@ Blocks **2** cards.
   - Magma Opus deals 4 damage divided as you choose among any number of targets.
 - **Skarrgan Hellkite** (rank 13459) — `skarrgan_hellkite`
   - {3}{R}: This creature deals 2 damage divided as you choose among one or two targets. Activate only if this creature has a +1/+1 counter on it.
-
-</details>
-
-## divided-damage-on-trigger
-
-Blocks **2** cards.
-
-- **(engine)** `damage` with `divided` inside a triggered ability's effects, with the division announced when the trigger is put on the stack and its targets chosen (603.3d / 601.2d), over an ability-level target spec of 'any number of target creatures and/or planeswalkers your opponents control' capped at one target per point of damage
-  <br>Why the existing vocabulary won't do: `damage.divided` exists, but `loader._check_division_homes` refuses it anywhere but a top-level spell effect ('divided damage is only supported as a top-level effect of a spell'), because the division is only announced from `Game._cast` and `engine.division.divided_damage` reads only `card.spell_effects`. `distribute_counters` is the activated-ability-only analogue and divides counters, not damage; fixed per-target `damage` effects would fix the target count and the split, an approximation
-- **(engine)** `damage` with `divided` inside a triggered ability's effects, with the division announced when the trigger is put on the stack and its targets chosen (603.3d / 601.2d), over an ability-level target spec of 'any number of target creatures and/or planeswalkers' capped at one target per point of damage
-  <br>Why the existing vocabulary won't do: `damage.divided` exists, but `loader._check_division_homes` refuses it anywhere but a top-level spell effect ('divided damage is only supported as a top-level effect of a spell'), because `Game._ask_damage_division` is only called from `Game._cast` and `engine.division.divided_damage` reads only `card.spell_effects`. `distribute_counters` is the activated-ability-only analogue and divides counters, not damage; splitting into fixed per-target `damage` effects would fix the target count and the split, an approximation
-
-<details><summary>Cards waiting on this</summary>
-
-- **Fury** (rank 2389) — `fury`
-  - When this creature enters, it deals 4 damage divided as you choose among any number of target creatures and/or planeswalkers.
-- **Dragonlord Atarka** (rank 4563) — `dragonlord_atarka`
-  - When Dragonlord Atarka enters, it deals 5 damage divided as you choose among any number of target creatures and/or planeswalkers your opponents control.
 
 </details>
 
@@ -1074,6 +1102,24 @@ Blocks **2** cards.
   - Whenever you cast your second spell each turn, draw a card, then create a 0/3 white Wall creature token with defender
 - **Teyo, the Shieldmage** (rank 9030) — `teyo_the_shieldmage`
   - −2: Create a 0/3 white Wall creature token with defender.
+
+</details>
+
+## x-dependent-spell-targets
+
+Blocks **2** cards.
+
+- **(engine)** Casting a spell whose target selector reads the announced X ("target creature with mana value X") must announce X before declaring targets (601.2b before 601.2c): offer one cast action per payable X, each carrying the targets legal at that X, the way legality._ability_aims already does for activated abilities via _targets_read_x
+  <br>Why the existing vocabulary won't do: The selector itself is expressible (mana_value {op: '=', value: {x: true}} with gain_control on the target), but casting._cast_variant enumerates a spell's targets with x=0 and CHOOSE_X is asked only after the targets are fixed; _targets_read_x is consulted for activated abilities only. Verified: the card is unplayable in the sandbox (no creature has mana value 0), and in play it could only ever target a mana value 0 creature and then pick a mismatched X
+- **(engine)** Casting a spell whose target selector reads the announced X ("target creature with mana value X") must announce X before declaring targets (601.2b before 601.2c): offer one cast action per payable X, each carrying the targets legal at that X, the way legality._ability_aims already does for activated abilities via _targets_read_x
+  <br>Why the existing vocabulary won't do: The card is otherwise expressible (target selector mana_value {op: '=', value: {x: true}}, return_to_hand on t1, create_token faerie_1_1_u_flying with amount {x: true}), but casting._cast_actions enumerates a spell's targets with x=0 and CHOOSE_X is asked only after targets are fixed; _targets_read_x is consulted for activated abilities only. Verified with verify(): unplayable in the sandbox (offered only Pass / Play Forest), since no creature has mana value 0
+
+<details><summary>Cards waiting on this</summary>
+
+- **Stolen by the Fae** (rank 5182) — `stolen_by_the_fae`
+  - Return target creature with mana value X to its owner's hand.
+- **Entrancing Melody** (rank 11545) — `entrancing_melody`
+  - Gain control of target creature with mana value X.
 
 </details>
 
@@ -1416,21 +1462,6 @@ Blocks **1** card.
 
 </details>
 
-## cast-from-library-top-unrestricted
-
-Blocks **1** card.
-
-- **(static_effect)** a cast_from_library_top permission with no price swap and no spell filter: every spell on top of your library castable at its printed cost (Future Sight's line), which the loader currently refuses
-  <br>Why the existing vocabulary won't do: cast_from_library_top requires either pay_life_instead (Bolas's Citadel) or an affects_spells filter (Thundermane Dragon); the loader raises a DslError on the bare permission, and any filter matching all spells would be a workaround for a deliberate guard rather than the printed card
-
-<details><summary>Cards waiting on this</summary>
-
-- **One with the Multiverse** (rank 1913) — `one_with_the_multiverse`
-  - You may play lands and cast spells from the top of your library.
-  - Once during each of your turns, you may cast a spell from your hand or the top of your library without paying its mana cost.
-
-</details>
-
 ## cast-restriction-self
 
 Blocks **1** card.
@@ -1594,6 +1625,20 @@ Blocks **1** card.
 
 </details>
 
+## control-while-has-counter
+
+Blocks **1** card.
+
+- **(op)** a gain_control duration bound to a counter on the stolen permanent: control lasts for as long as that permanent has at least one counter of a named kind (here shield), and is handed back the moment the last such counter is removed (e.g. by the shield counter's own damage/destroy replacement), like `{"op": "gain_control", "duration": "while_has_counter", "counter": "shield"}`
+  <br>Why the existing vocabulary won't do: gain_control's duration is closed to CONTROL_DURATIONS (permanent, until_end_of_turn, end_of_your_next_turn, as_long_as_you_control_source); none ends on counter removal. 'permanent' would be a strictly stronger steal. The counter-bound end exists only for cant_attack_player's `counter` key (the vow-counter attack mark), not for control changes
+
+<details><summary>Cards waiting on this</summary>
+
+- **Shield Broker** (rank 10319) — `shield_broker`
+  - You gain control of that creature for as long as it has a shield counter on it.
+
+</details>
+
 ## convoke
 
 Blocks **1** card.
@@ -1633,6 +1678,20 @@ Blocks **1** card.
 
 - **Sevinne's Reclamation** (rank 338) — `sevinne_s_reclamation`
   - If this spell was cast from a graveyard, you may copy this spell and may choose a new target for the copy.
+
+</details>
+
+## cost-reduction-per-attacker-this-turn
+
+Blocks **1** card.
+
+- **(value)** a card-level cost_reduction shape that counts every creature (any controller) that attacked this turn, read from the turn ledger's attacker oids rather than the board -- e.g. a cost_reduction key taking a value expression such as attackers_this_turn over all players, or attacked_this_turn added to cost_reduction_filter_keys with the count reading the ledger so attackers that died or left still count
+  <br>Why the existing vocabulary won't do: cost_reduction accepts only amount/count/greatest_count/total_power/total_mana_value/greatest_mana_value; count's filter keys have 'attacking' (only creatures still attacking now, so zero in a postcombat main phase and missing attackers that died) but not 'attacked_this_turn', and the value 'attackers_this_turn' exists only in value_keys, which cost_reduction cannot read
+
+<details><summary>Cards waiting on this</summary>
+
+- **Rowdy Research** (rank 9578) — `rowdy_research`
+  - This spell costs {1} less to cast for each creature that attacked this turn.
 
 </details>
 
@@ -1890,6 +1949,20 @@ Blocks **1** card.
 - **Vizier of Many Faces** (rank 4333) — `vizier_of_many_faces`
   - You may have this creature enter as a copy of any creature on the battlefield, except if this creature was embalmed, the token has no mana cost, it's white, and it's a Zombie in addition to its other types
   - Embalm {3}{U}{U}
+
+</details>
+
+## entered-without-being-cast
+
+Blocks **1** card.
+
+- **(selector)** a trigger filter / condition on a permanent_enters trigger asking whether the ENTERING permanent (not the trigger's source) arrived by resolving as a cast spell -- the entered_by_cast flag on that object -- so "whenever another creature you control enters, if it wasn't cast" fires for tokens, reanimation, blinks, put-onto-battlefield effects and not for creatures cast from any zone
+  <br>Why the existing vocabulary won't do: The was_cast condition reads the ability's own source and the loader restricts it to self_enters triggers (WAS_CAST_TRIGGERS), explicitly refusing it on permanent_enters because there it would answer about this creature, not the one that entered; trigger_keys' not_cause refuses a single named cause and misses reanimation, blinks and Show and Tell; trigger_filter_keys and selector_keys have no cast/entered-by-cast key. Dropping the clause would make every cast creature grow and unblock this one.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Rapid Augmenter** (rank 7379) — `rapid_augmenter`
+  - Whenever another creature you control enters, if it wasn't cast, put a +1/+1 counter on this creature and this creature can't be blocked this turn.
 
 </details>
 
@@ -2639,6 +2712,20 @@ Blocks **1** card.
 
 </details>
 
+## look-at-top-attacking
+
+Blocks **1** card.
+
+- **(op)** an `attacking` (and `or_planeswalker`) key on `look_at_top` -- the same `_attacking_player` contract `put_onto_battlefield` and `create_token` honour -- so a creature card a library look puts onto the battlefield with `destination: "battlefield"`, `tapped: true` enters attacking (508.4: its controller picks the defender, here the seat Arthur attacks). Its `as` binding then feeds a `delay` with `step: "end_of_combat"` holding `return_to_hand` over that binding, and `rest_to_bottom` covers the random-order remainder. Shared by Winota, Joiner of Forces and similar 'look at the top N, put one onto the battlefield tapped and attacking' cards
+  <br>Why the existing vocabulary won't do: `look_at_top`'s op_options carry `tapped` and `destination` but no `attacking`, and `_move_found` (ops_cards.py) moves the card with `tapped` only -- it never registers it with combat. Splitting it into `look_at_top` (destination `library_top`, `as`) then `put_onto_battlefield` with `attacking: true` over the binding is a composition no shipped card uses: `move_object` back onto the library may re-identify the object so the binding misses, and the `rest_to_bottom` happens before the creature leaves, so it rests on an unproven chain rather than the printed single action. The trigger half ('Arthur and at least one other creature attack') looks expressible as an `attacks`/`source: self` trigger with a `cmp` condition counting `attacking` creatures you control with `exclude_self` >= 1, and the end-of-combat return is `delay` step `end_of_combat` -- only the attacking arrival is missing
+
+<details><summary>Cards waiting on this</summary>
+
+- **Arthur, Marigold Knight** (rank 7846) — `arthur_marigold_knight`
+  - Whenever Arthur and at least one other creature attack, look at the top six cards of your library. You may put a creature card from among them onto the battlefield tapped and attacking. Put the rest on the bottom of your library in a random order. Return that creature to its owner's hand at end of combat
+
+</details>
+
 ## lose-the-game
 
 Blocks **1** card.
@@ -2951,6 +3038,20 @@ Blocks **1** card.
 - **Jeweled Amulet** (rank 3604) — `jeweled_amulet`
   - Note the type of mana spent to pay this activation cost.
   - {T}, Remove a charge counter from this artifact: Add one mana of this artifact's last noted type.
+
+</details>
+
+## offspring
+
+Blocks **1** card.
+
+- **(keyword)** The offspring {N} keyword (702.175): an optional additional cost paid as the creature spell is cast, and, if it was paid, an enters trigger creating a token copy of that permanent that is 1/1; plus a static effect that grants offspring {2} to creature spells its controller casts, on the stack, as they are cast
+  <br>Why the existing vocabulary won't do: offspring appears nowhere in the reference: not in keywords, card_level_cost_keys or static_effects. The closest cast-time grants, grant_warp and grant_miracle, give their own fixed mechanics to spells, and grant_keyword only reaches permanents, so neither can give a spell an optional additional cost that leaves a cast-time 'paid' flag for a 1/1 token-copy enters trigger to read
+
+<details><summary>Cards waiting on this</summary>
+
+- **Zinnia, Valley's Voice** (rank 6566) — `zinnia_valley_s_voice`
+  - Creature spells you cast gain offspring {2} as you cast them. (You may pay an additional {2} as you cast a creature spell. If you do, when that creature enters, create a 1/1 token copy of it.)
 
 </details>
 
@@ -3845,20 +3946,6 @@ Blocks **1** card.
 
 - **Elementalist's Palette** (rank 4046) — `elementalist_s_palette`
   - {T}: Add {C} for each charge counter on this artifact. Spend this mana only on costs that contain {X}.
-
-</details>
-
-## x-dependent-spell-targets
-
-Blocks **1** card.
-
-- **(engine)** Casting a spell whose target selector reads the announced X ("target creature with mana value X") must announce X before declaring targets (601.2b before 601.2c): offer one cast action per payable X, each carrying the targets legal at that X, the way legality._ability_aims already does for activated abilities via _targets_read_x
-  <br>Why the existing vocabulary won't do: The selector itself is expressible (mana_value {op: '=', value: {x: true}} with gain_control on the target), but casting._cast_variant enumerates a spell's targets with x=0 and CHOOSE_X is asked only after the targets are fixed; _targets_read_x is consulted for activated abilities only. Verified: the card is unplayable in the sandbox (no creature has mana value 0), and in play it could only ever target a mana value 0 creature and then pick a mismatched X
-
-<details><summary>Cards waiting on this</summary>
-
-- **Entrancing Melody** (rank 11545) — `entrancing_melody`
-  - Gain control of target creature with mana value X.
 
 </details>
 

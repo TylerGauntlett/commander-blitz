@@ -1968,6 +1968,97 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "create_token",
+                      "token": "bird_1_1_w_flying"
+                    }
+                  ],
+                  "label": "Create a 1/1 white Bird creature token with flying."
+                },
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "target": "t1"
+                      },
+                      "op": "return_to_hand"
+                    }
+                  ],
+                  "label": "Return another target nonland permanent to its owner's hand."
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "draw",
+                      "player": "you"
+                    }
+                  ],
+                  "label": "Draw a card."
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "mode": 1,
+              "selector": {
+                "controller": "any",
+                "exclude_self": true,
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, choose one —\n• Create a 1/1 white Bird creature token with flying.\n• Return another target nonland permanent to its owner's hand.\n• Draw a card.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "aether_channeler",
+      "mana_cost": "{2}{U}",
+      "name": "Aether Channeler",
+      "oracle_text": "When this creature enters, choose one —\n• Create a 1/1 white Bird creature token with flying.\n• Return another target nonland permanent to its owner's hand.\n• Draw a card.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -2869,6 +2960,81 @@
       "subtypes": [
         "Elf",
         "Detective"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "additional_paid": true
+              },
+              "controller": "you",
+              "except_": {
+                "power": 1,
+                "toughness": 1
+              },
+              "objects": {
+                "self_only": true
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Offspring {1}{R} (You may pay an additional {1}{R} as you cast this spell. If you do, when this creature enters, create a 1/1 token copy of it.)",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another creature you control enters, this creature deals 1 damage to each opponent.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "additional_cost": {
+        "mana": "{1}{R}"
+      },
+      "additional_optional": true,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "agate_instigator",
+      "mana_cost": "{1}{R}",
+      "name": "Agate Instigator",
+      "oracle_text": "Offspring {1}{R} (You may pay an additional {1}{R} as you cast this spell. If you do, when this creature enters, create a 1/1 token copy of it.)\nWhenever another creature you control enters, this creature deals 1 damage to each opponent.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Lizard",
+        "Rogue"
       ],
       "toughness": 3,
       "types": [
@@ -21689,6 +21855,59 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "phyrexian_golem_3_3_c_artifact"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, create a 3/3 colorless Phyrexian Golem artifact creature token.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Golem"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "first_strike"
+          ],
+          "kind": "static",
+          "text": "Golems you control have first strike."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "blade_splicer",
+      "mana_cost": "{2}{W}",
+      "name": "Blade Splicer",
+      "oracle_text": "When this creature enters, create a 3/3 colorless Phyrexian Golem artifact creature token.\nGolems you control have first strike.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Human",
+        "Artificer"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -25371,6 +25590,96 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Alliance — Whenever another creature you control enters, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "counters_had": "+1/+1"
+              },
+              "op": "create_token",
+              "token": "citizen_1_1_gw"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, create a 1/1 green and white Citizen creature token for each +1/+1 counter on it.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "boss_s_chauffeur",
+      "mana_cost": "{4}{W}",
+      "name": "Boss's Chauffeur",
+      "oracle_text": "This creature enters with a number of +1/+1 counters on it equal to one plus the number of other creatures you control.\nAlliance — Whenever another creature you control enters, put a +1/+1 counter on this creature.\nWhen this creature dies, create a 1/1 green and white Citizen creature token for each +1/+1 counter on it.",
+      "power": 0,
+      "replacements": [
+        {
+          "amount": {
+            "sum": [
+              {
+                "const": 1
+              },
+              {
+                "count": {
+                  "controller": "you",
+                  "exclude_self": true,
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              }
+            ]
+          },
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Citizen"
+      ],
+      "toughness": 0,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -29080,6 +29389,38 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "calamity_of_cinders",
+      "mana_cost": "{5}{R}{R}",
+      "name": "Calamity of Cinders",
+      "oracle_text": "Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nCalamity of Cinders deals 6 damage to each untapped creature.",
+      "pay_generic_with": "tap_creatures",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 6
+          },
+          "objects": {
+            "controller": "any",
+            "tapped": false,
+            "types": [
+              "Creature"
+            ]
+          },
+          "op": "damage"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -34968,6 +35309,50 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "chart_a_course",
+      "mana_cost": "{1}{U}",
+      "name": "Chart a Course",
+      "oracle_text": "Draw two cards. Then discard a card unless you attacked this turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "draw"
+        },
+        {
+          "condition": {
+            "cmp": "==",
+            "left": {
+              "attacked_this_turn": "you"
+            },
+            "right": {
+              "const": 0
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "discard"
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -36278,6 +36663,60 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, you gain 2 life.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature leaves the battlefield, draw a card.",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "circuit_mender",
+      "mana_cost": "{3}",
+      "name": "Circuit Mender",
+      "oracle_text": "When this creature enters, you gain 2 life.\nWhen this creature leaves the battlefield, draw a card.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Insect"
+      ],
+      "toughness": 3,
+      "types": [
+        "Artifact",
+        "Creature"
       ]
     },
     {
@@ -37625,6 +38064,59 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "gain_life",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, you gain 2 life and draw two cards",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "cloudblazer",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{W}{U}",
+      "name": "Cloudblazer",
+      "oracle_text": "Flying\nWhen this creature enters, you gain 2 life and draw two cards.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Scout"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -51562,6 +52054,66 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "power_of": {
+                  "self": true
+                }
+              },
+              "toughness": {
+                "const": 0
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Alliance — Whenever another creature you control enters, double this creature's power until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "devilish_valet",
+      "keywords": [
+        "trample",
+        "haste"
+      ],
+      "mana_cost": "{2}{R}",
+      "name": "Devilish Valet",
+      "oracle_text": "Trample, haste\nAlliance — Whenever another creature you control enters, double this creature's power until end of turn.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Devil",
+        "Warrior"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -57926,6 +58478,102 @@
       "toughness": 5,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "is_token": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "menace"
+          ],
+          "kind": "static",
+          "text": "Creature tokens you control have menace."
+        },
+        {
+          "effects": [
+            {
+              "as": "echo_token",
+              "attacking": {
+                "binding": "defender"
+              },
+              "controller": "you",
+              "except_": {
+                "power": 1,
+                "toughness": 1
+              },
+              "objects": {
+                "target": "t1"
+              },
+              "op": "copy_permanent",
+              "tapped": true
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "echo_token"
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "Sacrifice it at the beginning of the next end step."
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "attacking_player": {
+                  "binding": "defender"
+                },
+                "is_token": false,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever you attack a player, choose target nontoken creature that's attacking that player. Create a token that's a copy of that creature, except it's 1/1. The token enters tapped and attacking that player. Sacrifice it at the beginning of the next end step.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "attacking_player": "opponent",
+                "binding": "attackers"
+              }
+            },
+            "controller": "you",
+            "defending": "opponent",
+            "event": "creatures_attack_player"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "echoing_assault",
+      "mana_cost": "{4}{R}",
+      "name": "Echoing Assault",
+      "oracle_text": "Creature tokens you control have menace.\nWhenever you attack a player, choose target nontoken creature that's attacking that player. Create a token that's a copy of that creature, except it's 1/1. The token enters tapped and attacking that player. Sacrifice it at the beginning of the next end step.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -90301,6 +90949,77 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "spirit_1_1_w_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, create a 1/1 white Spirit creature token with flying.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "exile_self": true,
+            "mana": "{3}{W}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{3}{W}, Exile this creature: Exile target creature."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "hanged_executioner",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{W}",
+      "name": "Hanged Executioner",
+      "oracle_text": "Flying\nWhen this creature enters, create a 1/1 white Spirit creature token with flying.\n{3}{W}, Exile this creature: Exile target creature.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Spirit"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "effects": [
                 {
                   "amount": {
@@ -99357,6 +100076,50 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature is dealt damage, draw that many cards.",
+          "trigger": {
+            "event": "dealt_damage",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "illusory_ambusher",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{4}{U}",
+      "name": "Illusory Ambusher",
+      "oracle_text": "Flash (You may cast this spell any time you could cast an instant.)\nWhenever this creature is dealt damage, draw that many cards.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Cat",
+        "Illusion"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -105064,6 +105827,85 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Ravenous",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "binding": "x"
+              },
+              "right": {
+                "const": 5
+              }
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "self": true
+                }
+              },
+              "op": "create_token",
+              "token": "rabbit_1_1_w"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, create a number of 1/1 white Rabbit creature tokens equal to this creature's power.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "jacked_rabbit",
+      "mana_cost": "{X}{1}{W}",
+      "name": "Jacked Rabbit",
+      "oracle_text": "Ravenous (This creature enters with X +1/+1 counters on it. If X is 5 or more, draw a card when it enters.)\nWhenever this creature attacks, create a number of 1/1 white Rabbit creature tokens equal to this creature's power.",
+      "power": 1,
+      "replacements": [
+        {
+          "amount": {
+            "x": true
+          },
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Rabbit",
+        "Warrior"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -105438,6 +106280,78 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{3}{W}{W}"
+          },
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "attacking": true,
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "count": {
+                  "attacking": true,
+                  "controller": "any",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "toughness": {
+                "count": {
+                  "attacking": true,
+                  "controller": "any",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}{W}{W}: Attacking creatures you control get +X/+X until end of turn, where X is the number of attacking creatures."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "jazal_goldmane",
+      "keywords": [
+        "first_strike"
+      ],
+      "mana_cost": "{2}{W}{W}",
+      "name": "Jazal Goldmane",
+      "oracle_text": "First strike (This creature deals combat damage before creatures without first strike.)\n{3}{W}{W}: Attacking creatures you control get +X/+X until end of turn, where X is the number of attacking creatures.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Cat",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -107234,6 +108148,75 @@
         "Legendary"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "tap"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "skip_untap"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever a token you control enters, tap target nonland permanent an opponent controls. It doesn't untap during its controller's next untap step.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "is_token": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "cost_reduction": {
+        "count": {
+          "controller": "you",
+          "is_token": true,
+          "zone": "battlefield"
+        }
+      },
+      "id": "junk_winder",
+      "mana_cost": "{5}{U}{U}",
+      "name": "Junk Winder",
+      "oracle_text": "Affinity for tokens (This spell costs {1} less to cast for each token you control.)\nWhenever a token you control enters, tap target nonland permanent an opponent controls. It doesn't untap during its controller's next untap step.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Serpent"
+      ],
+      "toughness": 6,
       "types": [
         "Creature"
       ]
@@ -134957,6 +135940,78 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Bird"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Birds you control get +1/+1 and have vigilance.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Bird"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "vigilance"
+          ],
+          "kind": "static",
+          "text": "Birds you control get +1/+1 and have vigilance."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "spells_cast_this_turn": "you"
+              },
+              "op": "create_token",
+              "token": "storm_crow_1_2_u_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, for each spell you've cast this turn, create a 1/2 blue Bird creature token with flying named Storm Crow.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "murmuration",
+      "mana_cost": "{4}{W}",
+      "name": "Murmuration",
+      "oracle_text": "Birds you control get +1/+1 and have vigilance.\nAt the beginning of your end step, for each spell you've cast this turn, create a 1/2 blue Bird creature token with flying named Storm Crow.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -153299,6 +154354,66 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "keyword": "hexproof",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, target creature you control gains hexproof until end of turn.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "plumecreed_escort",
+      "keywords": [
+        "flash",
+        "flying"
+      ],
+      "mana_cost": "{1}{U}",
+      "name": "Plumecreed Escort",
+      "oracle_text": "Flash\nFlying\nWhen this creature enters, target creature you control gains hexproof until end of turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Bird",
+        "Scout"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U",
         "W"
@@ -153420,6 +154535,126 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "condition": {
+                "any": [
+                  {
+                    "cmp": ">",
+                    "left": {
+                      "power_of": {
+                        "binding": "subject"
+                      }
+                    },
+                    "right": {
+                      "power_of": {
+                        "self": true
+                      }
+                    }
+                  },
+                  {
+                    "cmp": ">",
+                    "left": {
+                      "toughness_of": {
+                        "binding": "subject"
+                      }
+                    },
+                    "right": {
+                      "toughness_of": {
+                        "self": true
+                      }
+                    }
+                  }
+                ]
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "add_counters"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Evolve (Whenever a creature you control enters, if that creature has greater power or toughness than this creature, put a +1/+1 counter on this creature.)",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent casts a noncreature spell with mana value less than this creature's power, draw a card.",
+          "trigger": {
+            "condition": {
+              "cmp": "<",
+              "left": {
+                "mana_value_of": {
+                  "binding": "subject"
+                }
+              },
+              "right": {
+                "power_of": {
+                  "self": true
+                }
+              }
+            },
+            "controller": "opponent",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "pollywog_prodigy",
+      "mana_cost": "{1}{U}",
+      "name": "Pollywog Prodigy",
+      "oracle_text": "Evolve (Whenever a creature you control enters, if that creature has greater power or toughness than this creature, put a +1/+1 counter on this creature.)\nWhenever an opponent casts a noncreature spell with mana value less than this creature's power, draw a card.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Frog",
+        "Wizard"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -165820,6 +167055,81 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "restored",
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "exile"
+                },
+                {
+                  "controller": "you",
+                  "objects": {
+                    "binding": "restored",
+                    "zone": "exile"
+                  },
+                  "op": "put_onto_battlefield"
+                }
+              ],
+              "op": "may",
+              "prompt": "Exile the target creature, then return it to the battlefield under your control?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "not_subtypes": [
+                  "Angel"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, you may exile target non-Angel creature you control, then return that card to the battlefield under your control.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "restoration_angel",
+      "keywords": [
+        "flash",
+        "flying"
+      ],
+      "mana_cost": "{3}{W}",
+      "name": "Restoration Angel",
+      "oracle_text": "Flash\nFlying\nWhen this creature enters, you may exile target non-Angel creature you control, then return that card to the battlefield under your control.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Angel"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "additional_cost_options": [
         {
           "mana": "{0}"
@@ -169866,6 +171176,107 @@
         "Legendary"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "condition": {
+                "cmp": "<=",
+                "left": {
+                  "resolutions_this_turn": "self"
+                },
+                "right": {
+                  "const": 2
+                }
+              },
+              "else": [
+                {
+                  "effects": [
+                    {
+                      "ability": "rose_room_treasurer_burn",
+                      "op": "reflexive_trigger"
+                    }
+                  ],
+                  "op": "may",
+                  "pay": {
+                    "mana": "{X}"
+                  },
+                  "player": "you",
+                  "prompt": "Pay {X} for Rose Room Treasurer to deal X damage to any target?",
+                  "x": {
+                    "as": "paid_x"
+                  }
+                }
+              ],
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "create_token",
+                  "token": "treasure_token"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Alliance — Whenever another creature you control enters, create a Treasure token if this is the first or second time this ability has resolved this turn. Otherwise, you may pay {X}.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "paid_x"
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "id": "rose_room_treasurer_burn",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any"
+            }
+          ],
+          "text": "When you do, this creature deals X damage to any target."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "rose_room_treasurer",
+      "mana_cost": "{3}{R}",
+      "name": "Rose Room Treasurer",
+      "oracle_text": "Alliance — Whenever another creature you control enters, create a Treasure token if this is the first or second time this ability has resolved this turn. Otherwise, you may pay {X}. When you do, this creature deals X damage to any target.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Ogre",
+        "Warrior"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -195043,6 +196454,64 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "exiles_itself": true,
+      "id": "storm_of_souls",
+      "mana_cost": "{4}{W}{W}",
+      "name": "Storm of Souls",
+      "oracle_text": "Return all creature cards from your graveyard to the battlefield. Each of them is a 1/1 Spirit with flying in addition to its other types. Exile Storm of Souls.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "you",
+          "destination": "battlefield",
+          "link": true,
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          },
+          "op": "return_from_graveyard"
+        },
+        {
+          "duration": "permanent",
+          "keywords": [
+            "flying"
+          ],
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "returned_with": "self",
+            "zone": "battlefield"
+          },
+          "op": "animate",
+          "power": {
+            "const": 1
+          },
+          "subtypes": [
+            "Spirit"
+          ],
+          "toughness": {
+            "const": 1
+          },
+          "types": [
+            "Creature"
+          ]
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -208842,6 +210311,61 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "any_of": [
+              {
+                "power": {
+                  "op": "<=",
+                  "value": 1
+                }
+              },
+              {
+                "toughness": {
+                  "op": "<=",
+                  "value": 1
+                }
+              }
+            ],
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "blockers": {
+            "controller": "any"
+          },
+          "effect": "block_restriction",
+          "kind": "static",
+          "text": "Creatures you control with power or toughness 1 or less can't be blocked."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "tetsuko_umezawa_fugitive",
+      "mana_cost": "{1}{U}",
+      "name": "Tetsuko Umezawa, Fugitive",
+      "oracle_text": "Creatures you control with power or toughness 1 or less can't be blocked.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Rogue"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -212808,6 +214332,59 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "thopter_1_1_c_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, create a 1/1 colorless Thopter artifact creature token with flying.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Artifact",
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "haste"
+          ],
+          "kind": "static",
+          "text": "Artifact creatures you control have haste."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "thopter_engineer",
+      "mana_cost": "{2}{R}",
+      "name": "Thopter Engineer",
+      "oracle_text": "When this creature enters, create a 1/1 colorless Thopter artifact creature token with flying.\nArtifact creatures you control have haste. (They can attack and {T} as soon as they come under your control.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Artificer"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
