@@ -63792,12 +63792,12 @@
     },
     "Deathcap Cultivator": {
       "edhrec_rank": 9177,
-      "gate": "template",
+      "gate": null,
       "name": "Deathcap Cultivator",
-      "reason": "no template for: Delirium — This creature has deathtouch as long as there are four or more card types among",
+      "reason": "",
       "scryfall_id": "17f9339a-d327-4239-a0d8-12f7ff58982b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deathcap Glade": {
@@ -73432,12 +73432,12 @@
     },
     "Dragon's Rage Channeler": {
       "edhrec_rank": 1799,
-      "gate": "template",
+      "gate": null,
       "name": "Dragon's Rage Channeler",
-      "reason": "no template for: Whenever you cast a noncreature spell, surveil 1",
+      "reason": "",
       "scryfall_id": "2429510d-ce59-472d-b0df-5e6b7cdf63af",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dragon's Smile": {
@@ -111972,12 +111972,12 @@
     },
     "Gnarlwood Dryad": {
       "edhrec_rank": 8507,
-      "gate": "template",
+      "gate": null,
       "name": "Gnarlwood Dryad",
-      "reason": "no template for: Delirium — This creature gets +2/+2 as long as there are four or more card types among car",
+      "reason": "",
       "scryfall_id": "8eae5e38-49ee-49ef-87ca-7b570d9ca2b8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gnashing of Teeth": {
@@ -118142,12 +118142,12 @@
     },
     "Grim Flayer": {
       "edhrec_rank": 10829,
-      "gate": "template",
+      "gate": null,
       "name": "Grim Flayer",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, surveil 3",
+      "reason": "",
       "scryfall_id": "b29e5af4-feb6-485a-a631-bfc42fa1b13a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Grim Flowering": {
@@ -208112,12 +208112,12 @@
     },
     "Professor Onyx": {
       "edhrec_rank": 2385,
-      "gate": "schema",
+      "gate": null,
       "name": "Professor Onyx",
-      "reason": "1 validation error for CardModel",
+      "reason": "",
       "scryfall_id": "b8d8e608-6de4-4b90-aeb7-d060d1f44844",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Professor Zei, Anthropologist": {

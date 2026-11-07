@@ -743,6 +743,9 @@ CONDITIONS: dict[str, Entry] = {
 #: Static-side entries, read before `VALUES`: a leaf in both languages whose
 #: static reading is narrower or documented apart is described here.
 STATIC_VALUE_EXTRAS: dict[str, Entry] = {
+    "distinct": ("The number of card types among a counting filter's pool off the battlefield "
+                 "(delirium); `of: \"card_type\"` only.",
+                 "Counting different values rather than objects"),
     "commander_casts_this_game": ("Times you have cast your commanders from the command zone this game "
                                   "(903.8's tally); `\"you\"` only.",
                                   "An anthem for each commander cast"),

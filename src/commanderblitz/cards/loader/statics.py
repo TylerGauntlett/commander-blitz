@@ -426,6 +426,38 @@ def _validate_static_extreme_value(spec: Any, where: str) -> None:
     _validate_static_count_filter(objects, f"{where}.objects")
 
 
+def _validate_static_distinct(spec: Any, where: str) -> None:
+    """Delirium: "as long as there are four or more card types among cards in
+    your graveyard."
+
+    The effect side's `distinct`, narrowed to what a static may read: ``of`` is
+    ``card_type`` and ``objects`` a counting filter in a zone other than the
+    battlefield. A card there has its printed face and nothing else, so its
+    types are a pipeline input; a permanent's types, and every other ``of``
+    (power, colour, land type), are a layer's output, and an anthem sized by one
+    would depend on another static.
+    """
+    if not isinstance(spec, Mapping):
+        raise DslError(f"{where}: must be an object")
+    if unknown := set(spec) - {"of", "objects"}:
+        raise DslError(f"{where}: unsupported keys {sorted(unknown)}")
+    if spec.get("of") != "card_type":
+        raise DslError(
+            f"{where}.of: a static can only read 'card_type' -- a printed face's "
+            f"types; the other qualities are layer outputs, got {spec.get('of')!r}"
+        )
+    objects = spec.get("objects")
+    if not isinstance(objects, Mapping) or not objects:
+        raise DslError(f"{where}: needs 'objects', a counting filter off the battlefield")
+    if str(objects.get("zone", "battlefield")) == "battlefield":
+        raise DslError(
+            f"{where}.objects.zone: a permanent's card types are a layer's output; "
+            f"a static may count them only among cards in a graveyard, hand, exile "
+            f"or library"
+        )
+    _validate_static_count_filter(objects, f"{where}.objects")
+
+
 def _validate_static_typed_spells_cast(spec: Mapping[str, Any], where: str) -> None:
     """The typed per-turn cast leaf, ``{"player": …, "filter": …}``.
 
@@ -580,6 +612,8 @@ def _validate_static_value(value: Any, where: str) -> None:
             )
     if "extreme_value" in value:
         _validate_static_extreme_value(value["extreme_value"], f"{where}.extreme_value")
+    if "distinct" in value:
+        _validate_static_distinct(value["distinct"], f"{where}.distinct")
     if "permanents_entered_this_turn" in value:
         # Kinbinding: "Creatures you control get +X/+X, where X is the number of
         # creatures that entered the battlefield under your control this turn."

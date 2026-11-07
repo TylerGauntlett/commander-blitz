@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**224 cards** blocked by **205** capabilities.
+**219 cards** blocked by **203** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -18,7 +18,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
 | [put-into-graveyard-from-anywhere](#put-into-graveyard-from-anywhere) | 6 | 256 | trigger_event |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
-| [delirium](#delirium) | 4 | 1799 | value |
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
 | [copy-exception-set-subtypes](#copy-exception-set-subtypes) | 3 | 1740 | engine, op |
@@ -159,7 +158,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [nontoken-creatures-died-this-turn](#nontoken-creatures-died-this-turn) | 1 | 3951 | value |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [odd-or-even](#odd-or-even) | 1 | 8504 | selector |
-| [ooze-x-x-g](#ooze-x-x-g) | 1 | 8801 | token |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
 | [play-lands-from-graveyard-filtered](#play-lands-from-graveyard-filtered) | 1 | 3993 | static_effect |
 | [playable-condition-opponent-lost-life](#playable-condition-opponent-lost-life) | 1 | 4478 | engine |
@@ -397,32 +395,6 @@ Blocks **5** cards.
   - Whenever you cast your first spell with {X} in its mana cost each turn, put X +1/+1 counters on Nev.
 - **Lattice Library** (rank 10607) — `lattice_library`
   - When this enchantment enters and whenever you cast your first spell with {X} in its mana cost each turn, create a 0/0 green and blue Fractal creature token. Put a number of +1/+1 counters on it equal to the number of study counters on this enchantment.
-
-</details>
-
-## delirium
-
-Blocks **4** cards.
-
-- **(value)** a static-ability value counting the distinct card types among cards in your graveyard (the `distinct` value with `of: card_type` over `{zone: graveyard, controller: you}`), usable in a static's `condition` cmp so a `grant_keyword` static with `affects: {self_only: true}` can switch deathtouch on at four or more
-  <br>Why the existing vocabulary won't do: `distinct` exists in `value_keys` (Shifting Woodland's activated-ability condition uses it) but is not in `static_value_keys`, and no `static_condition_keys` entry reads graveyard card types; `count` gives the number of cards, not of distinct types
-- **(value)** a static-legal counting leaf for the number of *distinct card types* among the cards in a zone -- the natural spelling being `{"distinct": {"of": "card_type", "objects": {"zone": "graveyard", "controller": "you"}}}`, i.e. a third `DISTINCT_OF` entry beside `power` and `basic_land_type` (src/commanderblitz/engine/effects/values.py, DISTINCT_OF) that counts the union of `card.types` over the pool, plus admission of `distinct` into `STATIC_VALUE_KEYS` (src/commanderblitz/cards/loader/vocabulary.py) so a static `condition`'s `cmp` can hold it. That one leaf turns on every delirium card at once -- the printed clause is always "four or more card types among cards in your graveyard" -- and the same leaf reads "the number of card types among cards in your graveyard" on the effect side (Traverse the Ulvenwald, Emrakul's Evangel-style scaling), so it wants to land in `VALUE_KEYS` too.
-  <br>Why the existing vocabulary won't do: `count` is the closest and is the wrong measurement: it counts *objects* matching a filter, so a graveyard of four creature cards reads 4 and satisfies a `>= 4` that delirium must reject, while a graveyard of one instant, one land, one artifact and one creature also reads 4 and passes by coincidence. That is the same distinction `values.py` already spells out for domain -- "five Forests are five and not one". `distinct` is the leaf that does count distinct values, but it is blocked twice over: its `DISTINCT_OF` allows only `power` (coven) and `basic_land_type` (domain), with no card-type entry, and it is absent from `STATIC_VALUE_KEYS` -- which is `{const, count, mana_symbols, counters_on, permanents_entered_this_turn}` plus the life and per-player leaves -- so even with a card-type entry it could not be named inside a static's `condition`. The `zone: graveyard` support in static counting filters that makes Threshold (Nimble Mongoose, `count` >= 7) and Hellbent expressible therefore reaches the graveyard but cannot ask what is in it. The remaining temptation is to enumerate: `any` of `all`-of-`exists` nodes over every 4-subset of the card types, which is 126 branches for nine types, silently wrong the moment a tenth type is printed, and an approximation rather than the sentence. Only this clause is blocked -- the first line, "Whenever you cast a noncreature spell, surveil 1", is a plain `spell_cast` trigger filtered `not_types: ["Creature"]` with the `surveil` op, and the consequences of the delirium clause (`buff` +2/+2, `grant_keyword` flying, `attacks_if_able`) are all present static effects -- so no partial answer was written.
-- **(value)** a static-ability value counting the distinct card types among cards in your graveyard (the `distinct` value with `of: card_type` over `{zone: graveyard, controller: you}`), usable in a static's `condition` cmp so a `buff` static with `affects: {self_only: true}`, power 2 and toughness 2 switches on at four or more
-  <br>Why the existing vocabulary won't do: `distinct` is in `value_keys` (Demolisher Spawn's trigger condition and Shifting Woodland's activation condition use it) but not in `static_value_keys`, so a static's `condition` cmp cannot read it; `count` gives the number of cards, not of distinct types, and `static_filter_keys` has no `zone` to point an `exists` at the graveyard per type
-- **(value)** a static-ability value counting the distinct card types among cards in your graveyard (the `distinct` value with `of: card_type` over `{zone: graveyard, controller: you}`), usable in a static's `condition` cmp so a `buff` static with `affects: {self_only: true}` and +2/+2 switches on at four or more
-  <br>Why the existing vocabulary won't do: `distinct` exists in `value_keys` (Demolisher Spawn's trigger condition and Shifting Woodland's activation condition use it) but is not in `static_value_keys`, and no `static_condition_keys` entry reads graveyard card types; `count` gives the number of cards, not of distinct types
-
-<details><summary>Cards waiting on this</summary>
-
-- **Dragon's Rage Channeler** (rank 1799) — `dragon_s_rage_channeler`
-  - Delirium — As long as there are four or more card types among cards in your graveyard, this creature gets +2/+2, has flying, and attacks each combat if able.
-- **Gnarlwood Dryad** (rank 8507) — `gnarlwood_dryad`
-  - Delirium — This creature gets +2/+2 as long as there are four or more card types among cards in your graveyard.
-- **Deathcap Cultivator** (rank 9177) — `deathcap_cultivator`
-  - Delirium — This creature has deathtouch as long as there are four or more card types among cards in your graveyard.
-- **Grim Flayer** (rank 10829) — `grim_flayer`
-  - Delirium — This creature gets +2/+2 as long as there are four or more card types among cards in your graveyard.
 
 </details>
 
@@ -2590,20 +2562,6 @@ Blocks **1** card.
 
 - **Zimone's Hypothesis** (rank 8504) — `zimone_s_hypothesis`
   - Then choose odd or even. Return each creature with power of the chosen quality to its owner's hand. (Zero is even.)
-
-</details>
-
-## ooze-x-x-g
-
-Blocks **1** card.
-
-- **(token)** a 0/0 green Ooze creature token (no abilities), id e.g. `ooze_x_x_g`, whose size is set at creation by `create_token`'s `power`/`toughness` -- here X/X, X being the total mana value of the permanents the spell destroyed
-  <br>Why the existing vocabulary won't do: token_ids is a closed list and holds no green Ooze at all; the only green 0/0 is `fractal_0_0_gu`, which is a green-blue Fractal, and the other X/X tokens (`illusion_x_x_u`, `shark_x_x_u_flying`, `dragon_illusion_x_x_r_flying_haste`, `shapeshifter_x_x_c_changeling_deathtouch`) are the wrong colour and creature type. The rest of the line looks expressible once the token exists: the delirium test as an `if` on `cmp` of `{"distinct": {"of": "card_type", "objects": {"zone": "graveyard", "controller": "you"}}}` >= 4 (DISTINCT_OF now carries `card_type`), the three up-to-one targets on `destroy` with `as` binding what was destroyed, and X as a `sum` of `mana_value_of` over that binding -- the worker should confirm `destroy`'s `as` binds only the permanents actually destroyed (an indestructible target must contribute 0) when authoring.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Convert to Slime** (rank 8801) — `convert_to_slime`
-  - Delirium — Then if there are four or more card types among cards in your graveyard, create an X/X green Ooze creature token, where X is the total mana value of permanents destroyed this way.
 
 </details>
 

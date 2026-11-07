@@ -47426,6 +47426,88 @@
           "is_mana_ability": true,
           "kind": "activated",
           "text": "{T}: Add {B} or {G}."
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "distinct": {
+                "objects": {
+                  "controller": "you",
+                  "zone": "graveyard"
+                },
+                "of": "card_type"
+              }
+            },
+            "right": {
+              "const": 4
+            }
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "deathtouch"
+          ],
+          "kind": "static",
+          "text": "Delirium — This creature has deathtouch as long as there are four or more card types among cards in your graveyard."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "deathcap_cultivator",
+      "mana_cost": "{1}{G}",
+      "name": "Deathcap Cultivator",
+      "oracle_text": "{T}: Add {B} or {G}.\nDelirium — This creature has deathtouch as long as there are four or more card types among cards in your graveyard.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Druid"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {B} or {G}."
         }
       ],
       "color_identity": [
@@ -53159,6 +53241,130 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "surveil",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a noncreature spell, surveil 1.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "distinct": {
+                "objects": {
+                  "controller": "you",
+                  "zone": "graveyard"
+                },
+                "of": "card_type"
+              }
+            },
+            "right": {
+              "const": 4
+            }
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Delirium — As long as there are four or more card types among cards in your graveyard, this creature gets +2/+2, has flying, and attacks each combat if able.",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "distinct": {
+                "objects": {
+                  "controller": "you",
+                  "zone": "graveyard"
+                },
+                "of": "card_type"
+              }
+            },
+            "right": {
+              "const": 4
+            }
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying"
+          ],
+          "kind": "static",
+          "text": "Delirium — As long as there are four or more card types among cards in your graveyard, this creature gets +2/+2, has flying, and attacks each combat if able."
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "distinct": {
+                "objects": {
+                  "controller": "you",
+                  "zone": "graveyard"
+                },
+                "of": "card_type"
+              }
+            },
+            "right": {
+              "const": 4
+            }
+          },
+          "effect": "attacks_if_able",
+          "kind": "static",
+          "text": "Delirium — As long as there are four or more card types among cards in your graveyard, this creature gets +2/+2, has flying, and attacks each combat if able."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "dragon_s_rage_channeler",
+      "mana_cost": "{R}",
+      "name": "Dragon's Rage Channeler",
+      "oracle_text": "Whenever you cast a noncreature spell, surveil 1. (Look at the top card of your library. You may put that card into your graveyard.)\nDelirium — As long as there are four or more card types among cards in your graveyard, this creature gets +2/+2, has flying, and attacks each combat if able.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Shaman"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -80589,6 +80795,62 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "distinct": {
+                "objects": {
+                  "controller": "you",
+                  "zone": "graveyard"
+                },
+                "of": "card_type"
+              }
+            },
+            "right": {
+              "const": 4
+            }
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Delirium — This creature gets +2/+2 as long as there are four or more card types among cards in your graveyard.",
+          "toughness": {
+            "const": 2
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "gnarlwood_dryad",
+      "keywords": [
+        "deathtouch"
+      ],
+      "mana_cost": "{G}",
+      "name": "Gnarlwood Dryad",
+      "oracle_text": "Deathtouch\nDelirium — This creature gets +2/+2 as long as there are four or more card types among cards in your graveyard.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Dryad",
+        "Horror"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -85215,6 +85477,81 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "surveil",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, surveil 3.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "distinct": {
+                "objects": {
+                  "controller": "you",
+                  "zone": "graveyard"
+                },
+                "of": "card_type"
+              }
+            },
+            "right": {
+              "const": 4
+            }
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Delirium — This creature gets +2/+2 as long as there are four or more card types among cards in your graveyard.",
+          "toughness": {
+            "const": 2
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "grim_flayer",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{B}{G}",
+      "name": "Grim Flayer",
+      "oracle_text": "Trample\nWhenever this creature deals combat damage to a player, surveil 3. (Look at the top three cards of your library, then put any number of them into your graveyard and the rest on top of your library in any order.)\nDelirium — This creature gets +2/+2 as long as there are four or more card types among cards in your graveyard.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -152353,6 +152690,201 @@
       "toughness": 6,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "lose_life",
+              "player": "each_opponent"
+            },
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Magecraft — Whenever you cast or copy an instant or sorcery spell, each opponent loses 2 life and you gain 2 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "lose_life",
+              "player": "each_opponent"
+            },
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Magecraft — Whenever you cast or copy an instant or sorcery spell, each opponent loses 2 life and you gain 2 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_copied",
+            "filter": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 3
+              },
+              "destination": "hand",
+              "objects": {
+                "count": 1
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "rest_to": "graveyard"
+            }
+          ],
+          "kind": "activated",
+          "text": "+1: You lose 1 life. Look at the top three cards of your library. Put one of them into your hand and the rest into your graveyard."
+        },
+        {
+          "cost": {
+            "loyalty": -3
+          },
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "chooser": "owner",
+                    "controller": {
+                      "binding": "each_player"
+                    },
+                    "count": 1,
+                    "extreme": {
+                      "of": "power",
+                      "pick": "greatest"
+                    },
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "activated",
+          "text": "−3: Each opponent sacrifices a creature with the greatest power among creatures that player controls."
+        },
+        {
+          "cost": {
+            "loyalty": -8
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 7
+              },
+              "effects": [
+                {
+                  "effects": [
+                    {
+                      "effects": [
+                        {
+                          "op": "noop"
+                        }
+                      ],
+                      "else": [
+                        {
+                          "amount": {
+                            "const": 3
+                          },
+                          "op": "lose_life",
+                          "player": {
+                            "binding": "each_player"
+                          }
+                        }
+                      ],
+                      "op": "may",
+                      "pay": {
+                        "discard": 1
+                      },
+                      "player": {
+                        "binding": "each_player"
+                      },
+                      "prompt": "Discard a card, or lose 3 life?"
+                    }
+                  ],
+                  "op": "for_each_player",
+                  "players": "each_opponent"
+                }
+              ],
+              "op": "repeat"
+            }
+          ],
+          "kind": "activated",
+          "text": "−8: Each opponent may discard a card. If they don't, they lose 3 life. Repeat this process six more times."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "professor_onyx",
+      "loyalty": 5,
+      "mana_cost": "{4}{B}{B}",
+      "name": "Professor Onyx",
+      "oracle_text": "Magecraft — Whenever you cast or copy an instant or sorcery spell, each opponent loses 2 life and you gain 2 life.\n+1: You lose 1 life. Look at the top three cards of your library. Put one of them into your hand and the rest into your graveyard.\n−3: Each opponent sacrifices a creature with the greatest power among creatures that player controls.\n−8: Each opponent may discard a card. If they don't, they lose 3 life. Repeat this process six more times.",
+      "source": "auto",
+      "subtypes": [
+        "Liliana"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
       ]
     },
     {

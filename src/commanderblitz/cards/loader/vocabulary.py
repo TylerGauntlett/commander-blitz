@@ -1594,6 +1594,10 @@ STATIC_DEATHS_KEYS = frozenset({"creatures_died_this_turn"})
 #: you've cast your commander from the command zone this game": the effect
 #: side's 903.8 tally, held to "you". `Player.commander_tax` is written only by
 #: a cast from the command zone, never by a layer, so it is a pipeline input.
+#: `distinct` is delirium's "four or more card types among cards in your
+#: graveyard": the effect side's leaf held to ``of: "card_type"`` over a counting
+#: filter off the battlefield, where a card's types are its printed face's and no
+#: layer can change them.
 STATIC_VALUE_KEYS = (
     frozenset(
         {
@@ -1608,6 +1612,7 @@ STATIC_VALUE_KEYS = (
             "greatest_commander_mana_value",
             "commander_casts_this_game",
             "extreme_value",
+            "distinct",
         }
     )
     | STATIC_LIFE_KEYS

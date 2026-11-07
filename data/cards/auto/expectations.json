@@ -4032,6 +4032,13 @@
   "deathbloom_gardener": {
     "zone": "battlefield"
   },
+  "deathcap_cultivator": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "deathcap_glade": {
     "zone": "battlefield"
   },
@@ -4520,6 +4527,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "dragon_s_rage_channeler": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "dragon_sniper": {
@@ -6967,6 +6978,13 @@
   "gnarled_mass": {
     "zone": "battlefield"
   },
+  "gnarlwood_dryad": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "gnoll_hunter": {
     "zone": "battlefield"
   },
@@ -7354,6 +7372,13 @@
   },
   "grim_backwoods": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "grim_flayer": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
     "zone": "battlefield"
   },
   "grim_initiate": {
@@ -12873,6 +12898,18 @@
     "battlefield_count": 33,
     "hand_size": {
       "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "professor_onyx": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 5,
+      "kind": "loyalty"
+    },
+    "life": {
+      "0": 40,
+      "1": 40
     },
     "zone": "battlefield"
   },

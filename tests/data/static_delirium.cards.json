@@ -1,0 +1,42 @@
+{
+  "_comment": "Shapes for tests/unit/statics/test_static_delirium.py. t_sdl_grower is Grim Flayer's delirium on a 2/2: +2/+2 as long as there are four or more card types among cards in your graveyard. t_sdl_creature is a creature card, t_sdl_land a land, t_sdl_sorcery a sorcery, t_sdl_instant an instant, t_sdl_artifact_creature an artifact creature (two types on one card), t_sdl_enchantment an enchantment.",
+  "cards": [
+    {
+      "id": "t_sdl_grower",
+      "name": "Test Delirium Grower",
+      "oracle_text": "Delirium — Test Delirium Grower gets +2/+2 as long as there are four or more card types among cards in your graveyard.",
+      "mana_cost": "{B}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Human"],
+      "colors": ["B", "G"],
+      "color_identity": ["B", "G"],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Delirium — Test Delirium Grower gets +2/+2 as long as there are four or more card types among cards in your graveyard.",
+          "effect": "buff",
+          "affects": {"self_only": true},
+          "power": {"const": 2},
+          "toughness": {"const": 2},
+          "condition": {"cmp": ">=",
+                        "left": {"distinct": {"of": "card_type", "objects": {"zone": "graveyard", "controller": "you"}}},
+                        "right": {"const": 4}}
+        }
+      ]
+    },
+    {"id": "t_sdl_creature", "name": "Test Delirium Creature", "oracle_text": "", "mana_cost": "{G}",
+     "types": ["Creature"], "colors": ["G"], "color_identity": ["G"], "power": 1, "toughness": 1},
+    {"id": "t_sdl_land", "name": "Test Delirium Land", "oracle_text": "",
+     "types": ["Land"], "colors": [], "color_identity": []},
+    {"id": "t_sdl_sorcery", "name": "Test Delirium Sorcery", "oracle_text": "", "mana_cost": "{B}",
+     "types": ["Sorcery"], "colors": ["B"], "color_identity": ["B"]},
+    {"id": "t_sdl_instant", "name": "Test Delirium Instant", "oracle_text": "", "mana_cost": "{G}",
+     "types": ["Instant"], "colors": ["G"], "color_identity": ["G"]},
+    {"id": "t_sdl_artifact_creature", "name": "Test Delirium Construct", "oracle_text": "", "mana_cost": "{2}",
+     "types": ["Artifact", "Creature"], "colors": [], "color_identity": [], "power": 2, "toughness": 2},
+    {"id": "t_sdl_enchantment", "name": "Test Delirium Enchantment", "oracle_text": "", "mana_cost": "{1}{B}",
+     "types": ["Enchantment"], "colors": ["B"], "color_identity": ["B"]}
+  ]
+}
