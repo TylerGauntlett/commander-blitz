@@ -23412,12 +23412,12 @@
     },
     "Bello, Bard of the Brambles": {
       "edhrec_rank": 3424,
-      "gate": "template",
+      "gate": null,
       "name": "Bello, Bard of the Brambles",
-      "reason": "no template for: During your turn, each non-Equipment artifact and non-Aura enchantment you control with ma",
+      "reason": "",
       "scryfall_id": "31e4b7a1-b377-49d2-a92e-4bcb0db35f16",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bellowing Aegisaur": {

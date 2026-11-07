@@ -1653,6 +1653,10 @@
     },
     "zone": "battlefield"
   },
+  "bello_bard_of_the_brambles": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "belonging": {
     "battlefield_count": 36,
     "tokens": {

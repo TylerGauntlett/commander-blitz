@@ -19186,6 +19186,203 @@
     {
       "abilities": [
         {
+          "affects": {
+            "any_of": [
+              {
+                "not_subtypes": [
+                  "Equipment"
+                ],
+                "types": [
+                  "Artifact"
+                ]
+              },
+              {
+                "not_subtypes": [
+                  "Aura"
+                ],
+                "types": [
+                  "Enchantment"
+                ]
+              }
+            ],
+            "controller": "you",
+            "mana_value": {
+              "op": ">=",
+              "value": 4
+            }
+          },
+          "condition": {
+            "is_your_turn": true
+          },
+          "effect": "add_subtype",
+          "kind": "static",
+          "subtypes": [
+            "Elemental"
+          ],
+          "text": "During your turn, each non-Equipment artifact and non-Aura enchantment you control with mana value 4 or greater is a 4/4 Elemental creature in addition to its other types and has indestructible, haste, and \"Whenever this creature deals combat damage to a player, draw a card.\"",
+          "types": [
+            "Creature"
+          ]
+        },
+        {
+          "affects": {
+            "any_of": [
+              {
+                "not_subtypes": [
+                  "Equipment"
+                ],
+                "types": [
+                  "Artifact"
+                ]
+              },
+              {
+                "not_subtypes": [
+                  "Aura"
+                ],
+                "types": [
+                  "Enchantment"
+                ]
+              }
+            ],
+            "controller": "you",
+            "mana_value": {
+              "op": ">=",
+              "value": 4
+            }
+          },
+          "condition": {
+            "is_your_turn": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "const": 4
+          },
+          "text": "During your turn, each non-Equipment artifact and non-Aura enchantment you control with mana value 4 or greater is a 4/4 Elemental creature in addition to its other types and has indestructible, haste, and \"Whenever this creature deals combat damage to a player, draw a card.\"",
+          "toughness": {
+            "const": 4
+          }
+        },
+        {
+          "affects": {
+            "any_of": [
+              {
+                "not_subtypes": [
+                  "Equipment"
+                ],
+                "types": [
+                  "Artifact"
+                ]
+              },
+              {
+                "not_subtypes": [
+                  "Aura"
+                ],
+                "types": [
+                  "Enchantment"
+                ]
+              }
+            ],
+            "controller": "you",
+            "mana_value": {
+              "op": ">=",
+              "value": 4
+            }
+          },
+          "condition": {
+            "is_your_turn": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "indestructible",
+            "haste"
+          ],
+          "kind": "static",
+          "text": "During your turn, each non-Equipment artifact and non-Aura enchantment you control with mana value 4 or greater is a 4/4 Elemental creature in addition to its other types and has indestructible, haste, and \"Whenever this creature deals combat damage to a player, draw a card.\""
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "any_of": [
+              {
+                "not_subtypes": [
+                  "Equipment"
+                ],
+                "types": [
+                  "Artifact"
+                ]
+              },
+              {
+                "not_subtypes": [
+                  "Aura"
+                ],
+                "types": [
+                  "Enchantment"
+                ]
+              }
+            ],
+            "controller": "you",
+            "mana_value": {
+              "op": ">=",
+              "value": 4
+            }
+          },
+          "condition": {
+            "is_your_turn": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "During your turn, each non-Equipment artifact and non-Aura enchantment you control with mana value 4 or greater is a 4/4 Elemental creature in addition to its other types and has indestructible, haste, and \"Whenever this creature deals combat damage to a player, draw a card.\""
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, draw a card.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "bello_bard_of_the_brambles",
+      "mana_cost": "{1}{R}{G}",
+      "name": "Bello, Bard of the Brambles",
+      "oracle_text": "During your turn, each non-Equipment artifact and non-Aura enchantment you control with mana value 4 or greater is a 4/4 Elemental creature in addition to its other types and has indestructible, haste, and \"Whenever this creature deals combat damage to a player, draw a card.\"",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Raccoon",
+        "Bard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
