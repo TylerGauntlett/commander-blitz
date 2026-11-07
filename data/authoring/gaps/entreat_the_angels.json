@@ -1,0 +1,18 @@
+{
+  "card_id": "entreat_the_angels",
+  "name": "Entreat the Angels",
+  "oracle_text": "Create X 4/4 white Angel creature tokens with flying.\nMiracle {X}{W}{W} (You may cast this card for its miracle cost when you draw it if it's the first card you drew this turn.)",
+  "blocked_sentences": [
+    "Miracle {X}{W}{W} (You may cast this card for its miracle cost when you draw it if it's the first card you drew this turn.)"
+  ],
+  "needs": [
+    {
+      "capability": "miracle",
+      "kind": "engine",
+      "what": "a miracle cost containing {X}: when the miracle cast is offered on the draw, the player chooses X (bounded by what they can pay), pays {X}{W}{W} with that X, and the spell goes on the stack with item.x set so 'Create X ... tokens' reads the chosen value",
+      "why_existing_wont_do": "The card-level `miracle` rider is accepted, but replacements._offer_cast builds Cost(mana=cost) and calls stack.push_spell without an `x`, so X defaults to 0: the miracle cast would pay only {W}{W} and create zero Angels, the card's whole point. No shipped miracle card has an X cost (only Molecule Man's granted {0})"
+    }
+  ],
+  "closest_existing": ["miracle", "create_token"],
+  "confidence": "high"
+}

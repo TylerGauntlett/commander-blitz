@@ -4377,6 +4377,13 @@
       "0": 41
     }
   },
+  "dimir_aqueduct": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 2
+    },
+    "zone": "battlefield"
+  },
   "dimir_guildgate": {
     "zone": "battlefield"
   },
@@ -4691,6 +4698,11 @@
     "zone": "battlefield"
   },
   "dreadhorde_invasion": {
+    "zone": "battlefield"
+  },
+  "dream_eater": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
   "dreamroot_cascade": {
@@ -5565,6 +5577,10 @@
       "0": 39
     },
     "zone": "graveyard"
+  },
+  "extravagant_replication": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "exultant_skymarcher": {
     "zone": "battlefield"

@@ -51294,6 +51294,63 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "objects": {
+                "chooser": "controller",
+                "controller": "you",
+                "count": 1,
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "return_to_hand"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this land enters, return a land you control to its owner's hand.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{U}{B}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {U}{B}."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [],
+      "id": "dimir_aqueduct",
+      "name": "Dimir Aqueduct",
+      "oracle_text": "This land enters tapped.\nWhen this land enters, return a land you control to its owner's hand.\n{T}: Add {U}{B}.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -55328,6 +55385,88 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "surveil",
+              "player": "you"
+            },
+            {
+              "ability": "dream_eater_bounce",
+              "op": "reflexive_trigger"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, surveil 4. When you do, you may return target nonland permanent an opponent controls to its owner's hand.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "return_to_hand"
+                }
+              ],
+              "op": "may",
+              "prompt": "Return the targeted permanent to its owner's hand?"
+            }
+          ],
+          "id": "dream_eater_bounce",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When you do, you may return target nonland permanent an opponent controls to its owner's hand."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "dream_eater",
+      "keywords": [
+        "flash",
+        "flying"
+      ],
+      "mana_cost": "{4}{U}{U}",
+      "name": "Dream Eater",
+      "oracle_text": "Flash\nFlying\nWhen this creature enters, surveil 4. When you do, you may return target nonland permanent an opponent controls to its owner's hand. (To surveil 4, look at the top four cards of your library, then put any number of them into your graveyard and the rest on top of your library in any order.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Nightmare",
+        "Sphinx"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -64514,6 +64653,55 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "exclude_self": true,
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "At the beginning of your upkeep, create a token that's a copy of another target nonland permanent you control.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "extravagant_replication",
+      "mana_cost": "{4}{U}{U}",
+      "name": "Extravagant Replication",
+      "oracle_text": "At the beginning of your upkeep, create a token that's a copy of another target nonland permanent you control.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {

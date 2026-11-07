@@ -1,0 +1,31 @@
+{
+  "card_id": "fear_of_sleep_paralysis",
+  "name": "Fear of Sleep Paralysis",
+  "oracle_text": "Flying\nEerie — Whenever this creature or another enchantment you control enters and whenever you fully unlock a Room, tap up to one target creature and put a stun counter on it.\nStun counters can't be removed from permanents your opponents control. (They won't untap if they have stun counters.)",
+  "blocked_sentences": [
+    "Eerie — Whenever this creature or another enchantment you control enters and whenever you fully unlock a Room, tap up to one target creature and put a stun counter on it.",
+    "Stun counters can't be removed from permanents your opponents control. (They won't untap if they have stun counters.)"
+  ],
+  "needs": [
+    {
+      "capability": "fully_unlock_room",
+      "kind": "trigger_event",
+      "what": "a trigger event 'whenever you fully unlock a Room' (Eerie), firing when a Room you control has both of its doors unlocked, whether the second door is unlocked by the special action or the Room is otherwise made fully unlocked; it depends on the Room engine support filed as `rooms`",
+      "why_existing_wont_do": "trigger_events has no unlock event and the engine has no Room permanents; self_enters + permanent_enters (enchantment, exclude_self) cover the enters half of Eerie as Doomwake Giant does, and `tap` + `add_counters` (counter: stun) on an up-to-one creature target cover the effect, but dropping the Room clause would make the card strictly narrower"
+    },
+    {
+      "capability": "stun_counters_cant_be_removed",
+      "kind": "static_effect",
+      "what": "a static that stops stun counters being removed from permanents matching `affects` (here controller: opponent) by any means: the 122.1d untap replacement in `primitives.untap_or_stun` must no longer spend the counter (so the permanent stays tapped and keeps it), and remove_counters / move_counters / costs that remove stun counters from such permanents must remove none",
+      "why_existing_wont_do": "`cant_have_counters` stops counters being put on, not removed; `skip_untap_step` / `untap_limit` change untapping wholesale rather than keeping the stun counter in place, and no static_effects entry intercepts counter removal"
+    }
+  ],
+  "closest_existing": [
+    "permanent_enters",
+    "self_enters",
+    "tap",
+    "add_counters",
+    "cant_have_counters"
+  ],
+  "confidence": "high"
+}

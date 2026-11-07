@@ -68792,12 +68792,12 @@
     },
     "Dimir Aqueduct": {
       "edhrec_rank": 355,
-      "gate": "template",
+      "gate": null,
       "name": "Dimir Aqueduct",
-      "reason": "no template for: When this land enters, return a land you control to its owner's hand",
+      "reason": "",
       "scryfall_id": "84bf9d60-64b8-4209-acfe-e07eefc6bf1f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dimir Charm": {
@@ -74762,12 +74762,12 @@
     },
     "Dream Eater": {
       "edhrec_rank": 9091,
-      "gate": "template",
+      "gate": null,
       "name": "Dream Eater",
-      "reason": "no template for: When this creature enters, surveil 4. When you do, you may return target nonland permanent",
+      "reason": "",
       "scryfall_id": "c721d449-fc77-4d86-8baf-158181e37087",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dream Fighter": {
@@ -89072,12 +89072,12 @@
     },
     "Extravagant Replication": {
       "edhrec_rank": 1765,
-      "gate": "template",
+      "gate": null,
       "name": "Extravagant Replication",
-      "reason": "no template for: At the beginning of your upkeep, create a token that's a copy of another target nonland pe",
+      "reason": "",
       "scryfall_id": "6a41dfae-bc7e-4105-8f7e-fd0109197ad8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Extravagant Spirit": {

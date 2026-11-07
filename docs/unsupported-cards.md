@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**238 cards** blocked by **221** capabilities.
+**241 cards** blocked by **223** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -40,7 +40,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 2 | 2389 | engine |
 | [escape](#escape) | 2 | 388 | engine, static_effect |
 | [face-down-filter](#face-down-filter) | 2 | 5772 | selector |
+| [look-at-top-rest-any-order](#look-at-top-rest-any-order) | 2 | 1289 | op |
 | [manifest-dread](#manifest-dread) | 2 | 5772 | op |
+| [miracle](#miracle) | 2 | 4945 | engine, static_effect |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
 | [return-face-down](#return-face-down) | 2 | 3081 | op |
@@ -126,6 +128,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [free-cast-one-per-card-type](#free-cast-one-per-card-type) | 1 | 2521 | engine |
 | [free-cast-this-turn](#free-cast-this-turn) | 1 | 6651 | op |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
+| [fully-unlock-room](#fully-unlock-room) | 1 | 3452 | trigger_event |
 | [goad-without-goaded](#goad-without-goaded) | 1 | 973 | op |
 | [gold-token](#gold-token) | 1 | 705 | token |
 | [grant-abilities-of-exiled-cards](#grant-abilities-of-exiled-cards) | 1 | 8370 | static_effect |
@@ -148,7 +151,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
 | [living-metal](#living-metal) | 1 | 11641 | keyword |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
-| [look-at-top-rest-any-order](#look-at-top-rest-any-order) | 1 | 7343 | op |
 | [lose-the-game](#lose-the-game) | 1 | 1512 | op |
 | [lure](#lure) | 1 | 31502 | static_effect |
 | [mana-ability-leading-rider](#mana-ability-leading-rider) | 1 | 4080 | engine |
@@ -161,7 +163,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [manifest-from-hand](#manifest-from-hand) | 1 | 3975 | op |
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
-| [miracle](#miracle) | 1 | 5025 | static_effect |
 | [modal-variable-targets](#modal-variable-targets) | 1 | 4339 | engine |
 | [mode-owned-variable-targets](#mode-owned-variable-targets) | 1 | 6294 | engine |
 | [mode-owned-variable-targets-mid-declaration](#mode-owned-variable-targets-mid-declaration) | 1 | 16968 | engine |
@@ -213,6 +214,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [static-greatest-power-in-graveyard](#static-greatest-power-in-graveyard) | 1 | 10492 | value |
+| [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
@@ -905,6 +907,24 @@ Blocks **2** cards.
 
 </details>
 
+## look-at-top-rest-any-order
+
+Blocks **2** cards.
+
+- **(op)** A remainder option on look_at_top (e.g. rest_to_top_any_order: true) that, after the picked card is taken, lets the resolving player arrange the cards looked at and not taken in any order on top of their library (rule 401.4 ordering choice, as put_on_top's any_order does via _in_owners_order)
+  <br>Why the existing vocabulary won't do: look_at_top with destination hand and count 1 leaves the untaken cards on top in their original order, so the player never gets the printed choice of order; rest_to_bottom sends them to the bottom in random order, rest_to only names a zone with no ordering; put_on_top has any_order but cannot name 'the rest' because look_at_top's `as` binds only the taken cards; scry orders the top but also allows bottoming, which is a different card
+- **(op)** A way for look_at_top to put the cards looked at and not taken back on top of the library in an order the resolving player chooses (rule 401.4, as put_on_top's any_order does via _in_owners_order) -- here with nothing taken at all: look at the top three, reorder them, put all three back on top
+  <br>Why the existing vocabulary won't do: look_at_top leaves untaken cards on top in their original order, so the printed ordering choice never happens; rest_to_bottom sends them to the bottom in random order and rest_to only names a zone; put_on_top has any_order but no selector can name 'the top three cards of your library' and look_at_top's `as` binds only cards it moved; scry orders the top but also allows bottoming any of them, which is a strictly better card (Ponder's shipped scry spelling is that approximation)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Halimar Depths** (rank 1289) — `halimar_depths`
+  - When this land enters, look at the top three cards of your library, then put them back in any order.
+- **Diabolic Vision** (rank 7343) — `diabolic_vision`
+  - Put one of them into your hand and the rest on top of your library in any order.
+
+</details>
+
 ## manifest-dread
 
 Blocks **2** cards.
@@ -922,6 +942,24 @@ Blocks **2** cards.
   - When you unlock this door, manifest dread, then put two +1/+1 counters and a trample counter on that creature.
   - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
   - Whenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it.
+
+</details>
+
+## miracle
+
+Blocks **2** cards.
+
+- **(static_effect)** a grant_miracle static whose miracle cost is relative to each granted card's own mana cost -- the card's printed mana cost with {4} of generic removed (never below zero generic, coloured pips kept) -- rather than one fixed price string
+  <br>Why the existing vocabulary won't do: grant_miracle's miracle_cost is a single fixed mana string (Molecule Man's "{0}") that player_statics.granted_miracle_cost returns verbatim for every matching card; there is no way to say 'this card's mana cost minus {4}'. spell_cost_reduction discounts every cast of enchantments, not only the miracle cast, and grant_warp/granted_alternative_cost are likewise fixed prices offered at any cast
+- **(engine)** a miracle cost containing {X}: when the miracle cast is offered on the draw, the player chooses X (bounded by what they can pay), pays {X}{W}{W} with that X, and the spell goes on the stack with item.x set so 'Create X ... tokens' reads the chosen value
+  <br>Why the existing vocabulary won't do: The card-level `miracle` rider is accepted, but replacements._offer_cast builds Cost(mana=cost) and calls stack.push_spell without an `x`, so X defaults to 0: the miracle cast would pay only {W}{W} and create zero Angels, the card's whole point. No shipped miracle card has an X cost (only Molecule Man's granted {0})
+
+<details><summary>Cards waiting on this</summary>
+
+- **Entreat the Angels** (rank 4945) — `entreat_the_angels`
+  - Miracle {X}{W}{W} (You may cast this card for its miracle cost when you draw it if it's the first card you drew this turn.)
+- **Aminatou, Veil Piercer** (rank 5025) — `aminatou_veil_piercer`
+  - Each enchantment card in your hand has miracle. Its miracle cost is equal to its mana cost reduced by {4}.
 
 </details>
 
@@ -2190,6 +2228,21 @@ Blocks **1** card.
 
 </details>
 
+## fully-unlock-room
+
+Blocks **1** card.
+
+- **(trigger_event)** a trigger event 'whenever you fully unlock a Room' (Eerie), firing when a Room you control has both of its doors unlocked, whether the second door is unlocked by the special action or the Room is otherwise made fully unlocked; it depends on the Room engine support filed as `rooms`
+  <br>Why the existing vocabulary won't do: trigger_events has no unlock event and the engine has no Room permanents; self_enters + permanent_enters (enchantment, exclude_self) cover the enters half of Eerie as Doomwake Giant does, and `tap` + `add_counters` (counter: stun) on an up-to-one creature target cover the effect, but dropping the Room clause would make the card strictly narrower
+
+<details><summary>Cards waiting on this</summary>
+
+- **Fear of Sleep Paralysis** (rank 3452) — `fear_of_sleep_paralysis`
+  - Eerie — Whenever this creature or another enchantment you control enters and whenever you fully unlock a Room, tap up to one target creature and put a stun counter on it.
+  - Stun counters can't be removed from permanents your opponents control. (They won't untap if they have stun counters.)
+
+</details>
+
 ## goad-without-goaded
 
 Blocks **1** card.
@@ -2501,20 +2554,6 @@ Blocks **1** card.
 
 </details>
 
-## look-at-top-rest-any-order
-
-Blocks **1** card.
-
-- **(op)** A remainder option on look_at_top (e.g. rest_to_top_any_order: true) that, after the picked card is taken, lets the resolving player arrange the cards looked at and not taken in any order on top of their library (rule 401.4 ordering choice, as put_on_top's any_order does via _in_owners_order)
-  <br>Why the existing vocabulary won't do: look_at_top with destination hand and count 1 leaves the untaken cards on top in their original order, so the player never gets the printed choice of order; rest_to_bottom sends them to the bottom in random order, rest_to only names a zone with no ordering; put_on_top has any_order but cannot name 'the rest' because look_at_top's `as` binds only the taken cards; scry orders the top but also allows bottoming, which is a different card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Diabolic Vision** (rank 7343) — `diabolic_vision`
-  - Put one of them into your hand and the rest on top of your library in any order.
-
-</details>
-
 ## lose-the-game
 
 Blocks **1** card.
@@ -2683,20 +2722,6 @@ Blocks **1** card.
 
 - **Silvergill Mentor** (rank 16445) — `silvergill_mentor`
   - When this creature enters, create a 1/1 white and blue Merfolk creature token.
-
-</details>
-
-## miracle
-
-Blocks **1** card.
-
-- **(static_effect)** a grant_miracle static whose miracle cost is relative to each granted card's own mana cost -- the card's printed mana cost with {4} of generic removed (never below zero generic, coloured pips kept) -- rather than one fixed price string
-  <br>Why the existing vocabulary won't do: grant_miracle's miracle_cost is a single fixed mana string (Molecule Man's "{0}") that player_statics.granted_miracle_cost returns verbatim for every matching card; there is no way to say 'this card's mana cost minus {4}'. spell_cost_reduction discounts every cast of enchantments, not only the miracle cast, and grant_warp/granted_alternative_cost are likewise fixed prices offered at any cast
-
-<details><summary>Cards waiting on this</summary>
-
-- **Aminatou, Veil Piercer** (rank 5025) — `aminatou_veil_piercer`
-  - Each enchantment card in your hand has miracle. Its miracle cost is equal to its mana cost reduced by {4}.
 
 </details>
 
@@ -3425,6 +3450,21 @@ Blocks **1** card.
 
 - **Carrion Grub** (rank 10492) — `carrion_grub`
   - This creature gets +X/+0, where X is the greatest power among creature cards in your graveyard.
+
+</details>
+
+## stun-counters-cant-be-removed
+
+Blocks **1** card.
+
+- **(static_effect)** a static that stops stun counters being removed from permanents matching `affects` (here controller: opponent) by any means: the 122.1d untap replacement in `primitives.untap_or_stun` must no longer spend the counter (so the permanent stays tapped and keeps it), and remove_counters / move_counters / costs that remove stun counters from such permanents must remove none
+  <br>Why the existing vocabulary won't do: `cant_have_counters` stops counters being put on, not removed; `skip_untap_step` / `untap_limit` change untapping wholesale rather than keeping the stun counter in place, and no static_effects entry intercepts counter removal
+
+<details><summary>Cards waiting on this</summary>
+
+- **Fear of Sleep Paralysis** (rank 3452) — `fear_of_sleep_paralysis`
+  - Eerie — Whenever this creature or another enchantment you control enters and whenever you fully unlock a Room, tap up to one target creature and put a stun counter on it.
+  - Stun counters can't be removed from permanents your opponents control. (They won't untap if they have stun counters.)
 
 </details>
 
