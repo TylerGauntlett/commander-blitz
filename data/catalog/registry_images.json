@@ -6716,6 +6716,10 @@
     "artist": "Anthony Palumbo",
     "scryfall_id": "30444f88-5a7e-46bc-ab0c-17e62fae2457"
   },
+  "growing_dread": {
+    "artist": "Maxime Minard",
+    "scryfall_id": "5479ac50-8335-4c6a-be99-750a44e24f25"
+  },
   "growth_spiral": {
     "artist": "Andrew Mar",
     "scryfall_id": "71ef2271-d9fc-4444-bc47-eb4ecfd1d860"
@@ -8344,6 +8348,14 @@
   "kher_keep": {
     "artist": "Paolo Parente",
     "scryfall_id": "15ca0b68-33a1-4d25-b622-d3f5ba05b0a5"
+  },
+  "kheru_spellsnatcher": {
+    "artist": "Clint Cearley",
+    "scryfall_id": "610f4f2b-e5ed-463b-9d9b-0f7b3f3e99c8"
+  },
+  "kianne_corrupted_memory": {
+    "artist": "Mila Pesic",
+    "scryfall_id": "d970c966-9a89-4c4c-ac73-8cf8fffe7721"
   },
   "killian_decisive_mentor": {
     "artist": "Billy Christian",
@@ -13012,6 +13024,10 @@
     "artist": "Diego Gisbert",
     "scryfall_id": "e7482def-e87e-4a7f-9c18-7859483b2a66"
   },
+  "sandwurm_convergence": {
+    "artist": "Slawomir Maniak",
+    "scryfall_id": "3ad9cb61-4072-449b-9b32-83e2192cb292"
+  },
   "sangrite_backlash": {
     "artist": "Cyril Van Der Haegen",
     "scryfall_id": "fa56b15e-d02d-4306-82a6-ced778fee90f"
@@ -13987,6 +14003,10 @@
   "sixth_sense": {
     "artist": "Zoltan Boros",
     "scryfall_id": "e564db6b-0b8b-4c67-9135-5da76d2225fe"
+  },
+  "skaab_ruinator": {
+    "artist": "Chris Rahn",
+    "scryfall_id": "668d4e90-61d3-4064-b867-6ac7a49a7d59"
   },
   "skeletal_crocodile": {
     "artist": "Mike Dringenberg",
@@ -15613,6 +15633,10 @@
     "artist": "Brent Hollowell",
     "scryfall_id": "1292af13-87dd-46d4-b49b-f27baae99e7f"
   },
+  "temur_war_shaman": {
+    "artist": "Raymond Swanland",
+    "scryfall_id": "24824ccd-d470-49eb-a07d-2fc0de817766"
+  },
   "tendershoot_dryad": {
     "artist": "Evyn Fong",
     "scryfall_id": "def3571c-01dd-4eee-8f60-0ac4d1928d33"
@@ -15870,6 +15894,10 @@
   "theoden_king_of_rohan": {
     "artist": "Kieran Yanner",
     "scryfall_id": "f6dcd1ca-4943-46e4-bb5d-c14949e21e23"
+  },
+  "they_came_from_the_pipes": {
+    "artist": "Andreas Zafiratos",
+    "scryfall_id": "541fc8eb-dba2-4d2b-9df2-9380c8c37e21"
   },
   "thickest_in_the_thicket": {
     "artist": "Michele Giorgi",
@@ -16274,6 +16302,10 @@
   "tragic_arrogance": {
     "artist": "Rimas Valeikis",
     "scryfall_id": "512da48c-a02a-4670-84f3-595b245e0321"
+  },
+  "trail_of_mystery": {
+    "artist": "Raymond Swanland",
+    "scryfall_id": "56271ec9-5e41-47d3-ac76-d0743fb399cc"
   },
   "trailblazer_s_boots": {
     "artist": "Zoltan Boros & Gabor Szikszai",
@@ -17759,6 +17791,10 @@
     "artist": "Luca Zontini",
     "scryfall_id": "b3762ab9-565a-4bcc-8033-57899e9e09c9"
   },
+  "whisperwood_elemental": {
+    "artist": "Raymond Swanland",
+    "scryfall_id": "f522f32d-e510-4128-98ae-d3c0f684b899"
+  },
   "white_auracite": {
     "artist": "Magali Villeneuve",
     "scryfall_id": "2df6f515-9d21-4769-b1c4-c219611bccbb"
@@ -18179,6 +18215,10 @@
     "artist": "Huang Qishi",
     "scryfall_id": "60e55b25-fde2-4b57-b5db-65b75262ff3d"
   },
+  "wurm_5_5_g": {
+    "artist": "Diana Franco",
+    "scryfall_id": "54d5e60d-559d-49e0-a65e-80db721b142a"
+  },
   "xander_s_lounge": {
     "artist": "V\u00e9ronique Meignaud",
     "scryfall_id": "1d96f496-1fc1-4e66-878a-b0905e920cdc"
@@ -18354,6 +18394,10 @@
   "zimone_quandrix_prodigy": {
     "artist": "Ryan Pancoast",
     "scryfall_id": "5a9a9f44-479e-47ca-afc4-d8372a11c9b3"
+  },
+  "zimone_s_hypothesis": {
+    "artist": "Crystal Fae",
+    "scryfall_id": "f91afbaf-e035-47cd-b493-0d5817fefa76"
   },
   "zodiac_dog": {
     "artist": "Qi Baocheng",
