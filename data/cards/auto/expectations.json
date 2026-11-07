@@ -7624,6 +7624,10 @@
     },
     "zone": "battlefield"
   },
+  "hall_of_heliod_s_generosity": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "hall_of_oracles": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -9815,6 +9819,13 @@
     },
     "zone": "graveyard"
   },
+  "life_insurance": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "lifeblood_hydra": {
     "battlefield_count": 33,
     "counters": {
@@ -10810,6 +10821,13 @@
       "0": 42
     }
   },
+  "mesa_enchantress": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "mesa_pegasus": {
     "zone": "battlefield"
   },
@@ -10987,6 +11005,11 @@
     "zone": "battlefield"
   },
   "mirri_cat_warrior": {
+    "zone": "battlefield"
+  },
+  "mirrormade": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
   "mischievous_mystic": {
@@ -11174,6 +11197,16 @@
       "id": "moogle_1_2_w_lifelink"
     },
     "zone": "graveyard"
+  },
+  "moon_blessed_cleric": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "battlefield"
   },
   "moon_heron": {
     "zone": "battlefield"

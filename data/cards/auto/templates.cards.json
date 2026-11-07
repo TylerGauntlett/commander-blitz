@@ -88284,6 +88284,67 @@
         },
         {
           "cost": {
+            "mana": "{1}{W}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "put_on_top"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Enchantment"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "{1}{W}, {T}: Put target enchantment card from your graveyard on top of your library."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "id": "hall_of_heliod_s_generosity",
+      "name": "Hall of Heliod's Generosity",
+      "oracle_text": "{T}: Add {C}.\n{1}{W}, {T}: Put target enchantment card from your graveyard on top of your library.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
             "mana": "{1}",
             "tap": true
           },
@@ -115716,6 +115777,87 @@
         {
           "effects": [
             {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "as": "extorted",
+                  "op": "lose_life",
+                  "player": "each_opponent"
+                },
+                {
+                  "amount": {
+                    "binding": "extorted"
+                  },
+                  "op": "gain_life",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{W/B}"
+              },
+              "prompt": "Extort: pay {W/B}?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Extort",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a nontoken creature dies, you lose 1 life and create a Treasure token.",
+          "trigger": {
+            "controller": "any",
+            "event": "creature_dies",
+            "filter": {
+              "is_token": false
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "life_insurance",
+      "mana_cost": "{3}{W}{B}",
+      "name": "Life Insurance",
+      "oracle_text": "Extort (Whenever you cast a spell, you may pay {W/B}. If you do, each opponent loses 1 life and you gain that much life.)\nWhenever a nontoken creature dies, you lose 1 life and create a Treasure token.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "power_had": true
               },
@@ -127217,6 +127359,58 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "prompt": "Draw a card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast an enchantment spell, you may draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "types": [
+                "Enchantment"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "mesa_enchantress",
+      "mana_cost": "{1}{W}{W}",
+      "name": "Mesa Enchantress",
+      "oracle_text": "Whenever you cast an enchantment spell, you may draw a card.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Druid"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -129196,6 +129390,34 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "mirrormade",
+      "mana_cost": "{1}{U}{U}",
+      "name": "Mirrormade",
+      "oracle_text": "You may have this enchantment enter as a copy of any artifact or enchantment on the battlefield.",
+      "replacements": [
+        {
+          "copying": {
+            "any_types": [
+              "Artifact",
+              "Enchantment"
+            ],
+            "zone": "battlefield"
+          },
+          "event": "self_enters_as_copy"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -131212,6 +131434,53 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "count": 1,
+              "destination": "library_top",
+              "op": "search_library",
+              "player": "you",
+              "reveal": true,
+              "selector": {
+                "types": [
+                  "Enchantment"
+                ]
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Divine Intervention — When this creature enters, you may search your library for an enchantment card, reveal it, then shuffle and put that card on top.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "moon_blessed_cleric",
+      "mana_cost": "{2}{W}",
+      "name": "Moon-Blessed Cleric",
+      "oracle_text": "Divine Intervention — When this creature enters, you may search your library for an enchantment card, reveal it, then shuffle and put that card on top.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Elf",
+        "Cleric"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
