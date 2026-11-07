@@ -51055,6 +51055,38 @@
       ]
     },
     {
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "diabolic_vision",
+      "mana_cost": "{U}{B}",
+      "name": "Diabolic Vision",
+      "oracle_text": "Look at the top five cards of your library. Put one of them into your hand and the rest on top of your library in any order.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 5
+          },
+          "destination": "hand",
+          "objects": {
+            "count": 1
+          },
+          "op": "look_at_top",
+          "player": "you",
+          "rest_any_order": true
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -88182,6 +88214,61 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "objects": {
+                "count": 0
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "rest_any_order": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this land enters, look at the top three cards of your library, then put them back in any order.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{U}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {U}."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "id": "halimar_depths",
+      "name": "Halimar Depths",
+      "oracle_text": "This land enters tapped.\nWhen this land enters, look at the top three cards of your library, then put them back in any order.\n{T}: Add {U}.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -152075,6 +152162,70 @@
     },
     {
       "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "portent",
+      "mana_cost": "{U}",
+      "name": "Portent",
+      "oracle_text": "Look at the top three cards of target player's library, then put them back in any order. You may have that player shuffle.\nDraw a card at the beginning of the next turn's upkeep.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 3
+          },
+          "objects": {
+            "count": 0
+          },
+          "op": "look_at_top",
+          "player": {
+            "target": "t1"
+          },
+          "rest_any_order": true
+        },
+        {
+          "effects": [
+            {
+              "op": "shuffle",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "op": "may",
+          "prompt": "Have that player shuffle their library?"
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "op": "delay",
+          "step": "upkeep",
+          "text": "Draw a card at the beginning of the next turn's upkeep."
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "G"
       ],
       "colors": [
@@ -185736,6 +185887,79 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "types": [
+              "Enchantment",
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying"
+          ],
+          "kind": "static",
+          "text": "Other enchantment creatures you control have flying."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "attacking": {
+                "binding": "defender"
+              },
+              "controller": "you",
+              "op": "create_token",
+              "tapped": true,
+              "token": "glimmer_1_1_w_enchantment"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you attack a player, create a 1/1 white Glimmer enchantment creature token that's tapped and attacking that player.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "attacking_player": "opponent",
+                "binding": "attackers"
+              }
+            },
+            "controller": "you",
+            "defending": "opponent",
+            "event": "creatures_attack_player"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "soaring_lightbringer",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{W}",
+      "name": "Soaring Lightbringer",
+      "oracle_text": "Flying\nOther enchantment creatures you control have flying.\nWhenever you attack a player, create a 1/1 white Glimmer enchantment creature token that's tapped and attacking that player.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Bird",
+        "Glimmer"
+      ],
+      "toughness": 5,
+      "types": [
+        "Enchantment",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -203979,6 +204203,44 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "telling_time",
+      "mana_cost": "{1}{U}",
+      "name": "Telling Time",
+      "oracle_text": "Look at the top three cards of your library. Put one of those cards into your hand, one on top of your library, and one on the bottom of your library.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 3
+          },
+          "destinations": [
+            {
+              "count": 1,
+              "to": "hand"
+            },
+            {
+              "count": 1,
+              "to": "library_top"
+            },
+            {
+              "count": 1,
+              "to": "library_bottom"
+            }
+          ],
+          "op": "look_at_top"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -205567,6 +205829,38 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "terminus",
+      "mana_cost": "{4}{W}{W}",
+      "miracle": "{W}",
+      "name": "Terminus",
+      "oracle_text": "Put all creatures on the bottom of their owners' libraries.\nMiracle {W} (You may cast this card for its miracle cost when you draw it if it's the first card you drew this turn.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "any_order": true,
+          "bottom": true,
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "put_on_top"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -206833,6 +207127,100 @@
       "mana_cost": "{2}{R}{R}",
       "name": "The Elder Dragon War",
       "oracle_text": "Read ahead (Choose a chapter and start with that many lore counters. Add one after your draw step. Skipped chapters don't trigger. Sacrifice after III.)\nI — This Saga deals 2 damage to each creature and each opponent.\nII — Discard any number of cards, then draw that many cards.\nIII — Create a 4/4 red Dragon creature token with flying.",
+      "source": "auto",
+      "subtypes": [
+        "Saga"
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "chapter": 1,
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "any_types": [
+                      "Creature",
+                      "Planeswalker"
+                    ],
+                    "chooser": {
+                      "binding": "each_player"
+                    },
+                    "controller": {
+                      "binding": "each_player"
+                    },
+                    "count": 1,
+                    "zone": "battlefield"
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "chapter",
+          "text": "I — Each opponent sacrifices a creature or planeswalker of their choice."
+        },
+        {
+          "chapter": 2,
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "discard",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "chapter",
+          "text": "II — Each opponent discards a card."
+        },
+        {
+          "chapter": 3,
+          "effects": [
+            {
+              "controller": "you",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "put_onto_battlefield"
+            }
+          ],
+          "kind": "chapter",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker"
+                ],
+                "controller": "any",
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "III — Put target creature or planeswalker card from a graveyard onto the battlefield under your control."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "the_eldest_reborn",
+      "mana_cost": "{4}{B}",
+      "name": "The Eldest Reborn",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Each opponent sacrifices a creature or planeswalker of their choice.\nII — Each opponent discards a card.\nIII — Put target creature or planeswalker card from a graveyard onto the battlefield under your control.",
       "source": "auto",
       "subtypes": [
         "Saga"
@@ -210021,6 +210409,58 @@
           },
           "player": "you",
           "prompt": "Discard an artifact card instead of discarding two cards?"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "thirst_for_meaning",
+      "mana_cost": "{2}{U}",
+      "name": "Thirst for Meaning",
+      "oracle_text": "Draw three cards. Then discard two cards unless you discard an enchantment card.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 3
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "effects": [
+            {
+              "op": "noop"
+            }
+          ],
+          "else": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "discard",
+              "player": "you"
+            }
+          ],
+          "op": "may",
+          "pay": {
+            "discard": 1,
+            "discard_selector": {
+              "types": [
+                "Enchantment"
+              ]
+            }
+          },
+          "player": "you",
+          "prompt": "Discard an enchantment card instead of discarding two cards?"
         }
       ],
       "types": [
@@ -222430,6 +222870,45 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "utter_end",
+      "mana_cost": "{2}{W}{B}",
+      "name": "Utter End",
+      "oracle_text": "Exile target nonland permanent.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "exile"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {

@@ -1,0 +1,23 @@
+{
+  "card_id": "the_master_of_keys",
+  "name": "The Master of Keys",
+  "oracle_text": "Flying\nWhen The Master of Keys enters, put X +1/+1 counters on it and mill twice X cards.\nEach enchantment card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard. (You may cast cards from your graveyard for their escape cost.)",
+  "blocked_sentences": [
+    "Each enchantment card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard. (You may cast cards from your graveyard for their escape cost.)"
+  ],
+  "needs": [
+    {
+      "capability": "escape",
+      "kind": "static_effect",
+      "what": "a granted escape permission: a `cast_from_graveyard`-style static (here `affects_spells: {\"types\": [\"Enchantment\"]}`) whose granted cast charges an additional cost on top of the card's own mana cost -- `exile_from_graveyard: {\"count\": 3}` where 'other' excludes the card being escaped, not the granting permanent -- priced and paid when the granted spell is cast, with no per-turn cap (the exile is the brake), and marking the spell as escaped (702.138) rather than exiling it on resolution, so an escaped enchantment returns to the graveyard and can escape again",
+      "why_existing_wont_do": "`cast_from_graveyard` grants the cast at the printed cost only, carries no additional-cost rider, and the loader requires `static_max_per_turn`, which this card does not print. The card-level `graveyard_cost` / `graveyard_additional_cost` slot is escape and can carry `exile_from_graveyard`, but it is set on the escaping card itself at load time; nothing writes a cost onto other cards. `grant_graveyard_cast` only takes `affects_spells`, `any_graveyard` and `grants_flashback` (flashback exiles the card, escape does not). `grant_keyword` has no escape keyword. Same blocker as underworld_breach."
+    }
+  ],
+  "closest_existing": [
+    "cast_from_graveyard",
+    "grant_graveyard_cast",
+    "graveyard_additional_cost",
+    "exile_from_graveyard"
+  ],
+  "confidence": "high"
+}

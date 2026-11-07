@@ -68362,12 +68362,12 @@
     },
     "Diabolic Vision": {
       "edhrec_rank": 7343,
-      "gate": "template",
+      "gate": null,
       "name": "Diabolic Vision",
-      "reason": "no template for: Look at the top five cards of your library. Put one of them into your hand and the rest on",
+      "reason": "",
       "scryfall_id": "c360753a-af32-4f1d-a1c7-c3f3c075ecc0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Diamond City": {
@@ -121412,12 +121412,12 @@
     },
     "Halimar Depths": {
       "edhrec_rank": 1289,
-      "gate": "template",
+      "gate": null,
       "name": "Halimar Depths",
-      "reason": "no template for: When this land enters, look at the top three cards of your library, then put them back in ",
+      "reason": "",
       "scryfall_id": "638e752c-fcfc-4277-ab93-943d0195e351",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Halimar Excavator": {
@@ -205242,12 +205242,12 @@
     },
     "Portent": {
       "edhrec_rank": 4014,
-      "gate": "template",
+      "gate": null,
       "name": "Portent",
-      "reason": "no template for: Look at the top three cards of target player's library, then put them back in any order. Y",
+      "reason": "",
       "scryfall_id": "5b360632-9c81-4b9c-8b9f-ac0b51c974a0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Portent Tracker": {
@@ -253822,12 +253822,12 @@
     },
     "Soaring Lightbringer": {
       "edhrec_rank": 3876,
-      "gate": "template",
+      "gate": null,
       "name": "Soaring Lightbringer",
-      "reason": "no template for: Other enchantment creatures you control have flying",
+      "reason": "",
       "scryfall_id": "1933e212-213f-461f-aeb5-4a86a4dae003",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Soaring Sandwing": {
@@ -276952,12 +276952,12 @@
     },
     "Telling Time": {
       "edhrec_rank": 5607,
-      "gate": "template",
+      "gate": null,
       "name": "Telling Time",
-      "reason": "no template for: Look at the top three cards of your library. Put one of those cards into your hand, one on",
+      "reason": "",
       "scryfall_id": "6c47bcb9-69a2-40ac-bb8f-2b3c808096d9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Temmet, Naktamun's Will": {
@@ -278252,12 +278252,12 @@
     },
     "Terminus": {
       "edhrec_rank": 4861,
-      "gate": "template",
+      "gate": null,
       "name": "Terminus",
-      "reason": "no template for: Put all creatures on the bottom of their owners' libraries",
+      "reason": "",
       "scryfall_id": "4c53c684-37f9-4b95-88be-a42b9600c47c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Teroh's Faithful": {
@@ -280522,12 +280522,12 @@
     },
     "The Eldest Reborn": {
       "edhrec_rank": 1906,
-      "gate": "template",
+      "gate": null,
       "name": "The Eldest Reborn",
-      "reason": "no template for: I — Each opponent sacrifices a creature or planeswalker of their choice",
+      "reason": "",
       "scryfall_id": "4d29351e-5608-40e8-8220-6c9635d48ad4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Eleventh Doctor": {
@@ -283652,12 +283652,12 @@
     },
     "Thirst for Meaning": {
       "edhrec_rank": 8081,
-      "gate": "template",
+      "gate": null,
       "name": "Thirst for Meaning",
-      "reason": "no template for: Draw three cards. Then discard two cards unless you discard an enchantment card",
+      "reason": "",
       "scryfall_id": "b91bd773-b36b-4a7a-a9e4-3a07cff90646",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thirsting Axe": {
@@ -300022,12 +300022,12 @@
     },
     "Utter End": {
       "edhrec_rank": 1631,
-      "gate": "template",
+      "gate": null,
       "name": "Utter End",
-      "reason": "no template for: Exile target nonland permanent",
+      "reason": "",
       "scryfall_id": "1819a0af-0775-431d-9637-13f8f10830f5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Utter Insignificance": {

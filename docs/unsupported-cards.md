@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**244 cards** blocked by **227** capabilities.
+**246 cards** blocked by **229** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -24,6 +24,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
 | [copy-exception-set-subtypes](#copy-exception-set-subtypes) | 3 | 1740 | engine, op |
+| [escape](#escape) | 3 | 388 | engine, static_effect |
 | [omen](#omen) | 3 | 3355 | cost, engine |
 | [random-player-choice](#random-player-choice) | 3 | 5120 | op |
 | [add-color](#add-color) | 2 | 2040 | op |
@@ -38,10 +39,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [devotion](#devotion) | 2 | 2401 | value |
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 2 | 2389 | engine |
-| [escape](#escape) | 2 | 388 | engine, static_effect |
 | [face-down-filter](#face-down-filter) | 2 | 5772 | selector |
 | [manifest-dread](#manifest-dread) | 2 | 5772 | op |
-| [miracle](#miracle) | 2 | 4945 | engine, static_effect |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
 | [return-face-down](#return-face-down) | 2 | 3081 | op |
@@ -124,6 +123,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [first-mate-ragavan](#first-mate-ragavan) | 1 | 7016 | token |
 | [first-x-spell-cost-reduction](#first-x-spell-cost-reduction) | 1 | 8360 | static_effect |
 | [fixed-piles-opponent-chooses](#fixed-piles-opponent-chooses) | 1 | 12369 | op |
+| [flash-if-targets](#flash-if-targets) | 1 | 1651 | engine |
 | [flip-coins-count](#flip-coins-count) | 1 | 6651 | value |
 | [foretold](#foretold) | 1 | 3713 | value |
 | [free-cast-by-other-player](#free-cast-by-other-player) | 1 | 11704 | op |
@@ -139,6 +139,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [grant-evoke](#grant-evoke) | 1 | 5749 | static_effect |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
 | [granted-alternative-cost-life-equal-to-mana-value](#granted-alternative-cost-life-equal-to-mana-value) | 1 | 3022 | static_effect |
+| [granted-miracle-from-mana-cost](#granted-miracle-from-mana-cost) | 1 | 5025 | static_effect |
 | [graveyard-cast-per-permanent-type](#graveyard-cast-per-permanent-type) | 1 | 1104 | static_effect |
 | [graveyard-cast-permission-additional-cost](#graveyard-cast-permission-additional-cost) | 1 | 7356 | static_effect |
 | [graveyard-play-grants-ability](#graveyard-play-grants-ability) | 1 | 3531 | static_effect |
@@ -166,6 +167,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [manifest-from-hand](#manifest-from-hand) | 1 | 3975 | op |
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
+| [miracle-x](#miracle-x) | 1 | 4945 | engine |
 | [modal-variable-targets](#modal-variable-targets) | 1 | 4339 | engine |
 | [mode-owned-variable-targets](#mode-owned-variable-targets) | 1 | 6294 | engine |
 | [mode-owned-variable-targets-mid-declaration](#mode-owned-variable-targets-mid-declaration) | 1 | 16968 | engine |
@@ -611,6 +613,30 @@ Blocks **3** cards.
 
 </details>
 
+## escape
+
+Blocks **3** cards.
+
+- **(static_effect)** a granted escape permission: a `cast_from_graveyard`-style static (here `affects_spells: {"types": ["Enchantment"]}`) whose granted cast charges an additional cost on top of the card's own mana cost -- `exile_from_graveyard: {"count": 3}` where 'other' excludes the card being escaped, not the granting permanent -- priced and paid when the granted spell is cast, with no per-turn cap (the exile is the brake), and marking the spell as escaped (702.138) rather than exiling it on resolution, so an escaped enchantment returns to the graveyard and can escape again
+  <br>Why the existing vocabulary won't do: `cast_from_graveyard` grants the cast at the printed cost only, carries no additional-cost rider, and the loader requires `static_max_per_turn`, which this card does not print. The card-level `graveyard_cost` / `graveyard_additional_cost` slot is escape and can carry `exile_from_graveyard`, but it is set on the escaping card itself at load time; nothing writes a cost onto other cards. `grant_graveyard_cast` only takes `affects_spells`, `any_graveyard` and `grants_flashback` (flashback exiles the card, escape does not). `grant_keyword` has no escape keyword. Same blocker as underworld_breach.
+- **(static_effect)** an additional-cost rider on the `cast_from_graveyard` static -- a Cost charged on top of the granted spell's own mana cost, drawn from `cost_keys`, so this card's static can carry `exile_from_graveyard: {"count": 3, "exclude_self": true}`. It must be priced and paid by `legality.graveyard_cast_permission` / `Game._cast` at the moment the granted spell is cast (the way `chosen_additional` charges a card's own `additional_cost`), and `exclude_self` has to mean the card being escaped, not the permanent granting the permission -- otherwise a three-card graveyard pays for the escape with the escaping card itself.
+  <br>Why the existing vocabulary won't do: `cast_from_graveyard` is the only static that lets a card out of a graveyard and it grants the cast at the card's printed cost with no price attached. Its whole rider vocabulary is `enters_tapped`, `arrived_this_turn_from` and `affects_spells`; the one cost field on any permission static is `pay_life_instead`, which belongs to `cast_from_library_top`, swaps mana for life rather than adding to it, and cannot express an exile. The card-level `graveyard_cost` / `flashback` slot *is* escape and does carry `exile_from_graveyard` with `exclude_self` -- but it is a field on the escaping card itself, set at load time, and Underworld Breach hands escape to cards it has never seen. There is no op or static that writes a cost onto another card, and `grant_keyword` knows only the 34 ability keywords, none of which is escape.
+- **(static_effect)** an unbounded `cast_from_graveyard` permission -- `static_max_per_turn` made optional (or given an explicit unlimited spelling) for permissions whose price is itself the rate limit, with `legality.graveyard_cast_permission` skipping the `GRAVEYARD_CAST_SLOT` ledger check instead of defaulting `cap` to 1. Underworld Breach prints no cap at all; the three exiled cards per cast are the whole brake.
+  <br>Why the existing vocabulary won't do: The loader hard-refuses `cast_from_graveyard` without `static_max_per_turn` (`if not model.static_max_per_turn`), on the stated grounds that a permission with no rate limit is an unbounded engine rather than a printed line -- which is true of Edgar, Master Machinist's "once during each of your turns" and exactly false of this card. Every accepted value is a finite integer, so any number I could write would be a cap this card does not print: the card is a storm/loop enabler and an invented ceiling is the approximation, not a rounding of one.
+- **(engine)** a verification sandbox that can cast an escape card for its escape cost from the graveyard (the card in the graveyard plus at least five other cards there), or an argued exception in the playable gate for a creature whose own 'sacrifice it unless it escaped' trigger lawfully bins it when cast from hand
+  <br>Why the existing vocabulary won't do: Every line is expressible: graveyard_cost {mana: {G}{G}{U}{U}, exile_from_graveyard: {count: 5, exclude_self: true}} + graveyard_cast: graveyard, a self_enters trigger with if {escaped: false} -> sacrifice self_only, and self_enters/attacks triggers with gain_life 3, draw 1, may put_onto_battlefield a land from hand. A dry run of verify() passes schema/compile/residual but fails the playable gate: '_cast' always casts from hand via build_sandbox (graveyard holds only 2 cards, so escape is unpayable), Uro correctly sacrifices itself, and _play_once allows a permanent only on the battlefield. Its docstring forbids widening that set and says the fix is a sandbox role, not a weaker gate. Dropping or inverting the sacrifice clause would be an approximation.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Underworld Breach** (rank 388) — `underworld_breach`
+  - Each nonland card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard.
+- **Uro, Titan of Nature's Wrath** (rank 1514) — `uro_titan_of_nature_s_wrath`
+  - When Uro enters, sacrifice it unless it escaped.
+- **The Master of Keys** (rank 4992) — `the_master_of_keys`
+  - Each enchantment card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard. (You may cast cards from your graveyard for their escape cost.)
+
+</details>
+
 ## omen
 
 Blocks **3** cards.
@@ -881,26 +907,6 @@ Blocks **2** cards.
 
 </details>
 
-## escape
-
-Blocks **2** cards.
-
-- **(static_effect)** an additional-cost rider on the `cast_from_graveyard` static -- a Cost charged on top of the granted spell's own mana cost, drawn from `cost_keys`, so this card's static can carry `exile_from_graveyard: {"count": 3, "exclude_self": true}`. It must be priced and paid by `legality.graveyard_cast_permission` / `Game._cast` at the moment the granted spell is cast (the way `chosen_additional` charges a card's own `additional_cost`), and `exclude_self` has to mean the card being escaped, not the permanent granting the permission -- otherwise a three-card graveyard pays for the escape with the escaping card itself.
-  <br>Why the existing vocabulary won't do: `cast_from_graveyard` is the only static that lets a card out of a graveyard and it grants the cast at the card's printed cost with no price attached. Its whole rider vocabulary is `enters_tapped`, `arrived_this_turn_from` and `affects_spells`; the one cost field on any permission static is `pay_life_instead`, which belongs to `cast_from_library_top`, swaps mana for life rather than adding to it, and cannot express an exile. The card-level `graveyard_cost` / `flashback` slot *is* escape and does carry `exile_from_graveyard` with `exclude_self` -- but it is a field on the escaping card itself, set at load time, and Underworld Breach hands escape to cards it has never seen. There is no op or static that writes a cost onto another card, and `grant_keyword` knows only the 34 ability keywords, none of which is escape.
-- **(static_effect)** an unbounded `cast_from_graveyard` permission -- `static_max_per_turn` made optional (or given an explicit unlimited spelling) for permissions whose price is itself the rate limit, with `legality.graveyard_cast_permission` skipping the `GRAVEYARD_CAST_SLOT` ledger check instead of defaulting `cap` to 1. Underworld Breach prints no cap at all; the three exiled cards per cast are the whole brake.
-  <br>Why the existing vocabulary won't do: The loader hard-refuses `cast_from_graveyard` without `static_max_per_turn` (`if not model.static_max_per_turn`), on the stated grounds that a permission with no rate limit is an unbounded engine rather than a printed line -- which is true of Edgar, Master Machinist's "once during each of your turns" and exactly false of this card. Every accepted value is a finite integer, so any number I could write would be a cap this card does not print: the card is a storm/loop enabler and an invented ceiling is the approximation, not a rounding of one.
-- **(engine)** a verification sandbox that can cast an escape card for its escape cost from the graveyard (the card in the graveyard plus at least five other cards there), or an argued exception in the playable gate for a creature whose own 'sacrifice it unless it escaped' trigger lawfully bins it when cast from hand
-  <br>Why the existing vocabulary won't do: Every line is expressible: graveyard_cost {mana: {G}{G}{U}{U}, exile_from_graveyard: {count: 5, exclude_self: true}} + graveyard_cast: graveyard, a self_enters trigger with if {escaped: false} -> sacrifice self_only, and self_enters/attacks triggers with gain_life 3, draw 1, may put_onto_battlefield a land from hand. A dry run of verify() passes schema/compile/residual but fails the playable gate: '_cast' always casts from hand via build_sandbox (graveyard holds only 2 cards, so escape is unpayable), Uro correctly sacrifices itself, and _play_once allows a permanent only on the battlefield. Its docstring forbids widening that set and says the fix is a sandbox role, not a weaker gate. Dropping or inverting the sacrifice clause would be an approximation.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Underworld Breach** (rank 388) — `underworld_breach`
-  - Each nonland card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard.
-- **Uro, Titan of Nature's Wrath** (rank 1514) — `uro_titan_of_nature_s_wrath`
-  - When Uro enters, sacrifice it unless it escaped.
-
-</details>
-
 ## face-down-filter
 
 Blocks **2** cards.
@@ -936,24 +942,6 @@ Blocks **2** cards.
   - When you unlock this door, manifest dread, then put two +1/+1 counters and a trample counter on that creature.
   - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
   - Whenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it.
-
-</details>
-
-## miracle
-
-Blocks **2** cards.
-
-- **(static_effect)** a grant_miracle static whose miracle cost is relative to each granted card's own mana cost -- the card's printed mana cost with {4} of generic removed (never below zero generic, coloured pips kept) -- rather than one fixed price string
-  <br>Why the existing vocabulary won't do: grant_miracle's miracle_cost is a single fixed mana string (Molecule Man's "{0}") that player_statics.granted_miracle_cost returns verbatim for every matching card; there is no way to say 'this card's mana cost minus {4}'. spell_cost_reduction discounts every cast of enchantments, not only the miracle cast, and grant_warp/granted_alternative_cost are likewise fixed prices offered at any cast
-- **(engine)** a miracle cost containing {X}: when the miracle cast is offered on the draw, the player chooses X (bounded by what they can pay), pays {X}{W}{W} with that X, and the spell goes on the stack with item.x set so 'Create X ... tokens' reads the chosen value
-  <br>Why the existing vocabulary won't do: The card-level `miracle` rider is accepted, but replacements._offer_cast builds Cost(mana=cost) and calls stack.push_spell without an `x`, so X defaults to 0: the miracle cast would pay only {W}{W} and create zero Angels, the card's whole point. No shipped miracle card has an X cost (only Molecule Man's granted {0})
-
-<details><summary>Cards waiting on this</summary>
-
-- **Entreat the Angels** (rank 4945) — `entreat_the_angels`
-  - Miracle {X}{W}{W} (You may cast this card for its miracle cost when you draw it if it's the first card you drew this turn.)
-- **Aminatou, Veil Piercer** (rank 5025) — `aminatou_veil_piercer`
-  - Each enchantment card in your hand has miracle. Its miracle cost is equal to its mana cost reduced by {4}.
 
 </details>
 
@@ -2182,6 +2170,20 @@ Blocks **1** card.
 
 </details>
 
+## flash-if-targets
+
+Blocks **1** card.
+
+- **(engine)** a card-level conditional flash permission whose condition reads the targets chosen for the spell itself: the card may be cast at instant speed only when its chosen target (here the Aura's enchant target) matches a selector such as `is_commander: true`. The cast must allow the card to be begun outside sorcery timing, then verify at target selection (601.2c) that the target matches, and reject/rewind the cast if it does not -- the same shape Ranger's Guile-style 'if it targets' riders and Nature's Way/Savage Smash-adjacent 'cast as though it had flash if' printings need
+  <br>Why the existing vocabulary won't do: `flash` is unconditional; the `cast_as_though_flash` static is a player-wide permission whose `affects_spells` filter reads only the printed characteristics of the face being cast and whose `condition` reads the board (static_condition_keys), never the spell's chosen targets; `grant_flash_permission` is a one-shot op from another source. `casting._timing_ok` decides timing from the CardDef and player statics before targets exist, so nothing can make timing depend on what the spell targets. Writing plain `flash` would be strictly better than the printed card (instant-speed Aura on any creature)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Timely Ward** (rank 1651) — `timely_ward`
+  - You may cast this spell as though it had flash if it targets a commander.
+
+</details>
+
 ## flip-coins-count
 
 Blocks **1** card.
@@ -2392,6 +2394,20 @@ Blocks **1** card.
 
 - **Demon of Fate's Design** (rank 3022) — `demon_of_fate_s_design`
   - Once during each of your turns, you may cast an enchantment spell by paying life equal to its mana value rather than paying its mana cost.
+
+</details>
+
+## granted-miracle-from-mana-cost
+
+Blocks **1** card.
+
+- **(static_effect)** a grant_miracle static whose miracle cost is relative to each granted card's own mana cost -- the card's printed mana cost with {4} of generic removed (never below zero generic, coloured pips kept) -- rather than one fixed price string
+  <br>Why the existing vocabulary won't do: grant_miracle's miracle_cost is a single fixed mana string (Molecule Man's "{0}") that player_statics.granted_miracle_cost returns verbatim for every matching card; there is no way to say 'this card's mana cost minus {4}'. spell_cost_reduction discounts every cast of enchantments, not only the miracle cast, and grant_warp/granted_alternative_cost are likewise fixed prices offered at any cast
+
+<details><summary>Cards waiting on this</summary>
+
+- **Aminatou, Veil Piercer** (rank 5025) — `aminatou_veil_piercer`
+  - Each enchantment card in your hand has miracle. Its miracle cost is equal to its mana cost reduced by {4}.
 
 </details>
 
@@ -2776,6 +2792,20 @@ Blocks **1** card.
 
 - **Silvergill Mentor** (rank 16445) — `silvergill_mentor`
   - When this creature enters, create a 1/1 white and blue Merfolk creature token.
+
+</details>
+
+## miracle-x
+
+Blocks **1** card.
+
+- **(engine)** a miracle cost containing {X}: when the miracle cast is offered on the draw, the player chooses X (bounded by what they can pay), pays {X}{W}{W} with that X, and the spell goes on the stack with item.x set so 'Create X ... tokens' reads the chosen value
+  <br>Why the existing vocabulary won't do: The card-level `miracle` rider is accepted, but replacements._offer_cast builds Cost(mana=cost) and calls stack.push_spell without an `x`, so X defaults to 0: the miracle cast would pay only {W}{W} and create zero Angels, the card's whole point. No shipped miracle card has an X cost (only Molecule Man's granted {0})
+
+<details><summary>Cards waiting on this</summary>
+
+- **Entreat the Angels** (rank 4945) — `entreat_the_angels`
+  - Miracle {X}{W}{W} (You may cast this card for its miracle cost when you draw it if it's the first card you drew this turn.)
 
 </details>
 

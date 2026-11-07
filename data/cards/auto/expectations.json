@@ -4351,6 +4351,15 @@
       "0": 41
     }
   },
+  "diabolic_vision": {
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "graveyard"
+  },
   "diamond_city": {
     "battlefield_count": 33,
     "counters": {
@@ -7615,6 +7624,13 @@
     "zone": "battlefield"
   },
   "halberdier": {
+    "zone": "battlefield"
+  },
+  "halimar_depths": {
+    "battlefield_count": 33,
+    "library_size": {
+      "0": 40
+    },
     "zone": "battlefield"
   },
   "haliya_guided_by_light": {
@@ -12885,6 +12901,15 @@
   "port_town": {
     "zone": "battlefield"
   },
+  "portent": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "pouncing_cheetah": {
     "zone": "battlefield"
   },
@@ -15821,6 +15846,10 @@
   "soaring_drake": {
     "zone": "battlefield"
   },
+  "soaring_lightbringer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sodden_verdure": {
     "zone": "battlefield"
   },
@@ -17181,6 +17210,18 @@
   "tekuthal_inquiry_dominus": {
     "zone": "battlefield"
   },
+  "telling_time": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "graveyard"
+  },
   "temmet_naktamun_s_will": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -17304,6 +17345,13 @@
   "teremko_griffin": {
     "zone": "battlefield"
   },
+  "terminus": {
+    "battlefield_count": 30,
+    "library_size": {
+      "0": 42
+    },
+    "zone": "graveyard"
+  },
   "teroh_s_faithful": {
     "life": {
       "0": 44
@@ -17418,6 +17466,14 @@
       "0": 40,
       "1": 38
     },
+    "zone": "battlefield"
+  },
+  "the_eldest_reborn": {
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
+    "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
   "the_emperor_of_palamecia_the_lord_master_of_hell": {
@@ -17615,6 +17671,18 @@
     "zone": "battlefield"
   },
   "thirst_for_knowledge": {
+    "graveyard_size": {
+      "0": 5
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 37
+    },
+    "zone": "graveyard"
+  },
+  "thirst_for_meaning": {
     "graveyard_size": {
       "0": 5
     },
@@ -18727,6 +18795,12 @@
   },
   "utopia_tree": {
     "zone": "battlefield"
+  },
+  "utter_end": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "zone": "graveyard"
   },
   "utvara_hellkite": {
     "battlefield_count": 33,

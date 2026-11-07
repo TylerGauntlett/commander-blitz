@@ -7,7 +7,7 @@
   ],
   "needs": [
     {
-      "capability": "miracle",
+      "capability": "miracle_x",
       "kind": "engine",
       "what": "a miracle cost containing {X}: when the miracle cast is offered on the draw, the player chooses X (bounded by what they can pay), pays {X}{W}{W} with that X, and the spell goes on the stack with item.x set so 'Create X ... tokens' reads the chosen value",
       "why_existing_wont_do": "The card-level `miracle` rider is accepted, but replacements._offer_cast builds Cost(mana=cost) and calls stack.push_spell without an `x`, so X defaults to 0: the miracle cast would pay only {W}{W} and create zero Angels, the card's whole point. No shipped miracle card has an X cost (only Molecule Man's granted {0})"
