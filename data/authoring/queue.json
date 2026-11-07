@@ -67872,12 +67872,12 @@
     },
     "Devastation Tide": {
       "edhrec_rank": 3921,
-      "gate": "template",
+      "gate": null,
       "name": "Devastation Tide",
-      "reason": "no template for: Return all nonland permanents to their owners' hands",
+      "reason": "",
       "scryfall_id": "2d493bd6-af71-45be-bd4c-1d8f94bca19e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deviant Glee": {
@@ -218972,12 +218972,12 @@
     },
     "Reforge the Soul": {
       "edhrec_rank": 1691,
-      "gate": "template",
+      "gate": null,
       "name": "Reforge the Soul",
-      "reason": "no template for: Each player discards their hand, then draws seven cards",
+      "reason": "",
       "scryfall_id": "1c3509c6-2ae7-45be-8ac9-4d14d69db32f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Refraction Trap": {
@@ -240132,12 +240132,12 @@
     },
     "Sensei's Divining Top": {
       "edhrec_rank": 227,
-      "gate": "template",
+      "gate": null,
       "name": "Sensei's Divining Top",
-      "reason": "no template for: {1}: Look at the top three cards of your library, then put them back in any order",
+      "reason": "",
       "scryfall_id": "f421a21a-763f-479b-bcc3-2abae29098d7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Senseless Rage": {
@@ -277472,12 +277472,12 @@
     },
     "Temporal Mastery": {
       "edhrec_rank": 2593,
-      "gate": "template",
+      "gate": null,
       "name": "Temporal Mastery",
-      "reason": "no template for: Take an extra turn after this one. Exile",
+      "reason": "",
       "scryfall_id": "0f46a800-b443-461d-87e0-5587249a42d8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Temporal Spring": {

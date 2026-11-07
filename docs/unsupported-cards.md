@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**246 cards** blocked by **229** capabilities.
+**247 cards** blocked by **230** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -111,6 +111,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [every-creature-type-everywhere](#every-creature-type-everywhere) | 1 | 494 | static_effect |
 | [exile-bottom-of-library](#exile-bottom-of-library) | 1 | 4763 | selector |
 | [exile-cards-with-card-types-among-them](#exile-cards-with-card-types-among-them) | 1 | 9107 | selector |
+| [exile-face-down](#exile-face-down) | 1 | 1363 | op |
 | [exile-permanent-cost](#exile-permanent-cost) | 1 | 6544 | cost |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [exile-x-from-graveyard-cost](#exile-x-from-graveyard-cost) | 1 | 17252 | cost |
@@ -1990,6 +1991,20 @@ Blocks **1** card.
 
 - **Winter, Cynical Opportunist** (rank 9107) — `winter_cynical_opportunist`
   - Delirium — At the beginning of your end step, you may exile any number of cards from your graveyard with four or more card types among them. If you do, put a permanent card from among them onto the battlefield with a finality counter on it.
+
+</details>
+
+## exile-face-down
+
+Blocks **1** card.
+
+- **(op)** a `face_down` option on the `exile` op so cards chosen from a hand (any number, `count: "any"`) are exiled hidden from every player but their owner, recorded with `as` so a later `look_at_top` (amount `{"count": {"binding": ...}}`, destination hand) and `put_on_top` with `any_order` can read them back
+  <br>Why the existing vocabulary won't do: `exile` carries `as` and `link` but no `face_down`; the only face-down exile is `look_at_top`'s `face_down`, which exiles from the top of a library, not from a hand. Exiling face up would reveal the chosen hand cards to the opponent, and skipping the exile (tucking the hand cards first) would put them where the following put-into-hand step takes them straight back
+
+<details><summary>Cards waiting on this</summary>
+
+- **Scroll Rack** (rank 1363) — `scroll_rack`
+  - {1}, {T}: Exile any number of cards from your hand face down. Put that many cards from the top of your library into your hand. Then look at the exiled cards and put them on top of your library in any order.
 
 </details>
 
