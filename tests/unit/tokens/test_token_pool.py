@@ -2224,6 +2224,19 @@ class TestTheMiracleWorkerTokens:
         assert not token.keywords
         assert not token.abilities
 
+    def test_the_glimmer_is_a_white_one_one_enchantment_creature(self, pool):
+        """Soaring Lightbringer: *"create a 1/1 white Glimmer enchantment
+        creature token. It gains flying until end of turn."* The flying is
+        granted after creation, so the token itself prints no keyword."""
+        token = pool.get("glimmer_1_1_w_enchantment")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (1, 1)
+        assert sorted(token.colors) == ["W"]
+        assert list(token.subtypes) == ["Glimmer"]
+        assert "Enchantment" in token.types
+        assert not token.keywords
+        assert not token.abilities
+
     def test_the_black_two_two_zombie_is_still_not_an_enchantment(self, pool):
         other = pool.get("zombie_2_2_b")
         assert list(other.subtypes) == ["Zombie"]
