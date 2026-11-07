@@ -2206,3 +2206,25 @@ class TestTheJumpScareTokens:
         other = pool.get("elemental_5_5_rg")
         assert list(other.subtypes) == ["Elemental"]
         assert sorted(other.colors) == ["G", "R"]
+
+
+class TestTheMiracleWorkerTokens:
+    """Phenomenon Investigators' Believe mode: *"create a 2/2 black Horror
+    enchantment creature token."* The enchantment type is the load-bearing
+    part: the precon counts and returns enchantments, so the pool's 2/2 black
+    Zombie of the same size is not a stand-in."""
+
+    def test_the_horror_is_a_black_two_two_enchantment_creature(self, pool):
+        token = pool.get("horror_2_2_b_enchantment")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (2, 2)
+        assert sorted(token.colors) == ["B"]
+        assert list(token.subtypes) == ["Horror"]
+        assert "Enchantment" in token.types
+        assert not token.keywords
+        assert not token.abilities
+
+    def test_the_black_two_two_zombie_is_still_not_an_enchantment(self, pool):
+        other = pool.get("zombie_2_2_b")
+        assert list(other.subtypes) == ["Zombie"]
+        assert "Enchantment" not in other.types

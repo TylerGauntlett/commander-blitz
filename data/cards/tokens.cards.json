@@ -600,6 +600,27 @@
       "is_token": true
     },
     {
+      "id": "horror_2_2_b_enchantment",
+      "name": "Horror Token",
+      "oracle_text": "2/2 black Horror enchantment creature token.",
+      "types": [
+        "Enchantment",
+        "Creature"
+      ],
+      "subtypes": [
+        "Horror"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "is_token": true
+    },
+    {
       "id": "golem_9_9_c_artifact",
       "name": "Golem Token",
       "oracle_text": "9/9 colorless Golem artifact creature token.",
