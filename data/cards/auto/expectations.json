@@ -2967,6 +2967,18 @@
   "charity_extractor": {
     "zone": "battlefield"
   },
+  "chart_a_course": {
+    "graveyard_size": {
+      "0": 4
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "graveyard"
+  },
   "chasm_skulker": {
     "battlefield_count": 33,
     "hand_size": {
@@ -3062,6 +3074,19 @@
       "id": "wizard_0_1_b_noncreature_ping"
     },
     "zone": "graveyard"
+  },
+  "circuit_mender": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "life": {
+      "0": 42
+    },
+    "zone": "battlefield"
   },
   "citanul_hierophants": {
     "battlefield_count": 33,
@@ -3177,6 +3202,19 @@
     "battlefield_count": 32,
     "opponent_battlefield_count": 6,
     "zone": "graveyard"
+  },
+  "cloudblazer": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 38
+    },
+    "life": {
+      "0": 42
+    },
+    "zone": "battlefield"
   },
   "cloudcrown_oak": {
     "zone": "battlefield"
@@ -4397,6 +4435,10 @@
     "opponent_battlefield_count": 2,
     "zone": "graveyard"
   },
+  "devilish_valet": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "devilthorn_fox": {
     "zone": "battlefield"
   },
@@ -4936,6 +4978,10 @@
     "zone": "battlefield"
   },
   "eccentric_pestfinder_turn_stones": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "echoing_assault": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

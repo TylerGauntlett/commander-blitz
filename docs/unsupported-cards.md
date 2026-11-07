@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**249 cards** blocked by **232** capabilities.
+**250 cards** blocked by **232** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -31,6 +31,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [basic-land-type-mana](#basic-land-type-mana) | 2 | 73 | engine |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
+| [cast-from-library-top-unrestricted](#cast-from-library-top-unrestricted) | 2 | 1913 | static_effect |
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
 | [cast-trigger-x](#cast-trigger-x) | 2 | 1521 | engine, value |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
@@ -71,7 +72,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cards-to-your-graveyard-from-zones-this-turn](#cards-to-your-graveyard-from-zones-this-turn) | 1 | 7412 | value |
 | [cast-from-hand-result](#cast-from-hand-result) | 1 | 7016 | op |
 | [cast-from-library-top-additional-cost](#cast-from-library-top-additional-cost) | 1 | 5828 | static_effect |
-| [cast-from-library-top-unrestricted](#cast-from-library-top-unrestricted) | 1 | 1913 | static_effect |
 | [cast-restriction-self](#cast-restriction-self) | 1 | 2559 | engine |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [cast-trigger-reads-x](#cast-trigger-reads-x) | 1 | 3909 | value |
@@ -760,6 +760,25 @@ Blocks **2** cards.
 
 </details>
 
+## cast-from-library-top-unrestricted
+
+Blocks **2** cards.
+
+- **(static_effect)** a cast_from_library_top permission with no price swap and no spell filter: every spell on top of your library castable at its printed cost (Future Sight's line), here gated by a static condition {cmp: '>', left: {spells_cast_this_turn: 'you'}, right: {const: 0}} and paired with play_lands_from_library_top under the same condition
+  <br>Why the existing vocabulary won't do: cast_from_library_top requires pay_life_instead (Bolas's Citadel) or an affects_spells filter (Thundermane Dragon); the loader raises a DslError on the bare permission, player_statics.library_top_cast_permissions fails closed on an empty filter, and a catch-all filter such as not_types [Land] would be a workaround for a deliberate guard rather than the printed card. Everything else on the card (look_at_library_top, the level lines, the condition, play_lands_from_library_top, the level-3 spell_cost_reduction with not_from_zone hand) is expressible
+- **(static_effect)** a cast_from_library_top permission with no price swap and no spell filter: every spell on top of your library castable at its printed cost (Future Sight's line), which the loader currently refuses
+  <br>Why the existing vocabulary won't do: cast_from_library_top requires either pay_life_instead (Bolas's Citadel) or an affects_spells filter (Thundermane Dragon); the loader raises a DslError on the bare permission, and any filter matching all spells would be a workaround for a deliberate guard rather than the printed card
+
+<details><summary>Cards waiting on this</summary>
+
+- **One with the Multiverse** (rank 1913) — `one_with_the_multiverse`
+  - You may play lands and cast spells from the top of your library.
+  - Once during each of your turns, you may cast a spell from your hand or the top of your library without paying its mana cost.
+- **Fortune Teller's Talent** (rank 3755) — `fortune_teller_s_talent`
+  - As long as you've cast a spell this turn, you may play cards from the top of your library.
+
+</details>
+
 ## cast-only-during-opponents-turn
 
 Blocks **2** cards.
@@ -1415,21 +1434,6 @@ Blocks **1** card.
 
 - **Into the Pit** (rank 5828) — `into_the_pit`
   - You may cast spells from the top of your library by sacrificing a nonland permanent in addition to paying their other costs.
-
-</details>
-
-## cast-from-library-top-unrestricted
-
-Blocks **1** card.
-
-- **(static_effect)** a cast_from_library_top permission with no price swap and no spell filter: every spell on top of your library castable at its printed cost (Future Sight's line), which the loader currently refuses
-  <br>Why the existing vocabulary won't do: cast_from_library_top requires either pay_life_instead (Bolas's Citadel) or an affects_spells filter (Thundermane Dragon); the loader raises a DslError on the bare permission, and any filter matching all spells would be a workaround for a deliberate guard rather than the printed card
-
-<details><summary>Cards waiting on this</summary>
-
-- **One with the Multiverse** (rank 1913) — `one_with_the_multiverse`
-  - You may play lands and cast spells from the top of your library.
-  - Once during each of your turns, you may cast a spell from your hand or the top of your library without paying its mana cost.
 
 </details>
 

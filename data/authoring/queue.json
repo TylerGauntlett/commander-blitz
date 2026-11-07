@@ -45032,12 +45032,12 @@
     },
     "Chart a Course": {
       "edhrec_rank": 1926,
-      "gate": "template",
+      "gate": null,
       "name": "Chart a Course",
-      "reason": "no template for: Draw two cards. Then discard a card unless you attacked this turn",
+      "reason": "",
       "scryfall_id": "4685fb39-e6cb-4c0a-9398-8eba6f2f4010",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chartooth Cougar": {
@@ -46932,12 +46932,12 @@
     },
     "Circuit Mender": {
       "edhrec_rank": 2167,
-      "gate": "template",
+      "gate": null,
       "name": "Circuit Mender",
-      "reason": "no template for: When this creature leaves the battlefield, draw a card",
+      "reason": "",
       "scryfall_id": "e572c156-3b1b-4b89-b9aa-5992aaa01d4c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Circuitous Route": {
@@ -48802,12 +48802,12 @@
     },
     "Cloudblazer": {
       "edhrec_rank": 3442,
-      "gate": "template",
+      "gate": null,
       "name": "Cloudblazer",
-      "reason": "no template for: When this creature enters, you gain 2 life and draw two cards",
+      "reason": "",
       "scryfall_id": "a9c966ab-0d92-4fa7-8a91-1f77089d8fc7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cloudbound Moogle": {
@@ -67912,12 +67912,12 @@
     },
     "Devilish Valet": {
       "edhrec_rank": 3354,
-      "gate": "template",
+      "gate": null,
       "name": "Devilish Valet",
-      "reason": "no template for: Alliance — Whenever another creature you control enters, double this creature's power unti",
+      "reason": "",
       "scryfall_id": "991eca84-5562-40e1-bc63-12dc469779b6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Devils' Playground": {
@@ -79112,12 +79112,12 @@
     },
     "Echoing Assault": {
       "edhrec_rank": 3158,
-      "gate": "template",
+      "gate": null,
       "name": "Echoing Assault",
-      "reason": "no template for: Creature tokens you control have menace",
+      "reason": "",
       "scryfall_id": "3213bfee-c0a0-49a2-9080-cdaa09b414c5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Echoing Boon": {
