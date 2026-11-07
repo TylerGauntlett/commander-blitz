@@ -4413,6 +4413,10 @@
   "dismember": {
     "zone": "graveyard"
   },
+  "disorienting_choice": {
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
   "dispatch": {
     "battlefield_count": 32,
     "opponent_battlefield_count": 6,
@@ -6810,6 +6814,14 @@
   "gigantosaurus": {
     "zone": "battlefield"
   },
+  "giggling_skitterspike": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "gilacorn": {
     "zone": "battlefield"
   },
@@ -7332,6 +7344,10 @@
     "zone": "battlefield"
   },
   "greater_good": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "greater_tanuki": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

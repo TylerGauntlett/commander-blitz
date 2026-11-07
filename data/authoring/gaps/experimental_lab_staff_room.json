@@ -1,0 +1,38 @@
+{
+  "card_id": "experimental_lab_staff_room",
+  "name": "Experimental Lab // Staff Room",
+  "oracle_text": "When you unlock this door, manifest dread, then put two +1/+1 counters and a trample counter on that creature.\n(You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)\nWhenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it.\n(You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)",
+  "blocked_sentences": [
+    "When you unlock this door, manifest dread, then put two +1/+1 counters and a trample counter on that creature.",
+    "(You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)",
+    "Whenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it."
+  ],
+  "needs": [
+    {
+      "capability": "rooms",
+      "kind": "engine",
+      "what": "Room split permanents (rule 709.5): one card with two doors (Experimental Lab {3}{G}, Staff Room {2}{G}), castable as either half; the cast door enters unlocked and the other locked; a locked door's abilities are inactive; a sorcery-speed special action pays a locked door's mana cost to unlock it; name and mana value read only unlocked doors",
+      "why_existing_wont_do": "card_level_face_keys offers second_face/back_face, where the cast half becomes the whole object; nothing keeps both doors on one permanent with per-door locked/unlocked state, and no special action unlocks a door. Staff Room's static trigger must only work while that door is unlocked"
+    },
+    {
+      "capability": "unlock_door",
+      "kind": "trigger_event",
+      "what": "a trigger event 'when you unlock this door' firing when this door becomes unlocked, both when the door is cast (enters unlocked) and when unlocked later by the special action",
+      "why_existing_wont_do": "self_enters misses a later unlock and fires even when this door enters locked; trigger_events has no unlock event"
+    },
+    {
+      "capability": "manifest_dread",
+      "kind": "op",
+      "what": "manifest dread (701.62): look at the top two cards of your library, manifest one of them, put the other into your graveyard; then refer to the manifested creature as 'that creature' so following effects can put two +1/+1 counters and a trample counter on it",
+      "why_existing_wont_do": "manifest takes only amount/cloak/player: no look-at-two-choose-one with the other milled, and no way to reference the manifested object afterwards; no trample keyword counter kind appears in the reference"
+    },
+    {
+      "capability": "turn_face_up_effect",
+      "kind": "op",
+      "what": "an effect op that turns a face-down permanent (the triggering creature) face up, offered as a choose_mode alternative to putting a +1/+1 counter on it",
+      "why_existing_wont_do": "turning face up exists only as the special action for face-down permanents; ops has no effect that turns a referenced creature face up"
+    }
+  ],
+  "closest_existing": ["second_face", "self_enters", "manifest", "deals_combat_damage_to_player"],
+  "confidence": "high"
+}

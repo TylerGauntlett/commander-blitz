@@ -70082,12 +70082,12 @@
     },
     "Disorienting Choice": {
       "edhrec_rank": 6043,
-      "gate": "template",
+      "gate": null,
       "name": "Disorienting Choice",
-      "reason": "no template for: For each opponent, choose up to one target artifact or enchantment that player controls. F",
+      "reason": "",
       "scryfall_id": "69a6433f-b832-4edc-bf74-2bed59cb4e20",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Disowned Ancestor": {
@@ -109302,12 +109302,12 @@
     },
     "Giggling Skitterspike": {
       "edhrec_rank": 2208,
-      "gate": "template",
+      "gate": null,
       "name": "Giggling Skitterspike",
-      "reason": "no template for: Whenever this creature attacks, blocks, or becomes the target of a spell, it deals damage ",
+      "reason": "",
       "scryfall_id": "a7360ffb-5a45-490f-9adf-d540a404e64d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gila Courser": {
@@ -117392,12 +117392,12 @@
     },
     "Greater Tanuki": {
       "edhrec_rank": 6937,
-      "gate": "template",
+      "gate": null,
       "name": "Greater Tanuki",
-      "reason": "no template for: Channel — {2}{G}, Discard this card: Search your library for a basic land card, put it ont",
+      "reason": "",
       "scryfall_id": "65a193bb-22f3-4732-93cd-877cd8c8417c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Greater Werewolf": {

@@ -1,0 +1,24 @@
+{
+  "card_id": "deathmist_raptor",
+  "name": "Deathmist Raptor",
+  "oracle_text": "Deathtouch\nWhenever a permanent you control is turned face up, you may return this card from your graveyard to the battlefield face up or face down.\nMegamorph {4}{G} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its megamorph cost and put a +1/+1 counter on it.)",
+  "blocked_sentences": [
+    "Whenever a permanent you control is turned face up, you may return this card from your graveyard to the battlefield face up or face down."
+  ],
+  "needs": [
+    {
+      "capability": "turned_face_up",
+      "kind": "trigger_event",
+      "what": "a trigger event for a permanent being turned face up (filterable by controller: 'a permanent you control'), usable by a triggered ability with active_zones [\"graveyard\"] on the card itself",
+      "why_existing_wont_do": "The engine's _turn_face_up emits a 'turned_face_up' event, but it is not in the packet's trigger_events vocabulary, so no card can trigger on it; becomes_untapped/permanent_enters/counter_placed are different events (a megamorph counter would miss plain morphs and manifests)"
+    },
+    {
+      "capability": "return_face_down",
+      "kind": "op",
+      "what": "return_from_graveyard to the battlefield with the controller's choice of face up or face down (a face-down 2/2 that can later be turned face up for its morph cost)",
+      "why_existing_wont_do": "return_from_graveyard takes controller/counters/destination/tapped but has no face_down option; face_down exists only on look_at_top/reveal_until/search_library, and manifest puts library cards, not this card from the graveyard"
+    }
+  ],
+  "closest_existing": ["return_from_graveyard", "manifest", "morph", "morph_counter"],
+  "confidence": "high"
+}

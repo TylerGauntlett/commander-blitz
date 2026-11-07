@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**222 cards** blocked by **205** capabilities.
+**225 cards** blocked by **209** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -21,9 +21,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
 | [copy-exception-set-subtypes](#copy-exception-set-subtypes) | 3 | 1740 | engine, op |
+| [manifest-dread](#manifest-dread) | 3 | 6774 | op |
 | [omen](#omen) | 3 | 3355 | cost, engine |
 | [random-player-choice](#random-player-choice) | 3 | 5120 | op |
+| [rooms](#rooms) | 3 | 4163 | engine |
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 3 | 714 | engine |
+| [unlock-door](#unlock-door) | 3 | 4163 | trigger_event |
 | [add-color](#add-color) | 2 | 2040 | op |
 | [basic-land-type-mana](#basic-land-type-mana) | 2 | 73 | engine |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
@@ -38,9 +41,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [escape](#escape) | 2 | 388 | engine, static_effect |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
-| [rooms](#rooms) | 2 | 4163 | engine |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
-| [unlock-door](#unlock-door) | 2 | 4163 | trigger_event |
 | [venture](#venture) | 2 | 19644 | engine |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
 | [x-maximum](#x-maximum) | 2 | 1665 | engine |
@@ -108,6 +109,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exiled-this-way-lki](#exiled-this-way-lki) | 1 | 6960 | value |
 | [experience-counters](#experience-counters) | 1 | 1480 | engine |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
+| [face-down](#face-down) | 1 | 10013 | selector |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
 | [filtered-discard](#filtered-discard) | 1 | 9279 | op |
 | [first-mate-ragavan](#first-mate-ragavan) | 1 | 7016 | token |
@@ -147,7 +149,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mana-spent-enters-with-counters](#mana-spent-enters-with-counters) | 1 | 653 | replacement |
 | [mana-spent-trigger-on-activation](#mana-spent-trigger-on-activation) | 1 | 4444 | trigger_event |
 | [mana-tap-trigger-damage-rider](#mana-tap-trigger-damage-rider) | 1 | 7929 | static_effect |
-| [manifest-dread](#manifest-dread) | 1 | 6774 | op |
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
 | [modal-variable-targets](#modal-variable-targets) | 1 | 4339 | engine |
@@ -184,6 +185,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [replace-dies-link](#replace-dies-link) | 1 | 2740 | replacement |
 | [replace-graveyard-with-counter](#replace-graveyard-with-counter) | 1 | 386 | replacement |
 | [retrace](#retrace) | 1 | 5451 | engine |
+| [return-face-down](#return-face-down) | 1 | 6493 | op |
 | [reveal-from-hand](#reveal-from-hand) | 1 | 3623 | cost |
 | [reveal-until-rest-to-graveyard](#reveal-until-rest-to-graveyard) | 1 | 1606 | op |
 | [sacrifice-multiple-distinct](#sacrifice-multiple-distinct) | 1 | 1918 | cost |
@@ -211,6 +213,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [total-toughness-cost-reduction](#total-toughness-cost-reduction) | 1 | 5188 | value |
 | [toughness-greater-than-power-filter](#toughness-greater-than-power-filter) | 1 | 3557 | selector |
 | [treefolk-x-x-g-reach-land-count](#treefolk-x-x-g-reach-land-count) | 1 | 2396 | token |
+| [turn-face-up-effect](#turn-face-up-effect) | 1 | 8930 | op |
+| [turned-face-up](#turned-face-up) | 1 | 6493 | trigger_event |
 | [two-share-all-card-types](#two-share-all-card-types) | 1 | 7993 | value |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
@@ -482,6 +486,30 @@ Blocks **3** cards.
 
 </details>
 
+## manifest-dread
+
+Blocks **3** cards.
+
+- **(op)** manifest dread (701.62a): look at the top two cards of your library, choose one and put it onto the battlefield face down as a 2/2 manifested creature (turnable face up for its mana cost if it is a creature card), and put the other into your graveyard -- either a `dread: true` flag on the `manifest` op or a `manifest_dread` op
+  <br>Why the existing vocabulary won't do: `manifest` (amount, cloak, player) always manifests the top card with no choice and no second card to the graveyard; `look_at_top` can choose one of two and send the rest to the graveyard, but its `face_down` only means private exile and it cannot put a card onto the battlefield as a face-down manifested 2/2. Chaining mill + manifest would pick the wrong card with no choice.
+- **(op)** manifest dread (701.62): look at the top two cards of your library, manifest one of them, put the other into your graveyard; then refer to the manifested creature as 'that creature' so following effects can put two +1/+1 counters and a trample counter on it
+  <br>Why the existing vocabulary won't do: manifest takes only amount/cloak/player: no look-at-two-choose-one with the other milled, and no way to reference the manifested object afterwards; no trample keyword counter kind appears in the reference
+- **(op)** manifest dread (701.62a): look at the top two cards of your library, choose one and put it onto the battlefield face down as a 2/2 manifested creature (turnable face up for its mana cost if it is a creature card), and put the other into your graveyard -- either a `dread: true` flag on the `manifest` op or a `manifest_dread` op
+  <br>Why the existing vocabulary won't do: `manifest` (amount, cloak, player) always manifests the top card with no choice and sends no second card to the graveyard; `look_at_top` can choose one of two and send the rest to the graveyard, but its `face_down` means private exile and it cannot put a card onto the battlefield as a face-down manifested 2/2
+
+<details><summary>Cards waiting on this</summary>
+
+- **Curator Beastie** (rank 6774) — `curator_beastie`
+  - Whenever this creature enters or attacks, manifest dread. (Look at the top two cards of your library. Put one onto the battlefield face down as a 2/2 creature and the other into your graveyard. Turn it face up any time for its mana cost if it's a creature card.)
+- **Experimental Lab // Staff Room** (rank 8930) — `experimental_lab_staff_room`
+  - When you unlock this door, manifest dread, then put two +1/+1 counters and a trample counter on that creature.
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - Whenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it.
+- **Glitch Interpreter** (rank 10013) — `glitch_interpreter`
+  - When this creature enters, if you control no face-down permanents, return this creature to its owner's hand and manifest dread.
+
+</details>
+
 ## omen
 
 Blocks **3** cards.
@@ -530,6 +558,34 @@ Blocks **3** cards.
 
 </details>
 
+## rooms
+
+Blocks **3** cards.
+
+- **(engine)** Room split permanents (rule 709.5): one card with two doors (Experimental Lab {3}{G}, Staff Room {2}{G}), castable as either half; the cast door enters unlocked and the other locked; a locked door's abilities are inactive; a sorcery-speed special action pays a locked door's mana cost to unlock it; name and mana value read only unlocked doors
+  <br>Why the existing vocabulary won't do: card_level_face_keys offers second_face/back_face, where the cast half becomes the whole object; nothing keeps both doors on one permanent with per-door locked/unlocked state, and no special action unlocks a door. Staff Room's static trigger must only work while that door is unlocked
+- **(engine)** Room split permanents (rule 709.5): a card with two door halves, each with its own name and mana cost ({1}{B} Polluted Cistern, {4}{B} Dim Oubliette), castable as either half; the cast half enters unlocked, the other locked; a locked door's abilities are inactive; a sorcery-speed special action pays a locked door's mana cost to unlock it; the permanent's name/cost reflect only unlocked doors
+  <br>Why the existing vocabulary won't do: second_face is a split/adventure/MDFC half that is cast instead of the front and then is the whole object; nothing keeps both halves on one permanent with per-half locked/unlocked state, and no special action unlocks a half
+- **(engine)** Room split permanents (rule 709.5): a card with two door halves, each with its own name and mana cost, castable as either half; the cast half enters unlocked, the other locked; a locked door's abilities are inactive; a sorcery-speed special action pays a locked door's mana cost to unlock it; the permanent's name/cost reflect only unlocked doors
+  <br>Why the existing vocabulary won't do: second_face is a split/adventure/MDFC half that is cast instead of the front and then is the whole object; nothing keeps both halves on one permanent with per-half locked/unlocked state, and no special action unlocks a half
+
+<details><summary>Cards waiting on this</summary>
+
+- **Spiked Corridor // Torture Pit** (rank 4163) — `spiked_corridor_torture_pit`
+  - When you unlock this door, create three 1/1 red Devil creature tokens with "When this token dies, it deals 1 damage to any target."
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - If a source you control would deal noncombat damage to an opponent, it deals that much damage plus 2 instead.
+- **Polluted Cistern // Dim Oubliette** (rank 6299) — `polluted_cistern_dim_oubliette`
+  - Whenever one or more cards are put into your graveyard from your library, each opponent loses 1 life for each card type among those cards.
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - When you unlock this door, mill three cards, then return a creature card from your graveyard to the battlefield.
+- **Experimental Lab // Staff Room** (rank 8930) — `experimental_lab_staff_room`
+  - When you unlock this door, manifest dread, then put two +1/+1 counters and a trample counter on that creature.
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - Whenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it.
+
+</details>
+
 ## self-sacrificing-permanent-gate
 
 Blocks **3** cards.
@@ -545,6 +601,34 @@ Blocks **3** cards.
   - When this land enters, sacrifice it. When you do, search your library for a basic Mountain, Forest, or Plains card, put it onto the battlefield tapped, then shuffle and you gain 1 life.
 - **Maestros Theater** (rank 1257) — `maestros_theater`
   - When this land enters, sacrifice it. When you do, search your library for a basic Island, Swamp, or Mountain card, put it onto the battlefield tapped, then shuffle and you gain 1 life.
+
+</details>
+
+## unlock-door
+
+Blocks **3** cards.
+
+- **(trigger_event)** a trigger event 'when you unlock this door' firing when this door becomes unlocked, both when the door is cast (enters unlocked) and when unlocked later by the special action
+  <br>Why the existing vocabulary won't do: self_enters misses a later unlock and fires even when this door enters locked; trigger_events has no unlock event
+- **(trigger_event)** a trigger event 'when you unlock this door' that fires when this door becomes unlocked, both when the half is cast (enters unlocked) and when unlocked later by the special action
+  <br>Why the existing vocabulary won't do: self_enters fires only on entering, missing a later unlock, and would fire even when this door enters locked because the other half was cast; trigger_events has no unlock event
+- **(trigger_event)** a trigger event 'when you unlock this door' that fires when this door becomes unlocked, both when the half is cast (enters unlocked) and when unlocked later by the special action
+  <br>Why the existing vocabulary won't do: self_enters fires only on entering, missing a later unlock, and fires even when this door enters locked because the other half was cast; trigger_events has no unlock event
+
+<details><summary>Cards waiting on this</summary>
+
+- **Spiked Corridor // Torture Pit** (rank 4163) — `spiked_corridor_torture_pit`
+  - When you unlock this door, create three 1/1 red Devil creature tokens with "When this token dies, it deals 1 damage to any target."
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - If a source you control would deal noncombat damage to an opponent, it deals that much damage plus 2 instead.
+- **Polluted Cistern // Dim Oubliette** (rank 6299) — `polluted_cistern_dim_oubliette`
+  - Whenever one or more cards are put into your graveyard from your library, each opponent loses 1 life for each card type among those cards.
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - When you unlock this door, mill three cards, then return a creature card from your graveyard to the battlefield.
+- **Experimental Lab // Staff Room** (rank 8930) — `experimental_lab_staff_room`
+  - When you unlock this door, manifest dread, then put two +1/+1 counters and a trample counter on that creature.
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - Whenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it.
 
 </details>
 
@@ -810,28 +894,6 @@ Blocks **2** cards.
 
 </details>
 
-## rooms
-
-Blocks **2** cards.
-
-- **(engine)** Room split permanents (rule 709.5): a card with two door halves, each with its own name and mana cost ({1}{B} Polluted Cistern, {4}{B} Dim Oubliette), castable as either half; the cast half enters unlocked, the other locked; a locked door's abilities are inactive; a sorcery-speed special action pays a locked door's mana cost to unlock it; the permanent's name/cost reflect only unlocked doors
-  <br>Why the existing vocabulary won't do: second_face is a split/adventure/MDFC half that is cast instead of the front and then is the whole object; nothing keeps both halves on one permanent with per-half locked/unlocked state, and no special action unlocks a half
-- **(engine)** Room split permanents (rule 709.5): a card with two door halves, each with its own name and mana cost, castable as either half; the cast half enters unlocked, the other locked; a locked door's abilities are inactive; a sorcery-speed special action pays a locked door's mana cost to unlock it; the permanent's name/cost reflect only unlocked doors
-  <br>Why the existing vocabulary won't do: second_face is a split/adventure/MDFC half that is cast instead of the front and then is the whole object; nothing keeps both halves on one permanent with per-half locked/unlocked state, and no special action unlocks a half
-
-<details><summary>Cards waiting on this</summary>
-
-- **Spiked Corridor // Torture Pit** (rank 4163) — `spiked_corridor_torture_pit`
-  - When you unlock this door, create three 1/1 red Devil creature tokens with "When this token dies, it deals 1 damage to any target."
-  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
-  - If a source you control would deal noncombat damage to an opponent, it deals that much damage plus 2 instead.
-- **Polluted Cistern // Dim Oubliette** (rank 6299) — `polluted_cistern_dim_oubliette`
-  - Whenever one or more cards are put into your graveyard from your library, each opponent loses 1 life for each card type among those cards.
-  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
-  - When you unlock this door, mill three cards, then return a creature card from your graveyard to the battlefield.
-
-</details>
-
 ## targeted-discard
 
 Blocks **2** cards.
@@ -848,28 +910,6 @@ Blocks **2** cards.
   - • Target opponent reveals their hand. You choose an instant or sorcery card from it. That player discards that card.
 - **Toll of the Invasion** (rank 20219) — `toll_of_the_invasion`
   - Target opponent reveals their hand. You choose a nonland card from it. That player discards that card.
-
-</details>
-
-## unlock-door
-
-Blocks **2** cards.
-
-- **(trigger_event)** a trigger event 'when you unlock this door' that fires when this door becomes unlocked, both when the half is cast (enters unlocked) and when unlocked later by the special action
-  <br>Why the existing vocabulary won't do: self_enters fires only on entering, missing a later unlock, and would fire even when this door enters locked because the other half was cast; trigger_events has no unlock event
-- **(trigger_event)** a trigger event 'when you unlock this door' that fires when this door becomes unlocked, both when the half is cast (enters unlocked) and when unlocked later by the special action
-  <br>Why the existing vocabulary won't do: self_enters fires only on entering, missing a later unlock, and fires even when this door enters locked because the other half was cast; trigger_events has no unlock event
-
-<details><summary>Cards waiting on this</summary>
-
-- **Spiked Corridor // Torture Pit** (rank 4163) — `spiked_corridor_torture_pit`
-  - When you unlock this door, create three 1/1 red Devil creature tokens with "When this token dies, it deals 1 damage to any target."
-  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
-  - If a source you control would deal noncombat damage to an opponent, it deals that much damage plus 2 instead.
-- **Polluted Cistern // Dim Oubliette** (rank 6299) — `polluted_cistern_dim_oubliette`
-  - Whenever one or more cards are put into your graveyard from your library, each opponent loses 1 life for each card type among those cards.
-  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
-  - When you unlock this door, mill three cards, then return a creature card from your graveyard to the battlefield.
 
 </details>
 
@@ -1854,6 +1894,20 @@ Blocks **1** card.
 
 </details>
 
+## face-down
+
+Blocks **1** card.
+
+- **(selector)** a selector/condition key matching face-down permanents (manifested, cloaked, morphed, disguised), so the intervening-if "if you control no face-down permanents" is an `exists` negated over `{zone: battlefield, controller: you, face_down: true}`
+  <br>Why the existing vocabulary won't do: `selector_keys` and `trigger_filter_keys` have no face-down key; `face_down` exists only as an option on library/exile ops meaning private exile, not as a property a selector can read on a permanent
+
+<details><summary>Cards waiting on this</summary>
+
+- **Glitch Interpreter** (rank 10013) — `glitch_interpreter`
+  - When this creature enters, if you control no face-down permanents, return this creature to its owner's hand and manifest dread.
+
+</details>
+
 ## faerie-rogue-1-1-b-flying-token
 
 Blocks **1** card.
@@ -2413,20 +2467,6 @@ Blocks **1** card.
 
 </details>
 
-## manifest-dread
-
-Blocks **1** card.
-
-- **(op)** manifest dread (701.62a): look at the top two cards of your library, choose one and put it onto the battlefield face down as a 2/2 manifested creature (turnable face up for its mana cost if it is a creature card), and put the other into your graveyard -- either a `dread: true` flag on the `manifest` op or a `manifest_dread` op
-  <br>Why the existing vocabulary won't do: `manifest` (amount, cloak, player) always manifests the top card with no choice and no second card to the graveyard; `look_at_top` can choose one of two and send the rest to the graveyard, but its `face_down` only means private exile and it cannot put a card onto the battlefield as a face-down manifested 2/2. Chaining mill + manifest would pick the wrong card with no choice.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Curator Beastie** (rank 6774) — `curator_beastie`
-  - Whenever this creature enters or attacks, manifest dread. (Look at the top two cards of your library. Put one onto the battlefield face down as a 2/2 creature and the other into your graveyard. Turn it face up any time for its mana cost if it's a creature card.)
-
-</details>
-
 ## may-pay-named-cost
 
 Blocks **1** card.
@@ -2941,6 +2981,20 @@ Blocks **1** card.
 
 </details>
 
+## return-face-down
+
+Blocks **1** card.
+
+- **(op)** return_from_graveyard to the battlefield with the controller's choice of face up or face down (a face-down 2/2 that can later be turned face up for its morph cost)
+  <br>Why the existing vocabulary won't do: return_from_graveyard takes controller/counters/destination/tapped but has no face_down option; face_down exists only on look_at_top/reveal_until/search_library, and manifest puts library cards, not this card from the graveyard
+
+<details><summary>Cards waiting on this</summary>
+
+- **Deathmist Raptor** (rank 6493) — `deathmist_raptor`
+  - Whenever a permanent you control is turned face up, you may return this card from your graveyard to the battlefield face up or face down.
+
+</details>
+
 ## reveal-from-hand
 
 Blocks **1** card.
@@ -3320,6 +3374,36 @@ Blocks **1** card.
 
 - **Wrenn and Seven** (rank 2396) — `wrenn_and_seven`
   - −3: Create a green Treefolk creature token with reach and "This token's power and toughness are each equal to the number of lands you control."
+
+</details>
+
+## turn-face-up-effect
+
+Blocks **1** card.
+
+- **(op)** an effect op that turns a face-down permanent (the triggering creature) face up, offered as a choose_mode alternative to putting a +1/+1 counter on it
+  <br>Why the existing vocabulary won't do: turning face up exists only as the special action for face-down permanents; ops has no effect that turns a referenced creature face up
+
+<details><summary>Cards waiting on this</summary>
+
+- **Experimental Lab // Staff Room** (rank 8930) — `experimental_lab_staff_room`
+  - When you unlock this door, manifest dread, then put two +1/+1 counters and a trample counter on that creature.
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - Whenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it.
+
+</details>
+
+## turned-face-up
+
+Blocks **1** card.
+
+- **(trigger_event)** a trigger event for a permanent being turned face up (filterable by controller: 'a permanent you control'), usable by a triggered ability with active_zones ["graveyard"] on the card itself
+  <br>Why the existing vocabulary won't do: The engine's _turn_face_up emits a 'turned_face_up' event, but it is not in the packet's trigger_events vocabulary, so no card can trigger on it; becomes_untapped/permanent_enters/counter_placed are different events (a megamorph counter would miss plain morphs and manifests)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Deathmist Raptor** (rank 6493) — `deathmist_raptor`
+  - Whenever a permanent you control is turned face up, you may return this card from your graveyard to the battlefield face up or face down.
 
 </details>
 
