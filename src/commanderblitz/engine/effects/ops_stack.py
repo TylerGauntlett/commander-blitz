@@ -13,11 +13,13 @@ from ..characteristics import (
     resolve_chosen_subtypes,
 )
 from ..enums import Zone
+from ..errors import DslError
 from ..events import EventType
 from ..stack import StackItem, ability_of, announce_targets
 from ..state import new_object
-from ..structs import CONVOKED_BINDING, TriggerInstance
+from ..structs import CONVOKED_BINDING, UNCOUNTERABLE_GRANT_DURATIONS, TriggerInstance
 from ..targeting import describe_ref, enumerate_target_tuples
+from ..temp_effects import grant_uncounterable, uncounterable_grant_covers
 from ..triggers import fire
 from ..zones import move_object
 from .context import EffectContext, ask_mode
@@ -354,6 +356,66 @@ def _shielded_by_a_static(state, item) -> bool:
     return False
 
 
+def _shielded_by_a_grant(state, item) -> bool:
+    """Is a timed `uncounterable_this_turn` grant covering this spell?
+
+    The resolved-effect twin of `_shielded_by_a_static`, read beside it. See
+    `structs.UncounterableGrant` for why it is asked here, at the counter, and
+    not when the grant was made.
+    """
+    return any(uncounterable_grant_covers(state, grant, item) for grant in state.uncounterable_grants)
+
+
+@register("uncounterable_this_turn")
+def op_uncounterable_this_turn(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Creature spells you cast this turn can't be countered." -- Domri,
+    Anarch of Bolas's +1. Rules 611.2a, 611.2c, 701.6a.
+
+    The one-shot, timed form of the `spells_cant_be_countered` static, for
+    `multiply_token_creation`'s reason: a loyalty ability or an instant leaves
+    no permanent to carry a static, and the effect it creates must outlive its
+    source and end with the turn. So it writes a `structs.UncounterableGrant`
+    for the resolving controller, which the `counter` op reads beside the
+    static and the cleanup step sweeps.
+
+    ``affects_spells`` narrows *which* spells, with the static's printed-face
+    vocabulary; absent, every spell of the player's ("spells you control can't
+    be countered this turn" -- Veil of Summer). A chosen type or colour in it is
+    substituted **now**, from the source as it resolves, so the grant keeps its
+    meaning after the source has gone. ``controller`` is refused by the loader:
+    the seat is always the resolving controller, because every printed
+    sentence says "you".
+
+    ``cast`` is the word "cast" in "spells you cast this turn": a copy the
+    player controls was never cast (707.10) and is not covered. ``next_spell``
+    is "the next creature spell you cast this turn can't be countered"
+    (Insist, Overmaster, Mistrise Village): the first matching cast binds the
+    grant to that spell, which it then covers for as long as the spell is on
+    the stack.
+
+    "Can't be countered **by blue or black spells**" (Autumn's Veil) is not
+    this op: it would need the counterer in the question, and no key here
+    names one.
+    """
+
+    duration = str(spec.get("duration", "this_turn"))
+    if duration not in UNCOUNTERABLE_GRANT_DURATIONS:  # pragma: no cover - loader guards
+        raise DslError(f"unknown uncounterable_this_turn duration {duration!r}")
+    filt = spec.get("affects_spells")
+    if filt:
+        source = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
+        filt = resolve_chosen_colors(resolve_chosen_subtypes(filt, source), source)
+    grant_uncounterable(
+        ctx.state,
+        ctx.controller,
+        affects_spells=filt or None,
+        cast=bool(spec.get("cast", False)),
+        next_spell=bool(spec.get("next_spell", False)),
+        duration=duration,
+        source=ctx.source_oid,
+    )
+
+
 @register("grant_rebound")
 def op_grant_rebound(ctx: EffectContext, spec: Mapping[str, Any]):
     """"It gains rebound." -- Ojer Pakpatiq, Deepest Epoch.
@@ -503,7 +565,9 @@ def op_counter(ctx: EffectContext, spec: Mapping[str, Any]):
         #   about itself, needing no static since the spell is on the stack where
         #   statics do not reach it anyway;
         # * a **static** on the battlefield, somebody else saying it about a
-        #   class of spell;
+        #   class of spell -- or its timed twin, a resolved effect's grant on
+        #   the table (`UncounterableGrant`), which is the same claim with a
+        #   clock and no permanent;
         # * the **mana** it was paid with -- Cavern of Souls, Delighted Halfling.
         #   Recorded on the spell's object by `costs.pay_mana` at the instant it
         #   was paid for, because a pip's rider is unrecoverable the moment the
@@ -517,6 +581,7 @@ def op_counter(ctx: EffectContext, spec: Mapping[str, Any]):
             state.registry.get(item.def_id).uncounterable
             or _paid_with_uncounterable_mana(state, item)
             or _shielded_by_a_static(state, item)
+            or _shielded_by_a_grant(state, item)
         ):
             state.emit(
                 EventType.SPELL_COUNTERED,

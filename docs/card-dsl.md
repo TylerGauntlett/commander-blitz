@@ -3850,6 +3850,33 @@ and keep their count.
 | `set_turn_flag` / `has_turn_flag` written by the trigger | Remembers only the taps this trigger saw, so a creature tapped before the Captain entered, or while its trigger was not armed, is untapped on its second tap |
 | `max_per_turn: 1` | Caps the *ability's* firings across every creature, so the second creature tapped in a turn is never untapped |
 
+### "…damage dealt to Grothama this turn by sources they controlled"
+
+```jsonc
+// Grothama, All-Devouring: "When Grothama leaves the battlefield, each player
+// draws cards equal to the amount of damage dealt to Grothama this turn by
+// sources they controlled."
+"trigger": { "event": "leaves_battlefield", "source": "self" },
+"effects": [ { "op": "for_each_player", "players": "each_player", "effects": [
+  { "op": "draw", "player": { "binding": "each_player" },
+    "amount": { "damage_dealt_to_this_turn": {
+      "to": { "self": true }, "by": { "binding": "each_player" } } } } ] } ]
+```
+
+`damage_dealt_to_this_turn` is the damage dealt this turn to **one permanent**,
+read off `TurnLedger.damage_to_permanents`. `to` is an object reference, the
+shape `times_tapped_this_turn` takes; `by` is a player spec naming whose sources
+count, and omitted counts every source. Each amount is filed under the source's
+controller **as the damage was dealt** and is the damage actually dealt, after
+prevention and replacement (120.3, 608.2h): a creature stolen afterwards does not
+move its blow to the thief, and a prevented blow is not there at all.
+
+The ledger is keyed by oid and outlives the permanent's marked damage, which
+`reset_permanent_state` wipes on the way out, so the permanent's own
+leaves-the-battlefield trigger reads it. It is cleared for an oid when that oid
+next **enters** the battlefield (400.7), and at cleanup with the rest of the
+turn. `damage_taken_this_turn` is the near miss and counts damage to players.
+
 ### Counting different values rather than objects
 
 `{"distinct": …}` is domain, coven and delirium, and they are one leaf rather
@@ -5214,7 +5241,7 @@ failed match never queues, so an opponent's placement does not spend a
 ```
 
 `nth` is "whenever you draw your **second** card each turn", and it is legal only
-on a `draw`, a `spell_cast`, a `you_gain_life`, a `life_lost`, an `attacks` or a `counter_placed` trigger. `draw_cards` puts the ordinal of each draw on the event —
+on a `draw`, a `spell_cast`, a `you_gain_life`, a `life_lost`, an `attacks`, a `counter_placed` or an `expend` trigger (where it is required; see the cookbook's expend section). `draw_cards` puts the ordinal of each draw on the event —
 1 for the draw step's card, 2 for the next one — and this compares against it.
 
 ```jsonc
@@ -5258,6 +5285,27 @@ by an instant fires on the instant.
 // The Council of Four: "a player casts their second spell during their turn"
 { "event": "spell_cast", "controller": "any", "nth": 2,
   "condition": { "is_active_player": { "binding": "event_player" } } }
+```
+
+The earlier spells of the run have left the stack, so the filter may ask only
+what the turn ledger kept of them: their printed faces (`spells_cast_ids`) and
+what paid for them (`spells_cast_mana`, each cast's `mana_spent_traits`). The
+loader refuses any other key beside `nth`. A selector-valued `paid_by` is the
+run counted by payment — "the first spell you cast each turn **that mana from a
+Treasure was spent to cast**" — and spells cast before the permanent arrived
+count, so a Treasure-paid spell earlier in the turn (the permanent itself
+included) leaves no first for the rest of it. `max_per_turn: 1` is the near miss
+and gets exactly that case wrong. The oid form (`"self"`) is refused beside
+`nth`. "Has cascade" is the spell's own cascade, so its ceiling is the
+triggering spell's mana value:
+
+```jsonc
+// Rain of Riches
+{ "kind": "triggered",
+  "trigger": { "event": "spell_cast", "controller": "you", "nth": 1,
+               "filter": { "paid_by": { "subtypes": ["Treasure"] } } },
+  "effects": [ { "op": "cascade",
+                 "max_mana_value": { "mana_value_of": { "binding": "subject" } } } ] }
 ```
 
 On `you_gain_life` it is "whenever you gain life **for the first time** each
@@ -6194,6 +6242,20 @@ characteristics — the loader rejects anything else. See
   "affects": { "controller": "you", "subtypes": ["Vampire"], "exclude_self": true },
   "power": { "const": 1 }, "toughness": { "const": 1 } }
 ```
+
+`not_subtypes` is the negation of `subtypes` — "each other **non-Human**
+creature you control" (Grumgully, the Generous) — read off the same set: the
+printed subtypes with text changes applied, plus any an effect recorded on the
+object, so a creature made a Human is spared like a printed one. `not_types`
+is a complement over card types and says something else; an `any_of` over
+every other creature type is not a finite spelling of it. Cost-reduction
+filters read it too.
+
+`mana_value` in `affects` is a threshold over the printed mana value — "each
+artifact you control **with mana value 4 or greater**" (Bello, Bard of the
+Brambles) — with {X} as 0 (202.3e). A literal number for equality,
+`{ "op": ">=", "value": 4 }`, or `{ "parity": "odd" }`; anything else is
+refused at load. `mana_cost` is the near miss: it matches exact printed costs.
 
 Effects: `buff` · `grant_keyword` · `set_pt` ·
 [`add_subtype`](card-dsl-cookbook.md#is-the-chosen-type-in-addition-to-its-other-types) · `set_types` ·

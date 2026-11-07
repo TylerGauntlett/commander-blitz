@@ -5842,12 +5842,12 @@
     },
     "Alchemist's Talent": {
       "edhrec_rank": 2203,
-      "gate": "template",
+      "gate": null,
       "name": "Alchemist's Talent",
-      "reason": "no template for: {1}{R}: Level 2",
+      "reason": "",
       "scryfall_id": "2fb8dace-c604-40fc-bbd4-5add5deb041a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Alchemist's Vial": {
@@ -19072,12 +19072,12 @@
     },
     "Bakersbane Duo": {
       "edhrec_rank": 9022,
-      "gate": "template",
+      "gate": null,
       "name": "Bakersbane Duo",
-      "reason": "no template for: When this creature enters, create a Food token",
+      "reason": "",
       "scryfall_id": "5309354f-1ff4-4fa9-9141-01ea2f7588ab",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Baki's Curse": {
@@ -20662,12 +20662,12 @@
     },
     "Bark-Knuckle Boxer": {
       "edhrec_rank": 13432,
-      "gate": "template",
+      "gate": null,
       "name": "Bark-Knuckle Boxer",
-      "reason": "no template for: Whenever you expend 4, this creature gains indestructible until end of turn",
+      "reason": "",
       "scryfall_id": "582637a9-6aa0-4824-bed7-d5fc91bda35e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Barkchannel Pathway // Tidechannel Pathway": {
@@ -23412,12 +23412,12 @@
     },
     "Bello, Bard of the Brambles": {
       "edhrec_rank": 3424,
-      "gate": "template",
+      "gate": null,
       "name": "Bello, Bard of the Brambles",
-      "reason": "no template for: During your turn, each non-Equipment artifact and non-Aura enchantment you control with ma",
+      "reason": "",
       "scryfall_id": "31e4b7a1-b377-49d2-a92e-4bcb0db35f16",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bellowing Aegisaur": {
@@ -24122,12 +24122,12 @@
     },
     "Berserkers' Onslaught": {
       "edhrec_rank": 2335,
-      "gate": "template",
+      "gate": null,
       "name": "Berserkers' Onslaught",
-      "reason": "no template for: Attacking creatures you control have double strike",
+      "reason": "",
       "scryfall_id": "83c64ec3-ad6d-45d8-a44a-fd557d1ad2bf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Berta, Wise Extrapolator": {
@@ -33032,12 +33032,12 @@
     },
     "Brambleguard Veteran": {
       "edhrec_rank": 13671,
-      "gate": "template",
+      "gate": null,
       "name": "Brambleguard Veteran",
-      "reason": "no template for: Whenever you expend 4, Raccoons you control get +1/+1 and gain vigilance until end of turn",
+      "reason": "",
       "scryfall_id": "bac9f6f8-6797-4580-9fc4-9a825872e017",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bramblesnap": {
@@ -34232,12 +34232,12 @@
     },
     "Brightcap Badger // Fungus Frolic": {
       "edhrec_rank": 3467,
-      "gate": "template",
+      "gate": null,
       "name": "Brightcap Badger // Fungus Frolic",
-      "reason": "no template for: Each Fungus and Saproling you control has \"{T}: Add {G}.\"",
+      "reason": "",
       "scryfall_id": "0e843102-b8cc-4bc8-872e-79924197f4cc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Brightclimb Pathway // Grimclimb Pathway": {
@@ -71692,12 +71692,12 @@
     },
     "Domri, Anarch of Bolas": {
       "edhrec_rank": 2644,
-      "gate": "template",
+      "gate": null,
       "name": "Domri, Anarch of Bolas",
-      "reason": "no template for: Creatures you control get +1/+0",
+      "reason": "",
       "scryfall_id": "c3aa2926-050c-460d-b26d-e44a39258dcc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Domri, Chaos Bringer": {
@@ -85942,12 +85942,12 @@
     },
     "Esika's Chariot": {
       "edhrec_rank": 2964,
-      "gate": "template",
+      "gate": null,
       "name": "Esika's Chariot",
-      "reason": "no template for: When enters, create two 2/2 green Cat creature tokens",
+      "reason": "",
       "scryfall_id": "bf333864-1299-43a4-a03f-5df98b7498e8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Esika, God of the Tree // The Prismatic Bridge": {
@@ -86462,12 +86462,12 @@
     },
     "Etali, Primal Storm": {
       "edhrec_rank": 262,
-      "gate": "template",
+      "gate": null,
       "name": "Etali, Primal Storm",
-      "reason": "no template for: Whenever Etali attacks, exile the top card of each player's library, then you may cast any",
+      "reason": "",
       "scryfall_id": "28d02e4b-4da8-4304-bce3-b4c273462106",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Etali, Primal Storm // Etali, Primal Storm": {
@@ -87232,12 +87232,12 @@
     },
     "Evercoat Ursine": {
       "edhrec_rank": 5545,
-      "gate": "template",
+      "gate": null,
       "name": "Evercoat Ursine",
-      "reason": "no template for: Hideaway 3, hideaway 3",
+      "reason": "",
       "scryfall_id": "b299d768-b171-47e5-b69d-82ce13917c43",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Everdawn Champion": {
@@ -116292,12 +116292,12 @@
     },
     "Gratuitous Violence": {
       "edhrec_rank": 1494,
-      "gate": "template",
+      "gate": null,
       "name": "Gratuitous Violence",
-      "reason": "no template for: If a creature you control would deal damage to a permanent or player, it deals double that",
+      "reason": "",
       "scryfall_id": "e89024c5-eef5-468c-92b4-e53dd212909c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gravblade Heavy": {
@@ -119002,12 +119002,12 @@
     },
     "Grothama, All-Devouring": {
       "edhrec_rank": 6714,
-      "gate": "template",
+      "gate": null,
       "name": "Grothama, All-Devouring",
-      "reason": "no template for: Other creatures have \"Whenever this creature attacks, you may have it fight .\"",
+      "reason": "",
       "scryfall_id": "08b5301b-9f3c-4fb2-a308-a47a16c08fc0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ground Assault": {
@@ -119392,12 +119392,12 @@
     },
     "Grumgully, the Generous": {
       "edhrec_rank": 4234,
-      "gate": "template",
+      "gate": null,
       "name": "Grumgully, the Generous",
-      "reason": "no template for: Each other non-Human creature you control enters with an additional +1/+1 counter on it",
+      "reason": "",
       "scryfall_id": "d8d7ac51-450e-473e-93e1-3fa9b3b6e2d4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Grunn, the Lonely King": {
@@ -144562,12 +144562,12 @@
     },
     "Junkblade Bruiser": {
       "edhrec_rank": 14161,
-      "gate": "template",
+      "gate": null,
       "name": "Junkblade Bruiser",
-      "reason": "no template for: Whenever you expend 4, this creature gets +2/+1 until end of turn",
+      "reason": "",
       "scryfall_id": "918fd89b-5ab7-4ae2-920c-faca5e9da7b9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Junktown": {
@@ -160062,12 +160062,12 @@
     },
     "Llanowar Loamspeaker": {
       "edhrec_rank": 3822,
-      "gate": "template",
+      "gate": null,
       "name": "Llanowar Loamspeaker",
-      "reason": "no template for: {T}: Target land you control becomes a 3/3 Elemental creature with haste until end of turn",
+      "reason": "",
       "scryfall_id": "0dba8ffb-b7b1-411e-90c5-070b7a888e3f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Llanowar Mentor": {
@@ -180632,12 +180632,12 @@
     },
     "Muerra, Trash Tactician": {
       "edhrec_rank": 8954,
-      "gate": "template",
+      "gate": null,
       "name": "Muerra, Trash Tactician",
-      "reason": "no template for: At the beginning of your first main phase, add {R} or {G} for each Raccoon you control",
+      "reason": "",
       "scryfall_id": "26b4e695-5ec4-4821-8637-8df501ba0653",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mugato": {
@@ -207182,12 +207182,12 @@
     },
     "Primeval Bounty": {
       "edhrec_rank": 2162,
-      "gate": "template",
+      "gate": null,
       "name": "Primeval Bounty",
-      "reason": "no template for: Whenever you cast a creature spell, create a 3/3 green Beast creature token",
+      "reason": "",
       "scryfall_id": "332c9742-dc3b-48e5-8736-7724fae1b4c4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Primeval Force": {
@@ -208582,12 +208582,12 @@
     },
     "Prosperous Bandit": {
       "edhrec_rank": 5285,
-      "gate": "template",
+      "gate": null,
       "name": "Prosperous Bandit",
-      "reason": "no template for: Offspring {1}",
+      "reason": "",
       "scryfall_id": "383bde13-c24c-4c3c-bc10-72287aae74de",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Prosperous Innkeeper": {
@@ -210712,12 +210712,12 @@
     },
     "Pyreswipe Hawk": {
       "edhrec_rank": 8845,
-      "gate": "template",
+      "gate": null,
       "name": "Pyreswipe Hawk",
-      "reason": "no template for: Whenever this creature attacks, it gets +X/+0 until end of turn, where X is the greatest m",
+      "reason": "",
       "scryfall_id": "0cf88f89-9490-4477-b632-85c513e8c749",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pyretic Charge": {
@@ -213642,12 +213642,12 @@
     },
     "Rain of Riches": {
       "edhrec_rank": 1572,
-      "gate": "template",
+      "gate": null,
       "name": "Rain of Riches",
-      "reason": "no template for: When this enchantment enters, create two Treasure tokens",
+      "reason": "",
       "scryfall_id": "299f81b5-20eb-465b-bd36-2acd80a4f37c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rain of Rust": {
@@ -226862,12 +226862,12 @@
     },
     "Rolling Hamsphere": {
       "edhrec_rank": 4061,
-      "gate": "template",
+      "gate": null,
       "name": "Rolling Hamsphere",
-      "reason": "no template for: This Vehicle gets +1/+1 for each Hamster you control",
+      "reason": "",
       "scryfall_id": "04d6e7f2-fb69-477c-b4f1-8a97485dbf32",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rolling Spoil": {
@@ -228002,12 +228002,12 @@
     },
     "Roughshod Duo": {
       "edhrec_rank": 9395,
-      "gate": "template",
+      "gate": null,
       "name": "Roughshod Duo",
-      "reason": "no template for: Whenever you expend 4, target creature you control gets +1/+1 and gains trample until end ",
+      "reason": "",
       "scryfall_id": "78cdcfb9-a247-4c2d-a098-5b57570f8cd5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Roughshod Mentor": {
@@ -259412,12 +259412,12 @@
     },
     "Spine of Ish Sah": {
       "edhrec_rank": 2508,
-      "gate": "template",
+      "gate": null,
       "name": "Spine of Ish Sah",
-      "reason": "no template for: When this artifact enters, destroy target permanent",
+      "reason": "",
       "scryfall_id": "033b1ee0-494f-4881-8bdf-f9436d58fd66",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spinebiter": {
@@ -263052,12 +263052,12 @@
     },
     "Starstorm": {
       "edhrec_rank": 2965,
-      "gate": "template",
+      "gate": null,
       "name": "Starstorm",
-      "reason": "no template for: deals X damage to each creature",
+      "reason": "",
       "scryfall_id": "a5f3ab82-2a24-4c6c-bdd9-f2bd5adca144",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Start // Finish": {
@@ -269412,12 +269412,12 @@
     },
     "Sunbird's Invocation": {
       "edhrec_rank": 1851,
-      "gate": "template",
+      "gate": null,
       "name": "Sunbird's Invocation",
-      "reason": "no template for: Whenever you cast a spell from your hand, reveal the top X cards of your library, where X ",
+      "reason": "",
       "scryfall_id": "1512eddf-7a24-4f0a-967f-85e51cc08907",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sunblade Angel": {
@@ -276072,12 +276072,12 @@
     },
     "Teapot Slinger": {
       "edhrec_rank": 8383,
-      "gate": "template",
+      "gate": null,
       "name": "Teapot Slinger",
-      "reason": "no template for: Whenever you expend 4, this creature deals 2 damage to each opponent",
+      "reason": "",
       "scryfall_id": "30506844-349f-4b68-8cc1-d028c1611cc7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tear Asunder": {
@@ -290842,12 +290842,12 @@
     },
     "Trailtracker Scout": {
       "edhrec_rank": 3287,
-      "gate": "template",
+      "gate": null,
       "name": "Trailtracker Scout",
-      "reason": "no template for: Whenever you expend 8, return up to one target permanent card from your graveyard to your ",
+      "reason": "",
       "scryfall_id": "36ee967a-3cac-4fff-b616-ec2557c676f2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Train of Thought": {
@@ -310152,12 +310152,12 @@
     },
     "Wandertale Mentor": {
       "edhrec_rank": 4616,
-      "gate": "template",
+      "gate": null,
       "name": "Wandertale Mentor",
-      "reason": "no template for: Whenever you expend 4, put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "8c399a55-d02e-41ed-b827-8784b738c118",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wanderwine Distracter": {
@@ -315522,12 +315522,12 @@
     },
     "Wildsear, Scouring Maw": {
       "edhrec_rank": 3408,
-      "gate": "template",
+      "gate": null,
       "name": "Wildsear, Scouring Maw",
-      "reason": "no template for: Enchantment spells you cast from your hand have cascade",
+      "reason": "",
       "scryfall_id": "48494ef9-5eb3-4b55-ad1d-b32bbed89ca5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wildsize": {

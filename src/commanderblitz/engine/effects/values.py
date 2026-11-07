@@ -32,6 +32,9 @@ forms::
                       "than": …}}
     {"max_damage_taken_this_turn":    the most damage ONE of them was dealt
         "each_opponent"}                this turn, where the plain tally sums
+    {"damage_dealt_to_this_turn":     damage dealt to ONE permanent this
+        {"to": {"self": true},          turn, by sources those players
+         "by": "you"}}                  controlled as it was dealt
     {"max_life_lost_this_turn":       the most life ONE of them lost this
         "each_player"}                  turn (damage, drains and payments)
     {"starting_life_of": "you"}       the life total one seat began with (103.4)
@@ -197,6 +200,15 @@ VALUE_KEYS = frozenset(
         # off the damage ledger. "Each opponent was dealt…" would be the
         # `min_` twin, which no printed card needs yet.
         "max_damage_taken_this_turn",
+        # "…draws cards equal to the amount of damage dealt to **Grothama**
+        # this turn by sources **they** controlled" -- Grothama,
+        # All-Devouring. Damage to one *permanent*, where the two keys above
+        # are damage to players, split by the controller of each source as the
+        # damage was dealt: `{"to": <object ref>, "by": <player spec>}`, `by`
+        # omitted for all of it. Off `TurnLedger.damage_to_permanents`, which
+        # outlives the permanent's marked damage, so the permanent's own
+        # leaves-the-battlefield trigger can still read it.
+        "damage_dealt_to_this_turn",
         "life_lost_this_turn",
         # "…if **a player** lost 4 or more life this turn" -- Y'shtola, Night's
         # Blessed. The life-loss twin of `max_damage_taken_this_turn`, for the
@@ -803,6 +815,18 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
     if "max_damage_taken_this_turn" in expr:
         pids = _players(ctx, expr["max_damage_taken_this_turn"])
         return max((ledger.damage_taken.get(p, 0) for p in pids), default=0)
+    if "damage_dealt_to_this_turn" in expr:
+        # One permanent, by oid -- the source's own oid in its leaves trigger,
+        # which survives the zone change while the marked damage does not. A
+        # reference that names nobody reads 0.
+        spec = expr["damage_dealt_to_this_turn"]
+        dealers = set(_players(ctx, spec["by"])) if "by" in spec else None
+        return sum(
+            amount
+            for oid in _referenced_oids(ctx, spec["to"])
+            for dealer, amount in ledger.damage_to_permanents.get(oid, {}).items()
+            if dealers is None or dealer in dealers
+        )
     if "life_lost_this_turn" in expr:
         pids = _players(ctx, expr["life_lost_this_turn"])
         return sum(ledger.life_lost.get(p, 0) for p in pids)
@@ -1414,6 +1438,39 @@ def validate_counters_on(spec: Any, where: str, *, validate_objects: Any = None)
     validate_objects(spec["objects"], f"{where}.objects")
 
 
+def validate_damage_dealt_to_this_turn(spec: Any, where: str) -> None:
+    """Load-time check of ``{"damage_dealt_to_this_turn": {...}}``.
+
+    ``to`` is required and is one object reference (`validate_object_ref`):
+    the damage is to one permanent, and no default could say which. ``by`` is
+    a player spec naming whose sources count -- ``{"binding": "each_player"}``
+    inside `for_each_player` for "by sources **they** controlled"; omitted,
+    every source counts, a sourceless one included.
+    """
+    if not isinstance(spec, Mapping):
+        raise DslError(f"{where}: must be an object with 'to' (and optionally 'by')")
+    unknown = set(spec) - {"to", "by"}
+    if unknown:
+        raise DslError(
+            f"{where}: unsupported keys {sorted(unknown)} (only 'to', the permanent, "
+            f"and 'by', whose sources, are remembered about damage)"
+        )
+    if "to" not in spec:
+        raise DslError(
+            f"{where}: needs 'to' -- the permanent damaged, e.g. {{'self': true}}"
+        )
+    validate_object_ref(spec["to"], f"{where}.to")
+    if "by" in spec:
+        who = spec["by"]
+        if not isinstance(who, Mapping) and (
+            not isinstance(who, str) or who not in PLAYER_SPEC_NAMES
+        ):
+            raise DslError(
+                f"{where}.by: needs a player spec, e.g. {{'binding': 'each_player'}} "
+                f"(whose sources dealt it), got {who!r}"
+            )
+
+
 def validate_counters_put_this_turn(spec: Any, where: str) -> None:
     """Load-time check of ``{"counters_put_this_turn": {...}}``.
 
@@ -1785,6 +1842,10 @@ def validate_value(expr: Any, where: str) -> None:
             )
     if "times_tapped_this_turn" in expr:
         validate_object_ref(expr["times_tapped_this_turn"], f"{where}.times_tapped_this_turn")
+    if "damage_dealt_to_this_turn" in expr:
+        validate_damage_dealt_to_this_turn(
+            expr["damage_dealt_to_this_turn"], f"{where}.damage_dealt_to_this_turn"
+        )
     if "command_zone_casts_of" in expr:
         validate_object_ref(expr["command_zone_casts_of"], f"{where}.command_zone_casts_of")
     if "attack_power_this_combat" in expr:

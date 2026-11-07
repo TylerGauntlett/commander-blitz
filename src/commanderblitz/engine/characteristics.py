@@ -2326,6 +2326,19 @@ def _matches_printed(
         printed = apply_text_changes(set(card.subtypes), text_changes)
         if not (set(subtypes) & (printed | set(added_subtypes))):
             return False
+    # "Each other **non-Human** creature you control enters with an additional
+    # +1/+1 counter" (Grumgully, the Generous); "each **non-Equipment**
+    # artifact" (Bello, Bard of the Brambles). The negation of `subtypes`,
+    # read off the same set -- printed, text changes applied, plus the
+    # recorded additions -- so a creature some effect made a Human is spared
+    # exactly as a printed Human is. A `not_types` complement says something
+    # else entirely, and an `any_of` over every other creature type is not a
+    # finite spelling of it.
+    not_subtypes = selector.get("not_subtypes")
+    if not_subtypes:
+        printed = apply_text_changes(set(card.subtypes), text_changes)
+        if set(not_subtypes) & (printed | set(added_subtypes)):
+            return False
     supertypes = selector.get("supertypes")
     if supertypes and not set(supertypes).issubset(card.supertypes):
         return False

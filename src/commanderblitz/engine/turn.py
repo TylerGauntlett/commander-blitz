@@ -58,6 +58,7 @@ from .temp_effects import (
     clear_sacrifice_restrictions,
     clear_token_multipliers,
     clear_unblockables,
+    clear_uncounterable_grants,
 )
 from .triggers import fire
 
@@ -782,6 +783,9 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int]]:
     # the next one.
     clear_outcome_locks(state, "this_turn")
     clear_flash_permissions(state, "this_turn")
+    # "Creature spells you cast this turn can't be countered" (Domri, Anarch of
+    # Bolas). Owned by no permanent: the walker may be long gone.
+    clear_uncounterable_grants(state, "this_turn")
     clear_life_floors(state, "this_turn")
     # Kaya, Geist Hunter's "until end of turn" doubling. Owned by no permanent,
     # so nothing else would end it: the walker that made it may be long gone.

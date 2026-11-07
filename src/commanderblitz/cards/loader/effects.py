@@ -50,6 +50,7 @@ from commanderblitz.engine.structs import (
     PROTECTION_SENTINELS,
     TOKEN_MULTIPLIER_DURATIONS,
     UNBLOCKABLE_DURATIONS,
+    UNCOUNTERABLE_GRANT_DURATIONS,
 )
 from commanderblitz.engine.temp_effects import COMBAT_RULE_GRANTS
 from commanderblitz.engine.triggers import (
@@ -77,6 +78,7 @@ from .vocabulary import (
     PLACED_COUNTER_KIND,
     PLAYER_TARGET_KINDS,
     PLURAL_PLAYER_SPEC_NAMES,
+    SPELL_FILTER_KEYS,
     STATIC_FILTER_KEYS,
     WAS_CAST_TRIGGERS,
     refuse_numbered_grant,
@@ -3223,6 +3225,47 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 raise DslError(
                     f"{where}: multiply_token_creation takes no {key!r} -- it "
                     f"multiplies every token created under the player"
+                )
+    if op == "uncounterable_this_turn":
+        # "This turn" is the one clock printed; any other word would never be
+        # swept and would shield the player's spells for the rest of the game.
+        if str(effect.get("duration", "this_turn")) not in UNCOUNTERABLE_GRANT_DURATIONS:
+            raise DslError(
+                f"{where}: uncounterable_this_turn's 'duration' is one of "
+                f"{list(UNCOUNTERABLE_GRANT_DURATIONS)}, not {effect['duration']!r}"
+            )
+        filt = effect.get("affects_spells")
+        if filt is not None:
+            if not isinstance(filt, Mapping) or not filt:
+                raise DslError(
+                    f"{where}.affects_spells: a non-empty spell filter, or omit it "
+                    f"for every spell the player controls"
+                )
+            # The seat is the resolving controller and is not spellable: every
+            # printed sentence says "you", and a `controller` here would be
+            # read by nothing.
+            unknown = set(filt) - (SPELL_FILTER_KEYS - {"controller"})
+            if unknown:
+                raise DslError(
+                    f"{where}.affects_spells: a spell's printed face only -- the "
+                    f"seat is always the resolving controller; unsupported keys "
+                    f"{sorted(unknown)}"
+                )
+            for key in ("types", "any_types", "not_types"):
+                for t in filt.get(key) or ():
+                    if t not in KNOWN_TYPES:
+                        raise DslError(f"{where}.affects_spells.{key}: unknown card type {t!r}")
+        for key in ("cast", "next_spell"):
+            if not isinstance(effect.get(key, False), bool):
+                raise DslError(f"{where}: uncounterable_this_turn's {key!r} is true or false")
+        for key in ("player", "affects", "by", "countered_by"):
+            # Nothing reads a seat or a counterer: "can't be countered by blue
+            # or black spells" (Autumn's Veil) is a different, narrower
+            # sentence, and loading it as this one would be a stronger card.
+            if key in effect:
+                raise DslError(
+                    f"{where}: uncounterable_this_turn takes no {key!r} -- it covers "
+                    f"the resolving controller's spells against every counter"
                 )
     if op in ("add_poison", "add_energy") and "amount" in effect:
         validate_value(effect["amount"], f"{where}.amount")

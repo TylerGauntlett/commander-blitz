@@ -10,7 +10,7 @@ from collections.abc import Iterable, Mapping
 from dataclasses import replace
 from typing import TYPE_CHECKING, Any
 
-from .characteristics import _matches, printed_creature_types
+from .characteristics import _matches, _matches_printed, printed_creature_types
 from .player_statics import _battlefield_statics, static_life_floor
 from .structs import (
     ATTACK_RESTRICTION_DURATIONS,
@@ -42,11 +42,13 @@ from .structs import (
     TempEffect,
     TokenMultiplier,
     Unblockable,
+    UncounterableGrant,
 )
 
 if TYPE_CHECKING:  # pragma: no cover
     from .carddef import CardDef
     from .state import GameState
+    from .structs import StackItem
 
 
 def restrict_attack(
@@ -650,6 +652,101 @@ def clear_flash_permissions(state: GameState, duration: str, player: int | None 
     they leave the game; ``this_turn`` goes at cleanup.
     """
     state.flash_permissions = _expired(state.flash_permissions, duration, player)
+
+
+def grant_uncounterable(
+    state: GameState,
+    pid: int,
+    *,
+    affects_spells: Mapping[str, Any] | None = None,
+    cast: bool = False,
+    next_spell: bool = False,
+    duration: str = "this_turn",
+    source: int | None = None,
+) -> None:
+    """``pid``'s spells matching ``affects_spells`` can't be countered for
+    ``duration`` -- or, with ``next_spell``, the first such spell they cast.
+
+    Never deduplicated: two grants over one seat are two effects, and the
+    narrower one being spent must not take the wider one with it.
+    """
+
+    state.uncounterable_grants.append(
+        UncounterableGrant(
+            player=pid,
+            affects_spells=dict(affects_spells) if affects_spells else None,
+            cast=cast or next_spell,
+            next_spell=next_spell,
+            duration=duration,
+            source=source,
+        )
+    )
+
+
+def uncounterable_grant_covers(state: GameState, grant: UncounterableGrant, item: StackItem) -> bool:
+    """Whether ``grant`` stops this stack item being countered, asked *now*.
+
+    Asked at the moment of the counter rather than at the grant (611.2c), so a
+    spell cast after the effect resolved is covered and so is one its player
+    already had on the stack. A ``next_spell`` grant covers only the spell it
+    was bound to, and nothing at all until then.
+    """
+    if not item.is_spell or item.controller != grant.player:
+        return False
+    if grant.next_spell:
+        return grant.sid is not None and grant.sid == item.sid
+    if grant.cast:
+        # A copy is a token object made on the stack and was never cast
+        # (707.10), so `push_spell` never stamped it.
+        obj = state.objects.get(item.oid) if item.oid is not None else None
+        if obj is None or obj.cast_step is None:
+            return False
+    return not grant.affects_spells or _matches_printed(
+        state.registry.get(item.def_id), grant.affects_spells
+    )
+
+
+def bind_next_spell_uncounterable_grants(
+    state: GameState, pid: int, card: CardDef, sid: int | None
+) -> None:
+    """Spend every unbound single-use grant this cast answers on this spell.
+
+    "The next creature spell you cast this turn can't be countered" is about the
+    next one **cast**, so it is folded off the cast itself, in
+    `GameState._tally`'s SPELL_CAST arm beside
+    `consume_next_spell_flash_permissions` and for its reason: every cast road
+    passes through there. *Every* matching grant binds, not the oldest -- two
+    Insists name the same next creature spell. A grant whose filter this spell
+    misses is left waiting.
+    """
+    if sid is None:
+        return
+    state.uncounterable_grants = [
+        replace(grant, sid=sid)
+        if grant.next_spell
+        and grant.sid is None
+        and grant.player == pid
+        and (not grant.affects_spells or _matches_printed(card, grant.affects_spells))
+        else grant
+        for grant in state.uncounterable_grants
+    ]
+
+
+def clear_uncounterable_grants(state: GameState, duration: str) -> None:
+    """Drop the uncounterable grants of one duration -- their wearing-off at cleanup.
+
+    Except a ``next_spell`` grant bound to a spell still on the stack: "that
+    spell can't be countered" lasts as long as the spell does, and a spell can
+    be cast in a cleanup step that gave priority (514.3a).
+    """
+    if not state.uncounterable_grants:
+        return
+    live = {item.sid for item in state.stack}
+    state.uncounterable_grants = [
+        grant
+        for grant in state.uncounterable_grants
+        if grant.duration != duration or (grant.sid is not None and grant.sid in live)
+    ]
 
 
 def clear_outcome_locks(state: GameState, duration: str, player: int | None = None) -> None:
