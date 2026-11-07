@@ -86425,6 +86425,62 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "op": "manifest_dread"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this enchantment enters, manifest dread.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "binding": "subject",
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you turn a permanent face up, put a +1/+1 counter on it.",
+          "trigger": {
+            "controller": "you",
+            "event": "turned_face_up"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "growing_dread",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{G}{U}",
+      "name": "Growing Dread",
+      "oracle_text": "Flash\nWhen this enchantment enters, manifest dread. (Look at the top two cards of your library. Put one onto the battlefield face down as a 2/2 creature and the other into your graveyard. Turn it face up any time for its mana cost if it's a creature card.)\nWhenever you turn a permanent face up, put a +1/+1 counter on it.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -108823,6 +108879,92 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "affects_spells": {
+            "not_types": [
+              "Creature"
+            ]
+          },
+          "condition": {
+            "exists_derived": {
+              "power": {
+                "parity": "even"
+              },
+              "self_only": true
+            }
+          },
+          "effect": "cast_as_though_flash",
+          "kind": "static",
+          "text": "As long as Kianne's power is even, you may cast noncreature spells as though they had flash."
+        },
+        {
+          "affects_player": "you",
+          "affects_spells": {
+            "types": [
+              "Creature"
+            ]
+          },
+          "condition": {
+            "exists_derived": {
+              "power": {
+                "parity": "odd"
+              },
+              "self_only": true
+            }
+          },
+          "effect": "cast_as_though_flash",
+          "kind": "static",
+          "text": "As long as Kianne's power is odd, you may cast creature spells as though they had flash."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you draw a card, put a +1/+1 counter on Kianne.",
+          "trigger": {
+            "controller": "you",
+            "event": "draw"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "kianne_corrupted_memory",
+      "mana_cost": "{2}{G}{U}",
+      "name": "Kianne, Corrupted Memory",
+      "oracle_text": "As long as Kianne's power is even, you may cast noncreature spells as though they had flash.\nAs long as Kianne's power is odd, you may cast creature spells as though they had flash.\nWhenever you draw a card, put a +1/+1 counter on Kianne.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Illusion"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -203471,6 +203613,91 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 1
+              },
+              "op": "manifest",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, manifest the top card of your library.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "subject"
+                  },
+                  "op": "fight",
+                  "other": {
+                    "target": "t1"
+                  }
+                }
+              ],
+              "op": "may",
+              "prompt": "Have it fight target creature you don't control?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever a permanent you control is turned face up, if it's a creature, you may have it fight target creature you don't control.",
+          "trigger": {
+            "controller": "you",
+            "event": "turned_face_up",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "temur_war_shaman",
+      "mana_cost": "{4}{G}{G}",
+      "name": "Temur War Shaman",
+      "oracle_text": "When this creature enters, manifest the top card of your library. (Put that card onto the battlefield face down as a 2/2 creature. Turn it face up any time for its mana cost if it's a creature card.)\nWhenever a permanent you control is turned face up, if it's a creature, you may have it fight target creature you don't control.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Shaman"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "op": "create_token",
               "token": "saproling_1_1_g"
             }
@@ -207877,6 +208104,62 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "manifest_dread"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this enchantment enters, manifest dread twice. (To manifest dread, look at the top two cards of your library. Put one onto the battlefield face down as a 2/2 creature and the other into your graveyard. Turn it face up any time for its mana cost if it's a creature card.)",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a face-down creature you control enters, draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "face_down": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "they_came_from_the_pipes",
+      "mana_cost": "{4}{U}",
+      "name": "They Came from the Pipes",
+      "oracle_text": "When this enchantment enters, manifest dread twice. (To manifest dread, look at the top two cards of your library. Put one onto the battlefield face down as a 2/2 creature and the other into your graveyard. Turn it face up any time for its mana cost if it's a creature card.)\nWhenever a face-down creature you control enters, draw a card.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -213252,6 +213535,101 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "count": {
+                    "const": 1
+                  },
+                  "destination": "hand",
+                  "op": "search_library",
+                  "player": "you",
+                  "reveal": true,
+                  "selector": {
+                    "supertypes": [
+                      "Basic"
+                    ],
+                    "types": [
+                      "Land"
+                    ]
+                  }
+                },
+                {
+                  "op": "shuffle",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Search for a basic land?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a face-down creature you control enters, you may search your library for a basic land card, reveal it, put it into your hand, then shuffle.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "face_down": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "binding": "subject",
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 2
+              },
+              "toughness": {
+                "const": 2
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a permanent you control is turned face up, if it's a creature, it gets +2/+2 until end of turn.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "binding": "subject",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "controller": "you",
+            "event": "turned_face_up"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "trail_of_mystery",
+      "mana_cost": "{1}{G}",
+      "name": "Trail of Mystery",
+      "oracle_text": "Whenever a face-down creature you control enters, you may search your library for a basic land card, reveal it, put it into your hand, then shuffle.\nWhenever a permanent you control is turned face up, if it's a creature, it gets +2/+2 until end of turn.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -238609,6 +238987,84 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "zimone_s_hypothesis",
+      "mana_cost": "{3}{U}{U}",
+      "name": "Zimone's Hypothesis",
+      "oracle_text": "You may put a +1/+1 counter on a creature. Then choose odd or even. Return each creature with power of the chosen quality to its owner's hand. (Zero is even.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "counter": "+1/+1",
+          "objects": {
+            "controller": "any",
+            "count": 1,
+            "optional": true,
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "add_counters"
+        },
+        {
+          "chooser": "you",
+          "modes": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "controller": "any",
+                    "count": "all",
+                    "power": {
+                      "parity": "odd"
+                    },
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "return_to_hand"
+                }
+              ],
+              "label": "Odd"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "controller": "any",
+                    "count": "all",
+                    "power": {
+                      "parity": "even"
+                    },
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "return_to_hand"
+                }
+              ],
+              "label": "Even"
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {

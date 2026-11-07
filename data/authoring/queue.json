@@ -119192,12 +119192,12 @@
     },
     "Growing Dread": {
       "edhrec_rank": 10701,
-      "gate": "template",
+      "gate": null,
       "name": "Growing Dread",
-      "reason": "no template for: When this enchantment enters, manifest dread",
+      "reason": "",
       "scryfall_id": "5479ac50-8335-4c6a-be99-750a44e24f25",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Growing Ranks": {
@@ -148572,12 +148572,12 @@
     },
     "Kianne, Corrupted Memory": {
       "edhrec_rank": 10846,
-      "gate": "template",
+      "gate": null,
       "name": "Kianne, Corrupted Memory",
-      "reason": "no template for: As long as Kianne's power is even, you may cast noncreature spells as though they had flas",
+      "reason": "",
       "scryfall_id": "d970c966-9a89-4c4c-ac73-8cf8fffe7721",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kianne, Dean of Substance // Imbraham, Dean of Theory": {
@@ -277772,12 +277772,12 @@
     },
     "Temur War Shaman": {
       "edhrec_rank": 7930,
-      "gate": "template",
+      "gate": null,
       "name": "Temur War Shaman",
-      "reason": "no template for: When this creature enters, manifest the top card of your library",
+      "reason": "",
       "scryfall_id": "24824ccd-d470-49eb-a07d-2fc0de817766",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tenacious Dead": {
@@ -283302,12 +283302,12 @@
     },
     "They Came from the Pipes": {
       "edhrec_rank": 5590,
-      "gate": "template",
+      "gate": null,
       "name": "They Came from the Pipes",
-      "reason": "no template for: When this enchantment enters, manifest dread twice",
+      "reason": "",
       "scryfall_id": "541fc8eb-dba2-4d2b-9df2-9380c8c37e21",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "They Went This Way": {
@@ -290792,12 +290792,12 @@
     },
     "Trail of Mystery": {
       "edhrec_rank": 5680,
-      "gate": "template",
+      "gate": null,
       "name": "Trail of Mystery",
-      "reason": "no template for: Whenever a face-down creature you control enters, you may search your library for a basic ",
+      "reason": "",
       "scryfall_id": "56271ec9-5e41-47d3-ac76-d0743fb399cc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Trailblazer": {
@@ -322782,12 +322782,12 @@
     },
     "Zimone's Hypothesis": {
       "edhrec_rank": 8504,
-      "gate": "template",
+      "gate": null,
       "name": "Zimone's Hypothesis",
-      "reason": "no template for: You may put a +1/+1 counter on a creature. Then choose odd or even. Return each creature w",
+      "reason": "",
       "scryfall_id": "f91afbaf-e035-47cd-b493-0d5817fefa76",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Zimone, All-Questioning": {

@@ -7454,6 +7454,16 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "growing_dread": {
+    "battlefield_count": 34,
+    "graveyard_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "battlefield"
+  },
   "gruesome_deformity": {
     "zone": [
       "battlefield",
@@ -9195,6 +9205,13 @@
   },
   "kher_keep": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "kianne_corrupted_memory": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "killian_decisive_mentor": {
@@ -17094,6 +17111,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "temur_war_shaman": {
+    "battlefield_count": 34,
+    "library_size": {
+      "0": 39
+    },
+    "zone": "battlefield"
+  },
   "tendershoot_dryad": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -17396,6 +17420,19 @@
       "keywords": [
         "double_strike"
       ]
+    },
+    "zone": "battlefield"
+  },
+  "they_came_from_the_pipes": {
+    "battlefield_count": 35,
+    "graveyard_size": {
+      "0": 4
+    },
+    "hand_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 34
     },
     "zone": "battlefield"
   },
@@ -17906,6 +17943,10 @@
     },
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
+  },
+  "trail_of_mystery": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "trailblazer_s_boots": {
     "zone": "battlefield"
@@ -20139,6 +20180,15 @@
   "zimone_quandrix_prodigy": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "zimone_s_hypothesis": {
+    "battlefield_count": 31,
+    "hand_size": {
+      "0": 2,
+      "1": 1
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
   },
   "zodiac_dog": {
     "zone": "battlefield"
