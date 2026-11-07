@@ -5260,6 +5260,27 @@ by an instant fires on the instant.
   "condition": { "is_active_player": { "binding": "event_player" } } }
 ```
 
+The earlier spells of the run have left the stack, so the filter may ask only
+what the turn ledger kept of them: their printed faces (`spells_cast_ids`) and
+what paid for them (`spells_cast_mana`, each cast's `mana_spent_traits`). The
+loader refuses any other key beside `nth`. A selector-valued `paid_by` is the
+run counted by payment — "the first spell you cast each turn **that mana from a
+Treasure was spent to cast**" — and spells cast before the permanent arrived
+count, so a Treasure-paid spell earlier in the turn (the permanent itself
+included) leaves no first for the rest of it. `max_per_turn: 1` is the near miss
+and gets exactly that case wrong. The oid form (`"self"`) is refused beside
+`nth`. "Has cascade" is the spell's own cascade, so its ceiling is the
+triggering spell's mana value:
+
+```jsonc
+// Rain of Riches
+{ "kind": "triggered",
+  "trigger": { "event": "spell_cast", "controller": "you", "nth": 1,
+               "filter": { "paid_by": { "subtypes": ["Treasure"] } } },
+  "effects": [ { "op": "cascade",
+                 "max_mana_value": { "mana_value_of": { "binding": "subject" } } } ] }
+```
+
 On `you_gain_life` it is "whenever you gain life **for the first time** each
 turn" (Vanguard Seraph): the ledger fold counts each player's gain *events* in
 `TurnLedger.life_gains` and writes the count onto LIFE_GAINED. A condition on

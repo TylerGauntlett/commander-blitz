@@ -3268,14 +3268,34 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         ):
             # "Their first noncreature spell" counts the caster's earlier spells
             # this turn against the filter, and those have left the stack: only
-            # their printed faces can be asked. A key that reads board state
+            # their printed faces, and what the turn ledger kept of their
+            # payment (`paid_by`), can be asked. A key that reads board state
             # would be checked on this spell and ignored on the ones before it,
             # so the run would be counted against a different filter than the
             # one that fires the ability.
             raise DslError(
                 f"{where}: 'nth' on a spell_cast trigger counts earlier spells by "
-                f"their printed faces, so its filter cannot use {sorted(unordinal)} "
+                f"their printed faces and what paid for them, so its filter cannot "
+                f"use {sorted(unordinal)} "
                 f"(allowed: {sorted(ORDINAL_FILTER_KEYS)})"
+            )
+        if (
+            model.trigger.nth is not None
+            and model.trigger.event == "spell_cast"
+            and model.trigger.filter
+            and "paid_by" in model.trigger.filter
+            and not isinstance(model.trigger.filter["paid_by"], Mapping)
+        ):
+            # "The first spell … that mana from a Treasure was spent to cast"
+            # counts earlier spells by what the ledger kept of their payment:
+            # the *kind* of each source (`TurnLedger.spells_cast_mana`). The oid
+            # form ("self") names one object, which the ledger does not follow
+            # across its zone changes, so it is refused rather than half-read.
+            raise DslError(
+                f"{where}: 'nth' on a spell_cast trigger counts earlier spells' "
+                f"payments by the kind of source, so 'paid_by' must be a selector "
+                f"(e.g. {{\"subtypes\": [\"Treasure\"]}}), not "
+                f"{model.trigger.filter['paid_by']!r}"
             )
 
         if (

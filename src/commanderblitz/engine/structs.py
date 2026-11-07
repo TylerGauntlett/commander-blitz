@@ -17,6 +17,7 @@ if TYPE_CHECKING:  # pragma: no cover
     # docstring is about: `carddef` is a leaf, but the point of `structs` is
     # that it needs nothing.
     from .carddef import TriggerSpec
+    from .mana import ManaOrigin
 
 TargetKind = Literal["object", "player", "stack"]
 
@@ -2107,6 +2108,17 @@ class TurnLedger:
     #: disturb cast turns the card over inside `push_spell`, and the half that
     #: was cast is the half the condition is asking about.
     spells_cast_ids: dict[int, list[str]] = field(default_factory=dict)
+    #: What paid for each of those spells, index for index with
+    #: `spells_cast_ids`: the cast object's `mana_spent_traits` at the instant
+    #: of the cast (an empty set for a free cast).
+    #:
+    #: Rain of Riches is why it exists: "the first spell you cast each turn
+    #: **that mana from a Treasure was spent to cast**" counts a run of earlier
+    #: spells by how they were paid for, and those spells have left the stack
+    #: -- and their Treasures the game -- by the time a later one is cast. The
+    #: printed id beside it cannot say it, so the snapshot is kept here, where
+    #: `triggers._spell_ordinal` reads it.
+    spells_cast_mana: dict[int, list[frozenset[ManaOrigin]]] = field(default_factory=dict)
     #: Cards put into any graveyard from anywhere this turn -- discards, mills,
     #: resolved instants and sorceries and deaths alike. Tokens are excluded
     #: because they are not cards. **Not** gravestorm's count, which is the
@@ -2388,6 +2400,7 @@ class TurnLedger:
         self.spells_cast.clear()
         self.mana_spent_on_spells.clear()
         self.spells_cast_ids.clear()
+        self.spells_cast_mana.clear()
         self.combat_damage_types.clear()
         self.ability_activations.clear()
         self.loyalty_activations.clear()

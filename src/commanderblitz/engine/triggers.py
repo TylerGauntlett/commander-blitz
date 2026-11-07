@@ -1544,7 +1544,7 @@ def _matches(
         if spec.event in ("counter_placed", "expend"):
             if not _crosses_nth(event, spec.nth):
                 return False
-        elif _ordinal(state, spec, event) != spec.nth:
+        elif _ordinal(state, spec, event, obj) != spec.nth:
             return False
 
     actor = _actor(state, spec.event, event, subject_oid)
@@ -1609,12 +1609,15 @@ def _matches(
     return True
 
 
-#: The filter keys an ordinal can be counted over: exactly the ones
-#: `characteristics._matches_printed` reads. The earlier spells of the run have
-#: left the stack by the time a later one is cast, so only their printed faces
-#: are left to ask -- a board-state key (`mana_value` of a paid X, `paid_by`,
-#: `exclude_self`) would be answered for this spell and silently ignored for
-#: every spell before it. The loader refuses the rest.
+#: The filter keys an ordinal can be counted over: the ones
+#: `characteristics._matches_printed` reads, plus `paid_by`. The earlier spells
+#: of the run have left the stack by the time a later one is cast, so only what
+#: the turn ledger kept of them is left to ask -- their printed faces
+#: (`spells_cast_ids`) and what paid for them (`spells_cast_mana`). Any other
+#: board-state key (`mana_value` of a paid X, `exclude_self`) would be answered
+#: for this spell and silently ignored for every spell before it. The loader
+#: refuses the rest, and refuses the oid form of `paid_by` ("self"), which asks
+#: about one object the ledger does not follow.
 ORDINAL_FILTER_KEYS = frozenset(
     {
         "types",
@@ -1628,6 +1631,7 @@ ORDINAL_FILTER_KEYS = frozenset(
         "keywords",
         "not_keywords",
         "name",
+        "paid_by",
     }
 )
 
@@ -1668,7 +1672,9 @@ def _crosses_nth(event: GameEvent, nth: int) -> bool:
     return before < nth <= before + amount
 
 
-def _ordinal(state: GameState, spec: TriggerSpec, event: GameEvent) -> int | None:
+def _ordinal(
+    state: GameState, spec: TriggerSpec, event: GameEvent, ability_source: GameObject
+) -> int | None:
     """The event's ordinal as ``spec`` counts it.
 
     A draw's is on the event. So is a cast's, and that answers an unfiltered
@@ -1677,10 +1683,16 @@ def _ordinal(state: GameState, spec: TriggerSpec, event: GameEvent) -> int | Non
     nth = event.data.get("nth")
     if spec.event != "spell_cast" or spec.filter is None or nth is None:
         return nth
-    return _spell_ordinal(state, spec.filter, event.player, int(nth))
+    return _spell_ordinal(state, spec.filter, event.player, int(nth), ability_source)
 
 
-def _spell_ordinal(state: GameState, filt: Mapping[str, Any], pid: int | None, nth: int) -> int:
+def _spell_ordinal(
+    state: GameState,
+    filt: Mapping[str, Any],
+    pid: int | None,
+    nth: int,
+    ability_source: GameObject | None = None,
+) -> int:
     """This spell's place among the caster's spells **matching** ``filt`` this turn.
 
     "Whenever an opponent casts their first **noncreature** spell each turn"
@@ -1698,16 +1710,37 @@ def _spell_ordinal(state: GameState, filt: Mapping[str, Any], pid: int | None, n
     `ORDINAL_FILTER_KEYS`); this spell itself counts as one because the trigger's
     `filter` is checked against it anyway, and a spell that fails it never
     fires the ability whatever this returns.
+
+    "The first spell you cast each turn **that mana from a Treasure was spent
+    to cast**" (Rain of Riches) is a run counted by payment rather than by
+    face, so a selector-valued `paid_by` is matched against what the ledger
+    kept of each earlier cast's payment (`TurnLedger.spells_cast_mana`), with
+    the same `_origin_matches` the trigger's own filter uses on this spell.
+    The ledger counts casts made before the ability's source arrived, so a
+    Treasure-paid spell cast first and the enchantment second leaves nothing to
+    be the first for the rest of the turn -- which is what the printed run says,
+    and what `max_per_turn: 1` would get wrong.
     """
 
     registry = state.registry
-    ids = state.turn_ledger.spells_cast_ids.get(pid, []) if pid is not None else []
-    earlier = sum(
-        1
-        for cast_id in ids[: nth - 1]
+    ledger = state.turn_ledger
+    ids = ledger.spells_cast_ids.get(pid, []) if pid is not None else []
+    paid_by = filt.get("paid_by")
+    paid = ledger.spells_cast_mana.get(pid, []) if pid is not None else []
+    earlier = 0
+    for index, cast_id in enumerate(ids[: nth - 1]):
         # `in` before `get`, as `values.py` does for the same list.
-        if cast_id in registry and _matches_printed(registry.get(cast_id), filt)
-    )
+        if cast_id not in registry or not _matches_printed(registry.get(cast_id), filt):
+            continue
+        if isinstance(paid_by, Mapping):
+            # Index for index with `ids`; a cast the ledger kept no payment for
+            # was paid for with nothing, which no `paid_by` matches.
+            traits = paid[index] if index < len(paid) else frozenset()
+            if ability_source is None or not any(
+                _origin_matches(o, paid_by, ability_source) for o in traits
+            ):
+                continue
+        earlier += 1
     return earlier + 1
 
 

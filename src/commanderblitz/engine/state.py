@@ -1062,6 +1062,14 @@ class GameState:
                 # rather than about a count. `card` is the face that was cast.
                 if (cast_id := data.get("card")) is not None:
                     ledger.spells_cast_ids.setdefault(pid, []).append(str(cast_id))
+                    # And how it was paid for, index for index, for "the first
+                    # spell … that mana from a Treasure was spent to cast"
+                    # (Rain of Riches). Every cast path pays before it fires
+                    # SPELL_CAST, so the spell already carries its traits.
+                    spell_obj = self.objects.get(data.get("oid"))
+                    ledger.spells_cast_mana.setdefault(pid, []).append(
+                        spell_obj.mana_spent_traits if spell_obj is not None else frozenset()
+                    )
                     # The same fact with no turn boundary on it, for "…this
                     # game". Written beside the per-turn list rather than in a
                     # second fold, so the two cannot disagree about what counted

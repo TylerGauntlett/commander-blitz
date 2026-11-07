@@ -14100,6 +14100,69 @@
       ]
     },
     {
+      "id": "t_treasure_cascade",
+      "name": "Test Treasure Cascade",
+      "oracle_text": "When this enchantment enters, create two Treasure tokens.\nThe first spell you cast each turn that mana from a Treasure was spent to cast has cascade.",
+      "mana_cost": "{3}{U}{R}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "U",
+        "R"
+      ],
+      "color_identity": [
+        "U",
+        "R"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this enchantment enters, create two Treasure tokens.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "treasure_token",
+              "controller": "you",
+              "amount": {
+                "const": 2
+              }
+            }
+          ]
+        },
+        {
+          "kind": "triggered",
+          "text": "The first spell you cast each turn that mana from a Treasure was spent to cast has cascade.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "you",
+            "filter": {
+              "paid_by": {
+                "subtypes": [
+                  "Treasure"
+                ]
+              }
+            },
+            "nth": 1
+          },
+          "effects": [
+            {
+              "op": "cascade",
+              "max_mana_value": {
+                "mana_value_of": {
+                  "binding": "subject"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_shield_to",
       "name": "Test Shield To",
       "oracle_text": "Prevent all damage that would be dealt to target creature this turn.",
