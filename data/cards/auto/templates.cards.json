@@ -15723,6 +15723,68 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "food_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, create a Food token.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you expend 4, this creature gets +1/+1 until end of turn.",
+          "trigger": {
+            "event": "expend",
+            "nth": 4
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "bakersbane_duo",
+      "mana_cost": "{1}{G}",
+      "name": "Bakersbane Duo",
+      "oracle_text": "When this creature enters, create a Food token.\nWhenever you expend 4, this creature gets +1/+1 until end of turn. (You expend 4 as you spend your fourth total mana to cast spells during a turn.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Squirrel",
+        "Raccoon"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -16834,6 +16896,50 @@
         "Legendary"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "keywords": [
+                "indestructible"
+              ],
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you expend 4, this creature gains indestructible until end of turn.",
+          "trigger": {
+            "event": "expend",
+            "nth": 4
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "bark_knuckle_boxer",
+      "mana_cost": "{1}{G}",
+      "name": "Bark-Knuckle Boxer",
+      "oracle_text": "Whenever you expend 4, this creature gains indestructible until end of turn. (You expend 4 as you spend your fourth total mana to cast spells during a turn.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Raccoon",
+        "Berserker"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -25823,6 +25929,72 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "subtypes": [
+                  "Raccoon"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              }
+            },
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "vigilance"
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "subtypes": [
+                  "Raccoon"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you expend 4, Raccoons you control get +1/+1 and gain vigilance until end of turn.",
+          "trigger": {
+            "event": "expend",
+            "nth": 4
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "brambleguard_veteran",
+      "mana_cost": "{1}{G}{G}",
+      "name": "Brambleguard Veteran",
+      "oracle_text": "Whenever you expend 4, Raccoons you control get +1/+1 and gain vigilance until end of turn. (You expend 4 as you spend your fourth total mana to cast spells during a turn.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Raccoon",
+        "Warrior"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -107071,6 +107243,58 @@
         {
           "effects": [
             {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 2
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you expend 4, this creature gets +2/+1 until end of turn. (You expend 4 as you spend your fourth total mana to cast spells during a turn.)",
+          "trigger": {
+            "event": "expend",
+            "nth": 4
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "junkblade_bruiser",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{3}{R/G}{R/G}",
+      "name": "Junkblade Bruiser",
+      "oracle_text": "Trample\nWhenever you expend 4, this creature gets +2/+1 until end of turn. (You expend 4 as you spend your fourth total mana to cast spells during a turn.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Raccoon",
+        "Berserker"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 1
               },
@@ -134252,6 +134476,100 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Raccoon"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "add_mana",
+              "split": [
+                "R",
+                "G"
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your first main phase, add {R} or {G} for each Raccoon you control.",
+          "trigger": {
+            "controller": "you",
+            "event": "precombat_main"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you expend 4, you gain 3 life.",
+          "trigger": {
+            "event": "expend",
+            "nth": 4
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "destination": "exile",
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "playable": "end_of_your_next_turn",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you expend 8, exile the top two cards of your library. Until the end of your next turn, you may play those cards.",
+          "trigger": {
+            "event": "expend",
+            "nth": 8
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "muerra_trash_tactician",
+      "mana_cost": "{1}{R}{G}",
+      "name": "Muerra, Trash Tactician",
+      "oracle_text": "At the beginning of your first main phase, add {R} or {G} for each Raccoon you control.\nWhenever you expend 4, you gain 3 life. (You expend 4 as you spend your fourth total mana to cast spells during a turn.)\nWhenever you expend 8, exile the top two cards of your library. Until the end of your next turn, you may play those cards.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Raccoon",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -169717,6 +170035,78 @@
         "Elephant"
       ],
       "toughness": 8,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              }
+            },
+            {
+              "keywords": [
+                "trample"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever you expend 4, target creature you control gets +1/+1 and gains trample until end of turn. (You expend 4 as you spend your fourth total mana to cast spells during a turn.)",
+          "trigger": {
+            "event": "expend",
+            "nth": 4
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "roughshod_duo",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{2}{R}",
+      "name": "Roughshod Duo",
+      "oracle_text": "Trample\nWhenever you expend 4, target creature you control gets +1/+1 and gains trample until end of turn. (You expend 4 as you spend your fourth total mana to cast spells during a turn.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Mouse",
+        "Raccoon"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]

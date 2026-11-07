@@ -19072,12 +19072,12 @@
     },
     "Bakersbane Duo": {
       "edhrec_rank": 9022,
-      "gate": "template",
+      "gate": null,
       "name": "Bakersbane Duo",
-      "reason": "no template for: When this creature enters, create a Food token",
+      "reason": "",
       "scryfall_id": "5309354f-1ff4-4fa9-9141-01ea2f7588ab",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Baki's Curse": {
@@ -20662,12 +20662,12 @@
     },
     "Bark-Knuckle Boxer": {
       "edhrec_rank": 13432,
-      "gate": "template",
+      "gate": null,
       "name": "Bark-Knuckle Boxer",
-      "reason": "no template for: Whenever you expend 4, this creature gains indestructible until end of turn",
+      "reason": "",
       "scryfall_id": "582637a9-6aa0-4824-bed7-d5fc91bda35e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Barkchannel Pathway // Tidechannel Pathway": {
@@ -33032,12 +33032,12 @@
     },
     "Brambleguard Veteran": {
       "edhrec_rank": 13671,
-      "gate": "template",
+      "gate": null,
       "name": "Brambleguard Veteran",
-      "reason": "no template for: Whenever you expend 4, Raccoons you control get +1/+1 and gain vigilance until end of turn",
+      "reason": "",
       "scryfall_id": "bac9f6f8-6797-4580-9fc4-9a825872e017",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bramblesnap": {
@@ -144562,12 +144562,12 @@
     },
     "Junkblade Bruiser": {
       "edhrec_rank": 14161,
-      "gate": "template",
+      "gate": null,
       "name": "Junkblade Bruiser",
-      "reason": "no template for: Whenever you expend 4, this creature gets +2/+1 until end of turn",
+      "reason": "",
       "scryfall_id": "918fd89b-5ab7-4ae2-920c-faca5e9da7b9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Junktown": {
@@ -180632,12 +180632,12 @@
     },
     "Muerra, Trash Tactician": {
       "edhrec_rank": 8954,
-      "gate": "template",
+      "gate": null,
       "name": "Muerra, Trash Tactician",
-      "reason": "no template for: At the beginning of your first main phase, add {R} or {G} for each Raccoon you control",
+      "reason": "",
       "scryfall_id": "26b4e695-5ec4-4821-8637-8df501ba0653",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mugato": {
@@ -228002,12 +228002,12 @@
     },
     "Roughshod Duo": {
       "edhrec_rank": 9395,
-      "gate": "template",
+      "gate": null,
       "name": "Roughshod Duo",
-      "reason": "no template for: Whenever you expend 4, target creature you control gets +1/+1 and gains trample until end ",
+      "reason": "",
       "scryfall_id": "78cdcfb9-a247-4c2d-a098-5b57570f8cd5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Roughshod Mentor": {

@@ -1368,6 +1368,14 @@
   "badlands": {
     "zone": "battlefield"
   },
+  "bakersbane_duo": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "food_token"
+    },
+    "zone": "battlefield"
+  },
   "bala_ged_recovery_bala_ged_sanctuary": {
     "graveyard_size": {
       "0": 2
@@ -1478,6 +1486,10 @@
     "library_size": {
       "0": 40
     },
+    "zone": "battlefield"
+  },
+  "bark_knuckle_boxer": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "barkhide_mauler": {
@@ -2204,6 +2216,10 @@
       "0": 38
     },
     "zone": "graveyard"
+  },
+  "brambleguard_veteran": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "brambleweft_behemoth": {
     "zone": "battlefield"
@@ -9094,6 +9110,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "junkblade_bruiser": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "juri_master_of_the_revue": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -11440,6 +11460,13 @@
       "0": 40
     },
     "zone": "graveyard"
+  },
+  "muerra_trash_tactician": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40
+    },
+    "zone": "battlefield"
   },
   "mugato": {
     "zone": "battlefield"
@@ -14411,6 +14438,10 @@
     "zone": "battlefield"
   },
   "rotting_mastodon": {
+    "zone": "battlefield"
+  },
+  "roughshod_duo": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "rousing_refrain": {
