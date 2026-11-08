@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**253 cards** blocked by **231** capabilities.
+**254 cards** blocked by **232** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -214,6 +214,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
 | [salamander-warrior-4-3-u](#salamander-warrior-4-3-u) | 1 | 3395 | token |
 | [sandbox-graveyard-spell-prop](#sandbox-graveyard-spell-prop) | 1 | 5082 | engine |
+| [sandbox-low-mana-value-permanent](#sandbox-low-mana-value-permanent) | 1 | 14140 | engine |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
@@ -3465,6 +3466,20 @@ Blocks **1** card.
 
 - **Surge to Victory** (rank 5082) — `surge_to_victory`
   - Exile target instant or sorcery card from your graveyard.
+
+</details>
+
+## sandbox-low-mana-value-permanent
+
+Blocks **1** card.
+
+- **(engine)** A role in the authoring sandbox (cards/authoring/verify.py `_ROLES` / board roles) that puts a nonlegendary creature with mana value 2 or less on the battlefield, so 'target creature or planeswalker with mana value 2 or less' has a legal target when the playable gate (`_play_once`) casts the card unkicked
+  <br>Why the existing vocabulary won't do: The card is fully expressible (card-level `kicker` + one permanent target with `selector` {any_types [Creature, Planeswalker], mana_value <= 2} and `selector_if_kicked` without the ceiling + `destroy`), but the sandbox's battlefield creatures (role 'creature', 'flier', 'legendary_creature') all have mana value above 2, so legality offers only the kicked cast and `_play_once` (which casts unkicked) fails with 'not playable in the sandbox'. Verified: with the 'creature' role patched in memory to pick a mana value <= 2 creature, the same answer passes all 6 gates. Same house fix as legendary_creature / x_spell / one_drop_spell: add the role, do not relax the gate. Ready answer: {kicker '{2}{B}', targets [{id t1, kind permanent, count 1, selector {zone battlefield, any_types [Creature, Planeswalker], mana_value {op '<=', value {const 2}}}, selector_if_kicked {zone battlefield, any_types [Creature, Planeswalker]}}], spell_effects [{op destroy, objects {target t1}}]}, expectation {zone graveyard}
+
+<details><summary>Cards waiting on this</summary>
+
+- **Bloodchief's Thirst** (rank 14140) — `bloodchief_s_thirst`
+  - Destroy target creature or planeswalker with mana value 2 or less. If this spell was kicked, instead destroy target creature or planeswalker.
 
 </details>
 
