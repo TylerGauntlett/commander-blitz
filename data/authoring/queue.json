@@ -318192,12 +318192,12 @@
     },
     "Wolfwillow Haven": {
       "edhrec_rank": 4836,
-      "gate": "template",
+      "gate": null,
       "name": "Wolfwillow Haven",
-      "reason": "no template for: Whenever enchanted land is tapped for mana, its controller adds an additional {G}",
+      "reason": "",
       "scryfall_id": "8506e3eb-07c1-4f5c-a2a7-c210acf6be16",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wolverine Pack": {

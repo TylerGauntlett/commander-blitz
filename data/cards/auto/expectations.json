@@ -20901,6 +20901,10 @@
   "wolf_cove_villager": {
     "zone": "battlefield"
   },
+  "wolfwillow_haven": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "wonder": {
     "battlefield_count": 33,
     "zone": "battlefield"
