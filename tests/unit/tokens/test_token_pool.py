@@ -2327,3 +2327,29 @@ class TestTheFamilyMattersTokens:
     def test_the_two_two_blue_bird_is_still_a_separate_token(self, pool):
         other = pool.get("bird_2_2_u_flying")
         assert (other.power, other.toughness) == (2, 2)
+
+
+class TestFishersTalentsSharkIsAPlainThreeThree:
+    """Fisher's Talent, level 2: *"If you would create a Fish token, create a
+    **3/3 blue Shark creature token** instead."*
+
+    `shark_x_x_u_flying` is the near miss: a blue Shark, but X/X with flying.
+    The level-3 line replaces this Shark with the 8/8 Octopus, so the subtype
+    is as load-bearing as the body.
+    """
+
+    TOKEN = "shark_3_3_u"
+
+    def test_it_is_a_vanilla_three_three_blue_shark(self, pool):
+        token = pool.get(self.TOKEN)
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (3, 3)
+        assert sorted(token.colors) == ["U"]
+        assert list(token.subtypes) == ["Shark"]
+        assert not token.keywords
+        assert not token.abilities
+
+    def test_the_flying_x_x_shark_is_still_a_separate_token(self, pool):
+        other = pool.get("shark_x_x_u_flying")
+        assert other is not None
+        assert list(other.keywords) == ["flying"]
