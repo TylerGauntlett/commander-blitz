@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**261 cards** blocked by **239** capabilities.
+**260 cards** blocked by **238** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -156,7 +156,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [insect-token-bg](#insect-token-bg) | 1 | 1924 | token |
 | [karox-bladewing](#karox-bladewing) | 1 | 8889 | token |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
-| [kicker](#kicker) | 1 | 868 | selector |
 | [life-lost-this-turn-static-value](#life-lost-this-turn-static-value) | 1 | 2559 | value |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
 | [living-metal](#living-metal) | 1 | 11641 | keyword |
@@ -2650,20 +2649,6 @@ Blocks **1** card.
 
 - **Emissary of Soulfire** (rank 18326) — `emissary_of_soulfire`
   - Pay {E}{E}: Put an exalted counter on target creature you control. Activate only as a sorcery.
-
-</details>
-
-## kicker
-
-Blocks **1** card.
-
-- **(selector)** a spell target whose selector (or whole target spec) is replaced when the spell was kicked: unkicked it declares one target artifact or enchantment, kicked it declares one target nonland permanent instead. Either a `selector_if_kicked` on a TargetSpec, or support for `count: 0` / `count_if_kicked: 0` so two specs can swap which one is declared
-  <br>Why the existing vocabulary won't do: `count_if_kicked` only resizes a spec. Writing two specs (artifact/enchantment with count 1 and count_if_kicked 0, nonland with count 0 and count_if_kicked 1) loads and enumerates correctly, but `targeting.filter_legal` slices stored refs with `max(1, spec.count)`, so at resolution the kicked line's one ref lands in the first spec's bucket, fails its artifact/enchantment check, and the kicked spell exiles nothing (verified in the sandbox: the kicked cast resolves without exiling anything). Making both targets `optional` would let an unkicked cast target a nonland creature, and a `choose_mode` cannot restrict a mode to kicked casts only
-
-<details><summary>Cards waiting on this</summary>
-
-- **Tear Asunder** (rank 868) — `tear_asunder`
-  - Exile target artifact or enchantment. If this spell was kicked, exile target nonland permanent instead.
 
 </details>
 

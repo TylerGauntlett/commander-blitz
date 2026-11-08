@@ -211159,6 +211159,52 @@
       ]
     },
     {
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "tear_asunder",
+      "kicker": "{1}{B}",
+      "mana_cost": "{1}{G}",
+      "name": "Tear Asunder",
+      "oracle_text": "Kicker {1}{B} (You may pay an additional {1}{B} as you cast this spell.)\nExile target artifact or enchantment. If this spell was kicked, exile target nonland permanent instead.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "exile"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Enchantment"
+            ],
+            "zone": "battlefield"
+          },
+          "selector_if_kicked": {
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [

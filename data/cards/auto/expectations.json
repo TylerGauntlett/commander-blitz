@@ -17797,6 +17797,11 @@
     },
     "zone": "battlefield"
   },
+  "tear_asunder": {
+    "battlefield_count": 31,
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
   "tectonic_giant": {
     "battlefield_count": 33,
     "zone": "battlefield"
