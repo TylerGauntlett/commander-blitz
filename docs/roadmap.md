@@ -66,7 +66,7 @@ each heading; this table is generated from them.
 | [Jump Scare! (Duskmourn: House of Horror Commander)](#jump-scare-duskmourn-house-of-horror-commander) | L | high | A trigger for cards put into a graveyard, Rooms: two doors on one permanent, and the unlock action | 0 |
 | [Miracle Worker (Duskmourn: House of Horror Commander)](#miracle-worker-duskmourn-house-of-horror-commander) | L | high | Rooms: two doors on one permanent, and the unlock action | 0 |
 | [Family Matters (Bloomburrow Commander)](#family-matters-bloomburrow-commander) | L | high | Divided damage from a triggered or activated ability, Divided damage that may hit players | 0 |
-| [Creative Energy (Modern Horizons 3 Commander)](#creative-energy-modern-horizons-3-commander) | L | high | nothing | 0 |
+| [Creative Energy (Modern Horizons 3 Commander)](#creative-energy-modern-horizons-3-commander) | L | high | Divided damage from a triggered or activated ability, Divided damage that may hit players | 0 |
 | [Graveyard Overdrive (Modern Horizons 3 Commander)](#graveyard-overdrive-modern-horizons-3-commander) | L | high | nothing | 0 |
 | [Tricky Terrain (Modern Horizons 3 Commander)](#tricky-terrain-modern-horizons-3-commander) | L | high | nothing | 0 |
 | [Eldrazi Incursion (Modern Horizons 3 Commander)](#eldrazi-incursion-modern-horizons-3-commander) | L | high | nothing | 0 |
@@ -132,10 +132,10 @@ each heading; this table is generated from them.
 | [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) | S | medium | nothing | 0 |
 | [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) | S | medium | nothing | 0 |
 | [Why a press is refused](#why-a-press-is-refused) | S | medium | nothing | 0 |
+| [Divided damage that may hit players](#divided-damage-that-may-hit-players) | M | medium | nothing | 5 |
 | [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) | M | medium | nothing | 4 |
-| [Divided damage that may hit players](#divided-damage-that-may-hit-players) | M | medium | nothing | 4 |
+| [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) | M | medium | nothing | 4 |
 | [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) | M | medium | nothing | 4 |
-| [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) | M | medium | nothing | 3 |
 | [Outcomes as data](#outcomes-as-data) | M | medium | nothing | 2 |
 | [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) | M | medium | nothing | 2 |
 | [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) | M | medium | nothing | 2 |
@@ -160,8 +160,6 @@ Derived from the properties: an item is **ready** when nothing it depends
 on is still on this page, and the ready items are ranked by impact, then
 rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
-
-**In progress:** [Creative Energy (Modern Horizons 3 Commander)](#creative-energy-modern-horizons-3-commander).
 
 **Ready now, best first:**
 
@@ -230,10 +228,10 @@ same list, and `/extend-roadmap` starts at the top of it.
 63. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
 64. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
 65. [Why a press is refused](#why-a-press-is-refused) — S, medium
-66. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
-67. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
-68. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
-69. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
+66. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
+67. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
+68. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
+69. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
 70. [Outcomes as data](#outcomes-as-data) — M, medium
 71. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
 72. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
@@ -268,6 +266,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Jump Scare! (Duskmourn: House of Horror Commander)](#jump-scare-duskmourn-house-of-horror-commander) — [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard), [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action)
 - [Miracle Worker (Duskmourn: House of Horror Commander)](#miracle-worker-duskmourn-house-of-horror-commander) — [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action)
 - [Family Matters (Bloomburrow Commander)](#family-matters-bloomburrow-commander) — [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability), [Divided damage that may hit players](#divided-damage-that-may-hit-players)
+- [Creative Energy (Modern Horizons 3 Commander)](#creative-energy-modern-horizons-3-commander) — [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability), [Divided damage that may hit players](#divided-damage-that-may-hit-players)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -423,6 +422,71 @@ and the mute setting's e2e assertion still passes.
 
 ## Cards
 
+### Divided damage that may hit players
+
+Effort **M** · Impact **medium**, every 'divided as you choose among any number of targets' burn spell waits on it, Magma Opus and Arc Lightning among them · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+Divided damage (601.2d) is announced as the spell is cast and dealt on
+resolution, but only among permanents. `cards.loader` refuses a `damage`
+effect with `divided` whose target spec is not `kind: "permanent"`;
+`Game._ask_damage_division` keeps only the declared targets whose kind is
+`"object"` and walks them through `_divide`, which asks one object at a time
+through `ask_objects`; and `effects.ops_life._damage_divided` deals each share
+with `damage_permanent`. [rules-coverage.md](rules-coverage.md#not-implemented)
+lists "dividing damage among players or any target" as not implemented.
+
+So every "deals N damage divided as you choose among any number of targets"
+spell is unwritable, because a player is a legal target of it. Magma Opus,
+in the Prismari Artistry precon, is the card that found it; Arc Lightning and
+Fireball's divided mode are the same sentence. Its gap record is
+`data/authoring/gaps/magma_opus.json`.
+
+#### The change
+
+1. The division carries players. `_ask_damage_division` divides over every
+   declared target of the spec, object or player, and the shares on the stack
+   item's `bindings["distribution"]` name which is which, so a player and a
+   permanent with the same number are never confused.
+2. The question asked while dividing offers players beside objects. Placing
+   one more point is one choice among the declared targets; `ask_objects`
+   names objects only, so this is either a target-shaped ask or a decision kind
+   of its own (an open question below).
+3. `_damage_divided` deals a player's share as damage to that player from the
+   source, with everything damage to a player already implies (lifelink,
+   infect, commander damage from a commander source, prevention), and a share
+   for a player who left the game or became an illegal target is lost (608.2b).
+4. The loader accepts `divided` over a spec of `kind: "any"` and
+   `kind: "player"`. The verifier's auto-answer table answers the new question,
+   or `/author-cards` hangs.
+5. Harvest: Magma Opus, then the catalog's other divided-among-any-targets
+   cards through the template tier with `--retry` and one `/author-cards` wave.
+
+It does not touch divided combat damage (510.1c) or `distribute_counters`,
+whose objects are always permanents.
+
+#### Gate
+
+A unit test under `tests/unit/` for divided damage over players and
+permanents together: the announcement on casting, each share dealt on
+resolution, a player's share lost when that player is no longer a legal
+target, lifelink and commander damage counted per share, and the loader
+accepting `kind: "any"` while still refusing divided damage on an ability. The
+verifier's auto-answer test covers the new question, and Magma Opus's six
+gates pass.
+
+#### Open questions
+
+- **How the division is asked.** Extend `ask_objects` to accept player
+  targets, or add a decision kind for "one more point to which target"?
+  Recommended: a target-shaped ask built on the existing target references,
+  because the client already renders a player as a target, and a new decision
+  kind would need its frontend label and an e2e path for no new rule.
+- **Is it an ADR.** Recommended: no; it widens an existing announcement
+  (601.2d) without changing what is announced or when, and the line in
+  rules-coverage.md moves from "not implemented" to the implemented table.
+
 ### A trigger for cards put into a graveyard
 
 Effort **M** · Impact **medium**, every 'whenever one or more cards are put into your graveyard from your library, or from anywhere' card waits on it, The Gitrog Monster and Sidisi among them · Depends on nothing · Awaiting decisions.
@@ -495,70 +559,81 @@ gates pass, and the generated DSL reference lists the new trigger event.
   `ZONE_CHANGE` beside `LEAVES_GRAVEYARD`, and the mill line moves from "not
   implemented" to the implemented table in rules-coverage.md.
 
-### Divided damage that may hit players
+### Divided damage from a triggered or activated ability
 
-Effort **M** · Impact **medium**, every 'divided as you choose among any number of targets' burn spell waits on it, Magma Opus and Arc Lightning among them · Depends on nothing · Awaiting decisions.
+Effort **M** · Impact **medium**, every creature whose enters or attack trigger divides its damage waits on it, Fury and Inferno Titan among them · Depends on nothing · Awaiting decisions.
 
 #### Today
 
-Divided damage (601.2d) is announced as the spell is cast and dealt on
-resolution, but only among permanents. `cards.loader` refuses a `damage`
-effect with `divided` whose target spec is not `kind: "permanent"`;
-`Game._ask_damage_division` keeps only the declared targets whose kind is
-`"object"` and walks them through `_divide`, which asks one object at a time
-through `ask_objects`; and `effects.ops_life._damage_divided` deals each share
-with `damage_permanent`. [rules-coverage.md](rules-coverage.md#not-implemented)
-lists "dividing damage among players or any target" as not implemented.
+Divided damage (601.2d) is announced on one line only: as a spell is cast.
+`Game._ask_damage_division` reads `engine.division.divided_damage(card)`,
+which walks `card.spell_effects`, and is called from `Game._cast`; the split
+rides on the stack item's `bindings["distribution"]` and
+`effects.ops_life._damage_divided` deals it on resolution.
+`cards.loader._check_division_homes` refuses `damage` with `divided` anywhere
+else ("only supported as a top-level effect of a spell"), and
+[rules-coverage.md](rules-coverage.md#not-implemented) lists dividing
+damage "on an ability" as not implemented.
 
-So every "deals N damage divided as you choose among any number of targets"
-spell is unwritable, because a player is a legal target of it. Magma Opus,
-in the Prismari Artistry precon, is the card that found it; Arc Lightning and
-Fireball's divided mode are the same sentence. Its gap record is
-`data/authoring/gaps/magma_opus.json`.
+The ability-level twin already exists for counters: `distribute_counters` on
+an activated ability is divided by `Game._ask_distribution` at activation
+(602.2b applying 601.2d), composed from `ask_objects` with no decision kind of
+its own. A triggered ability chooses its modes and targets in
+`stack._choose_trigger_targets` as it is put on the stack (603.3d), and
+nothing there asks for a division.
+
+So "When this creature enters, it deals 4 damage divided as you choose among
+any number of target creatures and/or planeswalkers" is unwritable. Fury, in
+the Dance of the Elements precon, is the card that found it; its gap record is
+`data/authoring/gaps/fury.json`.
 
 #### The change
 
-1. The division carries players. `_ask_damage_division` divides over every
-   declared target of the spec, object or player, and the shares on the stack
-   item's `bindings["distribution"]` name which is which, so a player and a
-   permanent with the same number are never confused.
-2. The question asked while dividing offers players beside objects. Placing
-   one more point is one choice among the declared targets; `ask_objects`
-   names objects only, so this is either a target-shaped ask or a decision kind
-   of its own (an open question below).
-3. `_damage_divided` deals a player's share as damage to that player from the
-   source, with everything damage to a player already implies (lifelink,
-   infect, commander damage from a commander source, prevention), and a share
-   for a player who left the game or became an illegal target is lost (608.2b).
-4. The loader accepts `divided` over a spec of `kind: "any"` and
-   `kind: "player"`. The verifier's auto-answer table answers the new question,
-   or `/author-cards` hangs.
-5. Harvest: Magma Opus, then the catalog's other divided-among-any-targets
-   cards through the template tier with `--retry` and one `/author-cards` wave.
+1. The trigger line divides. Where `stack` puts a triggered ability on the
+   stack and has chosen its targets, a `damage` effect with `divided` among
+   the ability's top-level effects is divided over the targets just declared,
+   through the same walk `_ask_damage_division` uses, and stored on the stack
+   item's `bindings["distribution"]` so `_damage_divided` resolves it
+   unchanged. The amount is read then (601.2d via 603.3d).
+2. The activation line divides damage the way it already divides counters:
+   `Game._ask_distribution` takes divided `damage` beside
+   `distribute_counters`.
+3. `_check_division_homes` accepts divided damage as a top-level effect of a
+   triggered or activated ability whose spec targets objects, and still
+   refuses it nested in a branch, where no announcement exists.
+4. The verifier's auto-answer table answers the division on the trigger line,
+   or `/author-cards` hangs on Fury.
+5. Harvest: Fury (which also waits on evoke with a non-mana cost) and the
+   catalog's other divided-damage triggers through the template tier with
+   `--retry` and one `/author-cards` wave.
 
-It does not touch divided combat damage (510.1c) or `distribute_counters`,
-whose objects are always permanents.
+It does not let the division include players: that is
+[divided-damage-any-target](divided-damage-any-target.md), which this item
+neither needs nor blocks. Inferno Titan needs both.
 
 #### Gate
 
-A unit test under `tests/unit/` for divided damage over players and
-permanents together: the announcement on casting, each share dealt on
-resolution, a player's share lost when that player is no longer a legal
-target, lifelink and commander damage counted per share, and the loader
-accepting `kind: "any"` while still refusing divided damage on an ability. The
-verifier's auto-answer test covers the new question, and Magma Opus's six
-gates pass.
+A unit test under `tests/unit/` for divided damage on a trigger and on an
+activation: the division asked as the trigger goes on the stack and before a
+response is possible, each share dealt on resolution, an illegal target's share
+lost (608.2b), the forced split asking nothing, and the loader accepting the
+top-level ability home while still refusing a nested one. The verifier's
+auto-answer test covers the trigger-line question, and the harvested cards pass
+their six gates.
 
 #### Open questions
 
-- **How the division is asked.** Extend `ask_objects` to accept player
-  targets, or add a decision kind for "one more point to which target"?
-  Recommended: a target-shaped ask built on the existing target references,
-  because the client already renders a player as a target, and a new decision
-  kind would need its frontend label and an e2e path for no new rule.
-- **Is it an ADR.** Recommended: no; it widens an existing announcement
-  (601.2d) without changing what is announced or when, and the line in
-  rules-coverage.md moves from "not implemented" to the implemented table.
+- **Where the trigger's division is asked.** In `stack` beside
+  `_choose_trigger_targets`, or by handing the trigger to the same
+  `Game` helper the cast and activation lines use? Recommended: one shared
+  helper called from all three lines, because the walk and its purpose tag are
+  already shared and a third copy would drift.
+- **Is it an ADR.** Recommended: no; it applies the existing announcement
+  (601.2d) on the two lines 602.2b and 603.3d already send it to, and the
+  rules-coverage.md line moves to the implemented table.
+- **Scope of the harvest.** Fury only, or every divided-damage trigger the
+  template tier can then read? Recommended: one template-tier `--retry` and
+  one `/author-cards` wave, the precon items' convention.
 
 ### Rooms: two doors on one permanent, and the unlock action
 
@@ -639,82 +714,6 @@ generated DSL reference lists the new event.
   token and the noncombat `replace_damage` key so Spiked Corridor // Torture
   Pit ships in it? Recommended: plus both, since each is small and the card
   is the gate.
-
-### Divided damage from a triggered or activated ability
-
-Effort **M** · Impact **medium**, every creature whose enters or attack trigger divides its damage waits on it, Fury and Inferno Titan among them · Depends on nothing · Awaiting decisions.
-
-#### Today
-
-Divided damage (601.2d) is announced on one line only: as a spell is cast.
-`Game._ask_damage_division` reads `engine.division.divided_damage(card)`,
-which walks `card.spell_effects`, and is called from `Game._cast`; the split
-rides on the stack item's `bindings["distribution"]` and
-`effects.ops_life._damage_divided` deals it on resolution.
-`cards.loader._check_division_homes` refuses `damage` with `divided` anywhere
-else ("only supported as a top-level effect of a spell"), and
-[rules-coverage.md](rules-coverage.md#not-implemented) lists dividing
-damage "on an ability" as not implemented.
-
-The ability-level twin already exists for counters: `distribute_counters` on
-an activated ability is divided by `Game._ask_distribution` at activation
-(602.2b applying 601.2d), composed from `ask_objects` with no decision kind of
-its own. A triggered ability chooses its modes and targets in
-`stack._choose_trigger_targets` as it is put on the stack (603.3d), and
-nothing there asks for a division.
-
-So "When this creature enters, it deals 4 damage divided as you choose among
-any number of target creatures and/or planeswalkers" is unwritable. Fury, in
-the Dance of the Elements precon, is the card that found it; its gap record is
-`data/authoring/gaps/fury.json`.
-
-#### The change
-
-1. The trigger line divides. Where `stack` puts a triggered ability on the
-   stack and has chosen its targets, a `damage` effect with `divided` among
-   the ability's top-level effects is divided over the targets just declared,
-   through the same walk `_ask_damage_division` uses, and stored on the stack
-   item's `bindings["distribution"]` so `_damage_divided` resolves it
-   unchanged. The amount is read then (601.2d via 603.3d).
-2. The activation line divides damage the way it already divides counters:
-   `Game._ask_distribution` takes divided `damage` beside
-   `distribute_counters`.
-3. `_check_division_homes` accepts divided damage as a top-level effect of a
-   triggered or activated ability whose spec targets objects, and still
-   refuses it nested in a branch, where no announcement exists.
-4. The verifier's auto-answer table answers the division on the trigger line,
-   or `/author-cards` hangs on Fury.
-5. Harvest: Fury (which also waits on evoke with a non-mana cost) and the
-   catalog's other divided-damage triggers through the template tier with
-   `--retry` and one `/author-cards` wave.
-
-It does not let the division include players: that is
-[divided-damage-any-target](divided-damage-any-target.md), which this item
-neither needs nor blocks. Inferno Titan needs both.
-
-#### Gate
-
-A unit test under `tests/unit/` for divided damage on a trigger and on an
-activation: the division asked as the trigger goes on the stack and before a
-response is possible, each share dealt on resolution, an illegal target's share
-lost (608.2b), the forced split asking nothing, and the loader accepting the
-top-level ability home while still refusing a nested one. The verifier's
-auto-answer test covers the trigger-line question, and the harvested cards pass
-their six gates.
-
-#### Open questions
-
-- **Where the trigger's division is asked.** In `stack` beside
-  `_choose_trigger_targets`, or by handing the trigger to the same
-  `Game` helper the cast and activation lines use? Recommended: one shared
-  helper called from all three lines, because the walk and its purpose tag are
-  already shared and a third copy would drift.
-- **Is it an ADR.** Recommended: no; it applies the existing announcement
-  (601.2d) on the two lines 602.2b and 603.3d already send it to, and the
-  rules-coverage.md line moves to the implemented table.
-- **Scope of the harvest.** Fury only, or every divided-damage trigger the
-  template tier can then read? Recommended: one template-tier `--retry` and
-  one `/author-cards` wave, the precon items' convention.
 
 ### Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number
 
@@ -2041,7 +2040,7 @@ whole-game test able to draw the deck.
 
 ### Creative Energy (Modern Horizons 3 Commander)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing · **In progress**.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability), [Divided damage that may hit players](#divided-damage-that-may-hit-players).
 
 #### Today
 
