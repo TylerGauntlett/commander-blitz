@@ -143622,12 +143622,12 @@
     },
     "Jolly Gerbils": {
       "edhrec_rank": 13806,
-      "gate": "template",
+      "gate": null,
       "name": "Jolly Gerbils",
-      "reason": "no template for: Whenever you give a gift, draw a card",
+      "reason": "",
       "scryfall_id": "0eab51d6-ba17-4a8c-8834-25db363f2b6b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jolrael's Centaur": {

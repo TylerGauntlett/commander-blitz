@@ -107937,6 +107937,47 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you give a gift, draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "gives_gift"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "jolly_gerbils",
+      "mana_cost": "{1}{W}",
+      "name": "Jolly Gerbils",
+      "oracle_text": "Whenever you give a gift, draw a card.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Hamster",
+        "Citizen"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "op": "create_token",
               "token": "cat_2_2_g"
             }

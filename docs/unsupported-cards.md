@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**257 cards** blocked by **236** capabilities.
+**256 cards** blocked by **235** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -137,7 +137,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [free-cast-this-turn](#free-cast-this-turn) | 1 | 6651 | op |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
 | [fully-unlock-room](#fully-unlock-room) | 1 | 3452 | trigger_event |
-| [gift-given-trigger](#gift-given-trigger) | 1 | 13806 | trigger_event |
 | [goad-without-goaded](#goad-without-goaded) | 1 | 973 | op |
 | [gold-token](#gold-token) | 1 | 705 | token |
 | [grant-abilities-of-exiled-cards](#grant-abilities-of-exiled-cards) | 1 | 8370 | static_effect |
@@ -2389,20 +2388,6 @@ Blocks **1** card.
 - **Fear of Sleep Paralysis** (rank 3452) — `fear_of_sleep_paralysis`
   - Eerie — Whenever this creature or another enchantment you control enters and whenever you fully unlock a Room, tap up to one target creature and put a stun counter on it.
   - Stun counters can't be removed from permanents your opponents control. (They won't untap if they have stun counters.)
-
-</details>
-
-## gift-given-trigger
-
-Blocks **1** card.
-
-- **(trigger_event)** a trigger event that fires when its controller gives a gift (702.174: a spell with a promised gift resolves, or a permanent spell's gift is given as it enters), for 'Whenever you give a gift'
-  <br>Why the existing vocabulary won't do: The card-level `gift` cost and the `gift_promised` condition let a gift card read whether its own gift was promised, but no entry in `trigger_events` reports a gift being given by any spell or permanent; `spell_cast` with a filter would fire on promise at cast time rather than on the gift being given at resolution, and could not see gifts from permanents' enter-time gifts
-
-<details><summary>Cards waiting on this</summary>
-
-- **Jolly Gerbils** (rank 13806) — `jolly_gerbils`
-  - Whenever you give a gift, draw a card.
 
 </details>
 
