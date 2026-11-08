@@ -6044,6 +6044,21 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: 'and_create' is a replace_dies or replace_token_creation "
             f"rider; on {model.effect!r} nothing would create the tokens"
         )
+    if model.and_create_per_token:
+        # "Plus that many" counts the tokens of a creation event and adds the
+        # `and_create` ids that many times; anywhere else, or with nothing to
+        # add, it would load clean and change nothing.
+        if model.effect != "replace_token_creation":
+            raise DslError(
+                f"{where}: 'and_create_per_token' counts the tokens of a creation "
+                f"event, so it only means anything on replace_token_creation, "
+                f"not on {model.effect!r}"
+            )
+        if not model.and_create:
+            raise DslError(
+                f"{where}: 'and_create_per_token' needs 'and_create' -- the token "
+                f"ids added that many times"
+            )
 
     if model.effect == "untap_limit":
         if model.amount is None:
@@ -6566,6 +6581,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["destination"] = model.destination
     if model.and_create:
         static["and_create"] = list(model.and_create)
+    if model.and_create_per_token:
+        static["and_create_per_token"] = True
     if model.affects_token is not None:
         static["affects_token"] = model.affects_token
     if model.keywords:

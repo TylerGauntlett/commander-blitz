@@ -930,8 +930,17 @@ class AbilityModel(BaseModel):
     #: Thopter artifact creature token with flying are created instead"
     #: (Stridehangar Automaton). The tokens about to be made are all kept and
     #: one of each id here joins them, once per creation however many of its
-    #: tokens `affects_token` matched. See `primitives._token_creation_plan`.
+    #: tokens `affects_token` matched -- or once per matched token under
+    #: `and_create_per_token`. See `primitives._token_creation_plan`.
     and_create: list[str] = Field(default_factory=list)
+    #: ``replace_token_creation`` with `and_create`: add each listed id **that
+    #: many** times rather than once -- one per matched token in the event, the
+    #: count read when the static applies. Chatterfang, Squirrel General's
+    #: "those tokens plus **that many** 1/1 green Squirrel creature tokens are
+    #: created instead": three Treasures bring three Squirrels. Refused without
+    #: `and_create`, which names what is added. See
+    #: `primitives._token_creation_plan`.
+    and_create_per_token: bool = False
     #: Whether `replace_graveyard` also catches a **token** -- the printed "a
     #: card **or token**" (Rest in Peace). Defaults to catching them, which is
     #: what every printed card in the family says; `false` is how one that

@@ -7712,6 +7712,35 @@ when they are, and an `as` binding ("exile that token") names it too.
   forever. `and_create` on `replace_dies` is Kalitas's rider, the same key on a
   different event.
 
+**"Those tokens plus that many … tokens are created instead."** An addition
+counted per token is `and_create` with `and_create_per_token: true`:
+
+```jsonc
+// Chatterfang, Squirrel General
+{ "kind": "static",
+  "text": "If one or more tokens would be created under your control, those tokens plus that many 1/1 green Squirrel creature tokens are created instead.",
+  "effect": "replace_token_creation",
+  "and_create": ["squirrel_1_1_g"],
+  "and_create_per_token": true }
+```
+
+**Each id in `and_create` joins the event once per token `affects_token`
+matched**, counted when the static applies — three Treasures bring three
+Squirrels. Everything else is the plain addition's: same event, same batch,
+no stack, the substitution's rulings.
+
+- **Fixed additions first, then per-token ones, then the rest.** A
+  Stridehangar's Thopter goes in before Chatterfang counts, so it brings a
+  Squirrel too; against a doubler the count is the same in either order, and
+  one Treasure under Chatterfang and a Doubling Season is two Treasures and two
+  Squirrels.
+- **Its own Squirrels are not counted again by it** (614.5, the single pass):
+  creating one Squirrel makes two, not a loop. A second Chatterfang sees the
+  first one's Squirrels in the event and adds that many more: one Treasure is
+  one Treasure and three Squirrels.
+- The flag is refused without a non-empty `and_create` and on any effect but
+  `replace_token_creation`.
+
 `affects_token`, not `affects`: the token being asked about **does not exist
 yet**, so there is no permanent for a static filter to find and no board state to
 read. It takes the printed-face keys (`types`, `not_types`, `subtypes`,
