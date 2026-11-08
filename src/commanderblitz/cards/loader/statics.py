@@ -18,6 +18,7 @@ from commanderblitz.engine.effects.selectors import (
 from commanderblitz.engine.effects.values import (
     PER_PLAYER_COUNT_KEYS,
     validate_counters_on,
+    validate_energy_spent_this_turn,
     validate_entered_filter,
     validate_mana_symbols,
     validate_per_player_count,
@@ -201,6 +202,9 @@ def _validate_cost_reduction(spec: Any, where: str) -> None:
                 f"{where}: a flat 'amount' needs a 'condition' -- an unconditional "
                 f"flat reduction is just a cheaper printed cost"
             )
+    elif key == "energy_spent_this_turn":
+        # A player spec, not a filter: the ledger is per player.
+        validate_energy_spent_this_turn(spec[key], f"{where}.{key}")
     else:
         filt = spec[key]
         if not isinstance(filt, Mapping):

@@ -1072,6 +1072,18 @@ class GameState:
             # and where it has gone since -- does not matter.
             if pid is not None:
                 ledger.cards_discarded[pid] = ledger.cards_discarded.get(pid, 0) + 1
+        elif event.type == EventType.ENERGY_PAID or (
+            event.type == EventType.COUNTER_REMOVED
+            and data.get("counter") == "energy"
+            and "oid" not in data
+        ):
+            # "…for each {E} you've paid or lost this turn" (Blaster Hulk). A
+            # payment and a removal off the *player* -- an object's
+            # COUNTER_REMOVED carries its `oid` and is a permanent's counters,
+            # not anybody's energy. Neither fires for nought.
+            if pid is not None:
+                spent = ledger.energy_spent
+                spent[pid] = spent.get(pid, 0) + int(data.get("amount") or 0)
         elif event.type == EventType.MANA_SPENT:
             # Expend's running total -- see `TurnLedger.mana_spent_on_spells`.
             # Only a payment toward a cast is marked `for_spell`; an

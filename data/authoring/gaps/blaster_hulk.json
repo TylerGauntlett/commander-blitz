@@ -3,16 +3,16 @@
   "name": "Blaster Hulk",
   "oracle_text": "This spell costs {1} less to cast for each {E} (energy counter) you've paid or lost this turn.\nHaste\nWhenever this creature attacks, you get {E}{E}, then you may pay eight {E}. When you do, this creature deals 8 damage divided as you choose among up to eight targets.",
   "blocked_sentences": [
-    "This spell costs {1} less to cast for each {E} (energy counter) you've paid or lost this turn."
+    "Whenever this creature attacks, you get {E}{E}, then you may pay eight {E}. When you do, this creature deals 8 damage divided as you choose among up to eight targets."
   ],
   "needs": [
     {
-      "capability": "energy_spent_this_turn",
-      "kind": "value",
-      "what": "a per-player turn ledger of energy counters paid or otherwise lost this turn (e.g. {\"energy_paid_or_lost_this_turn\": \"you\"}), usable as a card-level cost_reduction amount so the spell costs {1} less per energy counter",
-      "why_existing_wont_do": "cost_reduction takes only amount (a flat number gated by a condition), count, greatest_count, greatest_mana_value, total_mana_value or total_power, all of which read permanents; value_keys has turn ledgers for life gained/lost, cards drawn/discarded and counters put, but nothing that records energy counters paid or lost, and counters_on reads objects rather than a player's energy tally"
+      "capability": "divided_damage_on_trigger",
+      "kind": "engine",
+      "what": "`damage` with `divided` inside a reflexive ('When you do') triggered ability's effects, with the division announced as the reflexive trigger is put on the stack and its targets chosen (603.3d / 601.2d), over a target spec of 'up to eight targets' -- any target: creatures, planeswalkers, battles and players -- capped at one target per point of damage",
+      "why_existing_wont_do": "The first sentence is now `cost_reduction: {\"energy_spent_this_turn\": \"you\"}`, and the attack trigger, `add_energy`, the `may` with `pay: {\"pay_energy\": 8}` and `reflexive_trigger` all exist. But `damage.divided` is accepted only as a top-level spell effect over a `permanent` target spec: the loader refuses it on an ability, and dividing among players or 'any target' is not modelled (card-dsl.md, 'Dividing damage among targets'). Eight separate 1-damage targets or a fixed split would fix the division the printed card lets the controller choose, an approximation"
     }
   ],
-  "closest_existing": ["cost_reduction", "life_lost_this_turn", "counters_put_this_turn", "pay_energy"],
+  "closest_existing": ["damage.divided", "reflexive_trigger", "distribute_counters"],
   "confidence": "high"
 }

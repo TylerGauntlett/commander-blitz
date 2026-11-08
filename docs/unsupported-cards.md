@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**262 cards** blocked by **238** capabilities.
+**261 cards** blocked by **237** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -20,11 +20,11 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [rooms](#rooms) | 6 | 4163 | engine |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
+| [divided-damage-on-trigger](#divided-damage-on-trigger) | 4 | 2389 | engine |
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 4 | 714 | engine |
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
 | [copy-exception-set-subtypes](#copy-exception-set-subtypes) | 3 | 1740 | engine, op |
-| [divided-damage-on-trigger](#divided-damage-on-trigger) | 3 | 2389 | engine |
 | [escape](#escape) | 3 | 388 | engine, static_effect |
 | [omen](#omen) | 3 | 3355 | cost, engine |
 | [random-player-choice](#random-player-choice) | 3 | 5120 | op |
@@ -39,7 +39,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [council-s-dilemma](#council-s-dilemma) | 2 | 4067 | decision |
 | [devotion](#devotion) | 2 | 2401 | value |
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
-| [energy-spent-this-turn](#energy-spent-this-turn) | 2 | 4739 | value |
 | [face-down-filter](#face-down-filter) | 2 | 5772 | selector |
 | [manifest-dread](#manifest-dread) | 2 | 5772 | op |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
@@ -520,6 +519,32 @@ Blocks **5** cards.
 
 </details>
 
+## divided-damage-on-trigger
+
+Blocks **4** cards.
+
+- **(engine)** `damage` with `divided` inside a reflexive ('When you do') triggered ability's effects, with the division announced as the reflexive trigger is put on the stack and its targets chosen (603.3d / 601.2d), over a target spec of 'up to eight targets' -- any target: creatures, planeswalkers, battles and players -- capped at one target per point of damage
+  <br>Why the existing vocabulary won't do: The first sentence is now `cost_reduction: {"energy_spent_this_turn": "you"}`, and the attack trigger, `add_energy`, the `may` with `pay: {"pay_energy": 8}` and `reflexive_trigger` all exist. But `damage.divided` is accepted only as a top-level spell effect over a `permanent` target spec: the loader refuses it on an ability, and dividing among players or 'any target' is not modelled (card-dsl.md, 'Dividing damage among targets'). Eight separate 1-damage targets or a fixed split would fix the division the printed card lets the controller choose, an approximation
+- **(engine)** `damage` with `divided` inside a triggered ability's effects, with the division announced when the trigger is put on the stack and its targets chosen (603.3d / 601.2d), over an ability-level target spec of 'any number of target creatures and/or planeswalkers your opponents control' capped at one target per point of damage
+  <br>Why the existing vocabulary won't do: `damage.divided` exists, but `loader._check_division_homes` refuses it anywhere but a top-level spell effect ('divided damage is only supported as a top-level effect of a spell'), because the division is only announced from `Game._cast` and `engine.division.divided_damage` reads only `card.spell_effects`. `distribute_counters` is the activated-ability-only analogue and divides counters, not damage; fixed per-target `damage` effects would fix the target count and the split, an approximation
+- **(engine)** `damage` with `divided` inside a triggered ability's effects, with the division announced when the trigger is put on the stack and its targets chosen (603.3d / 601.2d), over an ability-level target spec of 'any number of target creatures and/or planeswalkers' capped at one target per point of damage
+  <br>Why the existing vocabulary won't do: `damage.divided` exists, but `loader._check_division_homes` refuses it anywhere but a top-level spell effect ('divided damage is only supported as a top-level effect of a spell'), because `Game._ask_damage_division` is only called from `Game._cast` and `engine.division.divided_damage` reads only `card.spell_effects`. `distribute_counters` is the activated-ability-only analogue and divides counters, not damage; splitting into fixed per-target `damage` effects would fix the target count and the split, an approximation
+- **(engine)** `damage` with `divided` inside a triggered ability's effects (self_enters and attacks triggers), with the division announced when the trigger is put on the stack and its targets chosen (603.3d / 601.2d), over an ability-level target spec of 'one, two, or three targets' that are ANY targets -- creatures, planeswalkers, battles and players -- each dealt at least one
+  <br>Why the existing vocabulary won't do: `damage.divided` exists, but `loader._check_division_homes` refuses it anywhere but a top-level spell effect ('divided damage is only supported as a top-level effect of a spell'), because `Game._ask_damage_division` is only called from `Game._cast` and `engine.division.divided_damage` reads only `card.spell_effects`. It also requires the divided spec to have kind `permanent`, and `ops_life._damage_divided` only calls `damage_permanent`, so a player can never receive a share. `distribute_counters` is the activated-ability-only analogue and divides counters, not damage; fixed per-target `damage` effects would fix the target count and the split, an approximation
+
+<details><summary>Cards waiting on this</summary>
+
+- **Fury** (rank 2389) — `fury`
+  - When this creature enters, it deals 4 damage divided as you choose among any number of target creatures and/or planeswalkers.
+- **Inferno Titan** (rank 2982) — `inferno_titan`
+  - Whenever this creature enters or attacks, it deals 3 damage divided as you choose among one, two, or three targets.
+- **Dragonlord Atarka** (rank 4563) — `dragonlord_atarka`
+  - When Dragonlord Atarka enters, it deals 5 damage divided as you choose among any number of target creatures and/or planeswalkers your opponents control.
+- **Blaster Hulk** (rank 7367) — `blaster_hulk`
+  - Whenever this creature attacks, you get {E}{E}, then you may pay eight {E}. When you do, this creature deals 8 damage divided as you choose among up to eight targets.
+
+</details>
+
 ## self-sacrificing-permanent-gate
 
 Blocks **4** cards.
@@ -619,28 +644,6 @@ Blocks **3** cards.
   - Whenever you discard a creature card, you may pay {2}{U}. If you do, create a tapped token that's a copy of that card, except it's a 4/4 black Zombie.
 - **God-Pharaoh's Gift** (rank 8873) — `god_pharaoh_s_gift`
   - If you do, create a token that's a copy of that card, except it's a 4/4 black Zombie.
-
-</details>
-
-## divided-damage-on-trigger
-
-Blocks **3** cards.
-
-- **(engine)** `damage` with `divided` inside a triggered ability's effects, with the division announced when the trigger is put on the stack and its targets chosen (603.3d / 601.2d), over an ability-level target spec of 'any number of target creatures and/or planeswalkers your opponents control' capped at one target per point of damage
-  <br>Why the existing vocabulary won't do: `damage.divided` exists, but `loader._check_division_homes` refuses it anywhere but a top-level spell effect ('divided damage is only supported as a top-level effect of a spell'), because the division is only announced from `Game._cast` and `engine.division.divided_damage` reads only `card.spell_effects`. `distribute_counters` is the activated-ability-only analogue and divides counters, not damage; fixed per-target `damage` effects would fix the target count and the split, an approximation
-- **(engine)** `damage` with `divided` inside a triggered ability's effects, with the division announced when the trigger is put on the stack and its targets chosen (603.3d / 601.2d), over an ability-level target spec of 'any number of target creatures and/or planeswalkers' capped at one target per point of damage
-  <br>Why the existing vocabulary won't do: `damage.divided` exists, but `loader._check_division_homes` refuses it anywhere but a top-level spell effect ('divided damage is only supported as a top-level effect of a spell'), because `Game._ask_damage_division` is only called from `Game._cast` and `engine.division.divided_damage` reads only `card.spell_effects`. `distribute_counters` is the activated-ability-only analogue and divides counters, not damage; splitting into fixed per-target `damage` effects would fix the target count and the split, an approximation
-- **(engine)** `damage` with `divided` inside a triggered ability's effects (self_enters and attacks triggers), with the division announced when the trigger is put on the stack and its targets chosen (603.3d / 601.2d), over an ability-level target spec of 'one, two, or three targets' that are ANY targets -- creatures, planeswalkers, battles and players -- each dealt at least one
-  <br>Why the existing vocabulary won't do: `damage.divided` exists, but `loader._check_division_homes` refuses it anywhere but a top-level spell effect ('divided damage is only supported as a top-level effect of a spell'), because `Game._ask_damage_division` is only called from `Game._cast` and `engine.division.divided_damage` reads only `card.spell_effects`. It also requires the divided spec to have kind `permanent`, and `ops_life._damage_divided` only calls `damage_permanent`, so a player can never receive a share. `distribute_counters` is the activated-ability-only analogue and divides counters, not damage; fixed per-target `damage` effects would fix the target count and the split, an approximation
-
-<details><summary>Cards waiting on this</summary>
-
-- **Fury** (rank 2389) — `fury`
-  - When this creature enters, it deals 4 damage divided as you choose among any number of target creatures and/or planeswalkers.
-- **Inferno Titan** (rank 2982) — `inferno_titan`
-  - Whenever this creature enters or attacks, it deals 3 damage divided as you choose among one, two, or three targets.
-- **Dragonlord Atarka** (rank 4563) — `dragonlord_atarka`
-  - When Dragonlord Atarka enters, it deals 5 damage divided as you choose among any number of target creatures and/or planeswalkers your opponents control.
 
 </details>
 
@@ -916,24 +919,6 @@ Blocks **2** cards.
   - Magma Opus deals 4 damage divided as you choose among any number of targets.
 - **Skarrgan Hellkite** (rank 13459) — `skarrgan_hellkite`
   - {3}{R}: This creature deals 2 damage divided as you choose among one or two targets. Activate only if this creature has a +1/+1 counter on it.
-
-</details>
-
-## energy-spent-this-turn
-
-Blocks **2** cards.
-
-- **(value)** a per-player turn ledger of energy counters paid or otherwise lost this turn (e.g. {"energy_paid_or_lost_this_turn": "you"}), usable as a card-level cost_reduction amount so the spell costs {1} less per energy counter
-  <br>Why the existing vocabulary won't do: cost_reduction takes only amount (a flat number gated by a condition), count, greatest_count, greatest_mana_value, total_mana_value or total_power, all of which read permanents; value_keys has turn ledgers for life gained/lost, cards drawn/discarded and counters put, but nothing that records energy counters paid or lost, and counters_on reads objects rather than a player's energy tally
-- **(value)** a value counting the energy a player paid or lost this turn (pay_energy costs plus energy removed by effects such as lose_all_player_counters), usable as an activated ability's condition compared >= 4
-  <br>Why the existing vocabulary won't do: value_keys has life_lost_this_turn, counters_put_this_turn and cards_discarded_this_turn but no per-turn energy-paid/lost ledger; the current energy total does not say how much was spent
-
-<details><summary>Cards waiting on this</summary>
-
-- **Izzet Generatorium** (rank 4739) — `izzet_generatorium`
-  - {T}: Draw a card. Activate only if you've paid or lost four or more {E} this turn.
-- **Blaster Hulk** (rank 7367) — `blaster_hulk`
-  - This spell costs {1} less to cast for each {E} (energy counter) you've paid or lost this turn.
 
 </details>
 

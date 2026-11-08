@@ -2374,6 +2374,15 @@ class TurnLedger:
     #: discard madness sent to exile counts too (702.35a: it is still
     #: discarded), and a discard paid as a cost counts like any other.
     cards_discarded: dict[int, int] = field(default_factory=dict)
+    #: How much **energy** each player has paid or lost this turn: player id ->
+    #: counters. Blaster Hulk's "{1} less for each {E} you've paid or lost this
+    #: turn" and Izzet Generatorium's "activate only if you've paid or lost four
+    #: or more {E} this turn". Folded off ENERGY_PAID (a `pay_energy` cost,
+    #: 107.14) and off a player's energy COUNTER_REMOVED (a removal effect such
+    #: as `lose_all_player_counters`), so both ways the count goes down are
+    #: counted and nothing that gave energy offsets them. Not derivable from
+    #: `Player.energy`: getting two and paying two leaves it where it was.
+    energy_spent: dict[int, int] = field(default_factory=dict)
 
     #: Every permanent that has **entered the battlefield** this turn, in the
     #: order it arrived, as :class:`EnteredPermanent` snapshots.
@@ -2513,6 +2522,7 @@ class TurnLedger:
         self.modes_chosen.clear()
         self.discarded.clear()
         self.cards_discarded.clear()
+        self.energy_spent.clear()
         self.permanents_entered.clear()
         self.counters_put.clear()
         self.combats = 0

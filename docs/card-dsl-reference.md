@@ -13,14 +13,14 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Effect ops](#effect-ops) | 171 |
 | [Selectors](#selectors) | 76 |
 | [Player specs](#player-specs) | 9 |
-| [Values](#values) | 70 |
+| [Values](#values) | 71 |
 | [Conditions](#conditions) | 34 |
 | [Trigger events](#trigger-events) | 53 |
 | [Trigger filters](#trigger-filters) | 37 |
 | [Static effects](#static-effects) | 96 |
 | [Player-wide statics](#player-wide-statics) | 46 |
 | [Grantable statics](#grantable-statics) | 43 |
-| [Cost reduction](#cost-reduction) | 6 |
+| [Cost reduction](#cost-reduction) | 7 |
 | [Ability costs](#ability-costs) | 32 |
 | [Card-level costs](#card-level-costs) | 32 |
 | [Keywords](#keywords) | 45 |
@@ -348,6 +348,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `damage_dealt_to_this_turn` | Damage dealt this turn to one permanent (`to`, an object reference), by sources a player spec (`by`) controlled as it was dealt; readable after the permanent has left. | ["…damage dealt to Grothama this turn by sources they controlled"](card-dsl.md#damage-dealt-to-grothama-this-turn-by-sources-they-controlled) |
 | `damage_taken_this_turn` | Damage the player was dealt this turn, summed over a plural spec (bloodthirst). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `distinct` | Distinct values of a quality among a pool (domain, coven, delirium, colors, kinds of counters, names). | [Counting different values rather than objects](card-dsl.md#counting-different-values-rather-than-objects) |
+| `energy_spent_this_turn` | Energy ({E}) the player paid or lost this turn. | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `extreme_value` | The greatest/least of a quality in a pool, as one number. | [Value expressions](card-dsl.md#value-expressions) |
 | `greatest_discarded_by_a_player` | The greatest number of cards one player discarded this way. | [Discarding a whole hand, and reading the greatest that went](card-dsl.md#discarding-a-whole-hand-and-reading-the-greatest-that-went) |
 | `half` | Half of a value, rounded `up` or `down`. | [Value expressions](card-dsl.md#value-expressions) |
@@ -752,6 +753,7 @@ The arithmetic heads a card-level `cost_reduction`, a `spell_cost_reduction` sta
 |---|---|---|
 | `amount` | Costs N less (usually gated on a `condition`). | [An activated ability that gets cheaper](card-dsl-cookbook.md#an-activated-ability-that-gets-cheaper) |
 | `count` | Costs {1} less for each object a filter finds. | [An activated ability that gets cheaper](card-dsl-cookbook.md#an-activated-ability-that-gets-cheaper) |
+| `energy_spent_this_turn` | Costs {1} less for each {E} a player paid or lost this turn. | [A reduction that reads energy paid or lost](card-dsl.md#a-reduction-that-reads-energy-paid-or-lost) |
 | `greatest_count` | …for the greatest number any one player has. | [A reduction that maximises a per-player tally](card-dsl.md#a-reduction-that-maximises-a-per-player-tally) |
 | `greatest_mana_value` | …by the greatest mana value among a filter's objects. | […by the greatest mana value of a commander you own](card-dsl-cookbook.md#by-the-greatest-mana-value-of-a-commander-you-own) |
 | `total_mana_value` | …by the total mana value of a filter's objects. | [A reduction that sums mana values](card-dsl.md#a-reduction-that-sums-mana-values) |

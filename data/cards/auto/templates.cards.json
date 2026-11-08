@@ -108166,6 +108166,61 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "you"
+          },
+          "affects_player": "you",
+          "counter": "energy",
+          "counter_addend": 1,
+          "effect": "replace_counters",
+          "kind": "static",
+          "text": "If you would get one or more {E} (energy counters), you get that many plus one {E} instead."
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "energy_spent_this_turn": "you"
+            },
+            "right": {
+              "const": 4
+            }
+          },
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}: Draw a card. Activate only if you've paid or lost four or more {E} this turn."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "izzet_generatorium",
+      "mana_cost": "{U}{R}",
+      "name": "Izzet Generatorium",
+      "oracle_text": "If you would get one or more {E} (energy counters), you get that many plus one {E} instead.\n{T}: Draw a card. Activate only if you've paid or lost four or more {E} this turn.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

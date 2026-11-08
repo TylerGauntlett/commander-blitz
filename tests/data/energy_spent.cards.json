@@ -1,0 +1,38 @@
+{
+  "_comment": "Cards that exist only for tests/unit/ledger/test_energy_spent_this_turn.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_es_hulk` is Blaster Hulk's price on a plain creature; `t_es_generatorium` is Izzet Generatorium's activation restriction.",
+  "cards": [
+    {
+      "id": "t_es_hulk",
+      "name": "Test Energy Hulk",
+      "oracle_text": "This spell costs {1} less to cast for each {E} you've paid or lost this turn.",
+      "mana_cost": "{4}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Construct"],
+      "power": 5,
+      "toughness": 5,
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "cost_reduction": {"energy_spent_this_turn": "you"}
+    },
+    {
+      "id": "t_es_generatorium",
+      "name": "Test Energy Generatorium",
+      "oracle_text": "{T}: Draw a card. Activate only if you've paid or lost four or more {E} this turn.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Draw a card. Activate only if you've paid or lost four or more {E} this turn.",
+          "cost": {"tap": true},
+          "condition": {
+            "cmp": ">=",
+            "left": {"energy_spent_this_turn": "you"},
+            "right": {"const": 4}
+          },
+          "effects": [{"op": "draw", "amount": {"const": 1}}]
+        }
+      ]
+    }
+  ]
+}

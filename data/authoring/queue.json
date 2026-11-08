@@ -141072,12 +141072,12 @@
     },
     "Izzet Generatorium": {
       "edhrec_rank": 4739,
-      "gate": "template",
+      "gate": null,
       "name": "Izzet Generatorium",
-      "reason": "no template for: If you would get one or more {E} , you get that many plus one {E} instead",
+      "reason": "",
       "scryfall_id": "3a78f479-aa17-417a-a81b-e8747656ba23",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Izzet Guildgate": {
