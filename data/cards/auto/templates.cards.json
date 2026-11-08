@@ -79794,6 +79794,59 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects_player": "any",
+          "amount": {
+            "const": 1
+          },
+          "effect": "extra_land_drops",
+          "kind": "static",
+          "text": "Each player may play an additional land on each of their turns."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "draw",
+              "player": {
+                "binding": "event_player"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each player's upkeep, if that player has no cards in hand, that player draws three cards.",
+          "trigger": {
+            "condition": {
+              "cmp": "=",
+              "left": {
+                "cards_in_hand": {
+                  "binding": "event_player"
+                }
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "controller": "any",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "ghirapur_orrery",
+      "mana_cost": "{4}",
+      "name": "Ghirapur Orrery",
+      "oracle_text": "Each player may play an additional land on each of their turns.\nAt the beginning of each player's upkeep, if that player has no cards in hand, that player draws three cards.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -103447,6 +103500,76 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "intellectual_offering",
+      "mana_cost": "{4}{U}",
+      "name": "Intellectual Offering",
+      "oracle_text": "Choose an opponent. You and that player each draw three cards.\nChoose an opponent. Untap all nonland permanents you control and all nonland permanents that player controls.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "drawer",
+          "op": "choose_player",
+          "players": "each_opponent",
+          "prompt": "Choose an opponent to draw three cards"
+        },
+        {
+          "amount": {
+            "const": 3
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "const": 3
+          },
+          "op": "draw",
+          "player": {
+            "binding": "drawer"
+          }
+        },
+        {
+          "as": "untapper",
+          "op": "choose_player",
+          "players": "each_opponent",
+          "prompt": "Choose an opponent whose nonland permanents untap"
+        },
+        {
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "untap"
+        },
+        {
+          "objects": {
+            "controller": {
+              "binding": "untapper"
+            },
+            "count": "all",
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "untap"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -107653,6 +107776,75 @@
         {
           "effects": [
             {
+              "op": "create_token",
+              "token": "cat_2_2_g"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you draw your second card each turn, create a 2/2 green Cat creature token.",
+          "trigger": {
+            "controller": "you",
+            "event": "draw",
+            "nth": 2
+          }
+        },
+        {
+          "cost": {
+            "mana": "{4}{G}{G}"
+          },
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "cards_in_hand": "you"
+              },
+              "toughness": {
+                "cards_in_hand": "you"
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "{4}{G}{G}: Until end of turn, creatures you control have base power and toughness X/X, where X is the number of cards in your hand."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "jolrael_mwonvuli_recluse",
+      "mana_cost": "{1}{G}",
+      "name": "Jolrael, Mwonvuli Recluse",
+      "oracle_text": "Whenever you draw your second card each turn, create a 2/2 green Cat creature token.\n{4}{G}{G}: Until end of turn, creatures you control have base power and toughness X/X, where X is the number of cards in your hand.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Druid"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 1
               },
@@ -109111,6 +109303,77 @@
         "Beast"
       ],
       "toughness": 9,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "counters_on": {
+                      "counter": "+1/+1",
+                      "objects": {
+                        "binding": "each"
+                      }
+                    }
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "binding": "each"
+                  },
+                  "op": "add_counters"
+                }
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "for_each"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, double the number of +1/+1 counters on each creature you control.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "kalonian_hydra",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{3}{G}{G}",
+      "name": "Kalonian Hydra",
+      "oracle_text": "Trample\nThis creature enters with four +1/+1 counters on it.\nWhenever this creature attacks, double the number of +1/+1 counters on each creature you control.",
+      "power": 0,
+      "replacements": [
+        {
+          "amount": 4,
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Hydra"
+      ],
+      "toughness": 0,
       "types": [
         "Creature"
       ]

@@ -6936,6 +6936,10 @@
   "ghalta_primal_hunger": {
     "zone": "battlefield"
   },
+  "ghirapur_orrery": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "ghirapur_osprey": {
     "zone": "battlefield"
   },
@@ -8853,6 +8857,16 @@
   "inspiring_vantage": {
     "zone": "battlefield"
   },
+  "intellectual_offering": {
+    "hand_size": {
+      "0": 4
+    },
+    "library_size": {
+      "0": 37,
+      "1": 17
+    },
+    "zone": "graveyard"
+  },
   "intelligence_bobblehead": {
     "battlefield_count": 33,
     "hand_size": {
@@ -9196,6 +9210,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "jolrael_mwonvuli_recluse": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "joraga_visionary": {
     "hand_size": {
       "0": 2
@@ -9301,6 +9322,14 @@
     "zone": "battlefield"
   },
   "kalonian_behemoth": {
+    "zone": "battlefield"
+  },
+  "kalonian_hydra": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 4,
+      "kind": "+1/+1"
+    },
     "zone": "battlefield"
   },
   "kalonian_tusker": {

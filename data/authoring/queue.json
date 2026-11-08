@@ -107582,12 +107582,12 @@
     },
     "Ghirapur Orrery": {
       "edhrec_rank": 2570,
-      "gate": "template",
+      "gate": null,
       "name": "Ghirapur Orrery",
-      "reason": "no template for: Each player may play an additional land on each of their turns",
+      "reason": "",
       "scryfall_id": "2dde7d22-f235-4368-8fbe-17f6cf0508b3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ghirapur Osprey": {
@@ -138022,12 +138022,12 @@
     },
     "Intellectual Offering": {
       "edhrec_rank": 7321,
-      "gate": "template",
+      "gate": null,
       "name": "Intellectual Offering",
-      "reason": "no template for: Choose an opponent. You and that player each draw three cards",
+      "reason": "",
       "scryfall_id": "78fa7463-cd59-4654-ada8-7854efee5aa4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Intelligence Bobblehead": {
@@ -143662,12 +143662,12 @@
     },
     "Jolrael, Mwonvuli Recluse": {
       "edhrec_rank": 2815,
-      "gate": "template",
+      "gate": null,
       "name": "Jolrael, Mwonvuli Recluse",
-      "reason": "no template for: Whenever you draw your second card each turn, create a 2/2 green Cat creature token",
+      "reason": "",
       "scryfall_id": "258bfd1a-ec8d-453d-a957-814110e2dcaf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jolrael, Voice of Zhalfir": {
@@ -145362,12 +145362,12 @@
     },
     "Kalonian Hydra": {
       "edhrec_rank": 1103,
-      "gate": "template",
+      "gate": null,
       "name": "Kalonian Hydra",
-      "reason": "no template for: This creature enters with four +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "9a936dcd-684a-47f6-860c-2f3541d8286c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kalonian Tusker": {
