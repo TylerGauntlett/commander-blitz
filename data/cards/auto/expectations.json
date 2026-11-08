@@ -15137,6 +15137,14 @@
       "0": 42
     }
   },
+  "saw_in_half": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 4
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
   "scabland": {
     "zone": "battlefield"
   },

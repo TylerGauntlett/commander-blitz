@@ -178334,6 +178334,82 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "saw_in_half",
+      "mana_cost": "{2}{B}",
+      "name": "Saw in Half",
+      "oracle_text": "Destroy target creature. If that creature dies this way, its controller creates two tokens that are copies of that creature, except their power is half that creature's power and their toughness is half that creature's toughness. Round up each time.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "sawn",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "as": "destroyed",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        },
+        {
+          "amount": 2,
+          "controller": {
+            "controller_of": "sawn"
+          },
+          "except_": {
+            "power": {
+              "half": {
+                "of": {
+                  "power_of": {
+                    "var": "sawn"
+                  }
+                },
+                "round": "up"
+              }
+            },
+            "toughness": {
+              "half": {
+                "of": {
+                  "toughness_of": {
+                    "var": "sawn"
+                  }
+                },
+                "round": "up"
+              }
+            }
+          },
+          "objects": {
+            "binding": "destroyed",
+            "zone": "graveyard"
+          },
+          "op": "copy_permanent"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {

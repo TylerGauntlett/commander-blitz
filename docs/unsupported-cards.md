@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**257 cards** blocked by **235** capabilities.
+**256 cards** blocked by **233** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -85,7 +85,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [conditional-play-exiled-with-source](#conditional-play-exiled-with-source) | 1 | 4225 | static_effect |
 | [control-while-has-counter](#control-while-has-counter) | 1 | 10319 | op |
 | [convoke](#convoke) | 1 | 11110 | cost |
-| [copy-except-computed-pt](#copy-except-computed-pt) | 1 | 586 | op |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
 | [copy-this-spell-on-resolution](#copy-this-spell-on-resolution) | 1 | 338 | op |
 | [cost-reduction-per-attacker-this-turn](#cost-reduction-per-attacker-this-turn) | 1 | 9578 | value |
@@ -97,7 +96,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [delayed-creature-dies](#delayed-creature-dies) | 1 | 1661 | trigger_event |
 | [demon-token-5-5-b-flying](#demon-token-5-5-b-flying) | 1 | 7993 | token |
 | [devil-token](#devil-token) | 1 | 4163 | token |
-| [dies-this-way](#dies-this-way) | 1 | 586 | condition |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [distribute-counters-spell](#distribute-counters-spell) | 1 | 6993 | op |
 | [divided-damage-on-activated](#divided-damage-on-activated) | 1 | 13459 | engine |
@@ -1635,20 +1633,6 @@ Blocks **1** card.
 
 </details>
 
-## copy-except-computed-pt
-
-Blocks **1** card.
-
-- **(op)** copy_permanent's `except` power/toughness must accept a value expression evaluated at resolution (e.g. {"half": {"of": {"power_had": ...}, "round": "up"}} read from the destroyed creature's last known power/toughness), stored as the token's copiable base P/T
-  <br>Why the existing vocabulary won't do: copy_permanent's `except`/`except_` is a static dict copied verbatim into copy_overrides, and characteristics.py reads copy_overrides['power'/'toughness'] with int(), so only printed constants (eternalize's 4/4) work; the `half` value exists but cannot be fed into a copy exception
-
-<details><summary>Cards waiting on this</summary>
-
-- **Saw in Half** (rank 586) — `saw_in_half`
-  - Destroy target creature. If that creature dies this way, its controller creates two tokens that are copies of that creature, except their power is half that creature's power and their toughness is half that creature's toughness. Round up each time.
-
-</details>
-
 ## copy-for-each-other-target
 
 Blocks **1** card.
@@ -1802,20 +1786,6 @@ Blocks **1** card.
   - When you unlock this door, create three 1/1 red Devil creature tokens with "When this token dies, it deals 1 damage to any target."
   - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
   - If a source you control would deal noncombat damage to an opponent, it deals that much damage plus 2 instead.
-
-</details>
-
-## dies-this-way
-
-Blocks **1** card.
-
-- **(condition)** a condition that the object destroyed by this spell's `destroy` (bound with `as`) actually died, i.e. went to the graveyard rather than being saved by indestructible/regeneration or replaced to exile, plus copy_permanent reaching that object in the graveyard and creating the tokens under its controller (controller: that creature's last controller)
-  <br>Why the existing vocabulary won't do: `destroy` has `as` and `if` has `zone_is`/`exists`, but no shipped card shows a 'dies this way' check on a destroyed target nor copy_permanent's controller resolving to the destroyed creature's last controller; low certainty this part is missing, the P/T exception is the definite blocker
-
-<details><summary>Cards waiting on this</summary>
-
-- **Saw in Half** (rank 586) — `saw_in_half`
-  - Destroy target creature. If that creature dies this way, its controller creates two tokens that are copies of that creature, except their power is half that creature's power and their toughness is half that creature's toughness. Round up each time.
 
 </details>
 
