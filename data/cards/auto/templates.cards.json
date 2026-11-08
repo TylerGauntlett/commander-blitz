@@ -93845,6 +93845,114 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "link": true,
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            },
+            {
+              "op": "create_token",
+              "token": "food_token"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "optional": true,
+              "selector": {
+                "controller": "any",
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Whenever this creature enters or attacks, exile up to one target card from a graveyard and create a Food token.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "link": true,
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            },
+            {
+              "op": "create_token",
+              "token": "food_token"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "optional": true,
+              "selector": {
+                "controller": "any",
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Whenever this creature enters or attacks, exile up to one target card from a graveyard and create a Food token.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Food"
+            ]
+          },
+          "effect": "grant_exiled_abilities",
+          "kind": "static",
+          "text": "Foods you control have all activated abilities of all creature cards exiled with this creature.",
+          "types": [
+            "Creature"
+          ]
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "hazel_s_brewmaster",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{3}{B}",
+      "name": "Hazel's Brewmaster",
+      "oracle_text": "Menace\nWhenever this creature enters or attacks, exile up to one target card from a graveyard and create a Food token.\nFoods you control have all activated abilities of all creature cards exiled with this creature.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Squirrel",
+        "Warlock"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_spells": {
             "colors": [
               "R"
@@ -199944,6 +200052,76 @@
       "toughness": 2,
       "types": [
         "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "link": true,
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 3,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Land"
+                ],
+                "zone": "graveyard"
+              },
+              "up_to": true
+            }
+          ],
+          "text": "When this creature enters, exile up to three target land cards from your graveyard.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_exiled_abilities",
+          "kind": "static",
+          "text": "Creatures you control have all activated abilities of all land cards exiled with this creature.",
+          "types": [
+            "Land"
+          ]
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "steward_of_the_harvest",
+      "mana_cost": "{3}{G}",
+      "name": "Steward of the Harvest",
+      "oracle_text": "When this creature enters, exile up to three target land cards from your graveyard.\nCreatures you control have all activated abilities of all land cards exiled with this creature.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Druid"
+      ],
+      "toughness": 3,
+      "types": [
         "Creature"
       ]
     },

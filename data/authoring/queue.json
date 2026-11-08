@@ -124022,12 +124022,12 @@
     },
     "Hazel's Brewmaster": {
       "edhrec_rank": 2263,
-      "gate": "template",
+      "gate": null,
       "name": "Hazel's Brewmaster",
-      "reason": "no template for: Whenever this creature enters or attacks, exile up to one target card from a graveyard and",
+      "reason": "",
       "scryfall_id": "52af8b70-a9c8-40d7-99da-fa51dc293688",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hazel's Nocturne": {
@@ -264322,12 +264322,12 @@
     },
     "Steward of the Harvest": {
       "edhrec_rank": 8370,
-      "gate": "template",
+      "gate": null,
       "name": "Steward of the Harvest",
-      "reason": "no template for: When this creature enters, exile up to three target land cards from your graveyard",
+      "reason": "",
       "scryfall_id": "1676e2b1-f112-4932-8492-e5d5d9e764ed",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stick Together": {

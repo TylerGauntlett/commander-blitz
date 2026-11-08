@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**255 cards** blocked by **232** capabilities.
+**253 cards** blocked by **231** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -40,7 +40,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [devotion](#devotion) | 2 | 2401 | value |
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
 | [face-down-filter](#face-down-filter) | 2 | 5772 | selector |
-| [grant-abilities-of-exiled-cards](#grant-abilities-of-exiled-cards) | 2 | 2263 | static_effect |
 | [manifest-dread](#manifest-dread) | 2 | 5772 | op |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
@@ -928,24 +927,6 @@ Blocks **2** cards.
   - Landfall — Whenever a land you control enters, manifest dread if this is the first time this ability has resolved this turn. Otherwise, you may turn a permanent you control face up
 - **Primordial Mist** (rank 6544) — `primordial_mist`
   - Exile a face-down permanent you control face up: You may play that card this turn. (You still pay its costs. Timing rules still apply.)
-
-</details>
-
-## grant-abilities-of-exiled-cards
-
-Blocks **2** cards.
-
-- **(static_effect)** a static ability that gives each permanent matching its `affects` filter (here Food artifacts you control: `subtypes: ["Food"]`, `controller: you`) every activated ability (mana abilities included) printed on the cards matching an `exiled_with: self` selector narrowed by type (here creature cards), read live from exile so the set grows as the enters/attacks trigger exiles more cards, and ending when the source leaves the battlefield
-  <br>Why the existing vocabulary won't do: The `grant_ability` static only hands over a fixed ability written in the card's own `grantable_abilities` by index, so it cannot borrow abilities from whatever cards happen to be exiled; `imprint_characteristics` reads an exiled card but copies only power, toughness and creature types, never abilities; `exiled_with` exists only as an effect selector key, not in `static_filter_keys` or `static_affects_filter_keys`
-- **(static_effect)** a static ability that gives each permanent matching its `affects` filter every activated ability (mana abilities included) printed on the cards matching an `exiled_with: self` selector, read live from exile so the set changes as cards are exiled with the source, and ending when the source leaves the battlefield
-  <br>Why the existing vocabulary won't do: The `grant_ability` static only hands over a fixed ability written in the card's own `grantable_abilities` by index, so it cannot borrow abilities from whatever cards happen to be exiled; `imprint_characteristics` reads an exiled card but copies only power, toughness and creature types (Duplicant), never abilities; `exiled_with` exists only as an effect selector key, not in `static_filter_keys`
-
-<details><summary>Cards waiting on this</summary>
-
-- **Hazel's Brewmaster** (rank 2263) — `hazel_s_brewmaster`
-  - Foods you control have all activated abilities of all creature cards exiled with this creature.
-- **Steward of the Harvest** (rank 8370) — `steward_of_the_harvest`
-  - Creatures you control have all activated abilities of all land cards exiled with this creature.
 
 </details>
 

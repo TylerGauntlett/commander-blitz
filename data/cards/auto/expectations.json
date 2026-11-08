@@ -8089,6 +8089,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "hazel_s_brewmaster": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "food_token"
+    },
+    "zone": "battlefield"
+  },
   "hazoret_s_monument": {
     "battlefield_count": 33,
     "hand_size": {
@@ -16993,6 +17001,13 @@
     "zone": "battlefield"
   },
   "sterling_hound": {
+    "zone": "battlefield"
+  },
+  "steward_of_the_harvest": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
     "zone": "battlefield"
   },
   "steward_of_valeron": {

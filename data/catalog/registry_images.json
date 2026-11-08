@@ -7216,6 +7216,10 @@
     "artist": "Anna Pavleeva",
     "scryfall_id": "1269ca79-907e-4932-9e77-a9a5d2929060"
   },
+  "hazel_s_brewmaster": {
+    "artist": "Simon Dominic",
+    "scryfall_id": "52af8b70-a9c8-40d7-99da-fa51dc293688"
+  },
   "hazoret_s_monument": {
     "artist": "Richard Wright",
     "scryfall_id": "72fdb06f-f18d-47ee-b431-c23c0d042459"
@@ -15331,6 +15335,10 @@
   "sterling_hound": {
     "artist": "Leon Tukker",
     "scryfall_id": "9e5bfcf5-6e5c-47fe-af6c-6b18938261c6"
+  },
+  "steward_of_the_harvest": {
+    "artist": "Marie Magny",
+    "scryfall_id": "1676e2b1-f112-4932-8492-e5d5d9e764ed"
   },
   "steward_of_valeron": {
     "artist": "Greg Staples",
