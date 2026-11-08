@@ -360,6 +360,16 @@ class TargetModel(BaseModel):
     #: refused on a triggered ability's targets, which have no cast to have
     #: been kicked.
     count_if_kicked: int | Literal["any"] | dict[str, Any] | None = None
+    #: The ``selector`` this spec takes instead **when the spell was kicked**
+    #: -- "Exile target artifact or enchantment. If this spell was kicked,
+    #: exile target nonland permanent instead" (Tear Asunder). One target
+    #: either way; only what it may be changes, and the kicked cast both
+    #: declares it and re-checks it on resolution (608.2b) against this
+    #: selector. Validated as a selector of the spec's own kind. Refused on a
+    #: card with no ``kicker``, on an ability's targets, beside ``mode``,
+    #: ``gift_promised`` or ``cost_option``, when it names a sibling target or
+    #: ``{X}``, and when it is the unkicked ``selector`` over again.
+    selector_if_kicked: dict[str, Any] | None = None
     #: Which side of the **gift promise** declares this target. ``true``: only
     #: a promised cast does -- "if the gift was promised, return target
     #: creature card from your graveyard to your hand" (Consumed by Greed).

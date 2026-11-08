@@ -1,0 +1,24 @@
+{
+  "_comment": "Cards that exist only for the kicked-selector target test (tests/unit/targets/test_selector_if_kicked.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_tear_asunder` is Tear Asunder: one target that is an artifact or enchantment unkicked and any nonland permanent kicked.",
+  "cards": [
+    {
+      "id": "t_tear_asunder",
+      "name": "Test Tear Asunder",
+      "oracle_text": "Kicker {1}{B} (You may pay an additional {1}{B} as you cast this spell.)\nExile target artifact or enchantment. If this spell was kicked, exile target nonland permanent instead.",
+      "mana_cost": "{1}{G}",
+      "types": ["Instant"],
+      "colors": ["G"],
+      "color_identity": ["B", "G"],
+      "kicker": "{1}{B}",
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": { "zone": "battlefield", "any_types": ["Artifact", "Enchantment"] },
+          "selector_if_kicked": { "zone": "battlefield", "not_types": ["Land"] }
+        }
+      ],
+      "spell_effects": [{ "op": "exile", "objects": { "target": "t1" } }]
+    }
+  ]
+}

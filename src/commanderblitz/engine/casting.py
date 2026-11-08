@@ -588,6 +588,53 @@ def warp_cost(state: GameState, pid: int, card: CardDef) -> str | None:
     return granted_warp_cost(state, pid, card)
 
 
+def _kicked_lines(
+    state: GameState,
+    pid: int,
+    oid: int,
+    card: CardDef,
+    tuples,
+    *,
+    extra_generic: int,
+    own_specs_only: bool = False,
+) -> list[Action]:
+    """The kicked cast line, on a card with a ``kicker``.
+
+    "If this spell was kicked, **instead choose any number of** target
+    creatures you own" -- The Eagles Are Coming!; "exile target nonland
+    permanent **instead**" -- Tear Asunder. When a spec carries a
+    `count_if_kicked` or a `selector_if_kicked`, the kicked line gets its own
+    enumeration from `targeting.kicked_targets`, because its target list is not
+    the unkicked one: ``tuples`` was built from the printed specs and is shared
+    by every other line on this object.
+
+    Legal at 601.2c precisely because kicker is announced at 601.2b, one step
+    earlier -- the choice is already made when the targets are declared.
+    Payment (601.2h) is later and is not what this reads.
+
+    ``own_specs_only`` is the caller with no unkicked tuples at all: then only
+    a kicked list of its own can offer anything.
+    """
+    if card.kicker is None:
+        return []
+    kicked_specs = kicked_targets(card.targets)
+    if kicked_specs is None:
+        if own_specs_only:
+            return []
+        kicked_tuples = tuples
+    else:
+        kicked_tuples = enumerate_target_tuples(
+            state,
+            pid,
+            kicked_specs,
+            oid,
+            defer=deferred_target_spec(state, card, kicked_specs),
+        )
+    return _cast_variant(
+        state, pid, oid, card, kicked_tuples, extra_generic=extra_generic, kicked=True
+    )
+
+
 def _gift_lines(
     state: GameState,
     pid: int,
@@ -666,8 +713,12 @@ def _cast_options(
         # Nothing the unpromised cast could point at -- but a promise may
         # declare a different target, and Into the Flood Maw facing only an
         # opponent's artifact is castable promised and not otherwise. Only the
-        # promised lines, then: every other variant shares `tuples`.
-        return _gift_lines(state, pid, oid, card, tuples, extra_generic=extra_generic)
+        # promised lines, then: every other variant shares `tuples`. The
+        # kicked line likewise, when kicking declares a different target --
+        # Tear Asunder facing only a creature is castable kicked.
+        return _kicked_lines(
+            state, pid, oid, card, tuples, extra_generic=extra_generic, own_specs_only=True
+        ) + _gift_lines(state, pid, oid, card, tuples, extra_generic=extra_generic)
 
     plain = _cast_variant(
         state,
@@ -732,31 +783,7 @@ def _cast_options(
                 kicked=False,
                 granted_cost=tuple(sorted((str(k), int(v)) for k, v in granted.items())),
             )
-    if card.kicker is not None:
-        # "If this spell was kicked, **instead choose any number of** target
-        # creatures you own" -- The Eagles Are Coming!. The kicked line gets its
-        # own enumeration, because the size of its target list is not the
-        # unkicked one: `tuples` above was built from the printed counts and is
-        # shared by every other line on this object.
-        #
-        # Legal at 601.2c precisely because kicker is announced at 601.2b, one
-        # step earlier -- the choice is already made when the targets are
-        # declared. Payment (601.2h) is later and is not what this reads.
-        kicked_specs = kicked_targets(card.targets)
-        kicked_tuples = (
-            tuples
-            if kicked_specs is None
-            else enumerate_target_tuples(
-                state,
-                pid,
-                kicked_specs,
-                oid,
-                defer=deferred_target_spec(state, card, kicked_specs),
-            )
-        )
-        out += _cast_variant(
-            state, pid, oid, card, kicked_tuples, extra_generic=extra_generic, kicked=True
-        )
+    out += _kicked_lines(state, pid, oid, card, tuples, extra_generic=extra_generic)
     # Gift (702.164a): "you may promise an opponent a gift as you cast this
     # spell". Kicker's slot -- an optional cast-time choice offered as extra
     # lines beside the plain one -- with two differences that are the whole

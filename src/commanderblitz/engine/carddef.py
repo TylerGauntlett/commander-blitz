@@ -100,6 +100,13 @@ class TargetSpec:
     #: enumeration. Nothing outside that line ever sees it, so an unkicked cast is
     #: byte-for-byte the card it was before.
     count_if_kicked: int | str | Mapping[str, Any] | None = None
+    #: The selector this spec declares and is re-checked against instead when
+    #: the spell was kicked -- "exile target artifact or enchantment. If this
+    #: spell was kicked, exile target nonland permanent instead" (Tear
+    #: Asunder). Swapped in by `targeting.kicked_targets` beside
+    #: :attr:`count_if_kicked`, so the kicked cast line's enumeration and
+    #: `stack._resolve_spell`'s 608.2b re-check both read it.
+    selector_if_kicked: Mapping[str, Any] | None = None
     #: Which side of the gift promise declares this spec: ``True`` only a
     #: promised cast, ``False`` only an unpromised one, ``None`` both. The
     #: loader has already split the card's specs into :attr:`CardDef.targets`

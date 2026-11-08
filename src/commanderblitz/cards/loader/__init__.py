@@ -1305,7 +1305,8 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         # For the one computed count a spell may carry: "each of X targets"
         # needs an {X} to be sized by.
         mana_cost=model.mana_cost,
-        # `count_if_kicked` names a choice made at 601.2b, so there has to be one.
+        # `count_if_kicked` and `selector_if_kicked` name a choice made at
+        # 601.2b, so there has to be one.
         has_kicker=model.kicker is not None or model.multikicker is not None,
         # `gift_promised` names the 601.2b promise, so there has to be one.
         has_gift=model.gift is not None,
@@ -1627,7 +1628,12 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     # kicked half is *how many targets it takes*. Counted here for `buyback`'s
     # reason -- the rider is what the extra mana buys -- or the card would be
     # refused as half a kicker while being the printed card.
-    targets_read_kicked = any(t.count_if_kicked is not None for t in model.targets)
+    # `selector_if_kicked` reads it the same way: Tear Asunder's kicked half
+    # is *what* its one target may be.
+    targets_read_kicked = any(
+        t.count_if_kicked is not None or t.selector_if_kicked is not None
+        for t in model.targets
+    )
     reads_kicked = _mentions_kicked(model) or model.buyback or targets_read_kicked
     if _mentions_kicked(model) and kicker is None:
         raise DslError(f"{where}: reads the 'kicked' condition but has no 'kicker' cost")

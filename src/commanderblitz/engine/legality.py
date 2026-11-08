@@ -50,7 +50,7 @@ from .player_statics import (
     player_plays_lands_from_library_top,
 )
 from .structs import TargetRef
-from .targeting import describe_ref, enumerate_target_tuples
+from .targeting import describe_ref, enumerate_target_tuples, kicked_targets
 from .zones import enters_cost_offer, enters_cost_options
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -518,10 +518,30 @@ def unplayable_reason(state: GameState, pid: int, oid: int) -> str | None:
     exclude_sid = state.objects[oid].stack_id
     # Either side of a gift promise will do: a card whose unpromised target is
     # missing is still castable promised, when the promise declares another.
-    # Any tier likewise (702.183): Omnislash declares nothing.
+    # Any tier likewise (702.183): Omnislash declares nothing. And the kicked
+    # list, when the kicked cost is payable: a Tear Asunder with no artifact
+    # or enchantment to exile still casts kicked at a creature.
+    kicked = (
+        kicked_targets(card.targets)
+        if card.kicker is not None
+        and can_pay_mana(
+            state,
+            pid,
+            card.mana_cost.plus(card.kicker),
+            x=x,
+            extra_generic=-discount,
+            purpose=purpose,
+        )
+        else None
+    )
     if not any(
         enumerate_target_tuples(state, pid, specs, oid, exclude_sid=exclude_sid)
-        for specs in (card.targets, card.gift_targets, *card.cost_option_targets.values())
+        for specs in (
+            card.targets,
+            card.gift_targets,
+            kicked,
+            *card.cost_option_targets.values(),
+        )
         if specs is not None
     ):
         return "targets"

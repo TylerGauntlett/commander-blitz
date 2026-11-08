@@ -2786,6 +2786,50 @@ battlefield, exactly as `cast_x` does for "enters with X counters":
 `{"kicked": ...}` reads the resolution context *or* the object, which are the
 flag's two lifetimes and never overlap.
 
+### A kicked cast declares different targets
+
+Kicker is announced at 601.2b, one step before 601.2c declares the targets, so
+"if this spell was kicked … **instead**" can change the target itself rather
+than what the spell does to it. Two keys on a spell's target spec say how:
+
+| Key | Printed clause | Example |
+|---|---|---|
+| `count_if_kicked` | "Choose target creature you own. If this spell was kicked, instead choose **any number of** target creatures you own." | The Eagles Are Coming! |
+| `selector_if_kicked` | "Exile target artifact or enchantment. If this spell was kicked, exile target **nonland permanent** instead." | Tear Asunder |
+
+```jsonc
+{
+  "id": "tear_asunder",
+  "mana_cost": "{1}{G}",
+  "kicker": "{1}{B}",
+  "targets": [
+    { "id": "t", "kind": "permanent",
+      "selector": { "any_types": ["Artifact", "Enchantment"], "zone": "battlefield" },
+      "selector_if_kicked": { "not_types": ["Land"], "zone": "battlefield" } }
+  ],
+  "spell_effects": [ { "op": "exile", "objects": { "target": "t" } } ]
+}
+```
+
+`targeting.kicked_targets` swaps the kicked count and selector into the specs,
+and both ends of the spell call it: the kicked cast line enumerates its targets
+from the swapped specs, and `stack._resolve_spell` splits and re-checks the
+stored refs against them (608.2b). A kicked Tear Asunder aimed at a creature
+therefore resolves, and fizzles only if that creature has left or become an
+illegal target. The unkicked line never sees either key. Either key counts as
+reading `kicked`, so the half-a-kicker guard is satisfied without an `if`.
+
+`selector_if_kicked` is checked as a selector of the spec's own kind, the way
+`selector` is. The loader refuses it on a card with no `kicker`, on an
+ability's targets (no cast declares them), beside `mode`, `gift_promised` or
+`cost_option`, when it names a sibling target or `{X}`, and when it repeats the
+unkicked `selector`.
+
+The near misses: two specs, one per side, cannot be sized to zero on the other
+side — every stored ref is split by position, so the kicked side's ref is read
+back into the first spec's bucket. Making both `optional` lets an unkicked cast
+aim at a creature, and a `choose_mode` cannot restrict a mode to kicked casts.
+
 ## Gift — a promise made to one opponent, for nothing
 
 **Gift a tapped Fish** (702.164a): "You may promise an opponent a gift as you
