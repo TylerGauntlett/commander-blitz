@@ -136,7 +136,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [free-cast-this-turn](#free-cast-this-turn) | 1 | 6651 | op |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
 | [fully-unlock-room](#fully-unlock-room) | 1 | 3452 | trigger_event |
-| [gift](#gift) | 1 | 13806 | trigger_event |
+| [gift-given-trigger](#gift-given-trigger) | 1 | 13806 | trigger_event |
 | [goad-without-goaded](#goad-without-goaded) | 1 | 973 | op |
 | [gold-token](#gold-token) | 1 | 705 | token |
 | [grant-abilities-of-exiled-cards](#grant-abilities-of-exiled-cards) | 1 | 8370 | static_effect |
@@ -2378,7 +2378,7 @@ Blocks **1** card.
 
 </details>
 
-## gift
+## gift-given-trigger
 
 Blocks **1** card.
 

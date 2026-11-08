@@ -116329,6 +116329,78 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "effects": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "as": "drew",
+                      "op": "draw",
+                      "player": {
+                        "binding": "each_player"
+                      }
+                    }
+                  ],
+                  "op": "may",
+                  "player": {
+                    "binding": "each_player"
+                  },
+                  "prompt": "Draw a card?"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_player"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": {
+                "binding": "drew"
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}: Each player may draw a card, then each player who drew a card this way gains 1 life."
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "kwain_itinerant_meddler",
+      "mana_cost": "{W}{U}",
+      "name": "Kwain, Itinerant Meddler",
+      "oracle_text": "{T}: Each player may draw a card, then each player who drew a card this way gains 1 life.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Rabbit",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -121519,6 +121591,59 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "gift": "a card",
+      "id": "long_river_s_pull",
+      "mana_cost": "{U}{U}",
+      "name": "Long River's Pull",
+      "oracle_text": "Gift a card (You may promise an opponent a gift as you cast this spell. If you do, they draw a card before its other effects.)\nCounter target creature spell. If the gift was promised, instead counter target spell.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "draw",
+          "player": "gift_recipient"
+        },
+        {
+          "op": "counter",
+          "target": "t1"
+        },
+        {
+          "op": "counter",
+          "target": "t2"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "gift_promised": false,
+          "id": "t1",
+          "kind": "spell",
+          "selector": {
+            "types": [
+              "Creature"
+            ]
+          }
+        },
+        {
+          "count": 1,
+          "gift_promised": true,
+          "id": "t2",
+          "kind": "spell"
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -135907,6 +136032,223 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "max": [
+                  {
+                    "minus": [
+                      {
+                        "cards_in_hand": {
+                          "binding": "defender"
+                        }
+                      },
+                      {
+                        "cards_in_hand": "you"
+                      }
+                    ]
+                  },
+                  {
+                    "const": 0
+                  }
+                ]
+              },
+              "as": "drew",
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "condition": {
+                "cmp": "=",
+                "left": {
+                  "player_count": {
+                    "binding": "drew"
+                  }
+                },
+                "right": {
+                  "const": 0
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "chooser": "controller",
+                        "controller": "you",
+                        "count": 1,
+                        "types": [
+                          "Creature"
+                        ],
+                        "zone": "hand"
+                      },
+                      "op": "put_onto_battlefield"
+                    }
+                  ],
+                  "op": "may",
+                  "prompt": "Put a creature card from your hand onto the battlefield?"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Mr. Foxglove attacks, draw cards equal to the number of cards in defending player's hand minus the number of cards in your hand. If you didn't draw cards this way, you may put a creature card from your hand onto the battlefield.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "U",
+        "W"
+      ],
+      "id": "mr_foxglove",
+      "keywords": [
+        "lifelink"
+      ],
+      "mana_cost": "{2}{G}{W}{U}",
+      "name": "Mr. Foxglove",
+      "oracle_text": "Lifelink\nWhenever Mr. Foxglove attacks, draw cards equal to the number of cards in defending player's hand minus the number of cards in your hand. If you didn't draw cards this way, you may put a creature card from your hand onto the battlefield.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Fox",
+        "Rogue"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": {
+                "target": "t1"
+              }
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t2"
+              },
+              "op": "add_counters"
+            },
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "flying"
+              ],
+              "objects": {
+                "target": "t2"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "condition": {
+                "cmp": "==",
+                "left": {
+                  "resolutions_this_turn": "self"
+                },
+                "right": {
+                  "const": 2
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            },
+            {
+              "count": 1,
+              "id": "t2",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever you cast a spell, target opponent draws a card. Put a +1/+1 counter on target creature. It gains flying until end of turn. If this is the second time this ability has resolved this turn, you draw two cards.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "U",
+        "W"
+      ],
+      "id": "ms_bumbleflower",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{1}{G}{W}{U}",
+      "name": "Ms. Bumbleflower",
+      "oracle_text": "Vigilance\nWhenever you cast a spell, target opponent draws a card. Put a +1/+1 counter on target creature. It gains flying until end of turn. If this is the second time this ability has resolved this turn, you draw two cards.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Rabbit",
+        "Citizen"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -144621,6 +144963,89 @@
           "effects": [
             {
               "amount": {
+                "const": 1
+              },
+              "controller": "gift_recipient",
+              "op": "create_token",
+              "token": "octopus_8_8_u"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Gift an Octopus",
+          "trigger": {
+            "condition": {
+              "gift_promised": true
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "entered_this_turn": true,
+                "is_token": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "At the beginning of each end step, create a token that's a copy of target creature token that entered the battlefield this turn.",
+          "trigger": {
+            "controller": "any",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "gift": "an Octopus",
+      "id": "octomancer",
+      "mana_cost": "{3}{G}{U}",
+      "name": "Octomancer",
+      "oracle_text": "Gift an Octopus (You may promise an opponent a gift as you cast this spell. If you do, when it enters, they create an 8/8 blue Octopus creature token.)\nAt the beginning of each end step, create a token that's a copy of target creature token that entered the battlefield this turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Frog",
+        "Druid"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
                 "const": 2
               },
               "op": "scry",
@@ -151501,6 +151926,82 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "gift": "a card",
+      "id": "peerless_recycling",
+      "mana_cost": "{1}{G}",
+      "name": "Peerless Recycling",
+      "oracle_text": "Gift a card (You may promise an opponent a gift as you cast this spell. If you do, they draw a card before its other effects.)\nReturn target permanent card from your graveyard to your hand. If the gift was promised, instead return two target permanent cards from your graveyard to your hand.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "draw",
+          "player": "gift_recipient"
+        },
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "return_to_hand"
+        },
+        {
+          "objects": {
+            "target": "t2"
+          },
+          "op": "return_to_hand"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "gift_promised": false,
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Creature",
+              "Enchantment",
+              "Land",
+              "Planeswalker",
+              "Battle"
+            ],
+            "controller": "you",
+            "zone": "graveyard"
+          }
+        },
+        {
+          "count": 2,
+          "gift_promised": true,
+          "id": "t2",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Creature",
+              "Enchantment",
+              "Land",
+              "Planeswalker",
+              "Battle"
+            ],
+            "controller": "you",
+            "zone": "graveyard"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {

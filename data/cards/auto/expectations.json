@@ -9892,6 +9892,10 @@
     },
     "zone": "battlefield"
   },
+  "kwain_itinerant_meddler": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "kyoshi_warrior_guard": {
     "zone": "battlefield"
   },
@@ -10306,6 +10310,9 @@
   "long_range_sensor": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "long_river_s_pull": {
+    "zone": "graveyard"
   },
   "longbow_archer": {
     "zone": "battlefield"
@@ -11623,6 +11630,17 @@
   "mox_sapphire": {
     "zone": "battlefield"
   },
+  "mr_foxglove": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "ms_bumbleflower": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "muck_rats": {
     "zone": "battlefield"
   },
@@ -12325,6 +12343,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "octomancer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "octoprophet": {
     "zone": "battlefield"
   },
@@ -12858,6 +12880,15 @@
     },
     "life": {
       "0": 20
+    },
+    "zone": "graveyard"
+  },
+  "peerless_recycling": {
+    "graveyard_size": {
+      "0": 1
+    },
+    "hand_size": {
+      "0": 3
     },
     "zone": "graveyard"
   },

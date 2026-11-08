@@ -4,7 +4,7 @@
   "oracle_text": "Whenever you give a gift, draw a card.",
   "blocked_sentences": ["Whenever you give a gift, draw a card."],
   "needs": [{
-    "capability": "gift",
+    "capability": "gift_given_trigger",
     "kind": "trigger_event",
     "what": "a trigger event that fires when its controller gives a gift (702.174: a spell with a promised gift resolves, or a permanent spell's gift is given as it enters), for 'Whenever you give a gift'",
     "why_existing_wont_do": "The card-level `gift` cost and the `gift_promised` condition let a gift card read whether its own gift was promised, but no entry in `trigger_events` reports a gift being given by any spell or permanent; `spell_cast` with a filter would fire on promise at cast time rather than on the gift being given at resolution, and could not see gifts from permanents' enter-time gifts"

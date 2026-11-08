@@ -153322,12 +153322,12 @@
     },
     "Kwain, Itinerant Meddler": {
       "edhrec_rank": 2235,
-      "gate": "template",
+      "gate": null,
       "name": "Kwain, Itinerant Meddler",
-      "reason": "no template for: {T}: Each player may draw a card, then each player who drew a card this way gains 1 life",
+      "reason": "",
       "scryfall_id": "941f5231-5620-45e5-9f00-a7f64f0385dc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kwende, Pride of Femeref": {
@@ -160862,12 +160862,12 @@
     },
     "Long River's Pull": {
       "edhrec_rank": 1434,
-      "gate": "template",
+      "gate": null,
       "name": "Long River's Pull",
-      "reason": "no template for: Gift a card",
+      "reason": "",
       "scryfall_id": "1c81d0fa-81a1-4f9b-a5fd-5a648fd01dea",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Long Road Home": {
@@ -180372,12 +180372,12 @@
     },
     "Mr. Foxglove": {
       "edhrec_rank": 6875,
-      "gate": "template",
+      "gate": null,
       "name": "Mr. Foxglove",
-      "reason": "no template for: Whenever attacks, draw cards equal to the number of cards in defending player's hand minus",
+      "reason": "",
       "scryfall_id": "8504e660-1a15-472d-8e5c-dee0c1d26c8f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mr. House, President and CEO": {
@@ -180402,12 +180402,12 @@
     },
     "Ms. Bumbleflower": {
       "edhrec_rank": 3143,
-      "gate": "template",
+      "gate": null,
       "name": "Ms. Bumbleflower",
-      "reason": "no template for: Whenever you cast a spell, target opponent draws a card. Put a +1/+1 counter on target cre",
+      "reason": "",
       "scryfall_id": "42bbedc1-6b83-46b4-8b3b-a4e05ce77d87",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ms. Marvel, Elastic Ally": {
@@ -191012,12 +191012,12 @@
     },
     "Octomancer": {
       "edhrec_rank": 4377,
-      "gate": "template",
+      "gate": null,
       "name": "Octomancer",
-      "reason": "no template for: Gift an Octopus",
+      "reason": "",
       "scryfall_id": "0da07361-5c92-4708-8314-ba0dce11daf9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Octoprophet": {
@@ -199292,12 +199292,12 @@
     },
     "Peerless Recycling": {
       "edhrec_rank": 2677,
-      "gate": "template",
+      "gate": null,
       "name": "Peerless Recycling",
-      "reason": "no template for: Gift a card",
+      "reason": "",
       "scryfall_id": "5f72466c-505b-4371-9366-0fde525a37e6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Peerless Ropemaster": {
