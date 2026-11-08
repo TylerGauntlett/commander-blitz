@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**263 cards** blocked by **241** capabilities.
+**262 cards** blocked by **240** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -45,7 +45,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
 | [return-face-down](#return-face-down) | 2 | 3081 | op |
-| [sacrifice-x](#sacrifice-x) | 2 | 998 | cost |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [turn-face-up](#turn-face-up) | 2 | 5772 | op |
 | [venture](#venture) | 2 | 19644 | engine |
@@ -1030,25 +1029,6 @@ Blocks **2** cards.
   - Whenever another nontoken creature you control dies, you may return it to the battlefield face down under its owner's control. It's a Forest land.
 - **Deathmist Raptor** (rank 6493) — `deathmist_raptor`
   - Whenever a permanent you control is turned face up, you may return this card from your graveyard to the battlefield face up or face down.
-
-</details>
-
-## sacrifice-x
-
-Blocks **2** cards.
-
-- **(cost)** an activated-ability sacrifice cost whose count is a variable X chosen by the activator (any number of Squirrels, including 0), with X readable by the effects as {"x": ...} for a pump of +X/-X
-  <br>Why the existing vocabulary won't do: the sacrifice cost's count is a fixed integer (costs.py reads int(spec['count'])); x_value derives X from a value rather than letting the player choose how many permanents to sacrifice, and discard_x/pay_life_x exist only for discard and life
-- **(cost)** an activated-ability cost that sacrifices a player-announced number X of permanents matching a selector (here Foods), with X announced at activation (601.2b, 107.3), bounded by the matching permanents the controller can sacrifice, and read back by the effects with {"x": true} -- the sacrifice analogue of `discard_x`
-  <br>Why the existing vocabulary won't do: `sacrifice` in cost_keys takes a fixed integer `count` (costs.pay pops `count` as an int, default 1), and `x_value` defines an {X} in the mana cost rather than a sacrifice count; the only announced-X non-mana costs are `discard_x`, `loyalty_x` and `pay_life_x`. Sacrificing in an effect instead would move the payment to resolution, which the brief forbids
-
-<details><summary>Cards waiting on this</summary>
-
-- **Chatterfang, Squirrel General** (rank 998) — `chatterfang_squirrel_general`
-  - If one or more tokens would be created under your control, those tokens plus that many 1/1 green Squirrel creature tokens are created instead.
-  - {B}, Sacrifice X Squirrels: Target creature gets +X/-X until end of turn.
-- **Insatiable Frugivore** (rank 10240) — `insatiable_frugivore`
-  - {3}{B}, Sacrifice X Foods: Creatures you control get +X/+0 and gain menace until end of turn.
 
 </details>
 
@@ -3866,7 +3846,6 @@ Blocks **1** card.
 
 - **Chatterfang, Squirrel General** (rank 998) — `chatterfang_squirrel_general`
   - If one or more tokens would be created under your control, those tokens plus that many 1/1 green Squirrel creature tokens are created instead.
-  - {B}, Sacrifice X Squirrels: Target creature gets +X/-X until end of turn.
 
 </details>
 

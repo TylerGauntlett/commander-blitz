@@ -103851,6 +103851,113 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "food_token"
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "create_token",
+                  "token": "food_token"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "exile_from_graveyard": {
+                  "count": 3
+                }
+              },
+              "prompt": "Exile three cards from your graveyard to create another Food?",
+              "repeat": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, create a Food token, then you may exile three cards from your graveyard. If you do, repeat this process.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}{B}",
+            "sacrifice_x": {
+              "subtypes": [
+                "Food"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "x": true
+              },
+              "toughness": {
+                "const": 0
+              }
+            },
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "menace"
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}{B}, Sacrifice X Foods: Creatures you control get +X/+0 and gain menace until end of turn."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "insatiable_frugivore",
+      "mana_cost": "{3}{B}",
+      "name": "Insatiable Frugivore",
+      "oracle_text": "When this creature enters, create a Food token, then you may exile three cards from your graveyard. If you do, repeat this process.\n{3}{B}, Sacrifice X Foods: Creatures you control get +X/+0 and gain menace until end of turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Rat",
+        "Berserker"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],

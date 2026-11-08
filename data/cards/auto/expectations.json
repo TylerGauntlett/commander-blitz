@@ -8853,6 +8853,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "insatiable_frugivore": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "zone": "battlefield"
+  },
   "insatiable_harpy": {
     "zone": "battlefield"
   },

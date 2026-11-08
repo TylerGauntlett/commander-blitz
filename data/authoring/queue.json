@@ -137332,12 +137332,12 @@
     },
     "Insatiable Frugivore": {
       "edhrec_rank": 10240,
-      "gate": "template",
+      "gate": null,
       "name": "Insatiable Frugivore",
-      "reason": "no template for: When this creature enters, create a Food token, then you may exile three cards from your g",
+      "reason": "",
       "scryfall_id": "2ef58a8f-ce72-40c2-b032-818cc16267ce",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Insatiable Gorgers": {

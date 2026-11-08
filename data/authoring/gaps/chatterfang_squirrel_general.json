@@ -3,8 +3,7 @@
   "name": "Chatterfang, Squirrel General",
   "oracle_text": "Forestwalk (This creature can't be blocked as long as defending player controls a Forest.)\nIf one or more tokens would be created under your control, those tokens plus that many 1/1 green Squirrel creature tokens are created instead.\n{B}, Sacrifice X Squirrels: Target creature gets +X/-X until end of turn.",
   "blocked_sentences": [
-    "If one or more tokens would be created under your control, those tokens plus that many 1/1 green Squirrel creature tokens are created instead.",
-    "{B}, Sacrifice X Squirrels: Target creature gets +X/-X until end of turn."
+    "If one or more tokens would be created under your control, those tokens plus that many 1/1 green Squirrel creature tokens are created instead."
   ],
   "needs": [
     {
@@ -12,19 +11,11 @@
       "kind": "replacement",
       "what": "a replace_token_creation addition that keeps the pending tokens and adds N copies of a listed token id, where N is the number of tokens in the event ('those tokens plus that many 1/1 green Squirrel tokens'), e.g. and_create with a per-token count flag",
       "why_existing_wont_do": "and_create adds one of each listed id once per creation event (Stridehangar Automaton), so three Treasures would bring one Squirrel instead of three; token_multiplier doubles the original tokens' own ids rather than adding Squirrels; create_instead replaces the tokens"
-    },
-    {
-      "capability": "sacrifice_x",
-      "kind": "cost",
-      "what": "an activated-ability sacrifice cost whose count is a variable X chosen by the activator (any number of Squirrels, including 0), with X readable by the effects as {\"x\": ...} for a pump of +X/-X",
-      "why_existing_wont_do": "the sacrifice cost's count is a fixed integer (costs.py reads int(spec['count'])); x_value derives X from a value rather than letting the player choose how many permanents to sacrifice, and discard_x/pay_life_x exist only for discard and life"
     }
   ],
   "closest_existing": [
     "and_create",
-    "token_multiplier",
-    "discard_x",
-    "pay_life_x"
+    "token_multiplier"
   ],
   "confidence": "high"
 }
