@@ -278022,12 +278022,12 @@
     },
     "Tenuous Truce": {
       "edhrec_rank": 3248,
-      "gate": "template",
+      "gate": null,
       "name": "Tenuous Truce",
-      "reason": "no template for: Enchant opponent",
+      "reason": "",
       "scryfall_id": "387d54f1-bf1d-44f1-9576-cc912a51358c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tenured Concocter": {

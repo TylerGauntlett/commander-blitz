@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**256 cards** blocked by **235** capabilities.
+**255 cards** blocked by **234** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -59,7 +59,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
-| [attack-enchanted-player-or-planeswalker](#attack-enchanted-player-or-planeswalker) | 1 | 3248 | trigger_event |
 | [attack-tax-x-count](#attack-tax-x-count) | 1 | 671 | value |
 | [attacking-opponents-of-player](#attacking-opponents-of-player) | 1 | 705 | selector |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
@@ -1263,20 +1262,6 @@ Blocks **1** card.
 
 - **Witchbane Orb** (rank 16177) — `witchbane_orb`
   - When this artifact enters, destroy all Curses attached to you
-
-</details>
-
-## attack-enchanted-player-or-planeswalker
-
-Blocks **1** card.
-
-- **(trigger_event)** a `defending` value on `creatures_attack_player` meaning "the seat this Aura is attached to OR a planeswalker that player controls" -- i.e. the event's folded defender seat compared against the Aura's attached_to_player, without the seat-only restriction. The other half of the sentence ("when they attack you or a planeswalker you control") is already sayable as `creatures_attack_player` with `controller: any`, `defending: you` and condition `{is_active_player: enchanted_player}`; the end-step draw and Enchant opponent are also sayable (Overencumbered / Archnemesis shapes)
-  <br>Why the existing vocabulary won't do: `defending: enchanted_player` (triggers._defender_matches) deliberately requires at least one attacker declared at the seat itself and rejects attacks aimed only at that player's planeswalkers, which is Archnemesis's narrower sentence. `defending: opponent` fires on attacks at any opponent, not just the enchanted one. No condition or value can compare the event's `{binding: defender}` seat to the enchanted player: `attacking_player` takes only you/opponent/any/most_life or a binding, and is seat-only too
-
-<details><summary>Cards waiting on this</summary>
-
-- **Tenuous Truce** (rank 3248) — `tenuous_truce`
-  - When you attack enchanted opponent or a planeswalker they control or when they attack you or a planeswalker you control, sacrifice this Aura.
 
 </details>
 

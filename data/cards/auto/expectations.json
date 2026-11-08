@@ -17823,6 +17823,14 @@
   "tenement_crasher": {
     "zone": "battlefield"
   },
+  "tenuous_truce": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "terastodon": {
     "battlefield_count": 33,
     "graveyard_size": {

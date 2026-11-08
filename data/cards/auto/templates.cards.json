@@ -211478,6 +211478,102 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "enchanted_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of enchanted opponent's end step, you and that player each draw a card.",
+          "trigger": {
+            "condition": {
+              "is_active_player": "enchanted_player"
+            },
+            "controller": "any",
+            "event": "end_step"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "sacrifice"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When you attack enchanted opponent or a planeswalker they control or when they attack you or a planeswalker you control, sacrifice this Aura.",
+          "trigger": {
+            "controller": "you",
+            "defending": "enchanted_player_or_planeswalker",
+            "event": "creatures_attack_player"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "sacrifice"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When you attack enchanted opponent or a planeswalker they control or when they attack you or a planeswalker you control, sacrifice this Aura.",
+          "trigger": {
+            "condition": {
+              "is_active_player": "enchanted_player"
+            },
+            "controller": "any",
+            "defending": "you",
+            "event": "creatures_attack_player",
+            "recheck": false
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "tenuous_truce",
+      "mana_cost": "{1}{W}",
+      "name": "Tenuous Truce",
+      "oracle_text": "Enchant opponent\nAt the beginning of enchanted opponent's end step, you and that player each draw a card.\nWhen you attack enchanted opponent or a planeswalker they control or when they attack you or a planeswalker you control, sacrifice this Aura.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "opponent"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "effects": [
                 {
                   "as": "victim",
