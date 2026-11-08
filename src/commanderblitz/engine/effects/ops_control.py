@@ -6,7 +6,7 @@ from collections.abc import Mapping
 from dataclasses import replace
 from typing import TYPE_CHECKING, Any
 
-from ..carddef import Cost, TriggerSpec
+from ..carddef import Cost, TriggerSpec, instance_target_id, is_repeatable
 from ..costs import can_pay, mana_sources, pay
 from ..mana import OTHER_PAYMENT, max_affordable_times, max_affordable_x
 from ..player_statics import forced_discard_or_sacrifice_barred
@@ -20,6 +20,7 @@ from .context import EffectContext, ask_mode, ask_player, ask_x, ask_yes_no
 from .modes import (
     _mode_flag,
     ask_none_or_exactly,
+    ask_repeated_modes,
     chosen_at_random,
     modal_bounds,
     mode_labels,
@@ -860,6 +861,10 @@ def op_choose_mode(ctx: EffectContext, spec: Mapping[str, Any]):
         # earlier. Off the seeded `state.rng`, so a replay picks the same.
         chosen = pick_at_random(ctx.state, offered, min(floor, len(offered)))
         record_per_turn(ctx.state, ctx.source_oid, spec, labels, chosen)
+    elif is_repeatable(spec):
+        # "You may choose the same mode more than once", with nobody having
+        # asked at cast -- a free cast of a card whose modes own no targets.
+        chosen = yield from ask_repeated_modes(ctx, labels, offered, chooser, floor, up_to)
     elif none_or_exactly(spec):
         # "You may choose two" -- a nested one, or one nobody answered as it
         # went on the stack. No mode owns a target here (the loader keeps
@@ -884,10 +889,47 @@ def op_choose_mode(ctx: EffectContext, spec: Mapping[str, Any]):
     # 700.2e: "the modes are executed in the order written on the card", not the
     # order they were clicked in -- which matters the moment one mode's effect
     # depends on another's having happened.
+    if is_repeatable(spec):
+        yield from _execute_instances(ctx, modes, chosen)
+        return
     for index in sorted(chosen):
         if once_each and not per_turn_modes and source is not None:
             source.flags.add(_mode_flag(labels[index]))
         yield from execute(ctx, modes[index].get("effects") or [])
+
+
+def _execute_instances(ctx: EffectContext, modes, chosen):
+    """Run a repeatable ``choose_mode``'s instances, each with its own targets.
+
+    700.2d: a mode chosen twice is two instances, and each declared its own
+    targets at 601.2c -- the second under `carddef.instance_target_id`'s
+    ``id#1``. While an instance runs, its targets are read under the printed
+    ids its effects name; 608.2b has already dropped an instance's illegal
+    target in `filter_legal`, so that instance does nothing to it and the
+    others are unaffected. Printed order (700.2e), repeats adjacent.
+    """
+    base = ctx.targets
+    seen: dict[int, int] = {}
+    try:
+        for index in sorted(chosen):
+            occurrence = seen.get(index, 0)
+            seen[index] = occurrence + 1
+            suffix = instance_target_id("", occurrence)
+            ctx.targets = (
+                base
+                if occurrence == 0
+                else {
+                    **base,
+                    **{
+                        key[: -len(suffix)]: refs
+                        for key, refs in base.items()
+                        if key.endswith(suffix)
+                    },
+                }
+            )
+            yield from execute(ctx, modes[index].get("effects") or [])
+    finally:
+        ctx.targets = base
 
 
 #: Guard on the budget loop, matching `join_forces`' and `may`'s. A mode priced

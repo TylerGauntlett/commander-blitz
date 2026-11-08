@@ -116,6 +116,7 @@ from .statics import (
 from .targets import (
     _check_reflexive_wiring,
     _compile_targets,
+    _names_target,
 )
 
 # The noqa is for the vocabulary constants this module does not read itself
@@ -1315,6 +1316,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         cost_options=len(model.additional_cost_options),
     )
     card_level = tuple(spec for spec in all_targets if spec.mode is None)
+    _check_repeatable_modes(model, cast_modes, all_targets, where)
     # The two sides of the gift promise, when a spec names one. The unpromised
     # list is `targets`, so every cast line that cannot promise -- flashback, a
     # free cast, a copy's default -- reads the right specs without knowing gift
@@ -3015,6 +3017,69 @@ def _has_per_turn_modes(effects: Any) -> bool:
     if isinstance(effects, (list, tuple)):
         return any(_has_per_turn_modes(v) for v in effects)
     return False
+
+
+def _has_repeatable_modes(effects: Any) -> bool:
+    """Does any ``choose_mode`` in this effect tree say ``repeatable: true``?"""
+    if isinstance(effects, Mapping):
+        if effects.get("op") == "choose_mode" and effects.get("repeatable") is True:
+            return True
+        return any(_has_repeatable_modes(v) for v in effects.values())
+    if isinstance(effects, (list, tuple)):
+        return any(_has_repeatable_modes(v) for v in effects)
+    return False
+
+
+def _check_repeatable_modes(
+    model: CardModel,
+    cast_modes: Mapping[str, Any] | None,
+    specs: tuple[TargetSpec, ...],
+    where: str,
+) -> None:
+    """A repeatable ``choose_mode`` is the spell's one cast-time modal question.
+
+    700.2d's instances are asked at 601.2b by `Game._ask_modes` and each
+    declares its own targets at 601.2c; a nested or second ``choose_mode`` is
+    answered on resolution, where no instance could declare anything. Each
+    instance's specs are stored as fixed-size slots (`carddef.mode_instances`),
+    so a sizeless one -- whose refs can only be split off as "whatever is
+    left" -- or one whose selector reads a sibling's answer by its printed id
+    has no unambiguous instance to belong to. Escalate fixes the mode count
+    from a cost, which "choose three" already fixes.
+    """
+    if not _has_repeatable_modes(model.spell_effects):
+        return
+    if cast_modes is None or cast_modes.get("repeatable") is not True:
+        raise DslError(
+            f"{where}.spell_effects: 'repeatable' needs the spell's effect tree to "
+            f"be one top-level 'choose_mode' -- a nested or second one is "
+            f"answered on resolution, where its instances cannot declare targets"
+        )
+    if model.escalate is not None:
+        raise DslError(
+            f"{where}: escalate fixes how many modes the cast pays for; a "
+            f"'repeatable' choose_mode already fixes it with 'count'"
+        )
+    for spec in specs:
+        if spec.mode is None:
+            continue
+        if spec.optional or spec.variable_size:
+            raise DslError(
+                f"{where}.target[{spec.id}]: a repeatable mode's target must be a "
+                f"fixed size -- each instance stores its own, and a sizeless one "
+                f"leaves no way to say where it ends"
+            )
+        linked = any(
+            _names_target(other.selector, spec.id) or _names_target(spec.selector, other.id)
+            for other in specs
+            if other is not spec
+        )
+        if linked:
+            raise DslError(
+                f"{where}.target[{spec.id}]: a repeatable mode's target cannot be "
+                f"linked to a sibling -- a second instance stores it under its "
+                f"own name"
+            )
 
 
 def _has_optional_modes(effects: Any) -> bool:

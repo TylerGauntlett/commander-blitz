@@ -4569,6 +4569,52 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             f"{where}: 'once_each' is for a permanent's repeated modal ability; "
             f"a spell chooses its modes as it is cast and remembers nothing"
         )
+    if "repeatable" in effect:
+        # "You may choose the same mode more than once" (700.2d): a multiset of
+        # exactly `count` modes ("up to" with `up_to`), each instance declaring
+        # its own targets at cast. Every other clause reshaping the answer is
+        # one `ask_repeated_modes` would ignore, and `budget` is the other
+        # multiset, priced and asked on resolution.
+        if op != "choose_mode":
+            raise DslError(f"{where}: 'repeatable' only means anything on choose_mode, not {op!r}")
+        if not isinstance(effect["repeatable"], bool):
+            raise DslError(f"{where}: 'repeatable' is a boolean, got {effect['repeatable']!r}")
+        if effect["repeatable"]:
+            clash = [
+                key
+                for key in (
+                    "budget", "or_more", "up_to_if", "all_if", "optional", "random",
+                    "chooser", "once_each",
+                )
+                if effect.get(key) not in (None, False)
+            ]
+            if clash:
+                raise DslError(
+                    f"{where}: a 'repeatable' choose_mode is `count` modes with "
+                    f"repeats, so {clash} cannot apply to it"
+                )
+            count = effect.get("count", 1)
+            if isinstance(count, dict) and "const" in count:
+                count = count["const"]
+            if not isinstance(count, int) or isinstance(count, bool) or count < 2:
+                # "Choose one" with repeats is "choose one"; and a computed count
+                # ("choose X") has no value at the moment the modes are asked.
+                raise DslError(
+                    f"{where}: 'repeatable' needs a fixed 'count' of at least 2; "
+                    f"got {count!r}"
+                )
+            if len(effect.get("modes") or ()) < 2:
+                raise DslError(
+                    f"{where}: 'repeatable' over one mode is that mode run "
+                    f"'count' times -- write a 'repeat'"
+                )
+            if ".spell_effects[" not in where:
+                # Asked at 601.2b by `Game._ask_modes`; a trigger's 603.3c
+                # question and an activation's 602.2b one have no repeat.
+                raise DslError(
+                    f"{where}: 'repeatable' is a spell's \"choose N, you may choose "
+                    f"the same mode more than once\", asked as it is cast"
+                )
 
     for key in ("then", "else", "effects"):
         if key in effect:

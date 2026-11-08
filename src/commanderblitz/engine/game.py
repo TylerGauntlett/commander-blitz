@@ -22,7 +22,7 @@ from commanderblitz.cards.registry import default_registry
 
 from . import legality, sba, stack, suspend, triggers, turn
 from .actions import GENERATOR_DECISIONS, Action, DecisionOption, PendingDecision
-from .carddef import Cost, stored_mode_specs
+from .carddef import Cost, is_repeatable, mode_instances, stored_mode_specs
 from .casting import (
     GRAVEYARD_CAST_SLOT,
     MORPH_COST,
@@ -59,7 +59,13 @@ from .costs import (
 )
 from .division import divided_damage, division_amount, division_caps, fits_division
 from .effects.context import EffectContext, ask_mode, ask_objects, ask_targets, ask_x, ask_yes_no
-from .effects.modes import chosen_at_random, modal_bounds, mode_labels, pick_at_random
+from .effects.modes import (
+    ask_repeated_modes,
+    chosen_at_random,
+    modal_bounds,
+    mode_labels,
+    pick_at_random,
+)
 from .effects.ops_mana import ask_split_mana
 from .enums import ActionKind, DecisionKind, Step, Zone
 from .errors import IllegalActionError, RulesLoopError
@@ -1734,6 +1740,17 @@ class Game:
             # ``exactly`` is escalate's count, already paid for.
             floor = up_to = exactly
         offered = list(range(len(modes))) if selectable is None else list(selectable)
+        if is_repeatable(spec):
+            # "You may choose the same mode more than once" (700.2d): one
+            # instance at a time, every offered mode still on offer after it
+            # is taken, so the multiset is `count` single-mode questions
+            # rather than one question per multiset. Each instance then
+            # declares its own targets in `_ask_mode_targets`. Not clamped to
+            # the modes on offer: one choosable mode fills every instance.
+            labels = mode_labels(modes)
+            return tuple(
+                (yield from ask_repeated_modes(ctx, labels, offered, pid, floor, up_to))
+            )
         # A floor that outruns what is on offer is not a spell that chooses
         # fewer modes -- it is one that cannot be cast, and `legality` already
         # declined to offer it. Clamped rather than asserted because a free cast
@@ -1780,8 +1797,11 @@ class Game:
             state=state, controller=pid, source_oid=oid, source_name=card.name
         )
         declared: dict[str, tuple[TargetRef, ...]] = {}
-        for index in sorted(modes):
-            for spec in card.mode_targets.get(index, ()):
+        # One entry per chosen *instance*: a mode taken twice under a
+        # repeatable `choose_mode` (700.2d) declares its targets twice, the
+        # second time under `instance_target_id`'s names.
+        for _index, _occurrence, specs in mode_instances(card.mode_targets, modes):
+            for spec in specs:
                 # A ref already taken by an earlier mode is **not** struck off.
                 # `enumerate_target_tuples` drops a tuple that reuses an object
                 # because those are the targets of one instance of the word

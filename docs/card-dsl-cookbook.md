@@ -11990,6 +11990,52 @@ moves, and every reader of the stored refs walks the same list. The loader
 admits one sizeless mode-owned spec per card, and none a sibling's selector
 names.
 
+### A mode chosen more than once
+
+```jsonc
+"targets": [
+  {"id": "grow", "kind": "permanent", "mode": 0,
+   "selector": {"zone": "battlefield", "types": ["Creature"]}},
+  {"id": "who", "kind": "player", "mode": 2}
+],
+"spell_effects": [
+  {"op": "choose_mode", "count": 3, "repeatable": true, "modes": [
+    {"label": "Put two +1/+1 counters on target creature.",
+     "effects": [{"op": "add_counters", "counter": "+1/+1", "amount": {"const": 2},
+                  "objects": {"target": "grow"}}]},
+    …
+  ]}
+]
+```
+
+Rootcast Apprenticeship and the Confluences: *"Choose three. You may choose the
+same mode more than once."* `repeatable: true` makes the answer a multiset of
+exactly `count` modes (with `up_to`, "choose up to four", at most `count`).
+700.2d makes each chosen instance a mode of its own, so each declares its own
+targets at 601.2c: three counters bullets are three targets, the same creature
+or three different ones.
+
+- **Asked one instance at a time** at cast (`modes.ask_repeated_modes`), every
+  mode with a legal target still on offer after it is taken, so the actions are
+  one per mode rather than one per multiset. The instances are recorded in
+  printed order on `StackItem.modes`, repeats included, and run that way
+  (700.2e).
+- **Each instance stores its own targets.** `carddef.mode_instances` gives the
+  first instance of a mode its printed spec ids and a later one `id#n`
+  (`instance_target_id`); `op_choose_mode` reads an instance's targets back
+  under the printed ids while it runs. 608.2b re-checks each instance alone, so
+  one whose target left does nothing and the others resolve.
+- **Refused at load:** anywhere but the single top-level `choose_mode` of a
+  spell; a `count` that is not a literal of at least two (so "choose X" is not
+  this); one mode; beside `budget`, `or_more`, `up_to_if`, `all_if`,
+  `optional`, `random`, `chooser`, `once_each` or escalate; an `optional` or
+  caster-sized mode-owned target, or one linked to a sibling; a `#` in any
+  target id.
+
+The near miss is `budget` (Season of Weaving), the other multiset: priced, and
+asked on resolution, where a mode can no longer declare a target. Plain `count`
+picks distinct modes, which is a weaker card.
+
 ## "Target creature phases out"
 
 ```jsonc

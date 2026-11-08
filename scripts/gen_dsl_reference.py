@@ -451,7 +451,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                         '"Each opponent sacrifices…" — a loop over players'),
     "may": ("Control flow", "Optional effects, with an optional `pay`; `as` records who said yes.",
             "`may`'s `as`, and `except` on a player spec"),
-    "choose_mode": ("Control flow", "Choose one or more modes and run them.", "Modal spells with a target"),
+    "choose_mode": ("Control flow", "Choose one or more modes and run them; `repeatable` lets one mode be "
+                    "chosen more than once, each instance with its own targets.", "Modal spells with a target"),
     "choose_type": ("Control flow", "Choose a creature, permanent or card type (`of`), readable later.",
                     '"Choose a creature type"'),
     "choose_color": ("Control flow", "Choose a color, readable later; `except_colors` removes colors from the offer.",

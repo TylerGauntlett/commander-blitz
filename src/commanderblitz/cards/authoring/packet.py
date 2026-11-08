@@ -1164,6 +1164,13 @@ def reference() -> dict:
             " if its mode is chosen. It must be a fixed count, never"
             " `optional`, and no card-level target on the same card may be"
             " variable-size.",
+            "\"Choose three. You may choose the same mode more than once.\" is"
+            " `repeatable: true` beside a literal `count` on that one top-level"
+            " `choose_mode` of a spell (700.2d). Each chosen instance declares"
+            " its own mode-owned targets, so a bullet's target spec is written"
+            " once and serves every instance; it must be a fixed size and"
+            " linked to no sibling. Not `budget`, which is the priced multiset"
+            " and can own no targets.",
             "The expectation is checked in a sandbox: player 0 at 40 life with a"
             " deep mana base, two creatures, and an opponent holding a creature,"
             " a flier, an artifact and an enchantment. The card under test is the"

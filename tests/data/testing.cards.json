@@ -14948,6 +14948,90 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_repeat_modes",
+      "name": "Test Repeated Modes",
+      "oracle_text": "Choose three. You may choose the same mode more than once.\n• Put two +1/+1 counters on target creature.\n• Target player gains 3 life.\n• Draw a card.",
+      "mana_cost": "{G}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "targets": [
+        {
+          "id": "creature",
+          "kind": "permanent",
+          "mode": 0,
+          "selector": {
+            "zone": "battlefield",
+            "types": [
+              "Creature"
+            ]
+          }
+        },
+        {
+          "id": "player",
+          "kind": "player",
+          "mode": 1,
+          "selector": {}
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "choose_mode",
+          "count": 3,
+          "repeatable": true,
+          "modes": [
+            {
+              "label": "Put two +1/+1 counters on target creature.",
+              "effects": [
+                {
+                  "op": "add_counters",
+                  "counter": "+1/+1",
+                  "amount": {
+                    "const": 2
+                  },
+                  "objects": {
+                    "target": "creature"
+                  }
+                }
+              ]
+            },
+            {
+              "label": "Target player gains 3 life.",
+              "effects": [
+                {
+                  "op": "gain_life",
+                  "player": {
+                    "target": "player"
+                  },
+                  "amount": {
+                    "const": 3
+                  }
+                }
+              ]
+            },
+            {
+              "label": "Draw a card.",
+              "effects": [
+                {
+                  "op": "draw",
+                  "player": "you",
+                  "amount": {
+                    "const": 1
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }

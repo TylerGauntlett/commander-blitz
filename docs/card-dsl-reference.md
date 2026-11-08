@@ -200,7 +200,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `roll_dice` | Dice | yes | Roll N dice with F faces; `as` records the results. | [Rolling dice](card-dsl-cookbook.md#rolling-dice) |
 | `choose_card_name` | Control flow | yes | Choose a card name; `as` records it. | ["Choose a card name"](card-dsl-cookbook.md#choose-a-card-name) |
 | `choose_color` | Control flow |  | Choose a color, readable later; `except_colors` removes colors from the offer. | ["Choose a color"](card-dsl-cookbook.md#choose-a-color) |
-| `choose_mode` | Control flow |  | Choose one or more modes and run them. | [Modal spells with a target](card-dsl-cookbook.md#modal-spells-with-a-target) |
+| `choose_mode` | Control flow |  | Choose one or more modes and run them; `repeatable` lets one mode be chosen more than once, each instance with its own targets. | [Modal spells with a target](card-dsl-cookbook.md#modal-spells-with-a-target) |
 | `choose_number` | Control flow | yes | Choose an integer in a printed range on resolution; `as` records it. | ["Choose a number"](card-dsl-cookbook.md#choose-a-number) |
 | `choose_permanents` | Control flow | yes | Mark permanents without acting on them; `as` records them; `max_total_power` caps the chosen set's total power. | [choose_permanents — marking without acting](card-dsl-cookbook.md#choose_permanents--marking-without-acting) |
 | `choose_player` | Control flow | yes | Choose a player; `as` records the seat. | [Effect ops](card-dsl.md#effect-ops) |

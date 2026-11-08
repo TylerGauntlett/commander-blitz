@@ -976,16 +976,64 @@ def _specs_for_modes(
     return tuple(base) + stored_mode_specs(mode_targets, modes)
 
 
+def is_repeatable(spec: Mapping[str, Any] | None) -> bool:
+    """Is this ``choose_mode`` "you may choose the same mode more than once"?
+
+    ``repeatable: true`` (700.2d): the answer is a **multiset** of `count`
+    modes, asked one instance at a time at 601.2b, and each chosen instance
+    declares targets of its own at 601.2c. Unlike `budget` it is answered at
+    cast, because its modes may own targets; `mode_instances` is how a second
+    instance of a mode gets specs that do not collide with the first's.
+    """
+    return bool(spec) and spec.get("repeatable") is True
+
+
+def instance_target_id(target_id: str, occurrence: int) -> str:
+    """The id one chosen **instance** of a mode stores its target under.
+
+    The first instance keeps the printed id, so every card whose modes are
+    chosen at most once stores and reads exactly what it always did. A later
+    instance of a repeatable mode (700.2d) gets ``id#n``; `op_choose_mode`
+    reads it back under the printed id while that instance runs. ``#`` is not
+    a character the loader admits in a target id, so the two cannot collide.
+    """
+    return target_id if occurrence == 0 else f"{target_id}#{occurrence}"
+
+
+def mode_instances(
+    mode_targets: Mapping[int, tuple[TargetSpec, ...]], modes: Sequence[int]
+) -> list[tuple[int, int, tuple[TargetSpec, ...]]]:
+    """``(mode, occurrence, specs)`` for each chosen mode instance, printed order.
+
+    ``modes`` may name one mode more than once (a repeatable `choose_mode`);
+    each occurrence is its own instance with its own specs, renamed by
+    `instance_target_id`. A mode chosen once has occurrence 0 and its printed
+    specs unchanged.
+    """
+    seen: dict[int, int] = {}
+    out: list[tuple[int, int, tuple[TargetSpec, ...]]] = []
+    for index in sorted(modes):
+        occurrence = seen.get(index, 0)
+        seen[index] = occurrence + 1
+        specs = tuple(
+            spec if occurrence == 0 else replace(spec, id=instance_target_id(spec.id, occurrence))
+            for spec in mode_targets.get(index, ())
+        )
+        out.append((index, occurrence, specs))
+    return out
+
+
 def stored_mode_specs(
     mode_targets: Mapping[int, tuple[TargetSpec, ...]], modes: Sequence[int]
 ) -> tuple[TargetSpec, ...]:
     """The chosen modes' own specs in storage order -- `_specs_for_modes`
     without the flat list in front: fixed-size specs in ascending mode index,
-    then the sizeless one."""
+    then the sizeless one. A mode chosen twice contributes its specs twice,
+    the second time under `instance_target_id`'s names."""
     fixed: list[TargetSpec] = []
     sizeless: list[TargetSpec] = []
-    for index in sorted(modes):
-        for spec in mode_targets.get(index, ()):
+    for _index, _occurrence, specs in mode_instances(mode_targets, modes):
+        for spec in specs:
             (sizeless if spec.optional or spec.variable_size else fixed).append(spec)
     return tuple(fixed) + tuple(sizeless)
 

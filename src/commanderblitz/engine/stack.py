@@ -19,6 +19,7 @@ from .carddef import (
     Ability,
     CardDef,
     TargetSpec,
+    is_repeatable,
     rules_ability,
 )
 from .characteristics import abilities_of, granted_ability_origin, printed_abilities
@@ -777,7 +778,11 @@ def modal_cast_ok(state: GameState, pid: int, card, oid: int) -> bool:
         return True
     ctx = EffectContext(state=state, controller=pid, source_oid=oid, source_name=card.name)
     floor, _ = modal_bounds(ctx, spec)
-    return len(selectable_modes(state, pid, card, oid) or []) >= floor
+    offered = len(selectable_modes(state, pid, card, oid) or [])
+    if is_repeatable(spec):
+        # 700.2d: one choosable mode can fill every instance.
+        return floor == 0 or offered >= 1
+    return offered >= floor
 
 
 def free_cast_modes(
@@ -810,6 +815,9 @@ def free_cast_modes(
     offered = selectable_modes(state, pid, card, oid) or []
     if chosen_at_random(ctx, spec):
         modes = tuple(pick_at_random(state, list(offered), floor))
+    elif is_repeatable(spec):
+        # The first choosable mode, as often as the floor demands (700.2d).
+        modes = tuple(offered[:1] * floor)
     else:
         modes = tuple(offered[:floor])
     refs: list[TargetRef] = []

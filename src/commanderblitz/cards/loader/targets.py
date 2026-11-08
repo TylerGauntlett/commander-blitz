@@ -69,6 +69,11 @@ def _compile_targets(
     """
     models = list(models)
     declared = {t.id for t in models}
+    for model in models:
+        if "#" in model.id:
+            # `carddef.instance_target_id` names a repeated mode's second
+            # instance `id#1`; a printed id with a `#` could collide with it.
+            raise DslError(f"{where}.target[{model.id}]: a target id cannot contain '#'")
     # Asked before anything compiles, so the one way a linked target goes wrong
     # that is *not* a typo gets its own sentence rather than the generic "the
     # card does not declare it": naming a sibling that comes later. The
