@@ -1,0 +1,22 @@
+{
+  "card_id": "necrodominance",
+  "name": "Necrodominance",
+  "oracle_text": "Skip your draw step.\nAt the beginning of your end step, you may pay any amount of life. If you do, draw that many cards.\nYour maximum hand size is five.\nIf a card or token would be put into your graveyard from anywhere, exile it instead.",
+  "blocked_sentences": [
+    "At the beginning of your end step, you may pay any amount of life. If you do, draw that many cards."
+  ],
+  "needs": [
+    {
+      "capability": "pay_any_amount_of_life",
+      "kind": "cost",
+      "what": "a mid-resolution optional payment of a player-chosen amount of life (0..current life total, 119.4) on `may`, binding the amount paid so a following `draw` reads it -- i.e. `may` with `pay: {\"pay_life\": 1}` and `any_amount: {\"as\": \"paid\"}` (or a `pay_life_x` honoured by `may`'s `x`)",
+      "why_existing_wont_do": "`may.any_amount` accepts only one coloured/{C} mana symbol or `pay_energy: 1`; `may.x` announces an X over mana (`_announce_x` probes mana sources), and `pay_life_x` is honoured only as a spell's additional cost at cast time; `choose_number` takes a constant integer `max`, so it cannot be bounded by the life total and a `may` paying `{\"binding\": n}` life would be a capped or over-offering approximation"
+    }
+  ],
+  "closest_existing": [
+    "may.any_amount",
+    "pay_life_x",
+    "choose_number"
+  ],
+  "confidence": "high"
+}

@@ -176153,6 +176153,77 @@
       ]
     },
     {
+      "cast_only_during": {
+        "phase": "combat",
+        "turn": "yours"
+      },
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "savage_beating",
+      "kicker": "{1}{R}",
+      "kicker_label": "entwine",
+      "mana_cost": "{3}{R}{R}",
+      "name": "Savage Beating",
+      "oracle_text": "Cast this spell only during combat on your turn.\nChoose one —\n• Creatures you control gain double strike until end of turn.\n• Untap all creatures you control. After this phase, there is an additional combat phase.\nEntwine {1}{R} (Choose both if you pay the entwine cost.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "all_if": {
+            "kicked": true
+          },
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "keywords": [
+                    "double_strike"
+                  ],
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "grant_keyword"
+                }
+              ],
+              "label": "Creatures you control gain double strike until end of turn."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "untap"
+                },
+                {
+                  "op": "extra_combat"
+                }
+              ],
+              "label": "Untap all creatures you control. After this phase, there is an additional combat phase."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -215044,6 +215115,65 @@
       "toughness": 5,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "amount": {
+            "const": 10
+          },
+          "effect": "maximum_hand_size",
+          "kind": "static",
+          "text": "Your maximum hand size is ten."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "minus": [
+                  {
+                    "const": 10
+                  },
+                  {
+                    "cards_in_hand": "you"
+                  }
+                ]
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, if you have fewer than ten cards in hand, draw cards equal to the difference.",
+          "trigger": {
+            "condition": {
+              "cmp": "<",
+              "left": {
+                "cards_in_hand": "you"
+              },
+              "right": {
+                "const": 10
+              }
+            },
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "the_ten_rings",
+      "mana_cost": "{8}",
+      "name": "The Ten Rings",
+      "oracle_text": "Your maximum hand size is ten.\nAt the beginning of your end step, if you have fewer than ten cards in hand, draw cards equal to the difference.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {

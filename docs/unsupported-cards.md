@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**254 cards** blocked by **234** capabilities.
+**256 cards** blocked by **235** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -33,7 +33,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-from-library-top-unrestricted](#cast-from-library-top-unrestricted) | 2 | 1913 | static_effect |
-| [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
 | [cast-trigger-x](#cast-trigger-x) | 2 | 1521 | engine, value |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [copy-exception-ability](#copy-exception-ability) | 2 | 6941 | op |
@@ -170,6 +169,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mana-spent-trigger-on-activation](#mana-spent-trigger-on-activation) | 1 | 4444 | trigger_event |
 | [mana-tap-trigger-damage-rider](#mana-tap-trigger-damage-rider) | 1 | 7929 | static_effect |
 | [manifest-from-hand](#manifest-from-hand) | 1 | 3975 | op |
+| [maximum-hand-size-modifier](#maximum-hand-size-modifier) | 1 | 1712 | static_effect |
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
 | [miracle-x](#miracle-x) | 1 | 4945 | engine |
@@ -184,6 +184,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [offspring](#offspring) | 1 | 6566 | keyword |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
+| [pay-any-amount-of-life](#pay-any-amount-of-life) | 1 | 4322 | cost |
 | [play-cost-paid-card](#play-cost-paid-card) | 1 | 6544 | op |
 | [play-lands-from-graveyard-filtered](#play-lands-from-graveyard-filtered) | 1 | 3993 | static_effect |
 | [playable-condition-opponent-lost-life](#playable-condition-opponent-lost-life) | 1 | 4478 | engine |
@@ -803,26 +804,6 @@ Blocks **2** cards.
 
 </details>
 
-## cast-only-during-opponents-turn
-
-Blocks **2** cards.
-
-- **(engine)** a card-level casting restriction on a spell: it may be cast only while the active player is an opponent of its caster (and, by extension, the 'cast only during combat' / 'only during your turn' family), checked when the cast is offered
-  <br>Why the existing vocabulary won't do: card_level_rider_keys has cant_cast_first_turns and split_second but no timing window; the `cast_during` / `is_your_turn` condition keys are read inside effects or statics, so an `if` would let the spell be cast on your own turn and fizzle rather than be uncastable, and `cast_only_at_sorcery_speed` is a static on other spells, not a self-restriction
-- **(engine)** a card-level casting restriction on a spell: it may be cast only while the active player is an opponent of its caster AND the game is in the combat phase ('Cast this spell only during combat on an opponent's turn'), checked when the cast is offered -- the same timing-window family as Delirium's 'only during an opponent's turn'
-  <br>Why the existing vocabulary won't do: card_level_rider_keys has cant_cast_first_turns and split_second but no timing window; the `cast_during` / `is_your_turn` condition keys are read inside effects or statics, so an `if` would let the spell be cast on your own main phase and do nothing rather than be uncastable
-
-<details><summary>Cards waiting on this</summary>
-
-- **Take the Bait** (rank 3254) — `take_the_bait`
-  - Cast this spell only during combat on an opponent's turn.
-  - Prevent all combat damage that would be dealt to you and planeswalkers you control this turn.
-- **Delirium** (rank 12129) — `delirium`
-  - Cast this spell only during an opponent's turn.
-  - Tap target creature that player controls. That creature deals damage equal to its power to the player.
-
-</details>
-
 ## cast-trigger-x
 
 Blocks **2** cards.
@@ -996,15 +977,14 @@ Blocks **2** cards.
 
 Blocks **2** cards.
 
-- **(op)** a one-shot, this-turn, combat-only prevention over the permanents a player controls that match a selector ('planeswalkers you control'), matched on the damaged permanent's current characteristics as the damage would be dealt (615.1), alongside the combat_only prevent_damage shield over the player
-  <br>Why the existing vocabulary won't do: prevent_damage with combat_only covers the seat ('you') but not its permanents; prevent_damage_permanent with combat_only shields objects chosen at resolution, so a planeswalker that arrives or changes control later in the turn would be judged by the board the spell saw; prevent_combat_damage is keyed to the dealer, not the recipient
+- **(op)** a one-shot, this-turn, combat-only prevention over the permanents a player controls that match a selector ('planeswalkers you control'), matched on the damaged permanent's current characteristics and controller as the damage would be dealt (615.1), alongside the combat_only prevent_damage shield over the player
+  <br>Why the existing vocabulary won't do: prevent_damage with combat_only covers the seat ('you') but not its permanents; prevent_damage_permanent with combat_only installs a PermanentShield on each object resolve_pool returns at resolution, so a planeswalker that enters or changes control later in the turn (e.g. during the additional combat phase this card creates) is judged by the board the spell saw; prevent_combat_damage is keyed to the dealer, not the recipient. The casting restriction is no longer blocked: it is cast_only_during {turn: opponents, phase: combat}
 - **(op)** a one-shot, this-turn, combat-only prevention over the permanents a player controls that match a selector ('creatures you control'), matched on the damaged permanent's current characteristics as the damage would be dealt (615.1), alongside the combat_only prevent_damage shield over the player
   <br>Why the existing vocabulary won't do: prevent_damage with combat_only covers the seat ('you') but not its permanents; prevent_damage_permanent with combat_only shields objects chosen at resolution, so a creature that arrives or changes control later in the turn would be judged by the board the spell saw; prevent_combat_damage is keyed to the dealer, not the recipient
 
 <details><summary>Cards waiting on this</summary>
 
 - **Take the Bait** (rank 3254) — `take_the_bait`
-  - Cast this spell only during combat on an opponent's turn.
   - Prevent all combat damage that would be dealt to you and planeswalkers you control this turn.
 - **You Look Upon the Tarrasque** (rank 8030) — `you_look_upon_the_tarrasque`
   - • Run and Hide — Prevent all combat damage that would be dealt to you and creatures you control this turn
@@ -1184,7 +1164,6 @@ Blocks **1** card.
 <details><summary>Cards waiting on this</summary>
 
 - **Delirium** (rank 12129) — `delirium`
-  - Cast this spell only during an opponent's turn.
   - Tap target creature that player controls. That creature deals damage equal to its power to the player.
 
 </details>
@@ -2854,6 +2833,20 @@ Blocks **1** card.
 
 </details>
 
+## maximum-hand-size-modifier
+
+Blocks **1** card.
+
+- **(static_effect)** a player-wide static that ADDS a signed amount to the named players' maximum hand size ("reduced by seven", "increased by one" -- Spellbook-style modifiers), applied in 613.11 timestamp order on top of whatever the newest setting effect left (7 by default, a set number from a `maximum_hand_size` static), floored at 0, and having no effect on a player with no maximum hand size
+  <br>Why the existing vocabulary won't do: The `maximum_hand_size` static only SETS the size (Twenty-Toed Toad's "is twenty") and `player_statics.maximum_hand_size` picks the newest single effect; writing it as 'is 0' for opponents would wrongly override an opponent's older Reliquary Tower / no_maximum_hand_size, and would give 0 instead of 13 against an older 'is twenty'. There is no additive hand-size adjustment.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Jin-Gitaxias, Core Augur** (rank 1712) — `jin_gitaxias_core_augur`
+  - Each opponent's maximum hand size is reduced by seven.
+
+</details>
+
 ## may-pay-named-cost
 
 Blocks **1** card.
@@ -3053,6 +3046,20 @@ Blocks **1** card.
   - Cast this spell only during combat before blockers are declared.
   - X can't be greater than the number of snow lands you control.
   - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
+
+</details>
+
+## pay-any-amount-of-life
+
+Blocks **1** card.
+
+- **(cost)** a mid-resolution optional payment of a player-chosen amount of life (0..current life total, 119.4) on `may`, binding the amount paid so a following `draw` reads it -- i.e. `may` with `pay: {"pay_life": 1}` and `any_amount: {"as": "paid"}` (or a `pay_life_x` honoured by `may`'s `x`)
+  <br>Why the existing vocabulary won't do: `may.any_amount` accepts only one coloured/{C} mana symbol or `pay_energy: 1`; `may.x` announces an X over mana (`_announce_x` probes mana sources), and `pay_life_x` is honoured only as a spell's additional cost at cast time; `choose_number` takes a constant integer `max`, so it cannot be bounded by the life total and a `may` paying `{"binding": n}` life would be a capped or over-offering approximation
+
+<details><summary>Cards waiting on this</summary>
+
+- **Necrodominance** (rank 4322) — `necrodominance`
+  - At the beginning of your end step, you may pay any amount of life. If you do, draw that many cards.
 
 </details>
 

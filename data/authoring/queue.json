@@ -233932,12 +233932,12 @@
     },
     "Savage Beating": {
       "edhrec_rank": 2944,
-      "gate": "template",
+      "gate": null,
       "name": "Savage Beating",
-      "reason": "no template for: Cast this spell only during combat on your turn",
+      "reason": "",
       "scryfall_id": "291ffa45-f395-420f-8862-9a685b65ce69",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Savage Conception": {
@@ -282532,12 +282532,12 @@
     },
     "The Ten Rings": {
       "edhrec_rank": 6670,
-      "gate": "template",
+      "gate": null,
       "name": "The Ten Rings",
-      "reason": "no template for: Your maximum hand size is ten",
+      "reason": "",
       "scryfall_id": "2332bc91-b0f2-4911-844d-d1cc915cd6c8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Tenth Doctor": {

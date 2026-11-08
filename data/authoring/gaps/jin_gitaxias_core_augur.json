@@ -1,0 +1,14 @@
+{
+  "card_id": "jin_gitaxias_core_augur",
+  "name": "Jin-Gitaxias, Core Augur",
+  "oracle_text": "Flash\nAt the beginning of your end step, draw seven cards.\nEach opponent's maximum hand size is reduced by seven.",
+  "blocked_sentences": ["Each opponent's maximum hand size is reduced by seven."],
+  "needs": [{
+    "capability": "maximum_hand_size_modifier",
+    "kind": "static_effect",
+    "what": "a player-wide static that ADDS a signed amount to the named players' maximum hand size (\"reduced by seven\", \"increased by one\" -- Spellbook-style modifiers), applied in 613.11 timestamp order on top of whatever the newest setting effect left (7 by default, a set number from a `maximum_hand_size` static), floored at 0, and having no effect on a player with no maximum hand size",
+    "why_existing_wont_do": "The `maximum_hand_size` static only SETS the size (Twenty-Toed Toad's \"is twenty\") and `player_statics.maximum_hand_size` picks the newest single effect; writing it as 'is 0' for opponents would wrongly override an opponent's older Reliquary Tower / no_maximum_hand_size, and would give 0 instead of 13 against an older 'is twenty'. There is no additive hand-size adjustment."
+  }],
+  "closest_existing": ["maximum_hand_size", "no_hand_limit"],
+  "confidence": "high"
+}

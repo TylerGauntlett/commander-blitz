@@ -14952,6 +14952,15 @@
     },
     "zone": "battlefield"
   },
+  "savage_beating": {
+    "granted": {
+      "count": 2,
+      "keywords": [
+        "double_strike"
+      ]
+    },
+    "zone": "graveyard"
+  },
   "savage_hunger": {
     "zone": [
       "battlefield",
@@ -18079,6 +18088,13 @@
   },
   "the_squadron_sinister": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "the_ten_rings": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "the_terror_of_serpent_s_pass": {
