@@ -1,0 +1,18 @@
+{
+  "card_id": "insatiable_frugivore",
+  "name": "Insatiable Frugivore",
+  "oracle_text": "When this creature enters, create a Food token, then you may exile three cards from your graveyard. If you do, repeat this process.\n{3}{B}, Sacrifice X Foods: Creatures you control get +X/+0 and gain menace until end of turn.",
+  "blocked_sentences": [
+    "{3}{B}, Sacrifice X Foods: Creatures you control get +X/+0 and gain menace until end of turn."
+  ],
+  "needs": [
+    {
+      "capability": "sacrifice_x",
+      "kind": "cost",
+      "what": "an activated-ability cost that sacrifices a player-announced number X of permanents matching a selector (here Foods), with X announced at activation (601.2b, 107.3), bounded by the matching permanents the controller can sacrifice, and read back by the effects with {\"x\": true} -- the sacrifice analogue of `discard_x`",
+      "why_existing_wont_do": "`sacrifice` in cost_keys takes a fixed integer `count` (costs.pay pops `count` as an int, default 1), and `x_value` defines an {X} in the mana cost rather than a sacrifice count; the only announced-X non-mana costs are `discard_x`, `loyalty_x` and `pay_life_x`. Sacrificing in an effect instead would move the payment to resolution, which the brief forbids"
+    }
+  ],
+  "closest_existing": ["discard_x", "sacrifice"],
+  "confidence": "high"
+}

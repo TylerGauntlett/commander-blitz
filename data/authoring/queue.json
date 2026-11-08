@@ -45132,12 +45132,12 @@
     },
     "Chatterstorm": {
       "edhrec_rank": 2785,
-      "gate": "template",
+      "gate": null,
       "name": "Chatterstorm",
-      "reason": "no template for: Create a 1/1 green Squirrel creature token",
+      "reason": "",
       "scryfall_id": "9426c906-e665-40a4-823a-0245bc39fbda",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chatzuk, Mighty Guitarist": {
@@ -45762,12 +45762,12 @@
     },
     "Chitterspitter": {
       "edhrec_rank": 3042,
-      "gate": "template",
+      "gate": null,
       "name": "Chitterspitter",
-      "reason": "no template for: At the beginning of your upkeep, you may sacrifice a token. If you do, put an acorn counte",
+      "reason": "",
       "scryfall_id": "f0b80608-1455-4899-9d19-1b1d2d068744",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chivalric Alliance": {
@@ -83602,12 +83602,12 @@
     },
     "End-Raze Forerunners": {
       "edhrec_rank": 1563,
-      "gate": "template",
+      "gate": null,
       "name": "End-Raze Forerunners",
-      "reason": "no template for: When this creature enters, other creatures you control get +2/+2 and gain vigilance and tr",
+      "reason": "",
       "scryfall_id": "6e4566f9-a6f5-420e-8ab8-ca505facc3d9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Endangered Armodon": {
@@ -105432,12 +105432,12 @@
     },
     "Garruk, Cursed Huntsman": {
       "edhrec_rank": 3748,
-      "gate": "template",
+      "gate": null,
       "name": "Garruk, Cursed Huntsman",
-      "reason": "no template for: 0: Create two 2/2 black and green Wolf creature tokens with \"When this token dies, put a l",
+      "reason": "",
       "scryfall_id": "3874f322-9847-4a63-b7e1-718abbe1e0bd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Garruk, Cursed Huntsman Emblem": {
@@ -129432,12 +129432,12 @@
     },
     "Honored Dreyleader": {
       "edhrec_rank": 3094,
-      "gate": "template",
+      "gate": null,
       "name": "Honored Dreyleader",
-      "reason": "no template for: When this creature enters, put a +1/+1 counter on it for each other Squirrel and/or Food y",
+      "reason": "",
       "scryfall_id": "bc5ee537-52e1-474a-9326-dfacc2a758ab",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Honored Heirloom": {
@@ -164172,12 +164172,12 @@
     },
     "Maelstrom Pulse": {
       "edhrec_rank": 3517,
-      "gate": "template",
+      "gate": null,
       "name": "Maelstrom Pulse",
-      "reason": "no template for: Destroy target nonland permanent and all other permanents with the same name as that perma",
+      "reason": "",
       "scryfall_id": "66f17263-b916-40f4-b175-fcfd5630103d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Maelstrom Wanderer": {
@@ -178952,12 +178952,12 @@
     },
     "Moonstone Eulogist": {
       "edhrec_rank": 7761,
-      "gate": "template",
+      "gate": null,
       "name": "Moonstone Eulogist",
-      "reason": "no template for: Whenever a creature an opponent controls dies, you create a Blood token",
+      "reason": "",
       "scryfall_id": "13158f3b-9d85-4689-9afa-7d9a8a2d1b09",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Moonstone Harbinger": {
@@ -182732,12 +182732,12 @@
     },
     "Nadier's Nightblade": {
       "edhrec_rank": 861,
-      "gate": "template",
+      "gate": null,
       "name": "Nadier's Nightblade",
-      "reason": "no template for: Whenever a token you control leaves the battlefield, each opponent loses 1 life and you ga",
+      "reason": "",
       "scryfall_id": "b533e358-3b30-4719-a2a3-13fb9ea817c6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nadier, Agent of the Duskenel": {
@@ -185362,12 +185362,12 @@
     },
     "Nested Shambler": {
       "edhrec_rank": 4104,
-      "gate": "template",
+      "gate": null,
       "name": "Nested Shambler",
-      "reason": "no template for: When this creature dies, create X tapped 1/1 green Squirrel creature tokens, where X is th",
+      "reason": "",
       "scryfall_id": "202011d5-755e-497b-b4a7-f2b6e6a0b464",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nesting Bot": {
@@ -191482,12 +191482,12 @@
     },
     "Ogre Slumlord": {
       "edhrec_rank": 1893,
-      "gate": "template",
+      "gate": null,
       "name": "Ogre Slumlord",
-      "reason": "no template for: Whenever another nontoken creature dies, you may create a 1/1 black Rat creature token",
+      "reason": "",
       "scryfall_id": "b70293ae-d50d-44bf-aaa3-689727056ec5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ogre Taskmaster": {
@@ -203602,12 +203602,12 @@
     },
     "Plaguecrafter": {
       "edhrec_rank": 628,
-      "gate": "template",
+      "gate": null,
       "name": "Plaguecrafter",
-      "reason": "no template for: When this creature enters, each player sacrifices a creature or planeswalker of their choi",
+      "reason": "",
       "scryfall_id": "7092aa38-4f05-4b18-b894-d55ca9fe9b15",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Plagued Rusalka": {
@@ -204652,12 +204652,12 @@
     },
     "Poison-Tip Archer": {
       "edhrec_rank": 1632,
-      "gate": "template",
+      "gate": null,
       "name": "Poison-Tip Archer",
-      "reason": "no template for: Whenever another creature dies, each opponent loses 1 life",
+      "reason": "",
       "scryfall_id": "b7e92375-037c-4be1-8183-6261e0666e12",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Poisonbelly Ogre": {
@@ -208592,12 +208592,12 @@
     },
     "Prosperous Innkeeper": {
       "edhrec_rank": 1533,
-      "gate": "template",
+      "gate": null,
       "name": "Prosperous Innkeeper",
-      "reason": "no template for: When this creature enters, create a Treasure token",
+      "reason": "",
       "scryfall_id": "6ab26569-5e7a-410c-86d3-a7ab989f7a31",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Prosperous Partnership": {
@@ -216382,12 +216382,12 @@
     },
     "Ravenous Squirrel": {
       "edhrec_rank": 2882,
-      "gate": "template",
+      "gate": null,
       "name": "Ravenous Squirrel",
-      "reason": "no template for: Whenever you sacrifice an artifact or creature, put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "fe425d81-833f-4ab9-b0e4-a1fa8ed26426",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ravenous Trap": {

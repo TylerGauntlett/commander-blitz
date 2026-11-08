@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**257 cards** blocked by **236** capabilities.
+**260 cards** blocked by **237** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -40,10 +40,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [devotion](#devotion) | 2 | 2401 | value |
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
 | [face-down-filter](#face-down-filter) | 2 | 5772 | selector |
+| [grant-abilities-of-exiled-cards](#grant-abilities-of-exiled-cards) | 2 | 2263 | static_effect |
 | [manifest-dread](#manifest-dread) | 2 | 5772 | op |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
 | [return-face-down](#return-face-down) | 2 | 3081 | op |
+| [sacrifice-x](#sacrifice-x) | 2 | 998 | cost |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [turn-face-up](#turn-face-up) | 2 | 5772 | op |
 | [venture](#venture) | 2 | 19644 | engine |
@@ -137,7 +139,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [fully-unlock-room](#fully-unlock-room) | 1 | 3452 | trigger_event |
 | [goad-without-goaded](#goad-without-goaded) | 1 | 973 | op |
 | [gold-token](#gold-token) | 1 | 705 | token |
-| [grant-abilities-of-exiled-cards](#grant-abilities-of-exiled-cards) | 1 | 8370 | static_effect |
 | [grant-cycling-to-cards-in-hand](#grant-cycling-to-cards-in-hand) | 1 | 5169 | static_effect |
 | [grant-evoke](#grant-evoke) | 1 | 5749 | static_effect |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
@@ -212,7 +213,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [reveal-from-hand](#reveal-from-hand) | 1 | 3623 | cost |
 | [reveal-until-rest-to-graveyard](#reveal-until-rest-to-graveyard) | 1 | 1606 | op |
 | [sacrifice-multiple-distinct](#sacrifice-multiple-distinct) | 1 | 1918 | cost |
-| [sacrifice-x](#sacrifice-x) | 1 | 998 | cost |
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
 | [salamander-warrior-4-3-u](#salamander-warrior-4-3-u) | 1 | 3395 | token |
@@ -227,6 +227,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [static-greatest-power-in-graveyard](#static-greatest-power-in-graveyard) | 1 | 10492 | value |
 | [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
+| [tap-x-permanents-cost](#tap-x-permanents-cost) | 1 | 2962 | cost |
 | [target-if-cast-during](#target-if-cast-during) | 1 | 1524 | selector |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
@@ -935,6 +936,24 @@ Blocks **2** cards.
 
 </details>
 
+## grant-abilities-of-exiled-cards
+
+Blocks **2** cards.
+
+- **(static_effect)** a static ability that gives each permanent matching its `affects` filter (here Food artifacts you control: `subtypes: ["Food"]`, `controller: you`) every activated ability (mana abilities included) printed on the cards matching an `exiled_with: self` selector narrowed by type (here creature cards), read live from exile so the set grows as the enters/attacks trigger exiles more cards, and ending when the source leaves the battlefield
+  <br>Why the existing vocabulary won't do: The `grant_ability` static only hands over a fixed ability written in the card's own `grantable_abilities` by index, so it cannot borrow abilities from whatever cards happen to be exiled; `imprint_characteristics` reads an exiled card but copies only power, toughness and creature types, never abilities; `exiled_with` exists only as an effect selector key, not in `static_filter_keys` or `static_affects_filter_keys`
+- **(static_effect)** a static ability that gives each permanent matching its `affects` filter every activated ability (mana abilities included) printed on the cards matching an `exiled_with: self` selector, read live from exile so the set changes as cards are exiled with the source, and ending when the source leaves the battlefield
+  <br>Why the existing vocabulary won't do: The `grant_ability` static only hands over a fixed ability written in the card's own `grantable_abilities` by index, so it cannot borrow abilities from whatever cards happen to be exiled; `imprint_characteristics` reads an exiled card but copies only power, toughness and creature types (Duplicant), never abilities; `exiled_with` exists only as an effect selector key, not in `static_filter_keys`
+
+<details><summary>Cards waiting on this</summary>
+
+- **Hazel's Brewmaster** (rank 2263) — `hazel_s_brewmaster`
+  - Foods you control have all activated abilities of all creature cards exiled with this creature.
+- **Steward of the Harvest** (rank 8370) — `steward_of_the_harvest`
+  - Creatures you control have all activated abilities of all land cards exiled with this creature.
+
+</details>
+
 ## manifest-dread
 
 Blocks **2** cards.
@@ -1007,6 +1026,25 @@ Blocks **2** cards.
   - Whenever another nontoken creature you control dies, you may return it to the battlefield face down under its owner's control. It's a Forest land.
 - **Deathmist Raptor** (rank 6493) — `deathmist_raptor`
   - Whenever a permanent you control is turned face up, you may return this card from your graveyard to the battlefield face up or face down.
+
+</details>
+
+## sacrifice-x
+
+Blocks **2** cards.
+
+- **(cost)** an activated-ability sacrifice cost whose count is a variable X chosen by the activator (any number of Squirrels, including 0), with X readable by the effects as {"x": ...} for a pump of +X/-X
+  <br>Why the existing vocabulary won't do: the sacrifice cost's count is a fixed integer (costs.py reads int(spec['count'])); x_value derives X from a value rather than letting the player choose how many permanents to sacrifice, and discard_x/pay_life_x exist only for discard and life
+- **(cost)** an activated-ability cost that sacrifices a player-announced number X of permanents matching a selector (here Foods), with X announced at activation (601.2b, 107.3), bounded by the matching permanents the controller can sacrifice, and read back by the effects with {"x": true} -- the sacrifice analogue of `discard_x`
+  <br>Why the existing vocabulary won't do: `sacrifice` in cost_keys takes a fixed integer `count` (costs.pay pops `count` as an int, default 1), and `x_value` defines an {X} in the mana cost rather than a sacrifice count; the only announced-X non-mana costs are `discard_x`, `loyalty_x` and `pay_life_x`. Sacrificing in an effect instead would move the payment to resolution, which the brief forbids
+
+<details><summary>Cards waiting on this</summary>
+
+- **Chatterfang, Squirrel General** (rank 998) — `chatterfang_squirrel_general`
+  - If one or more tokens would be created under your control, those tokens plus that many 1/1 green Squirrel creature tokens are created instead.
+  - {B}, Sacrifice X Squirrels: Target creature gets +X/-X until end of turn.
+- **Insatiable Frugivore** (rank 10240) — `insatiable_frugivore`
+  - {3}{B}, Sacrifice X Foods: Creatures you control get +X/+0 and gain menace until end of turn.
 
 </details>
 
@@ -2379,20 +2417,6 @@ Blocks **1** card.
 
 </details>
 
-## grant-abilities-of-exiled-cards
-
-Blocks **1** card.
-
-- **(static_effect)** a static ability that gives each permanent matching its `affects` filter every activated ability (mana abilities included) printed on the cards matching an `exiled_with: self` selector, read live from exile so the set changes as cards are exiled with the source, and ending when the source leaves the battlefield
-  <br>Why the existing vocabulary won't do: The `grant_ability` static only hands over a fixed ability written in the card's own `grantable_abilities` by index, so it cannot borrow abilities from whatever cards happen to be exiled; `imprint_characteristics` reads an exiled card but copies only power, toughness and creature types (Duplicant), never abilities; `exiled_with` exists only as an effect selector key, not in `static_filter_keys`
-
-<details><summary>Cards waiting on this</summary>
-
-- **Steward of the Harvest** (rank 8370) — `steward_of_the_harvest`
-  - Creatures you control have all activated abilities of all land cards exiled with this creature.
-
-</details>
-
 ## grant-cycling-to-cards-in-hand
 
 Blocks **1** card.
@@ -3445,21 +3469,6 @@ Blocks **1** card.
 
 </details>
 
-## sacrifice-x
-
-Blocks **1** card.
-
-- **(cost)** an activated-ability sacrifice cost whose count is a variable X chosen by the activator (any number of Squirrels, including 0), with X readable by the effects as {"x": ...} for a pump of +X/-X
-  <br>Why the existing vocabulary won't do: the sacrifice cost's count is a fixed integer (costs.py reads int(spec['count'])); x_value derives X from a value rather than letting the player choose how many permanents to sacrifice, and discard_x/pay_life_x exist only for discard and life
-
-<details><summary>Cards waiting on this</summary>
-
-- **Chatterfang, Squirrel General** (rank 998) — `chatterfang_squirrel_general`
-  - If one or more tokens would be created under your control, those tokens plus that many 1/1 green Squirrel creature tokens are created instead.
-  - {B}, Sacrifice X Squirrels: Target creature gets +X/-X until end of turn.
-
-</details>
-
 ## sacrificed-source-counters
 
 Blocks **1** card.
@@ -3657,6 +3666,20 @@ Blocks **1** card.
 
 - **Lux Artillery** (rank 3735) — `lux_artillery`
   - Whenever you cast an artifact creature spell, it gains sunburst. (It enters with a +1/+1 counter on it for each color of mana spent to cast it.)
+
+</details>
+
+## tap-x-permanents-cost
+
+Blocks **1** card.
+
+- **(cost)** a tap_permanents cost whose count is a variable X chosen by the activating player at payment (any number 0..pool size of untapped tokens you control), with X bound so the ability's effects (here a mana ability's add_mana amount, split in any combination of colors) can read it
+  <br>Why the existing vocabulary won't do: tap_permanents takes only a fixed integer `count` (costs._tap_cost_pool / pay path do int(spec.pop('count', 1)) and ask exactly that many) or crew's `total_power`; `x_value` derives X from a value expression rather than letting the payer choose how many permanents to tap, and `as` binds only the single tapped permanent, not the number tapped. Myr Battlesphere's 'tap X untapped Myr' is an effect inside a trigger, not an activation cost, and a mana ability may not carry that effect
+
+<details><summary>Cards waiting on this</summary>
+
+- **Hazel of the Rootbloom** (rank 2962) — `hazel_of_the_rootbloom`
+  - {T}, Pay 2 life, Tap X untapped tokens you control: Add X mana in any combination of colors.
 
 </details>
 

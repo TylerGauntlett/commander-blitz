@@ -3034,6 +3034,14 @@
     },
     "zone": "battlefield"
   },
+  "chatterstorm": {
+    "battlefield_count": 33,
+    "tokens": {
+      "count": 1,
+      "id": "squirrel_1_1_g"
+    },
+    "zone": "graveyard"
+  },
   "chief_of_the_foundry": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -3052,6 +3060,10 @@
     "zone": "battlefield"
   },
   "chittering_witch": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "chitterspitter": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -5330,6 +5342,17 @@
     },
     "zone": "battlefield"
   },
+  "end_raze_forerunners": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 3,
+      "keywords": [
+        "vigilance",
+        "trample"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "endless_atlas": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -6818,6 +6841,17 @@
     "zone": "graveyard"
   },
   "gangly_stompling": {
+    "zone": "battlefield"
+  },
+  "garruk_cursed_huntsman": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 5,
+      "kind": "loyalty"
+    },
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "garruk_s_companion": {
@@ -8384,6 +8418,10 @@
     "life": {
       "0": 44
     }
+  },
+  "honored_dreyleader": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "hoofprints_of_the_stag": {
     "battlefield_count": 33,
@@ -10619,6 +10657,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "maelstrom_pulse": {
+    "battlefield_count": 30,
+    "graveyard_size": {
+      "0": 5
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
   "maelstrom_wanderer": {
     "granted": {
       "count": 3,
@@ -11550,6 +11596,13 @@
     },
     "zone": "battlefield"
   },
+  "moonstone_eulogist": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "moonstone_harsh_mistress": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -11848,6 +11901,14 @@
     },
     "zone": "battlefield"
   },
+  "nadier_s_nightblade": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "nadir_kraken": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -11983,6 +12044,10 @@
     "zone": "battlefield"
   },
   "nest_robber": {
+    "zone": "battlefield"
+  },
+  "nested_shambler": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "nesting_grounds": {
@@ -12409,6 +12474,10 @@
     "zone": "battlefield"
   },
   "ogre_sentry": {
+    "zone": "battlefield"
+  },
+  "ogre_slumlord": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "ogre_warrior": {
@@ -13138,6 +13207,20 @@
   "plague_stinger": {
     "zone": "battlefield"
   },
+  "plaguecrafter": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "opponent_battlefield_count": 5,
+    "zone": [
+      "battlefield",
+      "graveyard"
+    ]
+  },
   "plan_for_all_outcomes": {
     "battlefield_count": 32,
     "library_size": {
@@ -13209,6 +13292,10 @@
     "zone": "battlefield"
   },
   "plumeveil": {
+    "zone": "battlefield"
+  },
+  "poison_tip_archer": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "polluted_delta": {
@@ -13524,6 +13611,17 @@
   },
   "prosperous_bandit": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "prosperous_innkeeper": {
+    "battlefield_count": 34,
+    "life": {
+      "0": 40
+    },
+    "tokens": {
+      "count": 1,
+      "id": "treasure_token"
+    },
     "zone": "battlefield"
   },
   "prosperous_thief": {
@@ -13948,6 +14046,10 @@
     "life": {
       "0": 44
     }
+  },
+  "ravenous_squirrel": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "razor_swine": {
     "zone": "battlefield"

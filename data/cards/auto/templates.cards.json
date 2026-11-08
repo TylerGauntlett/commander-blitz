@@ -35852,6 +35852,60 @@
     {
       "abilities": [
         {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "amount": {
+                "minus": [
+                  {
+                    "spells_cast_this_turn": "all"
+                  },
+                  {
+                    "const": 1
+                  }
+                ]
+              },
+              "op": "copy_spell"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Storm (When you cast this spell, copy it for each spell cast before it this turn.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "chatterstorm",
+      "mana_cost": "{1}{G}",
+      "name": "Chatterstorm",
+      "oracle_text": "Create a 1/1 green Squirrel creature token.\nStorm (When you cast this spell, copy it for each spell cast before it this turn.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "create_token",
+          "token": "squirrel_1_1_g"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "controller": "you",
             "exclude_self": true,
@@ -36150,6 +36204,107 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "counter": "acorn",
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "add_counters"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "sacrifice": {
+                  "controller": "you",
+                  "count": 1,
+                  "is_token": true,
+                  "zone": "battlefield"
+                }
+              },
+              "player": "you",
+              "prompt": "Sacrifice a token to put an acorn counter on Chitterspitter?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, you may sacrifice a token. If you do, put an acorn counter on this artifact.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Squirrel"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "counters_on": {
+              "counter": "acorn",
+              "objects": {
+                "self_only": true
+              }
+            }
+          },
+          "text": "Squirrels you control get +1/+1 for each acorn counter on this artifact.",
+          "toughness": {
+            "counters_on": {
+              "counter": "acorn",
+              "objects": {
+                "self_only": true
+              }
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{G}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "squirrel_1_1_g"
+            }
+          ],
+          "kind": "activated",
+          "text": "{G}, {T}: Create a 1/1 green Squirrel creature token."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "chitterspitter",
+      "mana_cost": "{2}{G}",
+      "name": "Chitterspitter",
+      "oracle_text": "At the beginning of your upkeep, you may sacrifice a token. If you do, put an acorn counter on this artifact.\nSquirrels you control get +1/+1 for each acorn counter on this artifact.\n{G}, {T}: Create a 1/1 green Squirrel creature token.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -62382,6 +62537,79 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 2
+              },
+              "toughness": {
+                "const": 2
+              }
+            },
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "vigilance",
+                "trample"
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, other creatures you control get +2/+2 and gain vigilance and trample until end of turn.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "end_raze_forerunners",
+      "keywords": [
+        "vigilance",
+        "trample",
+        "haste"
+      ],
+      "mana_cost": "{5}{G}{G}{G}",
+      "name": "End-Raze Forerunners",
+      "oracle_text": "Vigilance, trample, haste\nWhen this creature enters, other creatures you control get +2/+2 and gain vigilance and trample until end of turn.",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Boar"
+      ],
+      "toughness": 7,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "condition": {
             "cmp": ">=",
             "left": {
@@ -78565,6 +78793,136 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "loyalty": 0
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "wolf_2_2_bg_garruk_loyalty"
+            }
+          ],
+          "kind": "activated",
+          "text": "0: Create two 2/2 black and green Wolf creature tokens with \"When this token dies, put a loyalty counter on each Garruk you control.\""
+        },
+        {
+          "cost": {
+            "loyalty": -3
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "−3: Destroy target creature. Draw a card."
+        },
+        {
+          "cost": {
+            "loyalty": -6
+          },
+          "effects": [
+            {
+              "emblem": 0,
+              "op": "emblem",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "−6: You get an emblem with \"Creatures you control get +3/+3 and have trample.\""
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "emblems": [
+        {
+          "abilities": [
+            {
+              "affects": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ]
+              },
+              "effect": "buff",
+              "kind": "static",
+              "power": {
+                "const": 3
+              },
+              "text": "Creatures you control get +3/+3 and have trample.",
+              "toughness": {
+                "const": 3
+              }
+            },
+            {
+              "affects": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ]
+              },
+              "effect": "grant_keyword",
+              "keywords": [
+                "trample"
+              ],
+              "kind": "static",
+              "text": "Creatures you control get +3/+3 and have trample."
+            }
+          ]
+        }
+      ],
+      "id": "garruk_cursed_huntsman",
+      "loyalty": 5,
+      "mana_cost": "{4}{B}{G}",
+      "name": "Garruk, Cursed Huntsman",
+      "oracle_text": "0: Create two 2/2 black and green Wolf creature tokens with \"When this token dies, put a loyalty counter on each Garruk you control.\"\n−3: Destroy target creature. Draw a card.\n−6: You get an emblem with \"Creatures you control get +3/+3 and have trample.\"",
+      "source": "auto",
+      "subtypes": [
+        "Garruk"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
       ]
     },
     {
@@ -97793,6 +98151,106 @@
         "Elephant"
       ],
       "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "any_of": [
+                    {
+                      "subtypes": [
+                        "Squirrel"
+                      ]
+                    },
+                    {
+                      "subtypes": [
+                        "Food"
+                      ]
+                    }
+                  ],
+                  "controller": "you",
+                  "exclude_self": true,
+                  "zone": "battlefield"
+                }
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, put a +1/+1 counter on it for each other Squirrel and/or Food you control.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another Squirrel or Food you control enters, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "any_of": [
+                {
+                  "subtypes": [
+                    "Squirrel"
+                  ]
+                },
+                {
+                  "subtypes": [
+                    "Food"
+                  ]
+                }
+              ],
+              "exclude_self": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "honored_dreyleader",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{2}{G}",
+      "name": "Honored Dreyleader",
+      "oracle_text": "Trample\nWhen this creature enters, put a +1/+1 counter on it for each other Squirrel and/or Food you control.\nWhenever another Squirrel or Food you control enters, put a +1/+1 counter on this creature.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Squirrel",
+        "Warrior"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -125909,6 +126367,60 @@
       ]
     },
     {
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "maelstrom_pulse",
+      "mana_cost": "{1}{B}{G}",
+      "name": "Maelstrom Pulse",
+      "oracle_text": "Destroy target nonland permanent and all other permanents with the same name as that permanent.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "victim",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        },
+        {
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "exclude_binding": "victim",
+            "shares_a_name_with": "victim",
+            "zone": "battlefield"
+          },
+          "op": "destroy"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -135346,6 +135858,83 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "blood_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature an opponent controls dies, you create a Blood token.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "creature_dies"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you sacrifice an artifact, put a +1/+1 counter on this creature and you gain 1 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "sacrificed",
+            "filter": {
+              "types": [
+                "Artifact"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "moonstone_eulogist",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{B}{B}",
+      "name": "Moonstone Eulogist",
+      "oracle_text": "Flying\nWhenever a creature an opponent controls dies, you create a Blood token. (It's an artifact with \"{1}, {T}, Discard a card, Sacrifice this token: Draw a card.\")\nWhenever you sacrifice an artifact, put a +1/+1 counter on this creature and you gain 1 life.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Bat",
+        "Warlock"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "effects": [
                 {
                   "objects": {
@@ -138738,6 +139327,57 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": "each_opponent"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a token you control leaves the battlefield, each opponent loses 1 life and you gain 1 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "leaves_battlefield",
+            "filter": {
+              "is_token": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "nadier_s_nightblade",
+      "mana_cost": "{2}{B}",
+      "name": "Nadier's Nightblade",
+      "oracle_text": "Whenever a token you control leaves the battlefield, each opponent loses 1 life and you gain 1 life.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Warrior"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "effects": [
                 {
                   "amount": {
@@ -140413,6 +141053,47 @@
       "source": "auto",
       "subtypes": [
         "Dinosaur"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "power_had": true
+              },
+              "op": "create_token",
+              "tapped": true,
+              "token": "squirrel_1_1_g"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, create X tapped 1/1 green Squirrel creature tokens, where X is this creature's power.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "nested_shambler",
+      "mana_cost": "{B}",
+      "name": "Nested Shambler",
+      "oracle_text": "When this creature dies, create X tapped 1/1 green Squirrel creature tokens, where X is this creature's power.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Zombie"
       ],
       "toughness": 1,
       "types": [
@@ -146298,6 +146979,71 @@
       "subtypes": [
         "Ogre",
         "Warrior"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "create_token",
+                  "token": "rat_1_1_b"
+                }
+              ],
+              "op": "may",
+              "prompt": "Create a 1/1 black Rat creature token?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another nontoken creature dies, you may create a 1/1 black Rat creature token.",
+          "trigger": {
+            "controller": "any",
+            "event": "creature_dies",
+            "filter": {
+              "exclude_self": true,
+              "is_token": false
+            }
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Rat"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "deathtouch"
+          ],
+          "kind": "static",
+          "text": "Rats you control have deathtouch."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "ogre_slumlord",
+      "mana_cost": "{3}{B}{B}",
+      "name": "Ogre Slumlord",
+      "oracle_text": "Whenever another nontoken creature dies, you may create a 1/1 black Rat creature token.\nRats you control have deathtouch.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Ogre",
+        "Rogue"
       ],
       "toughness": 3,
       "types": [
@@ -155261,6 +156007,89 @@
         {
           "effects": [
             {
+              "effects": [
+                {
+                  "condition": {
+                    "exists": {
+                      "any_types": [
+                        "Creature",
+                        "Planeswalker"
+                      ],
+                      "controller": {
+                        "binding": "each_player"
+                      },
+                      "zone": "battlefield"
+                    }
+                  },
+                  "else": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "discard",
+                      "player": {
+                        "binding": "each_player"
+                      }
+                    }
+                  ],
+                  "op": "if",
+                  "then": [
+                    {
+                      "objects": {
+                        "any_types": [
+                          "Creature",
+                          "Planeswalker"
+                        ],
+                        "chooser": "owner",
+                        "controller": {
+                          "binding": "each_player"
+                        },
+                        "count": 1,
+                        "zone": "battlefield"
+                      },
+                      "op": "sacrifice"
+                    }
+                  ]
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, each player sacrifices a creature or planeswalker of their choice. Each player who can't discards a card.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "plaguecrafter",
+      "mana_cost": "{2}{B}",
+      "name": "Plaguecrafter",
+      "oracle_text": "When this creature enters, each player sacrifices a creature or planeswalker of their choice. Each player who can't discards a card.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Shaman"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "objects": {
                 "target": "t1"
               },
@@ -155969,6 +156798,56 @@
         "Elemental"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another creature dies, each opponent loses 1 life.",
+          "trigger": {
+            "controller": "any",
+            "event": "creature_dies",
+            "filter": {
+              "exclude_self": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "poison_tip_archer",
+      "keywords": [
+        "reach",
+        "deathtouch"
+      ],
+      "mana_cost": "{2}{B}{G}",
+      "name": "Poison-Tip Archer",
+      "oracle_text": "Reach (This creature can block creatures with flying.)\nDeathtouch (Any amount of damage this deals to a creature is enough to destroy it.)\nWhenever another creature dies, each opponent loses 1 life.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Archer"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -159998,6 +160877,70 @@
         "Rogue"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another creature you control enters, you gain 1 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "prosperous_innkeeper",
+      "mana_cost": "{1}{G}",
+      "name": "Prosperous Innkeeper",
+      "oracle_text": "When this creature enters, create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")\nWhenever another creature you control enters, you gain 1 life.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Halfling",
+        "Citizen"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -164971,6 +165914,89 @@
         "Wurm"
       ],
       "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you sacrifice an artifact or creature, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "sacrificed",
+            "filter": {
+              "any_types": [
+                "Artifact",
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{1}{B}{G}",
+            "sacrifice": {
+              "any_types": [
+                "Artifact",
+                "Creature"
+              ],
+              "controller": "you",
+              "count": 1,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{B}{G}, Sacrifice an artifact or creature: You gain 1 life and draw a card."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "ravenous_squirrel",
+      "mana_cost": "{B/G}",
+      "name": "Ravenous Squirrel",
+      "oracle_text": "Whenever you sacrifice an artifact or creature, put a +1/+1 counter on this creature.\n{1}{B}{G}, Sacrifice an artifact or creature: You gain 1 life and draw a card.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Squirrel"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
