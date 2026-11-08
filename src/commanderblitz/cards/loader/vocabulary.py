@@ -1516,6 +1516,23 @@ STATIC_COUNT_ZONES = frozenset({"battlefield", "graveyard", "hand", "exile", "li
 #: one.
 STATIC_COUNT_FILTER_KEYS = STATIC_FILTER_KEYS | {"zone", "name"}
 
+#: Keys a static *magnitude's* ``{"count": …}`` may use: the counting filter
+#: plus ``any_of``, a union of whole counting filters. "+1/+1 for each creature
+#: you control with **base power or toughness 1**" (Sword of the Squeak) is
+#: an *or* across two keys, and a creature that is both is one creature: two
+#: counts summed would count a 1/1 twice, and the language has no subtraction
+#: to take the overlap back out. Each branch is matched as the outer filter
+#: with the branch's keys added, by the same `characteristics._matches_wherever`
+#: recursion `affects` already uses, so a branch reads exactly what the outer
+#: filter could -- base P/T included -- and nothing else.
+#:
+#: Battlefield only, and the `count` leaf only: the other counting positions
+#: (`exists`, `counters_on`, `mana_symbols`, the per-player counts, an entering
+#: count) keep `STATIC_COUNT_FILTER_KEYS`, because their readers would each need
+#: the recursion argued separately. `STATIC_FILTER_KEYS` is untouched, so no
+#: static gains a way to read another static's output.
+STATIC_VALUE_COUNT_FILTER_KEYS = STATIC_COUNT_FILTER_KEYS | {"any_of"}
+
 #: ...and once it names a zone other than the battlefield, only these.  A card
 #: in a graveyard has a printed face and an owner; it is not tapped, attacking,
 #: attached to anything or a token, so those keys are refused here rather than

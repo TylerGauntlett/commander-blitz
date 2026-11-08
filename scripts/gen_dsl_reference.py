@@ -587,7 +587,8 @@ SELECTORS: dict[str, Entry] = {
 
 #: Keys a static's `affects` filter answers that the effect-side selector does not.
 STATIC_FILTER_EXTRAS: dict[str, Entry] = {
-    "any_of": ("A union of whole static filters, each with its own `exclude_self`; `affects` only.",
+    "any_of": ("A union of whole static filters, each with its own `exclude_self`; `affects` and a "
+               "static value's `count` only.",
                "`any_of` — a union of static filters"),
     "attached_to_host": ("Attached to the static's own source (\"equipped creature\").", None),
     "modified": ("Is modified: a counter, an Equipment by its printed face, or your Aura (`true` only).",
@@ -754,6 +755,9 @@ CONDITIONS: dict[str, Entry] = {
 #: Static-side entries, read before `VALUES`: a leaf in both languages whose
 #: static reading is narrower or documented apart is described here.
 STATIC_VALUE_EXTRAS: dict[str, Entry] = {
+    "count": ("How many objects a counting filter matches; on the battlefield it may be an `any_of` "
+              "union, each object counted once.",
+              "`any_of` in a `count` — \"base power or toughness 1\""),
     "distinct": ("The number of card types among a counting filter's pool off the battlefield "
                  "(delirium); `of: \"card_type\"` only.",
                  "Counting different values rather than objects"),

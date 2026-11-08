@@ -6488,11 +6488,45 @@ halves describe twice — every changeling, in a Zombie deck. One static with
 `subtypes: ["Skeleton", "Zombie"]` is the other near miss: it cannot put "other"
 on one half only.
 
-`affects` only (`STATIC_AFFECTS_FILTER_KEYS`); `blockers`, `targeting`,
-`damage_source` and the counting filters do not take it. A branch is held to the
-same keys and checks as the top level, recursively. The loader refuses a union
-of one, an empty branch, and a branch that repeats a key the outer filter names —
-the branch's value would replace the outer one rather than narrow it.
+`affects` (`STATIC_AFFECTS_FILTER_KEYS`) and a static value's `count` (next
+section) take it; `blockers`, `targeting`, `damage_source` and the other counting
+positions do not. A branch is held to the same keys and checks as the top level,
+recursively. The loader refuses a union of one, an empty branch, and a branch
+that repeats a key the outer filter names — the branch's value would replace the
+outer one rather than narrow it.
+
+#### `any_of` in a `count` — "base power or toughness 1"
+
+```jsonc
+// Sword of the Squeak: "Equipped creature gets +1/+1 for each creature you
+//  control with base power or toughness 1."
+{ "kind": "static", "effect": "buff", "affects": { "attached": true },
+  "power":     { "count": { "controller": "you", "types": ["Creature"],
+                            "any_of": [ { "power": 1 }, { "toughness": 1 } ] } },
+  "toughness": { "count": { "controller": "you", "types": ["Creature"],
+                            "any_of": [ { "power": 1 }, { "toughness": 1 } ] } } }
+```
+
+A static magnitude's `{"count": …}` takes `any_of`
+(`STATIC_VALUE_COUNT_FILTER_KEYS`): the objects any branch describes, each
+counted once, every branch matched as the outer filter plus its own keys — the
+same recursion as `affects`. A 1/1 is one creature here; a `sum` of two counts is
+the near miss and counts it twice, and `power: 1, toughness: 1` in one filter is
+the other and misses the 1/3 and the 3/1.
+
+"Base power" is spelled `power` in a static filter, because that is what the key
+reads there: [base P/T](#power--toughness--a-derived-characteristic-read-at-a-fixed-layer),
+`characteristics._base_pt`, before any layer. The creature the Sword pumps, a
++1/+1 counter and a pump leave a 1/1 counted; an `animate` or `set_pt` that sets
+base P/T is not seen either, the layers-lite simplification
+[rules-coverage.md](rules-coverage.md) records. `base_power` and
+`base_toughness` are the effect-side selector's spelling of the same reading and
+are refused in a static filter.
+
+Battlefield only, and the `count` leaf only: the loader refuses `any_of` beside a
+`zone` other than `battlefield`, a `zone` or a nested `any_of` inside a branch,
+and the word in `exists`, `counters_on`, `mana_symbols`, the per-player counts and
+an entering count.
 
 A static's **magnitude** — its `power`, `toughness` or `amount`, and either side
 of a `cmp` in its condition — is a fourth language, `STATIC_VALUE_KEYS`, and much
@@ -6501,7 +6535,7 @@ smaller than the effect-side `value_keys`:
 | leaf | reads |
 |---|---|
 | `{"const": n}` | a literal |
-| `{"count": filter}` | how many objects match, in any [countable zone](#counting-filters-and-the-zone-key) |
+| `{"count": filter}` | how many objects match, in any [countable zone](#counting-filters-and-the-zone-key); on the battlefield the filter may be [a union](#any_of-in-a-count--base-power-or-toughness-1) |
 | `{"counters_on": {"counter": …, "objects": …}}` | how many counters of a kind sit on the objects the filter picks; `"any"` sums every kind (122.1) |
 | `{"mana_symbols": {"of": "G", "objects": …}}` | chroma — pips in printed costs |
 | `{"permanents_entered_this_turn": filter}` | [how many arrived this turn](#which-permanents-entered-the-battlefield-this-turn), not how many are standing there |

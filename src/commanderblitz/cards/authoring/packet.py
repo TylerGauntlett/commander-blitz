@@ -52,6 +52,7 @@ from ..loader.vocabulary import (
     STATIC_CONDITION_HEADS,
     STATIC_EFFECTS,
     STATIC_FILTER_KEYS,
+    STATIC_VALUE_COUNT_FILTER_KEYS,
     STATIC_VALUE_KEYS,
     TAPPED_PERMANENT_KEYS,
 )
@@ -586,6 +587,12 @@ def reference() -> dict:
         # anthem's `power` is a `const` and files a gap for "+1/+1 for each
         # charge counter on this artifact" instead of writing it.
         "static_value_keys": sorted(STATIC_VALUE_KEYS),
+        # What a static magnitude's `count` may filter on: the counting filter
+        # plus `any_of`, a union counted once ("for each creature you control
+        # with base power **or** toughness 1"). Its own entry for
+        # `static_affects_filter_keys`' reason: the other counting positions do
+        # not take the word.
+        "static_value_count_filter_keys": sorted(STATIC_VALUE_COUNT_FILTER_KEYS),
         #: The three vocabularies a packet used to omit, each of which cost a
         #: real card.  A worker that cannot see `counters_on` cannot know
         #: "if this creature has no +1/+1 counters on it" is sayable, and files
@@ -902,6 +909,13 @@ def reference() -> dict:
             " {\"self_only\": true}}}` -- an anthem with a size, which no op"
             " can be: `pump` wears off and `add_counters` would miss both the"
             " creatures already out and the ones cast later.",
+            "A static magnitude's `count` reads `static_value_count_filter_keys`,"
+            " which adds `any_of` on the battlefield: \"for each creature you"
+            " control with base power or toughness 1\" is `{\"count\":"
+            " {\"controller\": \"you\", \"types\": [\"Creature\"], \"any_of\":"
+            " [{\"power\": 1}, {\"toughness\": 1}]}}` -- one count, so a 1/1 is"
+            " counted once. In a static filter `power` and `toughness` already"
+            " read *base* P/T, so \"base power\" is spelled `power` there.",
             "`selector_keys` is what an effect's `objects` or a target spec's"
             " `selector` may contain. `static_filter_keys` is the much smaller"
             " set a *static ability* may read, because a static may only read"
