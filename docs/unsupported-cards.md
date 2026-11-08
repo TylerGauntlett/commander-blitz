@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**258 cards** blocked by **236** capabilities.
+**257 cards** blocked by **235** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -236,7 +236,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [this-combat-duration](#this-combat-duration) | 1 | 9126 | op |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
 | [times-attacked-this-turn](#times-attacked-this-turn) | 1 | 988 | value |
-| [token-creation-addition-per-token](#token-creation-addition-per-token) | 1 | 998 | replacement |
 | [total-mana-value-selection](#total-mana-value-selection) | 1 | 4244 | op |
 | [total-toughness-cost-reduction](#total-toughness-cost-reduction) | 1 | 5188 | value |
 | [toughness-greater-than-power-filter](#toughness-greater-than-power-filter) | 1 | 3557 | selector |
@@ -3786,20 +3785,6 @@ Blocks **1** card.
 
 - **Moraug, Fury of Akoum** (rank 988) — `moraug_fury_of_akoum`
   - Each creature you control gets +1/+0 for each time it has attacked this turn.
-
-</details>
-
-## token-creation-addition-per-token
-
-Blocks **1** card.
-
-- **(replacement)** a replace_token_creation addition that keeps the pending tokens and adds N copies of a listed token id, where N is the number of tokens in the event ('those tokens plus that many 1/1 green Squirrel tokens'), e.g. and_create with a per-token count flag
-  <br>Why the existing vocabulary won't do: and_create adds one of each listed id once per creation event (Stridehangar Automaton), so three Treasures would bring one Squirrel instead of three; token_multiplier doubles the original tokens' own ids rather than adding Squirrels; create_instead replaces the tokens
-
-<details><summary>Cards waiting on this</summary>
-
-- **Chatterfang, Squirrel General** (rank 998) — `chatterfang_squirrel_general`
-  - If one or more tokens would be created under your control, those tokens plus that many 1/1 green Squirrel creature tokens are created instead.
 
 </details>
 

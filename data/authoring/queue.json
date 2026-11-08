@@ -45122,12 +45122,12 @@
     },
     "Chatterfang, Squirrel General": {
       "edhrec_rank": 998,
-      "gate": "template",
+      "gate": null,
       "name": "Chatterfang, Squirrel General",
-      "reason": "no template for: If one or more tokens would be created under your control, those tokens plus that many 1/1",
+      "reason": "",
       "scryfall_id": "2bb8c103-37c3-4c5f-9b3f-48d8b2292783",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chatterstorm": {

@@ -3034,6 +3034,10 @@
     },
     "zone": "battlefield"
   },
+  "chatterfang_squirrel_general": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "chatterstorm": {
     "battlefield_count": 33,
     "tokens": {

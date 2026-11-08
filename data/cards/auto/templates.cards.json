@@ -35852,6 +35852,93 @@
     {
       "abilities": [
         {
+          "and_create": [
+            "squirrel_1_1_g"
+          ],
+          "and_create_per_token": true,
+          "effect": "replace_token_creation",
+          "kind": "static",
+          "text": "If one or more tokens would be created under your control, those tokens plus that many 1/1 green Squirrel creature tokens are created instead."
+        },
+        {
+          "cost": {
+            "mana": "{B}",
+            "sacrifice_x": {
+              "subtypes": [
+                "Squirrel"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "pump",
+              "power": {
+                "x": true
+              },
+              "toughness": {
+                "minus": [
+                  {
+                    "const": 0
+                  },
+                  {
+                    "x": true
+                  }
+                ]
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{B}, Sacrifice X Squirrels: Target creature gets +X/-X until end of turn."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "chatterfang_squirrel_general",
+      "keywords": [
+        "forestwalk"
+      ],
+      "mana_cost": "{2}{G}",
+      "name": "Chatterfang, Squirrel General",
+      "oracle_text": "Forestwalk (This creature can't be blocked as long as defending player controls a Forest.)\nIf one or more tokens would be created under your control, those tokens plus that many 1/1 green Squirrel creature tokens are created instead.\n{B}, Sacrifice X Squirrels: Target creature gets +X/-X until end of turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Squirrel",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "active_zones": [
             "stack"
           ],
