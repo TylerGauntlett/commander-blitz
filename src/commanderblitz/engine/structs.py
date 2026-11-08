@@ -332,6 +332,10 @@ class AttackRestriction:
 #: `CONTROL_DURATIONS` spells the same clock, because it is the same clock.
 ATTACK_MARK_DURATIONS = ("end_of_your_next_turn", "this_turn")
 
+#: The durations a *prohibition* :class:`AttackMark` can carry -- the
+#: `cant_attack_player` op's creature form (``objects``).
+ATTACK_PROHIBITION_MARK_DURATIONS = ("while_counter", "next_combat")
+
 
 @dataclass(frozen=True)
 class CastRider:
@@ -388,6 +392,15 @@ class AttackMark:
     that kind and is dropped the moment the last one goes
     (`GameObject.remove_counter`), so a counter put back later does not revive
     a duration that has ended (611.2b).
+
+    ``next_combat`` is the other prohibition clock: Illusionist's Gambit's
+    "they can't attack you or planeswalkers you control that combat", where
+    "that combat" is the additional one the spell creates. It is `must_attack`'s
+    ``next_combat`` clock, kept and spent the same way: the mark stands until
+    the creature's controller next declares attackers and is dropped by
+    `combat.discharge_attack_requirements` once that declaration is locked in,
+    whether or not the creature attacked. Not a turn clock, because the
+    declaration it binds may be in this turn or a later one.
     """
 
     #: The player the creature must (or, with ``prohibition``, may not) attack.
@@ -408,6 +421,9 @@ class AttackMark:
     #: "…attack that opponent this turn if able": the cleanup of the turn the
     #: mark was made in ends it, whoever's turn that is.
     this_turn: bool = False
+    #: "…that combat": a prohibition spent when its creature's controller next
+    #: declares attackers.
+    next_combat: bool = False
 
     def ends_now(self, active_player: int, turn: int) -> bool:
         """Is the cleanup step of this turn the end of the mark's duration?"""
@@ -427,6 +443,7 @@ class AttackMark:
             "planeswalkers": self.planeswalkers,
             "while_counter": self.while_counter,
             "this_turn": self.this_turn,
+            "next_combat": self.next_combat,
         }
 
 

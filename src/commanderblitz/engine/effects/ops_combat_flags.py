@@ -24,6 +24,7 @@ from ..structs import (
     TargetRef,
 )
 from ..temp_effects import (
+    forbid_attack_next_combat,
     forbid_attack_while_counter,
     forbid_block,
     forbid_sacrifice,
@@ -782,12 +783,18 @@ def op_cant_attack_player(ctx: EffectContext, spec: Mapping[str, Any]):
 
     ``objects`` in place of ``attacker`` names **creatures** rather than a
     player: Promise of Loyalty's "each of those creatures can't attack you or
-    planeswalkers you control for as long as it has a vow counter on it". Its
-    one duration is ``while_counter``, with ``counter`` naming the kind, and
-    each creature carries the prohibition itself (`structs.AttackMark`) -- so a
+    planeswalkers you control for as long as it has a vow counter on it". Each
+    creature carries the prohibition itself (`structs.AttackMark`) -- so a
     creature that changes hands still may not attack ``defender``, and one that
-    leaves is a new object (400.7). A creature without the counter gets nothing:
-    its duration is already over.
+    leaves is a new object (400.7). Two durations:
+
+    ``while_counter``  with ``counter`` naming the kind: the mark stands while
+                       the creature has one. A creature without the counter
+                       gets nothing: its duration is already over.
+    ``next_combat``    Illusionist's Gambit's "they can't attack you or
+                       planeswalkers you control that combat": `must_attack`'s
+                       ``next_combat`` clock, spent when the creature's
+                       controller next declares attackers.
     """
 
     duration = str(spec.get("duration", "this_turn"))
@@ -797,6 +804,15 @@ def op_cant_attack_player(ctx: EffectContext, spec: Mapping[str, Any]):
         defenders = _players(ctx, spec.get("defender"))
         for oid in resolve_pool(ctx, spec.get("objects") or {}):
             for defender in defenders:
+                if duration == "next_combat":
+                    forbid_attack_next_combat(
+                        ctx.state,
+                        oid,
+                        defender,
+                        planeswalkers=walkers,
+                        source=ctx.source_oid,
+                    )
+                    continue
                 forbid_attack_while_counter(
                     ctx.state,
                     oid,

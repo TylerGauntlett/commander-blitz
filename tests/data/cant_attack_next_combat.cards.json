@@ -1,0 +1,72 @@
+{
+  "_comment": "Cards that exist only for tests/unit/combat/test_cant_attack_next_combat.py. Never part of a deck list. t_cnc_gambit is Illusionist's Gambit at {0}, its whole printed body.",
+  "cards": [
+    {
+      "id": "t_cnc_gambit",
+      "name": "Test Gambit",
+      "oracle_text": "Cast this spell only during the declare blockers step on an opponent's turn.\nRemove all attacking creatures from combat and untap them. After this phase, there is an additional combat phase. Each of those creatures attacks that combat if able. They can't attack you or planeswalkers you control that combat.",
+      "mana_cost": "{0}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "cast_only_during": {
+        "turn": "opponents",
+        "steps": [
+          "declare_blockers"
+        ]
+      },
+      "spell_effects": [
+        {
+          "op": "choose_permanents",
+          "objects": {
+            "zone": "battlefield",
+            "types": [
+              "Creature"
+            ],
+            "attacking": true,
+            "controller": "any",
+            "count": "all"
+          },
+          "as": "those"
+        },
+        {
+          "op": "remove_from_combat",
+          "objects": {
+            "binding": "those"
+          }
+        },
+        {
+          "op": "untap",
+          "objects": {
+            "binding": "those"
+          }
+        },
+        {
+          "op": "extra_combat"
+        },
+        {
+          "op": "must_attack",
+          "objects": {
+            "binding": "those"
+          },
+          "duration": "next_combat"
+        },
+        {
+          "op": "cant_attack_player",
+          "objects": {
+            "binding": "those"
+          },
+          "defender": "you",
+          "duration": "next_combat",
+          "planeswalkers": true
+        }
+      ]
+    }
+  ]
+}

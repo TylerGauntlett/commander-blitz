@@ -704,7 +704,12 @@ def _declare_attackers_step(state: GameState) -> None:
     attackers = combat_mod.legal_attackers(state)
     defenders = combat_mod.legal_defenders(state)
     if not attackers or not defenders:
-        combat_mod.finish_attackers(state)
+        # Nobody can attack, so nothing is declared and there is nothing to lock
+        # in -- but the declaration still happens (508.1), and the one-shot
+        # `next_combat` requirements and prohibitions it binds are spent by it.
+        # Left set, a creature that could not attack this combat would carry
+        # "that combat" into its controller's next one.
+        combat_mod.discharge_attack_requirements(state)
         return
     state.pending_decision = PendingDecision(
         kind=DecisionKind.DECLARE_ATTACKERS,

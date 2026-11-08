@@ -272,14 +272,18 @@ def discharge_attack_requirements(state: GameState) -> None:
     A ``next_combat`` obligation is one-shot and expires here whether or not it
     was met -- the creature may have been tapped, and "if able" means it owed
     nothing.  Leaving it set would compel the following combat too.
+
+    A ``next_combat`` *prohibition* mark (Illusionist's Gambit's "they can't
+    attack you … that combat") is spent here too, on the same clock, so the
+    requirement and the restriction the card pairs are one combat long together.
     """
     for oid in state.battlefield:
         obj = state.objects.get(oid)
-        if obj is None or obj.must_attack is None:
-            continue
-        if obj.controller != state.active_player:
+        if obj is None or obj.controller != state.active_player:
             continue
         obj.must_attack = None
+        if obj.attack_marks and any(m.next_combat for m in obj.attack_marks):
+            obj.attack_marks = [m for m in obj.attack_marks if not m.next_combat]
 
 
 def unmet_block_requirements(state: GameState, defender: int) -> list[int]:
