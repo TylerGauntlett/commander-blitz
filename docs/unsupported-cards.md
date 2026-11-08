@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**262 cards** blocked by **240** capabilities.
+**261 cards** blocked by **239** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -248,7 +248,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [two-share-all-card-types](#two-share-all-card-types) | 1 | 7993 | value |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
-| [vanishing](#vanishing) | 1 | 3385 | keyword |
 | [while-source-on-battlefield-duration](#while-source-on-battlefield-duration) | 1 | 8222 | engine |
 | [wurm-5-5-g-trample](#wurm-5-5-g-trample) | 1 | 2387 | token |
 | [x-cost-mana-restriction](#x-cost-mana-restriction) | 1 | 4046 | decision |
@@ -3958,20 +3957,6 @@ Blocks **1** card.
 
 - **Suppressor Skyguard** (rank 9126) — `suppressor_skyguard`
   - Whenever a player attacks you, if that player has another opponent who isn't being attacked, prevent all combat damage that would be dealt to you this combat.
-
-</details>
-
-## vanishing
-
-Blocks **1** card.
-
-- **(keyword)** Vanishing N (702.63): enters with N time counters; at the beginning of your upkeep remove a time counter; a separate triggered ability fires when the last time counter is removed and sacrifices the permanent
-  <br>Why the existing vocabulary won't do: vanishing is not in keywords. The enters-with-counters half is expressible via the self_enters_with_counters replacement and the upkeep removal via an upkeep trigger with remove_counters, but there is no trigger_event for a counter being removed (only counter_placed), so "When the last is removed, sacrifice it" can only be approximated by an inline if-zero-then-sacrifice inside the upkeep trigger, which is not the separate trigger the rules describe
-
-<details><summary>Cards waiting on this</summary>
-
-- **Deep Forest Hermit** (rank 3385) — `deep_forest_hermit`
-  - Vanishing 3 (This creature enters with three time counters on it. At the beginning of your upkeep, remove a time counter from it. When the last is removed, sacrifice it.)
 
 </details>
 

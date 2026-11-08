@@ -64632,12 +64632,12 @@
     },
     "Deep Forest Hermit": {
       "edhrec_rank": 3385,
-      "gate": "template",
+      "gate": null,
       "name": "Deep Forest Hermit",
-      "reason": "no template for: Vanishing 3",
+      "reason": "",
       "scryfall_id": "f712e233-1de8-45e4-9225-790d608ac90b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deep Freeze": {

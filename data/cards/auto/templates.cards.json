@@ -50780,6 +50780,65 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "create_token",
+              "token": "squirrel_1_1_g"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, create four 1/1 green Squirrel creature tokens.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Squirrel"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Squirrels you control get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "deep_forest_hermit",
+      "mana_cost": "{3}{G}{G}",
+      "name": "Deep Forest Hermit",
+      "oracle_text": "Vanishing 3 (This creature enters with three time counters on it. At the beginning of your upkeep, remove a time counter from it. When the last is removed, sacrifice it.)\nWhen this creature enters, create four 1/1 green Squirrel creature tokens.\nSquirrels you control get +1/+1.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Druid"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ],
+      "vanishing": 3
+    },
+    {
       "color_identity": [
         "W"
       ],
