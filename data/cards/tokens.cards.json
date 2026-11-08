@@ -4469,6 +4469,108 @@
         "G"
       ],
       "is_token": true
+    },
+    {
+      "id": "squirrel_1_1_g",
+      "name": "Squirrel Token",
+      "oracle_text": "1/1 green Squirrel creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Squirrel"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "raccoon_3_3_g",
+      "name": "Raccoon Token",
+      "oracle_text": "3/3 green Raccoon creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Raccoon"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "shapeshifter_2_2_u_changeling",
+      "name": "Shapeshifter Token",
+      "oracle_text": "2/2 blue Shapeshifter creature token with changeling. (It is every creature type.)",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Shapeshifter"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Changeling (This card is every creature type.)",
+          "effect": "add_subtype",
+          "affects": {
+            "self_only": true
+          },
+          "subtypes": [
+            "Human",
+            "Soldier",
+            "Warrior",
+            "Wizard",
+            "Cleric",
+            "Rogue",
+            "Knight",
+            "Elf",
+            "Goblin",
+            "Zombie",
+            "Vampire",
+            "Spirit",
+            "Beast",
+            "Elemental",
+            "Dragon",
+            "Angel",
+            "Demon",
+            "Sphinx",
+            "Bird",
+            "Cat",
+            "Snake",
+            "Insect",
+            "Serpent",
+            "Giant",
+            "Orc",
+            "Merfolk",
+            "Druid",
+            "Shaman",
+            "Bear",
+            "Wall"
+          ]
+        }
+      ]
     }
   ]
 }
