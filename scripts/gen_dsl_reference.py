@@ -1080,6 +1080,8 @@ ABILITY_COSTS: dict[str, Entry] = {
                        "Ninjutsu — swapping into a combat already under way"),
     "sacrifice": ("Sacrifice a matching permanent; `as` names it for the effects.",
                   "Ghoulcaller Gisa — a sacrifice cost that names what it sacrificed"),
+    "sacrifice_x": ("Sacrifice X matching permanents, X announced and bounded by them.",
+                    "`sacrifice_x` — sacrifice X permanents, X announced"),
     "tap": ("{T}: tap the source.", None),
     "tap_permanents": ("Tap N other permanents, or `total_power` of them (crew).",
                        "Crew — a tap cost measured in power"),

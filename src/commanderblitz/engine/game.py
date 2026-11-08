@@ -53,6 +53,7 @@ from .costs import (
     mana_sources,
     most_life_for_mana,
     pay,
+    sacrifice_x_ceiling,
     spell_purpose,
 )
 from .division import divided_damage, division_amount, division_caps, fits_division
@@ -1148,15 +1149,23 @@ class Game:
                 pid,
                 loyalty_cost=True,
             )
-        elif ability.cost is not None and ability.cost.discard_x:
-            # "Discard X cards" (Gix, Yawgmoth Praetor): announced now, before
-            # the cost is paid (601.2b), and bounded by the cards the cost may
-            # take -- `costs.pay` discards exactly this many and the stack item
-            # carries it to the effects that read X.
+        elif ability.cost is not None and (
+            ability.cost.discard_x or ability.cost.sacrifice_x is not None
+        ):
+            # "Discard X cards" (Gix, Yawgmoth Praetor) and "Sacrifice X Foods"
+            # (Insatiable Frugivore): announced now, before the cost is paid
+            # (601.2b), and bounded by what the cost may take -- `costs.pay`
+            # takes exactly this many and the stack item carries it to the
+            # effects that read X.
+            ceiling = (
+                discard_x_ceiling(state, pid, ability.cost, oid)
+                if ability.cost.discard_x
+                else sacrifice_x_ceiling(state, pid, ability.cost, oid)
+            )
             x = yield from ask_x(
                 EffectContext(state=state, controller=pid, source_oid=oid),
                 f"Choose X for {card.name}",
-                discard_x_ceiling(state, pid, ability.cost, oid),
+                ceiling,
                 pid,
             )
         elif ability.cost is not None and ability.cost.mana.x_count:

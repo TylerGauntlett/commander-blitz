@@ -429,6 +429,15 @@ class Cost:
     #: rather than a spelling of it, because ``discard`` is a number the card
     #: fixes and this one is the player's.
     discard_x: bool = False
+    #: "{3}{B}, **Sacrifice X Foods**: ..." -- Insatiable Frugivore. A selector
+    #: over the battlefield (controller defaults to you), the permanents the
+    #: cost may take. The controller announces X as the ability is activated
+    #: (601.2b, 107.3), bounded by the matching permanents they can sacrifice
+    #: (`costs.sacrifice_x_ceiling`), and sacrifices exactly that many as the
+    #: cost; the effects read X back with ``{"x": true}``. ``discard_x``'s
+    #: shape over `sacrifice`'s pool. Not ``sacrifice`` with a ``count``,
+    #: which is a number the card fixes.
+    sacrifice_x: Mapping[str, Any] | None = None
     exile_from_graveyard: Mapping[str, Any] | None = None
     #: How much less **this cost node** costs -- `{"count": filter}`,
     #: `{"total_power": filter}` or a flat `{"amount": N}`, any of them optionally
@@ -495,6 +504,7 @@ class Cost:
             ),
             discard_self=bool(spec.get("discard_self", False)),
             discard_x=bool(spec.get("discard_x")),
+            sacrifice_x=(dict(spec["sacrifice_x"]) if spec.get("sacrifice_x") else None),
             pay_life=(
                 dict(spec["pay_life"])
                 if isinstance(spec.get("pay_life"), Mapping)
@@ -578,6 +588,7 @@ class Cost:
             and self.remove_counters_from_among is None
             and self.discard == 0
             and not self.discard_x
+            and self.sacrifice_x is None
             and not self.discard_self
             # Without this the payment solver would treat Millikin as a plain
             # tap-for-mana source and take the {C} without ever milling.
@@ -615,6 +626,8 @@ class Cost:
             parts.append("Exert this permanent")
         if self.sacrifice:
             parts.append("Sacrifice")
+        if self.sacrifice_x:
+            parts.append("Sacrifice X")
         if self.return_to_hand:
             parts.append("Return to hand")
         if self.tap_permanents:

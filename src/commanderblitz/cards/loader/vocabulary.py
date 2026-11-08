@@ -60,6 +60,7 @@ NOT_A_CAST_TIME_COST = frozenset(
         "exile_self_from_hand",
         "discard_self",
         "discard_x",
+        "sacrifice_x",
         "pay_life_x",
         "x_value",
     }

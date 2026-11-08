@@ -292,6 +292,7 @@
    "loyalty_x",
    "pay_life_x",
    "remove_counters",
+   "sacrifice_x",
    "tap",
    "untap",
    "x_value"

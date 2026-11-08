@@ -8,7 +8,7 @@ may need a choice, so :func:`pay` is a generator.
 
 from __future__ import annotations
 
-from collections.abc import Generator, Sequence
+from collections.abc import Generator, Mapping, Sequence
 from dataclasses import replace
 from typing import TYPE_CHECKING, Any
 
@@ -1306,6 +1306,10 @@ def can_pay(
         return False
     if cost.sacrifice is not None and not _sacrifice_pool(state, pid, cost, source_oid):
         return False
+    if cost.sacrifice_x is not None and x > sacrifice_x_ceiling(state, pid, cost, source_oid):
+        # "Sacrifice X Foods" at the announced number; X = 0 is always payable,
+        # the `discard_x` floor.
+        return False
     if cost.return_to_hand is not None and not _return_pool(state, pid, cost, source_oid):
         return False
     if cost.tap_permanents is not None and not _tap_cost_pool(state, pid, cost, source_oid):
@@ -1498,12 +1502,35 @@ def _sacrifice_pool(state: GameState, pid: int, cost: Cost, source_oid: int | No
     # `as` names what was sacrificed for the ability's effects; like
     # `tap_permanents`' it says nothing about which permanents qualify.
     spec.pop("as", None)
+    count = int(spec.pop("count", 1) or 1)
+    pool = _sacrificeable(state, pid, spec, source_oid)
+    return pool if len(pool) >= count else []
+
+
+def _sacrificeable(
+    state: GameState, pid: int, selector: Mapping[str, Any], source_oid: int | None
+) -> list[int]:
+    """The permanents matching ``selector`` that the payer may sacrifice.
+
+    Shared by `sacrifice` and `sacrifice_x`, so a protected permanent (701.17b)
+    is fodder for neither.
+    """
+    spec = dict(selector)
     spec.setdefault("controller", "you")
     spec.setdefault("zone", "battlefield")
-    count = int(spec.pop("count", 1) or 1)
     ctx = EffectContext(state=state, controller=pid, source_oid=source_oid)
-    pool = [oid for oid in resolve_pool(ctx, spec) if not sacrifice_forbidden(state, oid)]
-    return pool if len(pool) >= count else []
+    return [oid for oid in resolve_pool(ctx, spec) if not sacrifice_forbidden(state, oid)]
+
+
+def sacrifice_x_ceiling(
+    state: GameState, pid: int, cost: Cost, source_oid: int | None = None
+) -> int:
+    """The most X a ``sacrifice_x`` cost may announce: the permanents it may take.
+
+    `discard_x_ceiling`'s twin, and read by the same three places -- legality's
+    offer, `game._activate`'s question and `can_pay` -- so they cannot disagree.
+    """
+    return len(_sacrificeable(state, pid, cost.sacrifice_x or {}, source_oid))
 
 
 def _blight_pool(state: GameState, pid: int, source_oid: int | None) -> list[int]:
@@ -1947,6 +1974,19 @@ def pay(
         for oid in picked:
             # The thing being paid for, so the log can say what the creature
             # was sacrificed *to* rather than only that it was sacrificed.
+            sacrifice_object(state, oid, by=source_oid)
+
+    if cost.sacrifice_x is not None and x > 0:
+        # Exactly the announced number, chosen now (601.2h) by the payer --
+        # `game._activate` bounded X by this same pool. No `as`: X permanents
+        # are not *the* sacrificed one, and the effects read only the number.
+        pool = _sacrificeable(state, pid, cost.sacrifice_x, source_oid)
+        picked = yield from ask_objects(
+            ctx, f"Sacrifice {x}", pool, x, x, pid, "sacrifice"
+        )
+        if len(picked) < x:
+            return False
+        for oid in picked:
             sacrifice_object(state, oid, by=source_oid)
 
     if cost.return_to_hand is not None:

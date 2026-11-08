@@ -35,6 +35,7 @@ from .costs import (
     most_life_for_mana,
     offerable_mana_ability,
     plus_mana,
+    sacrifice_x_ceiling,
     spell_purpose,
 )
 from .effects.conditions import evaluate
@@ -858,11 +859,18 @@ def _ability_aims(
             # ability's bullet is below, because the alternative -- asking for X
             # afterwards -- would declare the targets before the X they depend
             # on existed.
-            if ability.cost.loyalty_x or ability.cost.discard_x:
+            if (
+                ability.cost.loyalty_x
+                or ability.cost.discard_x
+                or ability.cost.sacrifice_x is not None
+            ):
                 # The ceiling of a -X is the loyalty there is to remove (606.4),
-                # and of "Discard X cards" the cards the cost may take.
+                # of "Discard X cards" the cards the cost may take, and of
+                # "Sacrifice X Foods" the permanents it may take.
                 if ability.cost.discard_x:
                     announced_ceiling = discard_x_ceiling(state, pid, ability.cost, oid)
+                elif ability.cost.sacrifice_x is not None:
+                    announced_ceiling = sacrifice_x_ceiling(state, pid, ability.cost, oid)
                 else:
                     source_obj = state.objects.get(oid)
                     announced_ceiling = source_obj.counter("loyalty") if source_obj is not None else 0
@@ -968,6 +976,7 @@ def _targets_read_x(ability) -> bool:
     if (
         not cost.loyalty_x
         and not cost.discard_x
+        and cost.sacrifice_x is None
         and (not cost.mana.x_count or cost.x_value is not None)
     ):
         return False

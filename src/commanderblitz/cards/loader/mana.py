@@ -211,6 +211,39 @@ def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
                 f"{where}.cost: 'discard_x' announces this ability's X, so the "
                 f"cost may not carry a second X in 'mana', 'pay_life_x' or 'loyalty_x'"
             )
+    if model.sacrifice_x is not None:
+        # "Sacrifice X Foods". `discard_x`'s three refusals, plus the two keys
+        # `sacrifice` takes that this one cannot: X is the count, and "the
+        # sacrificed creature" is one permanent where this cost takes X.
+        sacrifice_x = dict(model.sacrifice_x)
+        if not defines_x:
+            raise DslError(
+                f"{where}.cost: 'sacrifice_x' is announced as an activated ability "
+                f"is activated, and this is not one -- nothing else would ask for X"
+            )
+        if model.sacrifice is not None:
+            raise DslError(
+                f"{where}.cost: 'sacrifice_x' is the whole sacrifice (X permanents); "
+                f"give it or 'sacrifice', not both"
+            )
+        if (
+            "X" in str(model.mana or "").upper()
+            or model.pay_life_x
+            or model.loyalty_x
+            or model.discard_x
+        ):
+            raise DslError(
+                f"{where}.cost: 'sacrifice_x' announces this ability's X, so the cost "
+                f"may not carry a second X in 'mana', 'pay_life_x', 'loyalty_x' or "
+                f"'discard_x'"
+            )
+        for key in ("count", "as"):
+            if key in sacrifice_x:
+                raise DslError(
+                    f"{where}.cost.sacrifice_x: '{key}' may not be set -- X is the "
+                    f"number sacrificed, announced as the ability is activated"
+                )
+        validate_selector(sacrifice_x, f"{where}.cost.sacrifice_x")
     if model.put_counters is not None:
         _validate_put_counters(model.put_counters, where, defines_x=defines_x)
     if model.blight < 0:

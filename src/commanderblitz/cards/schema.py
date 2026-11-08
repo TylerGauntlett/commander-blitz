@@ -101,6 +101,15 @@ class CostModel(BaseModel):
     #: ``discard`` (two numbers for one payment) and not beside an ``{X}`` in
     #: ``mana``, ``loyalty_x`` or ``pay_life_x`` (an ability announces one X).
     discard_x: bool = False
+    #: "{3}{B}, **Sacrifice X Foods**:" -- Insatiable Frugivore. A selector over
+    #: the battlefield (``controller`` defaults to you): the controller
+    #: announces X as the ability is activated (601.2b, 107.3), no more than
+    #: the matching permanents they can sacrifice, and sacrifices that many as
+    #: the cost; the effects read X back with ``{"x": true}``. Activated
+    #: abilities only. No ``count`` (X is the count) and no ``as`` (there is no
+    #: one sacrificed permanent to name); not beside ``sacrifice`` (two
+    #: sacrifices drawing on one board) and not beside another announced X.
+    sacrifice_x: dict[str, Any] | None = None
     #: "{1}{W}, {T}, **Exile this artifact**:" -- Phoenix Down. The exile twin
     #: of `discard_self`, and deliberately not `sacrifice`, which puts the
     #: source in the graveyard. The difference is the whole card here: Phoenix

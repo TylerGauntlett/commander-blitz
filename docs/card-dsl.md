@@ -4224,6 +4224,7 @@ and [#card-level-costs](card-dsl-reference.md#card-level-costs):
   "pay_life_x": true,                             // Toxic Deluge: X life, the caster announces it
   "loyalty_x": true,                              // a planeswalker's −X: X loyalty, announced
   "discard_x": true,                              // Gix: discard X cards, X announced
+  "sacrifice_x": { "subtypes": ["Food"] },        // Frugivore: sacrifice X Foods, X announced
   "remove_counters": { "counter": "-1/-1", "amount": 1 },
   "put_counters":    { "counter": "page", "amount": 1 },   // Mazemind Tome: onto the source
   "exile_from_graveyard": { "types": ["Creature"] },
@@ -4302,6 +4303,37 @@ Not `discard`, which is a number the card fixes. The loader refuses it beside
 `discard` (two numbers for one payment), beside an `{X}` in `mana`, `pay_life_x`
 or `loyalty_x` (an ability announces one X), and anywhere but an activated
 ability's cost.
+
+### `sacrifice_x` — sacrifice X permanents, X announced
+
+"{3}{B}, Sacrifice X Foods: Creatures you control get +X/+0 and gain menace
+until end of turn." — Insatiable Frugivore.
+
+```jsonc
+"cost": { "mana": "{3}{B}", "sacrifice_x": { "subtypes": ["Food"] } },
+"effects": [{ "op": "pump", "objects": { "zone": "battlefield", "controller": "you",
+                                         "types": ["Creature"], "count": "all" },
+              "power": { "x": true }, "toughness": { "const": 0 },
+              "duration": "until_end_of_turn" }, ...]
+```
+
+The value is a selector over the battlefield, `controller` defaulting to you:
+the permanents the cost may take. The controller announces X as the ability is
+activated (601.2b, 107.3) and sacrifices exactly that many, chosen as the cost
+is paid (601.2h); the effects read the number with `{"x": true}` / `"x"`. The
+ceiling is `costs.sacrifice_x_ceiling`, the matching permanents the controller
+may sacrifice — the pool `sacrifice` draws from, so a permanent that can't be
+sacrificed is not counted. The source is fodder when it matches, so
+"Sacrifice X Squirrels" on a Squirrel may take itself; `exclude_self` says
+"other". X = 0 is a legal announcement, so the ability is on offer with nothing
+to sacrifice. A target whose filter reads X is offered once per X, as for
+`discard_x`.
+
+Not `sacrifice` with a `count`, which is a number the card fixes. The loader
+refuses `count` and `as` inside it (X is the count, and there is no one
+sacrificed permanent to name), the key beside `sacrifice`, beside an `{X}` in
+`mana`, `pay_life_x`, `loyalty_x` or `discard_x` (an ability announces one X),
+and anywhere but an activated ability's cost.
 
 ### `mill` — a cost, and never an effect
 
