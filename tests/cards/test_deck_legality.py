@@ -33,6 +33,7 @@ FAVORITES = {
 #: ``data/decks/sources.json`` (``tests/cards/test_precon_sources.py``).
 PRECONS = {
     "blc_animated_army",
+    "blc_peace_offering",
     "drc_living_energy",
     "fdc_calling_all_angels",
     "fdc_keen_engineering",
