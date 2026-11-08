@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**259 cards** blocked by **238** capabilities.
+**257 cards** blocked by **236** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -172,7 +172,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mana-spent-trigger-on-activation](#mana-spent-trigger-on-activation) | 1 | 4444 | trigger_event |
 | [mana-tap-trigger-damage-rider](#mana-tap-trigger-damage-rider) | 1 | 7929 | static_effect |
 | [manifest-from-hand](#manifest-from-hand) | 1 | 3975 | op |
-| [maximum-hand-size](#maximum-hand-size) | 1 | 1618 | static_effect |
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
 | [miracle-x](#miracle-x) | 1 | 4945 | engine |
@@ -225,7 +224,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [self-bounce-playable-gate](#self-bounce-playable-gate) | 1 | 10013 | engine |
 | [shapeshifter-2-2-u-changeling](#shapeshifter-2-2-u-changeling) | 1 | 494 | token |
 | [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
-| [shark-token](#shark-token) | 1 | 8308 | token |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [static-greatest-power-in-graveyard](#static-greatest-power-in-graveyard) | 1 | 10492 | value |
@@ -2890,20 +2888,6 @@ Blocks **1** card.
 
 </details>
 
-## maximum-hand-size
-
-Blocks **1** card.
-
-- **(static_effect)** a player-wide static that sets the affected player's maximum hand size to a printed number (here twenty, affects_player: you) while the permanent is on the battlefield, read by the cleanup-step discard (514.1) in place of the fixed MAX_HAND_SIZE
-  <br>Why the existing vocabulary won't do: The closest are the static no_hand_limit and the op no_maximum_hand_size, which remove the limit entirely; the cleanup discard in turn.py compares hand size against the constant MAX_HAND_SIZE (7) with no way to set a different number. Using no_hand_limit would be strictly better than the printed card (no discard above twenty). The other two lines look expressible: a you_attack trigger with a two-or-more-attackers condition doing add_counters +1/+1 on self and draw 1, and an attacks trigger on self with an if over any of cmp counters_on self >= 20 / cards_in_hand you >= 20 then win_game
-
-<details><summary>Cards waiting on this</summary>
-
-- **Twenty-Toed Toad** (rank 1618) — `twenty_toed_toad`
-  - Your maximum hand size is twenty.
-
-</details>
-
 ## may-pay-named-cost
 
 Blocks **1** card.
@@ -3642,20 +3626,6 @@ Blocks **1** card.
 
 - **Braids, Arisen Nightmare** (rank 291) — `braids_arisen_nightmare`
   - If you do, each opponent may sacrifice a permanent of their choice that shares a card type with it. For each opponent who doesn't, that player loses 2 life and you draw a card.
-
-</details>
-
-## shark-token
-
-Blocks **1** card.
-
-- **(token)** a 3/3 blue Shark creature token (no abilities), e.g. id shark_3_3_u, for the level-2 replace_token_creation create_instead (Fish -> Shark); the level-3 line then replaces that Shark with the existing octopus_8_8_u
-  <br>Why the existing vocabulary won't do: token_ids holds fish_1_1_u and octopus_8_8_u but the only Shark is shark_x_x_u_flying, a 0/0 Shark with flying, which is not a 3/3 vanilla Shark; substituting it would make the wrong token
-
-<details><summary>Cards waiting on this</summary>
-
-- **Fisher's Talent** (rank 8308) — `fisher_s_talent`
-  - If you would create a Fish token, create a 3/3 blue Shark creature token instead.
 
 </details>
 

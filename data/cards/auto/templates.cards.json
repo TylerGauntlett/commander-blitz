@@ -71965,6 +71965,132 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "as": "top_card",
+              "objects": {
+                "controller": "you",
+                "zone": "library"
+              },
+              "op": "snapshot"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "binding": "top_card",
+                  "types": [
+                    "Land"
+                  ],
+                  "zone": "library"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "binding": "top_card"
+                      },
+                      "op": "reveal"
+                    },
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "controller": "you",
+                      "op": "create_token",
+                      "token": "fish_1_1_u"
+                    }
+                  ],
+                  "op": "may",
+                  "prompt": "Reveal the top card (a land) and create a Fish?"
+                }
+              ]
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, look at the top card of your library. You may reveal it if it's a land card. Create a 1/1 blue Fish creature token if you revealed it this way. Then draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{G}{U}"
+          },
+          "kind": "level",
+          "level": 2,
+          "text": "{G}{U}: Level 2"
+        },
+        {
+          "affects_token": {
+            "subtypes": [
+              "Fish"
+            ]
+          },
+          "create_instead": [
+            "shark_3_3_u"
+          ],
+          "effect": "replace_token_creation",
+          "kind": "static",
+          "level": 2,
+          "text": "If you would create a Fish token, create a 3/3 blue Shark creature token instead."
+        },
+        {
+          "cost": {
+            "mana": "{2}{G}{U}"
+          },
+          "kind": "level",
+          "level": 3,
+          "text": "{2}{G}{U}: Level 3"
+        },
+        {
+          "affects_token": {
+            "subtypes": [
+              "Shark"
+            ]
+          },
+          "create_instead": [
+            "octopus_8_8_u"
+          ],
+          "effect": "replace_token_creation",
+          "kind": "static",
+          "level": 3,
+          "text": "If you would create a Shark token, create an 8/8 blue Octopus creature token instead."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "fisher_s_talent",
+      "mana_cost": "{2}{G}{U}",
+      "name": "Fisher's Talent",
+      "oracle_text": "(Gain the next level as a sorcery to add its ability.)\nAt the beginning of your upkeep, look at the top card of your library. You may reveal it if it's a land card. Create a 1/1 blue Fish creature token if you revealed it this way. Then draw a card.\n{G}{U}: Level 2\nIf you would create a Fish token, create a 3/3 blue Shark creature token instead.\n{2}{G}{U}: Level 3\nIf you would create a Shark token, create an 8/8 blue Octopus creature token instead.",
+      "source": "auto",
+      "subtypes": [
+        "Class"
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },

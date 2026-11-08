@@ -96402,12 +96402,12 @@
     },
     "Fisher's Talent": {
       "edhrec_rank": 8308,
-      "gate": "template",
+      "gate": null,
       "name": "Fisher's Talent",
-      "reason": "no template for: At the beginning of your upkeep, look at the top card of your library. You may reveal it i",
+      "reason": "",
       "scryfall_id": "47f0e0b9-d137-46ac-a6e4-13a529e30bb5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fishing Gear": {

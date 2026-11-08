@@ -6225,6 +6225,10 @@
     },
     "zone": "battlefield"
   },
+  "fisher_s_talent": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "fishliver_oil": {
     "zone": [
       "battlefield",
