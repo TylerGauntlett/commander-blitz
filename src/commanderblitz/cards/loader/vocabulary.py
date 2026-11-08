@@ -1319,9 +1319,15 @@ WAS_CAST_TRIGGERS = frozenset({"self_enters"})
 #: sharpest reason on this list: at a pod of four, three opponents with two
 #: artifacts each read {6} where the card says {2}, and in a two-player game
 #: the two numbers are identical -- so the wrong key is invisible until a pod.
+#: ``energy_spent_this_turn`` is Blaster Hulk's "{1} less for each {E} you've
+#: paid or lost this turn": not a board count at all but the per-turn ledger the
+#: value leaf of the same name reads, taking a player spec rather than a
+#: filter. A ledger is answerable at pricing time -- it is written only by
+#: `GameState._tally`, never by anything on the stack.
 COST_REDUCTION_KEYS = frozenset(
     {
         "count",
+        "energy_spent_this_turn",
         "greatest_count",
         "total_power",
         "amount",

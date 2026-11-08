@@ -1,0 +1,18 @@
+{
+  "card_id": "blaster_hulk",
+  "name": "Blaster Hulk",
+  "oracle_text": "This spell costs {1} less to cast for each {E} (energy counter) you've paid or lost this turn.\nHaste\nWhenever this creature attacks, you get {E}{E}, then you may pay eight {E}. When you do, this creature deals 8 damage divided as you choose among up to eight targets.",
+  "blocked_sentences": [
+    "Whenever this creature attacks, you get {E}{E}, then you may pay eight {E}. When you do, this creature deals 8 damage divided as you choose among up to eight targets."
+  ],
+  "needs": [
+    {
+      "capability": "divided_damage_on_trigger",
+      "kind": "engine",
+      "what": "`damage` with `divided` inside a reflexive ('When you do') triggered ability's effects, with the division announced as the reflexive trigger is put on the stack and its targets chosen (603.3d / 601.2d), over a target spec of 'up to eight targets' -- any target: creatures, planeswalkers, battles and players -- capped at one target per point of damage",
+      "why_existing_wont_do": "The first sentence is now `cost_reduction: {\"energy_spent_this_turn\": \"you\"}`, and the attack trigger, `add_energy`, the `may` with `pay: {\"pay_energy\": 8}` and `reflexive_trigger` all exist. But `damage.divided` is accepted only as a top-level spell effect over a `permanent` target spec: the loader refuses it on an ability, and dividing among players or 'any target' is not modelled (card-dsl.md, 'Dividing damage among targets'). Eight separate 1-damage targets or a fixed split would fix the division the printed card lets the controller choose, an approximation"
+    }
+  ],
+  "closest_existing": ["damage.divided", "reflexive_trigger", "distribute_counters"],
+  "confidence": "high"
+}

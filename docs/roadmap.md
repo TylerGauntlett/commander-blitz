@@ -66,7 +66,7 @@ each heading; this table is generated from them.
 | [Jump Scare! (Duskmourn: House of Horror Commander)](#jump-scare-duskmourn-house-of-horror-commander) | L | high | A trigger for cards put into a graveyard, Rooms: two doors on one permanent, and the unlock action | 0 |
 | [Miracle Worker (Duskmourn: House of Horror Commander)](#miracle-worker-duskmourn-house-of-horror-commander) | L | high | Rooms: two doors on one permanent, and the unlock action | 0 |
 | [Family Matters (Bloomburrow Commander)](#family-matters-bloomburrow-commander) | L | high | Divided damage from a triggered or activated ability, Divided damage that may hit players | 0 |
-| [Creative Energy (Modern Horizons 3 Commander)](#creative-energy-modern-horizons-3-commander) | L | high | nothing | 0 |
+| [Creative Energy (Modern Horizons 3 Commander)](#creative-energy-modern-horizons-3-commander) | L | high | Divided damage from a triggered or activated ability, Divided damage that may hit players | 0 |
 | [Graveyard Overdrive (Modern Horizons 3 Commander)](#graveyard-overdrive-modern-horizons-3-commander) | L | high | nothing | 0 |
 | [Tricky Terrain (Modern Horizons 3 Commander)](#tricky-terrain-modern-horizons-3-commander) | L | high | nothing | 0 |
 | [Eldrazi Incursion (Modern Horizons 3 Commander)](#eldrazi-incursion-modern-horizons-3-commander) | L | high | nothing | 0 |
@@ -132,10 +132,10 @@ each heading; this table is generated from them.
 | [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) | S | medium | nothing | 0 |
 | [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) | S | medium | nothing | 0 |
 | [Why a press is refused](#why-a-press-is-refused) | S | medium | nothing | 0 |
+| [Divided damage that may hit players](#divided-damage-that-may-hit-players) | M | medium | nothing | 5 |
 | [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) | M | medium | nothing | 4 |
-| [Divided damage that may hit players](#divided-damage-that-may-hit-players) | M | medium | nothing | 4 |
+| [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) | M | medium | nothing | 4 |
 | [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) | M | medium | nothing | 4 |
-| [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) | M | medium | nothing | 3 |
 | [Outcomes as data](#outcomes-as-data) | M | medium | nothing | 2 |
 | [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) | M | medium | nothing | 2 |
 | [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) | M | medium | nothing | 2 |
@@ -164,91 +164,90 @@ same list, and `/extend-roadmap` starts at the top of it.
 **Ready now, best first:**
 
 1. [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) — L, high
-2. [Creative Energy (Modern Horizons 3 Commander)](#creative-energy-modern-horizons-3-commander) — L, high
-3. [Graveyard Overdrive (Modern Horizons 3 Commander)](#graveyard-overdrive-modern-horizons-3-commander) — L, high
-4. [Tricky Terrain (Modern Horizons 3 Commander)](#tricky-terrain-modern-horizons-3-commander) — L, high
-5. [Eldrazi Incursion (Modern Horizons 3 Commander)](#eldrazi-incursion-modern-horizons-3-commander) — L, high
-6. [Quick Draw (Outlaws of Thunder Junction Commander)](#quick-draw-outlaws-of-thunder-junction-commander) — M, high
-7. [Desert Bloom (Outlaws of Thunder Junction Commander)](#desert-bloom-outlaws-of-thunder-junction-commander) — L, high
-8. [Grand Larceny (Outlaws of Thunder Junction Commander)](#grand-larceny-outlaws-of-thunder-junction-commander) — L, high
-9. [Most Wanted (Outlaws of Thunder Junction Commander)](#most-wanted-outlaws-of-thunder-junction-commander) — L, high
-10. [Hail, Caesar (Fallout)](#hail-caesar-fallout) — L, high
-11. [Scrappy Survivors (Fallout)](#scrappy-survivors-fallout) — L, high
-12. [Science! (Fallout)](#science-fallout) — L, high
-13. [Mutant Menace (Fallout)](#mutant-menace-fallout) — L, high
-14. [Deep Clue Sea (Murders at Karlov Manor Commander)](#deep-clue-sea-murders-at-karlov-manor-commander) — L, high
-15. [Revenant Recon (Murders at Karlov Manor Commander)](#revenant-recon-murders-at-karlov-manor-commander) — L, high
-16. [Blame Game (Murders at Karlov Manor Commander)](#blame-game-murders-at-karlov-manor-commander) — L, high
-17. [Deadly Disguise (Murders at Karlov Manor Commander)](#deadly-disguise-murders-at-karlov-manor-commander) — L, high
-18. [Blood Rites (The Lost Caverns of Ixalan Commander)](#blood-rites-the-lost-caverns-of-ixalan-commander) — M, high
-19. [Veloci-Ramp-Tor (The Lost Caverns of Ixalan Commander)](#veloci-ramp-tor-the-lost-caverns-of-ixalan-commander) — L, high
-20. [Ahoy Mateys (The Lost Caverns of Ixalan Commander)](#ahoy-mateys-the-lost-caverns-of-ixalan-commander) — L, high
-21. [Explorers of the Deep (The Lost Caverns of Ixalan Commander)](#explorers-of-the-deep-the-lost-caverns-of-ixalan-commander) — L, high
-22. [Masters of Evil (Doctor Who)](#masters-of-evil-doctor-who) — L, high
-23. [Paradox Power (Doctor Who)](#paradox-power-doctor-who) — L, high
-24. [Blast from the Past (Doctor Who)](#blast-from-the-past-doctor-who) — L, high
-25. [Timey-Wimey (Doctor Who)](#timey-wimey-doctor-who) — L, high
-26. [Fae Dominion (Wilds of Eldraine Commander)](#fae-dominion-wilds-of-eldraine-commander) — L, high
-27. [Virtue and Valor (Wilds of Eldraine Commander)](#virtue-and-valor-wilds-of-eldraine-commander) — L, high
-28. [Riders of Rohan (Tales of Middle-earth Commander)](#riders-of-rohan-tales-of-middle-earth-commander) — S, high
-29. [Food and Fellowship (Tales of Middle-earth Commander)](#food-and-fellowship-tales-of-middle-earth-commander) — L, high
-30. [Elven Council (Tales of Middle-earth Commander)](#elven-council-tales-of-middle-earth-commander) — L, high
-31. [The Hosts of Mordor (Tales of Middle-earth Commander)](#the-hosts-of-mordor-tales-of-middle-earth-commander) — L, high
-32. [Cavalry Charge (March of the Machine Commander)](#cavalry-charge-march-of-the-machine-commander) — L, high
-33. [Divine Convocation (March of the Machine Commander)](#divine-convocation-march-of-the-machine-commander) — L, high
-34. [Tinker Time (March of the Machine Commander)](#tinker-time-march-of-the-machine-commander) — L, high
-35. [Growing Threat (March of the Machine Commander)](#growing-threat-march-of-the-machine-commander) — L, high
-36. [Call for Backup (March of the Machine Commander)](#call-for-backup-march-of-the-machine-commander) — L, high
-37. [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander) — M, high
-38. [Corrupting Influence (Phyrexia: All Will Be One Commander)](#corrupting-influence-phyrexia-all-will-be-one-commander) — L, high
-39. [Draconic Destruction (Starter Commander Decks)](#draconic-destruction-starter-commander-decks) — M, high
-40. [Grave Danger (Starter Commander Decks)](#grave-danger-starter-commander-decks) — M, high
-41. [First Flight (Starter Commander Decks)](#first-flight-starter-commander-decks) — M, high
-42. [Chaos Incarnate (Starter Commander Decks)](#chaos-incarnate-starter-commander-decks) — M, high
-43. [Token Triumph (Starter Commander Decks)](#token-triumph-starter-commander-decks) — L, high
-44. [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) — M, high
-45. [Mishra's Burnished Banner (The Brothers' War Commander)](#mishras-burnished-banner-the-brothers-war-commander) — L, high
-46. [Forces of the Imperium (Warhammer 40,000 Commander)](#forces-of-the-imperium-warhammer-40000-commander) — L, high
-47. [The Ruinous Powers (Warhammer 40,000 Commander)](#the-ruinous-powers-warhammer-40000-commander) — L, high
-48. [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) — L, high
-49. [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) — L, high
-50. [Legends' Legacy (Dominaria United Commander)](#legends-legacy-dominaria-united-commander) — L, high
-51. [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — L, high
-52. [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — L, high
-53. [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — L, high
-54. [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — L, high
-55. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
-56. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
-57. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
-58. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
-59. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
-60. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
-61. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
-62. [Difficulty](#difficulty) — S, medium
-63. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
-64. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
-65. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
-66. [Why a press is refused](#why-a-press-is-refused) — S, medium
+2. [Graveyard Overdrive (Modern Horizons 3 Commander)](#graveyard-overdrive-modern-horizons-3-commander) — L, high
+3. [Tricky Terrain (Modern Horizons 3 Commander)](#tricky-terrain-modern-horizons-3-commander) — L, high
+4. [Eldrazi Incursion (Modern Horizons 3 Commander)](#eldrazi-incursion-modern-horizons-3-commander) — L, high
+5. [Quick Draw (Outlaws of Thunder Junction Commander)](#quick-draw-outlaws-of-thunder-junction-commander) — M, high
+6. [Desert Bloom (Outlaws of Thunder Junction Commander)](#desert-bloom-outlaws-of-thunder-junction-commander) — L, high
+7. [Grand Larceny (Outlaws of Thunder Junction Commander)](#grand-larceny-outlaws-of-thunder-junction-commander) — L, high
+8. [Most Wanted (Outlaws of Thunder Junction Commander)](#most-wanted-outlaws-of-thunder-junction-commander) — L, high
+9. [Hail, Caesar (Fallout)](#hail-caesar-fallout) — L, high
+10. [Scrappy Survivors (Fallout)](#scrappy-survivors-fallout) — L, high
+11. [Science! (Fallout)](#science-fallout) — L, high
+12. [Mutant Menace (Fallout)](#mutant-menace-fallout) — L, high
+13. [Deep Clue Sea (Murders at Karlov Manor Commander)](#deep-clue-sea-murders-at-karlov-manor-commander) — L, high
+14. [Revenant Recon (Murders at Karlov Manor Commander)](#revenant-recon-murders-at-karlov-manor-commander) — L, high
+15. [Blame Game (Murders at Karlov Manor Commander)](#blame-game-murders-at-karlov-manor-commander) — L, high
+16. [Deadly Disguise (Murders at Karlov Manor Commander)](#deadly-disguise-murders-at-karlov-manor-commander) — L, high
+17. [Blood Rites (The Lost Caverns of Ixalan Commander)](#blood-rites-the-lost-caverns-of-ixalan-commander) — M, high
+18. [Veloci-Ramp-Tor (The Lost Caverns of Ixalan Commander)](#veloci-ramp-tor-the-lost-caverns-of-ixalan-commander) — L, high
+19. [Ahoy Mateys (The Lost Caverns of Ixalan Commander)](#ahoy-mateys-the-lost-caverns-of-ixalan-commander) — L, high
+20. [Explorers of the Deep (The Lost Caverns of Ixalan Commander)](#explorers-of-the-deep-the-lost-caverns-of-ixalan-commander) — L, high
+21. [Masters of Evil (Doctor Who)](#masters-of-evil-doctor-who) — L, high
+22. [Paradox Power (Doctor Who)](#paradox-power-doctor-who) — L, high
+23. [Blast from the Past (Doctor Who)](#blast-from-the-past-doctor-who) — L, high
+24. [Timey-Wimey (Doctor Who)](#timey-wimey-doctor-who) — L, high
+25. [Fae Dominion (Wilds of Eldraine Commander)](#fae-dominion-wilds-of-eldraine-commander) — L, high
+26. [Virtue and Valor (Wilds of Eldraine Commander)](#virtue-and-valor-wilds-of-eldraine-commander) — L, high
+27. [Riders of Rohan (Tales of Middle-earth Commander)](#riders-of-rohan-tales-of-middle-earth-commander) — S, high
+28. [Food and Fellowship (Tales of Middle-earth Commander)](#food-and-fellowship-tales-of-middle-earth-commander) — L, high
+29. [Elven Council (Tales of Middle-earth Commander)](#elven-council-tales-of-middle-earth-commander) — L, high
+30. [The Hosts of Mordor (Tales of Middle-earth Commander)](#the-hosts-of-mordor-tales-of-middle-earth-commander) — L, high
+31. [Cavalry Charge (March of the Machine Commander)](#cavalry-charge-march-of-the-machine-commander) — L, high
+32. [Divine Convocation (March of the Machine Commander)](#divine-convocation-march-of-the-machine-commander) — L, high
+33. [Tinker Time (March of the Machine Commander)](#tinker-time-march-of-the-machine-commander) — L, high
+34. [Growing Threat (March of the Machine Commander)](#growing-threat-march-of-the-machine-commander) — L, high
+35. [Call for Backup (March of the Machine Commander)](#call-for-backup-march-of-the-machine-commander) — L, high
+36. [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander) — M, high
+37. [Corrupting Influence (Phyrexia: All Will Be One Commander)](#corrupting-influence-phyrexia-all-will-be-one-commander) — L, high
+38. [Draconic Destruction (Starter Commander Decks)](#draconic-destruction-starter-commander-decks) — M, high
+39. [Grave Danger (Starter Commander Decks)](#grave-danger-starter-commander-decks) — M, high
+40. [First Flight (Starter Commander Decks)](#first-flight-starter-commander-decks) — M, high
+41. [Chaos Incarnate (Starter Commander Decks)](#chaos-incarnate-starter-commander-decks) — M, high
+42. [Token Triumph (Starter Commander Decks)](#token-triumph-starter-commander-decks) — L, high
+43. [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) — M, high
+44. [Mishra's Burnished Banner (The Brothers' War Commander)](#mishras-burnished-banner-the-brothers-war-commander) — L, high
+45. [Forces of the Imperium (Warhammer 40,000 Commander)](#forces-of-the-imperium-warhammer-40000-commander) — L, high
+46. [The Ruinous Powers (Warhammer 40,000 Commander)](#the-ruinous-powers-warhammer-40000-commander) — L, high
+47. [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) — L, high
+48. [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) — L, high
+49. [Legends' Legacy (Dominaria United Commander)](#legends-legacy-dominaria-united-commander) — L, high
+50. [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — L, high
+51. [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — L, high
+52. [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — L, high
+53. [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — L, high
+54. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
+55. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
+56. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
+57. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
+58. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
+59. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
+60. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
+61. [Difficulty](#difficulty) — S, medium
+62. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+63. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
+64. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
+65. [Why a press is refused](#why-a-press-is-refused) — S, medium
+66. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
 67. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
-68. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
+68. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
 69. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
-70. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
-71. [Outcomes as data](#outcomes-as-data) — M, medium
-72. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
-73. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
-74. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
-75. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
-76. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
-77. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
-78. [Experience counters](#experience-counters) — M, medium
-79. [Replays and sharing](#replays-and-sharing) — M, medium
-80. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-81. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
-82. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
-83. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
-84. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-85. [Archidekt import](#archidekt-import) — S, low
-86. [Sound](#sound) — S, low
+70. [Outcomes as data](#outcomes-as-data) — M, medium
+71. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
+72. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
+73. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
+74. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
+75. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
+76. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
+77. [Experience counters](#experience-counters) — M, medium
+78. [Replays and sharing](#replays-and-sharing) — M, medium
+79. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+80. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
+81. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
+82. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
+83. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+84. [Archidekt import](#archidekt-import) — S, low
+85. [Sound](#sound) — S, low
 
 **Blocked, and by what:**
 
@@ -267,6 +266,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Jump Scare! (Duskmourn: House of Horror Commander)](#jump-scare-duskmourn-house-of-horror-commander) — [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard), [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action)
 - [Miracle Worker (Duskmourn: House of Horror Commander)](#miracle-worker-duskmourn-house-of-horror-commander) — [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action)
 - [Family Matters (Bloomburrow Commander)](#family-matters-bloomburrow-commander) — [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability), [Divided damage that may hit players](#divided-damage-that-may-hit-players)
+- [Creative Energy (Modern Horizons 3 Commander)](#creative-energy-modern-horizons-3-commander) — [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability), [Divided damage that may hit players](#divided-damage-that-may-hit-players)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -422,6 +422,71 @@ and the mute setting's e2e assertion still passes.
 
 ## Cards
 
+### Divided damage that may hit players
+
+Effort **M** · Impact **medium**, every 'divided as you choose among any number of targets' burn spell waits on it, Magma Opus and Arc Lightning among them · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+Divided damage (601.2d) is announced as the spell is cast and dealt on
+resolution, but only among permanents. `cards.loader` refuses a `damage`
+effect with `divided` whose target spec is not `kind: "permanent"`;
+`Game._ask_damage_division` keeps only the declared targets whose kind is
+`"object"` and walks them through `_divide`, which asks one object at a time
+through `ask_objects`; and `effects.ops_life._damage_divided` deals each share
+with `damage_permanent`. [rules-coverage.md](rules-coverage.md#not-implemented)
+lists "dividing damage among players or any target" as not implemented.
+
+So every "deals N damage divided as you choose among any number of targets"
+spell is unwritable, because a player is a legal target of it. Magma Opus,
+in the Prismari Artistry precon, is the card that found it; Arc Lightning and
+Fireball's divided mode are the same sentence. Its gap record is
+`data/authoring/gaps/magma_opus.json`.
+
+#### The change
+
+1. The division carries players. `_ask_damage_division` divides over every
+   declared target of the spec, object or player, and the shares on the stack
+   item's `bindings["distribution"]` name which is which, so a player and a
+   permanent with the same number are never confused.
+2. The question asked while dividing offers players beside objects. Placing
+   one more point is one choice among the declared targets; `ask_objects`
+   names objects only, so this is either a target-shaped ask or a decision kind
+   of its own (an open question below).
+3. `_damage_divided` deals a player's share as damage to that player from the
+   source, with everything damage to a player already implies (lifelink,
+   infect, commander damage from a commander source, prevention), and a share
+   for a player who left the game or became an illegal target is lost (608.2b).
+4. The loader accepts `divided` over a spec of `kind: "any"` and
+   `kind: "player"`. The verifier's auto-answer table answers the new question,
+   or `/author-cards` hangs.
+5. Harvest: Magma Opus, then the catalog's other divided-among-any-targets
+   cards through the template tier with `--retry` and one `/author-cards` wave.
+
+It does not touch divided combat damage (510.1c) or `distribute_counters`,
+whose objects are always permanents.
+
+#### Gate
+
+A unit test under `tests/unit/` for divided damage over players and
+permanents together: the announcement on casting, each share dealt on
+resolution, a player's share lost when that player is no longer a legal
+target, lifelink and commander damage counted per share, and the loader
+accepting `kind: "any"` while still refusing divided damage on an ability. The
+verifier's auto-answer test covers the new question, and Magma Opus's six
+gates pass.
+
+#### Open questions
+
+- **How the division is asked.** Extend `ask_objects` to accept player
+  targets, or add a decision kind for "one more point to which target"?
+  Recommended: a target-shaped ask built on the existing target references,
+  because the client already renders a player as a target, and a new decision
+  kind would need its frontend label and an e2e path for no new rule.
+- **Is it an ADR.** Recommended: no; it widens an existing announcement
+  (601.2d) without changing what is announced or when, and the line in
+  rules-coverage.md moves from "not implemented" to the implemented table.
+
 ### A trigger for cards put into a graveyard
 
 Effort **M** · Impact **medium**, every 'whenever one or more cards are put into your graveyard from your library, or from anywhere' card waits on it, The Gitrog Monster and Sidisi among them · Depends on nothing · Awaiting decisions.
@@ -494,70 +559,81 @@ gates pass, and the generated DSL reference lists the new trigger event.
   `ZONE_CHANGE` beside `LEAVES_GRAVEYARD`, and the mill line moves from "not
   implemented" to the implemented table in rules-coverage.md.
 
-### Divided damage that may hit players
+### Divided damage from a triggered or activated ability
 
-Effort **M** · Impact **medium**, every 'divided as you choose among any number of targets' burn spell waits on it, Magma Opus and Arc Lightning among them · Depends on nothing · Awaiting decisions.
+Effort **M** · Impact **medium**, every creature whose enters or attack trigger divides its damage waits on it, Fury and Inferno Titan among them · Depends on nothing · Awaiting decisions.
 
 #### Today
 
-Divided damage (601.2d) is announced as the spell is cast and dealt on
-resolution, but only among permanents. `cards.loader` refuses a `damage`
-effect with `divided` whose target spec is not `kind: "permanent"`;
-`Game._ask_damage_division` keeps only the declared targets whose kind is
-`"object"` and walks them through `_divide`, which asks one object at a time
-through `ask_objects`; and `effects.ops_life._damage_divided` deals each share
-with `damage_permanent`. [rules-coverage.md](rules-coverage.md#not-implemented)
-lists "dividing damage among players or any target" as not implemented.
+Divided damage (601.2d) is announced on one line only: as a spell is cast.
+`Game._ask_damage_division` reads `engine.division.divided_damage(card)`,
+which walks `card.spell_effects`, and is called from `Game._cast`; the split
+rides on the stack item's `bindings["distribution"]` and
+`effects.ops_life._damage_divided` deals it on resolution.
+`cards.loader._check_division_homes` refuses `damage` with `divided` anywhere
+else ("only supported as a top-level effect of a spell"), and
+[rules-coverage.md](rules-coverage.md#not-implemented) lists dividing
+damage "on an ability" as not implemented.
 
-So every "deals N damage divided as you choose among any number of targets"
-spell is unwritable, because a player is a legal target of it. Magma Opus,
-in the Prismari Artistry precon, is the card that found it; Arc Lightning and
-Fireball's divided mode are the same sentence. Its gap record is
-`data/authoring/gaps/magma_opus.json`.
+The ability-level twin already exists for counters: `distribute_counters` on
+an activated ability is divided by `Game._ask_distribution` at activation
+(602.2b applying 601.2d), composed from `ask_objects` with no decision kind of
+its own. A triggered ability chooses its modes and targets in
+`stack._choose_trigger_targets` as it is put on the stack (603.3d), and
+nothing there asks for a division.
+
+So "When this creature enters, it deals 4 damage divided as you choose among
+any number of target creatures and/or planeswalkers" is unwritable. Fury, in
+the Dance of the Elements precon, is the card that found it; its gap record is
+`data/authoring/gaps/fury.json`.
 
 #### The change
 
-1. The division carries players. `_ask_damage_division` divides over every
-   declared target of the spec, object or player, and the shares on the stack
-   item's `bindings["distribution"]` name which is which, so a player and a
-   permanent with the same number are never confused.
-2. The question asked while dividing offers players beside objects. Placing
-   one more point is one choice among the declared targets; `ask_objects`
-   names objects only, so this is either a target-shaped ask or a decision kind
-   of its own (an open question below).
-3. `_damage_divided` deals a player's share as damage to that player from the
-   source, with everything damage to a player already implies (lifelink,
-   infect, commander damage from a commander source, prevention), and a share
-   for a player who left the game or became an illegal target is lost (608.2b).
-4. The loader accepts `divided` over a spec of `kind: "any"` and
-   `kind: "player"`. The verifier's auto-answer table answers the new question,
-   or `/author-cards` hangs.
-5. Harvest: Magma Opus, then the catalog's other divided-among-any-targets
-   cards through the template tier with `--retry` and one `/author-cards` wave.
+1. The trigger line divides. Where `stack` puts a triggered ability on the
+   stack and has chosen its targets, a `damage` effect with `divided` among
+   the ability's top-level effects is divided over the targets just declared,
+   through the same walk `_ask_damage_division` uses, and stored on the stack
+   item's `bindings["distribution"]` so `_damage_divided` resolves it
+   unchanged. The amount is read then (601.2d via 603.3d).
+2. The activation line divides damage the way it already divides counters:
+   `Game._ask_distribution` takes divided `damage` beside
+   `distribute_counters`.
+3. `_check_division_homes` accepts divided damage as a top-level effect of a
+   triggered or activated ability whose spec targets objects, and still
+   refuses it nested in a branch, where no announcement exists.
+4. The verifier's auto-answer table answers the division on the trigger line,
+   or `/author-cards` hangs on Fury.
+5. Harvest: Fury (which also waits on evoke with a non-mana cost) and the
+   catalog's other divided-damage triggers through the template tier with
+   `--retry` and one `/author-cards` wave.
 
-It does not touch divided combat damage (510.1c) or `distribute_counters`,
-whose objects are always permanents.
+It does not let the division include players: that is
+[divided-damage-any-target](divided-damage-any-target.md), which this item
+neither needs nor blocks. Inferno Titan needs both.
 
 #### Gate
 
-A unit test under `tests/unit/` for divided damage over players and
-permanents together: the announcement on casting, each share dealt on
-resolution, a player's share lost when that player is no longer a legal
-target, lifelink and commander damage counted per share, and the loader
-accepting `kind: "any"` while still refusing divided damage on an ability. The
-verifier's auto-answer test covers the new question, and Magma Opus's six
-gates pass.
+A unit test under `tests/unit/` for divided damage on a trigger and on an
+activation: the division asked as the trigger goes on the stack and before a
+response is possible, each share dealt on resolution, an illegal target's share
+lost (608.2b), the forced split asking nothing, and the loader accepting the
+top-level ability home while still refusing a nested one. The verifier's
+auto-answer test covers the trigger-line question, and the harvested cards pass
+their six gates.
 
 #### Open questions
 
-- **How the division is asked.** Extend `ask_objects` to accept player
-  targets, or add a decision kind for "one more point to which target"?
-  Recommended: a target-shaped ask built on the existing target references,
-  because the client already renders a player as a target, and a new decision
-  kind would need its frontend label and an e2e path for no new rule.
-- **Is it an ADR.** Recommended: no; it widens an existing announcement
-  (601.2d) without changing what is announced or when, and the line in
-  rules-coverage.md moves from "not implemented" to the implemented table.
+- **Where the trigger's division is asked.** In `stack` beside
+  `_choose_trigger_targets`, or by handing the trigger to the same
+  `Game` helper the cast and activation lines use? Recommended: one shared
+  helper called from all three lines, because the walk and its purpose tag are
+  already shared and a third copy would drift.
+- **Is it an ADR.** Recommended: no; it applies the existing announcement
+  (601.2d) on the two lines 602.2b and 603.3d already send it to, and the
+  rules-coverage.md line moves to the implemented table.
+- **Scope of the harvest.** Fury only, or every divided-damage trigger the
+  template tier can then read? Recommended: one template-tier `--retry` and
+  one `/author-cards` wave, the precon items' convention.
 
 ### Rooms: two doors on one permanent, and the unlock action
 
@@ -638,82 +714,6 @@ generated DSL reference lists the new event.
   token and the noncombat `replace_damage` key so Spiked Corridor // Torture
   Pit ships in it? Recommended: plus both, since each is small and the card
   is the gate.
-
-### Divided damage from a triggered or activated ability
-
-Effort **M** · Impact **medium**, every creature whose enters or attack trigger divides its damage waits on it, Fury and Inferno Titan among them · Depends on nothing · Awaiting decisions.
-
-#### Today
-
-Divided damage (601.2d) is announced on one line only: as a spell is cast.
-`Game._ask_damage_division` reads `engine.division.divided_damage(card)`,
-which walks `card.spell_effects`, and is called from `Game._cast`; the split
-rides on the stack item's `bindings["distribution"]` and
-`effects.ops_life._damage_divided` deals it on resolution.
-`cards.loader._check_division_homes` refuses `damage` with `divided` anywhere
-else ("only supported as a top-level effect of a spell"), and
-[rules-coverage.md](rules-coverage.md#not-implemented) lists dividing
-damage "on an ability" as not implemented.
-
-The ability-level twin already exists for counters: `distribute_counters` on
-an activated ability is divided by `Game._ask_distribution` at activation
-(602.2b applying 601.2d), composed from `ask_objects` with no decision kind of
-its own. A triggered ability chooses its modes and targets in
-`stack._choose_trigger_targets` as it is put on the stack (603.3d), and
-nothing there asks for a division.
-
-So "When this creature enters, it deals 4 damage divided as you choose among
-any number of target creatures and/or planeswalkers" is unwritable. Fury, in
-the Dance of the Elements precon, is the card that found it; its gap record is
-`data/authoring/gaps/fury.json`.
-
-#### The change
-
-1. The trigger line divides. Where `stack` puts a triggered ability on the
-   stack and has chosen its targets, a `damage` effect with `divided` among
-   the ability's top-level effects is divided over the targets just declared,
-   through the same walk `_ask_damage_division` uses, and stored on the stack
-   item's `bindings["distribution"]` so `_damage_divided` resolves it
-   unchanged. The amount is read then (601.2d via 603.3d).
-2. The activation line divides damage the way it already divides counters:
-   `Game._ask_distribution` takes divided `damage` beside
-   `distribute_counters`.
-3. `_check_division_homes` accepts divided damage as a top-level effect of a
-   triggered or activated ability whose spec targets objects, and still
-   refuses it nested in a branch, where no announcement exists.
-4. The verifier's auto-answer table answers the division on the trigger line,
-   or `/author-cards` hangs on Fury.
-5. Harvest: Fury (which also waits on evoke with a non-mana cost) and the
-   catalog's other divided-damage triggers through the template tier with
-   `--retry` and one `/author-cards` wave.
-
-It does not let the division include players: that is
-[divided-damage-any-target](divided-damage-any-target.md), which this item
-neither needs nor blocks. Inferno Titan needs both.
-
-#### Gate
-
-A unit test under `tests/unit/` for divided damage on a trigger and on an
-activation: the division asked as the trigger goes on the stack and before a
-response is possible, each share dealt on resolution, an illegal target's share
-lost (608.2b), the forced split asking nothing, and the loader accepting the
-top-level ability home while still refusing a nested one. The verifier's
-auto-answer test covers the trigger-line question, and the harvested cards pass
-their six gates.
-
-#### Open questions
-
-- **Where the trigger's division is asked.** In `stack` beside
-  `_choose_trigger_targets`, or by handing the trigger to the same
-  `Game` helper the cast and activation lines use? Recommended: one shared
-  helper called from all three lines, because the walk and its purpose tag are
-  already shared and a third copy would drift.
-- **Is it an ADR.** Recommended: no; it applies the existing announcement
-  (601.2d) on the two lines 602.2b and 603.3d already send it to, and the
-  rules-coverage.md line moves to the implemented table.
-- **Scope of the harvest.** Fury only, or every divided-damage trigger the
-  template tier can then read? Recommended: one template-tier `--retry` and
-  one `/author-cards` wave, the precon items' convention.
 
 ### Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number
 
@@ -2040,7 +2040,7 @@ whole-game test able to draw the deck.
 
 ### Creative Energy (Modern Horizons 3 Commander)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability), [Divided damage that may hit players](#divided-damage-that-may-hit-players).
 
 #### Today
 

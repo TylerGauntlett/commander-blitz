@@ -795,6 +795,26 @@
       "is_token": true
     },
     {
+      "id": "construct_6_12_c_artifact_trample",
+      "name": "Construct Token",
+      "oracle_text": "6/12 colorless Construct artifact creature token with trample.",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Construct"
+      ],
+      "power": 6,
+      "toughness": 12,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true,
+      "keywords": [
+        "trample"
+      ]
+    },
+    {
       "id": "contract",
       "name": "Contract",
       "oracle_text": "Enchant creature\nWhenever enchanted creature attacks, it gets +2/+0 until end of turn if it's attacking one of your opponents. Otherwise, its controller loses 2 life.",
@@ -1880,6 +1900,26 @@
       "is_token": true
     },
     {
+      "id": "gremlin_1_1_r",
+      "name": "Gremlin Token",
+      "oracle_text": "1/1 red Gremlin creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Gremlin"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "is_token": true
+    },
+    {
       "id": "hero_1_1_c",
       "name": "Hero Token",
       "oracle_text": "",
@@ -2000,6 +2040,27 @@
       ],
       "color_identity": [
         "G"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "aetherborn_x_x_b",
+      "name": "Aetherborn Token",
+      "oracle_text": "X/X black Aetherborn creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Aetherborn"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "variable_pt": true,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
       ],
       "is_token": true
     },

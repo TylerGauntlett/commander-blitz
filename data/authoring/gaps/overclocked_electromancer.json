@@ -1,0 +1,18 @@
+{
+  "card_id": "overclocked_electromancer",
+  "name": "Overclocked Electromancer",
+  "oracle_text": "At the beginning of combat on your turn, you may pay {E}{E}{E}. If you do, put a +1/+1 counter on this creature.\nWhenever this creature attacks, double its power until end of turn.\nWhenever this creature deals combat damage to a creature, if that creature was dealt excess damage this turn, you get X {E}, where X is that excess damage.",
+  "blocked_sentences": [
+    "Whenever this creature deals combat damage to a creature, if that creature was dealt excess damage this turn, you get X {E}, where X is that excess damage."
+  ],
+  "needs": [
+    {
+      "capability": "excess_damage",
+      "kind": "value",
+      "what": "a value (and condition) reading the excess damage (damage beyond lethal, 120.4a) dealt to a damaged creature this turn, readable from a deals_combat_damage trigger whose damaged creature is bound, so the trigger can intervene on excess > 0 and add_energy that amount",
+      "why_existing_wont_do": "value_keys has damage_dealt_to_this_turn and max_damage_taken_this_turn but nothing that subtracts the creature's lethal threshold; the damage op's excess_to only redirects excess from its own damage and is not a readable value; deals_combat_damage exposes no per-creature excess amount"
+    }
+  ],
+  "closest_existing": ["excess_to", "damage_dealt_to_this_turn", "deals_combat_damage"],
+  "confidence": "high"
+}

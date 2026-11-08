@@ -624,6 +624,7 @@ VALUES: dict[str, Entry] = {
     "binding": ("A number a trigger or an `as` carried.", H_RECORDING),
     "cards_drawn_this_turn": ("Cards the player drew this turn.", H_LEDGER),
     "cards_discarded_this_turn": ("Cards the player discarded this turn, wherever they went after.", H_LEDGER),
+    "energy_spent_this_turn": ("Energy ({E}) the player paid or lost this turn.", H_LEDGER),
     "cards_from_graveyard_this_turn": ("Cards that left the player's graveyard this turn.", H_LEDGER),
     "cards_in_hand": ("Cards in the player's hand.", None),
     "cards_to_graveyard_this_turn": ("Cards put into any graveyard from anywhere this turn; tokens excluded.", H_LEDGER),
@@ -1027,6 +1028,8 @@ STATICS: dict[str, Entry] = {
 COST_REDUCTION: dict[str, Entry] = {
     "amount": ("Costs N less (usually gated on a `condition`).", H_CHEAPER),
     "count": ("Costs {1} less for each object a filter finds.", H_CHEAPER),
+    "energy_spent_this_turn": ("Costs {1} less for each {E} a player paid or lost this turn.",
+                               "A reduction that reads energy paid or lost"),
     "greatest_count": ("…for the greatest number any one player has.",
                        "A reduction that maximises a per-player tally"),
     "greatest_mana_value": ("…by the greatest mana value among a filter's objects.",

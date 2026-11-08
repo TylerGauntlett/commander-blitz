@@ -1,0 +1,16 @@
+{
+  "card_id": "hourglass_of_the_lost",
+  "name": "Hourglass of the Lost",
+  "oracle_text": "{T}: Add {W}. Put a time counter on this artifact.\n{T}, Remove X time counters from this artifact and exile it: Return each nonland permanent card with mana value X from your graveyard to the battlefield. Activate only as a sorcery.",
+  "blocked_sentences": [
+    "{T}, Remove X time counters from this artifact and exile it: Return each nonland permanent card with mana value X from your graveyard to the battlefield. Activate only as a sorcery."
+  ],
+  "needs": [{
+    "capability": "remove_x_counters_cost",
+    "kind": "cost",
+    "what": "an activated-ability cost that removes an announced number X of a named counter kind (here time counters) from the source itself, X chosen by the controller on activation (0 up to the counters on the source) and bound so the effects can read it with {\"x\": true}, so the resolution can return each nonland permanent card with mana value exactly X",
+    "why_existing_wont_do": "cost.remove_counters takes only a fixed integer amount (Cost reads int(amount)); loyalty_x is the variable form but only for loyalty counters and drags in planeswalker-ability rules (606.3 once per turn); x_value defines the X of an {X} in the mana cost from a value expression, and this cost has no {X} for the player to announce; remove_counters_from_among also takes a fixed count"
+  }],
+  "closest_existing": ["remove_counters", "loyalty_x", "x_value", "return_from_graveyard"],
+  "confidence": "high"
+}

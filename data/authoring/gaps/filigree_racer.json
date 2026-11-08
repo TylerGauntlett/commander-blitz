@@ -1,0 +1,16 @@
+{
+  "card_id": "filigree_racer",
+  "name": "Filigree Racer",
+  "oracle_text": "When this Vehicle enters, you get {E}{E}{E}{E} (four energy counters).\nWhenever this Vehicle attacks, you may pay {E}{E}. When you do, target instant or sorcery card in your graveyard gains jump-start until end of turn. (You may cast that card from your graveyard by discarding a card in addition to paying its other costs. Then exile it.)\nCrew 1",
+  "blocked_sentences": [
+    "Whenever this Vehicle attacks, you may pay {E}{E}. When you do, target instant or sorcery card in your graveyard gains jump-start until end of turn. (You may cast that card from your graveyard by discarding a card in addition to paying its other costs. Then exile it.)"
+  ],
+  "needs": [{
+    "capability": "jump-start",
+    "kind": "op",
+    "what": "an op that grants a targeted instant or sorcery card in its owner's graveyard jump-start until end of turn: it may be cast from the graveyard this turn for its mana cost plus an additional cost of discarding a card, and is exiled instead of going anywhere else when it leaves the stack",
+    "why_existing_wont_do": "grant_playable with as_flashback and playable_this_turn gives a once-only graveyard cast that exiles, but has no option to add an additional cost (discard a card), so it would grant flashback, not jump-start; grant_graveyard_cast takes only affects_spells/any_graveyard/grants_flashback and is a player-wide permission, not a per-card grant; the card-level graveyard_cost/graveyard_additional_cost express jump-start only on a card's own printed text, not as something granted to another card"
+  }],
+  "closest_existing": ["grant_playable", "grant_graveyard_cast", "graveyard_additional_cost"],
+  "confidence": "high"
+}

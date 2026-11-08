@@ -10,7 +10,9 @@ from typing import TYPE_CHECKING, Any
 from .carddef import CardDef, Cost
 from .characteristics import chars, compare_pt, enchanted_by, has_counters_matches
 from .effects.conditions import evaluate_condition
+from .effects.context import EffectContext
 from .effects.selectors import has_printed_cost
+from .effects.values import evaluate_value
 from .player_statics import spell_cost_reduction, spell_mana_tax
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -75,7 +77,7 @@ def reduction_amount(
       `legality._cast_variant` and `game._cast` -- "costs {X} less to cast
       **this way**".
 
-    Six shapes of arithmetic, exactly one per spec:
+    Seven shapes of arithmetic, exactly one per spec:
 
     - ``{"amount": 3}`` -- a **flat** number, which is what a conditional
       reduction needs.  Not expressible as `count`: "costs {3} less if you're
@@ -83,6 +85,9 @@ def reduction_amount(
       the crown is yours and none otherwise, and no filter over a board can say
       that.
     - ``{"count": {filter}}`` -- "{1} less for each Vampire you control".
+    - ``{"energy_spent_this_turn": <player spec>}`` -- Blaster Hulk, "{1}
+      less for each {E} you've paid or lost this turn". The one head that
+      reads the turn ledger rather than the board, so it takes a player spec.
     - ``{"greatest_count": {filter}}`` -- Cavern-Hoard Dragon, "where X is the
       greatest number of artifacts **an opponent** controls".  The same
       relation `greatest_mana_value` has to `total_mana_value`, one axis over:
@@ -126,6 +131,14 @@ def reduction_amount(
         return max(0, int(spec["amount"]))
     if "count" in spec:
         return sum(1 for _ in _reduction_matches(state, pid, spec["count"], source_oid))
+    if "energy_spent_this_turn" in spec:
+        # "…{1} less for each {E} you've paid or lost this turn" (Blaster
+        # Hulk). The value leaf of the same name, read through a context with
+        # nothing on the stack: a player spec needs only the controller.
+        ctx = EffectContext(state=state, controller=pid, source_oid=source_oid)
+        return max(
+            0, evaluate_value(ctx, {"energy_spent_this_turn": spec["energy_spent_this_turn"]})
+        )
     if "greatest_count" in spec:
         # "…where X is the greatest number of artifacts **an opponent**
         # controls" -- Cavern-Hoard Dragon. One pool, tallied per controller

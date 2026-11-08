@@ -60,6 +60,7 @@
   "COST_REDUCTION_KEYS": [
    "amount",
    "count",
+   "energy_spent_this_turn",
    "greatest_count",
    "greatest_mana_value",
    "total_mana_value",

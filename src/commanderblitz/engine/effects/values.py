@@ -146,6 +146,12 @@ VALUE_KEYS = frozenset(
         # per-object record, which forgets a discarded card the moment it
         # leaves the graveyard -- the player still discarded it.
         "cards_discarded_this_turn",
+        # "…for each {E} you've **paid or lost** this turn" (Blaster Hulk,
+        # Izzet Generatorium). Per player, off `TurnLedger.energy_spent`:
+        # every `pay_energy` cost and every removal of a player's energy
+        # (`lose_all_player_counters`). Not the energy total, which getting
+        # {E} offsets and a payment of nought leaves alone.
+        "energy_spent_this_turn",
         # The rest of the per-turn ledger (`structs.TurnLedger`).  All six are
         # values rather than condition leaves, so morbid is an ordinary `cmp`
         # against 1 and nothing new had to be added to the condition language:
@@ -859,6 +865,9 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
     if "cards_discarded_this_turn" in expr:
         pids = _players(ctx, expr["cards_discarded_this_turn"])
         return sum(ledger.cards_discarded.get(p, 0) for p in pids)
+    if "energy_spent_this_turn" in expr:
+        pids = _players(ctx, expr["energy_spent_this_turn"])
+        return sum(ledger.energy_spent.get(p, 0) for p in pids)
     if "loyalty_activations_this_turn" in expr:
         pids = _players(ctx, expr["loyalty_activations_this_turn"])
         return sum(ledger.loyalty_activations.get(p, 0) for p in pids)
@@ -1471,6 +1480,22 @@ def validate_damage_dealt_to_this_turn(spec: Any, where: str) -> None:
             )
 
 
+def validate_energy_spent_this_turn(who: Any, where: str) -> None:
+    """Load-time check of ``{"energy_spent_this_turn": <player spec>}``.
+
+    One validator for both readers -- the value leaf and a card-level
+    ``cost_reduction``'s head of the same name -- so "whose energy" means the
+    same thing in a condition and in a price.
+    """
+    if not isinstance(who, Mapping) and (
+        not isinstance(who, str) or who not in PLAYER_SPEC_NAMES
+    ):
+        raise DslError(
+            f"{where}: needs a player spec, e.g. 'you' (who paid or lost the "
+            f"energy), got {who!r}"
+        )
+
+
 def validate_counters_put_this_turn(spec: Any, where: str) -> None:
     """Load-time check of ``{"counters_put_this_turn": {...}}``.
 
@@ -1931,6 +1956,10 @@ def validate_value(expr: Any, where: str) -> None:
                 f"{where}.cards_discarded_this_turn: needs a player spec, e.g. 'you' "
                 f"(who discarded), got {who!r}"
             )
+    if "energy_spent_this_turn" in expr:
+        validate_energy_spent_this_turn(
+            expr["energy_spent_this_turn"], f"{where}.energy_spent_this_turn"
+        )
     if "player_count" in expr and isinstance(expr["player_count"], Mapping) and (
         "objects" in expr["player_count"]
     ):

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**254 cards** blocked by **232** capabilities.
+**261 cards** blocked by **237** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -20,11 +20,11 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [rooms](#rooms) | 6 | 4163 | engine |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
+| [divided-damage-on-trigger](#divided-damage-on-trigger) | 4 | 2389 | engine |
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 4 | 714 | engine |
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
 | [copy-exception-set-subtypes](#copy-exception-set-subtypes) | 3 | 1740 | engine, op |
-| [divided-damage-on-trigger](#divided-damage-on-trigger) | 3 | 2389 | engine |
 | [escape](#escape) | 3 | 388 | engine, static_effect |
 | [omen](#omen) | 3 | 3355 | cost, engine |
 | [random-player-choice](#random-player-choice) | 3 | 5120 | op |
@@ -43,6 +43,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [manifest-dread](#manifest-dread) | 2 | 5772 | op |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
+| [remove-x-counters-cost](#remove-x-counters-cost) | 2 | 5399 | cost |
 | [return-face-down](#return-face-down) | 2 | 3081 | op |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [turn-face-up](#turn-face-up) | 2 | 5772 | op |
@@ -105,11 +106,14 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
 | [embalm](#embalm) | 1 | 4333 | cost |
+| [energy-alternative-cost](#energy-alternative-cost) | 1 | 7462 | op |
+| [energy-count](#energy-count) | 1 | 7317 | value |
 | [entered-without-being-cast](#entered-without-being-cast) | 1 | 7379 | selector |
 | [enters-as-copy-add-subtypes](#enters-as-copy-add-subtypes) | 1 | 3852 | replacement |
 | [enters-as-copy-embalmed-exception](#enters-as-copy-embalmed-exception) | 1 | 4333 | replacement |
 | [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
+| [excess-damage](#excess-damage) | 1 | 10942 | value |
 | [exile-bottom-of-library](#exile-bottom-of-library) | 1 | 4763 | selector |
 | [exile-cards-with-card-types-among-them](#exile-cards-with-card-types-among-them) | 1 | 9107 | selector |
 | [exile-face-down](#exile-face-down) | 1 | 1363 | op |
@@ -149,6 +153,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [harmonize](#harmonize) | 1 | 7442 | cost |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [insect-token-bg](#insect-token-bg) | 1 | 1924 | token |
+| [jump-start](#jump-start) | 1 | 14777 | op |
 | [karox-bladewing](#karox-bladewing) | 1 | 8889 | token |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
 | [life-lost-this-turn-static-value](#life-lost-this-turn-static-value) | 1 | 2559 | value |
@@ -183,6 +188,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [offspring](#offspring) | 1 | 6566 | keyword |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
 | [pay-any-amount-of-life](#pay-any-amount-of-life) | 1 | 4322 | cost |
+| [pay-energy-x](#pay-energy-x) | 1 | 5591 | cost |
 | [play-cost-paid-card](#play-cost-paid-card) | 1 | 6544 | op |
 | [play-lands-from-graveyard-filtered](#play-lands-from-graveyard-filtered) | 1 | 3993 | static_effect |
 | [playable-condition-opponent-lost-life](#playable-condition-opponent-lost-life) | 1 | 4478 | engine |
@@ -200,7 +206,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [random-order-bottom](#random-order-bottom) | 1 | 1343 | op |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
-| [remove-x-counters-cost](#remove-x-counters-cost) | 1 | 5399 | cost |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
 | [repeat-while](#repeat-while) | 1 | 1924 | op |
 | [replace-damage-noncombat](#replace-damage-noncombat) | 1 | 4163 | static_effect |
@@ -514,6 +519,32 @@ Blocks **5** cards.
 
 </details>
 
+## divided-damage-on-trigger
+
+Blocks **4** cards.
+
+- **(engine)** `damage` with `divided` inside a reflexive ('When you do') triggered ability's effects, with the division announced as the reflexive trigger is put on the stack and its targets chosen (603.3d / 601.2d), over a target spec of 'up to eight targets' -- any target: creatures, planeswalkers, battles and players -- capped at one target per point of damage
+  <br>Why the existing vocabulary won't do: The first sentence is now `cost_reduction: {"energy_spent_this_turn": "you"}`, and the attack trigger, `add_energy`, the `may` with `pay: {"pay_energy": 8}` and `reflexive_trigger` all exist. But `damage.divided` is accepted only as a top-level spell effect over a `permanent` target spec: the loader refuses it on an ability, and dividing among players or 'any target' is not modelled (card-dsl.md, 'Dividing damage among targets'). Eight separate 1-damage targets or a fixed split would fix the division the printed card lets the controller choose, an approximation
+- **(engine)** `damage` with `divided` inside a triggered ability's effects, with the division announced when the trigger is put on the stack and its targets chosen (603.3d / 601.2d), over an ability-level target spec of 'any number of target creatures and/or planeswalkers your opponents control' capped at one target per point of damage
+  <br>Why the existing vocabulary won't do: `damage.divided` exists, but `loader._check_division_homes` refuses it anywhere but a top-level spell effect ('divided damage is only supported as a top-level effect of a spell'), because the division is only announced from `Game._cast` and `engine.division.divided_damage` reads only `card.spell_effects`. `distribute_counters` is the activated-ability-only analogue and divides counters, not damage; fixed per-target `damage` effects would fix the target count and the split, an approximation
+- **(engine)** `damage` with `divided` inside a triggered ability's effects, with the division announced when the trigger is put on the stack and its targets chosen (603.3d / 601.2d), over an ability-level target spec of 'any number of target creatures and/or planeswalkers' capped at one target per point of damage
+  <br>Why the existing vocabulary won't do: `damage.divided` exists, but `loader._check_division_homes` refuses it anywhere but a top-level spell effect ('divided damage is only supported as a top-level effect of a spell'), because `Game._ask_damage_division` is only called from `Game._cast` and `engine.division.divided_damage` reads only `card.spell_effects`. `distribute_counters` is the activated-ability-only analogue and divides counters, not damage; splitting into fixed per-target `damage` effects would fix the target count and the split, an approximation
+- **(engine)** `damage` with `divided` inside a triggered ability's effects (self_enters and attacks triggers), with the division announced when the trigger is put on the stack and its targets chosen (603.3d / 601.2d), over an ability-level target spec of 'one, two, or three targets' that are ANY targets -- creatures, planeswalkers, battles and players -- each dealt at least one
+  <br>Why the existing vocabulary won't do: `damage.divided` exists, but `loader._check_division_homes` refuses it anywhere but a top-level spell effect ('divided damage is only supported as a top-level effect of a spell'), because `Game._ask_damage_division` is only called from `Game._cast` and `engine.division.divided_damage` reads only `card.spell_effects`. It also requires the divided spec to have kind `permanent`, and `ops_life._damage_divided` only calls `damage_permanent`, so a player can never receive a share. `distribute_counters` is the activated-ability-only analogue and divides counters, not damage; fixed per-target `damage` effects would fix the target count and the split, an approximation
+
+<details><summary>Cards waiting on this</summary>
+
+- **Fury** (rank 2389) — `fury`
+  - When this creature enters, it deals 4 damage divided as you choose among any number of target creatures and/or planeswalkers.
+- **Inferno Titan** (rank 2982) — `inferno_titan`
+  - Whenever this creature enters or attacks, it deals 3 damage divided as you choose among one, two, or three targets.
+- **Dragonlord Atarka** (rank 4563) — `dragonlord_atarka`
+  - When Dragonlord Atarka enters, it deals 5 damage divided as you choose among any number of target creatures and/or planeswalkers your opponents control.
+- **Blaster Hulk** (rank 7367) — `blaster_hulk`
+  - Whenever this creature attacks, you get {E}{E}, then you may pay eight {E}. When you do, this creature deals 8 damage divided as you choose among up to eight targets.
+
+</details>
+
 ## self-sacrificing-permanent-gate
 
 Blocks **4** cards.
@@ -613,28 +644,6 @@ Blocks **3** cards.
   - Whenever you discard a creature card, you may pay {2}{U}. If you do, create a tapped token that's a copy of that card, except it's a 4/4 black Zombie.
 - **God-Pharaoh's Gift** (rank 8873) — `god_pharaoh_s_gift`
   - If you do, create a token that's a copy of that card, except it's a 4/4 black Zombie.
-
-</details>
-
-## divided-damage-on-trigger
-
-Blocks **3** cards.
-
-- **(engine)** `damage` with `divided` inside a triggered ability's effects, with the division announced when the trigger is put on the stack and its targets chosen (603.3d / 601.2d), over an ability-level target spec of 'any number of target creatures and/or planeswalkers your opponents control' capped at one target per point of damage
-  <br>Why the existing vocabulary won't do: `damage.divided` exists, but `loader._check_division_homes` refuses it anywhere but a top-level spell effect ('divided damage is only supported as a top-level effect of a spell'), because the division is only announced from `Game._cast` and `engine.division.divided_damage` reads only `card.spell_effects`. `distribute_counters` is the activated-ability-only analogue and divides counters, not damage; fixed per-target `damage` effects would fix the target count and the split, an approximation
-- **(engine)** `damage` with `divided` inside a triggered ability's effects, with the division announced when the trigger is put on the stack and its targets chosen (603.3d / 601.2d), over an ability-level target spec of 'any number of target creatures and/or planeswalkers' capped at one target per point of damage
-  <br>Why the existing vocabulary won't do: `damage.divided` exists, but `loader._check_division_homes` refuses it anywhere but a top-level spell effect ('divided damage is only supported as a top-level effect of a spell'), because `Game._ask_damage_division` is only called from `Game._cast` and `engine.division.divided_damage` reads only `card.spell_effects`. `distribute_counters` is the activated-ability-only analogue and divides counters, not damage; splitting into fixed per-target `damage` effects would fix the target count and the split, an approximation
-- **(engine)** `damage` with `divided` inside a triggered ability's effects (self_enters and attacks triggers), with the division announced when the trigger is put on the stack and its targets chosen (603.3d / 601.2d), over an ability-level target spec of 'one, two, or three targets' that are ANY targets -- creatures, planeswalkers, battles and players -- each dealt at least one
-  <br>Why the existing vocabulary won't do: `damage.divided` exists, but `loader._check_division_homes` refuses it anywhere but a top-level spell effect ('divided damage is only supported as a top-level effect of a spell'), because `Game._ask_damage_division` is only called from `Game._cast` and `engine.division.divided_damage` reads only `card.spell_effects`. It also requires the divided spec to have kind `permanent`, and `ops_life._damage_divided` only calls `damage_permanent`, so a player can never receive a share. `distribute_counters` is the activated-ability-only analogue and divides counters, not damage; fixed per-target `damage` effects would fix the target count and the split, an approximation
-
-<details><summary>Cards waiting on this</summary>
-
-- **Fury** (rank 2389) — `fury`
-  - When this creature enters, it deals 4 damage divided as you choose among any number of target creatures and/or planeswalkers.
-- **Inferno Titan** (rank 2982) — `inferno_titan`
-  - Whenever this creature enters or attacks, it deals 3 damage divided as you choose among one, two, or three targets.
-- **Dragonlord Atarka** (rank 4563) — `dragonlord_atarka`
-  - When Dragonlord Atarka enters, it deals 5 damage divided as you choose among any number of target creatures and/or planeswalkers your opponents control.
 
 </details>
 
@@ -985,6 +994,24 @@ Blocks **2** cards.
   - Prevent all combat damage that would be dealt to you and planeswalkers you control this turn.
 - **You Look Upon the Tarrasque** (rank 8030) — `you_look_upon_the_tarrasque`
   - • Run and Hide — Prevent all combat damage that would be dealt to you and creatures you control this turn
+
+</details>
+
+## remove-x-counters-cost
+
+Blocks **2** cards.
+
+- **(cost)** an activated-ability cost that removes an announced number X of a named counter kind (here time counters) from the source itself, X chosen by the controller on activation (0 up to the counters on the source) and bound so the effects can read it with {"x": true}, so the resolution can return each nonland permanent card with mana value exactly X
+  <br>Why the existing vocabulary won't do: cost.remove_counters takes only a fixed integer amount (Cost reads int(amount)); loyalty_x is the variable form but only for loyalty counters and drags in planeswalker-ability rules (606.3 once per turn); x_value defines the X of an {X} in the mana cost from a value expression, and this cost has no {X} for the player to announce; remove_counters_from_among also takes a fixed count
+- **(cost)** an activated-ability cost that removes an announced number X of counters (any kinds) from ONE chosen artifact or creature you control, with X bound so the effects can read it ({"x": ...}); X is bounded by the counters on the chosen permanent and is not part of the mana cost
+  <br>Why the existing vocabulary won't do: cost.remove_counters takes only a fixed amount of one named kind and only off the source; cost.remove_counters_from_among takes a fixed integer count (Cost reads int(count)) and lets the payer split the removal across several permanents, whereas this card takes all X from a single permanent; x_value defines a mana {X} from a value expression, and there is no {X} in this cost for the player to announce
+
+<details><summary>Cards waiting on this</summary>
+
+- **Moxite Refinery** (rank 5399) — `moxite_refinery`
+  - {2}, {T}, Remove X counters from an artifact or creature you control: Choose one. Activate only as a sorcery.
+- **Hourglass of the Lost** (rank 5928) — `hourglass_of_the_lost`
+  - {T}, Remove X time counters from this artifact and exile it: Return each nonland permanent card with mana value X from your graveyard to the battlefield. Activate only as a sorcery.
 
 </details>
 
@@ -1913,6 +1940,34 @@ Blocks **1** card.
 
 </details>
 
+## energy-alternative-cost
+
+Blocks **1** card.
+
+- **(op)** a permission to cast a card exiled by the resolving effect (exile_until's found card) immediately, with an alternative cost of paying energy equal to that card's mana value instead of its mana cost; if not cast, the card stays in exile
+  <br>Why the existing vocabulary won't do: exile_until offers only cast_free / cast_free_if (cast without paying, no energy charged); the playable family (exile, grant_playable, look_at_top, reveal_until) offers playable_free and playable_cost_reduction but no alternative cost priced in energy; pay_energy exists only as an activated-ability cost_key with a fixed amount, not as a spell alternative cost scaled to the cast card's mana value
+
+<details><summary>Cards waiting on this</summary>
+
+- **Amped Raptor** (rank 7462) — `amped_raptor`
+  - You may cast that card by paying an amount of {E} equal to its mana value rather than paying its mana cost.
+
+</details>
+
+## energy-count
+
+Blocks **1** card.
+
+- **(value)** a value expression reading how many energy counters a player has (PlayerState.energy), e.g. {"energy_of": "you"}, usable as a pump's power/toughness so "it gets +X/+X where X is the amount of {E} you have" can be said
+  <br>Why the existing vocabulary won't do: value_keys has counters_on, which reads counters on objects only (a player is not an object), and max_poison_of / max_life_of, which read poison and life but not energy; add_energy and the pay_energy cost exist, and may.any_amount binds energy PAID, but nothing reads the energy a player currently holds
+
+<details><summary>Cards waiting on this</summary>
+
+- **Razorfield Ripper** (rank 7317) — `razorfield_ripper`
+  - Whenever this creature or equipped creature attacks, you get {E} (an energy counter), then it gets +X/+X until end of turn, where X is the amount of {E} you have.
+
+</details>
+
 ## entered-without-being-cast
 
 Blocks **1** card.
@@ -1982,6 +2037,20 @@ Blocks **1** card.
 - **Collective Brutality** (rank 11817) — `collective_brutality`
   - Escalate—Discard a card. (Pay this cost for each mode chosen beyond the first.)
   - • Target opponent reveals their hand. You choose an instant or sorcery card from it. That player discards that card.
+
+</details>
+
+## excess-damage
+
+Blocks **1** card.
+
+- **(value)** a value (and condition) reading the excess damage (damage beyond lethal, 120.4a) dealt to a damaged creature this turn, readable from a deals_combat_damage trigger whose damaged creature is bound, so the trigger can intervene on excess > 0 and add_energy that amount
+  <br>Why the existing vocabulary won't do: value_keys has damage_dealt_to_this_turn and max_damage_taken_this_turn but nothing that subtracts the creature's lethal threshold; the damage op's excess_to only redirects excess from its own damage and is not a readable value; deals_combat_damage exposes no per-creature excess amount
+
+<details><summary>Cards waiting on this</summary>
+
+- **Overclocked Electromancer** (rank 10942) — `overclocked_electromancer`
+  - Whenever this creature deals combat damage to a creature, if that creature was dealt excess damage this turn, you get X {E}, where X is that excess damage.
 
 </details>
 
@@ -2544,6 +2613,20 @@ Blocks **1** card.
 
 </details>
 
+## jump-start
+
+Blocks **1** card.
+
+- **(op)** an op that grants a targeted instant or sorcery card in its owner's graveyard jump-start until end of turn: it may be cast from the graveyard this turn for its mana cost plus an additional cost of discarding a card, and is exiled instead of going anywhere else when it leaves the stack
+  <br>Why the existing vocabulary won't do: grant_playable with as_flashback and playable_this_turn gives a once-only graveyard cast that exiles, but has no option to add an additional cost (discard a card), so it would grant flashback, not jump-start; grant_graveyard_cast takes only affects_spells/any_graveyard/grants_flashback and is a player-wide permission, not a per-card grant; the card-level graveyard_cost/graveyard_additional_cost express jump-start only on a card's own printed text, not as something granted to another card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Filigree Racer** (rank 14777) — `filigree_racer`
+  - Whenever this Vehicle attacks, you may pay {E}{E}. When you do, target instant or sorcery card in your graveyard gains jump-start until end of turn. (You may cast that card from your graveyard by discarding a card in addition to paying its other costs. Then exile it.)
+
+</details>
+
 ## karox-bladewing
 
 Blocks **1** card.
@@ -3031,6 +3114,20 @@ Blocks **1** card.
 
 </details>
 
+## pay-energy-x
+
+Blocks **1** card.
+
+- **(cost)** an activated-ability cost "Pay X {E}" where X is announced on activation (bounded by the payer's energy, 0 allowed) and bound as `x` so the effect reads it -- the energy twin of `pay_life_x`/`discard_x`/`sacrifice_x`/`tap_x`, e.g. `{"pay_energy_x": true}`
+  <br>Why the existing vocabulary won't do: `pay_energy` in cost_keys is a fixed integer; its mapping form is a value expression read only by a resolving `may` (Confiscation Coup), not an announced X. `x_value` fixes X from the board rather than letting the player choose it, and the ability has no {X} mana symbol to announce X through
+
+<details><summary>Cards waiting on this</summary>
+
+- **Sphinx of the Revelation** (rank 5591) — `sphinx_of_the_revelation`
+  - {W}{U}{U}, {T}, Pay X {E}: Draw X cards.
+
+</details>
+
 ## play-cost-paid-card
 
 Blocks **1** card.
@@ -3266,20 +3363,6 @@ Blocks **1** card.
 
 - **Werewolf Pack Leader** (rank 8384) — `werewolf_pack_leader`
   - {3}{G}: Until end of turn, this creature has base power and toughness 5/3, gains trample, and isn't a Human.
-
-</details>
-
-## remove-x-counters-cost
-
-Blocks **1** card.
-
-- **(cost)** an activated-ability cost that removes an announced number X of counters (any kinds) from ONE chosen artifact or creature you control, with X bound so the effects can read it ({"x": ...}); X is bounded by the counters on the chosen permanent and is not part of the mana cost
-  <br>Why the existing vocabulary won't do: cost.remove_counters takes only a fixed amount of one named kind and only off the source; cost.remove_counters_from_among takes a fixed integer count (Cost reads int(count)) and lets the payer split the removal across several permanents, whereas this card takes all X from a single permanent; x_value defines a mana {X} from a value expression, and there is no {X} in this cost for the player to announce
-
-<details><summary>Cards waiting on this</summary>
-
-- **Moxite Refinery** (rank 5399) — `moxite_refinery`
-  - {2}, {T}, Remove X counters from an artifact or creature you control: Choose one. Activate only as a sorcery.
 
 </details>
 

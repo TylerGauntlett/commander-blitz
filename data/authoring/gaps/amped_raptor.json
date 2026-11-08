@@ -1,0 +1,18 @@
+{
+  "card_id": "amped_raptor",
+  "name": "Amped Raptor",
+  "oracle_text": "First strike\nWhen this creature enters, you get {E}{E} (two energy counters). Then if you cast it from your hand, exile cards from the top of your library until you exile a nonland card. You may cast that card by paying an amount of {E} equal to its mana value rather than paying its mana cost.",
+  "blocked_sentences": [
+    "You may cast that card by paying an amount of {E} equal to its mana value rather than paying its mana cost."
+  ],
+  "needs": [
+    {
+      "capability": "energy_alternative_cost",
+      "kind": "op",
+      "what": "a permission to cast a card exiled by the resolving effect (exile_until's found card) immediately, with an alternative cost of paying energy equal to that card's mana value instead of its mana cost; if not cast, the card stays in exile",
+      "why_existing_wont_do": "exile_until offers only cast_free / cast_free_if (cast without paying, no energy charged); the playable family (exile, grant_playable, look_at_top, reveal_until) offers playable_free and playable_cost_reduction but no alternative cost priced in energy; pay_energy exists only as an activated-ability cost_key with a fixed amount, not as a spell alternative cost scaled to the cast card's mana value"
+    }
+  ],
+  "closest_existing": ["exile_until", "pay_energy", "add_energy", "grant_playable"],
+  "confidence": "high"
+}

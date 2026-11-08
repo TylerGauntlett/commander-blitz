@@ -1,0 +1,14 @@
+{
+  "card_id": "sphinx_of_the_revelation",
+  "name": "Sphinx of the Revelation",
+  "oracle_text": "Flying, lifelink\nWhenever you gain life, you get that many {E} (energy counters).\n{W}{U}{U}, {T}, Pay X {E}: Draw X cards.",
+  "blocked_sentences": ["{W}{U}{U}, {T}, Pay X {E}: Draw X cards."],
+  "needs": [{
+    "capability": "pay_energy_x",
+    "kind": "cost",
+    "what": "an activated-ability cost \"Pay X {E}\" where X is announced on activation (bounded by the payer's energy, 0 allowed) and bound as `x` so the effect reads it -- the energy twin of `pay_life_x`/`discard_x`/`sacrifice_x`/`tap_x`, e.g. `{\"pay_energy_x\": true}`",
+    "why_existing_wont_do": "`pay_energy` in cost_keys is a fixed integer; its mapping form is a value expression read only by a resolving `may` (Confiscation Coup), not an announced X. `x_value` fixes X from the board rather than letting the player choose it, and the ability has no {X} mana symbol to announce X through"
+  }],
+  "closest_existing": ["pay_energy", "pay_life_x", "discard_x"],
+  "confidence": "high"
+}

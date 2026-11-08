@@ -33,7 +33,7 @@ from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
 from commanderblitz.engine.events import EventType
 from commanderblitz.engine.game import Game
 from commanderblitz.engine.objects import PLUS_ONE
-from commanderblitz.engine.primitives import add_counters, lose_life
+from commanderblitz.engine.primitives import add_counters, lose_life, pay_energy
 from commanderblitz.engine.sandbox import GameBuilder
 from commanderblitz.engine.stack import push_spell
 from commanderblitz.engine.state import new_object
@@ -803,7 +803,8 @@ def _satisfy_the_activation_condition(game: Game, registry, ability, oid: int) -
     Deliberately dumb, exactly as `_provide_the_target` is. It reads three shapes
     -- ``{"cmp": ">=", "left": {"count": <selector>}, "right": {"const": n}}``,
     which it satisfies by adding permanents; the same comparison over
-    ``life_lost_this_turn``, which it satisfies by taking the life; a per-player
+    ``life_lost_this_turn``, which it satisfies by taking the life (and
+    ``energy_spent_this_turn`` by paying the energy); a per-player
     ``max_count_of``, which it satisfies by stocking one opponent's board;
     ``power_of`` the source itself, which it satisfies with +1/+1 counters;
     ``spells_cast_this_turn``, which it satisfies by emitting the cast events the
@@ -848,6 +849,20 @@ def _satisfy_the_activation_condition(game: Game, registry, ability, oid: int) -
         pids = [p.pid for p in game.state.players if p.pid != 0] if "opponent" in whose else [0]
         for pid in pids:
             lose_life(game.state, pid, int(right["const"]))
+        return
+
+    # "Activate only if you've paid or lost four or more {E} this turn" --
+    # Izzet Generatorium. `life_lost_this_turn`'s argument: the energy is given
+    # and then really paid, through `primitives.pay_energy`, so the ledger the
+    # condition reads is folded from the event and a card naming the wrong
+    # tally still fails.
+    if "energy_spent_this_turn" in left:
+        whose = str(left["energy_spent_this_turn"])
+        pids = [p.pid for p in game.state.players if p.pid != 0] if "opponent" in whose else [0]
+        amount = int(right["const"])
+        for pid in pids:
+            game.state.players[pid].energy += amount
+            pay_energy(game.state, pid, amount)
         return
 
     # "Activate only if Kitsa's power is 3 or greater." A 1/3 printed under a

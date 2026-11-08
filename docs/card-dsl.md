@@ -1752,6 +1752,7 @@ Anywhere a number is expected -- the leaf list is
 { "command_zone_casts_of": { "binding": "subject" } }  // ONE commander's casts from the command zone
 { "cards_drawn_this_turn": "you" }              // a tally of an event, not of objects
 { "cards_discarded_this_turn": "you" }          // "if you discarded a card this turn"; per seat
+{ "energy_spent_this_turn": "you" }             // {E} paid or lost this turn; see below
 { "creatures_died_this_turn": "all" }           // morbid; "you" for "a creature you controlled"
 { "modified_creatures_died_this_turn": "you" }  // …of them, the ones modified (700.9) as they died
 { "attacked_this_turn": "you" }                 // raid; 1 if they attacked, else 0
@@ -2838,6 +2839,22 @@ The filter is the ordinary reduction filter and every key still applies, applied
 creatures into the seat that would otherwise win. A filter that admits one
 player has one group, so `greatest_count` with the default `controller: "you"`
 is simply `count`; the grouping and the filtering are separate steps.
+
+### A reduction that reads energy paid or lost
+
+```jsonc
+// Blaster Hulk — "This spell costs {1} less to cast for each {E} you've paid
+//  or lost this turn."
+"cost_reduction": { "energy_spent_this_turn": "you" }
+```
+
+The one reduction head that reads a per-turn ledger rather than the board. It
+takes a player spec, not a filter, and is `{1}` less per counter in the
+`energy_spent_this_turn` value leaf — the same tally, read through a context
+with nothing on the stack, so a spell in hand is priced off what has already
+happened this turn. A filter
+key is refused, as is anything that is not a player spec. `count` is the near
+miss: no filter over a board can say how much energy left a player this turn.
 
 ### A target pool that only exists once X is known
 
@@ -4147,6 +4164,15 @@ Two things about that ledger are load-bearing:
   with mayhem, or replaced into exile by madness or Rest in Peace still counts.
   Mayhem's `TurnLedger.discarded` is the near miss: it asks about one object
   and forgets it at its next zone change (400.7).
+- **Energy is counted as it goes, paid or lost.** `energy_spent_this_turn`
+  (Izzet Generatorium's "activate only if you've paid or lost four or more {E}
+  this turn") sums, per player, every `pay_energy` cost (ENERGY_PAID) and every
+  removal of that player's energy counters (`lose_all_player_counters`, a
+  COUNTER_REMOVED with `player` and no `oid`). Getting energy offsets nothing.
+  The player's current energy is the near miss: getting {E}{E} and paying
+  {E}{E} leaves the total where it was. A card-level
+  `cost_reduction` reads the same ledger through its own head — see
+  [A reduction that reads energy paid or lost](#a-reduction-that-reads-energy-paid-or-lost).
 - **A counter is counted by who put it.** `counters_put_this_turn` ("if you
   put a counter on a creature this turn", Lasting Tarfire) takes a required
   `player` (the putter, 122.6a — not the recipient's controller), optional

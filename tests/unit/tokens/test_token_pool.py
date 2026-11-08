@@ -1708,6 +1708,75 @@ class TestConvertToSlimesOozeIsAPlainXXGreen:
         assert list(other.subtypes) == ["Fractal"]
 
 
+class TestAetherRefinerysAetherbornIsAPlainXXBlack:
+    """Aether Refinery: *"create an **X/X black Aetherborn** creature token,
+    where X is the amount of {E} paid this way."*
+
+    Written 0/0 with `variable_pt`, like the Ooze beside it. The pool's other
+    X/X tokens are the wrong colour and creature type; the green Ooze does not
+    stand in.
+    """
+
+    def test_it_is_a_variable_black_aetherborn_with_no_abilities(self, pool):
+        token = pool.get("aetherborn_x_x_b")
+        assert token is not None and token.is_token and token.is_creature
+        assert token.variable_pt
+        assert (token.power, token.toughness) == (0, 0)
+        assert sorted(token.colors) == ["B"]
+        assert list(token.types) == ["Creature"]
+        assert list(token.subtypes) == ["Aetherborn"]
+        assert not token.keywords and not token.abilities
+
+    def test_the_ooze_is_still_a_separate_green_token(self, pool):
+        other = pool.get("ooze_x_x_g")
+        assert sorted(other.colors) == ["G"]
+        assert list(other.subtypes) == ["Ooze"]
+
+
+class TestScurryOfGremlinsGremlinIsAPlainOneOneRed:
+    """Scurry of Gremlins: *"create two **1/1 red Gremlin** creature tokens."*
+
+    The pool's 1/1 reds are the Goblin, the Hamster and the Warrior; each is
+    the wrong creature type, and a Goblin is a different token under 111.4.
+    """
+
+    def test_it_is_a_one_one_red_gremlin_with_no_abilities(self, pool):
+        token = pool.get("gremlin_1_1_r")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (1, 1)
+        assert sorted(token.colors) == ["R"]
+        assert list(token.types) == ["Creature"]
+        assert list(token.subtypes) == ["Gremlin"]
+        assert not token.keywords and not token.abilities
+
+    def test_the_hamster_is_still_a_separate_red_token(self, pool):
+        other = pool.get("hamster_1_1_r")
+        assert list(other.subtypes) == ["Hamster"]
+
+
+class TestStoneIdolGeneratorsConstructIsASixTwelveTrampler:
+    """Stone Idol Generator: *"create a **6/12 colorless Construct artifact**
+    creature token with **trample**."*
+
+    The pool's other colourless Constructs are 4/4s and the 0/0 that counts
+    artifacts; none is the 6/12, and none has trample alone.
+    """
+
+    def test_it_is_a_six_twelve_colourless_artifact_construct_with_trample(self, pool):
+        token = pool.get("construct_6_12_c_artifact_trample")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (6, 12)
+        assert not token.colors
+        assert sorted(token.types) == ["Artifact", "Creature"]
+        assert list(token.subtypes) == ["Construct"]
+        assert "trample" in token.keywords and len(token.keywords) == 1
+
+    def test_the_four_four_construct_is_still_a_separate_token(self, pool):
+        other = pool.get("construct_4_4_c_artifact")
+        assert (other.power, other.toughness) == (4, 4)
+        assert not other.keywords
+
+
 class TestWitherbloomsPestGainsLifeWhenItDies:
     """Beledros Witherbloom, Blight Mound and the Witherbloom precon: *"create a
     **1/1 black and green Pest** creature token with 'When this token dies, you
