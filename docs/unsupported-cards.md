@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**256 cards** blocked by **235** capabilities.
+**257 cards** blocked by **236** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -199,7 +199,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [proliferate-binding](#proliferate-binding) | 1 | 957 | op |
 | [protection-from-multicolored](#protection-from-multicolored) | 1 | 1516 | static_effect |
 | [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
-| [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
 | [random-order-bottom](#random-order-bottom) | 1 | 1343 | op |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
@@ -213,6 +212,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [reveal-from-hand](#reveal-from-hand) | 1 | 3623 | cost |
 | [reveal-until-rest-to-graveyard](#reveal-until-rest-to-graveyard) | 1 | 1606 | op |
 | [sacrifice-multiple-distinct](#sacrifice-multiple-distinct) | 1 | 1918 | cost |
+| [sacrifice-x](#sacrifice-x) | 1 | 998 | cost |
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
 | [salamander-warrior-4-3-u](#salamander-warrior-4-3-u) | 1 | 3395 | token |
@@ -221,7 +221,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [self-bounce-playable-gate](#self-bounce-playable-gate) | 1 | 10013 | engine |
-| [shapeshifter-2-2-u-changeling](#shapeshifter-2-2-u-changeling) | 1 | 494 | token |
 | [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
@@ -236,6 +235,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [this-combat-duration](#this-combat-duration) | 1 | 9126 | op |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
 | [times-attacked-this-turn](#times-attacked-this-turn) | 1 | 988 | value |
+| [token-creation-addition-per-token](#token-creation-addition-per-token) | 1 | 998 | replacement |
 | [total-mana-value-selection](#total-mana-value-selection) | 1 | 4244 | op |
 | [total-toughness-cost-reduction](#total-toughness-cost-reduction) | 1 | 5188 | value |
 | [toughness-greater-than-power-filter](#toughness-greater-than-power-filter) | 1 | 3557 | selector |
@@ -244,6 +244,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [two-share-all-card-types](#two-share-all-card-types) | 1 | 7993 | value |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
+| [vanishing](#vanishing) | 1 | 3385 | keyword |
 | [while-source-on-battlefield-duration](#while-source-on-battlefield-duration) | 1 | 8222 | engine |
 | [wurm-5-5-g-trample](#wurm-5-5-g-trample) | 1 | 2387 | token |
 | [x-cost-mana-restriction](#x-cost-mana-restriction) | 1 | 4046 | decision |
@@ -1999,7 +2000,6 @@ Blocks **1** card.
 
 - **Maskwood Nexus** (rank 494) — `maskwood_nexus`
   - Creatures you control are every creature type. The same is true for creature spells you control and creature cards you own that aren't on the battlefield.
-  - {3}, {T}: Create a 2/2 blue Shapeshifter creature token with changeling. (It is every creature type.)
 
 </details>
 
@@ -3259,20 +3259,6 @@ Blocks **1** card.
 
 </details>
 
-## raccoon-3-3-g
-
-Blocks **1** card.
-
-- **(token)** a 3/3 green Raccoon creature token (no abilities)
-  <br>Why the existing vocabulary won't do: token_ids is a closed list with no Raccoon; the nearest 3/3 green vanilla tokens (ape_3_3_g, badger_3_3_g, beast_3_3_g, elephant_3_3_g, frog_lizard_3_3_g) carry the wrong creature type, which matters to type-matters cards. The rest of the card is expressible: an add_subtype static and a grant_ability static, each with condition is_your_turn, plus you_gain_life triggers with nth: 1 at levels 2 and 3
-
-<details><summary>Cards waiting on this</summary>
-
-- **Gourmand's Talent** (rank 5861) — `gourmand_s_talent`
-  - Whenever you gain life for the first time each turn, create a 3/3 green Raccoon creature token.
-
-</details>
-
 ## random-order-bottom
 
 Blocks **1** card.
@@ -3459,6 +3445,21 @@ Blocks **1** card.
 
 </details>
 
+## sacrifice-x
+
+Blocks **1** card.
+
+- **(cost)** an activated-ability sacrifice cost whose count is a variable X chosen by the activator (any number of Squirrels, including 0), with X readable by the effects as {"x": ...} for a pump of +X/-X
+  <br>Why the existing vocabulary won't do: the sacrifice cost's count is a fixed integer (costs.py reads int(spec['count'])); x_value derives X from a value rather than letting the player choose how many permanents to sacrifice, and discard_x/pay_life_x exist only for discard and life
+
+<details><summary>Cards waiting on this</summary>
+
+- **Chatterfang, Squirrel General** (rank 998) — `chatterfang_squirrel_general`
+  - If one or more tokens would be created under your control, those tokens plus that many 1/1 green Squirrel creature tokens are created instead.
+  - {B}, Sacrifice X Squirrels: Target creature gets +X/-X until end of turn.
+
+</details>
+
 ## sacrificed-source-counters
 
 Blocks **1** card.
@@ -3570,21 +3571,6 @@ Blocks **1** card.
 
 - **Glitch Interpreter** (rank 10013) — `glitch_interpreter`
   - When this creature enters, if you control no face-down permanents, return this creature to its owner's hand and manifest dread.
-
-</details>
-
-## shapeshifter-2-2-u-changeling
-
-Blocks **1** card.
-
-- **(token)** a 2/2 blue Shapeshifter creature token with changeling
-  <br>Why the existing vocabulary won't do: token_ids has only shapeshifter_1_1_c_changeling, shapeshifter_3_2_c_changeling and shapeshifter_x_x_c_changeling_deathtouch; none is a blue 2/2
-
-<details><summary>Cards waiting on this</summary>
-
-- **Maskwood Nexus** (rank 494) — `maskwood_nexus`
-  - Creatures you control are every creature type. The same is true for creature spells you control and creature cards you own that aren't on the battlefield.
-  - {3}, {T}: Create a 2/2 blue Shapeshifter creature token with changeling. (It is every creature type.)
 
 </details>
 
@@ -3786,6 +3772,21 @@ Blocks **1** card.
 
 </details>
 
+## token-creation-addition-per-token
+
+Blocks **1** card.
+
+- **(replacement)** a replace_token_creation addition that keeps the pending tokens and adds N copies of a listed token id, where N is the number of tokens in the event ('those tokens plus that many 1/1 green Squirrel tokens'), e.g. and_create with a per-token count flag
+  <br>Why the existing vocabulary won't do: and_create adds one of each listed id once per creation event (Stridehangar Automaton), so three Treasures would bring one Squirrel instead of three; token_multiplier doubles the original tokens' own ids rather than adding Squirrels; create_instead replaces the tokens
+
+<details><summary>Cards waiting on this</summary>
+
+- **Chatterfang, Squirrel General** (rank 998) — `chatterfang_squirrel_general`
+  - If one or more tokens would be created under your control, those tokens plus that many 1/1 green Squirrel creature tokens are created instead.
+  - {B}, Sacrifice X Squirrels: Target creature gets +X/-X until end of turn.
+
+</details>
+
 ## total-mana-value-selection
 
 Blocks **1** card.
@@ -3895,6 +3896,20 @@ Blocks **1** card.
 
 - **Suppressor Skyguard** (rank 9126) — `suppressor_skyguard`
   - Whenever a player attacks you, if that player has another opponent who isn't being attacked, prevent all combat damage that would be dealt to you this combat.
+
+</details>
+
+## vanishing
+
+Blocks **1** card.
+
+- **(keyword)** Vanishing N (702.63): enters with N time counters; at the beginning of your upkeep remove a time counter; a separate triggered ability fires when the last time counter is removed and sacrifices the permanent
+  <br>Why the existing vocabulary won't do: vanishing is not in keywords. The enters-with-counters half is expressible via the self_enters_with_counters replacement and the upkeep removal via an upkeep trigger with remove_counters, but there is no trigger_event for a counter being removed (only counter_placed), so "When the last is removed, sacrifice it" can only be approximated by an inline if-zero-then-sacrifice inside the upkeep trigger, which is not the separate trigger the rules describe
+
+<details><summary>Cards waiting on this</summary>
+
+- **Deep Forest Hermit** (rank 3385) — `deep_forest_hermit`
+  - Vanishing 3 (This creature enters with three time counters on it. At the beginning of your upkeep, remove a time counter from it. When the last is removed, sacrifice it.)
 
 </details>
 

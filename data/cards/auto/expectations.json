@@ -1643,6 +1643,10 @@
   "beastcaller_savant": {
     "zone": "battlefield"
   },
+  "beastmaster_ascension": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "become_the_avalanche": {
     "zone": "graveyard"
   },
@@ -2501,6 +2505,12 @@
   "cabal_stronghold": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "cache_grab": {
+    "library_size": {
+      "0": 36
+    },
+    "zone": "graveyard"
   },
   "cackling_counterpart": {
     "battlefield_count": 33,

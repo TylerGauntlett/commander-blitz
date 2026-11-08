@@ -22802,12 +22802,12 @@
     },
     "Beastmaster Ascension": {
       "edhrec_rank": 559,
-      "gate": "template",
+      "gate": null,
       "name": "Beastmaster Ascension",
-      "reason": "no template for: Whenever a creature you control attacks, you may put a quest counter on this enchantment",
+      "reason": "",
       "scryfall_id": "832d9185-fa03-4e10-b612-e7916da8bb55",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Beastmaster's Magemark": {
@@ -37452,12 +37452,12 @@
     },
     "Cache Grab": {
       "edhrec_rank": 4913,
-      "gate": "template",
+      "gate": null,
       "name": "Cache Grab",
-      "reason": "no template for: Mill four cards. You may put a permanent card from among the cards milled this way into yo",
+      "reason": "",
       "scryfall_id": "dfd977dc-a7c3-4d0a-aca7-b25bd154e963",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cache Raiders": {

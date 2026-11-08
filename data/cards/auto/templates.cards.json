@@ -19156,6 +19156,75 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "counter": "quest",
+                  "objects": {
+                    "self_only": true,
+                    "zone": "battlefield"
+                  },
+                  "op": "add_counters"
+                }
+              ],
+              "op": "may",
+              "prompt": "Put a quest counter on it?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control attacks, you may put a quest counter on this enchantment.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks"
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "condition": {
+            "counters": {
+              "amount": 7,
+              "counter": "quest",
+              "op": ">="
+            }
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 5
+          },
+          "text": "As long as this enchantment has seven or more quest counters on it, creatures you control get +5/+5.",
+          "toughness": {
+            "const": 5
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "beastmaster_ascension",
+      "mana_cost": "{2}{G}",
+      "name": "Beastmaster Ascension",
+      "oracle_text": "Whenever a creature you control attacks, you may put a quest counter on this enchantment.\nAs long as this enchantment has seven or more quest counters on it, creatures you control get +5/+5.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -29461,6 +29530,84 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "cache_grab",
+      "mana_cost": "{1}{G}",
+      "name": "Cache Grab",
+      "oracle_text": "Mill four cards. You may put a permanent card from among the cards milled this way into your hand. If you control a Squirrel or returned a Squirrel card to your hand this way, create a Food token. (To mill four cards, put the top four cards of your library into your graveyard. A Food token is an artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 4
+          },
+          "as": "milled",
+          "op": "mill",
+          "player": "you"
+        },
+        {
+          "destination": "hand",
+          "objects": {
+            "any_types": [
+              "Artifact",
+              "Battle",
+              "Creature",
+              "Enchantment",
+              "Land",
+              "Planeswalker"
+            ],
+            "binding": "milled",
+            "count": 1,
+            "optional": true
+          },
+          "op": "return_from_graveyard"
+        },
+        {
+          "condition": {
+            "any": [
+              {
+                "exists": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Squirrel"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              {
+                "exists": {
+                  "binding": "milled",
+                  "subtypes": [
+                    "Squirrel"
+                  ],
+                  "zone": "hand"
+                }
+              }
+            ]
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "food_token"
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
