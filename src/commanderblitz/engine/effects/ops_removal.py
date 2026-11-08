@@ -772,6 +772,29 @@ def op_create_token(ctx: EffectContext, spec: Mapping[str, Any]):
         ctx.bindings[str(name)] = made
 
 
+def _fixed_exception(
+    ctx: EffectContext, exception: Mapping[str, Any] | None
+) -> dict[str, Any] | None:
+    """A copy exception with its size fixed as a number, once, now.
+
+    "…except their power is half that creature's power" (Saw in Half): a
+    ``power`` or ``toughness`` written as a value expression is evaluated here,
+    as the op resolves, and the token keeps the integer. 707.9b makes the
+    exception a copiable value, so it is part of what the token *is* and is
+    never re-read -- a pump on the original afterwards does not resize the
+    copies, and a copy of the token copies the number. Evaluated once rather
+    than per copy, because every copy the sentence makes is the same size.
+    """
+    if not exception:
+        return None
+    fixed = dict(exception)
+    for key in ("power", "toughness"):
+        value = fixed.get(key)
+        if isinstance(value, Mapping):
+            fixed[key] = int(evaluate_value(ctx, value))
+    return fixed
+
+
 @register("copy_permanent")
 def op_copy_permanent(ctx: EffectContext, spec: Mapping[str, Any]):
     """ "Create a token that's a copy of target creature."
@@ -822,7 +845,7 @@ def op_copy_permanent(ctx: EffectContext, spec: Mapping[str, Any]):
     if not oids:
         return
     controllers = _players(ctx, spec.get("controller", "you"))
-    exception = spec.get("except_") or spec.get("except")
+    exception = _fixed_exception(ctx, spec.get("except_") or spec.get("except"))
     attacking = _attacking_player(ctx, spec, _attack_target)
     made: list[int] = []
     for oid in oids:

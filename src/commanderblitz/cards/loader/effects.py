@@ -2742,14 +2742,20 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"write the one the printed clause says"
             )
         for key in ("power", "toughness"):
-            # "...except it's a 4/4" (eternalize). The base size, so a number and
-            # never an expression: 707.9b makes it a copiable value, fixed when
-            # the copy is made, not something re-read as the game goes on.
+            # "...except it's a 4/4" (eternalize) is a number; "...except their
+            # power is half that creature's power" (Saw in Half) is a value
+            # expression, which `copy_permanent` evaluates once as it resolves
+            # and stores as a number. Either way 707.9b makes it a copiable
+            # value, fixed when the copy is made, never re-read as the game
+            # goes on.
             if key in overrides:
                 value = overrides[key]
-                if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+                if isinstance(value, Mapping):
+                    validate_value(value, f"{where}.except_.{key}")
+                elif isinstance(value, bool) or not isinstance(value, int) or value < 0:
                     raise DslError(
-                        f"{where}.except_.{key}: must be a non-negative integer, got {value!r}"
+                        f"{where}.except_.{key}: must be a non-negative integer or a "
+                        f"value expression, got {value!r}"
                     )
         if ("power" in overrides) != ("toughness" in overrides):
             # Every printed exception names a size as "N/N"; half of one is a

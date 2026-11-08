@@ -10963,6 +10963,42 @@ Unlike `create_token` it names no token id, so nothing has to be pre-declared an
 `validate_token_references` does not apply: what is being copied is only known
 while the spell resolves.
 
+### "…except their power is half that creature's power"
+
+```jsonc
+// Saw in Half
+{ "op": "snapshot", "target": "t1", "as": "sawn" },
+{ "op": "destroy", "objects": { "target": "t1" }, "as": "destroyed" },
+{ "op": "copy_permanent", "amount": 2,
+  "objects": { "binding": "destroyed", "zone": "graveyard" },
+  "controller": { "controller_of": "sawn" },
+  "except_": {
+    "power":     { "half": { "of": { "power_of":     { "var": "sawn" } }, "round": "up" } },
+    "toughness": { "half": { "of": { "toughness_of": { "var": "sawn" } }, "round": "up" } } } }
+```
+
+`except_`'s `power` and `toughness` take a non-negative integer (eternalize's
+"except it's a 4/4") or a value expression. The expression is evaluated once, as
+`copy_permanent` resolves, and the token keeps the **number**: 707.9b makes the
+exception a copiable value, so a pump on the original afterwards does not resize
+the copies, a pump on a copy lands on top, and a copy of the copy copies the
+number. The two still come as a pair, and a malformed expression is refused at
+load like any other value.
+
+Three pieces of the sentence are not this key:
+
+- **The creature's size as it last existed** (608.2h) is a `snapshot` taken
+  before the `destroy`, pumps and counters included. `power_of` of the creature
+  itself, read after it died, is its printed graveyard size.
+- **"If that creature dies this way"** is `destroy`'s `as`, which holds only what
+  was actually destroyed (indestructible and regeneration are not), narrowed to
+  `zone: "graveyard"`: a death a replacement sent to exile was a destruction but
+  not a death (700.4). The copy reaches the card in the graveyard through the
+  binding, so no `if` is needed — an empty pool makes nothing.
+- **"Its controller creates"** is `controller: {"controller_of": "sawn"}`, the
+  seat that controlled it as it left, which is not `you` when the target was an
+  opponent's creature.
+
 # Recipes — Targets and modes
 
 ## Modal spells with a target

@@ -212,7 +212,12 @@ class TestTheLoaderChecksIt:
         with pytest.raises(DslError, match="as a pair"):
             compile_card(_card(power=4), source="test")
 
-    @pytest.mark.parametrize("bad", [-1, "4", True, {"power_of": "self"}])
-    def test_a_size_must_be_a_number(self, bad):
+    @pytest.mark.parametrize("bad", [-1, "4", True])
+    def test_a_size_must_be_a_number_or_an_expression(self, bad):
         with pytest.raises(DslError, match="non-negative integer"):
             compile_card(_card(power=bad, toughness=4), source="test")
+
+    def test_a_malformed_size_expression_is_refused(self):
+        """An expression is checked like any value: a bare ``"self"`` names nothing."""
+        with pytest.raises(DslError, match="object reference"):
+            compile_card(_card(power={"power_of": "self"}, toughness=4), source="test")
