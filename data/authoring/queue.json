@@ -11252,12 +11252,12 @@
     },
     "Arcane Adaptation": {
       "edhrec_rank": 4031,
-      "gate": "template",
+      "gate": null,
       "name": "Arcane Adaptation",
-      "reason": "no template for: As this enchantment enters, choose a creature type",
+      "reason": "",
       "scryfall_id": "b0384a47-b189-4e10-b847-1819d3ca5f8e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Arcane Amphisbaena": {
@@ -28472,12 +28472,12 @@
     },
     "Bloodchief's Thirst": {
       "edhrec_rank": 14140,
-      "gate": "template",
+      "gate": "playable",
       "name": "Bloodchief's Thirst",
-      "reason": "no template for: Kicker {2}{B}",
+      "reason": "CommanderBlitzError: bloodchief_s_thirst is not playable in the sandbox; offered: ['Pass', 'Play Forest', \"Cast Bloodchief's Thirst (kicked) -> Acidic Slime\", \"Cast Bloodchief's Thirst (kicked) -> Acidic Slime\", \"Cast Bloodchief's Thirst (kicked) -> Azusa, Lost but Seeking\", \"Cast Bloodchief's Thirst (kicked) -> Air Elemental\"]",
       "scryfall_id": "7aeaa32a-5a01-4d2d-a4a2-7d95e976fa77",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Bloodcrazed Goblin": {
@@ -88352,12 +88352,12 @@
     },
     "Expel the Unworthy": {
       "edhrec_rank": 23063,
-      "gate": "template",
+      "gate": null,
       "name": "Expel the Unworthy",
-      "reason": "no template for: Kicker {2}{W}",
+      "reason": "",
       "scryfall_id": "5f68baee-f503-407d-931f-2a550470a55f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Expendable Lackey": {
@@ -94582,12 +94582,12 @@
     },
     "Fiery Confluence": {
       "edhrec_rank": 1565,
-      "gate": "template",
+      "gate": null,
       "name": "Fiery Confluence",
-      "reason": "no template for: Choose three. You may choose the same mode more than once",
+      "reason": "",
       "scryfall_id": "85d431c2-e4fa-426d-83cb-ecb782e7e87d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fiery Emancipation": {
@@ -182212,12 +182212,12 @@
     },
     "Mystic Confluence": {
       "edhrec_rank": 1440,
-      "gate": "template",
+      "gate": null,
       "name": "Mystic Confluence",
-      "reason": "no template for: Choose three. You may choose the same mode more than once",
+      "reason": "",
       "scryfall_id": "5df07a06-e585-412d-a6db-cb5a78a68b6e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mystic Crusader": {

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**252 cards** blocked by **230** capabilities.
+**253 cards** blocked by **231** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -175,6 +175,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mode-owned-variable-targets-mid-declaration](#mode-owned-variable-targets-mid-declaration) | 1 | 16968 | engine |
 | [modified](#modified) | 1 | 831 | selector |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
+| [necron-warrior-token](#necron-warrior-token) | 1 | 4207 | token |
 | [no-mana-cost](#no-mana-cost) | 1 | 2978 | engine |
 | [noncombat-damage-trigger](#noncombat-damage-trigger) | 1 | 6793 | trigger_event |
 | [nontoken-creatures-died-this-turn](#nontoken-creatures-died-this-turn) | 1 | 3951 | value |
@@ -2909,6 +2910,20 @@ Blocks **1** card.
 - **Goldbug, Humanity's Ally // Goldbug, Scrappy Scout** (rank 11641) — `goldbug_humanity_s_ally_goldbug_scrappy_scout`
   - More Than Meets the Eye {W}{U} (You may cast this card converted for {W}{U}.)
   - Living metal (During your turn, this Vehicle is also a creature.)
+
+</details>
+
+## necron-warrior-token
+
+Blocks **1** card.
+
+- **(token)** a 2/2 black Necron Warrior artifact creature token (types Artifact Creature, subtypes Necron Warrior, no abilities)
+  <br>Why the existing vocabulary won't do: token_ids has no Necron Warrior; the nearest are warrior_1_1_r / warrior_1_1_w (wrong size, colour, not artifact) and elf_warrior_1_1_g. The rest of the card is expressible: the first line is an add_subtype static with types ["Artifact"] on creatures you control plus an off_battlefield add_subtype static for creature spells and cards, and the trigger is spell_cast with filter types ["Artifact"] doing lose_life 1 then create_token.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Biotransference** (rank 4207) — `biotransference`
+  - Whenever you cast an artifact spell, you lose 1 life and create a 2/2 black Necron Warrior artifact creature token.
 
 </details>
 

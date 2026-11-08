@@ -821,6 +821,10 @@
     },
     "zone": "battlefield"
   },
+  "arcane_adaptation": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "arcane_bombardment": {
     "battlefield_count": 33,
     "graveyard_size": {
@@ -5768,6 +5772,12 @@
     "opponent_battlefield_count": 4,
     "zone": "graveyard"
   },
+  "expel_the_unworthy": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "zone": "graveyard"
+  },
   "experimental_armor": {
     "zone": "battlefield"
   },
@@ -6142,6 +6152,16 @@
   "fierce_guardianship": {
     "hand_size": {
       "0": 1
+    },
+    "zone": "graveyard"
+  },
+  "fiery_confluence": {
+    "battlefield_count": 30,
+    "graveyard_size": {
+      "0": 5
+    },
+    "life": {
+      "1": 40
     },
     "zone": "graveyard"
   },
@@ -11898,6 +11918,9 @@
       "0": 40
     },
     "zone": "battlefield"
+  },
+  "mystic_confluence": {
+    "zone": "graveyard"
   },
   "mystic_gate": {
     "zone": "battlefield"
