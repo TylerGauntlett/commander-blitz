@@ -7498,6 +7498,10 @@
   "gorn_captain": {
     "zone": "battlefield"
   },
+  "gourmand_s_talent": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "graaz_unstoppable_juggernaut": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -15249,6 +15253,10 @@
   "scryb_sprites": {
     "zone": "battlefield"
   },
+  "scurry_of_squirrels": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "scute_swarm": {
     "zone": "battlefield"
   },
@@ -15342,6 +15350,13 @@
   },
   "secluded_steppe": {
     "zone": "battlefield"
+  },
+  "second_harvest": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
   },
   "secret_rendezvous": {
     "hand_size": {
@@ -16186,6 +16201,13 @@
   "skycloud_expanse": {
     "zone": "battlefield"
   },
+  "skyfisher_spider": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 4
+    },
+    "zone": "battlefield"
+  },
   "skyhunter_patrol": {
     "zone": "battlefield"
   },
@@ -16786,6 +16808,14 @@
     "zone": "battlefield"
   },
   "squirming_mass": {
+    "zone": "battlefield"
+  },
+  "squirrel_nest": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "squirrel_sovereign": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "squirrelanoids": {
@@ -17398,6 +17428,17 @@
   },
   "swan_song": {
     "opponent_battlefield_count": 8,
+    "zone": "graveyard"
+  },
+  "swarmyard": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "swarmyard_massacre": {
+    "tokens": {
+      "count": 2,
+      "id": "squirrel_1_1_g"
+    },
     "zone": "graveyard"
   },
   "swashbuckling": {
@@ -18163,6 +18204,18 @@
   },
   "the_mycosynth_gardens": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "the_odd_acorn_gang": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "reach",
+        "menace",
+        "trample"
+      ]
+    },
     "zone": "battlefield"
   },
   "the_one_ring": {

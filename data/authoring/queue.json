@@ -115552,12 +115552,12 @@
     },
     "Gourmand's Talent": {
       "edhrec_rank": 5861,
-      "gate": "template",
+      "gate": null,
       "name": "Gourmand's Talent",
-      "reason": "no template for: During your turn, artifacts you control are Foods in addition to their other types and hav",
+      "reason": "",
       "scryfall_id": "89670a1b-a6f1-491d-bbb4-92e3382da653",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Govern the Guildless": {
@@ -237122,12 +237122,12 @@
     },
     "Scurry of Squirrels": {
       "edhrec_rank": 3182,
-      "gate": "template",
+      "gate": null,
       "name": "Scurry of Squirrels",
-      "reason": "no template for: Myriad, myriad",
+      "reason": "",
       "scryfall_id": "c343b965-af2b-45c3-babb-9242736cf1e5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Scute Mob": {
@@ -238342,12 +238342,12 @@
     },
     "Second Harvest": {
       "edhrec_rank": 569,
-      "gate": "template",
+      "gate": null,
       "name": "Second Harvest",
-      "reason": "no template for: For each token you control, create a token that's a copy of that permanent",
+      "reason": "",
       "scryfall_id": "eaf56de3-a2c5-476a-9fac-f149e8c3aa3d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Second Sight": {
@@ -250592,12 +250592,12 @@
     },
     "Skyfisher Spider": {
       "edhrec_rank": 6044,
-      "gate": "template",
+      "gate": null,
       "name": "Skyfisher Spider",
-      "reason": "no template for: When this creature enters, you may sacrifice another creature. When you do, destroy target",
+      "reason": "",
       "scryfall_id": "e18927dd-c50c-4fb2-8d4c-d0f853b68294",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Skygames": {
@@ -261872,12 +261872,12 @@
     },
     "Squirrel Nest": {
       "edhrec_rank": 3310,
-      "gate": "template",
+      "gate": null,
       "name": "Squirrel Nest",
-      "reason": "no template for: Enchanted land has \"{T}: Create a 1/1 green Squirrel creature token.\"",
+      "reason": "",
       "scryfall_id": "bac26044-b41f-4c75-8bc1-26359250d8bc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Squirrel Sanctuary": {
@@ -261892,12 +261892,12 @@
     },
     "Squirrel Sovereign": {
       "edhrec_rank": 4217,
-      "gate": "template",
+      "gate": null,
       "name": "Squirrel Sovereign",
-      "reason": "no template for: Other Squirrels you control get +1/+1",
+      "reason": "",
       "scryfall_id": "b4356e13-655b-40b8-ad08-4e28b7464a3c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Squirrel Wrangler": {
@@ -271682,22 +271682,22 @@
     },
     "Swarmyard": {
       "edhrec_rank": 1001,
-      "gate": "template",
+      "gate": null,
       "name": "Swarmyard",
-      "reason": "no template for: {T}: Regenerate target Insect, Rat, Spider, or Squirrel",
+      "reason": "",
       "scryfall_id": "2b4ee0e7-7528-4fdc-a768-055d2c097f05",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Swarmyard Massacre": {
       "edhrec_rank": 2104,
-      "gate": "template",
+      "gate": null,
       "name": "Swarmyard Massacre",
-      "reason": "no template for: Create two 1/1 green Squirrel creature tokens. Then each creature that isn't an Insect, Ra",
+      "reason": "",
       "scryfall_id": "0ce5e24a-84e3-4ecb-924d-1a92b0da914a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Swashbuckler Extraordinaire": {
@@ -281872,12 +281872,12 @@
     },
     "The Odd Acorn Gang": {
       "edhrec_rank": 4375,
-      "gate": "template",
+      "gate": null,
       "name": "The Odd Acorn Gang",
-      "reason": "no template for: Squirrels you control have \"{T}: Target Squirrel gets +2/+2 and gains trample until end of",
+      "reason": "",
       "scryfall_id": "185ac3b0-116e-4539-9615-123a6d68b035",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The One Ring": {

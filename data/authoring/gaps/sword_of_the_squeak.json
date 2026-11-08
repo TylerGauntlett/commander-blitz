@@ -1,0 +1,18 @@
+{
+  "card_id": "sword_of_the_squeak",
+  "name": "Sword of the Squeak",
+  "oracle_text": "Equipped creature gets +1/+1 for each creature you control with base power or toughness 1.\nWhenever a Hamster, Mouse, Rat, or Squirrel you control enters, you may attach this Equipment to that creature.\nEquip {2}",
+  "blocked_sentences": [
+    "Equipped creature gets +1/+1 for each creature you control with base power or toughness 1."
+  ],
+  "needs": [
+    {
+      "capability": "base_power_toughness_static_filter",
+      "kind": "selector",
+      "what": "base_power and base_toughness (with a union, i.e. any_of, so 'base power OR toughness 1' counts a creature once) in the filter of a static's magnitude `count`, so a buff can be sized by {\"count\": {\"controller\": \"you\", \"types\": [\"Creature\"], \"any_of\": [{\"base_power\": 1}, {\"base_toughness\": 1}]}}",
+      "why_existing_wont_do": "base_power/base_toughness exist only in selector_keys (effect selectors); a static's `count` is filtered by static_filter_keys, which has neither base_power, base_toughness nor any_of. `power`/`toughness` read current values (wrong once the creature is pumped, e.g. by this very Equipment), and static_value_keys has no subtraction to build the union from two counts"
+    }
+  ],
+  "closest_existing": ["buff", "count", "base_power", "base_toughness"],
+  "confidence": "high"
+}

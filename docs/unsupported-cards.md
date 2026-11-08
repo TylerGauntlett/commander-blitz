@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**260 cards** blocked by **237** capabilities.
+**263 cards** blocked by **241** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -62,6 +62,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [attack-tax-x-count](#attack-tax-x-count) | 1 | 671 | value |
 | [attacking-opponents-of-player](#attacking-opponents-of-player) | 1 | 705 | selector |
+| [base-power-toughness-static-filter](#base-power-toughness-static-filter) | 1 | 3996 | selector |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
 | [batched-combat-damage-amount](#batched-combat-damage-amount) | 1 | 3943 | value |
 | [block-restriction-relative-power](#block-restriction-relative-power) | 1 | 6993 | static_effect |
@@ -86,6 +87,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [conditional-play-exiled-with-source](#conditional-play-exiled-with-source) | 1 | 4225 | static_effect |
 | [control-while-has-counter](#control-while-has-counter) | 1 | 10319 | op |
 | [convoke](#convoke) | 1 | 11110 | cost |
+| [copy-except-computed-pt](#copy-except-computed-pt) | 1 | 586 | op |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
 | [copy-this-spell-on-resolution](#copy-this-spell-on-resolution) | 1 | 338 | op |
 | [cost-reduction-per-attacker-this-turn](#cost-reduction-per-attacker-this-turn) | 1 | 9578 | value |
@@ -97,6 +99,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [delayed-creature-dies](#delayed-creature-dies) | 1 | 1661 | trigger_event |
 | [demon-token-5-5-b-flying](#demon-token-5-5-b-flying) | 1 | 7993 | token |
 | [devil-token](#devil-token) | 1 | 4163 | token |
+| [dies-this-way](#dies-this-way) | 1 | 586 | condition |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [distribute-counters-spell](#distribute-counters-spell) | 1 | 6993 | op |
 | [divided-damage-on-activated](#divided-damage-on-activated) | 1 | 13459 | engine |
@@ -206,6 +209,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [remove-x-counters-cost](#remove-x-counters-cost) | 1 | 5399 | cost |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
 | [repeat-while](#repeat-while) | 1 | 1924 | op |
+| [repeatable-modes](#repeatable-modes) | 1 | 3369 | decision |
 | [replace-damage-noncombat](#replace-damage-noncombat) | 1 | 4163 | static_effect |
 | [replace-dies-link](#replace-dies-link) | 1 | 2740 | replacement |
 | [replace-graveyard-with-counter](#replace-graveyard-with-counter) | 1 | 386 | replacement |
@@ -1307,6 +1311,20 @@ Blocks **1** card.
 
 </details>
 
+## base-power-toughness-static-filter
+
+Blocks **1** card.
+
+- **(selector)** base_power and base_toughness (with a union, i.e. any_of, so 'base power OR toughness 1' counts a creature once) in the filter of a static's magnitude `count`, so a buff can be sized by {"count": {"controller": "you", "types": ["Creature"], "any_of": [{"base_power": 1}, {"base_toughness": 1}]}}
+  <br>Why the existing vocabulary won't do: base_power/base_toughness exist only in selector_keys (effect selectors); a static's `count` is filtered by static_filter_keys, which has neither base_power, base_toughness nor any_of. `power`/`toughness` read current values (wrong once the creature is pumped, e.g. by this very Equipment), and static_value_keys has no subtraction to build the union from two counts
+
+<details><summary>Cards waiting on this</summary>
+
+- **Sword of the Squeak** (rank 3996) — `sword_of_the_squeak`
+  - Equipped creature gets +1/+1 for each creature you control with base power or toughness 1.
+
+</details>
+
 ## base-power-trigger-filter
 
 Blocks **1** card.
@@ -1656,6 +1674,20 @@ Blocks **1** card.
 
 </details>
 
+## copy-except-computed-pt
+
+Blocks **1** card.
+
+- **(op)** copy_permanent's `except` power/toughness must accept a value expression evaluated at resolution (e.g. {"half": {"of": {"power_had": ...}, "round": "up"}} read from the destroyed creature's last known power/toughness), stored as the token's copiable base P/T
+  <br>Why the existing vocabulary won't do: copy_permanent's `except`/`except_` is a static dict copied verbatim into copy_overrides, and characteristics.py reads copy_overrides['power'/'toughness'] with int(), so only printed constants (eternalize's 4/4) work; the `half` value exists but cannot be fed into a copy exception
+
+<details><summary>Cards waiting on this</summary>
+
+- **Saw in Half** (rank 586) — `saw_in_half`
+  - Destroy target creature. If that creature dies this way, its controller creates two tokens that are copies of that creature, except their power is half that creature's power and their toughness is half that creature's toughness. Round up each time.
+
+</details>
+
 ## copy-for-each-other-target
 
 Blocks **1** card.
@@ -1809,6 +1841,20 @@ Blocks **1** card.
   - When you unlock this door, create three 1/1 red Devil creature tokens with "When this token dies, it deals 1 damage to any target."
   - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
   - If a source you control would deal noncombat damage to an opponent, it deals that much damage plus 2 instead.
+
+</details>
+
+## dies-this-way
+
+Blocks **1** card.
+
+- **(condition)** a condition that the object destroyed by this spell's `destroy` (bound with `as`) actually died, i.e. went to the graveyard rather than being saved by indestructible/regeneration or replaced to exile, plus copy_permanent reaching that object in the graveyard and creating the tokens under its controller (controller: that creature's last controller)
+  <br>Why the existing vocabulary won't do: `destroy` has `as` and `if` has `zone_is`/`exists`, but no shipped card shows a 'dies this way' check on a destroyed target nor copy_permanent's controller resolving to the destroyed creature's last controller; low certainty this part is missing, the P/T exception is the definite blocker
+
+<details><summary>Cards waiting on this</summary>
+
+- **Saw in Half** (rank 586) — `saw_in_half`
+  - Destroy target creature. If that creature dies this way, its controller creates two tokens that are copies of that creature, except their power is half that creature's power and their toughness is half that creature's toughness. Round up each time.
 
 </details>
 
@@ -3365,6 +3411,20 @@ Blocks **1** card.
 - **Grist, the Hunger Tide** (rank 1924) — `grist_the_hunger_tide`
   - As long as Grist isn't on the battlefield, it's a 1/1 Insect creature in addition to its other types.
   - +1: Create a 1/1 black and green Insect creature token, then mill a card. If an Insect card was milled this way, put a loyalty counter on Grist and repeat this process.
+
+</details>
+
+## repeatable-modes
+
+Blocks **1** card.
+
+- **(decision)** a top-level choose_mode on a spell that picks a fixed number of modes (here exactly three) as a multiset, so one mode may be chosen more than once, with each chosen instance declaring its own mode-owned targets at cast time (601.2b/700.2d) -- e.g. three instances of 'Put two +1/+1 counters on target creature', each targeting a creature of its own (possibly the same one)
+  <br>Why the existing vocabulary won't do: choose_mode's count/up_to picks a set of distinct mode indices (op_choose_mode executes sorted(chosen), each once). The only multiset path is `budget` (Season of Weaving), which is asked one mode at a time on resolution, so its modes cannot own targets -- the loader refuses a target 'mode' unless the tree is one top-level choose_mode answered at cast, and a target spec carries one fixed 'mode' index with no notion of a second instance of that mode. Using budget 3 with cost 1 per mode would drop every 'target' in all four bullets, and repeat/for_each cannot declare fresh targets per iteration.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Rootcast Apprenticeship** (rank 3369) — `rootcast_apprenticeship`
+  - Choose three. You may choose the same mode more than once.
 
 </details>
 

@@ -1,0 +1,21 @@
+{
+  "card_id": "rootcast_apprenticeship",
+  "name": "Rootcast Apprenticeship",
+  "oracle_text": "Choose three. You may choose the same mode more than once.\n• Put two +1/+1 counters on target creature.\n• Create a token that's a copy of target token you control.\n• Target player creates a 1/1 green Squirrel creature token.\n• Target opponent sacrifices a nontoken artifact of their choice.",
+  "blocked_sentences": [
+    "Choose three. You may choose the same mode more than once."
+  ],
+  "needs": [
+    {
+      "capability": "repeatable_modes",
+      "kind": "decision",
+      "what": "a top-level choose_mode on a spell that picks a fixed number of modes (here exactly three) as a multiset, so one mode may be chosen more than once, with each chosen instance declaring its own mode-owned targets at cast time (601.2b/700.2d) -- e.g. three instances of 'Put two +1/+1 counters on target creature', each targeting a creature of its own (possibly the same one)",
+      "why_existing_wont_do": "choose_mode's count/up_to picks a set of distinct mode indices (op_choose_mode executes sorted(chosen), each once). The only multiset path is `budget` (Season of Weaving), which is asked one mode at a time on resolution, so its modes cannot own targets -- the loader refuses a target 'mode' unless the tree is one top-level choose_mode answered at cast, and a target spec carries one fixed 'mode' index with no notion of a second instance of that mode. Using budget 3 with cost 1 per mode would drop every 'target' in all four bullets, and repeat/for_each cannot declare fresh targets per iteration."
+    }
+  ],
+  "closest_existing": [
+    "choose_mode.budget",
+    "target.mode"
+  ],
+  "confidence": "high"
+}
