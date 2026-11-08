@@ -1978,6 +1978,20 @@ def _defender_matches(
                 for oid in event.data.get("attackers") or ()
             )
         return True
+    if clause == "enchanted_player_or_planeswalker":
+        # Tenuous Truce's "when you attack enchanted opponent **or a
+        # planeswalker they control**": the same seat, but the walker counts
+        # as well as the player. A battle that player controls does not -- the
+        # sentence names planeswalkers, and `defender` folds battles in too.
+        if obj.attached_to_player is None or int(defender) != obj.attached_to_player:
+            return False
+        if event.type == EventType.ATTACKS:
+            return _player_or_planeswalker(state, event.data.get("attacked_permanent"))
+        combat = state.combat
+        return combat is not None and any(
+            _player_or_planeswalker(state, combat.attacking_permanent.get(int(oid)))
+            for oid in event.data.get("attackers") or ()
+        )
     if clause in ("most_life", "monarch"):
         if event.data.get("attacked_permanent") is not None:
             return False
@@ -1989,6 +2003,15 @@ def _defender_matches(
     if clause == "opponent":
         return int(defender) != obj.controller
     return True
+
+
+def _player_or_planeswalker(state: GameState, permanent: Any) -> bool:
+    """Whether an attack aimed at ``permanent`` -- ``None`` for the player
+    themself -- is at the player or at a planeswalker, rather than a battle."""
+    if permanent is None:
+        return True
+    obj = state.objects.get(int(permanent))
+    return obj is not None and "Planeswalker" in chars(state, obj.oid).types
 
 
 def _subject_oid(dsl_event: str, event: GameEvent) -> int | None:

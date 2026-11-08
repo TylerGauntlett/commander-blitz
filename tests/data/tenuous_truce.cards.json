@@ -1,0 +1,67 @@
+{
+  "_comment": "Cards that exist only for tests/unit/triggers/test_attack_enchanted_player_or_planeswalker.py. Never part of a deck list. `t_tenuous_truce` is Tenuous Truce's third sentence, both halves, each its own ability that sacrifices the Aura; `t_truce_lookout` is the per-creature `attacks` form of the same `defending` value, gaining 1 life per creature so a count can be read off a life total.",
+  "cards": [
+    {
+      "id": "t_tenuous_truce",
+      "name": "Test Tenuous Truce",
+      "oracle_text": "Enchant opponent\nWhen you attack enchanted opponent or a planeswalker they control or when they attack you or a planeswalker you control, sacrifice this Aura.",
+      "mana_cost": "{1}{W}",
+      "types": ["Enchantment"],
+      "subtypes": ["Aura"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "targets": [
+        {"id": "t1", "kind": "player", "selector": {"controller": "opponent"}, "count": 1}
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When you attack enchanted opponent or a planeswalker they control, sacrifice this Aura.",
+          "trigger": {
+            "event": "creatures_attack_player",
+            "controller": "you",
+            "defending": "enchanted_player_or_planeswalker"
+          },
+          "effects": [{"op": "sacrifice", "objects": {"self_only": true}}]
+        },
+        {
+          "kind": "triggered",
+          "text": "When they attack you or a planeswalker you control, sacrifice this Aura.",
+          "trigger": {
+            "event": "creatures_attack_player",
+            "controller": "any",
+            "defending": "you",
+            "recheck": false,
+            "condition": {"is_active_player": "enchanted_player"}
+          },
+          "effects": [{"op": "sacrifice", "objects": {"self_only": true}}]
+        }
+      ]
+    },
+    {
+      "id": "t_truce_lookout",
+      "name": "Test Truce Lookout",
+      "oracle_text": "Enchant opponent\nWhenever a creature attacks enchanted opponent or a planeswalker they control, you gain 1 life.",
+      "mana_cost": "{W}",
+      "types": ["Enchantment"],
+      "subtypes": ["Aura"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "targets": [
+        {"id": "t1", "kind": "player", "selector": {"controller": "opponent"}, "count": 1}
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a creature attacks enchanted opponent or a planeswalker they control, you gain 1 life.",
+          "trigger": {
+            "event": "attacks",
+            "controller": "any",
+            "defending": "enchanted_player_or_planeswalker"
+          },
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    }
+  ]
+}

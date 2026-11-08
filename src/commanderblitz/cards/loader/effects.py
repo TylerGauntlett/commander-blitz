@@ -430,6 +430,11 @@ def _validate_pay_any_amount(effect: Mapping[str, Any], where: str) -> None:
         raise DslError(f"{where}.any_amount: cannot be combined with 'repeat'")
 
 
+#: The words that read `GameObject.attached_to_player`: the player spec, and the
+#: trigger `defending` value that also counts that player's planeswalkers.
+ENCHANTED_PLAYER_WORDS = frozenset({"enchanted_player", "enchanted_player_or_planeswalker"})
+
+
 def _validate_enchanted_player(model: CardModel, where: str) -> None:
     """``"enchanted_player"`` only on a card that can *be* attached to a player.
 
@@ -458,7 +463,9 @@ def _validate_enchanted_player(model: CardModel, where: str) -> None:
 
     def walk(node: Any) -> bool:
         if isinstance(node, Mapping):
-            return "enchanted_player" in node.values() or any(walk(v) for v in node.values())
+            return not ENCHANTED_PLAYER_WORDS.isdisjoint(
+                v for v in node.values() if isinstance(v, str)
+            ) or any(walk(v) for v in node.values())
         if isinstance(node, (list, tuple)):
             return any(walk(v) for v in node)
         return False

@@ -3181,6 +3181,19 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 f"attacked as a player and only means anything on 'attacks', "
                 f"not on {model.trigger.event!r}"
             )
+        if model.trigger.defending == "enchanted_player_or_planeswalker" and (
+            model.trigger.event not in ("attacks", "creatures_attack_player")
+        ):
+            # "Or a planeswalker they control" is about whom an attack is
+            # aimed at. A damage event's defender is the seat that was dealt
+            # the damage, so there the value would quietly read as plain
+            # `enchanted_player` and say a sentence the card does not print.
+            raise DslError(
+                f"{where}: defending 'enchanted_player_or_planeswalker' names "
+                f"whom an attack is aimed at and only means anything on "
+                f"'attacks' or 'creatures_attack_player', not on "
+                f"{model.trigger.event!r}"
+            )
         if model.trigger.cause_controller is not None:
             # Only `discard` records a cause, so the clause on anything else
             # would load, read as "a spell or ability an opponent controls

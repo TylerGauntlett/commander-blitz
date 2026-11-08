@@ -5215,6 +5215,31 @@ it is the seat that was dealt the damage. "That player" in the effect is
 condition on `enchanted_player`, which still fires on an attack at the
 enchanted player's planeswalker alone.
 
+`defending: "enchanted_player_or_planeswalker"` is "when you attack **enchanted
+opponent or a planeswalker they control**" (Tenuous Truce): the same seat,
+attacked as a player or through one of their planeswalkers, but not through a
+battle they control, which 506.2 names separately. On `attacks` the creature
+must attack one of those two; on `creatures_attack_player` one of the declared
+creatures must. It is legal on those two events only — a damage event's
+defender was dealt damage, not attacked — and only on an Aura. The near miss is
+`defending: "enchanted_player"`, which refuses an attack aimed only at the
+walker. The other half of Truce's sentence, "when **they** attack you or a
+planeswalker you control", needs no new word: `defending: "you"` already
+counts your planeswalkers on `creatures_attack_player`, and "they" is a
+`condition` of `{"is_active_player": "enchanted_player"}` with `recheck:
+false`, because only the active player declares attackers (508.1).
+
+```jsonc
+// "When you attack enchanted opponent or a planeswalker they control…"
+"trigger": { "event": "creatures_attack_player", "controller": "you",
+             "defending": "enchanted_player_or_planeswalker" },
+// "…or when they attack you or a planeswalker you control, sacrifice this Aura."
+"trigger": { "event": "creatures_attack_player", "controller": "any",
+             "defending": "you", "recheck": false,
+             "condition": { "is_active_player": "enchanted_player" } },
+"effects": [ { "op": "sacrifice", "objects": { "self_only": true } } ]
+```
+
 `counter` names which kind a `counter_placed` trigger cares about. Without it the
 trigger fires on *every* kind — and the pool places `charge` and `slumber`
 counters, so Fathom Mage's "whenever a +1/+1 counter is put on this creature"

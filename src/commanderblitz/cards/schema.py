@@ -427,8 +427,21 @@ class TriggerModel(BaseModel):
     #: monarch" (The Spear of Bashenga); both are legal on ``attacks`` only.
     #: ``enchanted_player`` is the seat this Aura is attached to -- "whenever
     #: you attack enchanted player" (Archnemesis) -- attacked as a player.
+    #: ``enchanted_player_or_planeswalker`` is the same seat attacked as a
+    #: player or through a planeswalker they control -- "when you attack
+    #: enchanted opponent or a planeswalker they control" (Tenuous Truce) --
+    #: legal on the two attack events only.
     defending: (
-        Literal["you", "opponent", "any", "most_life", "monarch", "enchanted_player"] | None
+        Literal[
+            "you",
+            "opponent",
+            "any",
+            "most_life",
+            "monarch",
+            "enchanted_player",
+            "enchanted_player_or_planeswalker",
+        ]
+        | None
     ) = None
     #: "…if it wasn't put onto the battlefield with this ability."  Names the
     #: ``cause`` this trigger refuses to fire on, which is how an ability that
