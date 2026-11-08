@@ -174088,6 +174088,133 @@
       "colors": [
         "G"
       ],
+      "id": "rootcast_apprenticeship",
+      "mana_cost": "{3}{G}",
+      "name": "Rootcast Apprenticeship",
+      "oracle_text": "Choose three. You may choose the same mode more than once.\n• Put two +1/+1 counters on target creature.\n• Create a token that's a copy of target token you control.\n• Target player creates a 1/1 green Squirrel creature token.\n• Target opponent sacrifices a nontoken artifact of their choice.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 3,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "target": "grown"
+                  },
+                  "op": "add_counters"
+                }
+              ],
+              "label": "Put two +1/+1 counters on target creature."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "copied"
+                  },
+                  "op": "copy_permanent"
+                }
+              ],
+              "label": "Create a token that's a copy of target token you control."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "controller": {
+                    "target": "creator"
+                  },
+                  "op": "create_token",
+                  "token": "squirrel_1_1_g"
+                }
+              ],
+              "label": "Target player creates a 1/1 green Squirrel creature token."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "chooser": "owner",
+                    "controller": {
+                      "target": "victim"
+                    },
+                    "count": 1,
+                    "is_token": false,
+                    "types": [
+                      "Artifact"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "label": "Target opponent sacrifices a nontoken artifact of their choice."
+            }
+          ],
+          "op": "choose_mode",
+          "repeatable": true
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "grown",
+          "kind": "permanent",
+          "mode": 0,
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "copied",
+          "kind": "permanent",
+          "mode": 1,
+          "selector": {
+            "controller": "you",
+            "is_token": true,
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "creator",
+          "kind": "player",
+          "mode": 2,
+          "selector": {}
+        },
+        {
+          "count": 1,
+          "id": "victim",
+          "kind": "player",
+          "mode": 3,
+          "selector": {
+            "controller": "opponent"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
       "id": "rootgrapple",
       "mana_cost": "{4}{G}",
       "name": "Rootgrapple",

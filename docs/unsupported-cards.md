@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**256 cards** blocked by **233** capabilities.
+**255 cards** blocked by **232** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -204,7 +204,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [remove-x-counters-cost](#remove-x-counters-cost) | 1 | 5399 | cost |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
 | [repeat-while](#repeat-while) | 1 | 1924 | op |
-| [repeatable-modes](#repeatable-modes) | 1 | 3369 | decision |
 | [replace-damage-noncombat](#replace-damage-noncombat) | 1 | 4163 | static_effect |
 | [replace-dies-link](#replace-dies-link) | 1 | 2740 | replacement |
 | [replace-graveyard-with-counter](#replace-graveyard-with-counter) | 1 | 386 | replacement |
@@ -3328,20 +3327,6 @@ Blocks **1** card.
 - **Grist, the Hunger Tide** (rank 1924) — `grist_the_hunger_tide`
   - As long as Grist isn't on the battlefield, it's a 1/1 Insect creature in addition to its other types.
   - +1: Create a 1/1 black and green Insect creature token, then mill a card. If an Insect card was milled this way, put a loyalty counter on Grist and repeat this process.
-
-</details>
-
-## repeatable-modes
-
-Blocks **1** card.
-
-- **(decision)** a top-level choose_mode on a spell that picks a fixed number of modes (here exactly three) as a multiset, so one mode may be chosen more than once, with each chosen instance declaring its own mode-owned targets at cast time (601.2b/700.2d) -- e.g. three instances of 'Put two +1/+1 counters on target creature', each targeting a creature of its own (possibly the same one)
-  <br>Why the existing vocabulary won't do: choose_mode's count/up_to picks a set of distinct mode indices (op_choose_mode executes sorted(chosen), each once). The only multiset path is `budget` (Season of Weaving), which is asked one mode at a time on resolution, so its modes cannot own targets -- the loader refuses a target 'mode' unless the tree is one top-level choose_mode answered at cast, and a target spec carries one fixed 'mode' index with no notion of a second instance of that mode. Using budget 3 with cost 1 per mode would drop every 'target' in all four bullets, and repeat/for_each cannot declare fresh targets per iteration.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Rootcast Apprenticeship** (rank 3369) — `rootcast_apprenticeship`
-  - Choose three. You may choose the same mode more than once.
 
 </details>
 

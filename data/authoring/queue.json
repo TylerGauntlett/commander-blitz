@@ -227292,12 +227292,12 @@
     },
     "Rootcast Apprenticeship": {
       "edhrec_rank": 3369,
-      "gate": "template",
+      "gate": null,
       "name": "Rootcast Apprenticeship",
-      "reason": "no template for: Choose three. You may choose the same mode more than once",
+      "reason": "",
       "scryfall_id": "00756441-a734-4960-9c69-f03a508a1522",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rootcoil Creeper": {
