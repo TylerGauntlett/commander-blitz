@@ -133982,12 +133982,12 @@
     },
     "Illusionist's Gambit": {
       "edhrec_rank": 3762,
-      "gate": "template",
+      "gate": null,
       "name": "Illusionist's Gambit",
-      "reason": "no template for: Cast this spell only during the declare blockers step on an opponent's turn",
+      "reason": "",
       "scryfall_id": "bfe27186-7e6e-4ad6-8980-28d7e26b4d86",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Illusionist's Stratagem": {

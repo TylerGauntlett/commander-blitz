@@ -8615,6 +8615,12 @@
       "0": 41
     }
   },
+  "illusionist_s_gambit": {
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "illusory_ambusher": {
     "battlefield_count": 33,
     "hand_size": {

@@ -100639,6 +100639,74 @@
       ]
     },
     {
+      "cast_only_during": {
+        "steps": [
+          "declare_blockers"
+        ],
+        "turn": "opponents"
+      },
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "illusionist_s_gambit",
+      "mana_cost": "{2}{U}{U}",
+      "name": "Illusionist's Gambit",
+      "oracle_text": "Cast this spell only during the declare blockers step on an opponent's turn.\nRemove all attacking creatures from combat and untap them. After this phase, there is an additional combat phase. Each of those creatures attacks that combat if able. They can't attack you or planeswalkers you control that combat.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "those",
+          "objects": {
+            "attacking": true,
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "choose_permanents"
+        },
+        {
+          "objects": {
+            "binding": "those"
+          },
+          "op": "remove_from_combat"
+        },
+        {
+          "objects": {
+            "binding": "those"
+          },
+          "op": "untap"
+        },
+        {
+          "op": "extra_combat"
+        },
+        {
+          "duration": "next_combat",
+          "objects": {
+            "binding": "those"
+          },
+          "op": "must_attack"
+        },
+        {
+          "defender": "you",
+          "duration": "next_combat",
+          "objects": {
+            "binding": "those"
+          },
+          "op": "cant_attack_player",
+          "planeswalkers": true
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [

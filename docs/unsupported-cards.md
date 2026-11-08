@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**255 cards** blocked by **234** capabilities.
+**254 cards** blocked by **234** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -23,7 +23,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 4 | 714 | engine |
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
-| [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 3 | 3254 | engine |
 | [copy-exception-set-subtypes](#copy-exception-set-subtypes) | 3 | 1740 | engine, op |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 3 | 2389 | engine |
 | [escape](#escape) | 3 | 388 | engine, static_effect |
@@ -34,6 +33,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-from-library-top-unrestricted](#cast-from-library-top-unrestricted) | 2 | 1913 | static_effect |
+| [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
 | [cast-trigger-x](#cast-trigger-x) | 2 | 1521 | engine, value |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [copy-exception-ability](#copy-exception-ability) | 2 | 6941 | op |
@@ -596,30 +596,6 @@ Blocks **4** cards.
 
 </details>
 
-## cast-only-during-opponents-turn
-
-Blocks **3** cards.
-
-- **(engine)** a card-level casting restriction on a spell: it may be cast only while the active player is an opponent of its caster (and, by extension, the 'cast only during combat' / 'only during your turn' family), checked when the cast is offered
-  <br>Why the existing vocabulary won't do: card_level_rider_keys has cant_cast_first_turns and split_second but no timing window; the `cast_during` / `is_your_turn` condition keys are read inside effects or statics, so an `if` would let the spell be cast on your own turn and fizzle rather than be uncastable, and `cast_only_at_sorcery_speed` is a static on other spells, not a self-restriction
-- **(engine)** a card-level casting restriction on a spell: it may be cast only while the active player is an opponent of its caster AND the game is in the declare blockers step ('Cast this spell only during the declare blockers step on an opponent's turn'), checked when the cast is offered -- the same timing-window family as Delirium's 'only during an opponent's turn' and Take the Bait's 'only during combat on an opponent's turn', here narrowed to one step
-  <br>Why the existing vocabulary won't do: card_level_rider_keys has cant_cast_first_turns and split_second but no timing window; the `cast_during` / `step_is` / `is_your_turn` condition keys are read inside effects or statics, so an `if` would let the spell be cast in your own main phase and do nothing rather than be uncastable, and `cast_only_at_sorcery_speed` is a static on other spells, not a self-restriction. The rest of the card (remove_from_combat, untap, extra_combat, must_attack, cant_attack_player with planeswalkers) appears expressible once the window exists, though whether must_attack/cant_attack_player can be scoped to the additional combat specifically ('that combat') should be checked when building it
-- **(engine)** a card-level casting restriction on a spell: it may be cast only while the active player is an opponent of its caster AND the game is in the combat phase ('Cast this spell only during combat on an opponent's turn'), checked when the cast is offered -- the same timing-window family as Delirium's 'only during an opponent's turn'
-  <br>Why the existing vocabulary won't do: card_level_rider_keys has cant_cast_first_turns and split_second but no timing window; the `cast_during` / `is_your_turn` condition keys are read inside effects or statics, so an `if` would let the spell be cast on your own main phase and do nothing rather than be uncastable
-
-<details><summary>Cards waiting on this</summary>
-
-- **Take the Bait** (rank 3254) — `take_the_bait`
-  - Cast this spell only during combat on an opponent's turn.
-  - Prevent all combat damage that would be dealt to you and planeswalkers you control this turn.
-- **Illusionist's Gambit** (rank 3762) — `illusionist_s_gambit`
-  - Cast this spell only during the declare blockers step on an opponent's turn.
-- **Delirium** (rank 12129) — `delirium`
-  - Cast this spell only during an opponent's turn.
-  - Tap target creature that player controls. That creature deals damage equal to its power to the player.
-
-</details>
-
 ## copy-exception-set-subtypes
 
 Blocks **3** cards.
@@ -824,6 +800,26 @@ Blocks **2** cards.
   - Once during each of your turns, you may cast a spell from your hand or the top of your library without paying its mana cost.
 - **Fortune Teller's Talent** (rank 3755) — `fortune_teller_s_talent`
   - As long as you've cast a spell this turn, you may play cards from the top of your library.
+
+</details>
+
+## cast-only-during-opponents-turn
+
+Blocks **2** cards.
+
+- **(engine)** a card-level casting restriction on a spell: it may be cast only while the active player is an opponent of its caster (and, by extension, the 'cast only during combat' / 'only during your turn' family), checked when the cast is offered
+  <br>Why the existing vocabulary won't do: card_level_rider_keys has cant_cast_first_turns and split_second but no timing window; the `cast_during` / `is_your_turn` condition keys are read inside effects or statics, so an `if` would let the spell be cast on your own turn and fizzle rather than be uncastable, and `cast_only_at_sorcery_speed` is a static on other spells, not a self-restriction
+- **(engine)** a card-level casting restriction on a spell: it may be cast only while the active player is an opponent of its caster AND the game is in the combat phase ('Cast this spell only during combat on an opponent's turn'), checked when the cast is offered -- the same timing-window family as Delirium's 'only during an opponent's turn'
+  <br>Why the existing vocabulary won't do: card_level_rider_keys has cant_cast_first_turns and split_second but no timing window; the `cast_during` / `is_your_turn` condition keys are read inside effects or statics, so an `if` would let the spell be cast on your own main phase and do nothing rather than be uncastable
+
+<details><summary>Cards waiting on this</summary>
+
+- **Take the Bait** (rank 3254) — `take_the_bait`
+  - Cast this spell only during combat on an opponent's turn.
+  - Prevent all combat damage that would be dealt to you and planeswalkers you control this turn.
+- **Delirium** (rank 12129) — `delirium`
+  - Cast this spell only during an opponent's turn.
+  - Tap target creature that player controls. That creature deals damage equal to its power to the player.
 
 </details>
 
