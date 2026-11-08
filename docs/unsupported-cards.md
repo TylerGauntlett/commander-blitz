@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**259 cards** blocked by **237** capabilities.
+**258 cards** blocked by **236** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -61,7 +61,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [attack-tax-x-count](#attack-tax-x-count) | 1 | 671 | value |
 | [attacking-opponents-of-player](#attacking-opponents-of-player) | 1 | 705 | selector |
-| [base-power-toughness-static-filter](#base-power-toughness-static-filter) | 1 | 3996 | selector |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
 | [batched-combat-damage-amount](#batched-combat-damage-amount) | 1 | 3943 | value |
 | [block-restriction-relative-power](#block-restriction-relative-power) | 1 | 6993 | static_effect |
@@ -1285,20 +1284,6 @@ Blocks **1** card.
 
 - **Curse of Opulence** (rank 705) — `curse_of_opulence`
   - Whenever enchanted player is attacked, create a Gold token. Each opponent attacking that player does the same.
-
-</details>
-
-## base-power-toughness-static-filter
-
-Blocks **1** card.
-
-- **(selector)** base_power and base_toughness (with a union, i.e. any_of, so 'base power OR toughness 1' counts a creature once) in the filter of a static's magnitude `count`, so a buff can be sized by {"count": {"controller": "you", "types": ["Creature"], "any_of": [{"base_power": 1}, {"base_toughness": 1}]}}
-  <br>Why the existing vocabulary won't do: base_power/base_toughness exist only in selector_keys (effect selectors); a static's `count` is filtered by static_filter_keys, which has neither base_power, base_toughness nor any_of. `power`/`toughness` read current values (wrong once the creature is pumped, e.g. by this very Equipment), and static_value_keys has no subtraction to build the union from two counts
-
-<details><summary>Cards waiting on this</summary>
-
-- **Sword of the Squeak** (rank 3996) — `sword_of_the_squeak`
-  - Equipped creature gets +1/+1 for each creature you control with base power or toughness 1.
 
 </details>
 

@@ -17501,6 +17501,10 @@
     },
     "zone": "battlefield"
   },
+  "sword_of_the_squeak": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sword_of_vengeance": {
     "zone": "battlefield"
   },

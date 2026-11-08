@@ -206850,6 +206850,126 @@
           "effect": "buff",
           "kind": "static",
           "power": {
+            "count": {
+              "any_of": [
+                {
+                  "power": 1
+                },
+                {
+                  "toughness": 1
+                }
+              ],
+              "controller": "you",
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "text": "Equipped creature gets +1/+1 for each creature you control with base power or toughness 1.",
+          "toughness": {
+            "count": {
+              "any_of": [
+                {
+                  "power": 1
+                },
+                {
+                  "toughness": 1
+                }
+              ],
+              "controller": "you",
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "subject"
+                  },
+                  "op": "attach"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Attach Sword of the Squeak to that creature?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a Hamster, Mouse, Rat, or Squirrel you control enters, you may attach this Equipment to that creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "controller": "you",
+              "subtypes": [
+                "Hamster",
+                "Mouse",
+                "Rat",
+                "Squirrel"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "sword_of_the_squeak",
+      "mana_cost": "{2}",
+      "name": "Sword of the Squeak",
+      "oracle_text": "Equipped creature gets +1/+1 for each creature you control with base power or toughness 1.\nWhenever a Hamster, Mouse, Rat, or Squirrel you control enters, you may attach this Equipment to that creature.\nEquip {2}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
             "const": 2
           },
           "text": "Equipped creature gets +2/+0 and has first strike, vigilance, trample, and haste",

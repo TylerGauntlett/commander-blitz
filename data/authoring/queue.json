@@ -272382,12 +272382,12 @@
     },
     "Sword of the Squeak": {
       "edhrec_rank": 3996,
-      "gate": "template",
+      "gate": null,
       "name": "Sword of the Squeak",
-      "reason": "no template for: Equipped creature gets +1/+1 for each creature you control with base power or toughness 1",
+      "reason": "",
       "scryfall_id": "3c50035a-9f68-438c-b4bf-427310b3971d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sword-Point Diplomacy": {
