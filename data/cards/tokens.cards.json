@@ -4571,6 +4571,55 @@
           ]
         }
       ]
+    },
+    {
+      "id": "wolf_2_2_bg_garruk_loyalty",
+      "name": "Wolf Token",
+      "oracle_text": "2/2 black and green Wolf creature token with \"When this token dies, put a loyalty counter on each Garruk you control.\"",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Wolf"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "B",
+        "G"
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this token dies, put a loyalty counter on each Garruk you control.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "loyalty",
+              "amount": {
+                "const": 1
+              },
+              "objects": {
+                "zone": "battlefield",
+                "controller": "you",
+                "count": "all",
+                "subtypes": [
+                  "Garruk"
+                ]
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }

@@ -2402,3 +2402,33 @@ class TestSquirreledAwayTokens:
         other = pool.get("shapeshifter_1_1_c_changeling")
         assert (other.power, other.toughness) == (1, 1)
         assert not other.colors
+
+
+class TestGarruksWolfLoadsAGarrukOnDeath:
+    """Garruk, Cursed Huntsman, 0: *"Create two 2/2 black and green Wolf
+    creature tokens with 'When this token dies, put a loyalty counter on each
+    Garruk you control.'"* The pool had no Wolf; the 2/2 black Zombie and
+    green Boar are the near misses, each the wrong colour pair and with no
+    dies trigger."""
+
+    TOKEN = "wolf_2_2_bg_garruk_loyalty"
+
+    def test_it_is_a_black_and_green_two_two_wolf(self, pool):
+        token = pool.get(self.TOKEN)
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (2, 2)
+        assert sorted(token.colors) == ["B", "G"]
+        assert list(token.subtypes) == ["Wolf"]
+
+    def test_its_death_puts_loyalty_on_each_garruk(self, pool):
+        (ability,) = pool.get(self.TOKEN).abilities
+        assert ability.text == "When this token dies, put a loyalty counter on each Garruk you control."
+        (effect,) = ability.effects
+        assert effect["op"] == "add_counters"
+        assert effect["counter"] == "loyalty"
+        assert effect["objects"]["subtypes"] == ["Garruk"]
+        assert effect["objects"]["count"] == "all"
+
+    def test_the_two_two_black_zombie_is_still_a_separate_token(self, pool):
+        other = pool.get("zombie_2_2_b")
+        assert list(other.subtypes) == ["Zombie"]
