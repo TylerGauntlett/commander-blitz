@@ -15891,6 +15891,51 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ]
+          },
+          "cost": {
+            "mana": "{1}"
+          },
+          "effect": "attack_tax",
+          "kind": "static",
+          "or_planeswalkers": true,
+          "text": "Creatures can't attack you or planeswalkers you control unless their controller pays {1} for each of those creatures."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "baird_steward_of_argive",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{2}{W}{W}",
+      "name": "Baird, Steward of Argive",
+      "oracle_text": "Vigilance\nCreatures can't attack you or planeswalkers you control unless their controller pays {1} for each of those creatures.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "op": "create_token",
@@ -23337,6 +23382,95 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "treasure_token"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": {
+                "target": "t1"
+              },
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "When this creature enters, you and target opponent each create a Treasure token.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "add_poison",
+              "player": {
+                "binding": "event_player"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent sacrifices a noncreature token, that player gets two poison counters.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "sacrificed",
+            "filter": {
+              "is_token": true,
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "bloodroot_apothecary",
+      "keywords": [
+        "toxic"
+      ],
+      "mana_cost": "{2}{G}",
+      "name": "Bloodroot Apothecary",
+      "oracle_text": "Toxic 2 (Players dealt combat damage by this creature also get two poison counters. A player with ten or more poison counters loses the game.)\nWhen this creature enters, you and target opponent each create a Treasure token.\nWhenever an opponent sacrifices a noncreature token, that player gets two poison counters.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Squirrel",
+        "Druid"
+      ],
+      "toughness": 3,
+      "toxic": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "pay_life": 1,
             "sacrifice": {
@@ -23963,6 +24097,72 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "count": {
+              "controller": "you",
+              "zone": "hand"
+            }
+          },
+          "text": "Body of Knowledge's power and toughness are each equal to the number of cards in your hand.",
+          "toughness": {
+            "count": {
+              "controller": "you",
+              "zone": "hand"
+            }
+          }
+        },
+        {
+          "affects_player": "you",
+          "effect": "no_hand_limit",
+          "kind": "static",
+          "text": "You have no maximum hand size."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature is dealt damage, draw that many cards.",
+          "trigger": {
+            "event": "dealt_damage",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "body_of_knowledge",
+      "mana_cost": "{3}{U}{U}",
+      "name": "Body of Knowledge",
+      "oracle_text": "Body of Knowledge's power and toughness are each equal to the number of cards in your hand.\nYou have no maximum hand size.\nWhenever this creature is dealt damage, draw that many cards.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Avatar"
+      ],
+      "toughness": 0,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -27700,6 +27900,60 @@
       "toughness": 10,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "broken_wings",
+      "mana_cost": "{2}{G}",
+      "name": "Broken Wings",
+      "oracle_text": "Destroy target artifact, enchantment, or creature with flying.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "any_of": [
+              {
+                "types": [
+                  "Artifact"
+                ]
+              },
+              {
+                "types": [
+                  "Enchantment"
+                ]
+              },
+              {
+                "keywords": [
+                  "flying"
+                ],
+                "types": [
+                  "Creature"
+                ]
+              }
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -40006,6 +40260,103 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "drew",
+              "op": "draw",
+              "player": {
+                "target": "t1"
+              }
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "ingredient",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            },
+            {
+              "amount": {
+                "player_count": {
+                  "binding": "drew"
+                }
+              },
+              "counter": "ingredient",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": "any",
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "When this enchantment enters, any number of target opponents each draw a card. Put an ingredient counter on this enchantment, then put an ingredient counter on it for each card drawn this way.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "effects": [
+            {
+              "counters": {
+                "+1/+1": {
+                  "counters_on": {
+                    "counter": "ingredient",
+                    "objects": {
+                      "self_only": true
+                    }
+                  }
+                }
+              },
+              "op": "spell_enters_with_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a creature spell, that creature enters with X additional +1/+1 counters on it, where X is the number of ingredient counters on this enchantment.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "communal_brewing",
+      "mana_cost": "{2}{G}",
+      "name": "Communal Brewing",
+      "oracle_text": "When this enchantment enters, any number of target opponents each draw a card. Put an ingredient counter on this enchantment, then put an ingredient counter on it for each card drawn this way.\nWhenever you cast a creature spell, that creature enters with X additional +1/+1 counters on it, where X is the number of ingredient counters on this enchantment.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {

@@ -1379,6 +1379,10 @@
   "badlands": {
     "zone": "battlefield"
   },
+  "baird_steward_of_argive": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "bakersbane_duo": {
     "battlefield_count": 34,
     "tokens": {
@@ -2002,6 +2006,15 @@
     },
     "zone": "battlefield"
   },
+  "bloodroot_apothecary": {
+    "battlefield_count": 34,
+    "opponent_battlefield_count": 7,
+    "tokens": {
+      "count": 1,
+      "id": "treasure_token"
+    },
+    "zone": "battlefield"
+  },
   "bloodstained_mire": {
     "zone": "battlefield"
   },
@@ -2047,6 +2060,13 @@
     "tokens": {
       "count": 1,
       "id": "hero_1_1_c"
+    },
+    "zone": "battlefield"
+  },
+  "body_of_knowledge": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
     },
     "zone": "battlefield"
   },
@@ -2343,6 +2363,10 @@
   },
   "brimstone_dragon": {
     "zone": "battlefield"
+  },
+  "broken_wings": {
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
   },
   "brokers_ascendancy": {
     "battlefield_count": 33,
@@ -3389,6 +3413,16 @@
     "zone": "graveyard"
   },
   "commercial_district": {
+    "zone": "battlefield"
+  },
+  "communal_brewing": {
+    "counters": {
+      "amount": 2,
+      "kind": "ingredient"
+    },
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "compulsive_research": {

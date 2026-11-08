@@ -1,0 +1,21 @@
+{
+  "card_id": "fisher_s_talent",
+  "name": "Fisher's Talent",
+  "oracle_text": "(Gain the next level as a sorcery to add its ability.)\nAt the beginning of your upkeep, look at the top card of your library. You may reveal it if it's a land card. Create a 1/1 blue Fish creature token if you revealed it this way. Then draw a card.\n{G}{U}: Level 2\nIf you would create a Fish token, create a 3/3 blue Shark creature token instead.\n{2}{G}{U}: Level 3\nIf you would create a Shark token, create an 8/8 blue Octopus creature token instead.",
+  "blocked_sentences": [
+    "If you would create a Fish token, create a 3/3 blue Shark creature token instead."
+  ],
+  "needs": [
+    {
+      "capability": "shark_token",
+      "kind": "token",
+      "what": "a 3/3 blue Shark creature token (no abilities), e.g. id shark_3_3_u, for the level-2 replace_token_creation create_instead (Fish -> Shark); the level-3 line then replaces that Shark with the existing octopus_8_8_u",
+      "why_existing_wont_do": "token_ids holds fish_1_1_u and octopus_8_8_u but the only Shark is shark_x_x_u_flying, a 0/0 Shark with flying, which is not a 3/3 vanilla Shark; substituting it would make the wrong token"
+    }
+  ],
+  "closest_existing": [
+    "shark_x_x_u_flying",
+    "replace_token_creation"
+  ],
+  "confidence": "high"
+}

@@ -19042,12 +19042,12 @@
     },
     "Baird, Steward of Argive": {
       "edhrec_rank": 2539,
-      "gate": "template",
+      "gate": null,
       "name": "Baird, Steward of Argive",
-      "reason": "no template for: Creatures can't attack you or planeswalkers you control unless their controller pays {1} f",
+      "reason": "",
       "scryfall_id": "5165b4fa-ce48-49c3-9cb3-dc6ece8c0f08",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Baithook Angler // Hook-Haunt Drifter": {
@@ -28942,12 +28942,12 @@
     },
     "Bloodroot Apothecary": {
       "edhrec_rank": 3567,
-      "gate": "template",
+      "gate": null,
       "name": "Bloodroot Apothecary",
-      "reason": "no template for: Toxic 2",
+      "reason": "",
       "scryfall_id": "d39e0024-9a91-49d6-bfbf-9dbf7d228687",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bloodscale Prowler": {
@@ -29812,12 +29812,12 @@
     },
     "Body of Knowledge": {
       "edhrec_rank": 2085,
-      "gate": "template",
+      "gate": null,
       "name": "Body of Knowledge",
-      "reason": "no template for: 's power and toughness are each equal to the number of cards in your hand",
+      "reason": "",
       "scryfall_id": "185b2e8f-ab37-42e4-b3a1-f38b19a2e05a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Body of Research": {
@@ -35002,12 +35002,12 @@
     },
     "Broken Wings": {
       "edhrec_rank": 3903,
-      "gate": "template",
+      "gate": null,
       "name": "Broken Wings",
-      "reason": "no template for: Destroy target artifact, enchantment, or creature with flying",
+      "reason": "",
       "scryfall_id": "1d7d5b71-7c1b-4fc2-a5ec-7285e17ffe0f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Brokers Ascendancy": {
@@ -50942,12 +50942,12 @@
     },
     "Communal Brewing": {
       "edhrec_rank": 3410,
-      "gate": "template",
+      "gate": null,
       "name": "Communal Brewing",
-      "reason": "no template for: When this enchantment enters, any number of target opponents each draw a card. Put an ingr",
+      "reason": "",
       "scryfall_id": "a27e08a7-018c-45a9-ab5a-a584ca17755d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Commune with Beavers": {

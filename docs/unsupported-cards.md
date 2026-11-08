@@ -68,7 +68,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [can-block-only](#can-block-only) | 1 | 2673 | static_effect |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cards-exiled-trigger](#cards-exiled-trigger) | 1 | 1303 | trigger_event |
-| [cards-in-hand-static-value](#cards-in-hand-static-value) | 1 | 2085 | value |
 | [cards-put-into-graveyard-from-library](#cards-put-into-graveyard-from-library) | 1 | 6299 | trigger_event |
 | [cards-to-your-graveyard-from-zones-this-turn](#cards-to-your-graveyard-from-zones-this-turn) | 1 | 7412 | value |
 | [cast-from-hand-result](#cast-from-hand-result) | 1 | 7016 | op |
@@ -223,6 +222,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [self-bounce-playable-gate](#self-bounce-playable-gate) | 1 | 10013 | engine |
 | [shapeshifter-2-2-u-changeling](#shapeshifter-2-2-u-changeling) | 1 | 494 | token |
 | [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
+| [shark-token](#shark-token) | 1 | 8308 | token |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [static-greatest-power-in-graveyard](#static-greatest-power-in-graveyard) | 1 | 10492 | value |
@@ -1387,20 +1387,6 @@ Blocks **1** card.
 
 - **Laelia, the Blade Reforged** (rank 1303) — `laelia_the_blade_reforged`
   - Whenever one or more cards are put into exile from your library and/or your graveyard, put a +1/+1 counter on Laelia.
-
-</details>
-
-## cards-in-hand-static-value
-
-Blocks **1** card.
-
-- **(value)** `cards_in_hand` (the number of cards in a player's hand, here "you") as a static value leaf, so a characteristic-defining `set_pt` static with `affects: {self_only: true}` can set power and toughness to it continuously as the hand changes
-  <br>Why the existing vocabulary won't do: `cards_in_hand` exists in `value_keys` (one-shot effect amounts) but not in `static_value_keys`, and a static magnitude outside that list is a load error; `count` reads permanents on the battlefield, not cards in hand, and a one-shot `set_pt`/`pump` would not track the hand size
-
-<details><summary>Cards waiting on this</summary>
-
-- **Body of Knowledge** (rank 2085) — `body_of_knowledge`
-  - Body of Knowledge's power and toughness are each equal to the number of cards in your hand.
 
 </details>
 
@@ -3607,6 +3593,20 @@ Blocks **1** card.
 
 - **Braids, Arisen Nightmare** (rank 291) — `braids_arisen_nightmare`
   - If you do, each opponent may sacrifice a permanent of their choice that shares a card type with it. For each opponent who doesn't, that player loses 2 life and you draw a card.
+
+</details>
+
+## shark-token
+
+Blocks **1** card.
+
+- **(token)** a 3/3 blue Shark creature token (no abilities), e.g. id shark_3_3_u, for the level-2 replace_token_creation create_instead (Fish -> Shark); the level-3 line then replaces that Shark with the existing octopus_8_8_u
+  <br>Why the existing vocabulary won't do: token_ids holds fish_1_1_u and octopus_8_8_u but the only Shark is shark_x_x_u_flying, a 0/0 Shark with flying, which is not a 3/3 vanilla Shark; substituting it would make the wrong token
+
+<details><summary>Cards waiting on this</summary>
+
+- **Fisher's Talent** (rank 8308) — `fisher_s_talent`
+  - If you would create a Fish token, create a 3/3 blue Shark creature token instead.
 
 </details>
 
