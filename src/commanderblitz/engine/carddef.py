@@ -1687,6 +1687,10 @@ class CardDef:
     #: `Keyword.ANNIHILATOR` by `characteristics.annihilator_instances`. Zero
     #: means no printed annihilator; a granted one carries its N on the static.
     annihilator: int = 0
+    #: Vanishing N (702.63a) -- the N, kept so gate 3 can hold the printed line
+    #: to it. Zero means no vanishing. The abilities are already on the card:
+    #: the loader lowered them (`loader._vanishing_abilities`).
+    vanishing: int = 0
     #: Madness -- the price of casting it out of the exile a discard sent it to.
     madness: ManaCost | None = None
     #: Miracle -- the price of casting it as the first card drawn this turn.

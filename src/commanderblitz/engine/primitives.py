@@ -1420,13 +1420,31 @@ def add_counters(
 
 
 def remove_counters(state: GameState, oid: int, kind: str, amount: int) -> int:
+    """Take up to ``amount`` counters of ``kind`` off a permanent, and return how many.
+
+    The removal funnel for a permanent's counters -- an effect, a cost and
+    vanishing's upkeep tick all come through here. Fires COUNTER_REMOVED with
+    the ``amount`` that came off and the ``total`` of that kind left, through
+    the trigger bus, so "when the last time counter is removed from it"
+    (`last_counter_removed`) hears every road to zero; nothing fires when there
+    was none to take.
+    """
     obj = state.objects.get(oid)
     if obj is None:
         return 0
     taken = obj.remove_counter(kind, amount)
     if taken:
         state.bump_chars()
-        state.emit(EventType.COUNTER_REMOVED, source=oid, counter=kind, amount=taken)
+        fire(
+            state,
+            EventType.COUNTER_REMOVED,
+            player=obj.controller,
+            source=oid,
+            oid=oid,
+            counter=kind,
+            amount=taken,
+            total=obj.counter(kind),
+        )
     return taken
 
 

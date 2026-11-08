@@ -7144,6 +7144,7 @@ The cookbook's subsystem chapters, one line each:
 - [Mutate — two cards, one permanent, and one synthesised `CardDef`](card-dsl-cookbook.md#mutate--two-cards-one-permanent-and-one-synthesised-carddef)
 - [Bestow — the alternative cost that changes what the spell points at](card-dsl-cookbook.md#bestow--the-alternative-cost-that-changes-what-the-spell-points-at)
 - [Impending — a creature that is not one until it counts down](card-dsl-cookbook.md#impending--a-creature-that-is-not-one-until-it-counts-down)
+- [Vanishing — a permanent that counts itself out](card-dsl-cookbook.md#vanishing--a-permanent-that-counts-itself-out)
 - [Fuse — the case where the answer is *both* faces](card-dsl-cookbook.md#fuse--the-case-where-the-answer-is-both-faces)
 - [A second castable face — adventure, aftermath and split cards](card-dsl-cookbook.md#a-second-castable-face--adventure-aftermath-and-split-cards)
 - [Face-down permanents — morph, megamorph and manifest](card-dsl-cookbook.md#face-down-permanents--morph-megamorph-and-manifest)

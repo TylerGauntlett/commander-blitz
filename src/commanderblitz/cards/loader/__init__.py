@@ -595,6 +595,19 @@ def _implied_replacements(model: CardModel) -> tuple[dict[str, Any], ...]:
                 "condition": {"impending": True},
             }
         )
+    if model.vanishing is not None:
+        # Vanishing's first ability (702.63a), "this permanent enters with N
+        # time counters on it": a replacement, so the permanent is never seen
+        # on the battlefield without them. Unconditioned -- however it enters.
+        out.append(
+            {
+                "event": "self_enters_with_counters",
+                "counter": TIME_COUNTER,
+                "amount": int(model.vanishing),
+                "modify": {},
+                "condition": None,
+            }
+        )
     return tuple(out)
 
 
@@ -750,6 +763,105 @@ def _impending_tick(index: int, where: str) -> Ability:
         index,
         where,
     )
+
+
+def _compile_vanishing(model: CardModel, where: str) -> int:
+    """A card's ``vanishing`` N, or 0 for a card without it.
+
+    The refusals are the silent failures. Zero or fewer counters is a permanent
+    that never counts down and is never sacrificed -- vanishing without its
+    point; a non-whole number has no count of counters to mean; and an instant
+    or sorcery never enters the battlefield, so its three abilities would load
+    and do nothing.
+    """
+    n = model.vanishing
+    if n is None:
+        return 0
+    if isinstance(n, bool) or not isinstance(n, int) or n < 1:
+        raise DslError(
+            f"{where}: 'vanishing' is N, the time counters it enters with -- a whole "
+            f"number of at least 1, got {n!r}"
+        )
+    if not set(model.types) - {CardType.INSTANT.value, CardType.SORCERY.value}:
+        raise DslError(
+            f"{where}: 'vanishing' is only on permanent cards (702.63a) -- an "
+            f"instant or sorcery never enters with its counters"
+        )
+    return n
+
+
+def _vanishing_abilities(index: int, where: str) -> tuple[Ability, Ability]:
+    """Vanishing's second and third abilities (702.63a), which no card prints as lines.
+
+    "At the beginning of your upkeep, if there is a time counter on this
+    permanent, remove a time counter from it" and "When the last time counter
+    is removed from this permanent, sacrifice it." Real triggered abilities,
+    impending's tick's reason: the keyword *is* these abilities on the
+    permanent, so they use the stack and are lost with its other abilities.
+    The sacrifice is a trigger of its own (`last_counter_removed`) rather than
+    an `if` inside the tick, so the last counter removed by anything -- a cost,
+    another card's effect -- sacrifices it too, and a permanent that never had
+    a counter is never sacrificed.
+
+    Their ``text`` is the rule's sentences and no printed line's, so they claim
+    nothing at gate 3; the printed "Vanishing N" line is the field's to claim
+    (`verify._covered`).
+    """
+    tick = _compile_ability(
+        AbilityModel.model_validate(
+            {
+                "kind": "triggered",
+                "text": (
+                    "At the beginning of your upkeep, if there is a time counter on "
+                    "this permanent, remove a time counter from it."
+                ),
+                "trigger": {
+                    "event": "upkeep",
+                    "controller": "you",
+                    "condition": {
+                        "cmp": ">=",
+                        "left": {
+                            "counters_on": {
+                                "counter": TIME_COUNTER,
+                                "objects": {"self_only": True},
+                            }
+                        },
+                        "right": {"const": 1},
+                    },
+                },
+                "effects": [
+                    {
+                        "op": "remove_counters",
+                        "counter": TIME_COUNTER,
+                        "amount": {"const": 1},
+                        "objects": {"self_only": True},
+                    }
+                ],
+            }
+        ),
+        index,
+        where,
+    )
+    sacrifice = _compile_ability(
+        AbilityModel.model_validate(
+            {
+                "kind": "triggered",
+                "text": (
+                    "When the last time counter is removed from this permanent, "
+                    "sacrifice it."
+                ),
+                "trigger": {
+                    "event": "last_counter_removed",
+                    "source": "self",
+                    "counter": TIME_COUNTER,
+                },
+                "effects": [{"op": "sacrifice", "objects": {"self_only": True}}],
+            }
+        ),
+        index + 1,
+        where,
+    )
+    return tick, sacrifice
 
 
 def _final_chapter(model: CardModel, abilities: tuple[Ability, ...], where: str) -> int | None:
@@ -1362,6 +1474,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         validate_condition(replacement.condition, f"{where}.replacements[{i}].condition")
 
     impending = _compile_impending(model, mana_cost, where)
+    vanishing = _compile_vanishing(model, where)
     abilities = tuple(_compile_ability(a, i, where) for i, a in enumerate(model.abilities))
     _check_threshold_order(abilities, where)
     if impending is not None:
@@ -1369,6 +1482,10 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         # the printed order's and a threshold striation stays a suffix of the
         # printed lines -- see `_impending_tick`.
         abilities = (*abilities, _impending_tick(len(abilities), where))
+    if vanishing:
+        # The upkeep tick and the sacrifice, after the printed abilities for
+        # the same reason -- see `_vanishing_abilities`.
+        abilities = (*abilities, *_vanishing_abilities(len(abilities), where))
     grantable = tuple(
         _compile_ability(a, i, f"{where}.grantable")
         for i, a in enumerate(model.grantable_abilities)
@@ -2518,6 +2635,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         dredge=model.dredge,
         toxic=model.toxic,
         annihilator=model.annihilator,
+        vanishing=vanishing,
         madness=ManaCost.parse(model.madness) if model.madness else None,
         miracle=ManaCost.parse(model.miracle) if model.miracle else None,
         foretell=ManaCost.parse(model.foretell) if model.foretell else None,
@@ -3293,13 +3411,24 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 f"not on {model.trigger.event!r}"
             )
 
-        if model.trigger.counter is not None and model.trigger.event != "counter_placed":
-            # Same reasoning as `not_cause` above: only `counter_placed` carries
+        if model.trigger.counter is not None and model.trigger.event not in (
+            "counter_placed",
+            "last_counter_removed",
+        ):
+            # Same reasoning as `not_cause` above: only the counter events carry
             # a counter kind, so accepting it elsewhere would look like a filter
             # and be one that never applies.
             raise DslError(
-                f"{where}: 'counter' only means anything on a counter_placed trigger, "
-                f"not on {model.trigger.event!r}"
+                f"{where}: 'counter' only means anything on a counter_placed or "
+                f"last_counter_removed trigger, not on {model.trigger.event!r}"
+            )
+        if model.trigger.event == "last_counter_removed" and model.trigger.counter is None:
+            # "The last" is the last of one kind: without it the trigger would
+            # fire when a permanent's last +1/+1 counter came off a vanishing
+            # creature still counting down.
+            raise DslError(
+                f"{where}: a last_counter_removed trigger needs 'counter' -- the kind "
+                f"whose last counter it waits for (\"the last time counter\")"
             )
         if model.trigger.put_by is not None and model.trigger.event != "counter_placed":
             # Only COUNTER_PLACED records who put something somewhere; on any

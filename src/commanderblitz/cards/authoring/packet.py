@@ -201,6 +201,9 @@ CARD_LEVEL_RIDER_KEYS = (
     # trigger is the rules', so no ability is written for it; a granted one
     # ("has annihilator 2") is a grant_keyword static with its own "annihilator": N.
     "annihilator",
+    # int; "Vanishing N" -- the N. The time counters, the upkeep tick and the
+    # sacrifice are the rule's, lowered by the loader; write no ability for them.
+    "vanishing",
     "morph_counter",  # bool; megamorph -- turns face up with a +1/+1 counter, beside `morph`
     # {name: value}; "…where X is … as you cast this spell" -- each value fixed
     # as the spell goes on the stack, read back by spell_effects as {"binding": name}

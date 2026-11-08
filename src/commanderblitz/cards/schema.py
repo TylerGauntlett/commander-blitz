@@ -1804,6 +1804,14 @@ class CardModel(BaseModel):
     #: pairing, and the loader requires the two together for toxic's reason. The
     #: trigger is the rules', so the card writes no ability for it.
     annihilator: int = 0
+    #: **Vanishing N** (702.63a): "This permanent enters with N time counters on
+    #: it. At the beginning of your upkeep, remove a time counter from it. When
+    #: the last is removed, sacrifice it." The N, and only the N: the loader
+    #: lowers the field into the three abilities the rule makes of it -- the
+    #: enters-with replacement, the upkeep tick and the `last_counter_removed`
+    #: sacrifice -- so the card writes none of them. A whole number of at least
+    #: 1, on a permanent card.
+    vanishing: Any = None
     #: **Madness** (702.35a): "If you would discard this card, exile it instead.
     #: Then you may cast it for its madness cost." The exile happens whether or
     #: not the cast is taken.

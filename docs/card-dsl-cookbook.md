@@ -3868,6 +3868,46 @@ an `impending` condition on a card without the field. The printed line is
 claimed at gate 3 by the field, strictly: the count and the cost must both be
 the printed ones.
 
+## Vanishing — a permanent that counts itself out
+
+```jsonc
+{ "id": "deep_forest_hermit", "types": ["Creature"], "vanishing": 3, … }
+```
+
+> Vanishing 3 *(This creature enters with three time counters on it. At the
+> beginning of your upkeep, remove a time counter from it. When the last is
+> removed, sacrifice it.)*
+
+702.63a makes the keyword three abilities, and the card writes none of them:
+`vanishing` is N, and the loader lowers it.
+
+- **The counters** are an implied `self_enters_with_counters` replacement
+  (`loader._implied_replacements`), unconditioned: however the permanent
+  enters, it is never on the battlefield without them.
+- **The tick** is a triggered ability the loader appends after the printed ones
+  (`loader._vanishing_abilities`): "at the beginning of your upkeep, if there is
+  a time counter on this permanent, remove a time counter from it".
+- **The sacrifice** is a second appended ability on the `last_counter_removed`
+  trigger with `counter: "time"`. That trigger listens to every removal
+  `primitives.remove_counters` makes and matches only the one that leaves none
+  of its kind, so the last counter taken by a cost or another card's effect
+  sacrifices the permanent too, and a permanent that never had a counter is
+  never sacrificed.
+
+Both abilities use the stack and are lost with the permanent's other abilities.
+
+The near miss is fading's shape — an `upkeep` trigger whose effect removes a
+counter and then sacrifices on an `if` over `counters_on` — which sacrifices only
+when the tick itself took the last counter, and as part of the tick rather than
+as a trigger of its own.
+
+The loader refuses an N that is not a whole number of at least 1, and vanishing
+on an instant or sorcery. The printed line is claimed at gate 3 by the field,
+strictly: the printed N must be the card's.
+
+`last_counter_removed` is an ordinary trigger as well, for any printed "when
+the last <kind> counter is removed from it"; it needs `counter`.
+
 ## Fuse — the case where the answer is *both* faces
 
 ```jsonc

@@ -1534,6 +1534,8 @@ _STRIVE_LINE = re.compile(
 #: "Impending 4—{2}{W}{W} (…)": the count, then the price after the em dash
 #: (or a hyphen, for text typed without one).
 _IMPENDING_LINE = re.compile(r"^impending (\d+)\s*[—-]\s*(\{.*)$", re.IGNORECASE)
+#: "Vanishing 3 (…)": the count, with or without its reminder text.
+_VANISHING_LINE = re.compile(r"^vanishing (\d+)(?:\s*\(.*\))?$", re.IGNORECASE)
 
 
 #: The two printed shapes of a card-level alternative cost (118.9), read off the
@@ -2104,6 +2106,15 @@ def _covered(card: CardDef, line: str) -> bool:
             return False
         cost, counters = card.impending
         return int(match.group(1)) == counters and _declares_printed_cost(match.group(2), cost)
+
+    # "Vanishing 3 (This creature enters with three time counters on it…)" is
+    # the card-level `vanishing` field: the loader lowers it into the enters
+    # replacement, the upkeep tick and the sacrifice, none of which is a printed
+    # line. Here, ahead of the replacement claimant below, for impending's
+    # reason, and strict on the number: `vanishing: 2` cannot claim a printed
+    # "Vanishing 3", and the line stays residual on a card without the field.
+    if (match := _VANISHING_LINE.match(stripped)) is not None:
+        return card.vanishing == int(match.group(1))
 
     # "Morph {3}{R}{R}{R} (You may cast this card face down as a 2/2 creature
     # for {3}. Turn it face up any time for its morph cost.)" -- warp's shape

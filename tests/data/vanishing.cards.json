@@ -1,0 +1,26 @@
+{
+  "_comment": "Cards that exist only for the vanishing test (tests/unit/keywords/test_vanishing.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_vanishing_sprite` is a vanilla creature with Vanishing 2, so the count, the upkeep tick and the sacrifice are the only things it does.",
+  "cards": [
+    {
+      "id": "t_vanishing_sprite",
+      "name": "Test Vanishing Sprite",
+      "oracle_text": "Vanishing 2 (This creature enters with two time counters on it. At the beginning of your upkeep, remove a time counter from it. When the last is removed, sacrifice it.)",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Faerie"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "vanishing": 2
+    }
+  ]
+}

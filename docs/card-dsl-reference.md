@@ -15,7 +15,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 70 |
 | [Conditions](#conditions) | 34 |
-| [Trigger events](#trigger-events) | 52 |
+| [Trigger events](#trigger-events) | 53 |
 | [Trigger filters](#trigger-filters) | 37 |
 | [Static effects](#static-effects) | 95 |
 | [Player-wide statics](#player-wide-statics) | 46 |
@@ -36,7 +36,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Mana rider ops](#mana-rider-ops) | 7 |
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
 | [Card-level face keys](#card-level-face-keys) | 6 |
-| [Card-level rider keys](#card-level-rider-keys) | 20 |
+| [Card-level rider keys](#card-level-rider-keys) | 21 |
 | [Engine events](#engine-events) | 79 |
 
 ## Effect ops
@@ -473,6 +473,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `expend` | `mana_spent` | You expend N (`nth`): the spell payment that takes your mana spent to cast spells this turn to N or more. | [Expend — "Whenever you expend N"](card-dsl-cookbook.md#expend--whenever-you-expend-n) |
 | `gives_gift` | `gift_given` | A player gives a gift (702.174): a spell with a promised gift resolves, or a permanent's gift trigger does; `gift_to` binds the recipient. | ["Whenever you give a gift"](card-dsl-cookbook.md#whenever-you-give-a-gift) |
 | `land_played` | `land_played` | A land is played. | [Triggers](card-dsl.md#triggers) |
+| `last_counter_removed` | `counter_removed` | The last counter of the `counter` kind is removed from a permanent, by anything. | [Vanishing — a permanent that counts itself out](card-dsl-cookbook.md#vanishing--a-permanent-that-counts-itself-out) |
 | `leaves_battlefield` | `leaves_battlefield` | A permanent leaves the battlefield. | [Triggers](card-dsl.md#triggers) |
 | `leaves_graveyard` | `leaves_graveyard` | A card leaves a graveyard. | [Triggers](card-dsl.md#triggers) |
 | `life_lost` | `life_lost` | A player loses life; with `nth`, that player's Nth separate loss this turn; `batched` fires once per simultaneous loss, however many players it reaches. | ["Whenever an opponent loses life"](card-dsl-cookbook.md#whenever-an-opponent-loses-life) |
@@ -1125,6 +1126,7 @@ Things a card says about itself that are neither a price nor a second face. Defi
 | `cast_only_during` | Castable only on whose turn (`turn`) and in which `steps` or `phase` it names, by any route. | [Narrowing when a spell may be cast](card-dsl.md#narrowing-when-a-spell-may-be-cast) |
 | `toxic` | Toxic N: the N, beside `toxic` in `keywords`. | [Toxic N](card-dsl-cookbook.md#toxic-n) |
 | `annihilator` | Annihilator N: the N, beside `annihilator` in `keywords`. | [Annihilator N](card-dsl-cookbook.md#annihilator-n) |
+| `vanishing` | Vanishing N: the time counters it enters with; the upkeep tick and the sacrifice are supplied. | [Vanishing — a permanent that counts itself out](card-dsl-cookbook.md#vanishing--a-permanent-that-counts-itself-out) |
 | `morph_counter` | Megamorph: turns face up with a +1/+1 counter, beside `morph`. | [Face-down permanents — morph, megamorph and manifest](card-dsl-cookbook.md#face-down-permanents--morph-megamorph-and-manifest) |
 | `as_cast` | Named values fixed as the spell is cast, read by `spell_effects` as `{"binding": name}`. | ["As you cast this spell" — a value fixed at cast time](card-dsl-cookbook.md#as-you-cast-this-spell--a-value-fixed-at-cast-time) |
 
@@ -1157,7 +1159,7 @@ Every `EventType` the engine emits, and which trigger events listen to it. An ev
 | `connived` | `connives` |  | [Triggers](card-dsl.md#triggers) |
 | `control_changed` |  |  | [Triggers](card-dsl.md#triggers) |
 | `counter_placed` | `counter_placed` |  | [Triggers](card-dsl.md#triggers) |
-| `counter_removed` |  |  | [Triggers](card-dsl.md#triggers) |
+| `counter_removed` | `last_counter_removed` |  | [Triggers](card-dsl.md#triggers) |
 | `creature_dealt_combat_damage` | `deals_combat_damage` |  | [Triggers](card-dsl.md#triggers) |
 | `creatures_attacked_player` | `creatures_attack_player` |  | [Triggers](card-dsl.md#triggers) |
 | `creatures_dealt_combat_damage` | `creatures_deal_combat_damage` |  | [Triggers](card-dsl.md#triggers) |
