@@ -13,7 +13,13 @@ from dataclasses import replace
 from typing import TYPE_CHECKING, Any
 
 from .carddef import Ability, CardDef, Cost
-from .characteristics import abilities_of, chars, crew_power_bonus, mana_source_traits
+from .characteristics import (
+    abilities_of,
+    borrowed_ability,
+    chars,
+    crew_power_bonus,
+    mana_source_traits,
+)
 from .cost_reduction import reduction_amount
 from .effects import execute
 from .effects.behold import announce_beheld, behold_count, behold_pool
@@ -2509,6 +2515,7 @@ def _spend_trigger_tag(
         controller=pid,
         ability=ability.mana_spent_trigger,
         granted_by=granted_by,
+        granted_ability=ability if borrowed_ability(state, oid, ability.index) else None,
     )
 
 
@@ -2568,6 +2575,7 @@ def _queue_spend_triggers(
                 description=f"{name}: {trigger.text or 'mana spent'}",
                 def_id=tag.def_id,
                 granted_by=tag.granted_by,
+                granted_ability=tag.granted_ability,
                 mana_spent=True,
             )
         )

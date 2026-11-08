@@ -83,7 +83,7 @@ from __future__ import annotations
 
 import dataclasses
 from collections.abc import Iterator, Mapping
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, NamedTuple
 
 from .carddef import Ability, CardDef, ward_ability
 from .enums import KEYWORD_COUNTERS, SUBTYPE_CLASS, Keyword, Zone
@@ -915,7 +915,63 @@ def _compute(state: GameState, oid: int) -> Characteristics:
 #: enchanting *another* Imprisoned in the Moon does not switch the second one
 #: off. Real Magic resolves that with dependency analysis, which is the thing
 #: layers-lite exists not to have.
-ABILITY_STATICS = ("lose_all_abilities", "grant_ability")
+ABILITY_STATICS = ("lose_all_abilities", "grant_ability", "grant_exiled_abilities")
+
+
+class Borrowed(NamedTuple):
+    """Provenance of an ability borrowed off a linked exiled card's printed face.
+
+    ``grant_exiled_abilities`` -- Hazel's Brewmaster: "Foods you control have
+    all activated abilities of all creature cards exiled with this creature."
+    The definition lives on ``card``'s printed face rather than in any
+    ``grantable_abilities`` pool, so it is a type of its own beside the
+    ``(granter, index)`` pair: `granted_ability_origin` must never hand it to
+    `stack.ability_of`, which would read the index against the wrong list.
+    """
+
+    card: int
+    index: int
+
+
+def exiled_activated_abilities(
+    state: GameState, source: GameObject, static: Mapping[str, Any]
+) -> list[tuple[int, Ability]]:
+    """The activated abilities a ``grant_exiled_abilities`` static hands over.
+
+    Every activated ability, mana abilities included, printed on each card
+    still linked to ``source`` (607.2a): walked off the source's own
+    `exiled_cards`, so the cards a previous incarnation exiled are not found
+    (400.7), and kept only while the card is in exile, face up, with its
+    `exiled_by` still this source. The card's type is its printed one -- the
+    characteristics a card has in exile, and a pipeline input, so reading it
+    here does not make a static read another static's output. An ability that
+    works only from another zone (cycling) is left behind: a permanent could
+    never activate it. ``(card oid, ability)`` pairs, in the order the cards
+    were exiled.
+    """
+    wanted = set(static.get("types") or ())
+    out: list[tuple[int, Ability]] = []
+    for oid in source.exiled_cards:
+        card = state.objects.get(oid)
+        if (
+            card is None
+            or card.zone is not Zone.EXILE
+            or card.exiled_by != source.oid
+            or card.face_down
+        ):
+            continue
+        face = state.card_of(card)
+        if not wanted & set(face.types):
+            continue
+        for ability in face.abilities:
+            if (
+                ability.is_activated
+                and Zone.BATTLEFIELD in ability.active_zones
+                and ability.level is None
+                and ability.threshold is None
+            ):
+                out.append((oid, ability))
+    return out
 
 
 def _ability_statics(state: GameState) -> list[tuple[GameObject, Mapping[str, Any]]]:
@@ -1136,7 +1192,7 @@ def abilities_of(state: GameState, oid: int) -> tuple[Ability, ...]:
 
 def _derived_abilities(
     state: GameState, obj: GameObject, statics: list[tuple[GameObject, Mapping[str, Any]]]
-) -> list[tuple[Ability, tuple[int, int] | None]]:
+) -> list[tuple[Ability, tuple[int, int] | Borrowed | None]]:
     """Every ability this permanent has, each with **where it came from**.
 
     ``None`` for a printed one; ``(granter oid, index into that card's
@@ -1149,11 +1205,14 @@ def _derived_abilities(
     reads whatever happens to be there, which is another ability or nothing at
     all.
 
+    A `Borrowed` for one a ``grant_exiled_abilities`` static lent off a linked
+    exiled card's printed face, which no pool index can name.
+
     Shared with `abilities_of` above rather than walked twice, because the two
     answers have to agree about which ability is at which position.
     """
     printed = present_printed_abilities(obj, printed_abilities(state, obj))
-    out: list[tuple[Ability, tuple[int, int] | None]] = []
+    out: list[tuple[Ability, tuple[int, int] | Borrowed | None]] = []
     # `obj.lost_all_abilities` beside the static, and both mean the same thing
     # about the printed list: one is somebody else saying it continuously
     # ("enchanted creature loses all abilities"), the other is a resolving
@@ -1168,9 +1227,16 @@ def _derived_abilities(
     ):
         out.extend((ability, None) for ability in printed)
     for source_obj, static in statics:
-        if static.get("effect") != "grant_ability":
+        effect = static.get("effect")
+        if effect not in ("grant_ability", "grant_exiled_abilities"):
             continue
         if not _matches(state, obj, source_obj, static.get("affects")):
+            continue
+        if effect == "grant_exiled_abilities":
+            out.extend(
+                (ability, Borrowed(card, ability.index))
+                for card, ability in exiled_activated_abilities(state, source_obj, static)
+            )
             continue
         granted = state.card_of(source_obj).grantable_abilities
         index = int(static.get("ability", 0))
@@ -1294,8 +1360,29 @@ def granted_ability_origin(state: GameState, oid: int, index: int) -> tuple[int,
         return None
     derived = _derived_abilities(state, obj, statics)
     if 0 <= index < len(derived):
-        return derived[index][1]
+        origin = derived[index][1]
+        # A borrowed ability has no pool to be found in; `borrowed_ability`
+        # is its question.
+        return None if isinstance(origin, Borrowed) else origin
     return None
+
+
+def borrowed_ability(state: GameState, oid: int, index: int) -> bool:
+    """Is the ability at ``index`` on this permanent borrowed off an exiled card?
+
+    ``grant_exiled_abilities``: the definition lives on a card in exile, not
+    in any ``grantable_abilities`` pool, so an activation snapshots the ability
+    itself (`StackItem.granted_ability`) rather than a ``(granter, index)``
+    pair -- 608.2 has it resolve even once the card has left exile.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield or obj.face_down:
+        return False
+    statics = _ability_statics(state)
+    if not any(static.get("effect") == "grant_exiled_abilities" for _, static in statics):
+        return False
+    derived = _derived_abilities(state, obj, statics)
+    return 0 <= index < len(derived) and isinstance(derived[index][1], Borrowed)
 
 
 def _battlefield_statics(state: GameState) -> list[tuple[GameObject, Mapping[str, Any]]]:

@@ -6336,6 +6336,33 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"creature types ('It's still a Shapeshifter'), not {entry!r}"
                 )
 
+    if model.effect == "grant_exiled_abilities":
+        # Hazel's Brewmaster: "Foods you control have all activated abilities
+        # of all creature cards exiled with this creature." `types` is the
+        # card type the linked exiled cards must have ("creature cards") and
+        # is required: left out, the static would lend the abilities of every
+        # card the source exiled, which is a stronger card than any printed.
+        # `affects` is who receives them; without it nothing would.
+        if model.affects is None:
+            raise DslError(
+                f"{where}: grant_exiled_abilities needs 'affects' naming the "
+                f"permanents that have the exiled cards' activated abilities"
+            )
+        if not model.types:
+            raise DslError(
+                f"{where}: grant_exiled_abilities needs 'types' -- the card "
+                f'types of the exiled cards it reads ("creature cards" is '
+                f'["Creature"])'
+            )
+        unknown = [t for t in model.types if t not in {c.value for c in CardType}]
+        if unknown:
+            raise DslError(f"{where}.types: unknown card type(s) {unknown}")
+        if model.ability is not None or model.subtypes or model.keywords:
+            raise DslError(
+                f"{where}: grant_exiled_abilities lends what the exiled cards "
+                f"print; it takes no 'ability', 'subtypes' or 'keywords'"
+            )
+
     if model.effect == "set_creature_types":
         # "…is a Dragon … (It loses all other creature types.)" The list is
         # the creature-type line the permanent ends with, so an empty one is

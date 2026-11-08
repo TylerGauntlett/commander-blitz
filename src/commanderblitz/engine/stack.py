@@ -22,7 +22,12 @@ from .carddef import (
     is_repeatable,
     rules_ability,
 )
-from .characteristics import abilities_of, granted_ability_origin, printed_abilities
+from .characteristics import (
+    abilities_of,
+    borrowed_ability,
+    granted_ability_origin,
+    printed_abilities,
+)
 from .effects import execute
 from .effects.conditions import evaluate
 from .effects.context import EffectContext, ask_mode, ask_targets, ask_yes_no
@@ -341,6 +346,10 @@ def push_activated_ability(
     origin = granted_ability_origin(state, source_oid, ability_index)
     granted_by, stored_index = origin if origin is not None else (None, ability_index)
     granted_def_id = state.card(granted_by).id if granted_by is not None else ""
+    # One borrowed off a card in exile (`grant_exiled_abilities`) lives in no
+    # pool at all, so the ability itself rides on the item -- see
+    # `TriggerInstance.granted_ability`.
+    borrowed = ability if borrowed_ability(state, source_oid, ability_index) else None
     item = StackItem(
         sid=state.alloc_sid(),
         kind="ability",
@@ -351,6 +360,7 @@ def push_activated_ability(
         ability_kind="activated",
         granted_by=granted_by,
         granted_def_id=granted_def_id,
+        granted_ability=borrowed,
         targets=tuple(targets),
         x=x,
         modes=modes,
@@ -385,6 +395,13 @@ def ability_of(state: GameState, item_or_trig) -> Ability | None:
     # a different ability on a different object, and silently so.
     if index < 0:
         return rules_ability(index)
+    borrowed = getattr(item_or_trig, "granted_ability", None)
+    if borrowed is not None:
+        # Borrowed off a card in exile and snapshotted as it was activated:
+        # neither the recipient's printed list nor any granter's pool holds it.
+        if getattr(item_or_trig, "mana_spent", False):
+            return borrowed.mana_spent_trigger
+        return borrowed
     granted_by = getattr(item_or_trig, "granted_by", None)
     if granted_by is not None:
         granter = state.objects.get(granted_by)
@@ -475,6 +492,7 @@ def push_triggered_ability(
         x=int(trig.bindings.get("x", 0) or 0),
         description=trig.description,
         granted_by=trig.granted_by,
+        granted_ability=trig.granted_ability,
         mana_spent=trig.mana_spent,
     )
     ability = ability_of(state, item)

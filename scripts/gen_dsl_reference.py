@@ -937,6 +937,8 @@ STATICS: dict[str, Entry] = {
                "Goaded for as long as a static applies"),
     "grant_ability": ("Matching permanents have one of the card's `grantable_abilities`.",
                       "`grant_ability` as a static, and where the line now runs"),
+    "grant_exiled_abilities": ("Matching permanents have every activated ability of the cards of `types` exiled with this permanent.",
+                               "`grant_exiled_abilities` — abilities lent by the cards exiled with a permanent"),
     "grant_keyword": ("Matching permanents have keywords.", None),
     "granted_alternative_cost": ("The player may pay `cost` (energy or life) instead of matching spells' mana cost.",
                                  "`granted_alternative_cost` — paying energy instead of a spell's mana cost"),

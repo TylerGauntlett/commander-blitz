@@ -274,6 +274,13 @@ STATIC_EFFECTS = frozenset(
         # the payment solver, because a granted mana ability nobody can tap is
         # not a mana ability.
         "grant_ability",
+        # Hazel's Brewmaster: "Foods you control have all activated abilities
+        # of all creature cards exiled with this creature." Lends every
+        # activated ability printed on the cards linked to the source by its
+        # own exiles (`exiled_cards`) whose printed card types meet `types`;
+        # collected off printed faces with `grant_ability`
+        # (`characteristics.ABILITY_STATICS`).
+        "grant_exiled_abilities",
         "extra_land_drops",
         # Player-wide, like `extra_land_drops`: a fact about the player rather
         # than a characteristic, with no object for it to attach to.

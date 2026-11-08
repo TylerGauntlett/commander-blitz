@@ -10134,6 +10134,45 @@ answer), and a non-literal kept subtype.
 name, colour, abilities — and is a different card; a `set_pt` cannot read a
 card in exile at all.
 
+### `grant_exiled_abilities` — abilities lent by the cards exiled with a permanent
+
+Hazel's Brewmaster: "Foods you control have all activated abilities of all
+creature cards exiled with this creature."
+
+```json
+{"kind": "static", "effect": "grant_exiled_abilities",
+ "affects": {"subtypes": ["Food"], "controller": "you"}, "types": ["Creature"]}
+```
+
+beside the ability whose `exile` carries `link: true`. Each permanent `affects`
+matches has every activated ability, mana abilities included, printed on each
+card still linked to the source by its own exiles (607.2a): the source's
+`exiled_cards`, kept while the card is in exile, face up, with its `exiled_by`
+intact, and whose printed card types include one of `types`
+(`characteristics.exiled_activated_abilities`). An ability that works only from
+another zone (cycling), a Class level line and a station threshold line are
+not lent. The abilities are appended after the recipient's own, in the order
+the cards were exiled.
+
+They are the recipient's abilities (113.6, 602.1): its controller activates
+them, a `{T}` in the cost taps the recipient, and "this creature" in their text
+is the recipient. An activation snapshots the ability onto the stack item
+(`StackItem.granted_ability`), since it lives on a card in exile rather than in
+any `grantable_abilities` pool, so it resolves even if the card leaves exile
+first (608.2). The grant is the source's static: when the source leaves the
+battlefield it ends, and `reset_permanent_state` empties `exiled_cards`, so a
+source that returns is a new object with nothing exiled with it (400.7).
+
+It is collected off printed faces with `grant_ability`
+(`characteristics.ABILITY_STATICS`), so it cannot itself be granted. The loader
+refuses it without `affects` or `types`, with an unknown card type, and with an
+`ability`, `subtypes` or `keywords`.
+
+**The near miss is a `grant_ability` static**, which hands over a fixed ability
+written in the card's own `grantable_abilities` and cannot borrow whatever
+happens to be in exile; `imprint_characteristics` reads a card in exile but
+takes only its size and creature types.
+
 ### `set_creature_types` — "it loses all other creature types"
 
 "Celebration — As long as two or more nonland permanents entered the

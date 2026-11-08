@@ -608,6 +608,9 @@ class ManaSpendTrigger(NamedTuple):
     controller: int
     ability: Any
     granted_by: int | None = None
+    #: The mana ability itself when it was borrowed off a card in exile --
+    #: see `TriggerInstance.granted_ability`.
+    granted_ability: Any = None
 
 
 class ManaOrigin(NamedTuple):

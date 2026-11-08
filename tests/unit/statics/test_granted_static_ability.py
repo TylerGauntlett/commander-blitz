@@ -341,6 +341,7 @@ class TestWhatMayBeGranted:
                     "effect": effect,
                     "affects": {"types": ["Creature"]},
                     **({"ability": 0} if effect == "grant_ability" else {}),
+                    **({"types": ["Creature"]} if effect == "grant_exiled_abilities" else {}),
                 }
             )
             with pytest.raises(DslError, match="printed faces"):

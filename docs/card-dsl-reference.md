@@ -17,7 +17,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Conditions](#conditions) | 34 |
 | [Trigger events](#trigger-events) | 53 |
 | [Trigger filters](#trigger-filters) | 37 |
-| [Static effects](#static-effects) | 95 |
+| [Static effects](#static-effects) | 96 |
 | [Player-wide statics](#player-wide-statics) | 46 |
 | [Grantable statics](#grantable-statics) | 43 |
 | [Cost reduction](#cost-reduction) | 6 |
@@ -590,6 +590,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `freeze_opponent_lands` | yes |  | The player's lands don't untap during their untap step. | [Static abilities](card-dsl.md#static-abilities) |
 | `goaded` |  | yes | Matching creatures are goaded by the static's controller while it applies. | [Goaded for as long as a static applies](card-dsl-cookbook.md#goaded-for-as-long-as-a-static-applies) |
 | `grant_ability` |  |  | Matching permanents have one of the card's `grantable_abilities`. | [grant_ability as a static, and where the line now runs](card-dsl-cookbook.md#grant_ability-as-a-static-and-where-the-line-now-runs) |
+| `grant_exiled_abilities` |  |  | Matching permanents have every activated ability of the cards of `types` exiled with this permanent. | [grant_exiled_abilities — abilities lent by the cards exiled with a permanent](card-dsl-cookbook.md#grant_exiled_abilities--abilities-lent-by-the-cards-exiled-with-a-permanent) |
 | `grant_keyword` |  | yes | Matching permanents have keywords. | [Static abilities](card-dsl.md#static-abilities) |
 | `grant_miracle` | yes |  | Matching cards in the player's hand have miracle for a price. | [grant_miracle — miracle handed to cards in your hand](card-dsl-cookbook.md#grant_miracle--miracle-handed-to-cards-in-your-hand) |
 | `grant_pay_generic_with` | yes |  | Matching spells the player casts have convoke, improvise or delve. | [grant_pay_generic_with — "spells you cast have improvise"](card-dsl-cookbook.md#grant_pay_generic_with--spells-you-cast-have-improvise) |
