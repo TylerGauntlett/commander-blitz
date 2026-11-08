@@ -2202,6 +2202,73 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "you"
+          },
+          "affects_player": "you",
+          "counter": "energy",
+          "counter_multiplier": 2,
+          "effect": "replace_counters",
+          "kind": "static",
+          "text": "If you would get one or more {E} (energy counters), you get twice that many {E} instead."
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "add_energy"
+            },
+            {
+              "any_amount": {
+                "as": "paid_energy"
+              },
+              "effects": [
+                {
+                  "op": "create_token",
+                  "power": {
+                    "binding": "paid_energy"
+                  },
+                  "token": "aetherborn_x_x_b",
+                  "toughness": {
+                    "binding": "paid_energy"
+                  }
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "pay_energy": 1
+              },
+              "player": "you",
+              "prompt": "Pay one or more {E} to create an X/X Aetherborn?"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}: You get {E}, then you may pay one or more {E}. If you do, create an X/X black Aetherborn creature token, where X is the amount of {E} paid this way."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "aether_refinery",
+      "mana_cost": "{4}{R}{R}",
+      "name": "Aether Refinery",
+      "oracle_text": "If you would get one or more {E} (energy counters), you get twice that many {E} instead.\n{T}: You get {E}, then you may pay one or more {E}. If you do, create an X/X black Aetherborn creature token, where X is the amount of {E} paid this way.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "mana": "{U}",
             "sacrifice": {
@@ -2403,6 +2470,64 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "add_energy",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, you get {E}{E} (two energy counters).",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "pay_energy": 2
+          },
+          "effects": [
+            {
+              "face": "front",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "exile_and_return"
+            }
+          ],
+          "kind": "activated",
+          "text": "Pay {E}{E}: Exile this creature, then return it to the battlefield under its owner's control."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "aethergeode_miner",
+      "mana_cost": "{1}{W}",
+      "name": "Aethergeode Miner",
+      "oracle_text": "Whenever this creature attacks, you get {E}{E} (two energy counters).\nPay {E}{E}: Exile this creature, then return it to the battlefield under its owner's control.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Dwarf",
+        "Scout"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -2553,6 +2678,95 @@
           "effects": [
             {
               "amount": {
+                "const": 2
+              },
+              "op": "add_energy"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this Vehicle enters, you get {E}{E} (two energy counters).",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "pay_energy": 1
+          },
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "lifelink"
+              ],
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "text": "Pay {E}: This Vehicle gains lifelink until end of turn."
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 1,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 3
+              },
+              "toughness": {
+                "const": 5
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 1"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "aethersphere_harvester",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}",
+      "name": "Aethersphere Harvester",
+      "oracle_text": "Flying\nWhen this Vehicle enters, you get {E}{E} (two energy counters).\nPay {E}: This Vehicle gains lifelink until end of turn.\nCrew 1 (Tap any number of creatures you control with total power 1 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "toughness": 5,
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
                 "const": 3
               },
               "op": "add_energy"
@@ -2607,6 +2821,107 @@
         "Leviathan"
       ],
       "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "add_energy",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature or another creature you control enters, you get {E} (an energy counter).",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "add_counters"
+                },
+                {
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "tap"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "pay_energy": 2
+              },
+              "player": "you",
+              "prompt": "Pay {E}{E} to put a +1/+1 counter on this creature and tap up to one target creature?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": {
+                  "binding": "defender"
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever this creature attacks, you may pay {E}{E}. If you do, put a +1/+1 counter on it and tap up to one target creature defending player controls.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "aetherstorm_roc",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{W}{W}",
+      "name": "Aetherstorm Roc",
+      "oracle_text": "Flying\nWhenever this creature or another creature you control enters, you get {E} (an energy counter).\nWhenever this creature attacks, you may pay {E}{E}. If you do, put a +1/+1 counter on it and tap up to one target creature defending player controls.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Bird"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -14043,6 +14358,109 @@
         "Legendary"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "add_energy"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, you get that many {E}.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "ability": "aurora_shifter_copy",
+                  "op": "reflexive_trigger"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "pay_energy": 2
+              },
+              "player": "you",
+              "prompt": "Pay {E}{E} to have Aurora Shifter become a copy of another creature you control?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of combat on your turn, you may pay {E}{E}.",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        },
+        {
+          "effects": [
+            {
+              "copying": {
+                "target": "t1"
+              },
+              "duration": "permanent",
+              "except_": {
+                "keep_abilities": [
+                  0,
+                  1,
+                  2
+                ]
+              },
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "become_copy"
+            }
+          ],
+          "id": "aurora_shifter_copy",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When you do, this creature becomes a copy of another target creature you control, except it has this ability and \"Whenever this creature deals combat damage to a player, you get that many {E}.\""
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "aurora_shifter",
+      "mana_cost": "{1}{U}",
+      "name": "Aurora Shifter",
+      "oracle_text": "Whenever this creature deals combat damage to a player, you get that many {E}.\nAt the beginning of combat on your turn, you may pay {E}{E}. When you do, this creature becomes a copy of another target creature you control, except it has this ability and \"Whenever this creature deals combat damage to a player, you get that many {E}.\"",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Shapeshifter"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -33457,6 +33875,187 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "counter": "+1/+1",
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "add_counters"
+                    }
+                  ],
+                  "label": "Put a +1/+1 counter on it."
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "create_token",
+                      "token": "servo_1_1_c"
+                    }
+                  ],
+                  "label": "Create a 1/1 colorless Servo artifact creature token."
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Fabricate 1 (When this creature enters, put a +1/+1 counter on it or create a 1/1 colorless Servo artifact creature token.)",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "is_token": false,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Other nontoken creatures you control have fabricate 1."
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "as": "populate_original",
+                      "objects": {
+                        "controller": "you",
+                        "count": 1,
+                        "is_token": true,
+                        "types": [
+                          "Creature"
+                        ],
+                        "zone": "battlefield"
+                      },
+                      "op": "choose_permanents",
+                      "prompt": "Populate: choose a creature token you control to copy"
+                    },
+                    {
+                      "controller": "you",
+                      "objects": {
+                        "binding": "populate_original"
+                      },
+                      "op": "copy_permanent"
+                    }
+                  ],
+                  "label": "Populate."
+                },
+                {
+                  "effects": [
+                    {
+                      "op": "proliferate"
+                    }
+                  ],
+                  "label": "Proliferate."
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, {T}: Choose one —\n• Populate.\n• Proliferate."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "U",
+        "W"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "counter": "+1/+1",
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "add_counters"
+                    }
+                  ],
+                  "label": "Put a +1/+1 counter on it."
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "create_token",
+                      "token": "servo_1_1_c"
+                    }
+                  ],
+                  "label": "Create a 1/1 colorless Servo artifact creature token."
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Fabricate 1 (When this creature enters, put a +1/+1 counter on it or create a 1/1 colorless Servo artifact creature token.)",
+          "trigger": {
+            "event": "self_enters"
+          }
+        }
+      ],
+      "id": "cayth_famed_mechanist",
+      "mana_cost": "{1}{U}{R}{W}",
+      "name": "Cayth, Famed Mechanist",
+      "oracle_text": "Fabricate 1 (When this creature enters, put a +1/+1 counter on it or create a 1/1 colorless Servo artifact creature token.)\nOther nontoken creatures you control have fabricate 1.\n{2}, {T}: Choose one —\n• Populate.\n• Proliferate.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Dwarf",
+        "Artificer"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -39014,6 +39613,133 @@
                 {
                   "effects": [
                     {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color."
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "charge",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}: Put a charge counter on this artifact."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "counters_on": {
+                  "counter": "charge",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              },
+              "as": "removed",
+              "counter": "charge",
+              "objects": {
+                "self_only": true
+              },
+              "op": "remove_counters"
+            },
+            {
+              "amount": {
+                "binding": "removed"
+              },
+              "op": "add_mana",
+              "split": [
+                "W",
+                "U",
+                "B",
+                "R",
+                "G"
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your first main phase, remove all charge counters from this artifact. Add one mana of any color for each charge counter removed this way.",
+          "trigger": {
+            "controller": "you",
+            "event": "precombat_main"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "coalition_relic",
+      "mana_cost": "{3}",
+      "name": "Coalition Relic",
+      "oracle_text": "{T}: Add one mana of any color.\n{T}: Put a charge counter on this artifact.\nAt the beginning of your first main phase, remove all charge counters from this artifact. Add one mana of any color for each charge counter removed this way.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
                       "mana": "{U}",
                       "op": "add_mana"
                     }
@@ -42170,6 +42896,75 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{3}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "add_energy",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}, {T}: You get {E}{E}{E} (three energy counters)."
+        },
+        {
+          "cost": {
+            "pay_energy": 3,
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "add_mana",
+              "split": [
+                "W",
+                "U",
+                "B",
+                "R",
+                "G"
+              ]
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}, Pay {E}{E}{E}: Add three mana in any combination of colors."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "conversion_apparatus",
+      "mana_cost": "{3}",
+      "name": "Conversion Apparatus",
+      "oracle_text": "{T}: Add {C}.\n{3}, {T}: You get {E}{E}{E} (three energy counters).\n{T}, Pay {E}{E}{E}: Add three mana in any combination of colors.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -86881,6 +87676,77 @@
           "effects": [
             {
               "amount": {
+                "const": 2
+              },
+              "op": "add_energy",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Gonti's Aether Heart or another artifact you control enters, you get {E}{E} (two energy counters).",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "add_energy",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Gonti's Aether Heart or another artifact you control enters, you get {E}{E} (two energy counters).",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "types": [
+                "Artifact"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "exile_self": true,
+            "pay_energy": 8
+          },
+          "effects": [
+            {
+              "op": "extra_turn",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "Pay eight {E}, Exile Gonti's Aether Heart: Take an extra turn after this one."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "gonti_s_aether_heart",
+      "mana_cost": "{6}",
+      "name": "Gonti's Aether Heart",
+      "oracle_text": "Whenever Gonti's Aether Heart or another artifact you control enters, you get {E}{E} (two energy counters).\nPay eight {E}, Exile Gonti's Aether Heart: Take an extra turn after this one.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
                 "const": 1
               },
               "op": "add_energy"
@@ -109525,6 +110391,90 @@
     {
       "abilities": [
         {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "discard_self": true,
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "is_cycling": true,
+          "kind": "activated",
+          "text": "Cycling {2} ({2}, Discard this card: Draw a card.)"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "jolted_awake",
+      "mana_cost": "{W}",
+      "name": "Jolted Awake",
+      "oracle_text": "Choose up to one target artifact or creature card in your graveyard. You get {E}{E} (two energy counters). Then you may pay an amount of {E} equal to that card's mana value. If you do, return it from your graveyard to the battlefield.\nCycling {2} ({2}, Discard this card: Draw a card.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "add_energy"
+        },
+        {
+          "effects": [
+            {
+              "destination": "battlefield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "op": "may",
+          "pay": {
+            "pay_energy": {
+              "mana_value_of": {
+                "target": "t1"
+              }
+            }
+          },
+          "player": "you",
+          "prompt": "Pay {E} equal to that card's mana value to return it to the battlefield?"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "optional": true,
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Creature"
+            ],
+            "controller": "you",
+            "zone": "graveyard"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -122648,6 +123598,76 @@
       "toughness": 6,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "localized_destruction",
+      "mana_cost": "{3}{W}{W}",
+      "name": "Localized Destruction",
+      "oracle_text": "You get {E} (an energy counter), then you may pay one or more {E}. If you do, each creature you control with power equal to the amount of {E} paid this way gains indestructible until end of turn.\nDestroy all creatures.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "add_energy",
+          "player": "you"
+        },
+        {
+          "any_amount": {
+            "as": "paid_energy"
+          },
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "indestructible"
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "power": {
+                  "op": "=",
+                  "value": {
+                    "binding": "paid_energy"
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "op": "may",
+          "pay": {
+            "pay_energy": 1
+          },
+          "player": "you",
+          "prompt": "Pay one or more {E}? Each creature you control with power equal to the amount paid gains indestructible until end of turn."
+        },
+        {
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "destroy"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -174320,6 +175340,69 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "add_energy",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Landfall — Whenever a land you control enters, you get {E} (an energy counter).",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "pay_energy": 6,
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Pay six {E}: Draw three cards."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "roil_cartographer",
+      "mana_cost": "{1}{U}",
+      "name": "Roil Cartographer",
+      "oracle_text": "Landfall — Whenever a land you control enters, you get {E} (an energy counter).\n{T}, Pay six {E}: Draw three cards.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Merfolk",
+        "Rogue"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "self_only": true
           },
@@ -177734,6 +178817,132 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 2
+              },
+              "toughness": {
+                "const": 2
+              }
+            },
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "indestructible"
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you attack, other creatures you control get +2/+2 and gain indestructible until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "you_attack"
+          }
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "pay_energy": 8
+          },
+          "effects": [
+            {
+              "controller": "you",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "put_onto_battlefield"
+            },
+            {
+              "destination": "exile",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "replace_leaves_battlefield"
+            },
+            {
+              "duration": "permanent",
+              "keyword": "haste",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "self_only": true,
+                    "zone": "battlefield"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "Exile it at the beginning of the next end step or if it would leave the battlefield."
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Unearth—Pay eight {E}. (Pay eight energy counters: Return this card from your graveyard to the battlefield. It gains haste. Exile it at the beginning of the next end step or if it would leave the battlefield. Unearth only as a sorcery.)"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "salvation_colossus",
+      "keywords": [
+        "flying",
+        "vigilance",
+        "trample"
+      ],
+      "mana_cost": "{6}{W}{W}",
+      "name": "Salvation Colossus",
+      "oracle_text": "Flying, vigilance, trample\nWhenever you attack, other creatures you control get +2/+2 and gain indestructible until end of turn.\nUnearth—Pay eight {E}. (Pay eight energy counters: Return this card from your graveyard to the battlefield. It gains haste. Exile it at the beginning of the next end step or if it would leave the battlefield. Unearth only as a sorcery.)",
+      "power": 9,
+      "source": "auto",
+      "subtypes": [
+        "Construct"
+      ],
+      "toughness": 9,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -178346,6 +179555,124 @@
         "Legendary"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "satya_token",
+              "attacking": true,
+              "controller": "you",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "copy_permanent",
+              "tapped": true
+            },
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "add_energy",
+              "player": "you"
+            },
+            {
+              "effects": [
+                {
+                  "condition": {
+                    "exists": {
+                      "binding": "satya_token"
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "effects": [],
+                      "else": [
+                        {
+                          "objects": {
+                            "binding": "satya_token",
+                            "count": "all"
+                          },
+                          "op": "sacrifice"
+                        }
+                      ],
+                      "op": "may",
+                      "pay": {
+                        "pay_energy": {
+                          "mana_value_of": {
+                            "binding": "satya_token"
+                          }
+                        }
+                      },
+                      "player": "you",
+                      "prompt": "Pay {E} equal to the token's mana value to keep it?"
+                    }
+                  ]
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "At the beginning of the next end step, sacrifice that token unless you pay an amount of {E} equal to its mana value."
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "you",
+                "exclude_self": true,
+                "is_token": false,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever Satya attacks, create a tapped and attacking token that's a copy of up to one other target nontoken creature you control. You get {E}{E} (two energy counters). At the beginning of the next end step, sacrifice that token unless you pay an amount of {E} equal to its mana value.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "U",
+        "W"
+      ],
+      "id": "satya_aetherflux_genius",
+      "keywords": [
+        "menace",
+        "haste"
+      ],
+      "mana_cost": "{1}{U}{R}{W}",
+      "name": "Satya, Aetherflux Genius",
+      "oracle_text": "Menace, haste\nWhenever Satya attacks, create a tapped and attacking token that's a copy of up to one other target nontoken creature you control. You get {E}{E} (two energy counters). At the beginning of the next end step, sacrifice that token unless you pay an amount of {E} equal to its mana value.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Artificer"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
@@ -180721,6 +182048,91 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "gremlin_1_1_r"
+            },
+            {
+              "amount": {
+                "creatures_you_control": true
+              },
+              "op": "add_energy",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this enchantment enters, create two 1/1 red Gremlin creature tokens. Then you get an amount of {E} (energy counters) equal to the number of creatures you control.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "pay_energy": 4
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 0
+              }
+            },
+            {
+              "keywords": [
+                "haste"
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "text": "Pay {E}{E}{E}{E}: Creatures you control get +1/+0 and gain haste until end of turn."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "scurry_of_gremlins",
+      "mana_cost": "{2}{R}{W}",
+      "name": "Scurry of Gremlins",
+      "oracle_text": "When this enchantment enters, create two 1/1 red Gremlin creature tokens. Then you get an amount of {E} (energy counters) equal to the number of creatures you control.\nPay {E}{E}{E}{E}: Creatures you control get +1/+0 and gain haste until end of turn.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -200915,6 +202327,56 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "add_energy",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control attacks, you get {E} (an energy counter).",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks"
+          }
+        },
+        {
+          "cost": {
+            "pay_energy": 6,
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "construct_6_12_c_artifact_trample"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "{T}, Pay six {E}: Create a 6/12 colorless Construct artifact creature token with trample. Activate only as a sorcery."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "stone_idol_generator",
+      "mana_cost": "{5}",
+      "name": "Stone Idol Generator",
+      "oracle_text": "Whenever a creature you control attacks, you get {E} (an energy counter).\n{T}, Pay six {E}: Create a 6/12 colorless Construct artifact creature token with trample. Activate only as a sorcery.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -231201,6 +232663,86 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "add_energy",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this artifact enters, you get {E}{E} (two energy counters).",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a spell from anywhere other than your hand, this artifact deals 1 damage to each opponent.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "from_zones": [
+              "library",
+              "graveyard",
+              "exile",
+              "command"
+            ]
+          }
+        },
+        {
+          "cost": {
+            "pay_energy": 2,
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "destination": "exile",
+              "objects": {
+                "count": 1
+              },
+              "op": "look_at_top",
+              "playable": "until_next_exile_by_source",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Pay {E}{E}: Exile the top card of your library. You may play it until you exile another card with this artifact."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "unstable_amulet",
+      "mana_cost": "{1}{R}",
+      "name": "Unstable Amulet",
+      "oracle_text": "When this artifact enters, you get {E}{E} (two energy counters).\nWhenever you cast a spell from anywhere other than your hand, this artifact deals 1 damage to each opponent.\n{T}, Pay {E}{E}: Exile the top card of your library. You may play it until you exile another card with this artifact.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {

@@ -155,6 +155,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "aether_refinery": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "aether_spellbomb": {
     "battlefield_count": 33,
     "hand_size": {
@@ -176,6 +180,10 @@
     },
     "zone": "battlefield"
   },
+  "aethergeode_miner": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "aetheric_amplifier": {
     "zone": "battlefield"
   },
@@ -187,8 +195,19 @@
     "opponent_battlefield_count": 6,
     "zone": "graveyard"
   },
+  "aethersphere_harvester": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "aethersquall_ancient": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "aetherstorm_roc": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "aethertide_whale": {
@@ -1220,6 +1239,10 @@
     "zone": "battlefield"
   },
   "auron_venerated_guardian": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "aurora_shifter": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -2842,6 +2865,14 @@
   "caves_of_koilos": {
     "zone": "battlefield"
   },
+  "cayth_famed_mechanist": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 1,
+      "kind": "+1/+1"
+    },
+    "zone": "battlefield"
+  },
   "ceaseless_conflict": {
     "battlefield_count": 32,
     "opponent_battlefield_count": 4,
@@ -3300,6 +3331,10 @@
     },
     "zone": "battlefield"
   },
+  "coalition_relic": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "coastal_peak": {
     "zone": "battlefield"
   },
@@ -3560,6 +3595,10 @@
   },
   "contingency_plan": {
     "zone": "graveyard"
+  },
+  "conversion_apparatus": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "convert_to_slime": {
     "battlefield_count": 31,
@@ -7501,6 +7540,10 @@
   "gongaga_reactor_town": {
     "zone": "battlefield"
   },
+  "gonti_s_aether_heart": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "gonti_s_machinations": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -9341,6 +9384,13 @@
     },
     "zone": "battlefield"
   },
+  "jolted_awake": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "zone": "graveyard"
+  },
   "joraga_visionary": {
     "hand_size": {
       "0": 2
@@ -10398,6 +10448,9 @@
   },
   "loamdragger_giant": {
     "zone": "battlefield"
+  },
+  "localized_destruction": {
+    "zone": "graveyard"
   },
   "locke_treasure_hunter": {
     "battlefield_count": 33,
@@ -14837,6 +14890,13 @@
   "rogue_s_passage": {
     "zone": "battlefield"
   },
+  "roil_cartographer": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "rolling_hamsphere": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -15083,6 +15143,10 @@
   "salt_marsh": {
     "zone": "battlefield"
   },
+  "salvation_colossus": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sanctuary_cat": {
     "zone": "battlefield"
   },
@@ -15129,6 +15193,13 @@
   },
   "sarkhan_soul_aflame": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "satya_aetherflux_genius": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "satyr_rambler": {
@@ -15332,6 +15403,14 @@
     "zone": "battlefield"
   },
   "scryb_sprites": {
+    "zone": "battlefield"
+  },
+  "scurry_of_gremlins": {
+    "battlefield_count": 35,
+    "tokens": {
+      "count": 2,
+      "id": "gremlin_1_1_r"
+    },
     "zone": "battlefield"
   },
   "scurry_of_squirrels": {
@@ -17074,6 +17153,10 @@
     "zone": "battlefield"
   },
   "stone_golem": {
+    "zone": "battlefield"
+  },
+  "stone_idol_generator": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "stone_quarry": {
@@ -19519,6 +19602,10 @@
     "zone": "battlefield"
   },
   "unnatural_growth": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "unstable_amulet": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

@@ -1,0 +1,18 @@
+{
+  "card_id": "blaster_hulk",
+  "name": "Blaster Hulk",
+  "oracle_text": "This spell costs {1} less to cast for each {E} (energy counter) you've paid or lost this turn.\nHaste\nWhenever this creature attacks, you get {E}{E}, then you may pay eight {E}. When you do, this creature deals 8 damage divided as you choose among up to eight targets.",
+  "blocked_sentences": [
+    "This spell costs {1} less to cast for each {E} (energy counter) you've paid or lost this turn."
+  ],
+  "needs": [
+    {
+      "capability": "energy_spent_this_turn",
+      "kind": "value",
+      "what": "a per-player turn ledger of energy counters paid or otherwise lost this turn (e.g. {\"energy_paid_or_lost_this_turn\": \"you\"}), usable as a card-level cost_reduction amount so the spell costs {1} less per energy counter",
+      "why_existing_wont_do": "cost_reduction takes only amount (a flat number gated by a condition), count, greatest_count, greatest_mana_value, total_mana_value or total_power, all of which read permanents; value_keys has turn ledgers for life gained/lost, cards drawn/discarded and counters put, but nothing that records energy counters paid or lost, and counters_on reads objects rather than a player's energy tally"
+    }
+  ],
+  "closest_existing": ["cost_reduction", "life_lost_this_turn", "counters_put_this_turn", "pay_energy"],
+  "confidence": "high"
+}

@@ -3102,12 +3102,12 @@
     },
     "Aether Refinery": {
       "edhrec_rank": 5362,
-      "gate": "template",
+      "gate": null,
       "name": "Aether Refinery",
-      "reason": "no template for: If you would get one or more {E} , you get twice that many {E} instead",
+      "reason": "",
       "scryfall_id": "94553de8-52e8-4209-919a-cdf9289af116",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aether Revolt": {
@@ -3332,12 +3332,12 @@
     },
     "Aethergeode Miner": {
       "edhrec_rank": 10175,
-      "gate": "template",
+      "gate": null,
       "name": "Aethergeode Miner",
-      "reason": "no template for: Whenever this creature attacks, you get {E}{E}",
+      "reason": "",
       "scryfall_id": "d95db4ba-449f-416d-96cf-a07ec7dbc647",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aetheric Amplifier": {
@@ -3432,12 +3432,12 @@
     },
     "Aethersphere Harvester": {
       "edhrec_rank": 13718,
-      "gate": "template",
+      "gate": null,
       "name": "Aethersphere Harvester",
-      "reason": "no template for: When this Vehicle enters, you get {E}{E}",
+      "reason": "",
       "scryfall_id": "40a3e817-0533-43b9-9350-2872e029ec50",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aetherspouts": {
@@ -3462,12 +3462,12 @@
     },
     "Aetherstorm Roc": {
       "edhrec_rank": 7901,
-      "gate": "template",
+      "gate": null,
       "name": "Aetherstorm Roc",
-      "reason": "no template for: Whenever this creature or another creature you control enters, you get {E}",
+      "reason": "",
       "scryfall_id": "cb39b0ed-75d8-403a-ab0e-3e876ee7a38c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aetherstream Leopard": {
@@ -16702,12 +16702,12 @@
     },
     "Aurora Shifter": {
       "edhrec_rank": 7508,
-      "gate": "template",
+      "gate": null,
       "name": "Aurora Shifter",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, you get that many {E}",
+      "reason": "",
       "scryfall_id": "90577060-8def-4b50-ae09-6f7a3244e80a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Auroral Procession": {
@@ -41862,12 +41862,12 @@
     },
     "Cayth, Famed Mechanist": {
       "edhrec_rank": 4238,
-      "gate": "template",
+      "gate": null,
       "name": "Cayth, Famed Mechanist",
-      "reason": "no template for: Fabricate 1",
+      "reason": "",
       "scryfall_id": "215b9251-1049-4776-8aba-5a3f31ed37e6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cazur, Ruthless Stalker": {
@@ -49192,12 +49192,12 @@
     },
     "Coalition Relic": {
       "edhrec_rank": 3444,
-      "gate": "template",
+      "gate": null,
       "name": "Coalition Relic",
-      "reason": "no template for: {T}: Put a charge counter on this artifact",
+      "reason": "",
       "scryfall_id": "9f83d87c-9ff7-4151-a266-bd77680a899b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Coalition Skyknight": {
@@ -52892,12 +52892,12 @@
     },
     "Conversion Apparatus": {
       "edhrec_rank": 5831,
-      "gate": "template",
+      "gate": null,
       "name": "Conversion Apparatus",
-      "reason": "no template for: {3}, {T}: You get {E}{E}{E}",
+      "reason": "",
       "scryfall_id": "41bcf6d0-4f72-4611-b9fc-2713b70ac618",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Conversion Chamber": {
@@ -115092,12 +115092,12 @@
     },
     "Gonti's Aether Heart": {
       "edhrec_rank": 3558,
-      "gate": "template",
+      "gate": null,
       "name": "Gonti's Aether Heart",
-      "reason": "no template for: Whenever or another artifact you control enters, you get {E}{E}",
+      "reason": "",
       "scryfall_id": "b2a3ac21-5e37-40c4-934a-4b00a5562b0e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gonti's Machinations": {
@@ -143692,12 +143692,12 @@
     },
     "Jolted Awake": {
       "edhrec_rank": 6263,
-      "gate": "template",
+      "gate": null,
       "name": "Jolted Awake",
-      "reason": "no template for: Choose up to one target artifact or creature card in your graveyard. You get {E}{E} . Then",
+      "reason": "",
       "scryfall_id": "6aca4a34-016a-4bc6-b0b3-745fc99254e3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jolting Merfolk": {
@@ -160392,12 +160392,12 @@
     },
     "Localized Destruction": {
       "edhrec_rank": 7848,
-      "gate": "template",
+      "gate": null,
       "name": "Localized Destruction",
-      "reason": "no template for: You get {E} , then you may pay one or more {E}. If you do, each creature you control with ",
+      "reason": "",
       "scryfall_id": "71337d43-b6b2-4dc6-a980-3f1c4fe5a330",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Loch Dragon": {
@@ -226692,12 +226692,12 @@
     },
     "Roil Cartographer": {
       "edhrec_rank": 4867,
-      "gate": "template",
+      "gate": null,
       "name": "Roil Cartographer",
-      "reason": "no template for: Landfall — Whenever a land you control enters, you get {E}",
+      "reason": "",
       "scryfall_id": "7b9b743b-340d-4a15-a71d-d3108adbdc45",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Roil Elemental": {
@@ -231802,12 +231802,12 @@
     },
     "Salvation Colossus": {
       "edhrec_rank": 6861,
-      "gate": "template",
+      "gate": null,
       "name": "Salvation Colossus",
-      "reason": "no template for: Whenever you attack, other creatures you control get +2/+2 and gain indestructible until e",
+      "reason": "",
       "scryfall_id": "3842803c-2d51-4ee0-88c3-800e2948d32c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Salvation Engine": {
@@ -233702,12 +233702,12 @@
     },
     "Satya, Aetherflux Genius": {
       "edhrec_rank": 6255,
-      "gate": "template",
+      "gate": null,
       "name": "Satya, Aetherflux Genius",
-      "reason": "no template for: Whenever Satya attacks, create a tapped and attacking token that's a copy of up to one oth",
+      "reason": "",
       "scryfall_id": "0be45f11-e89b-4f21-9166-e67929f87636",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Satyr Enchanter": {
@@ -237112,12 +237112,12 @@
     },
     "Scurry of Gremlins": {
       "edhrec_rank": 12538,
-      "gate": "template",
+      "gate": null,
       "name": "Scurry of Gremlins",
-      "reason": "no template for: When this enchantment enters, create two 1/1 red Gremlin creature tokens. Then you get an ",
+      "reason": "",
       "scryfall_id": "470ce8e9-64b9-403c-bee0-66a4c47ca6d4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Scurry of Squirrels": {
@@ -265252,12 +265252,12 @@
     },
     "Stone Idol Generator": {
       "edhrec_rank": 6974,
-      "gate": "template",
+      "gate": null,
       "name": "Stone Idol Generator",
-      "reason": "no template for: Whenever a creature you control attacks, you get {E}",
+      "reason": "",
       "scryfall_id": "38c3f277-7cb7-4722-8e04-db8e9eaeabda",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stone Idol Trap": {
@@ -298632,12 +298632,12 @@
     },
     "Unstable Amulet": {
       "edhrec_rank": 4153,
-      "gate": "template",
+      "gate": null,
       "name": "Unstable Amulet",
-      "reason": "no template for: When this artifact enters, you get {E}{E}",
+      "reason": "",
       "scryfall_id": "25f01df9-c4fa-4598-84c1-217bde6b1841",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Unstable Experiment": {

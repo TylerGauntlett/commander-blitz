@@ -1,0 +1,18 @@
+{
+  "card_id": "razorfield_ripper",
+  "name": "Razorfield Ripper",
+  "oracle_text": "Whenever this creature or equipped creature attacks, you get {E} (an energy counter), then it gets +X/+X until end of turn, where X is the amount of {E} you have.\nReconfigure—Pay {2} or {E}{E}{E}. (Pay {2} or {E}{E}{E}: Attach to target creature you control; or unattach from a creature. Reconfigure only as a sorcery. While attached, this isn't a creature.)",
+  "blocked_sentences": [
+    "Whenever this creature or equipped creature attacks, you get {E} (an energy counter), then it gets +X/+X until end of turn, where X is the amount of {E} you have."
+  ],
+  "needs": [
+    {
+      "capability": "energy_count",
+      "kind": "value",
+      "what": "a value expression reading how many energy counters a player has (PlayerState.energy), e.g. {\"energy_of\": \"you\"}, usable as a pump's power/toughness so \"it gets +X/+X where X is the amount of {E} you have\" can be said",
+      "why_existing_wont_do": "value_keys has counters_on, which reads counters on objects only (a player is not an object), and max_poison_of / max_life_of, which read poison and life but not energy; add_energy and the pay_energy cost exist, and may.any_amount binds energy PAID, but nothing reads the energy a player currently holds"
+    }
+  ],
+  "closest_existing": ["counters_on", "max_poison_of", "add_energy", "pump"],
+  "confidence": "high"
+}
