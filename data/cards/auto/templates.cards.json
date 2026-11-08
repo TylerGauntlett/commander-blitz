@@ -130309,6 +130309,80 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "add_subtype",
+          "kind": "static",
+          "off_battlefield": true,
+          "subtypes": [
+            "Human",
+            "Soldier",
+            "Warrior",
+            "Wizard",
+            "Cleric",
+            "Rogue",
+            "Knight",
+            "Elf",
+            "Goblin",
+            "Zombie",
+            "Vampire",
+            "Spirit",
+            "Beast",
+            "Elemental",
+            "Dragon",
+            "Angel",
+            "Demon",
+            "Sphinx",
+            "Bird",
+            "Cat",
+            "Snake",
+            "Insect",
+            "Serpent",
+            "Giant",
+            "Orc",
+            "Merfolk",
+            "Druid",
+            "Shaman",
+            "Bear",
+            "Wall"
+          ],
+          "text": "Creatures you control are every creature type. The same is true for creature spells you control and creature cards you own that aren't on the battlefield."
+        },
+        {
+          "cost": {
+            "mana": "{3}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "shapeshifter_2_2_u_changeling"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}, {T}: Create a 2/2 blue Shapeshifter creature token with changeling. (It is every creature type.)"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "maskwood_nexus",
+      "mana_cost": "{4}",
+      "name": "Maskwood Nexus",
+      "oracle_text": "Creatures you control are every creature type. The same is true for creature spells you control and creature cards you own that aren't on the battlefield.\n{3}, {T}: Create a 2/2 blue Shapeshifter creature token with changeling. (It is every creature type.)",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],

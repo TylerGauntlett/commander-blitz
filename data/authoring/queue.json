@@ -168782,12 +168782,12 @@
     },
     "Maskwood Nexus": {
       "edhrec_rank": 494,
-      "gate": "template",
+      "gate": null,
       "name": "Maskwood Nexus",
-      "reason": "no template for: Creatures you control are every creature type. The same is true for creature spells you co",
+      "reason": "",
       "scryfall_id": "404b3e0f-994e-49c8-b18a-ebbf418e741a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mass Appeal": {

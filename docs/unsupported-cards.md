@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**253 cards** blocked by **231** capabilities.
+**252 cards** blocked by **230** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -110,7 +110,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [enters-as-copy-embalmed-exception](#enters-as-copy-embalmed-exception) | 1 | 4333 | replacement |
 | [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
-| [every-creature-type-everywhere](#every-creature-type-everywhere) | 1 | 494 | static_effect |
 | [exile-bottom-of-library](#exile-bottom-of-library) | 1 | 4763 | selector |
 | [exile-cards-with-card-types-among-them](#exile-cards-with-card-types-among-them) | 1 | 9107 | selector |
 | [exile-face-down](#exile-face-down) | 1 | 1363 | op |
@@ -1981,20 +1980,6 @@ Blocks **1** card.
 - **Collective Brutality** (rank 11817) — `collective_brutality`
   - Escalate—Discard a card. (Pay this cost for each mode chosen beyond the first.)
   - • Target opponent reveals their hand. You choose an instant or sorcery card from it. That player discards that card.
-
-</details>
-
-## every-creature-type-everywhere
-
-Blocks **1** card.
-
-- **(static_effect)** a static on a permanent that makes other objects every creature type in every zone: creatures you control on the battlefield, creature spells you control on the stack, and creature cards you own in hand, library, graveyard, exile and the command zone
-  <br>Why the existing vocabulary won't do: add_subtype can cover creatures on the battlefield, but the layer pipeline applies statics to battlefield objects only; printed_creature_types and card_in_exile_characteristics honour only a card's own self_only add_subtype (a CDA such as changeling), never a grant from another permanent, so spells and cards off the battlefield would keep their printed types
-
-<details><summary>Cards waiting on this</summary>
-
-- **Maskwood Nexus** (rank 494) — `maskwood_nexus`
-  - Creatures you control are every creature type. The same is true for creature spells you control and creature cards you own that aren't on the battlefield.
 
 </details>
 
