@@ -312662,12 +312662,12 @@
     },
     "Wear Down": {
       "edhrec_rank": 2324,
-      "gate": "template",
+      "gate": null,
       "name": "Wear Down",
-      "reason": "no template for: Gift a card",
+      "reason": "",
       "scryfall_id": "fded2b83-3b7d-4c8c-83c4-0624a1069628",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Weary Prisoner // Wrathful Jailbreaker": {
@@ -317792,12 +317792,12 @@
     },
     "Wizard Class": {
       "edhrec_rank": 634,
-      "gate": "template",
+      "gate": null,
       "name": "Wizard Class",
-      "reason": "no template for: You have no maximum hand size",
+      "reason": "",
       "scryfall_id": "6b429f7a-da0c-4570-87ed-9945a657fe11",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wizard Mentor": {

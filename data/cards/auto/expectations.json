@@ -20168,6 +20168,10 @@
       "graveyard"
     ]
   },
+  "wear_down": {
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
+  },
   "weathered_sentinels": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -20654,6 +20658,13 @@
     "tokens": {
       "count": 2,
       "id": "warrior_1_1_r"
+    },
+    "zone": "battlefield"
+  },
+  "wizard_class": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
     },
     "zone": "battlefield"
   },
