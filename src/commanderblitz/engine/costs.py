@@ -404,7 +404,7 @@ def _mana_condition_met(state: GameState, pid: int, oid: int, ability: Ability) 
     return bool(evaluate(ctx, ability.activation_condition))
 
 
-def mana_amount(state: GameState, oid: int, ability: Ability) -> int:
+def mana_amount(state: GameState, oid: int, ability: Ability, x: int = 0) -> int:
     """How many times this mana ability's symbols are produced, right now.
 
     "Add {G} for each +1/+1 counter on this creature" -- Gyre Sage. The count is
@@ -418,6 +418,10 @@ def mana_amount(state: GameState, oid: int, ability: Ability) -> int:
 
     Clamped at zero: a negative multiplier is not a thing a card can mean, and
     an ability with no counters on it simply makes no mana.
+
+    ``x`` is the number a by-hand activation announced for a cost that takes X
+    permanents or cards (`cost_x_ceiling`) -- the one way a mana ability has an
+    X to read. Zero everywhere else, which is what the solver's sources carry.
     """
     if ability.mana_split:
         # A split ability's size is already inside each option -- the
@@ -435,6 +439,7 @@ def mana_amount(state: GameState, oid: int, ability: Ability) -> int:
         controller=obj.controller,
         source_oid=oid,
         source_name=state.card_of(obj).name,
+        x=x,
     )
     return max(0, int(evaluate_value(ctx, ability.mana_amount)))
 
@@ -677,14 +682,14 @@ def _split_options(state: GameState, oid: int, ability: Ability) -> tuple[tuple[
     option per composition and the solver picks the one that pays the spell --
     which is exactly what a player does at a table.
 
-    X is read here, at activation, through `_split_amount`; it is the same
+    X is read here, at activation, through `split_amount`; it is the same
     value expression `mana_amount` reads, and `mana_amount` returns 1 for a
     split ability so the size is not applied twice.
 
     X of zero yields nothing -- a Vivi with 0 power taps for no mana, which is
     the printed card.
     """
-    total = _split_amount(state, oid, ability)
+    total = split_amount(state, oid, ability)
     indices = [SYMBOL_INDEX[c] for c in ability.mana_split if c in SYMBOL_INDEX]
     if total <= 0 or not indices:
         return ()
@@ -711,8 +716,11 @@ def _split_options(state: GameState, oid: int, ability: Ability) -> tuple[tuple[
     return tuple(options)
 
 
-def _split_amount(state: GameState, oid: int, ability: Ability) -> int:
-    """X for a split ability, read the way `mana_amount` reads every other one."""
+def split_amount(state: GameState, oid: int, ability: Ability, x: int = 0) -> int:
+    """X for a split ability, read the way `mana_amount` reads every other one.
+
+    ``x`` is `mana_amount`'s: the number a by-hand activation announced.
+    """
     if ability.mana_amount is None:
         return 0
 
@@ -724,6 +732,7 @@ def _split_amount(state: GameState, oid: int, ability: Ability) -> int:
         controller=obj.controller,
         source_oid=oid,
         source_name=state.card_of(obj).name,
+        x=x,
     )
     return max(0, int(evaluate_value(ctx, ability.mana_amount)))
 
@@ -1310,6 +1319,10 @@ def can_pay(
         # "Sacrifice X Foods" at the announced number; X = 0 is always payable,
         # the `discard_x` floor.
         return False
+    if cost.tap_x is not None and x > tap_x_ceiling(state, pid, cost, source_oid):
+        # "Tap X untapped tokens" at the announced number; X = 0 is always
+        # payable, the `discard_x` floor.
+        return False
     if cost.return_to_hand is not None and not _return_pool(state, pid, cost, source_oid):
         return False
     if cost.tap_permanents is not None and not _tap_cost_pool(state, pid, cost, source_oid):
@@ -1531,6 +1544,59 @@ def sacrifice_x_ceiling(
     offer, `game._activate`'s question and `can_pay` -- so they cannot disagree.
     """
     return len(_sacrificeable(state, pid, cost.sacrifice_x or {}, source_oid))
+
+
+def _tap_x_pool(state: GameState, pid: int, cost: Cost, source_oid: int | None) -> list[int]:
+    """The untapped permanents a ``tap_x`` cost may tap.
+
+    `_tap_cost_pool`'s reading -- controller defaults to you, ``tapped: False``
+    forced, summoning sickness irrelevant (302.6 restricts only a permanent's
+    own ``{T}``) -- with one exclusion that pool does not need: when the same
+    cost also prints ``{T}``, the source is not fodder. It is tapped for the
+    ``{T}`` and cannot be tapped a second time (Hazel of the Rootbloom's
+    ruling: a token Hazel can't pay both), so counting it would announce an X
+    the payment cannot meet.
+    """
+    spec = dict(cost.tap_x or {})
+    spec.setdefault("controller", "you")
+    spec.setdefault("zone", "battlefield")
+    spec["tapped"] = False
+    ctx = EffectContext(state=state, controller=pid, source_oid=source_oid)
+    pool = resolve_pool(ctx, spec)
+    if cost.tap and source_oid is not None:
+        pool = [oid for oid in pool if oid != source_oid]
+    return pool
+
+
+def tap_x_ceiling(state: GameState, pid: int, cost: Cost, source_oid: int | None = None) -> int:
+    """The most X a ``tap_x`` cost may announce: the untapped permanents it may tap.
+
+    `sacrifice_x_ceiling`'s twin, read by the same places, so the offer, the
+    question and the charge cannot disagree.
+    """
+    return len(_tap_x_pool(state, pid, cost, source_oid))
+
+
+def cost_x_ceiling(
+    state: GameState, pid: int, cost: Cost | None, source_oid: int | None = None
+) -> int | None:
+    """The ceiling of an X a cost announces by **what it takes**, or ``None``.
+
+    "Discard X cards", "Sacrifice X Foods", "Tap X untapped tokens": X is
+    bounded by the pool the cost draws on. ``None`` for every other cost --
+    a mana ``{X}`` is bounded by mana and a ``-X`` by loyalty, each by its own
+    reader. The one dispatch `game._activate`, `game._activate_mana` and
+    `legality._ability_aims` share.
+    """
+    if cost is None:
+        return None
+    if cost.discard_x:
+        return discard_x_ceiling(state, pid, cost, source_oid)
+    if cost.sacrifice_x is not None:
+        return sacrifice_x_ceiling(state, pid, cost, source_oid)
+    if cost.tap_x is not None:
+        return tap_x_ceiling(state, pid, cost, source_oid)
+    return None
 
 
 def _blight_pool(state: GameState, pid: int, source_oid: int | None) -> list[int]:
@@ -2045,6 +2111,16 @@ def pay(
                 tap_permanent(state, chosen)
                 remaining.remove(chosen)
 
+    if cost.tap_x is not None and x > 0:
+        # Exactly the announced number, chosen now (601.2h) -- the pool X was
+        # bounded by, so the source paid for `{T}` is never asked twice.
+        pool = _tap_x_pool(state, pid, cost, source_oid)
+        picked = yield from ask_objects(ctx, f"Tap {x}", pool, x, x, pid, "tap_cost")
+        if len(picked) < x:
+            return False
+        for oid in picked:
+            tap_permanent(state, oid)
+
     if cost.untap_permanents is not None:
         spec = dict(cost.untap_permanents)
         count = int(spec.pop("count", 1) or 1)
@@ -2283,6 +2359,9 @@ def activate_mana_ability(
     option_index: int = 0,
     source_traits: ManaOrigin | None = None,
     ability: Any = None,
+    *,
+    x: int = 0,
+    option: tuple[int, ...] | None = None,
 ) -> None:
     """Tap a permanent for mana.  Mana abilities never use the stack.
 
@@ -2310,6 +2389,12 @@ def activate_mana_ability(
     permanent only while it is on the battlefield, so once the cost has
     sacrificed it `abilities_of` no longer lists it. `Game._activate_mana`
     hands over the ability it read before paying.
+
+    ``x`` and ``option`` are a by-hand activation whose cost announced X
+    ("Tap X untapped tokens", `cost_x_ceiling`): the amount reads ``x``, and
+    ``option`` is the yield `Game._activate_mana` asked for once X was known --
+    a split's composition, which no option index can name because the
+    compositions of X are only knowable after X is.
     """
     if ability is None:
         ability = abilities_of(state, oid)[ability_index]
@@ -2322,7 +2407,9 @@ def activate_mana_ability(
     # question: a spell offered on doubled mana and then paid on single mana
     # strands the payment mid-cast.
     doubled = obj is not None and player_doubles_mana_from(state, obj.controller, oid)
-    options = mana_options_of(state, oid, ability)
+    options = (option,) if option is not None else mana_options_of(state, oid, ability)
+    if option is not None:
+        option_index = 0
     if option_index >= len(options):
         # The board changed what this ability offers between the plan and the
         # payment. A reflecting ability is the first whose options are not
@@ -2334,7 +2421,7 @@ def activate_mana_ability(
     produced = mana_produced(
         options[option_index],
         doubled=doubled,
-        times=mana_amount(state, oid, ability),
+        times=mana_amount(state, oid, ability, x),
     )
     # "Whenever you tap a Swamp for mana, add an additional {B}." Read before
     # the tap for the reason the variable amount above is, and only when the

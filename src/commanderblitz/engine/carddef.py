@@ -445,6 +445,15 @@ class Cost:
     #: shape over `sacrifice`'s pool. Not ``sacrifice`` with a ``count``,
     #: which is a number the card fixes.
     sacrifice_x: Mapping[str, Any] | None = None
+    #: "{T}, **Tap X untapped tokens you control**: Add X mana in any
+    #: combination of colors." -- Hazel of the Rootbloom. ``sacrifice_x``'s
+    #: shape over ``tap_permanents``' pool: a selector over the battlefield
+    #: (controller defaults to you, untapped forced), the controller announces
+    #: X as the ability is activated, bounded by `costs.tap_x_ceiling`, and taps
+    #: exactly that many as the cost; the effects -- a mana ability's
+    #: ``add_mana`` ``amount`` included -- read X back with ``{"x": true}``.
+    #: Not ``tap_permanents`` with a ``count``, which is a number the card fixes.
+    tap_x: Mapping[str, Any] | None = None
     exile_from_graveyard: Mapping[str, Any] | None = None
     #: How much less **this cost node** costs -- `{"count": filter}`,
     #: `{"total_power": filter}` or a flat `{"amount": N}`, any of them optionally
@@ -512,6 +521,7 @@ class Cost:
             discard_self=bool(spec.get("discard_self", False)),
             discard_x=bool(spec.get("discard_x")),
             sacrifice_x=(dict(spec["sacrifice_x"]) if spec.get("sacrifice_x") else None),
+            tap_x=(dict(spec["tap_x"]) if spec.get("tap_x") is not None else None),
             pay_life=(
                 dict(spec["pay_life"])
                 if isinstance(spec.get("pay_life"), Mapping)
@@ -577,6 +587,15 @@ class Cost:
         """
         return self == Cost(mana=self.mana)
 
+    @property
+    def takes_x(self) -> bool:
+        """Does this cost announce an X bounded by what it takes?
+
+        "Discard X cards", "Sacrifice X Foods", "Tap X untapped tokens" --
+        `costs.cost_x_ceiling` bounds each. The X a mana ability can read.
+        """
+        return self.discard_x or self.sacrifice_x is not None or self.tap_x is not None
+
     def is_tap_only(self) -> bool:
         """True when the only cost is ``{T}`` -- the shape mana sources must have."""
         return (
@@ -596,6 +615,7 @@ class Cost:
             and self.discard == 0
             and not self.discard_x
             and self.sacrifice_x is None
+            and self.tap_x is None
             and not self.discard_self
             # Without this the payment solver would treat Millikin as a plain
             # tap-for-mana source and take the {C} without ever milling.
@@ -635,6 +655,8 @@ class Cost:
             parts.append("Sacrifice")
         if self.sacrifice_x:
             parts.append("Sacrifice X")
+        if self.tap_x is not None:
+            parts.append("Tap X untapped permanents")
         if self.return_to_hand:
             parts.append("Return to hand")
         if self.tap_permanents:

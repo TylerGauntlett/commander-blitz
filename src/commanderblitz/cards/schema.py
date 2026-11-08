@@ -110,6 +110,16 @@ class CostModel(BaseModel):
     #: one sacrificed permanent to name); not beside ``sacrifice`` (two
     #: sacrifices drawing on one board) and not beside another announced X.
     sacrifice_x: dict[str, Any] | None = None
+    #: "{T}, **Tap X untapped tokens you control**:" -- Hazel of the Rootbloom.
+    #: ``sacrifice_x``'s shape over ``tap_permanents``' pool: a selector over
+    #: the battlefield (``controller`` defaults to you, untapped forced), X
+    #: announced as the ability is activated and bounded by the matching
+    #: untapped permanents (never the source when the cost also has ``{T}``),
+    #: and that many tapped as the cost; the effects -- a mana ability's
+    #: ``add_mana`` ``amount`` included -- read X back with ``{"x": true}``.
+    #: Activated abilities only. No ``count``, ``total_power`` or ``as``; not
+    #: beside ``tap_permanents`` and not beside another announced X.
+    tap_x: dict[str, Any] | None = None
     #: "{1}{W}, {T}, **Exile this artifact**:" -- Phoenix Down. The exile twin
     #: of `discard_self`, and deliberately not `sacrifice`, which puts the
     #: source in the graveyard. The difference is the whole card here: Phoenix

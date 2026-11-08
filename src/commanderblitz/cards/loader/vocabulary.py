@@ -61,6 +61,7 @@ NOT_A_CAST_TIME_COST = frozenset(
         "discard_self",
         "discard_x",
         "sacrifice_x",
+        "tap_x",
         "pay_life_x",
         "x_value",
     }

@@ -1087,6 +1087,8 @@ ABILITY_COSTS: dict[str, Entry] = {
     "tap": ("{T}: tap the source.", None),
     "tap_permanents": ("Tap N other permanents, or `total_power` of them (crew).",
                        "Crew — a tap cost measured in power"),
+    "tap_x": ("Tap X matching untapped permanents, X announced and bounded by them.",
+              "`tap_x` — tap X untapped permanents, X announced"),
     "times": ("Pay the whole cost that many times (cumulative upkeep).", None),
     "untap": ("{Q}: untap the source.", None),
     "untap_permanents": ("Untap N other permanents.", None),

@@ -294,6 +294,7 @@
    "remove_counters",
    "sacrifice_x",
    "tap",
+   "tap_x",
    "untap",
    "x_value"
   ],

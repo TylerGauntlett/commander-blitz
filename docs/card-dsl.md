@@ -4225,6 +4225,7 @@ and [#card-level-costs](card-dsl-reference.md#card-level-costs):
   "loyalty_x": true,                              // a planeswalker's −X: X loyalty, announced
   "discard_x": true,                              // Gix: discard X cards, X announced
   "sacrifice_x": { "subtypes": ["Food"] },        // Frugivore: sacrifice X Foods, X announced
+  "tap_x": { "is_token": true },                  // Hazel: tap X untapped tokens, X announced
   "remove_counters": { "counter": "-1/-1", "amount": 1 },
   "put_counters":    { "counter": "page", "amount": 1 },   // Mazemind Tome: onto the source
   "exile_from_graveyard": { "types": ["Creature"] },
@@ -4334,6 +4335,47 @@ refuses `count` and `as` inside it (X is the count, and there is no one
 sacrificed permanent to name), the key beside `sacrifice`, beside an `{X}` in
 `mana`, `pay_life_x`, `loyalty_x` or `discard_x` (an ability announces one X),
 and anywhere but an activated ability's cost.
+
+### `tap_x` — tap X untapped permanents, X announced
+
+"{T}, Pay 2 life, Tap X untapped tokens you control: Add X mana in any
+combination of colors." — Hazel of the Rootbloom.
+
+```jsonc
+{ "kind": "activated", "is_mana_ability": true,
+  "cost": { "tap": true, "pay_life": 2, "tap_x": { "is_token": true } },
+  "effects": [{ "op": "add_mana", "split": ["W", "U", "B", "R", "G"],
+                "amount": { "x": true } }] }
+```
+
+`sacrifice_x`'s shape over `tap_permanents`' pool. The value is a selector over
+the battlefield, `controller` defaulting to you and `tapped: false` forced: the
+permanents the cost may tap, summoning-sick ones included (302.6 restricts only
+a permanent's own `{T}`). The controller announces X as the ability is
+activated (601.2b, 107.3) and taps exactly that many, chosen as the cost is
+paid; the effects read X with `{"x": true}` / `"x"`. The ceiling is
+`costs.tap_x_ceiling`, the matching untapped permanents — **less the source
+when the same cost prints `{T}`**, because a permanent tapped for the `{T}`
+cannot be tapped again (a token Hazel can't pay both). Without `{T}` the source
+is fodder when it matches. X = 0 is a legal announcement, so the ability is on
+offer with nothing to tap. A target whose filter reads X is offered once per X,
+as for `discard_x`.
+
+**On a mana ability.** A cost that takes X — `tap_x`, `sacrifice_x` or
+`discard_x` (`Cost.takes_x`) — is the one X a mana ability's `amount` may read;
+the loader refuses `x` there otherwise. Such an ability is not tap-only, so the
+payment solver never activates it: it is offered at priority as one row, and
+its mana floats in the pool for what is cast next, as a Signet's does.
+`Game._activate_mana` asks X (bounded by `costs.cost_x_ceiling`), pays the
+cost, then asks the yield: a `split` one mana at a time over its colours (the
+compositions of X cannot be offered as options before X is known, so the
+`_split_options` fold does not apply), any other ability one option, scaled by
+X.
+
+Not `tap_permanents` with a `count`, which is a number the card fixes. The
+loader refuses `count`, `total_power`, `as` and `tapped` inside it, the key
+beside `tap_permanents`, beside an `{X}` in `mana`, `pay_life_x`, `loyalty_x`,
+`discard_x` or `sacrifice_x`, and anywhere but an activated ability's cost.
 
 ### `mill` — a cost, and never an effect
 

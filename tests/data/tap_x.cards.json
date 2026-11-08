@@ -1,0 +1,75 @@
+{
+  "_comment": "Cards for tests/unit/costs/test_tap_x.py. `t_tx_hazel` is Hazel of the Rootbloom's mana ability without the life payment: tap X untapped tokens, add X mana in any combination of colours. `t_tx_green` is the same cost on a one-colour mana ability, so the amount alone reads X. `t_tx_engine` puts the cost on an ability that uses the stack, so the X the effect reads is visible on a life total. `t_tx_tapper` is a creature whose cost taps itself and X untapped creatures, so the source matches its own selector and must not be counted twice.",
+  "cards": [
+    {
+      "id": "t_tx_hazel",
+      "name": "Test Tap X Hazel",
+      "oracle_text": "{T}, Tap X untapped tokens you control: Add X mana in any combination of colors.",
+      "mana_cost": "{G}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Squirrel"],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}, Tap X untapped tokens you control: Add X mana in any combination of colors.",
+          "is_mana_ability": true,
+          "cost": {"tap": true, "tap_x": {"is_token": true}},
+          "effects": [
+            {"op": "add_mana", "split": ["W", "U", "B", "R", "G"], "amount": {"x": true}}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_tx_green",
+      "name": "Test Tap X Green",
+      "oracle_text": "Tap X untapped tokens you control: Add X {G}.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Tap X untapped tokens you control: Add X {G}.",
+          "is_mana_ability": true,
+          "cost": {"tap_x": {"is_token": true}},
+          "effects": [{"op": "add_mana", "mana": "{G}", "amount": {"x": true}}]
+        }
+      ]
+    },
+    {
+      "id": "t_tx_engine",
+      "name": "Test Tap X Engine",
+      "oracle_text": "{1}, Tap X untapped tokens you control: You gain X life.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}, Tap X untapped tokens you control: You gain X life.",
+          "cost": {"mana": "{1}", "tap_x": {"is_token": true}},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"x": true}}]
+        }
+      ]
+    },
+    {
+      "id": "t_tx_tapper",
+      "name": "Test Tap X Tapper",
+      "oracle_text": "{T}, Tap X untapped creatures you control: You gain X life.",
+      "mana_cost": "{2}",
+      "types": ["Creature"],
+      "subtypes": ["Elf"],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}, Tap X untapped creatures you control: You gain X life.",
+          "cost": {"tap": true, "tap_x": {"types": ["Creature"]}},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"x": true}}]
+        }
+      ]
+    }
+  ]
+}

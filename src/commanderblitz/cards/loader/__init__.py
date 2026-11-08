@@ -3701,6 +3701,9 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
     mana_chosen_color_fixed: tuple[tuple[int, ...], ...] = ()
     mana_any_one_color = False
     mana_split: tuple[str, ...] = ()
+    # "Tap X untapped tokens you control: Add X mana" -- the one X a mana
+    # ability's amount may read, announced before the mana is made.
+    takes_x = cost is not None and cost.takes_x
     if model.is_mana_ability:
         if kind is not AbilityKind.ACTIVATED:
             raise DslError(f"{where}: only activated abilities can be mana abilities")
@@ -3759,7 +3762,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             # offer and the payment both read.
             mana_amount = None
             if "amount" in reflect_effect:
-                _validate_mana_amount(reflect_effect["amount"], f"{where}.amount")
+                _validate_mana_amount(reflect_effect["amount"], f"{where}.amount", takes_x=takes_x)
                 amount = reflect_effect["amount"]
                 mana_amount = dict(amount) if isinstance(amount, Mapping) else amount
         elif (
@@ -3870,7 +3873,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                     f"'choose_mode' of five 'add_mana's"
                 )
             mana_any_one_color = True
-            _validate_mana_amount(effect["amount"], f"{where}.amount")
+            _validate_mana_amount(effect["amount"], f"{where}.amount", takes_x=takes_x)
             mana_amount = effect["amount"]
             # The five colours, one symbol each -- and unlike every other member
             # of the family this is not a placeholder superset to be narrowed at
@@ -3903,7 +3906,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                     f"being divided. Without it the split has no size"
                 )
             mana_split = tuple(colors)
-            _validate_mana_amount(effect["amount"], f"{where}.amount")
+            _validate_mana_amount(effect["amount"], f"{where}.amount", takes_x=takes_x)
             mana_amount = effect["amount"]
             # The static superset, for the reason `reflecting` needs one: an
             # empty tuple at load time makes `solver_taps` and
@@ -3944,7 +3947,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             mana_amount = None
         else:
             mana_options = _mana_options(mana_effects, where)
-            mana_amount = _mana_amount(mana_effects, where)
+            mana_amount = _mana_amount(mana_effects, where, takes_x=takes_x)
     mana_restriction: ManaRestriction | None = None
     if model.mana_restriction is not None:
         if not model.is_mana_ability:

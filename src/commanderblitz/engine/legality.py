@@ -25,7 +25,7 @@ from .costs import (
     ability_purpose,
     can_pay,
     can_pay_mana,
-    discard_x_ceiling,
+    cost_x_ceiling,
     land_drops_available,
     mana_added_total,
     mana_amount,
@@ -35,7 +35,6 @@ from .costs import (
     most_life_for_mana,
     offerable_mana_ability,
     plus_mana,
-    sacrifice_x_ceiling,
     spell_purpose,
 )
 from .effects.conditions import evaluate
@@ -879,18 +878,13 @@ def _ability_aims(
             # ability's bullet is below, because the alternative -- asking for X
             # afterwards -- would declare the targets before the X they depend
             # on existed.
-            if (
-                ability.cost.loyalty_x
-                or ability.cost.discard_x
-                or ability.cost.sacrifice_x is not None
-            ):
+            taken_ceiling = cost_x_ceiling(state, pid, ability.cost, oid)
+            if ability.cost.loyalty_x or taken_ceiling is not None:
                 # The ceiling of a -X is the loyalty there is to remove (606.4),
-                # of "Discard X cards" the cards the cost may take, and of
-                # "Sacrifice X Foods" the permanents it may take.
-                if ability.cost.discard_x:
-                    announced_ceiling = discard_x_ceiling(state, pid, ability.cost, oid)
-                elif ability.cost.sacrifice_x is not None:
-                    announced_ceiling = sacrifice_x_ceiling(state, pid, ability.cost, oid)
+                # and of "Discard X cards", "Sacrifice X Foods" or "Tap X
+                # untapped tokens" what the cost may take.
+                if taken_ceiling is not None:
+                    announced_ceiling = taken_ceiling
                 else:
                     source_obj = state.objects.get(oid)
                     announced_ceiling = source_obj.counter("loyalty") if source_obj is not None else 0
@@ -997,6 +991,7 @@ def _targets_read_x(ability) -> bool:
         not cost.loyalty_x
         and not cost.discard_x
         and cost.sacrifice_x is None
+        and cost.tap_x is None
         and (not cost.mana.x_count or cost.x_value is not None)
     ):
         return False
@@ -1046,6 +1041,12 @@ def _mana_option_indices(state: GameState, oid: int, ability) -> list[int | None
     cannot make or, past the end, refuse the activation the panel just offered.
     """
     if not ability.is_mana_ability:
+        return [None]
+    # "Tap X untapped tokens: Add X mana in any combination of colors." One
+    # row: the yield is asked by `Game._activate_mana` once X is announced,
+    # because a split's compositions depend on it. The X = 0 floor is always
+    # payable, so the row is there with nothing to tap.
+    if ability.cost is not None and ability.cost.takes_x:
         return [None]
 
     return list(range(len(mana_options_of(state, oid, ability))))
