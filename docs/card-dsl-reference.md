@@ -36,7 +36,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Mana rider ops](#mana-rider-ops) | 7 |
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
 | [Card-level face keys](#card-level-face-keys) | 6 |
-| [Card-level rider keys](#card-level-rider-keys) | 19 |
+| [Card-level rider keys](#card-level-rider-keys) | 20 |
 | [Engine events](#engine-events) | 79 |
 
 ## Effect ops
@@ -1121,6 +1121,7 @@ Things a card says about itself that are neither a price nor a second face. Defi
 | `melds_with` | The card this one melds with. | [Meld — mutate's merged permanent, with the pair fixed by the card](card-dsl-cookbook.md#meld--mutates-merged-permanent-with-the-pair-fixed-by-the-card) |
 | `melds_into` | The permanent the pair melds into. | [Meld — mutate's merged permanent, with the pair fixed by the card](card-dsl-cookbook.md#meld--mutates-merged-permanent-with-the-pair-fixed-by-the-card) |
 | `cant_cast_first_turns` | Can't be cast during its controller's first N turns of the game. | [Narrowing when a spell may be cast](card-dsl.md#narrowing-when-a-spell-may-be-cast) |
+| `cast_only_during` | Castable only on whose turn (`turn`) and in which `steps` or `phase` it names, by any route. | [Narrowing when a spell may be cast](card-dsl.md#narrowing-when-a-spell-may-be-cast) |
 | `toxic` | Toxic N: the N, beside `toxic` in `keywords`. | [Toxic N](card-dsl-cookbook.md#toxic-n) |
 | `annihilator` | Annihilator N: the N, beside `annihilator` in `keywords`. | [Annihilator N](card-dsl-cookbook.md#annihilator-n) |
 | `morph_counter` | Megamorph: turns face up with a +1/+1 counter, beside `morph`. | [Face-down permanents — morph, megamorph and manifest](card-dsl-cookbook.md#face-down-permanents--morph-megamorph-and-manifest) |

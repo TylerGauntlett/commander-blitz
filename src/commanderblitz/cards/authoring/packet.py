@@ -193,6 +193,9 @@ CARD_LEVEL_RIDER_KEYS = (
     "melds_with",  # the other half of a meld pair
     "melds_into",  # what the pair becomes
     "cant_cast_first_turns",  # "You can't cast this during your first N turns of the game"
+    # {"turn": "yours"|"opponents", "steps": [...] | "phase": ...}; "Cast this
+    # spell only during [combat|the <step>] [on your|an opponent's] turn"
+    "cast_only_during",
     "toxic",  # int; "Toxic N" -- the N, beside "toxic" in keywords
     # int; "Annihilator N" -- the N, beside "annihilator" in keywords. The
     # trigger is the rules', so no ability is written for it; a granted one

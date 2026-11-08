@@ -3732,6 +3732,47 @@ answers it with the card in hand, on every cast path; on an opponent's turn a
 card with flash can still be cast. `GameState.turn` is the near miss: it counts
 the table's turns, and in a pod the game's third turn is somebody's first.
 
+```jsonc
+// Illusionist's Gambit — "Cast this spell only during the declare blockers step on an opponent's turn."
+{ "types": ["Instant"], "cast_only_during": { "turn": "opponents", "steps": ["declare_blockers"] } }
+// Delirium — "Cast this spell only during an opponent's turn."
+{ "types": ["Instant"], "cast_only_during": { "turn": "opponents" } }
+// Savage Beating — "Cast this spell only during combat on your turn."
+{ "types": ["Instant"], "cast_only_during": { "turn": "yours", "phase": "combat" } }
+```
+
+`cast_only_during` is "cast this spell only during …": the window outside which
+the spell can't be cast. Three keys, each optional:
+
+| key | means | values |
+|---|---|---|
+| `turn` | whose turn | `yours`, `opponents` (the active player is one of the caster's opponents); absent for any player's |
+| `steps` | which steps | step names, spelled as `Step`'s members lower-cased (`declare_blockers`, `upkeep`, `end_step`) |
+| `phase` | which phase | one of `Phase`'s values (`combat`, `beginning`, `precombat_main`, `postcombat_main`, `ending`) |
+
+A printed phase compiles to its steps, so "during combat" is
+`"phase": "combat"` and every combat phase of the turn, an additional one
+included. A printed bound inside combat is a list of steps: "during combat
+before blockers are declared" is `["begin_combat", "declare_attackers"]`, since
+blockers are declared as the declare blockers step begins, and "after blockers
+are declared" is the four steps from `declare_blockers` to `end_of_combat`. "…
+before attackers are declared" on an opponent's turn (Siren's Call) is this key
+beside `cast_before_step`.
+
+Like `cant_cast_first_turns` it is a "can't", answered by
+`player_statics.player_cant_cast_spells` with the card in hand, not a timing
+window in `_timing_ok`. 601.3 holds the restriction against every cast, and the
+resolution-time ones — cascade, suspend, madness, `cast_copy` — ask the "can't"
+question and skip the timing one. It narrows and never widens: a sorcery with
+the key still waits for an empty stack in its main phase.
+
+The loader refuses `steps` beside `phase` (one would be ignored), an empty
+`steps`, an unknown step or phase name, a window naming neither a turn nor a
+step or phase, an unknown key, and the key on a land, which is played and never
+cast. `cast_during` and `step_is` are the near misses: they are conditions read
+inside effects, so an `if` on one lets the spell be cast anywhere and do
+nothing.
+
 ### Choosing a permanent or card type, and reading it back
 
 ```jsonc

@@ -1298,6 +1298,21 @@ class Ability:
 
 
 @dataclass(frozen=True)
+class CastWindow:
+    """ "Cast this spell only during …" -- the window a spell may be cast in.
+
+    ``turn`` is ``"yours"``, ``"opponents"`` or None for any player's turn;
+    ``steps`` the steps it is open in, or None for every step. A printed phase
+    ("during combat") is compiled to its steps, so the one question asked is
+    whether the game is in one of them. Read by
+    `player_statics.player_cant_cast_spells`.
+    """
+
+    turn: str | None = None
+    steps: frozenset[Step] | None = None
+
+
+@dataclass(frozen=True)
 class CardDef:
     """Everything printed on one card."""
 
@@ -1444,6 +1459,11 @@ class CardDef:
     #: game" (Serra Avenger). Read by `player_statics.player_cant_cast_spells`
     #: against `PlayerState.turns_begun`, so every cast path refuses it.
     cant_cast_first_turns: int | None = None
+    #: "Cast this spell only during the declare blockers step on an opponent's
+    #: turn" (Illusionist's Gambit). A "can't" outside the window, read by
+    #: `player_statics.player_cant_cast_spells`, so every cast path refuses it
+    #: -- a free cast by cascade or suspend included (601.3).
+    cast_only_during: CastWindow | None = None
     #: Buyback: a kicked spell returns to its owner's hand instead of the
     #: graveyard when it finishes resolving.
     buyback: bool = False

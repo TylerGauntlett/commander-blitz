@@ -25,6 +25,7 @@ from commanderblitz.engine.battles import DEFENSE as BATTLE_DEFENSE
 from commanderblitz.engine.carddef import (
     Ability,
     CardDef,
+    CastWindow,
     Cost,
     TargetSpec,
     TriggerSpec,
@@ -54,9 +55,11 @@ from commanderblitz.engine.effects.values import (
 from commanderblitz.engine.enums import (
     NUMBERED_KEYWORDS,
     PERMANENT_TYPES,
+    STEP_PHASE,
     SUBTYPE_CLASS,
     AbilityKind,
     CardType,
+    Phase,
     Step,
     Zone,
 )
@@ -1064,6 +1067,42 @@ def _check_division_homes(model: CardModel, where: str) -> None:
                 f"name at most {amount} objects (601.2d: each is dealt at least one); "
                 f"got count {target.count!r}"
             )
+
+
+def _compile_cast_window(model: CardModel) -> CastWindow | None:
+    """ "Cast this spell only during …" -- the card's `cast_only_during`.
+
+    Every refusal here is a card that would otherwise load as a strictly better
+    one: a misspelled step or phase would match nothing and read as no window
+    at all, and a window naming nothing restricts nothing. ``steps`` and
+    ``phase`` are refused together because one of them would be ignored. A
+    land is played, never cast, so the window on one would never be asked.
+    """
+    window = model.cast_only_during
+    if window is None:
+        return None
+    where = f"{model.id}.cast_only_during"
+    if "Land" in model.types:
+        raise DslError(f"{where}: a land is played, not cast, so a casting window never applies")
+    if window.steps is not None and window.phase is not None:
+        raise DslError(f"{where}: takes 'steps' or 'phase', not both")
+    steps: frozenset[Step] | None = None
+    if window.steps is not None:
+        if not window.steps:
+            raise DslError(f"{where}.steps: names no step; leave it out for any step")
+        names = {s.name.lower(): s for s in Step}
+        for name in window.steps:
+            if name not in names:
+                raise DslError(f"{where}.steps: unknown step {name!r} (one of {sorted(names)})")
+        steps = frozenset(names[name] for name in window.steps)
+    elif window.phase is not None:
+        phases = {p.value: p for p in Phase}
+        if window.phase not in phases:
+            raise DslError(f"{where}.phase: unknown phase {window.phase!r} (one of {sorted(phases)})")
+        steps = frozenset(s for s, p in STEP_PHASE.items() if p is phases[window.phase])
+    if window.turn is None and steps is None:
+        raise DslError(f"{where}: names neither a turn nor a step or phase, so it restricts nothing")
+    return CastWindow(turn=window.turn, steps=steps)
 
 
 def compile_card(model: CardModel, *, source: str = "") -> CardDef:
@@ -2419,6 +2458,8 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
                 f"{[s.name.lower() for s in Step]})"
             ) from None
 
+    cast_only_during = _compile_cast_window(model)
+
     if model.cant_cast_first_turns is not None and model.cant_cast_first_turns < 1:
         # "Your first zero turns" restricts nothing: the card would print the
         # line and cast as if it did not.
@@ -2466,6 +2507,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         split_second=model.split_second,
         cast_before_step=cast_before_step,
         cant_cast_first_turns=model.cant_cast_first_turns,
+        cast_only_during=cast_only_during,
         buyback=model.buyback,
         rebound=model.rebound,
         exiles_itself=model.exiles_itself,

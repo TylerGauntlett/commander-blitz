@@ -11,7 +11,7 @@ from __future__ import annotations
 from collections.abc import Iterator, Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 
-from .carddef import CardDef
+from .carddef import CardDef, CastWindow
 from .characteristics import (
     _battlefield_statics,
     _compare_printed,
@@ -2016,6 +2016,19 @@ def _player_static(state: GameState, pid: int, effect: str) -> bool:
 _SHUTS_EVERY_ZONE = frozenset(CASTABLE_ZONES)
 
 
+def in_cast_window(state: GameState, pid: int, window: CastWindow) -> bool:
+    """Whether ``pid`` is inside a card's `cast_only_during` window right now.
+
+    "An opponent's turn" is the active player being one of ``pid``'s
+    opponents (`GameState.opponents`), not merely somebody else.
+    """
+    if window.turn == "yours" and state.active_player != pid:
+        return False
+    if window.turn == "opponents" and state.active_player not in state.opponents(pid):
+        return False
+    return window.steps is None or state.step in window.steps
+
+
 def player_cant_cast_spells(
     state: GameState, pid: int, card: CardDef | None = None, *, x: int = 0
 ) -> bool:
@@ -2061,6 +2074,15 @@ def player_cant_cast_spells(
         # "You can't cast Serra Avenger during your first, second, or third
         # turns of the game." A "can't" on the card rather than a static, asked
         # here so every cast path that asks about a lock asks about this.
+        return True
+    if card is not None and card.cast_only_during is not None and not in_cast_window(
+        state, pid, card.cast_only_during
+    ):
+        # "Cast this spell only during the declare blockers step on an
+        # opponent's turn." Illusionist's Gambit. 601.3: the restriction holds
+        # for every cast, so it is a "can't" asked here, where the free casts
+        # (cascade, suspend, madness, a copy) ask as well -- not a timing
+        # window in `casting._timing_ok`, which those casts skip.
         return True
     if any(
         pid in lock.affects and set(lock.zones) >= _SHUTS_EVERY_ZONE for lock in state.cast_locks
