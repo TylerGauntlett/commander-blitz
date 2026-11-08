@@ -39,7 +39,7 @@ from commanderblitz.engine.carddef import CardDef, Cost
 from commanderblitz.engine.characteristics import chars
 from commanderblitz.engine.effects.context import EffectContext
 from commanderblitz.engine.effects.selectors import matches
-from commanderblitz.engine.enums import ActionKind, DecisionKind, Zone
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
 from commanderblitz.engine.errors import CommanderBlitzError, DslError
 from commanderblitz.engine.game import Game
 from commanderblitz.engine.mana import ManaCost
@@ -584,7 +584,74 @@ def build_sandbox(registry: CardRegistry, card_id: str, *, in_hand: bool = True)
         # fodder and was unplayable here for the same reason. Every other card
         # keeps the single Forest, so no authored `hand_size` moves.
         builder.hand(0, [card_id, *["forest"] * spare_cards_in_hand(under_test)])
+    active, step = sandbox_turn(under_test)
+    if active != 0:
+        builder.active(active)
+    if step is not Step.PRECOMBAT_MAIN:
+        builder.step(step)
     return builder.build(advance=False)
+
+
+#: Steps that grant no priority in a position with no attack declared
+#: (`turn.step_grants_priority`): a sandbox built in one is walked straight past
+#: it before anyone can cast anything.
+_SILENT_WITHOUT_COMBAT = frozenset({Step.UNTAP, Step.DECLARE_ATTACKERS, Step.CLEANUP})
+
+
+def sandbox_turn(card: CardDef | None) -> tuple[int, Step]:
+    """Whose turn the sandbox is, and which step: player 0's precombat main.
+
+    Unless the card says "cast this spell only during …" and that is not it.
+    Illusionist's Gambit is the witness: "only during the declare blockers step
+    on an opponent's turn" is never castable in player 0's main phase, so gate 4
+    rejected a correct card -- the harness unable to represent the moment the
+    card exists for, the same absence `x_spell` and `legendary_creature` record.
+    The house answer is the same: move the position, do not relax the gate. The
+    card is still cast through `legal_actions`, which asks `in_cast_window`, so a
+    window written wrong is still a card nobody can cast here.
+
+    So the turn is player 1's for `turn: "opponents"` -- player 0 stays the one
+    casting and measured, and every authored seat number keeps its meaning --
+    and the step is the window's first one when precombat main is outside it.
+
+    **Built in that step, not moved into it after advancing.** The unit tests of
+    `cast_only_during` build in main and move, which needs player 0 to *hold* priority in
+    main first; here nobody does on an opponent's turn -- the spare Forest is not
+    playable there and the card under test is shut out -- so auto-pass walked
+    both seats on into the opponent's declare attackers. The builder marks the
+    step started, so no turn-based action runs on arrival and the step simply
+    grants priority: the opponent, holding nothing, passes (`_cast` passes for
+    them if a prop of theirs ever gives them something to stop for), and player
+    0 holds priority inside the window with the card on offer. A step that grants none
+    without an attack (`_SILENT_WITHOUT_COMBAT`) is the one exception, skipped
+    for the window's next step when it has one.
+
+    Only a card with a window is moved. Every other card -- including one whose
+    window already holds player 0's main -- keeps the exact position it was
+    measured in, and no authored expectation moves.
+
+    **Measurement has to stay before cleanup, and here nothing guarantees it.**
+    On player 0's own main phase the spare Forest is the stop `drive` returns
+    at. On an opponent's turn it is unplayable, so once the spell resolves both
+    seats hold nothing but a pass, auto-pass runs the turn on, and `drive` only
+    notices the turn boundary after cleanup and the next draw step. A window
+    before combat is stopped by the opponent's declare attackers, since their
+    board holds creatures; the Gambit is stopped by the declaration of the extra
+    combat it grants. A window that reaches neither is refused by `_cast` with
+    that reason rather than measured late -- an unrepresented shape reported,
+    never a card measured after its until-end-of-turn effects wore off. A
+    castable spare that held priority would not do: it holds the stack open
+    too, the trap the spare Forest's comment records.
+    """
+    window = card.cast_only_during if card is not None else None
+    if window is None:
+        return 0, Step.PRECOMBAT_MAIN
+    active = 1 if window.turn == "opponents" else 0
+    step = Step.PRECOMBAT_MAIN
+    if window.steps is not None and step not in window.steps:
+        ordered = sorted(window.steps)
+        step = next((s for s in ordered if s not in _SILENT_WITHOUT_COMBAT), ordered[0])
+    return active, step
 
 
 def spare_cards_in_hand(card: CardDef | None) -> int:
@@ -1281,6 +1348,30 @@ def _play_and_check(registry: CardRegistry, card: CardDef, expectation: dict) ->
     )
 
 
+def _pass_for_the_opponent(game: Game, limit: int = 8) -> None:
+    """Pass the opponent's priority until player 0 holds it, within this step.
+
+    On an opponent's turn they hold priority first (117.3a). Their sandbox board
+    holds nothing they stop for today, so this does nothing; it is here so that a
+    prop of theirs offering an action never reads as "not playable" for the card
+    under test. Passing is the only answer given -- the opponent acts on nothing.
+    """
+    step = game.state.step
+    for _ in range(limit):
+        decision = game.pending()
+        if (
+            decision is None
+            or decision.kind is not DecisionKind.PRIORITY
+            or decision.player == 0
+            or game.state.step is not step
+        ):
+            return
+        passes = [a for a in game.legal_actions() if a.kind is ActionKind.PASS]
+        if not passes:
+            return
+        game.apply(passes[0])
+
+
 def _cast(
     registry: CardRegistry,
     card: CardDef,
@@ -1308,6 +1399,8 @@ def _cast(
     if any(spec.kind in ("spell", "spell_or_ability") for spec in card.targets):
         add_dummy_spell(game, registry, card)
     game._advance()
+    if card.cast_only_during is not None:
+        _pass_for_the_opponent(game)
 
     action = find_play(
         game, card.id, kicked=kicked, multikicked=multikicked, gifted=gifted
@@ -1323,8 +1416,17 @@ def _cast(
         was = chars(game.state, target_oid)
         before = (was.power, was.toughness)
 
+    turn = game.state.turn
     game.apply(action)
     drive(game)
+    if card.cast_only_during is not None and game.state.turn != turn:
+        # A windowed card only: see `sandbox_turn` for why its turn can roll
+        # over. Measured now, it would be measured after cleanup and the next
+        # draw step, so it is refused here rather than judged at gate 5.
+        raise CommanderBlitzError(
+            f"{card.id} was cast in its window but the sandbox ran past cleanup "
+            "before it could be measured"
+        )
     return game, oid, target_oid, before
 
 

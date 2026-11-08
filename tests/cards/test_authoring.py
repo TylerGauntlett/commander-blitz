@@ -269,6 +269,87 @@ class TestTheSandboxGraveyardFeedsAnExileCost:
         assert len(self._graveyard(hand_written, DIVINATION)) == 2
 
 
+class TestTheSandboxMeetsACastWindow:
+    """A `cast_only_during` card is cast inside its window, not in your main phase.
+
+    Illusionist's Gambit is never castable on player 0's turn, so gate 4
+    rejected a correct card. The sandbox now moves to the window -- and only for
+    a card with one -- and the card is still cast through `legal_actions`.
+    """
+
+    INSTANT = {
+        "id": "auto_test_instant",
+        "name": "Auto Test Instant",
+        "oracle_text": "Draw a card.",
+        "mana_cost": "{U}",
+        "types": ["Instant"],
+        "spell_effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}],
+    }
+
+    # The Gambit's window, and its extra combat: that combat's declaration is
+    # the stop that keeps the measurement inside the turn.
+    GAMBIT = {
+        **INSTANT,
+        "id": "auto_test_gambit",
+        "name": "Auto Test Gambit",
+        "oracle_text": (
+            "Cast this spell only during the declare blockers step on an opponent's turn.\n"
+            "After this phase, there is an additional combat phase."
+        ),
+        "cast_only_during": {"turn": "opponents", "steps": ["declare_blockers"]},
+        "spell_effects": [{"op": "extra_combat"}],
+    }
+
+    # The same window around a bare draw: nothing stops the opponent's turn
+    # from running on through cleanup once it resolves.
+    LATE_DRAW = {
+        **INSTANT,
+        "id": "auto_test_late_draw",
+        "name": "Auto Test Late Draw",
+        "oracle_text": (
+            "Cast this spell only during the declare blockers step on an opponent's turn.\n"
+            "Draw a card."
+        ),
+        "cast_only_during": {"turn": "opponents", "steps": ["declare_blockers"]},
+    }
+
+    def _merged(self, pool: CardRegistry, payload: dict):
+        card = V.compile_card(V.CardModel.model_validate(payload))
+        return V.CardRegistry({**{c.id: c for c in pool}, card.id: card}), card
+
+    def test_the_window_card_is_built_on_the_opponent_s_declare_blockers(self, hand_written):
+        merged, card = self._merged(hand_written, self.GAMBIT)
+        game = V.build_sandbox(merged, card.id)
+        assert (game.state.active_player, game.state.step) == (1, V.Step.DECLARE_BLOCKERS)
+
+    def test_it_is_cast_legally_and_lands_in_the_graveyard(self, hand_written):
+        merged, card = self._merged(hand_written, self.GAMBIT)
+        game, oid, _, _ = V._cast(merged, card)
+        assert game.state.objects[oid].zone is V.Zone.GRAVEYARD
+        # Measured inside the turn it was cast in, before cleanup.
+        assert (game.state.turn, game.state.active_player) == (1, 1)
+
+    def test_it_clears_every_gate(self, hand_written):
+        verdict = V.verify(
+            self.GAMBIT, {"zone": "graveyard", "hand_size": {"0": 1}}, hand_written
+        )
+        assert verdict.ok, str(verdict)
+        assert "playable" in verdict.passed
+
+    def test_a_cast_measured_past_cleanup_is_refused(self, hand_written):
+        """The gate is not weaker than it was: a late measurement is a failure."""
+        verdict = V.verify(self.LATE_DRAW, {"hand_size": {"0": 2}}, hand_written)
+        assert verdict.failed_gate == "playable"
+        assert "past cleanup" in verdict.reason
+
+    def test_an_ordinary_instant_keeps_its_position(self, hand_written):
+        merged, card = self._merged(hand_written, self.INSTANT)
+        assert V.sandbox_turn(card) == (0, V.Step.PRECOMBAT_MAIN)
+        game = V.build_sandbox(merged, card.id)
+        assert (game.state.active_player, game.state.step) == (0, V.Step.PRECOMBAT_MAIN)
+        assert game.state.turn == 1
+
+
 class TestTheSandboxIsUsable:
     def test_it_builds_from_whatever_pool_it_is_given(self, pool):
         """No dependency on test-only fixture cards.
