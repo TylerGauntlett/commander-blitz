@@ -93649,6 +93649,115 @@
     {
       "abilities": [
         {
+          "cost": {
+            "pay_life": 2,
+            "tap": true,
+            "tap_x": {
+              "is_token": true
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "x": true
+              },
+              "op": "add_mana",
+              "split": [
+                "W",
+                "U",
+                "B",
+                "R",
+                "G"
+              ]
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}, Pay 2 life, Tap X untapped tokens you control: Add X mana in any combination of colors."
+        },
+        {
+          "effects": [
+            {
+              "condition": {
+                "exists": {
+                  "subtypes": [
+                    "Squirrel"
+                  ],
+                  "target": "t1",
+                  "zone": "battlefield"
+                }
+              },
+              "else": [
+                {
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "copy_permanent"
+                }
+              ],
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "copy_permanent"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "is_token": true,
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "At the beginning of your end step, create a token that's a copy of target token you control. If that token is a Squirrel, instead create two tokens that are copies of it.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "hazel_of_the_rootbloom",
+      "mana_cost": "{2}{B}{G}",
+      "name": "Hazel of the Rootbloom",
+      "oracle_text": "{T}, Pay 2 life, Tap X untapped tokens you control: Add X mana in any combination of colors.\nAt the beginning of your end step, create a token that's a copy of target token you control. If that token is a Squirrel, instead create two tokens that are copies of it.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Squirrel",
+        "Druid"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_spells": {
             "colors": [
               "R"

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**260 cards** blocked by **238** capabilities.
+**259 cards** blocked by **237** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -229,7 +229,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [static-greatest-power-in-graveyard](#static-greatest-power-in-graveyard) | 1 | 10492 | value |
 | [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
-| [tap-x-permanents-cost](#tap-x-permanents-cost) | 1 | 2962 | cost |
 | [target-if-cast-during](#target-if-cast-during) | 1 | 1524 | selector |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
@@ -3690,20 +3689,6 @@ Blocks **1** card.
 
 - **Lux Artillery** (rank 3735) — `lux_artillery`
   - Whenever you cast an artifact creature spell, it gains sunburst. (It enters with a +1/+1 counter on it for each color of mana spent to cast it.)
-
-</details>
-
-## tap-x-permanents-cost
-
-Blocks **1** card.
-
-- **(cost)** a tap_permanents cost whose count is a variable X chosen by the activating player at payment (any number 0..pool size of untapped tokens you control), with X bound so the ability's effects (here a mana ability's add_mana amount, split in any combination of colors) can read it
-  <br>Why the existing vocabulary won't do: tap_permanents takes only a fixed integer `count` (costs._tap_cost_pool / pay path do int(spec.pop('count', 1)) and ask exactly that many) or crew's `total_power`; `x_value` derives X from a value expression rather than letting the payer choose how many permanents to tap, and `as` binds only the single tapped permanent, not the number tapped. Myr Battlesphere's 'tap X untapped Myr' is an effect inside a trigger, not an activation cost, and a mana ability may not carry that effect
-
-<details><summary>Cards waiting on this</summary>
-
-- **Hazel of the Rootbloom** (rank 2962) — `hazel_of_the_rootbloom`
-  - {T}, Pay 2 life, Tap X untapped tokens you control: Add X mana in any combination of colors.
 
 </details>
 
