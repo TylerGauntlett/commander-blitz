@@ -1,0 +1,110 @@
+{
+  "_comment": "Shapes for tests/unit/casting/test_cast_only_during.py. Each is a one-mana instant whose payload is a bare draw, so the tests measure the window and not the effect. t_cod_gambit is Illusionist's Gambit's first line (an opponent's declare blockers step), t_cod_delirium is Delirium's (an opponent's turn, any step), t_cod_beating is Savage Beating's (combat on your turn, written as a phase), and t_cod_free is the identical instant WITHOUT a window, kept live so every 'cannot be cast' assertion is measured against a card that can.",
+  "cards": [
+    {
+      "id": "t_cod_gambit",
+      "name": "Test Gambit Window",
+      "oracle_text": "Cast this spell only during the declare blockers step on an opponent's turn.\nDraw a card.",
+      "mana_cost": "{U}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "spell_effects": [
+        {
+          "op": "draw",
+          "amount": {
+            "const": 1
+          }
+        }
+      ],
+      "cast_only_during": {
+        "turn": "opponents",
+        "steps": [
+          "declare_blockers"
+        ]
+      }
+    },
+    {
+      "id": "t_cod_delirium",
+      "name": "Test Delirium Window",
+      "oracle_text": "Cast this spell only during an opponent's turn.\nDraw a card.",
+      "mana_cost": "{U}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "spell_effects": [
+        {
+          "op": "draw",
+          "amount": {
+            "const": 1
+          }
+        }
+      ],
+      "cast_only_during": {
+        "turn": "opponents"
+      }
+    },
+    {
+      "id": "t_cod_beating",
+      "name": "Test Beating Window",
+      "oracle_text": "Cast this spell only during combat on your turn.\nDraw a card.",
+      "mana_cost": "{U}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "spell_effects": [
+        {
+          "op": "draw",
+          "amount": {
+            "const": 1
+          }
+        }
+      ],
+      "cast_only_during": {
+        "turn": "yours",
+        "phase": "combat"
+      }
+    },
+    {
+      "id": "t_cod_free",
+      "name": "Test Open Window",
+      "oracle_text": "Draw a card.",
+      "mana_cost": "{U}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "spell_effects": [
+        {
+          "op": "draw",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    }
+  ]
+}

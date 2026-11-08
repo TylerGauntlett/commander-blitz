@@ -17,7 +17,9 @@ from pathlib import Path
 import pytest
 
 from commanderblitz.cards.authoring.verify import (
+    _pass_for_the_opponent,
     check_expectation,
+    sandbox_turn,
     spare_cards_in_hand,
     swap_in_artifact_body,
     swap_in_legendary_body,
@@ -143,6 +145,15 @@ def build_sandbox(registry: CardRegistry, card_id: str, *, in_hand: bool = True)
         # `verify.build_sandbox` uses, so Cathartic Reunion's "discard two
         # cards" has its fodder in both harnesses.
         builder.hand(0, [card_id, *["forest"] * spare_cards_in_hand(under_test)])
+    # "Cast this spell only during …" (Illusionist's Gambit, Savage Beating):
+    # the turn and step come from `verify.sandbox_turn`, shared rather than
+    # copied, so the two harnesses build the same window. Every card without
+    # one keeps player 0's precombat main.
+    active, step = sandbox_turn(under_test)
+    if active != 0:
+        builder.active(active)
+    if step is not Step.PRECOMBAT_MAIN:
+        builder.step(step)
     return builder.build(advance=False)
 
 
@@ -307,6 +318,9 @@ class TestEveryCardIsPlayable:
         if needs_spell_target:
             add_dummy_spell(game)
         game._advance()
+        if card.cast_only_during is not None:
+            # On an opponent's turn they hold priority first (117.3a).
+            _pass_for_the_opponent(game)
 
         action = find_play(game, card_id)
         if action is None and card.targets:

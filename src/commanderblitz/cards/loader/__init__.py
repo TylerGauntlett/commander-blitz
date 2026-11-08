@@ -25,6 +25,7 @@ from commanderblitz.engine.battles import DEFENSE as BATTLE_DEFENSE
 from commanderblitz.engine.carddef import (
     Ability,
     CardDef,
+    CastWindow,
     Cost,
     TargetSpec,
     TriggerSpec,
@@ -54,9 +55,11 @@ from commanderblitz.engine.effects.values import (
 from commanderblitz.engine.enums import (
     NUMBERED_KEYWORDS,
     PERMANENT_TYPES,
+    STEP_PHASE,
     SUBTYPE_CLASS,
     AbilityKind,
     CardType,
+    Phase,
     Step,
     Zone,
 )
@@ -190,6 +193,7 @@ from .walk import (
     _mentions_key_anywhere,
     _mentions_kicked,
     _mentions_pair,
+    _reads_gift_recipient,
     _refuse_granted_chosen_qualities,
     _walk_effect_specs,
     check_literal_mana_value_key,
@@ -1065,6 +1069,42 @@ def _check_division_homes(model: CardModel, where: str) -> None:
             )
 
 
+def _compile_cast_window(model: CardModel) -> CastWindow | None:
+    """ "Cast this spell only during …" -- the card's `cast_only_during`.
+
+    Every refusal here is a card that would otherwise load as a strictly better
+    one: a misspelled step or phase would match nothing and read as no window
+    at all, and a window naming nothing restricts nothing. ``steps`` and
+    ``phase`` are refused together because one of them would be ignored. A
+    land is played, never cast, so the window on one would never be asked.
+    """
+    window = model.cast_only_during
+    if window is None:
+        return None
+    where = f"{model.id}.cast_only_during"
+    if "Land" in model.types:
+        raise DslError(f"{where}: a land is played, not cast, so a casting window never applies")
+    if window.steps is not None and window.phase is not None:
+        raise DslError(f"{where}: takes 'steps' or 'phase', not both")
+    steps: frozenset[Step] | None = None
+    if window.steps is not None:
+        if not window.steps:
+            raise DslError(f"{where}.steps: names no step; leave it out for any step")
+        names = {s.name.lower(): s for s in Step}
+        for name in window.steps:
+            if name not in names:
+                raise DslError(f"{where}.steps: unknown step {name!r} (one of {sorted(names)})")
+        steps = frozenset(names[name] for name in window.steps)
+    elif window.phase is not None:
+        phases = {p.value: p for p in Phase}
+        if window.phase not in phases:
+            raise DslError(f"{where}.phase: unknown phase {window.phase!r} (one of {sorted(phases)})")
+        steps = frozenset(s for s, p in STEP_PHASE.items() if p is phases[window.phase])
+    if window.turn is None and steps is None:
+        raise DslError(f"{where}: names neither a turn nor a step or phase, so it restricts nothing")
+    return CastWindow(turn=window.turn, steps=steps)
+
+
 def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     where = f"{source}:{model.id}" if source else model.id
 
@@ -1507,6 +1547,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
                 f"{where}: has a 'gift' promise that nothing reads via "
                 f"'gift_promised' or the 'gift_recipient' player spec"
             )
+    gift_ability = _gift_ability(model, where)
 
     # Evoke is two halves the same way, and half of it is the same silent
     # failure: a cheaper cast that never dies, or a sacrifice clause that can
@@ -2417,6 +2458,8 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
                 f"{[s.name.lower() for s in Step]})"
             ) from None
 
+    cast_only_during = _compile_cast_window(model)
+
     if model.cant_cast_first_turns is not None and model.cant_cast_first_turns < 1:
         # "Your first zero turns" restricts nothing: the card would print the
         # line and cast as if it did not.
@@ -2464,6 +2507,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         split_second=model.split_second,
         cast_before_step=cast_before_step,
         cant_cast_first_turns=model.cant_cast_first_turns,
+        cast_only_during=cast_only_during,
         buyback=model.buyback,
         rebound=model.rebound,
         exiles_itself=model.exiles_itself,
@@ -2490,6 +2534,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         kicker_label=model.kicker_label,
         kicker=kicker,
         gift=model.gift,
+        gift_ability=gift_ability,
         multikicker=multikicker,
         escalate=escalate,
         strive=strive,
@@ -2670,6 +2715,37 @@ def _check_sacrificed_names(model: AbilityModel, cost: Cost | None, where: str) 
             f"the permanent this ability's sacrifice cost binds with 'as' "
             f"(got {sacrificed!r})"
         )
+
+
+def _gift_ability(model: CardModel, where: str) -> int | None:
+    """Which triggered ability gives this card's gift, or None for the spell.
+
+    702.174: an instant or sorcery gives its gift as it resolves, and a
+    permanent's gift is its enters trigger. The DSL writes the reward wherever
+    the card does -- in `spell_effects` or in one triggered ability -- and the
+    reward is the part aimed at ``"gift_recipient"``, so that is where the gift
+    is given and where `EventType.GIFT_GIVEN` fires. Scrapshooter's second
+    enters trigger also reads ``gift_promised`` and is not the gift: it aims at
+    no recipient.
+
+    The spell's own effects win, because they resolve first. Two triggered
+    abilities both aiming at the recipient are refused: one promise is one
+    gift, and either reading would make "whenever you give a gift" fire on the
+    wrong one or twice.
+    """
+    if model.gift is None or _reads_gift_recipient(model.spell_effects):
+        return None
+    givers = [
+        i
+        for i, ability in enumerate(model.abilities)
+        if ability.kind == "triggered" and _reads_gift_recipient(ability.effects)
+    ]
+    if len(givers) > 1:
+        raise DslError(
+            f"{where}: abilities {givers} all aim at 'gift_recipient' -- one "
+            f"promise gives one gift, so only one ability may give it"
+        )
+    return givers[0] if givers else None
 
 
 def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Ability:
@@ -3146,6 +3222,19 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 f"{where}: defending {model.trigger.defending!r} names a player "
                 f"attacked as a player and only means anything on 'attacks', "
                 f"not on {model.trigger.event!r}"
+            )
+        if model.trigger.defending == "enchanted_player_or_planeswalker" and (
+            model.trigger.event not in ("attacks", "creatures_attack_player")
+        ):
+            # "Or a planeswalker they control" is about whom an attack is
+            # aimed at. A damage event's defender is the seat that was dealt
+            # the damage, so there the value would quietly read as plain
+            # `enchanted_player` and say a sentence the card does not print.
+            raise DslError(
+                f"{where}: defending 'enchanted_player_or_planeswalker' names "
+                f"whom an attack is aimed at and only means anything on "
+                f"'attacks' or 'creatures_attack_player', not on "
+                f"{model.trigger.event!r}"
             )
         if model.trigger.cause_controller is not None:
             # Only `discard` records a cause, so the clause on anything else
@@ -5374,6 +5463,24 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             raise DslError(
                 f"{where}: draw_limit takes 'affects_player', 'amount' and an "
                 f"optional 'condition', and no 'affects'"
+            )
+    if model.effect == "maximum_hand_size":
+        # "Your maximum hand size is twenty." Without the number `_static_value`
+        # reads 0, and the card would discard its controller's whole hand every
+        # cleanup -- the inverse of the printed upside. A permanent filter has
+        # nothing to mean on a hand size.
+        if model.amount is None:
+            raise DslError(
+                f"{where}: maximum_hand_size needs an 'amount' -- the hand size "
+                f"the named players discard down to at cleanup"
+            )
+        size = model.amount.get("const") if isinstance(model.amount, dict) else model.amount
+        if isinstance(size, int) and size < 0:
+            raise DslError(f"{where}.amount: a maximum hand size is 0 or more")
+        if model.affects is not None:
+            raise DslError(
+                f"{where}: maximum_hand_size takes 'affects_player', 'amount' and "
+                f"an optional 'condition', and no 'affects'"
             )
     if model.effect in PLAYER_WIDE_STATIC_EFFECTS:
         if model.affects_player is None:

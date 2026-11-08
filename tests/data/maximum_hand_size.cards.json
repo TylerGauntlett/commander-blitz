@@ -1,0 +1,37 @@
+{
+  "_comment": "Cards that exist only for the maximum-hand-size test (tests/unit/players/test_maximum_hand_size.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_hand_size_nine` is Twenty-Toed Toad's first line with a number a test hand can reach, on a free artifact so it can be cast between other effects to take a later timestamp. `t_opponents_hand_size_two` names the other seat, which is the affects_player spec's other end.",
+  "cards": [
+    {
+      "id": "t_hand_size_nine",
+      "name": "Test Hand Size Nine",
+      "oracle_text": "Your maximum hand size is nine.",
+      "mana_cost": "{0}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "static",
+          "effect": "maximum_hand_size",
+          "affects_player": "you",
+          "amount": 9,
+          "text": "Your maximum hand size is nine."
+        }
+      ]
+    },
+    {
+      "id": "t_opponents_hand_size_two",
+      "name": "Test Opponents Hand Size Two",
+      "oracle_text": "Each opponent's maximum hand size is two.",
+      "mana_cost": "{0}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "static",
+          "effect": "maximum_hand_size",
+          "affects_player": "opponent",
+          "amount": 2,
+          "text": "Each opponent's maximum hand size is two."
+        }
+      ]
+    }
+  ]
+}

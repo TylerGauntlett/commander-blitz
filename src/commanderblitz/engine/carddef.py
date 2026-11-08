@@ -1298,6 +1298,21 @@ class Ability:
 
 
 @dataclass(frozen=True)
+class CastWindow:
+    """ "Cast this spell only during …" -- the window a spell may be cast in.
+
+    ``turn`` is ``"yours"``, ``"opponents"`` or None for any player's turn;
+    ``steps`` the steps it is open in, or None for every step. A printed phase
+    ("during combat") is compiled to its steps, so the one question asked is
+    whether the game is in one of them. Read by
+    `player_statics.player_cant_cast_spells`.
+    """
+
+    turn: str | None = None
+    steps: frozenset[Step] | None = None
+
+
+@dataclass(frozen=True)
 class CardDef:
     """Everything printed on one card."""
 
@@ -1444,6 +1459,11 @@ class CardDef:
     #: game" (Serra Avenger). Read by `player_statics.player_cant_cast_spells`
     #: against `PlayerState.turns_begun`, so every cast path refuses it.
     cant_cast_first_turns: int | None = None
+    #: "Cast this spell only during the declare blockers step on an opponent's
+    #: turn" (Illusionist's Gambit). A "can't" outside the window, read by
+    #: `player_statics.player_cant_cast_spells`, so every cast path refuses it
+    #: -- a free cast by cascade or suspend included (601.3).
+    cast_only_during: CastWindow | None = None
     #: Buyback: a kicked spell returns to its owner's hand instead of the
     #: graveyard when it finishes resolving.
     buyback: bool = False
@@ -1502,6 +1522,14 @@ class CardDef:
     #: `Action.gift_to`. Read back by `{"gift_promised": …}` and by the
     #: ``"gift_recipient"`` player spec.
     gift: str | None = None
+    #: Which part of the card **gives** the gift (702.174), for
+    #: `EventType.GIFT_GIVEN`: the index of the triggered ability that does --
+    #: a permanent's "if you do, when it enters, they draw a card" -- or
+    #: ``None`` when the spell gives it as it resolves, which is every instant
+    #: and sorcery. Derived by the loader from where ``"gift_recipient"`` is
+    #: read: the spell's own effects first, else the one triggered ability
+    #: whose effects aim at the recipient. ``None`` on a card with no gift.
+    gift_ability: int | None = None
     #: **Multikicker {1}{W}** (702.32b). Nothing in the engine reads this: the
     #: loader has already desugared it into the three fields above, which is the
     #: whole mechanic. What it records is the *name* the card declared the cost

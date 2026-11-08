@@ -3732,6 +3732,47 @@ answers it with the card in hand, on every cast path; on an opponent's turn a
 card with flash can still be cast. `GameState.turn` is the near miss: it counts
 the table's turns, and in a pod the game's third turn is somebody's first.
 
+```jsonc
+// Illusionist's Gambit — "Cast this spell only during the declare blockers step on an opponent's turn."
+{ "types": ["Instant"], "cast_only_during": { "turn": "opponents", "steps": ["declare_blockers"] } }
+// Delirium — "Cast this spell only during an opponent's turn."
+{ "types": ["Instant"], "cast_only_during": { "turn": "opponents" } }
+// Savage Beating — "Cast this spell only during combat on your turn."
+{ "types": ["Instant"], "cast_only_during": { "turn": "yours", "phase": "combat" } }
+```
+
+`cast_only_during` is "cast this spell only during …": the window outside which
+the spell can't be cast. Three keys, each optional:
+
+| key | means | values |
+|---|---|---|
+| `turn` | whose turn | `yours`, `opponents` (the active player is one of the caster's opponents); absent for any player's |
+| `steps` | which steps | step names, spelled as `Step`'s members lower-cased (`declare_blockers`, `upkeep`, `end_step`) |
+| `phase` | which phase | one of `Phase`'s values (`combat`, `beginning`, `precombat_main`, `postcombat_main`, `ending`) |
+
+A printed phase compiles to its steps, so "during combat" is
+`"phase": "combat"` and every combat phase of the turn, an additional one
+included. A printed bound inside combat is a list of steps: "during combat
+before blockers are declared" is `["begin_combat", "declare_attackers"]`, since
+blockers are declared as the declare blockers step begins, and "after blockers
+are declared" is the four steps from `declare_blockers` to `end_of_combat`. "…
+before attackers are declared" on an opponent's turn (Siren's Call) is this key
+beside `cast_before_step`.
+
+Like `cant_cast_first_turns` it is a "can't", answered by
+`player_statics.player_cant_cast_spells` with the card in hand, not a timing
+window in `_timing_ok`. 601.3 holds the restriction against every cast, and the
+resolution-time ones — cascade, suspend, madness, `cast_copy` — ask the "can't"
+question and skip the timing one. It narrows and never widens: a sorcery with
+the key still waits for an empty stack in its main phase.
+
+The loader refuses `steps` beside `phase` (one would be ignored), an empty
+`steps`, an unknown step or phase name, a window naming neither a turn nor a
+step or phase, an unknown key, and the key on a land, which is played and never
+cast. `cast_during` and `step_is` are the near misses: they are conditions read
+inside effects, so an `if` on one lets the spell be cast anywhere and do
+nothing.
+
 ### Choosing a permanent or card type, and reading it back
 
 ```jsonc
@@ -5215,6 +5256,31 @@ it is the seat that was dealt the damage. "That player" in the effect is
 condition on `enchanted_player`, which still fires on an attack at the
 enchanted player's planeswalker alone.
 
+`defending: "enchanted_player_or_planeswalker"` is "when you attack **enchanted
+opponent or a planeswalker they control**" (Tenuous Truce): the same seat,
+attacked as a player or through one of their planeswalkers, but not through a
+battle they control, which 506.2 names separately. On `attacks` the creature
+must attack one of those two; on `creatures_attack_player` one of the declared
+creatures must. It is legal on those two events only — a damage event's
+defender was dealt damage, not attacked — and only on an Aura. The near miss is
+`defending: "enchanted_player"`, which refuses an attack aimed only at the
+walker. The other half of Truce's sentence, "when **they** attack you or a
+planeswalker you control", needs no new word: `defending: "you"` already
+counts your planeswalkers on `creatures_attack_player`, and "they" is a
+`condition` of `{"is_active_player": "enchanted_player"}` with `recheck:
+false`, because only the active player declares attackers (508.1).
+
+```jsonc
+// "When you attack enchanted opponent or a planeswalker they control…"
+"trigger": { "event": "creatures_attack_player", "controller": "you",
+             "defending": "enchanted_player_or_planeswalker" },
+// "…or when they attack you or a planeswalker you control, sacrifice this Aura."
+"trigger": { "event": "creatures_attack_player", "controller": "any",
+             "defending": "you", "recheck": false,
+             "condition": { "is_active_player": "enchanted_player" } },
+"effects": [ { "op": "sacrifice", "objects": { "self_only": true } } ]
+```
+
 `counter` names which kind a `counter_placed` trigger cares about. Without it the
 trigger fires on *every* kind — and the pool places `charge` and `slumber`
 counters, so Fathom Mage's "whenever a +1/+1 counter is put on this creature"
@@ -5422,7 +5488,7 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `becomes_monarch` ·
 `counter_placed` · `sacrificed` · `leaves_graveyard` · `token_created` · `draw` · `discard` · `cycle` ·
 `ability_activated` · `damage_prevented` · `deals_damage_to_player` ·
-`searches_library` · `wins_coin_flip` · `turned_face_up` · `state`
+`searches_library` · `wins_coin_flip` · `gives_gift` · `turned_face_up` · `state`
 
 ### `state` — "When there are four or more page counters on this artifact"
 
@@ -5999,6 +6065,14 @@ one place a coin is flipped, so a flip won off any card counts. Its subject is a
 **player**: `controller` and `event_player` name the player who flipped and won.
 A lost flip fires nothing. See
 ["Whenever you win a coin flip"](card-dsl-cookbook.md#whenever-you-win-a-coin-flip).
+
+**`gives_gift`** fires once per gift given (702.174): as an instant or sorcery
+with a promised gift resolves, or as a permanent's gift trigger resolves —
+whichever part of the card `CardDef.gift_ability` names. Its subject is a
+**player**: `controller` and `event_player` name the giver, and `gift_to` binds
+the recipient. An unpromised cast, a countered gift spell and a gift trigger
+whose intervening-if fails fire nothing. See
+["Whenever you give a gift"](card-dsl-cookbook.md#whenever-you-give-a-gift).
 
 **`becomes_untapped`** is inspired, and it is nearly all untap step.
 `untap_permanent` fires it, and the untap step fires one event per permanent like

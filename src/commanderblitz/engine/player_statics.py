@@ -11,7 +11,7 @@ from __future__ import annotations
 from collections.abc import Iterator, Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 
-from .carddef import CardDef
+from .carddef import CardDef, CastWindow
 from .characteristics import (
     _battlefield_statics,
     _compare_printed,
@@ -25,10 +25,12 @@ from .characteristics import (
     resolve_chosen_color_list,
     resolve_chosen_colors,
     resolve_chosen_subtypes,
+    static_timestamp,
 )
 from .enums import Step, Zone
 from .mana import ManaCost, parse_mana_production
 from .objects import GameObject
+from .player import MAX_HAND_SIZE
 from .structs import CASTABLE_ZONES
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -634,24 +636,68 @@ def players_doubling_land_triggers(state: GameState) -> frozenset[int]:
     )
 
 
+def maximum_hand_size(state: GameState, pid: int) -> int | None:
+    """This player's maximum hand size, or ``None`` for no maximum (402.2, 514.1).
+
+    Seven unless an effect says otherwise. Three kinds of effect say otherwise:
+    the ``no_hand_limit`` static (Reliquary Tower, Thought Vessel), the
+    ``maximum_hand_size`` static that sets a number (Twenty-Toed Toad's "Your
+    maximum hand size is twenty"), and the one-shot
+    `PlayerState.has_no_maximum_hand_size` (Sea Gate Restoration's "for the rest
+    of the game"), which outlives the spell that wrote it.
+
+    **The newest applicable effect wins.** A hand-size effect changes a game
+    rule rather than an object, and 613.11 applies those after every other
+    continuous effect, in timestamp order -- so a later "is twenty" overwrites
+    an earlier "no maximum", and a later "no maximum" overwrites an earlier
+    "is twenty". A static's timestamp is its source's (`static_timestamp`,
+    613.7a-c); the one-shot's is the moment it resolved
+    (`PlayerState.no_maximum_hand_size_timestamp`). Two effects sharing a
+    timestamp -- two statics on one permanent, or permanents that arrived
+    together, whose order 613.7e would have the active player choose -- resolve
+    to the larger maximum, no maximum being the largest: the choice is not
+    modelled, and the reading that never discards a card the other would keep
+    is the one that cannot take something the printed cards give.
+
+    Every reader of the hand limit asks here, so the cleanup step and
+    `player_has_no_hand_limit` cannot disagree.
+    """
+    player = state.players[pid]
+    # (timestamp, unlimited, size): `max` picks the newest, and on a tie the
+    # unlimited one, then the larger number.
+    best: tuple[int, bool, int] | None = None
+    if player.has_no_maximum_hand_size:
+        best = (player.no_maximum_hand_size_timestamp, True, 0)
+    for obj, static in _active_player_statics(state, "no_hand_limit"):
+        if _reaches_player(obj, static, pid):
+            candidate = (static_timestamp(obj), True, 0)
+            best = candidate if best is None else max(best, candidate)
+    for obj, static in _active_player_statics(state, "maximum_hand_size"):
+        if not _reaches_player(obj, static, pid):
+            continue
+        size = max(0, _static_value(state, static.get("amount"), obj))
+        candidate = (static_timestamp(obj), False, size)
+        best = candidate if best is None else max(best, candidate)
+    if best is None:
+        return MAX_HAND_SIZE
+    _, unlimited, size = best
+    return None if unlimited else size
+
+
 def player_has_no_hand_limit(state: GameState, pid: int) -> bool:
     """Whether this player has no maximum hand size (402.2, 514.1).
 
-    Reliquary Tower, Thought Vessel, Nezahal. Written as a player-wide static
+    Reliquary Tower, Thought Vessel, Nezahal, and the one-shot
+    `PlayerState.has_no_maximum_hand_size`. Written as a player-wide static
     like ``extra_land_drops`` rather than as a characteristic, because it is a
     fact about the *player* and there is no object for it to attach to.
 
-    Two sources, one answer. The statics above last as long as the permanent
-    printing them; `PlayerState.has_no_maximum_hand_size` is the one-shot
-    version -- Sea Gate Restoration's "for the rest of the game", written by the
-    `no_maximum_hand_size` op off a sorcery that is in the graveyard by the
-    time any cleanup step asks. Both are read here rather than the flag being
-    read in `turn._cleanup_step`, so there is one rule path to the hand limit
-    and nothing that asks it can see half the answer.
+    The answer is `maximum_hand_size`'s, not a walk of its own: a newer
+    ``maximum_hand_size`` static sets a number over an older "no maximum", and
+    a second walk that ignored it would say the limit is gone while cleanup
+    still trimmed the hand.
     """
-    if state.players[pid].has_no_maximum_hand_size:
-        return True
-    return _player_static(state, pid, "no_hand_limit")
+    return maximum_hand_size(state, pid) is None
 
 
 def player_has_hexproof(state: GameState, pid: int) -> bool:
@@ -1970,6 +2016,19 @@ def _player_static(state: GameState, pid: int, effect: str) -> bool:
 _SHUTS_EVERY_ZONE = frozenset(CASTABLE_ZONES)
 
 
+def in_cast_window(state: GameState, pid: int, window: CastWindow) -> bool:
+    """Whether ``pid`` is inside a card's `cast_only_during` window right now.
+
+    "An opponent's turn" is the active player being one of ``pid``'s
+    opponents (`GameState.opponents`), not merely somebody else.
+    """
+    if window.turn == "yours" and state.active_player != pid:
+        return False
+    if window.turn == "opponents" and state.active_player not in state.opponents(pid):
+        return False
+    return window.steps is None or state.step in window.steps
+
+
 def player_cant_cast_spells(
     state: GameState, pid: int, card: CardDef | None = None, *, x: int = 0
 ) -> bool:
@@ -2015,6 +2074,15 @@ def player_cant_cast_spells(
         # "You can't cast Serra Avenger during your first, second, or third
         # turns of the game." A "can't" on the card rather than a static, asked
         # here so every cast path that asks about a lock asks about this.
+        return True
+    if card is not None and card.cast_only_during is not None and not in_cast_window(
+        state, pid, card.cast_only_during
+    ):
+        # "Cast this spell only during the declare blockers step on an
+        # opponent's turn." Illusionist's Gambit. 601.3: the restriction holds
+        # for every cast, so it is a "can't" asked here, where the free casts
+        # (cascade, suspend, madness, a copy) ask as well -- not a timing
+        # window in `casting._timing_ok`, which those casts skip.
         return True
     if any(
         pid in lock.affects and set(lock.zones) >= _SHUTS_EVERY_ZONE for lock in state.cast_locks

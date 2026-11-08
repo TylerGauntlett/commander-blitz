@@ -1,0 +1,91 @@
+{
+  "_comment": "Cards that exist only for the gift-given trigger test (tests/unit/triggers/test_gift_given.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_gift_watcher` is Jolly Gerbils. `t_gift_rival_watcher` is the same line about an opponent, and `t_gift_toll` reads the `gift_to` binding. `t_gift_enters` is a Scrapshooter-shaped creature: its gift is its enters trigger, and its second enters trigger reads the promise without giving anything.",
+  "cards": [
+    {
+      "id": "t_gift_watcher",
+      "name": "Test Jolly Gerbils",
+      "oracle_text": "Whenever you give a gift, draw a card.",
+      "mana_cost": "{1}{U}",
+      "types": ["Creature"],
+      "subtypes": ["Hamster", "Citizen"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "power": 2,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you give a gift, draw a card.",
+          "trigger": { "event": "gives_gift", "controller": "you" },
+          "effects": [{ "op": "draw", "player": "you", "amount": { "const": 1 } }]
+        }
+      ]
+    },
+    {
+      "id": "t_gift_rival_watcher",
+      "name": "Test Gift Rival Watcher",
+      "oracle_text": "Whenever an opponent gives a gift, you gain 1 life.",
+      "mana_cost": "{1}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Rabbit"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever an opponent gives a gift, you gain 1 life.",
+          "trigger": { "event": "gives_gift", "controller": "opponent" },
+          "effects": [{ "op": "gain_life", "player": "you", "amount": { "const": 1 } }]
+        }
+      ]
+    },
+    {
+      "id": "t_gift_toll",
+      "name": "Test Gift Toll",
+      "oracle_text": "Whenever you give a gift, the player you gave it to loses 1 life.",
+      "mana_cost": "{1}{B}",
+      "types": ["Enchantment"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you give a gift, the player you gave it to loses 1 life.",
+          "trigger": { "event": "gives_gift", "controller": "you" },
+          "effects": [
+            { "op": "lose_life", "player": { "binding": "gift_to" }, "amount": { "const": 1 } }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_gift_enters",
+      "name": "Test Gift Enters",
+      "oracle_text": "Gift a card (You may promise an opponent a gift as you cast this spell. If you do, when it enters, they draw a card.)\nWhen this creature enters, if the gift was promised, you gain 2 life.",
+      "mana_cost": "{1}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Raccoon"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": 2,
+      "toughness": 2,
+      "gift": "a card",
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Gift a card",
+          "trigger": { "event": "self_enters", "source": "self", "condition": { "gift_promised": true } },
+          "effects": [{ "op": "draw", "player": "gift_recipient", "amount": { "const": 1 } }]
+        },
+        {
+          "kind": "triggered",
+          "text": "When this creature enters, if the gift was promised, you gain 2 life.",
+          "trigger": { "event": "self_enters", "source": "self", "condition": { "gift_promised": true } },
+          "effects": [{ "op": "gain_life", "player": "you", "amount": { "const": 2 } }]
+        }
+      ]
+    }
+  ]
+}

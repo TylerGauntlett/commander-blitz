@@ -427,8 +427,21 @@ class TriggerModel(BaseModel):
     #: monarch" (The Spear of Bashenga); both are legal on ``attacks`` only.
     #: ``enchanted_player`` is the seat this Aura is attached to -- "whenever
     #: you attack enchanted player" (Archnemesis) -- attacked as a player.
+    #: ``enchanted_player_or_planeswalker`` is the same seat attacked as a
+    #: player or through a planeswalker they control -- "when you attack
+    #: enchanted opponent or a planeswalker they control" (Tenuous Truce) --
+    #: legal on the two attack events only.
     defending: (
-        Literal["you", "opponent", "any", "most_life", "monarch", "enchanted_player"] | None
+        Literal[
+            "you",
+            "opponent",
+            "any",
+            "most_life",
+            "monarch",
+            "enchanted_player",
+            "enchanted_player_or_planeswalker",
+        ]
+        | None
     ) = None
     #: "…if it wasn't put onto the battlefield with this ability."  Names the
     #: ``cause`` this trigger refuses to fire on, which is how an ability that
@@ -1280,6 +1293,22 @@ class ReplacementModel(BaseModel):
     instead_zone: Literal["graveyard", "exile", "hand", "library"] = "graveyard"
 
 
+class CastWindowModel(BaseModel):
+    """ "Cast this spell only during …": the window a spell may be cast in.
+
+    ``turn`` is whose turn -- ``"yours"`` or ``"opponents"`` -- and absent for
+    any player's. ``steps`` names the steps, ``phase`` one phase; neither means
+    any step of that turn. The names are checked by the loader against the
+    engine's `Step` and `Phase`, so a misspelling is a load error.
+    """
+
+    model_config = Strict
+
+    turn: Literal["yours", "opponents"] | None = None
+    steps: list[str] | None = None
+    phase: str | None = None
+
+
 class EmblemModel(BaseModel):
     """The abilities printed in one emblem's quotation marks (114.1).
 
@@ -1414,14 +1443,19 @@ class CardModel(BaseModel):
     #: *spell on the stack* and there is no permanent for it to sit on.
     split_second: bool = False
     #: "Cast this spell only before the combat damage step" (Berserk). The name
-    #: of the step the casting window closes at, lowercased -- the only card
-    #: field that narrows when a spell may be cast.
+    #: of the step the casting window closes at, lowercased -- the one card
+    #: field that narrows the timing window itself (`casting._timing_ok`).
     cast_before_step: str | None = None
     #: "You can't cast Serra Avenger during your first, second, or third turns
     #: of the game." How many of its controller's first turns the card can't be
     #: cast in -- ``3`` for the Avenger. Only the caster's *own* turns: with
     #: flash it could be cast on an opponent's turn. At least 1.
     cant_cast_first_turns: int | None = None
+    #: "Cast this spell only during the declare blockers step on an opponent's
+    #: turn" (Illusionist's Gambit), "…only during an opponent's turn"
+    #: (Delirium), "…only during combat on your turn" (Savage Beating). The
+    #: window outside which the spell can't be cast, by any route.
+    cast_only_during: CastWindowModel | None = None
     #: **Buyback**: "You may pay an additional cost as you cast this spell. If
     #: you do, put it into your hand instead of your graveyard as it resolves."
     #:

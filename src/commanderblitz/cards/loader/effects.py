@@ -32,6 +32,7 @@ from commanderblitz.engine.mana import ManaCost, compile_restriction
 from commanderblitz.engine.objects import PLAYABLE_CONDITIONS, PLAYABLE_DURATIONS
 from commanderblitz.engine.structs import (
     ATTACK_MARK_DURATIONS,
+    ATTACK_PROHIBITION_MARK_DURATIONS,
     ATTACK_RESTRICTION_DURATIONS,
     ATTACK_TAX_DURATIONS,
     BLOCK_PROHIBITION_DURATIONS,
@@ -430,6 +431,11 @@ def _validate_pay_any_amount(effect: Mapping[str, Any], where: str) -> None:
         raise DslError(f"{where}.any_amount: cannot be combined with 'repeat'")
 
 
+#: The words that read `GameObject.attached_to_player`: the player spec, and the
+#: trigger `defending` value that also counts that player's planeswalkers.
+ENCHANTED_PLAYER_WORDS = frozenset({"enchanted_player", "enchanted_player_or_planeswalker"})
+
+
 def _validate_enchanted_player(model: CardModel, where: str) -> None:
     """``"enchanted_player"`` only on a card that can *be* attached to a player.
 
@@ -458,7 +464,9 @@ def _validate_enchanted_player(model: CardModel, where: str) -> None:
 
     def walk(node: Any) -> bool:
         if isinstance(node, Mapping):
-            return "enchanted_player" in node.values() or any(walk(v) for v in node.values())
+            return not ENCHANTED_PLAYER_WORDS.isdisjoint(
+                v for v in node.values() if isinstance(v, str)
+            ) or any(walk(v) for v in node.values())
         if isinstance(node, (list, tuple)):
             return any(walk(v) for v in node)
         return False
@@ -1869,17 +1877,26 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                     f"those creatures may not attack"
                 )
             _validate_player_spec(effect["defender"], f"{where}.defender", target_kinds)
-            # The one clock the creature form has. A creature-scoped line on a
+            # The two clocks the creature form has. A creature-scoped line on a
             # turn clock is a different sentence nobody has printed yet, and
-            # guessing its storage would be a card nobody can check.
-            if effect.get("duration") != "while_counter":
+            # guessing its storage would be a card nobody can check. Neither is
+            # defaulted: `next_combat` read for `while_counter` ends a vow after
+            # one combat, and the other way round never ends "that combat".
+            if effect.get("duration") not in ATTACK_PROHIBITION_MARK_DURATIONS:
                 raise DslError(
-                    f"{where}: cant_attack_player with 'objects' needs "
-                    f"'duration': 'while_counter' (\"for as long as it has a "
-                    f"<kind> counter on it\"), not {effect.get('duration')!r}"
+                    f"{where}: cant_attack_player with 'objects' needs 'duration' "
+                    f"'while_counter' (\"for as long as it has a <kind> counter on "
+                    f"it\") or 'next_combat' (\"that combat\"), not "
+                    f"{effect.get('duration')!r}"
                 )
             counter = effect.get("counter")
-            if not isinstance(counter, str) or not counter:
+            if effect["duration"] == "next_combat":
+                if "counter" in effect:
+                    raise DslError(
+                        f"{where}: cant_attack_player 'next_combat' takes no 'counter' "
+                        f"-- the clock is the next declaration of attackers"
+                    )
+            elif not isinstance(counter, str) or not counter:
                 raise DslError(
                     f"{where}: cant_attack_player 'while_counter' needs 'counter' "
                     f"naming the counter kind"
@@ -1891,10 +1908,10 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 )
             if "planeswalkers" in effect and not isinstance(effect["planeswalkers"], bool):
                 raise DslError(f"{where}.planeswalkers: must be true or false")
-        elif "counter" in effect or effect.get("duration") == "while_counter":
+        elif "counter" in effect or effect.get("duration") in ATTACK_PROHIBITION_MARK_DURATIONS:
             raise DslError(
-                f"{where}: cant_attack_player's 'while_counter' clock is a fact "
-                f"about creatures; name them in 'objects'"
+                f"{where}: cant_attack_player's {effect.get('duration')!r} clock is a "
+                f"fact about creatures; name them in 'objects'"
             )
         else:
             for side in ("attacker", "defender"):

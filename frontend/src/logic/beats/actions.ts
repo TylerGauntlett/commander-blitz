@@ -68,6 +68,15 @@ export function actionBeat(ctx: EventContext): boolean {
       return true;
 
     /*
+     * A gift given. Short, like a connive: the reward has its own beat, and
+     * this one is here so a "whenever you give a gift" trigger that follows
+     * has a line before it.
+     */
+    case "gift_given":
+      push({ hold: 200, sound: "chime" });
+      return true;
+
+    /*
      * Triggers get the same spotlight a cast gets.
      *
      * In Commander triggers are most of what happens, and a trigger going on

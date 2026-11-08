@@ -19042,12 +19042,12 @@
     },
     "Baird, Steward of Argive": {
       "edhrec_rank": 2539,
-      "gate": "template",
+      "gate": null,
       "name": "Baird, Steward of Argive",
-      "reason": "no template for: Creatures can't attack you or planeswalkers you control unless their controller pays {1} f",
+      "reason": "",
       "scryfall_id": "5165b4fa-ce48-49c3-9cb3-dc6ece8c0f08",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Baithook Angler // Hook-Haunt Drifter": {
@@ -28942,12 +28942,12 @@
     },
     "Bloodroot Apothecary": {
       "edhrec_rank": 3567,
-      "gate": "template",
+      "gate": null,
       "name": "Bloodroot Apothecary",
-      "reason": "no template for: Toxic 2",
+      "reason": "",
       "scryfall_id": "d39e0024-9a91-49d6-bfbf-9dbf7d228687",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bloodscale Prowler": {
@@ -29812,12 +29812,12 @@
     },
     "Body of Knowledge": {
       "edhrec_rank": 2085,
-      "gate": "template",
+      "gate": null,
       "name": "Body of Knowledge",
-      "reason": "no template for: 's power and toughness are each equal to the number of cards in your hand",
+      "reason": "",
       "scryfall_id": "185b2e8f-ab37-42e4-b3a1-f38b19a2e05a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Body of Research": {
@@ -35002,12 +35002,12 @@
     },
     "Broken Wings": {
       "edhrec_rank": 3903,
-      "gate": "template",
+      "gate": null,
       "name": "Broken Wings",
-      "reason": "no template for: Destroy target artifact, enchantment, or creature with flying",
+      "reason": "",
       "scryfall_id": "1d7d5b71-7c1b-4fc2-a5ec-7285e17ffe0f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Brokers Ascendancy": {
@@ -50942,12 +50942,12 @@
     },
     "Communal Brewing": {
       "edhrec_rank": 3410,
-      "gate": "template",
+      "gate": null,
       "name": "Communal Brewing",
-      "reason": "no template for: When this enchantment enters, any number of target opponents each draw a card. Put an ingr",
+      "reason": "",
       "scryfall_id": "a27e08a7-018c-45a9-ab5a-a584ca17755d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Commune with Beavers": {
@@ -96402,12 +96402,12 @@
     },
     "Fisher's Talent": {
       "edhrec_rank": 8308,
-      "gate": "template",
+      "gate": null,
       "name": "Fisher's Talent",
-      "reason": "no template for: At the beginning of your upkeep, look at the top card of your library. You may reveal it i",
+      "reason": "",
       "scryfall_id": "47f0e0b9-d137-46ac-a6e4-13a529e30bb5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fishing Gear": {
@@ -107582,12 +107582,12 @@
     },
     "Ghirapur Orrery": {
       "edhrec_rank": 2570,
-      "gate": "template",
+      "gate": null,
       "name": "Ghirapur Orrery",
-      "reason": "no template for: Each player may play an additional land on each of their turns",
+      "reason": "",
       "scryfall_id": "2dde7d22-f235-4368-8fbe-17f6cf0508b3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ghirapur Osprey": {
@@ -133982,12 +133982,12 @@
     },
     "Illusionist's Gambit": {
       "edhrec_rank": 3762,
-      "gate": "template",
+      "gate": null,
       "name": "Illusionist's Gambit",
-      "reason": "no template for: Cast this spell only during the declare blockers step on an opponent's turn",
+      "reason": "",
       "scryfall_id": "bfe27186-7e6e-4ad6-8980-28d7e26b4d86",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Illusionist's Stratagem": {
@@ -138022,12 +138022,12 @@
     },
     "Intellectual Offering": {
       "edhrec_rank": 7321,
-      "gate": "template",
+      "gate": null,
       "name": "Intellectual Offering",
-      "reason": "no template for: Choose an opponent. You and that player each draw three cards",
+      "reason": "",
       "scryfall_id": "78fa7463-cd59-4654-ada8-7854efee5aa4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Intelligence Bobblehead": {
@@ -143622,12 +143622,12 @@
     },
     "Jolly Gerbils": {
       "edhrec_rank": 13806,
-      "gate": "template",
+      "gate": null,
       "name": "Jolly Gerbils",
-      "reason": "no template for: Whenever you give a gift, draw a card",
+      "reason": "",
       "scryfall_id": "0eab51d6-ba17-4a8c-8834-25db363f2b6b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jolrael's Centaur": {
@@ -143662,12 +143662,12 @@
     },
     "Jolrael, Mwonvuli Recluse": {
       "edhrec_rank": 2815,
-      "gate": "template",
+      "gate": null,
       "name": "Jolrael, Mwonvuli Recluse",
-      "reason": "no template for: Whenever you draw your second card each turn, create a 2/2 green Cat creature token",
+      "reason": "",
       "scryfall_id": "258bfd1a-ec8d-453d-a957-814110e2dcaf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jolrael, Voice of Zhalfir": {
@@ -145362,12 +145362,12 @@
     },
     "Kalonian Hydra": {
       "edhrec_rank": 1103,
-      "gate": "template",
+      "gate": null,
       "name": "Kalonian Hydra",
-      "reason": "no template for: This creature enters with four +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "9a936dcd-684a-47f6-860c-2f3541d8286c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kalonian Tusker": {
@@ -153322,12 +153322,12 @@
     },
     "Kwain, Itinerant Meddler": {
       "edhrec_rank": 2235,
-      "gate": "template",
+      "gate": null,
       "name": "Kwain, Itinerant Meddler",
-      "reason": "no template for: {T}: Each player may draw a card, then each player who drew a card this way gains 1 life",
+      "reason": "",
       "scryfall_id": "941f5231-5620-45e5-9f00-a7f64f0385dc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kwende, Pride of Femeref": {
@@ -160862,12 +160862,12 @@
     },
     "Long River's Pull": {
       "edhrec_rank": 1434,
-      "gate": "template",
+      "gate": null,
       "name": "Long River's Pull",
-      "reason": "no template for: Gift a card",
+      "reason": "",
       "scryfall_id": "1c81d0fa-81a1-4f9b-a5fd-5a648fd01dea",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Long Road Home": {
@@ -180372,12 +180372,12 @@
     },
     "Mr. Foxglove": {
       "edhrec_rank": 6875,
-      "gate": "template",
+      "gate": null,
       "name": "Mr. Foxglove",
-      "reason": "no template for: Whenever attacks, draw cards equal to the number of cards in defending player's hand minus",
+      "reason": "",
       "scryfall_id": "8504e660-1a15-472d-8e5c-dee0c1d26c8f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mr. House, President and CEO": {
@@ -180402,12 +180402,12 @@
     },
     "Ms. Bumbleflower": {
       "edhrec_rank": 3143,
-      "gate": "template",
+      "gate": null,
       "name": "Ms. Bumbleflower",
-      "reason": "no template for: Whenever you cast a spell, target opponent draws a card. Put a +1/+1 counter on target cre",
+      "reason": "",
       "scryfall_id": "42bbedc1-6b83-46b4-8b3b-a4e05ce77d87",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ms. Marvel, Elastic Ally": {
@@ -191012,12 +191012,12 @@
     },
     "Octomancer": {
       "edhrec_rank": 4377,
-      "gate": "template",
+      "gate": null,
       "name": "Octomancer",
-      "reason": "no template for: Gift an Octopus",
+      "reason": "",
       "scryfall_id": "0da07361-5c92-4708-8314-ba0dce11daf9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Octoprophet": {
@@ -199292,12 +199292,12 @@
     },
     "Peerless Recycling": {
       "edhrec_rank": 2677,
-      "gate": "template",
+      "gate": null,
       "name": "Peerless Recycling",
-      "reason": "no template for: Gift a card",
+      "reason": "",
       "scryfall_id": "5f72466c-505b-4371-9366-0fde525a37e6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Peerless Ropemaster": {
@@ -217202,12 +217202,12 @@
     },
     "Realm-Cloaked Giant // Cast Off": {
       "edhrec_rank": 6926,
-      "gate": "template",
+      "gate": null,
       "name": "Realm-Cloaked Giant // Cast Off",
-      "reason": "proxy simplified it: only the first half exists; the other half is not modelled",
+      "reason": "",
       "scryfall_id": "616d22fc-ab08-4e2d-8f0b-496a4ae1789e",
-      "source": "",
-      "status": "unexpressible",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Realm-Scorcher Hellkite": {
@@ -224382,12 +224382,12 @@
     },
     "Riot Control": {
       "edhrec_rank": 2302,
-      "gate": "template",
+      "gate": null,
       "name": "Riot Control",
-      "reason": "no template for: You gain 1 life for each creature your opponents control. Prevent all damage that would be",
+      "reason": "",
       "scryfall_id": "f0ca86cd-1b24-4abc-a877-c3aee6acf873",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Riot Devils": {
@@ -225242,12 +225242,12 @@
     },
     "Rites of Flourishing": {
       "edhrec_rank": 1527,
-      "gate": "template",
+      "gate": null,
       "name": "Rites of Flourishing",
-      "reason": "no template for: At the beginning of each player's draw step, that player draws an additional card",
+      "reason": "",
       "scryfall_id": "ec016236-fa38-49f3-8176-5a7734ca6821",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rites of Initiation": {
@@ -233932,12 +233932,12 @@
     },
     "Savage Beating": {
       "edhrec_rank": 2944,
-      "gate": "template",
+      "gate": null,
       "name": "Savage Beating",
-      "reason": "no template for: Cast this spell only during combat on your turn",
+      "reason": "",
       "scryfall_id": "291ffa45-f395-420f-8862-9a685b65ce69",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Savage Conception": {
@@ -239922,12 +239922,12 @@
     },
     "Selvala, Explorer Returned": {
       "edhrec_rank": 2117,
-      "gate": "template",
+      "gate": null,
       "name": "Selvala, Explorer Returned",
-      "reason": "no template for: Parley — {T}: Each player reveals the top card of their library. For each nonland card rev",
+      "reason": "",
       "scryfall_id": "54467e0f-fa50-4fd9-957d-892e567a2a08",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Selvala, Heart of the Wilds": {
@@ -248042,12 +248042,12 @@
     },
     "Simic Ascendancy": {
       "edhrec_rank": 1266,
-      "gate": "template",
+      "gate": null,
       "name": "Simic Ascendancy",
-      "reason": "no template for: {1}{G}{U}: Put a +1/+1 counter on target creature you control",
+      "reason": "",
       "scryfall_id": "ed12a38e-284e-439d-8203-cf730cc40805",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Simic Basilisk": {
@@ -258452,12 +258452,12 @@
     },
     "Sphinx of Enlightenment": {
       "edhrec_rank": 9348,
-      "gate": "template",
+      "gate": null,
       "name": "Sphinx of Enlightenment",
-      "reason": "no template for: When this creature enters, target opponent draws a card and you draw three cards",
+      "reason": "",
       "scryfall_id": "9ccfe045-26cf-4813-ba9d-0b234fe9342f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sphinx of False Conclusions": {
@@ -263852,12 +263852,12 @@
     },
     "Steelburr Champion": {
       "edhrec_rank": 6575,
-      "gate": "template",
+      "gate": null,
       "name": "Steelburr Champion",
-      "reason": "no template for: Offspring {1}{W}",
+      "reason": "",
       "scryfall_id": "73b1f962-22b7-4394-9796-24f7b0f8a42f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Steelclad Serpent": {
@@ -277532,22 +277532,22 @@
     },
     "Tempt with Bunnies": {
       "edhrec_rank": 1944,
-      "gate": "template",
+      "gate": null,
       "name": "Tempt with Bunnies",
-      "reason": "no template for: Tempting Offer — Draw a card and create a 1/1 white Rabbit creature token. Then each oppon",
+      "reason": "",
       "scryfall_id": "90cc0369-dc9b-4e75-8e3c-ec0783fa13a9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tempt with Discovery": {
       "edhrec_rank": 858,
-      "gate": "template",
+      "gate": null,
       "name": "Tempt with Discovery",
-      "reason": "no template for: Tempting offer — Search your library for a land card and put it onto the battlefield. Each",
+      "reason": "",
       "scryfall_id": "580bbd5b-795e-41fe-b061-579c42218670",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tempt with Glory": {
@@ -278022,12 +278022,12 @@
     },
     "Tenuous Truce": {
       "edhrec_rank": 3248,
-      "gate": "template",
+      "gate": null,
       "name": "Tenuous Truce",
-      "reason": "no template for: Enchant opponent",
+      "reason": "",
       "scryfall_id": "387d54f1-bf1d-44f1-9576-cc912a51358c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tenured Concocter": {
@@ -282532,12 +282532,12 @@
     },
     "The Ten Rings": {
       "edhrec_rank": 6670,
-      "gate": "template",
+      "gate": null,
       "name": "The Ten Rings",
-      "reason": "no template for: Your maximum hand size is ten",
+      "reason": "",
       "scryfall_id": "2332bc91-b0f2-4911-844d-d1cc915cd6c8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Tenth Doctor": {
@@ -292982,12 +292982,12 @@
     },
     "Triskaidekaphile": {
       "edhrec_rank": 1466,
-      "gate": "template",
+      "gate": null,
       "name": "Triskaidekaphile",
-      "reason": "no template for: You have no maximum hand size",
+      "reason": "",
       "scryfall_id": "2ddbaeed-ba00-476d-a68a-d98f179b62a6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Triskaidekaphobia": {
@@ -294672,12 +294672,12 @@
     },
     "Twenty-Toed Toad": {
       "edhrec_rank": 1618,
-      "gate": "template",
+      "gate": null,
       "name": "Twenty-Toed Toad",
-      "reason": "no template for: Your maximum hand size is twenty",
+      "reason": "",
       "scryfall_id": "1b3de0d8-5911-4743-8623-010f12c2055b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Twice Upon a Time // Unlikely Meeting": {
@@ -312662,12 +312662,12 @@
     },
     "Wear Down": {
       "edhrec_rank": 2324,
-      "gate": "template",
+      "gate": null,
       "name": "Wear Down",
-      "reason": "no template for: Gift a card",
+      "reason": "",
       "scryfall_id": "fded2b83-3b7d-4c8c-83c4-0624a1069628",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Weary Prisoner // Wrathful Jailbreaker": {
@@ -317792,12 +317792,12 @@
     },
     "Wizard Class": {
       "edhrec_rank": 634,
-      "gate": "template",
+      "gate": null,
       "name": "Wizard Class",
-      "reason": "no template for: You have no maximum hand size",
+      "reason": "",
       "scryfall_id": "6b429f7a-da0c-4570-87ed-9945a657fe11",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wizard Mentor": {

@@ -207,6 +207,19 @@ describe("beatsFor", () => {
     expect(beat.text).toBe("Edgar AI searches their library");
   });
 
+  it("gives a gift its own beat and line", () => {
+    // Parallel switches with parallel `default`s: a gift left out here would
+    // be dropped from the queue even with a log line.
+    const [beat] = beatsFor(
+      [event("gift_given", { gift_to: 0 }, { player: 1, source: 12 })],
+      NAMES,
+      undefined,
+      0,
+    );
+    expect(beat).toMatchObject({ hold: 200, sound: "chime" });
+    expect(beat.text).toBe("Edgar AI gives you a gift");
+  });
+
   it("banners an emblem, told from the viewer's side", () => {
     // Another table-level moment: the emblem sits in the command zone, which
     // is a pile, so there is nothing to flash. Neutral, because an emblem is as

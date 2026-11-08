@@ -15,10 +15,10 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 70 |
 | [Conditions](#conditions) | 34 |
-| [Trigger events](#trigger-events) | 51 |
+| [Trigger events](#trigger-events) | 52 |
 | [Trigger filters](#trigger-filters) | 37 |
-| [Static effects](#static-effects) | 94 |
-| [Player-wide statics](#player-wide-statics) | 45 |
+| [Static effects](#static-effects) | 95 |
+| [Player-wide statics](#player-wide-statics) | 46 |
 | [Grantable statics](#grantable-statics) | 43 |
 | [Cost reduction](#cost-reduction) | 6 |
 | [Ability costs](#ability-costs) | 30 |
@@ -36,8 +36,8 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Mana rider ops](#mana-rider-ops) | 7 |
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
 | [Card-level face keys](#card-level-face-keys) | 6 |
-| [Card-level rider keys](#card-level-rider-keys) | 19 |
-| [Engine events](#engine-events) | 78 |
+| [Card-level rider keys](#card-level-rider-keys) | 20 |
+| [Engine events](#engine-events) | 79 |
 
 ## Effect ops
 
@@ -471,6 +471,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `draw_step` | `draw_step` | At the beginning of the draw step. | [Triggers](card-dsl.md#triggers) |
 | `end_step` | `end_step` | At the beginning of the end step. | [Triggers](card-dsl.md#triggers) |
 | `expend` | `mana_spent` | You expend N (`nth`): the spell payment that takes your mana spent to cast spells this turn to N or more. | [Expend — "Whenever you expend N"](card-dsl-cookbook.md#expend--whenever-you-expend-n) |
+| `gives_gift` | `gift_given` | A player gives a gift (702.174): a spell with a promised gift resolves, or a permanent's gift trigger does; `gift_to` binds the recipient. | ["Whenever you give a gift"](card-dsl-cookbook.md#whenever-you-give-a-gift) |
 | `land_played` | `land_played` | A land is played. | [Triggers](card-dsl.md#triggers) |
 | `leaves_battlefield` | `leaves_battlefield` | A permanent leaves the battlefield. | [Triggers](card-dsl.md#triggers) |
 | `leaves_graveyard` | `leaves_graveyard` | A card leaves a graveyard. | [Triggers](card-dsl.md#triggers) |
@@ -601,6 +602,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `lose_keyword_timestamped` |  |  | Matching permanents lose keywords; a grant newer than the removal gives one back (613.7). | [lose_keyword_timestamped — "loses flying", with no "can't have"](card-dsl-cookbook.md#lose_keyword_timestamped--loses-flying-with-no-cant-have) |
 | `mana_becomes_colorless` | yes |  | Unspent mana the player would lose becomes colorless instead. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `mana_retention` | yes |  | The player doesn't lose unspent mana of the listed symbols as steps and phases end. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
+| `maximum_hand_size` | yes |  | The player's maximum hand size is N; the newest hand-size effect wins. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `no_hand_limit` | yes |  | The player has no maximum hand size. | [Static abilities](card-dsl.md#static-abilities) |
 | `opponents_cant_force_discard_or_sacrifice` | yes |  | Opponents' spells and abilities can't make the player discard or sacrifice. | ["Can't cause you to discard cards or sacrifice permanents"](card-dsl-cookbook.md#cant-cause-you-to-discard-cards-or-sacrifice-permanents) |
 | `play_lands_from_graveyard` | yes |  | The player may play lands from their graveyard. | [Static abilities](card-dsl.md#static-abilities) |
@@ -671,6 +673,7 @@ The static effects that describe the *player* rather than a characteristic, and 
 | `look_at_library_top` | The player may look at the top card of their library any time. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `mana_becomes_colorless` | Unspent mana the player would lose becomes colorless instead. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `mana_retention` | The player doesn't lose unspent mana of the listed symbols as steps and phases end. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
+| `maximum_hand_size` | The player's maximum hand size is N; the newest hand-size effect wins. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `no_hand_limit` | The player has no maximum hand size. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `opponents_cant_force_discard_or_sacrifice` | Opponents' spells and abilities can't make the player discard or sacrifice. | ["Can't cause you to discard cards or sacrifice permanents"](card-dsl-cookbook.md#cant-cause-you-to-discard-cards-or-sacrifice-permanents) |
 | `play_lands_from_graveyard` | The player may play lands from their graveyard. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
@@ -1118,6 +1121,7 @@ Things a card says about itself that are neither a price nor a second face. Defi
 | `melds_with` | The card this one melds with. | [Meld — mutate's merged permanent, with the pair fixed by the card](card-dsl-cookbook.md#meld--mutates-merged-permanent-with-the-pair-fixed-by-the-card) |
 | `melds_into` | The permanent the pair melds into. | [Meld — mutate's merged permanent, with the pair fixed by the card](card-dsl-cookbook.md#meld--mutates-merged-permanent-with-the-pair-fixed-by-the-card) |
 | `cant_cast_first_turns` | Can't be cast during its controller's first N turns of the game. | [Narrowing when a spell may be cast](card-dsl.md#narrowing-when-a-spell-may-be-cast) |
+| `cast_only_during` | Castable only on whose turn (`turn`) and in which `steps` or `phase` it names, by any route. | [Narrowing when a spell may be cast](card-dsl.md#narrowing-when-a-spell-may-be-cast) |
 | `toxic` | Toxic N: the N, beside `toxic` in `keywords`. | [Toxic N](card-dsl-cookbook.md#toxic-n) |
 | `annihilator` | Annihilator N: the N, beside `annihilator` in `keywords`. | [Annihilator N](card-dsl-cookbook.md#annihilator-n) |
 | `morph_counter` | Megamorph: turns face up with a +1/+1 counter, beside `morph`. | [Face-down permanents — morph, megamorph and manifest](card-dsl-cookbook.md#face-down-permanents--morph-megamorph-and-manifest) |
@@ -1170,6 +1174,7 @@ Every `EventType` the engine emits, and which trigger events listen to it. An ev
 | `energy_paid` |  |  | [Triggers](card-dsl.md#triggers) |
 | `enters_battlefield` | `self_enters` `permanent_enters` |  | [Triggers](card-dsl.md#triggers) |
 | `game_over` |  |  | [Triggers](card-dsl.md#triggers) |
+| `gift_given` | `gives_gift` |  | [Triggers](card-dsl.md#triggers) |
 | `hand_kept` |  |  | [Triggers](card-dsl.md#triggers) |
 | `land_played` | `land_played` |  | [Triggers](card-dsl.md#triggers) |
 | `leaves_battlefield` | `leaves_battlefield` |  | [Triggers](card-dsl.md#triggers) |

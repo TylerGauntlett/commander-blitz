@@ -1646,6 +1646,42 @@ def forbid_attack_while_counter(
     return True
 
 
+def forbid_attack_next_combat(
+    state: GameState,
+    oid: int,
+    defender: int,
+    *,
+    planeswalkers: bool = False,
+    source: int | None = None,
+) -> bool:
+    """ "They can't attack ``defender`` that combat." One rules-relevant thing:
+    it writes the mark, on `must_attack`'s ``next_combat`` clock -- spent when
+    the creature's controller next declares attackers
+    (`combat.discharge_attack_requirements`).
+
+    Refused, returning ``False``, for a creature no longer on the battlefield
+    and a defender out of the game. A defender who controls the creature is not
+    refused: control can change before that combat.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return False
+    if not state.is_alive(defender):
+        return False
+    mark = AttackMark(
+        defender=defender,
+        since_turn=state.turn,
+        source=source,
+        prohibition=True,
+        planeswalkers=planeswalkers,
+        next_combat=True,
+    )
+    if mark in obj.attack_marks:
+        return False
+    obj.attack_marks = [*obj.attack_marks, mark]
+    return True
+
+
 def clear_attack_marks(state: GameState) -> None:
     """End the creature attack marks whose "end of your next turn" is now -- cleanup."""
     for oid in state.battlefield:

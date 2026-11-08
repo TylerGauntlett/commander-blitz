@@ -93,6 +93,24 @@ class EventType:
     #: that discards nothing (an opponent's ability under a discard shield) is
     #: still a connive, and connive 2 is one connive, not two.
     CONNIVED = "connived"
+    #: A player gave a gift (702.174) -- "Whenever you give a gift" (Jolly
+    #: Gerbils). ``player`` is the **giver**, the controller of the spell or
+    #: ability that gave it; ``source`` is the gift card's object, ``card`` its
+    #: id, and ``data["gift_to"]`` the opponent who received it.
+    #:
+    #: One event per gift given, fired by `stack` at the one moment the card
+    #: gives it: as a spell with a promised gift resolves, or -- when the card's
+    #: gift is the enters trigger of a permanent ("if you do, when it enters,
+    #: they create an 8/8 blue Octopus") -- as that ability resolves.
+    #: `CardDef.gift_ability` says which. A spell cast without the promise, a
+    #: countered or fizzled one, and a gift trigger whose intervening-if fails
+    #: give nothing and fire nothing.
+    #:
+    #: Its own type because nothing else in the log says it: `spell_cast`
+    #: fires on the promise, including on a spell that is then countered and
+    #: a permanent spell that never enters, and the gift's own effect (a draw,
+    #: a token) is indistinguishable from any other draw or token.
+    GIFT_GIVEN = "gift_given"
     #: A player got the city's blessing. Once per player per game.
     CITY_S_BLESSING = "city_s_blessing"
     MILL = "mill"

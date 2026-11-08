@@ -35,6 +35,7 @@ from .effects.modes import (
     record_per_turn,
     unspent,
 )
+from .effects.selectors import select_players
 from .effects.values import evaluate_value
 from .enums import DecisionKind, Zone
 from .events import EventType
@@ -984,6 +985,12 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
         source_name=card.name if card else item.description,
         source_def_id=card.id if card else "",
     )
+    if card.gift is not None and card.gift_ability is None:
+        # 702.174: an instant or sorcery with a promised gift gives it as it
+        # resolves, the gift's effect first -- as does any spell whose own
+        # effects carry the gift (`CardDef.gift_ability`). Past the 608.2b
+        # check above, so a spell countered for want of targets gave nothing.
+        _give_gift(state, ctx, item.controller, item.oid, card.id)
     yield from execute(ctx, card.spell_effects)
     # "â€¦add this card's effects to that spell." After the host's own, in the
     # order they were spliced on, and through the *same* context -- which is
@@ -1411,6 +1418,28 @@ def _attach_aura(state: GameState, obj, card: CardDef, targets, specs) -> None:
                 return
 
 
+def _give_gift(
+    state: GameState, ctx: EffectContext, giver: int, source: int | None, card_id: str
+) -> None:
+    """Fire `EventType.GIFT_GIVEN` if a gift is being given here (702.174).
+
+    The recipient is asked exactly as the gift's own effect asks it -- the
+    ``"gift_recipient"`` player spec -- so the event and the reward cannot
+    disagree: no promise, or a promisee who has left the game, is no gift.
+    """
+    recipients = select_players(ctx, "gift_recipient")
+    if not recipients:
+        return
+    fire(
+        state,
+        EventType.GIFT_GIVEN,
+        player=giver,
+        source=source,
+        card=card_id,
+        gift_to=recipients[0],
+    )
+
+
 def _resolve_ability(state: GameState, item: StackItem) -> Generator[Any, list[int]]:
     source = state.objects.get(item.source_oid) if item.source_oid is not None else None
     # The ability first, and the card only once there is something to resolve.
@@ -1492,6 +1521,15 @@ def _resolve_ability(state: GameState, item: StackItem) -> Generator[Any, list[i
     # in.  Both early returns above are past -- a fizzled trigger and one whose
     # intervening-if failed (603.4) never resolve, so neither may advance it.
     ctx.resolutions = state.turn_ledger.resolving(item.source_oid, item.ability_index)
+    if (
+        card is not None
+        and card.gift_ability == item.ability_index
+        and item.granted_by is None
+    ):
+        # A permanent's gift (702.174) is its enters trigger, so it is given as
+        # that ability resolves -- after the intervening-if above, so a
+        # permanent that entered without the promise gives nothing.
+        _give_gift(state, ctx, item.controller, item.source_oid, card.id)
     yield from execute(ctx, ability.effects)
     # The records a cost named for this ability have been read for the last
     # time; without this every Station activation would leave one behind for

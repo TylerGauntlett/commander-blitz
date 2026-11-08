@@ -3132,6 +3132,26 @@
       ]
     },
     {
+      "id": "shark_3_3_u",
+      "name": "Shark Token",
+      "oracle_text": "3/3 blue Shark creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Shark"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "is_token": true
+    },
+    {
       "id": "shark_x_x_u_flying",
       "name": "Shark Token",
       "oracle_text": "X/X blue Shark creature token with flying.",

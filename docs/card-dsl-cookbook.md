@@ -1460,6 +1460,7 @@ they take `affects_player` instead of `affects` — the full list is
 { "kind": "static", "effect": "extra_land_drops",
   "affects_player": "you", "amount": { "const": 1 } }
 { "kind": "static", "effect": "no_hand_limit", "affects_player": "you" }
+{ "kind": "static", "effect": "maximum_hand_size", "affects_player": "you", "amount": 20 }
 { "kind": "static", "effect": "player_hexproof", "affects_player": "you" }
 { "kind": "static", "effect": "skip_draw_step", "affects_player": "you" }
 { "kind": "static", "effect": "skip_extra_turn", "affects_player": "opponent" }
@@ -1501,6 +1502,20 @@ filtered on both ends, so the key is optional there and sits beside `affects`
 rather than instead of it — see
 [Damage multiplied on the way out](card-dsl.md#damage-multiplied-on-the-way-out). It is the
 only static that takes both.
+
+`maximum_hand_size` is Twenty-Toed Toad's "Your maximum hand size is twenty":
+`amount` is the number the cleanup step (514.1) discards down to, and it is
+required — absent, the static would read 0 and empty the hand it was printed to
+protect. `affects` is a load error, and a negative constant is refused. It sets
+a number; "reduced by" (Locust Miser) and "increased by" modifiers
+change one, and are not this. `player_statics.maximum_hand_size` is the one
+answer to "what is this player's maximum": seven, unless a `maximum_hand_size`
+static, a `no_hand_limit` static or the `no_maximum_hand_size` one-shot applies,
+and then **the newest of them** (613.11 applies rules-changing effects in
+timestamp order). A Toad that arrives after a Reliquary Tower sets twenty; a
+Tower that arrives after the Toad lifts the limit. On a shared timestamp the
+larger maximum wins, no maximum being the largest. The discard prompt names the
+number.
 
 `skip_draw_step` is Necropotence's first line, and the whole of its design is
 how *little* it takes away. Rule 500.1: skipping a step's turn-based action is
@@ -2888,6 +2903,47 @@ The near misses are both a different card. A spec declared on every cast and
 branched on with `{"gift_promised": true}` needs a creature card in your
 graveyard to be cast at all, and announces a target the printed spell never
 chooses. `optional: true` lets a promised cast skip the target the promise buys.
+
+### "Whenever you give a gift"
+
+Jolly Gerbils: "Whenever you give a gift, draw a card." The trigger is
+`gives_gift`, and it listens to `EventType.GIFT_GIVEN`:
+
+```jsonc
+{ "kind": "triggered",
+  "text": "Whenever you give a gift, draw a card.",
+  "trigger": { "event": "gives_gift", "controller": "you" },
+  "effects": [ { "op": "draw", "player": "you", "amount": { "const": 1 } } ] }
+```
+
+A gift is **given** (702.174), not merely promised, at one of two moments, and
+the event fires there once per gift:
+
+- an instant or sorcery with a promised gift gives it **as it resolves**, before
+  its other effects, and only once past the 608.2b target check, so a spell
+  countered for want of targets gives nothing;
+- a permanent's gift is its **enters trigger** ("If you do, when it enters,
+  they create an 8/8 blue Octopus" — Octomancer), and it is given as that
+  ability resolves, past its intervening-if.
+
+Which part of a card gives its gift is not written by the author. The loader
+reads it off where `"gift_recipient"` is aimed and stores it as
+`CardDef.gift_ability`: the spell's own effects when they aim at the recipient
+(and on a card that aims nowhere, the spell), otherwise the one triggered
+ability that does. Scrapshooter's second enters trigger, "if the gift was
+promised, destroy target artifact or enchantment", reads the promise and gives
+nothing, so it is not the gift. Two triggered abilities that both aim at the
+recipient are refused at load: one promise is one gift.
+
+The giver is the subject — a **player**, the controller of the gift spell or
+ability — so `controller` reads `"you"` (the default), `"opponent"` or `"any"`
+against the giver, never the recipient. `{"binding": "gift_to"}` is the
+opponent who received it, and `event_player` the giver. A promisee who has left
+the game receives nothing, and nothing fires.
+
+`spell_cast` is the near miss and fires on the promise: it pays for a gift spell
+that is then countered, and for a permanent spell that never enters to give its
+gift.
 
 The loader refuses `gift_promised` on a card with no `gift`, on an ability's
 targets (no cast declares them), on a mode-owned spec, and beside
@@ -5054,7 +5110,7 @@ it does reach planeswalkers, which is why `attack_target_forbidden` is told whic
 kind of attack it is being asked about rather than inferring it.
 
 
-### `objects` — "those creatures can't attack you … for as long as it has a vow counter"
+### `objects` — "those creatures can't attack you …" on a creature's own clock
 
     Promise of Loyalty — "Each player puts a vow counter on a creature they
     control and sacrifices the rest. Each of those creatures can't attack you or
@@ -5066,6 +5122,23 @@ kind of attack it is being asked about rather than inferring it.
   "planeswalkers": true }
 ```
 
+    Illusionist's Gambit — "Remove all attacking creatures from combat and untap
+    them. After this phase, there is an additional combat phase. Each of those
+    creatures attacks that combat if able. They can't attack you or
+    planeswalkers you control that combat."
+
+```jsonc
+{ "op": "choose_permanents", "as": "those",
+  "objects": { "zone": "battlefield", "types": ["Creature"], "attacking": true,
+               "controller": "any", "count": "all" } },
+{ "op": "remove_from_combat", "objects": { "binding": "those" } },
+{ "op": "untap", "objects": { "binding": "those" } },
+{ "op": "extra_combat" },
+{ "op": "must_attack", "objects": { "binding": "those" }, "duration": "next_combat" },
+{ "op": "cant_attack_player", "objects": { "binding": "those" },
+  "defender": "you", "duration": "next_combat", "planeswalkers": true }
+```
+
 `objects` in place of `attacker` names **creatures** instead of a player, and
 each one carries the prohibition itself as a `structs.AttackMark`, read beside
 the table in `combat._attack_prohibited`. So it follows the creature to a new
@@ -5073,12 +5146,28 @@ controller, and a creature that leaves and returns is a new object without it
 (400.7). `planeswalkers` means what it means on the table: the defender's
 planeswalkers and battles are closed as well.
 
-The creature form has one clock, `while_counter`, with `counter` naming the
-kind: the mark stands while the creature has one and is dropped when the last
-one goes (`GameObject.remove_counter`), so a counter put back later does not
-revive it (611.2b). A creature without the counter at resolution gets nothing.
+The creature form has two clocks, and `duration` names one of them:
+
+| `duration` | ends |
+|---|---|
+| `while_counter` | with `counter` naming the kind: when the creature's last such counter goes (`GameObject.remove_counter`), so a counter put back later does not revive it (611.2b). A creature without the counter at resolution gets nothing |
+| `next_combat` | when the creature's controller next declares attackers: `combat.discharge_attack_requirements` drops the mark once that declaration is locked in, whether or not the creature attacked — `must_attack`'s `next_combat` clock, so the requirement and the prohibition the Gambit pairs bind the same one combat |
+
+"That combat" cannot be the table's `this_combat`, which `combat.end_combat`
+clears at the end of the combat the spell is cast in, before the additional one
+begins; nor `this_turn`, which also binds any later combat that turn; nor the
+player form, which would stop every creature the attacker controls rather than
+those creatures.
+
+The two halves meet in `can_attack` and `legal_defenders`. With another
+opponent open, each of those creatures must attack, and only that opponent (or
+their planeswalkers) is offered. With the caster the only player left to attack,
+the creature cannot attack at all, and the requirement owes nothing (508.1d:
+"if able").
+
 The loader refuses `objects` beside `attacker`, any other `duration` with
-`objects`, a missing `counter`, and `while_counter` without `objects`.
+`objects`, a missing `counter` on `while_counter`, a `counter` on
+`next_combat`, and either clock without `objects`.
 
 The `cant_attack_you` static is the near miss and is scoped to the seat of the
 permanent printing it: granted to another player's creature, "you" would be
