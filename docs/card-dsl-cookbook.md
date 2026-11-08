@@ -14042,6 +14042,51 @@ board of Bears into targets for a Goblin lord's anthem. `chars()` reports the
 type, and everything that reads `chars` — selectors, effect filters, the UI type
 line — sees it.
 
+### "The same is true for creature spells you control and creature cards you own that aren't on the battlefield"
+
+Maskwood Nexus, Arcane Adaptation, Xenograft, Roshan: the grant above, carried
+into every zone with `off_battlefield`.
+
+```jsonc
+// Maskwood Nexus — "Creatures you control are every creature type. The same
+// is true for creature spells you control and creature cards you own that
+// aren't on the battlefield."
+{ "kind": "static", "effect": "add_subtype",
+  "affects":  { "types": ["Creature"] },
+  "subtypes": [ /* every creature type: the template's CHANGELING_SUBTYPES */ ],
+  "off_battlefield": true }
+```
+
+On the battlefield it is the ordinary layer-4 grant. Off it, the grant also
+reaches each spell on the stack its source's controller controls and each card
+that player owns in a hand, library, graveyard, exile or the command zone,
+whenever `affects` describes the card's **printed** face — so "creature cards"
+are the cards that print Creature, and an opponent's cards are untouched. A
+face-down card is not reached. The grant lasts exactly as long as its source is
+on the battlefield with its abilities.
+
+Who sees it: `chars()` off the battlefield (`characteristics._compute`), a
+selector searching a zone (`selectors.matches`), a trigger filter's subject
+(`triggers.matches_card_filter` — "whenever you cast a Squirrel spell") and a
+spell being priced (`player_statics.spell_cost_reduction`, since 601.2f puts
+the spell on the stack under its caster's control before its cost is locked
+in). All four read `characteristics.off_battlefield_face` /
+`with_granted_types`. Another static's filter does not, for the layers-lite
+reason above.
+
+The loader refuses the flag on any static but `add_subtype`, without
+`affects`, with `self_only` (a changeling's own line already works in every
+zone), with an `affects` key a printed face cannot answer
+(`characteristics.OFF_BATTLEFIELD_AFFECTS_KEYS`: no tapped, attacking or
+counters clause, in `any_of` branches too), with a `controller` other than
+`"you"`, and inside a `grantable_abilities` static: the off-battlefield half is
+collected off printed faces (`characteristics._off_battlefield_type_statics`),
+so a granted copy would stop at the battlefield's edge.
+
+**The near miss is the same static without the flag**, which loads, makes every
+creature on the battlefield every creature type and leaves the second sentence
+undone: a tutor for "a Squirrel card" passes the cards in your library by.
+
 ## "Choose a card name"
 
     Tamiyo, Collector of Tales, +1 — "Choose a nonland card name, then reveal

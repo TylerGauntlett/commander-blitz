@@ -40,6 +40,7 @@ from .characteristics import (
     granted_wards,
     has_counters_matches,
     has_keyword,
+    off_battlefield_face,
     parity_matches,
     resolve_chosen_subtypes,
 )
@@ -2293,6 +2294,12 @@ def matches_card_filter(
     face_down = obj.face_down and obj.on_battlefield
     if face_down:
         card = face_down_face(card)
+    else:
+        # A spell on the stack or a card in another zone, with what an
+        # `off_battlefield` `add_subtype` grants it: "whenever you cast a
+        # Squirrel spell" sees a creature spell Maskwood Nexus made every
+        # creature type. A permanent's own face is unchanged.
+        card = off_battlefield_face(state, obj)
 
     # "…a creature spell of the chosen type." The same substitution the static
     # filters do, because Vanquisher's Banner asks the question from both.

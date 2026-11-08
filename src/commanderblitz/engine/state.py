@@ -176,6 +176,11 @@ class GameState:
     #: `char_cache` is being filled.
     ability_static_cache: list[Any] = field(default_factory=list, repr=False)
     ability_static_version: int = -1
+    #: `characteristics._off_battlefield_type_statics`, cached the same way and
+    #: for the same reason: one list for the whole battlefield, read while
+    #: `char_cache` is being filled for cards that are not on it.
+    off_battlefield_static_cache: list[Any] = field(default_factory=list, repr=False)
+    off_battlefield_static_version: int = -1
 
     triggers_this_step: int = 0
     #: Which "simultaneous" group the moves happening right now belong to.

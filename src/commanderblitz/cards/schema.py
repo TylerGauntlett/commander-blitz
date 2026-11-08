@@ -912,6 +912,13 @@ class AbilityModel(BaseModel):
     #: absorb 2 and do nothing to a total shield. The loader requires exactly
     #: one of this and ``amount``.
     prevent_all: bool = False
+    #: ``add_subtype``'s reach past the battlefield: "…**The same is true for
+    #: creature spells you control and creature cards you own that aren't on
+    #: the battlefield.**" (Maskwood Nexus, Arcane Adaptation). The grant then
+    #: also reaches every spell its source's controller controls and every card
+    #: that player owns in another zone that `affects` describes by its printed
+    #: face. Refused on any other static.
+    off_battlefield: bool = False
     #: Where `replace_graveyard` sends a card instead -- "exile it instead"
     #: (Rest in Peace, Leyline of the Void). A field rather than a hard-coded
     #: exile because the same sentence is printed about a library by the

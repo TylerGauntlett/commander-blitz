@@ -26,6 +26,7 @@ from .characteristics import (
     resolve_chosen_colors,
     resolve_chosen_subtypes,
     static_timestamp,
+    with_granted_types,
 )
 from .enums import Step, Zone
 from .mana import ManaCost, parse_mana_production
@@ -1350,6 +1351,10 @@ def spell_cost_reduction(
     resolving `cast_card` alike, and never the hand or the command zone.
     """
     total = 0
+    # The spell is on the stack under ``pid``'s control while its cost is
+    # locked in (601.2f), so an `off_battlefield` `add_subtype` -- Maskwood
+    # Nexus's "creature spells you control" -- is part of the face priced.
+    card = with_granted_types(state, card, pid)
     for source_obj, static in _battlefield_statics(state):
         if static.get("effect") != "spell_cost_reduction":
             continue

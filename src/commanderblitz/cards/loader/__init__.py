@@ -36,6 +36,8 @@ from commanderblitz.engine.carddef import (
 )
 from commanderblitz.engine.characteristics import (
     AFFECTED_CONTROLLER,
+    OFF_BATTLEFIELD,
+    OFF_BATTLEFIELD_AFFECTS_KEYS,
     static_condition_names_affected,
     static_condition_reads_derived,
 )
@@ -1578,6 +1580,15 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
                     f"(`_ability_statics` or `_active_player_statics`), so a "
                     f"granted one would load clean and never apply; grantable "
                     f"statics are {sorted(GRANTABLE_STATIC_EFFECTS)}"
+                )
+            if ability.static.get(OFF_BATTLEFIELD):
+                # The off-battlefield half is collected off printed faces
+                # (`_off_battlefield_type_statics`), so a granted copy would
+                # reach creatures and silently stop at the battlefield's edge.
+                raise DslError(
+                    f"{where}: an off_battlefield add_subtype is read off printed "
+                    f"faces, so a granted one would never reach a card off the "
+                    f"battlefield"
                 )
             for key in ("affects", "blockers"):
                 _refuse_granted_chosen_qualities(
@@ -4471,6 +4482,51 @@ def _validate_tax_x(model: AbilityModel, mana: str, where: str) -> None:
         validate_counter_kind(spec["counters"], f"{where}.x_per_attacker.counters")
 
 
+def _validate_off_battlefield(model: AbilityModel, where: str) -> None:
+    """An `add_subtype` grant carried past the battlefield (Maskwood Nexus).
+
+    "The same is true for creature spells you control and creature cards you
+    own that aren't on the battlefield." Only `add_subtype` reads the flag, so
+    it is refused anywhere else rather than loaded as a line with no reader.
+    The grant reaches cards by their printed face, so its `affects` may use
+    only the keys a face answers (`OFF_BATTLEFIELD_AFFECTS_KEYS`): a tapped or
+    attacking clause describes a permanent, and a card in a hand would fail or
+    pass it silently. "You" is the whole sentence -- spells you control, cards
+    you own -- so `controller` may only say it, and `self_only` is a
+    changeling's own CDA, which works in every zone without the flag.
+    """
+    if model.effect != "add_subtype":
+        raise DslError(
+            f"{where}: 'off_battlefield' carries an add_subtype grant past the "
+            f"battlefield; {model.effect!r} does not read it"
+        )
+    affects = model.affects
+    if not affects:
+        raise DslError(
+            f"{where}: an off_battlefield add_subtype needs 'affects' -- the "
+            f'creatures it describes ({{"types": ["Creature"]}})'
+        )
+    if affects.get("self_only"):
+        raise DslError(
+            f"{where}: an off_battlefield add_subtype describes other objects; a "
+            f"card's own type line (changeling) is a self_only add_subtype, which "
+            f"works in every zone without the flag"
+        )
+    branches = [affects, *(affects.get("any_of") or ())]
+    for branch in branches:
+        unknown = sorted(k for k in branch if k not in OFF_BATTLEFIELD_AFFECTS_KEYS)
+        if unknown:
+            raise DslError(
+                f"{where}.affects: an off_battlefield add_subtype reaches cards by "
+                f"their printed face, which cannot answer {unknown}"
+            )
+        if branch.get("controller", "you") != "you":
+            raise DslError(
+                f"{where}.affects: an off_battlefield add_subtype is about your own "
+                f"spells and cards; 'controller' may only be \"you\""
+            )
+
+
 def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     if model.effect is None:
         raise DslError(f"{where}: static abilities need an 'effect' name")
@@ -6363,6 +6419,9 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"print; it takes no 'ability', 'subtypes' or 'keywords'"
             )
 
+    if model.off_battlefield:
+        _validate_off_battlefield(model, where)
+
     if model.effect == "set_creature_types":
         # "…is a Dragon … (It loses all other creature types.)" The list is
         # the creature-type line the permanent ends with, so an empty one is
@@ -6669,6 +6728,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             static[field_name] = value
     if model.prevent_all:
         static["prevent_all"] = True
+    if model.off_battlefield:
+        static[OFF_BATTLEFIELD] = True
     if model.destination is not None:
         static["destination"] = model.destination
     if model.and_create:

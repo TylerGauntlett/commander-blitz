@@ -350,6 +350,136 @@ def card_in_exile_characteristics(
             )
     return power, toughness, frozenset(types)
 
+
+#: The `add_subtype` flag that carries a grant off the battlefield.
+#:
+#: "Creatures you control are every creature type. **The same is true for
+#: creature spells you control and creature cards you own that aren't on the
+#: battlefield.**" -- Maskwood Nexus; Arcane Adaptation, Xenograft and Roshan
+#: print the same sentence. With it, the static's grant also reaches each card
+#: off the battlefield that its `affects` describes: a spell on the stack its
+#: source's controller controls, and a card in any other zone that player owns.
+OFF_BATTLEFIELD = "off_battlefield"
+
+#: The filter keys an `OFF_BATTLEFIELD` static's `affects` may use: the ones
+#: `_matches_printed` answers off a card face, plus the two relations to the
+#: source that still mean something for a card -- whose it is and "other". A
+#: board-state key (tapped, attacking, counters, attached) describes a
+#: permanent, and a card in a hand would silently fail or pass it.
+OFF_BATTLEFIELD_AFFECTS_KEYS = frozenset(
+    {
+        "types",
+        "any_types",
+        "not_types",
+        "subtypes",
+        "not_subtypes",
+        "supertypes",
+        "not_supertypes",
+        "colors",
+        "min_colors",
+        "colorless",
+        "keywords",
+        "not_keywords",
+        "any_of",
+        "controller",
+        "exclude_self",
+    }
+)
+
+
+def _off_battlefield_type_statics(
+    state: GameState,
+) -> list[tuple[GameObject, Mapping[str, Any]]]:
+    """Every active `OFF_BATTLEFIELD` `add_subtype` static on the battlefield.
+
+    Read off **printed** faces, as `_ability_statics` is, and for a reason of
+    the same kind: the cards this grant reaches are asked about by `chars`, and
+    `abilities_of` can ask `chars` about a card off the battlefield (the cards
+    exiled with a Hazel's Brewmaster), so collecting through it would let one
+    card's characteristics wait on themselves. A permanent that has lost its
+    abilities grants nothing, and a granted copy of the static is not
+    collected -- the one divergence this costs.
+
+    Only the battlefield: "the same is true for…" is the permanent's static,
+    so it ends the moment the source leaves. Cached against ``char_version``.
+    """
+    if state.off_battlefield_static_version != state.char_version:
+        out: list[tuple[GameObject, Mapping[str, Any]]] = []
+        for oid in state.battlefield:
+            obj = state.objects.get(oid)
+            if obj is None or obj.face_down:
+                continue
+            for ability in present_printed_abilities(obj, printed_abilities(state, obj)):
+                static = ability.static if ability.is_static else None
+                if (
+                    not static
+                    or static.get("effect") != "add_subtype"
+                    or not static.get(OFF_BATTLEFIELD)
+                    or Zone.BATTLEFIELD not in ability.active_zones
+                ):
+                    continue
+                if _static_active(state, obj, static) and not _loses_abilities(state, obj):
+                    out.append((obj, static))
+        state.off_battlefield_static_cache = out
+        state.off_battlefield_static_version = state.char_version
+    return state.off_battlefield_static_cache
+
+
+def granted_card_types(
+    state: GameState, card: CardDef, pid: int
+) -> tuple[frozenset[str], frozenset[str]]:
+    """The card types and subtypes ``pid``'s `OFF_BATTLEFIELD` statics give ``card``.
+
+    ``pid`` is the player the card is *yours* for: the controller of a spell
+    on the stack, the owner of a card anywhere else, and the caster of a spell
+    being priced (601.2f puts it on the stack, under the caster's control,
+    before its cost is locked in). The static's `affects` is matched against
+    the printed face alone (`_matches_printed`), so the grant reaches "creature
+    cards" by what they print and no other static's output decides who gets it.
+    """
+    types: set[str] = set()
+    subtypes: set[str] = set()
+    for source, static in _off_battlefield_type_statics(state):
+        if source.controller != pid:
+            continue
+        affects = resolve_chosen_colors(
+            resolve_chosen_subtypes(static.get("affects") or {}, source), source
+        )
+        face_filter = {k: v for k, v in affects.items() if k not in ("controller", "exclude_self")}
+        if not _matches_printed(card, face_filter):
+            continue
+        subtypes.update(resolve_chosen_subtype_list(static.get("subtypes", ()), source))
+        types.update(static.get("types", ()))
+    return frozenset(types), frozenset(subtypes)
+
+
+def with_granted_types(state: GameState, card: CardDef, pid: int) -> CardDef:
+    """``card``'s face with ``pid``'s off-battlefield type grants unioned in.
+
+    For the readers that ask a printed face rather than `chars` -- a spell
+    being priced, a trigger's subject, a selector searching a hand or a
+    library. The same card back when nothing grants anything.
+    """
+    types, subtypes = granted_card_types(state, card, pid)
+    if not types and not subtypes:
+        return card
+    return dataclasses.replace(card, types=card.types | types, subtypes=card.subtypes | subtypes)
+
+
+def off_battlefield_face(state: GameState, obj: GameObject) -> CardDef:
+    """The face of a card off the battlefield, as the type grants leave it.
+
+    A spell is its controller's, any other card its owner's; a permanent, and
+    a face-down card (which has no characteristics to add to), is its printed
+    face unchanged.
+    """
+    card = state.card_of(obj)
+    if obj.on_battlefield or obj.face_down:
+        return card
+    pid = obj.controller if obj.zone is Zone.STACK else obj.owner
+    return with_granted_types(state, card, pid)
+
+
 def _base_pt(state: GameState, obj: GameObject) -> tuple[int, int]:
     """The size an object *starts* the pipeline with, before any layer applies.
 
@@ -533,6 +663,17 @@ def _compute(state: GameState, oid: int) -> Characteristics:
     if obj.cast_impending and obj.on_battlefield and obj.counter(TIME_COUNTER) > 0:
         types.discard("Creature")
         subtypes = {sub for sub in subtypes if subtype_survives(sub, types)}
+
+    if not obj.on_battlefield and not obj.face_down:
+        # Layer 4 for a card that is not a permanent: "the same is true for
+        # creature spells you control and creature cards you own that aren't
+        # on the battlefield" (Maskwood Nexus). The one static that reaches
+        # past the battlefield, matched on the printed face so no other
+        # static's output decides who it reaches -- see `granted_card_types`.
+        pid = obj.controller if obj.zone is Zone.STACK else obj.owner
+        granted_types, granted_subtypes = granted_card_types(state, card, pid)
+        types |= granted_types
+        subtypes |= granted_subtypes
 
     if obj.on_battlefield:
         statics = _battlefield_statics(state)
