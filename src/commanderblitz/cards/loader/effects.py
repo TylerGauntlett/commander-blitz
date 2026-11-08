@@ -2742,14 +2742,20 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"write the one the printed clause says"
             )
         for key in ("power", "toughness"):
-            # "...except it's a 4/4" (eternalize). The base size, so a number and
-            # never an expression: 707.9b makes it a copiable value, fixed when
-            # the copy is made, not something re-read as the game goes on.
+            # "...except it's a 4/4" (eternalize) is a number; "...except their
+            # power is half that creature's power" (Saw in Half) is a value
+            # expression, which `copy_permanent` evaluates once as it resolves
+            # and stores as a number. Either way 707.9b makes it a copiable
+            # value, fixed when the copy is made, never re-read as the game
+            # goes on.
             if key in overrides:
                 value = overrides[key]
-                if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+                if isinstance(value, Mapping):
+                    validate_value(value, f"{where}.except_.{key}")
+                elif isinstance(value, bool) or not isinstance(value, int) or value < 0:
                     raise DslError(
-                        f"{where}.except_.{key}: must be a non-negative integer, got {value!r}"
+                        f"{where}.except_.{key}: must be a non-negative integer or a "
+                        f"value expression, got {value!r}"
                     )
         if ("power" in overrides) != ("toughness" in overrides):
             # Every printed exception names a size as "N/N"; half of one is a
@@ -4563,6 +4569,52 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             f"{where}: 'once_each' is for a permanent's repeated modal ability; "
             f"a spell chooses its modes as it is cast and remembers nothing"
         )
+    if "repeatable" in effect:
+        # "You may choose the same mode more than once" (700.2d): a multiset of
+        # exactly `count` modes ("up to" with `up_to`), each instance declaring
+        # its own targets at cast. Every other clause reshaping the answer is
+        # one `ask_repeated_modes` would ignore, and `budget` is the other
+        # multiset, priced and asked on resolution.
+        if op != "choose_mode":
+            raise DslError(f"{where}: 'repeatable' only means anything on choose_mode, not {op!r}")
+        if not isinstance(effect["repeatable"], bool):
+            raise DslError(f"{where}: 'repeatable' is a boolean, got {effect['repeatable']!r}")
+        if effect["repeatable"]:
+            clash = [
+                key
+                for key in (
+                    "budget", "or_more", "up_to_if", "all_if", "optional", "random",
+                    "chooser", "once_each",
+                )
+                if effect.get(key) not in (None, False)
+            ]
+            if clash:
+                raise DslError(
+                    f"{where}: a 'repeatable' choose_mode is `count` modes with "
+                    f"repeats, so {clash} cannot apply to it"
+                )
+            count = effect.get("count", 1)
+            if isinstance(count, dict) and "const" in count:
+                count = count["const"]
+            if not isinstance(count, int) or isinstance(count, bool) or count < 2:
+                # "Choose one" with repeats is "choose one"; and a computed count
+                # ("choose X") has no value at the moment the modes are asked.
+                raise DslError(
+                    f"{where}: 'repeatable' needs a fixed 'count' of at least 2; "
+                    f"got {count!r}"
+                )
+            if len(effect.get("modes") or ()) < 2:
+                raise DslError(
+                    f"{where}: 'repeatable' over one mode is that mode run "
+                    f"'count' times -- write a 'repeat'"
+                )
+            if ".spell_effects[" not in where:
+                # Asked at 601.2b by `Game._ask_modes`; a trigger's 603.3c
+                # question and an activation's 602.2b one have no repeat.
+                raise DslError(
+                    f"{where}: 'repeatable' is a spell's \"choose N, you may choose "
+                    f"the same mode more than once\", asked as it is cast"
+                )
 
     for key in ("then", "else", "effects"):
         if key in effect:

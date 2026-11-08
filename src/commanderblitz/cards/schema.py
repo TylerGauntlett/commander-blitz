@@ -101,6 +101,25 @@ class CostModel(BaseModel):
     #: ``discard`` (two numbers for one payment) and not beside an ``{X}`` in
     #: ``mana``, ``loyalty_x`` or ``pay_life_x`` (an ability announces one X).
     discard_x: bool = False
+    #: "{3}{B}, **Sacrifice X Foods**:" -- Insatiable Frugivore. A selector over
+    #: the battlefield (``controller`` defaults to you): the controller
+    #: announces X as the ability is activated (601.2b, 107.3), no more than
+    #: the matching permanents they can sacrifice, and sacrifices that many as
+    #: the cost; the effects read X back with ``{"x": true}``. Activated
+    #: abilities only. No ``count`` (X is the count) and no ``as`` (there is no
+    #: one sacrificed permanent to name); not beside ``sacrifice`` (two
+    #: sacrifices drawing on one board) and not beside another announced X.
+    sacrifice_x: dict[str, Any] | None = None
+    #: "{T}, **Tap X untapped tokens you control**:" -- Hazel of the Rootbloom.
+    #: ``sacrifice_x``'s shape over ``tap_permanents``' pool: a selector over
+    #: the battlefield (``controller`` defaults to you, untapped forced), X
+    #: announced as the ability is activated and bounded by the matching
+    #: untapped permanents (never the source when the cost also has ``{T}``),
+    #: and that many tapped as the cost; the effects -- a mana ability's
+    #: ``add_mana`` ``amount`` included -- read X back with ``{"x": true}``.
+    #: Activated abilities only. No ``count``, ``total_power`` or ``as``; not
+    #: beside ``tap_permanents`` and not beside another announced X.
+    tap_x: dict[str, Any] | None = None
     #: "{1}{W}, {T}, **Exile this artifact**:" -- Phoenix Down. The exile twin
     #: of `discard_self`, and deliberately not `sacrifice`, which puts the
     #: source in the graveyard. The difference is the whole card here: Phoenix
@@ -351,6 +370,16 @@ class TargetModel(BaseModel):
     #: refused on a triggered ability's targets, which have no cast to have
     #: been kicked.
     count_if_kicked: int | Literal["any"] | dict[str, Any] | None = None
+    #: The ``selector`` this spec takes instead **when the spell was kicked**
+    #: -- "Exile target artifact or enchantment. If this spell was kicked,
+    #: exile target nonland permanent instead" (Tear Asunder). One target
+    #: either way; only what it may be changes, and the kicked cast both
+    #: declares it and re-checks it on resolution (608.2b) against this
+    #: selector. Validated as a selector of the spec's own kind. Refused on a
+    #: card with no ``kicker``, on an ability's targets, beside ``mode``,
+    #: ``gift_promised`` or ``cost_option``, when it names a sibling target or
+    #: ``{X}``, and when it is the unkicked ``selector`` over again.
+    selector_if_kicked: dict[str, Any] | None = None
     #: Which side of the **gift promise** declares this target. ``true``: only
     #: a promised cast does -- "if the gift was promised, return target
     #: creature card from your graveyard to your hand" (Consumed by Greed).
@@ -883,6 +912,13 @@ class AbilityModel(BaseModel):
     #: absorb 2 and do nothing to a total shield. The loader requires exactly
     #: one of this and ``amount``.
     prevent_all: bool = False
+    #: ``add_subtype``'s reach past the battlefield: "…**The same is true for
+    #: creature spells you control and creature cards you own that aren't on
+    #: the battlefield.**" (Maskwood Nexus, Arcane Adaptation). The grant then
+    #: also reaches every spell its source's controller controls and every card
+    #: that player owns in another zone that `affects` describes by its printed
+    #: face. Refused on any other static.
+    off_battlefield: bool = False
     #: Where `replace_graveyard` sends a card instead -- "exile it instead"
     #: (Rest in Peace, Leyline of the Void). A field rather than a hard-coded
     #: exile because the same sentence is printed about a library by the
@@ -901,8 +937,17 @@ class AbilityModel(BaseModel):
     #: Thopter artifact creature token with flying are created instead"
     #: (Stridehangar Automaton). The tokens about to be made are all kept and
     #: one of each id here joins them, once per creation however many of its
-    #: tokens `affects_token` matched. See `primitives._token_creation_plan`.
+    #: tokens `affects_token` matched -- or once per matched token under
+    #: `and_create_per_token`. See `primitives._token_creation_plan`.
     and_create: list[str] = Field(default_factory=list)
+    #: ``replace_token_creation`` with `and_create`: add each listed id **that
+    #: many** times rather than once -- one per matched token in the event, the
+    #: count read when the static applies. Chatterfang, Squirrel General's
+    #: "those tokens plus **that many** 1/1 green Squirrel creature tokens are
+    #: created instead": three Treasures bring three Squirrels. Refused without
+    #: `and_create`, which names what is added. See
+    #: `primitives._token_creation_plan`.
+    and_create_per_token: bool = False
     #: Whether `replace_graveyard` also catches a **token** -- the printed "a
     #: card **or token**" (Rest in Peace). Defaults to catching them, which is
     #: what every printed card in the family says; `false` is how one that
@@ -1795,6 +1840,14 @@ class CardModel(BaseModel):
     #: pairing, and the loader requires the two together for toxic's reason. The
     #: trigger is the rules', so the card writes no ability for it.
     annihilator: int = 0
+    #: **Vanishing N** (702.63a): "This permanent enters with N time counters on
+    #: it. At the beginning of your upkeep, remove a time counter from it. When
+    #: the last is removed, sacrifice it." The N, and only the N: the loader
+    #: lowers the field into the three abilities the rule makes of it -- the
+    #: enters-with replacement, the upkeep tick and the `last_counter_removed`
+    #: sacrifice -- so the card writes none of them. A whole number of at least
+    #: 1, on a permanent card.
+    vanishing: Any = None
     #: **Madness** (702.35a): "If you would discard this card, exile it instead.
     #: Then you may cast it for its madness cost." The exile happens whether or
     #: not the cast is taken.

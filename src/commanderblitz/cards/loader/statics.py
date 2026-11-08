@@ -46,6 +46,7 @@ from .vocabulary import (
     STATIC_MONARCH_PLAYERS,
     STATIC_POISON_KEYS,
     STATIC_SPELLS_CAST_KEYS,
+    STATIC_VALUE_COUNT_FILTER_KEYS,
     STATIC_VALUE_KEYS,
     STATIC_ZONE_FILTER_KEYS,
 )
@@ -261,6 +262,56 @@ def _validate_static_count_filter(spec: Any, where: str) -> None:
         raise DslError(
             f"{where}.controller: must be 'you', 'opponent' or 'any', got {controller!r}"
         )
+
+
+def _validate_static_value_count(spec: Any, where: str) -> None:
+    """A static magnitude's ``{"count": …}``: a counting filter, or a union of them.
+
+    "+1/+1 for each creature you control with base power **or** toughness 1"
+    (Sword of the Squeak) is ``any_of`` over two branches, and the reader is
+    `characteristics._matches_wherever`, which matches each branch as the outer
+    filter plus the branch's keys and counts an object once however many
+    branches describe it. So every branch is validated *as that merged filter*,
+    by the same counting check a plain `count` gets -- a malformed ``power``
+    inside a branch is refused here rather than matching everything later.
+
+    Refused, as `affects`' union refuses them: a union of one, an empty branch,
+    and a branch that repeats an outer key (its value would replace the outer
+    one rather than narrow it). Refused besides: a ``zone`` other than the
+    battlefield, and a ``zone`` or a nested ``any_of`` inside a branch -- a
+    union is of permanents described differently, not of places to look.
+    """
+    if not isinstance(spec, Mapping) or "any_of" not in spec:
+        _validate_static_count_filter(spec, where)
+        return
+    unknown = set(spec) - STATIC_VALUE_COUNT_FILTER_KEYS
+    if unknown:
+        raise DslError(f"{where}: unsupported filter keys {sorted(unknown)}")
+    if str(spec.get("zone", "battlefield")) != "battlefield":
+        raise DslError(
+            f"{where}.any_of: a union of permanents, so the count is over the "
+            f"battlefield (got zone {spec.get('zone')!r})"
+        )
+    branches = spec["any_of"]
+    if not isinstance(branches, list) or len(branches) < 2:
+        raise DslError(
+            f"{where}.any_of: takes at least two filters -- a union of one is the "
+            f"filter itself, written the long way"
+        )
+    outer = {k: v for k, v in spec.items() if k != "any_of"}
+    _validate_static_count_filter(outer, where)
+    for i, branch in enumerate(branches):
+        here = f"{where}.any_of[{i}]"
+        if not isinstance(branch, Mapping) or not branch:
+            raise DslError(f"{here}: must be a non-empty filter object")
+        if nested := sorted({"any_of", "zone"} & set(branch)):
+            raise DslError(f"{here}: a branch may not name {nested}")
+        if clash := sorted(set(outer) & set(branch)):
+            raise DslError(
+                f"{here}: {clash} already appear on the outer filter, and a "
+                f"branch's value would replace the outer one rather than narrow it"
+            )
+        _validate_static_count_filter({**outer, **branch}, here)
 
 
 def _validate_static_condition(condition: Any, where: str) -> None:
@@ -554,7 +605,7 @@ def _validate_static_value(value: Any, where: str) -> None:
         # here so it is a load error with a name on it instead.
         raise DslError(f"{where}: an empty object is not a static value")
     if "count" in value:
-        _validate_static_count_filter(value["count"], f"{where}.count")
+        _validate_static_value_count(value["count"], f"{where}.count")
     if "times" in value:
         # Recursive, so the factors are held to this same list -- a `times`
         # holding an effect-side leaf would otherwise slip past the difference

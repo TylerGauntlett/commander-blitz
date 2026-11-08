@@ -83,7 +83,7 @@ from __future__ import annotations
 
 import dataclasses
 from collections.abc import Iterator, Mapping
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, NamedTuple
 
 from .carddef import Ability, CardDef, ward_ability
 from .enums import KEYWORD_COUNTERS, SUBTYPE_CLASS, Keyword, Zone
@@ -350,6 +350,136 @@ def card_in_exile_characteristics(
             )
     return power, toughness, frozenset(types)
 
+
+#: The `add_subtype` flag that carries a grant off the battlefield.
+#:
+#: "Creatures you control are every creature type. **The same is true for
+#: creature spells you control and creature cards you own that aren't on the
+#: battlefield.**" -- Maskwood Nexus; Arcane Adaptation, Xenograft and Roshan
+#: print the same sentence. With it, the static's grant also reaches each card
+#: off the battlefield that its `affects` describes: a spell on the stack its
+#: source's controller controls, and a card in any other zone that player owns.
+OFF_BATTLEFIELD = "off_battlefield"
+
+#: The filter keys an `OFF_BATTLEFIELD` static's `affects` may use: the ones
+#: `_matches_printed` answers off a card face, plus the two relations to the
+#: source that still mean something for a card -- whose it is and "other". A
+#: board-state key (tapped, attacking, counters, attached) describes a
+#: permanent, and a card in a hand would silently fail or pass it.
+OFF_BATTLEFIELD_AFFECTS_KEYS = frozenset(
+    {
+        "types",
+        "any_types",
+        "not_types",
+        "subtypes",
+        "not_subtypes",
+        "supertypes",
+        "not_supertypes",
+        "colors",
+        "min_colors",
+        "colorless",
+        "keywords",
+        "not_keywords",
+        "any_of",
+        "controller",
+        "exclude_self",
+    }
+)
+
+
+def _off_battlefield_type_statics(
+    state: GameState,
+) -> list[tuple[GameObject, Mapping[str, Any]]]:
+    """Every active `OFF_BATTLEFIELD` `add_subtype` static on the battlefield.
+
+    Read off **printed** faces, as `_ability_statics` is, and for a reason of
+    the same kind: the cards this grant reaches are asked about by `chars`, and
+    `abilities_of` can ask `chars` about a card off the battlefield (the cards
+    exiled with a Hazel's Brewmaster), so collecting through it would let one
+    card's characteristics wait on themselves. A permanent that has lost its
+    abilities grants nothing, and a granted copy of the static is not
+    collected -- the one divergence this costs.
+
+    Only the battlefield: "the same is true for…" is the permanent's static,
+    so it ends the moment the source leaves. Cached against ``char_version``.
+    """
+    if state.off_battlefield_static_version != state.char_version:
+        out: list[tuple[GameObject, Mapping[str, Any]]] = []
+        for oid in state.battlefield:
+            obj = state.objects.get(oid)
+            if obj is None or obj.face_down:
+                continue
+            for ability in present_printed_abilities(obj, printed_abilities(state, obj)):
+                static = ability.static if ability.is_static else None
+                if (
+                    not static
+                    or static.get("effect") != "add_subtype"
+                    or not static.get(OFF_BATTLEFIELD)
+                    or Zone.BATTLEFIELD not in ability.active_zones
+                ):
+                    continue
+                if _static_active(state, obj, static) and not _loses_abilities(state, obj):
+                    out.append((obj, static))
+        state.off_battlefield_static_cache = out
+        state.off_battlefield_static_version = state.char_version
+    return state.off_battlefield_static_cache
+
+
+def granted_card_types(
+    state: GameState, card: CardDef, pid: int
+) -> tuple[frozenset[str], frozenset[str]]:
+    """The card types and subtypes ``pid``'s `OFF_BATTLEFIELD` statics give ``card``.
+
+    ``pid`` is the player the card is *yours* for: the controller of a spell
+    on the stack, the owner of a card anywhere else, and the caster of a spell
+    being priced (601.2f puts it on the stack, under the caster's control,
+    before its cost is locked in). The static's `affects` is matched against
+    the printed face alone (`_matches_printed`), so the grant reaches "creature
+    cards" by what they print and no other static's output decides who gets it.
+    """
+    types: set[str] = set()
+    subtypes: set[str] = set()
+    for source, static in _off_battlefield_type_statics(state):
+        if source.controller != pid:
+            continue
+        affects = resolve_chosen_colors(
+            resolve_chosen_subtypes(static.get("affects") or {}, source), source
+        )
+        face_filter = {k: v for k, v in affects.items() if k not in ("controller", "exclude_self")}
+        if not _matches_printed(card, face_filter):
+            continue
+        subtypes.update(resolve_chosen_subtype_list(static.get("subtypes", ()), source))
+        types.update(static.get("types", ()))
+    return frozenset(types), frozenset(subtypes)
+
+
+def with_granted_types(state: GameState, card: CardDef, pid: int) -> CardDef:
+    """``card``'s face with ``pid``'s off-battlefield type grants unioned in.
+
+    For the readers that ask a printed face rather than `chars` -- a spell
+    being priced, a trigger's subject, a selector searching a hand or a
+    library. The same card back when nothing grants anything.
+    """
+    types, subtypes = granted_card_types(state, card, pid)
+    if not types and not subtypes:
+        return card
+    return dataclasses.replace(card, types=card.types | types, subtypes=card.subtypes | subtypes)
+
+
+def off_battlefield_face(state: GameState, obj: GameObject) -> CardDef:
+    """The face of a card off the battlefield, as the type grants leave it.
+
+    A spell is its controller's, any other card its owner's; a permanent, and
+    a face-down card (which has no characteristics to add to), is its printed
+    face unchanged.
+    """
+    card = state.card_of(obj)
+    if obj.on_battlefield or obj.face_down:
+        return card
+    pid = obj.controller if obj.zone is Zone.STACK else obj.owner
+    return with_granted_types(state, card, pid)
+
+
 def _base_pt(state: GameState, obj: GameObject) -> tuple[int, int]:
     """The size an object *starts* the pipeline with, before any layer applies.
 
@@ -533,6 +663,17 @@ def _compute(state: GameState, oid: int) -> Characteristics:
     if obj.cast_impending and obj.on_battlefield and obj.counter(TIME_COUNTER) > 0:
         types.discard("Creature")
         subtypes = {sub for sub in subtypes if subtype_survives(sub, types)}
+
+    if not obj.on_battlefield and not obj.face_down:
+        # Layer 4 for a card that is not a permanent: "the same is true for
+        # creature spells you control and creature cards you own that aren't
+        # on the battlefield" (Maskwood Nexus). The one static that reaches
+        # past the battlefield, matched on the printed face so no other
+        # static's output decides who it reaches -- see `granted_card_types`.
+        pid = obj.controller if obj.zone is Zone.STACK else obj.owner
+        granted_types, granted_subtypes = granted_card_types(state, card, pid)
+        types |= granted_types
+        subtypes |= granted_subtypes
 
     if obj.on_battlefield:
         statics = _battlefield_statics(state)
@@ -915,7 +1056,63 @@ def _compute(state: GameState, oid: int) -> Characteristics:
 #: enchanting *another* Imprisoned in the Moon does not switch the second one
 #: off. Real Magic resolves that with dependency analysis, which is the thing
 #: layers-lite exists not to have.
-ABILITY_STATICS = ("lose_all_abilities", "grant_ability")
+ABILITY_STATICS = ("lose_all_abilities", "grant_ability", "grant_exiled_abilities")
+
+
+class Borrowed(NamedTuple):
+    """Provenance of an ability borrowed off a linked exiled card's printed face.
+
+    ``grant_exiled_abilities`` -- Hazel's Brewmaster: "Foods you control have
+    all activated abilities of all creature cards exiled with this creature."
+    The definition lives on ``card``'s printed face rather than in any
+    ``grantable_abilities`` pool, so it is a type of its own beside the
+    ``(granter, index)`` pair: `granted_ability_origin` must never hand it to
+    `stack.ability_of`, which would read the index against the wrong list.
+    """
+
+    card: int
+    index: int
+
+
+def exiled_activated_abilities(
+    state: GameState, source: GameObject, static: Mapping[str, Any]
+) -> list[tuple[int, Ability]]:
+    """The activated abilities a ``grant_exiled_abilities`` static hands over.
+
+    Every activated ability, mana abilities included, printed on each card
+    still linked to ``source`` (607.2a): walked off the source's own
+    `exiled_cards`, so the cards a previous incarnation exiled are not found
+    (400.7), and kept only while the card is in exile, face up, with its
+    `exiled_by` still this source. The card's type is its printed one -- the
+    characteristics a card has in exile, and a pipeline input, so reading it
+    here does not make a static read another static's output. An ability that
+    works only from another zone (cycling) is left behind: a permanent could
+    never activate it. ``(card oid, ability)`` pairs, in the order the cards
+    were exiled.
+    """
+    wanted = set(static.get("types") or ())
+    out: list[tuple[int, Ability]] = []
+    for oid in source.exiled_cards:
+        card = state.objects.get(oid)
+        if (
+            card is None
+            or card.zone is not Zone.EXILE
+            or card.exiled_by != source.oid
+            or card.face_down
+        ):
+            continue
+        face = state.card_of(card)
+        if not wanted & set(face.types):
+            continue
+        for ability in face.abilities:
+            if (
+                ability.is_activated
+                and Zone.BATTLEFIELD in ability.active_zones
+                and ability.level is None
+                and ability.threshold is None
+            ):
+                out.append((oid, ability))
+    return out
 
 
 def _ability_statics(state: GameState) -> list[tuple[GameObject, Mapping[str, Any]]]:
@@ -1136,7 +1333,7 @@ def abilities_of(state: GameState, oid: int) -> tuple[Ability, ...]:
 
 def _derived_abilities(
     state: GameState, obj: GameObject, statics: list[tuple[GameObject, Mapping[str, Any]]]
-) -> list[tuple[Ability, tuple[int, int] | None]]:
+) -> list[tuple[Ability, tuple[int, int] | Borrowed | None]]:
     """Every ability this permanent has, each with **where it came from**.
 
     ``None`` for a printed one; ``(granter oid, index into that card's
@@ -1149,11 +1346,14 @@ def _derived_abilities(
     reads whatever happens to be there, which is another ability or nothing at
     all.
 
+    A `Borrowed` for one a ``grant_exiled_abilities`` static lent off a linked
+    exiled card's printed face, which no pool index can name.
+
     Shared with `abilities_of` above rather than walked twice, because the two
     answers have to agree about which ability is at which position.
     """
     printed = present_printed_abilities(obj, printed_abilities(state, obj))
-    out: list[tuple[Ability, tuple[int, int] | None]] = []
+    out: list[tuple[Ability, tuple[int, int] | Borrowed | None]] = []
     # `obj.lost_all_abilities` beside the static, and both mean the same thing
     # about the printed list: one is somebody else saying it continuously
     # ("enchanted creature loses all abilities"), the other is a resolving
@@ -1168,9 +1368,16 @@ def _derived_abilities(
     ):
         out.extend((ability, None) for ability in printed)
     for source_obj, static in statics:
-        if static.get("effect") != "grant_ability":
+        effect = static.get("effect")
+        if effect not in ("grant_ability", "grant_exiled_abilities"):
             continue
         if not _matches(state, obj, source_obj, static.get("affects")):
+            continue
+        if effect == "grant_exiled_abilities":
+            out.extend(
+                (ability, Borrowed(card, ability.index))
+                for card, ability in exiled_activated_abilities(state, source_obj, static)
+            )
             continue
         granted = state.card_of(source_obj).grantable_abilities
         index = int(static.get("ability", 0))
@@ -1294,8 +1501,29 @@ def granted_ability_origin(state: GameState, oid: int, index: int) -> tuple[int,
         return None
     derived = _derived_abilities(state, obj, statics)
     if 0 <= index < len(derived):
-        return derived[index][1]
+        origin = derived[index][1]
+        # A borrowed ability has no pool to be found in; `borrowed_ability`
+        # is its question.
+        return None if isinstance(origin, Borrowed) else origin
     return None
+
+
+def borrowed_ability(state: GameState, oid: int, index: int) -> bool:
+    """Is the ability at ``index`` on this permanent borrowed off an exiled card?
+
+    ``grant_exiled_abilities``: the definition lives on a card in exile, not
+    in any ``grantable_abilities`` pool, so an activation snapshots the ability
+    itself (`StackItem.granted_ability`) rather than a ``(granter, index)``
+    pair -- 608.2 has it resolve even once the card has left exile.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield or obj.face_down:
+        return False
+    statics = _ability_statics(state)
+    if not any(static.get("effect") == "grant_exiled_abilities" for _, static in statics):
+        return False
+    derived = _derived_abilities(state, obj, statics)
+    return 0 <= index < len(derived) and isinstance(derived[index][1], Borrowed)
 
 
 def _battlefield_statics(state: GameState) -> list[tuple[GameObject, Mapping[str, Any]]]:

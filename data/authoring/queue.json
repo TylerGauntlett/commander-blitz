@@ -11252,12 +11252,12 @@
     },
     "Arcane Adaptation": {
       "edhrec_rank": 4031,
-      "gate": "template",
+      "gate": null,
       "name": "Arcane Adaptation",
-      "reason": "no template for: As this enchantment enters, choose a creature type",
+      "reason": "",
       "scryfall_id": "b0384a47-b189-4e10-b847-1819d3ca5f8e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Arcane Amphisbaena": {
@@ -22802,12 +22802,12 @@
     },
     "Beastmaster Ascension": {
       "edhrec_rank": 559,
-      "gate": "template",
+      "gate": null,
       "name": "Beastmaster Ascension",
-      "reason": "no template for: Whenever a creature you control attacks, you may put a quest counter on this enchantment",
+      "reason": "",
       "scryfall_id": "832d9185-fa03-4e10-b612-e7916da8bb55",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Beastmaster's Magemark": {
@@ -28472,12 +28472,12 @@
     },
     "Bloodchief's Thirst": {
       "edhrec_rank": 14140,
-      "gate": "template",
+      "gate": "playable",
       "name": "Bloodchief's Thirst",
-      "reason": "no template for: Kicker {2}{B}",
+      "reason": "CommanderBlitzError: bloodchief_s_thirst is not playable in the sandbox; offered: ['Pass', 'Play Forest', \"Cast Bloodchief's Thirst (kicked) -> Acidic Slime\", \"Cast Bloodchief's Thirst (kicked) -> Acidic Slime\", \"Cast Bloodchief's Thirst (kicked) -> Azusa, Lost but Seeking\", \"Cast Bloodchief's Thirst (kicked) -> Air Elemental\"]",
       "scryfall_id": "7aeaa32a-5a01-4d2d-a4a2-7d95e976fa77",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Bloodcrazed Goblin": {
@@ -37452,12 +37452,12 @@
     },
     "Cache Grab": {
       "edhrec_rank": 4913,
-      "gate": "template",
+      "gate": null,
       "name": "Cache Grab",
-      "reason": "no template for: Mill four cards. You may put a permanent card from among the cards milled this way into yo",
+      "reason": "",
       "scryfall_id": "dfd977dc-a7c3-4d0a-aca7-b25bd154e963",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cache Raiders": {
@@ -45122,22 +45122,22 @@
     },
     "Chatterfang, Squirrel General": {
       "edhrec_rank": 998,
-      "gate": "template",
+      "gate": null,
       "name": "Chatterfang, Squirrel General",
-      "reason": "no template for: If one or more tokens would be created under your control, those tokens plus that many 1/1",
+      "reason": "",
       "scryfall_id": "2bb8c103-37c3-4c5f-9b3f-48d8b2292783",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chatterstorm": {
       "edhrec_rank": 2785,
-      "gate": "template",
+      "gate": null,
       "name": "Chatterstorm",
-      "reason": "no template for: Create a 1/1 green Squirrel creature token",
+      "reason": "",
       "scryfall_id": "9426c906-e665-40a4-823a-0245bc39fbda",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chatzuk, Mighty Guitarist": {
@@ -45762,12 +45762,12 @@
     },
     "Chitterspitter": {
       "edhrec_rank": 3042,
-      "gate": "template",
+      "gate": null,
       "name": "Chitterspitter",
-      "reason": "no template for: At the beginning of your upkeep, you may sacrifice a token. If you do, put an acorn counte",
+      "reason": "",
       "scryfall_id": "f0b80608-1455-4899-9d19-1b1d2d068744",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chivalric Alliance": {
@@ -64632,12 +64632,12 @@
     },
     "Deep Forest Hermit": {
       "edhrec_rank": 3385,
-      "gate": "template",
+      "gate": null,
       "name": "Deep Forest Hermit",
-      "reason": "no template for: Vanishing 3",
+      "reason": "",
       "scryfall_id": "f712e233-1de8-45e4-9225-790d608ac90b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deep Freeze": {
@@ -83602,12 +83602,12 @@
     },
     "End-Raze Forerunners": {
       "edhrec_rank": 1563,
-      "gate": "template",
+      "gate": null,
       "name": "End-Raze Forerunners",
-      "reason": "no template for: When this creature enters, other creatures you control get +2/+2 and gain vigilance and tr",
+      "reason": "",
       "scryfall_id": "6e4566f9-a6f5-420e-8ab8-ca505facc3d9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Endangered Armodon": {
@@ -88352,12 +88352,12 @@
     },
     "Expel the Unworthy": {
       "edhrec_rank": 23063,
-      "gate": "template",
+      "gate": null,
       "name": "Expel the Unworthy",
-      "reason": "no template for: Kicker {2}{W}",
+      "reason": "",
       "scryfall_id": "5f68baee-f503-407d-931f-2a550470a55f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Expendable Lackey": {
@@ -94582,12 +94582,12 @@
     },
     "Fiery Confluence": {
       "edhrec_rank": 1565,
-      "gate": "template",
+      "gate": null,
       "name": "Fiery Confluence",
-      "reason": "no template for: Choose three. You may choose the same mode more than once",
+      "reason": "",
       "scryfall_id": "85d431c2-e4fa-426d-83cb-ecb782e7e87d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fiery Emancipation": {
@@ -105432,12 +105432,12 @@
     },
     "Garruk, Cursed Huntsman": {
       "edhrec_rank": 3748,
-      "gate": "template",
+      "gate": null,
       "name": "Garruk, Cursed Huntsman",
-      "reason": "no template for: 0: Create two 2/2 black and green Wolf creature tokens with \"When this token dies, put a l",
+      "reason": "",
       "scryfall_id": "3874f322-9847-4a63-b7e1-718abbe1e0bd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Garruk, Cursed Huntsman Emblem": {
@@ -115552,12 +115552,12 @@
     },
     "Gourmand's Talent": {
       "edhrec_rank": 5861,
-      "gate": "template",
+      "gate": null,
       "name": "Gourmand's Talent",
-      "reason": "no template for: During your turn, artifacts you control are Foods in addition to their other types and hav",
+      "reason": "",
       "scryfall_id": "89670a1b-a6f1-491d-bbb4-92e3382da653",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Govern the Guildless": {
@@ -124012,22 +124012,22 @@
     },
     "Hazel of the Rootbloom": {
       "edhrec_rank": 2962,
-      "gate": "template",
+      "gate": null,
       "name": "Hazel of the Rootbloom",
-      "reason": "no template for: {T}, Pay 2 life, Tap X untapped tokens you control: Add X mana in any combination of color",
+      "reason": "",
       "scryfall_id": "1269ca79-907e-4932-9e77-a9a5d2929060",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hazel's Brewmaster": {
       "edhrec_rank": 2263,
-      "gate": "template",
+      "gate": null,
       "name": "Hazel's Brewmaster",
-      "reason": "no template for: Whenever this creature enters or attacks, exile up to one target card from a graveyard and",
+      "reason": "",
       "scryfall_id": "52af8b70-a9c8-40d7-99da-fa51dc293688",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hazel's Nocturne": {
@@ -129432,12 +129432,12 @@
     },
     "Honored Dreyleader": {
       "edhrec_rank": 3094,
-      "gate": "template",
+      "gate": null,
       "name": "Honored Dreyleader",
-      "reason": "no template for: When this creature enters, put a +1/+1 counter on it for each other Squirrel and/or Food y",
+      "reason": "",
       "scryfall_id": "bc5ee537-52e1-474a-9326-dfacc2a758ab",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Honored Heirloom": {
@@ -137332,12 +137332,12 @@
     },
     "Insatiable Frugivore": {
       "edhrec_rank": 10240,
-      "gate": "template",
+      "gate": null,
       "name": "Insatiable Frugivore",
-      "reason": "no template for: When this creature enters, create a Food token, then you may exile three cards from your g",
+      "reason": "",
       "scryfall_id": "2ef58a8f-ce72-40c2-b032-818cc16267ce",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Insatiable Gorgers": {
@@ -164172,12 +164172,12 @@
     },
     "Maelstrom Pulse": {
       "edhrec_rank": 3517,
-      "gate": "template",
+      "gate": null,
       "name": "Maelstrom Pulse",
-      "reason": "no template for: Destroy target nonland permanent and all other permanents with the same name as that perma",
+      "reason": "",
       "scryfall_id": "66f17263-b916-40f4-b175-fcfd5630103d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Maelstrom Wanderer": {
@@ -168782,12 +168782,12 @@
     },
     "Maskwood Nexus": {
       "edhrec_rank": 494,
-      "gate": "template",
+      "gate": null,
       "name": "Maskwood Nexus",
-      "reason": "no template for: Creatures you control are every creature type. The same is true for creature spells you co",
+      "reason": "",
       "scryfall_id": "404b3e0f-994e-49c8-b18a-ebbf418e741a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mass Appeal": {
@@ -178952,12 +178952,12 @@
     },
     "Moonstone Eulogist": {
       "edhrec_rank": 7761,
-      "gate": "template",
+      "gate": null,
       "name": "Moonstone Eulogist",
-      "reason": "no template for: Whenever a creature an opponent controls dies, you create a Blood token",
+      "reason": "",
       "scryfall_id": "13158f3b-9d85-4689-9afa-7d9a8a2d1b09",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Moonstone Harbinger": {
@@ -182212,12 +182212,12 @@
     },
     "Mystic Confluence": {
       "edhrec_rank": 1440,
-      "gate": "template",
+      "gate": null,
       "name": "Mystic Confluence",
-      "reason": "no template for: Choose three. You may choose the same mode more than once",
+      "reason": "",
       "scryfall_id": "5df07a06-e585-412d-a6db-cb5a78a68b6e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mystic Crusader": {
@@ -182732,12 +182732,12 @@
     },
     "Nadier's Nightblade": {
       "edhrec_rank": 861,
-      "gate": "template",
+      "gate": null,
       "name": "Nadier's Nightblade",
-      "reason": "no template for: Whenever a token you control leaves the battlefield, each opponent loses 1 life and you ga",
+      "reason": "",
       "scryfall_id": "b533e358-3b30-4719-a2a3-13fb9ea817c6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nadier, Agent of the Duskenel": {
@@ -185362,12 +185362,12 @@
     },
     "Nested Shambler": {
       "edhrec_rank": 4104,
-      "gate": "template",
+      "gate": null,
       "name": "Nested Shambler",
-      "reason": "no template for: When this creature dies, create X tapped 1/1 green Squirrel creature tokens, where X is th",
+      "reason": "",
       "scryfall_id": "202011d5-755e-497b-b4a7-f2b6e6a0b464",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nesting Bot": {
@@ -191482,12 +191482,12 @@
     },
     "Ogre Slumlord": {
       "edhrec_rank": 1893,
-      "gate": "template",
+      "gate": null,
       "name": "Ogre Slumlord",
-      "reason": "no template for: Whenever another nontoken creature dies, you may create a 1/1 black Rat creature token",
+      "reason": "",
       "scryfall_id": "b70293ae-d50d-44bf-aaa3-689727056ec5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ogre Taskmaster": {
@@ -203602,12 +203602,12 @@
     },
     "Plaguecrafter": {
       "edhrec_rank": 628,
-      "gate": "template",
+      "gate": null,
       "name": "Plaguecrafter",
-      "reason": "no template for: When this creature enters, each player sacrifices a creature or planeswalker of their choi",
+      "reason": "",
       "scryfall_id": "7092aa38-4f05-4b18-b894-d55ca9fe9b15",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Plagued Rusalka": {
@@ -204652,12 +204652,12 @@
     },
     "Poison-Tip Archer": {
       "edhrec_rank": 1632,
-      "gate": "template",
+      "gate": null,
       "name": "Poison-Tip Archer",
-      "reason": "no template for: Whenever another creature dies, each opponent loses 1 life",
+      "reason": "",
       "scryfall_id": "b7e92375-037c-4be1-8183-6261e0666e12",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Poisonbelly Ogre": {
@@ -208592,12 +208592,12 @@
     },
     "Prosperous Innkeeper": {
       "edhrec_rank": 1533,
-      "gate": "template",
+      "gate": null,
       "name": "Prosperous Innkeeper",
-      "reason": "no template for: When this creature enters, create a Treasure token",
+      "reason": "",
       "scryfall_id": "6ab26569-5e7a-410c-86d3-a7ab989f7a31",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Prosperous Partnership": {
@@ -216382,12 +216382,12 @@
     },
     "Ravenous Squirrel": {
       "edhrec_rank": 2882,
-      "gate": "template",
+      "gate": null,
       "name": "Ravenous Squirrel",
-      "reason": "no template for: Whenever you sacrifice an artifact or creature, put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "fe425d81-833f-4ab9-b0e4-a1fa8ed26426",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ravenous Trap": {
@@ -227292,12 +227292,12 @@
     },
     "Rootcast Apprenticeship": {
       "edhrec_rank": 3369,
-      "gate": "template",
+      "gate": null,
       "name": "Rootcast Apprenticeship",
-      "reason": "no template for: Choose three. You may choose the same mode more than once",
+      "reason": "",
       "scryfall_id": "00756441-a734-4960-9c69-f03a508a1522",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rootcoil Creeper": {
@@ -234372,12 +234372,12 @@
     },
     "Saw in Half": {
       "edhrec_rank": 586,
-      "gate": "template",
+      "gate": null,
       "name": "Saw in Half",
-      "reason": "no template for: Destroy target creature. If that creature dies this way, its controller creates two tokens",
+      "reason": "",
       "scryfall_id": "eea57be1-032d-40ec-8091-92f89670e4a1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sawback Manticore": {
@@ -237122,12 +237122,12 @@
     },
     "Scurry of Squirrels": {
       "edhrec_rank": 3182,
-      "gate": "template",
+      "gate": null,
       "name": "Scurry of Squirrels",
-      "reason": "no template for: Myriad, myriad",
+      "reason": "",
       "scryfall_id": "c343b965-af2b-45c3-babb-9242736cf1e5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Scute Mob": {
@@ -238342,12 +238342,12 @@
     },
     "Second Harvest": {
       "edhrec_rank": 569,
-      "gate": "template",
+      "gate": null,
       "name": "Second Harvest",
-      "reason": "no template for: For each token you control, create a token that's a copy of that permanent",
+      "reason": "",
       "scryfall_id": "eaf56de3-a2c5-476a-9fac-f149e8c3aa3d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Second Sight": {
@@ -250592,12 +250592,12 @@
     },
     "Skyfisher Spider": {
       "edhrec_rank": 6044,
-      "gate": "template",
+      "gate": null,
       "name": "Skyfisher Spider",
-      "reason": "no template for: When this creature enters, you may sacrifice another creature. When you do, destroy target",
+      "reason": "",
       "scryfall_id": "e18927dd-c50c-4fb2-8d4c-d0f853b68294",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Skygames": {
@@ -261872,12 +261872,12 @@
     },
     "Squirrel Nest": {
       "edhrec_rank": 3310,
-      "gate": "template",
+      "gate": null,
       "name": "Squirrel Nest",
-      "reason": "no template for: Enchanted land has \"{T}: Create a 1/1 green Squirrel creature token.\"",
+      "reason": "",
       "scryfall_id": "bac26044-b41f-4c75-8bc1-26359250d8bc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Squirrel Sanctuary": {
@@ -261892,12 +261892,12 @@
     },
     "Squirrel Sovereign": {
       "edhrec_rank": 4217,
-      "gate": "template",
+      "gate": null,
       "name": "Squirrel Sovereign",
-      "reason": "no template for: Other Squirrels you control get +1/+1",
+      "reason": "",
       "scryfall_id": "b4356e13-655b-40b8-ad08-4e28b7464a3c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Squirrel Wrangler": {
@@ -264322,12 +264322,12 @@
     },
     "Steward of the Harvest": {
       "edhrec_rank": 8370,
-      "gate": "template",
+      "gate": null,
       "name": "Steward of the Harvest",
-      "reason": "no template for: When this creature enters, exile up to three target land cards from your graveyard",
+      "reason": "",
       "scryfall_id": "1676e2b1-f112-4932-8492-e5d5d9e764ed",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stick Together": {
@@ -271682,22 +271682,22 @@
     },
     "Swarmyard": {
       "edhrec_rank": 1001,
-      "gate": "template",
+      "gate": null,
       "name": "Swarmyard",
-      "reason": "no template for: {T}: Regenerate target Insect, Rat, Spider, or Squirrel",
+      "reason": "",
       "scryfall_id": "2b4ee0e7-7528-4fdc-a768-055d2c097f05",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Swarmyard Massacre": {
       "edhrec_rank": 2104,
-      "gate": "template",
+      "gate": null,
       "name": "Swarmyard Massacre",
-      "reason": "no template for: Create two 1/1 green Squirrel creature tokens. Then each creature that isn't an Insect, Ra",
+      "reason": "",
       "scryfall_id": "0ce5e24a-84e3-4ecb-924d-1a92b0da914a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Swashbuckler Extraordinaire": {
@@ -272382,12 +272382,12 @@
     },
     "Sword of the Squeak": {
       "edhrec_rank": 3996,
-      "gate": "template",
+      "gate": null,
       "name": "Sword of the Squeak",
-      "reason": "no template for: Equipped creature gets +1/+1 for each creature you control with base power or toughness 1",
+      "reason": "",
       "scryfall_id": "3c50035a-9f68-438c-b4bf-427310b3971d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sword-Point Diplomacy": {
@@ -276082,12 +276082,12 @@
     },
     "Tear Asunder": {
       "edhrec_rank": 868,
-      "gate": "template",
+      "gate": null,
       "name": "Tear Asunder",
-      "reason": "no template for: Kicker {1}{B}",
+      "reason": "",
       "scryfall_id": "e408c673-4a1f-45db-827a-75c501e1b3d6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Teardrop Kami": {
@@ -281872,12 +281872,12 @@
     },
     "The Odd Acorn Gang": {
       "edhrec_rank": 4375,
-      "gate": "template",
+      "gate": null,
       "name": "The Odd Acorn Gang",
-      "reason": "no template for: Squirrels you control have \"{T}: Target Squirrel gets +2/+2 and gains trample until end of",
+      "reason": "",
       "scryfall_id": "185ac3b0-116e-4539-9615-123a6d68b035",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The One Ring": {
@@ -318192,12 +318192,12 @@
     },
     "Wolfwillow Haven": {
       "edhrec_rank": 4836,
-      "gate": "template",
+      "gate": null,
       "name": "Wolfwillow Haven",
-      "reason": "no template for: Whenever enchanted land is tapped for mana, its controller adds an additional {G}",
+      "reason": "",
       "scryfall_id": "8506e3eb-07c1-4f5c-a2a7-c210acf6be16",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wolverine Pack": {

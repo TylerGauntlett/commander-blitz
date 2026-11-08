@@ -40,6 +40,7 @@ from .characteristics import (
     granted_wards,
     has_counters_matches,
     has_keyword,
+    off_battlefield_face,
     parity_matches,
     resolve_chosen_subtypes,
 )
@@ -219,6 +220,18 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: is compared against the event exactly as `chapter` is.
     "becomes_level": EventType.BECAME_LEVEL,
     "counter_placed": EventType.COUNTER_PLACED,
+    #: "When the last time counter is removed from it, sacrifice it" -- the
+    #: third ability of vanishing (702.63a). Always with `counter`: the kind
+    #: whose count reaching zero it waits for. Fired by
+    #: `primitives.remove_counters`, the one place a permanent's counters come
+    #: off, so the last one removed by the upkeep tick, by a cost or by any
+    #: other effect is the same event; the event's `total` is what is left,
+    #: and only a removal that leaves none matches (`_matches`).
+    #:
+    #: `upkeep` with an `if` on `counters_on` is the near miss: it sacrifices
+    #: only when the tick took the last counter, and as part of the tick rather
+    #: than as a trigger of its own.
+    "last_counter_removed": EventType.COUNTER_REMOVED,
     "creature_dies": EventType.DIES,
     #: "Whenever you **sacrifice** a token…" -- Mirkwood Bats. Not `dies`: a
     #: sacrifice is one specific way of leaving, and the printed line is about
@@ -527,6 +540,9 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         # `oid`, since what it hit may be several things or nothing with an oid.
         "deals_combat_damage",
         "counter_placed",
+        # The permanent the counter came off, so `source: "self"` is "from
+        # *this* permanent".
+        "last_counter_removed",
         "land_played",
         # The merged permanent, so `source: "self"` scopes the trigger to the
         # creature that mutated rather than to every mutation on the table.
@@ -1457,6 +1473,14 @@ def _matches(
     if spec.counter is not None and event.data.get("counter") != spec.counter:
         return False
 
+    # "When the **last** time counter is removed": a removal that leaves some
+    # behind is not it. A player's counters coming off carry no `oid` and are
+    # no permanent's last counter.
+    if spec.event == "last_counter_removed" and (
+        event.data.get("oid") is None or event.data.get("total") != 0
+    ):
+        return False
+
     # "Whenever **you** put one or more +1/+1 counters on this creature" --
     # Exemplar of Light. The putter, not the recipient's controller: the
     # `controller` clause reads `event.player`, which is whoever controls the
@@ -2270,6 +2294,12 @@ def matches_card_filter(
     face_down = obj.face_down and obj.on_battlefield
     if face_down:
         card = face_down_face(card)
+    else:
+        # A spell on the stack or a card in another zone, with what an
+        # `off_battlefield` `add_subtype` grants it: "whenever you cast a
+        # Squirrel spell" sees a creature spell Maskwood Nexus made every
+        # creature type. A permanent's own face is unchanged.
+        card = off_battlefield_face(state, obj)
 
     # "…a creature spell of the chosen type." The same substitution the static
     # filters do, because Vanquisher's Banner asks the question from both.

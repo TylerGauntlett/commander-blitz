@@ -1,0 +1,65 @@
+{
+  "_comment": "Cards for tests/unit/costs/test_sacrifice_x.py. `t_sx_engine` is Insatiable Frugivore's 'Sacrifice X Foods' cost reduced to 'you gain X life', so the X the effect reads is visible on a life total. `t_sx_squirrel` is Chatterfang's shape, a Squirrel that sacrifices Squirrels, so the source is among its own fodder. `t_sx_aimer` is the shape whose target filter reads X ('with mana value X'), so the announcement has to come before the targets.",
+  "cards": [
+    {
+      "id": "t_sx_engine",
+      "name": "Test Sacrifice X Engine",
+      "oracle_text": "{1}, Sacrifice X Foods: You gain X life.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}, Sacrifice X Foods: You gain X life.",
+          "cost": {"mana": "{1}", "sacrifice_x": {"subtypes": ["Food"]}},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"x": true}}]
+        }
+      ]
+    },
+    {
+      "id": "t_sx_squirrel",
+      "name": "Test Sacrifice X Squirrel",
+      "oracle_text": "Sacrifice X Squirrels: You gain X life.",
+      "mana_cost": "{2}",
+      "types": ["Creature"],
+      "subtypes": ["Squirrel"],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Sacrifice X Squirrels: You gain X life.",
+          "cost": {"sacrifice_x": {"subtypes": ["Squirrel"]}},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"x": true}}]
+        }
+      ]
+    },
+    {
+      "id": "t_sx_aimer",
+      "name": "Test Sacrifice X Aimer",
+      "oracle_text": "Sacrifice X Foods: Destroy target creature with mana value X.",
+      "mana_cost": "{4}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Sacrifice X Foods: Destroy target creature with mana value X.",
+          "cost": {"sacrifice_x": {"subtypes": ["Food"]}},
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "count": 1,
+              "selector": {
+                "zone": "battlefield",
+                "types": ["Creature"],
+                "mana_value": {"op": "=", "value": {"x": true}}
+              }
+            }
+          ],
+          "effects": [{"op": "destroy", "objects": {"target": "t1"}}]
+        }
+      ]
+    }
+  ]
+}

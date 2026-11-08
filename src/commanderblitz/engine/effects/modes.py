@@ -114,6 +114,43 @@ def ask_none_or_exactly(
     return sorted(groups[picked[0]]) if picked else []
 
 
+def ask_repeated_modes(
+    ctx: EffectContext,
+    labels: Sequence[str],
+    offered: Sequence[int],
+    chooser: int,
+    floor: int,
+    up_to: int | None,
+) -> Generator[Any, list[int], list[int]]:
+    """Ask a repeatable ``choose_mode``: a multiset of modes, one instance at a time.
+
+    "Choose three. You may choose the same mode more than once." (700.2d). A
+    multiset of three over four modes is twenty answers, and over five modes
+    of Unite the Coalition's "choose five" it is a hundred and twenty-six, so
+    it is not offered as one button per multiset: each instance is its own
+    single-mode question with every offered mode still on it, which keeps the
+    action list at one control per mode (ADR 0015). ``floor`` instances are
+    required; up to ``up_to`` (when wider) may be taken, a declined question
+    ending the run.
+
+    Returns indices into ``labels`` in **printed** order with repeats --
+    700.2e runs the modes in the order written, and `carddef.mode_instances`
+    numbers the repeats in that same order.
+    """
+    total = floor if up_to is None else max(floor, up_to)
+    options = [labels[i] for i in offered]
+    picked: list[int] = []
+    for n in range(total):
+        required = 1 if n < floor else 0
+        answer = yield from ask_mode(
+            ctx, f"Choose mode {n + 1} of {total}", options, chooser, required, 1
+        )
+        if not answer:
+            break
+        picked.append(offered[answer[0]])
+    return sorted(picked)
+
+
 def chosen_at_random(ctx: EffectContext, spec: Mapping[str, Any] | None) -> bool:
     """Is this ``choose_mode`` answered by the game's random source right now?
 

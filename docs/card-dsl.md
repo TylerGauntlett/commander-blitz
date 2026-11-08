@@ -4224,6 +4224,8 @@ and [#card-level-costs](card-dsl-reference.md#card-level-costs):
   "pay_life_x": true,                             // Toxic Deluge: X life, the caster announces it
   "loyalty_x": true,                              // a planeswalker's −X: X loyalty, announced
   "discard_x": true,                              // Gix: discard X cards, X announced
+  "sacrifice_x": { "subtypes": ["Food"] },        // Frugivore: sacrifice X Foods, X announced
+  "tap_x": { "is_token": true },                  // Hazel: tap X untapped tokens, X announced
   "remove_counters": { "counter": "-1/-1", "amount": 1 },
   "put_counters":    { "counter": "page", "amount": 1 },   // Mazemind Tome: onto the source
   "exile_from_graveyard": { "types": ["Creature"] },
@@ -4302,6 +4304,78 @@ Not `discard`, which is a number the card fixes. The loader refuses it beside
 `discard` (two numbers for one payment), beside an `{X}` in `mana`, `pay_life_x`
 or `loyalty_x` (an ability announces one X), and anywhere but an activated
 ability's cost.
+
+### `sacrifice_x` — sacrifice X permanents, X announced
+
+"{3}{B}, Sacrifice X Foods: Creatures you control get +X/+0 and gain menace
+until end of turn." — Insatiable Frugivore.
+
+```jsonc
+"cost": { "mana": "{3}{B}", "sacrifice_x": { "subtypes": ["Food"] } },
+"effects": [{ "op": "pump", "objects": { "zone": "battlefield", "controller": "you",
+                                         "types": ["Creature"], "count": "all" },
+              "power": { "x": true }, "toughness": { "const": 0 },
+              "duration": "until_end_of_turn" }, ...]
+```
+
+The value is a selector over the battlefield, `controller` defaulting to you:
+the permanents the cost may take. The controller announces X as the ability is
+activated (601.2b, 107.3) and sacrifices exactly that many, chosen as the cost
+is paid (601.2h); the effects read the number with `{"x": true}` / `"x"`. The
+ceiling is `costs.sacrifice_x_ceiling`, the matching permanents the controller
+may sacrifice — the pool `sacrifice` draws from, so a permanent that can't be
+sacrificed is not counted. The source is fodder when it matches, so
+"Sacrifice X Squirrels" on a Squirrel may take itself; `exclude_self` says
+"other". X = 0 is a legal announcement, so the ability is on offer with nothing
+to sacrifice. A target whose filter reads X is offered once per X, as for
+`discard_x`.
+
+Not `sacrifice` with a `count`, which is a number the card fixes. The loader
+refuses `count` and `as` inside it (X is the count, and there is no one
+sacrificed permanent to name), the key beside `sacrifice`, beside an `{X}` in
+`mana`, `pay_life_x`, `loyalty_x` or `discard_x` (an ability announces one X),
+and anywhere but an activated ability's cost.
+
+### `tap_x` — tap X untapped permanents, X announced
+
+"{T}, Pay 2 life, Tap X untapped tokens you control: Add X mana in any
+combination of colors." — Hazel of the Rootbloom.
+
+```jsonc
+{ "kind": "activated", "is_mana_ability": true,
+  "cost": { "tap": true, "pay_life": 2, "tap_x": { "is_token": true } },
+  "effects": [{ "op": "add_mana", "split": ["W", "U", "B", "R", "G"],
+                "amount": { "x": true } }] }
+```
+
+`sacrifice_x`'s shape over `tap_permanents`' pool. The value is a selector over
+the battlefield, `controller` defaulting to you and `tapped: false` forced: the
+permanents the cost may tap, summoning-sick ones included (302.6 restricts only
+a permanent's own `{T}`). The controller announces X as the ability is
+activated (601.2b, 107.3) and taps exactly that many, chosen as the cost is
+paid; the effects read X with `{"x": true}` / `"x"`. The ceiling is
+`costs.tap_x_ceiling`, the matching untapped permanents — **less the source
+when the same cost prints `{T}`**, because a permanent tapped for the `{T}`
+cannot be tapped again (a token Hazel can't pay both). Without `{T}` the source
+is fodder when it matches. X = 0 is a legal announcement, so the ability is on
+offer with nothing to tap. A target whose filter reads X is offered once per X,
+as for `discard_x`.
+
+**On a mana ability.** A cost that takes X — `tap_x`, `sacrifice_x` or
+`discard_x` (`Cost.takes_x`) — is the one X a mana ability's `amount` may read;
+the loader refuses `x` there otherwise. Such an ability is not tap-only, so the
+payment solver never activates it: it is offered at priority as one row, and
+its mana floats in the pool for what is cast next, as a Signet's does.
+`Game._activate_mana` asks X (bounded by `costs.cost_x_ceiling`), pays the
+cost, then asks the yield: a `split` one mana at a time over its colours (the
+compositions of X cannot be offered as options before X is known, so the
+`_split_options` fold does not apply), any other ability one option, scaled by
+X.
+
+Not `tap_permanents` with a `count`, which is a number the card fixes. The
+loader refuses `count`, `total_power`, `as` and `tapped` inside it, the key
+beside `tap_permanents`, beside an `{X}` in `mana`, `pay_life_x`, `loyalty_x`,
+`discard_x` or `sacrifice_x`, and anywhere but an activated ability's cost.
 
 ### `mill` — a cost, and never an effect
 
@@ -6414,11 +6488,45 @@ halves describe twice — every changeling, in a Zombie deck. One static with
 `subtypes: ["Skeleton", "Zombie"]` is the other near miss: it cannot put "other"
 on one half only.
 
-`affects` only (`STATIC_AFFECTS_FILTER_KEYS`); `blockers`, `targeting`,
-`damage_source` and the counting filters do not take it. A branch is held to the
-same keys and checks as the top level, recursively. The loader refuses a union
-of one, an empty branch, and a branch that repeats a key the outer filter names —
-the branch's value would replace the outer one rather than narrow it.
+`affects` (`STATIC_AFFECTS_FILTER_KEYS`) and a static value's `count` (next
+section) take it; `blockers`, `targeting`, `damage_source` and the other counting
+positions do not. A branch is held to the same keys and checks as the top level,
+recursively. The loader refuses a union of one, an empty branch, and a branch
+that repeats a key the outer filter names — the branch's value would replace the
+outer one rather than narrow it.
+
+#### `any_of` in a `count` — "base power or toughness 1"
+
+```jsonc
+// Sword of the Squeak: "Equipped creature gets +1/+1 for each creature you
+//  control with base power or toughness 1."
+{ "kind": "static", "effect": "buff", "affects": { "attached": true },
+  "power":     { "count": { "controller": "you", "types": ["Creature"],
+                            "any_of": [ { "power": 1 }, { "toughness": 1 } ] } },
+  "toughness": { "count": { "controller": "you", "types": ["Creature"],
+                            "any_of": [ { "power": 1 }, { "toughness": 1 } ] } } }
+```
+
+A static magnitude's `{"count": …}` takes `any_of`
+(`STATIC_VALUE_COUNT_FILTER_KEYS`): the objects any branch describes, each
+counted once, every branch matched as the outer filter plus its own keys — the
+same recursion as `affects`. A 1/1 is one creature here; a `sum` of two counts is
+the near miss and counts it twice, and `power: 1, toughness: 1` in one filter is
+the other and misses the 1/3 and the 3/1.
+
+"Base power" is spelled `power` in a static filter, because that is what the key
+reads there: [base P/T](#power--toughness--a-derived-characteristic-read-at-a-fixed-layer),
+`characteristics._base_pt`, before any layer. The creature the Sword pumps, a
++1/+1 counter and a pump leave a 1/1 counted; an `animate` or `set_pt` that sets
+base P/T is not seen either, the layers-lite simplification
+[rules-coverage.md](rules-coverage.md) records. `base_power` and
+`base_toughness` are the effect-side selector's spelling of the same reading and
+are refused in a static filter.
+
+Battlefield only, and the `count` leaf only: the loader refuses `any_of` beside a
+`zone` other than `battlefield`, a `zone` or a nested `any_of` inside a branch,
+and the word in `exists`, `counters_on`, `mana_symbols`, the per-player counts and
+an entering count.
 
 A static's **magnitude** — its `power`, `toughness` or `amount`, and either side
 of a `cmp` in its condition — is a fourth language, `STATIC_VALUE_KEYS`, and much
@@ -6427,7 +6535,7 @@ smaller than the effect-side `value_keys`:
 | leaf | reads |
 |---|---|
 | `{"const": n}` | a literal |
-| `{"count": filter}` | how many objects match, in any [countable zone](#counting-filters-and-the-zone-key) |
+| `{"count": filter}` | how many objects match, in any [countable zone](#counting-filters-and-the-zone-key); on the battlefield the filter may be [a union](#any_of-in-a-count--base-power-or-toughness-1) |
 | `{"counters_on": {"counter": …, "objects": …}}` | how many counters of a kind sit on the objects the filter picks; `"any"` sums every kind (122.1) |
 | `{"mana_symbols": {"of": "G", "objects": …}}` | chroma — pips in printed costs |
 | `{"permanents_entered_this_turn": filter}` | [how many arrived this turn](#which-permanents-entered-the-battlefield-this-turn), not how many are standing there |
@@ -7112,6 +7220,7 @@ The cookbook's subsystem chapters, one line each:
 - [Mutate — two cards, one permanent, and one synthesised `CardDef`](card-dsl-cookbook.md#mutate--two-cards-one-permanent-and-one-synthesised-carddef)
 - [Bestow — the alternative cost that changes what the spell points at](card-dsl-cookbook.md#bestow--the-alternative-cost-that-changes-what-the-spell-points-at)
 - [Impending — a creature that is not one until it counts down](card-dsl-cookbook.md#impending--a-creature-that-is-not-one-until-it-counts-down)
+- [Vanishing — a permanent that counts itself out](card-dsl-cookbook.md#vanishing--a-permanent-that-counts-itself-out)
 - [Fuse — the case where the answer is *both* faces](card-dsl-cookbook.md#fuse--the-case-where-the-answer-is-both-faces)
 - [A second castable face — adventure, aftermath and split cards](card-dsl-cookbook.md#a-second-castable-face--adventure-aftermath-and-split-cards)
 - [Face-down permanents — morph, megamorph and manifest](card-dsl-cookbook.md#face-down-permanents--morph-megamorph-and-manifest)

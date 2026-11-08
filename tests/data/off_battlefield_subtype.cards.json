@@ -1,0 +1,85 @@
+{
+  "_comment": "Shapes for tests/unit/statics/test_off_battlefield_subtype.py. t_ob_nexus is Maskwood Nexus's first line narrowed to one creature type (Squirrel), so a test can tell a granted type from a printed one; t_ob_patron reads Squirrel spells two ways -- a cost reduction and a cast trigger; t_ob_bad_nexus is the same static without the flag, the battlefield-only near miss; t_ob_lord is a Squirrel anthem, whose filter must not see the grant.",
+  "cards": [
+    {
+      "id": "t_ob_nexus",
+      "name": "Test Squirrel Nexus",
+      "oracle_text": "Creatures you control are Squirrels in addition to their other types. The same is true for creature spells you control and creature cards you own that aren't on the battlefield.",
+      "mana_cost": "{4}",
+      "colors": [],
+      "color_identity": [],
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures you control are Squirrels in addition to their other types. The same is true for creature spells you control and creature cards you own that aren't on the battlefield.",
+          "effect": "add_subtype",
+          "affects": {"types": ["Creature"]},
+          "subtypes": ["Squirrel"],
+          "off_battlefield": true
+        }
+      ]
+    },
+    {
+      "id": "t_ob_bad_nexus",
+      "name": "Test Battlefield Squirrel Nexus",
+      "oracle_text": "Creatures you control are Squirrels in addition to their other types.",
+      "mana_cost": "{4}",
+      "colors": [],
+      "color_identity": [],
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures you control are Squirrels in addition to their other types.",
+          "effect": "add_subtype",
+          "affects": {"types": ["Creature"]},
+          "subtypes": ["Squirrel"]
+        }
+      ]
+    },
+    {
+      "id": "t_ob_patron",
+      "name": "Test Squirrel Patron",
+      "oracle_text": "Squirrel spells you cast cost {1} less to cast.\nWhenever you cast a Squirrel spell, you gain 1 life.",
+      "mana_cost": "{1}{G}",
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "types": ["Enchantment"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Squirrel spells you cast cost {1} less to cast.",
+          "effect": "spell_cost_reduction",
+          "affects_spells": {"controller": "you", "subtypes": ["Squirrel"]},
+          "amount": {"const": 1}
+        },
+        {
+          "kind": "triggered",
+          "text": "Whenever you cast a Squirrel spell, you gain 1 life.",
+          "trigger": {"event": "spell_cast", "controller": "you", "filter": {"subtypes": ["Squirrel"]}},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_ob_lord",
+      "name": "Test Squirrel Lord",
+      "oracle_text": "Other Squirrels you control get +1/+1.",
+      "mana_cost": "{1}{G}",
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "types": ["Enchantment"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Other Squirrels you control get +1/+1.",
+          "effect": "buff",
+          "affects": {"subtypes": ["Squirrel"], "exclude_self": true},
+          "power": {"const": 1},
+          "toughness": {"const": 1}
+        }
+      ]
+    }
+  ]
+}

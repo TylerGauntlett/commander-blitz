@@ -148,17 +148,29 @@ def _add_split_mana(ctx: EffectContext, spec: Mapping[str, Any]):
     total = max(0, int(evaluate_value(ctx, amount))) if amount is not None else 0
     if total <= 0 or not colors:
         return
-    labels = [f"{{{c}}}" for c in colors]
     for pid in select_players(ctx, spec.get("player", "you")):
-        produced = [0] * N_SYMBOLS
-        for left in range(total, 0, -1):
-            picked = yield from ask_mode(
-                ctx, f"Add one mana ({left} to divide)", labels, pid
-            )
-            produced[SYMBOL_INDEX[colors[picked[0] if picked else 0]]] += 1
+        produced = yield from ask_split_mana(ctx, colors, total, pid)
         symbols = "".join(f"{{{SYMBOLS[i]}}}" * produced[i] for i in range(N_SYMBOLS))
-        _give_mana(ctx, spec, pid, produced)
+        _give_mana(ctx, spec, pid, list(produced))
         ctx.state.emit(EventType.MANA_ADDED, player=pid, source=ctx.source_oid, mana=symbols)
+
+
+def ask_split_mana(ctx: EffectContext, colors, total: int, chooser: int):
+    """Divide ``total`` mana among ``colors``, one `ask_mode` per mana.
+
+    X independent one-mana choices *is* a free division of X. Returns the
+    symbol tuple. Shared by a split `add_mana` that uses the stack and by
+    `Game._activate_mana` for a split mana ability whose X a cost announced
+    ("Tap X untapped tokens"), where the compositions are only knowable once X
+    is and so cannot be folded into the options the way `costs._split_options`
+    folds a board-read X.
+    """
+    labels = [f"{{{c}}}" for c in colors]
+    produced = [0] * N_SYMBOLS
+    for left in range(total, 0, -1):
+        picked = yield from ask_mode(ctx, f"Add one mana ({left} to divide)", labels, chooser)
+        produced[SYMBOL_INDEX[colors[picked[0] if picked else 0]]] += 1
+    return tuple(produced)
 
 
 def _add_one_color_mana(ctx: EffectContext, spec: Mapping[str, Any]):

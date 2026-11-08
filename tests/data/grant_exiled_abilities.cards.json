@@ -1,0 +1,53 @@
+{
+  "_comment": "Shapes for tests/unit/statics/test_grant_exiled_abilities.py. t_gx_brewmaster is the static line of Hazel's Brewmaster on a vanilla body, so a test links exiled cards to it directly; t_gx_tinkerer is a creature card whose one activated ability taps and grows 'this creature'.",
+  "cards": [
+    {
+      "id": "t_gx_brewmaster",
+      "name": "Test Exile Brewmaster",
+      "oracle_text": "Foods you control have all activated abilities of all creature cards exiled with this creature.",
+      "mana_cost": "{3}{B}{G}",
+      "colors": ["B", "G"],
+      "color_identity": ["B", "G"],
+      "types": ["Creature"],
+      "subtypes": ["Squirrel", "Warlock"],
+      "power": 4,
+      "toughness": 4,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Foods you control have all activated abilities of all creature cards exiled with this creature.",
+          "effect": "grant_exiled_abilities",
+          "affects": {"subtypes": ["Food"], "controller": "you"},
+          "types": ["Creature"]
+        }
+      ]
+    },
+    {
+      "id": "t_gx_tinkerer",
+      "name": "Test Exile Tinkerer",
+      "oracle_text": "{1}, {T}: Put a +1/+1 counter on this creature.",
+      "mana_cost": "{1}{G}",
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "types": ["Creature"],
+      "subtypes": ["Squirrel"],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}, {T}: Put a +1/+1 counter on this creature.",
+          "cost": {"mana": "{1}", "tap": true},
+          "effects": [
+            {
+              "op": "add_counters",
+              "objects": {"self_only": true},
+              "counter": "+1/+1",
+              "amount": {"const": 1}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

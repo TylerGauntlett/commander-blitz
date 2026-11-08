@@ -211,6 +211,73 @@ def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
                 f"{where}.cost: 'discard_x' announces this ability's X, so the "
                 f"cost may not carry a second X in 'mana', 'pay_life_x' or 'loyalty_x'"
             )
+    if model.sacrifice_x is not None:
+        # "Sacrifice X Foods". `discard_x`'s three refusals, plus the two keys
+        # `sacrifice` takes that this one cannot: X is the count, and "the
+        # sacrificed creature" is one permanent where this cost takes X.
+        sacrifice_x = dict(model.sacrifice_x)
+        if not defines_x:
+            raise DslError(
+                f"{where}.cost: 'sacrifice_x' is announced as an activated ability "
+                f"is activated, and this is not one -- nothing else would ask for X"
+            )
+        if model.sacrifice is not None:
+            raise DslError(
+                f"{where}.cost: 'sacrifice_x' is the whole sacrifice (X permanents); "
+                f"give it or 'sacrifice', not both"
+            )
+        if (
+            "X" in str(model.mana or "").upper()
+            or model.pay_life_x
+            or model.loyalty_x
+            or model.discard_x
+        ):
+            raise DslError(
+                f"{where}.cost: 'sacrifice_x' announces this ability's X, so the cost "
+                f"may not carry a second X in 'mana', 'pay_life_x', 'loyalty_x' or "
+                f"'discard_x'"
+            )
+        for key in ("count", "as"):
+            if key in sacrifice_x:
+                raise DslError(
+                    f"{where}.cost.sacrifice_x: '{key}' may not be set -- X is the "
+                    f"number sacrificed, announced as the ability is activated"
+                )
+        validate_selector(sacrifice_x, f"{where}.cost.sacrifice_x")
+    if model.tap_x is not None:
+        # "Tap X untapped tokens you control". `sacrifice_x`'s refusals over
+        # `tap_permanents`' keys: X is the count, crew's power sum is another
+        # question, and "the tapped creature" is one where this taps X.
+        tap_x = dict(model.tap_x)
+        if not defines_x:
+            raise DslError(
+                f"{where}.cost: 'tap_x' is announced as an activated ability is "
+                f"activated, and this is not one -- nothing else would ask for X"
+            )
+        if model.tap_permanents is not None:
+            raise DslError(
+                f"{where}.cost: 'tap_x' is the whole tap cost (X permanents); give it "
+                f"or 'tap_permanents', not both"
+            )
+        if (
+            "X" in str(model.mana or "").upper()
+            or model.pay_life_x
+            or model.loyalty_x
+            or model.discard_x
+            or model.sacrifice_x is not None
+        ):
+            raise DslError(
+                f"{where}.cost: 'tap_x' announces this ability's X, so the cost may "
+                f"not carry a second X in 'mana', 'pay_life_x', 'loyalty_x', "
+                f"'discard_x' or 'sacrifice_x'"
+            )
+        for key in ("count", "total_power", "as", "tapped"):
+            if key in tap_x:
+                raise DslError(
+                    f"{where}.cost.tap_x: '{key}' may not be set -- X untapped "
+                    f"permanents are tapped, X announced as the ability is activated"
+                )
+        validate_selector(tap_x, f"{where}.cost.tap_x")
     if model.put_counters is not None:
         _validate_put_counters(model.put_counters, where, defines_x=defines_x)
     if model.blight < 0:
@@ -484,13 +551,21 @@ def _chosen_color_or_fixed(
     return tuple(fixed)
 
 
-def _validate_mana_amount(amount: Any, where: str) -> None:
+def _validate_mana_amount(amount: Any, where: str, *, takes_x: bool = False) -> None:
+    """A mana ability's ``amount``: read at activation, so nothing it cannot see.
+
+    ``takes_x`` is a cost that announces X by what it takes (`Cost.takes_x`,
+    "Tap X untapped tokens"): that X is announced by `Game._activate_mana`
+    before the mana is made, so it is the one X a mana ability may read.
+    """
     validate_value(amount, where)
     if isinstance(amount, str) and amount == "x":
+        if takes_x:
+            return
         raise DslError(f"{where}: a mana ability has no X to read")
     if not isinstance(amount, Mapping):
         return
-    bad = MANA_AMOUNT_FORBIDDEN & set(amount)
+    bad = (MANA_AMOUNT_FORBIDDEN - {"x"} if takes_x else MANA_AMOUNT_FORBIDDEN) & set(amount)
     if bad:
         raise DslError(
             f"{where}: a mana ability is activated during payment, with no X, "
@@ -538,7 +613,9 @@ def _sum_mana(effects: list[dict[str, Any]], where: str) -> tuple[int, ...]:
     return tuple(total)
 
 
-def _mana_amount(effects: list[dict[str, Any]], where: str) -> Mapping[str, Any] | None:
+def _mana_amount(
+    effects: list[dict[str, Any]], where: str, *, takes_x: bool = False
+) -> Mapping[str, Any] | None:
     """The ``amount`` on a variable mana ability -- "Add {G} for each ...".
 
     Deliberately narrow. The amount scales *one* symbol tuple, so a card that
@@ -555,7 +632,7 @@ def _mana_amount(effects: list[dict[str, Any]], where: str) -> Mapping[str, Any]
             f"-- there is otherwise no one symbol for the amount to scale"
         )
     amount = carriers[0]["amount"]
-    _validate_mana_amount(amount, f"{where}.amount")
+    _validate_mana_amount(amount, f"{where}.amount", takes_x=takes_x)
     return dict(amount) if isinstance(amount, Mapping) else amount
 
 

@@ -69,6 +69,11 @@ def _compile_targets(
     """
     models = list(models)
     declared = {t.id for t in models}
+    for model in models:
+        if "#" in model.id:
+            # `carddef.instance_target_id` names a repeated mode's second
+            # instance `id#1`; a printed id with a `#` could collide with it.
+            raise DslError(f"{where}.target[{model.id}]: a target id cannot contain '#'")
     # Asked before anything compiles, so the one way a linked target goes wrong
     # that is *not* a typo gets its own sentence rather than the generic "the
     # card does not declare it": naming a sibling that comes later. The
@@ -178,6 +183,10 @@ def _compile_targets(
     # stores its refs after every card-level one -- so it is the card-level list
     # that has to end in the variable-size spec, not the printed list.
     for spec in specs:
+        if spec.selector_if_kicked is not None:
+            _check_kicked_selector(
+                spec, where, on_spell=on_spell, has_kicker=has_kicker
+            )
         if spec.count_if_kicked is None:
             continue
         # "If this spell was kicked, instead choose any number of target
@@ -234,6 +243,45 @@ def _compile_targets(
                 f"or the targets after it cannot be identified"
             )
     return specs
+
+
+def _check_kicked_selector(
+    spec: TargetSpec, where: str, *, on_spell: bool, has_kicker: bool
+) -> None:
+    """Every restriction on a target's ``selector_if_kicked``, each a card that
+    would load wrong.
+
+    Legal at all because 601.2b announces kicker one step before 601.2c
+    declares the targets, and only `targeting.kicked_targets` swaps it in --
+    which the card's own kicked cast line and its resolution call, and nothing
+    else. Each refusal is a place that call never reaches, or a second
+    cast-time choice deciding the same spec.
+    """
+    label = f"{where}.target[{spec.id}]"
+    if not on_spell:
+        raise DslError(
+            f"{label}: 'selector_if_kicked' is about a cast, and an ability's "
+            f"targets are declared without one -- it would read as unkicked for ever"
+        )
+    if not has_kicker:
+        raise DslError(
+            f"{label}: 'selector_if_kicked' on a card with no 'kicker' names a "
+            f"choice that can never be made"
+        )
+    if spec.mode is not None or spec.gift_promised is not None or spec.cost_option is not None:
+        # A mode-owned spec is declared by `Game._ask_mode_targets`, and the
+        # gift and tier lists are their own; none of them is the list
+        # `kicked_targets` is handed.
+        raise DslError(
+            f"{label}: 'selector_if_kicked' beside 'mode', 'gift_promised' or "
+            f"'cost_option' is two cast-time choices deciding one target -- no "
+            f"printing does it"
+        )
+    if dict(spec.selector_if_kicked) == dict(spec.selector):
+        raise DslError(
+            f"{label}: 'selector_if_kicked' is the unkicked 'selector' over again "
+            f"-- drop it"
+        )
 
 
 def _check_gift_targets(
@@ -655,10 +703,32 @@ def _compile_target(
                 f"below the ceiling {model.count} -- at the ceiling it is a plain "
                 f"'count' with no 'up_to'"
             )
+    if model.selector_if_kicked is not None:
+        # The kicked selector stands where `selector` stands, so it passes
+        # every check `selector` does for this kind: compiled once more as
+        # the spec the kicked cast declares.
+        _compile_target(
+            model.model_copy(
+                update={"selector": model.selector_if_kicked, "selector_if_kicked": None}
+            ),
+            where,
+            siblings,
+        )
+        if _reads_context(model.selector_if_kicked):
+            # The linked-target walk and the X walk (`legality._mentions_x`)
+            # read the printed `selector`; a clause only here would be
+            # enumerated without the answer it depends on.
+            raise DslError(
+                f"{label}.selector_if_kicked: names a sibling target or {{X}}, "
+                f"which only 'selector' may do"
+            )
     return TargetSpec(
         id=model.id,
         kind=model.kind,
         selector=dict(model.selector),
+        selector_if_kicked=(
+            dict(model.selector_if_kicked) if model.selector_if_kicked is not None else None
+        ),
         permanent_selector=(
             dict(model.permanent_selector) if model.permanent_selector is not None else None
         ),

@@ -821,6 +821,10 @@
     },
     "zone": "battlefield"
   },
+  "arcane_adaptation": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "arcane_bombardment": {
     "battlefield_count": 33,
     "graveyard_size": {
@@ -1641,6 +1645,10 @@
     "zone": "battlefield"
   },
   "beastcaller_savant": {
+    "zone": "battlefield"
+  },
+  "beastmaster_ascension": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "become_the_avalanche": {
@@ -2502,6 +2510,12 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "cache_grab": {
+    "library_size": {
+      "0": 36
+    },
+    "zone": "graveyard"
+  },
   "cackling_counterpart": {
     "battlefield_count": 33,
     "zone": "graveyard"
@@ -3024,6 +3038,18 @@
     },
     "zone": "battlefield"
   },
+  "chatterfang_squirrel_general": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "chatterstorm": {
+    "battlefield_count": 33,
+    "tokens": {
+      "count": 1,
+      "id": "squirrel_1_1_g"
+    },
+    "zone": "graveyard"
+  },
   "chief_of_the_foundry": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -3042,6 +3068,10 @@
     "zone": "battlefield"
   },
   "chittering_witch": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "chitterspitter": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -4311,6 +4341,18 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "deep_forest_hermit": {
+    "battlefield_count": 37,
+    "counters": {
+      "amount": 3,
+      "kind": "time"
+    },
+    "tokens": {
+      "count": 4,
+      "id": "squirrel_1_1_g"
+    },
+    "zone": "battlefield"
+  },
   "deep_gnome_terramancer": {
     "zone": "battlefield"
   },
@@ -5320,6 +5362,17 @@
     },
     "zone": "battlefield"
   },
+  "end_raze_forerunners": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 3,
+      "keywords": [
+        "vigilance",
+        "trample"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "endless_atlas": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -5719,6 +5772,12 @@
     "opponent_battlefield_count": 4,
     "zone": "graveyard"
   },
+  "expel_the_unworthy": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "zone": "graveyard"
+  },
   "experimental_armor": {
     "zone": "battlefield"
   },
@@ -6093,6 +6152,16 @@
   "fierce_guardianship": {
     "hand_size": {
       "0": 1
+    },
+    "zone": "graveyard"
+  },
+  "fiery_confluence": {
+    "battlefield_count": 30,
+    "graveyard_size": {
+      "0": 5
+    },
+    "life": {
+      "1": 40
     },
     "zone": "graveyard"
   },
@@ -6810,6 +6879,17 @@
   "gangly_stompling": {
     "zone": "battlefield"
   },
+  "garruk_cursed_huntsman": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 5,
+      "kind": "loyalty"
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "garruk_s_companion": {
     "zone": "battlefield"
   },
@@ -7454,6 +7534,10 @@
   "gorn_captain": {
     "zone": "battlefield"
   },
+  "gourmand_s_talent": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "graaz_unstoppable_juggernaut": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -8021,6 +8105,18 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "hazel_of_the_rootbloom": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "hazel_s_brewmaster": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "food_token"
+    },
+    "zone": "battlefield"
+  },
   "hazoret_s_monument": {
     "battlefield_count": 33,
     "hand_size": {
@@ -8374,6 +8470,10 @@
     "life": {
       "0": 44
     }
+  },
+  "honored_dreyleader": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "hoofprints_of_the_stag": {
     "battlefield_count": 33,
@@ -8799,6 +8899,13 @@
   },
   "inquisitor_s_flail": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "insatiable_frugivore": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
     "zone": "battlefield"
   },
   "insatiable_harpy": {
@@ -10609,6 +10716,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "maelstrom_pulse": {
+    "battlefield_count": 30,
+    "graveyard_size": {
+      "0": 5
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
   "maelstrom_wanderer": {
     "granted": {
       "count": 3,
@@ -10935,6 +11050,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "maskwood_nexus": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "mass_appeal": {
@@ -11540,6 +11659,13 @@
     },
     "zone": "battlefield"
   },
+  "moonstone_eulogist": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "moonstone_harsh_mistress": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -11793,6 +11919,9 @@
     },
     "zone": "battlefield"
   },
+  "mystic_confluence": {
+    "zone": "graveyard"
+  },
   "mystic_gate": {
     "zone": "battlefield"
   },
@@ -11835,6 +11964,14 @@
     "battlefield_count": 33,
     "hand_size": {
       "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "nadier_s_nightblade": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
     },
     "zone": "battlefield"
   },
@@ -11973,6 +12110,10 @@
     "zone": "battlefield"
   },
   "nest_robber": {
+    "zone": "battlefield"
+  },
+  "nested_shambler": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "nesting_grounds": {
@@ -12399,6 +12540,10 @@
     "zone": "battlefield"
   },
   "ogre_sentry": {
+    "zone": "battlefield"
+  },
+  "ogre_slumlord": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "ogre_warrior": {
@@ -13128,6 +13273,20 @@
   "plague_stinger": {
     "zone": "battlefield"
   },
+  "plaguecrafter": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "opponent_battlefield_count": 5,
+    "zone": [
+      "battlefield",
+      "graveyard"
+    ]
+  },
   "plan_for_all_outcomes": {
     "battlefield_count": 32,
     "library_size": {
@@ -13199,6 +13358,10 @@
     "zone": "battlefield"
   },
   "plumeveil": {
+    "zone": "battlefield"
+  },
+  "poison_tip_archer": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "polluted_delta": {
@@ -13514,6 +13677,17 @@
   },
   "prosperous_bandit": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "prosperous_innkeeper": {
+    "battlefield_count": 34,
+    "life": {
+      "0": 40
+    },
+    "tokens": {
+      "count": 1,
+      "id": "treasure_token"
+    },
     "zone": "battlefield"
   },
   "prosperous_thief": {
@@ -13938,6 +14112,10 @@
     "life": {
       "0": 44
     }
+  },
+  "ravenous_squirrel": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "razor_swine": {
     "zone": "battlefield"
@@ -14672,6 +14850,17 @@
   "rootbreaker_wurm": {
     "zone": "battlefield"
   },
+  "rootcast_apprenticeship": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
   "rootgrapple": {
     "zone": "graveyard"
   },
@@ -14994,6 +15183,14 @@
       "0": 42
     }
   },
+  "saw_in_half": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 4
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
   "scabland": {
     "zone": "battlefield"
   },
@@ -15137,6 +15334,10 @@
   "scryb_sprites": {
     "zone": "battlefield"
   },
+  "scurry_of_squirrels": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "scute_swarm": {
     "zone": "battlefield"
   },
@@ -15230,6 +15431,13 @@
   },
   "secluded_steppe": {
     "zone": "battlefield"
+  },
+  "second_harvest": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
   },
   "secret_rendezvous": {
     "hand_size": {
@@ -16074,6 +16282,13 @@
   "skycloud_expanse": {
     "zone": "battlefield"
   },
+  "skyfisher_spider": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 4
+    },
+    "zone": "battlefield"
+  },
   "skyhunter_patrol": {
     "zone": "battlefield"
   },
@@ -16676,6 +16891,14 @@
   "squirming_mass": {
     "zone": "battlefield"
   },
+  "squirrel_nest": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "squirrel_sovereign": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "squirrelanoids": {
     "zone": "battlefield"
   },
@@ -16805,6 +17028,13 @@
     "zone": "battlefield"
   },
   "sterling_hound": {
+    "zone": "battlefield"
+  },
+  "steward_of_the_harvest": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
     "zone": "battlefield"
   },
   "steward_of_valeron": {
@@ -17288,6 +17518,17 @@
     "opponent_battlefield_count": 8,
     "zone": "graveyard"
   },
+  "swarmyard": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "swarmyard_massacre": {
+    "tokens": {
+      "count": 2,
+      "id": "squirrel_1_1_g"
+    },
+    "zone": "graveyard"
+  },
   "swashbuckling": {
     "zone": [
       "battlefield",
@@ -17323,6 +17564,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "sword_of_the_squeak": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "sword_of_vengeance": {
@@ -17624,6 +17869,11 @@
       "1": 40
     },
     "zone": "battlefield"
+  },
+  "tear_asunder": {
+    "battlefield_count": 31,
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
   },
   "tectonic_giant": {
     "battlefield_count": 33,
@@ -18051,6 +18301,18 @@
   },
   "the_mycosynth_gardens": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "the_odd_acorn_gang": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "reach",
+        "menace",
+        "trample"
+      ]
+    },
     "zone": "battlefield"
   },
   "the_one_ring": {
@@ -20734,6 +20996,10 @@
     "zone": "battlefield"
   },
   "wolf_cove_villager": {
+    "zone": "battlefield"
+  },
+  "wolfwillow_haven": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "wonder": {

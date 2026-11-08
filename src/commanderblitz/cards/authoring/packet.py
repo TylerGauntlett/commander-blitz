@@ -52,6 +52,7 @@ from ..loader.vocabulary import (
     STATIC_CONDITION_HEADS,
     STATIC_EFFECTS,
     STATIC_FILTER_KEYS,
+    STATIC_VALUE_COUNT_FILTER_KEYS,
     STATIC_VALUE_KEYS,
     TAPPED_PERMANENT_KEYS,
 )
@@ -201,6 +202,9 @@ CARD_LEVEL_RIDER_KEYS = (
     # trigger is the rules', so no ability is written for it; a granted one
     # ("has annihilator 2") is a grant_keyword static with its own "annihilator": N.
     "annihilator",
+    # int; "Vanishing N" -- the N. The time counters, the upkeep tick and the
+    # sacrifice are the rule's, lowered by the loader; write no ability for them.
+    "vanishing",
     "morph_counter",  # bool; megamorph -- turns face up with a +1/+1 counter, beside `morph`
     # {name: value}; "…where X is … as you cast this spell" -- each value fixed
     # as the spell goes on the stack, read back by spell_effects as {"binding": name}
@@ -583,6 +587,12 @@ def reference() -> dict:
         # anthem's `power` is a `const` and files a gap for "+1/+1 for each
         # charge counter on this artifact" instead of writing it.
         "static_value_keys": sorted(STATIC_VALUE_KEYS),
+        # What a static magnitude's `count` may filter on: the counting filter
+        # plus `any_of`, a union counted once ("for each creature you control
+        # with base power **or** toughness 1"). Its own entry for
+        # `static_affects_filter_keys`' reason: the other counting positions do
+        # not take the word.
+        "static_value_count_filter_keys": sorted(STATIC_VALUE_COUNT_FILTER_KEYS),
         #: The three vocabularies a packet used to omit, each of which cost a
         #: real card.  A worker that cannot see `counters_on` cannot know
         #: "if this creature has no +1/+1 counters on it" is sayable, and files
@@ -899,6 +909,13 @@ def reference() -> dict:
             " {\"self_only\": true}}}` -- an anthem with a size, which no op"
             " can be: `pump` wears off and `add_counters` would miss both the"
             " creatures already out and the ones cast later.",
+            "A static magnitude's `count` reads `static_value_count_filter_keys`,"
+            " which adds `any_of` on the battlefield: \"for each creature you"
+            " control with base power or toughness 1\" is `{\"count\":"
+            " {\"controller\": \"you\", \"types\": [\"Creature\"], \"any_of\":"
+            " [{\"power\": 1}, {\"toughness\": 1}]}}` -- one count, so a 1/1 is"
+            " counted once. In a static filter `power` and `toughness` already"
+            " read *base* P/T, so \"base power\" is spelled `power` there.",
             "`selector_keys` is what an effect's `objects` or a target spec's"
             " `selector` may contain. `static_filter_keys` is the much smaller"
             " set a *static ability* may read, because a static may only read"
@@ -1034,7 +1051,10 @@ def reference() -> dict:
             " instead), `and_create` the third (\"those tokens plus an additional"
             " 1/1 ... Thopter ... token are created instead\", Stridehangar"
             " Automaton: the tokens are kept and one of each listed id is added,"
-            " once per creation), and a static takes exactly one. \"Creature tokens\""
+            " once per creation; \"those tokens plus that many 1/1 green Squirrel"
+            " ... tokens\", Chatterfang, adds `and_create_per_token: true` so each"
+            " id is added once per token in the event), and a static takes exactly"
+            " one. \"Creature tokens\""
             " is an `affects_token` filter; a sentence naming no player (\"if one"
             " or more tokens would be created\") adds `affects_player: \"any\"`.",
             "\"Until end of turn, if one or more tokens would be created under"
@@ -1144,6 +1164,13 @@ def reference() -> dict:
             " if its mode is chosen. It must be a fixed count, never"
             " `optional`, and no card-level target on the same card may be"
             " variable-size.",
+            "\"Choose three. You may choose the same mode more than once.\" is"
+            " `repeatable: true` beside a literal `count` on that one top-level"
+            " `choose_mode` of a spell (700.2d). Each chosen instance declares"
+            " its own mode-owned targets, so a bullet's target spec is written"
+            " once and serves every instance; it must be a fixed size and"
+            " linked to no sibling. Not `budget`, which is the priced multiset"
+            " and can own no targets.",
             "The expectation is checked in a sandbox: player 0 at 40 life with a"
             " deep mana base, two creatures, and an opponent holding a creature,"
             " a flier, an artifact and an enchantment. The card under test is the"

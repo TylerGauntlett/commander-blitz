@@ -2786,6 +2786,50 @@ battlefield, exactly as `cast_x` does for "enters with X counters":
 `{"kicked": ...}` reads the resolution context *or* the object, which are the
 flag's two lifetimes and never overlap.
 
+### A kicked cast declares different targets
+
+Kicker is announced at 601.2b, one step before 601.2c declares the targets, so
+"if this spell was kicked … **instead**" can change the target itself rather
+than what the spell does to it. Two keys on a spell's target spec say how:
+
+| Key | Printed clause | Example |
+|---|---|---|
+| `count_if_kicked` | "Choose target creature you own. If this spell was kicked, instead choose **any number of** target creatures you own." | The Eagles Are Coming! |
+| `selector_if_kicked` | "Exile target artifact or enchantment. If this spell was kicked, exile target **nonland permanent** instead." | Tear Asunder |
+
+```jsonc
+{
+  "id": "tear_asunder",
+  "mana_cost": "{1}{G}",
+  "kicker": "{1}{B}",
+  "targets": [
+    { "id": "t", "kind": "permanent",
+      "selector": { "any_types": ["Artifact", "Enchantment"], "zone": "battlefield" },
+      "selector_if_kicked": { "not_types": ["Land"], "zone": "battlefield" } }
+  ],
+  "spell_effects": [ { "op": "exile", "objects": { "target": "t" } } ]
+}
+```
+
+`targeting.kicked_targets` swaps the kicked count and selector into the specs,
+and both ends of the spell call it: the kicked cast line enumerates its targets
+from the swapped specs, and `stack._resolve_spell` splits and re-checks the
+stored refs against them (608.2b). A kicked Tear Asunder aimed at a creature
+therefore resolves, and fizzles only if that creature has left or become an
+illegal target. The unkicked line never sees either key. Either key counts as
+reading `kicked`, so the half-a-kicker guard is satisfied without an `if`.
+
+`selector_if_kicked` is checked as a selector of the spec's own kind, the way
+`selector` is. The loader refuses it on a card with no `kicker`, on an
+ability's targets (no cast declares them), beside `mode`, `gift_promised` or
+`cost_option`, when it names a sibling target or `{X}`, and when it repeats the
+unkicked `selector`.
+
+The near misses: two specs, one per side, cannot be sized to zero on the other
+side — every stored ref is split by position, so the kicked side's ref is read
+back into the first spec's bucket. Making both `optional` lets an unkicked cast
+aim at a creature, and a `choose_mode` cannot restrict a mode to kicked casts.
+
 ## Gift — a promise made to one opponent, for nothing
 
 **Gift a tapped Fish** (702.164a): "You may promise an opponent a gift as you
@@ -3867,6 +3911,46 @@ take away), with fewer than one counter, with an X, or at the printed price, and
 an `impending` condition on a card without the field. The printed line is
 claimed at gate 3 by the field, strictly: the count and the cost must both be
 the printed ones.
+
+## Vanishing — a permanent that counts itself out
+
+```jsonc
+{ "id": "deep_forest_hermit", "types": ["Creature"], "vanishing": 3, … }
+```
+
+> Vanishing 3 *(This creature enters with three time counters on it. At the
+> beginning of your upkeep, remove a time counter from it. When the last is
+> removed, sacrifice it.)*
+
+702.63a makes the keyword three abilities, and the card writes none of them:
+`vanishing` is N, and the loader lowers it.
+
+- **The counters** are an implied `self_enters_with_counters` replacement
+  (`loader._implied_replacements`), unconditioned: however the permanent
+  enters, it is never on the battlefield without them.
+- **The tick** is a triggered ability the loader appends after the printed ones
+  (`loader._vanishing_abilities`): "at the beginning of your upkeep, if there is
+  a time counter on this permanent, remove a time counter from it".
+- **The sacrifice** is a second appended ability on the `last_counter_removed`
+  trigger with `counter: "time"`. That trigger listens to every removal
+  `primitives.remove_counters` makes and matches only the one that leaves none
+  of its kind, so the last counter taken by a cost or another card's effect
+  sacrifices the permanent too, and a permanent that never had a counter is
+  never sacrificed.
+
+Both abilities use the stack and are lost with the permanent's other abilities.
+
+The near miss is fading's shape — an `upkeep` trigger whose effect removes a
+counter and then sacrifices on an `if` over `counters_on` — which sacrifices only
+when the tick itself took the last counter, and as part of the tick rather than
+as a trigger of its own.
+
+The loader refuses an N that is not a whole number of at least 1, and vanishing
+on an instant or sorcery. The printed line is claimed at gate 3 by the field,
+strictly: the printed N must be the card's.
+
+`last_counter_removed` is an ordinary trigger as well, for any printed "when
+the last <kind> counter is removed from it"; it needs `counter`.
 
 ## Fuse — the case where the answer is *both* faces
 
@@ -7628,6 +7712,35 @@ when they are, and an `as` binding ("exile that token") names it too.
   forever. `and_create` on `replace_dies` is Kalitas's rider, the same key on a
   different event.
 
+**"Those tokens plus that many … tokens are created instead."** An addition
+counted per token is `and_create` with `and_create_per_token: true`:
+
+```jsonc
+// Chatterfang, Squirrel General
+{ "kind": "static",
+  "text": "If one or more tokens would be created under your control, those tokens plus that many 1/1 green Squirrel creature tokens are created instead.",
+  "effect": "replace_token_creation",
+  "and_create": ["squirrel_1_1_g"],
+  "and_create_per_token": true }
+```
+
+**Each id in `and_create` joins the event once per token `affects_token`
+matched**, counted when the static applies — three Treasures bring three
+Squirrels. Everything else is the plain addition's: same event, same batch,
+no stack, the substitution's rulings.
+
+- **Fixed additions first, then per-token ones, then the rest.** A
+  Stridehangar's Thopter goes in before Chatterfang counts, so it brings a
+  Squirrel too; against a doubler the count is the same in either order, and
+  one Treasure under Chatterfang and a Doubling Season is two Treasures and two
+  Squirrels.
+- **Its own Squirrels are not counted again by it** (614.5, the single pass):
+  creating one Squirrel makes two, not a loop. A second Chatterfang sees the
+  first one's Squirrels in the event and adds that many more: one Treasure is
+  one Treasure and three Squirrels.
+- The flag is refused without a non-empty `and_create` and on any effect but
+  `replace_token_creation`.
+
 `affects_token`, not `affects`: the token being asked about **does not exist
 yet**, so there is no permanent for a static filter to find and no board state to
 read. It takes the printed-face keys (`types`, `not_types`, `subtypes`,
@@ -10021,6 +10134,45 @@ answer), and a non-literal kept subtype.
 name, colour, abilities — and is a different card; a `set_pt` cannot read a
 card in exile at all.
 
+### `grant_exiled_abilities` — abilities lent by the cards exiled with a permanent
+
+Hazel's Brewmaster: "Foods you control have all activated abilities of all
+creature cards exiled with this creature."
+
+```json
+{"kind": "static", "effect": "grant_exiled_abilities",
+ "affects": {"subtypes": ["Food"], "controller": "you"}, "types": ["Creature"]}
+```
+
+beside the ability whose `exile` carries `link: true`. Each permanent `affects`
+matches has every activated ability, mana abilities included, printed on each
+card still linked to the source by its own exiles (607.2a): the source's
+`exiled_cards`, kept while the card is in exile, face up, with its `exiled_by`
+intact, and whose printed card types include one of `types`
+(`characteristics.exiled_activated_abilities`). An ability that works only from
+another zone (cycling), a Class level line and a station threshold line are
+not lent. The abilities are appended after the recipient's own, in the order
+the cards were exiled.
+
+They are the recipient's abilities (113.6, 602.1): its controller activates
+them, a `{T}` in the cost taps the recipient, and "this creature" in their text
+is the recipient. An activation snapshots the ability onto the stack item
+(`StackItem.granted_ability`), since it lives on a card in exile rather than in
+any `grantable_abilities` pool, so it resolves even if the card leaves exile
+first (608.2). The grant is the source's static: when the source leaves the
+battlefield it ends, and `reset_permanent_state` empties `exiled_cards`, so a
+source that returns is a new object with nothing exiled with it (400.7).
+
+It is collected off printed faces with `grant_ability`
+(`characteristics.ABILITY_STATICS`), so it cannot itself be granted. The loader
+refuses it without `affects` or `types`, with an unknown card type, and with an
+`ability`, `subtypes` or `keywords`.
+
+**The near miss is a `grant_ability` static**, which hands over a fixed ability
+written in the card's own `grantable_abilities` and cannot borrow whatever
+happens to be in exile; `imprint_characteristics` reads a card in exile but
+takes only its size and creature types.
+
 ### `set_creature_types` — "it loses all other creature types"
 
 "Celebration — As long as two or more nonland permanents entered the
@@ -10849,6 +11001,42 @@ so a copy of one carries those, with its own `except` on top.
 Unlike `create_token` it names no token id, so nothing has to be pre-declared and
 `validate_token_references` does not apply: what is being copied is only known
 while the spell resolves.
+
+### "…except their power is half that creature's power"
+
+```jsonc
+// Saw in Half
+{ "op": "snapshot", "target": "t1", "as": "sawn" },
+{ "op": "destroy", "objects": { "target": "t1" }, "as": "destroyed" },
+{ "op": "copy_permanent", "amount": 2,
+  "objects": { "binding": "destroyed", "zone": "graveyard" },
+  "controller": { "controller_of": "sawn" },
+  "except_": {
+    "power":     { "half": { "of": { "power_of":     { "var": "sawn" } }, "round": "up" } },
+    "toughness": { "half": { "of": { "toughness_of": { "var": "sawn" } }, "round": "up" } } } }
+```
+
+`except_`'s `power` and `toughness` take a non-negative integer (eternalize's
+"except it's a 4/4") or a value expression. The expression is evaluated once, as
+`copy_permanent` resolves, and the token keeps the **number**: 707.9b makes the
+exception a copiable value, so a pump on the original afterwards does not resize
+the copies, a pump on a copy lands on top, and a copy of the copy copies the
+number. The two still come as a pair, and a malformed expression is refused at
+load like any other value.
+
+Three pieces of the sentence are not this key:
+
+- **The creature's size as it last existed** (608.2h) is a `snapshot` taken
+  before the `destroy`, pumps and counters included. `power_of` of the creature
+  itself, read after it died, is its printed graveyard size.
+- **"If that creature dies this way"** is `destroy`'s `as`, which holds only what
+  was actually destroyed (indestructible and regeneration are not), narrowed to
+  `zone: "graveyard"`: a death a replacement sent to exile was a destruction but
+  not a death (700.4). The copy reaches the card in the graveyard through the
+  binding, so no `if` is needed — an empty pool makes nothing.
+- **"Its controller creates"** is `controller: {"controller_of": "sawn"}`, the
+  seat that controlled it as it left, which is not `you` when the target was an
+  opponent's creature.
 
 # Recipes — Targets and modes
 
@@ -11840,6 +12028,52 @@ owns it. The questions are still asked in printed mode order
 moves, and every reader of the stored refs walks the same list. The loader
 admits one sizeless mode-owned spec per card, and none a sibling's selector
 names.
+
+### A mode chosen more than once
+
+```jsonc
+"targets": [
+  {"id": "grow", "kind": "permanent", "mode": 0,
+   "selector": {"zone": "battlefield", "types": ["Creature"]}},
+  {"id": "who", "kind": "player", "mode": 2}
+],
+"spell_effects": [
+  {"op": "choose_mode", "count": 3, "repeatable": true, "modes": [
+    {"label": "Put two +1/+1 counters on target creature.",
+     "effects": [{"op": "add_counters", "counter": "+1/+1", "amount": {"const": 2},
+                  "objects": {"target": "grow"}}]},
+    …
+  ]}
+]
+```
+
+Rootcast Apprenticeship and the Confluences: *"Choose three. You may choose the
+same mode more than once."* `repeatable: true` makes the answer a multiset of
+exactly `count` modes (with `up_to`, "choose up to four", at most `count`).
+700.2d makes each chosen instance a mode of its own, so each declares its own
+targets at 601.2c: three counters bullets are three targets, the same creature
+or three different ones.
+
+- **Asked one instance at a time** at cast (`modes.ask_repeated_modes`), every
+  mode with a legal target still on offer after it is taken, so the actions are
+  one per mode rather than one per multiset. The instances are recorded in
+  printed order on `StackItem.modes`, repeats included, and run that way
+  (700.2e).
+- **Each instance stores its own targets.** `carddef.mode_instances` gives the
+  first instance of a mode its printed spec ids and a later one `id#n`
+  (`instance_target_id`); `op_choose_mode` reads an instance's targets back
+  under the printed ids while it runs. 608.2b re-checks each instance alone, so
+  one whose target left does nothing and the others resolve.
+- **Refused at load:** anywhere but the single top-level `choose_mode` of a
+  spell; a `count` that is not a literal of at least two (so "choose X" is not
+  this); one mode; beside `budget`, `or_more`, `up_to_if`, `all_if`,
+  `optional`, `random`, `chooser`, `once_each` or escalate; an `optional` or
+  caster-sized mode-owned target, or one linked to a sibling; a `#` in any
+  target id.
+
+The near miss is `budget` (Season of Weaving), the other multiset: priced, and
+asked on resolution, where a mode can no longer declare a target. Plain `count`
+picks distinct modes, which is a weaker card.
 
 ## "Target creature phases out"
 
@@ -13807,6 +14041,51 @@ on another's output — which means a Xenograft naming Goblin does not turn a
 board of Bears into targets for a Goblin lord's anthem. `chars()` reports the
 type, and everything that reads `chars` — selectors, effect filters, the UI type
 line — sees it.
+
+### "The same is true for creature spells you control and creature cards you own that aren't on the battlefield"
+
+Maskwood Nexus, Arcane Adaptation, Xenograft, Roshan: the grant above, carried
+into every zone with `off_battlefield`.
+
+```jsonc
+// Maskwood Nexus — "Creatures you control are every creature type. The same
+// is true for creature spells you control and creature cards you own that
+// aren't on the battlefield."
+{ "kind": "static", "effect": "add_subtype",
+  "affects":  { "types": ["Creature"] },
+  "subtypes": [ /* every creature type: the template's CHANGELING_SUBTYPES */ ],
+  "off_battlefield": true }
+```
+
+On the battlefield it is the ordinary layer-4 grant. Off it, the grant also
+reaches each spell on the stack its source's controller controls and each card
+that player owns in a hand, library, graveyard, exile or the command zone,
+whenever `affects` describes the card's **printed** face — so "creature cards"
+are the cards that print Creature, and an opponent's cards are untouched. A
+face-down card is not reached. The grant lasts exactly as long as its source is
+on the battlefield with its abilities.
+
+Who sees it: `chars()` off the battlefield (`characteristics._compute`), a
+selector searching a zone (`selectors.matches`), a trigger filter's subject
+(`triggers.matches_card_filter` — "whenever you cast a Squirrel spell") and a
+spell being priced (`player_statics.spell_cost_reduction`, since 601.2f puts
+the spell on the stack under its caster's control before its cost is locked
+in). All four read `characteristics.off_battlefield_face` /
+`with_granted_types`. Another static's filter does not, for the layers-lite
+reason above.
+
+The loader refuses the flag on any static but `add_subtype`, without
+`affects`, with `self_only` (a changeling's own line already works in every
+zone), with an `affects` key a printed face cannot answer
+(`characteristics.OFF_BATTLEFIELD_AFFECTS_KEYS`: no tapped, attacking or
+counters clause, in `any_of` branches too), with a `controller` other than
+`"you"`, and inside a `grantable_abilities` static: the off-battlefield half is
+collected off printed faces (`characteristics._off_battlefield_type_statics`),
+so a granted copy would stop at the battlefield's edge.
+
+**The near miss is the same static without the flag**, which loads, makes every
+creature on the battlefield every creature type and leaves the second sentence
+undone: a tutor for "a Squirrel card" passes the cards in your library by.
 
 ## "Choose a card name"
 

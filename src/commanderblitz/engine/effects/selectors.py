@@ -24,6 +24,7 @@ from ..characteristics import (
     enchanted_by,
     has_counters_matches,
     is_equipped,
+    off_battlefield_face,
     parity_matches,
     resolve_chosen_subtypes,
 )
@@ -899,9 +900,12 @@ def matches(
             selector, state.objects.get(ctx.source_oid) if ctx.source_oid else None
         )
 
-    card = state.card_of(obj)
     use_derived = obj.on_battlefield
     c = chars(state, oid) if use_derived else None
+    # Off the battlefield the printed face, plus what an `off_battlefield`
+    # `add_subtype` grants it: "creature cards you own that aren't on the
+    # battlefield" are every creature type to a tutor too (Maskwood Nexus).
+    card = state.card_of(obj) if use_derived else off_battlefield_face(state, obj)
     types = c.types if c else card.types
     subtypes = c.subtypes if c else card.subtypes
     supertypes = c.supertypes if c else card.supertypes

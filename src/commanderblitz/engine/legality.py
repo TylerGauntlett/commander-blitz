@@ -25,7 +25,7 @@ from .costs import (
     ability_purpose,
     can_pay,
     can_pay_mana,
-    discard_x_ceiling,
+    cost_x_ceiling,
     land_drops_available,
     mana_added_total,
     mana_amount,
@@ -49,7 +49,7 @@ from .player_statics import (
     player_plays_lands_from_library_top,
 )
 from .structs import TargetRef
-from .targeting import describe_ref, enumerate_target_tuples
+from .targeting import describe_ref, enumerate_target_tuples, kicked_targets
 from .zones import enters_cost_offer, enters_cost_options
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -517,10 +517,30 @@ def unplayable_reason(state: GameState, pid: int, oid: int) -> str | None:
     exclude_sid = state.objects[oid].stack_id
     # Either side of a gift promise will do: a card whose unpromised target is
     # missing is still castable promised, when the promise declares another.
-    # Any tier likewise (702.183): Omnislash declares nothing.
+    # Any tier likewise (702.183): Omnislash declares nothing. And the kicked
+    # list, when the kicked cost is payable: a Tear Asunder with no artifact
+    # or enchantment to exile still casts kicked at a creature.
+    kicked = (
+        kicked_targets(card.targets)
+        if card.kicker is not None
+        and can_pay_mana(
+            state,
+            pid,
+            card.mana_cost.plus(card.kicker),
+            x=x,
+            extra_generic=-discount,
+            purpose=purpose,
+        )
+        else None
+    )
     if not any(
         enumerate_target_tuples(state, pid, specs, oid, exclude_sid=exclude_sid)
-        for specs in (card.targets, card.gift_targets, *card.cost_option_targets.values())
+        for specs in (
+            card.targets,
+            card.gift_targets,
+            kicked,
+            *card.cost_option_targets.values(),
+        )
         if specs is not None
     ):
         return "targets"
@@ -858,11 +878,13 @@ def _ability_aims(
             # ability's bullet is below, because the alternative -- asking for X
             # afterwards -- would declare the targets before the X they depend
             # on existed.
-            if ability.cost.loyalty_x or ability.cost.discard_x:
+            taken_ceiling = cost_x_ceiling(state, pid, ability.cost, oid)
+            if ability.cost.loyalty_x or taken_ceiling is not None:
                 # The ceiling of a -X is the loyalty there is to remove (606.4),
-                # and of "Discard X cards" the cards the cost may take.
-                if ability.cost.discard_x:
-                    announced_ceiling = discard_x_ceiling(state, pid, ability.cost, oid)
+                # and of "Discard X cards", "Sacrifice X Foods" or "Tap X
+                # untapped tokens" what the cost may take.
+                if taken_ceiling is not None:
+                    announced_ceiling = taken_ceiling
                 else:
                     source_obj = state.objects.get(oid)
                     announced_ceiling = source_obj.counter("loyalty") if source_obj is not None else 0
@@ -968,6 +990,8 @@ def _targets_read_x(ability) -> bool:
     if (
         not cost.loyalty_x
         and not cost.discard_x
+        and cost.sacrifice_x is None
+        and cost.tap_x is None
         and (not cost.mana.x_count or cost.x_value is not None)
     ):
         return False
@@ -1017,6 +1041,12 @@ def _mana_option_indices(state: GameState, oid: int, ability) -> list[int | None
     cannot make or, past the end, refuse the activation the panel just offered.
     """
     if not ability.is_mana_ability:
+        return [None]
+    # "Tap X untapped tokens: Add X mana in any combination of colors." One
+    # row: the yield is asked by `Game._activate_mana` once X is announced,
+    # because a split's compositions depend on it. The X = 0 floor is always
+    # payable, so the row is there with nothing to tap.
+    if ability.cost is not None and ability.cost.takes_x:
         return [None]
 
     return list(range(len(mana_options_of(state, oid, ability))))

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**256 cards** blocked by **235** capabilities.
+**254 cards** blocked by **232** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -110,7 +110,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [enters-as-copy-embalmed-exception](#enters-as-copy-embalmed-exception) | 1 | 4333 | replacement |
 | [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
-| [every-creature-type-everywhere](#every-creature-type-everywhere) | 1 | 494 | static_effect |
 | [exile-bottom-of-library](#exile-bottom-of-library) | 1 | 4763 | selector |
 | [exile-cards-with-card-types-among-them](#exile-cards-with-card-types-among-them) | 1 | 9107 | selector |
 | [exile-face-down](#exile-face-down) | 1 | 1363 | op |
@@ -137,7 +136,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [fully-unlock-room](#fully-unlock-room) | 1 | 3452 | trigger_event |
 | [goad-without-goaded](#goad-without-goaded) | 1 | 973 | op |
 | [gold-token](#gold-token) | 1 | 705 | token |
-| [grant-abilities-of-exiled-cards](#grant-abilities-of-exiled-cards) | 1 | 8370 | static_effect |
 | [grant-cycling-to-cards-in-hand](#grant-cycling-to-cards-in-hand) | 1 | 5169 | static_effect |
 | [grant-evoke](#grant-evoke) | 1 | 5749 | static_effect |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
@@ -153,7 +151,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [insect-token-bg](#insect-token-bg) | 1 | 1924 | token |
 | [karox-bladewing](#karox-bladewing) | 1 | 8889 | token |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
-| [kicker](#kicker) | 1 | 868 | selector |
 | [life-lost-this-turn-static-value](#life-lost-this-turn-static-value) | 1 | 2559 | value |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
 | [living-metal](#living-metal) | 1 | 11641 | keyword |
@@ -178,6 +175,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mode-owned-variable-targets-mid-declaration](#mode-owned-variable-targets-mid-declaration) | 1 | 16968 | engine |
 | [modified](#modified) | 1 | 831 | selector |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
+| [necron-warrior-token](#necron-warrior-token) | 1 | 4207 | token |
 | [no-mana-cost](#no-mana-cost) | 1 | 2978 | engine |
 | [noncombat-damage-trigger](#noncombat-damage-trigger) | 1 | 6793 | trigger_event |
 | [nontoken-creatures-died-this-turn](#nontoken-creatures-died-this-turn) | 1 | 3951 | value |
@@ -199,7 +197,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [proliferate-binding](#proliferate-binding) | 1 | 957 | op |
 | [protection-from-multicolored](#protection-from-multicolored) | 1 | 1516 | static_effect |
 | [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
-| [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
 | [random-order-bottom](#random-order-bottom) | 1 | 1343 | op |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
@@ -217,11 +214,11 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
 | [salamander-warrior-4-3-u](#salamander-warrior-4-3-u) | 1 | 3395 | token |
 | [sandbox-graveyard-spell-prop](#sandbox-graveyard-spell-prop) | 1 | 5082 | engine |
+| [sandbox-low-mana-value-permanent](#sandbox-low-mana-value-permanent) | 1 | 14140 | engine |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [self-bounce-playable-gate](#self-bounce-playable-gate) | 1 | 10013 | engine |
-| [shapeshifter-2-2-u-changeling](#shapeshifter-2-2-u-changeling) | 1 | 494 | token |
 | [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
@@ -1988,21 +1985,6 @@ Blocks **1** card.
 
 </details>
 
-## every-creature-type-everywhere
-
-Blocks **1** card.
-
-- **(static_effect)** a static on a permanent that makes other objects every creature type in every zone: creatures you control on the battlefield, creature spells you control on the stack, and creature cards you own in hand, library, graveyard, exile and the command zone
-  <br>Why the existing vocabulary won't do: add_subtype can cover creatures on the battlefield, but the layer pipeline applies statics to battlefield objects only; printed_creature_types and card_in_exile_characteristics honour only a card's own self_only add_subtype (a CDA such as changeling), never a grant from another permanent, so spells and cards off the battlefield would keep their printed types
-
-<details><summary>Cards waiting on this</summary>
-
-- **Maskwood Nexus** (rank 494) — `maskwood_nexus`
-  - Creatures you control are every creature type. The same is true for creature spells you control and creature cards you own that aren't on the battlefield.
-  - {3}, {T}: Create a 2/2 blue Shapeshifter creature token with changeling. (It is every creature type.)
-
-</details>
-
 ## exile-bottom-of-library
 
 Blocks **1** card.
@@ -2379,20 +2361,6 @@ Blocks **1** card.
 
 </details>
 
-## grant-abilities-of-exiled-cards
-
-Blocks **1** card.
-
-- **(static_effect)** a static ability that gives each permanent matching its `affects` filter every activated ability (mana abilities included) printed on the cards matching an `exiled_with: self` selector, read live from exile so the set changes as cards are exiled with the source, and ending when the source leaves the battlefield
-  <br>Why the existing vocabulary won't do: The `grant_ability` static only hands over a fixed ability written in the card's own `grantable_abilities` by index, so it cannot borrow abilities from whatever cards happen to be exiled; `imprint_characteristics` reads an exiled card but copies only power, toughness and creature types (Duplicant), never abilities; `exiled_with` exists only as an effect selector key, not in `static_filter_keys`
-
-<details><summary>Cards waiting on this</summary>
-
-- **Steward of the Harvest** (rank 8370) — `steward_of_the_harvest`
-  - Creatures you control have all activated abilities of all land cards exiled with this creature.
-
-</details>
-
 ## grant-cycling-to-cards-in-hand
 
 Blocks **1** card.
@@ -2601,20 +2569,6 @@ Blocks **1** card.
 
 - **Emissary of Soulfire** (rank 18326) — `emissary_of_soulfire`
   - Pay {E}{E}: Put an exalted counter on target creature you control. Activate only as a sorcery.
-
-</details>
-
-## kicker
-
-Blocks **1** card.
-
-- **(selector)** a spell target whose selector (or whole target spec) is replaced when the spell was kicked: unkicked it declares one target artifact or enchantment, kicked it declares one target nonland permanent instead. Either a `selector_if_kicked` on a TargetSpec, or support for `count: 0` / `count_if_kicked: 0` so two specs can swap which one is declared
-  <br>Why the existing vocabulary won't do: `count_if_kicked` only resizes a spec. Writing two specs (artifact/enchantment with count 1 and count_if_kicked 0, nonland with count 0 and count_if_kicked 1) loads and enumerates correctly, but `targeting.filter_legal` slices stored refs with `max(1, spec.count)`, so at resolution the kicked line's one ref lands in the first spec's bucket, fails its artifact/enchantment check, and the kicked spell exiles nothing (verified in the sandbox: the kicked cast resolves without exiling anything). Making both targets `optional` would let an unkicked cast target a nonland creature, and a `choose_mode` cannot restrict a mode to kicked casts only
-
-<details><summary>Cards waiting on this</summary>
-
-- **Tear Asunder** (rank 868) — `tear_asunder`
-  - Exile target artifact or enchantment. If this spell was kicked, exile target nonland permanent instead.
 
 </details>
 
@@ -2960,6 +2914,20 @@ Blocks **1** card.
 
 </details>
 
+## necron-warrior-token
+
+Blocks **1** card.
+
+- **(token)** a 2/2 black Necron Warrior artifact creature token (types Artifact Creature, subtypes Necron Warrior, no abilities)
+  <br>Why the existing vocabulary won't do: token_ids has no Necron Warrior; the nearest are warrior_1_1_r / warrior_1_1_w (wrong size, colour, not artifact) and elf_warrior_1_1_g. The rest of the card is expressible: the first line is an add_subtype static with types ["Artifact"] on creatures you control plus an off_battlefield add_subtype static for creature spells and cards, and the trigger is spell_cast with filter types ["Artifact"] doing lose_life 1 then create_token.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Biotransference** (rank 4207) — `biotransference`
+  - Whenever you cast an artifact spell, you lose 1 life and create a 2/2 black Necron Warrior artifact creature token.
+
+</details>
+
 ## no-mana-cost
 
 Blocks **1** card.
@@ -3259,20 +3227,6 @@ Blocks **1** card.
 
 </details>
 
-## raccoon-3-3-g
-
-Blocks **1** card.
-
-- **(token)** a 3/3 green Raccoon creature token (no abilities)
-  <br>Why the existing vocabulary won't do: token_ids is a closed list with no Raccoon; the nearest 3/3 green vanilla tokens (ape_3_3_g, badger_3_3_g, beast_3_3_g, elephant_3_3_g, frog_lizard_3_3_g) carry the wrong creature type, which matters to type-matters cards. The rest of the card is expressible: an add_subtype static and a grant_ability static, each with condition is_your_turn, plus you_gain_life triggers with nth: 1 at levels 2 and 3
-
-<details><summary>Cards waiting on this</summary>
-
-- **Gourmand's Talent** (rank 5861) — `gourmand_s_talent`
-  - Whenever you gain life for the first time each turn, create a 3/3 green Raccoon creature token.
-
-</details>
-
 ## random-order-bottom
 
 Blocks **1** card.
@@ -3515,6 +3469,20 @@ Blocks **1** card.
 
 </details>
 
+## sandbox-low-mana-value-permanent
+
+Blocks **1** card.
+
+- **(engine)** A role in the authoring sandbox (cards/authoring/verify.py `_ROLES` / board roles) that puts a nonlegendary creature with mana value 2 or less on the battlefield, so 'target creature or planeswalker with mana value 2 or less' has a legal target when the playable gate (`_play_once`) casts the card unkicked
+  <br>Why the existing vocabulary won't do: The card is fully expressible (card-level `kicker` + one permanent target with `selector` {any_types [Creature, Planeswalker], mana_value <= 2} and `selector_if_kicked` without the ceiling + `destroy`), but the sandbox's battlefield creatures (role 'creature', 'flier', 'legendary_creature') all have mana value above 2, so legality offers only the kicked cast and `_play_once` (which casts unkicked) fails with 'not playable in the sandbox'. Verified: with the 'creature' role patched in memory to pick a mana value <= 2 creature, the same answer passes all 6 gates. Same house fix as legendary_creature / x_spell / one_drop_spell: add the role, do not relax the gate. Ready answer: {kicker '{2}{B}', targets [{id t1, kind permanent, count 1, selector {zone battlefield, any_types [Creature, Planeswalker], mana_value {op '<=', value {const 2}}}, selector_if_kicked {zone battlefield, any_types [Creature, Planeswalker]}}], spell_effects [{op destroy, objects {target t1}}]}, expectation {zone graveyard}
+
+<details><summary>Cards waiting on this</summary>
+
+- **Bloodchief's Thirst** (rank 14140) — `bloodchief_s_thirst`
+  - Destroy target creature or planeswalker with mana value 2 or less. If this spell was kicked, instead destroy target creature or planeswalker.
+
+</details>
+
 ## search-aura-attached
 
 Blocks **1** card.
@@ -3570,21 +3538,6 @@ Blocks **1** card.
 
 - **Glitch Interpreter** (rank 10013) — `glitch_interpreter`
   - When this creature enters, if you control no face-down permanents, return this creature to its owner's hand and manifest dread.
-
-</details>
-
-## shapeshifter-2-2-u-changeling
-
-Blocks **1** card.
-
-- **(token)** a 2/2 blue Shapeshifter creature token with changeling
-  <br>Why the existing vocabulary won't do: token_ids has only shapeshifter_1_1_c_changeling, shapeshifter_3_2_c_changeling and shapeshifter_x_x_c_changeling_deathtouch; none is a blue 2/2
-
-<details><summary>Cards waiting on this</summary>
-
-- **Maskwood Nexus** (rank 494) — `maskwood_nexus`
-  - Creatures you control are every creature type. The same is true for creature spells you control and creature cards you own that aren't on the battlefield.
-  - {3}, {T}: Create a 2/2 blue Shapeshifter creature token with changeling. (It is every creature type.)
 
 </details>
 

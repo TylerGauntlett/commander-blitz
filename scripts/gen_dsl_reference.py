@@ -451,7 +451,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                         '"Each opponent sacrifices…" — a loop over players'),
     "may": ("Control flow", "Optional effects, with an optional `pay`; `as` records who said yes.",
             "`may`'s `as`, and `except` on a player spec"),
-    "choose_mode": ("Control flow", "Choose one or more modes and run them.", "Modal spells with a target"),
+    "choose_mode": ("Control flow", "Choose one or more modes and run them; `repeatable` lets one mode be "
+                    "chosen more than once, each instance with its own targets.", "Modal spells with a target"),
     "choose_type": ("Control flow", "Choose a creature, permanent or card type (`of`), readable later.",
                     '"Choose a creature type"'),
     "choose_color": ("Control flow", "Choose a color, readable later; `except_colors` removes colors from the offer.",
@@ -587,7 +588,8 @@ SELECTORS: dict[str, Entry] = {
 
 #: Keys a static's `affects` filter answers that the effect-side selector does not.
 STATIC_FILTER_EXTRAS: dict[str, Entry] = {
-    "any_of": ("A union of whole static filters, each with its own `exclude_self`; `affects` only.",
+    "any_of": ("A union of whole static filters, each with its own `exclude_self`; `affects` and a "
+               "static value's `count` only.",
                "`any_of` — a union of static filters"),
     "attached_to_host": ("Attached to the static's own source (\"equipped creature\").", None),
     "modified": ("Is modified: a counter, an Equipment by its printed face, or your Aura (`true` only).",
@@ -754,6 +756,9 @@ CONDITIONS: dict[str, Entry] = {
 #: Static-side entries, read before `VALUES`: a leaf in both languages whose
 #: static reading is narrower or documented apart is described here.
 STATIC_VALUE_EXTRAS: dict[str, Entry] = {
+    "count": ("How many objects a counting filter matches; on the battlefield it may be an `any_of` "
+              "union, each object counted once.",
+              "`any_of` in a `count` — \"base power or toughness 1\""),
     "distinct": ("The number of card types among a counting filter's pool off the battlefield "
                  "(delirium); `of: \"card_type\"` only.",
                  "Counting different values rather than objects"),
@@ -825,6 +830,8 @@ TRIGGER_EVENT_DESCRIPTIONS: dict[str, Entry] = {
     "gives_gift": ("A player gives a gift (702.174): a spell with a promised gift resolves, or a permanent's gift trigger does; `gift_to` binds the recipient.",
                    '"Whenever you give a gift"'),
     "land_played": ("A land is played.", None),
+    "last_counter_removed": ("The last counter of the `counter` kind is removed from a permanent, by anything.",
+                             "Vanishing — a permanent that counts itself out"),
     "leaves_battlefield": ("A permanent leaves the battlefield.", None),
     "leaves_graveyard": ("A card leaves a graveyard.", None),
     "life_lost": ("A player loses life; with `nth`, that player's Nth separate loss this turn; `batched` fires once per simultaneous loss, however many players it reaches.",
@@ -857,7 +864,9 @@ STATICS: dict[str, Entry] = {
     "activate_loyalty_as_though_instant": ("The player may activate loyalty abilities any time they could cast an instant.",
                                            None),
     "add_mana_on_tap": ("Whenever a matching permanent is tapped for mana, add extra mana.", None),
-    "add_subtype": ("Matching permanents have an extra subtype.",
+    "add_subtype": ("Matching permanents have an extra subtype; a printed one with "
+                    "`off_battlefield` also reaches matching spells you control and cards "
+                    "you own in every other zone.",
                     '"…is the chosen type in addition to its other types"'),
     "attack_tax": ("Matching creatures can't attack unless their controller pays "
                    "(`x_per_attacker`: {X} read off each attacker).",
@@ -930,6 +939,8 @@ STATICS: dict[str, Entry] = {
                "Goaded for as long as a static applies"),
     "grant_ability": ("Matching permanents have one of the card's `grantable_abilities`.",
                       "`grant_ability` as a static, and where the line now runs"),
+    "grant_exiled_abilities": ("Matching permanents have every activated ability of the cards of `types` exiled with this permanent.",
+                               "`grant_exiled_abilities` — abilities lent by the cards exiled with a permanent"),
     "grant_keyword": ("Matching permanents have keywords.", None),
     "granted_alternative_cost": ("The player may pay `cost` (energy or life) instead of matching spells' mana cost.",
                                  "`granted_alternative_cost` — paying energy instead of a spell's mana cost"),
@@ -1080,9 +1091,13 @@ ABILITY_COSTS: dict[str, Entry] = {
                        "Ninjutsu — swapping into a combat already under way"),
     "sacrifice": ("Sacrifice a matching permanent; `as` names it for the effects.",
                   "Ghoulcaller Gisa — a sacrifice cost that names what it sacrificed"),
+    "sacrifice_x": ("Sacrifice X matching permanents, X announced and bounded by them.",
+                    "`sacrifice_x` — sacrifice X permanents, X announced"),
     "tap": ("{T}: tap the source.", None),
     "tap_permanents": ("Tap N other permanents, or `total_power` of them (crew).",
                        "Crew — a tap cost measured in power"),
+    "tap_x": ("Tap X matching untapped permanents, X announced and bounded by them.",
+              "`tap_x` — tap X untapped permanents, X announced"),
     "times": ("Pay the whole cost that many times (cumulative upkeep).", None),
     "untap": ("{Q}: untap the source.", None),
     "untap_permanents": ("Untap N other permanents.", None),
@@ -1164,6 +1179,8 @@ RIDER_KEYS: dict[str, Entry] = {
                          "Narrowing when a spell may be cast"),
     "toxic": ("Toxic N: the N, beside `toxic` in `keywords`.", "Toxic N"),
     "annihilator": ("Annihilator N: the N, beside `annihilator` in `keywords`.", "Annihilator N"),
+    "vanishing": ("Vanishing N: the time counters it enters with; the upkeep tick and the sacrifice are supplied.",
+                  "Vanishing — a permanent that counts itself out"),
     "morph_counter": ("Megamorph: turns face up with a +1/+1 counter, beside `morph`.", H_MORPH),
     "as_cast": ("Named values fixed as the spell is cast, read by `spell_effects` as `{\"binding\": name}`.",
                 '"As you cast this spell" — a value fixed at cast time'),

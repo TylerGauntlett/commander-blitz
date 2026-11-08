@@ -66,7 +66,6 @@ each heading; this table is generated from them.
 | [Jump Scare! (Duskmourn: House of Horror Commander)](#jump-scare-duskmourn-house-of-horror-commander) | L | high | A trigger for cards put into a graveyard, Rooms: two doors on one permanent, and the unlock action | 0 |
 | [Miracle Worker (Duskmourn: House of Horror Commander)](#miracle-worker-duskmourn-house-of-horror-commander) | L | high | Rooms: two doors on one permanent, and the unlock action | 0 |
 | [Family Matters (Bloomburrow Commander)](#family-matters-bloomburrow-commander) | L | high | Divided damage from a triggered or activated ability, Divided damage that may hit players | 0 |
-| [Squirreled Away (Bloomburrow Commander)](#squirreled-away-bloomburrow-commander) | L | high | nothing | 0 |
 | [Creative Energy (Modern Horizons 3 Commander)](#creative-energy-modern-horizons-3-commander) | L | high | nothing | 0 |
 | [Graveyard Overdrive (Modern Horizons 3 Commander)](#graveyard-overdrive-modern-horizons-3-commander) | L | high | nothing | 0 |
 | [Tricky Terrain (Modern Horizons 3 Commander)](#tricky-terrain-modern-horizons-3-commander) | L | high | nothing | 0 |
@@ -148,6 +147,7 @@ each heading; this table is generated from them.
 | [Replays and sharing](#replays-and-sharing) | M | medium | nothing | 1 |
 | [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) | M | medium | nothing | 0 |
 | [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) | M | medium | nothing | 0 |
+| [Every creature type means every creature type](#every-creature-type-means-every-creature-type) | M | medium | nothing | 0 |
 | [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) | M | medium | nothing | 0 |
 | [Viewing a deck's list](#viewing-a-decks-list) | M | medium | nothing | 0 |
 | [A queue](#a-queue) | L | medium | CPU takeover and reconnection, Brackets, derived from the list, Outcomes as data | 0 |
@@ -164,87 +164,87 @@ same list, and `/extend-roadmap` starts at the top of it.
 **Ready now, best first:**
 
 1. [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) — L, high
-2. [Squirreled Away (Bloomburrow Commander)](#squirreled-away-bloomburrow-commander) — L, high
-3. [Creative Energy (Modern Horizons 3 Commander)](#creative-energy-modern-horizons-3-commander) — L, high
-4. [Graveyard Overdrive (Modern Horizons 3 Commander)](#graveyard-overdrive-modern-horizons-3-commander) — L, high
-5. [Tricky Terrain (Modern Horizons 3 Commander)](#tricky-terrain-modern-horizons-3-commander) — L, high
-6. [Eldrazi Incursion (Modern Horizons 3 Commander)](#eldrazi-incursion-modern-horizons-3-commander) — L, high
-7. [Quick Draw (Outlaws of Thunder Junction Commander)](#quick-draw-outlaws-of-thunder-junction-commander) — M, high
-8. [Desert Bloom (Outlaws of Thunder Junction Commander)](#desert-bloom-outlaws-of-thunder-junction-commander) — L, high
-9. [Grand Larceny (Outlaws of Thunder Junction Commander)](#grand-larceny-outlaws-of-thunder-junction-commander) — L, high
-10. [Most Wanted (Outlaws of Thunder Junction Commander)](#most-wanted-outlaws-of-thunder-junction-commander) — L, high
-11. [Hail, Caesar (Fallout)](#hail-caesar-fallout) — L, high
-12. [Scrappy Survivors (Fallout)](#scrappy-survivors-fallout) — L, high
-13. [Science! (Fallout)](#science-fallout) — L, high
-14. [Mutant Menace (Fallout)](#mutant-menace-fallout) — L, high
-15. [Deep Clue Sea (Murders at Karlov Manor Commander)](#deep-clue-sea-murders-at-karlov-manor-commander) — L, high
-16. [Revenant Recon (Murders at Karlov Manor Commander)](#revenant-recon-murders-at-karlov-manor-commander) — L, high
-17. [Blame Game (Murders at Karlov Manor Commander)](#blame-game-murders-at-karlov-manor-commander) — L, high
-18. [Deadly Disguise (Murders at Karlov Manor Commander)](#deadly-disguise-murders-at-karlov-manor-commander) — L, high
-19. [Blood Rites (The Lost Caverns of Ixalan Commander)](#blood-rites-the-lost-caverns-of-ixalan-commander) — M, high
-20. [Veloci-Ramp-Tor (The Lost Caverns of Ixalan Commander)](#veloci-ramp-tor-the-lost-caverns-of-ixalan-commander) — L, high
-21. [Ahoy Mateys (The Lost Caverns of Ixalan Commander)](#ahoy-mateys-the-lost-caverns-of-ixalan-commander) — L, high
-22. [Explorers of the Deep (The Lost Caverns of Ixalan Commander)](#explorers-of-the-deep-the-lost-caverns-of-ixalan-commander) — L, high
-23. [Masters of Evil (Doctor Who)](#masters-of-evil-doctor-who) — L, high
-24. [Paradox Power (Doctor Who)](#paradox-power-doctor-who) — L, high
-25. [Blast from the Past (Doctor Who)](#blast-from-the-past-doctor-who) — L, high
-26. [Timey-Wimey (Doctor Who)](#timey-wimey-doctor-who) — L, high
-27. [Fae Dominion (Wilds of Eldraine Commander)](#fae-dominion-wilds-of-eldraine-commander) — L, high
-28. [Virtue and Valor (Wilds of Eldraine Commander)](#virtue-and-valor-wilds-of-eldraine-commander) — L, high
-29. [Riders of Rohan (Tales of Middle-earth Commander)](#riders-of-rohan-tales-of-middle-earth-commander) — S, high
-30. [Food and Fellowship (Tales of Middle-earth Commander)](#food-and-fellowship-tales-of-middle-earth-commander) — L, high
-31. [Elven Council (Tales of Middle-earth Commander)](#elven-council-tales-of-middle-earth-commander) — L, high
-32. [The Hosts of Mordor (Tales of Middle-earth Commander)](#the-hosts-of-mordor-tales-of-middle-earth-commander) — L, high
-33. [Cavalry Charge (March of the Machine Commander)](#cavalry-charge-march-of-the-machine-commander) — L, high
-34. [Divine Convocation (March of the Machine Commander)](#divine-convocation-march-of-the-machine-commander) — L, high
-35. [Tinker Time (March of the Machine Commander)](#tinker-time-march-of-the-machine-commander) — L, high
-36. [Growing Threat (March of the Machine Commander)](#growing-threat-march-of-the-machine-commander) — L, high
-37. [Call for Backup (March of the Machine Commander)](#call-for-backup-march-of-the-machine-commander) — L, high
-38. [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander) — M, high
-39. [Corrupting Influence (Phyrexia: All Will Be One Commander)](#corrupting-influence-phyrexia-all-will-be-one-commander) — L, high
-40. [Draconic Destruction (Starter Commander Decks)](#draconic-destruction-starter-commander-decks) — M, high
-41. [Grave Danger (Starter Commander Decks)](#grave-danger-starter-commander-decks) — M, high
-42. [First Flight (Starter Commander Decks)](#first-flight-starter-commander-decks) — M, high
-43. [Chaos Incarnate (Starter Commander Decks)](#chaos-incarnate-starter-commander-decks) — M, high
-44. [Token Triumph (Starter Commander Decks)](#token-triumph-starter-commander-decks) — L, high
-45. [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) — M, high
-46. [Mishra's Burnished Banner (The Brothers' War Commander)](#mishras-burnished-banner-the-brothers-war-commander) — L, high
-47. [Forces of the Imperium (Warhammer 40,000 Commander)](#forces-of-the-imperium-warhammer-40000-commander) — L, high
-48. [The Ruinous Powers (Warhammer 40,000 Commander)](#the-ruinous-powers-warhammer-40000-commander) — L, high
-49. [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) — L, high
-50. [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) — L, high
-51. [Legends' Legacy (Dominaria United Commander)](#legends-legacy-dominaria-united-commander) — L, high
-52. [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — L, high
-53. [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — L, high
-54. [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — L, high
-55. [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — L, high
-56. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
-57. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
-58. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
-59. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
-60. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
-61. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
-62. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
-63. [Difficulty](#difficulty) — S, medium
-64. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
-65. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
-66. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
-67. [Why a press is refused](#why-a-press-is-refused) — S, medium
-68. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
-69. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
-70. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
-71. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
-72. [Outcomes as data](#outcomes-as-data) — M, medium
-73. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
-74. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
-75. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
-76. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
-77. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
-78. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
-79. [Experience counters](#experience-counters) — M, medium
-80. [Replays and sharing](#replays-and-sharing) — M, medium
-81. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-82. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
+2. [Creative Energy (Modern Horizons 3 Commander)](#creative-energy-modern-horizons-3-commander) — L, high
+3. [Graveyard Overdrive (Modern Horizons 3 Commander)](#graveyard-overdrive-modern-horizons-3-commander) — L, high
+4. [Tricky Terrain (Modern Horizons 3 Commander)](#tricky-terrain-modern-horizons-3-commander) — L, high
+5. [Eldrazi Incursion (Modern Horizons 3 Commander)](#eldrazi-incursion-modern-horizons-3-commander) — L, high
+6. [Quick Draw (Outlaws of Thunder Junction Commander)](#quick-draw-outlaws-of-thunder-junction-commander) — M, high
+7. [Desert Bloom (Outlaws of Thunder Junction Commander)](#desert-bloom-outlaws-of-thunder-junction-commander) — L, high
+8. [Grand Larceny (Outlaws of Thunder Junction Commander)](#grand-larceny-outlaws-of-thunder-junction-commander) — L, high
+9. [Most Wanted (Outlaws of Thunder Junction Commander)](#most-wanted-outlaws-of-thunder-junction-commander) — L, high
+10. [Hail, Caesar (Fallout)](#hail-caesar-fallout) — L, high
+11. [Scrappy Survivors (Fallout)](#scrappy-survivors-fallout) — L, high
+12. [Science! (Fallout)](#science-fallout) — L, high
+13. [Mutant Menace (Fallout)](#mutant-menace-fallout) — L, high
+14. [Deep Clue Sea (Murders at Karlov Manor Commander)](#deep-clue-sea-murders-at-karlov-manor-commander) — L, high
+15. [Revenant Recon (Murders at Karlov Manor Commander)](#revenant-recon-murders-at-karlov-manor-commander) — L, high
+16. [Blame Game (Murders at Karlov Manor Commander)](#blame-game-murders-at-karlov-manor-commander) — L, high
+17. [Deadly Disguise (Murders at Karlov Manor Commander)](#deadly-disguise-murders-at-karlov-manor-commander) — L, high
+18. [Blood Rites (The Lost Caverns of Ixalan Commander)](#blood-rites-the-lost-caverns-of-ixalan-commander) — M, high
+19. [Veloci-Ramp-Tor (The Lost Caverns of Ixalan Commander)](#veloci-ramp-tor-the-lost-caverns-of-ixalan-commander) — L, high
+20. [Ahoy Mateys (The Lost Caverns of Ixalan Commander)](#ahoy-mateys-the-lost-caverns-of-ixalan-commander) — L, high
+21. [Explorers of the Deep (The Lost Caverns of Ixalan Commander)](#explorers-of-the-deep-the-lost-caverns-of-ixalan-commander) — L, high
+22. [Masters of Evil (Doctor Who)](#masters-of-evil-doctor-who) — L, high
+23. [Paradox Power (Doctor Who)](#paradox-power-doctor-who) — L, high
+24. [Blast from the Past (Doctor Who)](#blast-from-the-past-doctor-who) — L, high
+25. [Timey-Wimey (Doctor Who)](#timey-wimey-doctor-who) — L, high
+26. [Fae Dominion (Wilds of Eldraine Commander)](#fae-dominion-wilds-of-eldraine-commander) — L, high
+27. [Virtue and Valor (Wilds of Eldraine Commander)](#virtue-and-valor-wilds-of-eldraine-commander) — L, high
+28. [Riders of Rohan (Tales of Middle-earth Commander)](#riders-of-rohan-tales-of-middle-earth-commander) — S, high
+29. [Food and Fellowship (Tales of Middle-earth Commander)](#food-and-fellowship-tales-of-middle-earth-commander) — L, high
+30. [Elven Council (Tales of Middle-earth Commander)](#elven-council-tales-of-middle-earth-commander) — L, high
+31. [The Hosts of Mordor (Tales of Middle-earth Commander)](#the-hosts-of-mordor-tales-of-middle-earth-commander) — L, high
+32. [Cavalry Charge (March of the Machine Commander)](#cavalry-charge-march-of-the-machine-commander) — L, high
+33. [Divine Convocation (March of the Machine Commander)](#divine-convocation-march-of-the-machine-commander) — L, high
+34. [Tinker Time (March of the Machine Commander)](#tinker-time-march-of-the-machine-commander) — L, high
+35. [Growing Threat (March of the Machine Commander)](#growing-threat-march-of-the-machine-commander) — L, high
+36. [Call for Backup (March of the Machine Commander)](#call-for-backup-march-of-the-machine-commander) — L, high
+37. [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander) — M, high
+38. [Corrupting Influence (Phyrexia: All Will Be One Commander)](#corrupting-influence-phyrexia-all-will-be-one-commander) — L, high
+39. [Draconic Destruction (Starter Commander Decks)](#draconic-destruction-starter-commander-decks) — M, high
+40. [Grave Danger (Starter Commander Decks)](#grave-danger-starter-commander-decks) — M, high
+41. [First Flight (Starter Commander Decks)](#first-flight-starter-commander-decks) — M, high
+42. [Chaos Incarnate (Starter Commander Decks)](#chaos-incarnate-starter-commander-decks) — M, high
+43. [Token Triumph (Starter Commander Decks)](#token-triumph-starter-commander-decks) — L, high
+44. [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) — M, high
+45. [Mishra's Burnished Banner (The Brothers' War Commander)](#mishras-burnished-banner-the-brothers-war-commander) — L, high
+46. [Forces of the Imperium (Warhammer 40,000 Commander)](#forces-of-the-imperium-warhammer-40000-commander) — L, high
+47. [The Ruinous Powers (Warhammer 40,000 Commander)](#the-ruinous-powers-warhammer-40000-commander) — L, high
+48. [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) — L, high
+49. [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) — L, high
+50. [Legends' Legacy (Dominaria United Commander)](#legends-legacy-dominaria-united-commander) — L, high
+51. [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — L, high
+52. [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — L, high
+53. [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — L, high
+54. [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — L, high
+55. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
+56. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
+57. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
+58. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
+59. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
+60. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
+61. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
+62. [Difficulty](#difficulty) — S, medium
+63. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+64. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
+65. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
+66. [Why a press is refused](#why-a-press-is-refused) — S, medium
+67. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
+68. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
+69. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
+70. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
+71. [Outcomes as data](#outcomes-as-data) — M, medium
+72. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
+73. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
+74. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
+75. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
+76. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
+77. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
+78. [Experience counters](#experience-counters) — M, medium
+79. [Replays and sharing](#replays-and-sharing) — M, medium
+80. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+81. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
+82. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
 83. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
 84. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
 85. [Archidekt import](#archidekt-import) — S, low
@@ -1083,6 +1083,60 @@ removes them. Meren's six gates pass, and the generated DSL reference
 - **Is it an ADR.** Recommended: no; it is one more kind under an existing
   rule (122.1), and its line moves from "not implemented" to the
   implemented table in rules-coverage.md.
+
+### Every creature type means every creature type
+
+Effort **M** · Impact **medium**, every changeling and Maskwood Nexus misses the tribe of the deck it is in, Squirrels, Rats and Wolves among them · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+"Every creature type" is a closed list, `CHANGELING_SUBTYPES` in
+`cards/authoring/templates.py`, whose comment says it holds every creature
+type a shipped card mentions. It no longer does: Squirrel, Rat, Mouse,
+Hamster, Raccoon and Wolf are all named by shipped cards and none is on it.
+The changeling template copies the list into each card's `add_subtype`
+static (`subtypes`), so every changeling card, every changeling token in
+`data/cards/tokens.cards.json` and Maskwood Nexus's `off_battlefield` grant
+carry their own frozen copy, and nothing checks that copy against the types
+the pool actually reads.
+
+So a changeling is not a Squirrel to Squirrel Sovereign or Chatterfang, nor
+a Rat to Ogre Slumlord, and Maskwood Nexus does nothing for the Squirreled
+Away deck it ships in. Each new tribe a precon brings widens the hole.
+
+#### The change
+
+1. An `add_subtype` static can say `all_creature_types: true` instead of
+   listing subtypes; `characteristics._compute`, the `off_battlefield` grant
+   and the printed-type readers treat it as every creature type (205.3m)
+   rather than a list, so a selector or trigger naming any creature type
+   matches it.
+2. The changeling template and the authoring packet emit the flag; the
+   changeling cards, the changeling tokens and Maskwood Nexus move to it
+   through `--collect` (tokens by hand under `/extend-dsl` Tier 0), and
+   `CHANGELING_SUBTYPES` goes.
+3. The loader refuses `all_creature_types` beside `subtypes`.
+
+It does not change which creature types exist as words in the DSL, and it
+leaves "choose a creature type" cards (`chosen_type_of`) as they are.
+
+#### Gate
+
+A unit test under `tests/unit/statics/` that a changeling creature, a
+changeling card in hand and a creature under Maskwood Nexus each match a
+selector, a lord and a cast trigger naming Squirrel, Rat and a type no
+shipped card names; the six gates over every changeling card; and the
+golden pool re-pinned once.
+
+#### Open questions
+
+- **A flag or a complete list.** A flag the engine reads as every type, or
+  the full 205.3m list written into each card? Recommended: the flag, so the
+  card data stops carrying a list that can go stale and a new tribe needs no
+  re-authoring.
+- **Is it an ADR.** Recommended: no; it restores what changeling (702.73) and
+  the existing comment already promise, and its line goes in the "Type
+  changes" row of rules-coverage.md.
 
 ## Decks
 
@@ -1958,55 +2012,6 @@ Family Matters ships native, card for card, as one batch of
 2. One `/extend-dsl` run per capability the gap records name, in the order
    the most cards elsewhere in the catalog wait on it.
 3. Re-author until `--missing` is empty, then `--write-deck blc_family_matters`, the
-   dossier and the archetype, and the deck joins `PRECONS` in
-   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
-4. One `/author-cards` wave over the pending cards the new capabilities reach.
-
-It does not touch another precon's deck.
-
-#### Gate
-
-`tests/cards/test_precon_imports.py` over the new deck; one unit test under
-`tests/unit/` per capability; the manifest test and
-`tests/server/test_upcoming_precons.py` still green; and the sampled
-whole-game test able to draw the deck.
-
-#### Decisions
-
-- **Scope:** this precon only, taken to 100% in one pull request titled
-  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
-- **The editorial fields:** the run writes the dossier and picks the closest
-  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
-  archetype that visibly misplays the deck is a new item.
-- **A capability that needs a rules subsystem the engine does not have**
-  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
-  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
-  this item back to `proposed`, and opens the pull request with the cards and
-  capabilities done so far. This item stays until the deck is whole.
-
-### Squirreled Away (Bloomburrow Commander)
-
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
-
-#### Today
-
-Squirreled Away, the Bloomburrow Commander precon released 2024-08-02, is a
-coming-soon shell on the shelf: its row `blc_squirreled_away` is in
-`data/decks/sources.json` and there is no `data/decks/blc_squirreled_away.deck.json`, so
-`GET /api/precons/upcoming` serves it.
-`python scripts/sync_precons.py --missing blc_squirreled_away` lists the cards the engine
-lacks, and the gap records in `data/authoring/gaps/` name the capability each
-attempted card waits on.
-
-#### The change
-
-Squirreled Away ships native, card for card, as one batch of
-[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
-
-1. `/author-cards` by name over the `--missing` list.
-2. One `/extend-dsl` run per capability the gap records name, in the order
-   the most cards elsewhere in the catalog wait on it.
-3. Re-author until `--missing` is empty, then `--write-deck blc_squirreled_away`, the
    dossier and the archetype, and the deck joins `PRECONS` in
    `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
 4. One `/author-cards` wave over the pending cards the new capabilities reach.

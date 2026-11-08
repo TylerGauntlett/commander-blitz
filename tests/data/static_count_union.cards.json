@@ -1,0 +1,141 @@
+{
+  "_comment": "Shapes for tests/unit/statics/test_static_count_union.py. t_scu_banner is Sword of the Squeak's magnitude on an anthem: creatures you control get +1/+1 for each creature you control with base power or toughness 1, a static `count` whose filter is an `any_of` of `power: 1` and `toughness: 1` -- which in a static filter read base P/T. The anthem pumps the very creatures it counts, the witness that a pumped 1/1 still has base power 1. The vanillas are the four shapes: power 1, toughness 1, both, neither.",
+  "cards": [
+    {
+      "id": "t_scu_banner",
+      "name": "Test Squeak Banner",
+      "oracle_text": "Creatures you control get +1/+1 for each creature you control with base power or toughness 1.",
+      "mana_cost": "{2}",
+      "types": [
+        "Artifact"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures you control get +1/+1 for each creature you control with base power or toughness 1.",
+          "effect": "buff",
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "power": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Creature"
+              ],
+              "any_of": [
+                {
+                  "power": 1
+                },
+                {
+                  "toughness": 1
+                }
+              ]
+            }
+          },
+          "toughness": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Creature"
+              ],
+              "any_of": [
+                {
+                  "power": 1
+                },
+                {
+                  "toughness": 1
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_scu_mouse",
+      "name": "Test Squeak Mouse",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Squirrel"
+      ],
+      "power": 1,
+      "toughness": 3,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ]
+    },
+    {
+      "id": "t_scu_rat",
+      "name": "Test Squeak Rat",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Squirrel"
+      ],
+      "power": 3,
+      "toughness": 1,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ]
+    },
+    {
+      "id": "t_scu_squirrel",
+      "name": "Test Squeak Squirrel",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Squirrel"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ]
+    },
+    {
+      "id": "t_scu_bear",
+      "name": "Test Squeak Bear",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Squirrel"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ]
+    }
+  ]
+}

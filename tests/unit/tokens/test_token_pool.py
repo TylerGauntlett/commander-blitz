@@ -2353,3 +2353,92 @@ class TestFishersTalentsSharkIsAPlainThreeThree:
         other = pool.get("shark_x_x_u_flying")
         assert other is not None
         assert list(other.keywords) == ["flying"]
+
+
+class TestSquirreledAwayTokens:
+    """Squirreled Away's tokens, each pinned beside its nearest near miss
+    (111.4: a token is exactly what its creating effect says).
+
+    - *"Create a 1/1 green Squirrel creature token."* (Chatterstorm,
+      Chitterspitter, Squirrel Nest and most of the deck). The pool's 1/1
+      green tokens are other creature types, and Squirrel lords count them.
+    - *"create a 3/3 green Raccoon creature token"* (Gourmand's Talent, level
+      2); the pool's 3/3 green Badger and Beast are the near misses.
+    - *"Create a 2/2 blue Shapeshifter creature token with changeling."*
+      (Maskwood Nexus); the 1/1 colorless changeling is the near miss.
+    """
+
+    def test_the_squirrel_is_a_green_one_one(self, pool):
+        token = pool.get("squirrel_1_1_g")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (1, 1)
+        assert sorted(token.colors) == ["G"]
+        assert list(token.subtypes) == ["Squirrel"]
+        assert not token.keywords
+        assert not token.abilities
+
+    def test_the_raccoon_is_a_vanilla_green_three_three(self, pool):
+        token = pool.get("raccoon_3_3_g")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (3, 3)
+        assert sorted(token.colors) == ["G"]
+        assert list(token.subtypes) == ["Raccoon"]
+        assert not token.abilities
+
+    def test_the_badger_is_still_a_separate_three_three(self, pool):
+        other = pool.get("badger_3_3_g")
+        assert list(other.subtypes) == ["Badger"]
+
+    def test_the_blue_shapeshifter_is_a_two_two_changeling(self, pool):
+        token = pool.get("shapeshifter_2_2_u_changeling")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (2, 2)
+        assert sorted(token.colors) == ["U"]
+        assert "Shapeshifter" in token.subtypes
+        near = pool.get("shapeshifter_1_1_c_changeling")
+        assert [a.text for a in token.abilities] == [a.text for a in near.abilities]
+
+    def test_the_colorless_changeling_is_still_a_one_one(self, pool):
+        other = pool.get("shapeshifter_1_1_c_changeling")
+        assert (other.power, other.toughness) == (1, 1)
+        assert not other.colors
+
+
+class TestGarruksWolfLoadsAGarrukOnDeath:
+    """Garruk, Cursed Huntsman, 0: *"Create two 2/2 black and green Wolf
+    creature tokens with 'When this token dies, put a loyalty counter on each
+    Garruk you control.'"* The pool had no Wolf; the 2/2 black Zombie and
+    green Boar are the near misses, each the wrong colour pair and with no
+    dies trigger."""
+
+    TOKEN = "wolf_2_2_bg_garruk_loyalty"
+
+    def test_it_is_a_black_and_green_two_two_wolf(self, pool):
+        token = pool.get(self.TOKEN)
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (2, 2)
+        assert sorted(token.colors) == ["B", "G"]
+        assert list(token.subtypes) == ["Wolf"]
+
+    def test_its_death_puts_loyalty_on_each_garruk(self, pool):
+        (ability,) = pool.get(self.TOKEN).abilities
+        assert ability.text == "When this token dies, put a loyalty counter on each Garruk you control."
+        (effect,) = ability.effects
+        assert effect["op"] == "add_counters"
+        assert effect["counter"] == "loyalty"
+        assert effect["objects"]["subtypes"] == ["Garruk"]
+        assert effect["objects"]["count"] == "all"
+
+    def test_the_two_two_black_zombie_is_still_a_separate_token(self, pool):
+        other = pool.get("zombie_2_2_b")
+        assert list(other.subtypes) == ["Zombie"]
+
+    def test_the_plain_green_wolf_is_a_vanilla_two_two(self, pool):
+        """Wolfwillow Haven: *"Create a 2/2 green Wolf creature token."* The
+        Garruk Wolf is the near miss: black and green, with a dies trigger."""
+        token = pool.get("wolf_2_2_g")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (2, 2)
+        assert sorted(token.colors) == ["G"]
+        assert list(token.subtypes) == ["Wolf"]
+        assert not token.abilities

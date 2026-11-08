@@ -15,13 +15,13 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 70 |
 | [Conditions](#conditions) | 34 |
-| [Trigger events](#trigger-events) | 52 |
+| [Trigger events](#trigger-events) | 53 |
 | [Trigger filters](#trigger-filters) | 37 |
-| [Static effects](#static-effects) | 95 |
+| [Static effects](#static-effects) | 96 |
 | [Player-wide statics](#player-wide-statics) | 46 |
 | [Grantable statics](#grantable-statics) | 43 |
 | [Cost reduction](#cost-reduction) | 6 |
-| [Ability costs](#ability-costs) | 30 |
+| [Ability costs](#ability-costs) | 32 |
 | [Card-level costs](#card-level-costs) | 32 |
 | [Keywords](#keywords) | 45 |
 | [Card types and supertypes](#card-types-and-supertypes) | 12 |
@@ -36,7 +36,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Mana rider ops](#mana-rider-ops) | 7 |
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
 | [Card-level face keys](#card-level-face-keys) | 6 |
-| [Card-level rider keys](#card-level-rider-keys) | 20 |
+| [Card-level rider keys](#card-level-rider-keys) | 21 |
 | [Engine events](#engine-events) | 79 |
 
 ## Effect ops
@@ -200,7 +200,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `roll_dice` | Dice | yes | Roll N dice with F faces; `as` records the results. | [Rolling dice](card-dsl-cookbook.md#rolling-dice) |
 | `choose_card_name` | Control flow | yes | Choose a card name; `as` records it. | ["Choose a card name"](card-dsl-cookbook.md#choose-a-card-name) |
 | `choose_color` | Control flow |  | Choose a color, readable later; `except_colors` removes colors from the offer. | ["Choose a color"](card-dsl-cookbook.md#choose-a-color) |
-| `choose_mode` | Control flow |  | Choose one or more modes and run them. | [Modal spells with a target](card-dsl-cookbook.md#modal-spells-with-a-target) |
+| `choose_mode` | Control flow |  | Choose one or more modes and run them; `repeatable` lets one mode be chosen more than once, each instance with its own targets. | [Modal spells with a target](card-dsl-cookbook.md#modal-spells-with-a-target) |
 | `choose_number` | Control flow | yes | Choose an integer in a printed range on resolution; `as` records it. | ["Choose a number"](card-dsl-cookbook.md#choose-a-number) |
 | `choose_permanents` | Control flow | yes | Mark permanents without acting on them; `as` records them; `max_total_power` caps the chosen set's total power. | [choose_permanents — marking without acting](card-dsl-cookbook.md#choose_permanents--marking-without-acting) |
 | `choose_player` | Control flow | yes | Choose a player; `as` records the seat. | [Effect ops](card-dsl.md#effect-ops) |
@@ -473,6 +473,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `expend` | `mana_spent` | You expend N (`nth`): the spell payment that takes your mana spent to cast spells this turn to N or more. | [Expend — "Whenever you expend N"](card-dsl-cookbook.md#expend--whenever-you-expend-n) |
 | `gives_gift` | `gift_given` | A player gives a gift (702.174): a spell with a promised gift resolves, or a permanent's gift trigger does; `gift_to` binds the recipient. | ["Whenever you give a gift"](card-dsl-cookbook.md#whenever-you-give-a-gift) |
 | `land_played` | `land_played` | A land is played. | [Triggers](card-dsl.md#triggers) |
+| `last_counter_removed` | `counter_removed` | The last counter of the `counter` kind is removed from a permanent, by anything. | [Vanishing — a permanent that counts itself out](card-dsl-cookbook.md#vanishing--a-permanent-that-counts-itself-out) |
 | `leaves_battlefield` | `leaves_battlefield` | A permanent leaves the battlefield. | [Triggers](card-dsl.md#triggers) |
 | `leaves_graveyard` | `leaves_graveyard` | A card leaves a graveyard. | [Triggers](card-dsl.md#triggers) |
 | `life_lost` | `life_lost` | A player loses life; with `nth`, that player's Nth separate loss this turn; `batched` fires once per simultaneous loss, however many players it reaches. | ["Whenever an opponent loses life"](card-dsl-cookbook.md#whenever-an-opponent-loses-life) |
@@ -546,7 +547,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `ability_cost_reduction` |  | yes | Activated abilities of a class (`equip`, or `any` beside `targeting`) cost less; `first_during_your_turn` limits it to your first matching activation of your turn. | [A static that discounts another permanent's activated ability](card-dsl.md#a-static-that-discounts-another-permanents-activated-ability) |
 | `activate_loyalty_as_though_instant` |  | yes | The player may activate loyalty abilities any time they could cast an instant. | [Static abilities](card-dsl.md#static-abilities) |
 | `add_mana_on_tap` | yes |  | Whenever a matching permanent is tapped for mana, add extra mana. | [Static abilities](card-dsl.md#static-abilities) |
-| `add_subtype` |  | yes | Matching permanents have an extra subtype. | ["…is the chosen type in addition to its other types"](card-dsl-cookbook.md#is-the-chosen-type-in-addition-to-its-other-types) |
+| `add_subtype` |  | yes | Matching permanents have an extra subtype; a printed one with `off_battlefield` also reaches matching spells you control and cards you own in every other zone. | ["…is the chosen type in addition to its other types"](card-dsl-cookbook.md#is-the-chosen-type-in-addition-to-its-other-types) |
 | `all_damage_wither` |  |  | All damage to creatures, from every source, is dealt as -1/-1 counters. | ["All damage is dealt as though its source had wither"](card-dsl-cookbook.md#all-damage-is-dealt-as-though-its-source-had-wither) |
 | `attack_despite_defender` |  | yes | Matching creatures can attack as though they didn't have defender (`defending`: only the players it names). | [Attacking as though it didn't have defender](card-dsl-cookbook.md#attacking-as-though-it-didnt-have-defender) |
 | `attack_tax` |  | yes | Matching creatures can't attack unless their controller pays (`x_per_attacker`: {X} read off each attacker). | [Pricing an attack rather than forbidding it](card-dsl.md#pricing-an-attack-rather-than-forbidding-it) |
@@ -589,6 +590,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `freeze_opponent_lands` | yes |  | The player's lands don't untap during their untap step. | [Static abilities](card-dsl.md#static-abilities) |
 | `goaded` |  | yes | Matching creatures are goaded by the static's controller while it applies. | [Goaded for as long as a static applies](card-dsl-cookbook.md#goaded-for-as-long-as-a-static-applies) |
 | `grant_ability` |  |  | Matching permanents have one of the card's `grantable_abilities`. | [grant_ability as a static, and where the line now runs](card-dsl-cookbook.md#grant_ability-as-a-static-and-where-the-line-now-runs) |
+| `grant_exiled_abilities` |  |  | Matching permanents have every activated ability of the cards of `types` exiled with this permanent. | [grant_exiled_abilities — abilities lent by the cards exiled with a permanent](card-dsl-cookbook.md#grant_exiled_abilities--abilities-lent-by-the-cards-exiled-with-a-permanent) |
 | `grant_keyword` |  | yes | Matching permanents have keywords. | [Static abilities](card-dsl.md#static-abilities) |
 | `grant_miracle` | yes |  | Matching cards in the player's hand have miracle for a price. | [grant_miracle — miracle handed to cards in your hand](card-dsl-cookbook.md#grant_miracle--miracle-handed-to-cards-in-your-hand) |
 | `grant_pay_generic_with` | yes |  | Matching spells the player casts have convoke, improvise or delve. | [grant_pay_generic_with — "spells you cast have improvise"](card-dsl-cookbook.md#grant_pay_generic_with--spells-you-cast-have-improvise) |
@@ -700,7 +702,7 @@ The static effects a `grant_ability` static may hand to another permanent. Defin
 |---|---|---|
 | `ability_cost_reduction` | Activated abilities of a class (`equip`, or `any` beside `targeting`) cost less; `first_during_your_turn` limits it to your first matching activation of your turn. | [A static that discounts another permanent's activated ability](card-dsl.md#a-static-that-discounts-another-permanents-activated-ability) |
 | `activate_loyalty_as_though_instant` | The player may activate loyalty abilities any time they could cast an instant. | [grant_ability as a static, and where the line now runs](card-dsl-cookbook.md#grant_ability-as-a-static-and-where-the-line-now-runs) |
-| `add_subtype` | Matching permanents have an extra subtype. | ["…is the chosen type in addition to its other types"](card-dsl-cookbook.md#is-the-chosen-type-in-addition-to-its-other-types) |
+| `add_subtype` | Matching permanents have an extra subtype; a printed one with `off_battlefield` also reaches matching spells you control and cards you own in every other zone. | ["…is the chosen type in addition to its other types"](card-dsl-cookbook.md#is-the-chosen-type-in-addition-to-its-other-types) |
 | `attack_despite_defender` | Matching creatures can attack as though they didn't have defender (`defending`: only the players it names). | [Attacking as though it didn't have defender](card-dsl-cookbook.md#attacking-as-though-it-didnt-have-defender) |
 | `attack_tax` | Matching creatures can't attack unless their controller pays (`x_per_attacker`: {X} read off each attacker). | [Pricing an attack rather than forbidding it](card-dsl.md#pricing-an-attack-rather-than-forbidding-it) |
 | `attacks_if_able` | Matching creatures attack each combat if able (`defending`: only a named player obeys it). | [The continuous form](card-dsl-cookbook.md#the-continuous-form) |
@@ -785,8 +787,10 @@ Every field an activated ability's `cost` (or a `may`'s `pay`) may carry -- the 
 | `remove_counters_from_among` | Remove N counters of any kinds from among other permanents. | [remove_counters_from_among — counters of any kind, off other permanents](card-dsl.md#remove_counters_from_among--counters-of-any-kind-off-other-permanents) |
 | `return_to_hand` | Return a matching permanent to hand; `as` names it, and whom it was attacking, for the effects. | [Ninjutsu — swapping into a combat already under way](card-dsl-cookbook.md#ninjutsu--swapping-into-a-combat-already-under-way) |
 | `sacrifice` | Sacrifice a matching permanent; `as` names it for the effects. | [Ghoulcaller Gisa — a sacrifice cost that names what it sacrificed](card-dsl.md#ghoulcaller-gisa--a-sacrifice-cost-that-names-what-it-sacrificed) |
+| `sacrifice_x` | Sacrifice X matching permanents, X announced and bounded by them. | [sacrifice_x — sacrifice X permanents, X announced](card-dsl.md#sacrifice_x--sacrifice-x-permanents-x-announced) |
 | `tap` | {T}: tap the source. | [Costs](card-dsl.md#costs) |
 | `tap_permanents` | Tap N other permanents, or `total_power` of them (crew). | [Crew — a tap cost measured in power](card-dsl.md#crew--a-tap-cost-measured-in-power) |
+| `tap_x` | Tap X matching untapped permanents, X announced and bounded by them. | [tap_x — tap X untapped permanents, X announced](card-dsl.md#tap_x--tap-x-untapped-permanents-x-announced) |
 | `times` | Pay the whole cost that many times (cumulative upkeep). | [Costs](card-dsl.md#costs) |
 | `untap` | {Q}: untap the source. | [Costs](card-dsl.md#costs) |
 | `untap_permanents` | Untap N other permanents. | [Costs](card-dsl.md#costs) |
@@ -939,7 +943,7 @@ The subset of the selector language a static's `affects` may use -- printed char
 
 | Name | Description | Defined in |
 |---|---|---|
-| `any_of` | A union of whole static filters, each with its own `exclude_self`; `affects` only. | [any_of — a union of static filters](card-dsl.md#any_of--a-union-of-static-filters) |
+| `any_of` | A union of whole static filters, each with its own `exclude_self`; `affects` and a static value's `count` only. | [any_of — a union of static filters](card-dsl.md#any_of--a-union-of-static-filters) |
 | `any_types` | Any one of these card types is enough. | [Static abilities](card-dsl.md#static-abilities) |
 | `attached` | Attached to the named object ("self", a binding, a target). | [Static abilities](card-dsl.md#static-abilities) |
 | `attached_to` | Attached to a permanent matching this filter (`{"self_only": true}`: to the source). | ["Attached to a creature" — attached_to](card-dsl.md#attached-to-a-creature--attached_to) |
@@ -1003,7 +1007,7 @@ The subset of the value language a static's magnitude (`power`, `amount`, …) m
 |---|---|---|
 | `commander_casts_this_game` | Times you have cast your commanders from the command zone this game (903.8's tally); `"you"` only. | [An anthem for each commander cast](card-dsl-cookbook.md#an-anthem-for-each-commander-cast) |
 | `const` | A literal number. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
-| `count` | How many objects a selector finds. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
+| `count` | How many objects a counting filter matches; on the battlefield it may be an `any_of` union, each object counted once. | [any_of in a count — "base power or toughness 1"](card-dsl.md#any_of-in-a-count--base-power-or-toughness-1) |
 | `counters_on` | Counters of a kind (or "any", every kind) on the objects a selector finds. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `creatures_died_this_turn` | Creatures that died this turn (morbid). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `distinct` | The number of card types among a counting filter's pool off the battlefield (delirium); `of: "card_type"` only. | [Counting different values rather than objects](card-dsl.md#counting-different-values-rather-than-objects) |
@@ -1124,6 +1128,7 @@ Things a card says about itself that are neither a price nor a second face. Defi
 | `cast_only_during` | Castable only on whose turn (`turn`) and in which `steps` or `phase` it names, by any route. | [Narrowing when a spell may be cast](card-dsl.md#narrowing-when-a-spell-may-be-cast) |
 | `toxic` | Toxic N: the N, beside `toxic` in `keywords`. | [Toxic N](card-dsl-cookbook.md#toxic-n) |
 | `annihilator` | Annihilator N: the N, beside `annihilator` in `keywords`. | [Annihilator N](card-dsl-cookbook.md#annihilator-n) |
+| `vanishing` | Vanishing N: the time counters it enters with; the upkeep tick and the sacrifice are supplied. | [Vanishing — a permanent that counts itself out](card-dsl-cookbook.md#vanishing--a-permanent-that-counts-itself-out) |
 | `morph_counter` | Megamorph: turns face up with a +1/+1 counter, beside `morph`. | [Face-down permanents — morph, megamorph and manifest](card-dsl-cookbook.md#face-down-permanents--morph-megamorph-and-manifest) |
 | `as_cast` | Named values fixed as the spell is cast, read by `spell_effects` as `{"binding": name}`. | ["As you cast this spell" — a value fixed at cast time](card-dsl-cookbook.md#as-you-cast-this-spell--a-value-fixed-at-cast-time) |
 
@@ -1156,7 +1161,7 @@ Every `EventType` the engine emits, and which trigger events listen to it. An ev
 | `connived` | `connives` |  | [Triggers](card-dsl.md#triggers) |
 | `control_changed` |  |  | [Triggers](card-dsl.md#triggers) |
 | `counter_placed` | `counter_placed` |  | [Triggers](card-dsl.md#triggers) |
-| `counter_removed` |  |  | [Triggers](card-dsl.md#triggers) |
+| `counter_removed` | `last_counter_removed` |  | [Triggers](card-dsl.md#triggers) |
 | `creature_dealt_combat_damage` | `deals_combat_damage` |  | [Triggers](card-dsl.md#triggers) |
 | `creatures_attacked_player` | `creatures_attack_player` |  | [Triggers](card-dsl.md#triggers) |
 | `creatures_dealt_combat_damage` | `creatures_deal_combat_damage` |  | [Triggers](card-dsl.md#triggers) |

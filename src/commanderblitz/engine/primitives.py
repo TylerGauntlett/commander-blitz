@@ -1420,13 +1420,31 @@ def add_counters(
 
 
 def remove_counters(state: GameState, oid: int, kind: str, amount: int) -> int:
+    """Take up to ``amount`` counters of ``kind`` off a permanent, and return how many.
+
+    The removal funnel for a permanent's counters -- an effect, a cost and
+    vanishing's upkeep tick all come through here. Fires COUNTER_REMOVED with
+    the ``amount`` that came off and the ``total`` of that kind left, through
+    the trigger bus, so "when the last time counter is removed from it"
+    (`last_counter_removed`) hears every road to zero; nothing fires when there
+    was none to take.
+    """
     obj = state.objects.get(oid)
     if obj is None:
         return 0
     taken = obj.remove_counter(kind, amount)
     if taken:
         state.bump_chars()
-        state.emit(EventType.COUNTER_REMOVED, source=oid, counter=kind, amount=taken)
+        fire(
+            state,
+            EventType.COUNTER_REMOVED,
+            player=obj.controller,
+            source=oid,
+            oid=oid,
+            counter=kind,
+            amount=taken,
+            total=obj.counter(kind),
+        )
     return taken
 
 
@@ -1544,6 +1562,15 @@ def _token_creation_plan(
       every later replacement, so it never leaves fewer tokens.  Two
       Stridehangars make two Thopters -- the second sees an artifact token in
       the event the first left.
+    - **"Plus that many" is an addition counted per token.**  Chatterfang,
+      Squirrel General's ``and_create_per_token`` adds each listed id once per
+      matched token in the event, so three Treasures bring three Squirrels.
+      It goes after the fixed additions and before everything else: a fixed
+      addition first gives it one more token to count (a Stridehangar's
+      Thopter brings a Squirrel too), and against a doubler the count is the
+      same either way.  Its own Squirrels are not replaced again by it --
+      614.5, the single pass -- so it terminates; a second Chatterfang sees
+      the first one's Squirrels and adds that many more.
     - **A timed doubler is one more entry.**  "Until end of turn, … twice that
       many of those tokens are created instead" (Kaya, Geist Hunter) is a
       `structs.TokenMultiplier` a resolved ability left on the table, read by
@@ -1570,7 +1597,12 @@ def _token_creation_plan(
     replacements = token_creation_replacements(state, controller)
     statics = [
         # The additions first, the order the controller would pick (above).
-        *(static for static in replacements if static.get("and_create")),
+        *(
+            static
+            for static in replacements
+            if static.get("and_create") and not static.get("and_create_per_token")
+        ),
+        *(static for static in replacements if static.get("and_create_per_token")),
         *(static for static in replacements if not static.get("and_create")),
         *timed_token_multipliers(state, controller),
     ]
@@ -1582,12 +1614,17 @@ def _token_creation_plan(
         selector = static.get("affects_token") or {}
         if additions := static.get("and_create"):
             # "If one or more artifact tokens would be created": one match in
-            # the event is enough, and the extra is made once for all of it.
-            if any(
-                pending_count > 0 and printed_token_matches(state, pending_id, selector)
+            # the event is enough, and the extra is made once for all of it --
+            # or, "plus that many", once per matched token in the event as the
+            # statics before this one left it.
+            matched_count = sum(
+                pending_count
                 for pending_id, pending_count, _ in plan
-            ):
-                plan = [*plan, *((str(extra), 1, True) for extra in additions)]
+                if pending_count > 0 and printed_token_matches(state, pending_id, selector)
+            )
+            if matched_count:
+                each = matched_count if static.get("and_create_per_token") else 1
+                plan = [*plan, *((str(extra), each, True) for extra in additions)]
                 replaced = True
             continue
         substitutes = static.get("create_instead") or ()

@@ -22,7 +22,7 @@ from commanderblitz.cards.registry import default_registry
 
 from . import legality, sba, stack, suspend, triggers, turn
 from .actions import GENERATOR_DECISIONS, Action, DecisionOption, PendingDecision
-from .carddef import Cost, stored_mode_specs
+from .carddef import Cost, is_repeatable, mode_instances, stored_mode_specs
 from .casting import (
     GRAVEYARD_CAST_SLOT,
     MORPH_COST,
@@ -48,21 +48,30 @@ from .costs import (
     can_pay,
     can_pay_mana,
     commander_cost,
+    cost_x_ceiling,
     defined_x,
-    discard_x_ceiling,
+    mana_options_of,
     mana_sources,
     most_life_for_mana,
     pay,
     spell_purpose,
+    split_amount,
 )
 from .division import divided_damage, division_amount, division_caps, fits_division
 from .effects.context import EffectContext, ask_mode, ask_objects, ask_targets, ask_x, ask_yes_no
-from .effects.modes import chosen_at_random, modal_bounds, mode_labels, pick_at_random
+from .effects.modes import (
+    ask_repeated_modes,
+    chosen_at_random,
+    modal_bounds,
+    mode_labels,
+    pick_at_random,
+)
+from .effects.ops_mana import ask_split_mana
 from .enums import ActionKind, DecisionKind, Step, Zone
 from .errors import IllegalActionError, RulesLoopError
 from .events import EventType, GameEvent
 from .legality import _targets_read_x
-from .mana import OTHER_PAYMENT, ManaCost, max_affordable_x
+from .mana import N_SYMBOLS, OTHER_PAYMENT, ManaCost, format_symbols, max_affordable_x
 from .objects import PLUS_ONE
 from .player import PlayerState
 from .player_statics import (
@@ -1148,15 +1157,16 @@ class Game:
                 pid,
                 loyalty_cost=True,
             )
-        elif ability.cost is not None and ability.cost.discard_x:
-            # "Discard X cards" (Gix, Yawgmoth Praetor): announced now, before
-            # the cost is paid (601.2b), and bounded by the cards the cost may
-            # take -- `costs.pay` discards exactly this many and the stack item
-            # carries it to the effects that read X.
+        elif (ceiling := cost_x_ceiling(state, pid, ability.cost, oid)) is not None:
+            # "Discard X cards" (Gix, Yawgmoth Praetor), "Sacrifice X Foods"
+            # (Insatiable Frugivore), "Tap X untapped tokens" (Hazel of the
+            # Rootbloom): announced now, before the cost is paid (601.2b), and
+            # bounded by what the cost may take -- `costs.pay` takes exactly
+            # this many and the stack item carries it to the effects that read X.
             x = yield from ask_x(
                 EffectContext(state=state, controller=pid, source_oid=oid),
                 f"Choose X for {card.name}",
-                discard_x_ceiling(state, pid, ability.cost, oid),
+                ceiling,
                 pid,
             )
         elif ability.cost is not None and ability.cost.mana.x_count:
@@ -1730,6 +1740,17 @@ class Game:
             # ``exactly`` is escalate's count, already paid for.
             floor = up_to = exactly
         offered = list(range(len(modes))) if selectable is None else list(selectable)
+        if is_repeatable(spec):
+            # "You may choose the same mode more than once" (700.2d): one
+            # instance at a time, every offered mode still on offer after it
+            # is taken, so the multiset is `count` single-mode questions
+            # rather than one question per multiset. Each instance then
+            # declares its own targets in `_ask_mode_targets`. Not clamped to
+            # the modes on offer: one choosable mode fills every instance.
+            labels = mode_labels(modes)
+            return tuple(
+                (yield from ask_repeated_modes(ctx, labels, offered, pid, floor, up_to))
+            )
         # A floor that outruns what is on offer is not a spell that chooses
         # fewer modes -- it is one that cannot be cast, and `legality` already
         # declined to offer it. Clamped rather than asserted because a free cast
@@ -1776,8 +1797,11 @@ class Game:
             state=state, controller=pid, source_oid=oid, source_name=card.name
         )
         declared: dict[str, tuple[TargetRef, ...]] = {}
-        for index in sorted(modes):
-            for spec in card.mode_targets.get(index, ()):
+        # One entry per chosen *instance*: a mode taken twice under a
+        # repeatable `choose_mode` (700.2d) declares its targets twice, the
+        # second time under `instance_target_id`'s names.
+        for _index, _occurrence, specs in mode_instances(card.mode_targets, modes):
+            for spec in specs:
                 # A ref already taken by an earlier mode is **not** struck off.
                 # `enumerate_target_tuples` drops a tuple that reuses an object
                 # because those are the targets of one instance of the word
@@ -1975,16 +1999,56 @@ class Game:
         # which is right for the solver's path -- that one only ever taps.
         traits = mana_source_traits(state, oid)
 
+        # "Tap X untapped tokens you control: Add X mana in any combination of
+        # colors" -- Hazel of the Rootbloom. A cost that takes X permanents or
+        # cards announces X here, before it is paid (601.2b, which 605.3a
+        # applies to a mana ability), bounded by `costs.cost_x_ceiling` as
+        # `_activate` bounds it. Asking is allowed on this path and only here:
+        # the payment solver never activates such an ability (its cost is not
+        # tap-only), so the question never lands inside somebody's payment.
+        ctx = EffectContext(state=state, controller=pid, source_oid=oid)
+        x = 0
+        ceiling = cost_x_ceiling(state, pid, ability.cost, oid)
+        if ceiling is not None:
+            x = yield from ask_x(ctx, f"Choose X for {card.name}", ceiling, pid)
+
         # A mana ability is an activated ability, so restricted mana may fund its
         # cost on the same terms as any other -- and it is read here rather than
         # left `None` because `legality._ability_aims` gates this path through
         # the same `can_pay`, and a cost found payable there and refused here
         # would strand the payment.
         ok = yield from pay(
-            state, pid, ability.cost, oid, purpose=ability_purpose(state, oid), ability=ability
+            state,
+            pid,
+            ability.cost,
+            oid,
+            x=x,
+            purpose=ability_purpose(state, oid),
+            ability=ability,
         )
         if not ok:  # pragma: no cover - legality already proved payability
             return
+
+        # With X announced the yield is chosen now rather than off the action:
+        # legality offered one row for this ability (`_mana_option_indices`),
+        # because a split's compositions depend on the X not yet announced.
+        option: tuple[int, ...] | None = None
+        if ceiling is not None:
+            if ability.mana_split:
+                option = yield from ask_split_mana(
+                    ctx, list(ability.mana_split), split_amount(state, oid, ability, x), pid
+                )
+            else:
+                options = mana_options_of(state, oid, ability)
+                picked = [0]
+                if len(options) > 1:
+                    picked = yield from ask_mode(
+                        ctx,
+                        f"Mana from {card.name}",
+                        [format_symbols(o) for o in options],
+                        pid,
+                    )
+                option = options[picked[0] if picked else 0] if options else (0,) * N_SYMBOLS
 
         activate_mana_ability(
             state,
@@ -1994,6 +2058,8 @@ class Game:
             action.mana_option or 0,
             source_traits=traits,
             ability=ability,
+            x=x,
+            option=option,
         )
 
     def _pass_priority(self) -> None:

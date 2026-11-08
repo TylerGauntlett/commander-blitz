@@ -16,7 +16,7 @@ if TYPE_CHECKING:  # pragma: no cover
     # Type-only, so this module keeps the no-runtime-imports property its
     # docstring is about: `carddef` is a leaf, but the point of `structs` is
     # that it needs nothing.
-    from .carddef import TriggerSpec
+    from .carddef import Ability, TriggerSpec
     from .mana import ManaOrigin
 
 TargetKind = Literal["object", "player", "stack"]
@@ -1607,6 +1607,8 @@ class StackItem:
     #: Read only when the granter object itself is gone -- a token popped by the
     #: token state-based action -- so the ability still resolves (608.2).
     granted_def_id: str = ""
+    #: See `TriggerInstance.granted_ability`.
+    granted_ability: Ability | None = None
     #: See `TriggerInstance.mana_spent`. A copy keeps it (706.10).
     mana_spent: bool = False
 
@@ -1654,6 +1656,14 @@ class TriggerInstance:
     #: `grantable_abilities` it came from.  Resolution has to look there rather
     #: than at the source's own abilities, which do not include it.
     granted_by: int | None = None
+    #: The ability itself, for one *borrowed* off a card in exile -- Hazel's
+    #: Brewmaster's "Foods you control have all activated abilities of all
+    #: creature cards exiled with this creature" (`grant_exiled_abilities`).
+    #: Its definition is in no ``grantable_abilities`` pool, so ``granted_by``
+    #: cannot name where it lives, and the card may leave exile before the
+    #: ability resolves (608.2). ``ability_index`` stays the recipient's
+    #: position, and `stack.ability_of` answers with this when it is set.
+    granted_ability: Ability | None = None
     #: "When you spend this mana to cast…" -- Study Hall. ``ability_index``
     #: names the *mana* ability, and the ability that triggered is the one
     #: riding it, `Ability.mana_spent_trigger`; `stack.ability_of` reads this

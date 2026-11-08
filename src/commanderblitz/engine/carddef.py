@@ -100,6 +100,13 @@ class TargetSpec:
     #: enumeration. Nothing outside that line ever sees it, so an unkicked cast is
     #: byte-for-byte the card it was before.
     count_if_kicked: int | str | Mapping[str, Any] | None = None
+    #: The selector this spec declares and is re-checked against instead when
+    #: the spell was kicked -- "exile target artifact or enchantment. If this
+    #: spell was kicked, exile target nonland permanent instead" (Tear
+    #: Asunder). Swapped in by `targeting.kicked_targets` beside
+    #: :attr:`count_if_kicked`, so the kicked cast line's enumeration and
+    #: `stack._resolve_spell`'s 608.2b re-check both read it.
+    selector_if_kicked: Mapping[str, Any] | None = None
     #: Which side of the gift promise declares this spec: ``True`` only a
     #: promised cast, ``False`` only an unpromised one, ``None`` both. The
     #: loader has already split the card's specs into :attr:`CardDef.targets`
@@ -429,6 +436,24 @@ class Cost:
     #: rather than a spelling of it, because ``discard`` is a number the card
     #: fixes and this one is the player's.
     discard_x: bool = False
+    #: "{3}{B}, **Sacrifice X Foods**: ..." -- Insatiable Frugivore. A selector
+    #: over the battlefield (controller defaults to you), the permanents the
+    #: cost may take. The controller announces X as the ability is activated
+    #: (601.2b, 107.3), bounded by the matching permanents they can sacrifice
+    #: (`costs.sacrifice_x_ceiling`), and sacrifices exactly that many as the
+    #: cost; the effects read X back with ``{"x": true}``. ``discard_x``'s
+    #: shape over `sacrifice`'s pool. Not ``sacrifice`` with a ``count``,
+    #: which is a number the card fixes.
+    sacrifice_x: Mapping[str, Any] | None = None
+    #: "{T}, **Tap X untapped tokens you control**: Add X mana in any
+    #: combination of colors." -- Hazel of the Rootbloom. ``sacrifice_x``'s
+    #: shape over ``tap_permanents``' pool: a selector over the battlefield
+    #: (controller defaults to you, untapped forced), the controller announces
+    #: X as the ability is activated, bounded by `costs.tap_x_ceiling`, and taps
+    #: exactly that many as the cost; the effects -- a mana ability's
+    #: ``add_mana`` ``amount`` included -- read X back with ``{"x": true}``.
+    #: Not ``tap_permanents`` with a ``count``, which is a number the card fixes.
+    tap_x: Mapping[str, Any] | None = None
     exile_from_graveyard: Mapping[str, Any] | None = None
     #: How much less **this cost node** costs -- `{"count": filter}`,
     #: `{"total_power": filter}` or a flat `{"amount": N}`, any of them optionally
@@ -495,6 +520,8 @@ class Cost:
             ),
             discard_self=bool(spec.get("discard_self", False)),
             discard_x=bool(spec.get("discard_x")),
+            sacrifice_x=(dict(spec["sacrifice_x"]) if spec.get("sacrifice_x") else None),
+            tap_x=(dict(spec["tap_x"]) if spec.get("tap_x") is not None else None),
             pay_life=(
                 dict(spec["pay_life"])
                 if isinstance(spec.get("pay_life"), Mapping)
@@ -560,6 +587,15 @@ class Cost:
         """
         return self == Cost(mana=self.mana)
 
+    @property
+    def takes_x(self) -> bool:
+        """Does this cost announce an X bounded by what it takes?
+
+        "Discard X cards", "Sacrifice X Foods", "Tap X untapped tokens" --
+        `costs.cost_x_ceiling` bounds each. The X a mana ability can read.
+        """
+        return self.discard_x or self.sacrifice_x is not None or self.tap_x is not None
+
     def is_tap_only(self) -> bool:
         """True when the only cost is ``{T}`` -- the shape mana sources must have."""
         return (
@@ -578,6 +614,8 @@ class Cost:
             and self.remove_counters_from_among is None
             and self.discard == 0
             and not self.discard_x
+            and self.sacrifice_x is None
+            and self.tap_x is None
             and not self.discard_self
             # Without this the payment solver would treat Millikin as a plain
             # tap-for-mana source and take the {C} without ever milling.
@@ -615,6 +653,10 @@ class Cost:
             parts.append("Exert this permanent")
         if self.sacrifice:
             parts.append("Sacrifice")
+        if self.sacrifice_x:
+            parts.append("Sacrifice X")
+        if self.tap_x is not None:
+            parts.append("Tap X untapped permanents")
         if self.return_to_hand:
             parts.append("Return to hand")
         if self.tap_permanents:
@@ -934,16 +976,64 @@ def _specs_for_modes(
     return tuple(base) + stored_mode_specs(mode_targets, modes)
 
 
+def is_repeatable(spec: Mapping[str, Any] | None) -> bool:
+    """Is this ``choose_mode`` "you may choose the same mode more than once"?
+
+    ``repeatable: true`` (700.2d): the answer is a **multiset** of `count`
+    modes, asked one instance at a time at 601.2b, and each chosen instance
+    declares targets of its own at 601.2c. Unlike `budget` it is answered at
+    cast, because its modes may own targets; `mode_instances` is how a second
+    instance of a mode gets specs that do not collide with the first's.
+    """
+    return bool(spec) and spec.get("repeatable") is True
+
+
+def instance_target_id(target_id: str, occurrence: int) -> str:
+    """The id one chosen **instance** of a mode stores its target under.
+
+    The first instance keeps the printed id, so every card whose modes are
+    chosen at most once stores and reads exactly what it always did. A later
+    instance of a repeatable mode (700.2d) gets ``id#n``; `op_choose_mode`
+    reads it back under the printed id while that instance runs. ``#`` is not
+    a character the loader admits in a target id, so the two cannot collide.
+    """
+    return target_id if occurrence == 0 else f"{target_id}#{occurrence}"
+
+
+def mode_instances(
+    mode_targets: Mapping[int, tuple[TargetSpec, ...]], modes: Sequence[int]
+) -> list[tuple[int, int, tuple[TargetSpec, ...]]]:
+    """``(mode, occurrence, specs)`` for each chosen mode instance, printed order.
+
+    ``modes`` may name one mode more than once (a repeatable `choose_mode`);
+    each occurrence is its own instance with its own specs, renamed by
+    `instance_target_id`. A mode chosen once has occurrence 0 and its printed
+    specs unchanged.
+    """
+    seen: dict[int, int] = {}
+    out: list[tuple[int, int, tuple[TargetSpec, ...]]] = []
+    for index in sorted(modes):
+        occurrence = seen.get(index, 0)
+        seen[index] = occurrence + 1
+        specs = tuple(
+            spec if occurrence == 0 else replace(spec, id=instance_target_id(spec.id, occurrence))
+            for spec in mode_targets.get(index, ())
+        )
+        out.append((index, occurrence, specs))
+    return out
+
+
 def stored_mode_specs(
     mode_targets: Mapping[int, tuple[TargetSpec, ...]], modes: Sequence[int]
 ) -> tuple[TargetSpec, ...]:
     """The chosen modes' own specs in storage order -- `_specs_for_modes`
     without the flat list in front: fixed-size specs in ascending mode index,
-    then the sizeless one."""
+    then the sizeless one. A mode chosen twice contributes its specs twice,
+    the second time under `instance_target_id`'s names."""
     fixed: list[TargetSpec] = []
     sizeless: list[TargetSpec] = []
-    for index in sorted(modes):
-        for spec in mode_targets.get(index, ()):
+    for _index, _occurrence, specs in mode_instances(mode_targets, modes):
+        for spec in specs:
             (sizeless if spec.optional or spec.variable_size else fixed).append(spec)
     return tuple(fixed) + tuple(sizeless)
 
@@ -1674,6 +1764,10 @@ class CardDef:
     #: `Keyword.ANNIHILATOR` by `characteristics.annihilator_instances`. Zero
     #: means no printed annihilator; a granted one carries its N on the static.
     annihilator: int = 0
+    #: Vanishing N (702.63a) -- the N, kept so gate 3 can hold the printed line
+    #: to it. Zero means no vanishing. The abilities are already on the card:
+    #: the loader lowered them (`loader._vanishing_abilities`).
+    vanishing: int = 0
     #: Madness -- the price of casting it out of the exile a discard sent it to.
     madness: ManaCost | None = None
     #: Miracle -- the price of casting it as the first card drawn this turn.

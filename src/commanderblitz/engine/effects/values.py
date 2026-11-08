@@ -1790,6 +1790,32 @@ def validate_auras_had(spec: Any, where: str) -> None:
         )
 
 
+#: The value keys that read one characteristic of an object, and the forms
+#: `_characteristic` reads their reference in.
+CHARACTERISTIC_OF_KEYS = ("power_of", "toughness_of", "mana_value_of", "mana_spent_of")
+CHARACTERISTIC_REF_KEYS = frozenset({"var", "target", "binding", "self", "objects"})
+
+
+def validate_characteristic_ref(ref: Any, where: str) -> None:
+    """``power_of`` and its siblings name an object `_characteristic` can read.
+
+    A snapshot (``var``), a target, a binding, the source (``self``), a
+    selector (``objects``) or a bare oid. Anything else -- ``"self"`` as a bare
+    string is the tempting one -- loads, and then raises on the first
+    resolution, which is a broken game rather than a failed load.
+    """
+    if isinstance(ref, int) and not isinstance(ref, bool):
+        return
+    if isinstance(ref, Mapping) and len(ref) == 1 and next(iter(ref)) in CHARACTERISTIC_REF_KEYS:
+        if "objects" in ref:
+            validate_selector(ref["objects"], f"{where}.objects")
+        return
+    raise DslError(
+        f"{where}: needs one object reference -- one of "
+        f"{sorted(CHARACTERISTIC_REF_KEYS)} -- got {ref!r}"
+    )
+
+
 def validate_value(expr: Any, where: str) -> None:
     """Load-time check that a value expression uses only known forms."""
     if expr is None or isinstance(expr, (int, bool)):
@@ -1811,6 +1837,9 @@ def validate_value(expr: Any, where: str) -> None:
                 validate_value(sub, f"{where}.{key}[{i}]")
     if "half" in expr:
         validate_half(expr["half"], f"{where}.half")
+    for key in CHARACTERISTIC_OF_KEYS:
+        if key in expr:
+            validate_characteristic_ref(expr[key], f"{where}.{key}")
     if "starting_life_of" in expr:
         validate_starting_life_of(expr["starting_life_of"], f"{where}.starting_life_of")
     if "count" in expr:

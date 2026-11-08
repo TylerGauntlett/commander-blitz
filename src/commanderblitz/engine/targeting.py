@@ -1016,16 +1016,24 @@ def filter_legal(
 
 
 def kicked_targets(specs):
-    """The same target specs with their kicked counts in place, or ``None``.
+    """The same target specs with their kicked counts and selectors in place, or ``None``.
 
     "If this spell was kicked, **instead choose any number of** target creatures
     you own" -- The Eagles Are Coming!. Legal at 601.2c because kicker is
     announced one step earlier at 601.2b, so the choice is already made when the
     targets are declared; payment (601.2h) is later and is not what this reads.
 
-    ``None`` when no spec carries a `count_if_kicked`, which is every card but the
-    handful printing that clause -- the caller then uses the specs it already had,
-    so an ordinary kicker card costs nothing and behaves exactly as before.
+    "Exile target artifact or enchantment. If this spell was kicked, exile
+    target nonland permanent **instead**" -- Tear Asunder. A spec's
+    `selector_if_kicked` is swapped in the same way, so the kicked line both
+    declares the wider target and re-checks it on resolution (608.2b) against
+    the selector it was declared under; the printed one would fizzle a kicked
+    Tear Asunder aimed at a creature.
+
+    ``None`` when no spec carries a `count_if_kicked` or a `selector_if_kicked`,
+    which is every card but the handful printing one of those clauses -- the
+    caller then uses the specs it already had, so an ordinary kicker card costs
+    nothing and behaves exactly as before.
 
     **Both the declaration and the resolution have to call this**, and that is the
     whole reason it lives here rather than in `casting`. `casting._cast_actions`
@@ -1042,12 +1050,23 @@ def kicked_targets(specs):
     of the card.
     """
 
-    if not any(spec.count_if_kicked is not None for spec in specs):
-        return None
-    return tuple(
-        spec if spec.count_if_kicked is None else replace(spec, count=spec.count_if_kicked)
+    if not any(
+        spec.count_if_kicked is not None or spec.selector_if_kicked is not None
         for spec in specs
-    )
+    ):
+        return None
+    return tuple(_kicked(spec) for spec in specs)
+
+
+def _kicked(spec: TargetSpec) -> TargetSpec:
+    """One spec as the kicked cast declares it: its kicked count, its kicked
+    selector, or both, in place of the printed ones."""
+    changes: dict[str, Any] = {}
+    if spec.count_if_kicked is not None:
+        changes["count"] = spec.count_if_kicked
+    if spec.selector_if_kicked is not None:
+        changes["selector"] = spec.selector_if_kicked
+    return replace(spec, **changes) if changes else spec
 
 
 def additional_sized_targets(specs, times: int):
