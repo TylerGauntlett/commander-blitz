@@ -953,6 +953,8 @@ STATICS: dict[str, Entry] = {
     "mana_becomes_colorless": ("Unspent mana the player would lose becomes colorless instead.",
                                "Player-wide statics"),
     "no_hand_limit": ("The player has no maximum hand size.", None),
+    "maximum_hand_size": ("The player's maximum hand size is N; the newest hand-size effect wins.",
+                          "Player-wide statics"),
     "player_hexproof": ("The player has hexproof: opponents' spells and abilities can't target them.",
                         "Player-wide statics"),
     "player_protection": ("The player has protection from a quality: damage, targeting and enchanting by it.",

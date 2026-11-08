@@ -17,8 +17,8 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Conditions](#conditions) | 34 |
 | [Trigger events](#trigger-events) | 51 |
 | [Trigger filters](#trigger-filters) | 37 |
-| [Static effects](#static-effects) | 94 |
-| [Player-wide statics](#player-wide-statics) | 45 |
+| [Static effects](#static-effects) | 95 |
+| [Player-wide statics](#player-wide-statics) | 46 |
 | [Grantable statics](#grantable-statics) | 43 |
 | [Cost reduction](#cost-reduction) | 6 |
 | [Ability costs](#ability-costs) | 30 |
@@ -601,6 +601,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `lose_keyword_timestamped` |  |  | Matching permanents lose keywords; a grant newer than the removal gives one back (613.7). | [lose_keyword_timestamped — "loses flying", with no "can't have"](card-dsl-cookbook.md#lose_keyword_timestamped--loses-flying-with-no-cant-have) |
 | `mana_becomes_colorless` | yes |  | Unspent mana the player would lose becomes colorless instead. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `mana_retention` | yes |  | The player doesn't lose unspent mana of the listed symbols as steps and phases end. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
+| `maximum_hand_size` | yes |  | The player's maximum hand size is N; the newest hand-size effect wins. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `no_hand_limit` | yes |  | The player has no maximum hand size. | [Static abilities](card-dsl.md#static-abilities) |
 | `opponents_cant_force_discard_or_sacrifice` | yes |  | Opponents' spells and abilities can't make the player discard or sacrifice. | ["Can't cause you to discard cards or sacrifice permanents"](card-dsl-cookbook.md#cant-cause-you-to-discard-cards-or-sacrifice-permanents) |
 | `play_lands_from_graveyard` | yes |  | The player may play lands from their graveyard. | [Static abilities](card-dsl.md#static-abilities) |
@@ -671,6 +672,7 @@ The static effects that describe the *player* rather than a characteristic, and 
 | `look_at_library_top` | The player may look at the top card of their library any time. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `mana_becomes_colorless` | Unspent mana the player would lose becomes colorless instead. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `mana_retention` | The player doesn't lose unspent mana of the listed symbols as steps and phases end. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
+| `maximum_hand_size` | The player's maximum hand size is N; the newest hand-size effect wins. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `no_hand_limit` | The player has no maximum hand size. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `opponents_cant_force_discard_or_sacrifice` | Opponents' spells and abilities can't make the player discard or sacrifice. | ["Can't cause you to discard cards or sacrifice permanents"](card-dsl-cookbook.md#cant-cause-you-to-discard-cards-or-sacrifice-permanents) |
 | `play_lands_from_graveyard` | The player may play lands from their graveyard. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |

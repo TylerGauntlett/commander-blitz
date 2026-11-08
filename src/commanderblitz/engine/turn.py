@@ -18,9 +18,8 @@ from .effects.context import EffectContext, ask_objects
 from .effects.ops_stack import put_copy_on_stack
 from .enums import DecisionKind, Keyword, Step
 from .events import EventType
-from .player import MAX_HAND_SIZE
 from .player_statics import (
-    player_has_no_hand_limit,
+    maximum_hand_size,
     player_skips_draw_step,
     player_skips_extra_turn,
     untap_also,
@@ -752,11 +751,14 @@ def _next_blocker_decision(state: GameState) -> None:
 def _cleanup_step(state: GameState) -> Generator[Any, list[int]]:
     pid = state.active_player
     player = state.players[pid]
-    excess = 0 if player_has_no_hand_limit(state, pid) else len(player.hand) - MAX_HAND_SIZE
+    # 514.1, against whatever maximum the effects in play leave this player.
+    limit = maximum_hand_size(state, pid)
+    excess = 0 if limit is None else len(player.hand) - limit
     if excess > 0:
         ctx = EffectContext(state=state, controller=pid, source_name="Cleanup")
+        noun = "card" if limit == 1 else "cards"
         picked = yield from ask_objects(
-            ctx, "Discard down to seven cards", list(player.hand), excess, excess, pid, "discard"
+            ctx, f"Discard down to {limit} {noun}", list(player.hand), excess, excess, pid, "discard"
         )
         yield from replacements.discard(state, pid, picked)
     clear_until_eot(state)

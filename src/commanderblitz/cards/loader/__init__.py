@@ -5375,6 +5375,24 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"{where}: draw_limit takes 'affects_player', 'amount' and an "
                 f"optional 'condition', and no 'affects'"
             )
+    if model.effect == "maximum_hand_size":
+        # "Your maximum hand size is twenty." Without the number `_static_value`
+        # reads 0, and the card would discard its controller's whole hand every
+        # cleanup -- the inverse of the printed upside. A permanent filter has
+        # nothing to mean on a hand size.
+        if model.amount is None:
+            raise DslError(
+                f"{where}: maximum_hand_size needs an 'amount' -- the hand size "
+                f"the named players discard down to at cleanup"
+            )
+        size = model.amount.get("const") if isinstance(model.amount, dict) else model.amount
+        if isinstance(size, int) and size < 0:
+            raise DslError(f"{where}.amount: a maximum hand size is 0 or more")
+        if model.affects is not None:
+            raise DslError(
+                f"{where}: maximum_hand_size takes 'affects_player', 'amount' and "
+                f"an optional 'condition', and no 'affects'"
+            )
     if model.effect in PLAYER_WIDE_STATIC_EFFECTS:
         if model.affects_player is None:
             raise DslError(f"{where}: {model.effect} needs 'affects_player'")

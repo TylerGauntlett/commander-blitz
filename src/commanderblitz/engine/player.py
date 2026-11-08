@@ -109,6 +109,12 @@ class PlayerState:
     #: read by `player_statics.player_has_no_hand_limit` beside the battlefield
     #: `no_hand_limit` statics, so cleanup (514.1) has one question to ask.
     has_no_maximum_hand_size: bool = False
+    #: When that one-shot last took effect (613.7a), from
+    #: `GameState.alloc_timestamp`, so `player_statics.maximum_hand_size` can
+    #: order it against the `no_hand_limit` and `maximum_hand_size` statics:
+    #: hand-size effects are rules-changing effects applied in timestamp order
+    #: (613.11). Meaningless while the flag is unset.
+    no_maximum_hand_size_timestamp: int = 0
 
     #: Skip priority windows where this player has nothing worth responding to.
     #: Off by default so the RL environment and the golden tests still see every

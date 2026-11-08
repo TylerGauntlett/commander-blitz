@@ -382,9 +382,15 @@ def op_no_maximum_hand_size(ctx: EffectContext, spec: Mapping[str, Any]) -> None
     lifetime it has, which is the whole game: "until your next turn" (Enter the
     Infinite) is a different, *ending* effect and the loader refuses a
     ``duration`` here rather than reading it as this.
+
+    The effect is stamped as it is created (613.7a), so a ``maximum_hand_size``
+    static that arrives later still sets a number over it (613.11).
     """
+    stamp = ctx.state.alloc_timestamp()
     for pid in select_players(ctx, spec.get("player", "you")):
-        ctx.state.players[pid].has_no_maximum_hand_size = True
+        player = ctx.state.players[pid]
+        player.has_no_maximum_hand_size = True
+        player.no_maximum_hand_size_timestamp = stamp
 
 
 @register("emblem")

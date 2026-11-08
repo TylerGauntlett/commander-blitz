@@ -1460,6 +1460,7 @@ they take `affects_player` instead of `affects` — the full list is
 { "kind": "static", "effect": "extra_land_drops",
   "affects_player": "you", "amount": { "const": 1 } }
 { "kind": "static", "effect": "no_hand_limit", "affects_player": "you" }
+{ "kind": "static", "effect": "maximum_hand_size", "affects_player": "you", "amount": 20 }
 { "kind": "static", "effect": "player_hexproof", "affects_player": "you" }
 { "kind": "static", "effect": "skip_draw_step", "affects_player": "you" }
 { "kind": "static", "effect": "skip_extra_turn", "affects_player": "opponent" }
@@ -1501,6 +1502,20 @@ filtered on both ends, so the key is optional there and sits beside `affects`
 rather than instead of it — see
 [Damage multiplied on the way out](card-dsl.md#damage-multiplied-on-the-way-out). It is the
 only static that takes both.
+
+`maximum_hand_size` is Twenty-Toed Toad's "Your maximum hand size is twenty":
+`amount` is the number the cleanup step (514.1) discards down to, and it is
+required — absent, the static would read 0 and empty the hand it was printed to
+protect. `affects` is a load error, and a negative constant is refused. It sets
+a number; "reduced by" (Locust Miser) and "increased by" modifiers
+change one, and are not this. `player_statics.maximum_hand_size` is the one
+answer to "what is this player's maximum": seven, unless a `maximum_hand_size`
+static, a `no_hand_limit` static or the `no_maximum_hand_size` one-shot applies,
+and then **the newest of them** (613.11 applies rules-changing effects in
+timestamp order). A Toad that arrives after a Reliquary Tower sets twenty; a
+Tower that arrives after the Toad lifts the limit. On a shared timestamp the
+larger maximum wins, no maximum being the largest. The discard prompt names the
+number.
 
 `skip_draw_step` is Necropotence's first line, and the whole of its design is
 how *little* it takes away. Rule 500.1: skipping a step's turn-based action is

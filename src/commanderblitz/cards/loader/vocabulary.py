@@ -276,6 +276,11 @@ STATIC_EFFECTS = frozenset(
         # Player-wide, like `extra_land_drops`: a fact about the player rather
         # than a characteristic, with no object for it to attach to.
         "no_hand_limit",
+        # "Your maximum hand size is twenty." (Twenty-Toed Toad.) Sets the
+        # number 514.1 trims to; `amount` is that number and is required.
+        # Ordered against `no_hand_limit` and the one-shot by timestamp in
+        # `player_statics.maximum_hand_size` (613.11).
+        "maximum_hand_size",
         # "You have hexproof." (Metropolis Reformer, Leyline of Sanctity) --
         # 702.11d, read by `targeting._player_allowed`. Not `grant_protection`
         # on a player: protection also prevents damage and stops everyone
@@ -848,6 +853,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
     {
         "extra_land_drops",
         "no_hand_limit",
+        "maximum_hand_size",
         "skip_draw_step",
         "skip_extra_turn",
         "play_lands_from_graveyard",
