@@ -2432,3 +2432,13 @@ class TestGarruksWolfLoadsAGarrukOnDeath:
     def test_the_two_two_black_zombie_is_still_a_separate_token(self, pool):
         other = pool.get("zombie_2_2_b")
         assert list(other.subtypes) == ["Zombie"]
+
+    def test_the_plain_green_wolf_is_a_vanilla_two_two(self, pool):
+        """Wolfwillow Haven: *"Create a 2/2 green Wolf creature token."* The
+        Garruk Wolf is the near miss: black and green, with a dies trigger."""
+        token = pool.get("wolf_2_2_g")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (2, 2)
+        assert sorted(token.colors) == ["G"]
+        assert list(token.subtypes) == ["Wolf"]
+        assert not token.abilities

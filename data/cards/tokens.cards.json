@@ -4620,6 +4620,26 @@
           ]
         }
       ]
+    },
+    {
+      "id": "wolf_2_2_g",
+      "name": "Wolf Token",
+      "oracle_text": "2/2 green Wolf creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Wolf"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true
     }
   ]
 }
