@@ -16763,6 +16763,10 @@
     },
     "zone": "battlefield"
   },
+  "steelburr_champion": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "steely_resolve": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -17743,6 +17747,27 @@
       "0": 1
     },
     "zone": "exile"
+  },
+  "tempt_with_bunnies": {
+    "hand_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 38
+    },
+    "opponent_battlefield_count": 7,
+    "tokens": {
+      "count": 2,
+      "id": "rabbit_1_1_w"
+    },
+    "zone": "graveyard"
+  },
+  "tempt_with_discovery": {
+    "battlefield_count": 34,
+    "library_size": {
+      "0": 38
+    },
+    "zone": "graveyard"
   },
   "tempt_with_vengeance": {
     "battlefield_count": 72,
@@ -18782,6 +18807,16 @@
   },
   "triplicate_titan": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "triskaidekaphile": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
     "zone": "battlefield"
   },
   "triton_shorethief": {

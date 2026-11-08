@@ -197077,6 +197077,86 @@
         {
           "effects": [
             {
+              "amount": {
+                "additional_paid": true
+              },
+              "controller": "you",
+              "except_": {
+                "power": 1,
+                "toughness": 1
+              },
+              "objects": {
+                "self_only": true
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Offspring {1}{W} (You may pay an additional {1}{W} as you cast this spell. If you do, when this creature enters, create a 1/1 token copy of it.)",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent casts a noncreature spell, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "additional_cost": {
+        "mana": "{1}{W}"
+      },
+      "additional_optional": true,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "steelburr_champion",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{2}{W}",
+      "name": "Steelburr Champion",
+      "oracle_text": "Offspring {1}{W} (You may pay an additional {1}{W} as you cast this spell. If you do, when this creature enters, create a 1/1 token copy of it.)\nVigilance\nWhenever an opponent casts a noncreature spell, put a +1/+1 counter on this creature.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Mouse",
+        "Soldier"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "op": "choose_type",
               "prompt": "Choose a creature type"
             }
@@ -210636,6 +210716,186 @@
     },
     {
       "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "tempt_with_bunnies",
+      "mana_cost": "{2}{W}",
+      "name": "Tempt with Bunnies",
+      "oracle_text": "Tempting Offer — Draw a card and create a 1/1 white Rabbit creature token. Then each opponent may draw a card and create a 1/1 white Rabbit creature token. For each opponent who does, you draw a card and you create a 1/1 white Rabbit creature token.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "create_token",
+          "token": "rabbit_1_1_w"
+        },
+        {
+          "effects": [
+            {
+              "as": "tempted",
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": {
+                    "binding": "each_player"
+                  }
+                },
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "controller": {
+                    "binding": "each_player"
+                  },
+                  "op": "create_token",
+                  "token": "rabbit_1_1_w"
+                }
+              ],
+              "op": "may",
+              "player": {
+                "binding": "each_player"
+              },
+              "prompt": "Draw a card and create a 1/1 white Rabbit creature token?"
+            }
+          ],
+          "op": "for_each_player",
+          "players": "each_opponent"
+        },
+        {
+          "amount": {
+            "player_count": {
+              "binding": "tempted"
+            }
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "player_count": {
+              "binding": "tempted"
+            }
+          },
+          "op": "create_token",
+          "token": "rabbit_1_1_w"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "tempt_with_discovery",
+      "mana_cost": "{3}{G}",
+      "name": "Tempt with Discovery",
+      "oracle_text": "Tempting offer — Search your library for a land card and put it onto the battlefield. Each opponent may search their library for a land card and put it onto the battlefield. For each opponent who searches a library this way, search your library for a land card and put it onto the battlefield. Then each player who searched a library this way shuffles.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "destination": "battlefield",
+          "op": "search_library",
+          "player": "you",
+          "selector": {
+            "types": [
+              "Land"
+            ]
+          },
+          "shuffle": false
+        },
+        {
+          "effects": [
+            {
+              "as": "tempted",
+              "effects": [
+                {
+                  "count": 1,
+                  "destination": "battlefield",
+                  "op": "search_library",
+                  "player": {
+                    "binding": "each_player"
+                  },
+                  "selector": {
+                    "types": [
+                      "Land"
+                    ]
+                  }
+                }
+              ],
+              "op": "may",
+              "player": {
+                "binding": "each_player"
+              },
+              "prompt": "Search your library for a land card and put it onto the battlefield?"
+            }
+          ],
+          "op": "for_each_player",
+          "players": "each_opponent"
+        },
+        {
+          "condition": {
+            "cmp": ">",
+            "left": {
+              "player_count": {
+                "binding": "tempted"
+              }
+            },
+            "right": {
+              "const": 0
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "count": {
+                "player_count": {
+                  "binding": "tempted"
+                }
+              },
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "types": [
+                  "Land"
+                ]
+              },
+              "shuffle": false
+            }
+          ]
+        },
+        {
+          "op": "shuffle",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "R"
       ],
       "colors": [
@@ -222507,6 +222767,75 @@
       "toughness": 9,
       "types": [
         "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "effect": "no_hand_limit",
+          "kind": "static",
+          "text": "You have no maximum hand size."
+        },
+        {
+          "effects": [
+            {
+              "op": "win_game",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, if you have exactly thirteen cards in your hand, you win the game.",
+          "trigger": {
+            "condition": {
+              "cmp": "==",
+              "left": {
+                "cards_in_hand": "you"
+              },
+              "right": {
+                "const": 13
+              }
+            },
+            "controller": "you",
+            "event": "upkeep"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}{U}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}{U}: Draw a card."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "triskaidekaphile",
+      "mana_cost": "{1}{U}",
+      "name": "Triskaidekaphile",
+      "oracle_text": "You have no maximum hand size.\nAt the beginning of your upkeep, if you have exactly thirteen cards in your hand, you win the game.\n{3}{U}: Draw a card.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "toughness": 3,
+      "types": [
         "Creature"
       ]
     },

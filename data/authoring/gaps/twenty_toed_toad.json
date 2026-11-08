@@ -1,0 +1,18 @@
+{
+  "card_id": "twenty_toed_toad",
+  "name": "Twenty-Toed Toad",
+  "oracle_text": "Your maximum hand size is twenty.\nWhenever you attack with two or more creatures, put a +1/+1 counter on this creature and draw a card.\nWhenever this creature attacks, you win the game if there are twenty or more counters on it or you have twenty or more cards in hand.",
+  "blocked_sentences": [
+    "Your maximum hand size is twenty."
+  ],
+  "needs": [
+    {
+      "capability": "maximum_hand_size",
+      "kind": "static_effect",
+      "what": "a player-wide static that sets the affected player's maximum hand size to a printed number (here twenty, affects_player: you) while the permanent is on the battlefield, read by the cleanup-step discard (514.1) in place of the fixed MAX_HAND_SIZE",
+      "why_existing_wont_do": "The closest are the static no_hand_limit and the op no_maximum_hand_size, which remove the limit entirely; the cleanup discard in turn.py compares hand size against the constant MAX_HAND_SIZE (7) with no way to set a different number. Using no_hand_limit would be strictly better than the printed card (no discard above twenty). The other two lines look expressible: a you_attack trigger with a two-or-more-attackers condition doing add_counters +1/+1 on self and draw 1, and an attacks trigger on self with an if over any of cmp counters_on self >= 20 / cards_in_hand you >= 20 then win_game"
+    }
+  ],
+  "closest_existing": ["no_hand_limit", "no_maximum_hand_size"],
+  "confidence": "high"
+}

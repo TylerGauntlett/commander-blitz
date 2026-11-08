@@ -263852,12 +263852,12 @@
     },
     "Steelburr Champion": {
       "edhrec_rank": 6575,
-      "gate": "template",
+      "gate": null,
       "name": "Steelburr Champion",
-      "reason": "no template for: Offspring {1}{W}",
+      "reason": "",
       "scryfall_id": "73b1f962-22b7-4394-9796-24f7b0f8a42f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Steelclad Serpent": {
@@ -277532,22 +277532,22 @@
     },
     "Tempt with Bunnies": {
       "edhrec_rank": 1944,
-      "gate": "template",
+      "gate": null,
       "name": "Tempt with Bunnies",
-      "reason": "no template for: Tempting Offer — Draw a card and create a 1/1 white Rabbit creature token. Then each oppon",
+      "reason": "",
       "scryfall_id": "90cc0369-dc9b-4e75-8e3c-ec0783fa13a9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tempt with Discovery": {
       "edhrec_rank": 858,
-      "gate": "template",
+      "gate": null,
       "name": "Tempt with Discovery",
-      "reason": "no template for: Tempting offer — Search your library for a land card and put it onto the battlefield. Each",
+      "reason": "",
       "scryfall_id": "580bbd5b-795e-41fe-b061-579c42218670",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tempt with Glory": {
@@ -292982,12 +292982,12 @@
     },
     "Triskaidekaphile": {
       "edhrec_rank": 1466,
-      "gate": "template",
+      "gate": null,
       "name": "Triskaidekaphile",
-      "reason": "no template for: You have no maximum hand size",
+      "reason": "",
       "scryfall_id": "2ddbaeed-ba00-476d-a68a-d98f179b62a6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Triskaidekaphobia": {
