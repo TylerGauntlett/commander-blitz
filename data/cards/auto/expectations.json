@@ -18943,6 +18943,13 @@
   "tusked_colossodon": {
     "zone": "battlefield"
   },
+  "twenty_toed_toad": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "twilight_drover": {
     "battlefield_count": 33,
     "zone": "battlefield"

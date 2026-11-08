@@ -294672,12 +294672,12 @@
     },
     "Twenty-Toed Toad": {
       "edhrec_rank": 1618,
-      "gate": "template",
+      "gate": null,
       "name": "Twenty-Toed Toad",
-      "reason": "no template for: Your maximum hand size is twenty",
+      "reason": "",
       "scryfall_id": "1b3de0d8-5911-4743-8623-010f12c2055b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Twice Upon a Time // Unlikely Meeting": {

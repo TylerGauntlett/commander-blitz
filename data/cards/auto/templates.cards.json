@@ -224450,6 +224450,123 @@
     {
       "abilities": [
         {
+          "affects_player": "you",
+          "amount": {
+            "const": 20
+          },
+          "effect": "maximum_hand_size",
+          "kind": "static",
+          "text": "Your maximum hand size is twenty."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you attack with two or more creatures, put a +1/+1 counter on this creature and draw a card.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "binding": "attackers"
+                }
+              },
+              "right": {
+                "const": 2
+              }
+            },
+            "controller": "you",
+            "event": "you_attack"
+          }
+        },
+        {
+          "effects": [
+            {
+              "condition": {
+                "any": [
+                  {
+                    "cmp": ">=",
+                    "left": {
+                      "counters_on": {
+                        "counter": "any",
+                        "objects": {
+                          "self_only": true
+                        }
+                      }
+                    },
+                    "right": {
+                      "const": 20
+                    }
+                  },
+                  {
+                    "cmp": ">=",
+                    "left": {
+                      "cards_in_hand": "you"
+                    },
+                    "right": {
+                      "const": 20
+                    }
+                  }
+                ]
+              },
+              "op": "if",
+              "then": [
+                {
+                  "op": "win_game",
+                  "player": "you"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, you win the game if there are twenty or more counters on it or you have twenty or more cards in hand.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "twenty_toed_toad",
+      "mana_cost": "{3}{U}",
+      "name": "Twenty-Toed Toad",
+      "oracle_text": "Your maximum hand size is twenty.\nWhenever you attack with two or more creatures, put a +1/+1 counter on this creature and draw a card.\nWhenever this creature attacks, you win the game if there are twenty or more counters on it or you have twenty or more cards in hand.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Frog",
+        "Wizard"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
