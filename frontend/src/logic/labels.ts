@@ -529,6 +529,19 @@ export function describeEvent(
       const theirs = owner === null ? "a" : `${names[owner] ?? `P${owner}`}'s`;
       return `${who} ${v("search", "searches")} ${theirs} library`;
     }
+    /*
+     * A gift given (702.174) -- a promised gift spell resolving, or a gift
+     * permanent's enters trigger. The reward itself (a draw, a Fish) has its
+     * own line, but nothing there says it was a gift, and this is the moment
+     * "whenever you give a gift" (Jolly Gerbils) triggers off.
+     */
+    case "gift_given": {
+      const to = typeof event.data.gift_to === "number" ? event.data.gift_to : null;
+      const recipient =
+        to === null ? "an opponent" : to === viewerSeat ? "you" : (names[to] ?? `P${to}`);
+      const gift = card ? ` (${card})` : "";
+      return `${who} ${v("give", "gives")} ${recipient} a gift${gift}`;
+    }
     case "damage_dealt":
       if (amount === null || amount <= 0) return null;
       return event.data.to === "player"

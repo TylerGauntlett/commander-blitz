@@ -246,6 +246,21 @@ def _mentions_gift(model: CardModel) -> bool:
     return _mentions(model, lambda node: "gift_recipient" in node.values())
 
 
+def _reads_gift_recipient(effects: Any) -> bool:
+    """Does this effect tree aim anything at the ``"gift_recipient"`` seat?
+
+    Matched as a value anywhere in a mapping, for `_mentions_gift`'s reason:
+    the seat is named through whichever key the op uses for a player.
+    """
+    if isinstance(effects, Mapping):
+        return "gift_recipient" in effects.values() or any(
+            _reads_gift_recipient(v) for v in effects.values()
+        )
+    if isinstance(effects, (list, tuple)):
+        return any(_reads_gift_recipient(v) for v in effects)
+    return False
+
+
 def _effects_move_source(effects: Any) -> bool:
     """Does this ability *unconditionally* move its own source out of its zone?
 

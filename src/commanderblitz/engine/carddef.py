@@ -1502,6 +1502,14 @@ class CardDef:
     #: `Action.gift_to`. Read back by `{"gift_promised": …}` and by the
     #: ``"gift_recipient"`` player spec.
     gift: str | None = None
+    #: Which part of the card **gives** the gift (702.174), for
+    #: `EventType.GIFT_GIVEN`: the index of the triggered ability that does --
+    #: a permanent's "if you do, when it enters, they draw a card" -- or
+    #: ``None`` when the spell gives it as it resolves, which is every instant
+    #: and sorcery. Derived by the loader from where ``"gift_recipient"`` is
+    #: read: the spell's own effects first, else the one triggered ability
+    #: whose effects aim at the recipient. ``None`` on a card with no gift.
+    gift_ability: int | None = None
     #: **Multikicker {1}{W}** (702.32b). Nothing in the engine reads this: the
     #: loader has already desugared it into the three fields above, which is the
     #: whole mechanic. What it records is the *name* the card declared the cost

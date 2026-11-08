@@ -190,6 +190,7 @@ from .walk import (
     _mentions_key_anywhere,
     _mentions_kicked,
     _mentions_pair,
+    _reads_gift_recipient,
     _refuse_granted_chosen_qualities,
     _walk_effect_specs,
     check_literal_mana_value_key,
@@ -1507,6 +1508,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
                 f"{where}: has a 'gift' promise that nothing reads via "
                 f"'gift_promised' or the 'gift_recipient' player spec"
             )
+    gift_ability = _gift_ability(model, where)
 
     # Evoke is two halves the same way, and half of it is the same silent
     # failure: a cheaper cast that never dies, or a sacrifice clause that can
@@ -2490,6 +2492,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         kicker_label=model.kicker_label,
         kicker=kicker,
         gift=model.gift,
+        gift_ability=gift_ability,
         multikicker=multikicker,
         escalate=escalate,
         strive=strive,
@@ -2670,6 +2673,37 @@ def _check_sacrificed_names(model: AbilityModel, cost: Cost | None, where: str) 
             f"the permanent this ability's sacrifice cost binds with 'as' "
             f"(got {sacrificed!r})"
         )
+
+
+def _gift_ability(model: CardModel, where: str) -> int | None:
+    """Which triggered ability gives this card's gift, or None for the spell.
+
+    702.174: an instant or sorcery gives its gift as it resolves, and a
+    permanent's gift is its enters trigger. The DSL writes the reward wherever
+    the card does -- in `spell_effects` or in one triggered ability -- and the
+    reward is the part aimed at ``"gift_recipient"``, so that is where the gift
+    is given and where `EventType.GIFT_GIVEN` fires. Scrapshooter's second
+    enters trigger also reads ``gift_promised`` and is not the gift: it aims at
+    no recipient.
+
+    The spell's own effects win, because they resolve first. Two triggered
+    abilities both aiming at the recipient are refused: one promise is one
+    gift, and either reading would make "whenever you give a gift" fire on the
+    wrong one or twice.
+    """
+    if model.gift is None or _reads_gift_recipient(model.spell_effects):
+        return None
+    givers = [
+        i
+        for i, ability in enumerate(model.abilities)
+        if ability.kind == "triggered" and _reads_gift_recipient(ability.effects)
+    ]
+    if len(givers) > 1:
+        raise DslError(
+            f"{where}: abilities {givers} all aim at 'gift_recipient' -- one "
+            f"promise gives one gift, so only one ability may give it"
+        )
+    return givers[0] if givers else None
 
 
 def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Ability:

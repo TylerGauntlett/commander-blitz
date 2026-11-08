@@ -177,6 +177,17 @@ describe("describeEvent", () => {
     ).toBe("You search AI 1's library");
   });
 
+  it("says who gave a gift, and to whom", () => {
+    // The reward has its own line; this one is the moment "whenever you give
+    // a gift" (Jolly Gerbils) triggers off, told from the viewer's side.
+    expect(
+      describeEvent(event({ type: "gift_given", player: 0, data: { gift_to: 1 } }), names, 0),
+    ).toBe("You give AI 1 a gift");
+    expect(
+      describeEvent(event({ type: "gift_given", player: 1, data: { gift_to: 0 } }), names, 0),
+    ).toBe("AI 1 gives you a gift");
+  });
+
   it("says who got an emblem, and from which card", () => {
     // Nothing moves when an emblem is made, so without this line the player
     // sees a drain on every draw with nothing in the log to say why.

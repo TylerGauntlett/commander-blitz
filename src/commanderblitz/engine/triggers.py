@@ -274,6 +274,21 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: discard would pay at all, and a connive whose discard an opponent's
     #: shield stopped would not pay -- and neither event names the creature.
     "connives": EventType.CONNIVED,
+    #: "Whenever you give a gift, draw a card." -- Jolly Gerbils. Once per gift
+    #: given (702.174), fired by `stack` as an instant or sorcery with a
+    #: promised gift resolves, or as a permanent's gift trigger resolves
+    #: (`CardDef.gift_ability` says which part of the card gives it).
+    #:
+    #: The subject is a **player** -- the giver -- so it is absent from
+    #: `OBJECT_SUBJECT_TRIGGERS` and `_actor` reads `event.player`:
+    #: `controller: "you"` is "whenever **you** give a gift", and an opponent
+    #: giving one is `controller: "opponent"`. `{"binding": "gift_to"}` is the
+    #: player who received it.
+    #:
+    #: `spell_cast` is the near miss and fires on the promise rather than the
+    #: gift: at cast time, so it pays for a gift spell that is then countered,
+    #: and for a permanent spell that never enters to give its gift.
+    "gives_gift": EventType.GIFT_GIVEN,
     #: Enrage (702.131): "Whenever this creature is dealt damage, …".  No new
     #: event -- `DAMAGE_DEALT` has always been fired through the trigger bus and
     #: nothing subscribed to it.  Sugar in the same sense `creature_dies` is:
@@ -1899,6 +1914,10 @@ EVENT_BINDING_KEYS = (
     # Broodmoth): the keywords the departed permanent had as it left, derived.
     # Read through the `keywords_had` value key.
     "had_keywords",
+    # "…that player" on a gift: the opponent who received it (702.174), on
+    # `gives_gift`, so a card rewarding the recipient can aim at the seat the
+    # gift went to. `event_player` is the giver.
+    "gift_to",
     # The X paid for the ability whose event this is, written over the `x`
     # `event_bindings` reads off the permanent. Only `cycle` carries it: "When
     # you cycle this card, create an X/X…" (Shark Typhoon) means the X in the
@@ -2039,11 +2058,13 @@ def _actor(
     # answer only because the subject is not an object; the event's `source` is
     # the tutor or fetchland that asked, and on Path to Exile that is *my* spell
     # making *them* search, so a subject read off it would be the wrong seat.
+    # `gives_gift` is listed for the same reason: the actor is the **giver**,
+    # who controls the gift spell or ability, never the opponent receiving it.
     # `wins_coin_flip` is listed for the same reason: the actor is the player
     # who **flipped**, and the event's `source` is the card whose effect made
     # the flip -- on a flip one player's card makes another player take, a
     # subject read off it would be the wrong seat.
-    if dsl_event in ("land_played", "spell_cast", "spell_copied", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target", "becomes_monarch", "ability_activated", "damage_prevented", "creatures_attack_player", "creatures_deal_combat_damage", "searches_library", "wins_coin_flip"):
+    if dsl_event in ("land_played", "spell_cast", "spell_copied", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target", "becomes_monarch", "ability_activated", "damage_prevented", "creatures_attack_player", "creatures_deal_combat_damage", "searches_library", "wins_coin_flip", "gives_gift"):
         return event.player
     # `deals_damage_to_player` is here beside the combat-only trigger it
     # generalises, and for the same reason: `event.player` on a damage event is

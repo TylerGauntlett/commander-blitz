@@ -2904,6 +2904,47 @@ branched on with `{"gift_promised": true}` needs a creature card in your
 graveyard to be cast at all, and announces a target the printed spell never
 chooses. `optional: true` lets a promised cast skip the target the promise buys.
 
+### "Whenever you give a gift"
+
+Jolly Gerbils: "Whenever you give a gift, draw a card." The trigger is
+`gives_gift`, and it listens to `EventType.GIFT_GIVEN`:
+
+```jsonc
+{ "kind": "triggered",
+  "text": "Whenever you give a gift, draw a card.",
+  "trigger": { "event": "gives_gift", "controller": "you" },
+  "effects": [ { "op": "draw", "player": "you", "amount": { "const": 1 } } ] }
+```
+
+A gift is **given** (702.174), not merely promised, at one of two moments, and
+the event fires there once per gift:
+
+- an instant or sorcery with a promised gift gives it **as it resolves**, before
+  its other effects, and only once past the 608.2b target check, so a spell
+  countered for want of targets gives nothing;
+- a permanent's gift is its **enters trigger** ("If you do, when it enters,
+  they create an 8/8 blue Octopus" — Octomancer), and it is given as that
+  ability resolves, past its intervening-if.
+
+Which part of a card gives its gift is not written by the author. The loader
+reads it off where `"gift_recipient"` is aimed and stores it as
+`CardDef.gift_ability`: the spell's own effects when they aim at the recipient
+(and on a card that aims nowhere, the spell), otherwise the one triggered
+ability that does. Scrapshooter's second enters trigger, "if the gift was
+promised, destroy target artifact or enchantment", reads the promise and gives
+nothing, so it is not the gift. Two triggered abilities that both aim at the
+recipient are refused at load: one promise is one gift.
+
+The giver is the subject — a **player**, the controller of the gift spell or
+ability — so `controller` reads `"you"` (the default), `"opponent"` or `"any"`
+against the giver, never the recipient. `{"binding": "gift_to"}` is the
+opponent who received it, and `event_player` the giver. A promisee who has left
+the game receives nothing, and nothing fires.
+
+`spell_cast` is the near miss and fires on the promise: it pays for a gift spell
+that is then countered, and for a permanent spell that never enters to give its
+gift.
+
 The loader refuses `gift_promised` on a card with no `gift`, on an ability's
 targets (no cast declares them), on a mode-owned spec, and beside
 `count_if_kicked`. The variable-size ordering rule is checked on each side's

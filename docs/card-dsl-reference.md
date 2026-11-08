@@ -15,7 +15,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 70 |
 | [Conditions](#conditions) | 34 |
-| [Trigger events](#trigger-events) | 51 |
+| [Trigger events](#trigger-events) | 52 |
 | [Trigger filters](#trigger-filters) | 37 |
 | [Static effects](#static-effects) | 95 |
 | [Player-wide statics](#player-wide-statics) | 46 |
@@ -37,7 +37,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
 | [Card-level face keys](#card-level-face-keys) | 6 |
 | [Card-level rider keys](#card-level-rider-keys) | 19 |
-| [Engine events](#engine-events) | 78 |
+| [Engine events](#engine-events) | 79 |
 
 ## Effect ops
 
@@ -471,6 +471,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `draw_step` | `draw_step` | At the beginning of the draw step. | [Triggers](card-dsl.md#triggers) |
 | `end_step` | `end_step` | At the beginning of the end step. | [Triggers](card-dsl.md#triggers) |
 | `expend` | `mana_spent` | You expend N (`nth`): the spell payment that takes your mana spent to cast spells this turn to N or more. | [Expend — "Whenever you expend N"](card-dsl-cookbook.md#expend--whenever-you-expend-n) |
+| `gives_gift` | `gift_given` | A player gives a gift (702.174): a spell with a promised gift resolves, or a permanent's gift trigger does; `gift_to` binds the recipient. | ["Whenever you give a gift"](card-dsl-cookbook.md#whenever-you-give-a-gift) |
 | `land_played` | `land_played` | A land is played. | [Triggers](card-dsl.md#triggers) |
 | `leaves_battlefield` | `leaves_battlefield` | A permanent leaves the battlefield. | [Triggers](card-dsl.md#triggers) |
 | `leaves_graveyard` | `leaves_graveyard` | A card leaves a graveyard. | [Triggers](card-dsl.md#triggers) |
@@ -1172,6 +1173,7 @@ Every `EventType` the engine emits, and which trigger events listen to it. An ev
 | `energy_paid` |  |  | [Triggers](card-dsl.md#triggers) |
 | `enters_battlefield` | `self_enters` `permanent_enters` |  | [Triggers](card-dsl.md#triggers) |
 | `game_over` |  |  | [Triggers](card-dsl.md#triggers) |
+| `gift_given` | `gives_gift` |  | [Triggers](card-dsl.md#triggers) |
 | `hand_kept` |  |  | [Triggers](card-dsl.md#triggers) |
 | `land_played` | `land_played` |  | [Triggers](card-dsl.md#triggers) |
 | `leaves_battlefield` | `leaves_battlefield` |  | [Triggers](card-dsl.md#triggers) |
