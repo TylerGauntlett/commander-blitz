@@ -13956,6 +13956,11 @@
     },
     "zone": "graveyard"
   },
+  "realm_cloaked_giant_cast_off": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "realmwalker": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -14463,6 +14468,12 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "riot_control": {
+    "life": {
+      "0": 42
+    },
+    "zone": "graveyard"
+  },
   "riot_devils": {
     "zone": "battlefield"
   },
@@ -14539,6 +14550,13 @@
   "rite_of_replication": {
     "battlefield_count": 37,
     "zone": "graveyard"
+  },
+  "rites_of_flourishing": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "ritual_of_rejuvenation": {
     "hand_size": {
@@ -15262,6 +15280,13 @@
   "selfless_squire": {
     "zone": "battlefield"
   },
+  "selvala_explorer_returned": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "selvala_heart_of_the_wilds": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -15891,6 +15916,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "simic_ascendancy": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "simic_charm": {
     "target_pt_delta": {
       "power": 3,
@@ -16423,6 +16452,16 @@
     "library_size": {
       "1": 10
     }
+  },
+  "sphinx_of_enlightenment": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 4
+    },
+    "library_size": {
+      "0": 37
+    },
+    "zone": "battlefield"
   },
   "sphinx_of_uthuun": {
     "battlefield_count": 33,

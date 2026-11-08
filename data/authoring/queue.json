@@ -217202,12 +217202,12 @@
     },
     "Realm-Cloaked Giant // Cast Off": {
       "edhrec_rank": 6926,
-      "gate": "template",
+      "gate": null,
       "name": "Realm-Cloaked Giant // Cast Off",
-      "reason": "proxy simplified it: only the first half exists; the other half is not modelled",
+      "reason": "",
       "scryfall_id": "616d22fc-ab08-4e2d-8f0b-496a4ae1789e",
-      "source": "",
-      "status": "unexpressible",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Realm-Scorcher Hellkite": {
@@ -224382,12 +224382,12 @@
     },
     "Riot Control": {
       "edhrec_rank": 2302,
-      "gate": "template",
+      "gate": null,
       "name": "Riot Control",
-      "reason": "no template for: You gain 1 life for each creature your opponents control. Prevent all damage that would be",
+      "reason": "",
       "scryfall_id": "f0ca86cd-1b24-4abc-a877-c3aee6acf873",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Riot Devils": {
@@ -225242,12 +225242,12 @@
     },
     "Rites of Flourishing": {
       "edhrec_rank": 1527,
-      "gate": "template",
+      "gate": null,
       "name": "Rites of Flourishing",
-      "reason": "no template for: At the beginning of each player's draw step, that player draws an additional card",
+      "reason": "",
       "scryfall_id": "ec016236-fa38-49f3-8176-5a7734ca6821",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rites of Initiation": {
@@ -239922,12 +239922,12 @@
     },
     "Selvala, Explorer Returned": {
       "edhrec_rank": 2117,
-      "gate": "template",
+      "gate": null,
       "name": "Selvala, Explorer Returned",
-      "reason": "no template for: Parley — {T}: Each player reveals the top card of their library. For each nonland card rev",
+      "reason": "",
       "scryfall_id": "54467e0f-fa50-4fd9-957d-892e567a2a08",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Selvala, Heart of the Wilds": {
@@ -248042,12 +248042,12 @@
     },
     "Simic Ascendancy": {
       "edhrec_rank": 1266,
-      "gate": "template",
+      "gate": null,
       "name": "Simic Ascendancy",
-      "reason": "no template for: {1}{G}{U}: Put a +1/+1 counter on target creature you control",
+      "reason": "",
       "scryfall_id": "ed12a38e-284e-439d-8203-cf730cc40805",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Simic Basilisk": {
@@ -258452,12 +258452,12 @@
     },
     "Sphinx of Enlightenment": {
       "edhrec_rank": 9348,
-      "gate": "template",
+      "gate": null,
       "name": "Sphinx of Enlightenment",
-      "reason": "no template for: When this creature enters, target opponent draws a card and you draw three cards",
+      "reason": "",
       "scryfall_id": "9ccfe045-26cf-4813-ba9d-0b234fe9342f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sphinx of False Conclusions": {
