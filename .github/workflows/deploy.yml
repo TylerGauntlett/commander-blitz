@@ -326,8 +326,10 @@ jobs:
     needs: lint
     runs-on: ubuntu-latest
     # Four stages in series under coverage (unit, every card works, HTTP API,
-    # AI); every card works and the AI arena grow with the pool.
-    timeout-minutes: 45
+    # AI); every card works and the AI arena grow with the pool. The limit
+    # leaves room for a runner that hands xdist half the cores, which doubles
+    # every stage at once.
+    timeout-minutes: 75
     steps:
       - uses: actions/checkout@v7
         with:
