@@ -140,6 +140,7 @@ class TestTheToken:
             [
                 SHARK,
                 "dragon_illusion_x_x_r_flying_haste",
+                "aetherborn_x_x_b",
                 "illusion_x_x_u",
                 "nalaar_aetherjet_x_x_c_flying_crew2",
                 "ooze_x_x_g",
