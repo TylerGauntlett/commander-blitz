@@ -1306,6 +1306,13 @@ def _provide_the_target(game: Game, registry, oid: int, ability) -> None:
         # `has_counters: true` names no kind, so any one counter will do.
         elif kind is True:
             obj.add_counter("+1/+1", 1)
+        # Garruk, Apex Predator's "+1: Destroy another target **planeswalker**."
+        # A prop put straight onto the battlefield skips the enters-with-loyalty
+        # replacement, so a planeswalker arrived with none and died to 704.5i
+        # before the ability was asked about: unaimed, not broken. Its printed
+        # starting loyalty, and only for a planeswalker.
+        if "Planeswalker" in match.types and match.loyalty:
+            obj.add_counter("loyalty", match.loyalty)
         if match.is_token:
             obj.is_token = True
         game.state.battlefield.append(obj.oid)
