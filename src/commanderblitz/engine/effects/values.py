@@ -165,6 +165,11 @@ VALUE_KEYS = frozenset(
         # the near miss and cannot answer it: it reads the board, and a dead
         # creature has neither its counters nor its attachments any more.
         "modified_creatures_died_this_turn",
+        # "…for each **nontoken** creature that died this turn" (Gadrak, the
+        # Crown-Scourge; Vile Redeemer). The same tally without the tokens, off
+        # `TurnLedger.nontoken_creatures_died`; `creatures_died_this_turn`
+        # counts a dead Scion and would pay for it.
+        "nontoken_creatures_died_this_turn",
         "attacked_this_turn",
         # "…if you attacked with **three or more creatures** this turn" --
         # Windbrisk Heights. How many *creatures*, where `attacked_this_turn`
@@ -760,6 +765,9 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
     if "modified_creatures_died_this_turn" in expr:
         pids = _players(ctx, expr["modified_creatures_died_this_turn"])
         return sum(ledger.modified_creatures_died.get(p, 0) for p in pids)
+    if "nontoken_creatures_died_this_turn" in expr:
+        pids = _players(ctx, expr["nontoken_creatures_died_this_turn"])
+        return sum(ledger.nontoken_creatures_died.get(p, 0) for p in pids)
     if "attacked_this_turn" in expr:
         # How many of the named players attacked, which is 0 or 1 for raid's
         # `"you"` and a headcount for "if two opponents attacked this turn".
@@ -1934,13 +1942,15 @@ def validate_value(expr: Any, where: str) -> None:
                 f"{where}.commander_casts_this_game: needs a player spec, e.g. 'you' "
                 f"(whose commanders' casts from the command zone), got {who!r}"
             )
-    if "modified_creatures_died_this_turn" in expr:
-        who = expr["modified_creatures_died_this_turn"]
+    for key in ("modified_creatures_died_this_turn", "nontoken_creatures_died_this_turn"):
+        if key not in expr:
+            continue
+        who = expr[key]
         if not isinstance(who, Mapping) and (
             not isinstance(who, str) or who not in PLAYER_SPEC_NAMES
         ):
             raise DslError(
-                f"{where}.modified_creatures_died_this_turn: needs a player spec, "
+                f"{where}.{key}: needs a player spec, "
                 f"e.g. 'you' (under whose control they died), got {who!r}"
             )
     if "counters_put_this_turn" in expr:

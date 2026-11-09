@@ -1755,6 +1755,7 @@ Anywhere a number is expected -- the leaf list is
 { "energy_spent_this_turn": "you" }             // {E} paid or lost this turn; see below
 { "creatures_died_this_turn": "all" }           // morbid; "you" for "a creature you controlled"
 { "modified_creatures_died_this_turn": "you" }  // …of them, the ones modified (700.9) as they died
+{ "nontoken_creatures_died_this_turn": "all" }  // …of them, the nontoken ones (Gadrak, Vile Redeemer)
 { "attacked_this_turn": "you" }                 // raid; 1 if they attacked, else 0
 { "attackers_this_turn": "you" }                // …with HOW MANY creatures; see below
 { "permanents_entered_this_turn":               // WHICH permanents entered; see below
