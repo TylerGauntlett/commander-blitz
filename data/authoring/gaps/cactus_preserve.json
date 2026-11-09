@@ -1,0 +1,18 @@
+{
+  "card_id": "cactus_preserve",
+  "name": "Cactus Preserve",
+  "oracle_text": "This land enters tapped.\n{T}: Add one mana of any type that a land you control could produce.\n{3}: Until end of turn, this land becomes an X/X green Plant creature with reach, where X is the greatest mana value among your commanders. It's still a land.",
+  "blocked_sentences": [
+    "{3}: Until end of turn, this land becomes an X/X green Plant creature with reach, where X is the greatest mana value among your commanders. It's still a land."
+  ],
+  "needs": [
+    {
+      "capability": "greatest_commander_mana_value",
+      "kind": "value",
+      "what": "an effect-side value leaf {\"greatest_commander_mana_value\": <player spec>} for `value_keys`, evaluated at resolution (so `animate`'s power/toughness can read it): the greatest printed mana value among the commanders the player owns, read off `state.commanders_of(pid)` wherever each commander is (command zone, battlefield, graveyard, exile, hand, library, stack), 0 for a seat with no commander -- the effect-side twin of the static leaf of the same name that Tangleweave Armor uses",
+      "why_existing_wont_do": "`greatest_commander_mana_value` exists only in `static_value_keys` (characteristics.py), not in `value_keys`, so an `animate` op inside an activated ability cannot use it. The nearest effect-side spelling, `extreme_value` over a selector with `is_commander: true`, gathers from one zone per selector; reaching a commander 'wherever it is' would need a hand-built seven-branch `union` over every zone, which is a reconstruction rather than the printed reference (the static leaf's own comment notes no selector reaches the commander in the command zone). Everything else on the card is expressible: `self_enters_tapped`, `add_mana` with `reflecting` + `any_type: true`, and `animate` with `types: [\"Creature\"]`, `subtypes: [\"Plant\"]`, `colors: [\"G\"]`, `keywords: [\"reach\"]`, `duration` this turn, keeping Land."
+    }
+  ],
+  "closest_existing": ["greatest_commander_mana_value", "extreme_value", "animate"],
+  "confidence": "low"
+}

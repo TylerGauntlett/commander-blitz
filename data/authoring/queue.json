@@ -702,12 +702,12 @@
     },
     "Abraded Bluffs": {
       "edhrec_rank": 2870,
-      "gate": "template",
+      "gate": null,
       "name": "Abraded Bluffs",
-      "reason": "no template for: When this land enters, it deals 1 damage to target opponent",
+      "reason": "",
       "scryfall_id": "19e96521-b4ce-4a36-a887-200e05ccc804",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Abrupt Decay": {
@@ -34852,12 +34852,12 @@
     },
     "Bristling Backwoods": {
       "edhrec_rank": 3476,
-      "gate": "template",
+      "gate": null,
       "name": "Bristling Backwoods",
-      "reason": "no template for: When this land enters, it deals 1 damage to target opponent",
+      "reason": "",
       "scryfall_id": "d61dfeb7-7f6b-4601-8396-2cbb98165489",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bristling Boar": {
@@ -55902,12 +55902,12 @@
     },
     "Creosote Heath": {
       "edhrec_rank": 3887,
-      "gate": "template",
+      "gate": null,
       "name": "Creosote Heath",
-      "reason": "no template for: When this land enters, it deals 1 damage to target opponent",
+      "reason": "",
       "scryfall_id": "c5523dac-7aa0-4486-89c8-3b22a1411f26",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Crescendo of War": {
@@ -66852,12 +66852,12 @@
     },
     "Descend upon the Sinful": {
       "edhrec_rank": 12335,
-      "gate": "template",
+      "gate": null,
       "name": "Descend upon the Sinful",
-      "reason": "no template for: Exile all creatures",
+      "reason": "",
       "scryfall_id": "83245e11-a020-4d81-9d83-e1505f1d125e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Descendant of Kiyomaro": {
@@ -76752,12 +76752,12 @@
     },
     "Dune Chanter": {
       "edhrec_rank": 6012,
-      "gate": "template",
+      "gate": null,
       "name": "Dune Chanter",
-      "reason": "no template for: Lands you control and land cards you own that aren't on the battlefield are Deserts in add",
+      "reason": "",
       "scryfall_id": "cbed084b-c0bc-4c05-9a89-ce4630f0897c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dune Diviner": {
@@ -76822,12 +76822,12 @@
     },
     "Dunes of the Dead": {
       "edhrec_rank": 5615,
-      "gate": "template",
+      "gate": null,
       "name": "Dunes of the Dead",
-      "reason": "no template for: When this land is put into a graveyard from the battlefield, create a 2/2 black Zombie cre",
+      "reason": "",
       "scryfall_id": "cd86b0af-9c26-4c3a-8e1e-74a28263bd83",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dungeon Crawler": {
@@ -78972,12 +78972,12 @@
     },
     "Eccentric Farmer": {
       "edhrec_rank": 12454,
-      "gate": "template",
+      "gate": null,
       "name": "Eccentric Farmer",
-      "reason": "no template for: When this creature enters, mill three cards, then you may return a land card from your gra",
+      "reason": "",
       "scryfall_id": "fe2a1718-eae1-4330-b494-c3088b992aae",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Eccentric Pestfinder // Turn Stones": {
@@ -80412,12 +80412,12 @@
     },
     "Electric Revelation": {
       "edhrec_rank": 5403,
-      "gate": "template",
+      "gate": null,
       "name": "Electric Revelation",
-      "reason": "no template for: Flashback {3}{R}",
+      "reason": "",
       "scryfall_id": "6bd798c7-a58b-4cbc-8ac7-bf084668c97b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Electric Seaweed": {
@@ -82642,12 +82642,12 @@
     },
     "Embrace the Unknown": {
       "edhrec_rank": 6487,
-      "gate": "template",
+      "gate": null,
       "name": "Embrace the Unknown",
-      "reason": "no template for: Exile the top two cards of your library. Until the end of your next turn, you may play tho",
+      "reason": "",
       "scryfall_id": "0ae6bfbf-b453-4138-9589-92ef6343b9ab",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Emerald Charm": {
@@ -106752,12 +106752,12 @@
     },
     "Genesis Hydra": {
       "edhrec_rank": 2594,
-      "gate": "template",
+      "gate": null,
       "name": "Genesis Hydra",
-      "reason": "no template for: When you cast this spell, reveal the top X cards of your library. You may put a nonland pe",
+      "reason": "",
       "scryfall_id": "55502dd7-a92b-41bc-b6b1-8e0347649faf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Genesis Storm": {
@@ -124952,12 +124952,12 @@
     },
     "Heaven // Earth": {
       "edhrec_rank": 14325,
-      "gate": "template",
+      "gate": null,
       "name": "Heaven // Earth",
-      "reason": "no template for: Heaven deals X damage to each creature with flying",
+      "reason": "",
       "scryfall_id": "b0bd107d-3915-4177-aa02-9106f3abbd86",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Heaven Sent": {
@@ -149612,12 +149612,12 @@
     },
     "Kirri, Talented Sprout": {
       "edhrec_rank": 11896,
-      "gate": "template",
+      "gate": null,
       "name": "Kirri, Talented Sprout",
-      "reason": "no template for: Other Plants and Treefolk you control get +2/+0",
+      "reason": "",
       "scryfall_id": "05b26fbe-ea68-4595-99cd-3ea2a0a3d739",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kirtar's Desire": {
@@ -152712,12 +152712,12 @@
     },
     "Krosan Verge": {
       "edhrec_rank": 947,
-      "gate": "template",
+      "gate": null,
       "name": "Krosan Verge",
-      "reason": "no template for: {2}, {T}, Sacrifice this land: Search your library for a Forest card and a Plains card, pu",
+      "reason": "",
       "scryfall_id": "19fc5bec-f877-430c-8e83-e6c5fe97f3c4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Krosan Vorine": {
@@ -164872,12 +164872,12 @@
     },
     "Magmatic Insight": {
       "edhrec_rank": 6145,
-      "gate": "template",
+      "gate": null,
       "name": "Magmatic Insight",
-      "reason": "no template for: As an additional cost to cast this spell, discard a land card",
+      "reason": "",
       "scryfall_id": "7a5d6f4d-31c7-4663-8c65-e84973ae118d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Magmatic Sinkhole": {
@@ -166962,12 +166962,12 @@
     },
     "Map the Frontier": {
       "edhrec_rank": 3549,
-      "gate": "template",
+      "gate": null,
       "name": "Map the Frontier",
-      "reason": "no template for: Search your library for up to two basic land cards and/or Desert cards, put them onto the ",
+      "reason": "",
       "scryfall_id": "165f4428-e1a1-477d-bd90-138189e88163",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Map the Wastes": {
@@ -174752,12 +174752,12 @@
     },
     "Mirage Mesa": {
       "edhrec_rank": 4129,
-      "gate": "template",
+      "gate": null,
       "name": "Mirage Mesa",
-      "reason": "proxy simplified it: mana clause read loosely: 'one mana of the chosen color'",
+      "reason": "",
       "scryfall_id": "c3d2e816-c06d-4c5d-98fe-c350d8cfab27",
-      "source": "",
-      "status": "unexpressible",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mirage Mirror": {
@@ -199762,12 +199762,12 @@
     },
     "Perennial Behemoth": {
       "edhrec_rank": 4068,
-      "gate": "template",
+      "gate": null,
       "name": "Perennial Behemoth",
-      "reason": "no template for: You may play lands from your graveyard",
+      "reason": "",
       "scryfall_id": "61eac235-faf7-4e4c-94a9-9a5a041c4701",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Perfect Intimidation": {
@@ -215042,12 +215042,12 @@
     },
     "Ramunap Ruins": {
       "edhrec_rank": 3844,
-      "gate": "template",
+      "gate": null,
       "name": "Ramunap Ruins",
-      "reason": "no template for: {T}, Pay 1 life: Add {R}",
+      "reason": "",
       "scryfall_id": "39269bfc-9cc9-4ad2-add1-663ae47eb883",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ran and Shaw": {
@@ -228932,12 +228932,12 @@
     },
     "Rumbleweed": {
       "edhrec_rank": 5998,
-      "gate": "template",
+      "gate": null,
       "name": "Rumbleweed",
-      "reason": "no template for: This spell costs {1} less to cast for each land card in your graveyard",
+      "reason": "",
       "scryfall_id": "f4d33ea4-c31c-426d-9659-1fa7bdd430fa",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rumbling Aftershocks": {
@@ -234942,12 +234942,12 @@
     },
     "Scaretiller": {
       "edhrec_rank": 5352,
-      "gate": "template",
+      "gate": null,
       "name": "Scaretiller",
-      "reason": "no template for: Whenever this creature becomes tapped, choose one —",
+      "reason": "",
       "scryfall_id": "23eb0fce-2e69-4280-8ee3-85736765fbbd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Scarland Thrinax": {
@@ -243452,12 +243452,12 @@
     },
     "Shefet Dunes": {
       "edhrec_rank": 5190,
-      "gate": "template",
+      "gate": null,
       "name": "Shefet Dunes",
-      "reason": "no template for: {T}, Pay 1 life: Add {W}",
+      "reason": "",
       "scryfall_id": "c9b0a526-73b0-4501-80a3-f16dbef9cdfd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shefet Monitor": {
@@ -281632,12 +281632,12 @@
     },
     "The Mending of Dominaria": {
       "edhrec_rank": 3259,
-      "gate": "template",
+      "gate": null,
       "name": "The Mending of Dominaria",
-      "reason": "no template for: I, II — Mill two cards, then you may return a creature card from your graveyard to your ha",
+      "reason": "",
       "scryfall_id": "6887f55f-7ac0-49b3-a3ed-6cdbd0ce7fe0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Mightstone and Weakstone": {
@@ -285422,12 +285422,12 @@
     },
     "Thrilling Discovery": {
       "edhrec_rank": 4077,
-      "gate": "template",
+      "gate": null,
       "name": "Thrilling Discovery",
-      "reason": "no template for: You gain 2 life. Then you may discard two cards. If you do, draw three cards",
+      "reason": "",
       "scryfall_id": "1278b2ef-6c11-4892-9388-833f67bcc858",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thrilling Encore": {
@@ -297922,12 +297922,12 @@
     },
     "Unholy Heat": {
       "edhrec_rank": 8960,
-      "gate": "template",
+      "gate": null,
       "name": "Unholy Heat",
-      "reason": "no template for: deals 2 damage to target creature or planeswalker",
+      "reason": "",
       "scryfall_id": "8288ca17-88b2-4ad4-9918-5624543e9048",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Unholy Hunger": {
@@ -316152,12 +316152,12 @@
     },
     "Winding Way": {
       "edhrec_rank": 8140,
-      "gate": "template",
+      "gate": null,
       "name": "Winding Way",
-      "reason": "no template for: Choose creature or land. Reveal the top four cards of your library. Put all cards of the c",
+      "reason": "",
       "scryfall_id": "0c1c6256-6302-4627-bfbb-bffdc124fab4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Winding Wurm": {
@@ -318892,12 +318892,12 @@
     },
     "World Shaper": {
       "edhrec_rank": 1426,
-      "gate": "template",
+      "gate": null,
       "name": "World Shaper",
-      "reason": "no template for: Whenever this creature attacks, you may mill three cards",
+      "reason": "",
       "scryfall_id": "2a6e2897-5f9e-4227-bf31-7903482d0467",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "World War Hulk": {
@@ -319472,12 +319472,12 @@
     },
     "Wreck and Rebuild": {
       "edhrec_rank": 8767,
-      "gate": "template",
+      "gate": null,
       "name": "Wreck and Rebuild",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "a177ba01-53cd-4223-8f79-9fbeb2b86906",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wreckage Wickerfolk": {

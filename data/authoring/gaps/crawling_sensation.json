@@ -8,8 +8,8 @@
   "needs": [{
     "capability": "put_into_graveyard_from_anywhere",
     "kind": "trigger_event",
-    "what": "a trigger event that fires when one or more cards matching a filter (here: land cards, owner = you) are put into a graveyard from ANY zone -- battlefield, hand (discard), library (mill, surveil), stack -- supporting `batched: true` so one simultaneous move of several land cards triggers once, and `max_per_turn: 1` for \"for the first time each turn\"",
-    "why_existing_wont_do": "trigger_events has no generic zone-change-to-graveyard event: leaves_battlefield with to_zones [\"graveyard\"] (and dies) only sees permanents leaving the battlefield and misses milled and discarded land cards, which is what this card's own upkeep mill feeds; discard covers only the hand; leaves_graveyard is the opposite direction. The upkeep `may` + `mill` line and the insect_1_1_g token are expressible today."
+    "what": "a trigger event that fires when one or more cards matching a filter (here: land cards, owner = you) are put into a graveyard from ANY zone -- battlefield, hand (discard), library (mill, surveil), stack -- supporting `batched: true` so one simultaneous move of several land cards triggers once, and a turn-wide \"for the first time each turn\" gate read from the turn's ledger (the first such move this turn, even one that happened before this enchantment entered), which `max_per_turn: 1` only approximates as a per-permanent cap",
+    "why_existing_wont_do": "trigger_events has no generic zone-change-to-graveyard event: leaves_battlefield with to_zones [\"graveyard\"] (the loader accepts to_zones on leaves_battlefield only) and dies see only permanents leaving the battlefield and miss milled and discarded land cards, which is what this card's own upkeep mill feeds; discard covers only the hand; leaves_graveyard is the opposite direction. The upkeep `may` + `mill` line and the insect_1_1_g token are expressible today."
   }],
   "closest_existing": ["leaves_battlefield", "discard", "cards_to_graveyard_this_turn"],
   "confidence": "high"

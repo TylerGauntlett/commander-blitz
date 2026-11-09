@@ -1,0 +1,16 @@
+{
+  "card_id": "hazezon_shaper_of_sand",
+  "name": "Hazezon, Shaper of Sand",
+  "oracle_text": "Desertwalk (This creature can't be blocked as long as defending player controls a Desert.)\nYou may play Desert lands from your graveyard.\nWhenever a Desert you control enters, create two 1/1 red, green, and white Sand Warrior creature tokens.",
+  "blocked_sentences": [
+    "Desertwalk (This creature can't be blocked as long as defending player controls a Desert.)"
+  ],
+  "needs": [{
+    "capability": "desertwalk",
+    "kind": "keyword",
+    "what": "a landwalk keyword for the nonbasic land type Desert (702.14): the creature can't be blocked while the defending player controls a Desert -- a sixth row in LANDWALK_SUBTYPE (desertwalk -> Desert) plus the Keyword enum entry",
+    "why_existing_wont_do": "The keyword list carries only the five basic landwalks and nonbasic_landwalk; combat.can_block reads landwalk from LANDWALK_SUBTYPE against the defending player. A block_restriction static's `blockers` filter reads only the blocker's qualities, and a static `exists` condition can only ask whether any opponent controls a Desert, not the defending player, so it would wrongly make the creature unblockable against every opponent in multiplayer"
+  }],
+  "closest_existing": ["forestwalk", "islandwalk", "nonbasic_landwalk", "block_restriction"],
+  "confidence": "high"
+}
