@@ -47,8 +47,17 @@ def _spell_named_by(ctx: EffectContext, spec: Mapping[str, Any]):
     Returns None for a `sid` that names nothing and for a stack item that is an
     ability rather than a spell, so every caller can treat "no spell here" as
     one case.
+
+    A fourth, ``this_spell``, is the spell whose own effects are running --
+    "you may copy this spell" (Sevinne's Reclamation). It is answered from
+    `EffectContext.resolving_spell` and not from the stack: a resolving spell
+    has already left it (`stack.resolve_top`), so it is copied from that item,
+    which is its last-known targets and choices (707.10).
     """
 
+    if spec.get("this_spell"):
+        item = ctx.resolving_spell
+        return item if item is not None and item.is_spell else None
     if "sid" in spec:
         sid = evaluate_value(ctx, spec["sid"])
     elif "target" in spec:
@@ -98,6 +107,12 @@ def op_copy_spell(ctx: EffectContext, spec: Mapping[str, Any]):
 
     The question is only put when there is something to decide: a spell with no
     targets, or one whose targets cannot legally be moved, is not asked.
+
+    ``this_spell`` is "copy **this** spell" said by the resolving spell itself
+    (Sevinne's Reclamation). The copy is made as the original resolves, so a
+    countered original makes none, and it is made from the original's item --
+    the same targets, X, modes and additional costs -- but it was never cast,
+    so it was not cast from a graveyard and does not copy itself again.
 
     ``spells`` is a pool instead of one spell -- "copy **each of** those
     spells twice" (Finale of Promise), over a `cast_from_hand` binding of the

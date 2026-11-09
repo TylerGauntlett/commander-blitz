@@ -241592,12 +241592,12 @@
     },
     "Sevinne's Reclamation": {
       "edhrec_rank": 338,
-      "gate": "template",
+      "gate": null,
       "name": "Sevinne's Reclamation",
-      "reason": "no template for: Return target permanent card with mana value 3 or less from your graveyard to the battlefi",
+      "reason": "",
       "scryfall_id": "8deab1ef-4219-4767-a3c4-b61250d0ebe0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sevinne, the Chronoclasm": {

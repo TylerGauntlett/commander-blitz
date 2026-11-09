@@ -1597,6 +1597,22 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             )
         if not isinstance(effect["new_targets"], bool):
             raise DslError(f"{where}: 'new_targets' is a boolean, got {effect['new_targets']!r}")
+    if "this_spell" in effect:
+        # "You may copy this spell" said by the resolving spell itself. Only a
+        # spell's own effects have a resolving spell to name, and beside
+        # `sid`, `target` or `spells` one of the two would be read and the
+        # other ignored.
+        if op != "copy_spell":
+            raise DslError(f"{where}: 'this_spell' only applies to copy_spell, not {op!r}")
+        if effect["this_spell"] is not True:
+            raise DslError(f"{where}: 'this_spell' is true or absent, got {effect['this_spell']!r}")
+        if {"sid", "target", "spells"} & set(effect):
+            raise DslError(f"{where}: copy_spell's 'this_spell' replaces 'sid', 'target' and 'spells'")
+        if ".spell_effects[" not in where:
+            raise DslError(
+                f"{where}: 'this_spell' names the resolving spell, so it belongs in "
+                f"spell_effects; an ability has no spell of its own to copy"
+            )
     if op == "copy_spell" and "spells" in effect:
         # "Copy each of those spells": a pool, so it names the spells instead
         # of `sid` or `target` -- beside either, one of the two would be read

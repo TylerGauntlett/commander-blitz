@@ -1011,6 +1011,7 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
         modes_answered=item.modes_answered,
         source_name=card.name if card else item.description,
         source_def_id=card.id if card else "",
+        resolving_spell=item,
     )
     if card.gift is not None and card.gift_ability is None:
         # 702.174: an instant or sorcery with a promised gift gives it as it

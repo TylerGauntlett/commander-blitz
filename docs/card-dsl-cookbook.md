@@ -6763,6 +6763,33 @@ Retargeting is not a detail of one card. A copy that can only
 re-kill what the original killed is a strictly worse spell than the one printed,
 and it would look entirely normal on screen.
 
+#### "You may copy this spell" — a spell copying itself as it resolves
+
+```jsonc
+// Sevinne's Reclamation, in spell_effects after the return
+{ "op": "if", "condition": { "cast_from_graveyard": true },
+  "then": [ { "op": "may", "prompt": "Copy this spell?",
+              "effects": [ { "op": "copy_spell", "this_spell": true,
+                             "new_targets": true } ] } ] }
+```
+
+`this_spell: true` names the spell whose own `spell_effects` are running. The
+copy is an instruction in the spell's text, so it is made **on resolution**: a
+countered original makes no copy, and the copy, put on the stack while the
+original resolves, resolves after it. It copies the original's stack
+item — its last-known targets, X, modes and additional costs (707.10) — and
+`new_targets` offers the re-aim as above. The copy was never cast, so a
+`cast_from_graveyard` condition is false for it and it does not copy itself
+again.
+
+Plain `copy_spell` cannot say this: with no `sid` or `target` it copies the
+spell a `spell_cast` trigger's `sid` binding names, and the resolving spell is
+already off the stack. The cast trigger that copies storm-style (casualty,
+above) is the near miss, and it is a different card: its copy exists even if
+the original is countered. The loader refuses `this_spell` on any other op,
+beside `sid`, `target` or `spells`, as anything but `true`, and outside
+`spell_effects`.
+
 #### Demonstrate — "choose an opponent to **also** copy it"
 
 ```jsonc

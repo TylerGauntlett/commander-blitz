@@ -186,7 +186,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `add_mana_per` | Mana |  | Add one mana of a color for each object a selector finds. | ["Add {G} for each …"](card-dsl-cookbook.md#add-g-for-each-) |
 | `extra_land_drop` | Mana |  | A player may play an additional land this turn. | [Effect ops](card-dsl.md#effect-ops) |
 | `copy_ability` | Stack |  | Copy an activated or triggered ability; `new_targets` re-aims it. | [Effect ops](card-dsl.md#effect-ops) |
-| `copy_spell` | Stack |  | Copy a spell, or with `spells` each spell in a pool; `new_targets` lets the copy be re-aimed. | ["You may choose new targets for the copy"](card-dsl-cookbook.md#you-may-choose-new-targets-for-the-copy) |
+| `copy_spell` | Stack |  | Copy a spell, or with `spells` each spell in a pool, or with `this_spell` the spell resolving; `new_targets` lets the copy be re-aimed. | ["You may choose new targets for the copy"](card-dsl-cookbook.md#you-may-choose-new-targets-for-the-copy) |
 | `counter` | Stack | yes | Counter a spell or ability; `exiles` sends a spell it countered to exile instead of its owner's graveyard, `as` binds the cards it countered. | ["If that spell is countered this way, exile it instead"](card-dsl.md#if-that-spell-is-countered-this-way-exile-it-instead) |
 | `exile_spell_on_resolution` | Stack |  | A spell is exiled as it resolves instead of binned, linked to this source. | [Plot](card-dsl.md#plot) |
 | `grant_plot` | Stack |  | Plot a card: exile it, castable free on a later turn. | [Plot](card-dsl.md#plot) |

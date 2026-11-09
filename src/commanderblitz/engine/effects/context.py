@@ -74,6 +74,13 @@ class EffectContext:
     #: All-Devouring's 'Other creatures have "…fight Grothama"' names the
     #: granter from inside an ability whose ``self`` is the recipient.
     granted_by: int | None = None
+    #: The spell whose ``spell_effects`` are running -- its `StackItem`, which
+    #: `stack.resolve_top` has already taken off the stack -- or ``None`` for an
+    #: ability. Read by ``copy_spell``'s ``this_spell``: "copy this spell" said
+    #: by the resolving spell itself (Sevinne's Reclamation) copies it from the
+    #: item's last-known targets and choices (707.10), and a stack lookup by
+    #: `sid` would find nothing.
+    resolving_spell: Any = None
 
     def __post_init__(self) -> None:
         if self.began_at < 0:

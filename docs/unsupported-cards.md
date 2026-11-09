@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**282 cards** blocked by **262** capabilities.
+**281 cards** blocked by **261** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -97,7 +97,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [copy-all-on-stack](#copy-all-on-stack) | 1 | 4558 | op |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
 | [copy-spell-forced-target](#copy-spell-forced-target) | 1 | 13586 | op |
-| [copy-this-spell-on-resolution](#copy-this-spell-on-resolution) | 1 | 338 | op |
 | [cost-reduction-per-attacker-this-turn](#cost-reduction-per-attacker-this-turn) | 1 | 9578 | value |
 | [coven](#coven) | 1 | 1129 | value |
 | [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
@@ -1824,20 +1823,6 @@ Blocks **1** card.
 
 - **Exterminator Magmarch** (rank 13586) — `exterminator_magmarch`
   - Whenever you cast an instant or sorcery spell that targets only a single nonland permanent an opponent controls, if another opponent controls one or more nonland permanents that spell could target, choose one of those permanents. Copy that spell. The copy targets the chosen permanent.
-
-</details>
-
-## copy-this-spell-on-resolution
-
-Blocks **1** card.
-
-- **(op)** a way for a resolving instant or sorcery's own spell_effects to copy that same spell ("you may copy this spell and may choose a new target for the copy"), with new_targets: copy_spell must be able to name the spell currently resolving, which stack.resolve_top has already popped off the stack before _resolve_spell runs its effects
-  <br>Why the existing vocabulary won't do: copy_spell (sid, target, new_targets) finds its original through _spell_named_by -> state.stack_item(sid), and the resolving spell is no longer on the stack (resolve_top pops it first), nor does the resolution context bind its own sid -- so a copy_spell inside spell_effects copies nothing. The cast_from_graveyard condition itself works. Moving the copy to a spell_cast trigger (the storm shape) would be a different card: the copy would exist even if the original is countered, and it would be made at cast rather than at resolution
-
-<details><summary>Cards waiting on this</summary>
-
-- **Sevinne's Reclamation** (rank 338) — `sevinne_s_reclamation`
-  - If this spell was cast from a graveyard, you may copy this spell and may choose a new target for the copy.
 
 </details>
 

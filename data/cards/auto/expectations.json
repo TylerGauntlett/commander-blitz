@@ -16425,6 +16425,13 @@
   "severed_legion": {
     "zone": "battlefield"
   },
+  "sevinne_s_reclamation": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "zone": "graveyard"
+  },
   "sewn_eye_drake": {
     "zone": "battlefield"
   },

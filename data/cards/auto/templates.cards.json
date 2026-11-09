@@ -194074,6 +194074,78 @@
     },
     {
       "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "flashback": {
+        "mana": "{4}{W}"
+      },
+      "id": "sevinne_s_reclamation",
+      "mana_cost": "{2}{W}",
+      "name": "Sevinne's Reclamation",
+      "oracle_text": "Return target permanent card with mana value 3 or less from your graveyard to the battlefield. If this spell was cast from a graveyard, you may copy this spell and may choose a new target for the copy.\nFlashback {4}{W} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "destination": "battlefield",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "return_from_graveyard"
+        },
+        {
+          "condition": {
+            "cast_from_graveyard": true
+          },
+          "op": "if",
+          "then": [
+            {
+              "effects": [
+                {
+                  "new_targets": true,
+                  "op": "copy_spell",
+                  "this_spell": true
+                }
+              ],
+              "op": "may",
+              "prompt": "Copy Sevinne's Reclamation?"
+            }
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Creature",
+              "Enchantment",
+              "Land",
+              "Planeswalker",
+              "Battle"
+            ],
+            "controller": "you",
+            "mana_value": {
+              "op": "<=",
+              "value": {
+                "const": 3
+              }
+            },
+            "zone": "graveyard"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "B",
         "R",
         "U"
