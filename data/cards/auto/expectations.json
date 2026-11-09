@@ -5097,6 +5097,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "drowner_of_hope": {
+    "battlefield_count": 35,
+    "tokens": {
+      "count": 2,
+      "id": "eldrazi_scion_1_1_c"
+    },
+    "zone": "battlefield"
+  },
   "drownyard_temple": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -5289,6 +5297,9 @@
       "0": 1
     },
     "zone": "battlefield"
+  },
+  "eldrazi_confluence": {
+    "zone": "graveyard"
   },
   "eldrazi_conscription": {
     "target_pt_delta": {
@@ -16447,6 +16458,10 @@
     },
     "zone": "battlefield"
   },
+  "sifter_of_skulls": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sighted_caste_sorcerer": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -17079,6 +17094,14 @@
       "amount": 1,
       "kind": "+1/+1"
     },
+    "zone": "battlefield"
+  },
+  "spawnbed_protector": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "spawning_bed": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "speaker_of_the_heavens": {
@@ -20920,6 +20943,11 @@
   },
   "warped_landscape": {
     "zone": "battlefield"
+  },
+  "warping_wail": {
+    "battlefield_count": 32,
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
   },
   "warriors_of_wakanda": {
     "zone": "battlefield"

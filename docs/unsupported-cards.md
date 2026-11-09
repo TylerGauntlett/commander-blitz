@@ -10,18 +10,17 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**306 cards** blocked by **269** capabilities.
+**300 cards** blocked by **268** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [put-into-graveyard-from-anywhere](#put-into-graveyard-from-anywhere) | 9 | 256 | trigger_event |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
-| [eldrazi-scion-token](#eldrazi-scion-token) | 7 | 2044 | token |
 | [rooms](#rooms) | 6 | 4163 | engine |
+| [copy-exception-set-subtypes](#copy-exception-set-subtypes) | 5 | 1740 | engine, op |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
-| [copy-exception-set-subtypes](#copy-exception-set-subtypes) | 4 | 1740 | engine, op |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 4 | 2389 | engine |
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 4 | 714 | engine |
 | [station](#station) | 4 | 1695 | engine |
@@ -101,7 +100,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [copy-all-on-stack](#copy-all-on-stack) | 1 | 4558 | op |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
-| [copy-set-subtypes](#copy-set-subtypes) | 1 | 4038 | op |
 | [copy-spell-forced-target](#copy-spell-forced-target) | 1 | 13586 | op |
 | [copy-this-spell-on-resolution](#copy-this-spell-on-resolution) | 1 | 338 | op |
 | [cost-reduction-per-attacker-this-turn](#cost-reduction-per-attacker-this-turn) | 1 | 9578 | value |
@@ -122,6 +120,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [dragon-egg-0-2-r-defender-token](#dragon-egg-0-2-r-defender-token) | 1 | 3556 | token |
 | [each-player-chooses-color](#each-player-chooses-color) | 1 | 3587 | op |
 | [echo](#echo) | 1 | 961 | keyword |
+| [eldrazi-scion-token](#eldrazi-scion-token) | 1 | 10435 | token |
 | [elemental-1-1-r](#elemental-1-1-r) | 1 | 811 | token |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
@@ -144,6 +143,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exiled-this-way-lki](#exiled-this-way-lki) | 1 | 6960 | value |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [face-down-counters-pt](#face-down-counters-pt) | 1 | 6774 | engine |
+| [face-down-exile-controller-may-look](#face-down-exile-controller-may-look) | 1 | 1073 | op |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
 | [filtered-discard](#filtered-discard) | 1 | 9279 | op |
 | [first-mate-ragavan](#first-mate-ragavan) | 1 | 7016 | token |
@@ -253,7 +253,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
-| [spirit-2-2-c](#spirit-2-2-c) | 1 | 1073 | token |
 | [stack-wipe](#stack-wipe) | 1 | 8784 | op |
 | [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
@@ -447,44 +446,6 @@ Blocks **8** cards.
 
 </details>
 
-## eldrazi-scion-token
-
-Blocks **7** cards.
-
-- **(token)** a 1/1 colorless Eldrazi Scion creature token with "Sacrifice this token: Add {C}." (e.g. id eldrazi_scion_1_1_c)
-  <br>Why the existing vocabulary won't do: token_ids has eldrazi_spawn_0_1_c (a 0/1 Eldrazi Spawn with the same mana ability) but no Eldrazi Scion; a 0/1 Spawn is not a 1/1 Scion and would also not be matched by the card's own 'Sacrifice an Eldrazi Scion' cost. The rest of the card is expressible: Devoid is colors: [], and the last line is an activated ability with cost sacrifice {subtypes: [Eldrazi, Scion]} and a tap op on a creature target.
-- **(token)** a 1/1 colorless Eldrazi Scion creature token with "Sacrifice this token: Add {C}."
-  <br>Why the existing vocabulary won't do: token_ids has eldrazi_spawn_0_1_c (a 0/1 Eldrazi Spawn with the same mana ability) but no 1/1 Eldrazi Scion; a Spawn differs in toughness, power and creature type, so substituting it is a different card
-- **(token)** a 1/1 colorless Eldrazi Scion creature token with "Sacrifice this token: Add {C}." (e.g. id eldrazi_scion_1_1_c)
-  <br>Why the existing vocabulary won't do: token_ids has eldrazi_spawn_0_1_c (a 0/1 Eldrazi Spawn with the same mana ability) but no Eldrazi Scion; a 0/1 Spawn is not a 1/1 Scion. The rest of the card is expressible: Devoid is colors: [], and the trigger is a creature_dies trigger with filter {controller: you, types: [Creature], is_token: false, exclude_self: true} creating the token.
-- **(token)** a 1/1 colorless Eldrazi Scion creature token with "Sacrifice this token: Add {C}." (e.g. id eldrazi_scion_1_1_c)
-  <br>Why the existing vocabulary won't do: token_ids has eldrazi_spawn_0_1_c (a 0/1 Eldrazi Spawn with the same mana ability) but no Eldrazi Scion; a 0/1 Spawn is not a 1/1 Scion. The rest of the card (end_step trigger with an up-to-one graveyard target of an Eldrazi creature card, return_to_hand) is expressible once the token exists
-- **(token)** a 1/1 colorless Eldrazi Scion creature token with "Sacrifice this token: Add {C}." (e.g. id eldrazi_scion_1_1_c)
-  <br>Why the existing vocabulary won't do: token_ids has eldrazi_spawn_0_1_c (a 0/1 Eldrazi Spawn with the same mana ability) but no Eldrazi Scion; a 0/1 Spawn is not a 1/1 Scion. The rest of the line (cost {6} + tap + sacrifice self, create_token amount 3) is expressible once the token exists
-- **(token)** a 1/1 colorless Eldrazi Scion creature token with "Sacrifice this token: Add {C}."
-  <br>Why the existing vocabulary won't do: token_ids has eldrazi_spawn_0_1_c (a 0/1 Spawn with the same mana ability) but no 1/1 Eldrazi Scion; substituting the Spawn would make the wrong creature
-- **(token)** a 1/1 colorless Eldrazi Scion creature token with "Sacrifice this token: Add {C}." (e.g. id eldrazi_scion_1_1_c)
-  <br>Why the existing vocabulary won't do: token_ids has eldrazi_spawn_0_1_c (a 0/1 Eldrazi Spawn with the same mana ability) but no Eldrazi Scion; a 0/1 Spawn is not a 1/1 Scion. The rest of the card is expressible: a top-level choose_mode with mode-owned targets, an exile of a creature target whose selector is any_of [{power <= 1}, {toughness <= 1}], and a counter of a spell target with types [Sorcery].
-
-<details><summary>Cards waiting on this</summary>
-
-- **Warping Wail** (rank 2044) — `warping_wail`
-  - • Create a 1/1 colorless Eldrazi Scion creature token. It has "Sacrifice this token: Add {C}."
-- **Eldrazi Confluence** (rank 2655) — `eldrazi_confluence`
-  - • Create a 1/1 colorless Eldrazi Scion creature token with "Sacrifice this token: Add {C}."
-- **Spawnbed Protector** (rank 2973) — `spawnbed_protector`
-  - Create two 1/1 colorless Eldrazi Scion creature tokens with "Sacrifice this token: Add {C}."
-- **Sifter of Skulls** (rank 3512) — `sifter_of_skulls`
-  - Whenever another nontoken creature you control dies, create a 1/1 colorless Eldrazi Scion creature token. It has "Sacrifice this token: Add {C}."
-- **Spawning Bed** (rank 4532) — `spawning_bed`
-  - {6}, {T}, Sacrifice this land: Create three 1/1 colorless Eldrazi Scion creature tokens. They have "Sacrifice this token: Add {C}."
-- **Drowner of Hope** (rank 7751) — `drowner_of_hope`
-  - When this creature enters, create two 1/1 colorless Eldrazi Scion creature tokens. They have "Sacrifice this token: Add {C}."
-- **Vile Redeemer** (rank 10435) — `vile_redeemer`
-  - When you cast this spell, you may pay {C}. If you do, create a 1/1 colorless Eldrazi Scion creature token for each nontoken creature that died under your control this turn. Those tokens have "Sacrifice this token: Add {C}."
-
-</details>
-
 ## rooms
 
 Blocks **6** cards.
@@ -528,6 +489,36 @@ Blocks **6** cards.
   - When you unlock this door, manifest dread, then put two +1/+1 counters and a trample counter on that creature.
   - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
   - Whenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it.
+
+</details>
+
+## copy-exception-set-subtypes
+
+Blocks **5** cards.
+
+- **(op)** a copy_permanent except_ key that REPLACES the copy's subtypes ("except ... it's a colorless Eldrazi creature": per 205.1b the token's creature types become exactly Eldrazi, losing the copied creature's own creature types), alongside the existing colors/types/power/toughness overrides read in characteristics._compute
+  <br>Why the existing vocabulary won't do: COPY_EXCEPT_KEYS (cards/loader/effects.py) has colors: [] for colorless, types: [Creature], and power/toughness as value expressions (summable via power_of {objects: {binding: chosen}} over an accumulating choose_permanents binding inside for_each_player each_opponent), but for subtypes only add_subtypes, which unions Eldrazi onto the copied creature's types -- a copy of a Human Wizard would stay a Human Wizard Eldrazi, a subtly different card for tribal interactions. The rest of the line (spell_cast self trigger on the stack, per-opponent choice, choosing one of the chosen to copy) is expressible.
+- **(op)** a copy_permanent `except_` key that REPLACES the copy's subtypes (e.g. `subtypes: ["Zombie"]`), so the token is a Zombie instead of its other creature types (205.1a; Gatherer ruling: "The token is a Zombie instead of its other creature types"), keeping its card types and mana cost
+  <br>Why the existing vocabulary won't do: copy_permanent's except_ (applied in characteristics._compute via copy_overrides) supports power, toughness, colors, add_subtypes, types, add_types, add_supertypes, remove_supertypes and no_mana_cost. add_subtypes is eternalize's additive shape ("Zombie Snake Wizard"), which would leave the copied creature types on the token; `types` replaces card types only. The rest of the card (begin_combat trigger, may + exile with `as`, copy_permanent from exile, grant_keyword haste on the token binding) is expressible.
+- **(engine)** A copy exception (copy_permanent `except_`) that REPLACES the copied card's creature types with the printed ones -- "except it's a 4/4 black Zombie" without "in addition to its other types" makes the token a Zombie and nothing else (205.1b, 707.9b), e.g. an `except_.subtypes: ["Zombie"]` override read in characteristics._compute beside `colors`, `power` and `toughness`
+  <br>Why the existing vocabulary won't do: The rest is expressible: a `discard` trigger with `controller: you` and `filter: {types: [Creature]}`, a `may` with `pay: {mana: {2}{U}}`, and `copy_permanent` on `{binding: subject, zone: graveyard}` with `tapped: true` and `except_` power 4 / toughness 4 / colors [B]. But the only creature-type key `copy_overrides` honours is `add_subtypes` (eternalize's 'Zombie in addition to its other types'); `types` replaces card types only and keeps subtypes. Using `add_subtypes` would leave a discarded Elf Warrior an Elf Warrior Zombie, a different card for every tribal interaction
+- **(op)** a copy_permanent `except_` key that REPLACES the copy's creature subtypes (e.g. `subtypes: ["Zombie"]`), so the token is a 4/4 black Zombie instead of its other creature types (205.1a), keeping its card types and mana cost
+  <br>Why the existing vocabulary won't do: copy_permanent's except_ (applied via copy_overrides in characteristics) supports power, toughness, colors, add_subtypes, types, add_types, add_supertypes, remove_supertypes and no_mana_cost; add_subtypes is eternalize's additive shape and would leave the copied creature types on the token, and `types` replaces card types only. The rest of the line (X mana cost, sacrifice-a-Desert cost, exile from graveyard, copy from exile, sorcery_speed_only) and the sacrifice-a-creature mana ability look expressible. Same capability as the_scarab_god and god_pharaoh_s_gift
+- **(op)** a copy_permanent except_ key that replaces the copy's creature subtypes rather than adding to them
+  <br>Why the existing vocabulary won't do: copy_permanent's except_ carries add_subtypes, which keeps the copied card's creature types; 'except it's a 4/4 black Zombie' with no 'in addition to its other types' makes the token a Zombie instead of its other creature types (205.1a), and the types override replaces card types only. Same capability as god_pharaoh_s_gift
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Scarab God** (rank 1740) — `the_scarab_god`
+  - {2}{U}{B}: Exile target creature card from a graveyard. Create a token that's a copy of it, except it's a 4/4 black Zombie.
+- **Lazotep Quarry** (rank 1937) — `lazotep_quarry`
+  - {X}{2}, {T}, Sacrifice a Desert: Exile target creature card with mana value X from your graveyard. Create a token that's a copy of it, except it's a 4/4 black Zombie. Activate only as a sorcery.
+- **Hashaton, Scarab's Fist** (rank 3525) — `hashaton_scarab_s_fist`
+  - Whenever you discard a creature card, you may pay {2}{U}. If you do, create a tapped token that's a copy of that card, except it's a 4/4 black Zombie.
+- **Benthic Anomaly** (rank 4038) — `benthic_anomaly`
+  - When you cast this spell, for each opponent, choose a creature that player controls. Create a token that's a copy of one of those creatures, except its power is equal to the total power of those creatures, its toughness is equal to the total toughness of those creatures, and it's a colorless Eldrazi creature.
+- **God-Pharaoh's Gift** (rank 8873) — `god_pharaoh_s_gift`
+  - If you do, create a token that's a copy of that card, except it's a 4/4 black Zombie.
 
 </details>
 
@@ -596,32 +587,6 @@ Blocks **5** cards.
   - Whenever you cast your first spell with {X} in its mana cost each turn, put X +1/+1 counters on Nev.
 - **Lattice Library** (rank 10607) — `lattice_library`
   - When this enchantment enters and whenever you cast your first spell with {X} in its mana cost each turn, create a 0/0 green and blue Fractal creature token. Put a number of +1/+1 counters on it equal to the number of study counters on this enchantment.
-
-</details>
-
-## copy-exception-set-subtypes
-
-Blocks **4** cards.
-
-- **(op)** a copy_permanent `except_` key that REPLACES the copy's subtypes (e.g. `subtypes: ["Zombie"]`), so the token is a Zombie instead of its other creature types (205.1a; Gatherer ruling: "The token is a Zombie instead of its other creature types"), keeping its card types and mana cost
-  <br>Why the existing vocabulary won't do: copy_permanent's except_ (applied in characteristics._compute via copy_overrides) supports power, toughness, colors, add_subtypes, types, add_types, add_supertypes, remove_supertypes and no_mana_cost. add_subtypes is eternalize's additive shape ("Zombie Snake Wizard"), which would leave the copied creature types on the token; `types` replaces card types only. The rest of the card (begin_combat trigger, may + exile with `as`, copy_permanent from exile, grant_keyword haste on the token binding) is expressible.
-- **(engine)** A copy exception (copy_permanent `except_`) that REPLACES the copied card's creature types with the printed ones -- "except it's a 4/4 black Zombie" without "in addition to its other types" makes the token a Zombie and nothing else (205.1b, 707.9b), e.g. an `except_.subtypes: ["Zombie"]` override read in characteristics._compute beside `colors`, `power` and `toughness`
-  <br>Why the existing vocabulary won't do: The rest is expressible: a `discard` trigger with `controller: you` and `filter: {types: [Creature]}`, a `may` with `pay: {mana: {2}{U}}`, and `copy_permanent` on `{binding: subject, zone: graveyard}` with `tapped: true` and `except_` power 4 / toughness 4 / colors [B]. But the only creature-type key `copy_overrides` honours is `add_subtypes` (eternalize's 'Zombie in addition to its other types'); `types` replaces card types only and keeps subtypes. Using `add_subtypes` would leave a discarded Elf Warrior an Elf Warrior Zombie, a different card for every tribal interaction
-- **(op)** a copy_permanent `except_` key that REPLACES the copy's creature subtypes (e.g. `subtypes: ["Zombie"]`), so the token is a 4/4 black Zombie instead of its other creature types (205.1a), keeping its card types and mana cost
-  <br>Why the existing vocabulary won't do: copy_permanent's except_ (applied via copy_overrides in characteristics) supports power, toughness, colors, add_subtypes, types, add_types, add_supertypes, remove_supertypes and no_mana_cost; add_subtypes is eternalize's additive shape and would leave the copied creature types on the token, and `types` replaces card types only. The rest of the line (X mana cost, sacrifice-a-Desert cost, exile from graveyard, copy from exile, sorcery_speed_only) and the sacrifice-a-creature mana ability look expressible. Same capability as the_scarab_god and god_pharaoh_s_gift
-- **(op)** a copy_permanent except_ key that replaces the copy's creature subtypes rather than adding to them
-  <br>Why the existing vocabulary won't do: copy_permanent's except_ carries add_subtypes, which keeps the copied card's creature types; 'except it's a 4/4 black Zombie' with no 'in addition to its other types' makes the token a Zombie instead of its other creature types (205.1a), and the types override replaces card types only. Same capability as god_pharaoh_s_gift
-
-<details><summary>Cards waiting on this</summary>
-
-- **The Scarab God** (rank 1740) — `the_scarab_god`
-  - {2}{U}{B}: Exile target creature card from a graveyard. Create a token that's a copy of it, except it's a 4/4 black Zombie.
-- **Lazotep Quarry** (rank 1937) — `lazotep_quarry`
-  - {X}{2}, {T}, Sacrifice a Desert: Exile target creature card with mana value X from your graveyard. Create a token that's a copy of it, except it's a 4/4 black Zombie. Activate only as a sorcery.
-- **Hashaton, Scarab's Fist** (rank 3525) — `hashaton_scarab_s_fist`
-  - Whenever you discard a creature card, you may pay {2}{U}. If you do, create a tapped token that's a copy of that card, except it's a 4/4 black Zombie.
-- **God-Pharaoh's Gift** (rank 8873) — `god_pharaoh_s_gift`
-  - If you do, create a token that's a copy of that card, except it's a 4/4 black Zombie.
 
 </details>
 
@@ -1969,20 +1934,6 @@ Blocks **1** card.
 
 </details>
 
-## copy-set-subtypes
-
-Blocks **1** card.
-
-- **(op)** a copy_permanent except_ key that REPLACES the copy's subtypes ("except ... it's a colorless Eldrazi creature": per 205.1b the token's creature types become exactly Eldrazi, losing the copied creature's own creature types), alongside the existing colors/types/power/toughness overrides read in characteristics._compute
-  <br>Why the existing vocabulary won't do: COPY_EXCEPT_KEYS (cards/loader/effects.py) has colors: [] for colorless, types: [Creature], and power/toughness as value expressions (summable via power_of {objects: {binding: chosen}} over an accumulating choose_permanents binding inside for_each_player each_opponent), but for subtypes only add_subtypes, which unions Eldrazi onto the copied creature's types -- a copy of a Human Wizard would stay a Human Wizard Eldrazi, a subtly different card for tribal interactions. The rest of the line (spell_cast self trigger on the stack, per-opponent choice, choosing one of the chosen to copy) is expressible.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Benthic Anomaly** (rank 4038) — `benthic_anomaly`
-  - When you cast this spell, for each opponent, choose a creature that player controls. Create a token that's a copy of one of those creatures, except its power is equal to the total power of those creatures, its toughness is equal to the total toughness of those creatures, and it's a colorless Eldrazi creature.
-
-</details>
-
 ## copy-spell-forced-target
 
 Blocks **1** card.
@@ -2264,6 +2215,20 @@ Blocks **1** card.
 
 - **Karmic Guide** (rank 961) — `karmic_guide`
   - Echo {3}{W}{W} (At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.)
+
+</details>
+
+## eldrazi-scion-token
+
+Blocks **1** card.
+
+- **(token)** a 1/1 colorless Eldrazi Scion creature token with "Sacrifice this token: Add {C}."
+  <br>Why the existing vocabulary won't do: token_ids has eldrazi_spawn_0_1_c (a 0/1 Spawn with the same mana ability) but no 1/1 Eldrazi Scion; substituting the Spawn would make the wrong creature
+
+<details><summary>Cards waiting on this</summary>
+
+- **Vile Redeemer** (rank 10435) — `vile_redeemer`
+  - When you cast this spell, you may pay {C}. If you do, create a 1/1 colorless Eldrazi Scion creature token for each nontoken creature that died under your control this turn. Those tokens have "Sacrifice this token: Add {C}."
 
 </details>
 
@@ -2577,6 +2542,20 @@ Blocks **1** card.
 
 - **Curator Beastie** (rank 6774) — `curator_beastie`
   - Colorless creatures you control enter with two additional +1/+1 counters on them.
+
+</details>
+
+## face-down-exile-controller-may-look
+
+Blocks **1** card.
+
+- **(op)** an option on look_at_top (destination exile, face_down) -- e.g. `look: true` -- that exiles the card face down but adds the effect's controller to the card's `revealed_to`, so it is hidden from everyone except the player who exiled it ("exile ... face down and look at it")
+  <br>Why the existing vocabulary won't do: look_at_top's `face_down` (ops_cards._move_found) sets `hidden_in_exile` and leaves `revealed_to` empty, the controller included -- that is Necropotence, which does not let you look. The only exception it makes is for a `playable_by` permission, and Ugin grants no play permission. `hideaway` does write `revealed_to.add(pid)` but takes a choice from the top N and bottoms the rest, which is a different action. Exiling without `face_down` would show the card to the whole table. Everything else on the line is expressible: look_at_top amount 1, destination exile, face_down, `as: "ugin_exiled"`; create_token spirit_2_2_c with `as: "ugin_spirit"`; delayed_trigger duration until_it_fires, trigger {event: leaves_battlefield, subject: {binding: ugin_spirit}}, effects return_to_hand {binding: ugin_exiled} (bindings are captured at creation, and departure-watching delayed triggers are supported via triggers.delayed_watches_departure). The static (spell_cost_reduction on colorless spells) and the -3 (destroy target permanent with min_colors 1) are expressible too.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ugin, the Ineffable** (rank 1073) — `ugin_the_ineffable`
+  - +1: Exile the top card of your library face down and look at it. Create a 2/2 colorless Spirit creature token. When that token leaves the battlefield, put the exiled card into your hand.
 
 </details>
 
@@ -4133,20 +4112,6 @@ Blocks **1** card.
 - **Mindbreak Trap** (rank 539) — `mindbreak_trap`
   - If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.
   - Exile any number of target spells.
-
-</details>
-
-## spirit-2-2-c
-
-Blocks **1** card.
-
-- **(token)** a 2/2 colorless Spirit creature token (no abilities; not an artifact)
-  <br>Why the existing vocabulary won't do: token_ids has spirit_1_1_c (1/1 colorless Spirit) and spirit_2_2_w (2/2 white Spirit), neither of which is a 2/2 colorless Spirit; substituting either changes the token's size or color, and color matters to Ugin's own -3 and to colorless-matters effects. The rest of the line looks sayable once the token exists: look_at_top amount 1 with destination exile, face_down and `as`, create_token with `as`, then a delayed_trigger (duration until_it_fires, trigger event leaves_battlefield with subject bound to the token) whose effect returns the bound exiled card to hand -- the worker who closes the token should verify the delayed trigger can read the exile binding.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ugin, the Ineffable** (rank 1073) — `ugin_the_ineffable`
-  - +1: Exile the top card of your library face down and look at it. Create a 2/2 colorless Spirit creature token. When that token leaves the battlefield, put the exiled card into your hand.
 
 </details>
 

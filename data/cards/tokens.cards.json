@@ -1101,6 +1101,44 @@
       ]
     },
     {
+      "id": "eldrazi_scion_1_1_c",
+      "name": "Eldrazi Scion Token",
+      "oracle_text": "1/1 colorless Eldrazi Scion creature token with \"Sacrifice this token: Add {C}.\"",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Eldrazi",
+        "Scion"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Sacrifice this token: Add {C}.",
+          "is_mana_ability": true,
+          "cost": {
+            "sacrifice": {
+              "zone": "battlefield",
+              "controller": "you",
+              "self_only": true,
+              "count": 1
+            }
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{C}"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "elemental_1_1_ur",
       "name": "Elemental Token",
       "oracle_text": "1/1 blue and red Elemental creature token.",
@@ -3311,6 +3349,22 @@
       ],
       "power": 1,
       "toughness": 1,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true
+    },
+    {
+      "id": "spirit_2_2_c",
+      "name": "Spirit Token",
+      "oracle_text": "2/2 colorless Spirit creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Spirit"
+      ],
+      "power": 2,
+      "toughness": 2,
       "colors": [],
       "color_identity": [],
       "is_token": true

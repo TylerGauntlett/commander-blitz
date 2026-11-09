@@ -60257,6 +60257,79 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "create_token",
+              "token": "eldrazi_scion_1_1_c"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, create two 1/1 colorless Eldrazi Scion creature tokens. They have \"Sacrifice this token: Add {C}.\"",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "subtypes": [
+                "Scion"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "tap"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Sacrifice an Eldrazi Scion: Tap target creature."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "id": "drowner_of_hope",
+      "mana_cost": "{5}{U}",
+      "name": "Drowner of Hope",
+      "oracle_text": "Devoid (This card has no color.)\nWhen this creature enters, create two 1/1 colorless Eldrazi Scion creature tokens. They have \"Sacrifice this token: Add {C}.\"\nSacrifice an Eldrazi Scion: Tap target creature.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Eldrazi"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -62585,6 +62658,104 @@
       "toughness": 6,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [],
+      "colors": [],
+      "id": "eldrazi_confluence",
+      "mana_cost": "{2}{C}{C}",
+      "name": "Eldrazi Confluence",
+      "oracle_text": "Choose three. You may choose the same mode more than once.\n• Target creature gets +3/-3 until end of turn.\n• Exile target nonland permanent, then return it to the battlefield tapped under its owner's control.\n• Create a 1/1 colorless Eldrazi Scion creature token with \"Sacrifice this token: Add {C}.\"",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 3,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "pumped"
+                  },
+                  "op": "pump",
+                  "power": {
+                    "const": 3
+                  },
+                  "toughness": {
+                    "const": -3
+                  }
+                }
+              ],
+              "label": "Target creature gets +3/-3 until end of turn."
+            },
+            {
+              "effects": [
+                {
+                  "as": "displaced",
+                  "objects": {
+                    "target": "blinked"
+                  },
+                  "op": "exile"
+                },
+                {
+                  "objects": {
+                    "binding": "displaced",
+                    "zone": "exile"
+                  },
+                  "op": "put_onto_battlefield",
+                  "tapped": true
+                }
+              ],
+              "label": "Exile target nonland permanent, then return it to the battlefield tapped under its owner's control."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "create_token",
+                  "token": "eldrazi_scion_1_1_c"
+                }
+              ],
+              "label": "Create a 1/1 colorless Eldrazi Scion creature token with \"Sacrifice this token: Add {C}.\""
+            }
+          ],
+          "op": "choose_mode",
+          "repeatable": true
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "pumped",
+          "kind": "permanent",
+          "mode": 0,
+          "selector": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "blinked",
+          "kind": "permanent",
+          "mode": 1,
+          "selector": {
+            "controller": "any",
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -194595,6 +194766,45 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "eldrazi_scion_1_1_c"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another nontoken creature you control dies, create a 1/1 colorless Eldrazi Scion creature token. It has \"Sacrifice this token: Add {C}.\"",
+          "trigger": {
+            "controller": "you",
+            "event": "creature_dies",
+            "filter": {
+              "exclude_self": true,
+              "is_token": false
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [],
+      "id": "sifter_of_skulls",
+      "mana_cost": "{3}{B}",
+      "name": "Sifter of Skulls",
+      "oracle_text": "Devoid (This card has no color.)\nWhenever another nontoken creature you control dies, create a 1/1 colorless Eldrazi Scion creature token. It has \"Sacrifice this token: Add {C}.\" ({C} represents colorless mana.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Eldrazi"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "mana": "{U}"
           },
@@ -201764,6 +201974,117 @@
       "toughness": 0,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "destination": "hand",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            },
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "create_token",
+              "token": "eldrazi_scion_1_1_c"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "optional": true,
+              "selector": {
+                "controller": "you",
+                "subtypes": [
+                  "Eldrazi"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "At the beginning of your end step, return up to one target Eldrazi creature card from your graveyard to your hand. Create two 1/1 colorless Eldrazi Scion creature tokens with \"Sacrifice this token: Add {C}.\"",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "spawnbed_protector",
+      "mana_cost": "{7}",
+      "name": "Spawnbed Protector",
+      "oracle_text": "At the beginning of your end step, return up to one target Eldrazi creature card from your graveyard to your hand. Create two 1/1 colorless Eldrazi Scion creature tokens with \"Sacrifice this token: Add {C}.\"",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Eldrazi"
+      ],
+      "toughness": 8,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{6}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "create_token",
+              "token": "eldrazi_scion_1_1_c"
+            }
+          ],
+          "kind": "activated",
+          "text": "{6}, {T}, Sacrifice this land: Create three 1/1 colorless Eldrazi Scion creature tokens. They have \"Sacrifice this token: Add {C}.\""
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "spawning_bed",
+      "name": "Spawning Bed",
+      "oracle_text": "{T}: Add {C}.\n{6}, {T}, Sacrifice this land: Create three 1/1 colorless Eldrazi Scion creature tokens. They have \"Sacrifice this token: Add {C}.\"",
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -248334,6 +248655,98 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [],
+      "colors": [],
+      "id": "warping_wail",
+      "mana_cost": "{1}{C}",
+      "name": "Warping Wail",
+      "oracle_text": "({C} represents colorless mana.)\nChoose one —\n• Exile target creature with power or toughness 1 or less.\n• Counter target sorcery spell.\n• Create a 1/1 colorless Eldrazi Scion creature token. It has \"Sacrifice this token: Add {C}.\"",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "wailed"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "label": "Exile target creature with power or toughness 1 or less."
+            },
+            {
+              "effects": [
+                {
+                  "op": "counter",
+                  "target": "countered"
+                }
+              ],
+              "label": "Counter target sorcery spell."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "create_token",
+                  "player": "you",
+                  "token": "eldrazi_scion_1_1_c"
+                }
+              ],
+              "label": "Create a 1/1 colorless Eldrazi Scion creature token. It has \"Sacrifice this token: Add {C}.\""
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "wailed",
+          "kind": "permanent",
+          "mode": 0,
+          "selector": {
+            "any_of": [
+              {
+                "power": {
+                  "op": "<=",
+                  "value": 1
+                }
+              },
+              {
+                "toughness": {
+                  "op": "<=",
+                  "value": 1
+                }
+              }
+            ],
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "countered",
+          "kind": "spell",
+          "mode": 1,
+          "selector": {
+            "types": [
+              "Sorcery"
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {

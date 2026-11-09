@@ -2599,3 +2599,43 @@ class TestTheTrickyTerrainTokens:
 
     def test_the_red_warrior_is_still_mono_red(self, pool):
         assert sorted(pool.get("warrior_1_1_r").colors) == ["R"]
+
+
+class TestTheEldraziIncursionTokens:
+    """Spawnbed Protector, Sifter of Skulls, Warping Wail and the rest of
+    Eldrazi Incursion: *"create a **1/1** colorless Eldrazi **Scion** creature
+    token with 'Sacrifice this token: Add {C}.'"*; Ugin, the Ineffable: *"create
+    a **2/2 colorless** Spirit creature token."*
+
+    The Scion's near miss is the Spawn: the same mana ability on a 0/1, so it
+    has no power and is not a Scion. Ugin's near misses are the 1/1 colorless
+    Spirit and the 2/2 white one, each right in one of the two ways.
+    """
+
+    def test_the_scion_is_a_colorless_one_one_that_makes_colorless_mana(self, pool):
+        token = pool.get("eldrazi_scion_1_1_c")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (1, 1)
+        assert not token.colors
+        assert sorted(token.subtypes) == ["Eldrazi", "Scion"]
+        (ability,) = token.abilities
+        assert ability.is_mana_ability
+        assert list(ability.effects) == [{"op": "add_mana", "mana": "{C}"}]
+
+    def test_the_spawn_is_still_a_separate_zero_one(self, pool):
+        spawn = pool.get("eldrazi_spawn_0_1_c")
+        assert (spawn.power, spawn.toughness) == (0, 1)
+        assert sorted(spawn.subtypes) == ["Eldrazi", "Spawn"]
+
+    def test_ugins_spirit_is_a_colorless_two_two(self, pool):
+        token = pool.get("spirit_2_2_c")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (2, 2)
+        assert not token.colors
+        assert list(token.subtypes) == ["Spirit"]
+        assert not token.keywords and not token.abilities
+
+    def test_the_other_spirits_are_still_separate(self, pool):
+        small = pool.get("spirit_1_1_c")
+        assert (small.power, small.toughness) == (1, 1) and not small.colors
+        assert sorted(pool.get("spirit_2_2_w").colors) == ["W"]

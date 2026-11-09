@@ -75992,12 +75992,12 @@
     },
     "Drowner of Hope": {
       "edhrec_rank": 7751,
-      "gate": "template",
+      "gate": null,
       "name": "Drowner of Hope",
-      "reason": "no template for: When this creature enters, create two 1/1 colorless Eldrazi Scion creature tokens. They ha",
+      "reason": "",
       "scryfall_id": "5091396e-a3cb-44a2-ade3-4f3a3bbd1942",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Drowner of Secrets": {
@@ -80252,12 +80252,12 @@
     },
     "Eldrazi Confluence": {
       "edhrec_rank": 2655,
-      "gate": "template",
+      "gate": null,
       "name": "Eldrazi Confluence",
-      "reason": "no template for: Choose three. You may choose the same mode more than once",
+      "reason": "",
       "scryfall_id": "78ee2013-29dc-4879-9d59-1b492996d297",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Eldrazi Conscription": {
@@ -246542,12 +246542,12 @@
     },
     "Sifter of Skulls": {
       "edhrec_rank": 3512,
-      "gate": "template",
+      "gate": null,
       "name": "Sifter of Skulls",
-      "reason": "no template for: Whenever another nontoken creature you control dies, create a 1/1 colorless Eldrazi Scion ",
+      "reason": "",
       "scryfall_id": "f824d5b6-259b-467b-93b5-e93db8b15359",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sigarda's Aid": {
@@ -257172,12 +257172,12 @@
     },
     "Spawnbed Protector": {
       "edhrec_rank": 2973,
-      "gate": "template",
+      "gate": null,
       "name": "Spawnbed Protector",
-      "reason": "no template for: At the beginning of your end step, return up to one target Eldrazi creature card from your",
+      "reason": "",
       "scryfall_id": "bf2d8dab-71f3-4da7-a4b1-ed3309a4c756",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spawnbinder Mage": {
@@ -257202,12 +257202,12 @@
     },
     "Spawning Bed": {
       "edhrec_rank": 4532,
-      "gate": "template",
+      "gate": null,
       "name": "Spawning Bed",
-      "reason": "no template for: {6}, {T}, Sacrifice this land: Create three 1/1 colorless Eldrazi Scion creature tokens. T",
+      "reason": "",
       "scryfall_id": "c256d8c5-a8e7-4b9a-a330-899301db7f52",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spawning Breath": {
@@ -311142,12 +311142,12 @@
     },
     "Warping Wail": {
       "edhrec_rank": 2044,
-      "gate": "template",
+      "gate": null,
       "name": "Warping Wail",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "f461d613-518f-41cf-b08f-0778d40d3cf7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Warping Wurm": {
