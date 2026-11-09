@@ -641,6 +641,8 @@ VALUES: dict[str, Entry] = {
                               'Mana that triggers when it is spent — `mana_spent_trigger`'),
     "commander_casts_this_game": ("Times the player has cast their commanders from the command zone this game (903.8's tally).",
                                   "Copying a spell for each commander cast"),
+    "greatest_commander_mana_value": ("The greatest printed mana value among the player's commanders, wherever "
+                                      "they are; 0 with none. Read as the effect resolves.", None),
     "const": ("A literal number.", None),
     "count": ("How many objects a selector finds.", None),
     "counters_had": ("Counters of a kind (or \"any\", every kind) the permanent that just left had.", None),

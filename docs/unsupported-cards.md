@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**287 cards** blocked by **265** capabilities.
+**286 cards** blocked by **264** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -164,7 +164,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [graveyard-play-from-library-this-turn](#graveyard-play-from-library-this-turn) | 1 | 7077 | static_effect |
 | [graveyard-play-grants-ability](#graveyard-play-grants-ability) | 1 | 3531 | static_effect |
 | [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 1 | 3531 | static_effect |
-| [greatest-commander-mana-value](#greatest-commander-mana-value) | 1 | 3774 | value |
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
 | [harmonize](#harmonize) | 1 | 7442 | cost |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
@@ -2792,20 +2791,6 @@ Blocks **1** card.
 
 - **Serra Paragon** (rank 3531) — `serra_paragon`
   - Once during each of your turns, you may play a land from your graveyard or cast a permanent spell with mana value 3 or less from your graveyard. If you do, it gains "When this permanent is put into a graveyard from the battlefield, exile it and you gain 2 life."
-
-</details>
-
-## greatest-commander-mana-value
-
-Blocks **1** card.
-
-- **(value)** an effect-side value leaf {"greatest_commander_mana_value": <player spec>} for `value_keys`, evaluated at resolution (so `animate`'s power/toughness can read it): the greatest printed mana value among the commanders the player owns, read off `state.commanders_of(pid)` wherever each commander is (command zone, battlefield, graveyard, exile, hand, library, stack), 0 for a seat with no commander -- the effect-side twin of the static leaf of the same name that Tangleweave Armor uses
-  <br>Why the existing vocabulary won't do: `greatest_commander_mana_value` exists only in `static_value_keys` (characteristics.py), not in `value_keys`, so an `animate` op inside an activated ability cannot use it. The nearest effect-side spelling, `extreme_value` over a selector with `is_commander: true`, gathers from one zone per selector; reaching a commander 'wherever it is' would need a hand-built seven-branch `union` over every zone, which is a reconstruction rather than the printed reference (the static leaf's own comment notes no selector reaches the commander in the command zone). Everything else on the card is expressible: `self_enters_tapped`, `add_mana` with `reflecting` + `any_type: true`, and `animate` with `types: ["Creature"]`, `subtypes: ["Plant"]`, `colors: ["G"]`, `keywords: ["reach"]`, `duration` this turn, keeping Land.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Cactus Preserve** (rank 3774) — `cactus_preserve`
-  - {3}: Until end of turn, this land becomes an X/X green Plant creature with reach, where X is the greatest mana value among your commanders. It's still a land.
 
 </details>
 

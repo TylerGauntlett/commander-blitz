@@ -1786,6 +1786,7 @@ Anywhere a number is expected -- the leaf list is
 { "cards_in_hand": "each_opponent" }
 { "player_count": "each_opponent" }             // "the number of opponents you have"; seats, not a quantity
 { "commander_casts_this_game": "you" }          // casts of your commanders from the command zone (903.8)
+{ "greatest_commander_mana_value": "you" }      // the greatest printed mana value among your commanders; see below
 { "command_zone_casts_of": { "binding": "subject" } }  // ONE commander's casts from the command zone
 { "cards_drawn_this_turn": "you" }              // a tally of an event, not of objects
 { "cards_discarded_this_turn": "you" }          // "if you discarded a card this turn"; per seat
@@ -1868,6 +1869,19 @@ near miss is a `for_each_player` with an `if` and a token of one each: separate
 events, and each token raises your count before the next opponent is measured.
 `max_count_of` and `min_count_of` answer "an opponent" and "each opponent", not
 how many.
+
+`greatest_commander_mana_value` is the greatest printed mana value among the
+commanders of the players its spec names, wherever each commander is (903.3),
+and 0 when none of them has one. Cactus Preserve's "this land becomes an X/X
+green Plant creature with reach, where X is the greatest mana value among your
+commanders" is an `animate` whose `power` and `toughness` are both
+`{"greatest_commander_mana_value": "you"}`; X is read once, as the ability
+resolves, so the size holds for the turn. With no commander the land becomes a
+0/0 and dies (704.5f), which is the printed card. It is the static leaf of the
+same name read on the effect side, through the one computation both use,
+`characteristics.greatest_commander_mana_value`. The near miss is
+`extreme_value` over a selector with `is_commander`: a selector walks one zone,
+and the commander usually sits in the command zone, which none reaches.
 
 `half` is the one division in the language, and it takes its rounding direction
 as a **required** key: 107.1a makes the card say which way a fraction goes, and

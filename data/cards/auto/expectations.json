@@ -2641,6 +2641,10 @@
     "battlefield_count": 33,
     "zone": "graveyard"
   },
+  "cactus_preserve": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "caelorna_coral_tyrant": {
     "zone": "battlefield"
   },

@@ -37602,12 +37602,12 @@
     },
     "Cactus Preserve": {
       "edhrec_rank": 3774,
-      "gate": "template",
+      "gate": null,
       "name": "Cactus Preserve",
-      "reason": "no template for: {3}: Until end of turn, this land becomes an X/X green Plant creature with reach, where X ",
+      "reason": "",
       "scryfall_id": "ad9d426f-5870-42bb-a589-9218f7e35d62",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cactusfolk Sureshot": {

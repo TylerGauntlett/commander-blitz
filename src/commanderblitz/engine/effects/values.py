@@ -40,6 +40,8 @@ forms::
     {"starting_life_of": "you"}       the life total one seat began with (103.4)
     {"commander_casts_this_game":     casts of their commanders from the
         "you"}                          command zone this game (903.8's tally)
+    {"greatest_commander_mana_value": the greatest printed mana value among
+        "you"}                          their commanders, wherever they are
     {"max_count_of": {"player": …,    how many objects the player with the most
                       "objects": …}}    of them has -- one player at a time
     {"sum": [a, b, ...]}              arithmetic
@@ -58,6 +60,7 @@ from ..characteristics import (
     auras_matching,
     chars,
     counters_of_kind,
+    greatest_commander_mana_value,
     min_count,
     min_life,
 )
@@ -262,6 +265,14 @@ VALUE_KEYS = frozenset(
         #: it sums both partners, so a partner deck would scry for the other's
         #: casts too. Takes an object reference, `times_tapped_this_turn`'s.
         "command_zone_casts_of",
+        #: "…becomes an X/X … where X is the greatest mana value among your
+        #: commanders" -- Cactus Preserve. The static leaf of the same name
+        #: (Tangleweave Armor) read as an effect resolves, through the one
+        #: computation both share, `characteristics.greatest_commander_mana_value`.
+        #: `extreme_value` over an `is_commander` selector is the near miss: a
+        #: selector walks one zone, and the commander is usually in the command
+        #: zone, which none reaches.
+        "greatest_commander_mana_value",
         # "…if it's the first combat phase of the turn" (Genji Glove). A value
         # rather than a boolean head, so the ordinary `cmp` says it: the printed
         # clause is `== 1`, and "the second combat" or "a later combat" fall out
@@ -991,6 +1002,12 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
             tax = ctx.state.players[p].commander_tax
             total += sum(tax.get(oid, 0) for oid in ctx.state.commanders_of(p))
         return total
+    if "greatest_commander_mana_value" in expr:
+        # Cactus Preserve. Read once, here, as the effect resolves (608.2h): an
+        # `animate` sized by it keeps that size for the turn.
+        return greatest_commander_mana_value(
+            ctx.state, _players(ctx, expr["greatest_commander_mana_value"])
+        )
     if "cards_to_graveyard_this_turn" in expr:
         # Every graveyard, from every zone, cards only, so it takes no player
         # spec. Not gravestorm's count -- that is the key below.
@@ -1941,6 +1958,15 @@ def validate_value(expr: Any, where: str) -> None:
             raise DslError(
                 f"{where}.commander_casts_this_game: needs a player spec, e.g. 'you' "
                 f"(whose commanders' casts from the command zone), got {who!r}"
+            )
+    if "greatest_commander_mana_value" in expr:
+        who = expr["greatest_commander_mana_value"]
+        if not isinstance(who, Mapping) and (
+            not isinstance(who, str) or who not in PLAYER_SPEC_NAMES
+        ):
+            raise DslError(
+                f"{where}.greatest_commander_mana_value: needs a player spec, e.g. "
+                f"'you' (whose commanders), got {who!r}"
             )
     for key in ("modified_creatures_died_this_turn", "nontoken_creatures_died_this_turn"):
         if key not in expr:
