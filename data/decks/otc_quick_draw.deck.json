@@ -23,6 +23,31 @@
   ],
   "strategy": "Stella Lee, Wild Card exiles the top card to play when you cast your second spell of a turn and, from the third, taps to copy an instant or sorcery, so the deck chains cheap cantrips -- Opt, Ponder, Preordain, Serum Visions, Think Twice -- into copies and card flow. Veyran, Voice of Duality, Archmage Emeritus, Crackling Spellslinger, Galvanic Iteration and Thunderclap Drake double the payoffs, while Talrand, Young Pyromancer, Murmuring Mystic, Third Path Iconoclast and Storm-Kiln Artist turn every spell into a body or a Treasure and Guttersnipe and Electrostatic Field burn the table for each one. Arcane Bombardment, Mizzix's Mastery, Finale of Promise, Bloodthirsty Adversary and Forger's Foundry recast the graveyard's spells, and Elemental Eruption and Eris, Roar of the Storm close with Dragon Elementals.",
   "archetype": "spellslinger",
+  "ratings": {
+    "speed": 3,
+    "complexity": 4,
+    "interaction": 3,
+    "resilience": 2,
+    "pilot": 4
+  },
+  "signature": [
+    {
+      "card_id": "stella_lee_wild_card",
+      "why": "The second spell each turn exiles the top card for you to play, and from the third she taps to copy an instant or sorcery."
+    },
+    {
+      "card_id": "veyran_voice_of_duality",
+      "why": "Magecraft triggers twice, so every copy-and-token payoff in the deck doubles."
+    },
+    {
+      "card_id": "talrand_sky_summoner",
+      "why": "A 2/2 flying Drake for every instant and sorcery, turning a cantrip chain into an air force."
+    },
+    {
+      "card_id": "finale_of_promise",
+      "why": "Recasts an instant and a sorcery from the graveyard for free, and copies each twice at ten mana."
+    }
+  ],
   "printings": {
     "arcane_bombardment": {
       "scryfall_id": "ef7e6e2d-d984-483e-b117-b1c5d640dc23",
