@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**280 cards** blocked by **252** capabilities.
+**282 cards** blocked by **254** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -119,6 +119,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [enters-as-copy-embalmed-exception](#enters-as-copy-embalmed-exception) | 1 | 4333 | replacement |
 | [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
+| [every-nonbasic-land-type](#every-nonbasic-land-type) | 1 | 2635 | engine |
 | [excess-damage](#excess-damage) | 1 | 10942 | value |
 | [exile-bottom-of-library](#exile-bottom-of-library) | 1 | 4763 | selector |
 | [exile-cards-with-card-types-among-them](#exile-cards-with-card-types-among-them) | 1 | 9107 | selector |
@@ -192,6 +193,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [necron-warrior-token](#necron-warrior-token) | 1 | 4207 | token |
 | [no-mana-cost](#no-mana-cost) | 1 | 2978 | engine |
+| [nonbasic-land-type](#nonbasic-land-type) | 1 | 10422 | selector |
 | [noncombat-damage-trigger](#noncombat-damage-trigger) | 1 | 6793 | trigger_event |
 | [nontoken-creatures-died-this-turn](#nontoken-creatures-died-this-turn) | 1 | 3951 | value |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
@@ -2173,6 +2175,20 @@ Blocks **1** card.
 
 </details>
 
+## every-nonbasic-land-type
+
+Blocks **1** card.
+
+- **(engine)** a characteristic-defining ability (604.3) that makes the card every nonbasic land type (205.3i) in every zone -- the land-type twin of changeling. On the battlefield it must satisfy Urza's Tower / Power-Plant / Mine checks and Gate or Desert counts; in a library, hand or graveyard it must match a selector such as Maze's End's "search your library for a Gate card". The set of types should be derived from the engine's own registry (SUBTYPE_CLASS entries of class Land minus the five basic types) rather than spelled out per card, so it tracks new land types
+  <br>Why the existing vocabulary won't do: The closest is a self_only add_subtype static listing the types literally, which is how Changeling is written. Off the battlefield that CDA is honoured only for creature types (characteristics.printed_creature_types and card_in_exile_characteristics filter to SUBTYPE_CLASS == 'Creature'); selectors searching a library or hand read off_battlefield_face, which unions only battlefield OFF_BATTLEFIELD grants and never the card's own self_only add_subtype, so a Gate or Urza's tutor would not find Planar Nexus. The literal list is also not pinned: SUBTYPE_CLASS's Land entries include questionable ones ("Ulamog's") and the rules' set grows with new sets, so a hand-written list drifts
+
+<details><summary>Cards waiting on this</summary>
+
+- **Planar Nexus** (rank 2635) — `planar_nexus`
+  - This land is every nonbasic land type. (Nonbasic land types include Cave, Desert, Gate, Lair, Locus, Mine, Power-Plant, Sphere, Tower, and Urza's.)
+
+</details>
+
 ## excess-damage
 
 Blocks **1** card.
@@ -3211,6 +3227,20 @@ Blocks **1** card.
 
 - **Ancestral Vision** (rank 2978) — `ancestral_vision`
   - Suspend 4—{U} (Rather than cast this card from your hand, pay {U} and exile it with four time counters on it. At the beginning of your upkeep, remove a time counter. When the last is removed, you may cast it without paying its mana cost.)
+
+</details>
+
+## nonbasic-land-type
+
+Blocks **1** card.
+
+- **(selector)** a selector/condition clause 'has a nonbasic land type' (any land subtype other than Plains, Island, Swamp, Mountain, Forest -- CR 205.3i), evaluated against the last-known information of the land the return_to_hand cost bounced (its `as` snapshot), so `if` can read 'unless that land had a nonbasic land type'
+  <br>Why the existing vocabulary won't do: The return_to_hand cost can bind the land with `as` (returned_snapshot), and `{binding: ...}` selectors can be narrowed by `subtypes`/`not_subtypes`, but those match the object's current characteristics in its new zone rather than what it had on the battlefield, and there is no 'nonbasic land type' predicate: `not_subtypes` of the five basics is a different question (a Wastes-like land with no type passes), and enumerating Gate/Desert/Locus/... in `subtypes` is a hand-maintained approximation. values.BASIC_LAND_TYPES exists but only domain reads it.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Wonderscape Sage** (rank 10422) — `wonderscape_sage`
+  - {T}, Return a land you control to its owner's hand: Draw a card. Then discard a card unless that land had a nonbasic land type.
 
 </details>
 

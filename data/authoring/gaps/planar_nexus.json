@@ -1,0 +1,18 @@
+{
+  "card_id": "planar_nexus",
+  "name": "Planar Nexus",
+  "oracle_text": "This land is every nonbasic land type. (Nonbasic land types include Cave, Desert, Gate, Lair, Locus, Mine, Power-Plant, Sphere, Tower, and Urza's.)\n{T}: Add {C}.\n{1}, {T}: Add one mana of any color.",
+  "blocked_sentences": [
+    "This land is every nonbasic land type. (Nonbasic land types include Cave, Desert, Gate, Lair, Locus, Mine, Power-Plant, Sphere, Tower, and Urza's.)"
+  ],
+  "needs": [
+    {
+      "capability": "every_nonbasic_land_type",
+      "kind": "engine",
+      "what": "a characteristic-defining ability (604.3) that makes the card every nonbasic land type (205.3i) in every zone -- the land-type twin of changeling. On the battlefield it must satisfy Urza's Tower / Power-Plant / Mine checks and Gate or Desert counts; in a library, hand or graveyard it must match a selector such as Maze's End's \"search your library for a Gate card\". The set of types should be derived from the engine's own registry (SUBTYPE_CLASS entries of class Land minus the five basic types) rather than spelled out per card, so it tracks new land types",
+      "why_existing_wont_do": "The closest is a self_only add_subtype static listing the types literally, which is how Changeling is written. Off the battlefield that CDA is honoured only for creature types (characteristics.printed_creature_types and card_in_exile_characteristics filter to SUBTYPE_CLASS == 'Creature'); selectors searching a library or hand read off_battlefield_face, which unions only battlefield OFF_BATTLEFIELD grants and never the card's own self_only add_subtype, so a Gate or Urza's tutor would not find Planar Nexus. The literal list is also not pinned: SUBTYPE_CLASS's Land entries include questionable ones (\"Ulamog's\") and the rules' set grows with new sets, so a hand-written list drifts"
+    }
+  ],
+  "closest_existing": ["add_subtype"],
+  "confidence": "low"
+}

@@ -1,0 +1,16 @@
+{
+  "card_id": "wonderscape_sage",
+  "name": "Wonderscape Sage",
+  "oracle_text": "Flying\n{T}, Return a land you control to its owner's hand: Draw a card. Then discard a card unless that land had a nonbasic land type.",
+  "blocked_sentences": [
+    "{T}, Return a land you control to its owner's hand: Draw a card. Then discard a card unless that land had a nonbasic land type."
+  ],
+  "needs": [{
+    "capability": "nonbasic_land_type",
+    "kind": "selector",
+    "what": "a selector/condition clause 'has a nonbasic land type' (any land subtype other than Plains, Island, Swamp, Mountain, Forest -- CR 205.3i), evaluated against the last-known information of the land the return_to_hand cost bounced (its `as` snapshot), so `if` can read 'unless that land had a nonbasic land type'",
+    "why_existing_wont_do": "The return_to_hand cost can bind the land with `as` (returned_snapshot), and `{binding: ...}` selectors can be narrowed by `subtypes`/`not_subtypes`, but those match the object's current characteristics in its new zone rather than what it had on the battlefield, and there is no 'nonbasic land type' predicate: `not_subtypes` of the five basics is a different question (a Wastes-like land with no type passes), and enumerating Gate/Desert/Locus/... in `subtypes` is a hand-maintained approximation. values.BASIC_LAND_TYPES exists but only domain reads it."
+  }],
+  "closest_existing": ["return_to_hand cost with as", "if", "exists", "binding", "subtypes", "not_subtypes"],
+  "confidence": "low"
+}

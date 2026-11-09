@@ -250152,12 +250152,12 @@
     },
     "Skullwinder": {
       "edhrec_rank": 3546,
-      "gate": "behaviour",
+      "gate": null,
       "name": "Skullwinder",
-      "reason": "player 0 hand_size is 1, expected 2; player 0 graveyard_size is 2, expected 1",
+      "reason": "",
       "scryfall_id": "0d53c93a-3d02-4a89-bf3a-58c19d861f9b",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sky Crier": {
@@ -292322,12 +292322,12 @@
     },
     "Trenchpost": {
       "edhrec_rank": 7890,
-      "gate": "template",
+      "gate": null,
       "name": "Trenchpost",
-      "reason": "no template for: {3}, {T}: Target player mills a card for each Locus you control",
+      "reason": "",
       "scryfall_id": "4afcabf8-8f84-489d-8496-5bec55b351bd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Treno, Dark City": {
@@ -296272,12 +296272,12 @@
     },
     "Ulvenwald Hydra": {
       "edhrec_rank": 2739,
-      "gate": "template",
+      "gate": null,
       "name": "Ulvenwald Hydra",
-      "reason": "no template for: 's power and toughness are each equal to the number of lands you control",
+      "reason": "",
       "scryfall_id": "4ade356e-ed2f-4373-b898-c3ccb46324a1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ulvenwald Mysteries": {
@@ -306222,12 +306222,12 @@
     },
     "Vivien Reid": {
       "edhrec_rank": 4050,
-      "gate": "template",
+      "gate": null,
       "name": "Vivien Reid",
-      "reason": "no template for: +1: Look at the top four cards of your library. You may reveal a creature or land card fro",
+      "reason": "",
       "scryfall_id": "162a3a3b-257e-46c7-bb29-65627b00363d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vivien Reid Emblem": {
@@ -307142,12 +307142,12 @@
     },
     "Volatile Fault": {
       "edhrec_rank": 2595,
-      "gate": "template",
+      "gate": null,
       "name": "Volatile Fault",
-      "reason": "no template for: {1}, {T}, Sacrifice this land: Destroy target nonbasic land an opponent controls. That pla",
+      "reason": "",
       "scryfall_id": "d9a42082-615c-4387-a77c-97ee94153c57",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Volatile Fjord": {

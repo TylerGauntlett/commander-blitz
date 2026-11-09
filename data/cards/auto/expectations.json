@@ -16570,6 +16570,15 @@
       "0": 3
     }
   },
+  "skullwinder": {
+    "graveyard_size": {
+      "0": 1
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "zone": "battlefield"
+  },
   "sky_diamond": {
     "zone": "battlefield"
   },
@@ -19445,6 +19454,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "trenchpost": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "treno_dark_city": {
     "zone": "battlefield"
   },
@@ -19713,6 +19726,13 @@
   },
   "ultron_unlimited": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "ulvenwald_hydra": {
+    "battlefield_count": 34,
+    "library_size": {
+      "0": 39
+    },
     "zone": "battlefield"
   },
   "ulvenwald_tracker": {
@@ -20444,6 +20464,13 @@
       "kind": "charge"
     }
   },
+  "vivien_reid": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "vivisection": {
     "hand_size": {
       "0": 4
@@ -20472,6 +20499,10 @@
     },
     "opponent_battlefield_count": 6,
     "zone": "graveyard"
+  },
+  "volatile_fault": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "volatile_fjord": {
     "zone": "battlefield"
