@@ -88592,12 +88592,12 @@
     },
     "Explosive Derailment": {
       "edhrec_rank": 11960,
-      "gate": "template",
+      "gate": null,
       "name": "Explosive Derailment",
-      "reason": "no template for: Spree",
+      "reason": "",
       "scryfall_id": "f0e3df9c-0a86-4e6f-a3c7-84a883328a3d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Explosive Entry": {
@@ -137322,12 +137322,12 @@
     },
     "Insatiable Avarice": {
       "edhrec_rank": 1158,
-      "gate": "template",
+      "gate": null,
       "name": "Insatiable Avarice",
-      "reason": "no template for: Spree",
+      "reason": "",
       "scryfall_id": "a108b0e4-1b43-4659-9e91-facb0bd57ebb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Insatiable Frugivore": {
@@ -141922,12 +141922,12 @@
     },
     "Jailbreak Scheme": {
       "edhrec_rank": 15482,
-      "gate": "template",
+      "gate": null,
       "name": "Jailbreak Scheme",
-      "reason": "no template for: Spree",
+      "reason": "",
       "scryfall_id": "a4be8e47-9006-4770-8d99-68a684064a43",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jalira, Master Polymorphist": {
@@ -220932,12 +220932,12 @@
     },
     "Requisition Raid": {
       "edhrec_rank": 1248,
-      "gate": "template",
+      "gate": null,
       "name": "Requisition Raid",
-      "reason": "no template for: Spree",
+      "reason": "",
       "scryfall_id": "6d9efae9-365d-46c8-be92-d4a3038f0414",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Requiting Hex": {
@@ -229992,12 +229992,12 @@
     },
     "Rustler Rampage": {
       "edhrec_rank": 8701,
-      "gate": "template",
+      "gate": null,
       "name": "Rustler Rampage",
-      "reason": "no template for: Spree",
+      "reason": "",
       "scryfall_id": "33ed7ca3-894b-45f4-a15f-51b6bcd3f474",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rustmouth Ogre": {
@@ -285252,12 +285252,12 @@
     },
     "Three Steps Ahead": {
       "edhrec_rank": 1087,
-      "gate": "template",
+      "gate": null,
       "name": "Three Steps Ahead",
-      "reason": "no template for: Spree",
+      "reason": "",
       "scryfall_id": "c39be5b1-b693-4b1b-b40b-8bf6d1fe986d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Three Tragedies": {

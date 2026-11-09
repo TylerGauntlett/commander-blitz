@@ -812,7 +812,7 @@ The alternative and additional costs that live on the *card* rather than inside 
 |---|---|---|
 | `additional_cost` | A non-mana additional cost. | [An additional cost that is not mana](card-dsl-cookbook.md#an-additional-cost-that-is-not-mana) |
 | `additional_cost_options` | A choice between prices; tiered when each buys a different effect. | [Tiered, and reading back which price was paid](card-dsl.md#tiered-and-reading-back-which-price-was-paid) |
-| `spree` | Spree: priced modes, a non-empty subset bought on cast. | [Spree — "choose one or more additional costs"](card-dsl.md#spree--choose-one-or-more-additional-costs) |
+| `spree` | Spree: priced modes, a non-empty subset bought on cast; a target spec's `spree_mode` is declared only when its mode is bought. | [Spree — "choose one or more additional costs"](card-dsl.md#spree--choose-one-or-more-additional-costs) |
 | `additional_optional` | An optional additional cost (kicker-like, non-mana). | [Alternative ways to play a card](card-dsl-cookbook.md#alternative-ways-to-play-a-card) |
 | `additional_repeatable` | An additional cost that may be paid any number of times. | [Alternative ways to play a card](card-dsl-cookbook.md#alternative-ways-to-play-a-card) |
 | `alternative_cost` | A non-mana alternative cost. | [An alternative cost that is not mana](card-dsl-cookbook.md#an-alternative-cost-that-is-not-mana) |

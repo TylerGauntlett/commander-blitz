@@ -1154,7 +1154,7 @@ CARD_LEVEL_COSTS: dict[str, Entry] = {
     "graveyard_additional_cost": ("Castable from the graveyard at the printed price plus this cost (retrace's slot).",
                                   'Retrace and "by discarding a card"'),
     "splice": ("Splice cost.", "Splice"),
-    "spree": ("Spree: priced modes, a non-empty subset bought on cast.", H_SPREE),
+    "spree": ("Spree: priced modes, a non-empty subset bought on cast; a target spec's `spree_mode` is declared only when its mode is bought.", H_SPREE),
     "strive": ("Strive: more per target beyond the first.", "Strive"),
     "suspend": ("Suspend N and its cost.", None),
     "warp": ("Warp cost.", None),

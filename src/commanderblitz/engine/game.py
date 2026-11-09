@@ -478,8 +478,11 @@ class Game:
         # legality enumerated this line from it, and `stack._resolve_spell`
         # splits the stored refs by it.
         # A tiered cast declares the list of the tier it paid, for the same reason.
+        # And a spree cast the bought modes' own targets (702.172).
         specs = card.targets_for(
-            gift_promised=action.gift_to is not None, cost_option=action.additional_choice
+            gift_promised=action.gift_to is not None,
+            cost_option=action.additional_choice,
+            spree_modes=action.spree_modes,
         )
         if action.kicked and (swapped := kicked_targets(specs)) is not None:
             specs = swapped

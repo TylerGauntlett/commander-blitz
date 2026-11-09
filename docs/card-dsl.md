@@ -5848,7 +5848,7 @@ equality test there would make a two-mode cast run one mode.
 Legality offers one cast line per non-empty subset — seven for three modes,
 cheapest shape first — and each line's price is the printed cost **plus every
 chosen mode's mana**, folded in so the solver prices what the player is actually
-offered. The plain line is **withdrawn**: 702.166a's "one or more" means the
+offered. The plain line is **withdrawn**: 702.172's "one or more" means the
 unmodified spell is not a legal cast at all, and a spree card castable for its
 printed cost is a card with none of its text. A card that cannot afford a single
 mode is simply not castable.
@@ -5864,6 +5864,35 @@ The chosen indices ride the stack item and are stamped onto the object **before*
 `spell_effects` run, for the reason `cost_option` is and with more riding on it:
 written afterwards the set would read empty and a spell three extra prices were
 paid for would do nothing at all.
+
+**A spree mode's own targets** are a target spec's `spree_mode`: the index of
+the mode that declares it. Requisition Raid destroys "target artifact" for one
+price, "target enchantment" for another, and counters the creatures of "target
+player" for a third:
+
+```jsonc
+"targets": [
+  { "id": "t1", "kind": "permanent", "spree_mode": 0, "selector": { "types": ["Artifact"] } },
+  { "id": "t2", "kind": "permanent", "spree_mode": 1, "selector": { "types": ["Enchantment"] } },
+  { "id": "t3", "kind": "player", "spree_mode": 2 }
+]
+```
+
+Legal because the modes are bought at 601.2b, one step before 601.2c declares
+targets. The loader keeps the printed list in `CardDef.spree_targets` and only
+the specs naming no mode in `targets`; `CardDef.targets_for` returns the shared
+specs plus the bought modes' own, in printed order, and the cast line, the
+cast, resolution and a copy (707.10 copies the bought modes) all read that one
+list. So each subset's line declares exactly its own targets, and a mode whose
+required target is missing withdraws only the subsets containing it: with no
+enchantment on the battlefield Raid still casts for its artifact and player
+modes. Every subset's list obeys the variable-size-last rule on its own. The
+near misses are both wrong: unconditional card-level targets demand an
+artifact, an enchantment and a player on every cast, and `optional` ones let a
+cast that bought a mode skip its target. Refused on a card without that many
+`spree` modes, on an ability's targets, beside `mode`, `gift_promised`,
+`cost_option` or `count_if_kicked`, and on a card that also gates a target on
+its gift.
 
 ### `mana_spent_of` — what was paid, not what is printed
 

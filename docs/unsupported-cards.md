@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**281 cards** blocked by **261** capabilities.
+**283 cards** blocked by **263** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -187,6 +187,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [manifest-from-hand](#manifest-from-hand) | 1 | 3975 | op |
 | [maximum-hand-size-modifier](#maximum-hand-size-modifier) | 1 | 1712 | static_effect |
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
+| [mercenary-1-1-r-pump](#mercenary-1-1-r-pump) | 1 | 18634 | token |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
 | [miracle-x](#miracle-x) | 1 | 4945 | engine |
 | [modal-variable-targets](#modal-variable-targets) | 1 | 4339 | engine |
@@ -236,6 +237,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
 | [salamander-warrior-4-3-u](#salamander-warrior-4-3-u) | 1 | 3395 | token |
+| [same-target-for-each-target-word](#same-target-for-each-target-word) | 1 | 5003 | engine |
 | [sandbox-graveyard-spell-prop](#sandbox-graveyard-spell-prop) | 1 | 5082 | engine |
 | [sandbox-low-mana-value-permanent](#sandbox-low-mana-value-permanent) | 1 | 14140 | engine |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
@@ -245,7 +247,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
-| [spree-mode-targets](#spree-mode-targets) | 1 | 1248 | selector |
+| [spirit-2-2-w-flying](#spirit-2-2-w-flying) | 1 | 12596 | token |
 | [stack-wipe](#stack-wipe) | 1 | 8784 | op |
 | [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
@@ -3110,6 +3112,20 @@ Blocks **1** card.
 
 </details>
 
+## mercenary-1-1-r-pump
+
+Blocks **1** card.
+
+- **(token)** a 1/1 red Mercenary creature token with "{T}: Target creature you control gets +1/+0 until end of turn. Activate only as a sorcery."
+  <br>Why the existing vocabulary won't do: token_ids has no Mercenary token at all
+
+<details><summary>Cards waiting on this</summary>
+
+- **Unfortunate Accident** (rank 18634) — `unfortunate_accident`
+  - + {1} — Create a 1/1 red Mercenary creature token with "{T}: Target creature you control gets +1/+0 until end of turn. Activate only as a sorcery."
+
+</details>
+
 ## merfolk-token
 
 Blocks **1** card.
@@ -3808,6 +3824,22 @@ Blocks **1** card.
 
 </details>
 
+## same-target-for-each-target-word
+
+Blocks **1** card.
+
+- **(engine)** rule 115.3: the same player or object may be chosen once for each instance of the word "target" on a spell, so Rush of Dread's three "target opponent" modes may all name one opponent; enumerate_target_tuples has to let separate specs of one spell share a ref (while one spec's own count still needs distinct choices)
+  <br>Why the existing vocabulary won't do: targeting.enumerate_target_tuples drops any tuple in which two specs pick the same ref ("the same object cannot fill two targets"), so with spree_mode targets t1/t2/t3 every subset of two or more modes needs two or three different opponents: in a two-player game only single-mode casts exist, and at a pod each bought mode is forced onto a different opponent -- a different card. One shared spec is no fix: each mode's target opponent is chosen independently
+
+<details><summary>Cards waiting on this</summary>
+
+- **Rush of Dread** (rank 5003) — `rush_of_dread`
+  - + {1} — Target opponent sacrifices half the creatures they control of their choice, rounded up.
+  - + {2} — Target opponent discards half the cards in their hand, rounded up.
+  - + {2} — Target opponent loses half their life, rounded up.
+
+</details>
+
 ## sandbox-graveyard-spell-prop
 
 Blocks **1** card.
@@ -3937,19 +3969,17 @@ Blocks **1** card.
 
 </details>
 
-## spree-mode-targets
+## spirit-2-2-w-flying
 
 Blocks **1** card.
 
-- **(selector)** a target spec owned by a spree mode (e.g. a `spree_mode: n` key on a card-level target), declared at 601.2c only when that mode was bought at 601.2b, so a cast line per spree subset enumerates the shared targets plus the targets of every chosen mode, and a mode whose required target is missing withdraws only the subsets containing it
-  <br>Why the existing vocabulary won't do: `spree` plus `if {spree_mode: n}` handles the priced modes but has no way to scope a target to a mode. A target spec's `mode` key needs a top-level `choose_mode` (resolution-time, not a cost); `cost_option` is refused without `additional_cost_options`, which the loader refuses beside `spree` and which is exclusive (one tier, never a subset). Declaring all three targets unconditionally would demand an artifact, an enchantment and a player on every cast and block the artifact-only mode when no enchantment exists; making them `optional` would let a cast that bought a mode skip its target, or target things for modes not bought
+- **(token)** a 2/2 white Spirit creature token with flying
+  <br>Why the existing vocabulary won't do: token_ids has spirit_2_2_w (no flying) and spirit_1_1_w_flying (1/1); neither is the printed token (111.4)
 
 <details><summary>Cards waiting on this</summary>
 
-- **Requisition Raid** (rank 1248) — `requisition_raid`
-  - + {1} — Destroy target artifact.
-  - + {1} — Destroy target enchantment.
-  - + {1} — Put a +1/+1 counter on each creature target player controls.
+- **Phantom Interference** (rank 12596) — `phantom_interference`
+  - + {3} — Create a 2/2 white Spirit creature token with flying.
 
 </details>
 

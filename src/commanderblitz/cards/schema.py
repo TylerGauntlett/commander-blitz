@@ -397,6 +397,14 @@ class TargetModel(BaseModel):
     #: Refused on a card without ``additional_cost_options``, on an ability's
     #: targets, and beside ``mode``, ``gift_promised`` or ``count_if_kicked``.
     cost_option: int | None = None
+    #: Which **spree mode** declares this target: the index into the card's
+    #: ``spree`` a cast must have bought. Spree (702.172) chooses the modes as
+    #: additional costs at 601.2b, one step before 601.2c declares targets, so
+    #: Requisition Raid's "+ {1} — Destroy target artifact" is a target only a
+    #: cast that bought that mode has. Absent: every cast. Refused on a card
+    #: without ``spree``, on an ability's targets, and beside ``mode``,
+    #: ``gift_promised``, ``cost_option`` or ``count_if_kicked``.
+    spree_mode: int | None = None
     #: "Return **up to** X target creature cards." The `count` is a ceiling and
     #: every size from zero through it is legal, which is the one reading none
     #: of the three above can give: a number forces exactly that many,

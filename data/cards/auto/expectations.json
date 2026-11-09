@@ -6126,6 +6126,11 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "explosive_derailment": {
+    "battlefield_count": 31,
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
   "expressive_iteration": {
     "graveyard_size": {
       "0": 3
@@ -9364,6 +9369,18 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "insatiable_avarice": {
+    "hand_size": {
+      "0": 4
+    },
+    "library_size": {
+      "0": 37
+    },
+    "life": {
+      "0": 37
+    },
+    "zone": "graveyard"
+  },
   "insatiable_frugivore": {
     "battlefield_count": 33,
     "graveyard_size": {
@@ -9700,6 +9717,9 @@
   },
   "jagwasp_swarm": {
     "zone": "battlefield"
+  },
+  "jailbreak_scheme": {
+    "zone": "graveyard"
   },
   "jarvis_earth_s_mightiest_butler": {
     "battlefield_count": 33,
@@ -15091,6 +15111,10 @@
     "opponent_battlefield_count": 6,
     "zone": "graveyard"
   },
+  "requisition_raid": {
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
+  },
   "rescue_pepper_potts": {
     "battlefield_count": 32,
     "hand_size": {
@@ -15709,6 +15733,15 @@
   },
   "rusted_sentinel": {
     "zone": "battlefield"
+  },
+  "rustler_rampage": {
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "double_strike"
+      ]
+    },
+    "zone": "graveyard"
   },
   "rustrazor_butcher": {
     "zone": "battlefield"
@@ -19491,6 +19524,16 @@
     "battlefield_count": 33,
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
+  },
+  "three_steps_ahead": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "graveyard"
   },
   "three_tree_city": {
     "battlefield_count": 33,

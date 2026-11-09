@@ -1,0 +1,24 @@
+{
+  "card_id": "rush_of_dread",
+  "name": "Rush of Dread",
+  "oracle_text": "Spree (Choose one or more additional costs.)\n+ {1} — Target opponent sacrifices half the creatures they control of their choice, rounded up.\n+ {2} — Target opponent discards half the cards in their hand, rounded up.\n+ {2} — Target opponent loses half their life, rounded up.",
+  "blocked_sentences": [
+    "+ {1} — Target opponent sacrifices half the creatures they control of their choice, rounded up.",
+    "+ {2} — Target opponent discards half the cards in their hand, rounded up.",
+    "+ {2} — Target opponent loses half their life, rounded up."
+  ],
+  "needs": [
+    {
+      "capability": "same_target_for_each_target_word",
+      "kind": "engine",
+      "what": "rule 115.3: the same player or object may be chosen once for each instance of the word \"target\" on a spell, so Rush of Dread's three \"target opponent\" modes may all name one opponent; enumerate_target_tuples has to let separate specs of one spell share a ref (while one spec's own count still needs distinct choices)",
+      "why_existing_wont_do": "targeting.enumerate_target_tuples drops any tuple in which two specs pick the same ref (\"the same object cannot fill two targets\"), so with spree_mode targets t1/t2/t3 every subset of two or more modes needs two or three different opponents: in a two-player game only single-mode casts exist, and at a pod each bought mode is forced onto a different opponent -- a different card. One shared spec is no fix: each mode's target opponent is chosen independently"
+    }
+  ],
+  "closest_existing": [
+    "spree_mode",
+    "half",
+    "sacrifice"
+  ],
+  "confidence": "high"
+}

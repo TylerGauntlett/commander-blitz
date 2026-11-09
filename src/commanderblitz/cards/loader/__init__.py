@@ -1317,6 +1317,8 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         has_gift=model.gift is not None,
         # `cost_option` names a tier, chosen at 601.2b, so it has to exist.
         cost_options=len(model.additional_cost_options),
+        # `spree_mode` names a spree mode, bought at 601.2b, so it has to exist.
+        spree_modes=len(model.spree),
     )
     card_level = tuple(spec for spec in all_targets if spec.mode is None)
     _check_repeatable_modes(model, cast_modes, all_targets, where)
@@ -1340,6 +1342,19 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             for n in range(len(model.additional_cost_options))
         }
         targets = tuple(spec for spec in targets if spec.cost_option is None)
+    # Each spree mode's own targets (702.172): `targets` keeps the shared
+    # specs, which is what a cast that bought none of those modes declares,
+    # and `spree_targets` the whole printed list for `targets_for` to filter
+    # by the bought subset.
+    spree_targets: tuple[TargetSpec, ...] = ()
+    if any(spec.spree_mode is not None for spec in targets):
+        if gift_targets is not None:
+            raise DslError(
+                f"{where}: a spree mode's target and a gift-gated target on one "
+                f"card are two cast-time target lists -- no printing does it"
+            )
+        spree_targets = targets
+        targets = tuple(spec for spec in targets if spec.spree_mode is None)
     mode_targets: dict[int, tuple[TargetSpec, ...]] = {}
     for spec in all_targets:
         if spec.mode is not None:
@@ -2627,6 +2642,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         mode_targets=mode_targets,
         gift_targets=gift_targets,
         cost_option_targets=cost_option_targets,
+        spree_targets=spree_targets,
         spell_effects=tuple(model.spell_effects),
         as_cast=dict(model.as_cast),
         replacements=_implied_replacements(model),

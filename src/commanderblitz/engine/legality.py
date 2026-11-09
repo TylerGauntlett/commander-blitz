@@ -565,6 +565,11 @@ def unplayable_reason(state: GameState, pid: int, oid: int) -> str | None:
             card.gift_targets,
             kicked,
             *card.cost_option_targets.values(),
+            # One spree mode's list each: a larger subset only adds targets.
+            *(
+                card.targets_for(gift_promised=False, spree_modes=(n,))
+                for n in range(len(card.spree) if card.spree_targets else 0)
+            ),
         )
         if specs is not None
     ):

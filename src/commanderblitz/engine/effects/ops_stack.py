@@ -200,11 +200,13 @@ def _choose_new_targets(ctx: EffectContext, original, chooser: int | None = None
         chooser = ctx.controller
     card = ctx.state.registry.get(original.def_id)
     specs = getattr(card, "targets", ()) or ()
-    if original.gift_to is not None or original.cost_option is not None:
-        # The copy keeps the promise and the tier (707.10), so it re-chooses
-        # among the specs its stored refs were declared under.
+    if original.gift_to is not None or original.cost_option is not None or original.spree_modes:
+        # The copy keeps the promise, the tier and the spree modes (707.10), so
+        # it re-chooses among the specs its stored refs were declared under.
         specs = card.targets_for(
-            gift_promised=original.gift_to is not None, cost_option=original.cost_option
+            gift_promised=original.gift_to is not None,
+            cost_option=original.cost_option,
+            spree_modes=original.spree_modes,
         )
     if not specs:
         return None
@@ -292,6 +294,11 @@ def put_copy_on_stack(state, controller: int, original, targets=None):
         # copies it): the copy's `{"cost_option": n}` branch and the target
         # list its refs are split by are the original's.
         cost_option=original.cost_option,
+        # And the spree modes bought (702.172 makes each an additional cost,
+        # so 707.10 copies them): every printed mode is an `if` on them, so a
+        # copy without them resolves as none of its modes, and its refs were
+        # declared under the bought modes' target list.
+        spree_modes=original.spree_modes,
         # Everything but the convoking creatures: 702.51c's "convoked it" is a
         # creature tapped to *pay* for the spell, and a copy was never paid for
         # -- convoke is neither an additional nor an alternative cost, so

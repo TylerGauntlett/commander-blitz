@@ -71548,6 +71548,89 @@
     },
     {
       "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "explosive_derailment",
+      "mana_cost": "{R}",
+      "name": "Explosive Derailment",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {2} — Explosive Derailment deals 4 damage to target creature.\n+ {2} — Destroy target artifact.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "spree_mode": 0
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "objects": {
+                "target": "t1"
+              },
+              "op": "damage"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "spree_mode": 1
+          },
+          "op": "if",
+          "then": [
+            {
+              "objects": {
+                "target": "t2"
+              },
+              "op": "destroy"
+            }
+          ]
+        }
+      ],
+      "spree": [
+        {
+          "mana": "{2}"
+        },
+        {
+          "mana": "{2}"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "spree_mode": 0
+        },
+        {
+          "count": 1,
+          "id": "t2",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Artifact"
+            ],
+            "zone": "battlefield"
+          },
+          "spree_mode": 1
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "R",
         "U"
       ],
@@ -110337,6 +110420,84 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "insatiable_avarice",
+      "mana_cost": "{B}",
+      "name": "Insatiable Avarice",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {2} — Search your library for a card, then shuffle and put that card on top.\n+ {B}{B} — Target player draws three cards and loses 3 life.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "spree_mode": 0
+          },
+          "op": "if",
+          "then": [
+            {
+              "count": 1,
+              "destination": "library_top",
+              "op": "search_library",
+              "player": "you",
+              "selector": {}
+            }
+          ]
+        },
+        {
+          "condition": {
+            "spree_mode": 1
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "draw",
+              "player": {
+                "target": "t1"
+              }
+            },
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "lose_life",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ]
+        }
+      ],
+      "spree": [
+        {
+          "mana": "{2}"
+        },
+        {
+          "mana": "{B}{B}"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "any"
+          },
+          "spree_mode": 1
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -114303,6 +114464,99 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "jailbreak_scheme",
+      "mana_cost": "{U}",
+      "name": "Jailbreak Scheme",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {3} — Put a +1/+1 counter on target creature. It can't be blocked this turn.\n+ {2} — Target artifact or creature's owner puts it on their choice of the top or bottom of their library.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "spree_mode": 0
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            },
+            {
+              "duration": "this_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "unblockable"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "spree_mode": 1
+          },
+          "op": "if",
+          "then": [
+            {
+              "objects": {
+                "target": "t2"
+              },
+              "op": "put_on_top",
+              "owner_chooses": true
+            }
+          ]
+        }
+      ],
+      "spree": [
+        {
+          "mana": "{3}"
+        },
+        {
+          "mana": "{2}"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "spree_mode": 0
+        },
+        {
+          "count": 1,
+          "id": "t2",
+          "kind": "permanent",
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "spree_mode": 1
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -178517,6 +178771,123 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "requisition_raid",
+      "mana_cost": "{W}",
+      "name": "Requisition Raid",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {1} — Destroy target artifact.\n+ {1} — Destroy target enchantment.\n+ {1} — Put a +1/+1 counter on each creature target player controls.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "spree_mode": 0
+          },
+          "op": "if",
+          "then": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "spree_mode": 1
+          },
+          "op": "if",
+          "then": [
+            {
+              "objects": {
+                "target": "t2"
+              },
+              "op": "destroy"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "spree_mode": 2
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "controller": {
+                  "target": "t3"
+                },
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ]
+        }
+      ],
+      "spree": [
+        {
+          "mana": "{1}"
+        },
+        {
+          "mana": "{1}"
+        },
+        {
+          "mana": "{1}"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Artifact"
+            ],
+            "zone": "battlefield"
+          },
+          "spree_mode": 0
+        },
+        {
+          "count": 1,
+          "id": "t2",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Enchantment"
+            ],
+            "zone": "battlefield"
+          },
+          "spree_mode": 1
+        },
+        {
+          "count": 1,
+          "id": "t3",
+          "kind": "player",
+          "selector": {
+            "controller": "any"
+          },
+          "spree_mode": 2
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -185344,6 +185715,94 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "rustler_rampage",
+      "mana_cost": "{W}",
+      "name": "Rustler Rampage",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {1} — Untap all creatures target player controls.\n+ {1} — Target creature gains double strike until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "spree_mode": 0
+          },
+          "op": "if",
+          "then": [
+            {
+              "objects": {
+                "controller": {
+                  "target": "t1"
+                },
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "untap"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "spree_mode": 1
+          },
+          "op": "if",
+          "then": [
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "double_strike"
+              ],
+              "objects": {
+                "target": "t2"
+              },
+              "op": "grant_keyword"
+            }
+          ]
+        }
+      ],
+      "spree": [
+        {
+          "mana": "{1}"
+        },
+        {
+          "mana": "{1}"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "any"
+          },
+          "spree_mode": 0
+        },
+        {
+          "count": 1,
+          "id": "t2",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "spree_mode": 1
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -232433,6 +232892,106 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "three_steps_ahead",
+      "mana_cost": "{U}",
+      "name": "Three Steps Ahead",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {1}{U} — Counter target spell.\n+ {3} — Create a token that's a copy of target artifact or creature you control.\n+ {2} — Draw two cards, then discard a card.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "spree_mode": 0
+          },
+          "op": "if",
+          "then": [
+            {
+              "op": "counter",
+              "target": "t1"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "spree_mode": 1
+          },
+          "op": "if",
+          "then": [
+            {
+              "objects": {
+                "target": "t2"
+              },
+              "op": "copy_permanent"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "spree_mode": 2
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "discard",
+              "player": "you"
+            }
+          ]
+        }
+      ],
+      "spree": [
+        {
+          "mana": "{1}{U}"
+        },
+        {
+          "mana": "{3}"
+        },
+        {
+          "mana": "{2}"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "spell",
+          "selector": {},
+          "spree_mode": 0
+        },
+        {
+          "count": 1,
+          "id": "t2",
+          "kind": "permanent",
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Creature"
+            ],
+            "controller": "you",
+            "zone": "battlefield"
+          },
+          "spree_mode": 1
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {

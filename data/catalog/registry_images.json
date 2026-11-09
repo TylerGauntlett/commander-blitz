@@ -5408,6 +5408,10 @@
     "artist": "Deruchenko Alexander",
     "scryfall_id": "42cacf46-6f84-4198-877b-1544cff2f837"
   },
+  "explosive_derailment": {
+    "artist": "Leon Tukker",
+    "scryfall_id": "f0e3df9c-0a86-4e6f-a3c7-84a883328a3d"
+  },
   "explosive_vegetation": {
     "artist": "John Avon",
     "scryfall_id": "ea73440b-a306-4425-84c0-5e18b6ec0516"
@@ -8361,6 +8365,10 @@
     "artist": "Rob Alexander",
     "scryfall_id": "3014f59d-9012-473a-8bb1-8085c6e91632"
   },
+  "insatiable_avarice": {
+    "artist": "Scott Murphy",
+    "scryfall_id": "a108b0e4-1b43-4659-9e91-facb0bd57ebb"
+  },
   "insatiable_frugivore": {
     "artist": "Ben Wootten",
     "scryfall_id": "2ef58a8f-ce72-40c2-b032-818cc16267ce"
@@ -8648,6 +8656,10 @@
   "jagwasp_swarm": {
     "artist": "Austin Hsu",
     "scryfall_id": "bd4e933b-de65-4089-877f-c598004b8e7e"
+  },
+  "jailbreak_scheme": {
+    "artist": "Inkognit",
+    "scryfall_id": "a4be8e47-9006-4770-8d99-68a684064a43"
   },
   "jarvis_earth_s_mightiest_butler": {
     "artist": "Gintas Galvanauskas",
@@ -13404,6 +13416,10 @@
     "artist": "Warren Mahy",
     "scryfall_id": "d2afc2b0-bd68-494b-9952-1fe53213552f"
   },
+  "requisition_raid": {
+    "artist": "Viko Menezes",
+    "scryfall_id": "951a32b0-f4a6-4942-bad3-e4708e976de6"
+  },
   "rescue_pepper_potts": {
     "artist": "Julia Vasilyeva",
     "scryfall_id": "476f75a4-a4e0-4d09-9756-f1001ebabc84"
@@ -13939,6 +13955,10 @@
   "rusted_sentinel": {
     "artist": "Jason Felix",
     "scryfall_id": "cba5fc44-4b9a-418b-a4e0-26d2c3a1eca4"
+  },
+  "rustler_rampage": {
+    "artist": "Josu Hernaiz",
+    "scryfall_id": "33ed7ca3-894b-45f4-a15f-51b6bcd3f474"
   },
   "rustrazor_butcher": {
     "artist": "Ron Spencer",
@@ -17346,6 +17366,10 @@
   "thrashing_brontodon": {
     "artist": "Randy Vargas",
     "scryfall_id": "d268088d-a929-44eb-804c-02d625a7b019"
+  },
+  "three_steps_ahead": {
+    "artist": "Jack Kirby & Vince Colletta",
+    "scryfall_id": "c39be5b1-b693-4b1b-b40b-8bf6d1fe986d"
   },
   "three_tree_city": {
     "artist": "Andrew Mar",
