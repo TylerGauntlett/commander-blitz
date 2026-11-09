@@ -105382,12 +105382,12 @@
     },
     "Garruk, Apex Predator": {
       "edhrec_rank": 8947,
-      "gate": "template",
+      "gate": null,
       "name": "Garruk, Apex Predator",
-      "reason": "no template for: +1: Destroy another target planeswalker",
+      "reason": "",
       "scryfall_id": "07dd9bfc-b6d2-493d-b825-941556018dbd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Garruk, Apex Predator Emblem": {
@@ -141012,12 +141012,12 @@
     },
     "Izoni, Thousand-Eyed": {
       "edhrec_rank": 4991,
-      "gate": "template",
+      "gate": null,
       "name": "Izoni, Thousand-Eyed",
-      "reason": "no template for: Undergrowth — When Izoni enters, create a 1/1 black and green Insect creature token for ea",
+      "reason": "",
       "scryfall_id": "95a3dfe3-88ab-4820-ae5e-2f5edd4d6f2f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Izzet Boilerworks": {
@@ -275372,12 +275372,12 @@
     },
     "Tarmogoyf Nest": {
       "edhrec_rank": 7833,
-      "gate": "template",
+      "gate": null,
       "name": "Tarmogoyf Nest",
-      "reason": "no template for: Enchanted land has \"{1}{G}, {T}: Create a Tarmogoyf token.\"",
+      "reason": "",
       "scryfall_id": "1a906132-19ab-4b7c-95de-08f8a5fa3aea",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tarnation Vista": {

@@ -6976,6 +6976,14 @@
   "gangly_stompling": {
     "zone": "battlefield"
   },
+  "garruk_apex_predator": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 5,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
   "garruk_cursed_huntsman": {
     "battlefield_count": 33,
     "counters": {
@@ -9248,6 +9256,13 @@
     "zone": "battlefield"
   },
   "ixalli_s_lorekeeper": {
+    "zone": "battlefield"
+  },
+  "izoni_thousand_eyed": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "izzet_boilerworks": {
@@ -18019,6 +18034,10 @@
     "zone": "graveyard"
   },
   "targ_nar_demon_fang_gnoll": {
+    "zone": "battlefield"
+  },
+  "tarmogoyf_nest": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "tarnished_citadel": {
