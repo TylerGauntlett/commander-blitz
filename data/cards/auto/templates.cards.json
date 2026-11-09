@@ -99696,6 +99696,73 @@
     {
       "abilities": [
         {
+          "affects_player": "you",
+          "affects_spells": {
+            "subtypes": [
+              "Desert"
+            ]
+          },
+          "effect": "play_lands_from_graveyard",
+          "kind": "static",
+          "text": "You may play Desert lands from your graveyard."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "create_token",
+              "token": "sand_warrior_1_1_rgw"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a Desert you control enters, create two 1/1 red, green, and white Sand Warrior creature tokens.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "subtypes": [
+                "Desert"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "R",
+        "W"
+      ],
+      "id": "hazezon_shaper_of_sand",
+      "keywords": [
+        "desertwalk"
+      ],
+      "mana_cost": "{R}{G}{W}",
+      "name": "Hazezon, Shaper of Sand",
+      "oracle_text": "Desertwalk (This creature can't be blocked as long as defending player controls a Desert.)\nYou may play Desert lands from your graveyard.\nWhenever a Desert you control enters, create two 1/1 red, green, and white Sand Warrior creature tokens.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_spells": {
             "colors": [
               "R"
@@ -234806,6 +234873,94 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "affects_spells": {
+            "subtypes": [
+              "Forest"
+            ]
+          },
+          "effect": "play_lands_from_graveyard",
+          "kind": "static",
+          "text": "You may play Forests from your graveyard."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "elemental_5_3_g"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a Forest you control enters, create a 5/3 green Elemental creature token.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "subtypes": [
+                "Forest"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 3
+                  },
+                  "op": "mill",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "prompt": "Mill three cards?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an Elemental you control dies, you may mill three cards.",
+          "trigger": {
+            "controller": "you",
+            "event": "creature_dies",
+            "filter": {
+              "controller": "you",
+              "subtypes": [
+                "Elemental"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "titania_nature_s_force",
+      "mana_cost": "{4}{G}{G}",
+      "name": "Titania, Nature's Force",
+      "oracle_text": "You may play Forests from your graveyard.\nWhenever a Forest you control enters, create a 5/3 green Elemental creature token.\nWhenever an Elemental you control dies, you may mill three cards.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Elemental"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
       ]
     },
     {

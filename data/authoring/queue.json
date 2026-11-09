@@ -124062,12 +124062,12 @@
     },
     "Hazezon, Shaper of Sand": {
       "edhrec_rank": 7724,
-      "gate": "template",
+      "gate": null,
       "name": "Hazezon, Shaper of Sand",
-      "reason": "no template for: You may play Desert lands from your graveyard",
+      "reason": "",
       "scryfall_id": "37dd84b4-0b8d-4303-8405-45e2c144f691",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hazoret the Fervent": {
@@ -288132,12 +288132,12 @@
     },
     "Titania, Nature's Force": {
       "edhrec_rank": 3993,
-      "gate": "template",
+      "gate": null,
       "name": "Titania, Nature's Force",
-      "reason": "no template for: You may play Forests from your graveyard",
+      "reason": "",
       "scryfall_id": "1230be09-8436-4023-bb8b-d325456c0914",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Titania, Protector of Argoth": {

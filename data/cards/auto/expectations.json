@@ -8551,6 +8551,9 @@
     },
     "zone": "battlefield"
   },
+  "hazezon_shaper_of_sand": {
+    "zone": "battlefield"
+  },
   "hazoret_s_monument": {
     "battlefield_count": 33,
     "hand_size": {
@@ -19685,6 +19688,9 @@
   },
   "titan_s_grave": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "titania_nature_s_force": {
     "zone": "battlefield"
   },
   "titania_protector_of_argoth": {

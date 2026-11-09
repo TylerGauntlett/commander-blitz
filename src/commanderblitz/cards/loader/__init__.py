@@ -4872,6 +4872,31 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"'once during each of your turns' is the whole rate limit, and "
                 f"without it the permission is an unbounded engine"
             )
+    elif model.effect == "play_lands_from_graveyard" and (
+        model.affects_spells is not None or model.affects is not None
+    ):
+        # "You may play **Desert** lands from your graveyard" -- Hazezon,
+        # Shaper of Sand. Optional, because Crucible of Worlds prints no
+        # filter: omitted it frees every land, written it frees only a land
+        # whose printed face matches, read per card by
+        # `player_statics.graveyard_land_play_allows`. `controller` is refused
+        # because `affects_player` already says whose land drop widens, and an
+        # empty filter would read as the unfiltered Crucible.
+        if model.affects is not None:
+            raise DslError(
+                f"{where}: play_lands_from_graveyard filters the graveyard's "
+                f"lands with 'affects_spells', not 'affects' (which picks out "
+                f"permanents)"
+            )
+        if not model.affects_spells:
+            raise DslError(f"{where}.affects_spells: an empty filter would free every land")
+        unknown = set(model.affects_spells) - (SPELL_FILTER_KEYS - {"controller"})
+        if unknown:
+            raise DslError(
+                f"{where}.affects_spells: a card in a graveyard has a printed face "
+                f"and no board state, and `affects_player` already names the "
+                f"player; unsupported keys {sorted(unknown)}"
+            )
     elif model.effect == "cant_cast_spells" and model.affects_spells is not None:
         # "Your opponents can't cast **noncreature** spells" -- Narset
         # Transcendent's emblem. Optional, because Voice of Victory prints no

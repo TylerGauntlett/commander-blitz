@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**286 cards** blocked by **264** capabilities.
+**284 cards** blocked by **263** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -42,7 +42,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [filtered-discard](#filtered-discard) | 2 | 9279 | op |
 | [manifest-dread](#manifest-dread) | 2 | 5772 | op |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
-| [play-lands-from-graveyard-filtered](#play-lands-from-graveyard-filtered) | 2 | 3993 | static_effect |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
 | [remove-x-counters-cost](#remove-x-counters-cost) | 2 | 5399 | cost |
 | [return-face-down](#return-face-down) | 2 | 3081 | op |
@@ -993,24 +992,6 @@ Blocks **2** cards.
   - {T}: Add {C}. If Gemstone Caverns has a luck counter on it, instead add one mana of any color.
 - **Leyline of Sanctity** (rank 7441) — `leyline_of_sanctity`
   - If this card is in your opening hand, you may begin the game with it on the battlefield.
-
-</details>
-
-## play-lands-from-graveyard-filtered
-
-Blocks **2** cards.
-
-- **(static_effect)** a filter on the `play_lands_from_graveyard` player-wide static -- "You may play Desert lands from your graveyard" -- so `legality._land_actions` offers only the graveyard lands matching it (here {"subtypes": ["Desert"]}), per object, rather than the whole graveyard
-  <br>Why the existing vocabulary won't do: `player_plays_lands_from_graveyard` answers a bare yes/no and `_land_actions` then appends the whole graveyard, so the static as it stands lets Hazezon play every land from the graveyard, a bigger card than printed; the vocabulary notes it 'cannot be narrowed by card type'. `cast_from_graveyard`'s `affects_spells` filter is the shape, but it is casting, not a land play. Desertwalk is the shipped `desertwalk` keyword, and 'Whenever a Desert you control enters' is an ordinary single-object `enters` trigger with a subtypes filter creating `sand_warrior_1_1_rgw` twice
-- **(static_effect)** a land-filter on the player-wide play_lands_from_graveyard static (e.g. an affects_cards selector with subtypes: ["Forest"]) so the land drop offers only matching lands from the graveyard; still one land drop per turn
-  <br>Why the existing vocabulary won't do: play_lands_from_graveyard is a yes/no permission (player_statics.player_plays_lands_from_graveyard), and legality._land_actions then offers every land in the graveyard; it cannot be narrowed by land subtype, so using it would let Titania play Plains, Islands and nonbasic lands from the graveyard too. cast_from_graveyard takes an affects_spells filter but covers spells only, never a land play
-
-<details><summary>Cards waiting on this</summary>
-
-- **Titania, Nature's Force** (rank 3993) — `titania_nature_s_force`
-  - You may play Forests from your graveyard.
-- **Hazezon, Shaper of Sand** (rank 7724) — `hazezon_shaper_of_sand`
-  - You may play Desert lands from your graveyard.
 
 </details>
 

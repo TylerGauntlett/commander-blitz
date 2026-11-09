@@ -613,7 +613,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `maximum_hand_size` | yes |  | The player's maximum hand size is N; the newest hand-size effect wins. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `no_hand_limit` | yes |  | The player has no maximum hand size. | [Static abilities](card-dsl.md#static-abilities) |
 | `opponents_cant_force_discard_or_sacrifice` | yes |  | Opponents' spells and abilities can't make the player discard or sacrifice. | ["Can't cause you to discard cards or sacrifice permanents"](card-dsl-cookbook.md#cant-cause-you-to-discard-cards-or-sacrifice-permanents) |
-| `play_lands_from_graveyard` | yes |  | The player may play lands from their graveyard. | [Static abilities](card-dsl.md#static-abilities) |
+| `play_lands_from_graveyard` | yes |  | The player may play lands from their graveyard: every land, or only those whose printed face matches `affects_spells`. | [Static abilities](card-dsl.md#static-abilities) |
 | `play_lands_from_library_top` | yes |  | The player may play lands from the top of their library. | [Static abilities](card-dsl.md#static-abilities) |
 | `player_hexproof` | yes |  | The player has hexproof: opponents' spells and abilities can't target them. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `player_protection` | yes |  | The player has protection from a quality: damage, targeting and enchanting by it. | [Protection](card-dsl-cookbook.md#protection) |
@@ -684,7 +684,7 @@ The static effects that describe the *player* rather than a characteristic, and 
 | `maximum_hand_size` | The player's maximum hand size is N; the newest hand-size effect wins. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `no_hand_limit` | The player has no maximum hand size. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `opponents_cant_force_discard_or_sacrifice` | Opponents' spells and abilities can't make the player discard or sacrifice. | ["Can't cause you to discard cards or sacrifice permanents"](card-dsl-cookbook.md#cant-cause-you-to-discard-cards-or-sacrifice-permanents) |
-| `play_lands_from_graveyard` | The player may play lands from their graveyard. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
+| `play_lands_from_graveyard` | The player may play lands from their graveyard: every land, or only those whose printed face matches `affects_spells`. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `play_lands_from_library_top` | The player may play lands from the top of their library. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `player_hexproof` | The player has hexproof: opponents' spells and abilities can't target them. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `player_protection` | The player has protection from a quality: damage, targeting and enchanting by it. | [Protection](card-dsl-cookbook.md#protection) |

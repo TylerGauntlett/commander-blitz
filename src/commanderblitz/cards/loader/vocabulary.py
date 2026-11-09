@@ -321,12 +321,15 @@ STATIC_EFFECTS = frozenset(
         # never at scheduling time, so a turn queued before the permanent arrived
         # is still skipped. Only extra turns -- the ordinary order has no reader.
         "skip_extra_turn",
+        # "You may play lands from your graveyard." Crucible of Worlds; with an
+        # optional `affects_spells` on the printed face, "You may play
+        # **Desert** lands from your graveyard" (Hazezon, Shaper of Sand). Read
+        # per card by `graveyard_land_play_allows`, only by the land drop.
         "play_lands_from_graveyard",
         # "Once during each of your turns, you may cast an artifact spell from
         # your graveyard." Edgar, Master Machinist. Player-wide like
         # `play_lands_from_graveyard` and strictly wider than it: that one is
-        # read only by the land drop, cannot be narrowed by card type and
-        # carries no per-turn count. Filters the spells it permits with
+        # read only by the land drop and carries no per-turn count. Filters the spells it permits with
         # `affects_spells`, the same filter `spell_cost_reduction` matches a
         # card in hand with, and counts its uses per granting permanent.
         "cast_from_graveyard",

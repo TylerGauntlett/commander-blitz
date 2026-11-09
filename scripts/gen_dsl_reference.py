@@ -983,7 +983,9 @@ STATICS: dict[str, Entry] = {
                           "Protection"),
     "opponents_cant_force_discard_or_sacrifice": ("Opponents' spells and abilities can't make the player discard or sacrifice.",
                                                   '"Can\'t cause you to discard cards or sacrifice permanents"'),
-    "play_lands_from_graveyard": ("The player may play lands from their graveyard.", None),
+    "play_lands_from_graveyard": ("The player may play lands from their graveyard: every land, or "
+                                  "only those whose printed face matches `affects_spells`.",
+                                  None),
     "play_lands_from_library_top": ("The player may play lands from the top of their library.", None),
     "prevent_all_but": ("Prevent all but N of each instance of damage to matching permanents.",
                         "Prevent all but N of that damage"),

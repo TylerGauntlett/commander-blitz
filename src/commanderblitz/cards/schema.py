@@ -765,6 +765,9 @@ class AbilityModel(BaseModel):
     #: name a card nobody can point at yet, and so may read only its printed
     #: face. Required on all three: an absent filter reads as "every spell",
     #: which on the last of them is Omniscience.
+    #: Optional on `play_lands_from_graveyard`, where it is the land a card
+    #: does not name yet either: "You may play **Desert** lands from your
+    #: graveyard" (Hazezon, Shaper of Sand); absent, every land.
     #: Read by `spell_cost_increase` too -- "Spells your opponents cast … cost
     #: an additional 3 life" (Terror of the Peaks) asks the identical question
     #: of the identical card, and answers it from the same key.

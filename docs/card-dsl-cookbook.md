@@ -1473,6 +1473,8 @@ they take `affects_player` instead of `affects` — the full list is
 { "kind": "static", "effect": "skip_draw_step", "affects_player": "you" }
 { "kind": "static", "effect": "skip_extra_turn", "affects_player": "opponent" }
 { "kind": "static", "effect": "play_lands_from_graveyard", "affects_player": "you" }
+{ "kind": "static", "effect": "play_lands_from_graveyard", "affects_player": "you",
+  "affects_spells": { "subtypes": ["Desert"] } }
 { "kind": "static", "effect": "cast_from_graveyard", "affects_player": "you" }
 { "kind": "static", "effect": "play_lands_from_library_top", "affects_player": "you" }
 { "kind": "static", "effect": "cast_from_library_top", "affects_player": "you",
@@ -1510,6 +1512,18 @@ filtered on both ends, so the key is optional there and sits beside `affects`
 rather than instead of it — see
 [Damage multiplied on the way out](card-dsl.md#damage-multiplied-on-the-way-out). It is the
 only static that takes both.
+
+`play_lands_from_graveyard` widens where the land drop may come from and never
+how many lands a turn allows. Bare, it is Crucible of Worlds' "You may play lands
+from your graveyard". An `affects_spells` filter on the printed face narrows it
+to the lands the card names — `{ "subtypes": ["Desert"] }` is Hazezon, Shaper of
+Sand's "Desert lands", `{ "subtypes": ["Forest"] }` Titania, Nature's Force's
+"Forests" — read per card by `player_statics.graveyard_land_play_allows`, so
+every other land stays in the graveyard. The filter takes the printed-face keys
+of `SPELL_FILTER_KEYS` except `controller` (`affects_player` already says whose
+land drop widens); an empty filter and `affects` are load errors. Two statics
+are two permissions, and a land either one covers is playable. The permission
+is not `cast_from_graveyard`, which casts spells and is metered per turn.
 
 `maximum_hand_size` is Twenty-Toed Toad's "Your maximum hand size is twenty":
 `amount` is the number the cleanup step (514.1) discards down to, and it is

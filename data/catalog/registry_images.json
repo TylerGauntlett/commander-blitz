@@ -7560,6 +7560,10 @@
     "artist": "Simon Dominic",
     "scryfall_id": "52af8b70-a9c8-40d7-99da-fa51dc293688"
   },
+  "hazezon_shaper_of_sand": {
+    "artist": "Bryan Sola",
+    "scryfall_id": "37dd84b4-0b8d-4303-8405-45e2c144f691"
+  },
   "hazoret_s_monument": {
     "artist": "Richard Wright",
     "scryfall_id": "72fdb06f-f18d-47ee-b431-c23c0d042459"
@@ -17514,6 +17518,10 @@
   "titan_s_grave": {
     "artist": "Lorenzo Lanfranconi",
     "scryfall_id": "a9ab41c8-3ee2-4676-9b8b-20c34d9f5f21"
+  },
+  "titania_nature_s_force": {
+    "artist": "Heonhwa",
+    "scryfall_id": "1230be09-8436-4023-bb8b-d325456c0914"
   },
   "titania_protector_of_argoth": {
     "artist": "SchmandrewART",

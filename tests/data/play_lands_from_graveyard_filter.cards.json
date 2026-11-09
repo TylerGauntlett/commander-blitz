@@ -1,0 +1,29 @@
+{
+  "_comment": "Cards that exist only for the filtered graveyard-land test (tests/unit/statics/test_play_lands_from_graveyard_filter.py). Never part of a deck list. `t_desert_crucible` is Hazezon, Shaper of Sand's permission on a vanilla enchantment.",
+  "cards": [
+    {
+      "id": "t_desert_crucible",
+      "name": "Test Desert Crucible",
+      "oracle_text": "You may play Desert lands from your graveyard.",
+      "mana_cost": "{2}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "You may play Desert lands from your graveyard.",
+          "effect": "play_lands_from_graveyard",
+          "affects_player": "you",
+          "affects_spells": {
+            "subtypes": [
+              "Desert"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
