@@ -2560,3 +2560,42 @@ class TestTheGraveyardOverdriveTokens:
         assert ability.static["affects"] == {"self_only": True}
         assert ability.static["power"] == types_in_graveyards
         assert ability.static["toughness"] == {"sum": [types_in_graveyards, {"const": 1}]}
+
+
+class TestTheTrickyTerrainTokens:
+    """Dark Depths makes Marit Lage, Hydra Broodmaster X/X green Hydras and
+    Desert Warfare 1/1 red, green and white Sand Warriors, each pinned beside
+    its nearest near miss (111.4: a token is exactly what its creating effect
+    says). The near misses are the colorless indestructible Vibranium, the
+    green X/X Ooze and the one-colour 1/1 Warriors."""
+
+    def test_marit_lage_is_a_legendary_black_twenty_twenty(self, pool):
+        token = pool.get("marit_lage_20_20_b_flying_indestructible")
+        assert token is not None and token.is_token and token.is_creature
+        assert token.name == "Marit Lage"
+        assert sorted(token.supertypes) == ["Legendary"]
+        assert (token.power, token.toughness) == (20, 20)
+        assert sorted(token.colors) == ["B"]
+        assert list(token.subtypes) == ["Avatar"]
+        assert set(token.keywords) == {"flying", "indestructible"}
+
+    def test_the_hydra_is_a_green_x_x(self, pool):
+        token = pool.get("hydra_x_x_g")
+        assert token is not None and token.is_token and token.is_creature
+        assert sorted(token.colors) == ["G"]
+        assert list(token.subtypes) == ["Hydra"]
+        assert not token.keywords and not token.abilities
+
+    def test_the_ooze_is_still_a_separate_x_x(self, pool):
+        assert list(pool.get("ooze_x_x_g").subtypes) == ["Ooze"]
+
+    def test_the_sand_warrior_is_a_three_colour_one_one(self, pool):
+        token = pool.get("sand_warrior_1_1_rgw")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (1, 1)
+        assert sorted(token.colors) == ["G", "R", "W"]
+        assert sorted(token.subtypes) == ["Sand", "Warrior"]
+        assert not token.keywords and not token.abilities
+
+    def test_the_red_warrior_is_still_mono_red(self, pool):
+        assert sorted(pool.get("warrior_1_1_r").colors) == ["R"]

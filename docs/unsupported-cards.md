@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**282 cards** blocked by **254** capabilities.
+**280 cards** blocked by **251** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -159,7 +159,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 1 | 3531 | static_effect |
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
 | [harmonize](#harmonize) | 1 | 7442 | cost |
-| [hydra-x-x-g-token](#hydra-x-x-g-token) | 1 | 4206 | token |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [jump-start](#jump-start) | 1 | 14777 | op |
 | [karox-bladewing](#karox-bladewing) | 1 | 8889 | token |
@@ -181,7 +180,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mana-spent-trigger-on-activation](#mana-spent-trigger-on-activation) | 1 | 4444 | trigger_event |
 | [mana-tap-trigger-damage-rider](#mana-tap-trigger-damage-rider) | 1 | 7929 | static_effect |
 | [manifest-from-hand](#manifest-from-hand) | 1 | 3975 | op |
-| [marit-lage-token](#marit-lage-token) | 1 | 1430 | token |
 | [maximum-hand-size-modifier](#maximum-hand-size-modifier) | 1 | 1712 | static_effect |
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
@@ -231,7 +229,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
 | [salamander-warrior-4-3-u](#salamander-warrior-4-3-u) | 1 | 3395 | token |
-| [sand-warrior-token](#sand-warrior-token) | 1 | 7493 | token |
 | [sandbox-graveyard-spell-prop](#sandbox-graveyard-spell-prop) | 1 | 5082 | engine |
 | [sandbox-low-mana-value-permanent](#sandbox-low-mana-value-permanent) | 1 | 14140 | engine |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
@@ -2748,20 +2745,6 @@ Blocks **1** card.
 
 </details>
 
-## hydra-x-x-g-token
-
-Blocks **1** card.
-
-- **(token)** an X/X green Hydra creature token (no abilities), e.g. hydra_x_x_g, whose power/toughness are set by create_token's power/toughness from the monstrosity X
-  <br>Why the existing vocabulary won't do: token_ids is closed and has no Hydra token; the nearest is ooze_x_x_g, a green X/X Ooze, which has the wrong creature type. Monstrosity X (op monstrosity) and the becomes_monstrous trigger event both exist, so the token is the only missing piece
-
-<details><summary>Cards waiting on this</summary>
-
-- **Hydra Broodmaster** (rank 4206) — `hydra_broodmaster`
-  - When this creature becomes monstrous, create X X/X green Hydra creature tokens.
-
-</details>
-
 ## impulse-from-opponent-library
 
 Blocks **1** card.
@@ -3058,20 +3041,6 @@ Blocks **1** card.
 
 - **Scroll of Fate** (rank 3975) — `scroll_of_fate`
   - {T}: Manifest a card from your hand
-
-</details>
-
-## marit-lage-token
-
-Blocks **1** card.
-
-- **(token)** Marit Lage, a legendary 20/20 black Avatar creature token with flying and indestructible (named token, Legendary supertype)
-  <br>Why the existing vocabulary won't do: token_ids is a closed list and holds no 20/20 Avatar, no Marit Lage and no legendary named creature token; the nearest indestructible token is vibranium_token, a colorless artifact, so create_token has nothing to name
-
-<details><summary>Cards waiting on this</summary>
-
-- **Dark Depths** (rank 1430) — `dark_depths`
-  - When Dark Depths has no ice counters on it, sacrifice it. If you do, create Marit Lage, a legendary 20/20 black Avatar creature token with flying and indestructible.
 
 </details>
 
@@ -3768,21 +3737,6 @@ Blocks **1** card.
 
 - **Amphin Mutineer** (rank 3395) — `amphin_mutineer`
   - When this creature enters, exile up to one target non-Salamander creature. That creature's controller creates a 4/3 blue Salamander Warrior creature token.
-
-</details>
-
-## sand-warrior-token
-
-Blocks **1** card.
-
-- **(token)** a 1/1 red, green, and white Sand Warrior creature token
-  <br>Why the existing vocabulary won't do: token_ids has warrior_1_1_r, warrior_1_1_w and elf_warrior_1_1_g, none of which is a three-colour R/G/W Sand Warrior
-
-<details><summary>Cards waiting on this</summary>
-
-- **Desert Warfare** (rank 7493) — `desert_warfare`
-  - Whenever you sacrifice a Desert and whenever a Desert card is put into your graveyard from your hand or library, put that card onto the battlefield under your control at the beginning of your next end step.
-  - At the beginning of combat on your turn, if you control five or more Deserts, create that many 1/1 red, green, and white Sand Warrior creature tokens. They gain haste.
 
 </details>
 

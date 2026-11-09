@@ -4188,6 +4188,14 @@
     },
     "zone": "graveyard"
   },
+  "dark_depths": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 10,
+      "kind": "ice"
+    },
+    "zone": "battlefield"
+  },
   "dark_ritual": {
     "graveyard_size": {
       "0": 3
@@ -8835,6 +8843,10 @@
     "zone": "battlefield"
   },
   "hussar_patrol": {
+    "zone": "battlefield"
+  },
+  "hydra_broodmaster": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "hydra_omnivore": {

@@ -49600,6 +49600,97 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "ice",
+              "objects": {
+                "self_only": true
+              },
+              "op": "remove_counters"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}: Remove an ice counter from Dark Depths."
+        },
+        {
+          "effects": [
+            {
+              "as": "sacrificed",
+              "objects": {
+                "self_only": true
+              },
+              "op": "sacrifice"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "binding": "sacrificed"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "create_token",
+                  "token": "marit_lage_20_20_b_flying_indestructible"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Dark Depths has no ice counters on it, sacrifice it. If you do, create Marit Lage, a legendary 20/20 black Avatar creature token with flying and indestructible.",
+          "trigger": {
+            "event": "state",
+            "state": {
+              "cmp": "==",
+              "left": {
+                "counters_on": {
+                  "counter": "ice",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              },
+              "right": {
+                "const": 0
+              }
+            }
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "dark_depths",
+      "mana_cost": "",
+      "name": "Dark Depths",
+      "oracle_text": "Dark Depths enters with ten ice counters on it.\n{3}: Remove an ice counter from Dark Depths.\nWhen Dark Depths has no ice counters on it, sacrifice it. If you do, create Marit Lage, a legendary 20/20 black Avatar creature token with flying and indestructible.",
+      "replacements": [
+        {
+          "amount": 10,
+          "counter": "ice",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "supertypes": [
+        "Legendary",
+        "Snow"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -103731,6 +103822,67 @@
         "Knight"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{X}{X}{G}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "x": true
+              },
+              "op": "monstrosity"
+            }
+          ],
+          "kind": "activated",
+          "text": "{X}{X}{G}: Monstrosity X. (If this creature isn't monstrous, put X +1/+1 counters on it and it becomes monstrous.)"
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "create_token",
+              "power": {
+                "binding": "amount"
+              },
+              "token": "hydra_x_x_g",
+              "toughness": {
+                "binding": "amount"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature becomes monstrous, create X X/X green Hydra creature tokens.",
+          "trigger": {
+            "event": "becomes_monstrous",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "hydra_broodmaster",
+      "mana_cost": "{4}{G}{G}",
+      "name": "Hydra Broodmaster",
+      "oracle_text": "{X}{X}{G}: Monstrosity X. (If this creature isn't monstrous, put X +1/+1 counters on it and it becomes monstrous.)\nWhen this creature becomes monstrous, create X X/X green Hydra creature tokens.",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Hydra"
+      ],
+      "toughness": 7,
       "types": [
         "Creature"
       ]

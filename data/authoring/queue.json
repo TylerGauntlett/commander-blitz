@@ -60962,12 +60962,12 @@
     },
     "Dark Depths": {
       "edhrec_rank": 1430,
-      "gate": "template",
+      "gate": null,
       "name": "Dark Depths",
-      "reason": "no template for: enters with ten ice counters on it",
+      "reason": "",
       "scryfall_id": "09c224c7-418d-4b64-9d56-a87e4ff631ab",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dark Endurance": {
@@ -132192,12 +132192,12 @@
     },
     "Hydra Broodmaster": {
       "edhrec_rank": 4206,
-      "gate": "template",
+      "gate": null,
       "name": "Hydra Broodmaster",
-      "reason": "no template for: {X}{X}{G}: Monstrosity X",
+      "reason": "",
       "scryfall_id": "d9947547-5f16-4972-ba1e-33bed3e49d34",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hydra Omnivore": {
