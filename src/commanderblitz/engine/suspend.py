@@ -152,6 +152,45 @@ def foretell_card(state: GameState, pid: int, oid: int) -> Generator[Any, list[i
     return True
 
 
+def plot_card(state: GameState, pid: int, oid: int) -> Generator[Any, list[int], bool]:
+    """Pay the plot cost and exile this card from hand, to cast free later.
+
+    Plot (702.171a) is foretell with the price moved to the front: the card
+    names what plotting costs, and the later cast is free. It shares
+    `ActionKind.SUSPEND` for foretell's reason -- a card exiled from hand to be
+    cast later, by a special action that uses no stack and cannot be
+    countered.
+
+    What it leaves behind is the permission a `grant_plot` spell leaves in
+    `stack._place_after_resolution`, and deliberately the same one, so a
+    plotted card is one thing however it was plotted: playable by this player
+    on a later turn (`later_turns`, the "later turn" of 702.171a), free
+    (`playable_free`, 601.2b), and only as a sorcery. Not face down -- plot
+    exiles the card face up, so nothing is written to `revealed_to`.
+    """
+
+    obj = state.objects[oid]
+    card = state.card_of(obj)
+    if card.plot is None:
+        return False
+
+    ok = yield from pay(state, pid, Cost(mana=card.plot), None, purpose=OTHER_PAYMENT)
+    if not ok:  # pragma: no cover - legality already proved payability
+        return False
+
+    move_object(state, oid, Zone.EXILE, cause="plotted")
+    # After the move, since `reset_permanent_state` clears the permission on
+    # the way -- the ordering `_place_after_resolution` keeps for the same
+    # five fields.
+    obj.playable_by = pid
+    obj.playable_turn = state.turn
+    obj.playable_duration = "later_turns"
+    obj.playable_free = True
+    obj.playable_sorcery_only = True
+    state.emit("plotted", player=pid, source=oid, card=card.id)
+    return True
+
+
 def foretold_cards(state: GameState, pid: int) -> list[int]:
     """This player's foretold cards that may be cast **now** -- a later turn."""
     return [

@@ -2137,6 +2137,14 @@ def _covered(card: CardDef, line: str) -> bool:
     if card.miracle is not None and stripped.lower().startswith("miracle "):
         return _declares_printed_cost(stripped[len("miracle ") :], card.miracle)
 
+    # "Plot {3}{U} (You may pay {3}{U} and exile this card from your hand. Cast
+    # it as a sorcery on a later turn without paying its mana cost…)" --
+    # miracle's shape: the line is the price, carried by the card-level `plot`
+    # field and read by the special action `suspend.plot_card`, so a creature
+    # with plot has no ability to claim it. Strict for warp's reason.
+    if card.plot is not None and stripped.lower().startswith("plot "):
+        return _declares_printed_cost(stripped[len("plot ") :], card.plot)
+
     # "Escape—{3}{B}{B}, Exile four other cards from your graveyard." -- the
     # graveyard-cost slot once more, with escape's destination (the card goes
     # where it normally would, so `graveyard_cast_exiles` is False and it is not

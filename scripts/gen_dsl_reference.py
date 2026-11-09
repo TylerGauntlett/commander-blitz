@@ -1135,6 +1135,7 @@ CARD_LEVEL_COSTS: dict[str, Entry] = {
     "escalate": ("Escalate cost (mana or a full cost), paid once per mode beyond the first.", "Escalate"),
     "mutate": ("Mutate cost.", "Mutate — two cards, one permanent, and one synthesised `CardDef`"),
     "overload": ("Overload cost.", "Overload"),
+    "plot": ("Plot cost: pay it to exile this from hand, then cast it free on a later turn.", "Plot"),
     "pay_generic_with": ("Convoke, improvise or delve: what may pay generic mana.",
                          "Convoke, improvise and delve"),
     "retrace": ("Retrace.", 'Retrace and "by discarding a card"'),

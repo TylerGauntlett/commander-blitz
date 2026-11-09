@@ -121,6 +121,7 @@ CARD_LEVEL_COST_KEYS = (
     "multikicker",
     "mutate",
     "overload",
+    "plot",  # str; the price of plotting it from hand
     "pay_generic_with",  # str; convoke and its relatives
     "retrace",  # bool
     "splice",

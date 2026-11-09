@@ -831,6 +831,7 @@ The alternative and additional costs that live on the *card* rather than inside 
 | `multikicker` | Multikicker cost. | [Multikicker](card-dsl-cookbook.md#multikicker) |
 | `mutate` | Mutate cost. | [Mutate — two cards, one permanent, and one synthesised CardDef](card-dsl-cookbook.md#mutate--two-cards-one-permanent-and-one-synthesised-carddef) |
 | `overload` | Overload cost. | [Overload](card-dsl-cookbook.md#overload) |
+| `plot` | Plot cost: pay it to exile this from hand, then cast it free on a later turn. | [Plot](card-dsl.md#plot) |
 | `pay_generic_with` | Convoke, improvise or delve: what may pay generic mana. | [Convoke, improvise and delve](card-dsl-cookbook.md#convoke-improvise-and-delve) |
 | `retrace` | Retrace. | [Retrace and "by discarding a card"](card-dsl-cookbook.md#retrace-and-by-discarding-a-card) |
 | `splice` | Splice cost. | [Splice](card-dsl-cookbook.md#splice) |

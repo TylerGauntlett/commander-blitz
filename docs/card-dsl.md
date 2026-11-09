@@ -1441,6 +1441,21 @@ The from-hand gate does double duty exactly as rebound's does — it is the prin
 words, and it is the loop guard, since the plotted card is cast from **exile** and
 would otherwise re-plot itself for ever.
 
+**A card that prints plot** carries the card-level field instead:
+
+```jsonc
+"plot": "{3}{U}"   // Lock and Load: "Plot {3}{U}"
+```
+
+It is foretell's special action with the price moved to the front, and shares
+`ActionKind.SUSPEND`: pay the `plot` cost and exile the card from hand, face up,
+using no stack (`suspend.plot_card`). Plotting is sorcery-speed whatever the
+card's type, so an instant with plot is still only plotted on your own turn with
+the stack empty. It leaves the same three riders `grant_plot` leaves, so a card
+plotted from hand and a spell plotted as it resolved are the same object
+afterwards. `grant_plot` is the near miss for it: it marks a spell already on the
+stack and cannot reach a card in hand.
+
 ### "Multicolored" — `min_colors`
 
 ```jsonc

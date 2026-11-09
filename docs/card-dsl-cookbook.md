@@ -6350,6 +6350,7 @@ them where it is sitting:
 "madness": "{R}"                            // discarded -> exiled, and castable for this
 "miracle": "{W}"                            // cast it as the first card you draw
 "foretell": "{R}"                           // pay {2} to exile it; cast it later for this
+"plot": "{3}{U}"                             // pay this to exile it; cast it free on a later turn
 "epic": true                                // no more spells; a free copy each upkeep
 "splice": "{1}{W}", "splice_onto": "Arcane" // add this card's effects to another spell
 "morph": "{2}{G}", "morph_counter": false  // cast it face down for {3}; turn up for this
