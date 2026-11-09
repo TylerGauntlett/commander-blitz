@@ -123252,12 +123252,12 @@
     },
     "Hashep Oasis": {
       "edhrec_rank": 4277,
-      "gate": "template",
+      "gate": null,
       "name": "Hashep Oasis",
-      "reason": "no template for: {T}, Pay 1 life: Add {G}",
+      "reason": "",
       "scryfall_id": "1e8afbcf-c5a6-428c-8d91-a309821362b3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hasran Ogress": {
@@ -127242,12 +127242,12 @@
     },
     "Hidden Cataract": {
       "edhrec_rank": 5024,
-      "gate": "template",
+      "gate": null,
       "name": "Hidden Cataract",
-      "reason": "no template for: {4}{U}, {T}, Sacrifice this land: Discover 4. Activate only as a sorcery",
+      "reason": "",
       "scryfall_id": "a3b53320-57bf-4b9f-903d-f14ff0afdd19",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hidden Courtyard": {
@@ -127372,12 +127372,12 @@
     },
     "Hidden Nursery": {
       "edhrec_rank": 3495,
-      "gate": "template",
+      "gate": null,
       "name": "Hidden Nursery",
-      "reason": "no template for: {4}{G}, {T}, Sacrifice this land: Discover 4. Activate only as a sorcery",
+      "reason": "",
       "scryfall_id": "fcd447b3-4d96-4d85-924d-2c5043ba054f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hidden Path": {
@@ -130542,12 +130542,12 @@
     },
     "Hour of Promise": {
       "edhrec_rank": 3110,
-      "gate": "template",
+      "gate": null,
       "name": "Hour of Promise",
-      "reason": "no template for: Search your library for up to two land cards, put them onto the battlefield tapped, then s",
+      "reason": "",
       "scryfall_id": "d74c66da-d247-46dc-9ccd-536f8af6bbe0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hour of Reckoning": {

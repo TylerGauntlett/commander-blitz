@@ -8218,6 +8218,10 @@
   "harvest_gwyllion": {
     "zone": "battlefield"
   },
+  "hashep_oasis": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "haste_magic": {
     "graveyard_size": {
       "0": 3
@@ -8529,7 +8533,15 @@
   "hexplate_golem": {
     "zone": "battlefield"
   },
+  "hidden_cataract": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "hidden_grotto": {
+    "zone": "battlefield"
+  },
+  "hidden_nursery": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "hieroglyphic_illumination": {
@@ -8710,6 +8722,16 @@
   },
   "hostile_minotaur": {
     "zone": "battlefield"
+  },
+  "hour_of_promise": {
+    "battlefield_count": 34,
+    "graveyard_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "graveyard"
   },
   "hour_of_reckoning": {
     "battlefield_count": 30,

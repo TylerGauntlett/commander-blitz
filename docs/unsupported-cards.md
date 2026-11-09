@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**271 cards** blocked by **244** capabilities.
+**272 cards** blocked by **245** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -156,6 +156,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 1 | 3531 | static_effect |
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
 | [harmonize](#harmonize) | 1 | 7442 | cost |
+| [hydra-x-x-g-token](#hydra-x-x-g-token) | 1 | 4206 | token |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [jump-start](#jump-start) | 1 | 14777 | op |
 | [karox-bladewing](#karox-bladewing) | 1 | 8889 | token |
@@ -648,8 +649,8 @@ Blocks **3** cards.
 
 - **(value)** a value (or a binding on the spell_cast event) that reads the X chosen for the spell that fired a spell_cast trigger -- for a `source: self` cast trigger, the X of this spell while it is still on the stack -- so the trigger can say 'each player sacrifices X creatures' as a for_each_player sacrifice with `count` equal to that X
   <br>Why the existing vocabulary won't do: The value `x` evaluates `ctx.x`, which for a triggered ability comes from `event_bindings` reading `obj.cast_x`; `cast_x` is only written in `stack.py` when the spell resolves (`obj.cast_x = item.x`), and `Game._cast` fires SPELL_CAST without an `x` in its payload (`x` in EVENT_BINDING_KEYS is carried only by `cycle`). So a cast trigger always reads X as 0 and the edict would sacrifice nothing. No value key reads a stack item's X by `sid`. The rest is expressible: `for_each_player` over each player with `sacrifice` (`as` binding) then `spell_enters_with_counters` adding `times [2, count(binding)]` +1/+1 counters to the spell named by the trigger's `sid` accumulates across iterations.
-- **(engine)** a cast trigger (`spell_cast`, `source: self`, `active_zones: ["stack"]`) whose effects read the X the spell was cast with through `{"x": true}` -- i.e. the SPELL_CAST event fired by `Game._cast` must carry `x=item.x` so `triggers.event_bindings` (which lists `x` in EVENT_BINDING_KEYS) overrides the permanent's `cast_x` the way the CYCLED event does for Shark Typhoon
-  <br>Why the existing vocabulary won't do: `{"x": true}` in a triggered ability reads the trigger's `x` binding, which `event_bindings` takes from `obj.cast_x`; `cast_x` is written only in `stack.resolve` when the spell resolves, and the SPELL_CAST payload has no `x`, so the cast trigger would read 0 and gain/draw nothing. The only other route, `half` of (`mana_value_of` self minus 2), reads the mana value rather than X and would be a stand-in, not the printed referent
+- **(engine)** a cast trigger (`spell_cast`, `source: self`, `active_zones: ["stack"]`) whose effects can read the X the spell was cast with via `{"x": true}` (then `half`, rounded down) -- the SPELL_CAST event fired by `Game._cast` must carry `x=item.x` and `x` must be in `triggers.EVENT_BINDING_KEYS` (or `event_bindings` must read the stack item's X) so it overrides the object's `cast_x`
+  <br>Why the existing vocabulary won't do: `event_bindings` sets the trigger's `x` from `obj.cast_x`, which `stack.resolve` writes only when the spell resolves; the SPELL_CAST payload in `Game._cast` has no `x`, so a cast trigger reads X as 0 and gains/draws nothing. `half` of (`mana_value_of` self minus 2) would read mana value rather than the printed X and is a stand-in, not the referent
 - **(value)** a value reading the X chosen for the triggering spell (the spell bound as `subject` on a spell_cast trigger), e.g. the SPELL_CAST event payload carrying `x` so `event_bindings` overrides the source's `cast_x` and `{"x": true}` means the cast spell's X
   <br>Why the existing vocabulary won't do: `{"x": true}` in a triggered ability reads the `x` binding, which `triggers.event_bindings` takes from the trigger source's own `cast_x` (Nev's, 0); the SPELL_CAST payload carries no `x` (only the cycle event does via EVENT_BINDING_KEYS), and `mana_value_of` the subject reads mana value, not X
 
@@ -2683,6 +2684,20 @@ Blocks **1** card.
 
 - **Zenith Festival** (rank 7442) — `zenith_festival`
   - Harmonize {X}{R}{R}
+
+</details>
+
+## hydra-x-x-g-token
+
+Blocks **1** card.
+
+- **(token)** an X/X green Hydra creature token (no abilities), e.g. hydra_x_x_g, whose power/toughness are set by create_token's power/toughness from the monstrosity X
+  <br>Why the existing vocabulary won't do: token_ids is closed and has no Hydra token; the nearest is ooze_x_x_g, a green X/X Ooze, which has the wrong creature type. Monstrosity X (op monstrosity) and the becomes_monstrous trigger event both exist, so the token is the only missing piece
+
+<details><summary>Cards waiting on this</summary>
+
+- **Hydra Broodmaster** (rank 4206) — `hydra_broodmaster`
+  - When this creature becomes monstrous, create X X/X green Hydra creature tokens.
 
 </details>
 
