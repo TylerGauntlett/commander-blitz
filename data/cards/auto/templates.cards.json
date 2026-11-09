@@ -20937,6 +20937,103 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "chosen",
+                  "objects": {
+                    "chooser": "you",
+                    "controller": {
+                      "binding": "each_player"
+                    },
+                    "count": 1,
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "choose_permanents",
+                  "prompt": "Choose a creature that player controls"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            },
+            {
+              "as": "model",
+              "objects": {
+                "binding": "chosen",
+                "chooser": "you",
+                "count": 1
+              },
+              "op": "choose_permanents",
+              "prompt": "Copy which of those creatures"
+            },
+            {
+              "except_": {
+                "colors": [],
+                "power": {
+                  "power_of": {
+                    "objects": {
+                      "binding": "chosen"
+                    }
+                  }
+                },
+                "subtypes": [
+                  "Eldrazi"
+                ],
+                "toughness": {
+                  "toughness_of": {
+                    "objects": {
+                      "binding": "chosen"
+                    }
+                  }
+                },
+                "types": [
+                  "Creature"
+                ]
+              },
+              "objects": {
+                "binding": "model"
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When you cast this spell, for each opponent, choose a creature that player controls. Create a token that's a copy of one of those creatures, except its power is equal to the total power of those creatures, its toughness is equal to the total toughness of those creatures, and it's a colorless Eldrazi creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "id": "benthic_anomaly",
+      "mana_cost": "{6}{U}",
+      "name": "Benthic Anomaly",
+      "oracle_text": "Devoid (This card has no color.)\nWhen you cast this spell, for each opponent, choose a creature that player controls. Create a token that's a copy of one of those creatures, except its power is equal to the total power of those creatures, its toughness is equal to the total toughness of those creatures, and it's a colorless Eldrazi creature.",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Eldrazi",
+        "Serpent"
+      ],
+      "toughness": 8,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -62987,6 +63084,65 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "mana_restriction": {
+            "activate": [
+              [
+                "eldrazi",
+                {
+                  "colorless": true
+                }
+              ]
+            ],
+            "cast": [
+              [
+                "eldrazi",
+                {
+                  "colorless": true
+                }
+              ]
+            ]
+          },
+          "text": "{T}: Add {C}{C}. Spend this mana only to cast colorless Eldrazi spells or activate abilities of colorless Eldrazi."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "eldrazi_temple",
+      "name": "Eldrazi Temple",
+      "oracle_text": "{T}: Add {C}.\n{T}: Add {C}{C}. Spend this mana only to cast colorless Eldrazi spells or activate abilities of colorless Eldrazi.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "eldritch_immunity",
@@ -81008,6 +81164,77 @@
         "Legendary"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "not": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "controller": "you",
+                  "types": [
+                    "Artifact"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "right": {
+                "const": 4
+              }
+            }
+          },
+          "effect": "cant_attack",
+          "kind": "static",
+          "text": "Gadrak can't attack unless you control four or more artifacts."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "nontoken_creatures_died_this_turn": "all"
+              },
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, create a Treasure token for each nontoken creature that died this turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "gadrak_the_crown_scourge",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{R}",
+      "name": "Gadrak, the Crown-Scourge",
+      "oracle_text": "Flying\nGadrak can't attack unless you control four or more artifacts.\nAt the beginning of your end step, create a Treasure token for each nontoken creature that died this turn. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -194048,6 +194275,71 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "count": {
+                "controller": "you",
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 7
+            }
+          },
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "mana_restriction": {
+            "cast": [
+              [
+                {
+                  "colorless": true
+                }
+              ]
+            ]
+          },
+          "text": "{T}: Add {C}{C}. Spend this mana only to cast colorless spells. Activate only if you control seven or more lands."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "shrine_of_the_forsaken_gods",
+      "name": "Shrine of the Forsaken Gods",
+      "oracle_text": "{T}: Add {C}.\n{T}: Add {C}{C}. Spend this mana only to cast colorless spells. Activate only if you control seven or more lands.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -244175,6 +244467,60 @@
         "Demon"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "nontoken_creatures_died_this_turn": "you"
+                  },
+                  "op": "create_token",
+                  "token": "eldrazi_scion_1_1_c"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{C}"
+              },
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When you cast this spell, you may pay {C}. If you do, create a 1/1 colorless Eldrazi Scion creature token for each nontoken creature that died under your control this turn. Those tokens have \"Sacrifice this token: Add {C}.\"",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "id": "vile_redeemer",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{2}{G}",
+      "name": "Vile Redeemer",
+      "oracle_text": "Devoid (This card has no color.)\nFlash\nWhen you cast this spell, you may pay {C}. If you do, create a 1/1 colorless Eldrazi Scion creature token for each nontoken creature that died under your control this turn. Those tokens have \"Sacrifice this token: Add {C}.\"",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Eldrazi"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]

@@ -1778,6 +1778,11 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "benthic_anomaly": {
+    "battlefield_count": 34,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "benthic_behemoth": {
     "zone": "battlefield"
   },
@@ -5326,6 +5331,10 @@
     },
     "zone": "battlefield"
   },
+  "eldrazi_temple": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "eldritch_immunity": {
     "zone": "graveyard"
   },
@@ -7005,6 +7014,10 @@
         "lifelink"
       ]
     },
+    "zone": "battlefield"
+  },
+  "gadrak_the_crown_scourge": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "gaea_s_cradle": {
@@ -16369,6 +16382,10 @@
   "shrike_force": {
     "zone": "battlefield"
   },
+  "shrine_of_the_forsaken_gods": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "shu_cavalry": {
     "zone": "battlefield"
   },
@@ -20529,6 +20546,10 @@
   "vile_mutilator": {
     "battlefield_count": 32,
     "opponent_battlefield_count": 4,
+    "zone": "battlefield"
+  },
+  "vile_redeemer": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "vilis_broker_of_blood": {

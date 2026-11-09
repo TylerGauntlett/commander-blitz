@@ -23912,12 +23912,12 @@
     },
     "Benthic Anomaly": {
       "edhrec_rank": 4038,
-      "gate": "behaviour",
+      "gate": null,
       "name": "Benthic Anomaly",
-      "reason": "your battlefield is 33, expected 34",
+      "reason": "",
       "scryfall_id": "08ff764d-2c0d-4599-a22a-6a64766dad3a",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Benthic Behemoth": {
@@ -80362,12 +80362,12 @@
     },
     "Eldrazi Temple": {
       "edhrec_rank": 1700,
-      "gate": "template",
+      "gate": null,
       "name": "Eldrazi Temple",
-      "reason": "no template for: {T}: Add {C}{C}. Spend this mana only to cast colorless Eldrazi spells or activate abiliti",
+      "reason": "",
       "scryfall_id": "010abd40-3f9c-44bc-8570-d539750c3cd7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Eldritch Evolution": {
@@ -104002,12 +104002,12 @@
     },
     "Gadrak, the Crown-Scourge": {
       "edhrec_rank": 3951,
-      "gate": "template",
+      "gate": null,
       "name": "Gadrak, the Crown-Scourge",
-      "reason": "no template for: Gadrak can't attack unless you control four or more artifacts",
+      "reason": "",
       "scryfall_id": "cbb13721-e6f7-439c-8993-a896de5d6892",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gadwick's First Duel": {
@@ -245692,12 +245692,12 @@
     },
     "Shrine of the Forsaken Gods": {
       "edhrec_rank": 1210,
-      "gate": "template",
+      "gate": null,
       "name": "Shrine of the Forsaken Gods",
-      "reason": "no template for: {T}: Add {C}{C}. Spend this mana only to cast colorless spells. Activate only if you contr",
+      "reason": "",
       "scryfall_id": "dde7ad4e-a38b-4981-8c9f-78a9e9ea2c36",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shrink": {
@@ -304742,12 +304742,12 @@
     },
     "Vile Redeemer": {
       "edhrec_rank": 10435,
-      "gate": "template",
+      "gate": null,
       "name": "Vile Redeemer",
-      "reason": "no template for: When you cast this spell, you may pay {C}. If you do, create a 1/1 colorless Eldrazi Scion",
+      "reason": "",
       "scryfall_id": "7a08e28c-dee2-4ab8-bc72-1498a7dd3a40",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vile Requiem": {
