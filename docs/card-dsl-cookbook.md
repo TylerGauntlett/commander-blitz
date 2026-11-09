@@ -462,8 +462,8 @@ creature source of the chosen type**." Three things are load-bearing:
   it would mean a sentinel that only half the substitution path honours. A name
   that is both required and forbidden in one group is refused too — nothing can
   satisfy it, which is the same dead mana a typo makes.
-- **`{"mana_value": …}` and `{"x_in_mana_cost": true}`** are the two entries that
-  are not names at all. See below.
+- **`{"mana_value": …}`, `{"x_in_mana_cost": true}` and `{"colorless": true}`**
+  are the entries that are not names at all. See below.
 
 #### A restriction that is not a name — `mana_value`, `x_in_mana_cost`
 
@@ -490,6 +490,14 @@ pipeline's `{"const": n}`), and `x_in_mana_cost` is true-or-false, so "mana valu
 comparison mapping written under `x_in_mana_cost` is refused for `selectors`'
 reason: it is truthy, so it would silently read as `true` and widen the clause to
 every cost.
+
+`colorless` is the third, true-or-false like `x_in_mana_cost`: Eldrazi Temple's
+"only to cast **colorless** Eldrazi spells or activate abilities of colorless
+Eldrazi" is `["eldrazi", {"colorless": true}]` in both halves. Colour is not a
+type, so a bare `"colorless"` name would match nothing (and is refused as a
+predicate spelled as a name), while `["eldrazi"]` alone funds coloured Eldrazi.
+`spell_purpose` answers it off the printed colours, `ability_purpose` off the
+source's current ones.
 
 The comparison's value must be a **literal**. A restriction is compiled once at
 load and read during payment, where there is no `EffectContext` to evaluate an
