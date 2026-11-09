@@ -1,0 +1,21 @@
+{
+  "card_id": "lazotep_quarry",
+  "name": "Lazotep Quarry",
+  "oracle_text": "{T}: Add {C}.\n{T}, Sacrifice a creature: Add one mana of any color.\n{X}{2}, {T}, Sacrifice a Desert: Exile target creature card with mana value X from your graveyard. Create a token that's a copy of it, except it's a 4/4 black Zombie. Activate only as a sorcery.",
+  "blocked_sentences": [
+    "{X}{2}, {T}, Sacrifice a Desert: Exile target creature card with mana value X from your graveyard. Create a token that's a copy of it, except it's a 4/4 black Zombie. Activate only as a sorcery."
+  ],
+  "needs": [
+    {
+      "capability": "copy_exception_set_subtypes",
+      "kind": "op",
+      "what": "a copy_permanent `except_` key that REPLACES the copy's creature subtypes (e.g. `subtypes: [\"Zombie\"]`), so the token is a 4/4 black Zombie instead of its other creature types (205.1a), keeping its card types and mana cost",
+      "why_existing_wont_do": "copy_permanent's except_ (applied via copy_overrides in characteristics) supports power, toughness, colors, add_subtypes, types, add_types, add_supertypes, remove_supertypes and no_mana_cost; add_subtypes is eternalize's additive shape and would leave the copied creature types on the token, and `types` replaces card types only. The rest of the line (X mana cost, sacrifice-a-Desert cost, exile from graveyard, copy from exile, sorcery_speed_only) and the sacrifice-a-creature mana ability look expressible. Same capability as the_scarab_god and god_pharaoh_s_gift"
+    }
+  ],
+  "closest_existing": [
+    "copy_permanent",
+    "eternalize"
+  ],
+  "confidence": "high"
+}

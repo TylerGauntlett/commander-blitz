@@ -163352,12 +163352,12 @@
     },
     "Lush Oasis": {
       "edhrec_rank": 4760,
-      "gate": "template",
+      "gate": null,
       "name": "Lush Oasis",
-      "reason": "no template for: When this land enters, it deals 1 damage to target opponent",
+      "reason": "",
       "scryfall_id": "ba0932e2-30da-478d-b295-40db01556eb0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lush Portico": {
@@ -165122,12 +165122,12 @@
     },
     "Magus of the Candelabra": {
       "edhrec_rank": 3694,
-      "gate": "template",
+      "gate": null,
       "name": "Magus of the Candelabra",
-      "reason": "no template for: {X}, {T}: Untap X target lands",
+      "reason": "",
       "scryfall_id": "593b618e-6882-429b-80f1-ab02ac72cfbc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Magus of the Chains": {

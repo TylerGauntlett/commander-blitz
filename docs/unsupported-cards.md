@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**272 cards** blocked by **245** capabilities.
+**275 cards** blocked by **247** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -20,13 +20,13 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [rooms](#rooms) | 6 | 4163 | engine |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
+| [copy-exception-set-subtypes](#copy-exception-set-subtypes) | 4 | 1740 | engine, op |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 4 | 2389 | engine |
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 4 | 714 | engine |
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
 | [cast-trigger-x](#cast-trigger-x) | 3 | 1521 | engine, value |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 6346 | op |
-| [copy-exception-set-subtypes](#copy-exception-set-subtypes) | 3 | 1740 | engine, op |
 | [escape](#escape) | 3 | 388 | engine, static_effect |
 | [omen](#omen) | 3 | 3355 | cost, engine |
 | [random-player-choice](#random-player-choice) | 3 | 5120 | op |
@@ -171,6 +171,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [madness](#madness) | 1 | 3016 | replacement |
 | [mana-ability-leading-rider](#mana-ability-leading-rider) | 1 | 4080 | engine |
 | [mana-cant-pay-generic](#mana-cant-pay-generic) | 1 | 3861 | value |
+| [mana-doubling-replacement](#mana-doubling-replacement) | 1 | 1807 | replacement |
 | [mana-restriction-cast-from-zone](#mana-restriction-cast-from-zone) | 1 | 9291 | engine |
 | [mana-restriction-turn-face-up](#mana-restriction-turn-face-up) | 1 | 6766 | value |
 | [mana-spent-enters-with-counters](#mana-spent-enters-with-counters) | 1 | 653 | replacement |
@@ -257,6 +258,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [while-source-on-battlefield-duration](#while-source-on-battlefield-duration) | 1 | 8222 | engine |
 | [wurm-5-5-g-trample](#wurm-5-5-g-trample) | 1 | 2387 | token |
 | [x-cost-mana-restriction](#x-cost-mana-restriction) | 1 | 4046 | decision |
+| [x-minimum](#x-minimum) | 1 | 2447 | cost |
 | [x-sized-ability-targets](#x-sized-ability-targets) | 1 | 1668 | engine |
 | [zombie-warrior-4-4-b-vigilance](#zombie-warrior-4-4-b-vigilance) | 1 | 2449 | token |
 
@@ -537,6 +539,32 @@ Blocks **5** cards.
 
 </details>
 
+## copy-exception-set-subtypes
+
+Blocks **4** cards.
+
+- **(op)** a copy_permanent `except_` key that REPLACES the copy's subtypes (e.g. `subtypes: ["Zombie"]`), so the token is a Zombie instead of its other creature types (205.1a; Gatherer ruling: "The token is a Zombie instead of its other creature types"), keeping its card types and mana cost
+  <br>Why the existing vocabulary won't do: copy_permanent's except_ (applied in characteristics._compute via copy_overrides) supports power, toughness, colors, add_subtypes, types, add_types, add_supertypes, remove_supertypes and no_mana_cost. add_subtypes is eternalize's additive shape ("Zombie Snake Wizard"), which would leave the copied creature types on the token; `types` replaces card types only. The rest of the card (begin_combat trigger, may + exile with `as`, copy_permanent from exile, grant_keyword haste on the token binding) is expressible.
+- **(engine)** A copy exception (copy_permanent `except_`) that REPLACES the copied card's creature types with the printed ones -- "except it's a 4/4 black Zombie" without "in addition to its other types" makes the token a Zombie and nothing else (205.1b, 707.9b), e.g. an `except_.subtypes: ["Zombie"]` override read in characteristics._compute beside `colors`, `power` and `toughness`
+  <br>Why the existing vocabulary won't do: The rest is expressible: a `discard` trigger with `controller: you` and `filter: {types: [Creature]}`, a `may` with `pay: {mana: {2}{U}}`, and `copy_permanent` on `{binding: subject, zone: graveyard}` with `tapped: true` and `except_` power 4 / toughness 4 / colors [B]. But the only creature-type key `copy_overrides` honours is `add_subtypes` (eternalize's 'Zombie in addition to its other types'); `types` replaces card types only and keeps subtypes. Using `add_subtypes` would leave a discarded Elf Warrior an Elf Warrior Zombie, a different card for every tribal interaction
+- **(op)** a copy_permanent `except_` key that REPLACES the copy's creature subtypes (e.g. `subtypes: ["Zombie"]`), so the token is a 4/4 black Zombie instead of its other creature types (205.1a), keeping its card types and mana cost
+  <br>Why the existing vocabulary won't do: copy_permanent's except_ (applied via copy_overrides in characteristics) supports power, toughness, colors, add_subtypes, types, add_types, add_supertypes, remove_supertypes and no_mana_cost; add_subtypes is eternalize's additive shape and would leave the copied creature types on the token, and `types` replaces card types only. The rest of the line (X mana cost, sacrifice-a-Desert cost, exile from graveyard, copy from exile, sorcery_speed_only) and the sacrifice-a-creature mana ability look expressible. Same capability as the_scarab_god and god_pharaoh_s_gift
+- **(op)** a copy_permanent except_ key that replaces the copy's creature subtypes rather than adding to them
+  <br>Why the existing vocabulary won't do: copy_permanent's except_ carries add_subtypes, which keeps the copied card's creature types; 'except it's a 4/4 black Zombie' with no 'in addition to its other types' makes the token a Zombie instead of its other creature types (205.1a), and the types override replaces card types only. Same capability as god_pharaoh_s_gift
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Scarab God** (rank 1740) — `the_scarab_god`
+  - {2}{U}{B}: Exile target creature card from a graveyard. Create a token that's a copy of it, except it's a 4/4 black Zombie.
+- **Lazotep Quarry** (rank 1937) — `lazotep_quarry`
+  - {X}{2}, {T}, Sacrifice a Desert: Exile target creature card with mana value X from your graveyard. Create a token that's a copy of it, except it's a 4/4 black Zombie. Activate only as a sorcery.
+- **Hashaton, Scarab's Fist** (rank 3525) — `hashaton_scarab_s_fist`
+  - Whenever you discard a creature card, you may pay {2}{U}. If you do, create a tapped token that's a copy of that card, except it's a 4/4 black Zombie.
+- **God-Pharaoh's Gift** (rank 8873) — `god_pharaoh_s_gift`
+  - If you do, create a token that's a copy of that card, except it's a 4/4 black Zombie.
+
+</details>
+
 ## divided-damage-on-trigger
 
 Blocks **4** cards.
@@ -684,28 +712,6 @@ Blocks **3** cards.
   - Whenever another nontoken creature you control dies, exile it. If you do, create a token that's a copy of that creature, except it's a Spirit in addition to its other types and it has "When this token leaves the battlefield, return the exiled card to its owner's graveyard."
 - **Muddle, the Ever-Changing** (rank 11112) — `muddle_the_ever_changing`
   - Whenever you cast an instant or sorcery spell, Muddle becomes a copy of up to one target nonlegendary creature you control until end of turn, except it has myriad
-
-</details>
-
-## copy-exception-set-subtypes
-
-Blocks **3** cards.
-
-- **(op)** a copy_permanent `except_` key that REPLACES the copy's subtypes (e.g. `subtypes: ["Zombie"]`), so the token is a Zombie instead of its other creature types (205.1a; Gatherer ruling: "The token is a Zombie instead of its other creature types"), keeping its card types and mana cost
-  <br>Why the existing vocabulary won't do: copy_permanent's except_ (applied in characteristics._compute via copy_overrides) supports power, toughness, colors, add_subtypes, types, add_types, add_supertypes, remove_supertypes and no_mana_cost. add_subtypes is eternalize's additive shape ("Zombie Snake Wizard"), which would leave the copied creature types on the token; `types` replaces card types only. The rest of the card (begin_combat trigger, may + exile with `as`, copy_permanent from exile, grant_keyword haste on the token binding) is expressible.
-- **(engine)** A copy exception (copy_permanent `except_`) that REPLACES the copied card's creature types with the printed ones -- "except it's a 4/4 black Zombie" without "in addition to its other types" makes the token a Zombie and nothing else (205.1b, 707.9b), e.g. an `except_.subtypes: ["Zombie"]` override read in characteristics._compute beside `colors`, `power` and `toughness`
-  <br>Why the existing vocabulary won't do: The rest is expressible: a `discard` trigger with `controller: you` and `filter: {types: [Creature]}`, a `may` with `pay: {mana: {2}{U}}`, and `copy_permanent` on `{binding: subject, zone: graveyard}` with `tapped: true` and `except_` power 4 / toughness 4 / colors [B]. But the only creature-type key `copy_overrides` honours is `add_subtypes` (eternalize's 'Zombie in addition to its other types'); `types` replaces card types only and keeps subtypes. Using `add_subtypes` would leave a discarded Elf Warrior an Elf Warrior Zombie, a different card for every tribal interaction
-- **(op)** a copy_permanent except_ key that replaces the copy's creature subtypes rather than adding to them
-  <br>Why the existing vocabulary won't do: copy_permanent's except_ carries add_subtypes, which keeps the copied card's creature types; 'except it's a 4/4 black Zombie' with no 'in addition to its other types' makes the token a Zombie instead of its other creature types (205.1a), and the types override replaces card types only. Same capability as god_pharaoh_s_gift
-
-<details><summary>Cards waiting on this</summary>
-
-- **The Scarab God** (rank 1740) — `the_scarab_god`
-  - {2}{U}{B}: Exile target creature card from a graveyard. Create a token that's a copy of it, except it's a 4/4 black Zombie.
-- **Hashaton, Scarab's Fist** (rank 3525) — `hashaton_scarab_s_fist`
-  - Whenever you discard a creature card, you may pay {2}{U}. If you do, create a tapped token that's a copy of that card, except it's a 4/4 black Zombie.
-- **God-Pharaoh's Gift** (rank 8873) — `god_pharaoh_s_gift`
-  - If you do, create a token that's a copy of that card, except it's a 4/4 black Zombie.
 
 </details>
 
@@ -2902,6 +2908,20 @@ Blocks **1** card.
 
 </details>
 
+## mana-doubling-replacement
+
+Blocks **1** card.
+
+- **(replacement)** a player static replacement effect (106.12 / 614.1a) on mana production: when the affected player taps ANY permanent (land or nonland) for mana, that ability produces twice as much of each type it would produce instead. As a replacement it multiplies, so two copies yield four times the mana (and stacks multiplicatively with other doublers such as Nyxbloom Ancient), and it applies to the full amount the mana ability produces, not one extra mana. A third member of `_MANA_DOUBLER_CLASS` in `engine/player_statics.py` (the docstring there already names Mana Reflection as 'a permanent'), but carrying a multiplier that compounds per instance rather than a boolean
+  <br>Why the existing vocabulary won't do: `double_land_mana` (Vorinclex) and `double_nonland_mana` (Kinnan) are each printed about a single permanent class and are triggered mana abilities adding 'one mana of any type that permanent produced'; `player_doubles_mana_from` returns a boolean, so two instances still only double. Writing both statics on one card would have two abilities claim one printed sentence and would make two Mana Reflections double instead of quadruple. `add_mana_on_tap` adds a fixed extra mana, not a multiple. No `mana_multiplier` exists among the ability keys (there are damage/token/counter/draw/gain/mill multipliers only)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Mana Reflection** (rank 1807) — `mana_reflection`
+  - If you tap a permanent for mana, it produces twice as much of that mana instead.
+
+</details>
+
 ## mana-restriction-cast-from-zone
 
 Blocks **1** card.
@@ -4119,6 +4139,20 @@ Blocks **1** card.
 
 - **Elementalist's Palette** (rank 4046) — `elementalist_s_palette`
   - {T}: Add {C} for each charge counter on this artifact. Spend this mana only on costs that contain {X}.
+
+</details>
+
+## x-minimum
+
+Blocks **1** card.
+
+- **(cost)** a floor on an activated ability's announced X ("X can't be 0", i.e. X >= 1), so the CHOOSE_X question for an {X} mana cost on an activated ability starts at 1 instead of 0
+  <br>Why the existing vocabulary won't do: cost_keys has x_value (a defined X, never announced) but nothing that bounds an announced X; Game's activation path calls _ask_x with a hard-coded floor of 0, and the only min_x in the engine is the cast-lock floor from player_statics.cast_lock_min_x and the fixed min_x=1 inside ops_control. Without it the land could be animated as a 0/0 and die to state-based actions, which the printed card forbids. The rest of the line is expressible with animate (power/toughness {x}, colors G, subtypes Hydra, types Creature, duration this turn)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Lair of the Hydra** (rank 2447) — `lair_of_the_hydra`
+  - {X}{G}: Until end of turn, this land becomes an X/X green Hydra creature. It's still a land. X can't be 0
 
 </details>
 
