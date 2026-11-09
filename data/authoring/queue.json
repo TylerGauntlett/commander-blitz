@@ -10132,12 +10132,12 @@
     },
     "Apex Devastator": {
       "edhrec_rank": 1059,
-      "gate": "template",
+      "gate": null,
       "name": "Apex Devastator",
-      "reason": "no template for: Cascade, cascade, cascade, cascade",
+      "reason": "",
       "scryfall_id": "ca9783bc-0e1b-42da-b0f3-89dd0db83743",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Apex Hawks": {
@@ -21372,12 +21372,12 @@
     },
     "Basilisk Gate": {
       "edhrec_rank": 2788,
-      "gate": "template",
+      "gate": null,
       "name": "Basilisk Gate",
-      "reason": "no template for: {2}, {T}: Target creature gets +X/+X until end of turn, where X is the number of Gates you",
+      "reason": "",
       "scryfall_id": "0f2587b5-ab79-4b14-8b49-83e94cef177f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Basim Ibn Ishaq": {
@@ -26342,12 +26342,12 @@
     },
     "Blast Zone": {
       "edhrec_rank": 1624,
-      "gate": "template",
+      "gate": null,
       "name": "Blast Zone",
-      "reason": "no template for: This land enters with a charge counter on it",
+      "reason": "",
       "scryfall_id": "68a19f91-82b2-4f60-94a1-911d817125a1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Blast of Genius": {
@@ -53202,12 +53202,12 @@
     },
     "Copy Land": {
       "edhrec_rank": 5993,
-      "gate": "template",
+      "gate": null,
       "name": "Copy Land",
-      "reason": "no template for: You may have this enchantment enter as a copy of any land on the battlefield, except it's ",
+      "reason": "",
       "scryfall_id": "c3d44c0e-733b-4ad3-b45b-6a3b09c12fb0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Copycrook": {
@@ -60962,12 +60962,12 @@
     },
     "Dark Depths": {
       "edhrec_rank": 1430,
-      "gate": "template",
+      "gate": null,
       "name": "Dark Depths",
-      "reason": "no template for: enters with ten ice counters on it",
+      "reason": "",
       "scryfall_id": "09c224c7-418d-4b64-9d56-a87e4ff631ab",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dark Endurance": {
@@ -75882,12 +75882,12 @@
     },
     "Drown in Dreams": {
       "edhrec_rank": 2066,
-      "gate": "template",
+      "gate": null,
       "name": "Drown in Dreams",
-      "reason": "no template for: Choose one. If you control a commander as you cast this spell, you may choose both instead",
+      "reason": "",
       "scryfall_id": "047cc3eb-7ec2-4813-899c-890b74fbbed1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Drown in Filth": {
@@ -82132,12 +82132,12 @@
     },
     "Elvish Rejuvenator": {
       "edhrec_rank": 5153,
-      "gate": "template",
+      "gate": null,
       "name": "Elvish Rejuvenator",
-      "reason": "no template for: When this creature enters, look at the top five cards of your library. You may put a land ",
+      "reason": "",
       "scryfall_id": "5deb7010-131c-40e9-a4c2-dee1b700e6c9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Elvish Scout": {
@@ -88292,12 +88292,12 @@
     },
     "Expedition Map": {
       "edhrec_rank": 455,
-      "gate": "template",
+      "gate": null,
       "name": "Expedition Map",
-      "reason": "no template for: {2}, {T}, Sacrifice this artifact: Search your library for a land card, reveal it, put it ",
+      "reason": "",
       "scryfall_id": "d80f6c3d-5eda-41a6-b9b2-4de6844af179",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Expedition Raptor": {
@@ -95192,12 +95192,12 @@
     },
     "Finale of Revelation": {
       "edhrec_rank": 1295,
-      "gate": "template",
+      "gate": null,
       "name": "Finale of Revelation",
-      "reason": "no template for: Draw X cards. If X is 10 or more, instead shuffle your graveyard into your library, draw X",
+      "reason": "",
       "scryfall_id": "0a77e063-e8f6-4cb2-954e-74cf41ce73da",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Finch Formation": {
@@ -98562,12 +98562,12 @@
     },
     "Floriferous Vinewall": {
       "edhrec_rank": 13441,
-      "gate": "template",
+      "gate": null,
       "name": "Floriferous Vinewall",
-      "reason": "no template for: When this creature enters, look at the top six cards of your library. You may reveal a lan",
+      "reason": "",
       "scryfall_id": "c3c27704-7886-4cce-ad66-fb94668822c4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Flotsam // Jetsam": {
@@ -110792,12 +110792,12 @@
     },
     "Glimmerpost": {
       "edhrec_rank": 6468,
-      "gate": "template",
+      "gate": null,
       "name": "Glimmerpost",
-      "reason": "no template for: When this land enters, you gain 1 life for each Locus on the battlefield",
+      "reason": "",
       "scryfall_id": "3ba372ea-b4a0-4db3-baec-9cbf5d3384b1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Glimmervoid": {
@@ -123252,12 +123252,12 @@
     },
     "Hashep Oasis": {
       "edhrec_rank": 4277,
-      "gate": "template",
+      "gate": null,
       "name": "Hashep Oasis",
-      "reason": "no template for: {T}, Pay 1 life: Add {G}",
+      "reason": "",
       "scryfall_id": "1e8afbcf-c5a6-428c-8d91-a309821362b3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hasran Ogress": {
@@ -127242,12 +127242,12 @@
     },
     "Hidden Cataract": {
       "edhrec_rank": 5024,
-      "gate": "template",
+      "gate": null,
       "name": "Hidden Cataract",
-      "reason": "no template for: {4}{U}, {T}, Sacrifice this land: Discover 4. Activate only as a sorcery",
+      "reason": "",
       "scryfall_id": "a3b53320-57bf-4b9f-903d-f14ff0afdd19",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hidden Courtyard": {
@@ -127372,12 +127372,12 @@
     },
     "Hidden Nursery": {
       "edhrec_rank": 3495,
-      "gate": "template",
+      "gate": null,
       "name": "Hidden Nursery",
-      "reason": "no template for: {4}{G}, {T}, Sacrifice this land: Discover 4. Activate only as a sorcery",
+      "reason": "",
       "scryfall_id": "fcd447b3-4d96-4d85-924d-2c5043ba054f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hidden Path": {
@@ -130542,12 +130542,12 @@
     },
     "Hour of Promise": {
       "edhrec_rank": 3110,
-      "gate": "template",
+      "gate": null,
       "name": "Hour of Promise",
-      "reason": "no template for: Search your library for up to two land cards, put them onto the battlefield tapped, then s",
+      "reason": "",
       "scryfall_id": "d74c66da-d247-46dc-9ccd-536f8af6bbe0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hour of Reckoning": {
@@ -132192,12 +132192,12 @@
     },
     "Hydra Broodmaster": {
       "edhrec_rank": 4206,
-      "gate": "template",
+      "gate": null,
       "name": "Hydra Broodmaster",
-      "reason": "no template for: {X}{X}{G}: Monstrosity X",
+      "reason": "",
       "scryfall_id": "d9947547-5f16-4972-ba1e-33bed3e49d34",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hydra Omnivore": {
@@ -144812,12 +144812,12 @@
     },
     "Jyoti, Moag Ancient": {
       "edhrec_rank": 10427,
-      "gate": "template",
+      "gate": null,
       "name": "Jyoti, Moag Ancient",
-      "reason": "no template for: When Jyoti enters, create a 1/1 green Forest Dryad land creature token for each time you'v",
+      "reason": "",
       "scryfall_id": "6e774ea9-5e8c-4031-b549-33dd9e6e7421",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jötun Grunt": {
@@ -163352,12 +163352,12 @@
     },
     "Lush Oasis": {
       "edhrec_rank": 4760,
-      "gate": "template",
+      "gate": null,
       "name": "Lush Oasis",
-      "reason": "no template for: When this land enters, it deals 1 damage to target opponent",
+      "reason": "",
       "scryfall_id": "ba0932e2-30da-478d-b295-40db01556eb0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lush Portico": {
@@ -165122,12 +165122,12 @@
     },
     "Magus of the Candelabra": {
       "edhrec_rank": 3694,
-      "gate": "template",
+      "gate": null,
       "name": "Magus of the Candelabra",
-      "reason": "no template for: {X}, {T}: Untap X target lands",
+      "reason": "",
       "scryfall_id": "593b618e-6882-429b-80f1-ab02ac72cfbc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Magus of the Chains": {
@@ -190572,12 +190572,12 @@
     },
     "Oblivion Stone": {
       "edhrec_rank": 5602,
-      "gate": "template",
+      "gate": null,
       "name": "Oblivion Stone",
-      "reason": "no template for: {4}, {T}: Put a fate counter on target permanent",
+      "reason": "",
       "scryfall_id": "2994bab5-59ae-4545-a125-67032850b4de",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Oblivion Strike": {
@@ -204592,12 +204592,12 @@
     },
     "Poison Dart Frog": {
       "edhrec_rank": 2125,
-      "gate": "template",
+      "gate": null,
       "name": "Poison Dart Frog",
-      "reason": "no template for: {2}: This creature gains deathtouch until end of turn",
+      "reason": "",
       "scryfall_id": "e99d6e94-2fb7-45ef-bb35-4bf4b92d4f4d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Poison the Blade": {
@@ -231032,12 +231032,12 @@
     },
     "Sage of the Maze": {
       "edhrec_rank": 5538,
-      "gate": "template",
+      "gate": null,
       "name": "Sage of the Maze",
-      "reason": "no template for: {T}: Until end of turn, target land you control becomes an X/X Citizen creature with haste",
+      "reason": "",
       "scryfall_id": "87fe9225-d73f-457e-b837-20852e15bb5e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sage of the Skies": {
@@ -250152,12 +250152,12 @@
     },
     "Skullwinder": {
       "edhrec_rank": 3546,
-      "gate": "template",
+      "gate": null,
       "name": "Skullwinder",
-      "reason": "no template for: When this creature enters, return target card from your graveyard to your hand, then choos",
+      "reason": "",
       "scryfall_id": "0d53c93a-3d02-4a89-bf3a-58c19d861f9b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sky Crier": {
@@ -272712,12 +272712,12 @@
     },
     "Sylvan Scrying": {
       "edhrec_rank": 1258,
-      "gate": "template",
+      "gate": null,
       "name": "Sylvan Scrying",
-      "reason": "no template for: Search your library for a land card, reveal it, put it into your hand, then shuffle",
+      "reason": "",
       "scryfall_id": "d5f11a08-8324-461a-8dbd-ecef0e511dee",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sylvan Shepherd": {
@@ -283292,12 +283292,12 @@
     },
     "Thespian's Stage": {
       "edhrec_rank": 571,
-      "gate": "template",
+      "gate": null,
       "name": "Thespian's Stage",
-      "reason": "no template for: {2}, {T}: This land becomes a copy of target land, except it has this ability",
+      "reason": "",
       "scryfall_id": "f55d8c6a-210a-4c89-91e7-e02679544c62",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "They Came from the Pipes": {
@@ -292322,12 +292322,12 @@
     },
     "Trenchpost": {
       "edhrec_rank": 7890,
-      "gate": "template",
+      "gate": null,
       "name": "Trenchpost",
-      "reason": "no template for: {3}, {T}: Target player mills a card for each Locus you control",
+      "reason": "",
       "scryfall_id": "4afcabf8-8f84-489d-8496-5bec55b351bd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Treno, Dark City": {
@@ -296272,12 +296272,12 @@
     },
     "Ulvenwald Hydra": {
       "edhrec_rank": 2739,
-      "gate": "template",
+      "gate": null,
       "name": "Ulvenwald Hydra",
-      "reason": "no template for: 's power and toughness are each equal to the number of lands you control",
+      "reason": "",
       "scryfall_id": "4ade356e-ed2f-4373-b898-c3ccb46324a1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ulvenwald Mysteries": {
@@ -306222,12 +306222,12 @@
     },
     "Vivien Reid": {
       "edhrec_rank": 4050,
-      "gate": "template",
+      "gate": null,
       "name": "Vivien Reid",
-      "reason": "no template for: +1: Look at the top four cards of your library. You may reveal a creature or land card fro",
+      "reason": "",
       "scryfall_id": "162a3a3b-257e-46c7-bb29-65627b00363d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vivien Reid Emblem": {
@@ -307142,12 +307142,12 @@
     },
     "Volatile Fault": {
       "edhrec_rank": 2595,
-      "gate": "template",
+      "gate": null,
       "name": "Volatile Fault",
-      "reason": "no template for: {1}, {T}, Sacrifice this land: Destroy target nonbasic land an opponent controls. That pla",
+      "reason": "",
       "scryfall_id": "d9a42082-615c-4387-a77c-97ee94153c57",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Volatile Fjord": {

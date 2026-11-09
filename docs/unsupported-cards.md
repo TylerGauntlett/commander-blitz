@@ -10,32 +10,32 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**268 cards** blocked by **242** capabilities.
+**280 cards** blocked by **251** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
+| [put-into-graveyard-from-anywhere](#put-into-graveyard-from-anywhere) | 9 | 256 | trigger_event |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
-| [put-into-graveyard-from-anywhere](#put-into-graveyard-from-anywhere) | 8 | 256 | trigger_event |
 | [rooms](#rooms) | 6 | 4163 | engine |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
+| [copy-exception-set-subtypes](#copy-exception-set-subtypes) | 4 | 1740 | engine, op |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 4 | 2389 | engine |
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 4 | 714 | engine |
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
+| [basic-land-type-mana](#basic-land-type-mana) | 3 | 73 | engine |
 | [cast-trigger-x](#cast-trigger-x) | 3 | 1521 | engine, value |
-| [copy-exception-set-subtypes](#copy-exception-set-subtypes) | 3 | 1740 | engine, op |
+| [copy-exception-ability](#copy-exception-ability) | 3 | 6346 | op |
 | [escape](#escape) | 3 | 388 | engine, static_effect |
 | [omen](#omen) | 3 | 3355 | cost, engine |
 | [random-player-choice](#random-player-choice) | 3 | 5120 | op |
 | [add-color](#add-color) | 2 | 2040 | op |
-| [basic-land-type-mana](#basic-land-type-mana) | 2 | 73 | engine |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-from-library-top-unrestricted](#cast-from-library-top-unrestricted) | 2 | 1913 | static_effect |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
-| [copy-exception-ability](#copy-exception-ability) | 2 | 6941 | op |
 | [council-s-dilemma](#council-s-dilemma) | 2 | 4067 | decision |
 | [devotion](#devotion) | 2 | 2401 | value |
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
@@ -59,6 +59,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [add-mana-on-tap-any-color](#add-mana-on-tap-any-color) | 1 | 1052 | static_effect |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
+| [all-creature-types](#all-creature-types) | 1 | 4942 | static_effect |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [attack-tax-x-count](#attack-tax-x-count) | 1 | 671 | value |
 | [attacking-opponents-of-player](#attacking-opponents-of-player) | 1 | 705 | selector |
@@ -78,6 +79,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-trigger-reads-x](#cast-trigger-reads-x) | 1 | 3909 | value |
 | [characteristics-outside-battlefield](#characteristics-outside-battlefield) | 1 | 1924 | static_effect |
 | [choose-card-type-from-list](#choose-card-type-from-list) | 1 | 611 | op |
+| [choose-land-type](#choose-land-type) | 1 | 11432 | decision |
 | [chosen-card-type-cost-reduction](#chosen-card-type-cost-reduction) | 1 | 611 | static_effect |
 | [chosen-number](#chosen-number) | 1 | 1610 | engine |
 | [chosen-player](#chosen-player) | 1 | 6383 | selector |
@@ -117,6 +119,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [enters-as-copy-embalmed-exception](#enters-as-copy-embalmed-exception) | 1 | 4333 | replacement |
 | [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
+| [every-nonbasic-land-type](#every-nonbasic-land-type) | 1 | 2635 | engine |
 | [excess-damage](#excess-damage) | 1 | 10942 | value |
 | [exile-bottom-of-library](#exile-bottom-of-library) | 1 | 4763 | selector |
 | [exile-cards-with-card-types-among-them](#exile-cards-with-card-types-among-them) | 1 | 9107 | selector |
@@ -170,6 +173,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [madness](#madness) | 1 | 3016 | replacement |
 | [mana-ability-leading-rider](#mana-ability-leading-rider) | 1 | 4080 | engine |
 | [mana-cant-pay-generic](#mana-cant-pay-generic) | 1 | 3861 | value |
+| [mana-doubling-replacement](#mana-doubling-replacement) | 1 | 1807 | replacement |
 | [mana-restriction-cast-from-zone](#mana-restriction-cast-from-zone) | 1 | 9291 | engine |
 | [mana-restriction-turn-face-up](#mana-restriction-turn-face-up) | 1 | 6766 | value |
 | [mana-spent-enters-with-counters](#mana-spent-enters-with-counters) | 1 | 653 | replacement |
@@ -187,6 +191,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [necron-warrior-token](#necron-warrior-token) | 1 | 4207 | token |
 | [no-mana-cost](#no-mana-cost) | 1 | 2978 | engine |
+| [nonbasic-land-type](#nonbasic-land-type) | 1 | 10422 | selector |
 | [noncombat-damage-trigger](#noncombat-damage-trigger) | 1 | 6793 | trigger_event |
 | [nontoken-creatures-died-this-turn](#nontoken-creatures-died-this-turn) | 1 | 3951 | value |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
@@ -201,6 +206,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-mana-ability-until-end-of-turn](#player-mana-ability-until-end-of-turn) | 1 | 12705 | op |
 | [players-attacked-last-combat](#players-attacked-last-combat) | 1 | 6681 | value |
+| [players-lost-the-game-count](#players-lost-the-game-count) | 1 | 4941 | value |
 | [plot](#plot) | 1 | 7506 | op |
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
 | [prime-number](#prime-number) | 1 | 11527 | value |
@@ -232,6 +238,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
+| [stack-wipe](#stack-wipe) | 1 | 8784 | op |
 | [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
 | [target-if-cast-during](#target-if-cast-during) | 1 | 1524 | selector |
@@ -254,7 +261,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [while-source-on-battlefield-duration](#while-source-on-battlefield-duration) | 1 | 8222 | engine |
 | [wurm-5-5-g-trample](#wurm-5-5-g-trample) | 1 | 2387 | token |
 | [x-cost-mana-restriction](#x-cost-mana-restriction) | 1 | 4046 | decision |
+| [x-minimum](#x-minimum) | 1 | 2447 | cost |
 | [x-sized-ability-targets](#x-sized-ability-targets) | 1 | 1668 | engine |
+| [x-starting-loyalty](#x-starting-loyalty) | 1 | 6660 | engine |
 | [zombie-warrior-4-4-b-vigilance](#zombie-warrior-4-4-b-vigilance) | 1 | 2449 | token |
 
 ## combat-only-permanent-shield
@@ -328,6 +337,55 @@ Blocks **15** cards.
 
 </details>
 
+## put-into-graveyard-from-anywhere
+
+Blocks **9** cards.
+
+- **(trigger_event)** a trigger event that fires whenever a card matching a filter (here: a land card, any owner) is put into a graveyard from ANY zone -- battlefield, hand (discard), library (mill), stack -- usable on an ability with active_zones ["graveyard"] so the card triggers while it sits in its owner's graveyard (Ashen Ghoul / Vengevine style recursion)
+  <br>Why the existing vocabulary won't do: leaves_battlefield with to_zones ["graveyard"] only sees permanents leaving the battlefield (a sacrificed or destroyed land) and misses discarded, milled and countered-from-stack cards; discard covers only the hand; dies is creatures only; there is no mill or generic zone-change-to-graveyard event in trigger_events. The may-pay {G}{G} and return_to_hand halves are expressible once the event exists.
+- **(trigger_event)** a trigger event that fires when cards matching a filter (here: creature cards, owner = you) are put into a graveyard, narrowed by `from_zones: ["library"]` (mill, surveil, self-mill costs), with `batched: true` so one simultaneous move of several creature cards triggers once ("one or more"), and binding the batch of moved cards so the effect can be `put_onto_battlefield` over exactly one of THEM chosen by the controller ("put one of them"), still in the graveyard on resolution
+  <br>Why the existing vocabulary won't do: trigger_events has no zone-change-to-graveyard event: leaves_battlefield only sees permanents leaving the battlefield, dies is battlefield creatures, discard is the hand, leaves_graveyard is the reverse direction; the trigger's from_zones key is read only for spell_cast and land_played. Without the event there is also no binding for 'them', so a put_onto_battlefield over any creature card in the graveyard would wrongly reach creature cards milled earlier. The Flying keyword and the enters-or-attacks mill three (self_enters + attacks triggers with mill) are expressible today.
+- **(trigger_event)** a trigger event that fires when one or more cards matching a filter (here: land cards, owner = you) are put into a graveyard from ANY zone -- battlefield, hand (discard), library (mill, surveil), stack -- supporting `batched: true` so one simultaneous move of several land cards triggers once, and `max_per_turn: 1` for "for the first time each turn"
+  <br>Why the existing vocabulary won't do: trigger_events has no generic zone-change-to-graveyard event: leaves_battlefield with to_zones ["graveyard"] (and dies) only sees permanents leaving the battlefield and misses milled and discarded land cards, which is what this card's own upkeep mill feeds; discard covers only the hand; leaves_graveyard is the opposite direction. The upkeep `may` + `mill` line and the insect_1_1_g token are expressible today.
+- **(trigger_event)** a trigger event that fires whenever a card matching a filter (here: a Desert card you own) is put into your graveyard from your hand or library (discard, mill, any other effect), restricted by from-zone, binding the card as subject so a delayed end-step trigger can return it to the battlefield under your control
+  <br>Why the existing vocabulary won't do: discard covers only cards discarded from hand, not other hand-to-graveyard moves; there is no mill or library-to-graveyard event in trigger_events; sacrificed covers the sacrifice half only, and leaves_battlefield sees only permanents
+- **(trigger_event)** a trigger event that fires when a card matching a filter (here: a permanent card with subtype Lhurgoyf, owner = you) is put into a graveyard, narrowed by `from_zones` to every zone except the battlefield (hand via discard, library via mill/surveil, stack via countered/resolved, exile), binding the moved card as the subject so the effect can `put_onto_battlefield` exactly that card ("put it") if it is still in the graveyard on resolution
+  <br>Why the existing vocabulary won't do: trigger_events has no zone-change-to-graveyard event: leaves_battlefield/dies only see permanents leaving the battlefield (exactly the source this card excludes), discard covers only the hand, leaves_graveyard is the reverse direction, and the trigger's from_zones key is read only for spell_cast and land_played. Without the event there is also no binding for 'it'.
+- **(trigger_event)** a trigger event that fires once per card matching a filter (here: a land card, owner = you, i.e. into YOUR graveyard) put into a graveyard from ANY zone -- battlefield, hand (discard), library (mill, surveil), stack -- unbatched, so milling two lands gains 2 life
+  <br>Why the existing vocabulary won't do: trigger_events has no generic zone-change-to-graveyard event: leaves_battlefield with to_zones ["graveyard"] only sees permanents leaving the battlefield and misses milled and discarded land cards, which this card's own {2}{G} mill ability is built to feed; discard covers only the hand; dies is creatures/permanents dying; leaves_graveyard is the opposite direction. The {2}{G}: mill 1 activated ability and the gain_life effect are expressible today.
+- **(trigger_event)** a trigger event that fires whenever a card matching a filter (here: a creature card, any owner, any graveyard) is put into a graveyard, with a from_zones/except-battlefield clause so it can be narrowed to arrivals from anywhere other than the battlefield -- hand (discard), library (mill), stack (countered or resolved), exile, command zone
+  <br>Why the existing vocabulary won't do: The other two clauses are expressible (`creature_dies` / `dies` with exclude_self, and `leaves_graveyard` filtered to creature cards you own), but there is no zone-change-to-graveyard event in trigger_events: `discard` covers only the hand, `dies` and `leaves_battlefield` only the battlefield, and there is no mill event; the trigger's `from_zones` key is read only for spell_cast and land_played. Writing just the two expressible clauses would silently drop the milled/discarded-creature half, which is the card's main engine with its own {1}{B} mill ability.
+- **(trigger_event)** a trigger event that fires when a card matching a filter (here: a land card, owner = you) is put into a graveyard from ANY zone -- battlefield (sacrifice/destroy), hand (discard), library (mill, surveil), stack -- and supports `batched: true` so that several land cards moved by one event (a mill of three lands, a discard of two lands) trigger it exactly once ("one or more")
+  <br>Why the existing vocabulary won't do: leaves_battlefield with to_zones ["graveyard"] sees only permanents leaving the battlefield and misses discarded, milled and surveilled land cards, which are the card's whole engine (Gitrog + discard/dredge loops); discard covers only the hand and carries no card-type filter on the moved card from library; there is no mill or generic zone-change-to-graveyard event in trigger_events. Combining leaves_battlefield and discard triggers would still miss mill/surveil and would trigger twice for a single simultaneous event that moves lands from two zones. The draw half is a plain draw op once the event exists. The upkeep 'sacrifice unless you sacrifice a land' and extra_land_drops lines are expressible today.
+- **(trigger_event)** a self trigger that fires when this card is put into a graveyard from ANY zone (battlefield, hand via discard, library via mill/surveil, stack via counter), so the triggered ability works from the graveyard and can shuffle the card (bound as the trigger subject) into its owner's library -- the Eldrazi titan clause shared by Emrakul, Ulamog and Kozilek
+  <br>Why the existing vocabulary won't do: `trigger_events` has `dies` and `leaves_battlefield` (with `to_zones`), which only see the battlefield and miss discard, mill and a countered spell -- the cases the clause exists for. `discard` covers only the hand. No event observes a card arriving in a graveyard from the library or stack, and no `card_level_rider_keys` entry (`tucks_itself` is a resolving spell's own fate) replaces it. Writing only the `dies` half would make a different card that stays in the graveyard when milled or discarded.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Syr Konrad, the Grim** (rank 256) — `syr_konrad_the_grim`
+  - Whenever another creature dies, or a creature card is put into a graveyard from anywhere other than the battlefield, or a creature card leaves your graveyard, Syr Konrad deals 1 damage to each opponent.
+- **The Gitrog Monster** (rank 902) — `the_gitrog_monster`
+  - Whenever one or more land cards are put into your graveyard from anywhere, draw a card.
+- **Colossal Grave-Reaver** (rank 1942) — `colossal_grave_reaver`
+  - Whenever one or more creature cards are put into your graveyard from your library, put one of them onto the battlefield.
+- **Worldspine Wurm** (rank 2387) — `worldspine_wurm`
+  - When this creature dies, create three 5/5 green Wurm creature tokens with trample.
+  - When Worldspine Wurm is put into a graveyard from anywhere, shuffle it into its owner's library.
+- **Crawling Sensation** (rank 3007) — `crawling_sensation`
+  - Whenever one or more land cards are put into your graveyard from anywhere for the first time each turn, create a 1/1 green Insect creature token.
+- **Desert Warfare** (rank 7493) — `desert_warfare`
+  - Whenever you sacrifice a Desert and whenever a Desert card is put into your graveyard from your hand or library, put that card onto the battlefield under your control at the beginning of your next end step.
+  - At the beginning of combat on your turn, if you control five or more Deserts, create that many 1/1 red, green, and white Sand Warrior creature tokens. They gain haste.
+- **Disa the Restless** (rank 8872) — `disa_the_restless`
+  - Whenever a Lhurgoyf permanent card is put into your graveyard from anywhere other than the battlefield, put it onto the battlefield.
+  - Whenever one or more creatures you control deal combat damage to a player, create a Tarmogoyf token.
+- **Centaur Vinecrasher** (rank 10988) — `centaur_vinecrasher`
+  - Whenever a land card is put into a graveyard from anywhere, you may pay {G}{G}. If you do, return this card from your graveyard to your hand.
+- **Skola Grovedancer** (rank 12300) — `skola_grovedancer`
+  - Whenever a land card is put into your graveyard from anywhere, you gain 1 life.
+
+</details>
+
 ## prevent-damage-by-source
 
 Blocks **8** cards.
@@ -336,8 +394,8 @@ Blocks **8** cards.
   <br>Why the existing vocabulary won't do: `prevent_damage` with `combat_only` + `prevent_all` + `affects: {self_only: true}` prevents ALL combat damage to the creature, which is strictly better than printed (it would also stop damage from creatures it is blocking, if it blocks). `damage_source` exists but the loader refuses it on anything but `replace_damage`, and the static filter key `blocking` is a boolean ('is blocking'), not 'is blocking this creature', so even on a source filter it could not say 'blocking it'.
 - **(static_effect)** a source filter on the `prevent_damage` static (prevent_all + combat_only + affects self_only) restricting the shield to damage dealt by sources matching a filter, e.g. a dealer filter of {"enchanted_by": true} (a creature with at least one Aura attached to it)
   <br>Why the existing vocabulary won't do: The `prevent_damage` static's `combat_only` + `prevent_all` read only the recipient (`affects`), never the dealer, so it would prevent combat damage from every creature. `damage_source` filters the dealer but is honoured only by `replace_damage` (a multiplier), not by prevention. The `enchanted_by` filter key says 'enchanted creatures'; nothing lets the prevention shield read it of the dealer.
-- **(static_effect)** a dealer filter (`damage_source`) on the `prevent_damage` static, so that `{"effect": "prevent_damage", "prevent_all": true, "combat_only": true, "damage_source": {"self_only": true}}` prevents all combat damage this creature would deal to any recipient (creatures, players and planeswalkers alike); the 'dealt to' half is already a second static with `affects: {"self_only": true}`
-  <br>Why the existing vocabulary won't do: The `prevent_damage` static with `prevent_all` + `combat_only` reads only the recipient (`affects`, via `prevents_all_damage`), so it covers 'dealt to this creature' but never 'dealt by' it. `damage_source` filters the dealer but the loader accepts it only on `replace_damage`, whose `damage_multiplier` must be 2 or more and so cannot prevent. `prevent_all_but` caps by recipient too. Writing only the 'dealt to' half would leave Fog Bank dealing combat damage, a different card.
+- **(static_effect)** a dealer-side total shield on the `prevent_damage` static: `{"effect": "prevent_damage", "prevent_all": true, "combat_only": true, "damage_source": {"self_only": true}}` preventing all combat damage this creature would deal to any recipient (creatures, players and planeswalkers). The 'dealt to' half is already expressible as a second `prevent_damage` static with `prevent_all`, `combat_only` and `affects: {"self_only": true}`
+  <br>Why the existing vocabulary won't do: The loader accepts `damage_source` on `prevent_damage` only beside `affects_player` with no `affects`, and refuses `prevent_all` beside `affects_player`; the player-side reader (`prevented_player_damage`) skips `prevent_all` statics and only absorbs N. So there is no way to prevent all damage dealt BY a source. `replace_damage` filters by `damage_source` but only multiplies or adds, it cannot prevent. Writing only the 'dealt to' half would leave Fog Bank dealing combat damage, a different card.
 - **(static_effect)** a damage_source (dealer) filter on the prevent_damage static, so 'prevent all combat damage that would be dealt by enchanted creature' is {effect: prevent_damage, prevent_all: true, combat_only: true, damage_source: {attached: true}} -- prevention keyed on the source rather than the recipient, applied wherever combat damage is dealt (to players and permanents alike)
   <br>Why the existing vocabulary won't do: The prevent_damage static with prevent_all + combat_only covers the 'dealt to' half via affects: {attached: true}, but its affects is the recipient only; damage_source exists only on replace_damage, which the loader refuses with a damage_multiplier below 2 (0 would be prevention). The prevent_damage_permanent op has a 'dealt' option but is a one-shot with a duration, not a static that lasts while the Aura is attached
 - **(static_effect)** a continuous static that prevents all (combat) damage a matching permanent would DEAL, e.g. a `prevent_damage` static with a direction key (`dealt: "by"` / `"to_and_by"`) read alongside `affects: {attached: true}` and `combat_only: true`, so an Aura can stop combat damage dealt both to and by the enchanted creature for as long as it is attached
@@ -368,50 +426,6 @@ Blocks **8** cards.
   - Prevent all combat damage that would be dealt to this creature by Walls.
 - **Enchanted Being** (rank 31748) — `enchanted_being`
   - Prevent all combat damage that would be dealt to this creature by enchanted creatures.
-
-</details>
-
-## put-into-graveyard-from-anywhere
-
-Blocks **8** cards.
-
-- **(trigger_event)** a trigger event that fires whenever a card matching a filter (here: a land card, any owner) is put into a graveyard from ANY zone -- battlefield, hand (discard), library (mill), stack -- usable on an ability with active_zones ["graveyard"] so the card triggers while it sits in its owner's graveyard (Ashen Ghoul / Vengevine style recursion)
-  <br>Why the existing vocabulary won't do: leaves_battlefield with to_zones ["graveyard"] only sees permanents leaving the battlefield (a sacrificed or destroyed land) and misses discarded, milled and countered-from-stack cards; discard covers only the hand; dies is creatures only; there is no mill or generic zone-change-to-graveyard event in trigger_events. The may-pay {G}{G} and return_to_hand halves are expressible once the event exists.
-- **(trigger_event)** a trigger event that fires when cards matching a filter (here: creature cards, owner = you) are put into a graveyard, narrowed by `from_zones: ["library"]` (mill, surveil, self-mill costs), with `batched: true` so one simultaneous move of several creature cards triggers once ("one or more"), and binding the batch of moved cards so the effect can be `put_onto_battlefield` over exactly one of THEM chosen by the controller ("put one of them"), still in the graveyard on resolution
-  <br>Why the existing vocabulary won't do: trigger_events has no zone-change-to-graveyard event: leaves_battlefield only sees permanents leaving the battlefield, dies is battlefield creatures, discard is the hand, leaves_graveyard is the reverse direction; the trigger's from_zones key is read only for spell_cast and land_played. Without the event there is also no binding for 'them', so a put_onto_battlefield over any creature card in the graveyard would wrongly reach creature cards milled earlier. The Flying keyword and the enters-or-attacks mill three (self_enters + attacks triggers with mill) are expressible today.
-- **(trigger_event)** a trigger event that fires when one or more cards matching a filter (here: land cards, owner = you) are put into a graveyard from ANY zone -- battlefield, hand (discard), library (mill, surveil), stack -- supporting `batched: true` so one simultaneous move of several land cards triggers once, and `max_per_turn: 1` for "for the first time each turn"
-  <br>Why the existing vocabulary won't do: trigger_events has no generic zone-change-to-graveyard event: leaves_battlefield with to_zones ["graveyard"] (and dies) only sees permanents leaving the battlefield and misses milled and discarded land cards, which is what this card's own upkeep mill feeds; discard covers only the hand; leaves_graveyard is the opposite direction. The upkeep `may` + `mill` line and the insect_1_1_g token are expressible today.
-- **(trigger_event)** a trigger event that fires when a card matching a filter (here: a permanent card with subtype Lhurgoyf, owner = you) is put into a graveyard, narrowed by `from_zones` to every zone except the battlefield (hand via discard, library via mill/surveil, stack via countered/resolved, exile), binding the moved card as the subject so the effect can `put_onto_battlefield` exactly that card ("put it") if it is still in the graveyard on resolution
-  <br>Why the existing vocabulary won't do: trigger_events has no zone-change-to-graveyard event: leaves_battlefield/dies only see permanents leaving the battlefield (exactly the source this card excludes), discard covers only the hand, leaves_graveyard is the reverse direction, and the trigger's from_zones key is read only for spell_cast and land_played. Without the event there is also no binding for 'it'.
-- **(trigger_event)** a trigger event that fires once per card matching a filter (here: a land card, owner = you, i.e. into YOUR graveyard) put into a graveyard from ANY zone -- battlefield, hand (discard), library (mill, surveil), stack -- unbatched, so milling two lands gains 2 life
-  <br>Why the existing vocabulary won't do: trigger_events has no generic zone-change-to-graveyard event: leaves_battlefield with to_zones ["graveyard"] only sees permanents leaving the battlefield and misses milled and discarded land cards, which this card's own {2}{G} mill ability is built to feed; discard covers only the hand; dies is creatures/permanents dying; leaves_graveyard is the opposite direction. The {2}{G}: mill 1 activated ability and the gain_life effect are expressible today.
-- **(trigger_event)** a trigger event that fires whenever a card matching a filter (here: a creature card, any owner, any graveyard) is put into a graveyard, with a from_zones/except-battlefield clause so it can be narrowed to arrivals from anywhere other than the battlefield -- hand (discard), library (mill), stack (countered or resolved), exile, command zone
-  <br>Why the existing vocabulary won't do: The other two clauses are expressible (`creature_dies` / `dies` with exclude_self, and `leaves_graveyard` filtered to creature cards you own), but there is no zone-change-to-graveyard event in trigger_events: `discard` covers only the hand, `dies` and `leaves_battlefield` only the battlefield, and there is no mill event; the trigger's `from_zones` key is read only for spell_cast and land_played. Writing just the two expressible clauses would silently drop the milled/discarded-creature half, which is the card's main engine with its own {1}{B} mill ability.
-- **(trigger_event)** a trigger event that fires when a card matching a filter (here: a land card, owner = you) is put into a graveyard from ANY zone -- battlefield (sacrifice/destroy), hand (discard), library (mill, surveil), stack -- and supports `batched: true` so that several land cards moved by one event (a mill of three lands, a discard of two lands) trigger it exactly once ("one or more")
-  <br>Why the existing vocabulary won't do: leaves_battlefield with to_zones ["graveyard"] sees only permanents leaving the battlefield and misses discarded, milled and surveilled land cards, which are the card's whole engine (Gitrog + discard/dredge loops); discard covers only the hand and carries no card-type filter on the moved card from library; there is no mill or generic zone-change-to-graveyard event in trigger_events. Combining leaves_battlefield and discard triggers would still miss mill/surveil and would trigger twice for a single simultaneous event that moves lands from two zones. The draw half is a plain draw op once the event exists. The upkeep 'sacrifice unless you sacrifice a land' and extra_land_drops lines are expressible today.
-- **(trigger_event)** a self trigger that fires when this card is put into a graveyard from ANY zone (battlefield, hand via discard, library via mill/surveil, stack via counter), so the triggered ability works from the graveyard and can shuffle the card (bound as the trigger subject) into its owner's library -- the Eldrazi titan clause shared by Emrakul, Ulamog and Kozilek
-  <br>Why the existing vocabulary won't do: `trigger_events` has `dies` and `leaves_battlefield` (with `to_zones`), which only see the battlefield and miss discard, mill and a countered spell -- the cases the clause exists for. `discard` covers only the hand. No event observes a card arriving in a graveyard from the library or stack, and no `card_level_rider_keys` entry (`tucks_itself` is a resolving spell's own fate) replaces it. Writing only the `dies` half would make a different card that stays in the graveyard when milled or discarded.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Syr Konrad, the Grim** (rank 256) — `syr_konrad_the_grim`
-  - Whenever another creature dies, or a creature card is put into a graveyard from anywhere other than the battlefield, or a creature card leaves your graveyard, Syr Konrad deals 1 damage to each opponent.
-- **The Gitrog Monster** (rank 902) — `the_gitrog_monster`
-  - Whenever one or more land cards are put into your graveyard from anywhere, draw a card.
-- **Colossal Grave-Reaver** (rank 1942) — `colossal_grave_reaver`
-  - Whenever one or more creature cards are put into your graveyard from your library, put one of them onto the battlefield.
-- **Worldspine Wurm** (rank 2387) — `worldspine_wurm`
-  - When this creature dies, create three 5/5 green Wurm creature tokens with trample.
-  - When Worldspine Wurm is put into a graveyard from anywhere, shuffle it into its owner's library.
-- **Crawling Sensation** (rank 3007) — `crawling_sensation`
-  - Whenever one or more land cards are put into your graveyard from anywhere for the first time each turn, create a 1/1 green Insect creature token.
-- **Disa the Restless** (rank 8872) — `disa_the_restless`
-  - Whenever a Lhurgoyf permanent card is put into your graveyard from anywhere other than the battlefield, put it onto the battlefield.
-  - Whenever one or more creatures you control deal combat damage to a player, create a Tarmogoyf token.
-- **Centaur Vinecrasher** (rank 10988) — `centaur_vinecrasher`
-  - Whenever a land card is put into a graveyard from anywhere, you may pay {G}{G}. If you do, return this card from your graveyard to your hand.
-- **Skola Grovedancer** (rank 12300) — `skola_grovedancer`
-  - Whenever a land card is put into your graveyard from anywhere, you gain 1 life.
 
 </details>
 
@@ -529,6 +543,32 @@ Blocks **5** cards.
 
 </details>
 
+## copy-exception-set-subtypes
+
+Blocks **4** cards.
+
+- **(op)** a copy_permanent `except_` key that REPLACES the copy's subtypes (e.g. `subtypes: ["Zombie"]`), so the token is a Zombie instead of its other creature types (205.1a; Gatherer ruling: "The token is a Zombie instead of its other creature types"), keeping its card types and mana cost
+  <br>Why the existing vocabulary won't do: copy_permanent's except_ (applied in characteristics._compute via copy_overrides) supports power, toughness, colors, add_subtypes, types, add_types, add_supertypes, remove_supertypes and no_mana_cost. add_subtypes is eternalize's additive shape ("Zombie Snake Wizard"), which would leave the copied creature types on the token; `types` replaces card types only. The rest of the card (begin_combat trigger, may + exile with `as`, copy_permanent from exile, grant_keyword haste on the token binding) is expressible.
+- **(engine)** A copy exception (copy_permanent `except_`) that REPLACES the copied card's creature types with the printed ones -- "except it's a 4/4 black Zombie" without "in addition to its other types" makes the token a Zombie and nothing else (205.1b, 707.9b), e.g. an `except_.subtypes: ["Zombie"]` override read in characteristics._compute beside `colors`, `power` and `toughness`
+  <br>Why the existing vocabulary won't do: The rest is expressible: a `discard` trigger with `controller: you` and `filter: {types: [Creature]}`, a `may` with `pay: {mana: {2}{U}}`, and `copy_permanent` on `{binding: subject, zone: graveyard}` with `tapped: true` and `except_` power 4 / toughness 4 / colors [B]. But the only creature-type key `copy_overrides` honours is `add_subtypes` (eternalize's 'Zombie in addition to its other types'); `types` replaces card types only and keeps subtypes. Using `add_subtypes` would leave a discarded Elf Warrior an Elf Warrior Zombie, a different card for every tribal interaction
+- **(op)** a copy_permanent `except_` key that REPLACES the copy's creature subtypes (e.g. `subtypes: ["Zombie"]`), so the token is a 4/4 black Zombie instead of its other creature types (205.1a), keeping its card types and mana cost
+  <br>Why the existing vocabulary won't do: copy_permanent's except_ (applied via copy_overrides in characteristics) supports power, toughness, colors, add_subtypes, types, add_types, add_supertypes, remove_supertypes and no_mana_cost; add_subtypes is eternalize's additive shape and would leave the copied creature types on the token, and `types` replaces card types only. The rest of the line (X mana cost, sacrifice-a-Desert cost, exile from graveyard, copy from exile, sorcery_speed_only) and the sacrifice-a-creature mana ability look expressible. Same capability as the_scarab_god and god_pharaoh_s_gift
+- **(op)** a copy_permanent except_ key that replaces the copy's creature subtypes rather than adding to them
+  <br>Why the existing vocabulary won't do: copy_permanent's except_ carries add_subtypes, which keeps the copied card's creature types; 'except it's a 4/4 black Zombie' with no 'in addition to its other types' makes the token a Zombie instead of its other creature types (205.1a), and the types override replaces card types only. Same capability as god_pharaoh_s_gift
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Scarab God** (rank 1740) — `the_scarab_god`
+  - {2}{U}{B}: Exile target creature card from a graveyard. Create a token that's a copy of it, except it's a 4/4 black Zombie.
+- **Lazotep Quarry** (rank 1937) — `lazotep_quarry`
+  - {X}{2}, {T}, Sacrifice a Desert: Exile target creature card with mana value X from your graveyard. Create a token that's a copy of it, except it's a 4/4 black Zombie. Activate only as a sorcery.
+- **Hashaton, Scarab's Fist** (rank 3525) — `hashaton_scarab_s_fist`
+  - Whenever you discard a creature card, you may pay {2}{U}. If you do, create a tapped token that's a copy of that card, except it's a 4/4 black Zombie.
+- **God-Pharaoh's Gift** (rank 8873) — `god_pharaoh_s_gift`
+  - If you do, create a token that's a copy of that card, except it's a 4/4 black Zombie.
+
+</details>
+
 ## divided-damage-on-trigger
 
 Blocks **4** cards.
@@ -635,14 +675,37 @@ Blocks **4** cards.
 
 </details>
 
+## basic-land-type-mana
+
+Blocks **3** cards.
+
+- **(engine)** Rule 305.6 -- a permanent with a basic land type has the matching intrinsic mana ability ({T}: Add {G} for Forest) by virtue of carrying the subtype, derived in the characteristics pipeline (characteristics.abilities_of) so that a Forest subtype granted by a static brings {T}: Add {G} with it, visible to legality, the payment solver and activation (and still subject to summoning sickness on a creature, 302.6).
+  <br>Why the existing vocabulary won't do: The type change itself is sayable: the `add_subtype` static carries `types` as well as `subtypes` (characteristics.py layer-4 grant loop does `types.update(static.get("types"))`), so {"effect": "add_subtype", "affects": {"controller": "you", "types": ["Creature"], "is_token": false}, "types": ["Land"], "subtypes": ["Forest"]} would make each nontoken creature a 'Creature Land -- Forest', and the first sentence is a self_only `set_pt` reading a count of lands you control. But the engine never derives a mana ability from a basic land subtype -- Forest's {T}: Add {G} is printed on the basic card in data/cards/basics.cards.json, and abilities_of returns printed plus statics-granted abilities only. So every creature would read as a Forest land and none could tap for {G}, which is the whole reason the card is played. A `grant_ability` static handing out {T}: Add {G} is unprinted text and the residual gate would have no line for it to claim. Same open gap as urborg_tomb_of_yawgmoth (and Dryad of the Ilysian Grove / Yavimaya, which already ship inert).
+- **(engine)** Rule 305.6 -- a land that gains a basic land type gains the matching intrinsic mana ability ({T}: Add {W}/{U}/{B}/{R}/{G}), derived in the characteristics pipeline so an `add_subtype` grant of Plains/Island/Swamp/Mountain/Forest brings the mana abilities with it, visible to legality, the payment solver and activation.
+  <br>Why the existing vocabulary won't do: The type change itself is sayable as {"effect": "add_subtype", "affects": {"types": ["Land"], "has_counters": ...}, "subtypes": [every land type in enums.SUBTYPE_CLASS]}, but the engine never derives a mana ability from a granted basic land type, so the land would be every land type in name only and tap for nothing new -- the main effect of the line. Same blocker as Urborg, Tomb of Yawgmoth and Ashaya.
+- **(engine)** Rule 305.6 -- a land with a basic land type has the corresponding intrinsic mana ability ({T}: Add {W}/{U}/{B}/{R}/{G}) by virtue of carrying the subtype, derived in the characteristics pipeline (characteristics.abilities_of) rather than printed on the card, so that a subtype a static ability *grants* brings the mana ability with it. The derived ability must be visible to legality, the payment solver and activation, exactly as the `grant_ability` static already is.
+  <br>Why the existing vocabulary won't do: The static effect `add_subtype` says the printed sentence exactly -- {"effect": "add_subtype", "affects": {"types": ["Land"], "controller": "any"}, "subtypes": ["Swamp"]} -- but the engine never derives a mana ability from a subtype. data/cards/basics.cards.json prints "{T}: Add {B}" on Swamp as an ordinary ability, and characteristics.abilities_of returns the printed list plus statics-granted abilities only; nothing consults subtypes. So the static loads clean, every land on the board correctly reads "Land -- Swamp", and not one of them can tap for {B} -- the whole reason the card is played. Urborg itself would also be a land with no mana ability at all, since its {T}: Add {B} is likewise only the 305.6 consequence of being a Swamp. The nearest workaround, a `grant_ability` static handing every land a {T}: Add {B} ability, is not what the card says: it would leave the lands not actually Swamps (invisible to swampwalk, domain, Swamp-fetching searches, and any "nonbasic land" test) while adding an ability the printed line never mentions, and the residual gate would have no printed sentence for it to claim. Dryad of the Ilysian Grove (data/cards/auto/templates.cards.json) already ships with the same construction and the same silent inertness, so closing this fixes both.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Urborg, Tomb of Yawgmoth** (rank 73) — `urborg_tomb_of_yawgmoth`
+  - Each land is a Swamp in addition to its other land types.
+- **Ashaya, Soul of the Wild** (rank 817) — `ashaya_soul_of_the_wild`
+  - Nontoken creatures you control are Forest lands in addition to their other types. (They're still affected by summoning sickness.)
+- **Omo, Queen of Vesuva** (rank 4942) — `omo_queen_of_vesuva`
+  - Each land with an everything counter on it is every land type in addition to its other types.
+  - Each nonland creature with an everything counter on it is every creature type.
+
+</details>
+
 ## cast-trigger-x
 
 Blocks **3** cards.
 
 - **(value)** a value (or a binding on the spell_cast event) that reads the X chosen for the spell that fired a spell_cast trigger -- for a `source: self` cast trigger, the X of this spell while it is still on the stack -- so the trigger can say 'each player sacrifices X creatures' as a for_each_player sacrifice with `count` equal to that X
   <br>Why the existing vocabulary won't do: The value `x` evaluates `ctx.x`, which for a triggered ability comes from `event_bindings` reading `obj.cast_x`; `cast_x` is only written in `stack.py` when the spell resolves (`obj.cast_x = item.x`), and `Game._cast` fires SPELL_CAST without an `x` in its payload (`x` in EVENT_BINDING_KEYS is carried only by `cycle`). So a cast trigger always reads X as 0 and the edict would sacrifice nothing. No value key reads a stack item's X by `sid`. The rest is expressible: `for_each_player` over each player with `sacrifice` (`as` binding) then `spell_enters_with_counters` adding `times [2, count(binding)]` +1/+1 counters to the spell named by the trigger's `sid` accumulates across iterations.
-- **(engine)** a cast trigger (`spell_cast`, `source: self`, `active_zones: ["stack"]`) whose effects read the X the spell was cast with through `{"x": true}` -- i.e. the SPELL_CAST event fired by `Game._cast` must carry `x=item.x` so `triggers.event_bindings` (which lists `x` in EVENT_BINDING_KEYS) overrides the permanent's `cast_x` the way the CYCLED event does for Shark Typhoon
-  <br>Why the existing vocabulary won't do: `{"x": true}` in a triggered ability reads the trigger's `x` binding, which `event_bindings` takes from `obj.cast_x`; `cast_x` is written only in `stack.resolve` when the spell resolves, and the SPELL_CAST payload has no `x`, so the cast trigger would read 0 and gain/draw nothing. The only other route, `half` of (`mana_value_of` self minus 2), reads the mana value rather than X and would be a stand-in, not the printed referent
+- **(engine)** a cast trigger (`spell_cast`, `source: self`, `active_zones: ["stack"]`) whose effects can read the X the spell was cast with via `{"x": true}` (then `half`, rounded down) -- the SPELL_CAST event fired by `Game._cast` must carry `x=item.x` and `x` must be in `triggers.EVENT_BINDING_KEYS` (or `event_bindings` must read the stack item's X) so it overrides the object's `cast_x`
+  <br>Why the existing vocabulary won't do: `event_bindings` sets the trigger's `x` from `obj.cast_x`, which `stack.resolve` writes only when the spell resolves; the SPELL_CAST payload in `Game._cast` has no `x`, so a cast trigger reads X as 0 and gains/draws nothing. `half` of (`mana_value_of` self minus 2) would read mana value rather than the printed X and is a stand-in, not the referent
 - **(value)** a value reading the X chosen for the triggering spell (the spell bound as `subject` on a spell_cast trigger), e.g. the SPELL_CAST event payload carrying `x` so `event_bindings` overrides the source's `cast_x` and `{"x": true}` means the cast spell's X
   <br>Why the existing vocabulary won't do: `{"x": true}` in a triggered ability reads the `x` binding, which `triggers.event_bindings` takes from the trigger source's own `cast_x` (Nev's, 0); the SPELL_CAST payload carries no `x` (only the cycle event does via EVENT_BINDING_KEYS), and `mana_value_of` the subject reads mana value, not X
 
@@ -657,25 +720,25 @@ Blocks **3** cards.
 
 </details>
 
-## copy-exception-set-subtypes
+## copy-exception-ability
 
 Blocks **3** cards.
 
-- **(op)** a copy_permanent `except_` key that REPLACES the copy's subtypes (e.g. `subtypes: ["Zombie"]`), so the token is a Zombie instead of its other creature types (205.1a; Gatherer ruling: "The token is a Zombie instead of its other creature types"), keeping its card types and mana cost
-  <br>Why the existing vocabulary won't do: copy_permanent's except_ (applied in characteristics._compute via copy_overrides) supports power, toughness, colors, add_subtypes, types, add_types, add_supertypes, remove_supertypes and no_mana_cost. add_subtypes is eternalize's additive shape ("Zombie Snake Wizard"), which would leave the copied creature types on the token; `types` replaces card types only. The rest of the card (begin_combat trigger, may + exile with `as`, copy_permanent from exile, grant_keyword haste on the token binding) is expressible.
-- **(engine)** A copy exception (copy_permanent `except_`) that REPLACES the copied card's creature types with the printed ones -- "except it's a 4/4 black Zombie" without "in addition to its other types" makes the token a Zombie and nothing else (205.1b, 707.9b), e.g. an `except_.subtypes: ["Zombie"]` override read in characteristics._compute beside `colors`, `power` and `toughness`
-  <br>Why the existing vocabulary won't do: The rest is expressible: a `discard` trigger with `controller: you` and `filter: {types: [Creature]}`, a `may` with `pay: {mana: {2}{U}}`, and `copy_permanent` on `{binding: subject, zone: graveyard}` with `tapped: true` and `except_` power 4 / toughness 4 / colors [B]. But the only creature-type key `copy_overrides` honours is `add_subtypes` (eternalize's 'Zombie in addition to its other types'); `types` replaces card types only and keeps subtypes. Using `add_subtypes` would leave a discarded Elf Warrior an Elf Warrior Zombie, a different card for every tribal interaction
-- **(op)** a copy_permanent except_ key that replaces the copy's creature subtypes rather than adding to them
-  <br>Why the existing vocabulary won't do: copy_permanent's except_ carries add_subtypes, which keeps the copied card's creature types; 'except it's a 4/4 black Zombie' with no 'in addition to its other types' makes the token a Zombie instead of its other creature types (205.1a), and the types override replaces card types only. Same capability as god_pharaoh_s_gift
+- **(op)** copy_permanent's `except_` adding a whole quoted triggered ability to the token copies' copiable values (707.9b) -- here "When this token enters, it fights up to one target creature you don't control" (a self-enters trigger whose effect is `fight` between the token and an optional target creature an opponent controls) -- present as the tokens enter so the enters trigger fires for each of the X copies, and copied along by any later copy of a token
+  <br>Why the existing vocabulary won't do: copy_permanent's `except_` is checked against COPY_EXCEPT_KEYS (add_keywords, colors, types, power, toughness, add_types, add_subtypes, add_supertypes, remove_supertypes, no_mana_cost) and becomes `copy_overrides`, which characteristics reads only for those characteristics; nothing adds a triggered ability. A following `grant_ability` on the copies' `as` binding comes after they entered, so a 'when this token enters' trigger would never fire, and it is a layer-6 grant rather than a copiable value. Resolving `fight` directly in the spell via for_each over the binding skips the trigger (targets chosen on the stack, can be responded to) and is an approximation. The rest -- X from {X}{X}, target creature you control, copy_permanent amount X, fight with up to one target -- is expressible.
+- **(op)** copy_permanent's `except_` adding a whole quoted triggered ability to the token's copiable values (707.9b), written once under `grantable_abilities` and referenced by index -- here "When this token leaves the battlefield, return the exiled card to its owner's graveyard" -- where "the exiled card" is linked to the specific card the creating ability exiled (e.g. the token records the exiled oid when created, and a selector such as `exiled_with: "self"` on the token resolves to it), so the card returns to its owner's graveyard when that particular token leaves
+  <br>Why the existing vocabulary won't do: copy_permanent's `except_` is checked against COPY_EXCEPT_KEYS (colors, types, power, toughness, add_types, add_subtypes, add_supertypes, remove_supertypes, add_keywords, no_mana_cost) and becomes `copy_overrides`, which characteristics._compute reads only for those characteristics -- `add_subtypes: ["Spirit"]` covers the Spirit half, and `add_keywords` adds keywords only, but nothing adds a triggered ability. The new `except_` keys on become_copy (BECOME_COPY_EXCEPT_KEYS: add_keywords, keep_abilities) do not reach this card: they are become_copy-only (an in-place copy, not a token copy_permanent creates), add_keywords adds keywords rather than a triggered ability, and keep_abilities keeps positions in the copying card's OWN printed abilities -- the quoted leaves-the-battlefield trigger is not one of Hofri's own abilities and would fire for Hofri, not the token. A following `grant_ability` on the `as` binding would be a layer-6 grant rather than a copiable value (a copy of the token would lack it), and the granted trigger has no way to name the card Hofri's trigger exiled: `exiled_with: "self"` on the token would look for cards the token exiled, not cards exiled by Hofri, and an `exile` `link` is held by the exiling source, not by the token it later creates. The first sentence (buff + grant_keyword statics on Spirits you control) and the die/exile/copy steps (creature_dies trigger, exile the dying card, copy_permanent from exile with add_subtypes) are expressible.
+- **(op)** a `become_copy` `except_` key (707.9b) that adds an ability the copying card does NOT itself have -- e.g. `add_abilities: [i]` indexing the card's `grantable_abilities`, appended by `GameState.card_of` the way `copying_own_abilities` is -- so 'becomes a copy of X until end of turn, except it has myriad' writes the myriad triggered ability (as shipped in templates: a self-attacks trigger making tapped-and-attacking token copies exiled at end of combat) into the copiable values, where the myriad tokens and anything copying Muddle see it, and nothing happens when no target was chosen
+  <br>Why the existing vocabulary won't do: `except_` now takes `add_keywords` and `keep_abilities` (BECOME_COPY_EXCEPT_KEYS). Myriad is not in `keywords` -- the pool writes it as a triggered ability -- so `add_keywords` cannot name it. `keep_abilities` only carries positions in the card's OWN printed `abilities` onto the copy; Muddle does not print myriad as its own ability, and writing it into `abilities` to keep it would give the uncopied Muddle myriad permanently. A `grant_ability` after the copy is a layer-6 grant, not a copiable value (the doc names it the near miss), so copies of Muddle would lack myriad. And the myriad trigger itself has a second gap: `copy_permanent` creates its token from the source's printed `def_id` and copy_overrides only, so a token copy of Muddle while it is copying another creature (an in-place `become_copy`, `obj.copying`) would be a copy of Muddle's own printed card rather than of the creature Muddle has become (707.2: the copiable values include the copy effect)
 
 <details><summary>Cards waiting on this</summary>
 
-- **The Scarab God** (rank 1740) — `the_scarab_god`
-  - {2}{U}{B}: Exile target creature card from a graveyard. Create a token that's a copy of it, except it's a 4/4 black Zombie.
-- **Hashaton, Scarab's Fist** (rank 3525) — `hashaton_scarab_s_fist`
-  - Whenever you discard a creature card, you may pay {2}{U}. If you do, create a tapped token that's a copy of that card, except it's a 4/4 black Zombie.
-- **God-Pharaoh's Gift** (rank 8873) — `god_pharaoh_s_gift`
-  - If you do, create a token that's a copy of that card, except it's a 4/4 black Zombie.
+- **Aggressive Biomancy** (rank 6346) — `aggressive_biomancy`
+  - Create X tokens that are copies of target creature you control, except they have "When this token enters, it fights up to one target creature you don't control."
+- **Hofri Ghostforge** (rank 6941) — `hofri_ghostforge`
+  - Whenever another nontoken creature you control dies, exile it. If you do, create a token that's a copy of that creature, except it's a Spirit in addition to its other types and it has "When this token leaves the battlefield, return the exiled card to its owner's graveyard."
+- **Muddle, the Ever-Changing** (rank 11112) — `muddle_the_ever_changing`
+  - Whenever you cast an instant or sorcery spell, Muddle becomes a copy of up to one target nonlegendary creature you control until end of turn, except it has myriad
 
 </details>
 
@@ -769,24 +832,6 @@ Blocks **2** cards.
 
 </details>
 
-## basic-land-type-mana
-
-Blocks **2** cards.
-
-- **(engine)** Rule 305.6 -- a permanent with a basic land type has the matching intrinsic mana ability ({T}: Add {G} for Forest) by virtue of carrying the subtype, derived in the characteristics pipeline (characteristics.abilities_of) so that a Forest subtype granted by a static brings {T}: Add {G} with it, visible to legality, the payment solver and activation (and still subject to summoning sickness on a creature, 302.6).
-  <br>Why the existing vocabulary won't do: The type change itself is sayable: the `add_subtype` static carries `types` as well as `subtypes` (characteristics.py layer-4 grant loop does `types.update(static.get("types"))`), so {"effect": "add_subtype", "affects": {"controller": "you", "types": ["Creature"], "is_token": false}, "types": ["Land"], "subtypes": ["Forest"]} would make each nontoken creature a 'Creature Land -- Forest', and the first sentence is a self_only `set_pt` reading a count of lands you control. But the engine never derives a mana ability from a basic land subtype -- Forest's {T}: Add {G} is printed on the basic card in data/cards/basics.cards.json, and abilities_of returns printed plus statics-granted abilities only. So every creature would read as a Forest land and none could tap for {G}, which is the whole reason the card is played. A `grant_ability` static handing out {T}: Add {G} is unprinted text and the residual gate would have no line for it to claim. Same open gap as urborg_tomb_of_yawgmoth (and Dryad of the Ilysian Grove / Yavimaya, which already ship inert).
-- **(engine)** Rule 305.6 -- a land with a basic land type has the corresponding intrinsic mana ability ({T}: Add {W}/{U}/{B}/{R}/{G}) by virtue of carrying the subtype, derived in the characteristics pipeline (characteristics.abilities_of) rather than printed on the card, so that a subtype a static ability *grants* brings the mana ability with it. The derived ability must be visible to legality, the payment solver and activation, exactly as the `grant_ability` static already is.
-  <br>Why the existing vocabulary won't do: The static effect `add_subtype` says the printed sentence exactly -- {"effect": "add_subtype", "affects": {"types": ["Land"], "controller": "any"}, "subtypes": ["Swamp"]} -- but the engine never derives a mana ability from a subtype. data/cards/basics.cards.json prints "{T}: Add {B}" on Swamp as an ordinary ability, and characteristics.abilities_of returns the printed list plus statics-granted abilities only; nothing consults subtypes. So the static loads clean, every land on the board correctly reads "Land -- Swamp", and not one of them can tap for {B} -- the whole reason the card is played. Urborg itself would also be a land with no mana ability at all, since its {T}: Add {B} is likewise only the 305.6 consequence of being a Swamp. The nearest workaround, a `grant_ability` static handing every land a {T}: Add {B} ability, is not what the card says: it would leave the lands not actually Swamps (invisible to swampwalk, domain, Swamp-fetching searches, and any "nonbasic land" test) while adding an ability the printed line never mentions, and the residual gate would have no printed sentence for it to claim. Dryad of the Ilysian Grove (data/cards/auto/templates.cards.json) already ships with the same construction and the same silent inertness, so closing this fixes both.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Urborg, Tomb of Yawgmoth** (rank 73) — `urborg_tomb_of_yawgmoth`
-  - Each land is a Swamp in addition to its other land types.
-- **Ashaya, Soul of the Wild** (rank 817) — `ashaya_soul_of_the_wild`
-  - Nontoken creatures you control are Forest lands in addition to their other types. (They're still affected by summoning sickness.)
-
-</details>
-
 ## batched-trigger-objects
 
 Blocks **2** cards.
@@ -857,24 +902,6 @@ Blocks **2** cards.
   - You may choose new targets for target spell or ability.
 - **Misdirection** (rank 1562) — `misdirection`
   - Change the target of target spell with a single target.
-
-</details>
-
-## copy-exception-ability
-
-Blocks **2** cards.
-
-- **(op)** copy_permanent's `except_` adding a whole quoted triggered ability to the token's copiable values (707.9b), written once under `grantable_abilities` and referenced by index -- here "When this token leaves the battlefield, return the exiled card to its owner's graveyard" -- where "the exiled card" is linked to the specific card the creating ability exiled (e.g. the token records the exiled oid when created, and a selector such as `exiled_with: "self"` on the token resolves to it), so the card returns to its owner's graveyard when that particular token leaves
-  <br>Why the existing vocabulary won't do: copy_permanent's `except_` is checked against COPY_EXCEPT_KEYS (colors, types, power, toughness, add_types, add_subtypes, add_supertypes, remove_supertypes, add_keywords, no_mana_cost) and becomes `copy_overrides`, which characteristics._compute reads only for those characteristics -- `add_subtypes: ["Spirit"]` covers the Spirit half, and `add_keywords` adds keywords only, but nothing adds a triggered ability. The new `except_` keys on become_copy (BECOME_COPY_EXCEPT_KEYS: add_keywords, keep_abilities) do not reach this card: they are become_copy-only (an in-place copy, not a token copy_permanent creates), add_keywords adds keywords rather than a triggered ability, and keep_abilities keeps positions in the copying card's OWN printed abilities -- the quoted leaves-the-battlefield trigger is not one of Hofri's own abilities and would fire for Hofri, not the token. A following `grant_ability` on the `as` binding would be a layer-6 grant rather than a copiable value (a copy of the token would lack it), and the granted trigger has no way to name the card Hofri's trigger exiled: `exiled_with: "self"` on the token would look for cards the token exiled, not cards exiled by Hofri, and an `exile` `link` is held by the exiling source, not by the token it later creates. The first sentence (buff + grant_keyword statics on Spirits you control) and the die/exile/copy steps (creature_dies trigger, exile the dying card, copy_permanent from exile with add_subtypes) are expressible.
-- **(op)** a `become_copy` `except_` key (707.9b) that adds an ability the copying card does NOT itself have -- e.g. `add_abilities: [i]` indexing the card's `grantable_abilities`, appended by `GameState.card_of` the way `copying_own_abilities` is -- so 'becomes a copy of X until end of turn, except it has myriad' writes the myriad triggered ability (as shipped in templates: a self-attacks trigger making tapped-and-attacking token copies exiled at end of combat) into the copiable values, where the myriad tokens and anything copying Muddle see it, and nothing happens when no target was chosen
-  <br>Why the existing vocabulary won't do: `except_` now takes `add_keywords` and `keep_abilities` (BECOME_COPY_EXCEPT_KEYS). Myriad is not in `keywords` -- the pool writes it as a triggered ability -- so `add_keywords` cannot name it. `keep_abilities` only carries positions in the card's OWN printed `abilities` onto the copy; Muddle does not print myriad as its own ability, and writing it into `abilities` to keep it would give the uncopied Muddle myriad permanently. A `grant_ability` after the copy is a layer-6 grant, not a copiable value (the doc names it the near miss), so copies of Muddle would lack myriad. And the myriad trigger itself has a second gap: `copy_permanent` creates its token from the source's printed `def_id` and copy_overrides only, so a token copy of Muddle while it is copying another creature (an in-place `become_copy`, `obj.copying`) would be a copy of Muddle's own printed card rather than of the creature Muddle has become (707.2: the copiable values include the copy effect)
-
-<details><summary>Cards waiting on this</summary>
-
-- **Hofri Ghostforge** (rank 6941) — `hofri_ghostforge`
-  - Whenever another nontoken creature you control dies, exile it. If you do, create a token that's a copy of that creature, except it's a Spirit in addition to its other types and it has "When this token leaves the battlefield, return the exiled card to its owner's graveyard."
-- **Muddle, the Ever-Changing** (rank 11112) — `muddle_the_ever_changing`
-  - Whenever you cast an instant or sorcery spell, Muddle becomes a copy of up to one target nonlegendary creature you control until end of turn, except it has myriad
 
 </details>
 
@@ -1283,6 +1310,21 @@ Blocks **1** card.
 
 </details>
 
+## all-creature-types
+
+Blocks **1** card.
+
+- **(static_effect)** A way for a static to say 'is every creature type' (205.3m, the changeling characteristic) for the objects its `affects` matches -- e.g. an `add_subtype` flag `all_creature_types: true` -- that the subtype readers (creature_types_of, shares-a-creature-type checks, subtype filters, tribal cost reductions and triggers) treat as matching every creature type, rather than a finite literal list.
+  <br>Why the existing vocabulary won't do: `add_subtype` only grants a literal `subtypes` list; enums.SUBTYPE_CLASS enumerates land, artifact, enchantment and planeswalker types but not creature types, so there is no registry to list exhaustively, and the shipped Maskwood Nexus template's 30-type list is an approximation that fails any creature type not on it. There is no `changeling` keyword in `keywords`.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Omo, Queen of Vesuva** (rank 4942) — `omo_queen_of_vesuva`
+  - Each land with an everything counter on it is every land type in addition to its other types.
+  - Each nonland creature with an everything counter on it is every creature type.
+
+</details>
+
 ## attached-to-player-selector
 
 Blocks **1** card.
@@ -1555,6 +1597,20 @@ Blocks **1** card.
 - **Cloud Key** (rank 611) — `cloud_key`
   - As this artifact enters, choose artifact, creature, enchantment, instant, or sorcery
   - Spells you cast of the chosen type cost {1} less to cast
+
+</details>
+
+## choose-land-type
+
+Blocks **1** card.
+
+- **(decision)** a `choose_type` axis `of: "nonbasic_land_type"` offering the nonbasic land types (Cave, Desert, Gate, Lair, Locus, Mine, Power-Plant, Sphere, Tower, Urza's, ...), stored on the resolving spell, plus a selector read-back (e.g. `subtypes: [{"chosen_land_type_of": "self"}]`) so `become_copy`'s `objects` can be 'each land you control of the chosen type'
+  <br>Why the existing vocabulary won't do: `choose_type` only has the creature_type (surveyed, writes chosen_type), permanent_type and card_type (write chosen_card_type) axes; none offers land subtypes, and the only subtype read-back is `chosen_type_of: self`, which holds a creature type. `become_copy` (with `copying` targeting a creature you control) and `grant_keyword` haste cover the rest, and Flashback is a card-level cost key
+
+<details><summary>Cards waiting on this</summary>
+
+- **March from Velis Vel** (rank 11432) — `march_from_velis_vel`
+  - Choose a nonbasic land type. Each land you control of that type becomes a copy of target creature you control until end of turn and gains haste until end of turn.
 
 </details>
 
@@ -2113,6 +2169,20 @@ Blocks **1** card.
 - **Collective Brutality** (rank 11817) — `collective_brutality`
   - Escalate—Discard a card. (Pay this cost for each mode chosen beyond the first.)
   - • Target opponent reveals their hand. You choose an instant or sorcery card from it. That player discards that card.
+
+</details>
+
+## every-nonbasic-land-type
+
+Blocks **1** card.
+
+- **(engine)** a characteristic-defining ability (604.3) that makes the card every nonbasic land type (205.3i) in every zone -- the land-type twin of changeling. On the battlefield it must satisfy Urza's Tower / Power-Plant / Mine checks and Gate or Desert counts; in a library, hand or graveyard it must match a selector such as Maze's End's "search your library for a Gate card". The set of types should be derived from the engine's own registry (SUBTYPE_CLASS entries of class Land minus the five basic types) rather than spelled out per card, so it tracks new land types
+  <br>Why the existing vocabulary won't do: The closest is a self_only add_subtype static listing the types literally, which is how Changeling is written. Off the battlefield that CDA is honoured only for creature types (characteristics.printed_creature_types and card_in_exile_characteristics filter to SUBTYPE_CLASS == 'Creature'); selectors searching a library or hand read off_battlefield_face, which unions only battlefield OFF_BATTLEFIELD grants and never the card's own self_only add_subtype, so a Gate or Urza's tutor would not find Planar Nexus. The literal list is also not pinned: SUBTYPE_CLASS's Land entries include questionable ones ("Ulamog's") and the rules' set grows with new sets, so a hand-written list drifts
+
+<details><summary>Cards waiting on this</summary>
+
+- **Planar Nexus** (rank 2635) — `planar_nexus`
+  - This land is every nonbasic land type. (Nonbasic land types include Cave, Desert, Gate, Lair, Locus, Mine, Power-Plant, Sphere, Tower, and Urza's.)
 
 </details>
 
@@ -2876,6 +2946,20 @@ Blocks **1** card.
 
 </details>
 
+## mana-doubling-replacement
+
+Blocks **1** card.
+
+- **(replacement)** a player static replacement effect (106.12 / 614.1a) on mana production: when the affected player taps ANY permanent (land or nonland) for mana, that ability produces twice as much of each type it would produce instead. As a replacement it multiplies, so two copies yield four times the mana (and stacks multiplicatively with other doublers such as Nyxbloom Ancient), and it applies to the full amount the mana ability produces, not one extra mana. A third member of `_MANA_DOUBLER_CLASS` in `engine/player_statics.py` (the docstring there already names Mana Reflection as 'a permanent'), but carrying a multiplier that compounds per instance rather than a boolean
+  <br>Why the existing vocabulary won't do: `double_land_mana` (Vorinclex) and `double_nonland_mana` (Kinnan) are each printed about a single permanent class and are triggered mana abilities adding 'one mana of any type that permanent produced'; `player_doubles_mana_from` returns a boolean, so two instances still only double. Writing both statics on one card would have two abilities claim one printed sentence and would make two Mana Reflections double instead of quadruple. `add_mana_on_tap` adds a fixed extra mana, not a multiple. No `mana_multiplier` exists among the ability keys (there are damage/token/counter/draw/gain/mill multipliers only)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Mana Reflection** (rank 1807) — `mana_reflection`
+  - If you tap a permanent for mana, it produces twice as much of that mana instead.
+
+</details>
+
 ## mana-restriction-cast-from-zone
 
 Blocks **1** card.
@@ -2922,8 +3006,8 @@ Blocks **1** card.
 
 Blocks **1** card.
 
-- **(trigger_event)** mana_spent_trigger must also fire when the tagged mana pays the cost of a non-mana activated ability, binding that ability on the stack as `subject` so the rider can `copy_ability` it (and `copy_spell` it with `new_targets` when it paid for a spell)
-  <br>Why the existing vocabulary won't do: mana_spent_trigger is spell-only: costs.pay_mana queues the rider via _queue_spend_triggers only when record_colors_on is set, which only the spell-cast paths (game.py cast, ops_cards cast) pass; an activated ability's mana payment never checks spend tags, so the 'or activate an ability' half would silently do nothing. The rider also has no way to branch between copy_spell and copy_ability on what `subject` is
+- **(trigger_event)** mana_spent_trigger must also fire when the tagged mana pays the cost of a non-mana activated ability, binding that ability on the stack as `subject` so the rider can `copy_ability` it (and `copy_spell` it with `new_targets` when it paid for a spell); the rider needs to branch on whether `subject` is a spell or an ability
+  <br>Why the existing vocabulary won't do: mana_spent_trigger is spell-only: the loader compiles it from a synthetic `spell_cast` trigger and costs.pay_mana queues it via _queue_spend_triggers only when record_colors_on is set, which only the spell-cast paths pass; an activated ability's mana payment never checks spend tags, so the 'or activate an ability' half would silently do nothing
 
 <details><summary>Cards waiting on this</summary>
 
@@ -3112,6 +3196,20 @@ Blocks **1** card.
 
 - **Ancestral Vision** (rank 2978) — `ancestral_vision`
   - Suspend 4—{U} (Rather than cast this card from your hand, pay {U} and exile it with four time counters on it. At the beginning of your upkeep, remove a time counter. When the last is removed, you may cast it without paying its mana cost.)
+
+</details>
+
+## nonbasic-land-type
+
+Blocks **1** card.
+
+- **(selector)** a selector/condition clause 'has a nonbasic land type' (any land subtype other than Plains, Island, Swamp, Mountain, Forest -- CR 205.3i), evaluated against the last-known information of the land the return_to_hand cost bounced (its `as` snapshot), so `if` can read 'unless that land had a nonbasic land type'
+  <br>Why the existing vocabulary won't do: The return_to_hand cost can bind the land with `as` (returned_snapshot), and `{binding: ...}` selectors can be narrowed by `subtypes`/`not_subtypes`, but those match the object's current characteristics in its new zone rather than what it had on the battlefield, and there is no 'nonbasic land type' predicate: `not_subtypes` of the five basics is a different question (a Wastes-like land with no type passes), and enumerating Gate/Desert/Locus/... in `subtypes` is a hand-maintained approximation. values.BASIC_LAND_TYPES exists but only domain reads it.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Wonderscape Sage** (rank 10422) — `wonderscape_sage`
+  - {T}, Return a land you control to its owner's hand: Draw a card. Then discard a card unless that land had a nonbasic land type.
 
 </details>
 
@@ -3313,6 +3411,20 @@ Blocks **1** card.
 
 - **Territorial Hellkite** (rank 6681) — `territorial_hellkite`
   - At the beginning of combat on your turn, choose an opponent at random that this creature didn't attack during your last combat. This creature attacks that player this combat if able. If you can't choose an opponent this way, tap this creature.
+
+</details>
+
+## players-lost-the-game-count
+
+Blocks **1** card.
+
+- **(value)** a static (continuous) value counting the players who have lost the game so far, usable as the multiplier of a self `buff` (+10/+10 times that count), re-evaluated as players are eliminated
+  <br>Why the existing vocabulary won't do: static_value_keys has `count` (over permanents), `starting_life_of`, `min_life_of` and similar, but nothing that reads eliminated players; `player_count` exists only in the effect-time value_keys, not the static ones, and counts players in the game rather than those who have lost
+
+<details><summary>Cards waiting on this</summary>
+
+- **Rampant Frogantua** (rank 4941) — `rampant_frogantua`
+  - This creature gets +10/+10 for each player who has lost the game.
 
 </details>
 
@@ -3757,6 +3869,20 @@ Blocks **1** card.
 
 </details>
 
+## stack-wipe
+
+Blocks **1** card.
+
+- **(op)** a non-targeted mass stack op (or a selector the counter/exile ops can read with zone 'stack') that, on resolution, exiles every other spell on the stack (moving the card to exile without countering it, so 'can't be countered' spells are exiled too and copies cease to exist) and counters every activated and triggered ability on the stack
+  <br>Why the existing vocabulary won't do: op_counter resolves only declared targets ('target') or one value-named 'sid'; it ignores 'objects', so there is no 'all spells/abilities' form, and countering would also be wrong for the spell half since uncounterable spells must still be exiled. op_exile chooses objects through choose_objects over zone-held cards and has no path that removes a StackItem from the stack. The 'object_kind'/'ability_kind' selector keys only narrow an ability_on_stack target
+
+<details><summary>Cards waiting on this</summary>
+
+- **Summary Dismissal** (rank 8784) — `summary_dismissal`
+  - Exile all other spells and counter all abilities.
+
+</details>
+
 ## stun-counters-cant-be-removed
 
 Blocks **1** card.
@@ -4067,6 +4193,20 @@ Blocks **1** card.
 
 </details>
 
+## x-minimum
+
+Blocks **1** card.
+
+- **(cost)** a floor on an activated ability's announced X ("X can't be 0", i.e. X >= 1), so the CHOOSE_X question for an {X} mana cost on an activated ability starts at 1 instead of 0
+  <br>Why the existing vocabulary won't do: cost_keys has x_value (a defined X, never announced) but nothing that bounds an announced X; Game's activation path calls _ask_x with a hard-coded floor of 0, and the only min_x in the engine is the cast-lock floor from player_statics.cast_lock_min_x and the fixed min_x=1 inside ops_control. Without it the land could be animated as a 0/0 and die to state-based actions, which the printed card forbids. The rest of the line is expressible with animate (power/toughness {x}, colors G, subtypes Hydra, types Creature, duration this turn)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Lair of the Hydra** (rank 2447) — `lair_of_the_hydra`
+  - {X}{G}: Until end of turn, this land becomes an X/X green Hydra creature. It's still a land. X can't be 0
+
+</details>
+
 ## x-sized-ability-targets
 
 Blocks **1** card.
@@ -4078,6 +4218,20 @@ Blocks **1** card.
 
 - **Shigeki, Jukai Visionary** (rank 1668) — `shigeki_jukai_visionary`
   - Channel — {X}{X}{G}{G}, Discard this card: Return X target nonlegendary cards from your graveyard to your hand.
+
+</details>
+
+## x-starting-loyalty
+
+Blocks **1** card.
+
+- **(engine)** a planeswalker whose printed loyalty is X: card-level `loyalty` accepting "X" (or an equivalent) that compiles to the self_enters_with_counters loyalty replacement with amount {x: true}, reading the cast's chosen X (306.5b, 107.3m), so the card enters with X loyalty counters and with 0 (and dies to 704.5i) when cast for X=0
+  <br>Why the existing vocabulary won't do: Card-level `loyalty` is an int only (the proxy tier notes "printed loyalty is 'X' and is chosen as the spell is cast; not modelled"); `loyalty_x` in cost_keys is the 606.4 variable loyalty *cost* of an ability, not a starting loyalty; the enters-with-X-counters replacement Hangarback Walker uses is not in this packet's reference vocabulary, and a fixed printed number would be a different card. The three loyalty abilities themselves (scry; look_at_top with a land-or-creature selector whose mana_value is compared against counters_on self, under may/put_onto_battlefield; untap plus animate 5/5 Elemental with flying and haste this_turn on up to two target lands) look expressible
+
+<details><summary>Cards waiting on this</summary>
+
+- **Nissa, Steward of Elements** (rank 6660) — `nissa_steward_of_elements`
+  - Printed starting loyalty X (the planeswalker enters with X loyalty counters, X being the value chosen for {X} in its mana cost as it was cast)
 
 </details>
 

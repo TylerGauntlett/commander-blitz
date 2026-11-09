@@ -1,0 +1,16 @@
+{
+  "card_id": "march_from_velis_vel",
+  "name": "March from Velis Vel",
+  "oracle_text": "Choose a nonbasic land type. Each land you control of that type becomes a copy of target creature you control until end of turn and gains haste until end of turn.\nFlashback {4}{U} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+  "blocked_sentences": [
+    "Choose a nonbasic land type. Each land you control of that type becomes a copy of target creature you control until end of turn and gains haste until end of turn."
+  ],
+  "needs": [{
+    "capability": "choose_land_type",
+    "kind": "decision",
+    "what": "a `choose_type` axis `of: \"nonbasic_land_type\"` offering the nonbasic land types (Cave, Desert, Gate, Lair, Locus, Mine, Power-Plant, Sphere, Tower, Urza's, ...), stored on the resolving spell, plus a selector read-back (e.g. `subtypes: [{\"chosen_land_type_of\": \"self\"}]`) so `become_copy`'s `objects` can be 'each land you control of the chosen type'",
+    "why_existing_wont_do": "`choose_type` only has the creature_type (surveyed, writes chosen_type), permanent_type and card_type (write chosen_card_type) axes; none offers land subtypes, and the only subtype read-back is `chosen_type_of: self`, which holds a creature type. `become_copy` (with `copying` targeting a creature you control) and `grant_keyword` haste cover the rest, and Flashback is a card-level cost key"
+  }],
+  "closest_existing": ["choose_type", "become_copy"],
+  "confidence": "high"
+}

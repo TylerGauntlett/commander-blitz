@@ -1,0 +1,18 @@
+{
+  "card_id": "mana_reflection",
+  "name": "Mana Reflection",
+  "oracle_text": "If you tap a permanent for mana, it produces twice as much of that mana instead.",
+  "blocked_sentences": [
+    "If you tap a permanent for mana, it produces twice as much of that mana instead."
+  ],
+  "needs": [
+    {
+      "capability": "mana_doubling_replacement",
+      "kind": "replacement",
+      "what": "a player static replacement effect (106.12 / 614.1a) on mana production: when the affected player taps ANY permanent (land or nonland) for mana, that ability produces twice as much of each type it would produce instead. As a replacement it multiplies, so two copies yield four times the mana (and stacks multiplicatively with other doublers such as Nyxbloom Ancient), and it applies to the full amount the mana ability produces, not one extra mana. A third member of `_MANA_DOUBLER_CLASS` in `engine/player_statics.py` (the docstring there already names Mana Reflection as 'a permanent'), but carrying a multiplier that compounds per instance rather than a boolean",
+      "why_existing_wont_do": "`double_land_mana` (Vorinclex) and `double_nonland_mana` (Kinnan) are each printed about a single permanent class and are triggered mana abilities adding 'one mana of any type that permanent produced'; `player_doubles_mana_from` returns a boolean, so two instances still only double. Writing both statics on one card would have two abilities claim one printed sentence and would make two Mana Reflections double instead of quadruple. `add_mana_on_tap` adds a fixed extra mana, not a multiple. No `mana_multiplier` exists among the ability keys (there are damage/token/counter/draw/gain/mill multipliers only)"
+    }
+  ],
+  "closest_existing": ["double_land_mana", "double_nonland_mana", "add_mana_on_tap"],
+  "confidence": "high"
+}

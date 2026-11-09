@@ -4802,6 +4802,79 @@
           }
         }
       ]
+    },
+    {
+      "id": "marit_lage_20_20_b_flying_indestructible",
+      "name": "Marit Lage",
+      "oracle_text": "Marit Lage, a legendary 20/20 black Avatar creature token with flying and indestructible.",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Avatar"
+      ],
+      "power": 20,
+      "toughness": 20,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "flying",
+        "indestructible"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "hydra_x_x_g",
+      "name": "Hydra Token",
+      "oracle_text": "X/X green Hydra creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Hydra"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "variable_pt": true,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "sand_warrior_1_1_rgw",
+      "name": "Sand Warrior Token",
+      "oracle_text": "1/1 red, green, and white Sand Warrior creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Sand",
+        "Warrior"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "R",
+        "G",
+        "W"
+      ],
+      "color_identity": [
+        "R",
+        "G",
+        "W"
+      ],
+      "is_token": true
     }
   ]
 }

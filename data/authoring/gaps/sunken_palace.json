@@ -9,10 +9,14 @@
     {
       "capability": "mana_spent_trigger_on_activation",
       "kind": "trigger_event",
-      "what": "mana_spent_trigger must also fire when the tagged mana pays the cost of a non-mana activated ability, binding that ability on the stack as `subject` so the rider can `copy_ability` it (and `copy_spell` it with `new_targets` when it paid for a spell)",
-      "why_existing_wont_do": "mana_spent_trigger is spell-only: costs.pay_mana queues the rider via _queue_spend_triggers only when record_colors_on is set, which only the spell-cast paths (game.py cast, ops_cards cast) pass; an activated ability's mana payment never checks spend tags, so the 'or activate an ability' half would silently do nothing. The rider also has no way to branch between copy_spell and copy_ability on what `subject` is"
+      "what": "mana_spent_trigger must also fire when the tagged mana pays the cost of a non-mana activated ability, binding that ability on the stack as `subject` so the rider can `copy_ability` it (and `copy_spell` it with `new_targets` when it paid for a spell); the rider needs to branch on whether `subject` is a spell or an ability",
+      "why_existing_wont_do": "mana_spent_trigger is spell-only: the loader compiles it from a synthetic `spell_cast` trigger and costs.pay_mana queues it via _queue_spend_triggers only when record_colors_on is set, which only the spell-cast paths pass; an activated ability's mana payment never checks spend tags, so the 'or activate an ability' half would silently do nothing"
     }
   ],
-  "closest_existing": ["mana_spent_trigger", "copy_spell", "copy_ability"],
+  "closest_existing": [
+    "mana_spent_trigger",
+    "copy_spell",
+    "copy_ability"
+  ],
   "confidence": "high"
 }

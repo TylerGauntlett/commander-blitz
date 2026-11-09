@@ -9,10 +9,10 @@
     {
       "capability": "cast_trigger_x",
       "kind": "engine",
-      "what": "a cast trigger (`spell_cast`, `source: self`, `active_zones: [\"stack\"]`) whose effects read the X the spell was cast with through `{\"x\": true}` -- i.e. the SPELL_CAST event fired by `Game._cast` must carry `x=item.x` so `triggers.event_bindings` (which lists `x` in EVENT_BINDING_KEYS) overrides the permanent's `cast_x` the way the CYCLED event does for Shark Typhoon",
-      "why_existing_wont_do": "`{\"x\": true}` in a triggered ability reads the trigger's `x` binding, which `event_bindings` takes from `obj.cast_x`; `cast_x` is written only in `stack.resolve` when the spell resolves, and the SPELL_CAST payload has no `x`, so the cast trigger would read 0 and gain/draw nothing. The only other route, `half` of (`mana_value_of` self minus 2), reads the mana value rather than X and would be a stand-in, not the printed referent"
+      "what": "a cast trigger (`spell_cast`, `source: self`, `active_zones: [\"stack\"]`) whose effects can read the X the spell was cast with via `{\"x\": true}` (then `half`, rounded down) -- the SPELL_CAST event fired by `Game._cast` must carry `x=item.x` and `x` must be in `triggers.EVENT_BINDING_KEYS` (or `event_bindings` must read the stack item's X) so it overrides the object's `cast_x`",
+      "why_existing_wont_do": "`event_bindings` sets the trigger's `x` from `obj.cast_x`, which `stack.resolve` writes only when the spell resolves; the SPELL_CAST payload in `Game._cast` has no `x`, so a cast trigger reads X as 0 and gains/draws nothing. `half` of (`mana_value_of` self minus 2) would read mana value rather than the printed X and is a stand-in, not the referent"
     }
   ],
-  "closest_existing": ["x", "half", "mana_value_of"],
+  "closest_existing": ["x", "half", "mana_value_of", "spell_cast"],
   "confidence": "high"
 }

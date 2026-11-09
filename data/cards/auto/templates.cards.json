@@ -9070,6 +9070,98 @@
     {
       "abilities": [
         {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "op": "cascade"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Cascade, cascade, cascade, cascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order. Multiple instances of cascade each trigger separately.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        },
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "op": "cascade"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Cascade, cascade, cascade, cascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order. Multiple instances of cascade each trigger separately.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        },
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "op": "cascade"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Cascade, cascade, cascade, cascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order. Multiple instances of cascade each trigger separately.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        },
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "op": "cascade"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Cascade, cascade, cascade, cascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order. Multiple instances of cascade each trigger separately.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "apex_devastator",
+      "mana_cost": "{8}{G}{G}",
+      "name": "Apex Devastator",
+      "oracle_text": "Cascade, cascade, cascade, cascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order. Multiple instances of cascade each trigger separately.)",
+      "power": 10,
+      "source": "auto",
+      "subtypes": [
+        "Chimera",
+        "Hydra"
+      ],
+      "toughness": 10,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "mana": "{U}",
             "tap": true
@@ -18561,6 +18653,84 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "pump",
+              "power": {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Gate"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "toughness": {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Gate"
+                  ],
+                  "zone": "battlefield"
+                }
+              }
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{2}, {T}: Target creature gets +X/+X until end of turn, where X is the number of Gates you control. Activate only as a sorcery."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "basilisk_gate",
+      "name": "Basilisk Gate",
+      "oracle_text": "{T}: Add {C}.\n{2}, {T}: Target creature gets +X/+X until end of turn, where X is the number of Gates you control. Activate only as a sorcery.",
+      "source": "auto",
+      "subtypes": [
+        "Gate"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -22917,6 +23087,98 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{X}{X}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "x": true
+              },
+              "counter": "charge",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "text": "{X}{X}, {T}: Put X charge counters on this land."
+        },
+        {
+          "cost": {
+            "mana": "{3}",
+            "sacrifice": {
+              "as": "sacrificed",
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "any",
+                "mana_value": {
+                  "op": "=",
+                  "value": {
+                    "counters_on": {
+                      "counter": "charge",
+                      "objects": {
+                        "binding": "sacrificed"
+                      }
+                    }
+                  }
+                },
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}, {T}, Sacrifice this land: Destroy each nonland permanent with mana value equal to the number of charge counters on this land."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "blast_zone",
+      "name": "Blast Zone",
+      "oracle_text": "This land enters with a charge counter on it.\n{T}: Add {C}.\n{X}{X}, {T}: Put X charge counters on this land.\n{3}, {T}, Sacrifice this land: Destroy each nonland permanent with mana value equal to the number of charge counters on this land.",
+      "replacements": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "counter": "charge",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -43876,6 +44138,38 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "copy_land",
+      "mana_cost": "{2}{U}",
+      "name": "Copy Land",
+      "oracle_text": "You may have this enchantment enter as a copy of any land on the battlefield, except it's an enchantment in addition to its other types.",
+      "replacements": [
+        {
+          "copying": {
+            "types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          },
+          "event": "self_enters_as_copy",
+          "except_": {
+            "add_types": [
+              "Enchantment"
+            ]
+          }
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -49303,6 +49597,97 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "ice",
+              "objects": {
+                "self_only": true
+              },
+              "op": "remove_counters"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}: Remove an ice counter from Dark Depths."
+        },
+        {
+          "effects": [
+            {
+              "as": "sacrificed",
+              "objects": {
+                "self_only": true
+              },
+              "op": "sacrifice"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "binding": "sacrificed"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "create_token",
+                  "token": "marit_lage_20_20_b_flying_indestructible"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Dark Depths has no ice counters on it, sacrifice it. If you do, create Marit Lage, a legendary 20/20 black Avatar creature token with flying and indestructible.",
+          "trigger": {
+            "event": "state",
+            "state": {
+              "cmp": "==",
+              "left": {
+                "counters_on": {
+                  "counter": "ice",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              },
+              "right": {
+                "const": 0
+              }
+            }
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "dark_depths",
+      "mana_cost": "",
+      "name": "Dark Depths",
+      "oracle_text": "Dark Depths enters with ten ice counters on it.\n{3}: Remove an ice counter from Dark Depths.\nWhen Dark Depths has no ice counters on it, sacrifice it. If you do, create Marit Lage, a legendary 20/20 black Avatar creature token with flying and indestructible.",
+      "replacements": [
+        {
+          "amount": 10,
+          "counter": "ice",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "supertypes": [
+        "Legendary",
+        "Snow"
+      ],
+      "types": [
+        "Land"
       ]
     },
     {
@@ -59349,6 +59734,95 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "drown_in_dreams",
+      "mana_cost": "{X}{2}{U}",
+      "name": "Drown in Dreams",
+      "oracle_text": "Choose one. If you control a commander as you cast this spell, you may choose both instead.\n• Target player draws X cards.\n• Target player mills twice X cards.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "x": true
+                  },
+                  "op": "draw",
+                  "player": {
+                    "target": "drawer"
+                  }
+                }
+              ],
+              "label": "Target player draws X cards."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "times": [
+                      {
+                        "const": 2
+                      },
+                      {
+                        "x": true
+                      }
+                    ]
+                  },
+                  "op": "mill",
+                  "player": {
+                    "target": "miller"
+                  }
+                }
+              ],
+              "label": "Target player mills twice X cards."
+            }
+          ],
+          "op": "choose_mode",
+          "up_to_if": {
+            "condition": {
+              "exists": {
+                "controller": "you",
+                "is_commander": true,
+                "zone": "battlefield"
+              }
+            },
+            "count": 2
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "drawer",
+          "kind": "player",
+          "mode": 0,
+          "selector": {
+            "controller": "any"
+          }
+        },
+        {
+          "count": 1,
+          "id": "miller",
+          "kind": "player",
+          "mode": 1,
+          "selector": {
+            "controller": "any"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -63196,6 +63670,57 @@
       "subtypes": [
         "Elf",
         "Ranger"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 5
+              },
+              "destination": "battlefield",
+              "objects": {
+                "count": 1,
+                "optional": true,
+                "types": [
+                  "Land"
+                ]
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "rest_to_bottom": true,
+              "tapped": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, look at the top five cards of your library. You may put a land card from among them onto the battlefield tapped. Put the rest on the bottom of your library in a random order.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "elvish_rejuvenator",
+      "mana_cost": "{2}{G}",
+      "name": "Elvish Rejuvenator",
+      "oracle_text": "When this creature enters, look at the top five cards of your library. You may put a land card from among them onto the battlefield tapped. Put the rest on the bottom of your library in a random order.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Druid"
       ],
       "toughness": 1,
       "types": [
@@ -68260,6 +68785,48 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{2}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": 1,
+              "destination": "hand",
+              "op": "search_library",
+              "player": "you",
+              "reveal": true,
+              "selector": {
+                "types": [
+                  "Land"
+                ]
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, {T}, Sacrifice this artifact: Search your library for a land card, reveal it, put it into your hand, then shuffle."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "expedition_map",
+      "mana_cost": "{1}",
+      "name": "Expedition Map",
+      "oracle_text": "{2}, {T}, Sacrifice this artifact: Search your library for a land card, reveal it, put it into your hand, then shuffle.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -73113,6 +73680,82 @@
     },
     {
       "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "exiles_itself": true,
+      "id": "finale_of_revelation",
+      "mana_cost": "{X}{U}{U}",
+      "name": "Finale of Revelation",
+      "oracle_text": "Draw X cards. If X is 10 or more, instead shuffle your graveyard into your library, draw X cards, untap up to five lands, and you have no maximum hand size for the rest of the game.\nExile Finale of Revelation.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "x": true
+            },
+            "right": {
+              "const": 10
+            }
+          },
+          "else": [
+            {
+              "amount": {
+                "x": true
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "op": "if",
+          "then": [
+            {
+              "objects": {
+                "count": "all",
+                "player": "you",
+                "zone": "graveyard"
+              },
+              "op": "put_on_top"
+            },
+            {
+              "op": "shuffle",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "x": true
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "objects": {
+                "count": 5,
+                "optional": true,
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "untap"
+            },
+            {
+              "op": "no_maximum_hand_size",
+              "player": "you"
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "B",
         "G"
       ],
@@ -75793,6 +76436,59 @@
         "Legendary"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 6
+              },
+              "destination": "hand",
+              "objects": {
+                "count": 1,
+                "optional": true,
+                "types": [
+                  "Land"
+                ]
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, look at the top six cards of your library. You may reveal a land card from among them and put it into your hand. Put the rest on the bottom of your library in a random order.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "floriferous_vinewall",
+      "keywords": [
+        "defender"
+      ],
+      "mana_cost": "{1}{G}",
+      "name": "Floriferous Vinewall",
+      "oracle_text": "Defender\nWhen this creature enters, look at the top six cards of your library. You may reveal a land card from among them and put it into your hand. Put the rest on the bottom of your library in a random order.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Plant",
+        "Wall"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -85878,6 +86574,58 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "subtypes": [
+                    "Locus"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this land enters, you gain 1 life for each Locus on the battlefield.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "glimmerpost",
+      "name": "Glimmerpost",
+      "oracle_text": "When this land enters, you gain 1 life for each Locus on the battlefield.\n{T}: Add {C}.",
+      "source": "auto",
+      "subtypes": [
+        "Locus"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -94875,6 +95623,97 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "pay_life": 1,
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{G}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}, Pay 1 life: Add {G}."
+        },
+        {
+          "cost": {
+            "mana": "{1}{G}{G}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "subtypes": [
+                "Desert"
+              ],
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "pump",
+              "power": {
+                "const": 3
+              },
+              "toughness": {
+                "const": 3
+              }
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}{G}{G}, {T}, Sacrifice a Desert: Target creature gets +3/+3 until end of turn. Activate only as a sorcery."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "id": "hashep_oasis",
+      "name": "Hashep Oasis",
+      "oracle_text": "{T}: Add {C}.\n{T}, Pay 1 life: Add {G}.\n{1}{G}{G}, {T}, Sacrifice a Desert: Target creature gets +3/+3 until end of turn. Activate only as a sorcery.",
+      "source": "auto",
+      "subtypes": [
+        "Desert"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -99173,6 +100012,66 @@
           },
           "effects": [
             {
+              "mana": "{U}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {U}."
+        },
+        {
+          "cost": {
+            "mana": "{4}{U}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "discover"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "{4}{U}, {T}, Sacrifice this land: Discover 4. Activate only as a sorcery"
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "id": "hidden_cataract",
+      "name": "Hidden Cataract",
+      "oracle_text": "This land enters tapped.\n{T}: Add {U}.\n{4}{U}, {T}, Sacrifice this land: Discover 4. Activate only as a sorcery. (Exile cards from the top of your library until you exile a nonland card with mana value 4 or less. Cast it without paying its mana cost or put it into your hand. Put the rest on the bottom in a random order.)",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Cave"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
               "mana": "{C}",
               "op": "add_mana"
             }
@@ -99269,6 +100168,66 @@
       "name": "Hidden Grotto",
       "oracle_text": "When this land enters, surveil 1. (Look at the top card of your library. You may put it into your graveyard.)\n{T}: Add {C}.\n{1}, {T}: Add one mana of any color.",
       "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{G}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G}."
+        },
+        {
+          "cost": {
+            "mana": "{4}{G}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "discover"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "{4}{G}, {T}, Sacrifice this land: Discover 4. Activate only as a sorcery"
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "id": "hidden_nursery",
+      "name": "Hidden Nursery",
+      "oracle_text": "This land enters tapped.\n{T}: Add {G}.\n{4}{G}, {T}, Sacrifice this land: Discover 4. Activate only as a sorcery. (Exile cards from the top of your library until you exile a nonland card with mana value 4 or less. Cast it without paying its mana cost or put it into your hand. Put the rest on the bottom in a random order.)",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Cave"
+      ],
       "types": [
         "Land"
       ]
@@ -101353,6 +102312,64 @@
     },
     {
       "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "hour_of_promise",
+      "mana_cost": "{4}{G}",
+      "name": "Hour of Promise",
+      "oracle_text": "Search your library for up to two land cards, put them onto the battlefield tapped, then shuffle. Then if you control three or more Deserts, create two 2/2 black Zombie creature tokens.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 2,
+          "destination": "battlefield",
+          "op": "search_library",
+          "player": "you",
+          "selector": {
+            "types": [
+              "Land"
+            ]
+          },
+          "tapped": true
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "count": {
+                "controller": "you",
+                "subtypes": [
+                  "Desert"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 3
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "zombie_2_2_b"
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "W"
       ],
       "colors": [
@@ -102805,6 +103822,67 @@
         "Knight"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{X}{X}{G}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "x": true
+              },
+              "op": "monstrosity"
+            }
+          ],
+          "kind": "activated",
+          "text": "{X}{X}{G}: Monstrosity X. (If this creature isn't monstrous, put X +1/+1 counters on it and it becomes monstrous.)"
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "create_token",
+              "power": {
+                "binding": "amount"
+              },
+              "token": "hydra_x_x_g",
+              "toughness": {
+                "binding": "amount"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature becomes monstrous, create X X/X green Hydra creature tokens.",
+          "trigger": {
+            "event": "becomes_monstrous",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "hydra_broodmaster",
+      "mana_cost": "{4}{G}{G}",
+      "name": "Hydra Broodmaster",
+      "oracle_text": "{X}{X}{G}: Monstrosity X. (If this creature isn't monstrous, put X +1/+1 counters on it and it becomes monstrous.)\nWhen this creature becomes monstrous, create X X/X green Hydra creature tokens.",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Hydra"
+      ],
+      "toughness": 7,
       "types": [
         "Creature"
       ]
@@ -112717,6 +113795,81 @@
         "Crab"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "commander_casts_this_game": "you"
+              },
+              "op": "create_token",
+              "token": "forest_dryad_1_1_g_land"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Jyoti enters, create a 1/1 green Forest Dryad land creature token for each time you've cast your commander from the command zone this game. (They're affected by summoning sickness.)",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "types": [
+                  "Land",
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "power_of": {
+                  "self": true
+                }
+              },
+              "toughness": {
+                "power_of": {
+                  "self": true
+                }
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each combat, land creatures you control get +X/+X until end of turn, where X is Jyoti's power.",
+          "trigger": {
+            "controller": "any",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "jyoti_moag_ancient",
+      "mana_cost": "{2}{G}{U}",
+      "name": "Jyoti, Moag Ancient",
+      "oracle_text": "When Jyoti enters, create a 1/1 green Forest Dryad land creature token for each time you've cast your commander from the command zone this game. (They're affected by summoning sickness.)\nAt the beginning of each combat, land creatures you control get +X/+X until end of turn, where X is Jyoti's power.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Elemental"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -128584,6 +129737,88 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "When this land enters, it deals 1 damage to target opponent.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G} or {U}."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [],
+      "id": "lush_oasis",
+      "name": "Lush Oasis",
+      "oracle_text": "This land enters tapped.\nWhen this land enters, it deals 1 damage to target opponent.\n{T}: Add {G} or {U}.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Desert"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -129946,6 +131181,62 @@
         "Treefolk"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{X}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "untap"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": {
+                "x": true
+              },
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{X}, {T}: Untap X target lands."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "magus_of_the_candelabra",
+      "mana_cost": "{G}",
+      "name": "Magus of the Candelabra",
+      "oracle_text": "{X}, {T}: Untap X target lands.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -148954,6 +150245,107 @@
       "abilities": [
         {
           "cost": {
+            "mana": "{4}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "fate",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{4}, {T}: Put a fate counter on target permanent."
+        },
+        {
+          "cost": {
+            "mana": "{5}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "as": "fated",
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "has_counters": "fate",
+                "zone": "battlefield"
+              },
+              "op": "choose_permanents"
+            },
+            {
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "exclude_binding": "fated",
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "destroy"
+            },
+            {
+              "amount": {
+                "counters_on": {
+                  "counter": "fate",
+                  "objects": {
+                    "controller": "any",
+                    "count": "all",
+                    "zone": "battlefield"
+                  }
+                }
+              },
+              "counter": "fate",
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "has_counters": "fate",
+                "zone": "battlefield"
+              },
+              "op": "remove_counters"
+            }
+          ],
+          "kind": "activated",
+          "text": "{5}, {T}, Sacrifice this artifact: Destroy each nonland permanent without a fate counter on it, then remove all fate counters from all permanents."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "oblivion_stone",
+      "mana_cost": "{3}",
+      "name": "Oblivion Stone",
+      "oracle_text": "{4}, {T}: Put a fate counter on target permanent.\n{5}, {T}, Sacrifice this artifact: Destroy each nonland permanent without a fate counter on it, then remove all fate counters from all permanents.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
             "tap": true
           },
           "effects": [
@@ -160112,6 +161504,106 @@
         "Elemental"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color."
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "keywords": [
+                "deathtouch"
+              ],
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}: This creature gains deathtouch until end of turn."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "poison_dart_frog",
+      "keywords": [
+        "reach"
+      ],
+      "mana_cost": "{1}{G}",
+      "name": "Poison Dart Frog",
+      "oracle_text": "Reach\n{T}: Add one mana of any color.\n{2}: This creature gains deathtouch until end of turn.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Frog"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -179624,6 +181116,147 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "add_mana",
+              "split": [
+                "W",
+                "U",
+                "B",
+                "R",
+                "G"
+              ]
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add two mana in any combination of colors."
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "haste"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "animate",
+              "power": {
+                "times": [
+                  {
+                    "const": 2
+                  },
+                  {
+                    "count": {
+                      "controller": "you",
+                      "subtypes": [
+                        "Gate"
+                      ],
+                      "zone": "battlefield"
+                    }
+                  }
+                ]
+              },
+              "subtypes": [
+                "Citizen"
+              ],
+              "toughness": {
+                "times": [
+                  {
+                    "const": 2
+                  },
+                  {
+                    "count": {
+                      "controller": "you",
+                      "subtypes": [
+                        "Gate"
+                      ],
+                      "zone": "battlefield"
+                    }
+                  }
+                ]
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{T}: Until end of turn, target land you control becomes an X/X Citizen creature with haste in addition to its other types, where X is twice the number of Gates you control. Activate only as a sorcery."
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "count": 1,
+              "subtypes": [
+                "Gate"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "untap"
+            }
+          ],
+          "kind": "activated",
+          "text": "Tap an untapped Gate you control: Untap this creature."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "sage_of_the_maze",
+      "mana_cost": "{2}{G}",
+      "name": "Sage of the Maze",
+      "oracle_text": "{T}: Add two mana in any combination of colors.\n{T}: Until end of turn, target land you control becomes an X/X Citizen creature with haste in addition to its other types, where X is twice the number of Gates you control. Activate only as a sorcery.\nTap an untapped Gate you control: Untap this creature.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Wizard"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -194212,6 +195845,80 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "destination": "hand",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            },
+            {
+              "as": "chosen_opponent",
+              "op": "choose_player",
+              "players": "each_opponent",
+              "prompt": "Choose an opponent to return a card from their graveyard"
+            },
+            {
+              "destination": "hand",
+              "objects": {
+                "chooser": {
+                  "binding": "chosen_opponent"
+                },
+                "count": 1,
+                "player": {
+                  "binding": "chosen_opponent"
+                },
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When this creature enters, return target card from your graveyard to your hand, then choose an opponent. That player returns a card from their graveyard to their hand.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "skullwinder",
+      "keywords": [
+        "deathtouch"
+      ],
+      "mana_cost": "{2}{G}",
+      "name": "Skullwinder",
+      "oracle_text": "Deathtouch\nWhen this creature enters, return target card from your graveyard to your hand, then choose an opponent. That player returns a card from their graveyard to their hand.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Snake"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -211411,6 +213118,36 @@
       ]
     },
     {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "sylvan_scrying",
+      "mana_cost": "{1}{G}",
+      "name": "Sylvan Scrying",
+      "oracle_text": "Search your library for a land card, reveal it, put it into your hand, then shuffle.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "destination": "hand",
+          "op": "search_library",
+          "player": "you",
+          "reveal": true,
+          "selector": {
+            "types": [
+              "Land"
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -222959,6 +224696,73 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "copying": {
+                "target": "t1"
+              },
+              "duration": "permanent",
+              "except_": {
+                "keep_abilities": [
+                  1
+                ]
+              },
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "become_copy"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{2}, {T}: This land becomes a copy of target land, except it has this ability."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "thespian_s_stage",
+      "name": "Thespian's Stage",
+      "oracle_text": "{T}: Add {C}.\n{2}, {T}: This land becomes a copy of target land, except it has this ability.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -229689,6 +231493,70 @@
           },
           "effects": [
             {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{3}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Locus"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "mill",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "any"
+              }
+            }
+          ],
+          "text": "{3}, {T}: Target player mills a card for each Locus you control."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "trenchpost",
+      "name": "Trenchpost",
+      "oracle_text": "{T}: Add {C}.\n{3}, {T}: Target player mills a card for each Locus you control.",
+      "source": "auto",
+      "subtypes": [
+        "Locus"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
               "modes": [
                 {
                   "effects": [
@@ -232868,6 +234736,84 @@
       "toughness": 2,
       "types": [
         "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Land"
+              ]
+            }
+          },
+          "text": "Ulvenwald Hydra's power and toughness are each equal to the number of lands you control.",
+          "toughness": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "count": 1,
+                  "destination": "battlefield",
+                  "op": "search_library",
+                  "player": "you",
+                  "selector": {
+                    "types": [
+                      "Land"
+                    ]
+                  },
+                  "tapped": true
+                }
+              ],
+              "op": "may",
+              "prompt": "Search your library for a land card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, you may search your library for a land card, put it onto the battlefield tapped, then shuffle.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "ulvenwald_hydra",
+      "keywords": [
+        "reach"
+      ],
+      "mana_cost": "{4}{G}{G}",
+      "name": "Ulvenwald Hydra",
+      "oracle_text": "Reach\nUlvenwald Hydra's power and toughness are each equal to the number of lands you control.\nWhen this creature enters, you may search your library for a land card, put it onto the battlefield tapped, then shuffle.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Hydra"
+      ],
+      "toughness": 0,
+      "types": [
         "Creature"
       ]
     },
@@ -241470,6 +243416,163 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "destination": "hand",
+              "objects": {
+                "any_of": [
+                  {
+                    "types": [
+                      "Creature"
+                    ]
+                  },
+                  {
+                    "types": [
+                      "Land"
+                    ]
+                  }
+                ],
+                "count": 1,
+                "optional": true
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "activated",
+          "text": "+1: Look at the top four cards of your library. You may reveal a creature or land card from among them and put it into your hand. Put the rest on the bottom of your library in a random order."
+        },
+        {
+          "cost": {
+            "loyalty": -3
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "any_of": [
+                  {
+                    "types": [
+                      "Artifact"
+                    ]
+                  },
+                  {
+                    "types": [
+                      "Enchantment"
+                    ]
+                  },
+                  {
+                    "keywords": [
+                      "flying"
+                    ],
+                    "types": [
+                      "Creature"
+                    ]
+                  }
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "−3: Destroy target artifact, enchantment, or creature with flying."
+        },
+        {
+          "cost": {
+            "loyalty": -8
+          },
+          "effects": [
+            {
+              "emblem": 0,
+              "op": "emblem",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "−8: You get an emblem with \"Creatures you control get +2/+2 and have vigilance, trample, and indestructible.\""
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "emblems": [
+        {
+          "abilities": [
+            {
+              "affects": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ]
+              },
+              "effect": "buff",
+              "kind": "static",
+              "power": {
+                "const": 2
+              },
+              "text": "Creatures you control get +2/+2 and have vigilance, trample, and indestructible.",
+              "toughness": {
+                "const": 2
+              }
+            },
+            {
+              "affects": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ]
+              },
+              "effect": "grant_keyword",
+              "keywords": [
+                "vigilance",
+                "trample",
+                "indestructible"
+              ],
+              "kind": "static",
+              "text": "Creatures you control get +2/+2 and have vigilance, trample, and indestructible."
+            }
+          ]
+        }
+      ],
+      "id": "vivien_reid",
+      "loyalty": 5,
+      "mana_cost": "{3}{G}{G}",
+      "name": "Vivien Reid",
+      "oracle_text": "+1: Look at the top four cards of your library. You may reveal a creature or land card from among them and put it into your hand. Put the rest on the bottom of your library in a random order.\n−3: Destroy target artifact, enchantment, or creature with flying.\n−8: You get an emblem with \"Creatures you control get +2/+2 and have vigilance, trample, and indestructible.\"",
+      "source": "auto",
+      "subtypes": [
+        "Vivien"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
       "additional_cost": {
         "sacrifice": {
           "controller": "you",
@@ -241703,6 +243806,103 @@
         "Instant"
       ],
       "uncounterable": true
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{1}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "as": "victim",
+              "op": "snapshot",
+              "target": "t1"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            },
+            {
+              "count": 1,
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": {
+                "controller_of": "victim"
+              },
+              "selector": {
+                "supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ]
+              }
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "not_supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}, {T}, Sacrifice this land: Destroy target nonbasic land an opponent controls. That player may search their library for a basic land card, put it onto the battlefield, then shuffle. You create a Treasure token."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "volatile_fault",
+      "name": "Volatile Fault",
+      "oracle_text": "{T}: Add {C}.\n{1}, {T}, Sacrifice this land: Destroy target nonbasic land an opponent controls. That player may search their library for a basic land card, put it onto the battlefield, then shuffle. You create a Treasure token.",
+      "source": "auto",
+      "subtypes": [
+        "Cave"
+      ],
+      "types": [
+        "Land"
+      ]
     },
     {
       "abilities": [
