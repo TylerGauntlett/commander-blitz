@@ -1161,6 +1161,79 @@
       "is_token": true
     },
     {
+      "id": "elemental_1_1_r",
+      "name": "Elemental Token",
+      "oracle_text": "1/1 red Elemental creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elemental"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "dragon_elemental_4_4_r_flying_prowess",
+      "name": "Dragon Elemental Token",
+      "oracle_text": "4/4 red Dragon Elemental creature token with flying and prowess.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Dragon",
+        "Elemental"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "is_token": true,
+      "keywords": [
+        "flying"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Prowess",
+          "trigger": {
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "pump",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "boar_2_2_g",
       "name": "Boar Token",
       "oracle_text": "2/2 green Boar creature token.",
