@@ -710,6 +710,24 @@ def _provide_the_tap_fodder(game: Game, registry, ability) -> None:
         return
     wanted = int(spec.get("count", 1) or 1)
     match = _fodder_for(registry, spec, wanted)
+    # Sage of the Maze taps *an untapped Gate*, and Gates are lands: a subtype
+    # with no card type is not a creature, so the creature-shaped search above
+    # finds nothing. Any permanent card of the subtype is the fodder, a
+    # nonlegendary one first for the reason `_fodder_for` gives.
+    if match is None and spec.get("subtypes") and not spec.get("types"):
+        wanted_subtypes = {str(s) for s in spec["subtypes"]}
+        candidates = [
+            c
+            for c in sorted(registry, key=lambda c: c.id)
+            if not c.is_token
+            and c.front_face is None
+            and wanted_subtypes & set(c.subtypes)
+            and not {"Instant", "Sorcery"} & set(c.types)
+        ]
+        match = next(
+            (c for c in candidates if "Legendary" not in c.supertypes),
+            candidates[0] if candidates else None,
+        )
     if match is None:
         return
     for _ in range(wanted):
