@@ -1,0 +1,23 @@
+{
+  "_comment": "Shapes for tests/unit/costs/test_pay_any_number_of_times.py. t_adversary_spell is Bloodthirsty Adversary's payment on a free sorcery: pay {2}{R} any number of times, gain that much life.",
+  "cards": [
+    {
+      "id": "t_adversary_spell",
+      "name": "Test Bloodthirst",
+      "oracle_text": "You may pay {2}{R} any number of times. You gain 1 life for each time you paid.",
+      "mana_cost": "{0}",
+      "types": ["Sorcery"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "spell_effects": [
+        {
+          "op": "may",
+          "player": "you",
+          "pay": {"mana": "{2}{R}"},
+          "any_number_of_times": {"as": "paid"},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"binding": "paid"}}]
+        }
+      ]
+    }
+  ]
+}

@@ -13836,6 +13836,27 @@ symbol (`{1}` is `{X}` with `x`; `{R}{R}` would charge pairs), any other cost
 beside it, `pay.times` or `pay.mana_reduction`, no `as`, and `any_amount`
 beside `x`, beside `repeat`, or on anything but a `may` with a `pay`.
 
+### "You may pay {2}{R} any number of times"
+
+`any_number_of_times` is the same announcement over a **whole price**: the
+count multiplies the cost (`{2}{R}` at two is `{4}{R}{R}`), the ceiling is the
+most whole prices the player can pay, and `as` binds how many were paid:
+
+```jsonc
+// Bloodthirsty Adversary: when this creature enters, you may pay {2}{R} any
+//                         number of times. When you pay this cost one or more
+//                         times, put that many +1/+1 counters on this creature…
+{ "op": "may", "pay": { "mana": "{2}{R}" },
+  "any_number_of_times": { "as": "paid" },
+  "effects": [ { "op": "reflexive_trigger", "ability": "adversary_payoff" } ] }
+```
+
+Its own key so that `any_amount` keeps refusing `{R}{R}` for "any amount of
+{R}". Refused at load: an `{X}`, a hybrid symbol, a lone `{1}` (that is `{X}`
+with `x`) or no mana, any other cost beside it, `pay.times` or
+`pay.mana_reduction`, no `as`, and the key beside `any_amount`, `x` or
+`repeat`, or on anything but a `may` with a `pay`.
+
 ### "…unless that player pays {1}"
 
 The same op, with two things moved. `player` says *who is asked* — it has always

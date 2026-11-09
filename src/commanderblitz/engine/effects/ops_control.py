@@ -115,7 +115,9 @@ def op_may(ctx: EffectContext, spec: Mapping[str, Any]):
     condition = spec.get("condition")
     pay_spec = spec.get("pay")
     x_spec = spec.get("x")
-    amount_spec = spec.get("any_amount")
+    # "Pay any amount of {R}" and "pay {2}{R} any number of times" are one
+    # announcement: a count that multiplies the price, bound under `as`.
+    amount_spec = spec.get("any_amount") or spec.get("any_number_of_times")
     cost = cost_from_spec(pay_spec)
     if cost is not None and pay_spec is not None and pay_spec.get("times") is not None:
         # Cumulative upkeep: "pay its upkeep cost for each age counter on it".
@@ -276,7 +278,8 @@ def _announce_x(ctx: EffectContext, chooser: int, cost: Cost, x_spec: Mapping[st
 def _announce_amount(
     ctx: EffectContext, chooser: int, cost: Cost, amount_spec: Mapping[str, Any]
 ):
-    """Ask how many times to pay the one symbol of a "pay any amount of {R}".
+    """Ask how many times to pay a "pay any amount of {R}" or "pay {2}{R} any
+    number of times" -- the count multiplies the whole price.
 
     The ceiling is 118.3's and nothing else: what the player can pay in *that
     symbol*, read by `max_affordable_times` off the pool -- red mana a
@@ -309,7 +312,7 @@ def _announce_amount(
         return 0
     prompt = str(
         amount_spec.get("prompt")
-        or f"How much {cost.mana.text or 'mana'} to pay for {ctx.source_name or 'the effect'}?"
+        or f"How many times to pay {cost.mana.text or 'mana'} for {ctx.source_name or 'the effect'}?"
     )
     return (yield from ask_x(ctx, prompt, affordable, chooser, min_x=1))
 
