@@ -192,9 +192,12 @@ class TestTheLoader:
         compile_card(CardModel.model_validate(probe()))
 
     def test_a_misspelled_exception_is_refused(self):
-        """Silently dropped, the token would come back a plain copy."""
+        """Silently dropped, the token would come back a plain copy.
+
+        `subtypes` is a real key now (a replacement, The Scarab God), so the
+        misspelling is the singular of embalm's `add_subtypes`."""
         with pytest.raises(DslError, match="unsupported keys"):
-            compile_card(CardModel.model_validate(probe(except_={"subtypes": ["Zombie"]})))
+            compile_card(CardModel.model_validate(probe(except_={"add_subtype": ["Zombie"]})))
 
     def test_an_unknown_colour_is_refused(self):
         with pytest.raises(DslError, match="unknown colour"):
