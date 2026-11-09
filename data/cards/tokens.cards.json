@@ -2199,6 +2199,30 @@
       "is_token": true
     },
     {
+      "id": "bird_illusion_1_1_u_flying",
+      "name": "Bird Illusion Token",
+      "oracle_text": "1/1 blue Bird Illusion creature token with flying.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bird",
+        "Illusion"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "flying"
+      ],
+      "is_token": true
+    },
+    {
       "id": "illusion_2_2_u_sac_when_targeted",
       "name": "Illusion Token",
       "oracle_text": "When this token becomes the target of a spell, sacrifice it.",

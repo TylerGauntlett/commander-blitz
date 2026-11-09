@@ -1181,6 +1181,9 @@ def _fodder_for(
     # Towering Titan sacrifices "a creature **with defender**", and the first
     # creature by id has no keywords at all.
     keywords = {str(k) for k in selector.get("keywords") or []}
+    # Leyline Dowser taps "an untapped **legendary** creature you control", and
+    # the first creature by id is not legendary.
+    supertypes = {str(t) for t in selector.get("supertypes") or []}
     matches = [
         c
         for c in sorted(registry, key=lambda c: c.id)
@@ -1190,6 +1193,7 @@ def _fodder_for(
         and (not subtypes or subtypes & set(c.subtypes))
         and colors <= set(c.colors)
         and keywords <= {str(k) for k in c.keywords}
+        and supertypes <= set(c.supertypes)
         and (min_power is None or (c.power is not None and c.power >= min_power))
         and (min_toughness is None or (c.toughness is not None and c.toughness >= min_toughness))
     ]

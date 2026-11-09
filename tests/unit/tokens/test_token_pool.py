@@ -2682,3 +2682,25 @@ class TestTheThunderJunctionDragonElementalHasProwess:
     def test_the_plain_dragon_is_still_separate(self, pool):
         dragon = pool.get("dragon_4_4_r_flying")
         assert list(dragon.subtypes) == ["Dragon"] and not dragon.abilities
+
+
+class TestMurmuringMysticsBirdIllusion:
+    """Murmuring Mystic: *"create a 1/1 blue **Bird Illusion** creature token
+    with flying."*
+
+    Its near misses are `illusion_1_1_u_flying`, with no Bird type, and
+    `bird_1_1_u_flying_vigilance`, with no Illusion type and vigilance.
+    """
+
+    def test_it_is_a_flying_blue_bird_illusion(self, pool):
+        token = pool.get("bird_illusion_1_1_u_flying")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (1, 1)
+        assert list(token.colors) == ["U"]
+        assert sorted(token.subtypes) == ["Bird", "Illusion"]
+        assert list(token.keywords) == ["flying"]
+        assert not token.abilities
+
+    def test_the_near_misses_are_still_separate(self, pool):
+        assert list(pool.get("illusion_1_1_u_flying").subtypes) == ["Illusion"]
+        assert "vigilance" in pool.get("bird_1_1_u_flying_vigilance").keywords
