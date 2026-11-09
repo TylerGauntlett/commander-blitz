@@ -157262,12 +157262,12 @@
     },
     "Lhurgoyf": {
       "edhrec_rank": 8064,
-      "gate": "template",
+      "gate": null,
       "name": "Lhurgoyf",
-      "reason": "no template for: 's power is equal to the number of creature cards in all graveyards and its toughness is e",
+      "reason": "",
       "scryfall_id": "e5093316-dc00-4155-babf-d6ca222f2bd3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Liability": {
@@ -179672,12 +179672,12 @@
     },
     "Mortivore": {
       "edhrec_rank": 5353,
-      "gate": "template",
+      "gate": null,
       "name": "Mortivore",
-      "reason": "no template for: 's power and toughness are each equal to the number of creature cards in all graveyards",
+      "reason": "",
       "scryfall_id": "2731f8a0-3e9d-43a5-b1a3-28b3a8f1f18c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mortuary": {
@@ -204902,12 +204902,12 @@
     },
     "Polygoyf": {
       "edhrec_rank": 7160,
-      "gate": "template",
+      "gate": null,
       "name": "Polygoyf",
-      "reason": "no template for: Trample, myriad",
+      "reason": "",
       "scryfall_id": "00b4625c-ce91-4b86-8db7-a6c2d4fb9c92",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Polygraph Orb": {
@@ -210882,12 +210882,12 @@
     },
     "Pyrogoyf": {
       "edhrec_rank": 6814,
-      "gate": "template",
+      "gate": null,
       "name": "Pyrogoyf",
-      "reason": "no template for: 's power is equal to the number of card types among cards in all graveyards and its toughn",
+      "reason": "",
       "scryfall_id": "f60be310-4461-4b84-95f0-b2095108bd79",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pyrohemia": {

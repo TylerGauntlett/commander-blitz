@@ -10339,6 +10339,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "lhurgoyf": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "lier_disciple_of_the_drowned": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 6,
@@ -11827,6 +11831,13 @@
       "0": 4
     },
     "zone": "graveyard"
+  },
+  "mortivore": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "moss_diamond": {
     "zone": "battlefield"
@@ -13508,6 +13519,10 @@
     },
     "zone": "battlefield"
   },
+  "polygoyf": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "pond_prophet": {
     "hand_size": {
       "0": 2
@@ -13942,6 +13957,15 @@
       "0": 1
     },
     "zone": "graveyard"
+  },
+  "pyrogoyf": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "battlefield"
   },
   "pyrokinesis": {
     "zone": "graveyard"

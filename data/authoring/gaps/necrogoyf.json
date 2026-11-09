@@ -1,0 +1,18 @@
+{
+  "card_id": "necrogoyf",
+  "name": "Necrogoyf",
+  "oracle_text": "Necrogoyf's power is equal to the number of creature cards in all graveyards.\nAt the beginning of each player's upkeep, that player discards a card.\nMadness {1}{B}{B} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)",
+  "blocked_sentences": [
+    "Madness {1}{B}{B} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)"
+  ],
+  "needs": [
+    {
+      "capability": "madness",
+      "kind": "replacement",
+      "what": "Madness per 702.35a and the printed reminder: the discard exiles the card, and if the player declines (or cannot) cast it for its madness cost, the card is put into its owner's graveyard rather than left in exile. The cast offer should also be a triggered ability ('When you do') that uses the stack, not an inline question at discard time.",
+      "why_existing_wont_do": "The card-level `madness` key exists, but `engine/replacements._madness` deliberately leaves a declined madness card in exile ('a declined madness card is in exile, not the graveyard', also stated in card-dsl-cookbook.md and the rules-coverage row). That contradicts the printed 'or put it into your graveyard'. The mismatch matters most on this card, whose own power counts creature cards in all graveyards: a declined Necrogoyf should land in the graveyard and be counted. `_offer_cast` also asks inline during the discard instead of through a 'when you do' trigger. The other two lines can be written today: a static `set_pt` with power `{\"count\": {\"controller\": \"any\", \"types\": [\"Creature\"], \"zone\": \"graveyard\"}}` (Lord of Extinction / Haughty Djinn shape) and toughness const 4, plus an `upkeep` trigger with `controller: any` and `discard` on `{\"binding\": \"event_player\"}` (Seizan / Liliana's Reaver shape)."
+    }
+  ],
+  "closest_existing": ["madness"],
+  "confidence": "high"
+}
