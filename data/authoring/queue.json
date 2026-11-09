@@ -23912,12 +23912,12 @@
     },
     "Benthic Anomaly": {
       "edhrec_rank": 4038,
-      "gate": "template",
+      "gate": "behaviour",
       "name": "Benthic Anomaly",
-      "reason": "no template for: When you cast this spell, for each opponent, choose a creature that player controls. Creat",
+      "reason": "your battlefield is 33, expected 34",
       "scryfall_id": "08ff764d-2c0d-4599-a22a-6a64766dad3a",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Benthic Behemoth": {
@@ -114052,12 +114052,12 @@
     },
     "God-Pharaoh's Gift": {
       "edhrec_rank": 8873,
-      "gate": "template",
+      "gate": null,
       "name": "God-Pharaoh's Gift",
-      "reason": "no template for: At the beginning of combat on your turn, you may exile a creature card from your graveyard",
+      "reason": "",
       "scryfall_id": "b34cdeff-f749-4609-93c8-21608106d099",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "God-Pharaoh's Statue": {
@@ -123242,12 +123242,12 @@
     },
     "Hashaton, Scarab's Fist": {
       "edhrec_rank": 3525,
-      "gate": "template",
+      "gate": null,
       "name": "Hashaton, Scarab's Fist",
-      "reason": "no template for: Whenever you discard a creature card, you may pay {2}{U}. If you do, create a tapped token",
+      "reason": "",
       "scryfall_id": "02645651-cd55-4bd0-8a4d-fa257270a0e0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hashep Oasis": {
@@ -155552,12 +155552,12 @@
     },
     "Lazotep Quarry": {
       "edhrec_rank": 1937,
-      "gate": "template",
+      "gate": null,
       "name": "Lazotep Quarry",
-      "reason": "no template for: {T}, Sacrifice a creature: Add one mana of any color",
+      "reason": "",
       "scryfall_id": "656ddd43-c70c-4927-9a02-fef5732708da",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lazotep Reaver": {
@@ -282192,12 +282192,12 @@
     },
     "The Scarab God": {
       "edhrec_rank": 1740,
-      "gate": "template",
+      "gate": null,
       "name": "The Scarab God",
-      "reason": "no template for: At the beginning of your upkeep, each opponent loses X life and you scry X, where X is the",
+      "reason": "",
       "scryfall_id": "7546b37d-c83a-4632-bebf-cc46d114481f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Scarlet Witch": {

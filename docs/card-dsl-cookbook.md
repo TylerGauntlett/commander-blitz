@@ -13273,6 +13273,7 @@ its own. So the exception rides on the **object**, as `copy_overrides`:
 |---|---|
 | `colors` | replaces the printed colours outright |
 | `add_subtypes` | *adds* to the printed subtypes — an embalm token is a Zombie **Angel** |
+| `subtypes` | *replaces* the subtypes — "except it's a 4/4 black Zombie" (The Scarab God, Benthic Anomaly) is a Zombie *instead of* its creature types (205.1b); never beside `add_subtypes` |
 | `no_mana_cost` | mana value reads 0 rather than the printed card's |
 | `types` | *replaces* the card types — Espers to Magicite, below |
 | `add_types` | *adds* card types — "except it's an artifact in addition to its other types" (Faerie Artisans) |

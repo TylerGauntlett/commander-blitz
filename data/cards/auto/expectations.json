@@ -7652,6 +7652,10 @@
   "god_eternal_bontu": {
     "zone": "battlefield"
   },
+  "god_pharaoh_s_gift": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "goddric_cloaked_reveler": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -8289,6 +8293,10 @@
     "zone": "battlefield"
   },
   "harvest_gwyllion": {
+    "zone": "battlefield"
+  },
+  "hashaton_scarab_s_fist": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "hashep_oasis": {
@@ -10439,6 +10447,9 @@
   },
   "lazotep_chancellor": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "lazotep_quarry": {
     "zone": "battlefield"
   },
   "leaden_myr": {
@@ -18823,6 +18834,10 @@
     "zone": "battlefield"
   },
   "the_reaver_cleaver": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "the_scarab_god": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
