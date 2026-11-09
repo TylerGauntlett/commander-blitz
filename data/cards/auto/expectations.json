@@ -12720,6 +12720,11 @@
   "obelisk_of_naya": {
     "zone": "battlefield"
   },
+  "oblivion_stone": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "oboro_palace_in_the_clouds": {
     "battlefield_count": 33,
     "hand_size": {
@@ -15318,6 +15323,10 @@
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
   },
+  "sage_of_the_maze": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sage_s_dousing": {
     "zone": "graveyard"
   },
@@ -17909,6 +17918,18 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "sylvan_scrying": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "graveyard"
+  },
   "sylvia_brightspear": {
     "battlefield_count": 33,
     "granted": {
@@ -18746,6 +18767,10 @@
         "double_strike"
       ]
     },
+    "zone": "battlefield"
+  },
+  "thespian_s_stage": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "they_came_from_the_pipes": {

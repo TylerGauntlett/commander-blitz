@@ -190572,12 +190572,12 @@
     },
     "Oblivion Stone": {
       "edhrec_rank": 5602,
-      "gate": "template",
+      "gate": null,
       "name": "Oblivion Stone",
-      "reason": "no template for: {4}, {T}: Put a fate counter on target permanent",
+      "reason": "",
       "scryfall_id": "2994bab5-59ae-4545-a125-67032850b4de",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Oblivion Strike": {
@@ -231032,12 +231032,12 @@
     },
     "Sage of the Maze": {
       "edhrec_rank": 5538,
-      "gate": "template",
+      "gate": null,
       "name": "Sage of the Maze",
-      "reason": "no template for: {T}: Until end of turn, target land you control becomes an X/X Citizen creature with haste",
+      "reason": "",
       "scryfall_id": "87fe9225-d73f-457e-b837-20852e15bb5e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sage of the Skies": {
@@ -250152,12 +250152,12 @@
     },
     "Skullwinder": {
       "edhrec_rank": 3546,
-      "gate": "template",
+      "gate": "behaviour",
       "name": "Skullwinder",
-      "reason": "no template for: When this creature enters, return target card from your graveyard to your hand, then choos",
+      "reason": "player 0 hand_size is 1, expected 2; player 0 graveyard_size is 2, expected 1",
       "scryfall_id": "0d53c93a-3d02-4a89-bf3a-58c19d861f9b",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Sky Crier": {
@@ -272712,12 +272712,12 @@
     },
     "Sylvan Scrying": {
       "edhrec_rank": 1258,
-      "gate": "template",
+      "gate": null,
       "name": "Sylvan Scrying",
-      "reason": "no template for: Search your library for a land card, reveal it, put it into your hand, then shuffle",
+      "reason": "",
       "scryfall_id": "d5f11a08-8324-461a-8dbd-ecef0e511dee",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sylvan Shepherd": {
@@ -283292,12 +283292,12 @@
     },
     "Thespian's Stage": {
       "edhrec_rank": 571,
-      "gate": "template",
+      "gate": null,
       "name": "Thespian's Stage",
-      "reason": "no template for: {2}, {T}: This land becomes a copy of target land, except it has this ability",
+      "reason": "",
       "scryfall_id": "f55d8c6a-210a-4c89-91e7-e02679544c62",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "They Came from the Pipes": {

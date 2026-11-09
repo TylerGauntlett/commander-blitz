@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**279 cards** blocked by **251** capabilities.
+**280 cards** blocked by **252** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -239,6 +239,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
+| [stack-wipe](#stack-wipe) | 1 | 8784 | op |
 | [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
 | [target-if-cast-during](#target-if-cast-during) | 1 | 1524 | selector |
@@ -3881,6 +3882,20 @@ Blocks **1** card.
 - **Mindbreak Trap** (rank 539) — `mindbreak_trap`
   - If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.
   - Exile any number of target spells.
+
+</details>
+
+## stack-wipe
+
+Blocks **1** card.
+
+- **(op)** a non-targeted mass stack op (or a selector the counter/exile ops can read with zone 'stack') that, on resolution, exiles every other spell on the stack (moving the card to exile without countering it, so 'can't be countered' spells are exiled too and copies cease to exist) and counters every activated and triggered ability on the stack
+  <br>Why the existing vocabulary won't do: op_counter resolves only declared targets ('target') or one value-named 'sid'; it ignores 'objects', so there is no 'all spells/abilities' form, and countering would also be wrong for the spell half since uncounterable spells must still be exiled. op_exile chooses objects through choose_objects over zone-held cards and has no path that removes a StackItem from the stack. The 'object_kind'/'ability_kind' selector keys only narrow an ability_on_stack target
+
+<details><summary>Cards waiting on this</summary>
+
+- **Summary Dismissal** (rank 8784) — `summary_dismissal`
+  - Exile all other spells and counter all abilities.
 
 </details>
 

@@ -1,0 +1,15 @@
+{
+  "card_id": "summary_dismissal",
+  "name": "Summary Dismissal",
+  "oracle_text": "Exile all other spells and counter all abilities.",
+  "blocked_sentences": ["Exile all other spells and counter all abilities."],
+  "needs": [{
+    "capability": "stack_wipe",
+    "kind": "op",
+    "what": "a non-targeted mass stack op (or a selector the counter/exile ops can read with zone 'stack') that, on resolution, exiles every other spell on the stack (moving the card to exile without countering it, so 'can't be countered' spells are exiled too and copies cease to exist) and counters every activated and triggered ability on the stack",
+    "why_existing_wont_do": "op_counter resolves only declared targets ('target') or one value-named 'sid'; it ignores 'objects', so there is no 'all spells/abilities' form, and countering would also be wrong for the spell half since uncounterable spells must still be exiled. op_exile chooses objects through choose_objects over zone-held cards and has no path that removes a StackItem from the stack. The 'object_kind'/'ability_kind' selector keys only narrow an ability_on_stack target",
+    "closest_existing": ["counter", "exile"]
+  }],
+  "closest_existing": ["counter", "exile"],
+  "confidence": "high"
+}
