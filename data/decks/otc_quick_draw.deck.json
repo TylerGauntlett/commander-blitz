@@ -1,0 +1,704 @@
+{
+  "id": "otc_quick_draw",
+  "name": "Quick Draw",
+  "commanders": [
+    "stella_lee_wild_card"
+  ],
+  "color_identity": [
+    "R",
+    "U"
+  ],
+  "source": "precon",
+  "release": {
+    "set_code": "OTC",
+    "set_name": "Outlaws of Thunder Junction Commander",
+    "date": "2024-04-19"
+  },
+  "notes": "Outlaws of Thunder Junction Commander precon, card for card (https://mtgjson.com/api/v5/decks/QuickDraw_OTC.json).",
+  "tags": [
+    "Spellslinger",
+    "Copies",
+    "Card draw",
+    "Tokens"
+  ],
+  "strategy": "Stella Lee, Wild Card exiles the top card to play when you cast your second spell of a turn and, from the third, taps to copy an instant or sorcery, so the deck chains cheap cantrips -- Opt, Ponder, Preordain, Serum Visions, Think Twice -- into copies and card flow. Veyran, Voice of Duality, Archmage Emeritus, Crackling Spellslinger, Galvanic Iteration and Thunderclap Drake double the payoffs, while Talrand, Young Pyromancer, Murmuring Mystic, Third Path Iconoclast and Storm-Kiln Artist turn every spell into a body or a Treasure and Guttersnipe and Electrostatic Field burn the table for each one. Arcane Bombardment, Mizzix's Mastery, Finale of Promise, Bloodthirsty Adversary and Forger's Foundry recast the graveyard's spells, and Elemental Eruption and Eris, Roar of the Storm close with Dragon Elementals.",
+  "archetype": "spellslinger",
+  "printings": {
+    "arcane_bombardment": {
+      "scryfall_id": "ef7e6e2d-d984-483e-b117-b1c5d640dc23",
+      "artist": "Marta Nael",
+      "set_code": "otc",
+      "collector_number": "154"
+    },
+    "arcane_denial": {
+      "scryfall_id": "66ca1ade-0a74-4aab-9040-b3696706f060",
+      "artist": "Xi Zhang",
+      "set_code": "otc",
+      "collector_number": "89"
+    },
+    "arcane_signet": {
+      "scryfall_id": "2bfeb9dc-0bf7-4f19-9714-b14114e4627f",
+      "artist": "Dan Murayama Scott",
+      "set_code": "otc",
+      "collector_number": "252"
+    },
+    "archmage_emeritus": {
+      "scryfall_id": "c3dbdc3b-4855-48aa-b06d-a31166161eab",
+      "artist": "Caio Monteiro",
+      "set_code": "otc",
+      "collector_number": "90"
+    },
+    "baral_s_expertise": {
+      "scryfall_id": "0f3bb535-dd33-430d-aace-7cf73d437890",
+      "artist": "Todd Lockwood",
+      "set_code": "otc",
+      "collector_number": "91"
+    },
+    "big_score": {
+      "scryfall_id": "5377da39-2152-414f-8b7e-638cb2e127e3",
+      "artist": "Gaboleps",
+      "set_code": "otc",
+      "collector_number": "155"
+    },
+    "bloodthirsty_adversary": {
+      "scryfall_id": "1d6d5c4b-01ec-407f-b3b6-854ab5127bdc",
+      "artist": "Heonhwa",
+      "set_code": "otc",
+      "collector_number": "157"
+    },
+    "cascade_bluffs": {
+      "scryfall_id": "6bdfb921-db15-49fd-90c2-5d725a28f675",
+      "artist": "Brandon Kitkouski",
+      "set_code": "otc",
+      "collector_number": "276"
+    },
+    "chaos_warp": {
+      "scryfall_id": "ce9df20b-c58b-4147-9ff8-902ce2944f50",
+      "artist": "Trevor Claxton",
+      "set_code": "otc",
+      "collector_number": "160"
+    },
+    "command_tower": {
+      "scryfall_id": "d1d019fb-0498-454b-a03b-4f396def718b",
+      "artist": "Ryan Yee",
+      "set_code": "otc",
+      "collector_number": "280"
+    },
+    "crackling_spellslinger": {
+      "scryfall_id": "aa735e13-f784-4174-91fc-3751aaa559d1",
+      "artist": "Marta Nael",
+      "set_code": "otc",
+      "collector_number": "25"
+    },
+    "curse_of_the_swine": {
+      "scryfall_id": "c423ecbc-518e-4ff9-ac0c-38c8eec66b54",
+      "artist": "James Ryman",
+      "set_code": "otc",
+      "collector_number": "92"
+    },
+    "cursed_mirror": {
+      "scryfall_id": "3feba886-abb2-4901-8ab7-3eee5c263f46",
+      "artist": "David Gaillet",
+      "set_code": "otc",
+      "collector_number": "161"
+    },
+    "deep_analysis": {
+      "scryfall_id": "6bb58d70-8944-4507-aeca-6b3d5f792a91",
+      "artist": "Daren Bader",
+      "set_code": "otc",
+      "collector_number": "94"
+    },
+    "dig_through_time": {
+      "scryfall_id": "2868636e-85e3-41e4-a68e-fe5c5a6dabf0",
+      "artist": "Ryan Yee",
+      "set_code": "otc",
+      "collector_number": "95"
+    },
+    "electrostatic_field": {
+      "scryfall_id": "21923a95-e65e-4f4a-81f8-fc0895beb107",
+      "artist": "Dan Murayama Scott",
+      "set_code": "otc",
+      "collector_number": "164"
+    },
+    "elemental_eruption": {
+      "scryfall_id": "32126592-a988-4171-b52e-cca80b881aff",
+      "artist": "Andrea Piparo",
+      "set_code": "otc",
+      "collector_number": "27"
+    },
+    "epic_experiment": {
+      "scryfall_id": "d3ad9626-3124-4ad6-9cac-49aa9c3ce88c",
+      "artist": "Dan Murayama Scott",
+      "set_code": "otc",
+      "collector_number": "222"
+    },
+    "eris_roar_of_the_storm": {
+      "scryfall_id": "1adce281-4d5a-44d2-8cfa-25f860b015ff",
+      "artist": "Aurore Folny",
+      "set_code": "otc",
+      "collector_number": "5"
+    },
+    "exotic_orchard": {
+      "scryfall_id": "3da63d3f-3752-48cd-8ea4-0ce08b1b8c21",
+      "artist": "Steven Belledin",
+      "set_code": "otc",
+      "collector_number": "293"
+    },
+    "expressive_iteration": {
+      "scryfall_id": "6da813aa-7fca-4e7e-8946-b5a900bba6c8",
+      "artist": "Anastasia Ovchinnikova",
+      "set_code": "otc",
+      "collector_number": "224"
+    },
+    "faithless_looting": {
+      "scryfall_id": "1ea23c17-6960-44fd-bae3-e24595b00c22",
+      "artist": "Karl Kopinski",
+      "set_code": "otc",
+      "collector_number": "165"
+    },
+    "ferrous_lake": {
+      "scryfall_id": "44e43398-cb71-4f65-80b4-f8d7d7ed4c9c",
+      "artist": "Grady Frederick",
+      "set_code": "otc",
+      "collector_number": "294"
+    },
+    "finale_of_promise": {
+      "scryfall_id": "0dbbb636-96c2-472c-a51d-d527e8e97798",
+      "artist": "Jaime Jones",
+      "set_code": "otc",
+      "collector_number": "166"
+    },
+    "finale_of_revelation": {
+      "scryfall_id": "9bbe8f2e-3dfd-4ca9-999f-47524ec089c2",
+      "artist": "Johann Bodin",
+      "set_code": "otc",
+      "collector_number": "97"
+    },
+    "forger_s_foundry": {
+      "scryfall_id": "16c32c5a-e011-4729-a4a0-b2deac7d5056",
+      "artist": "Rockey Chen",
+      "set_code": "otc",
+      "collector_number": "14"
+    },
+    "frostboil_snarl": {
+      "scryfall_id": "5229c275-04aa-4168-9eb3-6c04f9501fd1",
+      "artist": "Sam Burley",
+      "set_code": "otc",
+      "collector_number": "298"
+    },
+    "galvanic_iteration": {
+      "scryfall_id": "f6e94518-e177-4209-8a97-74c61bf51937",
+      "artist": "Johann Bodin",
+      "set_code": "otc",
+      "collector_number": "227"
+    },
+    "goblin_electromancer": {
+      "scryfall_id": "71808155-db49-4027-a2fc-76f53475ac05",
+      "artist": "Svetlin Velinov",
+      "set_code": "otc",
+      "collector_number": "228"
+    },
+    "guttersnipe": {
+      "scryfall_id": "90907737-ad75-48f6-a350-87d4021d89f8",
+      "artist": "Andrey Kuzinskiy",
+      "set_code": "otc",
+      "collector_number": "169"
+    },
+    "haughty_djinn": {
+      "scryfall_id": "21228052-e7bf-4e6c-9d88-674caca5b678",
+      "artist": "Mike Jordana",
+      "set_code": "otc",
+      "collector_number": "99"
+    },
+    "island": {
+      "scryfall_id": "acd6be3f-745c-41ad-95c9-1db66ba56be2",
+      "artist": "Sergey Glushakov",
+      "set_code": "otj",
+      "collector_number": "279"
+    },
+    "izzet_boilerworks": {
+      "scryfall_id": "bfac9395-7ca5-48dd-ab83-7c26ada12f61",
+      "artist": "John Avon",
+      "set_code": "otc",
+      "collector_number": "302"
+    },
+    "izzet_signet": {
+      "scryfall_id": "1a9f7c61-11e8-493f-98a8-50573a41c46a",
+      "artist": "Raoul Vitale",
+      "set_code": "otc",
+      "collector_number": "259"
+    },
+    "kaza_roil_chaser": {
+      "scryfall_id": "080585c6-d946-4435-954a-0ada936dc3f1",
+      "artist": "Ekaterina Burmak",
+      "set_code": "otc",
+      "collector_number": "232"
+    },
+    "leyline_dowser": {
+      "scryfall_id": "bd08616b-84a0-4e82-8bd8-a228e4c57be6",
+      "artist": "Diana Cearley",
+      "set_code": "otc",
+      "collector_number": "39"
+    },
+    "lock_and_load": {
+      "scryfall_id": "7a35de4b-5d98-4034-acc9-f38dc8c8f7d6",
+      "artist": "Anastasia Ovchinnikova",
+      "set_code": "otc",
+      "collector_number": "15"
+    },
+    "midnight_clock": {
+      "scryfall_id": "0b3c33b7-5b15-4b61-bfd6-1ffa823eb28a",
+      "artist": "Alexander Forssberg",
+      "set_code": "otc",
+      "collector_number": "100"
+    },
+    "mizzix_s_mastery": {
+      "scryfall_id": "4fa2d7f2-05b3-468f-9f2c-a61b46bad88e",
+      "artist": "Dan Murayama Scott",
+      "set_code": "otc",
+      "collector_number": "175"
+    },
+    "mountain": {
+      "scryfall_id": "9137b4aa-2289-4a4d-b1f5-ae75a0928278",
+      "artist": "Sergey Glushakov",
+      "set_code": "otj",
+      "collector_number": "283"
+    },
+    "murmuring_mystic": {
+      "scryfall_id": "9e68dcc2-bba4-4efa-97bb-3ed892037595",
+      "artist": "Mark Winters",
+      "set_code": "otc",
+      "collector_number": "102"
+    },
+    "niv_mizzet_parun": {
+      "scryfall_id": "86c5c337-d25f-4c3e-9762-09ed0c2d36d7",
+      "artist": "Svetlin Velinov",
+      "set_code": "otc",
+      "collector_number": "235"
+    },
+    "octavia_living_thesis": {
+      "scryfall_id": "e9591647-bad3-4015-90d1-1646a9eb4d14",
+      "artist": "Simon Dominic",
+      "set_code": "otc",
+      "collector_number": "103"
+    },
+    "opt": {
+      "scryfall_id": "67bcf3fd-fca0-4cdb-b625-bac5fadd00e3",
+      "artist": "Dan Murayama Scott",
+      "set_code": "otc",
+      "collector_number": "104"
+    },
+    "ponder": {
+      "scryfall_id": "5af43ceb-56d2-47d4-ab43-853338ab293c",
+      "artist": "Dan Murayama Scott",
+      "set_code": "otc",
+      "collector_number": "105"
+    },
+    "pongify": {
+      "scryfall_id": "37ff06d0-d652-4694-a3f5-bf7385e9e850",
+      "artist": "Heather Hudson",
+      "set_code": "otc",
+      "collector_number": "106"
+    },
+    "preordain": {
+      "scryfall_id": "122f2cc2-5f4d-497c-96b5-ed5698f28b51",
+      "artist": "Svetlin Velinov",
+      "set_code": "otc",
+      "collector_number": "107"
+    },
+    "propaganda": {
+      "scryfall_id": "e175bba4-c131-48f4-8e31-16ec07a12e59",
+      "artist": "Clint Cearley",
+      "set_code": "otc",
+      "collector_number": "108"
+    },
+    "pteramander": {
+      "scryfall_id": "0072bbbf-a695-47dd-9615-db2659f357db",
+      "artist": "Simon Dominic",
+      "set_code": "otc",
+      "collector_number": "109"
+    },
+    "pyretic_charge": {
+      "scryfall_id": "dc7a4733-63d9-4b47-8a2e-85d30fe82569",
+      "artist": "Slawomir Maniak",
+      "set_code": "otc",
+      "collector_number": "29"
+    },
+    "radical_idea": {
+      "scryfall_id": "aa32ec44-d29b-4ebe-82f5-4fe67bca07eb",
+      "artist": "Izzy",
+      "set_code": "otc",
+      "collector_number": "110"
+    },
+    "reliquary_tower": {
+      "scryfall_id": "dd9f036d-6ae4-451e-a67a-ecc2e44123e3",
+      "artist": "Jesper Ejsing",
+      "set_code": "otc",
+      "collector_number": "312"
+    },
+    "rousing_refrain": {
+      "scryfall_id": "3fa41486-e3fe-41e4-b407-ec697ab778db",
+      "artist": "Izzy",
+      "set_code": "otc",
+      "collector_number": "178"
+    },
+    "serum_visions": {
+      "scryfall_id": "5b75eb6b-d76c-4b92-b042-13493f9ef164",
+      "artist": "Ben Thompson",
+      "set_code": "otc",
+      "collector_number": "112"
+    },
+    "shark_typhoon": {
+      "scryfall_id": "4d410cf5-a70e-4680-a68f-fbb4aa3b7174",
+      "artist": "Caio Monteiro",
+      "set_code": "otc",
+      "collector_number": "113"
+    },
+    "shivan_reef": {
+      "scryfall_id": "951f28dd-40ff-43f0-af1c-6631b5845309",
+      "artist": "Andrew Mar",
+      "set_code": "otc",
+      "collector_number": "320"
+    },
+    "smoldering_stagecoach": {
+      "scryfall_id": "a39d6484-6530-4237-84b9-68ab8a056e7c",
+      "artist": "Billy Christian",
+      "set_code": "otc",
+      "collector_number": "30"
+    },
+    "sol_ring": {
+      "scryfall_id": "6c5c9437-3d99-4a7c-8255-9acdcb1acc40",
+      "artist": "Kekai Kotaki",
+      "set_code": "otc",
+      "collector_number": "267"
+    },
+    "stella_lee_wild_card": {
+      "scryfall_id": "2a8a7696-b5d9-4378-9d5c-2c9007e4df63",
+      "artist": "Fajareka Setiawan",
+      "set_code": "otc",
+      "collector_number": "3"
+    },
+    "storm_kiln_artist": {
+      "scryfall_id": "01482a58-5156-41ba-bf9e-11095cc3f9ef",
+      "artist": "Manuel Castañón",
+      "set_code": "otc",
+      "collector_number": "181"
+    },
+    "sulfur_falls": {
+      "scryfall_id": "b5f528aa-f375-40c3-b701-8643bef0f957",
+      "artist": "Cliff Childs",
+      "set_code": "otc",
+      "collector_number": "322"
+    },
+    "talrand_sky_summoner": {
+      "scryfall_id": "1be3ed47-072e-481a-b3d9-dc232ac4b24f",
+      "artist": "Svetlin Velinov",
+      "set_code": "otc",
+      "collector_number": "116"
+    },
+    "temple_of_epiphany": {
+      "scryfall_id": "faf8808a-6a28-419f-a60f-2d1cc4dfa5a7",
+      "artist": "Adam Paquette",
+      "set_code": "otc",
+      "collector_number": "329"
+    },
+    "temple_of_the_false_god": {
+      "scryfall_id": "f55a1775-9672-4f0c-9aab-30ba90f0d1e6",
+      "artist": "James Zapata",
+      "set_code": "otc",
+      "collector_number": "334"
+    },
+    "tezzeret_s_gambit": {
+      "scryfall_id": "15b2188f-06c8-4771-bba6-e6fc531ebc9a",
+      "artist": "Karl Kopinski",
+      "set_code": "otc",
+      "collector_number": "117"
+    },
+    "think_twice": {
+      "scryfall_id": "d4d6d21e-4941-4b99-bed1-491b5a524d47",
+      "artist": "Anthony Francisco",
+      "set_code": "otc",
+      "collector_number": "119"
+    },
+    "third_path_iconoclast": {
+      "scryfall_id": "ad56d60b-985e-470f-935b-036084957d2b",
+      "artist": "Manuel Castañón",
+      "set_code": "otc",
+      "collector_number": "244"
+    },
+    "thunderclap_drake": {
+      "scryfall_id": "4867e49b-ec5d-47df-bdc7-1211f97868c8",
+      "artist": "Kaitlyn McCulley",
+      "set_code": "otc",
+      "collector_number": "17"
+    },
+    "treasure_cruise": {
+      "scryfall_id": "d653b8ac-f643-4e0a-bfd4-edc658a18d9c",
+      "artist": "Cynthia Sheppard",
+      "set_code": "otc",
+      "collector_number": "120"
+    },
+    "vandalblast": {
+      "scryfall_id": "e781b55f-6388-4ab8-be74-7c56eaba1c4d",
+      "artist": "Seb McKinnon",
+      "set_code": "otc",
+      "collector_number": "183"
+    },
+    "veyran_voice_of_duality": {
+      "scryfall_id": "f34cd711-55b2-4802-9878-d22314c0cc9c",
+      "artist": "Mathias Kollros",
+      "set_code": "otc",
+      "collector_number": "248"
+    },
+    "volcanic_torrent": {
+      "scryfall_id": "e7dc57e7-babe-45bf-991b-d464b6e66bba",
+      "artist": "Grzegorz Rutkowski",
+      "set_code": "otc",
+      "collector_number": "184"
+    },
+    "windfall": {
+      "scryfall_id": "9ce7113b-08f7-4584-b65f-a7b5caa90c2f",
+      "artist": "Scott Murphy",
+      "set_code": "otc",
+      "collector_number": "123"
+    },
+    "winged_boots": {
+      "scryfall_id": "116361c4-fddd-440a-ad02-8d71df733231",
+      "artist": "Kim Sokol",
+      "set_code": "otc",
+      "collector_number": "124"
+    },
+    "young_pyromancer": {
+      "scryfall_id": "f233a41f-106b-4bf0-a599-7ac5d83cfed5",
+      "artist": "Cynthia Sheppard",
+      "set_code": "otc",
+      "collector_number": "185"
+    }
+  },
+  "cards": [
+    {
+      "id": "arcane_bombardment"
+    },
+    {
+      "id": "arcane_denial"
+    },
+    {
+      "id": "arcane_signet"
+    },
+    {
+      "id": "archmage_emeritus"
+    },
+    {
+      "id": "baral_s_expertise"
+    },
+    {
+      "id": "big_score"
+    },
+    {
+      "id": "bloodthirsty_adversary"
+    },
+    {
+      "id": "cascade_bluffs"
+    },
+    {
+      "id": "chaos_warp"
+    },
+    {
+      "id": "command_tower"
+    },
+    {
+      "id": "crackling_spellslinger"
+    },
+    {
+      "id": "curse_of_the_swine"
+    },
+    {
+      "id": "cursed_mirror"
+    },
+    {
+      "id": "deep_analysis"
+    },
+    {
+      "id": "dig_through_time"
+    },
+    {
+      "id": "electrostatic_field"
+    },
+    {
+      "id": "elemental_eruption"
+    },
+    {
+      "id": "epic_experiment"
+    },
+    {
+      "id": "eris_roar_of_the_storm"
+    },
+    {
+      "id": "exotic_orchard"
+    },
+    {
+      "id": "expressive_iteration"
+    },
+    {
+      "id": "faithless_looting"
+    },
+    {
+      "id": "ferrous_lake"
+    },
+    {
+      "id": "finale_of_promise"
+    },
+    {
+      "id": "finale_of_revelation"
+    },
+    {
+      "id": "forger_s_foundry"
+    },
+    {
+      "id": "frostboil_snarl"
+    },
+    {
+      "id": "galvanic_iteration"
+    },
+    {
+      "id": "goblin_electromancer"
+    },
+    {
+      "id": "guttersnipe"
+    },
+    {
+      "id": "haughty_djinn"
+    },
+    {
+      "id": "island",
+      "qty": 14
+    },
+    {
+      "id": "izzet_boilerworks"
+    },
+    {
+      "id": "izzet_signet"
+    },
+    {
+      "id": "kaza_roil_chaser"
+    },
+    {
+      "id": "leyline_dowser"
+    },
+    {
+      "id": "lock_and_load"
+    },
+    {
+      "id": "midnight_clock"
+    },
+    {
+      "id": "mizzix_s_mastery"
+    },
+    {
+      "id": "mountain",
+      "qty": 13
+    },
+    {
+      "id": "murmuring_mystic"
+    },
+    {
+      "id": "niv_mizzet_parun"
+    },
+    {
+      "id": "octavia_living_thesis"
+    },
+    {
+      "id": "opt"
+    },
+    {
+      "id": "ponder"
+    },
+    {
+      "id": "pongify"
+    },
+    {
+      "id": "preordain"
+    },
+    {
+      "id": "propaganda"
+    },
+    {
+      "id": "pteramander"
+    },
+    {
+      "id": "pyretic_charge"
+    },
+    {
+      "id": "radical_idea"
+    },
+    {
+      "id": "reliquary_tower"
+    },
+    {
+      "id": "rousing_refrain"
+    },
+    {
+      "id": "serum_visions"
+    },
+    {
+      "id": "shark_typhoon"
+    },
+    {
+      "id": "shivan_reef"
+    },
+    {
+      "id": "smoldering_stagecoach"
+    },
+    {
+      "id": "sol_ring"
+    },
+    {
+      "id": "storm_kiln_artist"
+    },
+    {
+      "id": "sulfur_falls"
+    },
+    {
+      "id": "talrand_sky_summoner"
+    },
+    {
+      "id": "temple_of_epiphany"
+    },
+    {
+      "id": "temple_of_the_false_god"
+    },
+    {
+      "id": "tezzeret_s_gambit"
+    },
+    {
+      "id": "think_twice"
+    },
+    {
+      "id": "third_path_iconoclast"
+    },
+    {
+      "id": "thunderclap_drake"
+    },
+    {
+      "id": "treasure_cruise"
+    },
+    {
+      "id": "vandalblast"
+    },
+    {
+      "id": "veyran_voice_of_duality"
+    },
+    {
+      "id": "volcanic_torrent"
+    },
+    {
+      "id": "windfall"
+    },
+    {
+      "id": "winged_boots"
+    },
+    {
+      "id": "young_pyromancer"
+    }
+  ]
+}
