@@ -1482,12 +1482,12 @@
     },
     "Accursed Marauder": {
       "edhrec_rank": 468,
-      "gate": "template",
+      "gate": null,
       "name": "Accursed Marauder",
-      "reason": "no template for: When this creature enters, each player sacrifices a nontoken creature of their choice",
+      "reason": "",
       "scryfall_id": "44a63029-1fb2-4fdc-bca9-0a530c7b42d9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Accursed Spirit": {
@@ -6892,12 +6892,12 @@
     },
     "Altar of the Goyf": {
       "edhrec_rank": 9679,
-      "gate": "template",
+      "gate": null,
       "name": "Altar of the Goyf",
-      "reason": "no template for: Whenever a creature you control attacks alone, it gets +X/+X until end of turn, where X is",
+      "reason": "",
       "scryfall_id": "a372b9c3-2611-4eba-834c-5fb113ac9bed",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Altar of the Lost": {
@@ -21082,12 +21082,12 @@
     },
     "Barrowgoyf": {
       "edhrec_rank": 4087,
-      "gate": "template",
+      "gate": null,
       "name": "Barrowgoyf",
-      "reason": "no template for: 's power is equal to the number of card types among cards in all graveyards and its toughn",
+      "reason": "",
       "scryfall_id": "fac2f9be-94ca-4657-b2eb-8df9548e6855",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Barrowin of Clan Undurr": {
@@ -25492,12 +25492,12 @@
     },
     "Bituminous Blast": {
       "edhrec_rank": 7436,
-      "gate": "template",
+      "gate": null,
       "name": "Bituminous Blast",
-      "reason": "no template for: Cascade",
+      "reason": "",
       "scryfall_id": "89cafccf-c199-4c07-857e-956adaf2817d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bjorna, Nightfall Alchemist": {
@@ -28422,22 +28422,22 @@
     },
     "Bloodbraid Challenger": {
       "edhrec_rank": 6592,
-      "gate": "template",
+      "gate": null,
       "name": "Bloodbraid Challenger",
-      "reason": "no template for: Cascade",
+      "reason": "",
       "scryfall_id": "4b39d43d-2a02-4edb-915a-6a7c002c945f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bloodbraid Elf": {
       "edhrec_rank": 4786,
-      "gate": "template",
+      "gate": null,
       "name": "Bloodbraid Elf",
-      "reason": "no template for: Cascade",
+      "reason": "",
       "scryfall_id": "bb6a56ec-4b16-46d4-a1fc-4688e7a89574",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bloodbraid Marauder": {

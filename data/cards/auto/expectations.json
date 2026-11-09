@@ -77,6 +77,17 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "accursed_marauder": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "opponent_battlefield_count": 5,
+    "zone": [
+      "battlefield",
+      "graveyard"
+    ]
+  },
   "accursed_spirit": {
     "zone": "battlefield"
   },
@@ -460,6 +471,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "altar_of_the_goyf": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "altar_s_reap": {
@@ -1568,6 +1583,17 @@
   "barrier_of_bones": {
     "zone": "battlefield"
   },
+  "barrowgoyf": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "deathtouch",
+        "lifelink"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "bartizan_bats": {
     "zone": "battlefield"
   },
@@ -1864,6 +1890,9 @@
     },
     "zone": "battlefield"
   },
+  "bituminous_blast": {
+    "zone": "graveyard"
+  },
   "black_bolt_inhuman_king": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -1988,6 +2017,14 @@
     "zone": "graveyard"
   },
   "blood_seeker": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "bloodbraid_challenger": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "bloodbraid_elf": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
