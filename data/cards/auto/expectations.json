@@ -7734,6 +7734,16 @@
   "graven_cairns": {
     "zone": "battlefield"
   },
+  "graveshifter": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 1
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "zone": "battlefield"
+  },
   "gray_merchant_of_asphodel": {
     "battlefield_count": 33,
     "life": {
@@ -10042,6 +10052,9 @@
   },
   "koilos_roc": {
     "zone": "battlefield"
+  },
+  "kolaghan_s_command": {
+    "zone": "graveyard"
   },
   "kolinahr_priest": {
     "zone": "battlefield"

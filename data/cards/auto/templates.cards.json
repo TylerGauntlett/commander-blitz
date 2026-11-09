@@ -89980,6 +89980,106 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "add_subtype",
+          "kind": "static",
+          "subtypes": [
+            "Human",
+            "Soldier",
+            "Warrior",
+            "Wizard",
+            "Cleric",
+            "Rogue",
+            "Knight",
+            "Elf",
+            "Goblin",
+            "Zombie",
+            "Vampire",
+            "Spirit",
+            "Beast",
+            "Elemental",
+            "Dragon",
+            "Angel",
+            "Demon",
+            "Sphinx",
+            "Bird",
+            "Cat",
+            "Snake",
+            "Insect",
+            "Serpent",
+            "Giant",
+            "Orc",
+            "Merfolk",
+            "Druid",
+            "Shaman",
+            "Bear",
+            "Wall"
+          ],
+          "text": "Changeling"
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "destination": "hand",
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ],
+              "op": "may",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When this creature enters, you may return target creature card from your graveyard to your hand.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "graveshifter",
+      "mana_cost": "{3}{B}",
+      "name": "Graveshifter",
+      "oracle_text": "Changeling (This card is every creature type.)\nWhen this creature enters, you may return target creature card from your graveyard to your hand.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Shapeshifter"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -118714,6 +118814,128 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "kolaghan_s_command",
+      "mana_cost": "{1}{B}{R}",
+      "name": "Kolaghan's Command",
+      "oracle_text": "Choose two —\n• Return target creature card from your graveyard to your hand.\n• Target player discards a card.\n• Destroy target artifact.\n• Kolaghan's Command deals 2 damage to any target.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 2,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "destination": "hand",
+                  "objects": {
+                    "target": "raised"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ],
+              "label": "Return target creature card from your graveyard to your hand."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "discard",
+                  "player": {
+                    "target": "discarder"
+                  }
+                }
+              ],
+              "label": "Target player discards a card."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "shattered"
+                  },
+                  "op": "destroy"
+                }
+              ],
+              "label": "Destroy target artifact."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "damage",
+                  "target": "burned"
+                }
+              ],
+              "label": "Kolaghan's Command deals 2 damage to any target."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "raised",
+          "kind": "card_in_graveyard",
+          "mode": 0,
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          }
+        },
+        {
+          "count": 1,
+          "id": "discarder",
+          "kind": "player",
+          "mode": 1,
+          "selector": {}
+        },
+        {
+          "count": 1,
+          "id": "shattered",
+          "kind": "permanent",
+          "mode": 2,
+          "selector": {
+            "types": [
+              "Artifact"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "burned",
+          "kind": "any",
+          "mode": 3,
+          "selector": {
+            "any_types": [
+              "Creature",
+              "Planeswalker",
+              "Battle"
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {

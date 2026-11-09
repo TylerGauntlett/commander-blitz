@@ -116712,12 +116712,12 @@
     },
     "Graveshifter": {
       "edhrec_rank": 2889,
-      "gate": "template",
+      "gate": null,
       "name": "Graveshifter",
-      "reason": "no template for: When this creature enters, you may return target creature card from your graveyard to your",
+      "reason": "",
       "scryfall_id": "dadb02b9-d3a0-4b51-bbc3-53b2316cd70d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gravespawn Sovereign": {
@@ -151262,12 +151262,12 @@
     },
     "Kolaghan's Command": {
       "edhrec_rank": 3591,
-      "gate": "template",
+      "gate": null,
       "name": "Kolaghan's Command",
-      "reason": "no template for: Choose two —",
+      "reason": "",
       "scryfall_id": "666317db-2f38-4187-b6a5-7947d0c1591b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kolaghan, the Storm's Fury": {
