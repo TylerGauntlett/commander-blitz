@@ -22,6 +22,7 @@ from commanderblitz.cards.authoring.verify import (
     sandbox_turn,
     spare_cards_in_hand,
     swap_in_artifact_body,
+    swap_in_colorless_sources,
     swap_in_legendary_body,
     swap_in_tribal_body,
 )
@@ -97,7 +98,12 @@ def pytest_generate_tests(metafunc):
 
 def build_sandbox(registry: CardRegistry, card_id: str, *, in_hand: bool = True) -> Game:
     builder = GameBuilder(registry, players=2, seed=1)
-    builder.battlefield(0, MANA_BASE)
+    under_test = registry.get(card_id) if card_id in registry else None
+    # A `{C}` pip (Glaring Fleshraker's {2}{C}) needs a land that makes
+    # colorless mana, and generic cannot pay it (107.4c). The swap is
+    # `verify.build_sandbox`'s, shared so the two sandboxes agree, and only for
+    # a card that prints one.
+    builder.battlefield(0, swap_in_colorless_sources(registry, MANA_BASE, under_test))
     # "As an additional cost to cast this spell, tap an untapped Vampire you
     # control" -- New Blood. `t_bear` is a Bear, so a printed cost naming any
     # tribe is unpayable and the card is never offered. The swap is shared with
@@ -110,7 +116,6 @@ def build_sandbox(registry: CardRegistry, card_id: str, *, in_hand: bool = True)
     # artifacts you control, and this board has none, so it entered as a 0/0
     # and died. `swap_in_artifact_body` trades the second creature for a quiet
     # artifact creature, again only for a card that needs it.
-    under_test = registry.get(card_id) if card_id in registry else None
     # Ultimate Nullification sacrifices a legendary creature to be cast, and
     # this board's creatures are nonlegendary; `swap_in_legendary_body` is the
     # tribal swap's twin, shared for the same reason.
@@ -1433,10 +1438,15 @@ def _target_fodder(registry, spec):
     # this turn…". The biggest creature has no keywords, so the ability read as
     # unusable when it was only unaimed.
     keywords = {str(k) for k in selector.get("keywords") or []}
+    # Ruins of Oran-Rief -- "{T}: Put a +1/+1 counter on target **colorless**
+    # creature that entered this turn." The biggest creature is coloured, so
+    # the ability read as unusable when it was only unaimed.
+    wants_colorless = selector.get("colorless") is True
 
     def eligible(card) -> bool:
         return (
             card.is_token == wants_token
+            and not (wants_colorless and card.colors)
             and types <= set(card.types)
             and keywords <= {str(k) for k in card.keywords}
             and (not subtypes or subtypes & set(card.subtypes))

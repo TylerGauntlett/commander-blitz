@@ -1143,6 +1143,11 @@ class SpendPurpose:
     #: this is a question about the symbols and not about `mana_value`, which
     #: scores X as 0 and cannot tell Fireball from Shock.
     x_in_mana_cost: bool | None = None
+    #: Is that card (or source) **colorless**? -- "…only to cast **colorless**
+    #: Eldrazi spells or activate abilities of **colorless** Eldrazi", Eldrazi
+    #: Temple. Colour is not a type, so `names` cannot hold it, and an Eldrazi
+    #: name alone funds the coloured Eldrazi too.
+    colorless: bool | None = None
 
 
 #: The purpose of every :data:`OTHER` payment. It names nothing, because no
@@ -1170,7 +1175,7 @@ RESTRICTION_OPS: dict[str, Any] = {
 #: be read by nobody, and leave the group permitting everything its names alone
 #: permit -- which is the strictly-better card this whole grammar exists to
 #: refuse.
-RESTRICTION_PREDICATES = frozenset({"mana_value", "x_in_mana_cost"})
+RESTRICTION_PREDICATES = frozenset({"mana_value", "x_in_mana_cost", "colorless"})
 
 
 @dataclass(frozen=True)
@@ -1208,6 +1213,9 @@ class RestrictionGroup:
     #: "…with {X} in their mana costs", true or false. ``None`` is a group that
     #: does not ask.
     x_in_mana_cost: bool | None = None
+    #: "…only to cast **colorless** Eldrazi spells", true or false. ``None`` is
+    #: a group that does not ask.
+    colorless: bool | None = None
 
     def names(self) -> frozenset[str]:
         """Every name mentioned, either way round -- for `dynamic`'s scan."""
@@ -1228,6 +1236,8 @@ class RestrictionGroup:
             op, wanted = self.mana_value
             if purpose.mana_value is None or not RESTRICTION_OPS[op](purpose.mana_value, wanted):
                 return False
+        if self.colorless is not None and purpose.colorless is not self.colorless:
+            return False
         return not (
             self.x_in_mana_cost is not None and purpose.x_in_mana_cost is not self.x_in_mana_cost
         )
@@ -1520,6 +1530,7 @@ def _restriction_groups(spec: Any, where: str) -> tuple[RestrictionGroup, ...]:
                 frozenset(forbidden),
                 mana_value=predicates.get("mana_value"),
                 x_in_mana_cost=predicates.get("x_in_mana_cost"),
+                colorless=predicates.get("colorless"),
             )
         )
     return tuple(out)
@@ -1548,6 +1559,13 @@ def _restriction_predicate(entry: Mapping[str, Any], where: str) -> tuple[str, A
             f"{sorted(entry)} as separate entries in the same group"
         )
     key, spec = next(iter(entry.items()))
+    if key == "colorless":
+        # "…only to cast **colorless** Eldrazi spells" (Eldrazi Temple, Shrine
+        # of the Forsaken Gods). A yes-or-no about colour, refused as anything
+        # else for `x_in_mana_cost`'s reason: a truthy mapping would read as true.
+        if not isinstance(spec, bool):
+            raise DslError(f"{where}.colorless: true or false -- whether the card has no colour")
+        return key, spec
     if key == "x_in_mana_cost":
         # `_compare`'s trap, in the one place `_compare` cannot catch it: a
         # `{"op": ">=", "value": 1}` here is a truthy mapping and would read as

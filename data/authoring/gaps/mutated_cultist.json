@@ -1,0 +1,18 @@
+{
+  "card_id": "mutated_cultist",
+  "name": "Mutated Cultist",
+  "oracle_text": "Devoid (This card has no color.)\nWhen you cast this spell, remove all counters from up to one target permanent or opponent. The next spell you cast this turn costs {1} less to cast for each counter removed this way.\nDeathtouch",
+  "blocked_sentences": [
+    "When you cast this spell, remove all counters from up to one target permanent or opponent. The next spell you cast this turn costs {1} less to cast for each counter removed this way."
+  ],
+  "needs": [
+    {
+      "capability": "next_spell_cost_reduction",
+      "kind": "op",
+      "what": "a one-shot op that makes the controller's next spell cast this turn cost {N} less (generic only), where N is a resolution-time value such as a binding counting the counters removed by a preceding remove_counters (all_kinds, as) from a target permanent, or lose_all_player_counters from a target opponent; the discount is consumed by the next spell cast and expires at end of turn",
+      "why_existing_wont_do": "cost_reduction and the spell_cost_reduction static are continuous and tied to a card or permanent, not a one-shot discount created by an effect; grant_flash_permission and uncounterable_this_turn carry next_spell but neither reduces cost; playable_cost_reduction applies only to cards an effect makes playable. Nothing can carry a variable discount to the next spell, so the cast trigger's second sentence has no expression"
+    }
+  ],
+  "closest_existing": ["grant_flash_permission", "spell_cost_reduction", "remove_counters", "lose_all_player_counters"],
+  "confidence": "high"
+}

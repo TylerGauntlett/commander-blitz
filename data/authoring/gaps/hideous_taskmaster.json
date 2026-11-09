@@ -1,0 +1,18 @@
+{
+  "card_id": "hideous_taskmaster",
+  "name": "Hideous Taskmaster",
+  "oracle_text": "Devoid (This card has no color.)\nWhen you cast this spell, for each opponent, gain control of up to one target creature that player controls until end of turn. Untap those creatures. They gain trample, haste, and annihilator 1 until end of turn.\nTrample, haste, annihilator 1 (Whenever this creature attacks, defending player sacrifices a permanent of their choice.)",
+  "blocked_sentences": [
+    "When you cast this spell, for each opponent, gain control of up to one target creature that player controls until end of turn. Untap those creatures. They gain trample, haste, and annihilator 1 until end of turn."
+  ],
+  "needs": [
+    {
+      "capability": "annihilator_grant",
+      "kind": "op",
+      "what": "a one-shot, duration-bound grant of annihilator N to chosen objects: the grant_keyword op (or a sibling) carrying an `annihilator` N beside `keywords: [\"annihilator\"]` with `duration: \"this_turn\"`, whose instance characteristics.annihilator_instances counts alongside the printed one and the grant_keyword static's, so a stolen creature attacks with one annihilator 1 trigger until end of turn",
+      "why_existing_wont_do": "annihilator is in NUMBERED_KEYWORDS, and the loader refuses every bare-word grant spelling of it (grant_keyword op, animate, keyword counters); NUMBER_CARRYING_GRANTS lets only the grant_keyword static carry its N, and a static lasts while its source does and reaches by a printed-characteristics filter, not 'until end of turn' on the up-to-one-per-opponent targets. annihilator_instances reads only CardDef.annihilator and grant_keyword statics, so there is nowhere for an op-granted N to live. The rest is expressible: devoid as colors [], a spell_cast/source self trigger with active_zones [stack], one_per_player targets controlled by opponents, gain_control this_turn, untap, grant_keyword trample+haste, and the printed trample/haste/annihilator 1 on the card"
+    }
+  ],
+  "closest_existing": ["grant_keyword", "gain_control"],
+  "confidence": "high"
+}

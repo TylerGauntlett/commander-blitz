@@ -69,7 +69,7 @@ each heading; this table is generated from them.
 | [Creative Energy (Modern Horizons 3 Commander)](#creative-energy-modern-horizons-3-commander) | L | high | Divided damage from a triggered or activated ability, Divided damage that may hit players | 0 |
 | [Graveyard Overdrive (Modern Horizons 3 Commander)](#graveyard-overdrive-modern-horizons-3-commander) | L | high | A trigger for cards put into a graveyard | 0 |
 | [Tricky Terrain (Modern Horizons 3 Commander)](#tricky-terrain-modern-horizons-3-commander) | L | high | A trigger for cards put into a graveyard | 0 |
-| [Eldrazi Incursion (Modern Horizons 3 Commander)](#eldrazi-incursion-modern-horizons-3-commander) | L | high | nothing | 0 |
+| [Eldrazi Incursion (Modern Horizons 3 Commander)](#eldrazi-incursion-modern-horizons-3-commander) | L | high | Experience counters | 0 |
 | [Quick Draw (Outlaws of Thunder Junction Commander)](#quick-draw-outlaws-of-thunder-junction-commander) | M | high | nothing | 0 |
 | [Desert Bloom (Outlaws of Thunder Junction Commander)](#desert-bloom-outlaws-of-thunder-junction-commander) | L | high | nothing | 0 |
 | [Grand Larceny (Outlaws of Thunder Junction Commander)](#grand-larceny-outlaws-of-thunder-junction-commander) | L | high | nothing | 0 |
@@ -136,6 +136,7 @@ each heading; this table is generated from them.
 | [Divided damage that may hit players](#divided-damage-that-may-hit-players) | M | medium | nothing | 5 |
 | [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) | M | medium | nothing | 4 |
 | [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) | M | medium | nothing | 4 |
+| [Experience counters](#experience-counters) | M | medium | nothing | 2 |
 | [Outcomes as data](#outcomes-as-data) | M | medium | nothing | 2 |
 | [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) | M | medium | nothing | 2 |
 | [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) | M | medium | nothing | 2 |
@@ -143,7 +144,6 @@ each heading; this table is generated from them.
 | [CPU takeover and reconnection](#cpu-takeover-and-reconnection) | M | medium | nothing | 1 |
 | [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) | M | medium | nothing | 1 |
 | [Distributing counters from a spell](#distributing-counters-from-a-spell) | M | medium | nothing | 1 |
-| [Experience counters](#experience-counters) | M | medium | nothing | 1 |
 | [Replays and sharing](#replays-and-sharing) | M | medium | nothing | 1 |
 | [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) | M | medium | nothing | 0 |
 | [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) | M | medium | nothing | 0 |
@@ -164,72 +164,72 @@ same list, and `/extend-roadmap` starts at the top of it.
 **Ready now, best first:**
 
 1. [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) — L, high
-2. [Eldrazi Incursion (Modern Horizons 3 Commander)](#eldrazi-incursion-modern-horizons-3-commander) — L, high
-3. [Quick Draw (Outlaws of Thunder Junction Commander)](#quick-draw-outlaws-of-thunder-junction-commander) — M, high
-4. [Desert Bloom (Outlaws of Thunder Junction Commander)](#desert-bloom-outlaws-of-thunder-junction-commander) — L, high
-5. [Grand Larceny (Outlaws of Thunder Junction Commander)](#grand-larceny-outlaws-of-thunder-junction-commander) — L, high
-6. [Most Wanted (Outlaws of Thunder Junction Commander)](#most-wanted-outlaws-of-thunder-junction-commander) — L, high
-7. [Hail, Caesar (Fallout)](#hail-caesar-fallout) — L, high
-8. [Scrappy Survivors (Fallout)](#scrappy-survivors-fallout) — L, high
-9. [Science! (Fallout)](#science-fallout) — L, high
-10. [Mutant Menace (Fallout)](#mutant-menace-fallout) — L, high
-11. [Deep Clue Sea (Murders at Karlov Manor Commander)](#deep-clue-sea-murders-at-karlov-manor-commander) — L, high
-12. [Revenant Recon (Murders at Karlov Manor Commander)](#revenant-recon-murders-at-karlov-manor-commander) — L, high
-13. [Blame Game (Murders at Karlov Manor Commander)](#blame-game-murders-at-karlov-manor-commander) — L, high
-14. [Deadly Disguise (Murders at Karlov Manor Commander)](#deadly-disguise-murders-at-karlov-manor-commander) — L, high
-15. [Blood Rites (The Lost Caverns of Ixalan Commander)](#blood-rites-the-lost-caverns-of-ixalan-commander) — M, high
-16. [Veloci-Ramp-Tor (The Lost Caverns of Ixalan Commander)](#veloci-ramp-tor-the-lost-caverns-of-ixalan-commander) — L, high
-17. [Ahoy Mateys (The Lost Caverns of Ixalan Commander)](#ahoy-mateys-the-lost-caverns-of-ixalan-commander) — L, high
-18. [Explorers of the Deep (The Lost Caverns of Ixalan Commander)](#explorers-of-the-deep-the-lost-caverns-of-ixalan-commander) — L, high
-19. [Masters of Evil (Doctor Who)](#masters-of-evil-doctor-who) — L, high
-20. [Paradox Power (Doctor Who)](#paradox-power-doctor-who) — L, high
-21. [Blast from the Past (Doctor Who)](#blast-from-the-past-doctor-who) — L, high
-22. [Timey-Wimey (Doctor Who)](#timey-wimey-doctor-who) — L, high
-23. [Fae Dominion (Wilds of Eldraine Commander)](#fae-dominion-wilds-of-eldraine-commander) — L, high
-24. [Virtue and Valor (Wilds of Eldraine Commander)](#virtue-and-valor-wilds-of-eldraine-commander) — L, high
-25. [Riders of Rohan (Tales of Middle-earth Commander)](#riders-of-rohan-tales-of-middle-earth-commander) — S, high
-26. [Food and Fellowship (Tales of Middle-earth Commander)](#food-and-fellowship-tales-of-middle-earth-commander) — L, high
-27. [Elven Council (Tales of Middle-earth Commander)](#elven-council-tales-of-middle-earth-commander) — L, high
-28. [The Hosts of Mordor (Tales of Middle-earth Commander)](#the-hosts-of-mordor-tales-of-middle-earth-commander) — L, high
-29. [Cavalry Charge (March of the Machine Commander)](#cavalry-charge-march-of-the-machine-commander) — L, high
-30. [Divine Convocation (March of the Machine Commander)](#divine-convocation-march-of-the-machine-commander) — L, high
-31. [Tinker Time (March of the Machine Commander)](#tinker-time-march-of-the-machine-commander) — L, high
-32. [Growing Threat (March of the Machine Commander)](#growing-threat-march-of-the-machine-commander) — L, high
-33. [Call for Backup (March of the Machine Commander)](#call-for-backup-march-of-the-machine-commander) — L, high
-34. [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander) — M, high
-35. [Corrupting Influence (Phyrexia: All Will Be One Commander)](#corrupting-influence-phyrexia-all-will-be-one-commander) — L, high
-36. [Draconic Destruction (Starter Commander Decks)](#draconic-destruction-starter-commander-decks) — M, high
-37. [Grave Danger (Starter Commander Decks)](#grave-danger-starter-commander-decks) — M, high
-38. [First Flight (Starter Commander Decks)](#first-flight-starter-commander-decks) — M, high
-39. [Chaos Incarnate (Starter Commander Decks)](#chaos-incarnate-starter-commander-decks) — M, high
-40. [Token Triumph (Starter Commander Decks)](#token-triumph-starter-commander-decks) — L, high
-41. [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) — M, high
-42. [Mishra's Burnished Banner (The Brothers' War Commander)](#mishras-burnished-banner-the-brothers-war-commander) — L, high
-43. [Forces of the Imperium (Warhammer 40,000 Commander)](#forces-of-the-imperium-warhammer-40000-commander) — L, high
-44. [The Ruinous Powers (Warhammer 40,000 Commander)](#the-ruinous-powers-warhammer-40000-commander) — L, high
-45. [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) — L, high
-46. [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) — L, high
-47. [Legends' Legacy (Dominaria United Commander)](#legends-legacy-dominaria-united-commander) — L, high
-48. [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — L, high
-49. [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — L, high
-50. [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — L, high
-51. [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — L, high
-52. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
-53. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
-54. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
-55. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
-56. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
-57. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
-58. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
-59. [Difficulty](#difficulty) — S, medium
-60. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
-61. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
-62. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
-63. [Why a press is refused](#why-a-press-is-refused) — S, medium
-64. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
-65. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
-66. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
-67. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
+2. [Quick Draw (Outlaws of Thunder Junction Commander)](#quick-draw-outlaws-of-thunder-junction-commander) — M, high
+3. [Desert Bloom (Outlaws of Thunder Junction Commander)](#desert-bloom-outlaws-of-thunder-junction-commander) — L, high
+4. [Grand Larceny (Outlaws of Thunder Junction Commander)](#grand-larceny-outlaws-of-thunder-junction-commander) — L, high
+5. [Most Wanted (Outlaws of Thunder Junction Commander)](#most-wanted-outlaws-of-thunder-junction-commander) — L, high
+6. [Hail, Caesar (Fallout)](#hail-caesar-fallout) — L, high
+7. [Scrappy Survivors (Fallout)](#scrappy-survivors-fallout) — L, high
+8. [Science! (Fallout)](#science-fallout) — L, high
+9. [Mutant Menace (Fallout)](#mutant-menace-fallout) — L, high
+10. [Deep Clue Sea (Murders at Karlov Manor Commander)](#deep-clue-sea-murders-at-karlov-manor-commander) — L, high
+11. [Revenant Recon (Murders at Karlov Manor Commander)](#revenant-recon-murders-at-karlov-manor-commander) — L, high
+12. [Blame Game (Murders at Karlov Manor Commander)](#blame-game-murders-at-karlov-manor-commander) — L, high
+13. [Deadly Disguise (Murders at Karlov Manor Commander)](#deadly-disguise-murders-at-karlov-manor-commander) — L, high
+14. [Blood Rites (The Lost Caverns of Ixalan Commander)](#blood-rites-the-lost-caverns-of-ixalan-commander) — M, high
+15. [Veloci-Ramp-Tor (The Lost Caverns of Ixalan Commander)](#veloci-ramp-tor-the-lost-caverns-of-ixalan-commander) — L, high
+16. [Ahoy Mateys (The Lost Caverns of Ixalan Commander)](#ahoy-mateys-the-lost-caverns-of-ixalan-commander) — L, high
+17. [Explorers of the Deep (The Lost Caverns of Ixalan Commander)](#explorers-of-the-deep-the-lost-caverns-of-ixalan-commander) — L, high
+18. [Masters of Evil (Doctor Who)](#masters-of-evil-doctor-who) — L, high
+19. [Paradox Power (Doctor Who)](#paradox-power-doctor-who) — L, high
+20. [Blast from the Past (Doctor Who)](#blast-from-the-past-doctor-who) — L, high
+21. [Timey-Wimey (Doctor Who)](#timey-wimey-doctor-who) — L, high
+22. [Fae Dominion (Wilds of Eldraine Commander)](#fae-dominion-wilds-of-eldraine-commander) — L, high
+23. [Virtue and Valor (Wilds of Eldraine Commander)](#virtue-and-valor-wilds-of-eldraine-commander) — L, high
+24. [Riders of Rohan (Tales of Middle-earth Commander)](#riders-of-rohan-tales-of-middle-earth-commander) — S, high
+25. [Food and Fellowship (Tales of Middle-earth Commander)](#food-and-fellowship-tales-of-middle-earth-commander) — L, high
+26. [Elven Council (Tales of Middle-earth Commander)](#elven-council-tales-of-middle-earth-commander) — L, high
+27. [The Hosts of Mordor (Tales of Middle-earth Commander)](#the-hosts-of-mordor-tales-of-middle-earth-commander) — L, high
+28. [Cavalry Charge (March of the Machine Commander)](#cavalry-charge-march-of-the-machine-commander) — L, high
+29. [Divine Convocation (March of the Machine Commander)](#divine-convocation-march-of-the-machine-commander) — L, high
+30. [Tinker Time (March of the Machine Commander)](#tinker-time-march-of-the-machine-commander) — L, high
+31. [Growing Threat (March of the Machine Commander)](#growing-threat-march-of-the-machine-commander) — L, high
+32. [Call for Backup (March of the Machine Commander)](#call-for-backup-march-of-the-machine-commander) — L, high
+33. [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander) — M, high
+34. [Corrupting Influence (Phyrexia: All Will Be One Commander)](#corrupting-influence-phyrexia-all-will-be-one-commander) — L, high
+35. [Draconic Destruction (Starter Commander Decks)](#draconic-destruction-starter-commander-decks) — M, high
+36. [Grave Danger (Starter Commander Decks)](#grave-danger-starter-commander-decks) — M, high
+37. [First Flight (Starter Commander Decks)](#first-flight-starter-commander-decks) — M, high
+38. [Chaos Incarnate (Starter Commander Decks)](#chaos-incarnate-starter-commander-decks) — M, high
+39. [Token Triumph (Starter Commander Decks)](#token-triumph-starter-commander-decks) — L, high
+40. [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) — M, high
+41. [Mishra's Burnished Banner (The Brothers' War Commander)](#mishras-burnished-banner-the-brothers-war-commander) — L, high
+42. [Forces of the Imperium (Warhammer 40,000 Commander)](#forces-of-the-imperium-warhammer-40000-commander) — L, high
+43. [The Ruinous Powers (Warhammer 40,000 Commander)](#the-ruinous-powers-warhammer-40000-commander) — L, high
+44. [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) — L, high
+45. [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) — L, high
+46. [Legends' Legacy (Dominaria United Commander)](#legends-legacy-dominaria-united-commander) — L, high
+47. [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — L, high
+48. [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — L, high
+49. [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — L, high
+50. [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — L, high
+51. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
+52. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
+53. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
+54. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
+55. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
+56. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
+57. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
+58. [Difficulty](#difficulty) — S, medium
+59. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+60. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
+61. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
+62. [Why a press is refused](#why-a-press-is-refused) — S, medium
+63. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
+64. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
+65. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
+66. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
+67. [Experience counters](#experience-counters) — M, medium
 68. [Outcomes as data](#outcomes-as-data) — M, medium
 69. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
 70. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
@@ -237,15 +237,14 @@ same list, and `/extend-roadmap` starts at the top of it.
 72. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
 73. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
 74. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
-75. [Experience counters](#experience-counters) — M, medium
-76. [Replays and sharing](#replays-and-sharing) — M, medium
-77. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-78. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
-79. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
-80. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
-81. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-82. [Archidekt import](#archidekt-import) — S, low
-83. [Sound](#sound) — S, low
+75. [Replays and sharing](#replays-and-sharing) — M, medium
+76. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+77. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
+78. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
+79. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
+80. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+81. [Archidekt import](#archidekt-import) — S, low
+82. [Sound](#sound) — S, low
 
 **Blocked, and by what:**
 
@@ -267,6 +266,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Creative Energy (Modern Horizons 3 Commander)](#creative-energy-modern-horizons-3-commander) — [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability), [Divided damage that may hit players](#divided-damage-that-may-hit-players)
 - [Graveyard Overdrive (Modern Horizons 3 Commander)](#graveyard-overdrive-modern-horizons-3-commander) — [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard)
 - [Tricky Terrain (Modern Horizons 3 Commander)](#tricky-terrain-modern-horizons-3-commander) — [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard)
+- [Eldrazi Incursion (Modern Horizons 3 Commander)](#eldrazi-incursion-modern-horizons-3-commander) — [Experience counters](#experience-counters)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -715,6 +715,70 @@ generated DSL reference lists the new event.
   Pit ships in it? Recommended: plus both, since each is small and the card
   is the gate.
 
+### Experience counters
+
+Effort **M** · Impact **medium**, every experience-counter commander waits on it, Meren of Clan Nel Toth and Ezuri, Claw of Progress among them · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+A player's counters are the kinds in `player.PLAYER_COUNTER_KINDS`, which
+lists poison and energy only. Each kind has its own funnel in
+`primitives` (`add_poison`, `add_energy`), its own field on `PlayerState`,
+its own event (`EventType.ENERGY_ADDED` for energy) and its own readers: `values` reads poison through `max_poison_of`, and
+`Cost.pay_energy` spends energy. `ops_combat_flags` (proliferate) and
+`ops_life.op_lose_all_player_counters` walk `PLAYER_COUNTER_KINDS`, so a new
+kind reaches both once it is listed and funnelled.
+[rules-coverage.md](rules-coverage.md#not-implemented) lists "Experience
+counters (122.1)" as not implemented.
+
+So no card can give a player an experience counter or read how many they
+have. Meren of Clan Nel Toth, the Sultai Arisen precon's card that found it,
+does both; its gap record is `data/authoring/gaps/meren_of_clan_nel_toth.json`.
+The catalog's other experience-counter cards (Ezuri, Claw of Progress,
+Mizzix, Kalemne, Daxos, the Avatar benders) are the same two sentences.
+
+#### The change
+
+1. `experience` joins `PLAYER_COUNTER_KINDS`, with a field on `PlayerState`,
+   an `add_experience` funnel in `primitives` in `add_energy`'s shape (counter
+   replacements applied, then an event of its own), and a key beside poison
+   and energy in the player's serialized view.
+2. An op that gives a player experience counters ("you get an experience
+   counter"), in the shape of `add_energy`.
+3. A value that reads a player's experience counters ("the number of
+   experience counters you have"), usable wherever a value is, in a
+   condition comparing a card's mana value with it (Meren) and in an
+   amount (Ezuri).
+4. Proliferate and "lose all counters" pick the kind up through
+   `PLAYER_COUNTER_KINDS`; a test pins that they do.
+5. Harvest: Meren, then the catalog's other experience-counter cards through
+   one `/author-cards` wave.
+
+It does not add any other player counter kind (rad, ticket), and nothing
+spends experience counters, because no card does.
+
+#### Gate
+
+A unit test under `tests/unit/` for experience counters: the op adds them,
+the value reads them, a mana-value comparison against them resolves both
+ways, proliferate adds one to a player who has any, and losing all counters
+removes them. Meren's six gates pass, and the generated DSL reference
+(`tests/cards/test_dsl_reference.py`) lists the new op and value.
+
+#### Open questions
+
+- **How the counter is stored.** A field of its own on `PlayerState` beside
+  `poison` and `energy`, or a general `counters` mapping on the player that
+  poison and energy later move into? Recommended: a field of its own, the
+  shape the two existing kinds have, so the change stays additive and the
+  general mapping is its own refactor if a fourth kind ever arrives.
+- **Where the client shows it.** Recommended: the same player-counter readout
+  that shows poison and energy, hidden at zero, with no new component; a
+  surface beyond that would need its story and floor (ADR 0013).
+- **Is it an ADR.** Recommended: no; it is one more kind under an existing
+  rule (122.1), and its line moves from "not implemented" to the
+  implemented table in rules-coverage.md.
+
 ### Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number
 
 Effort **M** · Impact **medium**, every Spacecraft in Edge of Eternities waits on it, two in the Counter Intelligence precon and two in World Shaper, whose commander is one · Depends on nothing · Awaiting decisions.
@@ -1019,70 +1083,6 @@ pass.
 - **Is it an ADR.** Recommended: no; it moves an existing announcement to the
   cast line, where divided damage already sits, and the line in
   rules-coverage.md narrows to triggered abilities.
-
-### Experience counters
-
-Effort **M** · Impact **medium**, every experience-counter commander waits on it, Meren of Clan Nel Toth and Ezuri, Claw of Progress among them · Depends on nothing · Awaiting decisions.
-
-#### Today
-
-A player's counters are the kinds in `player.PLAYER_COUNTER_KINDS`, which
-lists poison and energy only. Each kind has its own funnel in
-`primitives` (`add_poison`, `add_energy`), its own field on `PlayerState`,
-its own event (`EventType.ENERGY_ADDED` for energy) and its own readers: `values` reads poison through `max_poison_of`, and
-`Cost.pay_energy` spends energy. `ops_combat_flags` (proliferate) and
-`ops_life.op_lose_all_player_counters` walk `PLAYER_COUNTER_KINDS`, so a new
-kind reaches both once it is listed and funnelled.
-[rules-coverage.md](rules-coverage.md#not-implemented) lists "Experience
-counters (122.1)" as not implemented.
-
-So no card can give a player an experience counter or read how many they
-have. Meren of Clan Nel Toth, the Sultai Arisen precon's card that found it,
-does both; its gap record is `data/authoring/gaps/meren_of_clan_nel_toth.json`.
-The catalog's other experience-counter cards (Ezuri, Claw of Progress,
-Mizzix, Kalemne, Daxos, the Avatar benders) are the same two sentences.
-
-#### The change
-
-1. `experience` joins `PLAYER_COUNTER_KINDS`, with a field on `PlayerState`,
-   an `add_experience` funnel in `primitives` in `add_energy`'s shape (counter
-   replacements applied, then an event of its own), and a key beside poison
-   and energy in the player's serialized view.
-2. An op that gives a player experience counters ("you get an experience
-   counter"), in the shape of `add_energy`.
-3. A value that reads a player's experience counters ("the number of
-   experience counters you have"), usable wherever a value is, in a
-   condition comparing a card's mana value with it (Meren) and in an
-   amount (Ezuri).
-4. Proliferate and "lose all counters" pick the kind up through
-   `PLAYER_COUNTER_KINDS`; a test pins that they do.
-5. Harvest: Meren, then the catalog's other experience-counter cards through
-   one `/author-cards` wave.
-
-It does not add any other player counter kind (rad, ticket), and nothing
-spends experience counters, because no card does.
-
-#### Gate
-
-A unit test under `tests/unit/` for experience counters: the op adds them,
-the value reads them, a mana-value comparison against them resolves both
-ways, proliferate adds one to a player who has any, and losing all counters
-removes them. Meren's six gates pass, and the generated DSL reference
-(`tests/cards/test_dsl_reference.py`) lists the new op and value.
-
-#### Open questions
-
-- **How the counter is stored.** A field of its own on `PlayerState` beside
-  `poison` and `energy`, or a general `counters` mapping on the player that
-  poison and energy later move into? Recommended: a field of its own, the
-  shape the two existing kinds have, so the change stays additive and the
-  general mapping is its own refactor if a fourth kind ever arrives.
-- **Where the client shows it.** Recommended: the same player-counter readout
-  that shows poison and energy, hidden at zero, with no new component; a
-  surface beyond that would need its story and floor (ADR 0013).
-- **Is it an ADR.** Recommended: no; it is one more kind under an existing
-  rule (122.1), and its line moves from "not implemented" to the
-  implemented table in rules-coverage.md.
 
 ### Every creature type means every creature type
 
@@ -2187,7 +2187,7 @@ whole-game test able to draw the deck.
 
 ### Eldrazi Incursion (Modern Horizons 3 Commander)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Experience counters](#experience-counters).
 
 #### Today
 

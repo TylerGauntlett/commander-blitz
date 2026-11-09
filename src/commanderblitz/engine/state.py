@@ -872,6 +872,13 @@ class GameState:
                     if data.get("was_modified"):
                         modified = ledger.modified_creatures_died
                         modified[who] = modified.get(who, 0) + 1
+                    # "…for each **nontoken** creature that died this turn"
+                    # (Gadrak, Vile Redeemer). A token that died is still an
+                    # object here -- state-based actions sweep it later
+                    # (704.5d) -- so its flag is readable as the event fires.
+                    if obj is not None and not obj.is_token:
+                        nontoken = ledger.nontoken_creatures_died
+                        nontoken[who] = nontoken.get(who, 0) + 1
                     # The count is a static's input (`creatures_died_this_turn`),
                     # and `chars` caches per `char_version`. The zone change
                     # bumped it before this event fired, and an answer read in

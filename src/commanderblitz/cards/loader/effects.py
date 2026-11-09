@@ -91,7 +91,7 @@ from .walk import (
 
 #: What `copy_permanent`'s ``except_`` may rewrite -- the copiable values of
 #: 707.9b that a printed exception has needed so far. Replacements: ``colors``,
-#: ``types``, ``power`` and ``toughness``. Additions: ``add_types``,
+#: ``types``, ``subtypes``, ``power`` and ``toughness``. Additions: ``add_types``,
 #: ``add_subtypes`` and ``add_supertypes``. Removals: ``remove_supertypes``,
 #: the only subtraction any printing asks for ("except the token isn't
 #: legendary"). ``add_keywords``, "…and has haste" (Saheeli, Radiant Creator).
@@ -105,6 +105,7 @@ COPY_EXCEPT_KEYS = frozenset(
         "toughness",
         "add_types",
         "add_subtypes",
+        "subtypes",
         "add_supertypes",
         "remove_supertypes",
         "no_mana_cost",
@@ -2707,6 +2708,25 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             for t in overrides["types"]:
                 if t not in KNOWN_TYPES:
                     raise DslError(f"{where}.except_.types: unknown card type {t!r}")
+        if "subtypes" in overrides:
+            # "…except it's a 4/4 black **Zombie**" with no "in addition to its
+            # other types": the token is a Zombie *instead of* its creature
+            # types (205.1b; The Scarab God's ruling). A replacement, the
+            # subtype twin of `types`, so an empty list is a copy stripped of
+            # every subtype by a clause that names one.
+            named = overrides["subtypes"]
+            if not isinstance(named, list) or not named or not all(
+                isinstance(n, str) and n for n in named
+            ):
+                raise DslError(
+                    f"{where}.except_.subtypes: replaces the copy's subtypes, so it "
+                    f"needs a non-empty list of subtype names"
+                )
+            if "add_subtypes" in overrides:
+                raise DslError(
+                    f"{where}.except_: 'subtypes' replaces the subtypes and "
+                    f"'add_subtypes' adds to them -- write the one the printed clause says"
+                )
         if "types" in overrides and "add_types" in overrides:
             # One replaces and one adds, so together they say two different
             # printed lines at once -- the order would be a guess.

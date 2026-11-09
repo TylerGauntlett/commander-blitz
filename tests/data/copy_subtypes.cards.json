@@ -1,0 +1,76 @@
+{
+  "_comment": "Test cards for copy_permanent's except_.subtypes, the replacement of a copy's subtypes (205.1b).",
+  "cards": [
+    {
+      "id": "t_scarab_token",
+      "name": "Test Scarab Token",
+      "oracle_text": "Exile each opponent's graveyard. When you do, choose up to one target creature card exiled this way. Create a token that's a copy of that card, except it's a 4/4 black Zombie.",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "spell_effects": [
+        {
+          "op": "exile",
+          "as": "banished",
+          "objects": {
+            "zone": "graveyard",
+            "controller": "opponent",
+            "count": "all"
+          }
+        },
+        {
+          "op": "reflexive_trigger",
+          "ability": "magicite"
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "reflexive",
+          "id": "magicite",
+          "text": "When you do, choose up to one target creature card exiled this way. Create a token that's a copy of that card, except it's a 4/4 black Zombie.",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "card_in_exile",
+              "count": 1,
+              "optional": true,
+              "selector": {
+                "binding": "banished",
+                "types": [
+                  "Creature"
+                ],
+                "controller": "any"
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "copy_permanent",
+              "objects": {
+                "target": "t1"
+              },
+              "controller": "you",
+              "except_": {
+                "colors": [
+                  "B"
+                ],
+                "power": 4,
+                "toughness": 4,
+                "subtypes": [
+                  "Zombie"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

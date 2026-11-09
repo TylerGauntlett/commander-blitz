@@ -725,6 +725,44 @@ class TestTheArtifactProp:
         assert not pick.is_token
 
 
+class TestTheColorlessPipGetsWastes:
+    """A ``{C}`` pip needs a land that makes colorless mana.
+
+    The mana base is five basics, none of which makes ``{C}``, and generic mana
+    cannot pay it (rule 107.4c): Glaring Fleshraker ({2}{C}) and Eldritch
+    Immunity ({C}) failed gate 4 with "not playable in the sandbox". A basic is
+    swapped for Wastes, one per pip, and only for a card that prints one.
+    """
+
+    VOIDLING = {
+        "id": "auto_test_voidling",
+        "name": "Auto Test Voidling",
+        "oracle_text": "",
+        "mana_cost": "{1}{C}{C}",
+        "types": ["Creature"],
+        "subtypes": ["Eldrazi"],
+        "power": 2,
+        "toughness": 2,
+        "colors": [],
+    }
+
+    def test_a_colorless_pip_is_castable_against_the_hand_written_pool(self, hand_written):
+        """`--collect` verifies against the hand-written cards, which hold no
+        Wastes, so the harness brings its own."""
+        assert "wastes" not in hand_written
+        verdict = V.verify(self.VOIDLING, {"zone": "battlefield", "battlefield_count": 33}, hand_written)
+        assert verdict.ok, verdict.reason
+
+    def test_one_basic_is_swapped_per_pip_and_the_land_count_holds(self, pool):
+        card = V.compile_card(V.CardModel.model_validate(self.VOIDLING))
+        lands = V.swap_in_colorless_sources(pool, V.MANA_BASE, card)
+        assert lands.count("wastes") == 2
+        assert len(lands) == len(V.MANA_BASE)
+
+    def test_a_card_without_the_pip_sees_the_old_mana_base(self, pool):
+        assert V.swap_in_colorless_sources(pool, V.MANA_BASE, pool.get("sol_ring")) == V.MANA_BASE
+
+
 class TestTheLegendarySacrificeProp:
     """A spell that sacrifices a legendary creature to be cast needs one to sacrifice.
 

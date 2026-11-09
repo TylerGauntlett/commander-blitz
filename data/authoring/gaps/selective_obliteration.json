@@ -1,0 +1,18 @@
+{
+  "card_id": "selective_obliteration",
+  "name": "Selective Obliteration",
+  "oracle_text": "Each player chooses a color. Then exile each permanent unless it's colorless or it's only the color its controller chose.",
+  "blocked_sentences": [
+    "Each player chooses a color. Then exile each permanent unless it's colorless or it's only the color its controller chose."
+  ],
+  "needs": [
+    {
+      "capability": "each_player_chooses_color",
+      "kind": "op",
+      "what": "a colour choice made by each player in turn (for_each_player), recorded per player and bindable, plus a selector that matches a permanent whose colours are exactly the single colour its own controller chose (monocoloured in that colour), so 'exile each permanent unless colorless or only the color its controller chose' is an exile over {not colorless, not exactly-controller's-chosen-colour}",
+      "why_existing_wont_do": "choose_color takes only except_colors and prompt: it is asked of the effect's controller, stores the letter on the source object as chosen_color and is read back only through chosen_color_of: self, so it cannot record one choice per player or be compared against each permanent's controller. The selector language has colors, not_colors, colorless and min_colors but no 'exactly this one colour' (max colours) test and no colour keyed to the permanent's controller's choice"
+    }
+  ],
+  "closest_existing": ["choose_color", "for_each_player", "exile"],
+  "confidence": "high"
+}

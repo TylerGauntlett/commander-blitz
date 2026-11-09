@@ -1,0 +1,18 @@
+{
+  "card_id": "corrupted_crossroads",
+  "name": "Corrupted Crossroads",
+  "oracle_text": "{T}: Add {C}. ({C} represents colorless mana.)\n{T}, Pay 1 life: Add one mana of any color. Spend this mana only to cast a spell with devoid.",
+  "blocked_sentences": [
+    "{T}, Pay 1 life: Add one mana of any color. Spend this mana only to cast a spell with devoid."
+  ],
+  "needs": [
+    {
+      "capability": "devoid",
+      "kind": "keyword",
+      "what": "devoid as a real, queryable characteristic of a card/spell (not just 'has no colors'), plus a mana_restriction cast-group predicate such as {\"keyword\": \"devoid\"} so mana can be limited to casting spells with devoid",
+      "why_existing_wont_do": "mana_restriction groups accept only lowercased type/subtype names, {\"chosen_type_of\": \"self\"}, and the predicates mana_value and x_in_mana_cost; there is no keyword predicate, and devoid is not in the keyword list at all (the templates treat it as self-implementing by leaving colors empty). A restriction to colorless spells is not equivalent: it would also fund colorless artifacts and Eldrazi without devoid, a strictly better card"
+    }
+  ],
+  "closest_existing": ["mana_restriction"],
+  "confidence": "high"
+}

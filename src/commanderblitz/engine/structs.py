@@ -1979,6 +1979,11 @@ class TurnLedger:
     #: `was_modified` snapshot, because every limb is gone by the time the
     #: event goes out.
     modified_creatures_died: dict[int, int] = field(default_factory=dict)
+    #: Those of them that were **not tokens**, keyed the same way -- Gadrak, the
+    #: Crown-Scourge's "a Treasure token for each nontoken creature that died
+    #: this turn" and Vile Redeemer's Scions. A trigger counting deaths would
+    #: miss the ones before the card arrived; the ledger saw them all.
+    nontoken_creatures_died: dict[int, int] = field(default_factory=dict)
     #: How many combat phases have **begun** this turn, counting the one in
     #: progress. "If it's the first combat phase of the turn" (Genji Glove,
     #: Aggravated Assault's cousins) is this being 1.
@@ -2490,6 +2495,7 @@ class TurnLedger:
     def clear(self) -> None:
         self.creatures_died.clear()
         self.modified_creatures_died.clear()
+        self.nontoken_creatures_died.clear()
         self.creatures_attacked.clear()
         self.attack_power_this_combat.clear()
         self.opponents_attacked_this_combat.clear()

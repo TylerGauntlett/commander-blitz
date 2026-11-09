@@ -13,7 +13,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Effect ops](#effect-ops) | 171 |
 | [Selectors](#selectors) | 76 |
 | [Player specs](#player-specs) | 9 |
-| [Values](#values) | 71 |
+| [Values](#values) | 72 |
 | [Conditions](#conditions) | 34 |
 | [Trigger events](#trigger-events) | 53 |
 | [Trigger filters](#trigger-filters) | 37 |
@@ -374,6 +374,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `minus` | a - b. | [Value expressions](card-dsl.md#value-expressions) |
 | `modified_creatures_died_this_turn` | Creatures that died this turn while modified (700.9). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `most_sharing_a_name` | The largest group in a pool sharing one name. | [Value expressions](card-dsl.md#value-expressions) |
+| `nontoken_creatures_died_this_turn` | Nontoken creatures that died this turn. | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `opponents_attacked_this_combat` | How many opponents the player declared attackers against this combat, a planeswalker's or battle's controller included (melee). | [Melee](card-dsl-cookbook.md#melee) |
 | `permanents_entered_this_turn` | How many matching permanents entered this turn. | [Which permanents entered the battlefield this turn](card-dsl.md#which-permanents-entered-the-battlefield-this-turn) |
 | `permanents_to_graveyard_this_turn` | Permanents, tokens included, put into any graveyard from the battlefield this turn (gravestorm). | [Gravestorm — permanents put into a graveyard from the battlefield](card-dsl-cookbook.md#gravestorm--permanents-put-into-a-graveyard-from-the-battlefield) |

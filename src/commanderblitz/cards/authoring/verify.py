@@ -510,11 +510,76 @@ def swap_in_artifact_body(
     return [*board[:-1], pick]
 
 
+def colorless_pips(card: CardDef | None) -> int:
+    """How many ``{C}`` pips ``card``'s mana cost prints."""
+    return card.mana_cost.colored[-1] if card is not None else 0
+
+
+def sandbox_wastes() -> CardDef:
+    """The basic Wastes, for a pool that does not hold one.
+
+    `--collect` verifies against the hand-written cards only, and Wastes is an
+    authored card, so the land :func:`swap_in_colorless_sources` names would be
+    missing exactly where the gate runs. The harness brings its own, printed
+    as the basic is, rather than let the two pools verify the same card
+    differently.
+    """
+    return compile_card(
+        CardModel.model_validate(
+            {
+                "id": "wastes",
+                "name": "Wastes",
+                "oracle_text": "{T}: Add {C}.",
+                "supertypes": ["Basic"],
+                "types": ["Land"],
+                "abilities": [
+                    {
+                        "kind": "activated",
+                        "text": "{T}: Add {C}.",
+                        "is_mana_ability": True,
+                        "cost": {"tap": True},
+                        "effects": [{"op": "add_mana", "mana": "{C}"}],
+                    }
+                ],
+            }
+        )
+    )
+
+
+def swap_in_colorless_sources(
+    registry: CardRegistry, lands: list[str], card: CardDef | None
+) -> list[str]:
+    """``lands`` with one basic swapped for Wastes per ``{C}`` pip ``card`` prints.
+
+    The mana base is five basics and none of them makes colorless mana, so a
+    card that costs ``{2}{C}`` could never be cast and failed gate 4 with "not
+    playable in the sandbox". Generic mana cannot pay ``{C}`` (rule 107.4c), so
+    the position, not the card, was wrong. The same terms as the other swaps:
+    **only** for a card with a ``{C}`` pip, a swap rather than an addition so
+    your board stays 32, and each swap takes a basic of a colour the card does
+    not ask for. Returns the lands untouched when the pool has no Wastes, and
+    the card then fails gate 4 honestly; :func:`verify` puts
+    :func:`sandbox_wastes` in its pool so that never happens there.
+    """
+    need = colorless_pips(card)
+    if not need or "wastes" not in registry:
+        return lands
+    assert card is not None
+    colours = ["plains", "island", "swamp", "mountain", "forest"]
+    spare = [land for i, land in enumerate(colours) if not card.mana_cost.colored[i]]
+    out = list(lands)
+    for n in range(need):
+        if not spare:
+            break
+        out[out.index(spare[n % len(spare)])] = "wastes"
+    return out
+
+
 def build_sandbox(registry: CardRegistry, card_id: str, *, in_hand: bool = True) -> Game:
     """A fixed position with the card under test in hand."""
     builder = GameBuilder(registry, players=2, seed=1)
     under_test = registry.get(card_id) if card_id in registry else None
-    builder.battlefield(0, MANA_BASE)
+    builder.battlefield(0, swap_in_colorless_sources(registry, MANA_BASE, under_test))
     builder.battlefield(0, _own_board(registry, under_test))
     acts = under_test is not None and any(
         (a.is_activated and not a.is_mana_ability) or a.is_triggered
@@ -1169,6 +1234,8 @@ def verify(
                 return verdict
             pool[extra_card.id] = extra_card
 
+        if colorless_pips(card) and "wastes" not in pool:
+            pool["wastes"] = sandbox_wastes()
         link_faces(pool)
         merged = CardRegistry(pool)
         validate_token_references({c.id: c for c in merged})

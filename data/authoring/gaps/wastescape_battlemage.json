@@ -1,0 +1,20 @@
+{
+  "card_id": "wastescape_battlemage",
+  "name": "Wastescape Battlemage",
+  "oracle_text": "Kicker {G} and/or {1}{U}\nWhen you cast this spell, if it was kicked with its {G} kicker, exile target artifact or enchantment an opponent controls.\nWhen you cast this spell, if it was kicked with its {1}{U} kicker, return target creature an opponent controls to its owner's hand.",
+  "blocked_sentences": [
+    "Kicker {G} and/or {1}{U}",
+    "When you cast this spell, if it was kicked with its {G} kicker, exile target artifact or enchantment an opponent controls.",
+    "When you cast this spell, if it was kicked with its {1}{U} kicker, return target creature an opponent controls to its owner's hand."
+  ],
+  "needs": [
+    {
+      "capability": "multiple_kicker",
+      "kind": "cost",
+      "what": "A card-level list of independent kicker costs (702.33c 'Kicker [cost 1] and/or [cost 2]'): the caster may pay any subset of them, including none, as the spell is cast, plus a condition that asks which specific kicker was paid (e.g. {\"kicked\": 0} / {\"kicked\": 1}) readable from a spell_cast trigger's condition and from effects",
+      "why_existing_wont_do": "`kicker` is a single mana string and the `kicked` condition is one bool, so it cannot say which of two kickers was paid. `spree` takes a subset of priced modes but requires a non-empty subset (the unkicked cast would be lost). `additional_cost_options` with `additional_optional` is exclusive (one branch), so paying both kickers is impossible. `multikicker` is one price paid N times, not two distinct prices with distinct effects"
+    }
+  ],
+  "closest_existing": ["kicker", "spree", "additional_cost_options"],
+  "confidence": "high"
+}

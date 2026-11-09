@@ -1,0 +1,18 @@
+{
+  "card_id": "ulalek_fused_atrocity",
+  "name": "Ulalek, Fused Atrocity",
+  "oracle_text": "Devoid (This card has no color.)\nWhenever you cast an Eldrazi spell, you may pay {C}{C}. If you do, copy all spells you control, then copy all other activated and triggered abilities you control. You may choose new targets for the copies. (Mana abilities can't be copied.)",
+  "blocked_sentences": [
+    "Whenever you cast an Eldrazi spell, you may pay {C}{C}. If you do, copy all spells you control, then copy all other activated and triggered abilities you control. You may choose new targets for the copies"
+  ],
+  "needs": [
+    {
+      "capability": "copy_all_on_stack",
+      "kind": "op",
+      "what": "a mass-copy over the stack: copy every spell you control on the stack (new_targets per copy), then copy every activated and triggered ability you control on the stack except the resolving ability itself (new_targets per copy), mana abilities excluded",
+      "why_existing_wont_do": "copy_spell names exactly one spell (its `sid` value, a `target`, or the triggering spell) and copy_ability copies only the stack items chosen as its `target`; there is no stack-zone selector or for_each over stack items that binds each sid, so 'all spells you control' and 'all other activated and triggered abilities you control' cannot be enumerated, and targeting a fixed number of them would be a different card"
+    }
+  ],
+  "closest_existing": ["copy_spell", "copy_ability"],
+  "confidence": "high"
+}

@@ -644,6 +644,7 @@ VALUES: dict[str, Entry] = {
     "counters_on": ("Counters of a kind (or \"any\", every kind) on the objects a selector finds.", None),
     "creatures_died_this_turn": ("Creatures that died this turn (morbid).", H_LEDGER),
     "modified_creatures_died_this_turn": ("Creatures that died this turn while modified (700.9).", H_LEDGER),
+    "nontoken_creatures_died_this_turn": ("Nontoken creatures that died this turn.", H_LEDGER),
     "creatures_you_control": ("Creatures the player controls.", None),
     "damage_taken_this_turn": ("Damage the player was dealt this turn, summed over a plural spec (bloodthirst).", H_LEDGER),
     "damage_dealt_to_this_turn": ("Damage dealt this turn to one permanent (`to`, an object reference), by sources a player spec (`by`) controlled as it was dealt; readable after the permanent has left.",

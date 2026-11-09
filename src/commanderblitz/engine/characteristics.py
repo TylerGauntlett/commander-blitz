@@ -556,6 +556,14 @@ def _compute(state: GameState, oid: int) -> Characteristics:
     # what this object is, not an effect on it, so an anthem or an animate
     # afterwards should layer on top exactly as it would on a printed card.
     if obj.copy_overrides:
+        if (renamed := obj.copy_overrides.get("subtypes")) is not None:
+            # "…except it's a 4/4 black **Zombie**." No "in addition to its
+            # other types", so the copy is a Zombie *instead of* its creature
+            # types (205.1b): The Scarab God's token of a Llanowar Elves is no
+            # Elf, and an Elf lord does not pump it. A replacement, so a union
+            # would leave a Zombie Elf Druid -- a better card than the printed
+            # one on every Elf-matters board.
+            subtypes = set(renamed)
         if added := obj.copy_overrides.get("add_subtypes"):
             subtypes.update(added)
         if added_keywords := obj.copy_overrides.get("add_keywords"):

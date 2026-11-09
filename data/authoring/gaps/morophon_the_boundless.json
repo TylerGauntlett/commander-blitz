@@ -1,0 +1,18 @@
+{
+  "card_id": "morophon_the_boundless",
+  "name": "Morophon, the Boundless",
+  "oracle_text": "Changeling (This card is every creature type.)\nAs Morophon enters, choose a creature type.\nSpells of the chosen type you cast cost {W}{U}{B}{R}{G} less to cast. This effect reduces only the amount of colored mana you pay.\nOther creatures you control of the chosen type get +1/+1.",
+  "blocked_sentences": [
+    "Spells of the chosen type you cast cost {W}{U}{B}{R}{G} less to cast. This effect reduces only the amount of colored mana you pay."
+  ],
+  "needs": [
+    {
+      "capability": "colored_cost_reduction",
+      "kind": "static_effect",
+      "what": "a spell_cost_reduction whose discount is a set of colored mana symbols ({W}{U}{B}{R}{G}) rather than a generic number: each listed symbol removes one matching colored pip from the spell's cost if present, never touching generic mana and never reducing a color the cost does not contain; affects_spells must accept subtypes [{\"chosen_type_of\": \"self\"}] as Herald's Horn already does",
+      "why_existing_wont_do": "The spell_cost_reduction static (player_statics.spell_cost_reduction and cost_reduction.cost_reduction) takes only an integer `amount` and is generic-only by design ('Generic only, and never below zero'); writing amount 5 would instead knock {5} off the generic part, which is a different and much stronger card (it would make Morophon's own deck's colorless/generic-heavy spells near free and not reduce colored pips at all). No cost_reduction_keys entry names colored symbols."
+    }
+  ],
+  "closest_existing": ["spell_cost_reduction", "cost_reduction"],
+  "confidence": "high"
+}

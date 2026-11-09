@@ -147,6 +147,7 @@ def spell_purpose(card: CardDef) -> SpendPurpose:
         ),
         mana_value=card.mana_value,
         x_in_mana_cost=card.mana_cost.x_count > 0,
+        colorless=not card.colors,
     )
 
 
@@ -180,8 +181,10 @@ def ability_purpose(state: GameState, oid: int) -> SpendPurpose:
     if obj.on_battlefield:
         c = chars(state, oid)
         names = (*c.types, *c.subtypes, *c.supertypes)
+        colors = c.colors
     else:
         names = (*card.types, *card.subtypes, *card.supertypes)
+        colors = card.colors
     # The cost predicates are answered here too, off the printed face, rather
     # than left `None`. A source has a mana value and a printed cost whether or
     # not any card asks about them, and answering honestly means the day one
@@ -192,6 +195,7 @@ def ability_purpose(state: GameState, oid: int) -> SpendPurpose:
         names=frozenset(t.lower() for t in names),
         mana_value=card.mana_value,
         x_in_mana_cost=card.mana_cost.x_count > 0,
+        colorless=not colors,
     )
 
 
