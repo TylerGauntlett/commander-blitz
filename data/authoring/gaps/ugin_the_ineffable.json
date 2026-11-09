@@ -1,0 +1,18 @@
+{
+  "card_id": "ugin_the_ineffable",
+  "name": "Ugin, the Ineffable",
+  "oracle_text": "Colorless spells you cast cost {2} less to cast.\n+1: Exile the top card of your library face down and look at it. Create a 2/2 colorless Spirit creature token. When that token leaves the battlefield, put the exiled card into your hand.\n−3: Destroy target permanent that's one or more colors.",
+  "blocked_sentences": [
+    "+1: Exile the top card of your library face down and look at it. Create a 2/2 colorless Spirit creature token. When that token leaves the battlefield, put the exiled card into your hand."
+  ],
+  "needs": [
+    {
+      "capability": "spirit_2_2_c",
+      "kind": "token",
+      "what": "a 2/2 colorless Spirit creature token (no abilities; not an artifact)",
+      "why_existing_wont_do": "token_ids has spirit_1_1_c (1/1 colorless Spirit) and spirit_2_2_w (2/2 white Spirit), neither of which is a 2/2 colorless Spirit; substituting either changes the token's size or color, and color matters to Ugin's own -3 and to colorless-matters effects. The rest of the line looks sayable once the token exists: look_at_top amount 1 with destination exile, face_down and `as`, create_token with `as`, then a delayed_trigger (duration until_it_fires, trigger event leaves_battlefield with subject bound to the token) whose effect returns the bound exiled card to hand -- the worker who closes the token should verify the delayed trigger can read the exile binding."
+    }
+  ],
+  "closest_existing": ["spirit_1_1_c", "spirit_2_2_w"],
+  "confidence": "high"
+}

@@ -1,0 +1,18 @@
+{
+  "card_id": "suffer_the_past",
+  "name": "Suffer the Past",
+  "oracle_text": "Exile X target cards from target player's graveyard. For each card exiled this way, that player loses 1 life and you gain 1 life.",
+  "blocked_sentences": [
+    "Exile X target cards from target player's graveyard."
+  ],
+  "needs": [
+    {
+      "capability": "x_sized_linked_targets",
+      "kind": "engine",
+      "what": "An X-sized spell target (count {\"x\": true}) whose selector names a sibling target declared before it -- {\"kind\": \"card_in_graveyard\", \"count\": {\"x\": true}, \"selector\": {\"zone\": \"graveyard\", \"player\": {\"target\": \"graveyard_owner\"}}} after a {\"kind\": \"player\"} target -- so the X cards are chosen from the graveyard of the player already picked. Game._ask_x_targets must pass the already-declared refs (the `chosen` mapping enumerate_target_tuples uses for linked specs) into targeting.candidates, and resolution must re-check the link",
+      "why_existing_wont_do": "Both halves load and pass gates 1-3: linked siblings work for fixed-size specs (enumerate_target_tuples grows partials with `chosen`), and X-sized specs work alone (Curse of the Swine, Crackle with Power). But Game._ask_x_targets calls candidates(state, pid, spec, oid) with no `chosen`, so a selector reading {\"target\": \"graveyard_owner\"} resolves against no answer and offers nothing. Verified with verify(): the cast targets P0, X is announced as 20, zero cards are targeted, nothing is exiled and no life changes (graveyard_size stays 3) -- the card would be inert. Dropping the link (controller \"any\") would let the X cards come from several graveyards, which is a different card"
+    }
+  ],
+  "closest_existing": ["curse_of_the_swine", "crackle_with_power", "grey_host_reinforcements"],
+  "confidence": "high"
+}

@@ -1,0 +1,18 @@
+{
+  "card_id": "benthic_anomaly",
+  "name": "Benthic Anomaly",
+  "oracle_text": "Devoid (This card has no color.)\nWhen you cast this spell, for each opponent, choose a creature that player controls. Create a token that's a copy of one of those creatures, except its power is equal to the total power of those creatures, its toughness is equal to the total toughness of those creatures, and it's a colorless Eldrazi creature.",
+  "blocked_sentences": [
+    "When you cast this spell, for each opponent, choose a creature that player controls. Create a token that's a copy of one of those creatures, except its power is equal to the total power of those creatures, its toughness is equal to the total toughness of those creatures, and it's a colorless Eldrazi creature."
+  ],
+  "needs": [
+    {
+      "capability": "copy_set_subtypes",
+      "kind": "op",
+      "what": "a copy_permanent except_ key that REPLACES the copy's subtypes (\"except ... it's a colorless Eldrazi creature\": per 205.1b the token's creature types become exactly Eldrazi, losing the copied creature's own creature types), alongside the existing colors/types/power/toughness overrides read in characteristics._compute",
+      "why_existing_wont_do": "COPY_EXCEPT_KEYS (cards/loader/effects.py) has colors: [] for colorless, types: [Creature], and power/toughness as value expressions (summable via power_of {objects: {binding: chosen}} over an accumulating choose_permanents binding inside for_each_player each_opponent), but for subtypes only add_subtypes, which unions Eldrazi onto the copied creature's types -- a copy of a Human Wizard would stay a Human Wizard Eldrazi, a subtly different card for tribal interactions. The rest of the line (spell_cast self trigger on the stack, per-opponent choice, choosing one of the chosen to copy) is expressible."
+    }
+  ],
+  "closest_existing": ["copy_permanent", "add_subtypes", "choose_permanents"],
+  "confidence": "high"
+}

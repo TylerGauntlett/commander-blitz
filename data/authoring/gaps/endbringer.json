@@ -1,0 +1,18 @@
+{
+  "card_id": "endbringer",
+  "name": "Endbringer",
+  "oracle_text": "Untap this creature during each other player's untap step.\n{T}: This creature deals 1 damage to any target.\n{C}, {T}: Target creature can't attack or block this turn.\n{C}{C}, {T}: Draw a card.",
+  "blocked_sentences": [
+    "{C}, {T}: Target creature can't attack or block this turn."
+  ],
+  "needs": [
+    {
+      "capability": "cant_attack_this_turn",
+      "kind": "op",
+      "what": "a one-shot effect that makes the objects it names (here a targeted creature) unable to attack at all -- any player, planeswalker or battle -- until end of turn; paired with the existing cant_block op (duration this_turn) it says \"target creature can't attack or block this turn\"",
+      "why_existing_wont_do": "cant_block covers the block half only. cant_attack_player with `objects` supports only the `while_counter` and `next_combat` durations (next_combat outlives this turn when the creature's controller has no further combat this turn, so it would lock the creature on its controller's next turn), and with `attacker` it restricts a whole player, not one creature. The `cant_attack` static lasts while its source is on the battlefield and can only read printed characteristics, so it cannot name a target or a turn. detain lasts until your next turn and also stops activated abilities; granting defender changes the creature's keywords. None is exact."
+    }
+  ],
+  "closest_existing": ["cant_attack_player", "cant_block", "detain"],
+  "confidence": "high"
+}

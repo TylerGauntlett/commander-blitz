@@ -10,13 +10,14 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**280 cards** blocked by **251** capabilities.
+**306 cards** blocked by **269** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [put-into-graveyard-from-anywhere](#put-into-graveyard-from-anywhere) | 9 | 256 | trigger_event |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
+| [eldrazi-scion-token](#eldrazi-scion-token) | 7 | 2044 | token |
 | [rooms](#rooms) | 6 | 4163 | engine |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
@@ -36,11 +37,14 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-from-library-top-unrestricted](#cast-from-library-top-unrestricted) | 2 | 1913 | static_effect |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
+| [colorless-mana-restriction](#colorless-mana-restriction) | 2 | 1210 | value |
 | [council-s-dilemma](#council-s-dilemma) | 2 | 4067 | decision |
 | [devotion](#devotion) | 2 | 2401 | value |
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
+| [experience-counters](#experience-counters) | 2 | 1480 | engine |
 | [face-down-filter](#face-down-filter) | 2 | 5772 | selector |
 | [manifest-dread](#manifest-dread) | 2 | 5772 | op |
+| [nontoken-creatures-died-this-turn](#nontoken-creatures-died-this-turn) | 2 | 3951 | value |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
 | [remove-x-counters-cost](#remove-x-counters-cost) | 2 | 5399 | cost |
@@ -60,6 +64,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
 | [all-creature-types](#all-creature-types) | 1 | 4942 | static_effect |
+| [annihilator-grant](#annihilator-grant) | 1 | 3758 | op |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [attack-tax-x-count](#attack-tax-x-count) | 1 | 671 | value |
 | [attacking-opponents-of-player](#attacking-opponents-of-player) | 1 | 705 | selector |
@@ -67,13 +72,17 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [batched-combat-damage-amount](#batched-combat-damage-amount) | 1 | 3943 | value |
 | [block-restriction-relative-power](#block-restriction-relative-power) | 1 | 6993 | static_effect |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
+| [bloodthirst](#bloodthirst) | 1 | 6438 | keyword |
 | [can-block-only](#can-block-only) | 1 | 2673 | static_effect |
+| [cant-attack-this-turn](#cant-attack-this-turn) | 1 | 2358 | op |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cards-exiled-trigger](#cards-exiled-trigger) | 1 | 1303 | trigger_event |
 | [cards-put-into-graveyard-from-library](#cards-put-into-graveyard-from-library) | 1 | 6299 | trigger_event |
 | [cards-to-your-graveyard-from-zones-this-turn](#cards-to-your-graveyard-from-zones-this-turn) | 1 | 7412 | value |
+| [cast-exiled-for-life-equal-to-mana-value](#cast-exiled-for-life-equal-to-mana-value) | 1 | 7161 | op |
 | [cast-from-hand-result](#cast-from-hand-result) | 1 | 7016 | op |
 | [cast-from-library-top-additional-cost](#cast-from-library-top-additional-cost) | 1 | 5828 | static_effect |
+| [cast-from-library-top-colorless](#cast-from-library-top-colorless) | 1 | 414 | selector |
 | [cast-restriction-self](#cast-restriction-self) | 1 | 2559 | engine |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [cast-trigger-reads-x](#cast-trigger-reads-x) | 1 | 3909 | value |
@@ -83,13 +92,16 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [chosen-card-type-cost-reduction](#chosen-card-type-cost-reduction) | 1 | 611 | static_effect |
 | [chosen-number](#chosen-number) | 1 | 1610 | engine |
 | [chosen-player](#chosen-player) | 1 | 6383 | selector |
+| [colored-cost-reduction](#colored-cost-reduction) | 1 | 1541 | static_effect |
 | [combat-damage-amount-binding](#combat-damage-amount-binding) | 1 | 8933 | value |
 | [companion](#companion) | 1 | 3861 | engine |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [conditional-play-exiled-with-source](#conditional-play-exiled-with-source) | 1 | 4225 | static_effect |
 | [control-while-has-counter](#control-while-has-counter) | 1 | 10319 | op |
 | [convoke](#convoke) | 1 | 11110 | cost |
+| [copy-all-on-stack](#copy-all-on-stack) | 1 | 4558 | op |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
+| [copy-set-subtypes](#copy-set-subtypes) | 1 | 4038 | op |
 | [copy-spell-forced-target](#copy-spell-forced-target) | 1 | 13586 | op |
 | [copy-this-spell-on-resolution](#copy-this-spell-on-resolution) | 1 | 338 | op |
 | [cost-reduction-per-attacker-this-turn](#cost-reduction-per-attacker-this-turn) | 1 | 9578 | value |
@@ -102,11 +114,13 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [delayed-trigger-filter](#delayed-trigger-filter) | 1 | 12175 | trigger_event |
 | [demon-token-5-5-b-flying](#demon-token-5-5-b-flying) | 1 | 7993 | token |
 | [devil-token](#devil-token) | 1 | 4163 | token |
+| [devoid](#devoid) | 1 | 6026 | keyword |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [distribute-counters-spell](#distribute-counters-spell) | 1 | 6993 | op |
 | [divided-damage-on-activated](#divided-damage-on-activated) | 1 | 13459 | engine |
 | [double-x](#double-x) | 1 | 2672 | op |
 | [dragon-egg-0-2-r-defender-token](#dragon-egg-0-2-r-defender-token) | 1 | 3556 | token |
+| [each-player-chooses-color](#each-player-chooses-color) | 1 | 3587 | op |
 | [echo](#echo) | 1 | 961 | keyword |
 | [elemental-1-1-r](#elemental-1-1-r) | 1 | 811 | token |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
@@ -128,7 +142,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [exile-x-from-graveyard-cost](#exile-x-from-graveyard-cost) | 1 | 17252 | cost |
 | [exiled-this-way-lki](#exiled-this-way-lki) | 1 | 6960 | value |
-| [experience-counters](#experience-counters) | 1 | 1480 | engine |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [face-down-counters-pt](#face-down-counters-pt) | 1 | 6774 | engine |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
@@ -189,11 +202,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mode-owned-variable-targets-mid-declaration](#mode-owned-variable-targets-mid-declaration) | 1 | 16968 | engine |
 | [modified](#modified) | 1 | 831 | selector |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
+| [multiple-kicker](#multiple-kicker) | 1 | 7023 | cost |
 | [necron-warrior-token](#necron-warrior-token) | 1 | 4207 | token |
+| [next-spell-cost-reduction](#next-spell-cost-reduction) | 1 | 8432 | op |
 | [no-mana-cost](#no-mana-cost) | 1 | 2978 | engine |
 | [nonbasic-land-type](#nonbasic-land-type) | 1 | 10422 | selector |
 | [noncombat-damage-trigger](#noncombat-damage-trigger) | 1 | 6793 | trigger_event |
-| [nontoken-creatures-died-this-turn](#nontoken-creatures-died-this-turn) | 1 | 3951 | value |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [offspring](#offspring) | 1 | 6566 | keyword |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
@@ -211,6 +225,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
 | [prime-number](#prime-number) | 1 | 11527 | value |
 | [primo-the-indivisible](#primo-the-indivisible) | 1 | 11527 | token |
+| [process](#process) | 1 | 14187 | cost |
 | [proliferate-binding](#proliferate-binding) | 1 | 957 | op |
 | [protection-from-multicolored](#protection-from-multicolored) | 1 | 1516 | static_effect |
 | [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
@@ -238,9 +253,11 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
+| [spirit-2-2-c](#spirit-2-2-c) | 1 | 1073 | token |
 | [stack-wipe](#stack-wipe) | 1 | 8784 | op |
 | [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
+| [switch-power-toughness](#switch-power-toughness) | 1 | 10418 | op |
 | [target-if-cast-during](#target-if-cast-during) | 1 | 1524 | selector |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
@@ -263,6 +280,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [x-cost-mana-restriction](#x-cost-mana-restriction) | 1 | 4046 | decision |
 | [x-minimum](#x-minimum) | 1 | 2447 | cost |
 | [x-sized-ability-targets](#x-sized-ability-targets) | 1 | 1668 | engine |
+| [x-sized-linked-targets](#x-sized-linked-targets) | 1 | 12855 | engine |
 | [x-starting-loyalty](#x-starting-loyalty) | 1 | 6660 | engine |
 | [zombie-warrior-4-4-b-vigilance](#zombie-warrior-4-4-b-vigilance) | 1 | 2449 | token |
 
@@ -426,6 +444,44 @@ Blocks **8** cards.
   - Prevent all combat damage that would be dealt to this creature by Walls.
 - **Enchanted Being** (rank 31748) — `enchanted_being`
   - Prevent all combat damage that would be dealt to this creature by enchanted creatures.
+
+</details>
+
+## eldrazi-scion-token
+
+Blocks **7** cards.
+
+- **(token)** a 1/1 colorless Eldrazi Scion creature token with "Sacrifice this token: Add {C}." (e.g. id eldrazi_scion_1_1_c)
+  <br>Why the existing vocabulary won't do: token_ids has eldrazi_spawn_0_1_c (a 0/1 Eldrazi Spawn with the same mana ability) but no Eldrazi Scion; a 0/1 Spawn is not a 1/1 Scion and would also not be matched by the card's own 'Sacrifice an Eldrazi Scion' cost. The rest of the card is expressible: Devoid is colors: [], and the last line is an activated ability with cost sacrifice {subtypes: [Eldrazi, Scion]} and a tap op on a creature target.
+- **(token)** a 1/1 colorless Eldrazi Scion creature token with "Sacrifice this token: Add {C}."
+  <br>Why the existing vocabulary won't do: token_ids has eldrazi_spawn_0_1_c (a 0/1 Eldrazi Spawn with the same mana ability) but no 1/1 Eldrazi Scion; a Spawn differs in toughness, power and creature type, so substituting it is a different card
+- **(token)** a 1/1 colorless Eldrazi Scion creature token with "Sacrifice this token: Add {C}." (e.g. id eldrazi_scion_1_1_c)
+  <br>Why the existing vocabulary won't do: token_ids has eldrazi_spawn_0_1_c (a 0/1 Eldrazi Spawn with the same mana ability) but no Eldrazi Scion; a 0/1 Spawn is not a 1/1 Scion. The rest of the card is expressible: Devoid is colors: [], and the trigger is a creature_dies trigger with filter {controller: you, types: [Creature], is_token: false, exclude_self: true} creating the token.
+- **(token)** a 1/1 colorless Eldrazi Scion creature token with "Sacrifice this token: Add {C}." (e.g. id eldrazi_scion_1_1_c)
+  <br>Why the existing vocabulary won't do: token_ids has eldrazi_spawn_0_1_c (a 0/1 Eldrazi Spawn with the same mana ability) but no Eldrazi Scion; a 0/1 Spawn is not a 1/1 Scion. The rest of the card (end_step trigger with an up-to-one graveyard target of an Eldrazi creature card, return_to_hand) is expressible once the token exists
+- **(token)** a 1/1 colorless Eldrazi Scion creature token with "Sacrifice this token: Add {C}." (e.g. id eldrazi_scion_1_1_c)
+  <br>Why the existing vocabulary won't do: token_ids has eldrazi_spawn_0_1_c (a 0/1 Eldrazi Spawn with the same mana ability) but no Eldrazi Scion; a 0/1 Spawn is not a 1/1 Scion. The rest of the line (cost {6} + tap + sacrifice self, create_token amount 3) is expressible once the token exists
+- **(token)** a 1/1 colorless Eldrazi Scion creature token with "Sacrifice this token: Add {C}."
+  <br>Why the existing vocabulary won't do: token_ids has eldrazi_spawn_0_1_c (a 0/1 Spawn with the same mana ability) but no 1/1 Eldrazi Scion; substituting the Spawn would make the wrong creature
+- **(token)** a 1/1 colorless Eldrazi Scion creature token with "Sacrifice this token: Add {C}." (e.g. id eldrazi_scion_1_1_c)
+  <br>Why the existing vocabulary won't do: token_ids has eldrazi_spawn_0_1_c (a 0/1 Eldrazi Spawn with the same mana ability) but no Eldrazi Scion; a 0/1 Spawn is not a 1/1 Scion. The rest of the card is expressible: a top-level choose_mode with mode-owned targets, an exile of a creature target whose selector is any_of [{power <= 1}, {toughness <= 1}], and a counter of a spell target with types [Sorcery].
+
+<details><summary>Cards waiting on this</summary>
+
+- **Warping Wail** (rank 2044) — `warping_wail`
+  - • Create a 1/1 colorless Eldrazi Scion creature token. It has "Sacrifice this token: Add {C}."
+- **Eldrazi Confluence** (rank 2655) — `eldrazi_confluence`
+  - • Create a 1/1 colorless Eldrazi Scion creature token with "Sacrifice this token: Add {C}."
+- **Spawnbed Protector** (rank 2973) — `spawnbed_protector`
+  - Create two 1/1 colorless Eldrazi Scion creature tokens with "Sacrifice this token: Add {C}."
+- **Sifter of Skulls** (rank 3512) — `sifter_of_skulls`
+  - Whenever another nontoken creature you control dies, create a 1/1 colorless Eldrazi Scion creature token. It has "Sacrifice this token: Add {C}."
+- **Spawning Bed** (rank 4532) — `spawning_bed`
+  - {6}, {T}, Sacrifice this land: Create three 1/1 colorless Eldrazi Scion creature tokens. They have "Sacrifice this token: Add {C}."
+- **Drowner of Hope** (rank 7751) — `drowner_of_hope`
+  - When this creature enters, create two 1/1 colorless Eldrazi Scion creature tokens. They have "Sacrifice this token: Add {C}."
+- **Vile Redeemer** (rank 10435) — `vile_redeemer`
+  - When you cast this spell, you may pay {C}. If you do, create a 1/1 colorless Eldrazi Scion creature token for each nontoken creature that died under your control this turn. Those tokens have "Sacrifice this token: Add {C}."
 
 </details>
 
@@ -905,6 +961,24 @@ Blocks **2** cards.
 
 </details>
 
+## colorless-mana-restriction
+
+Blocks **2** cards.
+
+- **(value)** a colour predicate inside a mana_restriction group, e.g. {"colorless": true}, so a group can be the all-of ["eldrazi", {"colorless": true}] on both the cast half (the spell's colours) and the activate half (the source's current colours)
+  <br>Why the existing vocabulary won't do: mana_restriction groups match only lowercased types/subtypes/supertypes (costs.spell_purpose / ability_purpose build SpendPurpose.names from types, subtypes and supertypes) plus the mana_value and x_in_mana_cost predicates (RESTRICTION_PREDICATES). Colour is not in SpendPurpose, so a literal "colorless" name matches nothing and makes the mana unspendable, while {"cast": [["eldrazi"]], "activate": [["eldrazi"]]} drops the colorless clause and funds coloured Eldrazi too -- a strictly better card than printed
+- **(value)** a colour predicate inside a mana_restriction group, e.g. {"colorless": true}, so this ability's restriction can be {"cast": [[{"colorless": true}]]} -- the spell being cast must have no colours
+  <br>Why the existing vocabulary won't do: mana_restriction groups match only lowercased types/subtypes/supertypes (costs.spell_purpose builds SpendPurpose.names from types, subtypes and supertypes) plus the mana_value and x_in_mana_cost predicates (RESTRICTION_PREDICATES). Colour is not in SpendPurpose, so a literal "colorless" name matches nothing and makes the mana unspendable, and omitting the restriction funds every spell -- a strictly better card than printed. The 'activate only if you control seven or more lands' clause looks expressible as the ability's condition; the restriction alone blocks the line
+
+<details><summary>Cards waiting on this</summary>
+
+- **Shrine of the Forsaken Gods** (rank 1210) — `shrine_of_the_forsaken_gods`
+  - {T}: Add {C}{C}. Spend this mana only to cast colorless spells. Activate only if you control seven or more lands.
+- **Eldrazi Temple** (rank 1700) — `eldrazi_temple`
+  - {T}: Add {C}{C}. Spend this mana only to cast colorless Eldrazi spells or activate abilities of colorless Eldrazi.
+
+</details>
+
 ## council-s-dilemma
 
 Blocks **2** cards.
@@ -963,6 +1037,26 @@ Blocks **2** cards.
 
 </details>
 
+## experience-counters
+
+Blocks **2** cards.
+
+- **(engine)** an experience counter kind on players (122.1): a PlayerState field listed in PLAYER_COUNTER_KINDS so proliferate and lose_all_player_counters see it, an op that gives a player N experience counters (like add_poison/add_energy), and a value that reads how many experience counters a player has, usable as a pump amount (+X/+X where X is your experience counters)
+  <br>Why the existing vocabulary won't do: PLAYER_COUNTER_KINDS carries only poison and energy; add_poison and add_energy are fixed to those kinds, add_counters puts counters on objects not players, and counters_on reads object counters, so neither giving nor reading an experience counter can be said. Substituting energy would let other energy cards spend Azlask's experience, a different card. The rest of the card (dies trigger with self_only/colorless any_of filter, pump, grant_keyword indestructible and annihilator to Scion/Spawn subtypes) is expressible once the counter exists
+- **(engine)** an experience counter kind on players (122.1): a PlayerState field listed in PLAYER_COUNTER_KINDS so proliferate and lose_all_player_counters see it, an op that gives a player N experience counters (like add_poison/add_energy), and a value that reads how many experience counters a player has, for comparison against mana_value_of a target
+  <br>Why the existing vocabulary won't do: PLAYER_COUNTER_KINDS carries only poison and energy; add_poison and add_energy are fixed to those kinds, add_counters puts counters on objects not players, and counters_on reads object counters, so neither giving nor reading an experience counter can be said. Substituting energy would let other energy cards spend Meren's experience, a different card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Meren of Clan Nel Toth** (rank 1480) — `meren_of_clan_nel_toth`
+  - Whenever another creature you control dies, you get an experience counter.
+  - At the beginning of your end step, choose target creature card in your graveyard. If that card's mana value is less than or equal to the number of experience counters you have, return it to the battlefield. Otherwise, put it into your hand.
+- **Azlask, the Swelling Scourge** (rank 6315) — `azlask_the_swelling_scourge`
+  - Whenever Azlask or another colorless creature you control dies, you get an experience counter.
+  - {W}{U}{B}{R}{G}: Creatures you control get +X/+X until end of turn, where X is the number of experience counters you have. Scions and Spawns you control gain indestructible and annihilator 1 until end of turn.
+
+</details>
+
 ## face-down-filter
 
 Blocks **2** cards.
@@ -998,6 +1092,24 @@ Blocks **2** cards.
   - When you unlock this door, manifest dread, then put two +1/+1 counters and a trample counter on that creature.
   - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
   - Whenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it.
+
+</details>
+
+## nontoken-creatures-died-this-turn
+
+Blocks **2** cards.
+
+- **(value)** a value reading the turn ledger for how many NONTOKEN creatures died this turn (any controller), e.g. {"nontoken_creatures_died_this_turn": "all"}, counted in GameState's DIES ledger update only when the dying object was not a token
+  <br>Why the existing vocabulary won't do: creatures_died_this_turn counts every creature death including tokens (state.py's DIES ledger update increments creatures_died with no is_token check), and permanents_to_graveyard_this_turn / cards_to_graveyard_this_turn are not limited to creatures; a creature_dies trigger setting a counter would miss deaths before Gadrak entered
+- **(value)** a value counting only NONTOKEN creatures that died under a given player's control this turn, e.g. {"nontoken_creatures_died_this_turn": "you"}
+  <br>Why the existing vocabulary won't do: creatures_died_this_turn (turn_ledger.creatures_died, incremented in state.py on every DIES with was_creature) counts tokens too and takes only a player spec, no filter; modified_creatures_died_this_turn is a different subset
+
+<details><summary>Cards waiting on this</summary>
+
+- **Gadrak, the Crown-Scourge** (rank 3951) — `gadrak_the_crown_scourge`
+  - At the beginning of your end step, create a Treasure token for each nontoken creature that died this turn.
+- **Vile Redeemer** (rank 10435) — `vile_redeemer`
+  - When you cast this spell, you may pay {C}. If you do, create a 1/1 colorless Eldrazi Scion creature token for each nontoken creature that died under your control this turn. Those tokens have "Sacrifice this token: Add {C}."
 
 </details>
 
@@ -1325,6 +1437,20 @@ Blocks **1** card.
 
 </details>
 
+## annihilator-grant
+
+Blocks **1** card.
+
+- **(op)** a one-shot, duration-bound grant of annihilator N to chosen objects: the grant_keyword op (or a sibling) carrying an `annihilator` N beside `keywords: ["annihilator"]` with `duration: "this_turn"`, whose instance characteristics.annihilator_instances counts alongside the printed one and the grant_keyword static's, so a stolen creature attacks with one annihilator 1 trigger until end of turn
+  <br>Why the existing vocabulary won't do: annihilator is in NUMBERED_KEYWORDS, and the loader refuses every bare-word grant spelling of it (grant_keyword op, animate, keyword counters); NUMBER_CARRYING_GRANTS lets only the grant_keyword static carry its N, and a static lasts while its source does and reaches by a printed-characteristics filter, not 'until end of turn' on the up-to-one-per-opponent targets. annihilator_instances reads only CardDef.annihilator and grant_keyword statics, so there is nowhere for an op-granted N to live. The rest is expressible: devoid as colors [], a spell_cast/source self trigger with active_zones [stack], one_per_player targets controlled by opponents, gain_control this_turn, untap, grant_keyword trample+haste, and the printed trample/haste/annihilator 1 on the card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Hideous Taskmaster** (rank 3758) — `hideous_taskmaster`
+  - When you cast this spell, for each opponent, gain control of up to one target creature that player controls until end of turn. Untap those creatures. They gain trample, haste, and annihilator 1 until end of turn.
+
+</details>
+
 ## attached-to-player-selector
 
 Blocks **1** card.
@@ -1425,6 +1551,20 @@ Blocks **1** card.
 
 </details>
 
+## bloodthirst
+
+Blocks **1** card.
+
+- **(keyword)** bloodthirst N (702.54) as a grantable keyword with a magnitude: a static that gives other colorless creatures you control 'bloodthirst 2', so each enters with two additional +1/+1 counters if an opponent was dealt damage this turn (checked at the moment it enters)
+  <br>Why the existing vocabulary won't do: bloodthirst is not in `keywords`. The nearest is the `enters_with_additional_counters` static (affects {controller: you, types: [Creature], colorless: true, exclude_self: true}, counter +1/+1, amount 2), but its condition can only read `static_condition_keys`/`static_value_keys`, and neither has a reading of damage dealt to opponents this turn (`damage_taken_this_turn` is in `value_keys` only, not the static value language). Even with that, the creatures would not actually HAVE bloodthirst, which matters for keyword-reading effects. The first sentence is expressible (you_attack trigger, choose_mode of two cant_block effects over creatures with mana_value {parity: odd|even}, duration this_turn).
+
+<details><summary>Cards waiting on this</summary>
+
+- **Twins of Discord** (rank 6438) — `twins_of_discord`
+  - Each other colorless creature you control has bloodthirst 2
+
+</details>
+
 ## can-block-only
 
 Blocks **1** card.
@@ -1436,6 +1576,20 @@ Blocks **1** card.
 
 - **Brazen Borrower // Petty Theft** (rank 2673) — `brazen_borrower_petty_theft`
   - This creature can block only creatures with flying.
+
+</details>
+
+## cant-attack-this-turn
+
+Blocks **1** card.
+
+- **(op)** a one-shot effect that makes the objects it names (here a targeted creature) unable to attack at all -- any player, planeswalker or battle -- until end of turn; paired with the existing cant_block op (duration this_turn) it says "target creature can't attack or block this turn"
+  <br>Why the existing vocabulary won't do: cant_block covers the block half only. cant_attack_player with `objects` supports only the `while_counter` and `next_combat` durations (next_combat outlives this turn when the creature's controller has no further combat this turn, so it would lock the creature on its controller's next turn), and with `attacker` it restricts a whole player, not one creature. The `cant_attack` static lasts while its source is on the battlefield and can only read printed characteristics, so it cannot name a target or a turn. detain lasts until your next turn and also stops activated abilities; granting defender changes the creature's keywords. None is exact.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Endbringer** (rank 2358) — `endbringer`
+  - {C}, {T}: Target creature can't attack or block this turn.
 
 </details>
 
@@ -1497,6 +1651,20 @@ Blocks **1** card.
 
 </details>
 
+## cast-exiled-for-life-equal-to-mana-value
+
+Blocks **1** card.
+
+- **(op)** an exile_until (or playable-exile) option letting the effect controller cast the exiled nonland card from the damaged opponent's library, at resolution, by paying life equal to that spell's mana value as an alternative cost instead of its mana cost (declining leaves it in exile)
+  <br>Why the existing vocabulary won't do: exile_until offers only cast_free / cast_free_if (a free cast, strictly better than the printed card); playable/playable_free on exile and grant_playable charge the mana cost or nothing; pay_life_instead charges life equal to mana value but exists only on the cast_from_library_top static (Bolas's Citadel), a top-of-own-library zone permission, not a cast of an exiled card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Bismuth Mindrender** (rank 7161) — `bismuth_mindrender`
+  - Whenever this creature deals combat damage to a player, that player exiles cards from the top of their library until they exile a nonland card. You may cast that card by paying life equal to the spell's mana value rather than paying its mana cost.
+
+</details>
+
 ## cast-from-hand-result
 
 Blocks **1** card.
@@ -1522,6 +1690,20 @@ Blocks **1** card.
 
 - **Into the Pit** (rank 5828) — `into_the_pit`
   - You may cast spells from the top of your library by sacrificing a nonland permanent in addition to paying their other costs.
+
+</details>
+
+## cast-from-library-top-colorless
+
+Blocks **1** card.
+
+- **(selector)** the `colorless` key (zero colours, 105.2c) admitted in a cast_from_library_top static's `affects_spells` filter, so the colorless half of "artifact spells and colorless spells" can be written as a second permission beside the {"types": ["Artifact"]} one (or `any_of` over the two branches)
+  <br>Why the existing vocabulary won't do: cast_from_library_top's affects_spells is checked against LIBRARY_TOP_CAST_FILTER_KEYS (SPELL_FILTER_KEYS minus controller, plus power/toughness), which has no `colorless` and no `any_of`; `colors` is a membership test that cannot say zero colours, and `not_types`/`min_colors` cannot either. characteristics._matches_printed already honours `colorless`, so only the loader whitelist blocks it. Writing only the Artifact half would silently drop every colorless nonartifact spell (Eldrazi, Kozilek's Return-style colorless cards).
+
+<details><summary>Cards waiting on this</summary>
+
+- **Mystic Forge** (rank 414) — `mystic_forge`
+  - You may cast artifact spells and colorless spells from the top of your library.
 
 </details>
 
@@ -1659,6 +1841,20 @@ Blocks **1** card.
 
 </details>
 
+## colored-cost-reduction
+
+Blocks **1** card.
+
+- **(static_effect)** a spell_cost_reduction whose discount is a set of colored mana symbols ({W}{U}{B}{R}{G}) rather than a generic number: each listed symbol removes one matching colored pip from the spell's cost if present, never touching generic mana and never reducing a color the cost does not contain; affects_spells must accept subtypes [{"chosen_type_of": "self"}] as Herald's Horn already does
+  <br>Why the existing vocabulary won't do: The spell_cost_reduction static (player_statics.spell_cost_reduction and cost_reduction.cost_reduction) takes only an integer `amount` and is generic-only by design ('Generic only, and never below zero'); writing amount 5 would instead knock {5} off the generic part, which is a different and much stronger card (it would make Morophon's own deck's colorless/generic-heavy spells near free and not reduce colored pips at all). No cost_reduction_keys entry names colored symbols.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Morophon, the Boundless** (rank 1541) — `morophon_the_boundless`
+  - Spells of the chosen type you cast cost {W}{U}{B}{R}{G} less to cast. This effect reduces only the amount of colored mana you pay.
+
+</details>
+
 ## combat-damage-amount-binding
 
 Blocks **1** card.
@@ -1745,6 +1941,20 @@ Blocks **1** card.
 
 </details>
 
+## copy-all-on-stack
+
+Blocks **1** card.
+
+- **(op)** a mass-copy over the stack: copy every spell you control on the stack (new_targets per copy), then copy every activated and triggered ability you control on the stack except the resolving ability itself (new_targets per copy), mana abilities excluded
+  <br>Why the existing vocabulary won't do: copy_spell names exactly one spell (its `sid` value, a `target`, or the triggering spell) and copy_ability copies only the stack items chosen as its `target`; there is no stack-zone selector or for_each over stack items that binds each sid, so 'all spells you control' and 'all other activated and triggered abilities you control' cannot be enumerated, and targeting a fixed number of them would be a different card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ulalek, Fused Atrocity** (rank 4558) — `ulalek_fused_atrocity`
+  - Whenever you cast an Eldrazi spell, you may pay {C}{C}. If you do, copy all spells you control, then copy all other activated and triggered abilities you control. You may choose new targets for the copies
+
+</details>
+
 ## copy-for-each-other-target
 
 Blocks **1** card.
@@ -1756,6 +1966,20 @@ Blocks **1** card.
 
 - **Mirrorwing Dragon** (rank 8216) — `mirrorwing_dragon`
   - Whenever a player casts an instant or sorcery spell that targets only this creature, that player copies that spell for each other creature they control that the spell could target. Each copy targets a different one of those creatures.
+
+</details>
+
+## copy-set-subtypes
+
+Blocks **1** card.
+
+- **(op)** a copy_permanent except_ key that REPLACES the copy's subtypes ("except ... it's a colorless Eldrazi creature": per 205.1b the token's creature types become exactly Eldrazi, losing the copied creature's own creature types), alongside the existing colors/types/power/toughness overrides read in characteristics._compute
+  <br>Why the existing vocabulary won't do: COPY_EXCEPT_KEYS (cards/loader/effects.py) has colors: [] for colorless, types: [Creature], and power/toughness as value expressions (summable via power_of {objects: {binding: chosen}} over an accumulating choose_permanents binding inside for_each_player each_opponent), but for subtypes only add_subtypes, which unions Eldrazi onto the copied creature's types -- a copy of a Human Wizard would stay a Human Wizard Eldrazi, a subtly different card for tribal interactions. The rest of the line (spell_cast self trigger on the stack, per-opponent choice, choosing one of the chosen to copy) is expressible.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Benthic Anomaly** (rank 4038) — `benthic_anomaly`
+  - When you cast this spell, for each opponent, choose a creature that player controls. Create a token that's a copy of one of those creatures, except its power is equal to the total power of those creatures, its toughness is equal to the total toughness of those creatures, and it's a colorless Eldrazi creature.
 
 </details>
 
@@ -1929,6 +2153,20 @@ Blocks **1** card.
 
 </details>
 
+## devoid
+
+Blocks **1** card.
+
+- **(keyword)** devoid as a real, queryable characteristic of a card/spell (not just 'has no colors'), plus a mana_restriction cast-group predicate such as {"keyword": "devoid"} so mana can be limited to casting spells with devoid
+  <br>Why the existing vocabulary won't do: mana_restriction groups accept only lowercased type/subtype names, {"chosen_type_of": "self"}, and the predicates mana_value and x_in_mana_cost; there is no keyword predicate, and devoid is not in the keyword list at all (the templates treat it as self-implementing by leaving colors empty). A restriction to colorless spells is not equivalent: it would also fund colorless artifacts and Eldrazi without devoid, a strictly better card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Corrupted Crossroads** (rank 6026) — `corrupted_crossroads`
+  - {T}, Pay 1 life: Add one mana of any color. Spend this mana only to cast a spell with devoid.
+
+</details>
+
 ## discard-your-hand
 
 Blocks **1** card.
@@ -1998,6 +2236,20 @@ Blocks **1** card.
 
 - **Nesting Dragon** (rank 3556) — `nesting_dragon`
   - Landfall — Whenever a land you control enters, create a 0/2 red Dragon Egg creature token with defender and "When this token dies, create a 2/2 red Dragon creature token with flying and '{R}: This token gets +1/+0 until end of turn.'"
+
+</details>
+
+## each-player-chooses-color
+
+Blocks **1** card.
+
+- **(op)** a colour choice made by each player in turn (for_each_player), recorded per player and bindable, plus a selector that matches a permanent whose colours are exactly the single colour its own controller chose (monocoloured in that colour), so 'exile each permanent unless colorless or only the color its controller chose' is an exile over {not colorless, not exactly-controller's-chosen-colour}
+  <br>Why the existing vocabulary won't do: choose_color takes only except_colors and prompt: it is asked of the effect's controller, stores the letter on the source object as chosen_color and is read back only through chosen_color_of: self, so it cannot record one choice per player or be compared against each permanent's controller. The selector language has colors, not_colors, colorless and min_colors but no 'exactly this one colour' (max colours) test and no colour keyed to the permanent's controller's choice
+
+<details><summary>Cards waiting on this</summary>
+
+- **Selective Obliteration** (rank 3587) — `selective_obliteration`
+  - Each player chooses a color. Then exile each permanent unless it's colorless or it's only the color its controller chose.
 
 </details>
 
@@ -2296,21 +2548,6 @@ Blocks **1** card.
 
 - **Oversimplify** (rank 6960) — `oversimplify`
   - Exile all creatures. Each player creates a 0/0 green and blue Fractal creature token and puts a number of +1/+1 counters on it equal to the total power of creatures they controlled that were exiled this way.
-
-</details>
-
-## experience-counters
-
-Blocks **1** card.
-
-- **(engine)** an experience counter kind on players (122.1): a PlayerState field listed in PLAYER_COUNTER_KINDS so proliferate and lose_all_player_counters see it, an op that gives a player N experience counters (like add_poison/add_energy), and a value that reads how many experience counters a player has, for comparison against mana_value_of a target
-  <br>Why the existing vocabulary won't do: PLAYER_COUNTER_KINDS carries only poison and energy; add_poison and add_energy are fixed to those kinds, add_counters puts counters on objects not players, and counters_on reads object counters, so neither giving nor reading an experience counter can be said. Substituting energy would let other energy cards spend Meren's experience, a different card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Meren of Clan Nel Toth** (rank 1480) — `meren_of_clan_nel_toth`
-  - Whenever another creature you control dies, you get an experience counter.
-  - At the beginning of your end step, choose target creature card in your graveyard. If that card's mana value is less than or equal to the number of experience counters you have, return it to the battlefield. Otherwise, put it into your hand.
 
 </details>
 
@@ -3171,6 +3408,22 @@ Blocks **1** card.
 
 </details>
 
+## multiple-kicker
+
+Blocks **1** card.
+
+- **(cost)** A card-level list of independent kicker costs (702.33c 'Kicker [cost 1] and/or [cost 2]'): the caster may pay any subset of them, including none, as the spell is cast, plus a condition that asks which specific kicker was paid (e.g. {"kicked": 0} / {"kicked": 1}) readable from a spell_cast trigger's condition and from effects
+  <br>Why the existing vocabulary won't do: `kicker` is a single mana string and the `kicked` condition is one bool, so it cannot say which of two kickers was paid. `spree` takes a subset of priced modes but requires a non-empty subset (the unkicked cast would be lost). `additional_cost_options` with `additional_optional` is exclusive (one branch), so paying both kickers is impossible. `multikicker` is one price paid N times, not two distinct prices with distinct effects
+
+<details><summary>Cards waiting on this</summary>
+
+- **Wastescape Battlemage** (rank 7023) — `wastescape_battlemage`
+  - Kicker {G} and/or {1}{U}
+  - When you cast this spell, if it was kicked with its {G} kicker, exile target artifact or enchantment an opponent controls.
+  - When you cast this spell, if it was kicked with its {1}{U} kicker, return target creature an opponent controls to its owner's hand.
+
+</details>
+
 ## necron-warrior-token
 
 Blocks **1** card.
@@ -3182,6 +3435,20 @@ Blocks **1** card.
 
 - **Biotransference** (rank 4207) — `biotransference`
   - Whenever you cast an artifact spell, you lose 1 life and create a 2/2 black Necron Warrior artifact creature token.
+
+</details>
+
+## next-spell-cost-reduction
+
+Blocks **1** card.
+
+- **(op)** a one-shot op that makes the controller's next spell cast this turn cost {N} less (generic only), where N is a resolution-time value such as a binding counting the counters removed by a preceding remove_counters (all_kinds, as) from a target permanent, or lose_all_player_counters from a target opponent; the discount is consumed by the next spell cast and expires at end of turn
+  <br>Why the existing vocabulary won't do: cost_reduction and the spell_cost_reduction static are continuous and tied to a card or permanent, not a one-shot discount created by an effect; grant_flash_permission and uncounterable_this_turn carry next_spell but neither reduces cost; playable_cost_reduction applies only to cards an effect makes playable. Nothing can carry a variable discount to the next spell, so the cast trigger's second sentence has no expression
+
+<details><summary>Cards waiting on this</summary>
+
+- **Mutated Cultist** (rank 8432) — `mutated_cultist`
+  - When you cast this spell, remove all counters from up to one target permanent or opponent. The next spell you cast this turn costs {1} less to cast for each counter removed this way.
 
 </details>
 
@@ -3224,20 +3491,6 @@ Blocks **1** card.
 
 - **Fear of Burning Alive** (rank 6793) — `fear_of_burning_alive`
   - Delirium — Whenever a source you control deals noncombat damage to an opponent, if there are four or more card types among cards in your graveyard, this creature deals that amount of damage to target creature that player controls.
-
-</details>
-
-## nontoken-creatures-died-this-turn
-
-Blocks **1** card.
-
-- **(value)** a value reading the turn ledger for how many NONTOKEN creatures died this turn (any controller), e.g. {"nontoken_creatures_died_this_turn": "all"}, counted in GameState's DIES ledger update only when the dying object was not a token
-  <br>Why the existing vocabulary won't do: creatures_died_this_turn counts every creature death including tokens (state.py's DIES ledger update increments creatures_died with no is_token check), and permanents_to_graveyard_this_turn / cards_to_graveyard_this_turn are not limited to creatures; a creature_dies trigger setting a counter would miss deaths before Gadrak entered
-
-<details><summary>Cards waiting on this</summary>
-
-- **Gadrak, the Crown-Scourge** (rank 3951) — `gadrak_the_crown_scourge`
-  - At the beginning of your end step, create a Treasure token for each nontoken creature that died this turn.
 
 </details>
 
@@ -3481,6 +3734,20 @@ Blocks **1** card.
 
 - **Zimone, All-Questioning** (rank 11527) — `zimone_all_questioning`
   - At the beginning of your end step, if a land entered the battlefield under your control this turn and you control a prime number of lands, create Primo, the Indivisible, a legendary 0/0 green and blue Fractal creature token, then put that many +1/+1 counters on it.
+
+</details>
+
+## process
+
+Blocks **1** card.
+
+- **(cost)** the Eldrazi processor payment: a cost key usable as a `may` op's `pay` (and on activated abilities) that puts N cards chosen from exile, owned by opponents of the payer, into their owners' graveyards, and is unpayable (so the `if you do` branch is skipped) when fewer than N such cards are in exile
+  <br>Why the existing vocabulary won't do: cost_keys has exile_from_graveyard and exile_from_hand but nothing whose source zone is exile; search_zones with zones ["exile"] and destination graveyard is a search effect, not a payment, so it can move fewer than two cards and still let the counter happen, and it carries search semantics (reveal/shuffle) the card does not print
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ulamog's Nullifier** (rank 14187) — `ulamog_s_nullifier`
+  - When this creature enters, you may put two cards your opponents own from exile into their owners' graveyards. If you do, counter target spell.
 
 </details>
 
@@ -3869,6 +4136,20 @@ Blocks **1** card.
 
 </details>
 
+## spirit-2-2-c
+
+Blocks **1** card.
+
+- **(token)** a 2/2 colorless Spirit creature token (no abilities; not an artifact)
+  <br>Why the existing vocabulary won't do: token_ids has spirit_1_1_c (1/1 colorless Spirit) and spirit_2_2_w (2/2 white Spirit), neither of which is a 2/2 colorless Spirit; substituting either changes the token's size or color, and color matters to Ugin's own -3 and to colorless-matters effects. The rest of the line looks sayable once the token exists: look_at_top amount 1 with destination exile, face_down and `as`, create_token with `as`, then a delayed_trigger (duration until_it_fires, trigger event leaves_battlefield with subject bound to the token) whose effect returns the bound exiled card to hand -- the worker who closes the token should verify the delayed trigger can read the exile binding.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ugin, the Ineffable** (rank 1073) — `ugin_the_ineffable`
+  - +1: Exile the top card of your library face down and look at it. Create a 2/2 colorless Spirit creature token. When that token leaves the battlefield, put the exiled card into your hand.
+
+</details>
+
 ## stack-wipe
 
 Blocks **1** card.
@@ -3909,6 +4190,20 @@ Blocks **1** card.
 
 - **Lux Artillery** (rank 3735) — `lux_artillery`
   - Whenever you cast an artifact creature spell, it gains sunburst. (It enters with a +1/+1 counter on it for each color of mana spent to cast it.)
+
+</details>
+
+## switch-power-toughness
+
+Blocks **1** card.
+
+- **(op)** an op that switches each target creature's power and toughness until end of turn (layer 7d, rule 613.4d), applied after every other P/T effect so pumps and counters are included in the swap, with objects bound to a variable-size ('any number of') target spec
+  <br>Why the existing vocabulary won't do: set_pt and pump fix or add constant amounts; set_pt with power_of/toughness_of values would snapshot the numbers in layer 7b and ignore later pumps and counters, and has no duration for 'until end of turn'. No op or static in reference performs the layer-7d switch
+
+<details><summary>Cards waiting on this</summary>
+
+- **Inversion Behemoth** (rank 10418) — `inversion_behemoth`
+  - At the beginning of combat on your turn, switch the power and toughness of each of any number of target creatures until end of turn.
 
 </details>
 
@@ -4218,6 +4513,20 @@ Blocks **1** card.
 
 - **Shigeki, Jukai Visionary** (rank 1668) — `shigeki_jukai_visionary`
   - Channel — {X}{X}{G}{G}, Discard this card: Return X target nonlegendary cards from your graveyard to your hand.
+
+</details>
+
+## x-sized-linked-targets
+
+Blocks **1** card.
+
+- **(engine)** An X-sized spell target (count {"x": true}) whose selector names a sibling target declared before it -- {"kind": "card_in_graveyard", "count": {"x": true}, "selector": {"zone": "graveyard", "player": {"target": "graveyard_owner"}}} after a {"kind": "player"} target -- so the X cards are chosen from the graveyard of the player already picked. Game._ask_x_targets must pass the already-declared refs (the `chosen` mapping enumerate_target_tuples uses for linked specs) into targeting.candidates, and resolution must re-check the link
+  <br>Why the existing vocabulary won't do: Both halves load and pass gates 1-3: linked siblings work for fixed-size specs (enumerate_target_tuples grows partials with `chosen`), and X-sized specs work alone (Curse of the Swine, Crackle with Power). But Game._ask_x_targets calls candidates(state, pid, spec, oid) with no `chosen`, so a selector reading {"target": "graveyard_owner"} resolves against no answer and offers nothing. Verified with verify(): the cast targets P0, X is announced as 20, zero cards are targeted, nothing is exiled and no life changes (graveyard_size stays 3) -- the card would be inert. Dropping the link (controller "any") would let the X cards come from several graveyards, which is a different card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Suffer the Past** (rank 12855) — `suffer_the_past`
+  - Exile X target cards from target player's graveyard.
 
 </details>
 

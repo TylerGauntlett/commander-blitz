@@ -1,0 +1,18 @@
+{
+  "card_id": "spawning_bed",
+  "name": "Spawning Bed",
+  "oracle_text": "{T}: Add {C}.\n{6}, {T}, Sacrifice this land: Create three 1/1 colorless Eldrazi Scion creature tokens. They have \"Sacrifice this token: Add {C}.\"",
+  "blocked_sentences": [
+    "{6}, {T}, Sacrifice this land: Create three 1/1 colorless Eldrazi Scion creature tokens. They have \"Sacrifice this token: Add {C}.\""
+  ],
+  "needs": [
+    {
+      "capability": "eldrazi_scion_token",
+      "kind": "token",
+      "what": "a 1/1 colorless Eldrazi Scion creature token with \"Sacrifice this token: Add {C}.\" (e.g. id eldrazi_scion_1_1_c)",
+      "why_existing_wont_do": "token_ids has eldrazi_spawn_0_1_c (a 0/1 Eldrazi Spawn with the same mana ability) but no Eldrazi Scion; a 0/1 Spawn is not a 1/1 Scion. The rest of the line (cost {6} + tap + sacrifice self, create_token amount 3) is expressible once the token exists"
+    }
+  ],
+  "closest_existing": ["eldrazi_spawn_0_1_c"],
+  "confidence": "high"
+}

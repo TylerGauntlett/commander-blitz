@@ -7216,6 +7216,38 @@
       ]
     },
     {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "ancient_stirrings",
+      "mana_cost": "{G}",
+      "name": "Ancient Stirrings",
+      "oracle_text": "Look at the top five cards of your library. You may reveal a colorless card from among them and put it into your hand. Then put the rest on the bottom of your library in any order.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 5
+          },
+          "destination": "hand",
+          "objects": {
+            "colorless": true,
+            "count": 1,
+            "optional": true
+          },
+          "op": "look_at_top",
+          "player": "you",
+          "rest_to_bottom": true
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -33133,6 +33165,60 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{5}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 5
+              },
+              "op": "add_mana",
+              "split": [
+                "W",
+                "U",
+                "B",
+                "R",
+                "G"
+              ]
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{5}, {T}: Add five mana in any combination of colors."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "cascading_cataracts",
+      "keywords": [
+        "indestructible"
+      ],
+      "name": "Cascading Cataracts",
+      "oracle_text": "Indestructible\n{T}: Add {C}.\n{5}, {T}: Add five mana in any combination of colors.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -37675,6 +37761,97 @@
         "Shapeshifter"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "effects": [
+                    {
+                      "as": "myriad_token",
+                      "attacking": {
+                        "binding": "each_player"
+                      },
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "copy_permanent",
+                      "or_planeswalker": true,
+                      "tapped": true
+                    },
+                    {
+                      "effects": [
+                        {
+                          "objects": {
+                            "binding": "myriad_token"
+                          },
+                          "op": "exile"
+                        }
+                      ],
+                      "op": "delay",
+                      "step": "end_of_combat",
+                      "text": "Exile the tokens at end of combat."
+                    }
+                  ],
+                  "op": "may"
+                }
+              ],
+              "op": "for_each_player",
+              "players": {
+                "except": "you",
+                "not": {
+                  "binding": "defender"
+                }
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Myriad",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "eldrazi_spawn_0_1_c"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature leaves the battlefield, create a 0/1 colorless Eldrazi Spawn creature token with \"Sacrifice this token: Add {C}.\"",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "id": "chittering_dispatcher",
+      "mana_cost": "{2}{G}",
+      "name": "Chittering Dispatcher",
+      "oracle_text": "Devoid (This card has no color.)\nMyriad\nWhen this creature leaves the battlefield, create a 0/1 colorless Eldrazi Spawn creature token with \"Sacrifice this token: Add {C}.\"",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Eldrazi",
+        "Drone"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -52748,6 +52925,86 @@
         {
           "effects": [
             {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Draw a card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control deals combat damage to a player, you may draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "deals_combat_damage_to_player",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}{C}"
+          },
+          "effects": [
+            {
+              "duration": "this_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "unblockable"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{3}{C}: Target creature can't be blocked this turn."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "id": "deepfathom_skulker",
+      "mana_cost": "{5}{U}",
+      "name": "Deepfathom Skulker",
+      "oracle_text": "Devoid (This card has no color.)\nWhenever a creature you control deals combat damage to a player, you may draw a card.\n{3}{C}: Target creature can't be blocked this turn. ({C} represents colorless mana.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Eldrazi"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "objects": {
                 "target": "t1"
               },
@@ -59537,6 +59794,57 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}{C}{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}{C}{C}."
+        },
+        {
+          "cost": {
+            "mana": "{3}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}, {T}, Sacrifice this artifact: Draw three cards."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "dreamstone_hedron",
+      "mana_cost": "{6}",
+      "name": "Dreamstone Hedron",
+      "oracle_text": "{T}: Add {C}{C}{C}.\n{3}, {T}, Sacrifice this artifact: Draw three cards.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -62355,6 +62663,231 @@
       "toughness": 9,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{2}{C}"
+          },
+          "effects": [
+            {
+              "as": "displaced",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            },
+            {
+              "objects": {
+                "binding": "displaced",
+                "zone": "exile"
+              },
+              "op": "put_onto_battlefield",
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{2}{C}: Exile another target creature, then return it to the battlefield tapped under its owner's control."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "id": "eldrazi_displacer",
+      "mana_cost": "{2}{W}",
+      "name": "Eldrazi Displacer",
+      "oracle_text": "Devoid (This card has no color.)\n{2}{C}: Exile another target creature, then return it to the battlefield tapped under its owner's control. ({C} represents colorless mana.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Eldrazi"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Creatures you control get +1/+1 and have flying and indestructible",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying",
+            "indestructible"
+          ],
+          "kind": "static",
+          "text": "Creatures you control get +1/+1 and have flying and indestructible"
+        },
+        {
+          "effects": [
+            {
+              "condition": {
+                "exists": {
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "else": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "if",
+              "then": [
+                {
+                  "objects": {
+                    "chooser": "controller",
+                    "controller": "you",
+                    "count": 1,
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "sacrifice"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, sacrifice a creature. If you can't, sacrifice this artifact.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "eldrazi_monument",
+      "mana_cost": "{5}",
+      "name": "Eldrazi Monument",
+      "oracle_text": "Creatures you control get +1/+1 and have flying and indestructible.\nAt the beginning of your upkeep, sacrifice a creature. If you can't, sacrifice this artifact.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "color_identity": [],
+      "colors": [],
+      "id": "eldritch_immunity",
+      "mana_cost": "{C}",
+      "name": "Eldritch Immunity",
+      "oracle_text": "Target creature you control gains protection from each color until end of turn.\nOverload {4}{C} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
+      "overload": "{4}{C}",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "overloaded": true
+          },
+          "else": [
+            {
+              "from_colors": [
+                "W",
+                "U",
+                "B",
+                "R",
+                "G"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_protection"
+            }
+          ],
+          "op": "if",
+          "then": [
+            {
+              "from_colors": [
+                "W",
+                "U",
+                "B",
+                "R",
+                "G"
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_protection"
+            }
+          ]
+        }
+      ],
+      "subtypes": [
+        "Eldrazi"
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "optional": true,
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Kindred",
+        "Instant"
       ]
     },
     {
@@ -86168,6 +86701,70 @@
         "Villain"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "eldrazi_spawn_0_1_c"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a colorless spell, create a 0/1 colorless Eldrazi Spawn creature token with \"Sacrifice this token: Add {C}.\"",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "colorless": true
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another colorless creature you control enters, this creature deals 1 damage to each opponent.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "colorless": true,
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "glaring_fleshraker",
+      "mana_cost": "{2}{C}",
+      "name": "Glaring Fleshraker",
+      "oracle_text": "Whenever you cast a colorless spell, create a 0/1 colorless Eldrazi Spawn creature token with \"Sacrifice this token: Add {C}.\"\nWhenever another colorless creature you control enters, this creature deals 1 damage to each opponent.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Eldrazi",
+        "Drone"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -120950,6 +121547,88 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 5
+                  },
+                  "objects": {
+                    "controller": "any",
+                    "types": [
+                      "Creature"
+                    ]
+                  },
+                  "op": "damage"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "exile_from_graveyard": {
+                  "count": 1,
+                  "self_only": true
+                }
+              },
+              "player": "you",
+              "prompt": "Exile Kozilek's Return from your graveyard to deal 5 damage to each creature?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast an Eldrazi creature spell with mana value 7 or greater, you may exile this card from your graveyard. If you do, this card deals 5 damage to each creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "mana_value": {
+                "op": ">=",
+                "value": {
+                  "const": 7
+                }
+              },
+              "subtypes": [
+                "Eldrazi"
+              ],
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "id": "kozilek_s_return",
+      "mana_cost": "{2}{R}",
+      "name": "Kozilek's Return",
+      "oracle_text": "Devoid (This card has no color.)\nKozilek's Return deals 2 damage to each creature.\nWhenever you cast an Eldrazi creature spell with mana value 7 or greater, you may exile this card from your graveyard. If you do, this card deals 5 damage to each creature.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "objects": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ]
+          },
+          "op": "damage"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -150239,6 +150918,76 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "destination": "exile",
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "player": {
+                "target": "t1"
+              }
+            },
+            {
+              "controller": "you",
+              "objects": {
+                "count": "any",
+                "owner": {
+                  "target": "t1"
+                },
+                "types": [
+                  "Land"
+                ],
+                "zone": "exile"
+              },
+              "op": "put_onto_battlefield"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "When you cast this spell, target opponent exiles the top four cards of their library, then you may put any number of land cards that player owns from exile onto the battlefield under your control.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "oblivion_sower",
+      "mana_cost": "{6}",
+      "name": "Oblivion Sower",
+      "oracle_text": "When you cast this spell, target opponent exiles the top four cards of their library, then you may put any number of land cards that player owns from exile onto the battlefield under your control.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Eldrazi"
+      ],
+      "toughness": 8,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -180099,6 +180848,74 @@
         },
         {
           "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "colorless": true,
+                "controller": "any",
+                "entered_this_turn": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{T}: Put a +1/+1 counter on target colorless creature that entered this turn."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "ruins_of_oran_rief",
+      "mana_cost": "",
+      "name": "Ruins of Oran-Rief",
+      "oracle_text": "This land enters tapped.\n{T}: Add {C}. ({C} represents colorless mana.)\n{T}: Put a +1/+1 counter on target colorless creature that entered this turn.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
             "mana": "{1}",
             "tap": true
           },
@@ -195297,6 +196114,63 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "destination": "exile",
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "player": {
+                "binding": "event_player"
+              }
+            },
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a land an opponent controls enters, that player exiles the top two cards of their library and you draw two cards.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [],
+      "id": "sire_of_stagnation",
+      "mana_cost": "{4}{U}{B}",
+      "name": "Sire of Stagnation",
+      "oracle_text": "Devoid (This card has no color.)\nWhenever a land an opponent controls enters, that player exiles the top two cards of their library and you draw two cards.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Eldrazi"
+      ],
+      "toughness": 7,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -195592,6 +196466,31 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [],
+      "colors": [],
+      "id": "skittering_invasion",
+      "mana_cost": "{7}",
+      "name": "Skittering Invasion",
+      "oracle_text": "Create five 0/1 colorless Eldrazi Spawn creature tokens. They have \"Sacrifice this token: Add {C}.\"",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 5
+          },
+          "op": "create_token",
+          "token": "eldrazi_spawn_0_1_c"
+        }
+      ],
+      "subtypes": [
+        "Eldrazi"
+      ],
+      "types": [
+        "Kindred",
+        "Sorcery"
       ]
     },
     {
@@ -198245,6 +199144,60 @@
         "Drake"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}{C}."
+        },
+        {
+          "cost": {
+            "mana": "{3}{C}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}{C}, {T}: Draw a card."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [],
+      "id": "snapping_voidcraw",
+      "mana_cost": "{1}{G}{U}",
+      "name": "Snapping Voidcraw",
+      "oracle_text": "Devoid (This card has no color.)\n{T}: Add {C}{C}.\n{3}{C}, {T}: Draw a card.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Eldrazi",
+        "Turtle"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -217259,6 +218212,88 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "max_count_of": {
+                "objects": {
+                  "types": [
+                    "Land"
+                  ],
+                  "zone": "battlefield"
+                },
+                "player": "each_opponent"
+              }
+            },
+            "right": {
+              "const": 4
+            }
+          },
+          "cost": {
+            "mana": "{1}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "not_supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}, {T}, Sacrifice this land: Destroy target nonbasic land. Activate only if an opponent controls four or more lands."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "tectonic_edge",
+      "name": "Tectonic Edge",
+      "oracle_text": "{T}: Add {C}.\n{1}, {T}, Sacrifice this land: Destroy target nonbasic land. Activate only if an opponent controls four or more lands.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "count": 1,
@@ -219743,6 +220778,106 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "remove_counters": {
+              "amount": 1,
+              "counter": "charge"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "W"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "U"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "B"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "R"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "G"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}, Remove a charge counter from this land: Add one mana of any color."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "tendo_ice_bridge",
+      "name": "Tendo Ice Bridge",
+      "oracle_text": "This land enters with a charge counter on it.\n{T}: Add {C}.\n{T}, Remove a charge counter from this land: Add one mana of any color.",
+      "replacements": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "counter": "charge",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -228724,6 +229859,87 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "colorless": true,
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When you cast this spell and whenever this creature attacks, put a +1/+1 counter on each colorless creature you control.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "colorless": true,
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When you cast this spell and whenever this creature attacks, put a +1/+1 counter on each colorless creature you control.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [],
+      "id": "titans_vanguard",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{3}{R}{G}",
+      "name": "Titans' Vanguard",
+      "oracle_text": "Devoid (This card has no color.)\nWhen you cast this spell and whenever this creature attacks, put a +1/+1 counter on each colorless creature you control.\nTrample",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Eldrazi"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U",
         "W"
@@ -229121,6 +230337,57 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "colorless": true,
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, {T}: You gain 1 life for each colorless creature you control."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "tomb_of_the_spirit_dragon",
+      "name": "Tomb of the Spirit Dragon",
+      "oracle_text": "{T}: Add {C}.\n{2}, {T}: You gain 1 life for each colorless creature you control.",
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -234443,6 +235710,43 @@
     },
     {
       "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "ugin_s_insight",
+      "mana_cost": "{3}{U}{U}",
+      "name": "Ugin's Insight",
+      "oracle_text": "Scry X, where X is the greatest mana value among permanents you control, then draw three cards.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "extreme_value": {
+              "objects": {
+                "controller": "you",
+                "zone": "battlefield"
+              },
+              "of": "mana_value",
+              "pick": "greatest"
+            }
+          },
+          "op": "scry"
+        },
+        {
+          "amount": {
+            "const": 3
+          },
+          "op": "draw"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "B"
       ],
       "colors": [
@@ -234492,6 +235796,65 @@
         "Eldrazi"
       ],
       "toughness": 8,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "mana_value": {
+                "op": ">=",
+                "value": {
+                  "const": 1
+                }
+              },
+              "zone": "battlefield"
+            }
+          },
+          "effect": "ward",
+          "kind": "static",
+          "text": "Ward—Sacrifice a permanent with mana value 1 or greater."
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "eldrazi_10_10_c"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}: Create a 10/10 colorless Eldrazi creature token."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "ulamog_s_dreadsire",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{10}",
+      "name": "Ulamog's Dreadsire",
+      "oracle_text": "Vigilance\nWard—Sacrifice a permanent with mana value 1 or greater.\n{T}: Create a 10/10 colorless Eldrazi creature token.",
+      "power": 10,
+      "source": "auto",
+      "subtypes": [
+        "Eldrazi"
+      ],
+      "toughness": 10,
       "types": [
         "Creature"
       ]

@@ -1,0 +1,19 @@
+{
+  "card_id": "azlask_the_swelling_scourge",
+  "name": "Azlask, the Swelling Scourge",
+  "oracle_text": "Whenever Azlask or another colorless creature you control dies, you get an experience counter.\n{W}{U}{B}{R}{G}: Creatures you control get +X/+X until end of turn, where X is the number of experience counters you have. Scions and Spawns you control gain indestructible and annihilator 1 until end of turn.",
+  "blocked_sentences": [
+    "Whenever Azlask or another colorless creature you control dies, you get an experience counter.",
+    "{W}{U}{B}{R}{G}: Creatures you control get +X/+X until end of turn, where X is the number of experience counters you have. Scions and Spawns you control gain indestructible and annihilator 1 until end of turn."
+  ],
+  "needs": [
+    {
+      "capability": "experience_counters",
+      "kind": "engine",
+      "what": "an experience counter kind on players (122.1): a PlayerState field listed in PLAYER_COUNTER_KINDS so proliferate and lose_all_player_counters see it, an op that gives a player N experience counters (like add_poison/add_energy), and a value that reads how many experience counters a player has, usable as a pump amount (+X/+X where X is your experience counters)",
+      "why_existing_wont_do": "PLAYER_COUNTER_KINDS carries only poison and energy; add_poison and add_energy are fixed to those kinds, add_counters puts counters on objects not players, and counters_on reads object counters, so neither giving nor reading an experience counter can be said. Substituting energy would let other energy cards spend Azlask's experience, a different card. The rest of the card (dies trigger with self_only/colorless any_of filter, pump, grant_keyword indestructible and annihilator to Scion/Spawn subtypes) is expressible once the counter exists"
+    }
+  ],
+  "closest_existing": ["add_energy", "add_poison", "counters_on"],
+  "confidence": "high"
+}

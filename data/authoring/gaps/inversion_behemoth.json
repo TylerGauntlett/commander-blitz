@@ -1,0 +1,18 @@
+{
+  "card_id": "inversion_behemoth",
+  "name": "Inversion Behemoth",
+  "oracle_text": "At the beginning of combat on your turn, switch the power and toughness of each of any number of target creatures until end of turn.",
+  "blocked_sentences": [
+    "At the beginning of combat on your turn, switch the power and toughness of each of any number of target creatures until end of turn."
+  ],
+  "needs": [
+    {
+      "capability": "switch_power_toughness",
+      "kind": "op",
+      "what": "an op that switches each target creature's power and toughness until end of turn (layer 7d, rule 613.4d), applied after every other P/T effect so pumps and counters are included in the swap, with objects bound to a variable-size ('any number of') target spec",
+      "why_existing_wont_do": "set_pt and pump fix or add constant amounts; set_pt with power_of/toughness_of values would snapshot the numbers in layer 7b and ignore later pumps and counters, and has no duration for 'until end of turn'. No op or static in reference performs the layer-7d switch"
+    }
+  ],
+  "closest_existing": ["set_pt", "pump"],
+  "confidence": "high"
+}

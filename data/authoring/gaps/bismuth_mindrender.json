@@ -1,0 +1,22 @@
+{
+  "card_id": "bismuth_mindrender",
+  "name": "Bismuth Mindrender",
+  "oracle_text": "Devoid (This card has no color.)\nMenace\nWhenever this creature deals combat damage to a player, that player exiles cards from the top of their library until they exile a nonland card. You may cast that card by paying life equal to the spell's mana value rather than paying its mana cost.",
+  "blocked_sentences": [
+    "Whenever this creature deals combat damage to a player, that player exiles cards from the top of their library until they exile a nonland card. You may cast that card by paying life equal to the spell's mana value rather than paying its mana cost."
+  ],
+  "needs": [
+    {
+      "capability": "cast_exiled_for_life_equal_to_mana_value",
+      "kind": "op",
+      "what": "an exile_until (or playable-exile) option letting the effect controller cast the exiled nonland card from the damaged opponent's library, at resolution, by paying life equal to that spell's mana value as an alternative cost instead of its mana cost (declining leaves it in exile)",
+      "why_existing_wont_do": "exile_until offers only cast_free / cast_free_if (a free cast, strictly better than the printed card); playable/playable_free on exile and grant_playable charge the mana cost or nothing; pay_life_instead charges life equal to mana value but exists only on the cast_from_library_top static (Bolas's Citadel), a top-of-own-library zone permission, not a cast of an exiled card"
+    }
+  ],
+  "closest_existing": [
+    "exile_until",
+    "cast_from_library_top",
+    "grant_playable"
+  ],
+  "confidence": "high"
+}

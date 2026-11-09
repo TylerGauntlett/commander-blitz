@@ -1,0 +1,16 @@
+{
+  "card_id": "twins_of_discord",
+  "name": "Twins of Discord",
+  "oracle_text": "Whenever you attack, choose odd or even. Creatures with mana value of that quality can't block this turn. (Zero is even.)\nEach other colorless creature you control has bloodthirst 2. (If an opponent was dealt damage this turn, that creature enters with two additional +1/+1 counters on it.)",
+  "blocked_sentences": [
+    "Each other colorless creature you control has bloodthirst 2"
+  ],
+  "needs": [{
+    "capability": "bloodthirst",
+    "kind": "keyword",
+    "what": "bloodthirst N (702.54) as a grantable keyword with a magnitude: a static that gives other colorless creatures you control 'bloodthirst 2', so each enters with two additional +1/+1 counters if an opponent was dealt damage this turn (checked at the moment it enters)",
+    "why_existing_wont_do": "bloodthirst is not in `keywords`. The nearest is the `enters_with_additional_counters` static (affects {controller: you, types: [Creature], colorless: true, exclude_self: true}, counter +1/+1, amount 2), but its condition can only read `static_condition_keys`/`static_value_keys`, and neither has a reading of damage dealt to opponents this turn (`damage_taken_this_turn` is in `value_keys` only, not the static value language). Even with that, the creatures would not actually HAVE bloodthirst, which matters for keyword-reading effects. The first sentence is expressible (you_attack trigger, choose_mode of two cant_block effects over creatures with mana_value {parity: odd|even}, duration this_turn)."
+  }],
+  "closest_existing": ["enters_with_additional_counters", "damage_taken_this_turn"],
+  "confidence": "high"
+}

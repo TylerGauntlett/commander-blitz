@@ -609,6 +609,15 @@
   "ancient_spider": {
     "zone": "battlefield"
   },
+  "ancient_stirrings": {
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "graveyard"
+  },
   "ancient_tomb": {
     "zone": "battlefield"
   },
@@ -2812,6 +2821,10 @@
   "cascade_bluffs": {
     "zone": "battlefield"
   },
+  "cascading_cataracts": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "cast_out": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 5,
@@ -3160,6 +3173,10 @@
     "zone": "battlefield"
   },
   "chitinous_graspling": {
+    "zone": "battlefield"
+  },
+  "chittering_dispatcher": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "chittering_witch": {
@@ -4471,6 +4488,13 @@
   "deep_gnome_terramancer": {
     "zone": "battlefield"
   },
+  "deepfathom_skulker": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "deepglow_skate": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -5035,6 +5059,10 @@
   "dreamroot_cascade": {
     "zone": "battlefield"
   },
+  "dreamstone_hedron": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "dreg_reaver": {
     "zone": "battlefield"
   },
@@ -5271,6 +5299,24 @@
   },
   "eldrazi_devastator": {
     "zone": "battlefield"
+  },
+  "eldrazi_displacer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "eldrazi_monument": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 2,
+      "keywords": [
+        "flying",
+        "indestructible"
+      ]
+    },
+    "zone": "battlefield"
+  },
+  "eldritch_immunity": {
+    "zone": "graveyard"
   },
   "eldritch_pact": {
     "graveyard_size": {
@@ -7407,6 +7453,14 @@
     "zone": "battlefield"
   },
   "glamorous_grapplers": {
+    "zone": "battlefield"
+  },
+  "glaring_fleshraker": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
     "zone": "battlefield"
   },
   "glass_golem": {
@@ -10219,6 +10273,9 @@
   "kozilek_s_channeler": {
     "zone": "battlefield"
   },
+  "kozilek_s_return": {
+    "zone": "graveyard"
+  },
   "kraken_hatchling": {
     "zone": "battlefield"
   },
@@ -12730,6 +12787,13 @@
     "zone": "battlefield"
   },
   "obelisk_of_naya": {
+    "zone": "battlefield"
+  },
+  "oblivion_sower": {
+    "library_size": {
+      "0": 40,
+      "1": 16
+    },
     "zone": "battlefield"
   },
   "oblivion_stone": {
@@ -15264,6 +15328,10 @@
     "opponent_battlefield_count": 2,
     "zone": "graveyard"
   },
+  "ruins_of_oran_rief": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "rumble_arena": {
     "zone": "battlefield"
   },
@@ -16530,6 +16598,13 @@
   "sir_shandlar_of_eberyn": {
     "zone": "battlefield"
   },
+  "sire_of_stagnation": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "sisay_s_ring": {
     "zone": "battlefield"
   },
@@ -16558,6 +16633,14 @@
   },
   "skinrender": {
     "zone": "battlefield"
+  },
+  "skittering_invasion": {
+    "battlefield_count": 37,
+    "tokens": {
+      "count": 5,
+      "id": "eldrazi_spawn_0_1_c"
+    },
+    "zone": "graveyard"
   },
   "skrelv_s_hive": {
     "battlefield_count": 33,
@@ -16793,6 +16876,13 @@
     "zone": "graveyard"
   },
   "snapping_drake": {
+    "zone": "battlefield"
+  },
+  "snapping_voidcraw": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "snare_thopter": {
@@ -18232,6 +18322,10 @@
     "opponent_battlefield_count": 6,
     "zone": "graveyard"
   },
+  "tectonic_edge": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "tectonic_giant": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -18437,6 +18531,14 @@
   },
   "tendershoot_dryad": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "tendo_ice_bridge": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 1,
+      "kind": "charge"
+    },
     "zone": "battlefield"
   },
   "tendrils_of_corruption": {
@@ -19187,6 +19289,10 @@
     },
     "zone": "battlefield"
   },
+  "titans_vanguard": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "tobias_andrion": {
     "zone": "battlefield"
   },
@@ -19226,6 +19332,10 @@
     "zone": "battlefield"
   },
   "tolarian_scholar": {
+    "zone": "battlefield"
+  },
+  "tomb_of_the_spirit_dragon": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "tombstone_career_criminal": {
@@ -19708,10 +19818,23 @@
     },
     "zone": "graveyard"
   },
+  "ugin_s_insight": {
+    "hand_size": {
+      "0": 4
+    },
+    "library_size": {
+      "0": 37
+    },
+    "zone": "graveyard"
+  },
   "ukud_cobra": {
     "zone": "battlefield"
   },
   "ulamog_s_crusher": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "ulamog_s_dreadsire": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

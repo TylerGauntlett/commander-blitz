@@ -8372,12 +8372,12 @@
     },
     "Ancient Stirrings": {
       "edhrec_rank": 8560,
-      "gate": "template",
+      "gate": null,
       "name": "Ancient Stirrings",
-      "reason": "no template for: Look at the top five cards of your library. You may reveal a colorless card from among the",
+      "reason": "",
       "scryfall_id": "da974ed3-c089-4354-8cb0-7dd4c6c1dfe0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ancient Stone Idol": {
@@ -40522,12 +40522,12 @@
     },
     "Cascading Cataracts": {
       "edhrec_rank": 1207,
-      "gate": "template",
+      "gate": null,
       "name": "Cascading Cataracts",
-      "reason": "proxy simplified it: mana clause read loosely: 'five mana in any combination of colors'",
+      "reason": "",
       "scryfall_id": "016a3d0d-08f5-4352-97a2-262b802c46e2",
-      "source": "",
-      "status": "unexpressible",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Case File Auditor": {
@@ -45702,12 +45702,12 @@
     },
     "Chittering Dispatcher": {
       "edhrec_rank": 4149,
-      "gate": "template",
+      "gate": null,
       "name": "Chittering Dispatcher",
-      "reason": "no template for: Myriad",
+      "reason": "",
       "scryfall_id": "ec5fe7d0-b444-4488-b058-f3916e404cac",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chittering Harvester": {
@@ -64802,12 +64802,12 @@
     },
     "Deepfathom Skulker": {
       "edhrec_rank": 6745,
-      "gate": "template",
+      "gate": null,
       "name": "Deepfathom Skulker",
-      "reason": "no template for: Whenever a creature you control deals combat damage to a player, you may draw a card",
+      "reason": "",
       "scryfall_id": "5f26c11a-b84b-4670-b135-359b93afb83d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deepfire Elemental": {
@@ -75122,12 +75122,12 @@
     },
     "Dreamstone Hedron": {
       "edhrec_rank": 1903,
-      "gate": "template",
+      "gate": null,
       "name": "Dreamstone Hedron",
-      "reason": "no template for: {3}, {T}, Sacrifice this artifact: Draw three cards",
+      "reason": "",
       "scryfall_id": "25c5e6f8-eec6-4a90-b7c6-36f882bab64a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dreamtail Heron": {
@@ -80282,12 +80282,12 @@
     },
     "Eldrazi Displacer": {
       "edhrec_rank": 2939,
-      "gate": "template",
+      "gate": null,
       "name": "Eldrazi Displacer",
-      "reason": "no template for: {2}{C}: Exile another target creature, then return it to the battlefield tapped under its ",
+      "reason": "",
       "scryfall_id": "0d87a0d9-13d5-46f2-b32a-acc080d8f480",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Eldrazi Linebreaker": {
@@ -80312,12 +80312,12 @@
     },
     "Eldrazi Monument": {
       "edhrec_rank": 1439,
-      "gate": "template",
+      "gate": null,
       "name": "Eldrazi Monument",
-      "reason": "no template for: Creatures you control get +1/+1 and have flying and indestructible",
+      "reason": "",
       "scryfall_id": "f8ecdf65-c6e6-4dac-899b-55cd80242629",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Eldrazi Obligator": {
@@ -80382,12 +80382,12 @@
     },
     "Eldritch Immunity": {
       "edhrec_rank": 1964,
-      "gate": "template",
+      "gate": null,
       "name": "Eldritch Immunity",
-      "reason": "no template for: Target creature you control gains protection from each color until end of turn",
+      "reason": "",
       "scryfall_id": "64a63b90-dbd6-4b66-8031-a3e230ada5b9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Eldritch Pact": {
@@ -110332,12 +110332,12 @@
     },
     "Glaring Fleshraker": {
       "edhrec_rank": 1213,
-      "gate": "template",
+      "gate": null,
       "name": "Glaring Fleshraker",
-      "reason": "no template for: Whenever you cast a colorless spell, create a 0/1 colorless Eldrazi Spawn creature token w",
+      "reason": "",
       "scryfall_id": "80c2a3c7-1486-4ff9-88ec-79ec67a437f8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Glaring Spotlight": {
@@ -151982,12 +151982,12 @@
     },
     "Kozilek's Return": {
       "edhrec_rank": 8973,
-      "gate": "template",
+      "gate": null,
       "name": "Kozilek's Return",
-      "reason": "no template for: deals 2 damage to each creature",
+      "reason": "",
       "scryfall_id": "eed3be26-6c05-48cf-889a-9cbbd4977283",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kozilek's Sentinel": {
@@ -190562,12 +190562,12 @@
     },
     "Oblivion Sower": {
       "edhrec_rank": 2268,
-      "gate": "template",
+      "gate": null,
       "name": "Oblivion Sower",
-      "reason": "no template for: When you cast this spell, target opponent exiles the top four cards of their library, then",
+      "reason": "",
       "scryfall_id": "eb179ae3-28d9-4741-a055-e7e767d8a408",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Oblivion Stone": {
@@ -228842,12 +228842,12 @@
     },
     "Ruins of Oran-Rief": {
       "edhrec_rank": 6174,
-      "gate": "template",
+      "gate": null,
       "name": "Ruins of Oran-Rief",
-      "reason": "no template for: {T}: Add {C}",
+      "reason": "",
       "scryfall_id": "dd563d94-787d-4098-8b38-b462640c4216",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ruins of Trokair": {
@@ -248642,12 +248642,12 @@
     },
     "Sire of Stagnation": {
       "edhrec_rank": 2711,
-      "gate": "template",
+      "gate": null,
       "name": "Sire of Stagnation",
-      "reason": "no template for: Whenever a land an opponent controls enters, that player exiles the top two cards of their",
+      "reason": "",
       "scryfall_id": "e62cddab-34ef-46c6-b700-9b59751b9a2c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sire of the Storm": {
@@ -249652,12 +249652,12 @@
     },
     "Skittering Invasion": {
       "edhrec_rank": 4524,
-      "gate": "template",
+      "gate": null,
       "name": "Skittering Invasion",
-      "reason": "no template for: Create five 0/1 colorless Eldrazi Spawn creature tokens. They have \"Sacrifice this token: ",
+      "reason": "",
       "scryfall_id": "0bf49859-c1ef-43ca-aa0a-6f4116825b7d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Skittering Monstrosity": {
@@ -253372,12 +253372,12 @@
     },
     "Snapping Voidcraw": {
       "edhrec_rank": 4470,
-      "gate": "template",
+      "gate": null,
       "name": "Snapping Voidcraw",
-      "reason": "no template for: {3}{C}, {T}: Draw a card",
+      "reason": "",
       "scryfall_id": "7ab3a5a5-9cb1-4ee5-b7b2-d870c9a56097",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Snapsail Glider": {
@@ -276152,12 +276152,12 @@
     },
     "Tectonic Edge": {
       "edhrec_rank": 4003,
-      "gate": "template",
+      "gate": null,
       "name": "Tectonic Edge",
-      "reason": "no template for: {1}, {T}, Sacrifice this land: Destroy target nonbasic land. Activate only if an opponent ",
+      "reason": "",
       "scryfall_id": "02174040-f292-468b-9aa6-4bd468b38cf9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tectonic Fiend": {
@@ -277902,12 +277902,12 @@
     },
     "Tendo Ice Bridge": {
       "edhrec_rank": 7490,
-      "gate": "template",
+      "gate": null,
       "name": "Tendo Ice Bridge",
-      "reason": "no template for: This land enters with a charge counter on it",
+      "reason": "",
       "scryfall_id": "929961bf-c866-4ed8-a552-b261ecd5f2fb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tendril of the Mycotyrant": {
@@ -288262,12 +288262,12 @@
     },
     "Titans' Vanguard": {
       "edhrec_rank": 8182,
-      "gate": "template",
+      "gate": null,
       "name": "Titans' Vanguard",
-      "reason": "no template for: When you cast this spell and whenever this creature attacks, put a +1/+1 counter on each c",
+      "reason": "",
       "scryfall_id": "907e314e-b346-4bc0-8754-3d436cbe1360",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tithe": {
@@ -288922,12 +288922,12 @@
     },
     "Tomb of the Spirit Dragon": {
       "edhrec_rank": 1735,
-      "gate": "template",
+      "gate": null,
       "name": "Tomb of the Spirit Dragon",
-      "reason": "no template for: {2}, {T}: You gain 1 life for each colorless creature you control",
+      "reason": "",
       "scryfall_id": "c5c2da3e-5e82-4236-b866-93bec88d86b0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tombfire": {
@@ -295722,12 +295722,12 @@
     },
     "Ugin's Insight": {
       "edhrec_rank": 9050,
-      "gate": "template",
+      "gate": null,
       "name": "Ugin's Insight",
-      "reason": "no template for: Scry X, where X is the greatest mana value among permanents you control, then draw three c",
+      "reason": "",
       "scryfall_id": "cbe80abe-cbc7-499b-92bb-accbf59bb138",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ugin's Labyrinth": {
@@ -295912,12 +295912,12 @@
     },
     "Ulamog's Dreadsire": {
       "edhrec_rank": 3403,
-      "gate": "template",
+      "gate": null,
       "name": "Ulamog's Dreadsire",
-      "reason": "no template for: Ward—Sacrifice a permanent with mana value 1 or greater",
+      "reason": "",
       "scryfall_id": "b5821c21-8133-40f7-a28d-addf64b1e35f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ulamog's Nullifier": {

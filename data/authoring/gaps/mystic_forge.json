@@ -1,0 +1,18 @@
+{
+  "card_id": "mystic_forge",
+  "name": "Mystic Forge",
+  "oracle_text": "You may look at the top card of your library any time.\nYou may cast artifact spells and colorless spells from the top of your library.\n{T}, Pay 1 life: Exile the top card of your library.",
+  "blocked_sentences": [
+    "You may cast artifact spells and colorless spells from the top of your library."
+  ],
+  "needs": [
+    {
+      "capability": "cast_from_library_top_colorless",
+      "kind": "selector",
+      "what": "the `colorless` key (zero colours, 105.2c) admitted in a cast_from_library_top static's `affects_spells` filter, so the colorless half of \"artifact spells and colorless spells\" can be written as a second permission beside the {\"types\": [\"Artifact\"]} one (or `any_of` over the two branches)",
+      "why_existing_wont_do": "cast_from_library_top's affects_spells is checked against LIBRARY_TOP_CAST_FILTER_KEYS (SPELL_FILTER_KEYS minus controller, plus power/toughness), which has no `colorless` and no `any_of`; `colors` is a membership test that cannot say zero colours, and `not_types`/`min_colors` cannot either. characteristics._matches_printed already honours `colorless`, so only the loader whitelist blocks it. Writing only the Artifact half would silently drop every colorless nonartifact spell (Eldrazi, Kozilek's Return-style colorless cards)."
+    }
+  ],
+  "closest_existing": ["cast_from_library_top", "look_at_library_top"],
+  "confidence": "high"
+}
