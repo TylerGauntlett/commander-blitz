@@ -20,7 +20,7 @@ worked out in several unconnected places:
 | in [card-dsl.md](card-dsl.md) | the argument made there |
 |---|---|
 | "Its activated abilities can't be activated" | `lock_abilities` is **not** a keyword: a keyword is a characteristic, and this is a permission |
-| Landwalk | five `Keyword`s rather than one parameterised ability, because a static cannot be *filtered on* |
+| Landwalk | one `Keyword` per land type rather than one parameterised ability, because a static cannot be *filtered on* |
 | Block restrictions | `block_restriction` is a static, **not** a keyword, because the quality it names is a parameter |
 | Skulk | a `Keyword`, because it must read **derived** power, which a static filter may never do |
 | Protection / shroud | protection is a static (parameterised); shroud is a `Keyword` (one rule, no parameter) |
@@ -84,8 +84,9 @@ Three corollaries worth stating, because each has already cost a rebuild:
 
 **A parameter that is the whole content is not a parameter.** Landwalk looks
 parameterised — "islandwalk" is walk-over-Islands — but the quality has no
-meaning apart from which land type, and there are exactly five. Five keywords
-beat one static, because a keyword can be *filtered on* and a static cannot.
+meaning apart from which land type, and each land type is one
+`enums.LANDWALK_SUBTYPE` row. A keyword per type beats one static, because a
+keyword can be *filtered on* and a static cannot.
 Skulk is the same shape: "greater power" reads like a parameter and is not.
 
 **A number that something filters on is a keyword plus a field.** Toxic N
@@ -298,7 +299,8 @@ This is the long tail, and where the build order comes from.
 | Landwalk — swampwalk | shipped | `Keyword` | `swampwalk` |
 | Landwalk — mountainwalk | shipped | `Keyword` | `mountainwalk` |
 | Landwalk — forestwalk | shipped | `Keyword` | `forestwalk` |
-| Landwalk — nonbasic † | shipped | `Keyword`, and **not** a sixth `LANDWALK_SUBTYPE` row: the test is a supertype the land must lack | `nonbasic_landwalk` |
+| Landwalk — desertwalk | shipped | `Keyword`, a `LANDWALK_SUBTYPE` row over the nonbasic land type Desert | `desertwalk` |
+| Landwalk — nonbasic † | shipped | `Keyword`, and **not** a `LANDWALK_SUBTYPE` row: the test is a supertype the land must lack | `nonbasic_landwalk` |
 | Level up | free | a level counter, plus `set_pt` / `grant_keyword` statics whose `condition` is an `all` of two `counters` comparisons -- a band | `set_pt` |
 | Living weapon | free | `self_enters` trigger, `create_token`, then `attach` | — |
 | Madness | shipped | the `madness` card field: the discard exiles instead, and the cast is offered from there | `madness` |

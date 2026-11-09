@@ -1217,6 +1217,7 @@ KEYWORDS: dict[str, Entry] = {
     "daybound": ("Daybound.", "Daybound and nightbound — one field for the whole table"),
     "decayed": ("Decayed: can't block; sacrificed at end of the combat it attacks in.", "Decayed"),
     "deathtouch": ("Deathtouch.", None),
+    "desertwalk": ("Desertwalk.", H_LANDWALK),
     "defender": ("Defender.", None),
     "double_strike": ("Double strike.", None),
     "dethrone": ("Dethrone.", "Dethrone"),

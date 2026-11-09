@@ -4554,9 +4554,12 @@ anything that does belongs in the engine instead.
 The three lines only work together, and each needed something different.
 
 **Landwalk** is an ordinary `keywords` entry — `plainswalk`, `islandwalk`,
-`swampwalk`, `mountainwalk`, `forestwalk`. Five keywords rather than one
-parameterised ability because `Keyword` is a bare string and the whole content
-of the quality is *which* land type. It is the first evasion whose condition is
+`swampwalk`, `mountainwalk`, `forestwalk`, and `desertwalk` for the one
+nonbasic land type a card walks over (Hazezon, Shaper of Sand). One keyword per
+land type rather than one parameterised ability because `Keyword` is a bare
+string and the whole content of the quality is *which* land type;
+`enums.LANDWALK_SUBTYPE` maps each keyword to the subtype it reads, so another
+land type is one row there and one `Keyword` value. It is the first evasion whose condition is
 neither creature's: `can_block` asks what the **defending player's board**
 contains, reading `chars` rather than the printed card so line two above is
 visible to line one.
@@ -5669,7 +5672,7 @@ Three of them are worth stating individually, because each is a distinct shape:
 |---|---|
 | `intimidate` | Compares the two creatures — skulk's shape, on colors. A **colorless** creature with intimidate shares a color with nothing, so only an artifact creature may block it; that is the boundary, and reading the clause as "is not a different color" would silently invert it |
 | `shadow` | The only evasion that is not an attacker-side rule. 702.28b is "can block **or** be blocked by only creatures with shadow", so `can_block` asks whether the two creatures *agree*, and a shadow creature may not block a normal one either |
-| `nonbasic_landwalk` | Landwalk with the test inverted — a **supertype the land must lack**, not a subtype it must have. That is why it is a sixth keyword and not a sixth `LANDWALK_SUBTYPE` row, and why "defending player controls eight Forests" is the case that separates it from "controls a land" |
+| `nonbasic_landwalk` | Landwalk with the test inverted — a **supertype the land must lack**, not a subtype it must have. That is why it is its own keyword and not a `LANDWALK_SUBTYPE` row, and why "defending player controls eight Forests" is the case that separates it from "controls a land" |
 
 `horsemanship` is the plain one: the blocker must carry the same keyword. It is
 one-directional, unlike shadow — a creature with horsemanship may block

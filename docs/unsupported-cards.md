@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**286 cards** blocked by **265** capabilities.
+**287 cards** blocked by **265** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -42,6 +42,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [filtered-discard](#filtered-discard) | 2 | 9279 | op |
 | [manifest-dread](#manifest-dread) | 2 | 5772 | op |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
+| [play-lands-from-graveyard-filtered](#play-lands-from-graveyard-filtered) | 2 | 3993 | static_effect |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
 | [remove-x-counters-cost](#remove-x-counters-cost) | 2 | 5399 | cost |
 | [return-face-down](#return-face-down) | 2 | 3081 | op |
@@ -108,7 +109,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [delayed-creature-dies](#delayed-creature-dies) | 1 | 1661 | trigger_event |
 | [delayed-trigger-filter](#delayed-trigger-filter) | 1 | 12175 | trigger_event |
 | [demon-token-5-5-b-flying](#demon-token-5-5-b-flying) | 1 | 7993 | token |
-| [desertwalk](#desertwalk) | 1 | 7724 | keyword |
 | [devil-token](#devil-token) | 1 | 4163 | token |
 | [devoid](#devoid) | 1 | 6026 | keyword |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
@@ -210,7 +210,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [pay-any-amount-of-life](#pay-any-amount-of-life) | 1 | 4322 | cost |
 | [pay-energy-x](#pay-energy-x) | 1 | 5591 | cost |
 | [play-cost-paid-card](#play-cost-paid-card) | 1 | 6544 | op |
-| [play-lands-from-graveyard-filtered](#play-lands-from-graveyard-filtered) | 1 | 3993 | static_effect |
 | [playable-condition-opponent-lost-life](#playable-condition-opponent-lost-life) | 1 | 4478 | engine |
 | [playable-spell-type-restriction](#playable-spell-type-restriction) | 1 | 4763 | op |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
@@ -218,6 +217,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [players-attacked-last-combat](#players-attacked-last-combat) | 1 | 6681 | value |
 | [players-lost-the-game-count](#players-lost-the-game-count) | 1 | 4941 | value |
 | [plot](#plot) | 1 | 7506 | op |
+| [prevent-damage-from-source-to-permanent](#prevent-damage-from-source-to-permanent) | 1 | 29255 | static_effect |
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
 | [prime-number](#prime-number) | 1 | 11527 | value |
 | [primo-the-indivisible](#primo-the-indivisible) | 1 | 11527 | token |
@@ -994,6 +994,24 @@ Blocks **2** cards.
   - {T}: Add {C}. If Gemstone Caverns has a luck counter on it, instead add one mana of any color.
 - **Leyline of Sanctity** (rank 7441) — `leyline_of_sanctity`
   - If this card is in your opening hand, you may begin the game with it on the battlefield.
+
+</details>
+
+## play-lands-from-graveyard-filtered
+
+Blocks **2** cards.
+
+- **(static_effect)** a filter on the `play_lands_from_graveyard` player-wide static -- "You may play Desert lands from your graveyard" -- so `legality._land_actions` offers only the graveyard lands matching it (here {"subtypes": ["Desert"]}), per object, rather than the whole graveyard
+  <br>Why the existing vocabulary won't do: `player_plays_lands_from_graveyard` answers a bare yes/no and `_land_actions` then appends the whole graveyard, so the static as it stands lets Hazezon play every land from the graveyard, a bigger card than printed; the vocabulary notes it 'cannot be narrowed by card type'. `cast_from_graveyard`'s `affects_spells` filter is the shape, but it is casting, not a land play. Desertwalk is the shipped `desertwalk` keyword, and 'Whenever a Desert you control enters' is an ordinary single-object `enters` trigger with a subtypes filter creating `sand_warrior_1_1_rgw` twice
+- **(static_effect)** a land-filter on the player-wide play_lands_from_graveyard static (e.g. an affects_cards selector with subtypes: ["Forest"]) so the land drop offers only matching lands from the graveyard; still one land drop per turn
+  <br>Why the existing vocabulary won't do: play_lands_from_graveyard is a yes/no permission (player_statics.player_plays_lands_from_graveyard), and legality._land_actions then offers every land in the graveyard; it cannot be narrowed by land subtype, so using it would let Titania play Plains, Islands and nonbasic lands from the graveyard too. cast_from_graveyard takes an affects_spells filter but covers spells only, never a land play
+
+<details><summary>Cards waiting on this</summary>
+
+- **Titania, Nature's Force** (rank 3993) — `titania_nature_s_force`
+  - You may play Forests from your graveyard.
+- **Hazezon, Shaper of Sand** (rank 7724) — `hazezon_shaper_of_sand`
+  - You may play Desert lands from your graveyard.
 
 </details>
 
@@ -1985,20 +2003,6 @@ Blocks **1** card.
 
 - **Demonic Covenant** (rank 7993) — `demonic_covenant`
   - At the beginning of your end step, create a 5/5 black Demon creature token with flying, then mill two cards. If two cards that share all their card types were milled this way, sacrifice this enchantment.
-
-</details>
-
-## desertwalk
-
-Blocks **1** card.
-
-- **(keyword)** a landwalk keyword for the nonbasic land type Desert (702.14): the creature can't be blocked while the defending player controls a Desert -- a sixth row in LANDWALK_SUBTYPE (desertwalk -> Desert) plus the Keyword enum entry
-  <br>Why the existing vocabulary won't do: The keyword list carries only the five basic landwalks and nonbasic_landwalk; combat.can_block reads landwalk from LANDWALK_SUBTYPE against the defending player. A block_restriction static's `blockers` filter reads only the blocker's qualities, and a static `exists` condition can only ask whether any opponent controls a Desert, not the defending player, so it would wrongly make the creature unblockable against every opponent in multiplayer
-
-<details><summary>Cards waiting on this</summary>
-
-- **Hazezon, Shaper of Sand** (rank 7724) — `hazezon_shaper_of_sand`
-  - Desertwalk (This creature can't be blocked as long as defending player controls a Desert.)
 
 </details>
 
@@ -3448,20 +3452,6 @@ Blocks **1** card.
 
 </details>
 
-## play-lands-from-graveyard-filtered
-
-Blocks **1** card.
-
-- **(static_effect)** a land-filter on the player-wide play_lands_from_graveyard static (e.g. an affects_cards selector with subtypes: ["Forest"]) so the land drop offers only matching lands from the graveyard; still one land drop per turn
-  <br>Why the existing vocabulary won't do: play_lands_from_graveyard is a yes/no permission (player_statics.player_plays_lands_from_graveyard), and legality._land_actions then offers every land in the graveyard; it cannot be narrowed by land subtype, so using it would let Titania play Plains, Islands and nonbasic lands from the graveyard too. cast_from_graveyard takes an affects_spells filter but covers spells only, never a land play
-
-<details><summary>Cards waiting on this</summary>
-
-- **Titania, Nature's Force** (rank 3993) — `titania_nature_s_force`
-  - You may play Forests from your graveyard.
-
-</details>
-
 ## playable-condition-opponent-lost-life
 
 Blocks **1** card.
@@ -3557,6 +3547,20 @@ Blocks **1** card.
 
 - **Jace Reawakened** (rank 7506) — `jace_reawakened`
   - +1: You may exile a nonland card with mana value 3 or less from your hand. If you do, it becomes plotted.
+
+</details>
+
+## prevent-damage-from-source-to-permanent
+
+Blocks **1** card.
+
+- **(static_effect)** a `prevent_damage` static over permanents (`affects`, `prevent_all`) that reads `damage_source` -- here {"subtypes": ["Desert"]} -- so only damage from a matching dealer is prevented: `primitives.damage_permanent` must filter its total shield by the source the way `player_statics.prevented_player_damage` does for a seat
+  <br>Why the existing vocabulary won't do: The loader refuses `damage_source` on `prevent_damage` unless the static names `affects_player` and no `affects` -- the permanent half does not read it, so `prevent_all` over self would prevent every source's damage. `protection` from Deserts is a bigger card: it also stops the creature being blocked, targeted and enchanted by Deserts. Desertwalk itself is the shipped `desertwalk` keyword
+
+<details><summary>Cards waiting on this</summary>
+
+- **Desert Nomads** (rank 29255) — `desert_nomads`
+  - Prevent all damage that would be dealt to this creature by Deserts.
 
 </details>
 

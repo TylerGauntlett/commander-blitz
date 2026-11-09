@@ -188,20 +188,25 @@ class Keyword(str, Enum):
     #: creature either.  Read only by :func:`targeting.can_be_targeted` -- it is
     #: a target rule and nothing else, unlike protection, which four rules read.
     SHROUD = "shroud"
-    #: Landwalk (702.14).  Five keywords rather than one parameterised
-    #: ability because `Keyword` is a bare string and the whole point of the
-    #: quality is *which* land type: `LANDWALK_SUBTYPE` maps each to the
-    #: subtype the defending player must control.  Read only by
+    #: Landwalk (702.14).  One keyword per land type rather than one
+    #: parameterised ability because `Keyword` is a bare string and the whole
+    #: point of the quality is *which* land type: `LANDWALK_SUBTYPE` maps each
+    #: to the subtype the defending player must control.  Read only by
     #: `combat.can_block`, and unlike protection it is one rule.
     PLAINSWALK = "plainswalk"
     ISLANDWALK = "islandwalk"
     SWAMPWALK = "swampwalk"
     MOUNTAINWALK = "mountainwalk"
     FORESTWALK = "forestwalk"
+    #: Desertwalk -- landwalk over a *nonbasic* land type (702.14a allows any
+    #: land type, 205.3i lists Desert).  The same rule as the basic five, so
+    #: it is one more `LANDWALK_SUBTYPE` row and nothing else: Hazezon, Shaper
+    #: of Sand and Desert Nomads print it.
+    DESERTWALK = "desertwalk"
     #: Nonbasic landwalk, the same rule with the test inverted: a *supertype*
     #: the land must lack rather than a subtype it must have.  So it cannot be a
-    #: sixth `LANDWALK_SUBTYPE` row, and it is a separate keyword for the reason
-    #: the other five are separate from each other -- `Keyword` is a bare string.
+    #: `LANDWALK_SUBTYPE` row, and it is a separate keyword for the reason the
+    #: subtype walks are separate from each other -- `Keyword` is a bare string.
     NONBASIC_LANDWALK = "nonbasic_landwalk"
     INDESTRUCTIBLE = "indestructible"
     #: Wither (702.90b) and infect (702.90c).  Both change the *form* damage
@@ -401,6 +406,7 @@ LANDWALK_SUBTYPE = {
     Keyword.SWAMPWALK.value: "Swamp",
     Keyword.MOUNTAINWALK.value: "Mountain",
     Keyword.FORESTWALK.value: "Forest",
+    Keyword.DESERTWALK.value: "Desert",
 }
 
 EVASION_KEYWORDS = frozenset(
