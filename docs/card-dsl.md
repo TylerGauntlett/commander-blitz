@@ -156,6 +156,18 @@ is countered, and the same card cast later by another route goes back to the
 graveyard. `exiles` must be a boolean. `cast_card` is the near miss and charges
 the mana cost; `play_exiled` is free but defaults its pool to cards in exile.
 
+`as` records the cards actually cast (a declined offer, or a card with no legal
+target, is not in it) and **accumulates** across the ops of one resolution.
+Finale of Promise casts an instant and a sorcery by two ops over two targets,
+then copies "each of those spells twice" with `copy_spell`'s `spells`, a pool
+in place of `sid` or `target` that copies each spell in it still on the stack:
+
+```jsonc
+{ "op": "cast_from_hand", "objects": { "target": "t1" }, "exiles": true, "as": "cast" },
+{ "op": "cast_from_hand", "objects": { "target": "t2" }, "exiles": true, "as": "cast" },
+{ "op": "copy_spell", "spells": { "binding": "cast" }, "amount": { "const": 2 }, "new_targets": true }
+```
+
 `scry` takes `player` (whose library) and `chooser` (who decides) separately.
 They are the same person for scry and different people for **fateseal** —
 `{"op": "scry", "player": {"target": "t1"}, "chooser": "you"}` — and that is
@@ -1440,6 +1452,31 @@ there is no state where the first happened and the second did not.
 The from-hand gate does double duty exactly as rebound's does — it is the printed
 words, and it is the loop guard, since the plotted card is cast from **exile** and
 would otherwise re-plot itself for ever.
+
+**A card that prints plot** carries the card-level field instead:
+
+```jsonc
+"plot": "{3}{U}"   // Lock and Load: "Plot {3}{U}"
+```
+
+It is foretell's special action with the price moved to the front, and shares
+`ActionKind.SUSPEND`: pay the `plot` cost and exile the card from hand, face up,
+using no stack (`suspend.plot_card`). Plotting is sorcery-speed whatever the
+card's type, so an instant with plot is still only plotted on your own turn with
+the stack empty. It leaves the same three riders `grant_plot` leaves, so a card
+plotted from hand and a spell plotted as it resolved are the same object
+afterwards. `grant_plot` is the near miss for it: it marks a spell already on the
+stack and cannot reach a card in hand.
+
+**Exiled with a source.** `exile_spell_on_resolution` is the same rider with a
+link where plot leaves a permission: "you may exile that spell instead of
+putting it into its owner's graveyard as it resolves" (Forger's Foundry). The
+spell goes to exile and is linked to the ability's source (`exiled_by`,
+607.2a), so the source's `{"zone": "exile", "exiled_with": "self"}` finds it
+later. It has no from-hand gate, since the printed line has none, and does
+nothing to a spell another rider already sends to exile. The spell is named as
+`grant_plot`'s is, or, with neither `sid` nor `target`, by a spent-mana
+trigger's `subject`.
 
 ### "Multicolored" — `min_colors`
 
@@ -2840,6 +2877,53 @@ The filter is the ordinary reduction filter and every key still applies, applied
 creatures into the seat that would otherwise win. A filter that admits one
 player has one group, so `greatest_count` with the default `controller: "you"`
 is simply `count`; the grouping and the filtering are separate steps.
+
+### A reduction that counts mana values
+
+```jsonc
+// Eris, Roar of the Storm — "This spell costs {2} less to cast for each
+//  different mana value among instant and sorcery cards in your graveyard."
+"cost_reduction": {
+  "distinct_mana_values": {
+    "zone": "graveyard", "controller": "you", "any_types": ["Instant", "Sorcery"]
+  },
+  "each": 2
+}
+```
+
+`distinct_mana_values` counts the **set** of printed mana values among the
+filter's objects, so two instants of mana value 2 are one unit. `count` is the
+near miss and reads them as two.
+
+`each` is the price of one unit beside a head that counts (`count`,
+`distinct_mana_values`, `greatest_count`): "{2} less for each". It is an
+integer of 2 or more, since a unit is already {1} without it, and the loader
+refuses it beside `amount` or a sum (`total_power`, `total_mana_value`).
+
+### The next spell costs less
+
+```jsonc
+// Kaza, Roil Chaser — "{T}: The next instant or sorcery spell you cast this
+//  turn costs {X} less to cast, where X is the number of Wizards you control as
+//  this ability resolves."
+{ "op": "next_spell_cost_reduction",
+  "types": ["Instant", "Sorcery"],
+  "amount": { "count": { "zone": "battlefield", "controller": "you", "subtypes": ["Wizard"] } } }
+```
+
+An effect, not a `cost_reduction`: it installs a one-shot discount owned by the
+player (`structs.NextSpellDiscount`). `amount` is any value and is read once,
+as the effect resolves, so a Wizard dying later changes nothing and a binding
+such as "for each counter removed this way" (Mutated Cultist) is available.
+`types` narrows it to spells of any of those card types; omitted, it is the
+next spell of any kind. The next matching spell cast spends it, a spell the
+filter misses leaves it waiting, and whatever is unspent goes at cleanup. Two
+discounts waiting for the same spell both apply. Generic only, like every
+reduction; zero installs nothing.
+
+The near misses are the continuous ones: a card's `cost_reduction` and the
+`spell_cost_reduction` static recount the board each time a spell is priced
+and discount every matching spell while their source stands.
 
 ### A reduction that reads energy paid or lost
 

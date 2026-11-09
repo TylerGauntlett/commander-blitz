@@ -337,6 +337,22 @@ def _suspend_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Ac
                     label=f"Foretell {card.name}",
                 )
             )
+        # Plot (702.171a) is the same special action with the card's own price
+        # in front, "only as a sorcery" whatever the card's type. No printing
+        # has both plot and foretell, so the one action kind stays unambiguous.
+        for oid in state.players[pid].hand:
+            card = state.card(oid)
+            if card.plot is None:
+                continue
+            if not can_pay_mana(state, pid, card.plot, purpose=OTHER_PAYMENT):
+                continue
+            out.append(
+                Action(
+                    kind=ActionKind.SUSPEND,
+                    source=oid,
+                    label=f"Plot {card.name}",
+                )
+            )
     return out
 
 

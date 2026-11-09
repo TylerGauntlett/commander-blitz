@@ -28,6 +28,7 @@ from commanderblitz.engine.errors import DslError
 from .vocabulary import (
     CAST_ORIGIN_ZONES,
     COST_CONDITION_HEADS,
+    COST_REDUCTION_EACH,
     COST_REDUCTION_FILTER_KEYS,
     COST_REDUCTION_KEYS,
     COST_REDUCTION_REFUSED_FILTER_KEYS,
@@ -177,11 +178,12 @@ def _validate_cost_reduction(spec: Any, where: str) -> None:
     if not isinstance(spec, Mapping):
         raise DslError(f"{where}: must name exactly one of {sorted(COST_REDUCTION_KEYS)}")
     arithmetic = set(spec) & COST_REDUCTION_KEYS
-    unknown = set(spec) - COST_REDUCTION_KEYS - {"condition"}
+    unknown = set(spec) - COST_REDUCTION_KEYS - {"condition", COST_REDUCTION_EACH}
     if unknown:
         raise DslError(
             f"{where}: unknown reduction keys {sorted(unknown)} "
-            f"(implemented: {sorted(COST_REDUCTION_KEYS)} plus an optional 'condition')"
+            f"(implemented: {sorted(COST_REDUCTION_KEYS)} plus an optional 'condition' "
+            f"and '{COST_REDUCTION_EACH}')"
         )
     if len(arithmetic) != 1:
         # Two would be paid at whichever the code read first, which is not
@@ -189,6 +191,22 @@ def _validate_cost_reduction(spec: Any, where: str) -> None:
         # to reduce.
         raise DslError(f"{where}: must name exactly one of {sorted(COST_REDUCTION_KEYS)}")
     key = next(iter(arithmetic))
+    if COST_REDUCTION_EACH in spec:
+        # "{2} less for each …" -- a per-unit price, so it needs a head that
+        # counts units. Beside a flat `amount` it would be a second way to
+        # write a bigger number; beside a sum of power or mana value it would
+        # multiply a total no printed card multiplies.
+        each = spec[COST_REDUCTION_EACH]
+        if not isinstance(each, int) or isinstance(each, bool) or each < 2:
+            raise DslError(
+                f"{where}.{COST_REDUCTION_EACH}: an integer of 2 or more (one unit is "
+                f"{{1}} without it), got {each!r}"
+            )
+        if key not in ("count", "distinct_mana_values", "greatest_count"):
+            raise DslError(
+                f"{where}.{COST_REDUCTION_EACH}: only beside a head that counts "
+                f"('count', 'distinct_mana_values', 'greatest_count'), not {key!r}"
+            )
     if key == "amount":
         amount = spec["amount"]
         if not isinstance(amount, int) or isinstance(amount, bool) or amount < 1:

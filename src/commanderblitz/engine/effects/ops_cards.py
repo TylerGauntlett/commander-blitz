@@ -1892,6 +1892,10 @@ def op_cast_from_hand(ctx: EffectContext, spec: Mapping[str, Any]):
     fizzling or being countered -- and the same card cast later by other means
     goes back to the graveyard. `cast_card` is the near miss and charges the
     mana cost; `play_exiled` is free but reads its pool out of exile.
+
+    ``as`` records the cards actually cast -- the spells now on the stack --
+    and accumulates across ops of one resolution, so `copy_spell`'s
+    ``spells`` can copy "each of those spells" (Finale of Promise).
     """
 
     selector = spec.get("selector") or {}
@@ -1905,6 +1909,7 @@ def op_cast_from_hand(ctx: EffectContext, spec: Mapping[str, Any]):
     # written before this reads as it did.
     zones = [str(z) for z in spec.get("zones", ("hand",))]
     named = spec.get("objects")
+    cast: list[int] = []
     for pid in select_players(ctx, spec.get("player", "you")):
         if player_cant_cast_while_resolving(ctx.state, pid):
             # Voice of Victory: nothing to offer a player who cannot cast.
@@ -1951,8 +1956,13 @@ def op_cast_from_hand(ctx: EffectContext, spec: Mapping[str, Any]):
             groups = [pool] if pool else []
         for group in groups:
             picked = yield from ask_objects(ctx, prompt, group, 0, 1, pid, "cast_from_hand")
-            if picked:
-                cast_for_free(ctx.state, pid, picked[0], exiles_instead=exiles)
+            if picked and cast_for_free(ctx.state, pid, picked[0], exiles_instead=exiles):
+                cast.append(picked[0])
+    if name := spec.get("as"):
+        # Accumulates: Finale of Promise casts its instant and its sorcery by
+        # two ops and copies "each of those spells" in one.
+        previous = ctx.bindings.get(str(name))
+        ctx.bindings[str(name)] = [*(previous if isinstance(previous, list) else ()), *cast]
 
 
 def _cast_paying_mana_cost(ctx: EffectContext, pid: int, oid: int, *, exiles: bool = False):

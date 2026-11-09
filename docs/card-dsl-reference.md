@@ -10,7 +10,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 171 |
+| [Effect ops](#effect-ops) | 173 |
 | [Selectors](#selectors) | 76 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 72 |
@@ -20,9 +20,9 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Static effects](#static-effects) | 96 |
 | [Player-wide statics](#player-wide-statics) | 46 |
 | [Grantable statics](#grantable-statics) | 43 |
-| [Cost reduction](#cost-reduction) | 7 |
+| [Cost reduction](#cost-reduction) | 8 |
 | [Ability costs](#ability-costs) | 32 |
-| [Card-level costs](#card-level-costs) | 32 |
+| [Card-level costs](#card-level-costs) | 33 |
 | [Keywords](#keywords) | 45 |
 | [Card types and supertypes](#card-types-and-supertypes) | 12 |
 | [Durations](#durations) | 6 |
@@ -48,7 +48,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `behold` | Cards | yes | Choose a matching permanent you control or reveal a matching card from hand; `effects` is "if you do". | [behold — choose a permanent or reveal a card](card-dsl-cookbook.md#behold--choose-a-permanent-or-reveal-a-card) |
 | `cascade` | Cards |  | Cascade: exile from the top until a cheaper nonland, cast it free. | [Cascade, ripple and reveal_until — walking a library](card-dsl-cookbook.md#cascade-ripple-and-reveal_until--walking-a-library) |
 | `cast_card` | Cards | yes | Cast a named card during resolution, paying its mana cost; `exiles` exiles the spell instead of putting it into a graveyard; `as` records what was cast. | ["You may cast that card" — a paid cast during resolution](card-dsl-cookbook.md#you-may-cast-that-card--a-paid-cast-during-resolution) |
-| `cast_from_hand` | Cards |  | Cast a spell from hand (or listed zones, or a named pool once per owner) without paying its mana cost; `exiles` exiles the spell instead of putting it into a graveyard. | [Effect ops](card-dsl.md#effect-ops) |
+| `cast_from_hand` | Cards | yes | Cast a spell from hand (or listed zones, or a named pool once per owner) without paying its mana cost; `exiles` exiles the spell instead of putting it into a graveyard; `as` records what was cast, accumulating. | [Effect ops](card-dsl.md#effect-ops) |
 | `clash` | Cards |  | Clash with an opponent; the winner is bound for a later `if`. | [Clash](card-dsl-cookbook.md#clash) |
 | `connive` | Cards |  | Connive: draw, discard, +1/+1 counter if a nonland was discarded. | [Connive](card-dsl-cookbook.md#connive) |
 | `discard` | Cards | yes | A player discards N cards, chosen or at random; `as` records them. | [discard: up_to and as](card-dsl.md#discard-up_to-and-as) |
@@ -179,14 +179,16 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `extra_loyalty_activation` | Players |  | A player may activate loyalty abilities an extra time this turn. | [Effect ops](card-dsl.md#effect-ops) |
 | `grant_flash_permission` | Players |  | A player may cast matching spells (or, with `next_spell`, the next one) as though they had flash. | [Effect ops](card-dsl.md#effect-ops) |
 | `lose_game` | Players |  | A player loses the game. | ["That player loses the game"](card-dsl-cookbook.md#that-player-loses-the-game) |
+| `next_spell_cost_reduction` | Players |  | A player's next spell of the given types this turn costs N less, N read as it resolves. | [The next spell costs less](card-dsl.md#the-next-spell-costs-less) |
 | `no_maximum_hand_size` | Players |  | A player has no maximum hand size for the rest of the game. | ["No maximum hand size for the rest of the game"](card-dsl-cookbook.md#no-maximum-hand-size-for-the-rest-of-the-game) |
 | `win_game` | Players |  | A player wins the game. | ["You win the game"](card-dsl-cookbook.md#you-win-the-game) |
 | `add_mana` | Mana |  | Add mana to a player's pool. | [Mana abilities](card-dsl-cookbook.md#mana-abilities) |
 | `add_mana_per` | Mana |  | Add one mana of a color for each object a selector finds. | ["Add {G} for each …"](card-dsl-cookbook.md#add-g-for-each-) |
 | `extra_land_drop` | Mana |  | A player may play an additional land this turn. | [Effect ops](card-dsl.md#effect-ops) |
 | `copy_ability` | Stack |  | Copy an activated or triggered ability; `new_targets` re-aims it. | [Effect ops](card-dsl.md#effect-ops) |
-| `copy_spell` | Stack |  | Copy a spell; `new_targets` lets the copy be re-aimed. | ["You may choose new targets for the copy"](card-dsl-cookbook.md#you-may-choose-new-targets-for-the-copy) |
+| `copy_spell` | Stack |  | Copy a spell, or with `spells` each spell in a pool; `new_targets` lets the copy be re-aimed. | ["You may choose new targets for the copy"](card-dsl-cookbook.md#you-may-choose-new-targets-for-the-copy) |
 | `counter` | Stack | yes | Counter a spell or ability; `exiles` sends a spell it countered to exile instead of its owner's graveyard, `as` binds the cards it countered. | ["If that spell is countered this way, exile it instead"](card-dsl.md#if-that-spell-is-countered-this-way-exile-it-instead) |
+| `exile_spell_on_resolution` | Stack |  | A spell is exiled as it resolves instead of binned, linked to this source. | [Plot](card-dsl.md#plot) |
 | `grant_plot` | Stack |  | Plot a card: exile it, castable free on a later turn. | [Plot](card-dsl.md#plot) |
 | `grant_rebound` | Stack |  | Give a spell rebound as it resolves. | [Granting rebound to a spell that does not print it](card-dsl.md#granting-rebound-to-a-spell-that-does-not-print-it) |
 | `reflexive_trigger` | Stack |  | "When you do": queue a trigger off the preceding effect. | ["When you do" — reflexive triggered abilities](card-dsl-cookbook.md#when-you-do--reflexive-triggered-abilities) |
@@ -754,6 +756,7 @@ The arithmetic heads a card-level `cost_reduction`, a `spell_cost_reduction` sta
 |---|---|---|
 | `amount` | Costs N less (usually gated on a `condition`). | [An activated ability that gets cheaper](card-dsl-cookbook.md#an-activated-ability-that-gets-cheaper) |
 | `count` | Costs {1} less for each object a filter finds. | [An activated ability that gets cheaper](card-dsl-cookbook.md#an-activated-ability-that-gets-cheaper) |
+| `distinct_mana_values` | …for each different printed mana value among a filter's objects. | [A reduction that counts mana values](card-dsl.md#a-reduction-that-counts-mana-values) |
 | `energy_spent_this_turn` | Costs {1} less for each {E} a player paid or lost this turn. | [A reduction that reads energy paid or lost](card-dsl.md#a-reduction-that-reads-energy-paid-or-lost) |
 | `greatest_count` | …for the greatest number any one player has. | [A reduction that maximises a per-player tally](card-dsl.md#a-reduction-that-maximises-a-per-player-tally) |
 | `greatest_mana_value` | …by the greatest mana value among a filter's objects. | […by the greatest mana value of a commander you own](card-dsl-cookbook.md#by-the-greatest-mana-value-of-a-commander-you-own) |
@@ -831,6 +834,7 @@ The alternative and additional costs that live on the *card* rather than inside 
 | `multikicker` | Multikicker cost. | [Multikicker](card-dsl-cookbook.md#multikicker) |
 | `mutate` | Mutate cost. | [Mutate — two cards, one permanent, and one synthesised CardDef](card-dsl-cookbook.md#mutate--two-cards-one-permanent-and-one-synthesised-carddef) |
 | `overload` | Overload cost. | [Overload](card-dsl-cookbook.md#overload) |
+| `plot` | Plot cost: pay it to exile this from hand, then cast it free on a later turn. | [Plot](card-dsl.md#plot) |
 | `pay_generic_with` | Convoke, improvise or delve: what may pay generic mana. | [Convoke, improvise and delve](card-dsl-cookbook.md#convoke-improvise-and-delve) |
 | `retrace` | Retrace. | [Retrace and "by discarding a card"](card-dsl-cookbook.md#retrace-and-by-discarding-a-card) |
 | `splice` | Splice cost. | [Splice](card-dsl-cookbook.md#splice) |

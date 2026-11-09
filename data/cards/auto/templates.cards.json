@@ -24881,6 +24881,114 @@
         {
           "effects": [
             {
+              "any_number_of_times": {
+                "as": "paid"
+              },
+              "effects": [
+                {
+                  "ability": "bloodthirsty_adversary_payoff",
+                  "op": "reflexive_trigger"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{2}{R}"
+              },
+              "player": "you",
+              "prompt": "Pay {2}{R} any number of times for Bloodthirsty Adversary?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, you may pay {2}{R} any number of times.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "paid"
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            },
+            {
+              "as": "banked",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            },
+            {
+              "objects": {
+                "binding": "banked"
+              },
+              "op": "cast_copy",
+              "optional": true
+            }
+          ],
+          "id": "bloodthirsty_adversary_payoff",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "count": {
+                "binding": "paid"
+              },
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "any_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "controller": "you",
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "const": 3
+                  }
+                },
+                "zone": "graveyard"
+              },
+              "up_to": true
+            }
+          ],
+          "text": "When you pay this cost one or more times, put that many +1/+1 counters on this creature, then exile up to that many target instant and/or sorcery cards with mana value 3 or less from your graveyard and copy them. You may cast any number of the copies without paying their mana costs."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "bloodthirsty_adversary",
+      "keywords": [
+        "haste"
+      ],
+      "mana_cost": "{1}{R}",
+      "name": "Bloodthirsty Adversary",
+      "oracle_text": "Haste\nWhen this creature enters, you may pay {2}{R} any number of times. When you pay this cost one or more times, put that many +1/+1 counters on this creature, then exile up to that many target instant and/or sorcery cards with mana value 3 or less from your graveyard and copy them. You may cast any number of the copies without paying their mana costs.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Vampire"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "binding": "amount"
               },
@@ -45659,6 +45767,81 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "duration": "once_this_turn",
+              "effects": [
+                {
+                  "amount": {
+                    "minus": [
+                      {
+                        "spells_cast_this_turn": "all"
+                      },
+                      {
+                        "const": 1
+                      }
+                    ]
+                  },
+                  "new_targets": true,
+                  "op": "copy_spell"
+                }
+              ],
+              "op": "delayed_trigger",
+              "text": "The next instant or sorcery spell you cast this turn has storm. (When you cast that spell, copy it for each spell cast before it this turn. You may choose new targets for the copies.)",
+              "trigger": {
+                "condition": {
+                  "exists": {
+                    "any_types": [
+                      "Instant",
+                      "Sorcery"
+                    ],
+                    "binding": "subject",
+                    "zone": "stack"
+                  }
+                },
+                "controller": "you",
+                "event": "spell_cast"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, if you cast it, the next instant or sorcery spell you cast this turn has storm. (When you cast that spell, copy it for each spell cast before it this turn. You may choose new targets for the copies.)",
+          "trigger": {
+            "condition": {
+              "was_cast": true
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "crackling_spellslinger",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{3}{R}{R}",
+      "name": "Crackling Spellslinger",
+      "oracle_text": "Flash\nWhen this creature enters, if you cast it, the next instant or sorcery spell you cast this turn has storm. (When you cast that spell, copy it for each spell cast before it this turn. You may choose new targets for the copies.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -63438,6 +63621,55 @@
               "amount": {
                 "const": 1
               },
+              "op": "damage",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast an instant or sorcery spell, this creature deals 1 damage to each opponent.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "electrostatic_field",
+      "keywords": [
+        "defender"
+      ],
+      "mana_cost": "{1}{R}",
+      "name": "Electrostatic Field",
+      "oracle_text": "Defender\nWhenever you cast an instant or sorcery spell, this creature deals 1 damage to each opponent.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Wall"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
               "counter": "+1/+1",
               "objects": {
                 "self_only": true
@@ -63600,6 +63832,59 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "amount": {
+                "minus": [
+                  {
+                    "spells_cast_this_turn": "all"
+                  },
+                  {
+                    "const": 1
+                  }
+                ]
+              },
+              "op": "copy_spell"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Storm (When you cast this spell, copy it for each spell cast before it this turn.)",
+          "trigger": {
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "elemental_eruption",
+      "mana_cost": "{4}{R}{R}",
+      "name": "Elemental Eruption",
+      "oracle_text": "Create a 4/4 red Dragon Elemental creature token with flying and prowess.\nStorm (When you cast this spell, copy it for each spell cast before it this turn.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "create_token",
+          "token": "dragon_elemental_4_4_r_flying_prowess"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -67017,6 +67302,96 @@
       "source": "auto",
       "subtypes": [
         "Human",
+        "Warlock"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Flying, prowess",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "dragon_elemental_4_4_r_flying_prowess"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast your second spell each turn, create a 4/4 red Dragon Elemental creature token with flying and prowess.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "nth": 2
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "cost_reduction": {
+        "distinct_mana_values": {
+          "any_types": [
+            "Instant",
+            "Sorcery"
+          ],
+          "controller": "you",
+          "zone": "graveyard"
+        },
+        "each": 2
+      },
+      "id": "eris_roar_of_the_storm",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{8}{U}{R}",
+      "name": "Eris, Roar of the Storm",
+      "oracle_text": "This spell costs {2} less to cast for each different mana value among instant and sorcery cards in your graveyard.\nFlying, prowess\nWhenever you cast your second spell each turn, create a 4/4 red Dragon Elemental creature token with flying and prowess.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Elemental",
         "Warlock"
       ],
       "supertypes": [
@@ -74540,6 +74915,104 @@
     },
     {
       "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "finale_of_promise",
+      "mana_cost": "{X}{R}{R}",
+      "name": "Finale of Promise",
+      "oracle_text": "You may cast up to one target instant card and/or up to one target sorcery card from your graveyard each with mana value X or less without paying their mana costs. If a spell cast this way would be put into your graveyard, exile it instead. If X is 10 or more, copy each of those spells twice. You may choose new targets for the copies.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "cast",
+          "exiles": true,
+          "objects": {
+            "target": "t1"
+          },
+          "op": "cast_from_hand"
+        },
+        {
+          "as": "cast",
+          "exiles": true,
+          "objects": {
+            "target": "t2"
+          },
+          "op": "cast_from_hand"
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "x": true
+            },
+            "right": {
+              "const": 10
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "new_targets": true,
+              "op": "copy_spell",
+              "spells": {
+                "binding": "cast"
+              }
+            }
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "optional": true,
+          "selector": {
+            "controller": "you",
+            "mana_value": {
+              "op": "<=",
+              "value": {
+                "x": true
+              }
+            },
+            "types": [
+              "Instant"
+            ],
+            "zone": "graveyard"
+          }
+        },
+        {
+          "count": 1,
+          "id": "t2",
+          "kind": "card_in_graveyard",
+          "optional": true,
+          "selector": {
+            "controller": "you",
+            "mana_value": {
+              "op": "<=",
+              "value": {
+                "x": true
+              }
+            },
+            "types": [
+              "Sorcery"
+            ],
+            "zone": "graveyard"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "U"
       ],
       "colors": [
@@ -78585,6 +79058,86 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{U}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "mana_spent_trigger": {
+            "effects": [
+              {
+                "effects": [
+                  {
+                    "op": "exile_spell_on_resolution"
+                  }
+                ],
+                "op": "may",
+                "prompt": "Exile that spell instead of putting it into its owner's graveyard as it resolves?"
+              }
+            ],
+            "spell": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ],
+              "mana_value": {
+                "op": "<=",
+                "value": {
+                  "const": 3
+                }
+              }
+            }
+          },
+          "text": "{T}: Add {U}. When you spend this mana to cast an instant or sorcery spell with mana value 3 or less, you may exile that spell instead of putting it into its owner's graveyard as it resolves."
+        },
+        {
+          "cost": {
+            "mana": "{3}{U}{U}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "any",
+                "count": "any",
+                "exiled_with": "self",
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "exile"
+              },
+              "op": "play_exiled"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "{3}{U}{U}, {T}: You may cast any number of spells from among cards exiled with this artifact without paying their mana costs. Activate only as a sorcery."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "forger_s_foundry",
+      "mana_cost": "{2}{U}",
+      "name": "Forger's Foundry",
+      "oracle_text": "{T}: Add {U}. When you spend this mana to cast an instant or sorcery spell with mana value 3 or less, you may exile that spell instead of putting it into its owner's graveyard as it resolves.\n{3}{U}{U}, {T}: You may cast any number of spells from among cards exiled with this artifact without paying their mana costs. Activate only as a sorcery.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -116793,6 +117346,64 @@
           },
           "effects": [
             {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Wizard"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "next_spell_cost_reduction",
+              "types": [
+                "Instant",
+                "Sorcery"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}: The next instant or sorcery spell you cast this turn costs {X} less to cast, where X is the number of Wizards you control as this ability resolves."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "kaza_roil_chaser",
+      "keywords": [
+        "flying",
+        "haste"
+      ],
+      "mana_cost": "{U}{R}",
+      "name": "Kaza, Roil Chaser",
+      "oracle_text": "Flying, haste\n{T}: The next instant or sorcery spell you cast this turn costs {X} less to cast, where X is the number of Wizards you control as this ability resolves.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
               "modes": [
                 {
                   "effects": [
@@ -124933,6 +125544,73 @@
       "abilities": [
         {
           "cost": {
+            "mana": "{1}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "milled",
+              "op": "mill",
+              "player": "you"
+            },
+            {
+              "destination": "hand",
+              "objects": {
+                "any_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "binding": "milled",
+                "count": 1,
+                "optional": true
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}, {T}: Mill a card. You may put an instant or sorcery card milled this way into your hand."
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "supertypes": [
+                "Legendary"
+              ],
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "untap"
+            }
+          ],
+          "kind": "activated",
+          "text": "Tap an untapped legendary creature you control: Untap this artifact."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "leyline_dowser",
+      "mana_cost": "{2}",
+      "name": "Leyline Dowser",
+      "oracle_text": "{1}, {T}: Mill a card. You may put an instant or sorcery card milled this way into your hand.\nTap an untapped legendary creature you control: Untap this artifact.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
             "tap": true
           },
           "effects": [
@@ -127455,6 +128133,61 @@
             "zone": "battlefield"
           },
           "op": "destroy"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "lock_and_load",
+      "mana_cost": "{2}{U}",
+      "name": "Lock and Load",
+      "oracle_text": "Draw a card, then draw a card for each other instant and sorcery spell you've cast this turn.\nPlot {3}{U} (You may pay {3}{U} and exile this card from your hand. Cast it as a sorcery on a later turn without paying its mana cost. Plot only as a sorcery.)",
+      "plot": "{3}{U}",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "max": [
+              {
+                "minus": [
+                  {
+                    "spells_cast_this_turn": {
+                      "filter": {
+                        "any_types": [
+                          "Instant",
+                          "Sorcery"
+                        ]
+                      },
+                      "player": "you"
+                    }
+                  },
+                  {
+                    "const": 1
+                  }
+                ]
+              },
+              {
+                "const": 0
+              }
+            ]
+          },
+          "op": "draw",
+          "player": "you"
         }
       ],
       "types": [
@@ -143945,6 +144678,54 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "bird_illusion_1_1_u_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast an instant or sorcery spell, create a 1/1 blue Bird Illusion creature token with flying.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "murmuring_mystic",
+      "mana_cost": "{3}{U}",
+      "name": "Murmuring Mystic",
+      "oracle_text": "Whenever you cast an instant or sorcery spell, create a 1/1 blue Bird Illusion creature token with flying.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -149357,6 +150138,93 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker",
+                  "Battle"
+                ]
+              }
+            }
+          ],
+          "text": "Whenever you draw a card, Niv-Mizzet deals 1 damage to any target.",
+          "trigger": {
+            "controller": "you",
+            "event": "draw"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a player casts an instant or sorcery spell, you draw a card.",
+          "trigger": {
+            "controller": "any",
+            "event": "spell_cast",
+            "filter": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "niv_mizzet_parun",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{U}{U}{U}{R}{R}{R}",
+      "name": "Niv-Mizzet, Parun",
+      "oracle_text": "This spell can't be countered.\nFlying\nWhenever you draw a card, Niv-Mizzet deals 1 damage to any target.\nWhenever a player casts an instant or sorcery spell, you draw a card.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Dragon",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ],
+      "uncounterable": true
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -152208,6 +153076,149 @@
         "Cat"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "cost": {
+            "mana": "{8}"
+          },
+          "effect": "ward",
+          "kind": "static",
+          "text": "Ward {8}"
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "animate",
+              "power": {
+                "const": 8
+              },
+              "toughness": {
+                "const": 8
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Magecraft — Whenever you cast or copy an instant or sorcery spell, target creature has base power and toughness 8/8 until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "animate",
+              "power": {
+                "const": 8
+              },
+              "toughness": {
+                "const": 8
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Magecraft — Whenever you cast or copy an instant or sorcery spell, target creature has base power and toughness 8/8 until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_copied",
+            "filter": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "cost_reduction": {
+        "amount": 8,
+        "condition": {
+          "cmp": ">=",
+          "left": {
+            "count": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ],
+              "controller": "you",
+              "zone": "graveyard"
+            }
+          },
+          "right": {
+            "const": 8
+          }
+        }
+      },
+      "id": "octavia_living_thesis",
+      "mana_cost": "{8}{U}{U}",
+      "name": "Octavia, Living Thesis",
+      "oracle_text": "This spell costs {8} less to cast if you have eight or more instant and/or sorcery cards in your graveyard.\nWard {8}\nMagecraft — Whenever you cast or copy an instant or sorcery spell, target creature has base power and toughness 8/8 until end of turn.",
+      "power": 8,
+      "source": "auto",
+      "subtypes": [
+        "Elemental",
+        "Octopus"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 8,
       "types": [
         "Creature"
       ]
@@ -167743,6 +168754,81 @@
     {
       "abilities": [
         {
+          "cost": {
+            "mana": "{7}{U}",
+            "mana_reduction": {
+              "count": {
+                "any_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "owner": "you",
+                "zone": "graveyard"
+              }
+            }
+          },
+          "effects": [
+            {
+              "condition": {
+                "cmp": "==",
+                "left": {
+                  "counters_on": {
+                    "counter": "+1/+1",
+                    "objects": {
+                      "self_only": true
+                    }
+                  }
+                },
+                "right": {
+                  "const": 0
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 4
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "add_counters"
+                }
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "{7}{U}: Adapt 4. This ability costs {1} less to activate for each instant and sorcery card in your graveyard. (If this creature has no +1/+1 counters on it, put four +1/+1 counters on it.)"
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "pteramander",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{U}",
+      "name": "Pteramander",
+      "oracle_text": "Flying\n{7}{U}: Adapt 4. This ability costs {1} less to activate for each instant and sorcery card in your graveyard. (If this creature has no +1/+1 counters on it, put four +1/+1 counters on it.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Salamander",
+        "Drake"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "condition": {
@@ -168540,6 +169626,57 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "pyretic_charge",
+      "mana_cost": "{4}{R}",
+      "name": "Pyretic Charge",
+      "oracle_text": "Discard your hand, then draw four cards. For each card discarded this way, creatures you control get +1/+0 until end of turn.\nPlot {3}{R} (You may pay {3}{R} and exile this card from your hand. Cast it as a sorcery on a later turn without paying its mana cost. Plot only as a sorcery.)",
+      "plot": "{3}{R}",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "pitched",
+          "op": "discard",
+          "player": "you",
+          "whole_hand": true
+        },
+        {
+          "amount": {
+            "const": 4
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "pump",
+          "power": {
+            "count": {
+              "binding": "pitched"
+            }
+          },
+          "toughness": {
+            "const": 0
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -170084,6 +171221,35 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "graveyard_cost": {
+        "discard": 1,
+        "mana": "{1}{U}"
+      },
+      "id": "radical_idea",
+      "mana_cost": "{1}{U}",
+      "name": "Radical Idea",
+      "oracle_text": "Draw a card.\nJump-start (You may cast this card from your graveyard by discarding a card in addition to paying its other costs. Then exile this card.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "draw",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -190299,6 +191465,38 @@
     },
     {
       "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "serum_visions",
+      "mana_cost": "{U}",
+      "name": "Serum Visions",
+      "oracle_text": "Draw a card. Scry 2.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "scry",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "B"
       ],
       "colors": [
@@ -199711,6 +200909,143 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "count": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ],
+              "controller": "you",
+              "zone": "graveyard"
+            }
+          },
+          "text": "Smoldering Stagecoach's power is equal to the number of instant and sorcery cards in your graveyard.",
+          "toughness": {
+            "const": 5
+          }
+        },
+        {
+          "effects": [
+            {
+              "duration": "once_this_turn",
+              "effects": [
+                {
+                  "max_mana_value": {
+                    "mana_value_of": {
+                      "binding": "subject"
+                    }
+                  },
+                  "op": "cascade"
+                }
+              ],
+              "op": "delayed_trigger",
+              "text": "The next instant spell you cast this turn has cascade.",
+              "trigger": {
+                "condition": {
+                  "exists": {
+                    "binding": "subject",
+                    "types": [
+                      "Instant"
+                    ],
+                    "zone": "stack"
+                  }
+                },
+                "controller": "you",
+                "event": "spell_cast"
+              }
+            },
+            {
+              "duration": "once_this_turn",
+              "effects": [
+                {
+                  "max_mana_value": {
+                    "mana_value_of": {
+                      "binding": "subject"
+                    }
+                  },
+                  "op": "cascade"
+                }
+              ],
+              "op": "delayed_trigger",
+              "text": "The next sorcery spell you cast this turn has cascade.",
+              "trigger": {
+                "condition": {
+                  "exists": {
+                    "binding": "subject",
+                    "types": [
+                      "Sorcery"
+                    ],
+                    "zone": "stack"
+                  }
+                },
+                "controller": "you",
+                "event": "spell_cast"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this Vehicle attacks, the next instant spell and the next sorcery spell you cast this turn each have cascade.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 2,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "keep_pt": true,
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 2"
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "smoldering_stagecoach",
+      "mana_cost": "{3}{R}",
+      "name": "Smoldering Stagecoach",
+      "oracle_text": "Smoldering Stagecoach's power is equal to the number of instant and sorcery cards in your graveyard.\nWhenever this Vehicle attacks, the next instant spell and the next sorcery spell you cast this turn each have cascade.\nCrew 2",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "toughness": 5,
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "objects": {
@@ -207019,6 +208354,95 @@
         "Bird"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "destination": "exile",
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "playable": "end_of_your_next_turn",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast your second spell each turn, exile the top card of your library. Until the end of your next turn, you may play that card.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "nth": 2
+          }
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "spells_cast_this_turn": "you"
+            },
+            "right": {
+              "const": 3
+            }
+          },
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "new_targets": true,
+              "op": "copy_spell",
+              "target": "spell"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "spell",
+              "kind": "spell",
+              "selector": {
+                "any_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "controller": "you"
+              }
+            }
+          ],
+          "text": "{T}: Copy target instant or sorcery spell you control. You may choose new targets for the copy. Activate only if you've cast three or more spells this turn."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "stella_lee_wild_card",
+      "mana_cost": "{1}{U}{R}",
+      "name": "Stella Lee, Wild Card",
+      "oracle_text": "Whenever you cast your second spell each turn, exile the top card of your library. Until the end of your next turn, you may play that card.\n{T}: Copy target instant or sorcery spell you control. You may choose new targets for the copy. Activate only if you've cast three or more spells this turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Rogue"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -216975,6 +218399,56 @@
         "Scout"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "drake_2_2_u_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast an instant or sorcery spell, create a 2/2 blue Drake creature token with flying.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "talrand_sky_summoner",
+      "mana_cost": "{2}{U}{U}",
+      "name": "Talrand, Sky Summoner",
+      "oracle_text": "Whenever you cast an instant or sorcery spell, create a 2/2 blue Drake creature token with flying.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Merfolk",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -258060,6 +259534,53 @@
       "toughness": 4,
       "types": [
         "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "elemental_1_1_r"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast an instant or sorcery spell, create a 1/1 red Elemental creature token.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "young_pyromancer",
+      "mana_cost": "{1}{R}",
+      "name": "Young Pyromancer",
+      "oracle_text": "Whenever you cast an instant or sorcery spell, create a 1/1 red Elemental creature token.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Shaman"
+      ],
+      "toughness": 1,
+      "types": [
         "Creature"
       ]
     },

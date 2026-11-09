@@ -60,6 +60,7 @@
   "COST_REDUCTION_KEYS": [
    "amount",
    "count",
+   "distinct_mana_values",
    "energy_spent_this_turn",
    "greatest_count",
    "greatest_mana_value",
@@ -1007,6 +1008,7 @@
   "exchange_life_total",
   "exile",
   "exile_and_return",
+  "exile_spell_on_resolution",
   "exile_until",
   "explore",
   "extra_combat",
@@ -1056,6 +1058,7 @@
   "must_attack_player",
   "must_block",
   "must_block_any",
+  "next_spell_cost_reduction",
   "no_maximum_hand_size",
   "noop",
   "pair",

@@ -1863,6 +1863,16 @@ class CardModel(BaseModel):
     #: special action: both exile a card from hand to be cast later, neither
     #: uses the stack, and neither can be countered.
     foretell: str | None = None
+    #: **Plot** (702.171a): "You may pay {3}{U} and exile this card from your
+    #: hand. Cast it as a sorcery on a later turn without paying its mana cost.
+    #: Plot only as a sorcery." This names what plotting costs; the later cast is
+    #: free, which is the rule's, not the card's.
+    #:
+    #: Foretell's special action with the price moved to the front, so it shares
+    #: `ActionKind.SUSPEND` too. What it leaves behind is the permission
+    #: `grant_plot` already leaves: `playable_by` for `later_turns`, free and at
+    #: sorcery speed.
+    plot: str | None = None
     #: **Epic** (702.50a): "Spend the rest of the game casting no spells. At the
     #: beginning of each of your upkeeps, copy this spell except for its epic
     #: ability."

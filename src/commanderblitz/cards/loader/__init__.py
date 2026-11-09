@@ -2659,6 +2659,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         madness=ManaCost.parse(model.madness) if model.madness else None,
         miracle=ManaCost.parse(model.miracle) if model.miracle else None,
         foretell=ManaCost.parse(model.foretell) if model.foretell else None,
+        plot=ManaCost.parse(model.plot) if model.plot else None,
         epic=model.epic,
         morph=ManaCost.parse(model.morph) if model.morph else None,
         morph_counter=model.morph_counter,

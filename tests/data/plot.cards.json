@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/casting/test_plot.py. t_lilah is Lilah, Undefeated Slickshot's second line. t_gold_bolt is a multicolored instant and t_mono_bolt the mono-coloured near miss, which is what separates `min_colors` from `colors`.",
+  "_comment": "Shapes for tests/unit/casting/test_plot.py. t_lilah is Lilah, Undefeated Slickshot's second line. t_gold_bolt is a multicolored instant and t_mono_bolt the mono-coloured near miss, which is what separates `min_colors` from `colors`. t_plotter and t_plotted_bear print Plot themselves: an instant, so \"only as a sorcery\" has something to restrict, and a creature with no other text.",
   "cards": [
     {
       "id": "t_lilah",
@@ -56,6 +56,31 @@
       "toughness": 2,
       "colors": ["U", "R"],
       "color_identity": ["U", "R"]
+    },
+    {
+      "id": "t_plotter",
+      "name": "Test Plotted Bolt",
+      "oracle_text": "Test Plotted Bolt deals 3 damage to any target.\nPlot {1}{R} (You may pay {1}{R} and exile this card from your hand. Cast it as a sorcery on a later turn without paying its mana cost. Plot only as a sorcery.)",
+      "mana_cost": "{3}{R}{R}",
+      "types": ["Instant"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "plot": "{1}{R}",
+      "targets": [{"id": "t1", "kind": "any", "count": 1, "selector": {}}],
+      "spell_effects": [{"op": "damage", "target": "t1", "amount": {"const": 3}}]
+    },
+    {
+      "id": "t_plotted_bear",
+      "name": "Test Plotted Bear",
+      "oracle_text": "Plot {G} (You may pay {G} and exile this card from your hand. Cast it as a sorcery on a later turn without paying its mana cost. Plot only as a sorcery.)",
+      "mana_cost": "{3}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Bear"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "plot": "{G}"
     }
   ]
 }

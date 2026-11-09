@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**291 cards** blocked by **264** capabilities.
+**290 cards** blocked by **263** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -117,7 +117,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [dragon-egg-0-2-r-defender-token](#dragon-egg-0-2-r-defender-token) | 1 | 3556 | token |
 | [each-player-chooses-color](#each-player-chooses-color) | 1 | 3587 | op |
 | [echo](#echo) | 1 | 961 | keyword |
-| [elemental-1-1-r](#elemental-1-1-r) | 1 | 811 | token |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
 | [embalm](#embalm) | 1 | 4333 | cost |
@@ -2145,20 +2144,6 @@ Blocks **1** card.
 
 - **Karmic Guide** (rank 961) — `karmic_guide`
   - Echo {3}{W}{W} (At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.)
-
-</details>
-
-## elemental-1-1-r
-
-Blocks **1** card.
-
-- **(token)** a 1/1 red Elemental creature token (no abilities), suggested id elemental_1_1_r
-  <br>Why the existing vocabulary won't do: token_ids is a closed list and has no mono-red 1/1 Elemental: the nearest is elemental_1_1_ur, which is blue and red, so it would give the token the wrong colours. The trigger half is already expressible: a spell_cast trigger with controller you and filter any_types [Instant, Sorcery] feeding create_token
-
-<details><summary>Cards waiting on this</summary>
-
-- **Young Pyromancer** (rank 811) — `young_pyromancer`
-  - Whenever you cast an instant or sorcery spell, create a 1/1 red Elemental creature token.
 
 </details>
 

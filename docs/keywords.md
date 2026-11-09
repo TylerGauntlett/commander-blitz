@@ -318,6 +318,7 @@ This is the long tail, and where the build order comes from.
 | Partner † | shipped | an **inert** `Keyword` — deck construction only, and the engine is handed a finished deck | `partner` |
 | Persist | free | `dies` trigger with a `counters_had` condition, then `return_from_graveyard` with `counters` | — |
 | Phasing | shipped | a `Keyword` read by the untap step: a phased-out permanent leaves `state.battlefield` and stays in `state.objects`, which is what "treated as though it does not exist" means here | `phasing` |
+| Plot | shipped | foretell's special action with the card's price in front: pay `plot` at sorcery speed to exile it face up, then a free cast as a sorcery on a later turn — the same permission `grant_plot` leaves | `plot` |
 | Poisonous | free | `deals_combat_damage_to_player` trigger, then `add_poison`; ten is lethal in the state-based pass | `add_poison` |
 | Populate | free | `copy_permanent` over a selector filtered to `is_token` | — |
 | Proliferate | free | the `proliferate` op — the kinds were always enumerable; `GameObject.counters` is a dict keyed by kind | `proliferate` |

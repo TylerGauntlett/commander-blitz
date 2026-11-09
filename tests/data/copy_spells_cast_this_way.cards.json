@@ -1,0 +1,25 @@
+{
+  "_comment": "Shapes for tests/unit/copies/test_copy_spells_cast_this_way.py. t_finale is Finale of Promise without its X: cast up to one target instant and up to one target sorcery card from your graveyard free, exiled instead of binned, then copy each of those spells twice.",
+  "cards": [
+    {
+      "id": "t_finale",
+      "name": "Test Finale",
+      "oracle_text": "You may cast up to one target instant card and/or up to one target sorcery card from your graveyard without paying their mana costs. If a spell cast this way would be put into your graveyard, exile it instead. Copy each of those spells twice. You may choose new targets for the copies.",
+      "mana_cost": "{U}{R}",
+      "types": ["Sorcery"],
+      "colors": ["U", "R"],
+      "color_identity": ["U", "R"],
+      "targets": [
+        {"id": "t1", "kind": "card_in_graveyard", "count": 1, "optional": true,
+         "selector": {"controller": "you", "types": ["Instant"], "zone": "graveyard"}},
+        {"id": "t2", "kind": "card_in_graveyard", "count": 1, "optional": true,
+         "selector": {"controller": "you", "types": ["Sorcery"], "zone": "graveyard"}}
+      ],
+      "spell_effects": [
+        {"op": "cast_from_hand", "objects": {"target": "t1"}, "exiles": true, "as": "cast"},
+        {"op": "cast_from_hand", "objects": {"target": "t2"}, "exiles": true, "as": "cast"},
+        {"op": "copy_spell", "spells": {"binding": "cast"}, "amount": {"const": 2}, "new_targets": true}
+      ]
+    }
+  ]
+}

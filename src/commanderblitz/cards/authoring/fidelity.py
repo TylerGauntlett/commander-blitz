@@ -328,6 +328,8 @@ def unimplemented_mechanics(card: CardDef, printed: str) -> list[str]:
         declared.add("retrace")
     if card.suspend is not None:
         declared.add("suspend")
+    if card.plot is not None:
+        declared.add("plot")
     if card.cost_reduction is not None:
         declared.add("affinity")
     if card.flashback is not None:

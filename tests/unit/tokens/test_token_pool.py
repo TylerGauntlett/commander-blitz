@@ -2639,3 +2639,68 @@ class TestTheEldraziIncursionTokens:
         small = pool.get("spirit_1_1_c")
         assert (small.power, small.toughness) == (1, 1) and not small.colors
         assert sorted(pool.get("spirit_2_2_w").colors) == ["W"]
+
+
+class TestYoungPyromancersElementalIsMonoRed:
+    """Young Pyromancer: *"create a 1/1 **red** Elemental creature token."*
+
+    Its near misses are `elemental_1_1_ur`, the same body in blue and red, and
+    `elemental_1_1_r_haste`, the same body and colour with haste.
+    """
+
+    def test_it_is_a_vanilla_red_one_one_elemental(self, pool):
+        token = pool.get("elemental_1_1_r")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (1, 1)
+        assert list(token.colors) == ["R"]
+        assert list(token.subtypes) == ["Elemental"]
+        assert not token.keywords and not token.abilities
+
+    def test_the_near_misses_are_still_separate(self, pool):
+        assert sorted(pool.get("elemental_1_1_ur").colors) == ["R", "U"]
+        assert list(pool.get("elemental_1_1_r_haste").keywords) == ["haste"]
+
+
+class TestTheThunderJunctionDragonElementalHasProwess:
+    """Elemental Eruption and Eris, Roar of the Storm: *"create a 4/4 red
+    **Dragon Elemental** creature token with flying and **prowess**."*
+
+    Its near miss is `dragon_4_4_r_flying`: the same body and colour, but no
+    Elemental type and no prowess trigger.
+    """
+
+    def test_it_is_a_flying_red_dragon_elemental_with_prowess(self, pool):
+        token = pool.get("dragon_elemental_4_4_r_flying_prowess")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (4, 4)
+        assert list(token.colors) == ["R"]
+        assert sorted(token.subtypes) == ["Dragon", "Elemental"]
+        assert list(token.keywords) == ["flying"]
+        (prowess,) = token.abilities
+        assert prowess.text == "Prowess"
+
+    def test_the_plain_dragon_is_still_separate(self, pool):
+        dragon = pool.get("dragon_4_4_r_flying")
+        assert list(dragon.subtypes) == ["Dragon"] and not dragon.abilities
+
+
+class TestMurmuringMysticsBirdIllusion:
+    """Murmuring Mystic: *"create a 1/1 blue **Bird Illusion** creature token
+    with flying."*
+
+    Its near misses are `illusion_1_1_u_flying`, with no Bird type, and
+    `bird_1_1_u_flying_vigilance`, with no Illusion type and vigilance.
+    """
+
+    def test_it_is_a_flying_blue_bird_illusion(self, pool):
+        token = pool.get("bird_illusion_1_1_u_flying")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (1, 1)
+        assert list(token.colors) == ["U"]
+        assert sorted(token.subtypes) == ["Bird", "Illusion"]
+        assert list(token.keywords) == ["flying"]
+        assert not token.abilities
+
+    def test_the_near_misses_are_still_separate(self, pool):
+        assert list(pool.get("illusion_1_1_u_flying").subtypes) == ["Illusion"]
+        assert "vigilance" in pool.get("bird_1_1_u_flying_vigilance").keywords

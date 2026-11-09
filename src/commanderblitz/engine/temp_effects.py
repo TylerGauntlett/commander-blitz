@@ -35,6 +35,7 @@ from .structs import (
     FlashPermission,
     LifeFloor,
     LifeLock,
+    NextSpellDiscount,
     OutcomeLock,
     PermanentShield,
     PlayerProtection,
@@ -652,6 +653,58 @@ def clear_flash_permissions(state: GameState, duration: str, player: int | None 
     they leave the game; ``this_turn`` goes at cleanup.
     """
     state.flash_permissions = _expired(state.flash_permissions, duration, player)
+
+
+def grant_next_spell_discount(
+    state: GameState,
+    pid: int,
+    amount: int,
+    *,
+    types: tuple[str, ...] = (),
+    source: int | None = None,
+) -> None:
+    """Make ``pid``'s next spell of ``types`` this turn cost ``amount`` less."""
+
+    if amount <= 0:
+        return
+    state.next_spell_discounts.append(
+        NextSpellDiscount(player=pid, amount=amount, types=tuple(types), source=source)
+    )
+
+
+def _discount_covers(discount: NextSpellDiscount, pid: int, card: CardDef) -> bool:
+    if discount.player != pid:
+        return False
+    return not discount.types or bool(set(discount.types) & set(card.types))
+
+
+def next_spell_discount(state: GameState, pid: int, card: CardDef) -> int:
+    """How much less ``pid``'s spell of this face costs from one-shot discounts.
+
+    Every waiting discount it matches, added: two Kaza activations are two
+    effects about the same next spell, and both apply to it.
+    """
+    return sum(d.amount for d in state.next_spell_discounts if _discount_covers(d, pid, card))
+
+
+def consume_next_spell_discounts(state: GameState, pid: int, card: CardDef) -> None:
+    """Spend every discount this cast answers.
+
+    `consume_next_spell_flash_permissions`'s fold and for its reason: the next
+    matching spell **cast** uses it up, however it was cast. A spell the filter
+    misses -- a creature after Kaza -- leaves it waiting for the instant.
+    """
+    state.next_spell_discounts = [
+        d for d in state.next_spell_discounts if not _discount_covers(d, pid, card)
+    ]
+
+
+def clear_next_spell_discounts(state: GameState, player: int | None = None) -> None:
+    """Drop the discounts nobody spent: all of them at cleanup ("this turn"), or
+    one seat's when that player leaves the game."""
+    state.next_spell_discounts = [
+        d for d in state.next_spell_discounts if player is not None and d.player != player
+    ]
 
 
 def grant_uncounterable(

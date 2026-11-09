@@ -24,7 +24,7 @@ from ..triggers import fire
 from ..zones import move_object
 from .context import EffectContext, ask_mode
 from .registry import register
-from .selectors import select_players
+from .selectors import resolve_pool, select_players
 from .values import evaluate_value
 
 
@@ -99,6 +99,10 @@ def op_copy_spell(ctx: EffectContext, spec: Mapping[str, Any]):
     The question is only put when there is something to decide: a spell with no
     targets, or one whose targets cannot legally be moved, is not asked.
 
+    ``spells`` is a pool instead of one spell -- "copy **each of** those
+    spells twice" (Finale of Promise), over a `cast_from_hand` binding of the
+    cards it cast. Each spell in it still on the stack is copied as above.
+
     ``controller`` is a **player spec** naming whose copy it is, and it is
     **demonstrate**: "choose an opponent to also copy it." Every copy this op
     could make used to be the resolving player's, because the controller was
@@ -117,9 +121,23 @@ def op_copy_spell(ctx: EffectContext, spec: Mapping[str, Any]):
     """
 
     state = ctx.state
-    original = _spell_named_by(ctx, spec)
-    if original is None:
-        return
+    if "spells" in spec:
+        # "Copy each of those spells twice" (Finale of Promise): every spell
+        # still on the stack whose card is in the binding, each copied as one
+        # `original` would be. A card that has already left the stack -- it
+        # resolved, or was countered -- is not a spell to copy.
+        named = set(resolve_pool(ctx, spec["spells"]))
+        originals = [item for item in state.stack if item.is_spell and item.oid in named]
+    else:
+        original = _spell_named_by(ctx, spec)
+        originals = [original] if original is not None else []
+    for original in originals:
+        yield from _copy_one_spell(ctx, spec, original)
+
+
+def _copy_one_spell(ctx: EffectContext, spec: Mapping[str, Any], original):
+    """`op_copy_spell` for one original: ``amount`` copies per named controller."""
+    state = ctx.state
     times = evaluate_value(ctx, spec.get("amount", 1)) if "amount" in spec else 1
     if "controller" in spec:
         # A named seat that has already lost the game is not handed a copy, and
@@ -512,6 +530,37 @@ def op_grant_plot(ctx: EffectContext, spec: Mapping[str, Any]):
     if obj is None:
         return
     obj.granted_plot = True
+
+
+@register("exile_spell_on_resolution")
+def op_exile_spell_on_resolution(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "…you may exile that spell instead of putting it into its owner's
+    graveyard as it resolves." -- Forger's Foundry.
+
+    `grant_plot`'s rider with a link where plot leaves a permission: the
+    spell's object is marked while it is on the stack, `_place_after_resolution`
+    exiles it instead of binning it, and the card is then linked to this
+    ability's source (`zones.link_exiled`), so the Foundry's "cards exiled with
+    this artifact" finds it with `exiled_with: "self"`.
+
+    **Which spell** is `_spell_named_by`'s answer, and one more: a spent-mana
+    trigger binds the spell its mana paid for as ``subject``, an object id
+    rather than a stack id, so with no ``sid`` or ``target`` the stack item of
+    that object is the one. Not an `exile` op in the trigger's effects: the
+    spell is still on the stack and has not resolved.
+    """
+    item = _spell_named_by(ctx, spec)
+    if item is None and "sid" not in spec and "target" not in spec:
+        subject = ctx.bindings.get("subject")
+        item = next(
+            (i for i in ctx.state.stack if i.is_spell and i.oid == subject), None
+        )
+    if item is None or ctx.source_oid is None:
+        return
+    obj = ctx.state.objects.get(item.oid)
+    if obj is None:
+        return
+    obj.exile_on_resolution_by = ctx.source_oid
 
 
 @register("counter")

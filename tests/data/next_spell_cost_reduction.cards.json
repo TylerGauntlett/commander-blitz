@@ -1,0 +1,61 @@
+{
+  "_comment": "Shapes for tests/unit/costs/test_next_spell_cost_reduction.py. t_kaza is Kaza, Roil Chaser's activated line over Wizards; t_wizard is a vanilla Wizard to count; t_next_discount_any is Mutated Cultist's 'the next spell you cast', with no type filter.",
+  "cards": [
+    {
+      "id": "t_kaza",
+      "name": "Test Roil Chaser",
+      "oracle_text": "{T}: The next instant or sorcery spell you cast this turn costs {X} less to cast, where X is the number of Wizards you control as this ability resolves.",
+      "mana_cost": "{U}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Wizard"],
+      "power": 3,
+      "toughness": 1,
+      "colors": ["U", "R"],
+      "color_identity": ["U", "R"],
+      "keywords": ["haste"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: The next instant or sorcery spell you cast this turn costs {X} less to cast, where X is the number of Wizards you control as this ability resolves.",
+          "cost": {"tap": true},
+          "effects": [
+            {
+              "op": "next_spell_cost_reduction",
+              "types": ["Instant", "Sorcery"],
+              "amount": {"count": {"zone": "battlefield", "controller": "you", "subtypes": ["Wizard"]}}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_wizard",
+      "name": "Test Apprentice",
+      "oracle_text": "",
+      "mana_cost": "{1}{U}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Wizard"],
+      "power": 1,
+      "toughness": 1,
+      "colors": ["U"],
+      "color_identity": ["U"]
+    },
+    {
+      "id": "t_next_discount_any",
+      "name": "Test Cultist",
+      "oracle_text": "{T}: The next spell you cast this turn costs {2} less to cast.",
+      "mana_cost": "{1}{B}",
+      "types": ["Artifact"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: The next spell you cast this turn costs {2} less to cast.",
+          "cost": {"tap": true},
+          "effects": [{"op": "next_spell_cost_reduction", "amount": {"const": 2}}]
+        }
+      ]
+    }
+  ]
+}

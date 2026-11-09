@@ -1,0 +1,27 @@
+{
+  "_comment": "Shapes for tests/unit/casting/test_exile_spell_on_resolution.py. t_foundry is Forger's Foundry's mana ability: blue mana whose spending on a small instant or sorcery offers to exile that spell as it resolves, linked to the Foundry.",
+  "cards": [
+    {
+      "id": "t_foundry",
+      "name": "Test Foundry",
+      "oracle_text": "{T}: Add {U}. When you spend this mana to cast an instant or sorcery spell with mana value 3 or less, you may exile that spell instead of putting it into its owner's graveyard as it resolves.",
+      "mana_cost": "{2}{U}",
+      "types": ["Artifact"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {U}. When you spend this mana to cast an instant or sorcery spell with mana value 3 or less, you may exile that spell instead of putting it into its owner's graveyard as it resolves.",
+          "is_mana_ability": true,
+          "cost": {"tap": true},
+          "effects": [{"op": "add_mana", "mana": "{U}"}],
+          "mana_spent_trigger": {
+            "spell": {"any_types": ["Instant", "Sorcery"]},
+            "effects": [{"op": "may", "effects": [{"op": "exile_spell_on_resolution"}]}]
+          }
+        }
+      ]
+    }
+  ]
+}

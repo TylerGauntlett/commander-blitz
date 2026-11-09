@@ -33,10 +33,16 @@ from ..structs import (
     CASTABLE_ZONES,
     TOKEN_MULTIPLIER_DURATIONS,
 )
-from ..temp_effects import grant_flash_permission, lock_casting_zones, multiply_tokens
+from ..temp_effects import (
+    grant_flash_permission,
+    grant_next_spell_discount,
+    lock_casting_zones,
+    multiply_tokens,
+)
 from .context import EffectContext
 from .registry import register
 from .selectors import resolve_pool, select_players
+from .values import evaluate_value
 
 
 @register("become_monarch")
@@ -221,6 +227,27 @@ def op_grant_flash_permission(ctx: EffectContext, spec: Mapping[str, Any]):
             duration=duration,
             source=ctx.source_oid,
         )
+    yield from ()
+
+
+@register("next_spell_cost_reduction")
+def op_next_spell_cost_reduction(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "The next instant or sorcery spell you cast this turn costs {X} less to
+    cast, where X is the number of Wizards you control as this ability
+    resolves." -- Kaza, Roil Chaser.
+
+    ``amount`` is any value, read **now**: "as this ability resolves" is the
+    printed rule, and Mutated Cultist's "{1} less for each counter removed this
+    way" is a binding that exists only now. The number is written to the
+    player's one-shot table (`structs.NextSpellDiscount`), spent by their next
+    cast of ``types`` (any of them; omitted, any spell) and gone at cleanup.
+    Zero installs nothing. Generic only, like every reduction.
+    """
+
+    amount = max(0, int(evaluate_value(ctx, spec["amount"])))
+    types = tuple(str(t) for t in spec.get("types") or ())
+    for pid in select_players(ctx, spec.get("player", "you")):
+        grant_next_spell_discount(ctx.state, pid, amount, types=types, source=ctx.source_oid)
     yield from ()
 
 

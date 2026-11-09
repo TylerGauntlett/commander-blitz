@@ -30,6 +30,7 @@ from .structs import (
     GraveyardCastGrant,
     LifeFloor,
     LifeLock,
+    NextSpellDiscount,
     OutcomeLock,
     PlayerProtection,
     SacrificeRestriction,
@@ -42,6 +43,7 @@ from .structs import (
 )
 from .temp_effects import (
     bind_next_spell_uncounterable_grants,
+    consume_next_spell_discounts,
     consume_next_spell_flash_permissions,
 )
 
@@ -463,6 +465,10 @@ class GameState:
     #: flash" -- see :class:`structs.FlashPermission`. Read by
     #: `casting._timing_ok`; empty in every game that plays none of these.
     flash_permissions: list[FlashPermission] = field(default_factory=list)
+    #: "The next instant or sorcery spell you cast this turn costs {X} less" --
+    #: see :class:`structs.NextSpellDiscount`. Read by
+    #: `cost_reduction.cost_reduction`, spent by the cast in `_tally`.
+    next_spell_discounts: list[NextSpellDiscount] = field(default_factory=list)
     #: "Creature spells you cast this turn can't be countered" -- see
     #: :class:`structs.UncounterableGrant`. The timed twin of the
     #: `spells_cant_be_countered` static, read by the `counter` op beside it
@@ -1135,6 +1141,11 @@ class GameState:
                 # reason `nth` is: every cast path passes through this fold.
                 if self.flash_permissions and (spell := data.get("oid")) in self.objects:
                     consume_next_spell_flash_permissions(self, pid, self.card(spell))
+                # "The next instant or sorcery spell you cast this turn costs {X}
+                # less" (Kaza, Roil Chaser) -- spent by the same fold, after the
+                # cast has been priced and paid with it.
+                if self.next_spell_discounts and (spell := data.get("oid")) in self.objects:
+                    consume_next_spell_discounts(self, pid, self.card(spell))
                 # "The next creature spell you cast this turn can't be
                 # countered" (Insist) -- bound to the spell by the same fold.
                 if self.uncounterable_grants and (spell := data.get("oid")) in self.objects:

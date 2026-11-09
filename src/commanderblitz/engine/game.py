@@ -214,11 +214,13 @@ class Game:
         elif action.kind is ActionKind.CAST:
             self._run(self._cast(pid, action))
         elif action.kind is ActionKind.SUSPEND:
-            # One action kind, two mechanics: both exile a card from hand to
-            # be cast later and neither uses the stack. Which one is decided by
-            # the card, since no printing has both.
+            # One action kind, three mechanics: each exiles a card from hand to
+            # be cast later and none uses the stack. Which one is decided by
+            # the card, since no printing has two of them.
             if state.card(action.source).foretell is not None:
                 self._run(suspend.foretell_card(state, pid, action.source))
+            elif state.card(action.source).plot is not None:
+                self._run(suspend.plot_card(state, pid, action.source))
             else:
                 self._run(suspend.suspend_card(state, pid, action.source))
         elif action.kind is ActionKind.ACTIVATE:

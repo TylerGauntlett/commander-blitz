@@ -432,6 +432,54 @@ def _validate_pay_any_amount(effect: Mapping[str, Any], where: str) -> None:
         raise DslError(f"{where}.any_amount: cannot be combined with 'repeat'")
 
 
+def _validate_pay_any_number_of_times(effect: Mapping[str, Any], where: str) -> None:
+    """``may``'s ``any_number_of_times``: "you may pay {2}{R} any number of
+    times" -- Bloodthirsty Adversary.
+
+    `any_amount`'s count over a **whole price** rather than one symbol: the
+    announced count multiplies the cost, so ``{2}{R}`` at two is ``{4}{R}{R}``,
+    and ``as`` binds how many times it was paid for "that many". A separate
+    key so that `any_amount` keeps refusing ``{R}{R}`` for "any amount of
+    {R}", where it would charge pairs.
+
+    The price is fixed mana and nothing else: an ``{X}`` or a hybrid symbol has
+    no one price to multiply, a lone ``{1}`` is "any amount of mana" (``{X}``
+    with ``x``), and a life or sacrifice beside it would be multiplied or
+    charged once with no printing to say which. Refused beside ``any_amount``,
+    ``x``, ``repeat`` and ``pay.times`` for `any_amount`'s reasons.
+    """
+    spec = effect["any_number_of_times"]
+    key = f"{where}.any_number_of_times"
+    if not isinstance(spec, Mapping):
+        raise DslError(f"{key}: must be an object with 'as' and an optional 'prompt'")
+    if unknown := set(spec) - {"as", "prompt"}:
+        raise DslError(f"{key}: unsupported keys {sorted(unknown)} (takes 'as', 'prompt')")
+    if not (isinstance(spec.get("as"), str) and spec["as"]):
+        raise DslError(f"{key}.as: a binding name for the number of payments is required")
+    pay_spec = effect["pay"]
+    if extra := {k for k, v in pay_spec.items() if v not in (None, False, 0)} - {"mana"}:
+        raise DslError(f"{key}: the price is mana and nothing else; 'pay' also has {sorted(extra)}")
+    mana = ManaCost.parse(pay_spec.get("mana"))
+    if (
+        mana.x_count
+        or mana.hybrid
+        or not (mana.generic or sum(mana.colored))
+        or (mana.generic == 1 and not sum(mana.colored))
+    ):
+        raise DslError(
+            f"{key}: 'pay.mana' must be a fixed mana cost (\"{{2}}{{R}}\"), not "
+            f"{pay_spec.get('mana')!r} -- any amount of generic mana is '{{X}}' with 'x'"
+        )
+    for other in ("any_amount", "x"):
+        if other in effect:
+            raise DslError(f"{key}: cannot be combined with {other!r}")
+    if effect.get("repeat"):
+        raise DslError(f"{key}: cannot be combined with 'repeat'")
+    for other in ("times", "mana_reduction"):
+        if pay_spec.get(other) is not None:
+            raise DslError(f"{key}: cannot be combined with 'pay.{other}'")
+
+
 #: The words that read `GameObject.attached_to_player`: the player spec, and the
 #: trigger `defending` value that also counts that player's planeswalkers.
 ENCHANTED_PLAYER_WORDS = frozenset({"enchanted_player", "enchanted_player_or_planeswalker"})
@@ -1164,7 +1212,12 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: spell_enters_with_counters needs 'counters', a map of "
                 f"counter kind to amount (e.g. {{'+1/+1': 2}})"
             )
-    if op in ("grant_rebound", "grant_plot", "spell_enters_with_counters"):
+    if op in (
+        "grant_rebound",
+        "grant_plot",
+        "spell_enters_with_counters",
+        "exile_spell_on_resolution",
+    ):
         # The same two checks `return_spell_to_hand` makes, for the same reason
         # and with the same failure mode: the op reads one stack object, and a
         # `target` that names a permanent or a player finds no spell, sets
@@ -1268,6 +1321,8 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 )
         if "any_amount" in effect:
             _validate_pay_any_amount(effect, where)
+        if "any_number_of_times" in effect:
+            _validate_pay_any_number_of_times(effect, where)
         # A payment has to buy *something*, but there are two things it can buy.
         # "You may pay {2}. If you do, draw a card" buys the `effects`. Rhystic
         # Study's "unless that player pays {1}" buys the **absence** of the
@@ -1322,6 +1377,11 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             validate_value(times, f"{where}.pay.times")
             if not effect["pay"].get("mana"):
                 raise DslError(f"{where}.pay: 'times' multiplies the mana cost, and there is none")
+    if "any_number_of_times" in effect and (op != "may" or "pay" not in effect):
+        raise DslError(
+            f"{where}: 'any_number_of_times' counts how many times a may's 'pay' is "
+            f"paid, and {op!r} has no 'pay' to count"
+        )
     if "any_amount" in effect and (op != "may" or "pay" not in effect):
         # Every other op ignores the key, so the card would load and pay nothing.
         raise DslError(
@@ -1537,6 +1597,13 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             )
         if not isinstance(effect["new_targets"], bool):
             raise DslError(f"{where}: 'new_targets' is a boolean, got {effect['new_targets']!r}")
+    if op == "copy_spell" and "spells" in effect:
+        # "Copy each of those spells": a pool, so it names the spells instead
+        # of `sid` or `target` -- beside either, one of the two would be read
+        # and the other ignored.
+        if {"sid", "target"} & set(effect):
+            raise DslError(f"{where}: copy_spell's 'spells' replaces 'sid' and 'target'")
+        validate_selector(effect["spells"], f"{where}.spells")
     if op == "copy_spell" and "controller" in effect:
         # Demonstrate's "choose an opponent to **also** copy it". A full player
         # spec, so it is checked as one: until the op read this key it loaded
@@ -3242,6 +3309,16 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 )
         if not isinstance(effect.get("next_spell", False), bool):
             raise DslError(f"{where}: grant_flash_permission's 'next_spell' is true or false")
+    if op == "next_spell_cost_reduction":
+        # Without an amount there is nothing to take off, and a misspelt type
+        # would narrow the discount to no spell -- an activation doing nothing.
+        if "amount" not in effect:
+            raise DslError(f"{where}: next_spell_cost_reduction needs an 'amount'")
+        for t in effect.get("types") or ():
+            if t not in KNOWN_TYPES:
+                raise DslError(f"{where}: unknown card type {t!r}")
+        if effect.get("player") is not None:
+            _validate_player_spec(effect["player"], f"{where}.player", target_kinds)
     if op == "multiply_token_creation":
         # Without a duration the doubling would have no clock to end on; a
         # misspelt one would never be swept and double every token for the rest

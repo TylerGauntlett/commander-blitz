@@ -14,6 +14,7 @@ from .effects.context import EffectContext
 from .effects.selectors import has_printed_cost
 from .effects.values import evaluate_value
 from .player_statics import spell_cost_reduction, spell_mana_tax
+from .temp_effects import next_spell_discount
 
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
@@ -54,6 +55,10 @@ def cost_reduction(
     # through the same number -- see `spell_mana_tax`. The total may therefore
     # be negative, which every caller already folds into an `extra_generic`.
     total -= spell_mana_tax(state, pid, card, targets)
+    # Kaza's "the next instant or sorcery spell you cast this turn costs {X}
+    # less": a one-shot discount owned by the player, read here so the offer
+    # and the charge both see it.
+    total += next_spell_discount(state, pid, card)
     return total + reduction_amount(state, pid, card.cost_reduction)
 
 
@@ -77,7 +82,8 @@ def reduction_amount(
       `legality._cast_variant` and `game._cast` -- "costs {X} less to cast
       **this way**".
 
-    Seven shapes of arithmetic, exactly one per spec:
+    Eight shapes of arithmetic, exactly one per spec, and an optional ``each``
+    multiplier beside the ones that count:
 
     - ``{"amount": 3}`` -- a **flat** number, which is what a conditional
       reduction needs.  Not expressible as `count`: "costs {3} less if you're
@@ -85,6 +91,9 @@ def reduction_amount(
       the crown is yours and none otherwise, and no filter over a board can say
       that.
     - ``{"count": {filter}}`` -- "{1} less for each Vampire you control".
+    - ``{"distinct_mana_values": {filter}}`` -- Eris, Roar of the Storm, "for
+      each different mana value among instant and sorcery cards in your
+      graveyard": how many mana values, not how many cards.
     - ``{"energy_spent_this_turn": <player spec>}`` -- Blaster Hulk, "{1}
       less for each {E} you've paid or lost this turn". The one head that
       reads the turn ledger rather than the board, so it takes a player spec.
@@ -120,6 +129,12 @@ def reduction_amount(
     """
     if not spec:
         return 0
+    if "each" in spec:
+        # "Costs **{2}** less for each …" (Eris, Roar of the Storm): the
+        # counting head's units, each worth this much generic. The loader keeps
+        # it beside a head that counts.
+        rest = {k: v for k, v in spec.items() if k != "each"}
+        return int(spec["each"]) * reduction_amount(state, pid, rest, source_oid=source_oid)
     # The gate first, so a false condition costs one condition evaluation rather
     # than a walk of the battlefield.
     cond = spec.get("condition")
@@ -131,6 +146,16 @@ def reduction_amount(
         return max(0, int(spec["amount"]))
     if "count" in spec:
         return sum(1 for _ in _reduction_matches(state, pid, spec["count"], source_oid))
+    if "distinct_mana_values" in spec:
+        # "…for each **different** mana value among instant and sorcery cards in
+        # your graveyard" (Eris). The printed mana value, the face
+        # `total_mana_value` reads; a set, so two cards of one value are one.
+        return len(
+            {
+                state.card(oid).mana_value
+                for oid in _reduction_matches(state, pid, spec["distinct_mana_values"], source_oid)
+            }
+        )
     if "energy_spent_this_turn" in spec:
         # "…{1} less for each {E} you've paid or lost this turn" (Blaster
         # Hulk). The value leaf of the same name, read through a context with
@@ -326,6 +351,11 @@ def _object_matches(
     if (want := filt.get("types")) and not set(want).issubset(types):
         return False
     if (want := filt.get("not_types")) and set(want) & set(types):
+        return False
+    # "Instant **and** sorcery cards" is an or over types (Furygale Flocking,
+    # Eris). Accepted by the loader and once read by nothing, so such a
+    # reduction counted every card in the zone.
+    if (want := filt.get("any_types")) and not set(want) & set(types):
         return False
     if (want := filt.get("subtypes")) and not set(want) & set(subtypes):
         return False
