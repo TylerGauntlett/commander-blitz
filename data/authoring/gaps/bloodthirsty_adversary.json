@@ -1,0 +1,18 @@
+{
+  "card_id": "bloodthirsty_adversary",
+  "name": "Bloodthirsty Adversary",
+  "oracle_text": "Haste\nWhen this creature enters, you may pay {2}{R} any number of times. When you pay this cost one or more times, put that many +1/+1 counters on this creature, then exile up to that many target instant and/or sorcery cards with mana value 3 or less from your graveyard and copy them. You may cast any number of the copies without paying their mana costs.",
+  "blocked_sentences": [
+    "When this creature enters, you may pay {2}{R} any number of times. When you pay this cost one or more times, put that many +1/+1 counters on this creature, then exile up to that many target instant and/or sorcery cards with mana value 3 or less from your graveyard and copy them. You may cast any number of the copies without paying their mana costs."
+  ],
+  "needs": [
+    {
+      "capability": "pay_any_number_of_times",
+      "kind": "op",
+      "what": "a resolution-time optional payment of a multi-symbol mana cost ({2}{R}) a player-chosen number of times (0..affordable), binding the count paid so ONE reflexive trigger ('when you pay this cost one or more times') can read it for 'that many' +1/+1 counters and a variable 'up to that many' target count",
+      "why_existing_wont_do": "may.any_amount is exactly this shape but the loader (_validate_pay_any_amount) refuses any pay.mana that is not exactly one coloured or {C} symbol, so {2}{R} cannot be scaled; may.repeat asks again after each payment but runs the effects (and so the reflexive trigger) once per payment, giving N separate one-counter, one-target triggers instead of one trigger reading the total, and binds no count; pay.times is a computed multiplier, not a chosen one; may.x adds X as generic mana"
+    }
+  ],
+  "closest_existing": ["may", "reflexive_trigger", "exile", "cast_copy"],
+  "confidence": "high"
+}

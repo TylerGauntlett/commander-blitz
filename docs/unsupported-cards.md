@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**291 cards** blocked by **264** capabilities.
+**293 cards** blocked by **266** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -98,6 +98,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [copy-all-on-stack](#copy-all-on-stack) | 1 | 4558 | op |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
 | [copy-spell-forced-target](#copy-spell-forced-target) | 1 | 13586 | op |
+| [copy-spells-cast-this-way](#copy-spells-cast-this-way) | 1 | 5410 | op |
 | [copy-this-spell-on-resolution](#copy-this-spell-on-resolution) | 1 | 338 | op |
 | [cost-reduction-per-attacker-this-turn](#cost-reduction-per-attacker-this-turn) | 1 | 9578 | value |
 | [coven](#coven) | 1 | 1129 | value |
@@ -117,7 +118,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [dragon-egg-0-2-r-defender-token](#dragon-egg-0-2-r-defender-token) | 1 | 3556 | token |
 | [each-player-chooses-color](#each-player-chooses-color) | 1 | 3587 | op |
 | [echo](#echo) | 1 | 961 | keyword |
-| [elemental-1-1-r](#elemental-1-1-r) | 1 | 811 | token |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
 | [embalm](#embalm) | 1 | 4333 | cost |
@@ -134,6 +134,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exile-cards-with-card-types-among-them](#exile-cards-with-card-types-among-them) | 1 | 9107 | selector |
 | [exile-face-down](#exile-face-down) | 1 | 1363 | op |
 | [exile-permanent-cost](#exile-permanent-cost) | 1 | 6544 | cost |
+| [exile-spell-on-resolution](#exile-spell-on-resolution) | 1 | 9085 | op |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [exile-x-from-graveyard-cost](#exile-x-from-graveyard-cost) | 1 | 17252 | cost |
 | [exiled-this-way-lki](#exiled-this-way-lki) | 1 | 6960 | value |
@@ -208,6 +209,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [offspring](#offspring) | 1 | 6566 | keyword |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
 | [pay-any-amount-of-life](#pay-any-amount-of-life) | 1 | 4322 | cost |
+| [pay-any-number-of-times](#pay-any-number-of-times) | 1 | 14251 | op |
 | [pay-energy-x](#pay-energy-x) | 1 | 5591 | cost |
 | [play-cost-paid-card](#play-cost-paid-card) | 1 | 6544 | op |
 | [play-lands-from-graveyard-filtered](#play-lands-from-graveyard-filtered) | 1 | 3993 | static_effect |
@@ -1878,6 +1880,20 @@ Blocks **1** card.
 
 </details>
 
+## copy-spells-cast-this-way
+
+Blocks **1** card.
+
+- **(op)** a free resolution-time cast (cast_from_hand over a target pool, with exiles) that records the stack items of the spells it actually cast under an `as` binding, and a copy_spell that accepts that binding (possibly several spells) so each cast spell is copied `amount` times with new_targets, gated by an `if` on {x} >= 10
+  <br>Why the existing vocabulary won't do: cast_from_hand (free, objects + exiles covers the cast and the exile replacement) has no `as` and binds nothing; play_exiled and cast_card do have `as`, but play_exiled reads only exile and cast_card charges the mana cost, and their `as` holds card object ids, not stack sids. copy_spell finds its spell only by `sid` (a single value), a declared spell `target`, or the triggering spell's sid, so it cannot name 'each of those spells' cast during this resolution
+
+<details><summary>Cards waiting on this</summary>
+
+- **Finale of Promise** (rank 5410) — `finale_of_promise`
+  - If X is 10 or more, copy each of those spells twice. You may choose new targets for the copies.
+
+</details>
+
 ## copy-this-spell-on-resolution
 
 Blocks **1** card.
@@ -2148,20 +2164,6 @@ Blocks **1** card.
 
 </details>
 
-## elemental-1-1-r
-
-Blocks **1** card.
-
-- **(token)** a 1/1 red Elemental creature token (no abilities), suggested id elemental_1_1_r
-  <br>Why the existing vocabulary won't do: token_ids is a closed list and has no mono-red 1/1 Elemental: the nearest is elemental_1_1_ur, which is blue and red, so it would give the token the wrong colours. The trigger half is already expressible: a spell_cast trigger with controller you and filter any_types [Instant, Sorcery] feeding create_token
-
-<details><summary>Cards waiting on this</summary>
-
-- **Young Pyromancer** (rank 811) — `young_pyromancer`
-  - Whenever you cast an instant or sorcery spell, create a 1/1 red Elemental creature token.
-
-</details>
-
 ## elemental-x-x-ur-flying-haste
 
 Blocks **1** card.
@@ -2386,6 +2388,20 @@ Blocks **1** card.
 
 - **Primordial Mist** (rank 6544) — `primordial_mist`
   - Exile a face-down permanent you control face up: You may play that card this turn. (You still pay its costs. Timing rules still apply.)
+
+</details>
+
+## exile-spell-on-resolution
+
+Blocks **1** card.
+
+- **(op)** an op usable inside a mana_spent_trigger (or spell_cast trigger) that marks the bound `subject` spell on the stack so that, as it resolves, it is exiled instead of going to its owner's graveyard, with the exiled card linked to the source permanent (obj.exiled_by = this artifact) so a later selector `{"zone": "exile", "exiled_with": "self"}` finds it; wrapped in `may` for the optional choice
+  <br>Why the existing vocabulary won't do: grant_rebound and grant_plot are the right shape (riders written on the stack object, read by _place_after_resolution) but each adds its own mechanic (free cast next upkeep / plotted) and neither links the card to the source; StackItem.exiles_instead is set only by the caster (cast_for_free paths), and an `exile` op in the trigger would remove the spell from the stack before it resolves. Without the link, the second ability's 'cards exiled with this artifact' has nothing to find
+
+<details><summary>Cards waiting on this</summary>
+
+- **Forger's Foundry** (rank 9085) — `forger_s_foundry`
+  - {T}: Add {U}. When you spend this mana to cast an instant or sorcery spell with mana value 3 or less, you may exile that spell instead of putting it into its owner's graveyard as it resolves.
 
 </details>
 
@@ -3447,6 +3463,20 @@ Blocks **1** card.
 
 - **Necrodominance** (rank 4322) — `necrodominance`
   - At the beginning of your end step, you may pay any amount of life. If you do, draw that many cards.
+
+</details>
+
+## pay-any-number-of-times
+
+Blocks **1** card.
+
+- **(op)** a resolution-time optional payment of a multi-symbol mana cost ({2}{R}) a player-chosen number of times (0..affordable), binding the count paid so ONE reflexive trigger ('when you pay this cost one or more times') can read it for 'that many' +1/+1 counters and a variable 'up to that many' target count
+  <br>Why the existing vocabulary won't do: may.any_amount is exactly this shape but the loader (_validate_pay_any_amount) refuses any pay.mana that is not exactly one coloured or {C} symbol, so {2}{R} cannot be scaled; may.repeat asks again after each payment but runs the effects (and so the reflexive trigger) once per payment, giving N separate one-counter, one-target triggers instead of one trigger reading the total, and binds no count; pay.times is a computed multiplier, not a chosen one; may.x adds X as generic mana
+
+<details><summary>Cards waiting on this</summary>
+
+- **Bloodthirsty Adversary** (rank 14251) — `bloodthirsty_adversary`
+  - When this creature enters, you may pay {2}{R} any number of times. When you pay this cost one or more times, put that many +1/+1 counters on this creature, then exile up to that many target instant and/or sorcery cards with mana value 3 or less from your graveyard and copy them. You may cast any number of the copies without paying their mana costs.
 
 </details>
 

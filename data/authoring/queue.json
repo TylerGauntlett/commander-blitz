@@ -55062,12 +55062,12 @@
     },
     "Crackling Spellslinger": {
       "edhrec_rank": 8722,
-      "gate": "template",
+      "gate": null,
       "name": "Crackling Spellslinger",
-      "reason": "no template for: When this creature enters, if you cast it, the next instant or sorcery spell you cast this",
+      "reason": "",
       "scryfall_id": "86d1c74c-90d9-451e-bfbb-18b60e185308",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Crackling Triton": {
@@ -80532,12 +80532,12 @@
     },
     "Electrostatic Field": {
       "edhrec_rank": 1549,
-      "gate": "template",
+      "gate": null,
       "name": "Electrostatic Field",
-      "reason": "no template for: Whenever you cast an instant or sorcery spell, this creature deals 1 damage to each oppone",
+      "reason": "",
       "scryfall_id": "2ddbabad-4f23-4138-a25e-9de1b80a1389",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Electrostatic Infantry": {
@@ -80672,12 +80672,12 @@
     },
     "Elemental Eruption": {
       "edhrec_rank": 5263,
-      "gate": "template",
+      "gate": null,
       "name": "Elemental Eruption",
-      "reason": "no template for: Create a 4/4 red Dragon Elemental creature token with flying and prowess",
+      "reason": "",
       "scryfall_id": "32126592-a988-4171-b52e-cca80b881aff",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Elemental Expressionist": {
@@ -85462,12 +85462,12 @@
     },
     "Eris, Roar of the Storm": {
       "edhrec_rank": 6240,
-      "gate": "template",
+      "gate": null,
       "name": "Eris, Roar of the Storm",
-      "reason": "no template for: This spell costs {2} less to cast for each different mana value among instant and sorcery ",
+      "reason": "",
       "scryfall_id": "1adce281-4d5a-44d2-8cfa-25f860b015ff",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Erithizon": {
@@ -147082,12 +147082,12 @@
     },
     "Kaza, Roil Chaser": {
       "edhrec_rank": 10006,
-      "gate": "template",
+      "gate": null,
       "name": "Kaza, Roil Chaser",
-      "reason": "no template for: {T}: The next instant or sorcery spell you cast this turn costs {X} less to cast, where X ",
+      "reason": "",
       "scryfall_id": "080585c6-d946-4435-954a-0ada936dc3f1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kazandu Blademaster": {
@@ -157042,12 +157042,12 @@
     },
     "Leyline Dowser": {
       "edhrec_rank": 18453,
-      "gate": "template",
+      "gate": null,
       "name": "Leyline Dowser",
-      "reason": "no template for: {1}, {T}: Mill a card. You may put an instant or sorcery card milled this way into your ha",
+      "reason": "",
       "scryfall_id": "48759d1e-5963-4942-8093-cb14e5dbae97",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Leyline Immersion": {
@@ -160442,12 +160442,12 @@
     },
     "Lock and Load": {
       "edhrec_rank": 5839,
-      "gate": "template",
+      "gate": null,
       "name": "Lock and Load",
-      "reason": "no template for: Draw a card, then draw a card for each other instant and sorcery spell you've cast this tu",
+      "reason": "",
       "scryfall_id": "3a24979d-a090-4153-9461-ac1aa1f69b74",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Locke Cole": {
@@ -181192,12 +181192,12 @@
     },
     "Murmuring Mystic": {
       "edhrec_rank": 1776,
-      "gate": "template",
+      "gate": null,
       "name": "Murmuring Mystic",
-      "reason": "no template for: Whenever you cast an instant or sorcery spell, create a 1/1 blue Bird Illusion creature to",
+      "reason": "",
       "scryfall_id": "5dc95208-2b3a-44cd-9782-b303379b8174",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Murmuring Phantasm": {
@@ -187932,12 +187932,12 @@
     },
     "Niv-Mizzet, Parun": {
       "edhrec_rank": 752,
-      "gate": "template",
+      "gate": null,
       "name": "Niv-Mizzet, Parun",
-      "reason": "no template for: This spell can't be countered",
+      "reason": "",
       "scryfall_id": "44146784-d7f0-4add-8242-8783b97a4d7d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Niv-Mizzet, Supreme": {
@@ -191002,12 +191002,12 @@
     },
     "Octavia, Living Thesis": {
       "edhrec_rank": 5875,
-      "gate": "template",
+      "gate": null,
       "name": "Octavia, Living Thesis",
-      "reason": "no template for: This spell costs {8} less to cast if you have eight or more instant and/or sorcery cards i",
+      "reason": "",
       "scryfall_id": "e9591647-bad3-4015-90d1-1646a9eb4d14",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Octomancer": {
@@ -209562,12 +209562,12 @@
     },
     "Pteramander": {
       "edhrec_rank": 15832,
-      "gate": "template",
+      "gate": null,
       "name": "Pteramander",
-      "reason": "no template for: {7}{U}: Adapt 4. This ability costs {1} less to activate for each instant and sorcery card",
+      "reason": "",
       "scryfall_id": "0072bbbf-a695-47dd-9615-db2659f357db",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pterodon Knight": {
@@ -210722,12 +210722,12 @@
     },
     "Pyretic Charge": {
       "edhrec_rank": 9971,
-      "gate": "template",
+      "gate": null,
       "name": "Pyretic Charge",
-      "reason": "no template for: Discard your hand, then draw four cards. For each card discarded this way, creatures you c",
+      "reason": "",
       "scryfall_id": "42a46e37-ada5-4067-9144-97c4e050bc56",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pyretic Hunter": {
@@ -212912,12 +212912,12 @@
     },
     "Radical Idea": {
       "edhrec_rank": 8275,
-      "gate": "template",
+      "gate": null,
       "name": "Radical Idea",
-      "reason": "no template for: Jump-start",
+      "reason": "",
       "scryfall_id": "aa32ec44-d29b-4ebe-82f5-4fe67bca07eb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Radioactive Man": {
@@ -241202,12 +241202,12 @@
     },
     "Serum Visions": {
       "edhrec_rank": 872,
-      "gate": "template",
+      "gate": null,
       "name": "Serum Visions",
-      "reason": "no template for: Draw a card. Scry 2",
+      "reason": "",
       "scryfall_id": "9a55b4e9-bbe7-4f12-909e-77082f54c1bb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Serum-Core Chimera": {
@@ -253062,12 +253062,12 @@
     },
     "Smoldering Stagecoach": {
       "edhrec_rank": 15581,
-      "gate": "template",
+      "gate": null,
       "name": "Smoldering Stagecoach",
-      "reason": "no template for: 's power is equal to the number of instant and sorcery cards in your graveyard",
+      "reason": "",
       "scryfall_id": "30e02250-a6e5-4bcc-a9c1-3634d39c0c83",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Smoldering Tar": {
@@ -264022,12 +264022,12 @@
     },
     "Stella Lee, Wild Card": {
       "edhrec_rank": 4803,
-      "gate": "template",
+      "gate": null,
       "name": "Stella Lee, Wild Card",
-      "reason": "no template for: Whenever you cast your second spell each turn, exile the top card of your library. Until t",
+      "reason": "",
       "scryfall_id": "2a8a7696-b5d9-4378-9d5c-2c9007e4df63",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stench of Decay": {
@@ -274602,12 +274602,12 @@
     },
     "Talrand, Sky Summoner": {
       "edhrec_rank": 769,
-      "gate": "template",
+      "gate": null,
       "name": "Talrand, Sky Summoner",
-      "reason": "no template for: Whenever you cast an instant or sorcery spell, create a 2/2 blue Drake creature token with",
+      "reason": "",
       "scryfall_id": "1be3ed47-072e-481a-b3d9-dc232ac4b24f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Talruum Champion": {
@@ -321452,12 +321452,12 @@
     },
     "Young Pyromancer": {
       "edhrec_rank": 811,
-      "gate": "template",
+      "gate": null,
       "name": "Young Pyromancer",
-      "reason": "no template for: Whenever you cast an instant or sorcery spell, create a 1/1 red Elemental creature token",
+      "reason": "",
       "scryfall_id": "8afb19df-b96a-4736-81ab-3561e2767d2d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Young Red Dragon // Bathe in Gold": {

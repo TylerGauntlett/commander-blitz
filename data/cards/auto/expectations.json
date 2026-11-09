@@ -3825,6 +3825,13 @@
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
   },
+  "crackling_spellslinger": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "crash_of_rhinos": {
     "zone": "battlefield"
   },
@@ -5366,6 +5373,14 @@
     },
     "zone": "graveyard"
   },
+  "electrostatic_field": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "electrostatic_infantry": {
     "battlefield_count": 33,
     "counters": {
@@ -5386,6 +5401,14 @@
       "0": 40
     },
     "zone": "battlefield"
+  },
+  "elemental_eruption": {
+    "battlefield_count": 33,
+    "tokens": {
+      "count": 1,
+      "id": "dragon_elemental_4_4_r_flying_prowess"
+    },
+    "zone": "graveyard"
   },
   "elemental_spectacle": {
     "battlefield_count": 33,
@@ -5689,6 +5712,10 @@
     "zone": "battlefield"
   },
   "eriette_of_the_charmed_apple": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "eris_roar_of_the_storm": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -9873,6 +9900,13 @@
     },
     "zone": "battlefield"
   },
+  "kaza_roil_chaser": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "kazandu_refuge": {
     "life": {
       "0": 41
@@ -10539,6 +10573,10 @@
     },
     "zone": "battlefield"
   },
+  "leyline_dowser": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "leyline_prowler": {
     "zone": "battlefield"
   },
@@ -10739,6 +10777,18 @@
     "zone": "battlefield"
   },
   "localized_destruction": {
+    "zone": "graveyard"
+  },
+  "lock_and_load": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
     "zone": "graveyard"
   },
   "locke_treasure_hunter": {
@@ -12220,6 +12270,10 @@
   "murmuring_bosk": {
     "zone": "battlefield"
   },
+  "murmuring_mystic": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "murmuring_phantasm": {
     "zone": "battlefield"
   },
@@ -12646,6 +12700,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "niv_mizzet_parun": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "no_dachi": {
     "zone": "battlefield"
   },
@@ -12870,6 +12931,10 @@
     "zone": "graveyard"
   },
   "ocelot_pride": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "octavia_living_thesis": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -14103,6 +14168,13 @@
     },
     "zone": "battlefield"
   },
+  "pteramander": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "puca_s_covenant": {
     "battlefield_count": 33,
     "hand_size": {
@@ -14175,6 +14247,18 @@
     "battlefield_count": 33,
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
+  },
+  "pyretic_charge": {
+    "graveyard_size": {
+      "0": 4
+    },
+    "hand_size": {
+      "0": 4
+    },
+    "library_size": {
+      "0": 36
+    },
+    "zone": "graveyard"
   },
   "pyretic_ritual": {
     "graveyard_size": {
@@ -14314,6 +14398,15 @@
   },
   "radiant_summit": {
     "zone": "battlefield"
+  },
+  "radical_idea": {
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "graveyard"
   },
   "raffine_s_guidance": {
     "target_pt_delta": {
@@ -16068,6 +16161,18 @@
   "serra_zealot": {
     "zone": "battlefield"
   },
+  "serum_visions": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "graveyard"
+  },
   "servant_of_nefarox": {
     "zone": "battlefield"
   },
@@ -16884,6 +16989,13 @@
   "smoldering_marsh": {
     "zone": "battlefield"
   },
+  "smoldering_stagecoach": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "zone": "battlefield"
+  },
   "smothering_abomination": {
     "battlefield_count": 33,
     "hand_size": {
@@ -17499,6 +17611,16 @@
     "zone": "battlefield"
   },
   "steeple_roc": {
+    "zone": "battlefield"
+  },
+  "stella_lee_wild_card": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
     "zone": "battlefield"
   },
   "stensian_sanguinist_exsanguinate": {
@@ -18230,6 +18352,10 @@
     "zone": "battlefield"
   },
   "talon_trooper": {
+    "zone": "battlefield"
+  },
+  "talrand_sky_summoner": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "talruum_minotaur": {
@@ -21737,6 +21863,10 @@
     "zone": "battlefield"
   },
   "yotian_soldier": {
+    "zone": "battlefield"
+  },
+  "young_pyromancer": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "youthful_knight": {

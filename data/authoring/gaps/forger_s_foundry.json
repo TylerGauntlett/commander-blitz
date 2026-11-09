@@ -1,0 +1,18 @@
+{
+  "card_id": "forger_s_foundry",
+  "name": "Forger's Foundry",
+  "oracle_text": "{T}: Add {U}. When you spend this mana to cast an instant or sorcery spell with mana value 3 or less, you may exile that spell instead of putting it into its owner's graveyard as it resolves.\n{3}{U}{U}, {T}: You may cast any number of spells from among cards exiled with this artifact without paying their mana costs. Activate only as a sorcery.",
+  "blocked_sentences": [
+    "{T}: Add {U}. When you spend this mana to cast an instant or sorcery spell with mana value 3 or less, you may exile that spell instead of putting it into its owner's graveyard as it resolves."
+  ],
+  "needs": [
+    {
+      "capability": "exile_spell_on_resolution",
+      "kind": "op",
+      "what": "an op usable inside a mana_spent_trigger (or spell_cast trigger) that marks the bound `subject` spell on the stack so that, as it resolves, it is exiled instead of going to its owner's graveyard, with the exiled card linked to the source permanent (obj.exiled_by = this artifact) so a later selector `{\"zone\": \"exile\", \"exiled_with\": \"self\"}` finds it; wrapped in `may` for the optional choice",
+      "why_existing_wont_do": "grant_rebound and grant_plot are the right shape (riders written on the stack object, read by _place_after_resolution) but each adds its own mechanic (free cast next upkeep / plotted) and neither links the card to the source; StackItem.exiles_instead is set only by the caster (cast_for_free paths), and an `exile` op in the trigger would remove the spell from the stack before it resolves. Without the link, the second ability's 'cards exiled with this artifact' has nothing to find"
+    }
+  ],
+  "closest_existing": ["grant_plot", "grant_rebound", "mana_spent_trigger", "play_exiled"],
+  "confidence": "high"
+}
