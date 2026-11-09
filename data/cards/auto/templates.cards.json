@@ -27862,6 +27862,58 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "condition": {
+            "exists": {
+              "controller": "you",
+              "subtypes": [
+                "Forest"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "trample"
+          ],
+          "kind": "static",
+          "text": "As long as this card is in your graveyard and you control a Forest, creatures you control have trample."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "brawn",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{3}{G}",
+      "name": "Brawn",
+      "oracle_text": "Trample\nAs long as this card is in your graveyard and you control a Forest, creatures you control have trample.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Incarnation"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -29203,6 +29255,122 @@
         "Wurm"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "dragon_5_5_r_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, create a 5/5 red Dragon creature token with flying.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "exile_from_graveyard": {
+              "count": 1,
+              "self_only": true
+            },
+            "mana": "{5}{B}{R}{G}"
+          },
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "encore_copy",
+                  "controller": "you",
+                  "objects": {
+                    "controller": "any",
+                    "self_only": true,
+                    "zone": "exile"
+                  },
+                  "op": "copy_permanent"
+                },
+                {
+                  "defender": {
+                    "binding": "each_player"
+                  },
+                  "duration": "this_turn",
+                  "objects": {
+                    "binding": "encore_copy",
+                    "count": "all"
+                  },
+                  "op": "must_attack_player"
+                },
+                {
+                  "duration": "permanent",
+                  "keywords": [
+                    "haste"
+                  ],
+                  "objects": {
+                    "binding": "encore_copy",
+                    "count": "all"
+                  },
+                  "op": "grant_keyword"
+                },
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "binding": "encore_copy",
+                        "count": "all"
+                      },
+                      "op": "sacrifice"
+                    }
+                  ],
+                  "op": "delay",
+                  "step": "end_step",
+                  "text": "Sacrifice them at the beginning of the next end step."
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Encore {5}{B}{R}{G}"
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R"
+      ],
+      "id": "broodmate_tyrant",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{B}{R}{G}",
+      "name": "Broodmate Tyrant",
+      "oracle_text": "Flying\nWhen this creature enters, create a 5/5 red Dragon creature token with flying.\nEncore {5}{B}{R}{G}",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
@@ -72937,6 +73105,110 @@
               "op": "grant_keyword"
             }
           ]
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "finality",
+      "mana_cost": "{4}{B}{G}",
+      "name": "Finality",
+      "oracle_text": "You may put two +1/+1 counters on a creature you control. Then all creatures get -4/-4 until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "chooser": "controller",
+                "controller": "you",
+                "count": 1,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "op": "may",
+          "player": "you",
+          "prompt": "Put two +1/+1 counters on a creature you control?"
+        },
+        {
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "pump",
+          "power": {
+            "const": -4
+          },
+          "toughness": {
+            "const": -4
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "find_finality",
+      "mana_cost": "{B/G}{B/G}",
+      "name": "Find // Finality",
+      "oracle_text": "Return up to two target creature cards from your graveyard to your hand.\nYou may put two +1/+1 counters on a creature you control. Then all creatures get -4/-4 until end of turn.",
+      "second_face": "finality",
+      "second_face_zone": "hand",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "destination": "hand",
+          "objects": {
+            "target": "gy_creatures"
+          },
+          "op": "return_from_graveyard"
+        }
+      ],
+      "targets": [
+        {
+          "count": 2,
+          "id": "gy_creatures",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          },
+          "up_to": true
         }
       ],
       "types": [

@@ -1,0 +1,24 @@
+{
+  "card_id": "exterminator_magmarch",
+  "name": "Exterminator Magmarch",
+  "oracle_text": "Whenever you cast an instant or sorcery spell that targets only a single nonland permanent an opponent controls, if another opponent controls one or more nonland permanents that spell could target, choose one of those permanents. Copy that spell. The copy targets the chosen permanent.\n{1}{B}: Regenerate this creature.",
+  "blocked_sentences": [
+    "Whenever you cast an instant or sorcery spell that targets only a single nonland permanent an opponent controls, if another opponent controls one or more nonland permanents that spell could target, choose one of those permanents. Copy that spell. The copy targets the chosen permanent."
+  ],
+  "needs": [
+    {
+      "capability": "targets_only_single",
+      "kind": "trigger_event",
+      "what": "a spell_cast trigger filter on the spell's TARGETS: matches an instant or sorcery whose only target is a single object, and that object is a nonland permanent controlled by an opponent, binding that permanent (and its controller) for the trigger's condition and effects",
+      "why_existing_wont_do": "spell_cast's trigger_filter_keys read the spell's own characteristics, not what it targets; the value targets_of_spell counts permanent/player targets but cannot say the permanent is nonland or opponent-controlled, nor bind it, so 'targets only a single nonland permanent an opponent controls' cannot be checked"
+    },
+    {
+      "capability": "copy_spell_forced_target",
+      "kind": "op",
+      "what": "copy_spell variant whose copy is pointed at a specific chosen object: the trigger's controller chooses one nonland permanent controlled by an opponent OTHER than the original target's controller that the spell could legally target (intervening-if: only if such a permanent exists), and the copy's single target is set to it (Ink-Treader Nephilim / Precursor Golem family, one copy aimed at another opponent)",
+      "why_existing_wont_do": "copy_spell takes amount, controller, new_targets, sid and target; new_targets offers every legal target tuple (including the same opponent's permanents or keeping the original), so the copy is not constrained to 'another opponent', and there is no way to hand a chosen binding to the copy as its target; choose_permanents can bind a permanent but nothing filters it by 'legal target of that spell' or feeds it into the copy"
+    }
+  ],
+  "closest_existing": ["copy_spell", "spell_cast", "targets_of_spell", "choose_permanents"],
+  "confidence": "high"
+}

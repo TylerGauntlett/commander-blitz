@@ -2366,6 +2366,10 @@
   "brawler_s_plate": {
     "zone": "battlefield"
   },
+  "brawn": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "brazen_scourge": {
     "zone": "battlefield"
   },
@@ -2454,6 +2458,14 @@
     "zone": "battlefield"
   },
   "broodhunter_wurm": {
+    "zone": "battlefield"
+  },
+  "broodmate_tyrant": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "dragon_5_5_r_flying"
+    },
     "zone": "battlefield"
   },
   "broodstar": {
@@ -6279,6 +6291,15 @@
     },
     "graveyard_size": {
       "0": 2
+    },
+    "zone": "graveyard"
+  },
+  "find_finality": {
+    "graveyard_size": {
+      "0": 1
+    },
+    "hand_size": {
+      "0": 3
     },
     "zone": "graveyard"
   },

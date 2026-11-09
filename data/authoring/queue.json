@@ -33392,12 +33392,12 @@
     },
     "Brawn": {
       "edhrec_rank": 1896,
-      "gate": "template",
+      "gate": null,
       "name": "Brawn",
-      "reason": "no template for: As long as this card is in your graveyard and you control a Forest, creatures you control ",
+      "reason": "",
       "scryfall_id": "e3d58928-500d-46fc-b82b-f1add64df859",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Brawn, Amadeus Cho": {
@@ -35372,12 +35372,12 @@
     },
     "Broodmate Tyrant": {
       "edhrec_rank": 13461,
-      "gate": "template",
+      "gate": null,
       "name": "Broodmate Tyrant",
-      "reason": "no template for: When this creature enters, create a 5/5 red Dragon creature token with flying",
+      "reason": "",
       "scryfall_id": "2a1bcd5b-c145-4891-a6a5-8651841acedf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Broodrage Mycoid": {
@@ -95212,12 +95212,12 @@
     },
     "Find // Finality": {
       "edhrec_rank": 5421,
-      "gate": "template",
+      "gate": null,
       "name": "Find // Finality",
-      "reason": "no template for: Return up to two target creature cards from your graveyard to your hand",
+      "reason": "",
       "scryfall_id": "9a6bae45-a58c-42b1-89a0-4c1ff879e0d0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Find the Path": {
