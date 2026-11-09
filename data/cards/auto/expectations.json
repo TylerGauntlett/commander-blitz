@@ -14948,6 +14948,10 @@
   "riverwheel_aerialists": {
     "zone": "battlefield"
   },
+  "riveteers_charm": {
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
   "roaming_throne": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -16206,6 +16210,10 @@
     "zone": "battlefield"
   },
   "siege_gang_commander": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "siege_gang_lieutenant": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -18230,6 +18238,9 @@
     },
     "zone": "graveyard"
   },
+  "tempt_with_mayhem": {
+    "zone": "graveyard"
+  },
   "tempt_with_vengeance": {
     "battlefield_count": 72,
     "opponent_battlefield_count": 26,
@@ -18520,6 +18531,10 @@
     "library_size": {
       "0": 40
     },
+    "zone": "battlefield"
+  },
+  "the_reaver_cleaver": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "the_scorpion_god": {
@@ -21453,6 +21468,10 @@
     "zone": "battlefield"
   },
   "ziatora_s_proving_ground": {
+    "zone": "battlefield"
+  },
+  "ziatora_the_incinerator": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "zimone_quandrix_prodigy": {

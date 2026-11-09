@@ -176117,6 +176117,108 @@
       ]
     },
     {
+      "color_identity": [
+        "B",
+        "G",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R"
+      ],
+      "id": "riveteers_charm",
+      "mana_cost": "{B}{R}{G}",
+      "name": "Riveteers Charm",
+      "oracle_text": "Choose one —\n• Target opponent sacrifices a creature or planeswalker they control with the greatest mana value among creatures and planeswalkers they control.\n• Exile the top three cards of your library. Until your next end step, you may play those cards.\n• Exile target player's graveyard.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "any_types": [
+                      "Creature",
+                      "Planeswalker"
+                    ],
+                    "chooser": "owner",
+                    "controller": {
+                      "target": "victim"
+                    },
+                    "count": 1,
+                    "extreme": {
+                      "of": "mana_value",
+                      "pick": "greatest"
+                    },
+                    "zone": "battlefield"
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "label": "Target opponent sacrifices a creature or planeswalker they control with the greatest mana value among creatures and planeswalkers they control."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 3
+                  },
+                  "destination": "exile",
+                  "objects": {
+                    "count": "all"
+                  },
+                  "op": "look_at_top",
+                  "playable": "your_next_end_step",
+                  "player": "you"
+                }
+              ],
+              "label": "Exile the top three cards of your library. Until your next end step, you may play those cards."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "count": "all",
+                    "player": {
+                      "target": "graveyard_owner"
+                    },
+                    "zone": "graveyard"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "label": "Exile target player's graveyard."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "victim",
+          "kind": "player",
+          "mode": 0,
+          "selector": {
+            "controller": "opponent"
+          }
+        },
+        {
+          "count": 1,
+          "id": "graveyard_owner",
+          "kind": "player",
+          "mode": 2,
+          "selector": {}
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -191533,6 +191635,103 @@
       "mana_cost": "{3}{R}{R}",
       "name": "Siege-Gang Commander",
       "oracle_text": "When this creature enters, create three 1/1 red Goblin creature tokens.\n{1}{R}, Sacrifice a Goblin: This creature deals 2 damage to any target.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Goblin"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "as": "lieutenant_goblins",
+              "controller": "you",
+              "op": "create_token",
+              "token": "goblin_1_1_r"
+            },
+            {
+              "keywords": [
+                "haste"
+              ],
+              "objects": {
+                "binding": "lieutenant_goblins"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Lieutenant — At the beginning of combat on your turn, if you control your commander, create two 1/1 red Goblin creature tokens. Those tokens gain haste until end of turn.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "controller": "you",
+                "is_commander": true,
+                "owner": "you",
+                "zone": "battlefield"
+              }
+            },
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "subtypes": [
+                "Goblin"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker",
+                  "Battle"
+                ]
+              }
+            }
+          ],
+          "text": "{2}, Sacrifice a Goblin: This creature deals 1 damage to any target."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "siege_gang_lieutenant",
+      "mana_cost": "{3}{R}",
+      "name": "Siege-Gang Lieutenant",
+      "oracle_text": "Lieutenant — At the beginning of combat on your turn, if you control your commander, create two 1/1 red Goblin creature tokens. Those tokens gain haste until end of turn.\n{2}, Sacrifice a Goblin: This creature deals 1 damage to any target.",
       "power": 2,
       "source": "auto",
       "subtypes": [
@@ -217088,6 +217287,78 @@
       "colors": [
         "R"
       ],
+      "id": "tempt_with_mayhem",
+      "mana_cost": "{1}{R}{R}",
+      "name": "Tempt with Mayhem",
+      "oracle_text": "Tempting offer — Choose target instant or sorcery spell. Each opponent may copy that spell and may choose new targets for the copy they control. You copy that spell once plus an additional time for each opponent who copied the spell this way. You may choose new targets for the copies you control.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "as": "tempted",
+              "effects": [
+                {
+                  "controller": {
+                    "binding": "each_player"
+                  },
+                  "new_targets": true,
+                  "op": "copy_spell",
+                  "target": "t1"
+                }
+              ],
+              "op": "may",
+              "player": {
+                "binding": "each_player"
+              },
+              "prompt": "Copy that spell?"
+            }
+          ],
+          "op": "for_each_player",
+          "players": "each_opponent"
+        },
+        {
+          "amount": {
+            "sum": [
+              {
+                "const": 1
+              },
+              {
+                "player_count": {
+                  "binding": "tempted"
+                }
+              }
+            ]
+          },
+          "new_targets": true,
+          "op": "copy_spell",
+          "target": "t1"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "spell",
+          "selector": {
+            "any_types": [
+              "Instant",
+              "Sorcery"
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
       "id": "tempt_with_vengeance",
       "mana_cost": "{X}{R}",
       "name": "Tempt with Vengeance",
@@ -220804,6 +221075,142 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Equipped creature gets +1/+1 and has trample and \"Whenever this creature deals combat damage to a player or planeswalker, create that many Treasure tokens.\"",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "trample"
+          ],
+          "kind": "static",
+          "text": "Equipped creature gets +1/+1 and has trample and \"Whenever this creature deals combat damage to a player or planeswalker, create that many Treasure tokens.\""
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Equipped creature gets +1/+1 and has trample and \"Whenever this creature deals combat damage to a player or planeswalker, create that many Treasure tokens.\""
+        },
+        {
+          "ability": 1,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Equipped creature gets +1/+1 and has trample and \"Whenever this creature deals combat damage to a player or planeswalker, create that many Treasure tokens.\""
+        },
+        {
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {3}"
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "create_token",
+              "player": "you",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player or planeswalker, create that many Treasure tokens.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "create_token",
+              "player": "you",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player or planeswalker, create that many Treasure tokens.",
+          "trigger": {
+            "event": "deals_combat_damage_to_planeswalker",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "the_reaver_cleaver",
+      "mana_cost": "{2}{R}",
+      "name": "The Reaver Cleaver",
+      "oracle_text": "Equipped creature gets +1/+1 and has trample and \"Whenever this creature deals combat damage to a player or planeswalker, create that many Treasure tokens.\"\nEquip {3}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -253979,6 +254386,122 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "ziatora_sacrificed",
+                  "objects": {
+                    "controller": "you",
+                    "count": 1,
+                    "exclude_self": true,
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "sacrifice",
+                  "snapshot": "ziatora_sacrificed_snap"
+                },
+                {
+                  "condition": {
+                    "cmp": ">",
+                    "left": {
+                      "count": {
+                        "binding": "ziatora_sacrificed"
+                      }
+                    },
+                    "right": {
+                      "const": 0
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "ability": "ziatora_incinerate",
+                      "op": "reflexive_trigger"
+                    }
+                  ]
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Sacrifice another creature to have Ziatora deal damage equal to its power and create three Treasures?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, you may sacrifice another creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "binding": "ziatora_sacrificed_snap"
+                }
+              },
+              "op": "damage",
+              "target": "t1"
+            },
+            {
+              "amount": {
+                "const": 3
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "id": "ziatora_incinerate",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any"
+            }
+          ],
+          "text": "When you do, Ziatora deals damage equal to that creature's power to any target and you create three Treasure tokens."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R"
+      ],
+      "id": "ziatora_the_incinerator",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{B}{R}{G}",
+      "name": "Ziatora, the Incinerator",
+      "oracle_text": "Flying\nAt the beginning of your end step, you may sacrifice another creature. When you do, Ziatora deals damage equal to that creature's power to any target and you create three Treasure tokens.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Demon",
+        "Dragon"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
       ]
     },
     {

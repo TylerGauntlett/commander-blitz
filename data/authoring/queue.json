@@ -225762,12 +225762,12 @@
     },
     "Riveteers Charm": {
       "edhrec_rank": 7088,
-      "gate": "template",
+      "gate": null,
       "name": "Riveteers Charm",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "9cb6fe33-c64e-4cbd-9e8f-c23e684d3a12",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Riveteers Confluence": {
@@ -246432,12 +246432,12 @@
     },
     "Siege-Gang Lieutenant": {
       "edhrec_rank": 2627,
-      "gate": "template",
+      "gate": null,
       "name": "Siege-Gang Lieutenant",
-      "reason": "no template for: Lieutenant — At the beginning of combat on your turn, if you control your commander, creat",
+      "reason": "",
       "scryfall_id": "76049160-69f7-4114-81f3-dfab8242ac15",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Siegebreaker Giant": {
@@ -277572,12 +277572,12 @@
     },
     "Tempt with Mayhem": {
       "edhrec_rank": 4985,
-      "gate": "template",
+      "gate": null,
       "name": "Tempt with Mayhem",
-      "reason": "no template for: Tempting offer — Choose target instant or sorcery spell. Each opponent may copy that spell",
+      "reason": "",
       "scryfall_id": "085cb059-6cab-4725-95fb-de484167a5d4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tempt with Reflections": {
@@ -282072,12 +282072,12 @@
     },
     "The Reaver Cleaver": {
       "edhrec_rank": 558,
-      "gate": "template",
+      "gate": null,
       "name": "The Reaver Cleaver",
-      "reason": "no template for: Equipped creature gets +1/+1 and has trample and \"Whenever this creature deals combat dama",
+      "reason": "",
       "scryfall_id": "be11af2c-ced6-4da7-a56c-60cef97b7fbb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Red Terror": {
@@ -322732,12 +322732,12 @@
     },
     "Ziatora, the Incinerator": {
       "edhrec_rank": 3097,
-      "gate": "template",
+      "gate": null,
       "name": "Ziatora, the Incinerator",
-      "reason": "no template for: At the beginning of your end step, you may sacrifice another creature. When you do, Ziator",
+      "reason": "",
       "scryfall_id": "68cce7e2-8c4b-4c76-a38b-0fee85da3151",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Zidane, Tantalus Thief": {

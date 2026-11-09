@@ -1,0 +1,19 @@
+{
+  "card_id": "sawhorn_nemesis",
+  "name": "Sawhorn Nemesis",
+  "oracle_text": "As this creature enters, choose a player.\nIf a source would deal damage to the chosen player or a permanent they control, it deals double that damage instead.",
+  "blocked_sentences": [
+    "As this creature enters, choose a player",
+    "If a source would deal damage to the chosen player or a permanent they control, it deals double that damage instead"
+  ],
+  "needs": [
+    {
+      "capability": "chosen_player",
+      "kind": "selector",
+      "what": "an 'as this enters, choose a player' choice remembered on the permanent (the player twin of chosen_type_of/chosen_color_of), readable by statics as a player spec -- e.g. affects_player: {\"chosen_player_of\": \"self\"} and an affects filter controller: {\"chosen_player_of\": \"self\"} -- so a replace_damage static with damage_multiplier 2 and damage_source controller any can be keyed to the chosen player and the permanents they control",
+      "why_existing_wont_do": "choose_player only writes ctx.bindings for the resolving ability, which a static never sees; persistent choices exist only for creature types (chosen_type_of), colors (chosen_color_of) and card types (chosen_card_type_of). replace_damage's affects_player takes you/opponent/any, so 'opponent' would double damage to every opponent (and can never pick yourself), which is a different card at a pod"
+    }
+  ],
+  "closest_existing": ["choose_player", "chosen_type_of", "replace_damage"],
+  "confidence": "high"
+}
