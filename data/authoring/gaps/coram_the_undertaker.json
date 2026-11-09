@@ -1,0 +1,25 @@
+{
+  "card_id": "coram_the_undertaker",
+  "name": "Coram, the Undertaker",
+  "oracle_text": "Coram gets +X/+0, where X is the greatest power among creature cards in all graveyards.\nWhenever Coram attacks, each player mills a card.\nDuring each of your turns, you may play a land and cast a spell from among cards in graveyards that were put there from libraries this turn.",
+  "blocked_sentences": [
+    "Coram gets +X/+0, where X is the greatest power among creature cards in all graveyards.",
+    "During each of your turns, you may play a land and cast a spell from among cards in graveyards that were put there from libraries this turn."
+  ],
+  "needs": [
+    {
+      "capability": "static_greatest_power_in_graveyard",
+      "kind": "value",
+      "what": "a static value leaf reading the greatest printed power among cards matched by a static counting filter in a non-battlefield zone (here: creature cards in ALL graveyards, any owner), so a self-only buff of +X/+0 can be sized by it; an empty pool is 0",
+      "why_existing_wont_do": "The static `extreme_value` leaf has the right shape (objects with zone: graveyard, pick: greatest) but `_validate_static_extreme_value` in cards/loader/statics.py refuses any `of` other than mana_value because battlefield power is a layer output. A graveyard card's power is printed and a pipeline input, so `of: power` could be allowed when every branch's zone is off the battlefield. Same need as carrion_grub; a self_enters pump would go stale"
+    },
+    {
+      "capability": "graveyard_play_from_library_this_turn",
+      "kind": "static_effect",
+      "what": "a player-wide static, active only during its controller's turns, letting you play one land and cast one spell each turn from among cards in ANY player's graveyard that were put there from a library this turn (requires a per-card zone-history mark: moved library->graveyard during the current turn), with one land allowance and one spell allowance per turn",
+      "why_existing_wont_do": "`cast_from_graveyard` and `play_lands_from_graveyard` read only your own graveyard and their filters (static_filter_keys) are printed characteristics; nothing in static_filter_keys or static_condition_keys records that a card arrived from a library this turn, they do not reach opponents' graveyards, and `play_lands_from_graveyard` carries no once-per-turn cap of its own"
+    }
+  ],
+  "closest_existing": ["extreme_value", "buff", "cast_from_graveyard", "play_lands_from_graveyard"],
+  "confidence": "high"
+}

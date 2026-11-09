@@ -77,6 +77,17 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "accursed_marauder": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "opponent_battlefield_count": 5,
+    "zone": [
+      "battlefield",
+      "graveyard"
+    ]
+  },
   "accursed_spirit": {
     "zone": "battlefield"
   },
@@ -460,6 +471,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "altar_of_the_goyf": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "altar_s_reap": {
@@ -1568,6 +1583,17 @@
   "barrier_of_bones": {
     "zone": "battlefield"
   },
+  "barrowgoyf": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "deathtouch",
+        "lifelink"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "bartizan_bats": {
     "zone": "battlefield"
   },
@@ -1864,6 +1890,9 @@
     },
     "zone": "battlefield"
   },
+  "bituminous_blast": {
+    "zone": "graveyard"
+  },
   "black_bolt_inhuman_king": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -1988,6 +2017,14 @@
     "zone": "graveyard"
   },
   "blood_seeker": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "bloodbraid_challenger": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "bloodbraid_elf": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -2329,6 +2366,10 @@
   "brawler_s_plate": {
     "zone": "battlefield"
   },
+  "brawn": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "brazen_scourge": {
     "zone": "battlefield"
   },
@@ -2417,6 +2458,14 @@
     "zone": "battlefield"
   },
   "broodhunter_wurm": {
+    "zone": "battlefield"
+  },
+  "broodmate_tyrant": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "dragon_5_5_r_flying"
+    },
     "zone": "battlefield"
   },
   "broodstar": {
@@ -6245,6 +6294,15 @@
     },
     "zone": "graveyard"
   },
+  "find_finality": {
+    "graveyard_size": {
+      "0": 1
+    },
+    "hand_size": {
+      "0": 3
+    },
+    "zone": "graveyard"
+  },
   "finest_hour": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -6916,6 +6974,14 @@
     "zone": "graveyard"
   },
   "gangly_stompling": {
+    "zone": "battlefield"
+  },
+  "garruk_apex_predator": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 5,
+      "kind": "loyalty"
+    },
     "zone": "battlefield"
   },
   "garruk_cursed_huntsman": {
@@ -7674,6 +7740,16 @@
     "zone": "battlefield"
   },
   "graven_cairns": {
+    "zone": "battlefield"
+  },
+  "graveshifter": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 1
+    },
+    "hand_size": {
+      "0": 2
+    },
     "zone": "battlefield"
   },
   "gray_merchant_of_asphodel": {
@@ -9182,6 +9258,13 @@
   "ixalli_s_lorekeeper": {
     "zone": "battlefield"
   },
+  "izoni_thousand_eyed": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "izzet_boilerworks": {
     "battlefield_count": 32,
     "hand_size": {
@@ -9985,6 +10068,9 @@
   "koilos_roc": {
     "zone": "battlefield"
   },
+  "kolaghan_s_command": {
+    "zone": "graveyard"
+  },
   "kolinahr_priest": {
     "zone": "battlefield"
   },
@@ -10265,6 +10351,10 @@
     "zone": "battlefield"
   },
   "leyline_tyrant": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "lhurgoyf": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -11756,6 +11846,13 @@
       "0": 4
     },
     "zone": "graveyard"
+  },
+  "mortivore": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "moss_diamond": {
     "zone": "battlefield"
@@ -13437,6 +13534,10 @@
     },
     "zone": "battlefield"
   },
+  "polygoyf": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "pond_prophet": {
     "hand_size": {
       "0": 2
@@ -13871,6 +13972,15 @@
       "0": 1
     },
     "zone": "graveyard"
+  },
+  "pyrogoyf": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "battlefield"
   },
   "pyrokinesis": {
     "zone": "graveyard"
@@ -14852,6 +14962,10 @@
   },
   "riverwheel_aerialists": {
     "zone": "battlefield"
+  },
+  "riveteers_charm": {
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
   },
   "roaming_throne": {
     "battlefield_count": 33,
@@ -16111,6 +16225,10 @@
     "zone": "battlefield"
   },
   "siege_gang_commander": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "siege_gang_lieutenant": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -17918,6 +18036,10 @@
   "targ_nar_demon_fang_gnoll": {
     "zone": "battlefield"
   },
+  "tarmogoyf_nest": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "tarnished_citadel": {
     "zone": "battlefield"
   },
@@ -18133,6 +18255,9 @@
     "library_size": {
       "0": 38
     },
+    "zone": "graveyard"
+  },
+  "tempt_with_mayhem": {
     "zone": "graveyard"
   },
   "tempt_with_vengeance": {
@@ -18425,6 +18550,10 @@
     "library_size": {
       "0": 40
     },
+    "zone": "battlefield"
+  },
+  "the_reaver_cleaver": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "the_scorpion_god": {
@@ -21358,6 +21487,10 @@
     "zone": "battlefield"
   },
   "ziatora_s_proving_ground": {
+    "zone": "battlefield"
+  },
+  "ziatora_the_incinerator": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "zimone_quandrix_prodigy": {

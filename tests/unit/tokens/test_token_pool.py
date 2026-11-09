@@ -2511,3 +2511,52 @@ class TestGarruksWolfLoadsAGarrukOnDeath:
         assert sorted(token.colors) == ["G"]
         assert list(token.subtypes) == ["Wolf"]
         assert not token.abilities
+
+
+class TestTheGraveyardOverdriveTokens:
+    """Izoni and Grist make a 1/1 black and green Insect, Garruk, Apex Predator
+    a 3/3 black Beast with deathtouch, and Disa and Tarmogoyf Nest a Tarmogoyf.
+    The near misses are the green Insect, the green Beast and, for the
+    Tarmogoyf, nothing: no other token counts card types in graveyards."""
+
+    def test_the_insect_is_a_black_and_green_one_one(self, pool):
+        token = pool.get("insect_1_1_bg")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (1, 1)
+        assert sorted(token.colors) == ["B", "G"]
+        assert list(token.subtypes) == ["Insect"]
+        assert not token.keywords and not token.abilities
+
+    def test_the_green_insect_is_still_mono_green(self, pool):
+        assert sorted(pool.get("insect_1_1_g").colors) == ["G"]
+
+    def test_the_beast_is_a_black_three_three_with_deathtouch(self, pool):
+        token = pool.get("beast_3_3_b_deathtouch")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (3, 3)
+        assert sorted(token.colors) == ["B"]
+        assert list(token.subtypes) == ["Beast"]
+        assert set(token.keywords) == {"deathtouch"}
+
+    def test_the_green_beast_is_still_vanilla(self, pool):
+        token = pool.get("beast_3_3_g")
+        assert sorted(token.colors) == ["G"] and not token.keywords
+
+    def test_the_tarmogoyf_is_a_named_green_lhurgoyf_costing_two(self, pool):
+        token = pool.get("tarmogoyf_0_1_g")
+        assert token is not None and token.is_token and token.is_creature
+        assert token.name == "Tarmogoyf"
+        assert token.mana_value == 2
+        assert (token.power, token.toughness) == (0, 1)
+        assert sorted(token.colors) == ["G"]
+        assert list(token.subtypes) == ["Lhurgoyf"]
+
+    def test_the_tarmogoyf_counts_card_types_in_all_graveyards(self, pool):
+        (ability,) = pool.get("tarmogoyf_0_1_g").abilities
+        types_in_graveyards = {
+            "distinct": {"objects": {"controller": "any", "zone": "graveyard"}, "of": "card_type"}
+        }
+        assert ability.static["effect"] == "set_pt"
+        assert ability.static["affects"] == {"self_only": True}
+        assert ability.static["power"] == types_in_graveyards
+        assert ability.static["toughness"] == {"sum": [types_in_graveyards, {"const": 1}]}

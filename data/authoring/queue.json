@@ -1482,12 +1482,12 @@
     },
     "Accursed Marauder": {
       "edhrec_rank": 468,
-      "gate": "template",
+      "gate": null,
       "name": "Accursed Marauder",
-      "reason": "no template for: When this creature enters, each player sacrifices a nontoken creature of their choice",
+      "reason": "",
       "scryfall_id": "44a63029-1fb2-4fdc-bca9-0a530c7b42d9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Accursed Spirit": {
@@ -6892,12 +6892,12 @@
     },
     "Altar of the Goyf": {
       "edhrec_rank": 9679,
-      "gate": "template",
+      "gate": null,
       "name": "Altar of the Goyf",
-      "reason": "no template for: Whenever a creature you control attacks alone, it gets +X/+X until end of turn, where X is",
+      "reason": "",
       "scryfall_id": "a372b9c3-2611-4eba-834c-5fb113ac9bed",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Altar of the Lost": {
@@ -21082,12 +21082,12 @@
     },
     "Barrowgoyf": {
       "edhrec_rank": 4087,
-      "gate": "template",
+      "gate": null,
       "name": "Barrowgoyf",
-      "reason": "no template for: 's power is equal to the number of card types among cards in all graveyards and its toughn",
+      "reason": "",
       "scryfall_id": "fac2f9be-94ca-4657-b2eb-8df9548e6855",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Barrowin of Clan Undurr": {
@@ -25492,12 +25492,12 @@
     },
     "Bituminous Blast": {
       "edhrec_rank": 7436,
-      "gate": "template",
+      "gate": null,
       "name": "Bituminous Blast",
-      "reason": "no template for: Cascade",
+      "reason": "",
       "scryfall_id": "89cafccf-c199-4c07-857e-956adaf2817d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bjorna, Nightfall Alchemist": {
@@ -28422,22 +28422,22 @@
     },
     "Bloodbraid Challenger": {
       "edhrec_rank": 6592,
-      "gate": "template",
+      "gate": null,
       "name": "Bloodbraid Challenger",
-      "reason": "no template for: Cascade",
+      "reason": "",
       "scryfall_id": "4b39d43d-2a02-4edb-915a-6a7c002c945f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bloodbraid Elf": {
       "edhrec_rank": 4786,
-      "gate": "template",
+      "gate": null,
       "name": "Bloodbraid Elf",
-      "reason": "no template for: Cascade",
+      "reason": "",
       "scryfall_id": "bb6a56ec-4b16-46d4-a1fc-4688e7a89574",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bloodbraid Marauder": {
@@ -33392,12 +33392,12 @@
     },
     "Brawn": {
       "edhrec_rank": 1896,
-      "gate": "template",
+      "gate": null,
       "name": "Brawn",
-      "reason": "no template for: As long as this card is in your graveyard and you control a Forest, creatures you control ",
+      "reason": "",
       "scryfall_id": "e3d58928-500d-46fc-b82b-f1add64df859",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Brawn, Amadeus Cho": {
@@ -35372,12 +35372,12 @@
     },
     "Broodmate Tyrant": {
       "edhrec_rank": 13461,
-      "gate": "template",
+      "gate": null,
       "name": "Broodmate Tyrant",
-      "reason": "no template for: When this creature enters, create a 5/5 red Dragon creature token with flying",
+      "reason": "",
       "scryfall_id": "2a1bcd5b-c145-4891-a6a5-8651841acedf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Broodrage Mycoid": {
@@ -95212,12 +95212,12 @@
     },
     "Find // Finality": {
       "edhrec_rank": 5421,
-      "gate": "template",
+      "gate": null,
       "name": "Find // Finality",
-      "reason": "no template for: Return up to two target creature cards from your graveyard to your hand",
+      "reason": "",
       "scryfall_id": "9a6bae45-a58c-42b1-89a0-4c1ff879e0d0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Find the Path": {
@@ -105382,12 +105382,12 @@
     },
     "Garruk, Apex Predator": {
       "edhrec_rank": 8947,
-      "gate": "template",
+      "gate": null,
       "name": "Garruk, Apex Predator",
-      "reason": "no template for: +1: Destroy another target planeswalker",
+      "reason": "",
       "scryfall_id": "07dd9bfc-b6d2-493d-b825-941556018dbd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Garruk, Apex Predator Emblem": {
@@ -116712,12 +116712,12 @@
     },
     "Graveshifter": {
       "edhrec_rank": 2889,
-      "gate": "template",
+      "gate": null,
       "name": "Graveshifter",
-      "reason": "no template for: When this creature enters, you may return target creature card from your graveyard to your",
+      "reason": "",
       "scryfall_id": "dadb02b9-d3a0-4b51-bbc3-53b2316cd70d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gravespawn Sovereign": {
@@ -141012,12 +141012,12 @@
     },
     "Izoni, Thousand-Eyed": {
       "edhrec_rank": 4991,
-      "gate": "template",
+      "gate": null,
       "name": "Izoni, Thousand-Eyed",
-      "reason": "no template for: Undergrowth — When Izoni enters, create a 1/1 black and green Insect creature token for ea",
+      "reason": "",
       "scryfall_id": "95a3dfe3-88ab-4820-ae5e-2f5edd4d6f2f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Izzet Boilerworks": {
@@ -151262,12 +151262,12 @@
     },
     "Kolaghan's Command": {
       "edhrec_rank": 3591,
-      "gate": "template",
+      "gate": null,
       "name": "Kolaghan's Command",
-      "reason": "no template for: Choose two —",
+      "reason": "",
       "scryfall_id": "666317db-2f38-4187-b6a5-7947d0c1591b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kolaghan, the Storm's Fury": {
@@ -157262,12 +157262,12 @@
     },
     "Lhurgoyf": {
       "edhrec_rank": 8064,
-      "gate": "template",
+      "gate": null,
       "name": "Lhurgoyf",
-      "reason": "no template for: 's power is equal to the number of creature cards in all graveyards and its toughness is e",
+      "reason": "",
       "scryfall_id": "e5093316-dc00-4155-babf-d6ca222f2bd3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Liability": {
@@ -179672,12 +179672,12 @@
     },
     "Mortivore": {
       "edhrec_rank": 5353,
-      "gate": "template",
+      "gate": null,
       "name": "Mortivore",
-      "reason": "no template for: 's power and toughness are each equal to the number of creature cards in all graveyards",
+      "reason": "",
       "scryfall_id": "2731f8a0-3e9d-43a5-b1a3-28b3a8f1f18c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mortuary": {
@@ -204902,12 +204902,12 @@
     },
     "Polygoyf": {
       "edhrec_rank": 7160,
-      "gate": "template",
+      "gate": null,
       "name": "Polygoyf",
-      "reason": "no template for: Trample, myriad",
+      "reason": "",
       "scryfall_id": "00b4625c-ce91-4b86-8db7-a6c2d4fb9c92",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Polygraph Orb": {
@@ -210882,12 +210882,12 @@
     },
     "Pyrogoyf": {
       "edhrec_rank": 6814,
-      "gate": "template",
+      "gate": null,
       "name": "Pyrogoyf",
-      "reason": "no template for: 's power is equal to the number of card types among cards in all graveyards and its toughn",
+      "reason": "",
       "scryfall_id": "f60be310-4461-4b84-95f0-b2095108bd79",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pyrohemia": {
@@ -225762,12 +225762,12 @@
     },
     "Riveteers Charm": {
       "edhrec_rank": 7088,
-      "gate": "template",
+      "gate": null,
       "name": "Riveteers Charm",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "9cb6fe33-c64e-4cbd-9e8f-c23e684d3a12",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Riveteers Confluence": {
@@ -246432,12 +246432,12 @@
     },
     "Siege-Gang Lieutenant": {
       "edhrec_rank": 2627,
-      "gate": "template",
+      "gate": null,
       "name": "Siege-Gang Lieutenant",
-      "reason": "no template for: Lieutenant — At the beginning of combat on your turn, if you control your commander, creat",
+      "reason": "",
       "scryfall_id": "76049160-69f7-4114-81f3-dfab8242ac15",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Siegebreaker Giant": {
@@ -275372,12 +275372,12 @@
     },
     "Tarmogoyf Nest": {
       "edhrec_rank": 7833,
-      "gate": "template",
+      "gate": null,
       "name": "Tarmogoyf Nest",
-      "reason": "no template for: Enchanted land has \"{1}{G}, {T}: Create a Tarmogoyf token.\"",
+      "reason": "",
       "scryfall_id": "1a906132-19ab-4b7c-95de-08f8a5fa3aea",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tarnation Vista": {
@@ -277572,12 +277572,12 @@
     },
     "Tempt with Mayhem": {
       "edhrec_rank": 4985,
-      "gate": "template",
+      "gate": null,
       "name": "Tempt with Mayhem",
-      "reason": "no template for: Tempting offer — Choose target instant or sorcery spell. Each opponent may copy that spell",
+      "reason": "",
       "scryfall_id": "085cb059-6cab-4725-95fb-de484167a5d4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tempt with Reflections": {
@@ -282072,12 +282072,12 @@
     },
     "The Reaver Cleaver": {
       "edhrec_rank": 558,
-      "gate": "template",
+      "gate": null,
       "name": "The Reaver Cleaver",
-      "reason": "no template for: Equipped creature gets +1/+1 and has trample and \"Whenever this creature deals combat dama",
+      "reason": "",
       "scryfall_id": "be11af2c-ced6-4da7-a56c-60cef97b7fbb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Red Terror": {
@@ -322732,12 +322732,12 @@
     },
     "Ziatora, the Incinerator": {
       "edhrec_rank": 3097,
-      "gate": "template",
+      "gate": null,
       "name": "Ziatora, the Incinerator",
-      "reason": "no template for: At the beginning of your end step, you may sacrifice another creature. When you do, Ziator",
+      "reason": "",
       "scryfall_id": "68cce7e2-8c4b-4c76-a38b-0fee85da3151",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Zidane, Tantalus Thief": {

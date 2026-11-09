@@ -1023,6 +1023,61 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "chooser": "owner",
+                    "controller": {
+                      "binding": "each_player"
+                    },
+                    "count": 1,
+                    "is_token": false,
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, each player sacrifices a nontoken creature of their choice.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "accursed_marauder",
+      "mana_cost": "{1}{B}",
+      "name": "Accursed Marauder",
+      "oracle_text": "When this creature enters, each player sacrifices a nontoken creature of their choice.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Warrior"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -5814,6 +5869,86 @@
       "oracle_text": "Whenever another permanent you control enters, each opponent mills a card.",
       "source": "auto",
       "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "binding": "attackers"
+              },
+              "op": "pump",
+              "power": {
+                "distinct": {
+                  "objects": {
+                    "controller": "any",
+                    "zone": "graveyard"
+                  },
+                  "of": "card_type"
+                }
+              },
+              "toughness": {
+                "distinct": {
+                  "objects": {
+                    "controller": "any",
+                    "zone": "graveyard"
+                  },
+                  "of": "card_type"
+                }
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control attacks alone, it gets +X/+X until end of turn, where X is the number of card types among cards in all graveyards.",
+          "trigger": {
+            "condition": {
+              "cmp": "==",
+              "left": {
+                "count": {
+                  "binding": "attackers"
+                }
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "you",
+            "event": "you_attack"
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Lhurgoyf"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "trample"
+          ],
+          "kind": "static",
+          "text": "Lhurgoyf creatures you control have trample."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "altar_of_the_goyf",
+      "mana_cost": "{5}",
+      "name": "Altar of the Goyf",
+      "oracle_text": "Whenever a creature you control attacks alone, it gets +X/+X until end of turn, where X is the number of card types among cards in all graveyards.\nLhurgoyf creatures you control have trample.",
+      "source": "auto",
+      "subtypes": [
+        "Lhurgoyf"
+      ],
+      "types": [
+        "Kindred",
         "Artifact"
       ]
     },
@@ -18188,6 +18323,103 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "distinct": {
+              "objects": {
+                "controller": "any",
+                "zone": "graveyard"
+              },
+              "of": "card_type"
+            }
+          },
+          "text": "Barrowgoyf's power is equal to the number of card types among cards in all graveyards and its toughness is equal to that number plus 1.",
+          "toughness": {
+            "sum": [
+              {
+                "distinct": {
+                  "objects": {
+                    "controller": "any",
+                    "zone": "graveyard"
+                  },
+                  "of": "card_type"
+                }
+              },
+              {
+                "const": 1
+              }
+            ]
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "binding": "amount"
+                  },
+                  "as": "milled",
+                  "op": "mill",
+                  "player": "you"
+                },
+                {
+                  "destination": "hand",
+                  "objects": {
+                    "binding": "milled",
+                    "count": 1,
+                    "optional": true,
+                    "types": [
+                      "Creature"
+                    ]
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Mill that many cards?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, you may mill that many cards. If you do, you may put a creature card from among them into your hand.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "barrowgoyf",
+      "keywords": [
+        "deathtouch",
+        "lifelink"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "Barrowgoyf",
+      "oracle_text": "Deathtouch, lifelink\nBarrowgoyf's power is equal to the number of card types among cards in all graveyards and its toughness is equal to that number plus 1.\nWhenever this creature deals combat damage to a player, you may mill that many cards. If you do, you may put a creature card from among them into your hand.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Lhurgoyf"
+      ],
+      "toughness": 0,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -21804,6 +22036,65 @@
     {
       "abilities": [
         {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "op": "cascade"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Cascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "bituminous_blast",
+      "mana_cost": "{3}{B}{R}",
+      "name": "Bituminous Blast",
+      "oracle_text": "Cascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)\nBituminous Blast deals 4 damage to target creature.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 4
+          },
+          "op": "damage",
+          "target": "t1"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "duration": "until_end_of_turn",
@@ -23389,6 +23680,106 @@
         "Shaman"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "op": "cascade"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Cascade",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "graveyard_cast": "graveyard",
+      "graveyard_cost": {
+        "exile_from_graveyard": {
+          "count": 3,
+          "exclude_self": true
+        },
+        "mana": "{3}{R}{G}"
+      },
+      "id": "bloodbraid_challenger",
+      "keywords": [
+        "haste"
+      ],
+      "mana_cost": "{3}{R}{G}",
+      "name": "Bloodbraid Challenger",
+      "oracle_text": "Cascade\nHaste\nEscape—{3}{R}{G}, Exile three other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Berserker"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "op": "cascade"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Cascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "bloodbraid_elf",
+      "keywords": [
+        "haste"
+      ],
+      "mana_cost": "{2}{R}{G}",
+      "name": "Bloodbraid Elf",
+      "oracle_text": "Haste (This creature can attack and {T} as soon as it comes under your control.)\nCascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Berserker"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -27471,6 +27862,58 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "condition": {
+            "exists": {
+              "controller": "you",
+              "subtypes": [
+                "Forest"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "trample"
+          ],
+          "kind": "static",
+          "text": "As long as this card is in your graveyard and you control a Forest, creatures you control have trample."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "brawn",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{3}{G}",
+      "name": "Brawn",
+      "oracle_text": "Trample\nAs long as this card is in your graveyard and you control a Forest, creatures you control have trample.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Incarnation"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -28812,6 +29255,122 @@
         "Wurm"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "dragon_5_5_r_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, create a 5/5 red Dragon creature token with flying.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "exile_from_graveyard": {
+              "count": 1,
+              "self_only": true
+            },
+            "mana": "{5}{B}{R}{G}"
+          },
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "encore_copy",
+                  "controller": "you",
+                  "objects": {
+                    "controller": "any",
+                    "self_only": true,
+                    "zone": "exile"
+                  },
+                  "op": "copy_permanent"
+                },
+                {
+                  "defender": {
+                    "binding": "each_player"
+                  },
+                  "duration": "this_turn",
+                  "objects": {
+                    "binding": "encore_copy",
+                    "count": "all"
+                  },
+                  "op": "must_attack_player"
+                },
+                {
+                  "duration": "permanent",
+                  "keywords": [
+                    "haste"
+                  ],
+                  "objects": {
+                    "binding": "encore_copy",
+                    "count": "all"
+                  },
+                  "op": "grant_keyword"
+                },
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "binding": "encore_copy",
+                        "count": "all"
+                      },
+                      "op": "sacrifice"
+                    }
+                  ],
+                  "op": "delay",
+                  "step": "end_step",
+                  "text": "Sacrifice them at the beginning of the next end step."
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Encore {5}{B}{R}{G}"
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R"
+      ],
+      "id": "broodmate_tyrant",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{B}{R}{G}",
+      "name": "Broodmate Tyrant",
+      "oracle_text": "Flying\nWhen this creature enters, create a 5/5 red Dragon creature token with flying.\nEncore {5}{B}{R}{G}",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
@@ -72553,6 +73112,110 @@
       ]
     },
     {
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "finality",
+      "mana_cost": "{4}{B}{G}",
+      "name": "Finality",
+      "oracle_text": "You may put two +1/+1 counters on a creature you control. Then all creatures get -4/-4 until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "chooser": "controller",
+                "controller": "you",
+                "count": 1,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "op": "may",
+          "player": "you",
+          "prompt": "Put two +1/+1 counters on a creature you control?"
+        },
+        {
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "pump",
+          "power": {
+            "const": -4
+          },
+          "toughness": {
+            "const": -4
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "find_finality",
+      "mana_cost": "{B/G}{B/G}",
+      "name": "Find // Finality",
+      "oracle_text": "Return up to two target creature cards from your graveyard to your hand.\nYou may put two +1/+1 counters on a creature you control. Then all creatures get -4/-4 until end of turn.",
+      "second_face": "finality",
+      "second_face_zone": "hand",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "destination": "hand",
+          "objects": {
+            "target": "gy_creatures"
+          },
+          "op": "return_from_graveyard"
+        }
+      ],
+      "targets": [
+        {
+          "count": 2,
+          "id": "gy_creatures",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          },
+          "up_to": true
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -79930,6 +80593,186 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "exclude_self": true,
+                "types": [
+                  "Planeswalker"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "+1: Destroy another target planeswalker."
+        },
+        {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "beast_3_3_b_deathtouch"
+            }
+          ],
+          "kind": "activated",
+          "text": "+1: Create a 3/3 black Beast creature token with deathtouch."
+        },
+        {
+          "cost": {
+            "loyalty": -3
+          },
+          "effects": [
+            {
+              "as": "victim",
+              "op": "snapshot",
+              "target": "t1"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            },
+            {
+              "amount": {
+                "toughness_of": {
+                  "binding": "victim"
+                }
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "−3: Destroy target creature. You gain life equal to its toughness."
+        },
+        {
+          "cost": {
+            "loyalty": -8
+          },
+          "effects": [
+            {
+              "emblem": 0,
+              "op": "emblem",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "−8: Target opponent gets an emblem with \"Whenever a creature attacks you, it gets +5/+5 and gains trample until end of turn.\""
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "emblems": [
+        {
+          "abilities": [
+            {
+              "effects": [
+                {
+                  "duration": "until_end_of_turn",
+                  "objects": {
+                    "binding": "subject"
+                  },
+                  "op": "pump",
+                  "power": {
+                    "const": 5
+                  },
+                  "toughness": {
+                    "const": 5
+                  }
+                },
+                {
+                  "duration": "until_end_of_turn",
+                  "keywords": [
+                    "trample"
+                  ],
+                  "objects": {
+                    "binding": "subject"
+                  },
+                  "op": "grant_keyword"
+                }
+              ],
+              "kind": "triggered",
+              "text": "Whenever a creature attacks you, it gets +5/+5 and gains trample until end of turn.",
+              "trigger": {
+                "controller": "any",
+                "event": "attacks",
+                "filter": {
+                  "attacking_player": "you",
+                  "types": [
+                    "Creature"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "id": "garruk_apex_predator",
+      "loyalty": 5,
+      "mana_cost": "{5}{B}{G}",
+      "name": "Garruk, Apex Predator",
+      "oracle_text": "+1: Destroy another target planeswalker.\n+1: Create a 3/3 black Beast creature token with deathtouch.\n−3: Destroy target creature. You gain life equal to its toughness.\n−8: Target opponent gets an emblem with \"Whenever a creature attacks you, it gets +5/+5 and gains trample until end of turn.\"",
+      "source": "auto",
+      "subtypes": [
+        "Garruk"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
       ]
     },
     {
@@ -89312,6 +90155,106 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "add_subtype",
+          "kind": "static",
+          "subtypes": [
+            "Human",
+            "Soldier",
+            "Warrior",
+            "Wizard",
+            "Cleric",
+            "Rogue",
+            "Knight",
+            "Elf",
+            "Goblin",
+            "Zombie",
+            "Vampire",
+            "Spirit",
+            "Beast",
+            "Elemental",
+            "Dragon",
+            "Angel",
+            "Demon",
+            "Sphinx",
+            "Bird",
+            "Cat",
+            "Snake",
+            "Insect",
+            "Serpent",
+            "Giant",
+            "Orc",
+            "Merfolk",
+            "Druid",
+            "Shaman",
+            "Bear",
+            "Wall"
+          ],
+          "text": "Changeling"
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "destination": "hand",
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ],
+              "op": "may",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When this creature enters, you may return target creature card from your graveyard to your hand.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "graveshifter",
+      "mana_cost": "{3}{B}",
+      "name": "Graveshifter",
+      "oracle_text": "Changeling (This card is every creature type.)\nWhen this creature enters, you may return target creature card from your graveyard to your hand.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Shapeshifter"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -108111,6 +109054,87 @@
         {
           "effects": [
             {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "graveyard"
+                }
+              },
+              "op": "create_token",
+              "token": "insect_1_1_bg"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Undergrowth — When Izoni enters, create a 1/1 black and green Insect creature token for each creature card in your graveyard.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{B}{G}",
+            "sacrifice": {
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{B}{G}, Sacrifice another creature: You gain 1 life and draw a card."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "izoni_thousand_eyed",
+      "mana_cost": "{2}{B}{B}{G}{G}",
+      "name": "Izoni, Thousand-Eyed",
+      "oracle_text": "Undergrowth — When Izoni enters, create a 1/1 black and green Insect creature token for each creature card in your graveyard.\n{B}{G}, Sacrifice another creature: You gain 1 life and draw a card.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Shaman"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "objects": {
                 "chooser": "controller",
                 "controller": "you",
@@ -118055,6 +119079,128 @@
     },
     {
       "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "kolaghan_s_command",
+      "mana_cost": "{1}{B}{R}",
+      "name": "Kolaghan's Command",
+      "oracle_text": "Choose two —\n• Return target creature card from your graveyard to your hand.\n• Target player discards a card.\n• Destroy target artifact.\n• Kolaghan's Command deals 2 damage to any target.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 2,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "destination": "hand",
+                  "objects": {
+                    "target": "raised"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ],
+              "label": "Return target creature card from your graveyard to your hand."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "discard",
+                  "player": {
+                    "target": "discarder"
+                  }
+                }
+              ],
+              "label": "Target player discards a card."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "shattered"
+                  },
+                  "op": "destroy"
+                }
+              ],
+              "label": "Destroy target artifact."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "damage",
+                  "target": "burned"
+                }
+              ],
+              "label": "Kolaghan's Command deals 2 damage to any target."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "raised",
+          "kind": "card_in_graveyard",
+          "mode": 0,
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          }
+        },
+        {
+          "count": 1,
+          "id": "discarder",
+          "kind": "player",
+          "mode": 1,
+          "selector": {}
+        },
+        {
+          "count": 1,
+          "id": "shattered",
+          "kind": "permanent",
+          "mode": 2,
+          "selector": {
+            "types": [
+              "Artifact"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "burned",
+          "kind": "any",
+          "mode": 3,
+          "selector": {
+            "any_types": [
+              "Creature",
+              "Planeswalker",
+              "Battle"
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "U"
       ],
       "colors": [
@@ -121413,6 +122559,62 @@
         "Dragon"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "count": {
+              "controller": "any",
+              "types": [
+                "Creature"
+              ],
+              "zone": "graveyard"
+            }
+          },
+          "text": "Lhurgoyf's power is equal to the number of creature cards in all graveyards and its toughness is equal to that number plus 1.",
+          "toughness": {
+            "sum": [
+              {
+                "count": {
+                  "controller": "any",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "graveyard"
+                }
+              },
+              {
+                "const": 1
+              }
+            ]
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "lhurgoyf",
+      "mana_cost": "{2}{G}{G}",
+      "name": "Lhurgoyf",
+      "oracle_text": "Lhurgoyf's power is equal to the number of creature cards in all graveyards and its toughness is equal to that number plus 1.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Lhurgoyf"
+      ],
+      "toughness": 0,
       "types": [
         "Creature"
       ]
@@ -138144,6 +139346,72 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "count": {
+              "controller": "any",
+              "types": [
+                "Creature"
+              ],
+              "zone": "graveyard"
+            }
+          },
+          "text": "Mortivore's power and toughness are each equal to the number of creature cards in all graveyards.",
+          "toughness": {
+            "count": {
+              "controller": "any",
+              "types": [
+                "Creature"
+              ],
+              "zone": "graveyard"
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{B}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "regenerate"
+            }
+          ],
+          "kind": "activated",
+          "text": "{B}: Regenerate this creature. (The next time this creature would be destroyed this turn, instead tap it, remove it from combat, and heal all damage on it.)"
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "mortivore",
+      "mana_cost": "{2}{B}{B}",
+      "name": "Mortivore",
+      "oracle_text": "Mortivore's power and toughness are each equal to the number of creature cards in all graveyards.\n{B}: Regenerate this creature. (The next time this creature would be destroyed this turn, instead tap it, remove it from combat, and heal all damage on it.)",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Lhurgoyf"
+      ],
+      "toughness": 0,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -159119,6 +160387,116 @@
         {
           "effects": [
             {
+              "effects": [
+                {
+                  "effects": [
+                    {
+                      "as": "myriad_token",
+                      "attacking": {
+                        "binding": "each_player"
+                      },
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "copy_permanent",
+                      "or_planeswalker": true,
+                      "tapped": true
+                    },
+                    {
+                      "effects": [
+                        {
+                          "objects": {
+                            "binding": "myriad_token"
+                          },
+                          "op": "exile"
+                        }
+                      ],
+                      "op": "delay",
+                      "step": "end_of_combat",
+                      "text": "Exile the tokens at end of combat."
+                    }
+                  ],
+                  "op": "may"
+                }
+              ],
+              "op": "for_each_player",
+              "players": {
+                "except": "you",
+                "not": {
+                  "binding": "defender"
+                }
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Trample, myriad",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "distinct": {
+              "objects": {
+                "controller": "any",
+                "zone": "graveyard"
+              },
+              "of": "card_type"
+            }
+          },
+          "text": "Polygoyf's power is equal to the number of card types among cards in all graveyards and its toughness is equal to that number plus 1.",
+          "toughness": {
+            "sum": [
+              {
+                "distinct": {
+                  "objects": {
+                    "controller": "any",
+                    "zone": "graveyard"
+                  },
+                  "of": "card_type"
+                }
+              },
+              {
+                "const": 1
+              }
+            ]
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "polygoyf",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{2}{G}",
+      "name": "Polygoyf",
+      "oracle_text": "Trample, myriad (Whenever this creature attacks, for each opponent other than defending player, you may create a token copy that's tapped and attacking that player or a planeswalker they control. Exile the tokens at end of combat.)\nPolygoyf's power is equal to the number of card types among cards in all graveyards and its toughness is equal to that number plus 1.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Lhurgoyf"
+      ],
+      "toughness": 0,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 1
               },
@@ -164330,6 +165708,106 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "distinct": {
+              "objects": {
+                "controller": "any",
+                "zone": "graveyard"
+              },
+              "of": "card_type"
+            }
+          },
+          "text": "Pyrogoyf's power is equal to the number of card types among cards in all graveyards and its toughness is equal to that number plus 1.",
+          "toughness": {
+            "sum": [
+              {
+                "distinct": {
+                  "objects": {
+                    "controller": "any",
+                    "zone": "graveyard"
+                  },
+                  "of": "card_type"
+                }
+              },
+              {
+                "const": 1
+              }
+            ]
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "binding": "subject"
+                }
+              },
+              "op": "damage",
+              "source_object": {
+                "binding": "subject"
+              },
+              "target": "t1"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker",
+                  "Battle"
+                ]
+              }
+            }
+          ],
+          "text": "Whenever this creature or another Lhurgoyf creature you control enters, that creature deals damage equal to its power to any target.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "subtypes": [
+                "Lhurgoyf"
+              ],
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "pyrogoyf",
+      "mana_cost": "{3}{R}",
+      "name": "Pyrogoyf",
+      "oracle_text": "Pyrogoyf's power is equal to the number of card types among cards in all graveyards and its toughness is equal to that number plus 1.\nWhenever this creature or another Lhurgoyf creature you control enters, that creature deals damage equal to its power to any target.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Lhurgoyf"
+      ],
+      "toughness": 0,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -174897,6 +176375,108 @@
       "toughness": 5,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "G",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R"
+      ],
+      "id": "riveteers_charm",
+      "mana_cost": "{B}{R}{G}",
+      "name": "Riveteers Charm",
+      "oracle_text": "Choose one —\n• Target opponent sacrifices a creature or planeswalker they control with the greatest mana value among creatures and planeswalkers they control.\n• Exile the top three cards of your library. Until your next end step, you may play those cards.\n• Exile target player's graveyard.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "any_types": [
+                      "Creature",
+                      "Planeswalker"
+                    ],
+                    "chooser": "owner",
+                    "controller": {
+                      "target": "victim"
+                    },
+                    "count": 1,
+                    "extreme": {
+                      "of": "mana_value",
+                      "pick": "greatest"
+                    },
+                    "zone": "battlefield"
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "label": "Target opponent sacrifices a creature or planeswalker they control with the greatest mana value among creatures and planeswalkers they control."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 3
+                  },
+                  "destination": "exile",
+                  "objects": {
+                    "count": "all"
+                  },
+                  "op": "look_at_top",
+                  "playable": "your_next_end_step",
+                  "player": "you"
+                }
+              ],
+              "label": "Exile the top three cards of your library. Until your next end step, you may play those cards."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "count": "all",
+                    "player": {
+                      "target": "graveyard_owner"
+                    },
+                    "zone": "graveyard"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "label": "Exile target player's graveyard."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "victim",
+          "kind": "player",
+          "mode": 0,
+          "selector": {
+            "controller": "opponent"
+          }
+        },
+        {
+          "count": 1,
+          "id": "graveyard_owner",
+          "kind": "player",
+          "mode": 2,
+          "selector": {}
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -190316,6 +191896,103 @@
       "mana_cost": "{3}{R}{R}",
       "name": "Siege-Gang Commander",
       "oracle_text": "When this creature enters, create three 1/1 red Goblin creature tokens.\n{1}{R}, Sacrifice a Goblin: This creature deals 2 damage to any target.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Goblin"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "as": "lieutenant_goblins",
+              "controller": "you",
+              "op": "create_token",
+              "token": "goblin_1_1_r"
+            },
+            {
+              "keywords": [
+                "haste"
+              ],
+              "objects": {
+                "binding": "lieutenant_goblins"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Lieutenant — At the beginning of combat on your turn, if you control your commander, create two 1/1 red Goblin creature tokens. Those tokens gain haste until end of turn.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "controller": "you",
+                "is_commander": true,
+                "owner": "you",
+                "zone": "battlefield"
+              }
+            },
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "subtypes": [
+                "Goblin"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker",
+                  "Battle"
+                ]
+              }
+            }
+          ],
+          "text": "{2}, Sacrifice a Goblin: This creature deals 1 damage to any target."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "siege_gang_lieutenant",
+      "mana_cost": "{3}{R}",
+      "name": "Siege-Gang Lieutenant",
+      "oracle_text": "Lieutenant — At the beginning of combat on your turn, if you control your commander, create two 1/1 red Goblin creature tokens. Those tokens gain haste until end of turn.\n{2}, Sacrifice a Goblin: This creature deals 1 damage to any target.",
       "power": 2,
       "source": "auto",
       "subtypes": [
@@ -213136,6 +214813,70 @@
     {
       "abilities": [
         {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Enchanted land has \"{1}{G}, {T}: Create a Tarmogoyf token.\""
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "mana": "{1}{G}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "tarmogoyf_0_1_g"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{G}, {T}: Create a Tarmogoyf token."
+        }
+      ],
+      "id": "tarmogoyf_nest",
+      "mana_cost": "{2}{G}",
+      "name": "Tarmogoyf Nest",
+      "oracle_text": "Enchant land\nEnchanted land has \"{1}{G}, {T}: Create a Tarmogoyf token.\" (It's a {1}{G} Lhurgoyf creature with \"Tarmogoyf's power is equal to the number of card types among cards in all graveyards and its toughness is equal to that number plus 1.\")",
+      "source": "auto",
+      "subtypes": [
+        "Lhurgoyf",
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Kindred",
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -215862,6 +217603,78 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "tempt_with_mayhem",
+      "mana_cost": "{1}{R}{R}",
+      "name": "Tempt with Mayhem",
+      "oracle_text": "Tempting offer — Choose target instant or sorcery spell. Each opponent may copy that spell and may choose new targets for the copy they control. You copy that spell once plus an additional time for each opponent who copied the spell this way. You may choose new targets for the copies you control.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "as": "tempted",
+              "effects": [
+                {
+                  "controller": {
+                    "binding": "each_player"
+                  },
+                  "new_targets": true,
+                  "op": "copy_spell",
+                  "target": "t1"
+                }
+              ],
+              "op": "may",
+              "player": {
+                "binding": "each_player"
+              },
+              "prompt": "Copy that spell?"
+            }
+          ],
+          "op": "for_each_player",
+          "players": "each_opponent"
+        },
+        {
+          "amount": {
+            "sum": [
+              {
+                "const": 1
+              },
+              {
+                "player_count": {
+                  "binding": "tempted"
+                }
+              }
+            ]
+          },
+          "new_targets": true,
+          "op": "copy_spell",
+          "target": "t1"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "spell",
+          "selector": {
+            "any_types": [
+              "Instant",
+              "Sorcery"
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -219587,6 +221400,142 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Equipped creature gets +1/+1 and has trample and \"Whenever this creature deals combat damage to a player or planeswalker, create that many Treasure tokens.\"",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "trample"
+          ],
+          "kind": "static",
+          "text": "Equipped creature gets +1/+1 and has trample and \"Whenever this creature deals combat damage to a player or planeswalker, create that many Treasure tokens.\""
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Equipped creature gets +1/+1 and has trample and \"Whenever this creature deals combat damage to a player or planeswalker, create that many Treasure tokens.\""
+        },
+        {
+          "ability": 1,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Equipped creature gets +1/+1 and has trample and \"Whenever this creature deals combat damage to a player or planeswalker, create that many Treasure tokens.\""
+        },
+        {
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {3}"
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "create_token",
+              "player": "you",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player or planeswalker, create that many Treasure tokens.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "create_token",
+              "player": "you",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player or planeswalker, create that many Treasure tokens.",
+          "trigger": {
+            "event": "deals_combat_damage_to_planeswalker",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "the_reaver_cleaver",
+      "mana_cost": "{2}{R}",
+      "name": "The Reaver Cleaver",
+      "oracle_text": "Equipped creature gets +1/+1 and has trample and \"Whenever this creature deals combat damage to a player or planeswalker, create that many Treasure tokens.\"\nEquip {3}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -252762,6 +254711,122 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "ziatora_sacrificed",
+                  "objects": {
+                    "controller": "you",
+                    "count": 1,
+                    "exclude_self": true,
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "sacrifice",
+                  "snapshot": "ziatora_sacrificed_snap"
+                },
+                {
+                  "condition": {
+                    "cmp": ">",
+                    "left": {
+                      "count": {
+                        "binding": "ziatora_sacrificed"
+                      }
+                    },
+                    "right": {
+                      "const": 0
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "ability": "ziatora_incinerate",
+                      "op": "reflexive_trigger"
+                    }
+                  ]
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Sacrifice another creature to have Ziatora deal damage equal to its power and create three Treasures?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, you may sacrifice another creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "binding": "ziatora_sacrificed_snap"
+                }
+              },
+              "op": "damage",
+              "target": "t1"
+            },
+            {
+              "amount": {
+                "const": 3
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "id": "ziatora_incinerate",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any"
+            }
+          ],
+          "text": "When you do, Ziatora deals damage equal to that creature's power to any target and you create three Treasure tokens."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R"
+      ],
+      "id": "ziatora_the_incinerator",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{B}{R}{G}",
+      "name": "Ziatora, the Incinerator",
+      "oracle_text": "Flying\nAt the beginning of your end step, you may sacrifice another creature. When you do, Ziatora deals damage equal to that creature's power to any target and you create three Treasure tokens.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Demon",
+        "Dragon"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
       ]
     },
     {

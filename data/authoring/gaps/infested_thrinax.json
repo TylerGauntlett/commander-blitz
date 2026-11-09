@@ -1,0 +1,18 @@
+{
+  "card_id": "infested_thrinax",
+  "name": "Infested Thrinax",
+  "oracle_text": "Flash\nWhen this creature enters, until end of turn, whenever a nontoken creature you control dies, create a number of 1/1 green Saproling creature tokens equal to that creature's power.",
+  "blocked_sentences": [
+    "When this creature enters, until end of turn, whenever a nontoken creature you control dies, create a number of 1/1 green Saproling creature tokens equal to that creature's power."
+  ],
+  "needs": [
+    {
+      "capability": "delayed_trigger_filter",
+      "kind": "trigger_event",
+      "what": "a delayed_trigger (duration this_turn) watching creature_dies that can be narrowed by a trigger filter on the dying object -- here {\"is_token\": false} for 'nontoken' -- and that applies creature_dies' own was_creature check and reads 'you control' as the controller the creature had as it died (last known information), exactly as a hosted creature_dies trigger does",
+      "why_existing_wont_do": "delayed_trigger_keys are only event/controller/condition/subject/recipient, and the loader refuses 'filter'. In triggers._delayed_matches the creature_dies sugar's was_creature check (applied only in the hosted _matches path) is skipped, so a delayed creature_dies fires on any permanent going to the graveyard; was_creature is not in EVENT_BINDING_KEYS, so a condition cannot recover it, and an 'exists {binding: subject, types: [Creature], is_token: false, zone: graveyard}' condition would read the graveyard card's printed types (missing crewed Vehicles and animated permanents) and is a workaround rather than the printed filter. _actor reads the dead object's controller after zone change, which has been reset to its owner, so a stolen creature you control dying would not count. The tokens (saproling_1_1_g) and the amount ({power_had: true}, bound on DIES events and carried into delayed bindings) are already available."
+    }
+  ],
+  "closest_existing": ["delayed_trigger", "creature_dies", "power_had", "saproling_1_1_g"],
+  "confidence": "low"
+}
