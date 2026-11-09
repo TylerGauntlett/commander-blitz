@@ -69,7 +69,7 @@ each heading; this table is generated from them.
 | [Creative Energy (Modern Horizons 3 Commander)](#creative-energy-modern-horizons-3-commander) | L | high | Divided damage from a triggered or activated ability, Divided damage that may hit players | 0 |
 | [Graveyard Overdrive (Modern Horizons 3 Commander)](#graveyard-overdrive-modern-horizons-3-commander) | L | high | A trigger for cards put into a graveyard | 0 |
 | [Tricky Terrain (Modern Horizons 3 Commander)](#tricky-terrain-modern-horizons-3-commander) | L | high | A trigger for cards put into a graveyard | 0 |
-| [Eldrazi Incursion (Modern Horizons 3 Commander)](#eldrazi-incursion-modern-horizons-3-commander) | L | high | nothing | 0 |
+| [Eldrazi Incursion (Modern Horizons 3 Commander)](#eldrazi-incursion-modern-horizons-3-commander) | L | high | Experience counters | 0 |
 | [Quick Draw (Outlaws of Thunder Junction Commander)](#quick-draw-outlaws-of-thunder-junction-commander) | M | high | nothing | 0 |
 | [Desert Bloom (Outlaws of Thunder Junction Commander)](#desert-bloom-outlaws-of-thunder-junction-commander) | L | high | nothing | 0 |
 | [Grand Larceny (Outlaws of Thunder Junction Commander)](#grand-larceny-outlaws-of-thunder-junction-commander) | L | high | nothing | 0 |
@@ -136,6 +136,7 @@ each heading; this table is generated from them.
 | [Divided damage that may hit players](#divided-damage-that-may-hit-players) | M | medium | nothing | 5 |
 | [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) | M | medium | nothing | 4 |
 | [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) | M | medium | nothing | 4 |
+| [Experience counters](#experience-counters) | M | medium | nothing | 2 |
 | [Outcomes as data](#outcomes-as-data) | M | medium | nothing | 2 |
 | [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) | M | medium | nothing | 2 |
 | [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) | M | medium | nothing | 2 |
@@ -143,7 +144,6 @@ each heading; this table is generated from them.
 | [CPU takeover and reconnection](#cpu-takeover-and-reconnection) | M | medium | nothing | 1 |
 | [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) | M | medium | nothing | 1 |
 | [Distributing counters from a spell](#distributing-counters-from-a-spell) | M | medium | nothing | 1 |
-| [Experience counters](#experience-counters) | M | medium | nothing | 1 |
 | [Replays and sharing](#replays-and-sharing) | M | medium | nothing | 1 |
 | [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) | M | medium | nothing | 0 |
 | [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) | M | medium | nothing | 0 |
@@ -160,8 +160,6 @@ Derived from the properties: an item is **ready** when nothing it depends
 on is still on this page, and the ready items are ranked by impact, then
 rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
-
-**In progress:** [Eldrazi Incursion (Modern Horizons 3 Commander)](#eldrazi-incursion-modern-horizons-3-commander).
 
 **Ready now, best first:**
 
@@ -231,14 +229,14 @@ same list, and `/extend-roadmap` starts at the top of it.
 64. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
 65. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
 66. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
-67. [Outcomes as data](#outcomes-as-data) — M, medium
-68. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
-69. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
-70. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
-71. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
-72. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
-73. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
-74. [Experience counters](#experience-counters) — M, medium
+67. [Experience counters](#experience-counters) — M, medium
+68. [Outcomes as data](#outcomes-as-data) — M, medium
+69. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
+70. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
+71. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
+72. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
+73. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
+74. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
 75. [Replays and sharing](#replays-and-sharing) — M, medium
 76. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
 77. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
@@ -268,6 +266,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Creative Energy (Modern Horizons 3 Commander)](#creative-energy-modern-horizons-3-commander) — [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability), [Divided damage that may hit players](#divided-damage-that-may-hit-players)
 - [Graveyard Overdrive (Modern Horizons 3 Commander)](#graveyard-overdrive-modern-horizons-3-commander) — [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard)
 - [Tricky Terrain (Modern Horizons 3 Commander)](#tricky-terrain-modern-horizons-3-commander) — [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard)
+- [Eldrazi Incursion (Modern Horizons 3 Commander)](#eldrazi-incursion-modern-horizons-3-commander) — [Experience counters](#experience-counters)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -716,6 +715,70 @@ generated DSL reference lists the new event.
   Pit ships in it? Recommended: plus both, since each is small and the card
   is the gate.
 
+### Experience counters
+
+Effort **M** · Impact **medium**, every experience-counter commander waits on it, Meren of Clan Nel Toth and Ezuri, Claw of Progress among them · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+A player's counters are the kinds in `player.PLAYER_COUNTER_KINDS`, which
+lists poison and energy only. Each kind has its own funnel in
+`primitives` (`add_poison`, `add_energy`), its own field on `PlayerState`,
+its own event (`EventType.ENERGY_ADDED` for energy) and its own readers: `values` reads poison through `max_poison_of`, and
+`Cost.pay_energy` spends energy. `ops_combat_flags` (proliferate) and
+`ops_life.op_lose_all_player_counters` walk `PLAYER_COUNTER_KINDS`, so a new
+kind reaches both once it is listed and funnelled.
+[rules-coverage.md](rules-coverage.md#not-implemented) lists "Experience
+counters (122.1)" as not implemented.
+
+So no card can give a player an experience counter or read how many they
+have. Meren of Clan Nel Toth, the Sultai Arisen precon's card that found it,
+does both; its gap record is `data/authoring/gaps/meren_of_clan_nel_toth.json`.
+The catalog's other experience-counter cards (Ezuri, Claw of Progress,
+Mizzix, Kalemne, Daxos, the Avatar benders) are the same two sentences.
+
+#### The change
+
+1. `experience` joins `PLAYER_COUNTER_KINDS`, with a field on `PlayerState`,
+   an `add_experience` funnel in `primitives` in `add_energy`'s shape (counter
+   replacements applied, then an event of its own), and a key beside poison
+   and energy in the player's serialized view.
+2. An op that gives a player experience counters ("you get an experience
+   counter"), in the shape of `add_energy`.
+3. A value that reads a player's experience counters ("the number of
+   experience counters you have"), usable wherever a value is, in a
+   condition comparing a card's mana value with it (Meren) and in an
+   amount (Ezuri).
+4. Proliferate and "lose all counters" pick the kind up through
+   `PLAYER_COUNTER_KINDS`; a test pins that they do.
+5. Harvest: Meren, then the catalog's other experience-counter cards through
+   one `/author-cards` wave.
+
+It does not add any other player counter kind (rad, ticket), and nothing
+spends experience counters, because no card does.
+
+#### Gate
+
+A unit test under `tests/unit/` for experience counters: the op adds them,
+the value reads them, a mana-value comparison against them resolves both
+ways, proliferate adds one to a player who has any, and losing all counters
+removes them. Meren's six gates pass, and the generated DSL reference
+(`tests/cards/test_dsl_reference.py`) lists the new op and value.
+
+#### Open questions
+
+- **How the counter is stored.** A field of its own on `PlayerState` beside
+  `poison` and `energy`, or a general `counters` mapping on the player that
+  poison and energy later move into? Recommended: a field of its own, the
+  shape the two existing kinds have, so the change stays additive and the
+  general mapping is its own refactor if a fourth kind ever arrives.
+- **Where the client shows it.** Recommended: the same player-counter readout
+  that shows poison and energy, hidden at zero, with no new component; a
+  surface beyond that would need its story and floor (ADR 0013).
+- **Is it an ADR.** Recommended: no; it is one more kind under an existing
+  rule (122.1), and its line moves from "not implemented" to the
+  implemented table in rules-coverage.md.
+
 ### Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number
 
 Effort **M** · Impact **medium**, every Spacecraft in Edge of Eternities waits on it, two in the Counter Intelligence precon and two in World Shaper, whose commander is one · Depends on nothing · Awaiting decisions.
@@ -1020,70 +1083,6 @@ pass.
 - **Is it an ADR.** Recommended: no; it moves an existing announcement to the
   cast line, where divided damage already sits, and the line in
   rules-coverage.md narrows to triggered abilities.
-
-### Experience counters
-
-Effort **M** · Impact **medium**, every experience-counter commander waits on it, Meren of Clan Nel Toth and Ezuri, Claw of Progress among them · Depends on nothing · Awaiting decisions.
-
-#### Today
-
-A player's counters are the kinds in `player.PLAYER_COUNTER_KINDS`, which
-lists poison and energy only. Each kind has its own funnel in
-`primitives` (`add_poison`, `add_energy`), its own field on `PlayerState`,
-its own event (`EventType.ENERGY_ADDED` for energy) and its own readers: `values` reads poison through `max_poison_of`, and
-`Cost.pay_energy` spends energy. `ops_combat_flags` (proliferate) and
-`ops_life.op_lose_all_player_counters` walk `PLAYER_COUNTER_KINDS`, so a new
-kind reaches both once it is listed and funnelled.
-[rules-coverage.md](rules-coverage.md#not-implemented) lists "Experience
-counters (122.1)" as not implemented.
-
-So no card can give a player an experience counter or read how many they
-have. Meren of Clan Nel Toth, the Sultai Arisen precon's card that found it,
-does both; its gap record is `data/authoring/gaps/meren_of_clan_nel_toth.json`.
-The catalog's other experience-counter cards (Ezuri, Claw of Progress,
-Mizzix, Kalemne, Daxos, the Avatar benders) are the same two sentences.
-
-#### The change
-
-1. `experience` joins `PLAYER_COUNTER_KINDS`, with a field on `PlayerState`,
-   an `add_experience` funnel in `primitives` in `add_energy`'s shape (counter
-   replacements applied, then an event of its own), and a key beside poison
-   and energy in the player's serialized view.
-2. An op that gives a player experience counters ("you get an experience
-   counter"), in the shape of `add_energy`.
-3. A value that reads a player's experience counters ("the number of
-   experience counters you have"), usable wherever a value is, in a
-   condition comparing a card's mana value with it (Meren) and in an
-   amount (Ezuri).
-4. Proliferate and "lose all counters" pick the kind up through
-   `PLAYER_COUNTER_KINDS`; a test pins that they do.
-5. Harvest: Meren, then the catalog's other experience-counter cards through
-   one `/author-cards` wave.
-
-It does not add any other player counter kind (rad, ticket), and nothing
-spends experience counters, because no card does.
-
-#### Gate
-
-A unit test under `tests/unit/` for experience counters: the op adds them,
-the value reads them, a mana-value comparison against them resolves both
-ways, proliferate adds one to a player who has any, and losing all counters
-removes them. Meren's six gates pass, and the generated DSL reference
-(`tests/cards/test_dsl_reference.py`) lists the new op and value.
-
-#### Open questions
-
-- **How the counter is stored.** A field of its own on `PlayerState` beside
-  `poison` and `energy`, or a general `counters` mapping on the player that
-  poison and energy later move into? Recommended: a field of its own, the
-  shape the two existing kinds have, so the change stays additive and the
-  general mapping is its own refactor if a fourth kind ever arrives.
-- **Where the client shows it.** Recommended: the same player-counter readout
-  that shows poison and energy, hidden at zero, with no new component; a
-  surface beyond that would need its story and floor (ADR 0013).
-- **Is it an ADR.** Recommended: no; it is one more kind under an existing
-  rule (122.1), and its line moves from "not implemented" to the
-  implemented table in rules-coverage.md.
 
 ### Every creature type means every creature type
 
@@ -2188,7 +2187,7 @@ whole-game test able to draw the deck.
 
 ### Eldrazi Incursion (Modern Horizons 3 Commander)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing · **In progress**.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Experience counters](#experience-counters).
 
 #### Today
 
