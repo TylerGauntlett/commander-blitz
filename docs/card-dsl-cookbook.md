@@ -10323,8 +10323,9 @@ lone Treasure not at all. A later, separate group fires it again, which is what
 sets it apart from `max_per_turn: 1`.
 
 What one group is depends on the event, and `triggers.BATCHED_EVENTS` lists
-the events that carry one: `permanent_enters` and `leaves_graveyard` group by
-the effect op or cost payment that moved the objects, and `token_created` by
+the events that carry one: `permanent_enters`, `leaves_graveyard` and
+`put_into_graveyard` group by the effect op or cost payment that moved the
+objects, and `token_created` by
 the `primitives.create_token` call, so every token one creation makes is one
 group, including the extra ones a `replace_token_creation` doubler adds or the
 ones it substitutes. Two `create_token` ops are two groups. `attacks_unblocked`
@@ -10416,6 +10417,63 @@ opponent. `controller` is asked of each loss first, so your own loss in an
 even in one resolution. Nothing is summed, since the group spans players:
 `amount` and `event_player` are the first opponent's, so a card that pays out
 "that much" per opponent wants the unbatched trigger.
+
+## "…put into your graveyard from anywhere" — `put_into_graveyard`
+
+"Whenever one or more land cards are put into your graveyard from anywhere,
+create a 0/1 green Plant creature token." (Turntimber Sower)
+
+```jsonc
+"trigger": {"event": "put_into_graveyard", "controller": "you",
+            "filter": {"types": ["Land"]}, "batched": true},
+"effects": [{"op": "create_token", "token": "plant_0_1_g", "amount": {"const": 1}}]
+```
+
+`put_into_graveyard` fires once per **card** that reaches a graveyard from
+another zone, whatever moved it: a death or sacrifice, a discard, a mill or
+surveil, a spell resolving or countered, a card put there from exile.
+`zones.move_object` fires it after every replacement, so a card Rest in Peace
+exiled, or a commander sent home, reached no graveyard and fires nothing.
+Tokens never fire it: every printed form says "card". The subject is the card,
+already in the graveyard, so the `filter` reads its printed face and
+`{"binding": "subject"}` is "it". `controller` is the graveyard's **owner**
+(400.3), so `"you"` is "into your graveyard" whoever did the moving, and
+`"any"` is "into a graveyard".
+
+- **Per card.** Without `batched` it fires once for each matching card: Yuma,
+  Proud Protector's "whenever a Desert card is put into your graveyard" makes
+  two Plant Warriors when two Deserts are milled together.
+- **"One or more."** With `batched` it fires once per simultaneous group (one
+  effect op or cost payment, as for `leaves_graveyard`), and `{"binding":
+  "moved"}` is every card of that group the filter named — "put one of
+  **them** onto the battlefield" (Colossal Grave-Reaver) is
+  `put_onto_battlefield` over `{"binding": "moved", "zone": "graveyard",
+  "count": 1}`, whose `zone` keeps only the ones still there.
+- **"Triggers only once each turn"** is `max_per_turn: 1` beside `batched`
+  (Sand Scout): a cap on this permanent's firings.
+- **"For the first time each turn"** is `nth: 1` beside `batched` (Crawling
+  Sensation), and it is not the cap. It counts the groups this turn, from the
+  turn ledger (`TurnLedger.graveyard_arrivals`), that held a card the filter,
+  `controller` and `from_zones` name — so a land milled before the enchantment
+  entered was the first time, and the enchantment does not fire later that
+  turn. The loader requires `batched` with it and holds the filter to
+  `ORDINAL_FILTER_KEYS`, because earlier cards are matched on their printed
+  faces.
+- **"From anywhere other than the battlefield"** (Disa the Restless, Syr
+  Konrad) is `from_zones` listing every other zone: `["library", "hand",
+  "stack", "exile", "command"]`. `["library"]` alone is Colossal
+  Grave-Reaver's "from your library". The loader takes the zones in
+  `GRAVEYARD_ORIGIN_ZONES`.
+- **From the graveyard.** With `active_zones: ["graveyard"]` and `source:
+  "self"` it is "when this card is put into a graveyard from anywhere"; with a
+  filter and `active_zones: ["graveyard"]` it works while the card sits in its
+  own graveyard (Centaur Vinecrasher).
+
+A permanent put into a graveyard from the battlefield looks back in time
+(603.10a), so a battlefield ability hears its own card's arrival. The near
+misses each see one road in: `dies` and `leaves_battlefield` the battlefield,
+`discard` the hand, and none of them a mill. Two of them side by side still
+miss the library and fire twice for one simultaneous move.
 
 ## "Enters with a counter on it **for each** …"
 

@@ -5312,7 +5312,7 @@ and the filter keys are
     "mana_ability": false,           // `ability_activated` only: exclude mana abilities
     "targeted_by": "spell",          // `becomes_target` only: a spell, an ability, or an activated ability
     "to_zones": ["graveyard", "exile"], // `leaves_battlefield` only: where it went
-    "from_zones": ["exile"]          // `spell_cast` / `land_played` only: where it was played from
+    "from_zones": ["exile"]          // `spell_cast` / `land_played`: where it was played from; `put_into_graveyard`: where it came from
   },
   "effects": [ ... ]
 }
@@ -5384,6 +5384,14 @@ payload. It is allowed on those two events only, and names zones a card is
 played from (`library`, `hand`, `graveyard`, `exile`, `command`). A filter's
 `zone: "exile"` is the near miss: it reads where the subject is *now*, the stack
 or the battlefield, and never matches.
+
+On `put_into_graveyard`, `from_zones` is where the card was put into the
+graveyard from, carried as `from_zone` on the event: "from anywhere other than
+the battlefield" (Disa the Restless) lists every other zone, and "from your
+library" (Colossal Grave-Reaver) is `["library"]`. There it names zones in
+`GRAVEYARD_ORIGIN_ZONES` (`library`, `hand`, `battlefield`, `stack`, `exile`,
+`command`). The event itself is in [the
+cookbook](card-dsl-cookbook.md#put-into-your-graveyard-from-anywhere--put_into_graveyard).
 
 `self_enters` and `permanent_enters` are the *same* engine event, separated only
 by `source: "self"` — so the loader supplies it for `self_enters` rather than
@@ -5671,7 +5679,7 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `life_lost` · `you_attack` · `creatures_attack_player` ·
 `creatures_deal_combat_damage` · `becomes_monstrous` · `becomes_level` ·
 `becomes_monarch` ·
-`counter_placed` · `sacrificed` · `leaves_graveyard` · `token_created` · `draw` · `discard` · `cycle` ·
+`counter_placed` · `sacrificed` · `leaves_graveyard` · `put_into_graveyard` · `token_created` · `draw` · `discard` · `cycle` ·
 `ability_activated` · `damage_prevented` · `deals_damage_to_player` ·
 `searches_library` · `wins_coin_flip` · `gives_gift` · `turned_face_up` · `state`
 

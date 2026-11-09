@@ -36038,6 +36038,84 @@
     {
       "abilities": [
         {
+          "active_zones": [
+            "graveyard"
+          ],
+          "effects": [
+            {
+              "effects": [
+                {
+                  "destination": "hand",
+                  "objects": {
+                    "self_only": true,
+                    "zone": "graveyard"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{G}{G}"
+              },
+              "player": "you",
+              "prompt": "Pay {G}{G} to return Centaur Vinecrasher from your graveyard to your hand?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a land card is put into a graveyard from anywhere, you may pay {G}{G}. If you do, return this card from your graveyard to your hand.",
+          "trigger": {
+            "controller": "any",
+            "event": "put_into_graveyard",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "centaur_vinecrasher",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{3}{G}",
+      "name": "Centaur Vinecrasher",
+      "oracle_text": "Trample\nThis creature enters with a number of +1/+1 counters on it equal to the number of land cards in all graveyards.\nWhenever a land card is put into a graveyard from anywhere, you may pay {G}{G}. If you do, return this card from your graveyard to your hand.",
+      "power": 1,
+      "replacements": [
+        {
+          "amount": {
+            "count": {
+              "controller": "any",
+              "types": [
+                "Land"
+              ],
+              "zone": "graveyard"
+            }
+          },
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Plant",
+        "Centaur"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -41960,6 +42038,95 @@
           "effects": [
             {
               "amount": {
+                "const": 3
+              },
+              "op": "mill",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature enters or attacks, mill three cards.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "mill",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature enters or attacks, mill three cards.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "binding": "moved",
+                "count": 1,
+                "zone": "graveyard"
+              },
+              "op": "put_onto_battlefield"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more creature cards are put into your graveyard from your library, put one of them onto the battlefield.",
+          "trigger": {
+            "batched": true,
+            "controller": "you",
+            "event": "put_into_graveyard",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            },
+            "from_zones": [
+              "library"
+            ]
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "colossal_grave_reaver",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{6}{B}{G}",
+      "name": "Colossal Grave-Reaver",
+      "oracle_text": "Flying\nWhenever this creature enters or attacks, mill three cards.\nWhenever one or more creature cards are put into your graveyard from your library, put one of them onto the battlefield.",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
                 "const": 1
               },
               "op": "draw",
@@ -46175,6 +46342,72 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "mill",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "prompt": "Mill two cards?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, you may mill two cards. (You may put the top two cards of your library into your graveyard.)",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "insect_1_1_g"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more land cards are put into your graveyard from anywhere for the first time each turn, create a 1/1 green Insect creature token.",
+          "trigger": {
+            "batched": true,
+            "controller": "you",
+            "event": "put_into_graveyard",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            },
+            "nth": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "crawling_sensation",
+      "mana_cost": "{2}{G}",
+      "name": "Crawling Sensation",
+      "oracle_text": "At the beginning of your upkeep, you may mill two cards. (You may put the top two cards of your library into your graveyard.)\nWhenever one or more land cards are put into your graveyard from anywhere for the first time each turn, create a 1/1 green Insect creature token.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -55142,6 +55375,138 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "controller": "you",
+                  "objects": {
+                    "binding": "subject",
+                    "zone": "graveyard"
+                  },
+                  "op": "put_onto_battlefield"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "put that card onto the battlefield under your control at the beginning of your next end step",
+              "your_turn": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you sacrifice a Desert and whenever a Desert card is put into your graveyard from your hand or library, put that card onto the battlefield under your control at the beginning of your next end step.",
+          "trigger": {
+            "controller": "you",
+            "event": "sacrificed",
+            "filter": {
+              "subtypes": [
+                "Desert"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "controller": "you",
+                  "objects": {
+                    "binding": "subject",
+                    "zone": "graveyard"
+                  },
+                  "op": "put_onto_battlefield"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "put that card onto the battlefield under your control at the beginning of your next end step",
+              "your_turn": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you sacrifice a Desert and whenever a Desert card is put into your graveyard from your hand or library, put that card onto the battlefield under your control at the beginning of your next end step.",
+          "trigger": {
+            "controller": "you",
+            "event": "put_into_graveyard",
+            "filter": {
+              "subtypes": [
+                "Desert"
+              ]
+            },
+            "from_zones": [
+              "hand",
+              "library"
+            ]
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Desert"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "as": "warriors",
+              "controller": "you",
+              "op": "create_token",
+              "token": "sand_warrior_1_1_rgw"
+            },
+            {
+              "duration": "permanent",
+              "keyword": "haste",
+              "objects": {
+                "binding": "warriors"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of combat on your turn, if you control five or more Deserts, create that many 1/1 red, green, and white Sand Warrior creature tokens. They gain haste.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Desert"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "right": {
+                "const": 5
+              }
+            },
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "desert_warfare",
+      "mana_cost": "{3}{G}",
+      "name": "Desert Warfare",
+      "oracle_text": "Whenever you sacrifice a Desert and whenever a Desert card is put into your graveyard from your hand or library, put that card onto the battlefield under your control at the beginning of your next end step.\nAt the beginning of combat on your turn, if you control five or more Deserts, create that many 1/1 red, green, and white Sand Warrior creature tokens. They gain haste.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -56647,6 +57012,93 @@
         "Monk"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "objects": {
+                "binding": "subject",
+                "zone": "graveyard"
+              },
+              "op": "put_onto_battlefield"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a Lhurgoyf permanent card is put into your graveyard from anywhere other than the battlefield, put it onto the battlefield.",
+          "trigger": {
+            "controller": "you",
+            "event": "put_into_graveyard",
+            "filter": {
+              "any_types": [
+                "Artifact",
+                "Creature",
+                "Enchantment",
+                "Land",
+                "Planeswalker",
+                "Battle"
+              ],
+              "subtypes": [
+                "Lhurgoyf"
+              ]
+            },
+            "from_zones": [
+              "library",
+              "hand",
+              "stack",
+              "exile",
+              "command"
+            ]
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "tarmogoyf_0_1_g"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more creatures you control deal combat damage to a player, create a Tarmogoyf token.",
+          "trigger": {
+            "controller": "you",
+            "event": "creatures_deal_combat_damage"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R"
+      ],
+      "id": "disa_the_restless",
+      "mana_cost": "{2}{B}{R}{G}",
+      "name": "Disa the Restless",
+      "oracle_text": "Whenever a Lhurgoyf permanent card is put into your graveyard from anywhere other than the battlefield, put it onto the battlefield.\nWhenever one or more creatures you control deal combat damage to a player, create a Tarmogoyf token.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Scout"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
       "types": [
         "Creature"
       ]
@@ -186244,6 +186696,94 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "count": 1,
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "subtypes": [
+                  "Desert"
+                ]
+              },
+              "tapped": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, if an opponent controls more lands than you, search your library for a Desert card, put it onto the battlefield tapped, then shuffle.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "max_count_of": {
+                  "objects": {
+                    "types": [
+                      "Land"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "player": "each_opponent"
+                }
+              },
+              "right": {
+                "lands_you_control": true
+              }
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "sand_warrior_1_1_rgw"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more land cards are put into your graveyard from anywhere, create a 1/1 red, green, and white Sand Warrior creature token. This ability triggers only once each turn.",
+          "trigger": {
+            "batched": true,
+            "controller": "you",
+            "event": "put_into_graveyard",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            },
+            "max_per_turn": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "sand_scout",
+      "mana_cost": "{1}{W}",
+      "name": "Sand Scout",
+      "oracle_text": "When this creature enters, if an opponent controls more lands than you, search your library for a Desert card, put it onto the battlefield tapped, then shuffle.\nWhenever one or more land cards are put into your graveyard from anywhere, create a 1/1 red, green, and white Sand Warrior creature token. This ability triggers only once each turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Scout"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -200005,6 +200545,69 @@
       "types": [
         "Kindred",
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a land card is put into your graveyard from anywhere, you gain 1 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "put_into_graveyard",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}{G}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "mill",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{G}: Mill a card. (Put the top card of your library into your graveyard.)"
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "skola_grovedancer",
+      "mana_cost": "{1}{G}",
+      "name": "Skola Grovedancer",
+      "oracle_text": "Whenever a land card is put into your graveyard from anywhere, you gain 1 life.\n{2}{G}: Mill a card. (Put the top card of your library into your graveyard.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Satyr",
+        "Druid"
+      ],
+      "toughness": 2,
+      "types": [
+        "Enchantment",
+        "Creature"
       ]
     },
     {
@@ -218173,6 +218776,120 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another creature dies, or a creature card is put into a graveyard from anywhere other than the battlefield, or a creature card leaves your graveyard, Syr Konrad deals 1 damage to each opponent.",
+          "trigger": {
+            "controller": "any",
+            "event": "creature_dies",
+            "filter": {
+              "exclude_self": true
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another creature dies, or a creature card is put into a graveyard from anywhere other than the battlefield, or a creature card leaves your graveyard, Syr Konrad deals 1 damage to each opponent.",
+          "trigger": {
+            "controller": "any",
+            "event": "put_into_graveyard",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            },
+            "from_zones": [
+              "library",
+              "hand",
+              "stack",
+              "exile",
+              "command"
+            ]
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another creature dies, or a creature card is put into a graveyard from anywhere other than the battlefield, or a creature card leaves your graveyard, Syr Konrad deals 1 damage to each opponent.",
+          "trigger": {
+            "controller": "you",
+            "event": "leaves_graveyard",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{1}{B}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "mill",
+              "player": "each_player"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{B}: Each player mills a card. (They each put the top card of their library into their graveyard.)"
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "syr_konrad_the_grim",
+      "mana_cost": "{3}{B}{B}",
+      "name": "Syr Konrad, the Grim",
+      "oracle_text": "Whenever another creature dies, or a creature card is put into a graveyard from anywhere other than the battlefield, or a creature card leaves your graveyard, Syr Konrad deals 1 damage to each opponent.\n{1}{B}: Each player mills a card. (They each put the top card of their library into their graveyard.)",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_player": "you",
           "effect": "play_lands_from_graveyard",
           "kind": "static",
@@ -226977,6 +227694,103 @@
         "Legendary"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [],
+              "else": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "sacrifice": {
+                  "controller": "you",
+                  "count": 1,
+                  "types": [
+                    "Land"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "prompt": "Sacrifice a land to keep The Gitrog Monster?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, sacrifice The Gitrog Monster unless you sacrifice a land.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        },
+        {
+          "affects_player": "you",
+          "amount": {
+            "const": 1
+          },
+          "effect": "extra_land_drops",
+          "kind": "static",
+          "text": "You may play an additional land on each of your turns."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more land cards are put into your graveyard from anywhere, draw a card.",
+          "trigger": {
+            "batched": true,
+            "controller": "you",
+            "event": "put_into_graveyard",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "the_gitrog_monster",
+      "keywords": [
+        "deathtouch"
+      ],
+      "mana_cost": "{3}{B}{G}",
+      "name": "The Gitrog Monster",
+      "oracle_text": "Deathtouch\nAt the beginning of your upkeep, sacrifice The Gitrog Monster unless you sacrifice a land.\nYou may play an additional land on each of your turns.\nWhenever one or more land cards are put into your graveyard from anywhere, draw a card.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Frog",
+        "Horror"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
       "types": [
         "Creature"
       ]
@@ -238743,6 +239557,92 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "plant_0_1_g"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more land cards are put into your graveyard from anywhere, create a 0/1 green Plant creature token.",
+          "trigger": {
+            "batched": true,
+            "controller": "you",
+            "event": "put_into_graveyard",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{G}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 3,
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "destination": "hand",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Land"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "{G}, Sacrifice three creatures: Return target land card from your graveyard to your hand."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "turntimber_sower",
+      "mana_cost": "{2}{G}",
+      "name": "Turntimber Sower",
+      "oracle_text": "Whenever one or more land cards are put into your graveyard from anywhere, create a 0/1 green Plant creature token.\n{G}, Sacrifice three creatures: Return target land card from your graveyard to your hand.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Druid"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -261771,6 +262671,137 @@
         "Legendary"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "sacrifice": {
+                  "controller": "you",
+                  "count": 1,
+                  "types": [
+                    "Land"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "player": "you",
+              "prompt": "Sacrifice a land to draw a card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Yuma enters or attacks, you may sacrifice a land. If you do, draw a card.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "sacrifice": {
+                  "controller": "you",
+                  "count": 1,
+                  "types": [
+                    "Land"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "player": "you",
+              "prompt": "Sacrifice a land to draw a card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Yuma enters or attacks, you may sacrifice a land. If you do, draw a card.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "plant_warrior_4_2_g_reach"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a Desert card is put into your graveyard from anywhere, create a 4/2 green Plant Warrior creature token with reach.",
+          "trigger": {
+            "controller": "you",
+            "event": "put_into_graveyard",
+            "filter": {
+              "subtypes": [
+                "Desert"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "R",
+        "W"
+      ],
+      "cost_reduction": {
+        "count": {
+          "controller": "you",
+          "types": [
+            "Land"
+          ],
+          "zone": "graveyard"
+        }
+      },
+      "id": "yuma_proud_protector",
+      "mana_cost": "{5}{R}{G}{W}",
+      "name": "Yuma, Proud Protector",
+      "oracle_text": "This spell costs {1} less to cast for each land card in your graveyard.\nWhenever Yuma enters or attacks, you may sacrifice a land. If you do, draw a card.\nWhenever a Desert card is put into your graveyard from anywhere, create a 4/2 green Plant Warrior creature token with reach.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Ranger"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
       "types": [
         "Creature"
       ]

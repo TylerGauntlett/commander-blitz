@@ -1883,6 +1883,28 @@ class CountersPut:
 
 
 @dataclass(frozen=True)
+class GraveyardArrival:
+    """One card put into a graveyard from another zone, as the turn ledger keeps it.
+
+    "Whenever one or more land cards are put into your graveyard from anywhere
+    **for the first time each turn**" (Crawling Sensation) asks about every
+    such arrival since the turn began, including the ones before the asking
+    permanent existed -- so the arrivals are remembered, not the firings.
+    ``owner`` is the graveyard's owner (400.3), ``card`` the card id whose
+    printed face a filter is matched against (the card may have left the
+    graveyard since), ``from_zone`` where it came from and ``batch`` the
+    simultaneous group (`state.event_batch`) it arrived in. Folded off
+    PUT_INTO_GRAVEYARD, so tokens and replaced moves are absent for that
+    event's reasons.
+    """
+
+    owner: int
+    card: str
+    from_zone: str
+    batch: int
+
+
+@dataclass(frozen=True)
 class EnteredPermanent:
     """One permanent as it was **at the moment it entered the battlefield**.
 
@@ -2437,6 +2459,14 @@ class TurnLedger:
     #: counters a permanent enters with count too (122.6), and kept when the
     #: counter or the permanent has gone since: it was still put there.
     counters_put: list[CountersPut] = field(default_factory=list)
+    #: Every card put into a graveyard from another zone this turn, as
+    #: :class:`GraveyardArrival` records, in order. What `nth` on a
+    #: `put_into_graveyard` trigger counts: the Nth simultaneous group this
+    #: turn holding a card the trigger's filter names, into a graveyard its
+    #: `controller` clause names (`triggers._graveyard_ordinal`). Counted
+    #: whether or not anything was listening, so a land milled before Crawling
+    #: Sensation entered has already been the first time.
+    graveyard_arrivals: list[GraveyardArrival] = field(default_factory=list)
 
     @property
     def attacked(self) -> set[int]:
@@ -2557,6 +2587,7 @@ class TurnLedger:
         self.energy_spent.clear()
         self.permanents_entered.clear()
         self.counters_put.clear()
+        self.graveyard_arrivals.clear()
         self.combats = 0
 
 

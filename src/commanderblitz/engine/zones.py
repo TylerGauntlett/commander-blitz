@@ -467,6 +467,29 @@ def move_object(
             batch=state.event_batch,
         )
 
+    # "Whenever one or more land cards are put into your graveyard from
+    # anywhere" -- The Gitrog Monster. The arrival half of the block above, and
+    # narrow for its reason. `to_zone` is the *final* destination, after every
+    # replacement, so a card Rest in Peace exiled never reached a graveyard and
+    # fires nothing; tokens are excluded because every printed form asks about
+    # a card. `player` is the graveyard's owner (400.3), so "your graveyard" is
+    # a fact about the yard and not about whoever moved the card.
+    if (
+        to_zone is Zone.GRAVEYARD
+        and from_zone is not Zone.GRAVEYARD
+        and not obj.is_token
+    ):
+        fire(
+            state,
+            EventType.PUT_INTO_GRAVEYARD,
+            player=owner,
+            source=oid,
+            oid=oid,
+            card=card.id,
+            from_zone=from_zone.value,
+            batch=state.event_batch,
+        )
+
     if was_on_battlefield:
         fire(
             state,

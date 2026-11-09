@@ -1047,6 +1047,14 @@ SPELL_COST_REDUCTION_FILTER_KEYS = SPELL_FILTER_KEYS | {
 #: ``not_from_zone`` spell filter and a trigger's ``from_zones`` may name.
 CAST_ORIGIN_ZONES = frozenset({"library", "hand", "graveyard", "exile", "command"})
 
+#: What a ``put_into_graveyard`` trigger's ``from_zones`` may name: every zone a
+#: card can be put into a graveyard *from* -- "from anywhere other than the
+#: battlefield" is all of these but one. Not the graveyard itself, which
+#: `zones.move_object` never reports as an arrival.
+GRAVEYARD_ORIGIN_ZONES = frozenset(
+    {"library", "hand", "battlefield", "stack", "exile", "command"}
+)
+
 #: What a ``cant_cast_spells`` static's ``affects_spells`` filter may use.
 #:
 #: `SPELL_FILTER_KEYS` without `controller` -- `affects_player` already names

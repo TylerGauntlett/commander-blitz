@@ -525,6 +525,10 @@ class TriggerModel(BaseModel):
     #: that carries the count of that kind across N.  Matched where
     #: the ability queues and never re-asked, unlike a ``condition`` on the same
     #: tally, which rule 603.4 re-evaluates after the tally has moved on.
+    #: For ``put_into_graveyard`` (always ``batched``): "one or more land
+    #: cards are put into your graveyard **for the first time each turn**",
+    #: the Nth simultaneous group this turn the trigger's filter, controller
+    #: and ``from_zones`` name, counted from the turn ledger.
     nth: int | None = None
     #: "This ability triggers only once each turn." A per-permanent cap on how
     #: many times this ability may queue in one turn.
@@ -561,8 +565,10 @@ class TriggerModel(BaseModel):
     to_zones: list[str] | None = None
     #: For ``spell_cast`` and ``land_played``: the zones the card must have been
     #: played *from*. "Whenever you play a card **from exile**" -- Klaw, Master
-    #: of Sound -- is ``["exile"]`` on each of the two events. Refused on every
-    #: other event.
+    #: of Sound -- is ``["exile"]`` on each of the two events. For
+    #: ``put_into_graveyard``: the zones the card must have come *from* --
+    #: "from anywhere other than the battlefield" (Disa the Restless) lists
+    #: every other zone. Refused on every other event.
     from_zones: list[str] | None = None
     #: For ``state``: the condition a state trigger (603.8) watches -- "When
     #: there are four or more page counters on this artifact" (Mazemind Tome).

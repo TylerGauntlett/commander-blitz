@@ -878,7 +878,9 @@ class TriggerSpec:
     #: have been played from -- "whenever you play a card **from exile**" is
     #: ``("exile",)``. A spell is asked `GameObject.cast_from_zone`, stamped by
     #: `stack.push_spell` before the card reaches the stack (601.2a); a land
-    #: drop carries ``from_zone`` on its LAND_PLAYED payload. ``None`` is any
+    #: drop carries ``from_zone`` on its LAND_PLAYED payload. On
+    #: ``put_into_graveyard`` it is the zone the card was put into the
+    #: graveyard from, on the PUT_INTO_GRAVEYARD payload. ``None`` is any
     #: origin.
     from_zones: tuple[str, ...] | None = None
     #: The ``state`` event only: the condition a **state trigger** watches

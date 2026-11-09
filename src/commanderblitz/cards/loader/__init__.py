@@ -146,6 +146,7 @@ from .vocabulary import (  # noqa: F401
     FIRST_ACTIVATION_TARGETING_KEYS,
     FREE_CAST_FILTER_KEYS,
     GRANTABLE_STATIC_EFFECTS,
+    GRAVEYARD_ORIGIN_ZONES,
     KEYWORD_ALIASES,
     KNOWN_COLORS,
     KNOWN_KEYWORDS,
@@ -3555,6 +3556,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             "attacks",
             "counter_placed",
             "expend",
+            "put_into_graveyard",
         ):
             # Same reasoning as `counter` and `mana_ability` above: only `draw`,
             # `spell_cast`, `you_gain_life`, `life_lost` and `attacks` carry an
@@ -3566,7 +3568,8 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             raise DslError(
                 f"{where}: 'nth' only means anything on a draw, spell_cast or "
                 f"you_gain_life trigger, or a life_lost trigger, or an attacks "
-                f"trigger, or a counter_placed or expend trigger, not on "
+                f"trigger, or a counter_placed or expend trigger, or a "
+                f"put_into_graveyard trigger, not on "
                 f"{model.trigger.event!r}"
             )
         if model.trigger.event == "expend":
@@ -3644,6 +3647,25 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 f"{model.trigger.filter['paid_by']!r}"
             )
 
+        if model.trigger.nth is not None and model.trigger.event == "put_into_graveyard":
+            # "…for the first time each turn" counts simultaneous *groups*
+            # (`triggers._graveyard_ordinal`), and only a batched trigger fires
+            # once per group: unbatched, every card of the first group would
+            # be "the first time" and fire it. The earlier groups' cards may
+            # have left the graveyard, so only their printed faces can be asked.
+            if not model.trigger.batched:
+                raise DslError(
+                    f"{where}: 'nth' on a put_into_graveyard trigger counts "
+                    f"\"one or more\" groups, so it needs 'batched: true'"
+                )
+            unordinal = set(model.trigger.filter or ()) - (ORDINAL_FILTER_KEYS - {"paid_by"})
+            if unordinal:
+                raise DslError(
+                    f"{where}: 'nth' on a put_into_graveyard trigger counts "
+                    f"earlier arrivals by their printed faces, so its filter "
+                    f"cannot use {sorted(unordinal)} "
+                    f"(allowed: {sorted(ORDINAL_FILTER_KEYS - {'paid_by'})})"
+                )
         if (
             model.trigger.batched
             and model.trigger.event != STATE_TRIGGER
@@ -3719,16 +3741,23 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                     f"from {sorted(departures)}, got {model.trigger.to_zones!r}"
                 )
         if model.trigger.from_zones is not None:
-            # "Whenever you play a card from exile." Only a cast and a land
-            # drop record where the card was played from, so anywhere else
-            # this would be a filter that never applies.
-            if model.trigger.event not in ("spell_cast", "land_played"):
+            # "Whenever you play a card from exile." Only a cast, a land drop
+            # and a card put into a graveyard record where the card came from,
+            # so anywhere else this would be a filter that never applies.
+            if model.trigger.event not in ("spell_cast", "land_played", "put_into_graveyard"):
                 raise DslError(
                     f"{where}: 'from_zones' narrows a spell_cast or land_played "
-                    f"trigger to where the card was played from, and means "
-                    f"nothing on {model.trigger.event!r}"
+                    f"trigger to where the card was played from, or a "
+                    f"put_into_graveyard trigger to where it came from, and "
+                    f"means nothing on {model.trigger.event!r}"
                 )
-            origins = CAST_ORIGIN_ZONES
+            # "…from anywhere other than the battlefield" is every zone but
+            # one, and a graveyard is never where a card is put into one from.
+            origins = (
+                GRAVEYARD_ORIGIN_ZONES
+                if model.trigger.event == "put_into_graveyard"
+                else CAST_ORIGIN_ZONES
+            )
             bad = [z for z in model.trigger.from_zones if z not in origins]
             if bad or not model.trigger.from_zones:
                 raise DslError(

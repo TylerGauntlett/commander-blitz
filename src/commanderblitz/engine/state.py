@@ -27,6 +27,7 @@ from .structs import (
     DelayedTrigger,
     EnteredPermanent,
     FlashPermission,
+    GraveyardArrival,
     GraveyardCastGrant,
     LifeFloor,
     LifeLock,
@@ -1156,6 +1157,20 @@ class GameState:
                 # Mar-Vell's "as long as an opponent has cast a spell this
                 # turn"), and `chars` caches per `char_version`.
                 self.bump_chars()
+        elif event.type == EventType.PUT_INTO_GRAVEYARD:
+            # "…for the first time each turn" (Crawling Sensation): every
+            # arrival, whatever was listening, so one before the watcher
+            # entered still spent the turn's first time. See
+            # `TurnLedger.graveyard_arrivals`.
+            if pid is not None and data.get("card") is not None:
+                ledger.graveyard_arrivals.append(
+                    GraveyardArrival(
+                        owner=int(pid),
+                        card=str(data["card"]),
+                        from_zone=str(data.get("from_zone", "")),
+                        batch=int(data.get("batch", -1)),
+                    )
+                )
         elif event.type == EventType.ZONE_CHANGE:
             obj = self.objects.get(data.get("oid"))
             # 400.7: the oid survives a zone change and the object does not. A

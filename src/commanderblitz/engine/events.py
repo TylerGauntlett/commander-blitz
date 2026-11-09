@@ -48,6 +48,27 @@ class EventType:
     #: "one or more" batching in `triggers._queue` can fire it once for a
     #: single move of several cards.
     LEAVES_GRAVEYARD = "leaves_graveyard"
+    #: "Whenever one or more land cards are put into your graveyard **from
+    #: anywhere**…" -- The Gitrog Monster, Turntimber Sower, Yuma. The
+    #: arrival half of `LEAVES_GRAVEYARD`, fired from the same place in
+    #: `zones.move_object` for the same reason: `ZONE_CHANGE` stays off the
+    #: trigger bus, and every way a card reaches a graveyard -- a death, a
+    #: sacrifice, a discard, a mill, a resolved or countered spell, a card put
+    #: there from exile -- passes through that one function.
+    #:
+    #: One event per **card** that reaches a graveyard from another zone, with
+    #: its final destination: a move a replacement sent elsewhere (Rest in
+    #: Peace, a commander going home) reached no graveyard and fires nothing.
+    #: Tokens are excluded, because every printed form asks about a *card*
+    #: (111.1), and a token there ceases to exist as a state-based action.
+    #:
+    #: Carries the graveyard's **owner** as `player` (400.3), so
+    #: `controller: "you"` is "into **your** graveyard"; `from_zone`, the zone
+    #: it came from, for a trigger's `from_zones` ("from anywhere other than the
+    #: battlefield"); and `batch`, so "one or more" fires once per simultaneous
+    #: move. Folded into `TurnLedger.graveyard_arrivals`, which is what "for
+    #: the first time each turn" (`nth`) counts.
+    PUT_INTO_GRAVEYARD = "put_into_graveyard"
 
     # cards and the stack
     #: One card drawn. ``data["nth"]`` is that draw's **ordinal** for its player

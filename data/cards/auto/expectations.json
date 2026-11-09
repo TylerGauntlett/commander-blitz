@@ -3030,6 +3030,10 @@
       "0": 43
     }
   },
+  "centaur_vinecrasher": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "cephalid_coliseum": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -3496,6 +3500,16 @@
       "0": 43
     }
   },
+  "colossal_grave_reaver": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 5
+    },
+    "library_size": {
+      "0": 37
+    },
+    "zone": "battlefield"
+  },
   "colossal_majesty": {
     "battlefield_count": 33,
     "hand_size": {
@@ -3870,6 +3884,10 @@
     "zone": "battlefield"
   },
   "craw_wurm": {
+    "zone": "battlefield"
+  },
+  "crawling_sensation": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "crazed_skirge": {
@@ -4683,6 +4701,10 @@
   "desert_of_the_true": {
     "zone": "battlefield"
   },
+  "desert_warfare": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "deserted_beach": {
     "zone": "battlefield"
   },
@@ -4814,6 +4836,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "disa_the_restless": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "disallow": {
@@ -15749,6 +15775,10 @@
   "sanctuary_cat": {
     "zone": "battlefield"
   },
+  "sand_scout": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sandbar_crocodile": {
     "zone": "battlefield"
   },
@@ -16961,6 +16991,10 @@
       "id": "eldrazi_spawn_0_1_c"
     },
     "zone": "graveyard"
+  },
+  "skola_grovedancer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "skrelv_s_hive": {
     "battlefield_count": 33,
@@ -18421,6 +18455,10 @@
     },
     "zone": "graveyard"
   },
+  "syr_konrad_the_grim": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "szarel_genesis_shepherd": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -19078,6 +19116,10 @@
       "0": 40,
       "1": 40
     },
+    "zone": "battlefield"
+  },
+  "the_gitrog_monster": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "the_goose_mother": {
@@ -20073,6 +20115,10 @@
     "life": {
       "0": 43
     }
+  },
+  "turntimber_sower": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "turntimber_symbiosis_turntimber_serpentine_wood": {
     "battlefield_count": 32,
@@ -22094,6 +22140,16 @@
   "yuffie_materia_hunter": {
     "battlefield_count": 34,
     "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
+  "yuma_proud_protector": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 2
+    },
     "zone": "battlefield"
   },
   "yuna_grand_summoner": {

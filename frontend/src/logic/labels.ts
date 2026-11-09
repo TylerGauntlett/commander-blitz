@@ -623,6 +623,16 @@ export function describeEvent(
      */
     case "creature_dealt_combat_damage":
       return null;
+    /*
+     * A card reaching a graveyard from another zone, fired beside the
+     * `zone_change` for the very same card so that "whenever a land card is
+     * put into your graveyard from anywhere" can hear it. The departure from
+     * the battlefield is already narrated by `zone_change`, and every other
+     * road that matters to the table (a mill, a discard) already has its own
+     * line, so a line here would say each move twice.
+     */
+    case "put_into_graveyard":
+      return null;
     case "blockers_declared":
       return "Blockers declared";
     // Payment used to be entirely silent, then was narrated by a second switch

@@ -35,6 +35,12 @@ export const SILENT = new Set([
   // something to hear. A beat here would toll a second time for one card and
   // flash an oid that has already left the graveyard pile in the DOM.
   "leaves_graveyard",
+  // The arrival half, silent for the same reason: fired beside the
+  // `zone_change` that already owns the move, once per card reaching a
+  // graveyard, so that "whenever a land card is put into your graveyard from
+  // anywhere" has something to hear. A beat would toll a second time for a
+  // death and announce every milled and discarded card on its own.
+  "put_into_graveyard",
   "untapped",
   "ability_resolved",
   // Fired beside `attackers_declared` for the very same declaration -- one per

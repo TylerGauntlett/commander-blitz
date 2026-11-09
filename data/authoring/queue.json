@@ -42522,12 +42522,12 @@
     },
     "Centaur Vinecrasher": {
       "edhrec_rank": 10988,
-      "gate": "template",
+      "gate": null,
       "name": "Centaur Vinecrasher",
-      "reason": "no template for: This creature enters with a number of +1/+1 counters on it equal to the number of land car",
+      "reason": "",
       "scryfall_id": "cf8712ba-574b-4e53-9c7e-0a1465116320",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Centaur's Herald": {
@@ -50232,12 +50232,12 @@
     },
     "Colossal Grave-Reaver": {
       "edhrec_rank": 1942,
-      "gate": "template",
+      "gate": null,
       "name": "Colossal Grave-Reaver",
-      "reason": "no template for: Whenever this creature enters or attacks, mill three cards",
+      "reason": "",
       "scryfall_id": "7c3f7d76-528a-490a-852a-071adcd7bd55",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Colossal Growth": {
@@ -55602,12 +55602,12 @@
     },
     "Crawling Sensation": {
       "edhrec_rank": 3007,
-      "gate": "template",
+      "gate": null,
       "name": "Crawling Sensation",
-      "reason": "no template for: At the beginning of your upkeep, you may mill two cards",
+      "reason": "",
       "scryfall_id": "e1b6af08-5041-4a9f-a61d-aae6ff892ac3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Crawlspace": {
@@ -67102,12 +67102,12 @@
     },
     "Desert Warfare": {
       "edhrec_rank": 7493,
-      "gate": "template",
+      "gate": null,
       "name": "Desert Warfare",
-      "reason": "no template for: Whenever you sacrifice a Desert and whenever a Desert card is put into your graveyard from",
+      "reason": "",
       "scryfall_id": "399f59ce-0b0f-4c40-865b-b2e876e07cfe",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Desert Were-Worm": {
@@ -69502,12 +69502,12 @@
     },
     "Disa the Restless": {
       "edhrec_rank": 8872,
-      "gate": "template",
+      "gate": null,
       "name": "Disa the Restless",
-      "reason": "no template for: Whenever a Lhurgoyf permanent card is put into your graveyard from anywhere other than the",
+      "reason": "",
       "scryfall_id": "19439420-9e0a-4fd1-bae9-f1c698edee1c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Disallow": {
@@ -232432,12 +232432,12 @@
     },
     "Sand Scout": {
       "edhrec_rank": 5064,
-      "gate": "template",
+      "gate": null,
       "name": "Sand Scout",
-      "reason": "no template for: Whenever one or more land cards are put into your graveyard from anywhere, create a 1/1 re",
+      "reason": "",
       "scryfall_id": "5dd3a550-de5c-4f4f-a55f-07c84d8c45f8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sand Silos": {
@@ -249762,12 +249762,12 @@
     },
     "Skola Grovedancer": {
       "edhrec_rank": 12300,
-      "gate": "template",
+      "gate": null,
       "name": "Skola Grovedancer",
-      "reason": "no template for: Whenever a land card is put into your graveyard from anywhere, you gain 1 life",
+      "reason": "",
       "scryfall_id": "ce7753e0-2838-49c2-acd0-80b534f43bad",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Skophos Maze-Warden": {
@@ -273282,12 +273282,12 @@
     },
     "Syr Konrad, the Grim": {
       "edhrec_rank": 256,
-      "gate": "template",
+      "gate": null,
       "name": "Syr Konrad, the Grim",
-      "reason": "no template for: Whenever another creature dies, or a creature card is put into a graveyard from anywhere o",
+      "reason": "",
       "scryfall_id": "5b40815d-0104-461e-b193-fcf5e1f35299",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Syr Vondam, Sunstar Exemplar": {
@@ -280982,12 +280982,12 @@
     },
     "The Gitrog Monster": {
       "edhrec_rank": 902,
-      "gate": "template",
+      "gate": null,
       "name": "The Gitrog Monster",
-      "reason": "no template for: At the beginning of your upkeep, sacrifice unless you sacrifice a land",
+      "reason": "",
       "scryfall_id": "40489e28-878d-44a2-847f-07beef1aa0f8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Gitrog, Ravenous Ride": {
@@ -294472,12 +294472,12 @@
     },
     "Turntimber Sower": {
       "edhrec_rank": 7428,
-      "gate": "template",
+      "gate": null,
       "name": "Turntimber Sower",
-      "reason": "no template for: Whenever one or more land cards are put into your graveyard from anywhere, create a 0/1 gr",
+      "reason": "",
       "scryfall_id": "11bdff1d-4542-4c71-af00-731d6651b492",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Turntimber Symbiosis // Turntimber, Serpentine Wood": {
@@ -321632,12 +321632,12 @@
     },
     "Yuma, Proud Protector": {
       "edhrec_rank": 8729,
-      "gate": "template",
+      "gate": null,
       "name": "Yuma, Proud Protector",
-      "reason": "no template for: This spell costs {1} less to cast for each land card in your graveyard",
+      "reason": "",
       "scryfall_id": "18df72be-07d2-4412-b36d-a45119763db3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Yume, Chronicler of Valor": {
