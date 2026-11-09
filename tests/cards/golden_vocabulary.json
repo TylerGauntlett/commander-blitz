@@ -1008,6 +1008,7 @@
   "exchange_life_total",
   "exile",
   "exile_and_return",
+  "exile_spell_on_resolution",
   "exile_until",
   "explore",
   "extra_combat",

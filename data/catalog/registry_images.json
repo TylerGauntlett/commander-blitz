@@ -1891,6 +1891,10 @@
     "artist": "Tony Szczudlo",
     "scryfall_id": "f9db32fa-64b2-4ef6-88f2-28e758d420bb"
   },
+  "bloodthirsty_adversary": {
+    "artist": "Heonhwa",
+    "scryfall_id": "1d6d5c4b-01ec-407f-b3b6-854ab5127bdc"
+  },
   "bloodthirsty_conqueror": {
     "artist": "Alexander Mokhov",
     "scryfall_id": "3c340ba8-9287-4072-937a-438251b5ff1d"
@@ -5676,6 +5680,10 @@
     "artist": "Naoki Saito",
     "scryfall_id": "721ea98f-4150-4fde-a0af-4f454695e927"
   },
+  "finale_of_promise": {
+    "artist": "Jaime Jones",
+    "scryfall_id": "0dbbb636-96c2-472c-a51d-d527e8e97798"
+  },
   "finale_of_revelation": {
     "artist": "Johann Bodin",
     "scryfall_id": "0a77e063-e8f6-4cb2-954e-74cf41ce73da"
@@ -5979,6 +5987,10 @@
   "forge_of_heroes": {
     "artist": "Makoto Shiki",
     "scryfall_id": "7ac60dfc-040e-4cc1-a967-3c915770fc8e"
+  },
+  "forger_s_foundry": {
+    "artist": "Rockey Chen",
+    "scryfall_id": "16c32c5a-e011-4729-a4a0-b2deac7d5056"
   },
   "forgotten_ancient": {
     "artist": "Mark Tedin",

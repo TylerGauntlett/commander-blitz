@@ -2118,6 +2118,10 @@
   "bloodstone_cameo": {
     "zone": "battlefield"
   },
+  "bloodthirsty_adversary": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "bloodthirsty_conqueror": {
     "battlefield_count": 33,
     "hand_size": {
@@ -6434,6 +6438,15 @@
     },
     "zone": "graveyard"
   },
+  "finale_of_promise": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "finale_of_revelation": {
     "graveyard_size": {
       "0": 0
@@ -6828,6 +6841,10 @@
     "zone": "battlefield"
   },
   "forge_of_heroes": {
+    "zone": "battlefield"
+  },
+  "forger_s_foundry": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "forgotten_ancient": {

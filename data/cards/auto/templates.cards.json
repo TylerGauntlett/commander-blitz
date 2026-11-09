@@ -24881,6 +24881,114 @@
         {
           "effects": [
             {
+              "any_number_of_times": {
+                "as": "paid"
+              },
+              "effects": [
+                {
+                  "ability": "bloodthirsty_adversary_payoff",
+                  "op": "reflexive_trigger"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{2}{R}"
+              },
+              "player": "you",
+              "prompt": "Pay {2}{R} any number of times for Bloodthirsty Adversary?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, you may pay {2}{R} any number of times.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "paid"
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            },
+            {
+              "as": "banked",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            },
+            {
+              "objects": {
+                "binding": "banked"
+              },
+              "op": "cast_copy",
+              "optional": true
+            }
+          ],
+          "id": "bloodthirsty_adversary_payoff",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "count": {
+                "binding": "paid"
+              },
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "any_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "controller": "you",
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "const": 3
+                  }
+                },
+                "zone": "graveyard"
+              },
+              "up_to": true
+            }
+          ],
+          "text": "When you pay this cost one or more times, put that many +1/+1 counters on this creature, then exile up to that many target instant and/or sorcery cards with mana value 3 or less from your graveyard and copy them. You may cast any number of the copies without paying their mana costs."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "bloodthirsty_adversary",
+      "keywords": [
+        "haste"
+      ],
+      "mana_cost": "{1}{R}",
+      "name": "Bloodthirsty Adversary",
+      "oracle_text": "Haste\nWhen this creature enters, you may pay {2}{R} any number of times. When you pay this cost one or more times, put that many +1/+1 counters on this creature, then exile up to that many target instant and/or sorcery cards with mana value 3 or less from your graveyard and copy them. You may cast any number of the copies without paying their mana costs.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Vampire"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "binding": "amount"
               },
@@ -74807,6 +74915,104 @@
     },
     {
       "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "finale_of_promise",
+      "mana_cost": "{X}{R}{R}",
+      "name": "Finale of Promise",
+      "oracle_text": "You may cast up to one target instant card and/or up to one target sorcery card from your graveyard each with mana value X or less without paying their mana costs. If a spell cast this way would be put into your graveyard, exile it instead. If X is 10 or more, copy each of those spells twice. You may choose new targets for the copies.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "cast",
+          "exiles": true,
+          "objects": {
+            "target": "t1"
+          },
+          "op": "cast_from_hand"
+        },
+        {
+          "as": "cast",
+          "exiles": true,
+          "objects": {
+            "target": "t2"
+          },
+          "op": "cast_from_hand"
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "x": true
+            },
+            "right": {
+              "const": 10
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "new_targets": true,
+              "op": "copy_spell",
+              "spells": {
+                "binding": "cast"
+              }
+            }
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "optional": true,
+          "selector": {
+            "controller": "you",
+            "mana_value": {
+              "op": "<=",
+              "value": {
+                "x": true
+              }
+            },
+            "types": [
+              "Instant"
+            ],
+            "zone": "graveyard"
+          }
+        },
+        {
+          "count": 1,
+          "id": "t2",
+          "kind": "card_in_graveyard",
+          "optional": true,
+          "selector": {
+            "controller": "you",
+            "mana_value": {
+              "op": "<=",
+              "value": {
+                "x": true
+              }
+            },
+            "types": [
+              "Sorcery"
+            ],
+            "zone": "graveyard"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "U"
       ],
       "colors": [
@@ -78852,6 +79058,86 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{U}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "mana_spent_trigger": {
+            "effects": [
+              {
+                "effects": [
+                  {
+                    "op": "exile_spell_on_resolution"
+                  }
+                ],
+                "op": "may",
+                "prompt": "Exile that spell instead of putting it into its owner's graveyard as it resolves?"
+              }
+            ],
+            "spell": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ],
+              "mana_value": {
+                "op": "<=",
+                "value": {
+                  "const": 3
+                }
+              }
+            }
+          },
+          "text": "{T}: Add {U}. When you spend this mana to cast an instant or sorcery spell with mana value 3 or less, you may exile that spell instead of putting it into its owner's graveyard as it resolves."
+        },
+        {
+          "cost": {
+            "mana": "{3}{U}{U}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "any",
+                "count": "any",
+                "exiled_with": "self",
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "exile"
+              },
+              "op": "play_exiled"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "{3}{U}{U}, {T}: You may cast any number of spells from among cards exiled with this artifact without paying their mana costs. Activate only as a sorcery."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "forger_s_foundry",
+      "mana_cost": "{2}{U}",
+      "name": "Forger's Foundry",
+      "oracle_text": "{T}: Add {U}. When you spend this mana to cast an instant or sorcery spell with mana value 3 or less, you may exile that spell instead of putting it into its owner's graveyard as it resolves.\n{3}{U}{U}, {T}: You may cast any number of spells from among cards exiled with this artifact without paying their mana costs. Activate only as a sorcery.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {

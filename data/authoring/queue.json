@@ -29132,12 +29132,12 @@
     },
     "Bloodthirsty Adversary": {
       "edhrec_rank": 14251,
-      "gate": "template",
+      "gate": null,
       "name": "Bloodthirsty Adversary",
-      "reason": "no template for: When this creature enters, you may pay {2}{R} any number of times. When you pay this cost ",
+      "reason": "",
       "scryfall_id": "1d6d5c4b-01ec-407f-b3b6-854ab5127bdc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bloodthirsty Aerialist": {
@@ -95182,12 +95182,12 @@
     },
     "Finale of Promise": {
       "edhrec_rank": 5410,
-      "gate": "template",
+      "gate": null,
       "name": "Finale of Promise",
-      "reason": "no template for: You may cast up to one target instant card and/or up to one target sorcery card from your ",
+      "reason": "",
       "scryfall_id": "0dbbb636-96c2-472c-a51d-d527e8e97798",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Finale of Revelation": {
@@ -100442,12 +100442,12 @@
     },
     "Forger's Foundry": {
       "edhrec_rank": 9085,
-      "gate": "template",
+      "gate": null,
       "name": "Forger's Foundry",
-      "reason": "no template for: {T}: Add {U}. When you spend this mana to cast an instant or sorcery spell with mana value",
+      "reason": "",
       "scryfall_id": "16c32c5a-e011-4729-a4a0-b2deac7d5056",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Forgestoker Dragon": {
