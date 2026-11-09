@@ -144812,12 +144812,12 @@
     },
     "Jyoti, Moag Ancient": {
       "edhrec_rank": 10427,
-      "gate": "template",
+      "gate": null,
       "name": "Jyoti, Moag Ancient",
-      "reason": "no template for: When Jyoti enters, create a 1/1 green Forest Dryad land creature token for each time you'v",
+      "reason": "",
       "scryfall_id": "6e774ea9-5e8c-4031-b549-33dd9e6e7421",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jötun Grunt": {
@@ -204592,12 +204592,12 @@
     },
     "Poison Dart Frog": {
       "edhrec_rank": 2125,
-      "gate": "template",
+      "gate": null,
       "name": "Poison Dart Frog",
-      "reason": "no template for: {2}: This creature gains deathtouch until end of turn",
+      "reason": "",
       "scryfall_id": "e99d6e94-2fb7-45ef-bb35-4bf4b92d4f4d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Poison the Blade": {

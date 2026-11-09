@@ -9647,6 +9647,10 @@
   "jwari_scuttler": {
     "zone": "battlefield"
   },
+  "jyoti_moag_ancient": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "k_rrik_son_of_yawgmoth": {
     "zone": "battlefield"
   },
@@ -13610,6 +13614,10 @@
     "zone": "battlefield"
   },
   "plumeveil": {
+    "zone": "battlefield"
+  },
+  "poison_dart_frog": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "poison_tip_archer": {

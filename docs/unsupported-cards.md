@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**275 cards** blocked by **247** capabilities.
+**278 cards** blocked by **250** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -78,6 +78,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-trigger-reads-x](#cast-trigger-reads-x) | 1 | 3909 | value |
 | [characteristics-outside-battlefield](#characteristics-outside-battlefield) | 1 | 1924 | static_effect |
 | [choose-card-type-from-list](#choose-card-type-from-list) | 1 | 611 | op |
+| [choose-land-type](#choose-land-type) | 1 | 11432 | decision |
 | [chosen-card-type-cost-reduction](#chosen-card-type-cost-reduction) | 1 | 611 | static_effect |
 | [chosen-number](#chosen-number) | 1 | 1610 | engine |
 | [chosen-player](#chosen-player) | 1 | 6383 | selector |
@@ -204,6 +205,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-mana-ability-until-end-of-turn](#player-mana-ability-until-end-of-turn) | 1 | 12705 | op |
 | [players-attacked-last-combat](#players-attacked-last-combat) | 1 | 6681 | value |
+| [players-lost-the-game-count](#players-lost-the-game-count) | 1 | 4941 | value |
 | [plot](#plot) | 1 | 7506 | op |
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
 | [prime-number](#prime-number) | 1 | 11527 | value |
@@ -260,6 +262,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [x-cost-mana-restriction](#x-cost-mana-restriction) | 1 | 4046 | decision |
 | [x-minimum](#x-minimum) | 1 | 2447 | cost |
 | [x-sized-ability-targets](#x-sized-ability-targets) | 1 | 1668 | engine |
+| [x-starting-loyalty](#x-starting-loyalty) | 1 | 6660 | engine |
 | [zombie-warrior-4-4-b-vigilance](#zombie-warrior-4-4-b-vigilance) | 1 | 2449 | token |
 
 ## combat-only-permanent-shield
@@ -1573,6 +1576,20 @@ Blocks **1** card.
 - **Cloud Key** (rank 611) — `cloud_key`
   - As this artifact enters, choose artifact, creature, enchantment, instant, or sorcery
   - Spells you cast of the chosen type cost {1} less to cast
+
+</details>
+
+## choose-land-type
+
+Blocks **1** card.
+
+- **(decision)** a `choose_type` axis `of: "nonbasic_land_type"` offering the nonbasic land types (Cave, Desert, Gate, Lair, Locus, Mine, Power-Plant, Sphere, Tower, Urza's, ...), stored on the resolving spell, plus a selector read-back (e.g. `subtypes: [{"chosen_land_type_of": "self"}]`) so `become_copy`'s `objects` can be 'each land you control of the chosen type'
+  <br>Why the existing vocabulary won't do: `choose_type` only has the creature_type (surveyed, writes chosen_type), permanent_type and card_type (write chosen_card_type) axes; none offers land subtypes, and the only subtype read-back is `chosen_type_of: self`, which holds a creature type. `become_copy` (with `copying` targeting a creature you control) and `grant_keyword` haste cover the rest, and Flashback is a card-level cost key
+
+<details><summary>Cards waiting on this</summary>
+
+- **March from Velis Vel** (rank 11432) — `march_from_velis_vel`
+  - Choose a nonbasic land type. Each land you control of that type becomes a copy of target creature you control until end of turn and gains haste until end of turn.
 
 </details>
 
@@ -3376,6 +3393,20 @@ Blocks **1** card.
 
 </details>
 
+## players-lost-the-game-count
+
+Blocks **1** card.
+
+- **(value)** a static (continuous) value counting the players who have lost the game so far, usable as the multiplier of a self `buff` (+10/+10 times that count), re-evaluated as players are eliminated
+  <br>Why the existing vocabulary won't do: static_value_keys has `count` (over permanents), `starting_life_of`, `min_life_of` and similar, but nothing that reads eliminated players; `player_count` exists only in the effect-time value_keys, not the static ones, and counts players in the game rather than those who have lost
+
+<details><summary>Cards waiting on this</summary>
+
+- **Rampant Frogantua** (rank 4941) — `rampant_frogantua`
+  - This creature gets +10/+10 for each player who has lost the game.
+
+</details>
+
 ## plot
 
 Blocks **1** card.
@@ -4167,6 +4198,20 @@ Blocks **1** card.
 
 - **Shigeki, Jukai Visionary** (rank 1668) — `shigeki_jukai_visionary`
   - Channel — {X}{X}{G}{G}, Discard this card: Return X target nonlegendary cards from your graveyard to your hand.
+
+</details>
+
+## x-starting-loyalty
+
+Blocks **1** card.
+
+- **(engine)** a planeswalker whose printed loyalty is X: card-level `loyalty` accepting "X" (or an equivalent) that compiles to the self_enters_with_counters loyalty replacement with amount {x: true}, reading the cast's chosen X (306.5b, 107.3m), so the card enters with X loyalty counters and with 0 (and dies to 704.5i) when cast for X=0
+  <br>Why the existing vocabulary won't do: Card-level `loyalty` is an int only (the proxy tier notes "printed loyalty is 'X' and is chosen as the spell is cast; not modelled"); `loyalty_x` in cost_keys is the 606.4 variable loyalty *cost* of an ability, not a starting loyalty; the enters-with-X-counters replacement Hangarback Walker uses is not in this packet's reference vocabulary, and a fixed printed number would be a different card. The three loyalty abilities themselves (scry; look_at_top with a land-or-creature selector whose mana_value is compared against counters_on self, under may/put_onto_battlefield; untap plus animate 5/5 Elemental with flying and haste this_turn on up to two target lands) look expressible
+
+<details><summary>Cards waiting on this</summary>
+
+- **Nissa, Steward of Elements** (rank 6660) — `nissa_steward_of_elements`
+  - Printed starting loyalty X (the planeswalker enters with X loyalty counters, X being the value chosen for {X} in its mana cost as it was cast)
 
 </details>
 

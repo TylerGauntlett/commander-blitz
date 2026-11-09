@@ -1,0 +1,18 @@
+{
+  "card_id": "rampant_frogantua",
+  "name": "Rampant Frogantua",
+  "oracle_text": "Trample\nThis creature gets +10/+10 for each player who has lost the game.\nWhenever this creature deals combat damage to a player, you may mill that many cards. Put any number of land cards from among them onto the battlefield tapped.",
+  "blocked_sentences": [
+    "This creature gets +10/+10 for each player who has lost the game."
+  ],
+  "needs": [
+    {
+      "capability": "players_lost_the_game_count",
+      "kind": "value",
+      "what": "a static (continuous) value counting the players who have lost the game so far, usable as the multiplier of a self `buff` (+10/+10 times that count), re-evaluated as players are eliminated",
+      "why_existing_wont_do": "static_value_keys has `count` (over permanents), `starting_life_of`, `min_life_of` and similar, but nothing that reads eliminated players; `player_count` exists only in the effect-time value_keys, not the static ones, and counts players in the game rather than those who have lost"
+    }
+  ],
+  "closest_existing": ["buff", "player_count", "times"],
+  "confidence": "high"
+}
