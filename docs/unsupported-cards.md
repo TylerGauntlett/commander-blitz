@@ -10,13 +10,13 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**261 cards** blocked by **237** capabilities.
+**268 cards** blocked by **242** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
-| [put-into-graveyard-from-anywhere](#put-into-graveyard-from-anywhere) | 7 | 256 | trigger_event |
+| [put-into-graveyard-from-anywhere](#put-into-graveyard-from-anywhere) | 8 | 256 | trigger_event |
 | [rooms](#rooms) | 6 | 4163 | engine |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
@@ -24,6 +24,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 4 | 714 | engine |
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
+| [cast-trigger-x](#cast-trigger-x) | 3 | 1521 | engine, value |
 | [copy-exception-set-subtypes](#copy-exception-set-subtypes) | 3 | 1740 | engine, op |
 | [escape](#escape) | 3 | 388 | engine, static_effect |
 | [omen](#omen) | 3 | 3355 | cost, engine |
@@ -33,7 +34,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-from-library-top-unrestricted](#cast-from-library-top-unrestricted) | 2 | 1913 | static_effect |
-| [cast-trigger-x](#cast-trigger-x) | 2 | 1521 | engine, value |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [copy-exception-ability](#copy-exception-ability) | 2 | 6941 | op |
 | [council-s-dilemma](#council-s-dilemma) | 2 | 4067 | decision |
@@ -45,6 +45,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
 | [remove-x-counters-cost](#remove-x-counters-cost) | 2 | 5399 | cost |
 | [return-face-down](#return-face-down) | 2 | 3081 | op |
+| [static-greatest-power-in-graveyard](#static-greatest-power-in-graveyard) | 2 | 7077 | value |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [turn-face-up](#turn-face-up) | 2 | 5772 | op |
 | [venture](#venture) | 2 | 19644 | engine |
@@ -79,6 +80,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [choose-card-type-from-list](#choose-card-type-from-list) | 1 | 611 | op |
 | [chosen-card-type-cost-reduction](#chosen-card-type-cost-reduction) | 1 | 611 | static_effect |
 | [chosen-number](#chosen-number) | 1 | 1610 | engine |
+| [chosen-player](#chosen-player) | 1 | 6383 | selector |
 | [combat-damage-amount-binding](#combat-damage-amount-binding) | 1 | 8933 | value |
 | [companion](#companion) | 1 | 3861 | engine |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
@@ -86,6 +88,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [control-while-has-counter](#control-while-has-counter) | 1 | 10319 | op |
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
+| [copy-spell-forced-target](#copy-spell-forced-target) | 1 | 13586 | op |
 | [copy-this-spell-on-resolution](#copy-this-spell-on-resolution) | 1 | 338 | op |
 | [cost-reduction-per-attacker-this-turn](#cost-reduction-per-attacker-this-turn) | 1 | 9578 | value |
 | [coven](#coven) | 1 | 1129 | value |
@@ -94,6 +97,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [damage-player-or-planeswalker](#damage-player-or-planeswalker) | 1 | 5120 | op |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [delayed-creature-dies](#delayed-creature-dies) | 1 | 1661 | trigger_event |
+| [delayed-trigger-filter](#delayed-trigger-filter) | 1 | 12175 | trigger_event |
 | [demon-token-5-5-b-flying](#demon-token-5-5-b-flying) | 1 | 7993 | token |
 | [devil-token](#devil-token) | 1 | 4163 | token |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
@@ -147,12 +151,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [granted-miracle-from-mana-cost](#granted-miracle-from-mana-cost) | 1 | 5025 | static_effect |
 | [graveyard-cast-per-permanent-type](#graveyard-cast-per-permanent-type) | 1 | 1104 | static_effect |
 | [graveyard-cast-permission-additional-cost](#graveyard-cast-permission-additional-cost) | 1 | 7356 | static_effect |
+| [graveyard-play-from-library-this-turn](#graveyard-play-from-library-this-turn) | 1 | 7077 | static_effect |
 | [graveyard-play-grants-ability](#graveyard-play-grants-ability) | 1 | 3531 | static_effect |
 | [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 1 | 3531 | static_effect |
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
 | [harmonize](#harmonize) | 1 | 7442 | cost |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
-| [insect-token-bg](#insect-token-bg) | 1 | 1924 | token |
 | [jump-start](#jump-start) | 1 | 14777 | op |
 | [karox-bladewing](#karox-bladewing) | 1 | 8889 | token |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
@@ -163,6 +167,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [look-at-top-attacking](#look-at-top-attacking) | 1 | 7846 | op |
 | [lose-the-game](#lose-the-game) | 1 | 1512 | op |
 | [lure](#lure) | 1 | 31502 | static_effect |
+| [madness](#madness) | 1 | 3016 | replacement |
 | [mana-ability-leading-rider](#mana-ability-leading-rider) | 1 | 4080 | engine |
 | [mana-cant-pay-generic](#mana-cant-pay-generic) | 1 | 3861 | value |
 | [mana-restriction-cast-from-zone](#mana-restriction-cast-from-zone) | 1 | 9291 | engine |
@@ -227,13 +232,13 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
-| [static-greatest-power-in-graveyard](#static-greatest-power-in-graveyard) | 1 | 10492 | value |
 | [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
 | [target-if-cast-during](#target-if-cast-during) | 1 | 1524 | selector |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
 | [targets-only-self](#targets-only-self) | 1 | 8216 | trigger_event |
+| [targets-only-single](#targets-only-single) | 1 | 13586 | trigger_event |
 | [teammates](#teammates) | 1 | 26785 | selector |
 | [this-combat-duration](#this-combat-duration) | 1 | 9126 | op |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
@@ -368,7 +373,7 @@ Blocks **8** cards.
 
 ## put-into-graveyard-from-anywhere
 
-Blocks **7** cards.
+Blocks **8** cards.
 
 - **(trigger_event)** a trigger event that fires whenever a card matching a filter (here: a land card, any owner) is put into a graveyard from ANY zone -- battlefield, hand (discard), library (mill), stack -- usable on an ability with active_zones ["graveyard"] so the card triggers while it sits in its owner's graveyard (Ashen Ghoul / Vengevine style recursion)
   <br>Why the existing vocabulary won't do: leaves_battlefield with to_zones ["graveyard"] only sees permanents leaving the battlefield (a sacrificed or destroyed land) and misses discarded, milled and countered-from-stack cards; discard covers only the hand; dies is creatures only; there is no mill or generic zone-change-to-graveyard event in trigger_events. The may-pay {G}{G} and return_to_hand halves are expressible once the event exists.
@@ -376,6 +381,8 @@ Blocks **7** cards.
   <br>Why the existing vocabulary won't do: trigger_events has no zone-change-to-graveyard event: leaves_battlefield only sees permanents leaving the battlefield, dies is battlefield creatures, discard is the hand, leaves_graveyard is the reverse direction; the trigger's from_zones key is read only for spell_cast and land_played. Without the event there is also no binding for 'them', so a put_onto_battlefield over any creature card in the graveyard would wrongly reach creature cards milled earlier. The Flying keyword and the enters-or-attacks mill three (self_enters + attacks triggers with mill) are expressible today.
 - **(trigger_event)** a trigger event that fires when one or more cards matching a filter (here: land cards, owner = you) are put into a graveyard from ANY zone -- battlefield, hand (discard), library (mill, surveil), stack -- supporting `batched: true` so one simultaneous move of several land cards triggers once, and `max_per_turn: 1` for "for the first time each turn"
   <br>Why the existing vocabulary won't do: trigger_events has no generic zone-change-to-graveyard event: leaves_battlefield with to_zones ["graveyard"] (and dies) only sees permanents leaving the battlefield and misses milled and discarded land cards, which is what this card's own upkeep mill feeds; discard covers only the hand; leaves_graveyard is the opposite direction. The upkeep `may` + `mill` line and the insect_1_1_g token are expressible today.
+- **(trigger_event)** a trigger event that fires when a card matching a filter (here: a permanent card with subtype Lhurgoyf, owner = you) is put into a graveyard, narrowed by `from_zones` to every zone except the battlefield (hand via discard, library via mill/surveil, stack via countered/resolved, exile), binding the moved card as the subject so the effect can `put_onto_battlefield` exactly that card ("put it") if it is still in the graveyard on resolution
+  <br>Why the existing vocabulary won't do: trigger_events has no zone-change-to-graveyard event: leaves_battlefield/dies only see permanents leaving the battlefield (exactly the source this card excludes), discard covers only the hand, leaves_graveyard is the reverse direction, and the trigger's from_zones key is read only for spell_cast and land_played. Without the event there is also no binding for 'it'.
 - **(trigger_event)** a trigger event that fires once per card matching a filter (here: a land card, owner = you, i.e. into YOUR graveyard) put into a graveyard from ANY zone -- battlefield, hand (discard), library (mill, surveil), stack -- unbatched, so milling two lands gains 2 life
   <br>Why the existing vocabulary won't do: trigger_events has no generic zone-change-to-graveyard event: leaves_battlefield with to_zones ["graveyard"] only sees permanents leaving the battlefield and misses milled and discarded land cards, which this card's own {2}{G} mill ability is built to feed; discard covers only the hand; dies is creatures/permanents dying; leaves_graveyard is the opposite direction. The {2}{G}: mill 1 activated ability and the gain_life effect are expressible today.
 - **(trigger_event)** a trigger event that fires whenever a card matching a filter (here: a creature card, any owner, any graveyard) is put into a graveyard, with a from_zones/except-battlefield clause so it can be narrowed to arrivals from anywhere other than the battlefield -- hand (discard), library (mill), stack (countered or resolved), exile, command zone
@@ -398,6 +405,9 @@ Blocks **7** cards.
   - When Worldspine Wurm is put into a graveyard from anywhere, shuffle it into its owner's library.
 - **Crawling Sensation** (rank 3007) — `crawling_sensation`
   - Whenever one or more land cards are put into your graveyard from anywhere for the first time each turn, create a 1/1 green Insect creature token.
+- **Disa the Restless** (rank 8872) — `disa_the_restless`
+  - Whenever a Lhurgoyf permanent card is put into your graveyard from anywhere other than the battlefield, put it onto the battlefield.
+  - Whenever one or more creatures you control deal combat damage to a player, create a Tarmogoyf token.
 - **Centaur Vinecrasher** (rank 10988) — `centaur_vinecrasher`
   - Whenever a land card is put into a graveyard from anywhere, you may pay {G}{G}. If you do, return this card from your graveyard to your hand.
 - **Skola Grovedancer** (rank 12300) — `skola_grovedancer`
@@ -625,6 +635,28 @@ Blocks **4** cards.
 
 </details>
 
+## cast-trigger-x
+
+Blocks **3** cards.
+
+- **(value)** a value (or a binding on the spell_cast event) that reads the X chosen for the spell that fired a spell_cast trigger -- for a `source: self` cast trigger, the X of this spell while it is still on the stack -- so the trigger can say 'each player sacrifices X creatures' as a for_each_player sacrifice with `count` equal to that X
+  <br>Why the existing vocabulary won't do: The value `x` evaluates `ctx.x`, which for a triggered ability comes from `event_bindings` reading `obj.cast_x`; `cast_x` is only written in `stack.py` when the spell resolves (`obj.cast_x = item.x`), and `Game._cast` fires SPELL_CAST without an `x` in its payload (`x` in EVENT_BINDING_KEYS is carried only by `cycle`). So a cast trigger always reads X as 0 and the edict would sacrifice nothing. No value key reads a stack item's X by `sid`. The rest is expressible: `for_each_player` over each player with `sacrifice` (`as` binding) then `spell_enters_with_counters` adding `times [2, count(binding)]` +1/+1 counters to the spell named by the trigger's `sid` accumulates across iterations.
+- **(engine)** a cast trigger (`spell_cast`, `source: self`, `active_zones: ["stack"]`) whose effects read the X the spell was cast with through `{"x": true}` -- i.e. the SPELL_CAST event fired by `Game._cast` must carry `x=item.x` so `triggers.event_bindings` (which lists `x` in EVENT_BINDING_KEYS) overrides the permanent's `cast_x` the way the CYCLED event does for Shark Typhoon
+  <br>Why the existing vocabulary won't do: `{"x": true}` in a triggered ability reads the trigger's `x` binding, which `event_bindings` takes from `obj.cast_x`; `cast_x` is written only in `stack.resolve` when the spell resolves, and the SPELL_CAST payload has no `x`, so the cast trigger would read 0 and gain/draw nothing. The only other route, `half` of (`mana_value_of` self minus 2), reads the mana value rather than X and would be a stand-in, not the printed referent
+- **(value)** a value reading the X chosen for the triggering spell (the spell bound as `subject` on a spell_cast trigger), e.g. the SPELL_CAST event payload carrying `x` so `event_bindings` overrides the source's `cast_x` and `{"x": true}` means the cast spell's X
+  <br>Why the existing vocabulary won't do: `{"x": true}` in a triggered ability reads the `x` binding, which `triggers.event_bindings` takes from the trigger source's own `cast_x` (Nev's, 0); the SPELL_CAST payload carries no `x` (only the cycle event does via EVENT_BINDING_KEYS), and `mana_value_of` the subject reads mana value, not X
+
+<details><summary>Cards waiting on this</summary>
+
+- **Hydroid Krasis** (rank 1521) — `hydroid_krasis`
+  - When you cast this spell, you gain half X life and draw half X cards. Round down each time.
+- **Nev, the Practical Dean** (rank 9566) — `nev_the_practical_dean`
+  - Whenever you cast your first spell with {X} in its mana cost each turn, put X +1/+1 counters on Nev.
+- **Gluttonous Hellkite** (rank 10097) — `gluttonous_hellkite`
+  - When you cast this spell, each player sacrifices X creatures. This creature enters with two +1/+1 counters on it for each creature sacrificed this way.
+
+</details>
+
 ## copy-exception-set-subtypes
 
 Blocks **3** cards.
@@ -807,24 +839,6 @@ Blocks **2** cards.
   - Once during each of your turns, you may cast a spell from your hand or the top of your library without paying its mana cost.
 - **Fortune Teller's Talent** (rank 3755) — `fortune_teller_s_talent`
   - As long as you've cast a spell this turn, you may play cards from the top of your library.
-
-</details>
-
-## cast-trigger-x
-
-Blocks **2** cards.
-
-- **(engine)** a cast trigger (`spell_cast`, `source: self`, `active_zones: ["stack"]`) whose effects read the X the spell was cast with through `{"x": true}` -- i.e. the SPELL_CAST event fired by `Game._cast` must carry `x=item.x` so `triggers.event_bindings` (which lists `x` in EVENT_BINDING_KEYS) overrides the permanent's `cast_x` the way the CYCLED event does for Shark Typhoon
-  <br>Why the existing vocabulary won't do: `{"x": true}` in a triggered ability reads the trigger's `x` binding, which `event_bindings` takes from `obj.cast_x`; `cast_x` is written only in `stack.resolve` when the spell resolves, and the SPELL_CAST payload has no `x`, so the cast trigger would read 0 and gain/draw nothing. The only other route, `half` of (`mana_value_of` self minus 2), reads the mana value rather than X and would be a stand-in, not the printed referent
-- **(value)** a value reading the X chosen for the triggering spell (the spell bound as `subject` on a spell_cast trigger), e.g. the SPELL_CAST event payload carrying `x` so `event_bindings` overrides the source's `cast_x` and `{"x": true}` means the cast spell's X
-  <br>Why the existing vocabulary won't do: `{"x": true}` in a triggered ability reads the `x` binding, which `triggers.event_bindings` takes from the trigger source's own `cast_x` (Nev's, 0); the SPELL_CAST payload carries no `x` (only the cycle event does via EVENT_BINDING_KEYS), and `mana_value_of` the subject reads mana value, not X
-
-<details><summary>Cards waiting on this</summary>
-
-- **Hydroid Krasis** (rank 1521) — `hydroid_krasis`
-  - When you cast this spell, you gain half X life and draw half X cards. Round down each time.
-- **Nev, the Practical Dean** (rank 9566) — `nev_the_practical_dean`
-  - Whenever you cast your first spell with {X} in its mana cost each turn, put X +1/+1 counters on Nev.
 
 </details>
 
@@ -1030,6 +1044,25 @@ Blocks **2** cards.
   - Whenever another nontoken creature you control dies, you may return it to the battlefield face down under its owner's control. It's a Forest land.
 - **Deathmist Raptor** (rank 6493) — `deathmist_raptor`
   - Whenever a permanent you control is turned face up, you may return this card from your graveyard to the battlefield face up or face down.
+
+</details>
+
+## static-greatest-power-in-graveyard
+
+Blocks **2** cards.
+
+- **(value)** a static value leaf reading the greatest printed power among cards matched by a static counting filter in a non-battlefield zone (here: creature cards in your graveyard), so a self-only buff can be sized by it; an empty pool is 0
+  <br>Why the existing vocabulary won't do: The static `extreme_value` leaf (Dragon Man) has the right shape -- objects with zone: graveyard, pick: greatest -- but `_validate_static_extreme_value` in cards/loader/statics.py refuses any `of` other than mana_value, because battlefield power is a layer output. A graveyard card's power is its printed power and is a pipeline input, so the leaf could accept `of: power` when every branch's zone is off the battlefield. `power_of` and the effect-side `extreme_value` are not static value keys, and a self_enters pump would go stale as the graveyard changes
+- **(value)** a static value leaf reading the greatest printed power among cards matched by a static counting filter in a non-battlefield zone (here: creature cards in ALL graveyards, any owner), so a self-only buff of +X/+0 can be sized by it; an empty pool is 0
+  <br>Why the existing vocabulary won't do: The static `extreme_value` leaf has the right shape (objects with zone: graveyard, pick: greatest) but `_validate_static_extreme_value` in cards/loader/statics.py refuses any `of` other than mana_value because battlefield power is a layer output. A graveyard card's power is printed and a pipeline input, so `of: power` could be allowed when every branch's zone is off the battlefield. Same need as carrion_grub; a self_enters pump would go stale
+
+<details><summary>Cards waiting on this</summary>
+
+- **Coram, the Undertaker** (rank 7077) — `coram_the_undertaker`
+  - Coram gets +X/+0, where X is the greatest power among creature cards in all graveyards.
+  - During each of your turns, you may play a land and cast a spell from among cards in graveyards that were put there from libraries this turn.
+- **Carrion Grub** (rank 10492) — `carrion_grub`
+  - This creature gets +X/+0, where X is the greatest power among creature cards in your graveyard.
 
 </details>
 
@@ -1555,6 +1588,21 @@ Blocks **1** card.
 
 </details>
 
+## chosen-player
+
+Blocks **1** card.
+
+- **(selector)** an 'as this enters, choose a player' choice remembered on the permanent (the player twin of chosen_type_of/chosen_color_of), readable by statics as a player spec -- e.g. affects_player: {"chosen_player_of": "self"} and an affects filter controller: {"chosen_player_of": "self"} -- so a replace_damage static with damage_multiplier 2 and damage_source controller any can be keyed to the chosen player and the permanents they control
+  <br>Why the existing vocabulary won't do: choose_player only writes ctx.bindings for the resolving ability, which a static never sees; persistent choices exist only for creature types (chosen_type_of), colors (chosen_color_of) and card types (chosen_card_type_of). replace_damage's affects_player takes you/opponent/any, so 'opponent' would double damage to every opponent (and can never pick yourself), which is a different card at a pod
+
+<details><summary>Cards waiting on this</summary>
+
+- **Sawhorn Nemesis** (rank 6383) — `sawhorn_nemesis`
+  - As this creature enters, choose a player
+  - If a source would deal damage to the chosen player or a permanent they control, it deals double that damage instead
+
+</details>
+
 ## combat-damage-amount-binding
 
 Blocks **1** card.
@@ -1652,6 +1700,20 @@ Blocks **1** card.
 
 - **Mirrorwing Dragon** (rank 8216) — `mirrorwing_dragon`
   - Whenever a player casts an instant or sorcery spell that targets only this creature, that player copies that spell for each other creature they control that the spell could target. Each copy targets a different one of those creatures.
+
+</details>
+
+## copy-spell-forced-target
+
+Blocks **1** card.
+
+- **(op)** copy_spell variant whose copy is pointed at a specific chosen object: the trigger's controller chooses one nonland permanent controlled by an opponent OTHER than the original target's controller that the spell could legally target (intervening-if: only if such a permanent exists), and the copy's single target is set to it (Ink-Treader Nephilim / Precursor Golem family, one copy aimed at another opponent)
+  <br>Why the existing vocabulary won't do: copy_spell takes amount, controller, new_targets, sid and target; new_targets offers every legal target tuple (including the same opponent's permanents or keeping the original), so the copy is not constrained to 'another opponent', and there is no way to hand a chosen binding to the copy as its target; choose_permanents can bind a permanent but nothing filters it by 'legal target of that spell' or feeds it into the copy
+
+<details><summary>Cards waiting on this</summary>
+
+- **Exterminator Magmarch** (rank 13586) — `exterminator_magmarch`
+  - Whenever you cast an instant or sorcery spell that targets only a single nonland permanent an opponent controls, if another opponent controls one or more nonland permanents that spell could target, choose one of those permanents. Copy that spell. The copy targets the chosen permanent.
 
 </details>
 
@@ -1764,6 +1826,20 @@ Blocks **1** card.
 
 - **Massacre Girl** (rank 1661) — `massacre_girl`
   - Whenever a creature dies this turn, each creature other than Massacre Girl gets -1/-1 until end of turn.
+
+</details>
+
+## delayed-trigger-filter
+
+Blocks **1** card.
+
+- **(trigger_event)** a delayed_trigger (duration this_turn) watching creature_dies that can be narrowed by a trigger filter on the dying object -- here {"is_token": false} for 'nontoken' -- and that applies creature_dies' own was_creature check and reads 'you control' as the controller the creature had as it died (last known information), exactly as a hosted creature_dies trigger does
+  <br>Why the existing vocabulary won't do: delayed_trigger_keys are only event/controller/condition/subject/recipient, and the loader refuses 'filter'. In triggers._delayed_matches the creature_dies sugar's was_creature check (applied only in the hosted _matches path) is skipped, so a delayed creature_dies fires on any permanent going to the graveyard; was_creature is not in EVENT_BINDING_KEYS, so a condition cannot recover it, and an 'exists {binding: subject, types: [Creature], is_token: false, zone: graveyard}' condition would read the graveyard card's printed types (missing crewed Vehicles and animated permanents) and is a workaround rather than the printed filter. _actor reads the dead object's controller after zone change, which has been reset to its owner, so a stolen creature you control dying would not count. The tokens (saproling_1_1_g) and the amount ({power_had: true}, bound on DIES events and carried into delayed bindings) are already available.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Infested Thrinax** (rank 12175) — `infested_thrinax`
+  - When this creature enters, until end of turn, whenever a nontoken creature you control dies, create a number of 1/1 green Saproling creature tokens equal to that creature's power.
 
 </details>
 
@@ -2528,6 +2604,21 @@ Blocks **1** card.
 
 </details>
 
+## graveyard-play-from-library-this-turn
+
+Blocks **1** card.
+
+- **(static_effect)** a player-wide static, active only during its controller's turns, letting you play one land and cast one spell each turn from among cards in ANY player's graveyard that were put there from a library this turn (requires a per-card zone-history mark: moved library->graveyard during the current turn), with one land allowance and one spell allowance per turn
+  <br>Why the existing vocabulary won't do: `cast_from_graveyard` and `play_lands_from_graveyard` read only your own graveyard and their filters (static_filter_keys) are printed characteristics; nothing in static_filter_keys or static_condition_keys records that a card arrived from a library this turn, they do not reach opponents' graveyards, and `play_lands_from_graveyard` carries no once-per-turn cap of its own
+
+<details><summary>Cards waiting on this</summary>
+
+- **Coram, the Undertaker** (rank 7077) — `coram_the_undertaker`
+  - Coram gets +X/+0, where X is the greatest power among creature cards in all graveyards.
+  - During each of your turns, you may play a land and cast a spell from among cards in graveyards that were put there from libraries this turn.
+
+</details>
+
 ## graveyard-play-grants-ability
 
 Blocks **1** card.
@@ -2595,21 +2686,6 @@ Blocks **1** card.
 
 - **Ragavan, Nimble Pilferer** (rank 271) — `ragavan_nimble_pilferer`
   - Whenever Ragavan deals combat damage to a player, create a Treasure token and exile the top card of that player's library. Until end of turn, you may cast that card.
-
-</details>
-
-## insect-token-bg
-
-Blocks **1** card.
-
-- **(token)** a 1/1 black and green Insect creature token (e.g. insect_1_1_bg)
-  <br>Why the existing vocabulary won't do: token_ids has insect_1_1_g (green only), insect_1_1_b_flying (black, flying) and the black-green pest_1_1_bg / worm_1_1_bg, but no black-green Insect with no abilities; a near token would be the wrong colour or creature type
-
-<details><summary>Cards waiting on this</summary>
-
-- **Grist, the Hunger Tide** (rank 1924) — `grist_the_hunger_tide`
-  - As long as Grist isn't on the battlefield, it's a 1/1 Insect creature in addition to its other types.
-  - +1: Create a 1/1 black and green Insect creature token, then mill a card. If an Insect card was milled this way, put a loyalty counter on Grist and repeat this process.
 
 </details>
 
@@ -2754,6 +2830,20 @@ Blocks **1** card.
 - **Marble Priest** (rank 31502) — `marble_priest`
   - All Walls able to block this creature do so.
   - Prevent all combat damage that would be dealt to this creature by Walls.
+
+</details>
+
+## madness
+
+Blocks **1** card.
+
+- **(replacement)** Madness per 702.35a and the printed reminder: the discard exiles the card, and if the player declines (or cannot) cast it for its madness cost, the card is put into its owner's graveyard rather than left in exile. The cast offer should also be a triggered ability ('When you do') that uses the stack, not an inline question at discard time.
+  <br>Why the existing vocabulary won't do: The card-level `madness` key exists, but `engine/replacements._madness` deliberately leaves a declined madness card in exile ('a declined madness card is in exile, not the graveyard', also stated in card-dsl-cookbook.md and the rules-coverage row). That contradicts the printed 'or put it into your graveyard'. The mismatch matters most on this card, whose own power counts creature cards in all graveyards: a declined Necrogoyf should land in the graveyard and be counted. `_offer_cast` also asks inline during the discard instead of through a 'when you do' trigger. The other two lines can be written today: a static `set_pt` with power `{"count": {"controller": "any", "types": ["Creature"], "zone": "graveyard"}}` (Lord of Extinction / Haughty Djinn shape) and toughness const 4, plus an `upkeep` trigger with `controller: any` and `discard` on `{"binding": "event_player"}` (Seizan / Liliana's Reaver shape).
+
+<details><summary>Cards waiting on this</summary>
+
+- **Necrogoyf** (rank 3016) — `necrogoyf`
+  - Madness {1}{B}{B} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)
 
 </details>
 
@@ -3667,20 +3757,6 @@ Blocks **1** card.
 
 </details>
 
-## static-greatest-power-in-graveyard
-
-Blocks **1** card.
-
-- **(value)** a static value leaf reading the greatest printed power among cards matched by a static counting filter in a non-battlefield zone (here: creature cards in your graveyard), so a self-only buff can be sized by it; an empty pool is 0
-  <br>Why the existing vocabulary won't do: The static `extreme_value` leaf (Dragon Man) has the right shape -- objects with zone: graveyard, pick: greatest -- but `_validate_static_extreme_value` in cards/loader/statics.py refuses any `of` other than mana_value, because battlefield power is a layer output. A graveyard card's power is its printed power and is a pipeline input, so the leaf could accept `of: power` when every branch's zone is off the battlefield. `power_of` and the effect-side `extreme_value` are not static value keys, and a self_enters pump would go stale as the graveyard changes
-
-<details><summary>Cards waiting on this</summary>
-
-- **Carrion Grub** (rank 10492) — `carrion_grub`
-  - This creature gets +X/+0, where X is the greatest power among creature cards in your graveyard.
-
-</details>
-
 ## stun-counters-cant-be-removed
 
 Blocks **1** card.
@@ -3763,6 +3839,20 @@ Blocks **1** card.
 
 - **Mirrorwing Dragon** (rank 8216) — `mirrorwing_dragon`
   - Whenever a player casts an instant or sorcery spell that targets only this creature, that player copies that spell for each other creature they control that the spell could target. Each copy targets a different one of those creatures.
+
+</details>
+
+## targets-only-single
+
+Blocks **1** card.
+
+- **(trigger_event)** a spell_cast trigger filter on the spell's TARGETS: matches an instant or sorcery whose only target is a single object, and that object is a nonland permanent controlled by an opponent, binding that permanent (and its controller) for the trigger's condition and effects
+  <br>Why the existing vocabulary won't do: spell_cast's trigger_filter_keys read the spell's own characteristics, not what it targets; the value targets_of_spell counts permanent/player targets but cannot say the permanent is nonland or opponent-controlled, nor bind it, so 'targets only a single nonland permanent an opponent controls' cannot be checked
+
+<details><summary>Cards waiting on this</summary>
+
+- **Exterminator Magmarch** (rank 13586) — `exterminator_magmarch`
+  - Whenever you cast an instant or sorcery spell that targets only a single nonland permanent an opponent controls, if another opponent controls one or more nonland permanents that spell could target, choose one of those permanents. Copy that spell. The copy targets the chosen permanent.
 
 </details>
 
