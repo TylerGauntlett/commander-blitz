@@ -1164,7 +1164,12 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: spell_enters_with_counters needs 'counters', a map of "
                 f"counter kind to amount (e.g. {{'+1/+1': 2}})"
             )
-    if op in ("grant_rebound", "grant_plot", "spell_enters_with_counters"):
+    if op in (
+        "grant_rebound",
+        "grant_plot",
+        "spell_enters_with_counters",
+        "exile_spell_on_resolution",
+    ):
         # The same two checks `return_spell_to_hand` makes, for the same reason
         # and with the same failure mode: the op reads one stack object, and a
         # `target` that names a permanent or a player finds no spell, sets

@@ -57,6 +57,7 @@ from .targeting import (
 )
 from .triggers import fire
 from .zones import (
+    link_exiled,
     move_object,
     offer_as_enters_effects,
     offer_enters_copy,
@@ -1238,6 +1239,16 @@ def _place_after_resolution(
         destination = Zone.EXILE
     if rebounds:
         destination = Zone.EXILE
+    # Forger's Foundry's "exile that spell instead of putting it into its
+    # owner's graveyard as it resolves" -- plot's slot again, with no
+    # from-hand gate (the printed line has none) and a link instead of a
+    # permission. Only a spell still bound for the graveyard: one a rider above
+    # already sends to exile is not put into a graveyard to be replaced.
+    exiled_with = (
+        obj.exile_on_resolution_by if destination is Zone.GRAVEYARD else None
+    )
+    if exiled_with is not None:
+        destination = Zone.EXILE
     # "Exile Rousing Refrain with three time counters on it." The card's own
     # instruction, carried out as the last step of its resolution (608.2c)
     # rather than a replacement of the graveyard, so it **overrides** every
@@ -1250,6 +1261,7 @@ def _place_after_resolution(
     if suspends:
         destination = Zone.EXILE
         rebounds = plots = False
+        exiled_with = None
         tuck_to = None
         shuffles_in = False
     # Adventure (715.3c) and aftermath (702.127b): the fifth rider on this slot,
@@ -1308,6 +1320,10 @@ def _place_after_resolution(
         )
     if shuffles_in:
         shuffle_library(state, obj.owner)
+    if exiled_with is not None and obj.zone is Zone.EXILE:
+        # After the move, since `reset_permanent_state` runs on the way and
+        # would wipe the link -- the ordering `link_exiled` documents.
+        link_exiled(state, obj.oid, exiled_with)
     if obj.pending_face_down and destination is Zone.BATTLEFIELD:
         # Morph. Marked after the move for `cast_transformed`'s reason:
         # `reset_permanent_state` clears it on the way onto the battlefield,

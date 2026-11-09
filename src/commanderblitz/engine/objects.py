@@ -363,6 +363,13 @@ class GameObject:
     #: would wipe a permission set before it, which is what `rebound_by` and
     #: `exiled_by` both discovered first.
     granted_plot: bool = False
+    #: "…you may exile that spell instead of putting it into its owner's
+    #: graveyard as it resolves" -- Forger's Foundry, whose second ability casts
+    #: "from among cards exiled with this artifact". The oid of the permanent
+    #: the exile is linked to, written on the spell's object while it is on the
+    #: stack (`granted_plot`'s slot), read by `_place_after_resolution`, and
+    #: turned into the `exiled_by` link after the move.
+    exile_on_resolution_by: int | None = None
     #: "As this land enters, you may pay 3 life." Whether the controller took
     #: that offer, answered just before the move and read by the enters
     #: replacements a moment later. Deliberately survives
@@ -1387,6 +1394,7 @@ class GameObject:
         # the grant nothing and stops it outliving the spell it was given to.
         self.granted_rebound = False
         self.granted_plot = False
+        self.exile_on_resolution_by = None
         self.playable_by = None
         self.playable_turn = -1
         self.playable_duration = "this_turn"

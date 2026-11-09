@@ -1456,6 +1456,16 @@ plotted from hand and a spell plotted as it resolved are the same object
 afterwards. `grant_plot` is the near miss for it: it marks a spell already on the
 stack and cannot reach a card in hand.
 
+**Exiled with a source.** `exile_spell_on_resolution` is the same rider with a
+link where plot leaves a permission: "you may exile that spell instead of
+putting it into its owner's graveyard as it resolves" (Forger's Foundry). The
+spell goes to exile and is linked to the ability's source (`exiled_by`,
+607.2a), so the source's `{"zone": "exile", "exiled_with": "self"}` finds it
+later. It has no from-hand gate, since the printed line has none, and does
+nothing to a spell another rider already sends to exile. The spell is named as
+`grant_plot`'s is, or, with neither `sid` nor `target`, by a spent-mana
+trigger's `subject`.
+
 ### "Multicolored" — `min_colors`
 
 ```jsonc

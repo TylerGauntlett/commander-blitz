@@ -514,6 +514,37 @@ def op_grant_plot(ctx: EffectContext, spec: Mapping[str, Any]):
     obj.granted_plot = True
 
 
+@register("exile_spell_on_resolution")
+def op_exile_spell_on_resolution(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "…you may exile that spell instead of putting it into its owner's
+    graveyard as it resolves." -- Forger's Foundry.
+
+    `grant_plot`'s rider with a link where plot leaves a permission: the
+    spell's object is marked while it is on the stack, `_place_after_resolution`
+    exiles it instead of binning it, and the card is then linked to this
+    ability's source (`zones.link_exiled`), so the Foundry's "cards exiled with
+    this artifact" finds it with `exiled_with: "self"`.
+
+    **Which spell** is `_spell_named_by`'s answer, and one more: a spent-mana
+    trigger binds the spell its mana paid for as ``subject``, an object id
+    rather than a stack id, so with no ``sid`` or ``target`` the stack item of
+    that object is the one. Not an `exile` op in the trigger's effects: the
+    spell is still on the stack and has not resolved.
+    """
+    item = _spell_named_by(ctx, spec)
+    if item is None and "sid" not in spec and "target" not in spec:
+        subject = ctx.bindings.get("subject")
+        item = next(
+            (i for i in ctx.state.stack if i.is_spell and i.oid == subject), None
+        )
+    if item is None or ctx.source_oid is None:
+        return
+    obj = ctx.state.objects.get(item.oid)
+    if obj is None:
+        return
+    obj.exile_on_resolution_by = ctx.source_oid
+
+
 @register("counter")
 def op_counter(ctx: EffectContext, spec: Mapping[str, Any]):
     """Counter target spell.
