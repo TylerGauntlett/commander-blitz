@@ -10132,12 +10132,12 @@
     },
     "Apex Devastator": {
       "edhrec_rank": 1059,
-      "gate": "template",
+      "gate": null,
       "name": "Apex Devastator",
-      "reason": "no template for: Cascade, cascade, cascade, cascade",
+      "reason": "",
       "scryfall_id": "ca9783bc-0e1b-42da-b0f3-89dd0db83743",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Apex Hawks": {
@@ -21372,12 +21372,12 @@
     },
     "Basilisk Gate": {
       "edhrec_rank": 2788,
-      "gate": "template",
+      "gate": null,
       "name": "Basilisk Gate",
-      "reason": "no template for: {2}, {T}: Target creature gets +X/+X until end of turn, where X is the number of Gates you",
+      "reason": "",
       "scryfall_id": "0f2587b5-ab79-4b14-8b49-83e94cef177f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Basim Ibn Ishaq": {
@@ -26342,12 +26342,12 @@
     },
     "Blast Zone": {
       "edhrec_rank": 1624,
-      "gate": "template",
+      "gate": null,
       "name": "Blast Zone",
-      "reason": "no template for: This land enters with a charge counter on it",
+      "reason": "",
       "scryfall_id": "68a19f91-82b2-4f60-94a1-911d817125a1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Blast of Genius": {
@@ -53202,12 +53202,12 @@
     },
     "Copy Land": {
       "edhrec_rank": 5993,
-      "gate": "template",
+      "gate": null,
       "name": "Copy Land",
-      "reason": "no template for: You may have this enchantment enter as a copy of any land on the battlefield, except it's ",
+      "reason": "",
       "scryfall_id": "c3d44c0e-733b-4ad3-b45b-6a3b09c12fb0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Copycrook": {
@@ -88292,12 +88292,12 @@
     },
     "Expedition Map": {
       "edhrec_rank": 455,
-      "gate": "template",
+      "gate": null,
       "name": "Expedition Map",
-      "reason": "no template for: {2}, {T}, Sacrifice this artifact: Search your library for a land card, reveal it, put it ",
+      "reason": "",
       "scryfall_id": "d80f6c3d-5eda-41a6-b9b2-4de6844af179",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Expedition Raptor": {

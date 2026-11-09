@@ -1,0 +1,22 @@
+{
+  "card_id": "aggressive_biomancy",
+  "name": "Aggressive Biomancy",
+  "oracle_text": "Create X tokens that are copies of target creature you control, except they have \"When this token enters, it fights up to one target creature you don't control.\"",
+  "blocked_sentences": [
+    "Create X tokens that are copies of target creature you control, except they have \"When this token enters, it fights up to one target creature you don't control.\""
+  ],
+  "needs": [
+    {
+      "capability": "copy_exception_ability",
+      "kind": "op",
+      "what": "copy_permanent's `except_` adding a whole quoted triggered ability to the token copies' copiable values (707.9b) -- here \"When this token enters, it fights up to one target creature you don't control\" (a self-enters trigger whose effect is `fight` between the token and an optional target creature an opponent controls) -- present as the tokens enter so the enters trigger fires for each of the X copies, and copied along by any later copy of a token",
+      "why_existing_wont_do": "copy_permanent's `except_` is checked against COPY_EXCEPT_KEYS (add_keywords, colors, types, power, toughness, add_types, add_subtypes, add_supertypes, remove_supertypes, no_mana_cost) and becomes `copy_overrides`, which characteristics reads only for those characteristics; nothing adds a triggered ability. A following `grant_ability` on the copies' `as` binding comes after they entered, so a 'when this token enters' trigger would never fire, and it is a layer-6 grant rather than a copiable value. Resolving `fight` directly in the spell via for_each over the binding skips the trigger (targets chosen on the stack, can be responded to) and is an approximation. The rest -- X from {X}{X}, target creature you control, copy_permanent amount X, fight with up to one target -- is expressible."
+    }
+  ],
+  "closest_existing": [
+    "copy_permanent",
+    "grant_ability",
+    "fight"
+  ],
+  "confidence": "high"
+}

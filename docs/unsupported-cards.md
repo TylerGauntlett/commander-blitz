@@ -10,13 +10,13 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**268 cards** blocked by **242** capabilities.
+**271 cards** blocked by **244** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
+| [put-into-graveyard-from-anywhere](#put-into-graveyard-from-anywhere) | 9 | 256 | trigger_event |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
-| [put-into-graveyard-from-anywhere](#put-into-graveyard-from-anywhere) | 8 | 256 | trigger_event |
 | [rooms](#rooms) | 6 | 4163 | engine |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
@@ -25,6 +25,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
 | [cast-trigger-x](#cast-trigger-x) | 3 | 1521 | engine, value |
+| [copy-exception-ability](#copy-exception-ability) | 3 | 6346 | op |
 | [copy-exception-set-subtypes](#copy-exception-set-subtypes) | 3 | 1740 | engine, op |
 | [escape](#escape) | 3 | 388 | engine, static_effect |
 | [omen](#omen) | 3 | 3355 | cost, engine |
@@ -35,7 +36,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-from-library-top-unrestricted](#cast-from-library-top-unrestricted) | 2 | 1913 | static_effect |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
-| [copy-exception-ability](#copy-exception-ability) | 2 | 6941 | op |
 | [council-s-dilemma](#council-s-dilemma) | 2 | 4067 | decision |
 | [devotion](#devotion) | 2 | 2401 | value |
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
@@ -176,6 +176,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mana-spent-trigger-on-activation](#mana-spent-trigger-on-activation) | 1 | 4444 | trigger_event |
 | [mana-tap-trigger-damage-rider](#mana-tap-trigger-damage-rider) | 1 | 7929 | static_effect |
 | [manifest-from-hand](#manifest-from-hand) | 1 | 3975 | op |
+| [marit-lage-token](#marit-lage-token) | 1 | 1430 | token |
 | [maximum-hand-size-modifier](#maximum-hand-size-modifier) | 1 | 1712 | static_effect |
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
@@ -223,6 +224,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
 | [salamander-warrior-4-3-u](#salamander-warrior-4-3-u) | 1 | 3395 | token |
+| [sand-warrior-token](#sand-warrior-token) | 1 | 7493 | token |
 | [sandbox-graveyard-spell-prop](#sandbox-graveyard-spell-prop) | 1 | 5082 | engine |
 | [sandbox-low-mana-value-permanent](#sandbox-low-mana-value-permanent) | 1 | 14140 | engine |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
@@ -328,6 +330,55 @@ Blocks **15** cards.
 
 </details>
 
+## put-into-graveyard-from-anywhere
+
+Blocks **9** cards.
+
+- **(trigger_event)** a trigger event that fires whenever a card matching a filter (here: a land card, any owner) is put into a graveyard from ANY zone -- battlefield, hand (discard), library (mill), stack -- usable on an ability with active_zones ["graveyard"] so the card triggers while it sits in its owner's graveyard (Ashen Ghoul / Vengevine style recursion)
+  <br>Why the existing vocabulary won't do: leaves_battlefield with to_zones ["graveyard"] only sees permanents leaving the battlefield (a sacrificed or destroyed land) and misses discarded, milled and countered-from-stack cards; discard covers only the hand; dies is creatures only; there is no mill or generic zone-change-to-graveyard event in trigger_events. The may-pay {G}{G} and return_to_hand halves are expressible once the event exists.
+- **(trigger_event)** a trigger event that fires when cards matching a filter (here: creature cards, owner = you) are put into a graveyard, narrowed by `from_zones: ["library"]` (mill, surveil, self-mill costs), with `batched: true` so one simultaneous move of several creature cards triggers once ("one or more"), and binding the batch of moved cards so the effect can be `put_onto_battlefield` over exactly one of THEM chosen by the controller ("put one of them"), still in the graveyard on resolution
+  <br>Why the existing vocabulary won't do: trigger_events has no zone-change-to-graveyard event: leaves_battlefield only sees permanents leaving the battlefield, dies is battlefield creatures, discard is the hand, leaves_graveyard is the reverse direction; the trigger's from_zones key is read only for spell_cast and land_played. Without the event there is also no binding for 'them', so a put_onto_battlefield over any creature card in the graveyard would wrongly reach creature cards milled earlier. The Flying keyword and the enters-or-attacks mill three (self_enters + attacks triggers with mill) are expressible today.
+- **(trigger_event)** a trigger event that fires when one or more cards matching a filter (here: land cards, owner = you) are put into a graveyard from ANY zone -- battlefield, hand (discard), library (mill, surveil), stack -- supporting `batched: true` so one simultaneous move of several land cards triggers once, and `max_per_turn: 1` for "for the first time each turn"
+  <br>Why the existing vocabulary won't do: trigger_events has no generic zone-change-to-graveyard event: leaves_battlefield with to_zones ["graveyard"] (and dies) only sees permanents leaving the battlefield and misses milled and discarded land cards, which is what this card's own upkeep mill feeds; discard covers only the hand; leaves_graveyard is the opposite direction. The upkeep `may` + `mill` line and the insect_1_1_g token are expressible today.
+- **(trigger_event)** a trigger event that fires whenever a card matching a filter (here: a Desert card you own) is put into your graveyard from your hand or library (discard, mill, any other effect), restricted by from-zone, binding the card as subject so a delayed end-step trigger can return it to the battlefield under your control
+  <br>Why the existing vocabulary won't do: discard covers only cards discarded from hand, not other hand-to-graveyard moves; there is no mill or library-to-graveyard event in trigger_events; sacrificed covers the sacrifice half only, and leaves_battlefield sees only permanents
+- **(trigger_event)** a trigger event that fires when a card matching a filter (here: a permanent card with subtype Lhurgoyf, owner = you) is put into a graveyard, narrowed by `from_zones` to every zone except the battlefield (hand via discard, library via mill/surveil, stack via countered/resolved, exile), binding the moved card as the subject so the effect can `put_onto_battlefield` exactly that card ("put it") if it is still in the graveyard on resolution
+  <br>Why the existing vocabulary won't do: trigger_events has no zone-change-to-graveyard event: leaves_battlefield/dies only see permanents leaving the battlefield (exactly the source this card excludes), discard covers only the hand, leaves_graveyard is the reverse direction, and the trigger's from_zones key is read only for spell_cast and land_played. Without the event there is also no binding for 'it'.
+- **(trigger_event)** a trigger event that fires once per card matching a filter (here: a land card, owner = you, i.e. into YOUR graveyard) put into a graveyard from ANY zone -- battlefield, hand (discard), library (mill, surveil), stack -- unbatched, so milling two lands gains 2 life
+  <br>Why the existing vocabulary won't do: trigger_events has no generic zone-change-to-graveyard event: leaves_battlefield with to_zones ["graveyard"] only sees permanents leaving the battlefield and misses milled and discarded land cards, which this card's own {2}{G} mill ability is built to feed; discard covers only the hand; dies is creatures/permanents dying; leaves_graveyard is the opposite direction. The {2}{G}: mill 1 activated ability and the gain_life effect are expressible today.
+- **(trigger_event)** a trigger event that fires whenever a card matching a filter (here: a creature card, any owner, any graveyard) is put into a graveyard, with a from_zones/except-battlefield clause so it can be narrowed to arrivals from anywhere other than the battlefield -- hand (discard), library (mill), stack (countered or resolved), exile, command zone
+  <br>Why the existing vocabulary won't do: The other two clauses are expressible (`creature_dies` / `dies` with exclude_self, and `leaves_graveyard` filtered to creature cards you own), but there is no zone-change-to-graveyard event in trigger_events: `discard` covers only the hand, `dies` and `leaves_battlefield` only the battlefield, and there is no mill event; the trigger's `from_zones` key is read only for spell_cast and land_played. Writing just the two expressible clauses would silently drop the milled/discarded-creature half, which is the card's main engine with its own {1}{B} mill ability.
+- **(trigger_event)** a trigger event that fires when a card matching a filter (here: a land card, owner = you) is put into a graveyard from ANY zone -- battlefield (sacrifice/destroy), hand (discard), library (mill, surveil), stack -- and supports `batched: true` so that several land cards moved by one event (a mill of three lands, a discard of two lands) trigger it exactly once ("one or more")
+  <br>Why the existing vocabulary won't do: leaves_battlefield with to_zones ["graveyard"] sees only permanents leaving the battlefield and misses discarded, milled and surveilled land cards, which are the card's whole engine (Gitrog + discard/dredge loops); discard covers only the hand and carries no card-type filter on the moved card from library; there is no mill or generic zone-change-to-graveyard event in trigger_events. Combining leaves_battlefield and discard triggers would still miss mill/surveil and would trigger twice for a single simultaneous event that moves lands from two zones. The draw half is a plain draw op once the event exists. The upkeep 'sacrifice unless you sacrifice a land' and extra_land_drops lines are expressible today.
+- **(trigger_event)** a self trigger that fires when this card is put into a graveyard from ANY zone (battlefield, hand via discard, library via mill/surveil, stack via counter), so the triggered ability works from the graveyard and can shuffle the card (bound as the trigger subject) into its owner's library -- the Eldrazi titan clause shared by Emrakul, Ulamog and Kozilek
+  <br>Why the existing vocabulary won't do: `trigger_events` has `dies` and `leaves_battlefield` (with `to_zones`), which only see the battlefield and miss discard, mill and a countered spell -- the cases the clause exists for. `discard` covers only the hand. No event observes a card arriving in a graveyard from the library or stack, and no `card_level_rider_keys` entry (`tucks_itself` is a resolving spell's own fate) replaces it. Writing only the `dies` half would make a different card that stays in the graveyard when milled or discarded.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Syr Konrad, the Grim** (rank 256) — `syr_konrad_the_grim`
+  - Whenever another creature dies, or a creature card is put into a graveyard from anywhere other than the battlefield, or a creature card leaves your graveyard, Syr Konrad deals 1 damage to each opponent.
+- **The Gitrog Monster** (rank 902) — `the_gitrog_monster`
+  - Whenever one or more land cards are put into your graveyard from anywhere, draw a card.
+- **Colossal Grave-Reaver** (rank 1942) — `colossal_grave_reaver`
+  - Whenever one or more creature cards are put into your graveyard from your library, put one of them onto the battlefield.
+- **Worldspine Wurm** (rank 2387) — `worldspine_wurm`
+  - When this creature dies, create three 5/5 green Wurm creature tokens with trample.
+  - When Worldspine Wurm is put into a graveyard from anywhere, shuffle it into its owner's library.
+- **Crawling Sensation** (rank 3007) — `crawling_sensation`
+  - Whenever one or more land cards are put into your graveyard from anywhere for the first time each turn, create a 1/1 green Insect creature token.
+- **Desert Warfare** (rank 7493) — `desert_warfare`
+  - Whenever you sacrifice a Desert and whenever a Desert card is put into your graveyard from your hand or library, put that card onto the battlefield under your control at the beginning of your next end step.
+  - At the beginning of combat on your turn, if you control five or more Deserts, create that many 1/1 red, green, and white Sand Warrior creature tokens. They gain haste.
+- **Disa the Restless** (rank 8872) — `disa_the_restless`
+  - Whenever a Lhurgoyf permanent card is put into your graveyard from anywhere other than the battlefield, put it onto the battlefield.
+  - Whenever one or more creatures you control deal combat damage to a player, create a Tarmogoyf token.
+- **Centaur Vinecrasher** (rank 10988) — `centaur_vinecrasher`
+  - Whenever a land card is put into a graveyard from anywhere, you may pay {G}{G}. If you do, return this card from your graveyard to your hand.
+- **Skola Grovedancer** (rank 12300) — `skola_grovedancer`
+  - Whenever a land card is put into your graveyard from anywhere, you gain 1 life.
+
+</details>
+
 ## prevent-damage-by-source
 
 Blocks **8** cards.
@@ -368,50 +419,6 @@ Blocks **8** cards.
   - Prevent all combat damage that would be dealt to this creature by Walls.
 - **Enchanted Being** (rank 31748) — `enchanted_being`
   - Prevent all combat damage that would be dealt to this creature by enchanted creatures.
-
-</details>
-
-## put-into-graveyard-from-anywhere
-
-Blocks **8** cards.
-
-- **(trigger_event)** a trigger event that fires whenever a card matching a filter (here: a land card, any owner) is put into a graveyard from ANY zone -- battlefield, hand (discard), library (mill), stack -- usable on an ability with active_zones ["graveyard"] so the card triggers while it sits in its owner's graveyard (Ashen Ghoul / Vengevine style recursion)
-  <br>Why the existing vocabulary won't do: leaves_battlefield with to_zones ["graveyard"] only sees permanents leaving the battlefield (a sacrificed or destroyed land) and misses discarded, milled and countered-from-stack cards; discard covers only the hand; dies is creatures only; there is no mill or generic zone-change-to-graveyard event in trigger_events. The may-pay {G}{G} and return_to_hand halves are expressible once the event exists.
-- **(trigger_event)** a trigger event that fires when cards matching a filter (here: creature cards, owner = you) are put into a graveyard, narrowed by `from_zones: ["library"]` (mill, surveil, self-mill costs), with `batched: true` so one simultaneous move of several creature cards triggers once ("one or more"), and binding the batch of moved cards so the effect can be `put_onto_battlefield` over exactly one of THEM chosen by the controller ("put one of them"), still in the graveyard on resolution
-  <br>Why the existing vocabulary won't do: trigger_events has no zone-change-to-graveyard event: leaves_battlefield only sees permanents leaving the battlefield, dies is battlefield creatures, discard is the hand, leaves_graveyard is the reverse direction; the trigger's from_zones key is read only for spell_cast and land_played. Without the event there is also no binding for 'them', so a put_onto_battlefield over any creature card in the graveyard would wrongly reach creature cards milled earlier. The Flying keyword and the enters-or-attacks mill three (self_enters + attacks triggers with mill) are expressible today.
-- **(trigger_event)** a trigger event that fires when one or more cards matching a filter (here: land cards, owner = you) are put into a graveyard from ANY zone -- battlefield, hand (discard), library (mill, surveil), stack -- supporting `batched: true` so one simultaneous move of several land cards triggers once, and `max_per_turn: 1` for "for the first time each turn"
-  <br>Why the existing vocabulary won't do: trigger_events has no generic zone-change-to-graveyard event: leaves_battlefield with to_zones ["graveyard"] (and dies) only sees permanents leaving the battlefield and misses milled and discarded land cards, which is what this card's own upkeep mill feeds; discard covers only the hand; leaves_graveyard is the opposite direction. The upkeep `may` + `mill` line and the insect_1_1_g token are expressible today.
-- **(trigger_event)** a trigger event that fires when a card matching a filter (here: a permanent card with subtype Lhurgoyf, owner = you) is put into a graveyard, narrowed by `from_zones` to every zone except the battlefield (hand via discard, library via mill/surveil, stack via countered/resolved, exile), binding the moved card as the subject so the effect can `put_onto_battlefield` exactly that card ("put it") if it is still in the graveyard on resolution
-  <br>Why the existing vocabulary won't do: trigger_events has no zone-change-to-graveyard event: leaves_battlefield/dies only see permanents leaving the battlefield (exactly the source this card excludes), discard covers only the hand, leaves_graveyard is the reverse direction, and the trigger's from_zones key is read only for spell_cast and land_played. Without the event there is also no binding for 'it'.
-- **(trigger_event)** a trigger event that fires once per card matching a filter (here: a land card, owner = you, i.e. into YOUR graveyard) put into a graveyard from ANY zone -- battlefield, hand (discard), library (mill, surveil), stack -- unbatched, so milling two lands gains 2 life
-  <br>Why the existing vocabulary won't do: trigger_events has no generic zone-change-to-graveyard event: leaves_battlefield with to_zones ["graveyard"] only sees permanents leaving the battlefield and misses milled and discarded land cards, which this card's own {2}{G} mill ability is built to feed; discard covers only the hand; dies is creatures/permanents dying; leaves_graveyard is the opposite direction. The {2}{G}: mill 1 activated ability and the gain_life effect are expressible today.
-- **(trigger_event)** a trigger event that fires whenever a card matching a filter (here: a creature card, any owner, any graveyard) is put into a graveyard, with a from_zones/except-battlefield clause so it can be narrowed to arrivals from anywhere other than the battlefield -- hand (discard), library (mill), stack (countered or resolved), exile, command zone
-  <br>Why the existing vocabulary won't do: The other two clauses are expressible (`creature_dies` / `dies` with exclude_self, and `leaves_graveyard` filtered to creature cards you own), but there is no zone-change-to-graveyard event in trigger_events: `discard` covers only the hand, `dies` and `leaves_battlefield` only the battlefield, and there is no mill event; the trigger's `from_zones` key is read only for spell_cast and land_played. Writing just the two expressible clauses would silently drop the milled/discarded-creature half, which is the card's main engine with its own {1}{B} mill ability.
-- **(trigger_event)** a trigger event that fires when a card matching a filter (here: a land card, owner = you) is put into a graveyard from ANY zone -- battlefield (sacrifice/destroy), hand (discard), library (mill, surveil), stack -- and supports `batched: true` so that several land cards moved by one event (a mill of three lands, a discard of two lands) trigger it exactly once ("one or more")
-  <br>Why the existing vocabulary won't do: leaves_battlefield with to_zones ["graveyard"] sees only permanents leaving the battlefield and misses discarded, milled and surveilled land cards, which are the card's whole engine (Gitrog + discard/dredge loops); discard covers only the hand and carries no card-type filter on the moved card from library; there is no mill or generic zone-change-to-graveyard event in trigger_events. Combining leaves_battlefield and discard triggers would still miss mill/surveil and would trigger twice for a single simultaneous event that moves lands from two zones. The draw half is a plain draw op once the event exists. The upkeep 'sacrifice unless you sacrifice a land' and extra_land_drops lines are expressible today.
-- **(trigger_event)** a self trigger that fires when this card is put into a graveyard from ANY zone (battlefield, hand via discard, library via mill/surveil, stack via counter), so the triggered ability works from the graveyard and can shuffle the card (bound as the trigger subject) into its owner's library -- the Eldrazi titan clause shared by Emrakul, Ulamog and Kozilek
-  <br>Why the existing vocabulary won't do: `trigger_events` has `dies` and `leaves_battlefield` (with `to_zones`), which only see the battlefield and miss discard, mill and a countered spell -- the cases the clause exists for. `discard` covers only the hand. No event observes a card arriving in a graveyard from the library or stack, and no `card_level_rider_keys` entry (`tucks_itself` is a resolving spell's own fate) replaces it. Writing only the `dies` half would make a different card that stays in the graveyard when milled or discarded.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Syr Konrad, the Grim** (rank 256) — `syr_konrad_the_grim`
-  - Whenever another creature dies, or a creature card is put into a graveyard from anywhere other than the battlefield, or a creature card leaves your graveyard, Syr Konrad deals 1 damage to each opponent.
-- **The Gitrog Monster** (rank 902) — `the_gitrog_monster`
-  - Whenever one or more land cards are put into your graveyard from anywhere, draw a card.
-- **Colossal Grave-Reaver** (rank 1942) — `colossal_grave_reaver`
-  - Whenever one or more creature cards are put into your graveyard from your library, put one of them onto the battlefield.
-- **Worldspine Wurm** (rank 2387) — `worldspine_wurm`
-  - When this creature dies, create three 5/5 green Wurm creature tokens with trample.
-  - When Worldspine Wurm is put into a graveyard from anywhere, shuffle it into its owner's library.
-- **Crawling Sensation** (rank 3007) — `crawling_sensation`
-  - Whenever one or more land cards are put into your graveyard from anywhere for the first time each turn, create a 1/1 green Insect creature token.
-- **Disa the Restless** (rank 8872) — `disa_the_restless`
-  - Whenever a Lhurgoyf permanent card is put into your graveyard from anywhere other than the battlefield, put it onto the battlefield.
-  - Whenever one or more creatures you control deal combat damage to a player, create a Tarmogoyf token.
-- **Centaur Vinecrasher** (rank 10988) — `centaur_vinecrasher`
-  - Whenever a land card is put into a graveyard from anywhere, you may pay {G}{G}. If you do, return this card from your graveyard to your hand.
-- **Skola Grovedancer** (rank 12300) — `skola_grovedancer`
-  - Whenever a land card is put into your graveyard from anywhere, you gain 1 life.
 
 </details>
 
@@ -657,6 +664,28 @@ Blocks **3** cards.
 
 </details>
 
+## copy-exception-ability
+
+Blocks **3** cards.
+
+- **(op)** copy_permanent's `except_` adding a whole quoted triggered ability to the token copies' copiable values (707.9b) -- here "When this token enters, it fights up to one target creature you don't control" (a self-enters trigger whose effect is `fight` between the token and an optional target creature an opponent controls) -- present as the tokens enter so the enters trigger fires for each of the X copies, and copied along by any later copy of a token
+  <br>Why the existing vocabulary won't do: copy_permanent's `except_` is checked against COPY_EXCEPT_KEYS (add_keywords, colors, types, power, toughness, add_types, add_subtypes, add_supertypes, remove_supertypes, no_mana_cost) and becomes `copy_overrides`, which characteristics reads only for those characteristics; nothing adds a triggered ability. A following `grant_ability` on the copies' `as` binding comes after they entered, so a 'when this token enters' trigger would never fire, and it is a layer-6 grant rather than a copiable value. Resolving `fight` directly in the spell via for_each over the binding skips the trigger (targets chosen on the stack, can be responded to) and is an approximation. The rest -- X from {X}{X}, target creature you control, copy_permanent amount X, fight with up to one target -- is expressible.
+- **(op)** copy_permanent's `except_` adding a whole quoted triggered ability to the token's copiable values (707.9b), written once under `grantable_abilities` and referenced by index -- here "When this token leaves the battlefield, return the exiled card to its owner's graveyard" -- where "the exiled card" is linked to the specific card the creating ability exiled (e.g. the token records the exiled oid when created, and a selector such as `exiled_with: "self"` on the token resolves to it), so the card returns to its owner's graveyard when that particular token leaves
+  <br>Why the existing vocabulary won't do: copy_permanent's `except_` is checked against COPY_EXCEPT_KEYS (colors, types, power, toughness, add_types, add_subtypes, add_supertypes, remove_supertypes, add_keywords, no_mana_cost) and becomes `copy_overrides`, which characteristics._compute reads only for those characteristics -- `add_subtypes: ["Spirit"]` covers the Spirit half, and `add_keywords` adds keywords only, but nothing adds a triggered ability. The new `except_` keys on become_copy (BECOME_COPY_EXCEPT_KEYS: add_keywords, keep_abilities) do not reach this card: they are become_copy-only (an in-place copy, not a token copy_permanent creates), add_keywords adds keywords rather than a triggered ability, and keep_abilities keeps positions in the copying card's OWN printed abilities -- the quoted leaves-the-battlefield trigger is not one of Hofri's own abilities and would fire for Hofri, not the token. A following `grant_ability` on the `as` binding would be a layer-6 grant rather than a copiable value (a copy of the token would lack it), and the granted trigger has no way to name the card Hofri's trigger exiled: `exiled_with: "self"` on the token would look for cards the token exiled, not cards exiled by Hofri, and an `exile` `link` is held by the exiling source, not by the token it later creates. The first sentence (buff + grant_keyword statics on Spirits you control) and the die/exile/copy steps (creature_dies trigger, exile the dying card, copy_permanent from exile with add_subtypes) are expressible.
+- **(op)** a `become_copy` `except_` key (707.9b) that adds an ability the copying card does NOT itself have -- e.g. `add_abilities: [i]` indexing the card's `grantable_abilities`, appended by `GameState.card_of` the way `copying_own_abilities` is -- so 'becomes a copy of X until end of turn, except it has myriad' writes the myriad triggered ability (as shipped in templates: a self-attacks trigger making tapped-and-attacking token copies exiled at end of combat) into the copiable values, where the myriad tokens and anything copying Muddle see it, and nothing happens when no target was chosen
+  <br>Why the existing vocabulary won't do: `except_` now takes `add_keywords` and `keep_abilities` (BECOME_COPY_EXCEPT_KEYS). Myriad is not in `keywords` -- the pool writes it as a triggered ability -- so `add_keywords` cannot name it. `keep_abilities` only carries positions in the card's OWN printed `abilities` onto the copy; Muddle does not print myriad as its own ability, and writing it into `abilities` to keep it would give the uncopied Muddle myriad permanently. A `grant_ability` after the copy is a layer-6 grant, not a copiable value (the doc names it the near miss), so copies of Muddle would lack myriad. And the myriad trigger itself has a second gap: `copy_permanent` creates its token from the source's printed `def_id` and copy_overrides only, so a token copy of Muddle while it is copying another creature (an in-place `become_copy`, `obj.copying`) would be a copy of Muddle's own printed card rather than of the creature Muddle has become (707.2: the copiable values include the copy effect)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Aggressive Biomancy** (rank 6346) — `aggressive_biomancy`
+  - Create X tokens that are copies of target creature you control, except they have "When this token enters, it fights up to one target creature you don't control."
+- **Hofri Ghostforge** (rank 6941) — `hofri_ghostforge`
+  - Whenever another nontoken creature you control dies, exile it. If you do, create a token that's a copy of that creature, except it's a Spirit in addition to its other types and it has "When this token leaves the battlefield, return the exiled card to its owner's graveyard."
+- **Muddle, the Ever-Changing** (rank 11112) — `muddle_the_ever_changing`
+  - Whenever you cast an instant or sorcery spell, Muddle becomes a copy of up to one target nonlegendary creature you control until end of turn, except it has myriad
+
+</details>
+
 ## copy-exception-set-subtypes
 
 Blocks **3** cards.
@@ -857,24 +886,6 @@ Blocks **2** cards.
   - You may choose new targets for target spell or ability.
 - **Misdirection** (rank 1562) — `misdirection`
   - Change the target of target spell with a single target.
-
-</details>
-
-## copy-exception-ability
-
-Blocks **2** cards.
-
-- **(op)** copy_permanent's `except_` adding a whole quoted triggered ability to the token's copiable values (707.9b), written once under `grantable_abilities` and referenced by index -- here "When this token leaves the battlefield, return the exiled card to its owner's graveyard" -- where "the exiled card" is linked to the specific card the creating ability exiled (e.g. the token records the exiled oid when created, and a selector such as `exiled_with: "self"` on the token resolves to it), so the card returns to its owner's graveyard when that particular token leaves
-  <br>Why the existing vocabulary won't do: copy_permanent's `except_` is checked against COPY_EXCEPT_KEYS (colors, types, power, toughness, add_types, add_subtypes, add_supertypes, remove_supertypes, add_keywords, no_mana_cost) and becomes `copy_overrides`, which characteristics._compute reads only for those characteristics -- `add_subtypes: ["Spirit"]` covers the Spirit half, and `add_keywords` adds keywords only, but nothing adds a triggered ability. The new `except_` keys on become_copy (BECOME_COPY_EXCEPT_KEYS: add_keywords, keep_abilities) do not reach this card: they are become_copy-only (an in-place copy, not a token copy_permanent creates), add_keywords adds keywords rather than a triggered ability, and keep_abilities keeps positions in the copying card's OWN printed abilities -- the quoted leaves-the-battlefield trigger is not one of Hofri's own abilities and would fire for Hofri, not the token. A following `grant_ability` on the `as` binding would be a layer-6 grant rather than a copiable value (a copy of the token would lack it), and the granted trigger has no way to name the card Hofri's trigger exiled: `exiled_with: "self"` on the token would look for cards the token exiled, not cards exiled by Hofri, and an `exile` `link` is held by the exiling source, not by the token it later creates. The first sentence (buff + grant_keyword statics on Spirits you control) and the die/exile/copy steps (creature_dies trigger, exile the dying card, copy_permanent from exile with add_subtypes) are expressible.
-- **(op)** a `become_copy` `except_` key (707.9b) that adds an ability the copying card does NOT itself have -- e.g. `add_abilities: [i]` indexing the card's `grantable_abilities`, appended by `GameState.card_of` the way `copying_own_abilities` is -- so 'becomes a copy of X until end of turn, except it has myriad' writes the myriad triggered ability (as shipped in templates: a self-attacks trigger making tapped-and-attacking token copies exiled at end of combat) into the copiable values, where the myriad tokens and anything copying Muddle see it, and nothing happens when no target was chosen
-  <br>Why the existing vocabulary won't do: `except_` now takes `add_keywords` and `keep_abilities` (BECOME_COPY_EXCEPT_KEYS). Myriad is not in `keywords` -- the pool writes it as a triggered ability -- so `add_keywords` cannot name it. `keep_abilities` only carries positions in the card's OWN printed `abilities` onto the copy; Muddle does not print myriad as its own ability, and writing it into `abilities` to keep it would give the uncopied Muddle myriad permanently. A `grant_ability` after the copy is a layer-6 grant, not a copiable value (the doc names it the near miss), so copies of Muddle would lack myriad. And the myriad trigger itself has a second gap: `copy_permanent` creates its token from the source's printed `def_id` and copy_overrides only, so a token copy of Muddle while it is copying another creature (an in-place `become_copy`, `obj.copying`) would be a copy of Muddle's own printed card rather than of the creature Muddle has become (707.2: the copiable values include the copy effect)
-
-<details><summary>Cards waiting on this</summary>
-
-- **Hofri Ghostforge** (rank 6941) — `hofri_ghostforge`
-  - Whenever another nontoken creature you control dies, exile it. If you do, create a token that's a copy of that creature, except it's a Spirit in addition to its other types and it has "When this token leaves the battlefield, return the exiled card to its owner's graveyard."
-- **Muddle, the Ever-Changing** (rank 11112) — `muddle_the_ever_changing`
-  - Whenever you cast an instant or sorcery spell, Muddle becomes a copy of up to one target nonlegendary creature you control until end of turn, except it has myriad
 
 </details>
 
@@ -2960,6 +2971,20 @@ Blocks **1** card.
 
 </details>
 
+## marit-lage-token
+
+Blocks **1** card.
+
+- **(token)** Marit Lage, a legendary 20/20 black Avatar creature token with flying and indestructible (named token, Legendary supertype)
+  <br>Why the existing vocabulary won't do: token_ids is a closed list and holds no 20/20 Avatar, no Marit Lage and no legendary named creature token; the nearest indestructible token is vibranium_token, a colorless artifact, so create_token has nothing to name
+
+<details><summary>Cards waiting on this</summary>
+
+- **Dark Depths** (rank 1430) — `dark_depths`
+  - When Dark Depths has no ice counters on it, sacrifice it. If you do, create Marit Lage, a legendary 20/20 black Avatar creature token with flying and indestructible.
+
+</details>
+
 ## maximum-hand-size-modifier
 
 Blocks **1** card.
@@ -3625,6 +3650,21 @@ Blocks **1** card.
 
 - **Amphin Mutineer** (rank 3395) — `amphin_mutineer`
   - When this creature enters, exile up to one target non-Salamander creature. That creature's controller creates a 4/3 blue Salamander Warrior creature token.
+
+</details>
+
+## sand-warrior-token
+
+Blocks **1** card.
+
+- **(token)** a 1/1 red, green, and white Sand Warrior creature token
+  <br>Why the existing vocabulary won't do: token_ids has warrior_1_1_r, warrior_1_1_w and elf_warrior_1_1_g, none of which is a three-colour R/G/W Sand Warrior
+
+<details><summary>Cards waiting on this</summary>
+
+- **Desert Warfare** (rank 7493) — `desert_warfare`
+  - Whenever you sacrifice a Desert and whenever a Desert card is put into your graveyard from your hand or library, put that card onto the battlefield under your control at the beginning of your next end step.
+  - At the beginning of combat on your turn, if you control five or more Deserts, create that many 1/1 red, green, and white Sand Warrior creature tokens. They gain haste.
 
 </details>
 

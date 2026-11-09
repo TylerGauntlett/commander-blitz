@@ -1,0 +1,16 @@
+{
+  "card_id": "dark_depths",
+  "name": "Dark Depths",
+  "oracle_text": "Dark Depths enters with ten ice counters on it.\n{3}: Remove an ice counter from Dark Depths.\nWhen Dark Depths has no ice counters on it, sacrifice it. If you do, create Marit Lage, a legendary 20/20 black Avatar creature token with flying and indestructible.",
+  "blocked_sentences": [
+    "When Dark Depths has no ice counters on it, sacrifice it. If you do, create Marit Lage, a legendary 20/20 black Avatar creature token with flying and indestructible."
+  ],
+  "needs": [{
+    "capability": "marit_lage_token",
+    "kind": "token",
+    "what": "Marit Lage, a legendary 20/20 black Avatar creature token with flying and indestructible (named token, Legendary supertype)",
+    "why_existing_wont_do": "token_ids is a closed list and holds no 20/20 Avatar, no Marit Lage and no legendary named creature token; the nearest indestructible token is vibranium_token, a colorless artifact, so create_token has nothing to name"
+  }],
+  "closest_existing": ["create_token", "last_counter_removed", "state"],
+  "confidence": "high"
+}

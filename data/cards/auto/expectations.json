@@ -786,6 +786,9 @@
   "anvilwrought_raptor": {
     "zone": "battlefield"
   },
+  "apex_devastator": {
+    "zone": "battlefield"
+  },
   "apprentice_wizard": {
     "zone": "battlefield"
   },
@@ -1604,6 +1607,10 @@
   "basilisk_collar": {
     "zone": "battlefield"
   },
+  "basilisk_gate": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "bassara_tower_archer": {
     "zone": "battlefield"
   },
@@ -1959,6 +1966,14 @@
     "battlefield_count": 30,
     "opponent_battlefield_count": 4,
     "zone": "graveyard"
+  },
+  "blast_zone": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 1,
+      "kind": "charge"
+    },
+    "zone": "battlefield"
   },
   "blasted_landscape": {
     "zone": "battlefield"
@@ -3673,6 +3688,10 @@
     "zone": "battlefield"
   },
   "copperline_gorge": {
+    "zone": "battlefield"
+  },
+  "copy_land": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "coral_atoll": {
@@ -5850,6 +5869,10 @@
     "zone": "graveyard"
   },
   "expedition_envoy": {
+    "zone": "battlefield"
+  },
+  "expedition_map": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "expel_the_interlopers": {
