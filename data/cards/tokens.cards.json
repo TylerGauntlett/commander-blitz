@@ -5026,6 +5026,121 @@
         "W"
       ],
       "is_token": true
+    },
+    {
+      "id": "dragon_2_2_r_flying_firebreathing",
+      "name": "Dragon Token",
+      "oracle_text": "2/2 red Dragon creature token with flying and \"{R}: This token gets +1/+0 until end of turn.\"",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Dragon"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "is_token": true,
+      "keywords": [
+        "flying"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{R}: This token gets +1/+0 until end of turn.",
+          "cost": {
+            "mana": "{R}"
+          },
+          "effects": [
+            {
+              "op": "pump",
+              "objects": {
+                "self_only": true
+              },
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 0
+              },
+              "duration": "until_end_of_turn"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dragon_egg_0_2_r_defender",
+      "name": "Dragon Egg Token",
+      "oracle_text": "0/2 red Dragon Egg creature token with defender and \"When this token dies, create a 2/2 red Dragon creature token with flying and '{R}: This token gets +1/+0 until end of turn.'\"",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Dragon",
+        "Egg"
+      ],
+      "power": 0,
+      "toughness": 2,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "is_token": true,
+      "keywords": [
+        "defender"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this token dies, create a 2/2 red Dragon creature token with flying and \"{R}: This token gets +1/+0 until end of turn.\"",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "dragon_2_2_r_flying_firebreathing",
+              "amount": {
+                "const": 1
+              },
+              "controller": "you"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "plant_warrior_4_2_g_reach",
+      "name": "Plant Warrior Token",
+      "oracle_text": "4/2 green Plant Warrior creature token with reach.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Plant",
+        "Warrior"
+      ],
+      "power": 4,
+      "toughness": 2,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true,
+      "keywords": [
+        "reach"
+      ]
     }
   ]
 }

@@ -12663,6 +12663,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "nesting_dragon": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "nesting_grounds": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -20733,6 +20737,13 @@
       "1": 40
     },
     "zone": "battlefield"
+  },
+  "vengeful_regrowth": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
   },
   "vengeful_warchief": {
     "battlefield_count": 33,

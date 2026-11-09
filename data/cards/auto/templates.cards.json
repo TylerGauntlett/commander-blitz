@@ -148916,6 +148916,54 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "dragon_egg_0_2_r_defender"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Landfall — Whenever a land you control enters, create a 0/2 red Dragon Egg creature token with defender and \"When this token dies, create a 2/2 red Dragon creature token with flying and '{R}: This token gets +1/+0 until end of turn.'\"",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "nesting_dragon",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{R}{R}",
+      "name": "Nesting Dragon",
+      "oracle_text": "Flying\nLandfall — Whenever a land you control enters, create a 0/2 red Dragon Egg creature token with defender and \"When this token dies, create a 2/2 red Dragon creature token with flying and '{R}: This token gets +1/+0 until end of turn.'\"",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -246060,6 +246108,62 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "flashback": {
+        "mana": "{6}{G}{G}"
+      },
+      "id": "vengeful_regrowth",
+      "mana_cost": "{4}{G}{G}",
+      "name": "Vengeful Regrowth",
+      "oracle_text": "Return up to three target land cards from your graveyard to the battlefield tapped. Create that many 4/2 green Plant Warrior creature tokens with reach.\nFlashback {6}{G}{G} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "you",
+          "destination": "battlefield",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "return_from_graveyard",
+          "tapped": true
+        },
+        {
+          "amount": {
+            "count": {
+              "target": "t1",
+              "zone": "battlefield"
+            }
+          },
+          "op": "create_token",
+          "token": "plant_warrior_4_2_g_reach"
+        }
+      ],
+      "targets": [
+        {
+          "count": 3,
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "min_count": 0,
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Land"
+            ],
+            "zone": "graveyard"
+          },
+          "up_to": true
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {

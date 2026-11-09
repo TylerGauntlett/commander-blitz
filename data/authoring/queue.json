@@ -185392,12 +185392,12 @@
     },
     "Nesting Dragon": {
       "edhrec_rank": 3556,
-      "gate": "template",
+      "gate": null,
       "name": "Nesting Dragon",
-      "reason": "no template for: Landfall — Whenever a land you control enters, create a 0/2 red Dragon Egg creature token ",
+      "reason": "",
       "scryfall_id": "571e3136-e4f3-412b-bfd4-0eb06d3d723f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nesting Grounds": {
@@ -302582,12 +302582,12 @@
     },
     "Vengeful Regrowth": {
       "edhrec_rank": 10758,
-      "gate": "template",
+      "gate": null,
       "name": "Vengeful Regrowth",
-      "reason": "no template for: Return up to three target land cards from your graveyard to the battlefield tapped. Create",
+      "reason": "",
       "scryfall_id": "3df6b46d-1079-4c32-b22c-ecd21132209a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vengeful Strangler // Strangling Grasp": {

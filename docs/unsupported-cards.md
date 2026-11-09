@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**299 cards** blocked by **268** capabilities.
+**297 cards** blocked by **267** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -43,7 +43,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [filtered-discard](#filtered-discard) | 2 | 9279 | op |
 | [manifest-dread](#manifest-dread) | 2 | 5772 | op |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
-| [plant-warrior-4-2-g-reach](#plant-warrior-4-2-g-reach) | 2 | 8729 | token |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
 | [remove-x-counters-cost](#remove-x-counters-cost) | 2 | 5399 | cost |
 | [return-face-down](#return-face-down) | 2 | 3081 | op |
@@ -117,7 +116,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [distribute-counters-spell](#distribute-counters-spell) | 1 | 6993 | op |
 | [divided-damage-on-activated](#divided-damage-on-activated) | 1 | 13459 | engine |
 | [double-x](#double-x) | 1 | 2672 | op |
-| [dragon-egg-0-2-r-defender-token](#dragon-egg-0-2-r-defender-token) | 1 | 3556 | token |
 | [each-player-chooses-color](#each-player-chooses-color) | 1 | 3587 | op |
 | [echo](#echo) | 1 | 961 | keyword |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
@@ -212,6 +210,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
 | [pay-any-amount-of-life](#pay-any-amount-of-life) | 1 | 4322 | cost |
 | [pay-energy-x](#pay-energy-x) | 1 | 5591 | cost |
+| [plant-warrior-4-2-g-reach](#plant-warrior-4-2-g-reach) | 1 | 8729 | token |
 | [play-cost-paid-card](#play-cost-paid-card) | 1 | 6544 | op |
 | [play-lands-from-graveyard-filtered](#play-lands-from-graveyard-filtered) | 1 | 3993 | static_effect |
 | [playable-condition-opponent-lost-life](#playable-condition-opponent-lost-life) | 1 | 4478 | engine |
@@ -1058,24 +1057,6 @@ Blocks **2** cards.
   - {T}: Add {C}. If Gemstone Caverns has a luck counter on it, instead add one mana of any color.
 - **Leyline of Sanctity** (rank 7441) — `leyline_of_sanctity`
   - If this card is in your opening hand, you may begin the game with it on the battlefield.
-
-</details>
-
-## plant-warrior-4-2-g-reach
-
-Blocks **2** cards.
-
-- **(token)** a 4/2 green Plant Warrior creature token with reach
-  <br>Why the existing vocabulary won't do: token_ids is a closed list and holds no 4/2 Plant Warrior: the nearest are plant_0_1_g (0/1 Plant, no reach), rhino_warrior_4_4_g (4/4 Rhino Warrior) and spider_1_2_g_reach (1/2 Spider with reach), none of which is the printed token. The rest of the card is expressible: return_from_graveyard with tapped over an up_to card_in_graveyard land target, create_token amount as {targets_of_spell: t1} or a count of the returned cards, and card-level flashback.
-- **(token)** a 4/2 green Plant Warrior creature token with reach
-  <br>Why the existing vocabulary won't do: token_ids has no Plant Warrior token; the only Plant is plant_0_1_g and the reach tokens are spider_1_2_g_reach and wall_0_3_c_defender_reach, all different tokens
-
-<details><summary>Cards waiting on this</summary>
-
-- **Yuma, Proud Protector** (rank 8729) — `yuma_proud_protector`
-  - Whenever a Desert card is put into your graveyard from anywhere, create a 4/2 green Plant Warrior creature token with reach.
-- **Vengeful Regrowth** (rank 10758) — `vengeful_regrowth`
-  - Create that many 4/2 green Plant Warrior creature tokens with reach.
 
 </details>
 
@@ -2169,20 +2150,6 @@ Blocks **1** card.
 - **Unbound Flourishing** (rank 2672) — `unbound_flourishing`
   - Whenever you cast a permanent spell with a mana cost that contains {X}, double the value of X.
   - Whenever you cast an instant or sorcery spell or activate an ability, if that spell's mana cost or that ability's activation cost contains {X}, copy that spell or ability. You may choose new targets for the copy.
-
-</details>
-
-## dragon-egg-0-2-r-defender-token
-
-Blocks **1** card.
-
-- **(token)** a 0/2 red Dragon Egg creature token with defender and "When this token dies, create a 2/2 red Dragon creature token with flying and '{R}: This token gets +1/+0 until end of turn.'" -- which in turn needs a second token, a 2/2 red Dragon creature token with flying and "{R}: This token gets +1/+0 until end of turn."
-  <br>Why the existing vocabulary won't do: token_ids is a closed list with no Dragon Egg and no 2/2 firebreathing Dragon; the nearest red Dragons (dragon_4_4_r_flying, dragon_5_5_r_flying, dragon_6_6_r_flying) are the wrong size and lack the pump ability. The rest of the card is expressible: flying from starting_point, and the landfall line is a permanent_enters trigger filtered to lands you control with a create_token effect
-
-<details><summary>Cards waiting on this</summary>
-
-- **Nesting Dragon** (rank 3556) — `nesting_dragon`
-  - Landfall — Whenever a land you control enters, create a 0/2 red Dragon Egg creature token with defender and "When this token dies, create a 2/2 red Dragon creature token with flying and '{R}: This token gets +1/+0 until end of turn.'"
 
 </details>
 
@@ -3527,6 +3494,20 @@ Blocks **1** card.
 
 - **Sphinx of the Revelation** (rank 5591) — `sphinx_of_the_revelation`
   - {W}{U}{U}, {T}, Pay X {E}: Draw X cards.
+
+</details>
+
+## plant-warrior-4-2-g-reach
+
+Blocks **1** card.
+
+- **(token)** a 4/2 green Plant Warrior creature token with reach
+  <br>Why the existing vocabulary won't do: token_ids has no Plant Warrior token; the only Plant is plant_0_1_g and the reach tokens are spider_1_2_g_reach and wall_0_3_c_defender_reach, all different tokens
+
+<details><summary>Cards waiting on this</summary>
+
+- **Yuma, Proud Protector** (rank 8729) — `yuma_proud_protector`
+  - Whenever a Desert card is put into your graveyard from anywhere, create a 4/2 green Plant Warrior creature token with reach.
 
 </details>
 
