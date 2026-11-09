@@ -40,6 +40,8 @@ forms::
     {"starting_life_of": "you"}       the life total one seat began with (103.4)
     {"commander_casts_this_game":     casts of their commanders from the
         "you"}                          command zone this game (903.8's tally)
+    {"greatest_commander_mana_value": the greatest printed mana value among
+        "you"}                          their commanders, wherever they are
     {"max_count_of": {"player": …,    how many objects the player with the most
                       "objects": …}}    of them has -- one player at a time
     {"sum": [a, b, ...]}              arithmetic
@@ -58,17 +60,20 @@ from ..characteristics import (
     auras_matching,
     chars,
     counters_of_kind,
+    greatest_commander_mana_value,
     min_count,
     min_life,
 )
 from ..enums import KEYWORD_COUNTERS, Keyword
 from ..errors import DslError
+from ..mana import origin_matches
 from ..objects import ANY_COUNTER_KIND, FINALITY, PLUS_ONE, SHIELD, STUN
 from .context import EffectContext
 from .selectors import (
     ENCHANTED_BY_CONTROLLERS,
     ENCHANTED_BY_KEYS,
     KNOWN_TYPES,
+    PAID_BY_SELECTOR_KEYS,
     PLAYER_SPEC_NAMES,
     resolve_pool,
     select_players,
@@ -262,6 +267,14 @@ VALUE_KEYS = frozenset(
         #: it sums both partners, so a partner deck would scry for the other's
         #: casts too. Takes an object reference, `times_tapped_this_turn`'s.
         "command_zone_casts_of",
+        #: "…becomes an X/X … where X is the greatest mana value among your
+        #: commanders" -- Cactus Preserve. The static leaf of the same name
+        #: (Tangleweave Armor) read as an effect resolves, through the one
+        #: computation both share, `characteristics.greatest_commander_mana_value`.
+        #: `extreme_value` over an `is_commander` selector is the near miss: a
+        #: selector walks one zone, and the commander is usually in the command
+        #: zone, which none reaches.
+        "greatest_commander_mana_value",
         # "…if it's the first combat phase of the turn" (Genji Glove). A value
         # rather than a boolean head, so the ordinary `cmp` says it: the printed
         # clause is `== 1`, and "the second combat" or "a later combat" fall out
@@ -383,6 +396,11 @@ VALUE_KEYS = frozenset(
         # Sunburst artifact cast for {4} off five different lands enters with
         # five counters, and its printed cost has no coloured pip at all.
         "colors_of_mana_spent",
+        # "For each mana from a Desert spent to cast this spell" -- Cataclysmic
+        # Prospecting. How many *units* of the payment came from permanents
+        # matching a `paid_by`-style filter: `paid_by` itself only says whether
+        # any did, over a set that holds one entry per source.
+        "mana_spent_from",
         #: "…the number of colors in your commanders' color identity". A deck
         #: fact rather than a board one, so it is the same number wherever the
         #: commander currently is.
@@ -546,6 +564,18 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         # an oid survives the zone change onto the battlefield.
         obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
         return len(obj.colors_spent) if obj is not None else 0
+    if "mana_spent_from" in expr:
+        # Read off the object that was cast, as `colors_of_mana_spent` is: the
+        # spell for its own `spell_effects`, the permanent for its enters
+        # trigger. `controller` in the filter is relative to that object's.
+        obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
+        if obj is None:
+            return 0
+        filt = expr["mana_spent_from"]
+        return sum(
+            1 for origin in obj.mana_spent_origins
+            if origin_matches(origin, filt, obj.controller)
+        )
     if "mana_symbols" in expr:
         # Chroma. Read off the **printed** cost, which is what the keyword says
         # and also what makes it safe inside a static: a mana cost is a pipeline
@@ -991,6 +1021,12 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
             tax = ctx.state.players[p].commander_tax
             total += sum(tax.get(oid, 0) for oid in ctx.state.commanders_of(p))
         return total
+    if "greatest_commander_mana_value" in expr:
+        # Cactus Preserve. Read once, here, as the effect resolves (608.2h): an
+        # `animate` sized by it keeps that size for the turn.
+        return greatest_commander_mana_value(
+            ctx.state, _players(ctx, expr["greatest_commander_mana_value"])
+        )
     if "cards_to_graveyard_this_turn" in expr:
         # Every graveyard, from every zone, cards only, so it takes no player
         # spec. Not gravestorm's count -- that is the key below.
@@ -1849,6 +1885,32 @@ def validate_characteristic_ref(ref: Any, where: str) -> None:
     )
 
 
+def validate_mana_spent_from(filt: Any, where: str) -> None:
+    """The filter is a remembered mana source's, so `paid_by`'s closed keys.
+
+    An empty filter would count every unit of mana a permanent made, which is
+    not "from a Desert" and is printed nowhere; `mana_spent_of` is the total.
+    """
+    if not isinstance(filt, Mapping) or not filt:
+        raise DslError(
+            f"{where}: a non-empty filter over what the mana's source was, e.g. "
+            f'{{"subtypes": ["Desert"]}}; for all mana spent use mana_spent_of'
+        )
+    unknown = set(filt) - PAID_BY_SELECTOR_KEYS
+    if unknown:
+        raise DslError(
+            f"{where}: {sorted(unknown)} cannot be asked of a remembered mana "
+            f"source -- it may have left the battlefield to make the mana. Use "
+            f"only {sorted(PAID_BY_SELECTOR_KEYS)}"
+        )
+    controller = filt.get("controller")
+    if controller is not None and controller not in ("you", "opponent", "any"):
+        raise DslError(
+            f"{where}.controller: only 'you', 'opponent' and 'any' can be asked "
+            f"of the one player the snapshot records, got {controller!r}"
+        )
+
+
 def validate_value(expr: Any, where: str) -> None:
     """Load-time check that a value expression uses only known forms."""
     if expr is None or isinstance(expr, (int, bool)):
@@ -1870,6 +1932,8 @@ def validate_value(expr: Any, where: str) -> None:
                 validate_value(sub, f"{where}.{key}[{i}]")
     if "half" in expr:
         validate_half(expr["half"], f"{where}.half")
+    if "mana_spent_from" in expr:
+        validate_mana_spent_from(expr["mana_spent_from"], f"{where}.mana_spent_from")
     for key in CHARACTERISTIC_OF_KEYS:
         if key in expr:
             validate_characteristic_ref(expr[key], f"{where}.{key}")
@@ -1941,6 +2005,15 @@ def validate_value(expr: Any, where: str) -> None:
             raise DslError(
                 f"{where}.commander_casts_this_game: needs a player spec, e.g. 'you' "
                 f"(whose commanders' casts from the command zone), got {who!r}"
+            )
+    if "greatest_commander_mana_value" in expr:
+        who = expr["greatest_commander_mana_value"]
+        if not isinstance(who, Mapping) and (
+            not isinstance(who, str) or who not in PLAYER_SPEC_NAMES
+        ):
+            raise DslError(
+                f"{where}.greatest_commander_mana_value: needs a player spec, e.g. "
+                f"'you' (whose commanders), got {who!r}"
             )
     for key in ("modified_creatures_died_this_turn", "nontoken_creatures_died_this_turn"):
         if key not in expr:

@@ -321,12 +321,15 @@ STATIC_EFFECTS = frozenset(
         # never at scheduling time, so a turn queued before the permanent arrived
         # is still skipped. Only extra turns -- the ordinary order has no reader.
         "skip_extra_turn",
+        # "You may play lands from your graveyard." Crucible of Worlds; with an
+        # optional `affects_spells` on the printed face, "You may play
+        # **Desert** lands from your graveyard" (Hazezon, Shaper of Sand). Read
+        # per card by `graveyard_land_play_allows`, only by the land drop.
         "play_lands_from_graveyard",
         # "Once during each of your turns, you may cast an artifact spell from
         # your graveyard." Edgar, Master Machinist. Player-wide like
         # `play_lands_from_graveyard` and strictly wider than it: that one is
-        # read only by the land drop, cannot be narrowed by card type and
-        # carries no per-turn count. Filters the spells it permits with
+        # read only by the land drop and carries no per-turn count. Filters the spells it permits with
         # `affects_spells`, the same filter `spell_cost_reduction` matches a
         # card in hand with, and counts its uses per granting permanent.
         "cast_from_graveyard",
@@ -1046,6 +1049,14 @@ SPELL_COST_REDUCTION_FILTER_KEYS = SPELL_FILTER_KEYS | {
 #: The zones a card can be cast or played **from** -- what a ``from_zone`` /
 #: ``not_from_zone`` spell filter and a trigger's ``from_zones`` may name.
 CAST_ORIGIN_ZONES = frozenset({"library", "hand", "graveyard", "exile", "command"})
+
+#: What a ``put_into_graveyard`` trigger's ``from_zones`` may name: every zone a
+#: card can be put into a graveyard *from* -- "from anywhere other than the
+#: battlefield" is all of these but one. Not the graveyard itself, which
+#: `zones.move_object` never reports as an arrival.
+GRAVEYARD_ORIGIN_ZONES = frozenset(
+    {"library", "hand", "battlefield", "stack", "exile", "command"}
+)
 
 #: What a ``cant_cast_spells`` static's ``affects_spells`` filter may use.
 #:

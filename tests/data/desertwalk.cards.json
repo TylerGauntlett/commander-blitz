@@ -1,0 +1,29 @@
+{
+  "_comment": "Cards that exist only for the desertwalk test (tests/unit/combat/test_desertwalk.py). Never part of a deck list. `t_desertwalker` is Hazezon, Shaper of Sand's evasion on a vanilla body.",
+  "cards": [
+    {
+      "id": "t_desertwalker",
+      "name": "Test Desertwalker",
+      "oracle_text": "Desertwalk (This creature can't be blocked as long as defending player controls a Desert.)",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "desertwalk"
+      ]
+    }
+  ]
+}

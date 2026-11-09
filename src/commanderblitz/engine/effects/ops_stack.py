@@ -47,8 +47,17 @@ def _spell_named_by(ctx: EffectContext, spec: Mapping[str, Any]):
     Returns None for a `sid` that names nothing and for a stack item that is an
     ability rather than a spell, so every caller can treat "no spell here" as
     one case.
+
+    A fourth, ``this_spell``, is the spell whose own effects are running --
+    "you may copy this spell" (Sevinne's Reclamation). It is answered from
+    `EffectContext.resolving_spell` and not from the stack: a resolving spell
+    has already left it (`stack.resolve_top`), so it is copied from that item,
+    which is its last-known targets and choices (707.10).
     """
 
+    if spec.get("this_spell"):
+        item = ctx.resolving_spell
+        return item if item is not None and item.is_spell else None
     if "sid" in spec:
         sid = evaluate_value(ctx, spec["sid"])
     elif "target" in spec:
@@ -98,6 +107,12 @@ def op_copy_spell(ctx: EffectContext, spec: Mapping[str, Any]):
 
     The question is only put when there is something to decide: a spell with no
     targets, or one whose targets cannot legally be moved, is not asked.
+
+    ``this_spell`` is "copy **this** spell" said by the resolving spell itself
+    (Sevinne's Reclamation). The copy is made as the original resolves, so a
+    countered original makes none, and it is made from the original's item --
+    the same targets, X, modes and additional costs -- but it was never cast,
+    so it was not cast from a graveyard and does not copy itself again.
 
     ``spells`` is a pool instead of one spell -- "copy **each of** those
     spells twice" (Finale of Promise), over a `cast_from_hand` binding of the
@@ -185,11 +200,13 @@ def _choose_new_targets(ctx: EffectContext, original, chooser: int | None = None
         chooser = ctx.controller
     card = ctx.state.registry.get(original.def_id)
     specs = getattr(card, "targets", ()) or ()
-    if original.gift_to is not None or original.cost_option is not None:
-        # The copy keeps the promise and the tier (707.10), so it re-chooses
-        # among the specs its stored refs were declared under.
+    if original.gift_to is not None or original.cost_option is not None or original.spree_modes:
+        # The copy keeps the promise, the tier and the spree modes (707.10), so
+        # it re-chooses among the specs its stored refs were declared under.
         specs = card.targets_for(
-            gift_promised=original.gift_to is not None, cost_option=original.cost_option
+            gift_promised=original.gift_to is not None,
+            cost_option=original.cost_option,
+            spree_modes=original.spree_modes,
         )
     if not specs:
         return None
@@ -277,6 +294,11 @@ def put_copy_on_stack(state, controller: int, original, targets=None):
         # copies it): the copy's `{"cost_option": n}` branch and the target
         # list its refs are split by are the original's.
         cost_option=original.cost_option,
+        # And the spree modes bought (702.172 makes each an additional cost,
+        # so 707.10 copies them): every printed mode is an `if` on them, so a
+        # copy without them resolves as none of its modes, and its refs were
+        # declared under the bought modes' target list.
+        spree_modes=original.spree_modes,
         # Everything but the convoking creatures: 702.51c's "convoked it" is a
         # creature tapped to *pay* for the spell, and a copy was never paid for
         # -- convoke is neither an additional nor an alternative cost, so

@@ -120,6 +120,11 @@ class TargetSpec:
     #: :attr:`gift_promised` is split into :attr:`CardDef.gift_targets`, so the
     #: engine never reads the field itself.
     cost_option: int | None = None
+    #: The index of the **spree mode** (702.172) that declares this spec --
+    #: which of the card's `spree` prices the cast bought -- or ``None`` for
+    #: every cast. Kept in :attr:`CardDef.spree_targets` and filtered by
+    #: :meth:`CardDef.targets_for` against the bought subset.
+    spree_mode: int | None = None
     #: "Return **up to X** target creature cards from your graveyard." The
     #: ``count`` is a *ceiling* rather than an exact number, so every size from
     #: zero through it is a legal choice. `optional` cannot say it -- that is
@@ -878,7 +883,9 @@ class TriggerSpec:
     #: have been played from -- "whenever you play a card **from exile**" is
     #: ``("exile",)``. A spell is asked `GameObject.cast_from_zone`, stamped by
     #: `stack.push_spell` before the card reaches the stack (601.2a); a land
-    #: drop carries ``from_zone`` on its LAND_PLAYED payload. ``None`` is any
+    #: drop carries ``from_zone`` on its LAND_PLAYED payload. On
+    #: ``put_into_graveyard`` it is the zone the card was put into the
+    #: graveyard from, on the PUT_INTO_GRAVEYARD payload. ``None`` is any
     #: origin.
     from_zones: tuple[str, ...] | None = None
     #: The ``state`` event only: the condition a **state trigger** watches
@@ -1445,6 +1452,12 @@ class CardDef:
     #: Read through :meth:`targets_for`, by the same callers as
     #: :attr:`gift_targets` and for the same reason.
     cost_option_targets: Mapping[int, tuple[TargetSpec, ...]] = field(default_factory=dict)
+    #: Every card-level spec of a **spree** card with a mode-owned target, in
+    #: printed order, the shared ones and each spree mode's own (702.172): a
+    #: cast declares the shared specs plus those of the modes it bought, so
+    #: :attr:`targets` keeps only the shared ones and :meth:`targets_for`
+    #: filters this list by the bought subset. Empty for every other card.
+    spree_targets: tuple[TargetSpec, ...] = ()
     spell_effects: tuple[Mapping[str, Any], ...] = ()
     #: "…as you cast this spell": named value expressions `stack.push_spell`
     #: evaluates once, as the spell goes on the stack, and writes into the
@@ -1814,6 +1827,7 @@ class CardDef:
         *,
         gift_promised: bool = False,
         cost_option: int | None = None,
+        spree_modes: Sequence[int] = (),
     ) -> tuple[TargetSpec, ...]:
         """The target specs a cast of this spell actually declared.
 
@@ -1827,17 +1841,24 @@ class CardDef:
         A card with no mode-owned targets returns :attr:`targets` unchanged,
         which is every card in the pool but the modal ones.
 
-        ``gift_promised`` picks the side of the promise the cast was on, and
-        ``cost_option`` the tier it paid -- see :meth:`targets_for`.
+        ``gift_promised`` picks the side of the promise the cast was on,
+        ``cost_option`` the tier it paid and ``spree_modes`` the spree modes it
+        bought -- see :meth:`targets_for`.
         """
         return _specs_for_modes(
-            self.targets_for(gift_promised=gift_promised, cost_option=cost_option),
+            self.targets_for(
+                gift_promised=gift_promised, cost_option=cost_option, spree_modes=spree_modes
+            ),
             self.mode_targets,
             modes,
         )
 
     def targets_for(
-        self, *, gift_promised: bool, cost_option: int | None = None
+        self,
+        *,
+        gift_promised: bool,
+        cost_option: int | None = None,
+        spree_modes: Sequence[int] = (),
     ) -> tuple[TargetSpec, ...]:
         """The card-level specs a cast declares, on its side of the gift promise.
 
@@ -1850,7 +1871,18 @@ class CardDef:
         ``cost_option`` is the tier the cast paid (702.183): an additional cost
         chosen at 601.2b, so the tier's own list -- :attr:`cost_option_targets`
         -- is what 601.2c declares. The loader refuses a card with both.
+
+        ``spree_modes`` is the subset of spree modes the cast bought (702.172),
+        also chosen at 601.2b: the shared specs and the bought modes' own, in
+        printed order, from :attr:`spree_targets`. The loader refuses a spree
+        mode's target beside a gift or a tier.
         """
+        if self.spree_targets:
+            return tuple(
+                spec
+                for spec in self.spree_targets
+                if spec.spree_mode is None or spec.spree_mode in spree_modes
+            )
         if cost_option is not None and cost_option in self.cost_option_targets:
             return self.cost_option_targets[cost_option]
         if gift_promised and self.gift_targets is not None:

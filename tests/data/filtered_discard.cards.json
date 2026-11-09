@@ -1,0 +1,43 @@
+{
+  "_comment": "Cards that exist only for the filtered discard test (tests/unit/effects/test_filtered_discard.py). Never part of a deck list. `t_land_pitch` is Nantuko Cultivator's discard as a sorcery; `t_exact_land_pitch` is the exact-count counterfactual.",
+  "cards": [
+    {
+      "id": "t_land_pitch",
+      "name": "Test Land Pitch",
+      "oracle_text": "Discard any number of land cards, then draw that many cards.",
+      "mana_cost": "{1}{G}",
+      "types": ["Sorcery"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "spell_effects": [
+        {
+          "op": "discard",
+          "player": "you",
+          "amount": {"cards_in_hand": "you"},
+          "up_to": true,
+          "selector": {"types": ["Land"]},
+          "as": "pitched"
+        },
+        {"op": "draw", "player": "you", "amount": {"count": {"binding": "pitched"}}}
+      ]
+    },
+    {
+      "id": "t_exact_land_pitch",
+      "name": "Test Exact Land Pitch",
+      "oracle_text": "Discard two land cards.",
+      "mana_cost": "{1}{G}",
+      "types": ["Sorcery"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "spell_effects": [
+        {
+          "op": "discard",
+          "player": "you",
+          "amount": {"const": 2},
+          "selector": {"types": ["Land"]},
+          "as": "pitched"
+        }
+      ]
+    }
+  ]
+}

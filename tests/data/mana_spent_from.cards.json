@@ -1,0 +1,59 @@
+{
+  "_comment": "Cards that exist only for the mana-spent-from test (tests/unit/mana/test_mana_spent_from.py). Never part of a deck list. `t_desert_prospect` is Cataclysmic Prospecting's Treasure clause on a fixed cost; `t_desert_digger` is the same count on a creature's enters trigger; `t_twin_desert` is a Desert that makes two mana in one activation, which a set of sources counts once.",
+  "cards": [
+    {
+      "id": "t_desert_prospect",
+      "name": "Test Desert Prospect",
+      "oracle_text": "For each mana from a Desert spent to cast this spell, create a tapped Treasure token.",
+      "mana_cost": "{2}{R}",
+      "types": ["Sorcery"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "spell_effects": [
+        {"op": "create_token", "token": "treasure_token", "tapped": true,
+         "amount": {"mana_spent_from": {"subtypes": ["Desert"]}}}
+      ]
+    },
+    {
+      "id": "t_desert_digger",
+      "name": "Test Desert Digger",
+      "oracle_text": "When this creature enters, create a Treasure token for each mana from a Desert spent to cast it.",
+      "mana_cost": "{2}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Dwarf"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "abilities": [
+        {"kind": "triggered",
+         "text": "When this creature enters, create a Treasure token for each mana from a Desert spent to cast it.",
+         "trigger": {"event": "self_enters", "source": "self"},
+         "effects": [{"op": "create_token", "token": "treasure_token",
+                      "amount": {"mana_spent_from": {"subtypes": ["Desert"]}}}]}
+      ]
+    },
+    {
+      "id": "t_twin_desert",
+      "name": "Test Twin Desert",
+      "oracle_text": "{T}: Add {R}{R}.",
+      "types": ["Land"],
+      "subtypes": ["Desert"],
+      "abilities": [
+        {"kind": "activated", "is_mana_ability": true, "text": "{T}: Add {R}{R}.",
+         "cost": {"tap": true}, "effects": [{"op": "add_mana", "mana": "{R}{R}"}]}
+      ]
+    },
+    {
+      "id": "t_red_desert",
+      "name": "Test Red Desert",
+      "oracle_text": "{T}: Add {R}.",
+      "types": ["Land"],
+      "subtypes": ["Desert"],
+      "abilities": [
+        {"kind": "activated", "is_mana_ability": true, "text": "{T}: Add {R}.",
+         "cost": {"tap": true}, "effects": [{"op": "add_mana", "mana": "{R}"}]}
+      ]
+    }
+  ]
+}

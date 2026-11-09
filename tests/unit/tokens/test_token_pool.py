@@ -2704,3 +2704,62 @@ class TestMurmuringMysticsBirdIllusion:
     def test_the_near_misses_are_still_separate(self, pool):
         assert list(pool.get("illusion_1_1_u_flying").subtypes) == ["Illusion"]
         assert "vigilance" in pool.get("bird_1_1_u_flying_vigilance").keywords
+
+
+class TestNestingDragonsEggHatchesAFirebreathingDragon:
+    """Nesting Dragon: *"create a 0/2 red **Dragon Egg** creature token with
+    defender and 'When this token dies, create a 2/2 red Dragon creature
+    token with flying and "{R}: This token gets +1/+0 until end of turn."'"*
+
+    The Egg's near miss is any plain red Dragon; the hatchling's are
+    `dragon_4_4_r_flying`, bigger and with no pump ability.
+    """
+
+    def test_the_egg_is_a_red_zero_two_dragon_egg_with_defender(self, pool):
+        token = pool.get("dragon_egg_0_2_r_defender")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (0, 2)
+        assert list(token.colors) == ["R"]
+        assert sorted(token.subtypes) == ["Dragon", "Egg"]
+        assert list(token.keywords) == ["defender"]
+
+    def test_the_egg_hatches_the_firebreathing_dragon_when_it_dies(self, pool):
+        (hatch,) = pool.get("dragon_egg_0_2_r_defender").abilities
+        assert hatch.trigger.event == "dies"
+        (create,) = hatch.effects
+        assert create["token"] == "dragon_2_2_r_flying_firebreathing"
+
+    def test_the_hatchling_is_a_flying_two_two_that_pumps_for_red(self, pool):
+        token = pool.get("dragon_2_2_r_flying_firebreathing")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (2, 2)
+        assert list(token.colors) == ["R"]
+        assert list(token.keywords) == ["flying"]
+        (pump,) = token.abilities
+        assert pump.text == "{R}: This token gets +1/+0 until end of turn."
+
+    def test_the_four_four_dragon_is_still_separate(self, pool):
+        dragon = pool.get("dragon_4_4_r_flying")
+        assert (dragon.power, dragon.toughness) == (4, 4) and not dragon.abilities
+
+
+class TestThunderJunctionsPlantWarriorHasReach:
+    """Vengeful Regrowth and Yuma, Proud Protector: *"create a 4/2 green
+    **Plant Warrior** creature token with **reach**."*
+
+    Its near misses are `plant_0_1_g`, the bare Plant, and
+    `rhino_warrior_4_4_g`, a green 4/x Warrior with no reach.
+    """
+
+    def test_it_is_a_green_four_two_plant_warrior_with_reach(self, pool):
+        token = pool.get("plant_warrior_4_2_g_reach")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (4, 2)
+        assert list(token.colors) == ["G"]
+        assert sorted(token.subtypes) == ["Plant", "Warrior"]
+        assert list(token.keywords) == ["reach"]
+        assert not token.abilities
+
+    def test_the_near_misses_are_still_separate(self, pool):
+        assert (pool.get("plant_0_1_g").power, pool.get("plant_0_1_g").toughness) == (0, 1)
+        assert "reach" not in pool.get("rhino_warrior_4_4_g").keywords

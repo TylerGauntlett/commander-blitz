@@ -146,6 +146,7 @@ from .vocabulary import (  # noqa: F401
     FIRST_ACTIVATION_TARGETING_KEYS,
     FREE_CAST_FILTER_KEYS,
     GRANTABLE_STATIC_EFFECTS,
+    GRAVEYARD_ORIGIN_ZONES,
     KEYWORD_ALIASES,
     KNOWN_COLORS,
     KNOWN_KEYWORDS,
@@ -1316,6 +1317,8 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         has_gift=model.gift is not None,
         # `cost_option` names a tier, chosen at 601.2b, so it has to exist.
         cost_options=len(model.additional_cost_options),
+        # `spree_mode` names a spree mode, bought at 601.2b, so it has to exist.
+        spree_modes=len(model.spree),
     )
     card_level = tuple(spec for spec in all_targets if spec.mode is None)
     _check_repeatable_modes(model, cast_modes, all_targets, where)
@@ -1339,6 +1342,19 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             for n in range(len(model.additional_cost_options))
         }
         targets = tuple(spec for spec in targets if spec.cost_option is None)
+    # Each spree mode's own targets (702.172): `targets` keeps the shared
+    # specs, which is what a cast that bought none of those modes declares,
+    # and `spree_targets` the whole printed list for `targets_for` to filter
+    # by the bought subset.
+    spree_targets: tuple[TargetSpec, ...] = ()
+    if any(spec.spree_mode is not None for spec in targets):
+        if gift_targets is not None:
+            raise DslError(
+                f"{where}: a spree mode's target and a gift-gated target on one "
+                f"card are two cast-time target lists -- no printing does it"
+            )
+        spree_targets = targets
+        targets = tuple(spec for spec in targets if spec.spree_mode is None)
     mode_targets: dict[int, tuple[TargetSpec, ...]] = {}
     for spec in all_targets:
         if spec.mode is not None:
@@ -2626,6 +2642,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         mode_targets=mode_targets,
         gift_targets=gift_targets,
         cost_option_targets=cost_option_targets,
+        spree_targets=spree_targets,
         spell_effects=tuple(model.spell_effects),
         as_cast=dict(model.as_cast),
         replacements=_implied_replacements(model),
@@ -3555,6 +3572,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             "attacks",
             "counter_placed",
             "expend",
+            "put_into_graveyard",
         ):
             # Same reasoning as `counter` and `mana_ability` above: only `draw`,
             # `spell_cast`, `you_gain_life`, `life_lost` and `attacks` carry an
@@ -3566,7 +3584,8 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             raise DslError(
                 f"{where}: 'nth' only means anything on a draw, spell_cast or "
                 f"you_gain_life trigger, or a life_lost trigger, or an attacks "
-                f"trigger, or a counter_placed or expend trigger, not on "
+                f"trigger, or a counter_placed or expend trigger, or a "
+                f"put_into_graveyard trigger, not on "
                 f"{model.trigger.event!r}"
             )
         if model.trigger.event == "expend":
@@ -3644,6 +3663,25 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 f"{model.trigger.filter['paid_by']!r}"
             )
 
+        if model.trigger.nth is not None and model.trigger.event == "put_into_graveyard":
+            # "…for the first time each turn" counts simultaneous *groups*
+            # (`triggers._graveyard_ordinal`), and only a batched trigger fires
+            # once per group: unbatched, every card of the first group would
+            # be "the first time" and fire it. The earlier groups' cards may
+            # have left the graveyard, so only their printed faces can be asked.
+            if not model.trigger.batched:
+                raise DslError(
+                    f"{where}: 'nth' on a put_into_graveyard trigger counts "
+                    f"\"one or more\" groups, so it needs 'batched: true'"
+                )
+            unordinal = set(model.trigger.filter or ()) - (ORDINAL_FILTER_KEYS - {"paid_by"})
+            if unordinal:
+                raise DslError(
+                    f"{where}: 'nth' on a put_into_graveyard trigger counts "
+                    f"earlier arrivals by their printed faces, so its filter "
+                    f"cannot use {sorted(unordinal)} "
+                    f"(allowed: {sorted(ORDINAL_FILTER_KEYS - {'paid_by'})})"
+                )
         if (
             model.trigger.batched
             and model.trigger.event != STATE_TRIGGER
@@ -3719,16 +3757,23 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                     f"from {sorted(departures)}, got {model.trigger.to_zones!r}"
                 )
         if model.trigger.from_zones is not None:
-            # "Whenever you play a card from exile." Only a cast and a land
-            # drop record where the card was played from, so anywhere else
-            # this would be a filter that never applies.
-            if model.trigger.event not in ("spell_cast", "land_played"):
+            # "Whenever you play a card from exile." Only a cast, a land drop
+            # and a card put into a graveyard record where the card came from,
+            # so anywhere else this would be a filter that never applies.
+            if model.trigger.event not in ("spell_cast", "land_played", "put_into_graveyard"):
                 raise DslError(
                     f"{where}: 'from_zones' narrows a spell_cast or land_played "
-                    f"trigger to where the card was played from, and means "
-                    f"nothing on {model.trigger.event!r}"
+                    f"trigger to where the card was played from, or a "
+                    f"put_into_graveyard trigger to where it came from, and "
+                    f"means nothing on {model.trigger.event!r}"
                 )
-            origins = CAST_ORIGIN_ZONES
+            # "…from anywhere other than the battlefield" is every zone but
+            # one, and a graveyard is never where a card is put into one from.
+            origins = (
+                GRAVEYARD_ORIGIN_ZONES
+                if model.trigger.event == "put_into_graveyard"
+                else CAST_ORIGIN_ZONES
+            )
             bad = [z for z in model.trigger.from_zones if z not in origins]
             if bad or not model.trigger.from_zones:
                 raise DslError(
@@ -4842,6 +4887,31 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"'grants_flashback' -- "
                 f"'once during each of your turns' is the whole rate limit, and "
                 f"without it the permission is an unbounded engine"
+            )
+    elif model.effect == "play_lands_from_graveyard" and (
+        model.affects_spells is not None or model.affects is not None
+    ):
+        # "You may play **Desert** lands from your graveyard" -- Hazezon,
+        # Shaper of Sand. Optional, because Crucible of Worlds prints no
+        # filter: omitted it frees every land, written it frees only a land
+        # whose printed face matches, read per card by
+        # `player_statics.graveyard_land_play_allows`. `controller` is refused
+        # because `affects_player` already says whose land drop widens, and an
+        # empty filter would read as the unfiltered Crucible.
+        if model.affects is not None:
+            raise DslError(
+                f"{where}: play_lands_from_graveyard filters the graveyard's "
+                f"lands with 'affects_spells', not 'affects' (which picks out "
+                f"permanents)"
+            )
+        if not model.affects_spells:
+            raise DslError(f"{where}.affects_spells: an empty filter would free every land")
+        unknown = set(model.affects_spells) - (SPELL_FILTER_KEYS - {"controller"})
+        if unknown:
+            raise DslError(
+                f"{where}.affects_spells: a card in a graveyard has a printed face "
+                f"and no board state, and `affects_player` already names the "
+                f"player; unsupported keys {sorted(unknown)}"
             )
     elif model.effect == "cant_cast_spells" and model.affects_spells is not None:
         # "Your opponents can't cast **noncreature** spells" -- Narset

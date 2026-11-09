@@ -289,6 +289,15 @@ class GameObject:
     #: cast pays in more than one call when it has an additional cost, and a
     #: spell partly paid for with Treasure mana was paid for with Treasure mana.
     mana_spent_traits: frozenset[ManaOrigin] = frozenset()
+    #: The same memory **per unit of mana** spent casting this -- "for each
+    #: mana from a Desert spent to cast this spell" (Cataclysmic Prospecting) --
+    #: one `ManaOrigin` per pip, which the set above cannot count: two mana from
+    #: one Desert are one entry there. Accumulated by `pay_mana` across a cast's
+    #: payments, read by the ``mana_spent_from`` value. Cleared by
+    #: `reset_permanent_state`, and carried across the move onto the battlefield
+    #: by `zones.move_object`, so it describes this object's own cast: the
+    #: permanent a spell becomes still knows it, a card cast again starts over.
+    mana_spent_origins: tuple[ManaOrigin, ...] = ()
     #: The turn this card was **drawn**, or -1 if it never was. "Choose two
     #: cards in your hand drawn this turn" -- Sylvan Library.
     #:
@@ -1319,6 +1328,9 @@ class GameObject:
         # graveyard owing nobody haste. `move_object` restores it across this
         # reset for the one destination that is owed it -- the battlefield.
         self.mana_granted_keywords = set()
+        # And the mana that paid for it, restored by `move_object` for a
+        # battlefield destination only, for the same reason.
+        self.mana_spent_origins = ()
         self.cast_rider = None
         self.cast_enters_with = {}
         self.granted_abilities_permanent = []

@@ -1,0 +1,16 @@
+{
+  "card_id": "desert_nomads",
+  "name": "Desert Nomads",
+  "oracle_text": "Desertwalk\nPrevent all damage that would be dealt to this creature by Deserts.",
+  "blocked_sentences": [
+    "Prevent all damage that would be dealt to this creature by Deserts."
+  ],
+  "needs": [{
+    "capability": "prevent_damage_from_source_to_permanent",
+    "kind": "static_effect",
+    "what": "a `prevent_damage` static over permanents (`affects`, `prevent_all`) that reads `damage_source` -- here {\"subtypes\": [\"Desert\"]} -- so only damage from a matching dealer is prevented: `primitives.damage_permanent` must filter its total shield by the source the way `player_statics.prevented_player_damage` does for a seat",
+    "why_existing_wont_do": "The loader refuses `damage_source` on `prevent_damage` unless the static names `affects_player` and no `affects` -- the permanent half does not read it, so `prevent_all` over self would prevent every source's damage. `protection` from Deserts is a bigger card: it also stops the creature being blocked, targeted and enchanted by Deserts. Desertwalk itself is the shipped `desertwalk` keyword"
+  }],
+  "closest_existing": ["prevent_damage", "protection", "damage_source"],
+  "confidence": "high"
+}

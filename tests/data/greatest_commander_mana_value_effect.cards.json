@@ -1,0 +1,38 @@
+{
+  "_comment": "Shapes for tests/unit/commander/test_greatest_commander_mana_value_effect.py. t_gcmv_preserve is Cactus Preserve's animation on a land that enters untapped and taps for {G}, so the {3} is paid off the board without the reflecting mana ability in the way.",
+  "cards": [
+    {
+      "id": "t_gcmv_preserve",
+      "name": "Test Commander Mana Value Preserve",
+      "oracle_text": "{T}: Add {G}.\n{3}: Until end of turn, this land becomes an X/X green Plant creature with reach, where X is the greatest mana value among your commanders. It's still a land.",
+      "types": ["Land"],
+      "subtypes": ["Desert"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {G}.",
+          "cost": {"tap": true},
+          "is_mana_ability": true,
+          "effects": [{"op": "add_mana", "mana": "{G}"}]
+        },
+        {
+          "kind": "activated",
+          "text": "{3}: Until end of turn, this land becomes an X/X green Plant creature with reach, where X is the greatest mana value among your commanders. It's still a land.",
+          "cost": {"mana": "{3}"},
+          "effects": [
+            {
+              "op": "animate",
+              "objects": {"zone": "battlefield", "self_only": true},
+              "power": {"greatest_commander_mana_value": "you"},
+              "toughness": {"greatest_commander_mana_value": "you"},
+              "types": ["Creature"],
+              "subtypes": ["Plant"],
+              "colors": ["G"],
+              "keywords": ["reach"]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

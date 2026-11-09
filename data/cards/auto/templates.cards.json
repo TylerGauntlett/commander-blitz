@@ -508,6 +508,88 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "When this land enters, it deals 1 damage to target opponent.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {R} or {W}."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [],
+      "id": "abraded_bluffs",
+      "name": "Abraded Bluffs",
+      "oracle_text": "This land enters tapped.\nWhen this land enters, it deals 1 damage to target opponent.\n{T}: Add {R} or {W}.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Desert"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -29381,6 +29463,89 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "When this land enters, it deals 1 damage to target opponent.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {R} or {G}."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [],
+      "id": "bristling_backwoods",
+      "mana_cost": "",
+      "name": "Bristling Backwoods",
+      "oracle_text": "This land enters tapped.\nWhen this land enters, it deals 1 damage to target opponent.\n{T}: Add {R} or {G}.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Desert"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -31175,6 +31340,82 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "any_type": true,
+              "op": "add_mana",
+              "reflecting": {
+                "controller": "you",
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of any type that a land you control could produce."
+        },
+        {
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "colors": [
+                "G"
+              ],
+              "keywords": [
+                "reach"
+              ],
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "greatest_commander_mana_value": "you"
+              },
+              "subtypes": [
+                "Plant"
+              ],
+              "toughness": {
+                "greatest_commander_mana_value": "you"
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}: Until end of turn, this land becomes an X/X green Plant creature with reach, where X is the greatest mana value among your commanders. It's still a land."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "cactus_preserve",
+      "name": "Cactus Preserve",
+      "oracle_text": "This land enters tapped.\n{T}: Add one mana of any type that a land you control could produce.\n{3}: Until end of turn, this land becomes an X/X green Plant creature with reach, where X is the greatest mana value among your commanders. It's still a land.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Desert"
+      ],
+      "types": [
+        "Land"
       ]
     },
     {
@@ -34064,6 +34305,50 @@
     },
     {
       "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "cataclysmic_prospecting",
+      "mana_cost": "{X}{R}{R}",
+      "name": "Cataclysmic Prospecting",
+      "oracle_text": "Cataclysmic Prospecting deals X damage to each creature. For each mana from a Desert spent to cast this spell, create a tapped Treasure token.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "x": true
+          },
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "damage"
+        },
+        {
+          "amount": {
+            "mana_spent_from": {
+              "subtypes": [
+                "Desert"
+              ]
+            }
+          },
+          "op": "create_token",
+          "tapped": true,
+          "token": "treasure_token"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "B"
       ],
       "colors": [
@@ -35866,6 +36151,84 @@
         "Druid"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "effects": [
+            {
+              "effects": [
+                {
+                  "destination": "hand",
+                  "objects": {
+                    "self_only": true,
+                    "zone": "graveyard"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{G}{G}"
+              },
+              "player": "you",
+              "prompt": "Pay {G}{G} to return Centaur Vinecrasher from your graveyard to your hand?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a land card is put into a graveyard from anywhere, you may pay {G}{G}. If you do, return this card from your graveyard to your hand.",
+          "trigger": {
+            "controller": "any",
+            "event": "put_into_graveyard",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "centaur_vinecrasher",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{3}{G}",
+      "name": "Centaur Vinecrasher",
+      "oracle_text": "Trample\nThis creature enters with a number of +1/+1 counters on it equal to the number of land cards in all graveyards.\nWhenever a land card is put into a graveyard from anywhere, you may pay {G}{G}. If you do, return this card from your graveyard to your hand.",
+      "power": 1,
+      "replacements": [
+        {
+          "amount": {
+            "count": {
+              "controller": "any",
+              "types": [
+                "Land"
+              ],
+              "zone": "graveyard"
+            }
+          },
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Plant",
+        "Centaur"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -41795,6 +42158,95 @@
           "effects": [
             {
               "amount": {
+                "const": 3
+              },
+              "op": "mill",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature enters or attacks, mill three cards.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "mill",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature enters or attacks, mill three cards.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "binding": "moved",
+                "count": 1,
+                "zone": "graveyard"
+              },
+              "op": "put_onto_battlefield"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more creature cards are put into your graveyard from your library, put one of them onto the battlefield.",
+          "trigger": {
+            "batched": true,
+            "controller": "you",
+            "event": "put_into_graveyard",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            },
+            "from_zones": [
+              "library"
+            ]
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "colossal_grave_reaver",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{6}{B}{G}",
+      "name": "Colossal Grave-Reaver",
+      "oracle_text": "Flying\nWhenever this creature enters or attacks, mill three cards.\nWhenever one or more creature cards are put into your graveyard from your library, put one of them onto the battlefield.",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
                 "const": 1
               },
               "op": "draw",
@@ -46013,6 +46465,72 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "mill",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "prompt": "Mill two cards?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, you may mill two cards. (You may put the top two cards of your library into your graveyard.)",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "insect_1_1_g"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more land cards are put into your graveyard from anywhere for the first time each turn, create a 1/1 green Insect creature token.",
+          "trigger": {
+            "batched": true,
+            "controller": "you",
+            "event": "put_into_graveyard",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            },
+            "nth": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "crawling_sensation",
+      "mana_cost": "{2}{G}",
+      "name": "Crawling Sensation",
+      "oracle_text": "At the beginning of your upkeep, you may mill two cards. (You may put the top two cards of your library into your graveyard.)\nWhenever one or more land cards are put into your graveyard from anywhere for the first time each turn, create a 1/1 green Insect creature token.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -46300,6 +46818,89 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "When this land enters, it deals 1 damage to target opponent.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G} or {W}."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [],
+      "id": "creosote_heath",
+      "mana_cost": "",
+      "name": "Creosote Heath",
+      "oracle_text": "This land enters tapped.\nWhen this land enters, it deals 1 damage to target opponent.\n{T}: Add {G} or {W}.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Desert"
+      ],
+      "types": [
+        "Land"
       ]
     },
     {
@@ -54407,6 +55008,63 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "descend_upon_the_sinful",
+      "mana_cost": "{4}{W}{W}",
+      "name": "Descend upon the Sinful",
+      "oracle_text": "Exile all creatures.\nDelirium — Create a 4/4 white Angel creature token with flying if there are four or more card types among cards in your graveyard.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "exile"
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "distinct": {
+                "objects": {
+                  "controller": "you",
+                  "zone": "graveyard"
+                },
+                "of": "card_type"
+              }
+            },
+            "right": {
+              "const": 4
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "player": "you",
+              "token": "angel_4_4_w_flying"
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -54832,6 +55490,138 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "controller": "you",
+                  "objects": {
+                    "binding": "subject",
+                    "zone": "graveyard"
+                  },
+                  "op": "put_onto_battlefield"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "put that card onto the battlefield under your control at the beginning of your next end step",
+              "your_turn": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you sacrifice a Desert and whenever a Desert card is put into your graveyard from your hand or library, put that card onto the battlefield under your control at the beginning of your next end step.",
+          "trigger": {
+            "controller": "you",
+            "event": "sacrificed",
+            "filter": {
+              "subtypes": [
+                "Desert"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "controller": "you",
+                  "objects": {
+                    "binding": "subject",
+                    "zone": "graveyard"
+                  },
+                  "op": "put_onto_battlefield"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "put that card onto the battlefield under your control at the beginning of your next end step",
+              "your_turn": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you sacrifice a Desert and whenever a Desert card is put into your graveyard from your hand or library, put that card onto the battlefield under your control at the beginning of your next end step.",
+          "trigger": {
+            "controller": "you",
+            "event": "put_into_graveyard",
+            "filter": {
+              "subtypes": [
+                "Desert"
+              ]
+            },
+            "from_zones": [
+              "hand",
+              "library"
+            ]
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Desert"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "as": "warriors",
+              "controller": "you",
+              "op": "create_token",
+              "token": "sand_warrior_1_1_rgw"
+            },
+            {
+              "duration": "permanent",
+              "keyword": "haste",
+              "objects": {
+                "binding": "warriors"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of combat on your turn, if you control five or more Deserts, create that many 1/1 red, green, and white Sand Warrior creature tokens. They gain haste.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Desert"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "right": {
+                "const": 5
+              }
+            },
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "desert_warfare",
+      "mana_cost": "{3}{G}",
+      "name": "Desert Warfare",
+      "oracle_text": "Whenever you sacrifice a Desert and whenever a Desert card is put into your graveyard from your hand or library, put that card onto the battlefield under your control at the beginning of your next end step.\nAt the beginning of combat on your turn, if you control five or more Deserts, create that many 1/1 red, green, and white Sand Warrior creature tokens. They gain haste.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -56342,6 +57132,93 @@
         "Monk"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "objects": {
+                "binding": "subject",
+                "zone": "graveyard"
+              },
+              "op": "put_onto_battlefield"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a Lhurgoyf permanent card is put into your graveyard from anywhere other than the battlefield, put it onto the battlefield.",
+          "trigger": {
+            "controller": "you",
+            "event": "put_into_graveyard",
+            "filter": {
+              "any_types": [
+                "Artifact",
+                "Creature",
+                "Enchantment",
+                "Land",
+                "Planeswalker",
+                "Battle"
+              ],
+              "subtypes": [
+                "Lhurgoyf"
+              ]
+            },
+            "from_zones": [
+              "library",
+              "hand",
+              "stack",
+              "exile",
+              "command"
+            ]
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "tarmogoyf_0_1_g"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more creatures you control deal combat damage to a player, create a Tarmogoyf token.",
+          "trigger": {
+            "controller": "you",
+            "event": "creatures_deal_combat_damage"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R"
+      ],
+      "id": "disa_the_restless",
+      "mana_cost": "{2}{B}{R}{G}",
+      "name": "Disa the Restless",
+      "oracle_text": "Whenever a Lhurgoyf permanent card is put into your graveyard from anywhere other than the battlefield, put it onto the battlefield.\nWhenever one or more creatures you control deal combat damage to a player, create a Tarmogoyf token.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Scout"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
       "types": [
         "Creature"
       ]
@@ -61072,6 +61949,194 @@
       "abilities": [
         {
           "affects": {
+            "controller": "you",
+            "types": [
+              "Land"
+            ]
+          },
+          "effect": "add_subtype",
+          "kind": "static",
+          "off_battlefield": true,
+          "subtypes": [
+            "Desert"
+          ],
+          "text": "Lands you control and land cards you own that aren't on the battlefield are Deserts in addition to their other types."
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Land"
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Lands you control have \"{T}: Add one mana of any color.\""
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "as": "milled",
+              "op": "mill",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "count": {
+                  "binding": "milled",
+                  "types": [
+                    "Land"
+                  ]
+                }
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}: Mill two cards. You gain 1 life for each land card milled this way."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color."
+        }
+      ],
+      "id": "dune_chanter",
+      "keywords": [
+        "reach"
+      ],
+      "mana_cost": "{2}{G}",
+      "name": "Dune Chanter",
+      "oracle_text": "Reach\nLands you control and land cards you own that aren't on the battlefield are Deserts in addition to their other types.\nLands you control have \"{T}: Add one mana of any color.\"\n{T}: Mill two cards. You gain 1 life for each land card milled this way.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Plant",
+        "Druid"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "zombie_2_2_b"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this land is put into a graveyard from the battlefield, create a 2/2 black Zombie creature token.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "dunes_of_the_dead",
+      "mana_cost": "",
+      "name": "Dunes of the Dead",
+      "oracle_text": "{T}: Add {C}.\nWhen this land is put into a graveyard from the battlefield, create a 2/2 black Zombie creature token.",
+      "source": "auto",
+      "subtypes": [
+        "Desert"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
             "self_only": true
           },
           "effect": "set_pt",
@@ -61794,6 +62859,60 @@
       "toughness": 5,
       "types": [
         "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "mill",
+              "player": "you"
+            },
+            {
+              "destination": "hand",
+              "objects": {
+                "controller": "you",
+                "count": 1,
+                "optional": true,
+                "types": [
+                  "Land"
+                ],
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, mill three cards, then you may return a land card from your graveyard to your hand.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "eccentric_farmer",
+      "mana_cost": "{2}{G}",
+      "name": "Eccentric Farmer",
+      "oracle_text": "When this creature enters, mill three cards, then you may return a land card from your graveyard to your hand. (To mill three cards, put the top three cards of your library into your graveyard.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Peasant"
+      ],
+      "toughness": 3,
+      "types": [
         "Creature"
       ]
     },
@@ -63457,6 +64576,37 @@
       ]
     },
     {
+      "additional_cost": {
+        "discard": 1
+      },
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "flashback": {
+        "mana": "{3}{R}"
+      },
+      "id": "electric_revelation",
+      "mana_cost": "{2}{R}",
+      "name": "Electric Revelation",
+      "oracle_text": "As an additional cost to cast this spell, discard a card.\nDraw two cards.\nFlashback {3}{R} (You may cast this card from your graveyard for its flashback cost and any additional costs. Then exile it.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "draw",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects_player": "you",
@@ -64946,6 +66096,37 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "embrace_the_unknown",
+      "mana_cost": "{2}{R}",
+      "name": "Embrace the Unknown",
+      "oracle_text": "Exile the top two cards of your library. Until the end of your next turn, you may play those cards.\nRetrace (You may cast this card from your graveyard by discarding a land card in addition to paying its other costs.)",
+      "retrace": true,
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "destination": "exile",
+          "objects": {
+            "count": "all"
+          },
+          "op": "look_at_top",
+          "playable": "end_of_your_next_turn",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -70403,6 +71584,89 @@
           "selector": {
             "controller": "any"
           }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "explosive_derailment",
+      "mana_cost": "{R}",
+      "name": "Explosive Derailment",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {2} — Explosive Derailment deals 4 damage to target creature.\n+ {2} — Destroy target artifact.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "spree_mode": 0
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "objects": {
+                "target": "t1"
+              },
+              "op": "damage"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "spree_mode": 1
+          },
+          "op": "if",
+          "then": [
+            {
+              "objects": {
+                "target": "t2"
+              },
+              "op": "destroy"
+            }
+          ]
+        }
+      ],
+      "spree": [
+        {
+          "mana": "{2}"
+        },
+        {
+          "mana": "{2}"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "spree_mode": 0
+        },
+        {
+          "count": 1,
+          "id": "t2",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Artifact"
+            ],
+            "zone": "battlefield"
+          },
+          "spree_mode": 1
         }
       ],
       "types": [
@@ -84281,6 +85545,77 @@
         "Cat"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "amount": {
+                "x": true
+              },
+              "destination": "battlefield",
+              "objects": {
+                "count": 1,
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "x": true
+                  }
+                },
+                "not_types": [
+                  "Land",
+                  "Instant",
+                  "Sorcery"
+                ],
+                "optional": true
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "shuffle": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "When you cast this spell, reveal the top X cards of your library. You may put a nonland permanent card with mana value X or less from among them onto the battlefield. Then shuffle the rest into your library.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "genesis_hydra",
+      "mana_cost": "{X}{G}{G}",
+      "name": "Genesis Hydra",
+      "oracle_text": "When you cast this spell, reveal the top X cards of your library. You may put a nonland permanent card with mana value X or less from among them onto the battlefield. Then shuffle the rest into your library.\nThis creature enters with X +1/+1 counters on it.",
+      "power": 0,
+      "replacements": [
+        {
+          "amount": {
+            "x": true
+          },
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Plant",
+        "Hydra"
+      ],
+      "toughness": 0,
       "types": [
         "Creature"
       ]
@@ -98488,6 +99823,73 @@
     {
       "abilities": [
         {
+          "affects_player": "you",
+          "affects_spells": {
+            "subtypes": [
+              "Desert"
+            ]
+          },
+          "effect": "play_lands_from_graveyard",
+          "kind": "static",
+          "text": "You may play Desert lands from your graveyard."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "create_token",
+              "token": "sand_warrior_1_1_rgw"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a Desert you control enters, create two 1/1 red, green, and white Sand Warrior creature tokens.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "subtypes": [
+                "Desert"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "R",
+        "W"
+      ],
+      "id": "hazezon_shaper_of_sand",
+      "keywords": [
+        "desertwalk"
+      ],
+      "mana_cost": "{R}{G}{W}",
+      "name": "Hazezon, Shaper of Sand",
+      "oracle_text": "Desertwalk (This creature can't be blocked as long as defending player controls a Desert.)\nYou may play Desert lands from your graveyard.\nWhenever a Desert you control enters, create two 1/1 red, green, and white Sand Warrior creature tokens.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_spells": {
             "colors": [
               "R"
@@ -98910,6 +100312,80 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "heaven_earth",
+      "mana_cost": "{X}{G}",
+      "name": "Heaven // Earth",
+      "oracle_text": "Heaven deals X damage to each creature with flying.\nAftermath (Cast this spell only from your graveyard. Then exile it.)\nEarth deals X damage to each creature without flying.",
+      "second_face": "heaven_earth_earth",
+      "second_face_zone": "graveyard",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "x": true
+          },
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "keywords": [
+              "flying"
+            ],
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "damage"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "heaven_earth_earth",
+      "mana_cost": "{X}{R}{R}",
+      "name": "Earth",
+      "oracle_text": "Aftermath (Cast this spell only from your graveyard. Then exile it.)\nEarth deals X damage to each creature without flying.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "x": true
+          },
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "not_keywords": [
+              "flying"
+            ],
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "damage"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -108988,6 +110464,84 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "insatiable_avarice",
+      "mana_cost": "{B}",
+      "name": "Insatiable Avarice",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {2} — Search your library for a card, then shuffle and put that card on top.\n+ {B}{B} — Target player draws three cards and loses 3 life.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "spree_mode": 0
+          },
+          "op": "if",
+          "then": [
+            {
+              "count": 1,
+              "destination": "library_top",
+              "op": "search_library",
+              "player": "you",
+              "selector": {}
+            }
+          ]
+        },
+        {
+          "condition": {
+            "spree_mode": 1
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "draw",
+              "player": {
+                "target": "t1"
+              }
+            },
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "lose_life",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ]
+        }
+      ],
+      "spree": [
+        {
+          "mana": "{2}"
+        },
+        {
+          "mana": "{B}{B}"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "any"
+          },
+          "spree_mode": 1
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -112954,6 +114508,99 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "jailbreak_scheme",
+      "mana_cost": "{U}",
+      "name": "Jailbreak Scheme",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {3} — Put a +1/+1 counter on target creature. It can't be blocked this turn.\n+ {2} — Target artifact or creature's owner puts it on their choice of the top or bottom of their library.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "spree_mode": 0
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            },
+            {
+              "duration": "this_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "unblockable"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "spree_mode": 1
+          },
+          "op": "if",
+          "then": [
+            {
+              "objects": {
+                "target": "t2"
+              },
+              "op": "put_on_top",
+              "owner_chooses": true
+            }
+          ]
+        }
+      ],
+      "spree": [
+        {
+          "mana": "{3}"
+        },
+        {
+          "mana": "{2}"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "spree_mode": 0
+        },
+        {
+          "count": 1,
+          "id": "t2",
+          "kind": "permanent",
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "spree_mode": 1
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -120751,6 +122398,97 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Plant",
+              "Treefolk"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Other Plants and Treefolk you control get +2/+0.",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "effects": [
+            {
+              "destination": "hand",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "any_of": [
+                  {
+                    "subtypes": [
+                      "Plant",
+                      "Treefolk"
+                    ]
+                  },
+                  {
+                    "types": [
+                      "Land"
+                    ]
+                  }
+                ],
+                "controller": "you",
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "At the beginning of each of your postcombat main phases, return target Plant, Treefolk, or land card from your graveyard to your hand.",
+          "trigger": {
+            "controller": "you",
+            "event": "postcombat_main"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "R",
+        "W"
+      ],
+      "id": "kirri_talented_sprout",
+      "mana_cost": "{1}{R}{G}{W}",
+      "name": "Kirri, Talented Sprout",
+      "oracle_text": "Other Plants and Treefolk you control get +2/+0.\nAt the beginning of each of your postcombat main phases, return target Plant, Treefolk, or land card from your graveyard to your hand.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Plant",
+        "Druid"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -123068,6 +124806,81 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "subtypes": [
+                  "Forest"
+                ]
+              },
+              "shuffle": false,
+              "tapped": true
+            },
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "subtypes": [
+                  "Plains"
+                ]
+              },
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, {T}, Sacrifice this land: Search your library for a Forest card and a Plains card, put them onto the battlefield tapped, then shuffle"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "krosan_verge",
+      "name": "Krosan Verge",
+      "oracle_text": "This land enters tapped.\n{T}: Add {C}.\n{2}, {T}, Sacrifice this land: Search your library for a Forest card and a Plains card, put them onto the battlefield tapped, then shuffle.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -128044,6 +129857,109 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "cards_in_hand": "you"
+              },
+              "as": "pitched",
+              "op": "discard",
+              "player": "you",
+              "selector": {
+                "types": [
+                  "Land"
+                ]
+              },
+              "up_to": true
+            },
+            {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "count": {
+                    "binding": "pitched"
+                  }
+                },
+                "right": {
+                  "const": 1
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "ability": "loamcrafter_faun_return",
+                  "op": "reflexive_trigger"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, you may discard one or more land cards.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "destination": "hand",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "id": "loamcrafter_faun_return",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "count": {
+                "count": {
+                  "binding": "pitched"
+                }
+              },
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "not_types": [
+                  "Land",
+                  "Instant",
+                  "Sorcery"
+                ],
+                "zone": "graveyard"
+              },
+              "up_to": true
+            }
+          ],
+          "text": "When you do, return up to that many target nonland permanent cards from your graveyard to your hand."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "loamcrafter_faun",
+      "mana_cost": "{2}{G}",
+      "name": "Loamcrafter Faun",
+      "oracle_text": "When this creature enters, you may discard one or more land cards. When you do, return up to that many target nonland permanent cards from your graveyard to your hand.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Satyr",
+        "Druid"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -133276,6 +135192,39 @@
       ]
     },
     {
+      "additional_cost": {
+        "discard": 1,
+        "discard_selector": {
+          "types": [
+            "Land"
+          ]
+        }
+      },
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "magmatic_insight",
+      "mana_cost": "{R}",
+      "name": "Magmatic Insight",
+      "oracle_text": "As an additional cost to cast this spell, discard a land card.\nDraw two cards.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "draw",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -134899,6 +136848,48 @@
       ]
     },
     {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "map_the_frontier",
+      "mana_cost": "{3}{G}",
+      "name": "Map the Frontier",
+      "oracle_text": "Search your library for up to two basic land cards and/or Desert cards, put them onto the battlefield tapped, then shuffle.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 2,
+          "destination": "battlefield",
+          "op": "search_library",
+          "player": "you",
+          "selector": {
+            "any_of": [
+              {
+                "supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ]
+              },
+              {
+                "subtypes": [
+                  "Desert"
+                ]
+              }
+            ]
+          },
+          "tapped": true
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -135933,6 +137924,63 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "mana_spent_from": {
+                  "subtypes": [
+                    "Treasure"
+                  ]
+                }
+              },
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, if mana from a Treasure was spent to cast it, create a Treasure token for each mana from a Treasure spent to cast it.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "mana_spent_from": {
+                  "subtypes": [
+                    "Treasure"
+                  ]
+                }
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "marut",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{8}",
+      "name": "Marut",
+      "oracle_text": "Trample\nWhen this creature enters, if mana from a Treasure was spent to cast it, create a Treasure token for each mana from a Treasure spent to cast it. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Construct"
+      ],
+      "toughness": 7,
+      "types": [
+        "Artifact",
+        "Creature"
       ]
     },
     {
@@ -139566,6 +141614,72 @@
           "effects": [
             {
               "amount": {
+                "cards_in_hand": "you"
+              },
+              "as": "pitched",
+              "op": "discard",
+              "player": "you",
+              "selector": {
+                "types": [
+                  "Creature"
+                ]
+              },
+              "up_to": true
+            },
+            {
+              "amount": {
+                "times": [
+                  {
+                    "const": 2
+                  },
+                  {
+                    "count": {
+                      "binding": "pitched"
+                    }
+                  }
+                ]
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, discard any number of creature cards. For each card discarded this way, put two +1/+1 counters on this creature.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "mind_maggots",
+      "mana_cost": "{3}{B}",
+      "name": "Mind Maggots",
+      "oracle_text": "When this creature enters, discard any number of creature cards. For each card discarded this way, put two +1/+1 counters on this creature.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Insect"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
                 "const": 1
               },
               "as": "exiled",
@@ -139927,6 +142041,57 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "choose_color",
+              "prompt": "Choose a color"
+            }
+          ],
+          "kind": "triggered",
+          "text": "As it enters, choose a color.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": {
+                "chosen_color_of": "self"
+              },
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of the chosen color."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "mirage_mesa",
+      "name": "Mirage Mesa",
+      "oracle_text": "This land enters tapped. As it enters, choose a color.\n{T}: Add one mana of the chosen color.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Desert"
+      ],
+      "types": [
+        "Land"
       ]
     },
     {
@@ -146518,6 +148683,75 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "cards_in_hand": "you"
+              },
+              "as": "pitched",
+              "op": "discard",
+              "player": "you",
+              "selector": {
+                "types": [
+                  "Land"
+                ]
+              },
+              "up_to": true
+            },
+            {
+              "amount": {
+                "count": {
+                  "binding": "pitched"
+                }
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            },
+            {
+              "amount": {
+                "count": {
+                  "binding": "pitched"
+                }
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, you may discard any number of land cards. Put that many +1/+1 counters on this creature and draw that many cards.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "nantuko_cultivator",
+      "mana_cost": "{3}{G}",
+      "name": "Nantuko Cultivator",
+      "oracle_text": "When this creature enters, you may discard any number of land cards. Put that many +1/+1 counters on this creature and draw that many cards.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Insect",
+        "Druid"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -147863,6 +150097,54 @@
         "Zombie"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "dragon_egg_0_2_r_defender"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Landfall — Whenever a land you control enters, create a 0/2 red Dragon Egg creature token with defender and \"When this token dies, create a 2/2 red Dragon creature token with flying and '{R}: This token gets +1/+0 until end of turn.'\"",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "nesting_dragon",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{R}{R}",
+      "name": "Nesting Dragon",
+      "oracle_text": "Flying\nLandfall — Whenever a land you control enters, create a 0/2 red Dragon Egg creature token with defender and \"When this token dies, create a 2/2 red Dragon creature token with flying and '{R}: This token gets +1/+0 until end of turn.'\"",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -160855,6 +163137,86 @@
     {
       "abilities": [
         {
+          "affects_player": "you",
+          "effect": "play_lands_from_graveyard",
+          "kind": "static",
+          "text": "You may play lands from your graveyard."
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "mana": "{G}{G}"
+          },
+          "effects": [
+            {
+              "controller": "you",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "put_onto_battlefield"
+            },
+            {
+              "destination": "exile",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "replace_leaves_battlefield"
+            },
+            {
+              "duration": "permanent",
+              "keyword": "haste",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "self_only": true,
+                    "zone": "battlefield"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "Exile it at the beginning of the next end step or if it would leave the battlefield."
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Unearth {G}{G} ({G}{G}: Return this card from your graveyard to the battlefield. It gains haste. Exile it at the beginning of the next end step or if it would leave the battlefield. Unearth only as a sorcery.)"
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "id": "perennial_behemoth",
+      "mana_cost": "{5}",
+      "name": "Perennial Behemoth",
+      "oracle_text": "You may play lands from your graveyard.\nUnearth {G}{G} ({G}{G}: Return this card from your graveyard to the battlefield. It gains haste. Exile it at the beginning of the next end step or if it would leave the battlefield. Unearth only as a sorcery.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Beast"
+      ],
+      "toughness": 7,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -172779,6 +175141,78 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "pay_life": 1,
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{R}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}, Pay 1 life: Add {R}."
+        },
+        {
+          "cost": {
+            "mana": "{2}{R}{R}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "subtypes": [
+                "Desert"
+              ],
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{R}{R}, {T}, Sacrifice a Desert: This land deals 2 damage to each opponent."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "id": "ramunap_ruins",
+      "name": "Ramunap Ruins",
+      "oracle_text": "{T}: Add {C}.\n{T}, Pay 1 life: Add {R}.\n{2}{R}{R}, {T}, Sacrifice a Desert: This land deals 2 damage to each opponent.",
+      "source": "auto",
+      "subtypes": [
+        "Desert"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -176435,6 +178869,123 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "requisition_raid",
+      "mana_cost": "{W}",
+      "name": "Requisition Raid",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {1} — Destroy target artifact.\n+ {1} — Destroy target enchantment.\n+ {1} — Put a +1/+1 counter on each creature target player controls.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "spree_mode": 0
+          },
+          "op": "if",
+          "then": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "spree_mode": 1
+          },
+          "op": "if",
+          "then": [
+            {
+              "objects": {
+                "target": "t2"
+              },
+              "op": "destroy"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "spree_mode": 2
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "controller": {
+                  "target": "t3"
+                },
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ]
+        }
+      ],
+      "spree": [
+        {
+          "mana": "{1}"
+        },
+        {
+          "mana": "{1}"
+        },
+        {
+          "mana": "{1}"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Artifact"
+            ],
+            "zone": "battlefield"
+          },
+          "spree_mode": 0
+        },
+        {
+          "count": 1,
+          "id": "t2",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Enchantment"
+            ],
+            "zone": "battlefield"
+          },
+          "spree_mode": 1
+        },
+        {
+          "count": 1,
+          "id": "t3",
+          "kind": "player",
+          "selector": {
+            "controller": "any"
+          },
+          "spree_mode": 2
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -182878,6 +185429,88 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 3
+              },
+              "toughness": {
+                "const": 3
+              }
+            },
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "trample"
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, other creatures you control get +3/+3 and gain trample until end of turn.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "cost_reduction": {
+        "count": {
+          "controller": "you",
+          "types": [
+            "Land"
+          ],
+          "zone": "graveyard"
+        }
+      },
+      "id": "rumbleweed",
+      "keywords": [
+        "reach",
+        "vigilance",
+        "trample"
+      ],
+      "mana_cost": "{10}{G}",
+      "name": "Rumbleweed",
+      "oracle_text": "This spell costs {1} less to cast for each land card in your graveyard.\nReach, vigilance, trample\nWhen this creature enters, other creatures you control get +3/+3 and gain trample until end of turn.",
+      "power": 8,
+      "source": "auto",
+      "subtypes": [
+        "Plant",
+        "Elemental"
+      ],
+      "toughness": 8,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -183183,6 +185816,94 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "rustler_rampage",
+      "mana_cost": "{W}",
+      "name": "Rustler Rampage",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {1} — Untap all creatures target player controls.\n+ {1} — Target creature gains double strike until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "spree_mode": 0
+          },
+          "op": "if",
+          "then": [
+            {
+              "objects": {
+                "controller": {
+                  "target": "t1"
+                },
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "untap"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "spree_mode": 1
+          },
+          "op": "if",
+          "then": [
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "double_strike"
+              ],
+              "objects": {
+                "target": "t2"
+              },
+              "op": "grant_keyword"
+            }
+          ]
+        }
+      ],
+      "spree": [
+        {
+          "mana": "{1}"
+        },
+        {
+          "mana": "{1}"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "any"
+          },
+          "spree_mode": 0
+        },
+        {
+          "count": 1,
+          "id": "t2",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "spree_mode": 1
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -184916,6 +187637,94 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "count": 1,
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "subtypes": [
+                  "Desert"
+                ]
+              },
+              "tapped": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, if an opponent controls more lands than you, search your library for a Desert card, put it onto the battlefield tapped, then shuffle.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "max_count_of": {
+                  "objects": {
+                    "types": [
+                      "Land"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "player": "each_opponent"
+                }
+              },
+              "right": {
+                "lands_you_control": true
+              }
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "sand_warrior_1_1_rgw"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more land cards are put into your graveyard from anywhere, create a 1/1 red, green, and white Sand Warrior creature token. This ability triggers only once each turn.",
+          "trigger": {
+            "batched": true,
+            "controller": "you",
+            "event": "put_into_graveyard",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            },
+            "max_per_turn": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "sand_scout",
+      "mana_cost": "{1}{W}",
+      "name": "Sand Scout",
+      "oracle_text": "When this creature enters, if an opponent controls more lands than you, search your library for a Desert card, put it onto the battlefield tapped, then shuffle.\nWhenever one or more land cards are put into your graveyard from anywhere, create a 1/1 red, green, and white Sand Warrior creature token. This ability triggers only once each turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Scout"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -186499,6 +189308,104 @@
         "Gnome"
       ],
       "toughness": 2,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "condition": {
+                        "exists": {
+                          "controller": "you",
+                          "types": [
+                            "Land"
+                          ],
+                          "zone": "hand"
+                        }
+                      },
+                      "effects": [
+                        {
+                          "objects": {
+                            "chooser": "controller",
+                            "controller": "you",
+                            "count": 1,
+                            "types": [
+                              "Land"
+                            ],
+                            "zone": "hand"
+                          },
+                          "op": "put_onto_battlefield",
+                          "tapped": true
+                        }
+                      ],
+                      "op": "may",
+                      "prompt": "Put a land card from your hand onto the battlefield tapped?"
+                    }
+                  ],
+                  "label": "You may put a land card from your hand onto the battlefield tapped."
+                },
+                {
+                  "effects": [
+                    {
+                      "controller": "you",
+                      "destination": "battlefield",
+                      "objects": {
+                        "target": "t1"
+                      },
+                      "op": "return_from_graveyard",
+                      "tapped": true
+                    }
+                  ],
+                  "label": "Return target land card from your graveyard to the battlefield tapped."
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "mode": 1,
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Land"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Whenever this creature becomes tapped, choose one —\n• You may put a land card from your hand onto the battlefield tapped.\n• Return target land card from your graveyard to the battlefield tapped.",
+          "trigger": {
+            "event": "becomes_tapped",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "scaretiller",
+      "mana_cost": "{4}",
+      "name": "Scaretiller",
+      "oracle_text": "Whenever this creature becomes tapped, choose one —\n• You may put a land card from your hand onto the battlefield tapped.\n• Return target land card from your graveyard to the battlefield tapped.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Scarecrow"
+      ],
+      "toughness": 4,
       "types": [
         "Artifact",
         "Creature"
@@ -191727,6 +194634,78 @@
     },
     {
       "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "flashback": {
+        "mana": "{4}{W}"
+      },
+      "id": "sevinne_s_reclamation",
+      "mana_cost": "{2}{W}",
+      "name": "Sevinne's Reclamation",
+      "oracle_text": "Return target permanent card with mana value 3 or less from your graveyard to the battlefield. If this spell was cast from a graveyard, you may copy this spell and may choose a new target for the copy.\nFlashback {4}{W} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "destination": "battlefield",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "return_from_graveyard"
+        },
+        {
+          "condition": {
+            "cast_from_graveyard": true
+          },
+          "op": "if",
+          "then": [
+            {
+              "effects": [
+                {
+                  "new_targets": true,
+                  "op": "copy_spell",
+                  "this_spell": true
+                }
+              ],
+              "op": "may",
+              "prompt": "Copy Sevinne's Reclamation?"
+            }
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Creature",
+              "Enchantment",
+              "Land",
+              "Planeswalker",
+              "Battle"
+            ],
+            "controller": "you",
+            "mana_value": {
+              "op": "<=",
+              "value": {
+                "const": 3
+              }
+            },
+            "zone": "graveyard"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "B",
         "R",
         "U"
@@ -193165,6 +196144,90 @@
       "toughness": 5,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "pay_life": 1,
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{W}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}, Pay 1 life: Add {W}."
+        },
+        {
+          "cost": {
+            "mana": "{2}{W}{W}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "subtypes": [
+                "Desert"
+              ],
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "{2}{W}{W}, {T}, Sacrifice a Desert: Creatures you control get +1/+1 until end of turn. Activate only as a sorcery."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "id": "shefet_dunes",
+      "mana_cost": "",
+      "name": "Shefet Dunes",
+      "oracle_text": "{T}: Add {C}.\n{T}, Pay 1 life: Add {W}.\n{2}{W}{W}, {T}, Sacrifice a Desert: Creatures you control get +1/+1 until end of turn. Activate only as a sorcery.",
+      "source": "auto",
+      "subtypes": [
+        "Desert"
+      ],
+      "types": [
+        "Land"
       ]
     },
     {
@@ -198495,6 +201558,69 @@
       "types": [
         "Kindred",
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a land card is put into your graveyard from anywhere, you gain 1 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "put_into_graveyard",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}{G}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "mill",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{G}: Mill a card. (Put the top card of your library into your graveyard.)"
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "skola_grovedancer",
+      "mana_cost": "{1}{G}",
+      "name": "Skola Grovedancer",
+      "oracle_text": "Whenever a land card is put into your graveyard from anywhere, you gain 1 life.\n{2}{G}: Mill a card. (Put the top card of your library into your graveyard.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Satyr",
+        "Druid"
+      ],
+      "toughness": 2,
+      "types": [
+        "Enchantment",
+        "Creature"
       ]
     },
     {
@@ -205850,6 +208976,81 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "spoils_of_the_hunt",
+      "mana_cost": "{2}{G}",
+      "name": "Spoils of the Hunt",
+      "oracle_text": "Target creature you control gets +1/+0 until end of turn for each mana from a Treasure that was spent to cast this spell. Then that creature deals damage equal to its power to target creature an opponent controls.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "duration": "until_end_of_turn",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "pump",
+          "power": {
+            "mana_spent_from": {
+              "subtypes": [
+                "Treasure"
+              ]
+            }
+          },
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "amount": {
+            "power_of": {
+              "target": "t1"
+            }
+          },
+          "objects": {
+            "target": "t2"
+          },
+          "op": "damage",
+          "source_object": {
+            "target": "t1"
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "t2",
+          "kind": "permanent",
+          "selector": {
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -216663,6 +219864,120 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another creature dies, or a creature card is put into a graveyard from anywhere other than the battlefield, or a creature card leaves your graveyard, Syr Konrad deals 1 damage to each opponent.",
+          "trigger": {
+            "controller": "any",
+            "event": "creature_dies",
+            "filter": {
+              "exclude_self": true
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another creature dies, or a creature card is put into a graveyard from anywhere other than the battlefield, or a creature card leaves your graveyard, Syr Konrad deals 1 damage to each opponent.",
+          "trigger": {
+            "controller": "any",
+            "event": "put_into_graveyard",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            },
+            "from_zones": [
+              "library",
+              "hand",
+              "stack",
+              "exile",
+              "command"
+            ]
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another creature dies, or a creature card is put into a graveyard from anywhere other than the battlefield, or a creature card leaves your graveyard, Syr Konrad deals 1 damage to each opponent.",
+          "trigger": {
+            "controller": "you",
+            "event": "leaves_graveyard",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{1}{B}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "mill",
+              "player": "each_player"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{B}: Each player mills a card. (They each put the top card of their library into their graveyard.)"
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "syr_konrad_the_grim",
+      "mana_cost": "{3}{B}{B}",
+      "name": "Syr Konrad, the Grim",
+      "oracle_text": "Whenever another creature dies, or a creature card is put into a graveyard from anywhere other than the battlefield, or a creature card leaves your graveyard, Syr Konrad deals 1 damage to each opponent.\n{1}{B}: Each player mills a card. (They each put the top card of their library into their graveyard.)",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_player": "you",
           "effect": "play_lands_from_graveyard",
           "kind": "static",
@@ -225476,6 +228791,103 @@
         {
           "effects": [
             {
+              "effects": [],
+              "else": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "sacrifice": {
+                  "controller": "you",
+                  "count": 1,
+                  "types": [
+                    "Land"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "prompt": "Sacrifice a land to keep The Gitrog Monster?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, sacrifice The Gitrog Monster unless you sacrifice a land.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        },
+        {
+          "affects_player": "you",
+          "amount": {
+            "const": 1
+          },
+          "effect": "extra_land_drops",
+          "kind": "static",
+          "text": "You may play an additional land on each of your turns."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more land cards are put into your graveyard from anywhere, draw a card.",
+          "trigger": {
+            "batched": true,
+            "controller": "you",
+            "event": "put_into_graveyard",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "the_gitrog_monster",
+      "keywords": [
+        "deathtouch"
+      ],
+      "mana_cost": "{3}{B}{G}",
+      "name": "The Gitrog Monster",
+      "oracle_text": "Deathtouch\nAt the beginning of your upkeep, sacrifice The Gitrog Monster unless you sacrifice a land.\nYou may play an additional land on each of your turns.\nWhenever one or more land cards are put into your graveyard from anywhere, draw a card.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Frog",
+        "Horror"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "half": {
                   "of": {
@@ -226024,6 +229436,113 @@
       "toughness": 5,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "chapter": 1,
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "mill",
+              "player": "you"
+            },
+            {
+              "destination": "hand",
+              "objects": {
+                "controller": "you",
+                "count": 1,
+                "optional": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "chapter",
+          "text": "I, II — Mill two cards, then you may return a creature card from your graveyard to your hand."
+        },
+        {
+          "chapter": 2,
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "mill",
+              "player": "you"
+            },
+            {
+              "destination": "hand",
+              "objects": {
+                "controller": "you",
+                "count": 1,
+                "optional": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "chapter",
+          "text": "I, II — Mill two cards, then you may return a creature card from your graveyard to your hand."
+        },
+        {
+          "chapter": 3,
+          "effects": [
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Land"
+                ],
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            },
+            {
+              "objects": {
+                "count": "all",
+                "player": "you",
+                "zone": "graveyard"
+              },
+              "op": "put_on_top"
+            },
+            {
+              "op": "shuffle",
+              "player": "you"
+            }
+          ],
+          "kind": "chapter",
+          "text": "III — Return all land cards from your graveyard to the battlefield, then shuffle your graveyard into your library."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "the_mending_of_dominaria",
+      "mana_cost": "{3}{G}{G}",
+      "name": "The Mending of Dominaria",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI, II — Mill two cards, then you may return a creature card from your graveyard to your hand.\nIII — Return all land cards from your graveyard to the battlefield, then shuffle your graveyard into your library.",
+      "source": "auto",
+      "subtypes": [
+        "Saga"
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -229552,6 +233071,106 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "three_steps_ahead",
+      "mana_cost": "{U}",
+      "name": "Three Steps Ahead",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {1}{U} — Counter target spell.\n+ {3} — Create a token that's a copy of target artifact or creature you control.\n+ {2} — Draw two cards, then discard a card.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "spree_mode": 0
+          },
+          "op": "if",
+          "then": [
+            {
+              "op": "counter",
+              "target": "t1"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "spree_mode": 1
+          },
+          "op": "if",
+          "then": [
+            {
+              "objects": {
+                "target": "t2"
+              },
+              "op": "copy_permanent"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "spree_mode": 2
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "discard",
+              "player": "you"
+            }
+          ]
+        }
+      ],
+      "spree": [
+        {
+          "mana": "{1}{U}"
+        },
+        {
+          "mana": "{3}"
+        },
+        {
+          "mana": "{2}"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "spell",
+          "selector": {},
+          "spree_mode": 0
+        },
+        {
+          "count": 1,
+          "id": "t2",
+          "kind": "permanent",
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Creature"
+            ],
+            "controller": "you",
+            "zone": "battlefield"
+          },
+          "spree_mode": 1
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -229856,6 +233475,50 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "thrilling_discovery",
+      "mana_cost": "{R}{W}",
+      "name": "Thrilling Discovery",
+      "oracle_text": "You gain 2 life. Then you may discard two cards. If you do, draw three cards.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "gain_life",
+          "player": "you"
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "op": "may",
+          "pay": {
+            "discard": 2
+          },
+          "player": "you",
+          "prompt": "Discard two cards to draw three cards?"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -232255,6 +235918,94 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "affects_spells": {
+            "subtypes": [
+              "Forest"
+            ]
+          },
+          "effect": "play_lands_from_graveyard",
+          "kind": "static",
+          "text": "You may play Forests from your graveyard."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "elemental_5_3_g"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a Forest you control enters, create a 5/3 green Elemental creature token.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "subtypes": [
+                "Forest"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 3
+                  },
+                  "op": "mill",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "prompt": "Mill three cards?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an Elemental you control dies, you may mill three cards.",
+          "trigger": {
+            "controller": "you",
+            "event": "creature_dies",
+            "filter": {
+              "controller": "you",
+              "subtypes": [
+                "Elemental"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "titania_nature_s_force",
+      "mana_cost": "{4}{G}{G}",
+      "name": "Titania, Nature's Force",
+      "oracle_text": "You may play Forests from your graveyard.\nWhenever a Forest you control enters, create a 5/3 green Elemental creature token.\nWhenever an Elemental you control dies, you may mill three cards.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Elemental"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -237085,6 +240836,92 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "plant_0_1_g"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more land cards are put into your graveyard from anywhere, create a 0/1 green Plant creature token.",
+          "trigger": {
+            "batched": true,
+            "controller": "you",
+            "event": "put_into_graveyard",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{G}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 3,
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "destination": "hand",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Land"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "{G}, Sacrifice three creatures: Return target land card from your graveyard to your hand."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "turntimber_sower",
+      "mana_cost": "{2}{G}",
+      "name": "Turntimber Sower",
+      "oracle_text": "Whenever one or more land cards are put into your graveyard from anywhere, create a 0/1 green Plant creature token.\n{G}, Sacrifice three creatures: Return target land card from your graveyard to your hand.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Druid"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -240221,6 +244058,73 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "unholy_heat",
+      "mana_cost": "{R}",
+      "name": "Unholy Heat",
+      "oracle_text": "Unholy Heat deals 2 damage to target creature or planeswalker.\nDelirium — Unholy Heat deals 6 damage instead if there are four or more card types among cards in your graveyard.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "distinct": {
+                "objects": {
+                  "controller": "you",
+                  "zone": "graveyard"
+                },
+                "of": "card_type"
+              }
+            },
+            "right": {
+              "const": 4
+            }
+          },
+          "else": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 6
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "any_types": [
+              "Creature",
+              "Planeswalker"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -244380,6 +248284,62 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "flashback": {
+        "mana": "{6}{G}{G}"
+      },
+      "id": "vengeful_regrowth",
+      "mana_cost": "{4}{G}{G}",
+      "name": "Vengeful Regrowth",
+      "oracle_text": "Return up to three target land cards from your graveyard to the battlefield tapped. Create that many 4/2 green Plant Warrior creature tokens with reach.\nFlashback {6}{G}{G} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "you",
+          "destination": "battlefield",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "return_from_graveyard",
+          "tapped": true
+        },
+        {
+          "amount": {
+            "count": {
+              "target": "t1",
+              "zone": "battlefield"
+            }
+          },
+          "op": "create_token",
+          "token": "plant_warrior_4_2_g_reach"
+        }
+      ],
+      "targets": [
+        {
+          "count": 3,
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "min_count": 0,
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Land"
+            ],
+            "zone": "graveyard"
+          },
+          "up_to": true
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -255500,6 +259460,70 @@
       ]
     },
     {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "winding_way",
+      "mana_cost": "{1}{G}",
+      "name": "Winding Way",
+      "oracle_text": "Choose creature or land. Reveal the top four cards of your library. Put all cards of the chosen type revealed this way into your hand and the rest into your graveyard.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 4
+                  },
+                  "destination": "hand",
+                  "objects": {
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ]
+                  },
+                  "op": "look_at_top",
+                  "player": "you",
+                  "rest_to": "graveyard"
+                }
+              ],
+              "label": "Creature"
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 4
+                  },
+                  "destination": "hand",
+                  "objects": {
+                    "count": "all",
+                    "types": [
+                      "Land"
+                    ]
+                  },
+                  "op": "look_at_top",
+                  "player": "you",
+                  "rest_to": "graveyard"
+                }
+              ],
+              "label": "Land"
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -258281,6 +262305,77 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 3
+                  },
+                  "op": "mill",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Mill three cards?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, you may mill three cards.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "chooser": "none",
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Land"
+                ],
+                "zone": "graveyard"
+              },
+              "op": "put_onto_battlefield",
+              "tapped": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, return all land cards from your graveyard to the battlefield tapped.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "world_shaper",
+      "mana_cost": "{3}{G}",
+      "name": "World Shaper",
+      "oracle_text": "Whenever this creature attacks, you may mill three cards.\nWhen this creature dies, return all land cards from your graveyard to the battlefield tapped.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Merfolk",
+        "Shaman"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G",
         "R"
@@ -258370,6 +262465,94 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "flashback": {
+        "mana": "{3}{R}{G}"
+      },
+      "id": "wreck_and_rebuild",
+      "mana_cost": "{1}{R}{G}",
+      "name": "Wreck and Rebuild",
+      "oracle_text": "Choose one —\n• Destroy target artifact or enchantment.\n• Mill five cards, then you may put a land card from your graveyard onto the battlefield tapped.\nFlashback {3}{R}{G}",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "wrecked"
+                  },
+                  "op": "destroy"
+                }
+              ],
+              "label": "Destroy target artifact or enchantment."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 5
+                  },
+                  "op": "mill",
+                  "player": "you"
+                },
+                {
+                  "effects": [
+                    {
+                      "controller": "you",
+                      "destination": "battlefield",
+                      "objects": {
+                        "chooser": "controller",
+                        "controller": "you",
+                        "count": 1,
+                        "types": [
+                          "Land"
+                        ],
+                        "zone": "graveyard"
+                      },
+                      "op": "return_from_graveyard",
+                      "tapped": true
+                    }
+                  ],
+                  "op": "may",
+                  "prompt": "Put a land card from your graveyard onto the battlefield tapped?"
+                }
+              ],
+              "label": "Mill five cards, then you may put a land card from your graveyard onto the battlefield tapped."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "wrecked",
+          "kind": "permanent",
+          "mode": 0,
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Enchantment"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -259764,6 +263947,137 @@
         "Legendary"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "sacrifice": {
+                  "controller": "you",
+                  "count": 1,
+                  "types": [
+                    "Land"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "player": "you",
+              "prompt": "Sacrifice a land to draw a card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Yuma enters or attacks, you may sacrifice a land. If you do, draw a card.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "sacrifice": {
+                  "controller": "you",
+                  "count": 1,
+                  "types": [
+                    "Land"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "player": "you",
+              "prompt": "Sacrifice a land to draw a card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Yuma enters or attacks, you may sacrifice a land. If you do, draw a card.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "plant_warrior_4_2_g_reach"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a Desert card is put into your graveyard from anywhere, create a 4/2 green Plant Warrior creature token with reach.",
+          "trigger": {
+            "controller": "you",
+            "event": "put_into_graveyard",
+            "filter": {
+              "subtypes": [
+                "Desert"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "R",
+        "W"
+      ],
+      "cost_reduction": {
+        "count": {
+          "controller": "you",
+          "types": [
+            "Land"
+          ],
+          "zone": "graveyard"
+        }
+      },
+      "id": "yuma_proud_protector",
+      "mana_cost": "{5}{R}{G}{W}",
+      "name": "Yuma, Proud Protector",
+      "oracle_text": "This spell costs {1} less to cast for each land card in your graveyard.\nWhenever Yuma enters or attacks, you may sacrifice a land. If you do, draw a card.\nWhenever a Desert card is put into your graveyard from anywhere, create a 4/2 green Plant Warrior creature token with reach.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Ranger"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
       "types": [
         "Creature"
       ]

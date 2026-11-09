@@ -1,0 +1,50 @@
+{
+  "_comment": "Cards that exist only for the spree-mode-targets test (tests/unit/modes/test_spree_mode_targets.py). Never part of a deck list. `t_spree_raid` is Requisition Raid's shape as an instant, so a cast-trigger copier can copy it; each of its three modes owns its own target. `t_raid_relic` and `t_raid_charm` are a vanilla artifact and enchantment to point those targets at.",
+  "cards": [
+    {
+      "id": "t_spree_raid",
+      "name": "Test Spree Raid",
+      "oracle_text": "Spree (Choose one or more additional costs.)\n+ {1} — Destroy target artifact.\n+ {1} — Destroy target enchantment.\n+ {1} — Put a +1/+1 counter on each creature target player controls.",
+      "mana_cost": "{W}",
+      "types": ["Instant"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "spree": [
+        {"mana": "{1}"},
+        {"mana": "{1}"},
+        {"mana": "{1}"}
+      ],
+      "targets": [
+        {"id": "art", "kind": "permanent", "count": 1, "spree_mode": 0,
+         "selector": {"types": ["Artifact"]}},
+        {"id": "ench", "kind": "permanent", "count": 1, "spree_mode": 1,
+         "selector": {"types": ["Enchantment"]}},
+        {"id": "who", "kind": "player", "count": 1, "spree_mode": 2, "selector": {}}
+      ],
+      "spell_effects": [
+        {"op": "if", "condition": {"spree_mode": 0},
+         "then": [{"op": "destroy", "objects": {"target": "art"}}]},
+        {"op": "if", "condition": {"spree_mode": 1},
+         "then": [{"op": "destroy", "objects": {"target": "ench"}}]},
+        {"op": "if", "condition": {"spree_mode": 2},
+         "then": [{"op": "add_counters", "counter": "+1/+1", "amount": {"const": 1},
+                   "objects": {"zone": "battlefield", "types": ["Creature"],
+                               "controller": {"target": "who"}}}]}
+      ]
+    },
+    {
+      "id": "t_raid_relic",
+      "name": "Test Raid Relic",
+      "oracle_text": "",
+      "mana_cost": "{2}",
+      "types": ["Artifact"]
+    },
+    {
+      "id": "t_raid_charm",
+      "name": "Test Raid Charm",
+      "oracle_text": "",
+      "mana_cost": "{2}",
+      "types": ["Enchantment"]
+    }
+  ]
+}

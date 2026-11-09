@@ -1,0 +1,42 @@
+{
+  "_comment": "Cards that exist only for the copy-this-spell test (tests/unit/copies/test_copy_this_spell.py). Never part of a deck list. `t_self_reclaim` is Sevinne's Reclamation at a cheaper price.",
+  "cards": [
+    {
+      "id": "t_self_reclaim",
+      "name": "Test Self Reclaim",
+      "oracle_text": "Return target permanent card with mana value 3 or less from your graveyard to the battlefield. If this spell was cast from a graveyard, you may copy this spell and may choose a new target for the copy.\nFlashback {W}",
+      "mana_cost": "{W}",
+      "types": ["Sorcery"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "flashback": {"mana": "{W}"},
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "count": 1,
+          "selector": {
+            "controller": "you",
+            "zone": "graveyard",
+            "any_types": ["Artifact", "Creature", "Enchantment", "Land", "Planeswalker", "Battle"],
+            "mana_value": {"op": "<=", "value": {"const": 3}}
+          }
+        }
+      ],
+      "spell_effects": [
+        {"op": "return_from_graveyard", "objects": {"target": "t1"}, "destination": "battlefield"},
+        {
+          "op": "if",
+          "condition": {"cast_from_graveyard": true},
+          "then": [
+            {
+              "op": "may",
+              "prompt": "Copy this spell?",
+              "effects": [{"op": "copy_spell", "this_spell": true, "new_targets": true}]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "card_id": "unfortunate_accident",
+  "name": "Unfortunate Accident",
+  "oracle_text": "Spree (Choose one or more additional costs.)\n+ {2}{B} — Destroy target creature.\n+ {1} — Create a 1/1 red Mercenary creature token with \"{T}: Target creature you control gets +1/+0 until end of turn. Activate only as a sorcery.\"",
+  "blocked_sentences": [
+    "+ {1} — Create a 1/1 red Mercenary creature token with \"{T}: Target creature you control gets +1/+0 until end of turn. Activate only as a sorcery.\""
+  ],
+  "needs": [
+    {
+      "capability": "mercenary_1_1_r_pump",
+      "kind": "token",
+      "what": "a 1/1 red Mercenary creature token with \"{T}: Target creature you control gets +1/+0 until end of turn. Activate only as a sorcery.\"",
+      "why_existing_wont_do": "token_ids has no Mercenary token at all"
+    }
+  ],
+  "closest_existing": [],
+  "confidence": "high"
+}

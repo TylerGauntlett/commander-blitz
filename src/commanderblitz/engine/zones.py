@@ -337,6 +337,7 @@ def move_object(
     # only for a battlefield destination, so a countered creature spell does not
     # sit in its graveyard holding a haste to cash on a later cast.
     mana_granted_keywords = obj.mana_granted_keywords
+    mana_spent_origins = obj.mana_spent_origins
     cast_rider = obj.cast_rider
     cast_enters_with = obj.cast_enters_with
 
@@ -395,6 +396,7 @@ def move_object(
     obj.left_with = left_with
     if to_zone is Zone.BATTLEFIELD:
         obj.mana_granted_keywords = mana_granted_keywords
+        obj.mana_spent_origins = mana_spent_origins
         obj.cast_rider = cast_rider
         obj.cast_enters_with = cast_enters_with
     _add_to_zone(state, obj, to_zone, target_player, to_top=to_top, to_index=to_index)
@@ -464,6 +466,29 @@ def move_object(
             source=oid,
             oid=oid,
             card=card.id,
+            batch=state.event_batch,
+        )
+
+    # "Whenever one or more land cards are put into your graveyard from
+    # anywhere" -- The Gitrog Monster. The arrival half of the block above, and
+    # narrow for its reason. `to_zone` is the *final* destination, after every
+    # replacement, so a card Rest in Peace exiled never reached a graveyard and
+    # fires nothing; tokens are excluded because every printed form asks about
+    # a card. `player` is the graveyard's owner (400.3), so "your graveyard" is
+    # a fact about the yard and not about whoever moved the card.
+    if (
+        to_zone is Zone.GRAVEYARD
+        and from_zone is not Zone.GRAVEYARD
+        and not obj.is_token
+    ):
+        fire(
+            state,
+            EventType.PUT_INTO_GRAVEYARD,
+            player=owner,
+            source=oid,
+            oid=oid,
+            card=card.id,
+            from_zone=from_zone.value,
             batch=state.event_batch,
         )
 

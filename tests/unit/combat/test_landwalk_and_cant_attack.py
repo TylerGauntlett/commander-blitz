@@ -11,8 +11,9 @@ creature: it asks what the *defending player's board* contains. `can_block` knew
 flying, reach and protection, all of which read the two creatures involved, so
 there was nowhere to put it and no `blockers` filter could express it.
 
-Five keywords rather than one parameterised ability, because `Keyword` is a bare
-string and the whole content of the quality is *which* land type.
+One keyword per land type rather than one parameterised ability, because
+`Keyword` is a bare string and the whole content of the quality is *which* land
+type.
 
 **`cant_attack`** is a global prohibition, and it is the one static whose filter
 routinely names creatures its own controller does not control — so its `affects`

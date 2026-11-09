@@ -82,7 +82,7 @@ bumps.
 from __future__ import annotations
 
 import dataclasses
-from collections.abc import Iterator, Mapping
+from collections.abc import Iterable, Iterator, Mapping
 from typing import TYPE_CHECKING, Any, NamedTuple
 
 from .carddef import Ability, CardDef, ward_ability
@@ -2045,15 +2045,7 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
         # input on `mana_symbols`' terms, so the anthem cannot come to depend on
         # another static's output.
         pids = _static_players(state, source, expr["greatest_commander_mana_value"])
-        return max(
-            (
-                state.card_of(obj).mana_value
-                for pid in pids
-                for oid in state.commanders_of(pid)
-                if (obj := state.objects.get(oid)) is not None
-            ),
-            default=0,
-        )
+        return greatest_commander_mana_value(state, pids)
     if "commander_casts_this_game" in expr:
         # Commander's Insignia: "Creatures you control get +1/+1 for each time
         # you've cast your commander from the command zone this game." The
@@ -2309,6 +2301,27 @@ def top_of_library(state: GameState, pid: int) -> GameObject | None:
     """
     library = state.players[pid].library
     return state.objects.get(library[0]) if library else None
+
+
+def greatest_commander_mana_value(state: GameState, pids: Iterable[int]) -> int:
+    """The greatest printed mana value among these players' commanders.
+
+    Rule 903.3: a commander is a card wherever it is, so this reads
+    `GameState.commanders_of` rather than any zone -- most of the game the
+    commander is in the command zone, which no selector reaches. 0 when none of
+    the players has a commander. One computation for both sides of the DSL: the
+    static leaf re-reads it with every characteristics pass (Tangleweave Armor),
+    the effect leaf once, as its effect resolves (Cactus Preserve).
+    """
+    return max(
+        (
+            state.card_of(obj).mana_value
+            for pid in pids
+            for oid in state.commanders_of(pid)
+            if (obj := state.objects.get(oid)) is not None
+        ),
+        default=0,
+    )
 
 
 def _static_players(state: GameState, source: GameObject, spec: Any) -> list[int]:

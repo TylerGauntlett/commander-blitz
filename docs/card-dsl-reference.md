@@ -13,9 +13,9 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Effect ops](#effect-ops) | 173 |
 | [Selectors](#selectors) | 76 |
 | [Player specs](#player-specs) | 9 |
-| [Values](#values) | 72 |
+| [Values](#values) | 74 |
 | [Conditions](#conditions) | 34 |
-| [Trigger events](#trigger-events) | 53 |
+| [Trigger events](#trigger-events) | 54 |
 | [Trigger filters](#trigger-filters) | 37 |
 | [Static effects](#static-effects) | 96 |
 | [Player-wide statics](#player-wide-statics) | 46 |
@@ -23,7 +23,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Cost reduction](#cost-reduction) | 8 |
 | [Ability costs](#ability-costs) | 32 |
 | [Card-level costs](#card-level-costs) | 33 |
-| [Keywords](#keywords) | 45 |
+| [Keywords](#keywords) | 46 |
 | [Card types and supertypes](#card-types-and-supertypes) | 12 |
 | [Durations](#durations) | 6 |
 | [Decision kinds](#decision-kinds) | 11 |
@@ -37,7 +37,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
 | [Card-level face keys](#card-level-face-keys) | 6 |
 | [Card-level rider keys](#card-level-rider-keys) | 21 |
-| [Engine events](#engine-events) | 79 |
+| [Engine events](#engine-events) | 80 |
 
 ## Effect ops
 
@@ -51,7 +51,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `cast_from_hand` | Cards | yes | Cast a spell from hand (or listed zones, or a named pool once per owner) without paying its mana cost; `exiles` exiles the spell instead of putting it into a graveyard; `as` records what was cast, accumulating. | [Effect ops](card-dsl.md#effect-ops) |
 | `clash` | Cards |  | Clash with an opponent; the winner is bound for a later `if`. | [Clash](card-dsl-cookbook.md#clash) |
 | `connive` | Cards |  | Connive: draw, discard, +1/+1 counter if a nonland was discarded. | [Connive](card-dsl-cookbook.md#connive) |
-| `discard` | Cards | yes | A player discards N cards, chosen or at random; `as` records them. | [discard: up_to and as](card-dsl.md#discard-up_to-and-as) |
+| `discard` | Cards | yes | A player discards N cards, chosen or at random, from the hand or only the cards in it matching `selector`; `as` records them. | [discard: up_to, selector and as](card-dsl.md#discard-up_to-selector-and-as) |
 | `discover` | Cards | yes | Discover N: exile until a nonland of mana value N or less; cast it free or take it. | [Discover — cascade's walk, N or less, cast or hand](card-dsl-cookbook.md#discover--cascades-walk-n-or-less-cast-or-hand) |
 | `draw` | Cards | yes | A player draws N cards; `as` records who drew. | [draw's as — "each opponent who drew a card this way"](card-dsl-cookbook.md#draws-as--each-opponent-who-drew-a-card-this-way) |
 | `exile_until` | Cards | yes | Exile from the top of a player's library until a card matches; the rest stay exiled, the hit may be cast free by you, a creature with a `creature_cast_gains` rider. | [exile_until — a walk that leaves its cards in exile](card-dsl-cookbook.md#exile_until--a-walk-that-leaves-its-cards-in-exile) |
@@ -186,7 +186,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `add_mana_per` | Mana |  | Add one mana of a color for each object a selector finds. | ["Add {G} for each …"](card-dsl-cookbook.md#add-g-for-each-) |
 | `extra_land_drop` | Mana |  | A player may play an additional land this turn. | [Effect ops](card-dsl.md#effect-ops) |
 | `copy_ability` | Stack |  | Copy an activated or triggered ability; `new_targets` re-aims it. | [Effect ops](card-dsl.md#effect-ops) |
-| `copy_spell` | Stack |  | Copy a spell, or with `spells` each spell in a pool; `new_targets` lets the copy be re-aimed. | ["You may choose new targets for the copy"](card-dsl-cookbook.md#you-may-choose-new-targets-for-the-copy) |
+| `copy_spell` | Stack |  | Copy a spell, or with `spells` each spell in a pool, or with `this_spell` the spell resolving; `new_targets` lets the copy be re-aimed. | ["You may choose new targets for the copy"](card-dsl-cookbook.md#you-may-choose-new-targets-for-the-copy) |
 | `counter` | Stack | yes | Counter a spell or ability; `exiles` sends a spell it countered to exile instead of its owner's graveyard, `as` binds the cards it countered. | ["If that spell is countered this way, exile it instead"](card-dsl.md#if-that-spell-is-countered-this-way-exile-it-instead) |
 | `exile_spell_on_resolution` | Stack |  | A spell is exiled as it resolves instead of binned, linked to this source. | [Plot](card-dsl.md#plot) |
 | `grant_plot` | Stack |  | Plot a card: exile it, castable free on a later turn. | [Plot](card-dsl.md#plot) |
@@ -352,6 +352,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `distinct` | Distinct values of a quality among a pool (domain, coven, delirium, colors, kinds of counters, names). | [Counting different values rather than objects](card-dsl.md#counting-different-values-rather-than-objects) |
 | `energy_spent_this_turn` | Energy ({E}) the player paid or lost this turn. | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `extreme_value` | The greatest/least of a quality in a pool, as one number. | [Value expressions](card-dsl.md#value-expressions) |
+| `greatest_commander_mana_value` | The greatest printed mana value among the player's commanders, wherever they are; 0 with none. Read as the effect resolves. | [Value expressions](card-dsl.md#value-expressions) |
 | `greatest_discarded_by_a_player` | The greatest number of cards one player discarded this way. | [Discarding a whole hand, and reading the greatest that went](card-dsl.md#discarding-a-whole-hand-and-reading-the-greatest-that-went) |
 | `half` | Half of a value, rounded `up` or `down`. | [Value expressions](card-dsl.md#value-expressions) |
 | `keywords_had` | 1 if the departed permanent had a keyword (derived) as it left, else 0. | ["Without flying", asked of a creature that died — keywords_had](card-dsl.md#without-flying-asked-of-a-creature-that-died--keywords_had) |
@@ -361,6 +362,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `life_of` | A player's life total (summed over a plural spec). | [Value expressions](card-dsl.md#value-expressions) |
 | `loop_value` | The current item of an enclosing `for_each`. | [Value expressions](card-dsl.md#value-expressions) |
 | `loyalty_activations_this_turn` | Loyalty abilities the player activated this turn. | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
+| `mana_spent_from` | Units of mana spent to cast this whose source matched a `paid_by`-style filter ("for each mana from a Desert"). | [mana_spent_from — how much of the payment came from a kind of permanent](card-dsl.md#mana_spent_from--how-much-of-the-payment-came-from-a-kind-of-permanent) |
 | `mana_spent_of` | Mana of a color actually spent to cast this. | [mana_spent_of — what was paid, not what is printed](card-dsl.md#mana_spent_of--what-was-paid-not-what-is-printed) |
 | `mana_symbols` | Pips of a color among a pool's mana costs (chroma). | [Counting mana symbols](card-dsl.md#counting-mana-symbols) |
 | `mana_value_of` | Mana value of an object (summed over a pool). | [Value expressions](card-dsl.md#value-expressions) |
@@ -485,6 +487,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `permanent_enters` | `enters_battlefield` | A permanent enters the battlefield. | [Triggers](card-dsl.md#triggers) |
 | `postcombat_main` | `postcombat_main` | At the beginning of the postcombat main phase. | [Triggers](card-dsl.md#triggers) |
 | `precombat_main` | `precombat_main` | At the beginning of the precombat main phase. | [Triggers](card-dsl.md#triggers) |
+| `put_into_graveyard` | `put_into_graveyard` | A card is put into a graveyard from another zone; `from_zones` narrows where from, `batched` fires once per simultaneous move with `moved` its matching cards, and `nth` counts those moves this turn. | ["…put into your graveyard from anywhere" — put_into_graveyard](card-dsl-cookbook.md#put-into-your-graveyard-from-anywhere--put_into_graveyard) |
 | `sacrificed` | `sacrificed` | A permanent is sacrificed. | [Triggers](card-dsl.md#triggers) |
 | `searches_library` | `library_searched` | A player searches a library. | [Triggers](card-dsl.md#triggers) |
 | `self_enters` | `enters_battlefield` | This permanent enters the battlefield. | [Triggers](card-dsl.md#triggers) |
@@ -611,7 +614,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `maximum_hand_size` | yes |  | The player's maximum hand size is N; the newest hand-size effect wins. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `no_hand_limit` | yes |  | The player has no maximum hand size. | [Static abilities](card-dsl.md#static-abilities) |
 | `opponents_cant_force_discard_or_sacrifice` | yes |  | Opponents' spells and abilities can't make the player discard or sacrifice. | ["Can't cause you to discard cards or sacrifice permanents"](card-dsl-cookbook.md#cant-cause-you-to-discard-cards-or-sacrifice-permanents) |
-| `play_lands_from_graveyard` | yes |  | The player may play lands from their graveyard. | [Static abilities](card-dsl.md#static-abilities) |
+| `play_lands_from_graveyard` | yes |  | The player may play lands from their graveyard: every land, or only those whose printed face matches `affects_spells`. | [Static abilities](card-dsl.md#static-abilities) |
 | `play_lands_from_library_top` | yes |  | The player may play lands from the top of their library. | [Static abilities](card-dsl.md#static-abilities) |
 | `player_hexproof` | yes |  | The player has hexproof: opponents' spells and abilities can't target them. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `player_protection` | yes |  | The player has protection from a quality: damage, targeting and enchanting by it. | [Protection](card-dsl-cookbook.md#protection) |
@@ -682,7 +685,7 @@ The static effects that describe the *player* rather than a characteristic, and 
 | `maximum_hand_size` | The player's maximum hand size is N; the newest hand-size effect wins. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `no_hand_limit` | The player has no maximum hand size. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `opponents_cant_force_discard_or_sacrifice` | Opponents' spells and abilities can't make the player discard or sacrifice. | ["Can't cause you to discard cards or sacrifice permanents"](card-dsl-cookbook.md#cant-cause-you-to-discard-cards-or-sacrifice-permanents) |
-| `play_lands_from_graveyard` | The player may play lands from their graveyard. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
+| `play_lands_from_graveyard` | The player may play lands from their graveyard: every land, or only those whose printed face matches `affects_spells`. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `play_lands_from_library_top` | The player may play lands from the top of their library. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `player_hexproof` | The player has hexproof: opponents' spells and abilities can't target them. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `player_protection` | The player has protection from a quality: damage, targeting and enchanting by it. | [Protection](card-dsl-cookbook.md#protection) |
@@ -810,7 +813,7 @@ The alternative and additional costs that live on the *card* rather than inside 
 |---|---|---|
 | `additional_cost` | A non-mana additional cost. | [An additional cost that is not mana](card-dsl-cookbook.md#an-additional-cost-that-is-not-mana) |
 | `additional_cost_options` | A choice between prices; tiered when each buys a different effect. | [Tiered, and reading back which price was paid](card-dsl.md#tiered-and-reading-back-which-price-was-paid) |
-| `spree` | Spree: priced modes, a non-empty subset bought on cast. | [Spree — "choose one or more additional costs"](card-dsl.md#spree--choose-one-or-more-additional-costs) |
+| `spree` | Spree: priced modes, a non-empty subset bought on cast; a target spec's `spree_mode` is declared only when its mode is bought. | [Spree — "choose one or more additional costs"](card-dsl.md#spree--choose-one-or-more-additional-costs) |
 | `additional_optional` | An optional additional cost (kicker-like, non-mana). | [Alternative ways to play a card](card-dsl-cookbook.md#alternative-ways-to-play-a-card) |
 | `additional_repeatable` | An additional cost that may be paid any number of times. | [Alternative ways to play a card](card-dsl-cookbook.md#alternative-ways-to-play-a-card) |
 | `alternative_cost` | A non-mana alternative cost. | [An alternative cost that is not mana](card-dsl-cookbook.md#an-alternative-cost-that-is-not-mana) |
@@ -856,6 +859,7 @@ Every keyword the `keywords` list may carry -- the engine's `Keyword` enum. Alia
 | `deathtouch` | Deathtouch. | [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on) |
 | `decayed` | Decayed: can't block; sacrificed at end of the combat it attacks in. | [Decayed](card-dsl-cookbook.md#decayed) |
 | `defender` | Defender. | [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on) |
+| `desertwalk` | Desertwalk. | [Landwalk, and global attack prohibitions](card-dsl-cookbook.md#landwalk-and-global-attack-prohibitions) |
 | `dethrone` | Dethrone. | [Dethrone](card-dsl-cookbook.md#dethrone) |
 | `double_strike` | Double strike. | [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on) |
 | `exalted` | Exalted. | [Exalted](card-dsl-cookbook.md#exalted) |
@@ -1204,6 +1208,7 @@ Every `EventType` the engine emits, and which trigger events listen to it. An ev
 | `poison_added` |  |  | [Triggers](card-dsl.md#triggers) |
 | `postcombat_main` | `postcombat_main` |  | [Triggers](card-dsl.md#triggers) |
 | `precombat_main` | `precombat_main` |  | [Triggers](card-dsl.md#triggers) |
+| `put_into_graveyard` | `put_into_graveyard` |  | [Triggers](card-dsl.md#triggers) |
 | `sacrificed` | `sacrificed` |  | [Triggers](card-dsl.md#triggers) |
 | `spell_cast` | `spell_cast` |  | [Triggers](card-dsl.md#triggers) |
 | `spell_copied` | `spell_copied` |  | [Triggers](card-dsl.md#triggers) |

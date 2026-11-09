@@ -1,0 +1,20 @@
+{
+  "card_id": "bat_colony",
+  "name": "Bat Colony",
+  "oracle_text": "When this enchantment enters, create a 1/1 black Bat creature token with flying for each mana from a Cave spent to cast it.\nWhenever a Cave you control enters, put a +1/+1 counter on target creature you control.",
+  "blocked_sentences": [
+    "When this enchantment enters, create a 1/1 black Bat creature token with flying for each mana from a Cave spent to cast it."
+  ],
+  "needs": [
+    {
+      "capability": "bat_1_1_b_flying",
+      "kind": "token",
+      "what": "a 1/1 black Bat creature token with flying",
+      "why_existing_wont_do": "token_ids has no Bat token; the count itself is `mana_spent_from` with {\"subtypes\": [\"Cave\"]}"
+    }
+  ],
+  "closest_existing": [
+    "mana_spent_from"
+  ],
+  "confidence": "high"
+}

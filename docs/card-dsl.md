@@ -1006,13 +1006,34 @@ survivor. The binding accumulates across a loop, as `exile`'s does.
   "then": [ … ] }
 ```
 
-### `discard`: `up_to` and `as`
+### `discard`: `up_to`, `selector` and `as`
 
 `up_to` makes `amount` a **ceiling** with a floor of zero, so "discard up to two
 cards" is satisfiable with none and, with `amount` reading your hand size, so is
 "discard any number of cards". It is opt-in on purpose: an exact discard offered
 as a range would let a player keep a card the effect was meant to take. It may
 not be combined with `random`, which has no choice to relax.
+
+`selector` narrows the cards in hand the discard may take: only matching cards
+are offered, and `amount` is capped by how many match rather than by the hand.
+"You may discard any number of **land** cards" (Nantuko Cultivator) is
+`up_to` with `amount` reading the hand size and `selector: {"types": ["Land"]}`;
+the cards chosen go together as one discard event (603.2c), so a batched
+`discard` trigger hears them once. The selector takes no `zone` (the hand is
+the only one), and is refused beside `whole_hand` and `random`. The near miss
+is the `discard` cost with `discard_selector`, which fixes the number before
+anything resolves; and a `may` + `repeat` loop paying one land at a time is as
+many discard events as lands, which a "one or more" trigger counts wrongly.
+
+```jsonc
+// Nantuko Cultivator — "you may discard any number of land cards. Put that many
+// +1/+1 counters on this creature and draw that many cards."
+{ "op": "discard", "player": "you", "amount": { "cards_in_hand": "you" },
+  "up_to": true, "selector": { "types": ["Land"] }, "as": "pitched" },
+{ "op": "add_counters", "counter": "+1/+1", "objects": { "self_only": true },
+  "amount": { "count": { "binding": "pitched" } } },
+{ "op": "draw", "player": "you", "amount": { "count": { "binding": "pitched" } } }
+```
 
 `as` records what actually went, so "then draw **that many** cards" (Joshua),
 "that many cards **plus one**" (Celes) and "if a **creature card** was discarded
@@ -1786,6 +1807,7 @@ Anywhere a number is expected -- the leaf list is
 { "cards_in_hand": "each_opponent" }
 { "player_count": "each_opponent" }             // "the number of opponents you have"; seats, not a quantity
 { "commander_casts_this_game": "you" }          // casts of your commanders from the command zone (903.8)
+{ "greatest_commander_mana_value": "you" }      // the greatest printed mana value among your commanders; see below
 { "command_zone_casts_of": { "binding": "subject" } }  // ONE commander's casts from the command zone
 { "cards_drawn_this_turn": "you" }              // a tally of an event, not of objects
 { "cards_discarded_this_turn": "you" }          // "if you discarded a card this turn"; per seat
@@ -1868,6 +1890,19 @@ near miss is a `for_each_player` with an `if` and a token of one each: separate
 events, and each token raises your count before the next opponent is measured.
 `max_count_of` and `min_count_of` answer "an opponent" and "each opponent", not
 how many.
+
+`greatest_commander_mana_value` is the greatest printed mana value among the
+commanders of the players its spec names, wherever each commander is (903.3),
+and 0 when none of them has one. Cactus Preserve's "this land becomes an X/X
+green Plant creature with reach, where X is the greatest mana value among your
+commanders" is an `animate` whose `power` and `toughness` are both
+`{"greatest_commander_mana_value": "you"}`; X is read once, as the ability
+resolves, so the size holds for the turn. With no commander the land becomes a
+0/0 and dies (704.5f), which is the printed card. It is the static leaf of the
+same name read on the effect side, through the one computation both use,
+`characteristics.greatest_commander_mana_value`. The near miss is
+`extreme_value` over a selector with `is_commander`: a selector walks one zone,
+and the commander usually sits in the command zone, which none reaches.
 
 `half` is the one division in the language, and it takes its rounding direction
 as a **required** key: 107.1a makes the card say which way a fraction goes, and
@@ -5312,7 +5347,7 @@ and the filter keys are
     "mana_ability": false,           // `ability_activated` only: exclude mana abilities
     "targeted_by": "spell",          // `becomes_target` only: a spell, an ability, or an activated ability
     "to_zones": ["graveyard", "exile"], // `leaves_battlefield` only: where it went
-    "from_zones": ["exile"]          // `spell_cast` / `land_played` only: where it was played from
+    "from_zones": ["exile"]          // `spell_cast` / `land_played`: where it was played from; `put_into_graveyard`: where it came from
   },
   "effects": [ ... ]
 }
@@ -5384,6 +5419,14 @@ payload. It is allowed on those two events only, and names zones a card is
 played from (`library`, `hand`, `graveyard`, `exile`, `command`). A filter's
 `zone: "exile"` is the near miss: it reads where the subject is *now*, the stack
 or the battlefield, and never matches.
+
+On `put_into_graveyard`, `from_zones` is where the card was put into the
+graveyard from, carried as `from_zone` on the event: "from anywhere other than
+the battlefield" (Disa the Restless) lists every other zone, and "from your
+library" (Colossal Grave-Reaver) is `["library"]`. There it names zones in
+`GRAVEYARD_ORIGIN_ZONES` (`library`, `hand`, `battlefield`, `stack`, `exile`,
+`command`). The event itself is in [the
+cookbook](card-dsl-cookbook.md#put-into-your-graveyard-from-anywhere--put_into_graveyard).
 
 `self_enters` and `permanent_enters` are the *same* engine event, separated only
 by `source: "self"` — so the loader supplies it for `self_enters` rather than
@@ -5671,7 +5714,7 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `life_lost` · `you_attack` · `creatures_attack_player` ·
 `creatures_deal_combat_damage` · `becomes_monstrous` · `becomes_level` ·
 `becomes_monarch` ·
-`counter_placed` · `sacrificed` · `leaves_graveyard` · `token_created` · `draw` · `discard` · `cycle` ·
+`counter_placed` · `sacrificed` · `leaves_graveyard` · `put_into_graveyard` · `token_created` · `draw` · `discard` · `cycle` ·
 `ability_activated` · `damage_prevented` · `deals_damage_to_player` ·
 `searches_library` · `wins_coin_flip` · `gives_gift` · `turned_face_up` · `state`
 
@@ -5805,7 +5848,7 @@ equality test there would make a two-mode cast run one mode.
 Legality offers one cast line per non-empty subset — seven for three modes,
 cheapest shape first — and each line's price is the printed cost **plus every
 chosen mode's mana**, folded in so the solver prices what the player is actually
-offered. The plain line is **withdrawn**: 702.166a's "one or more" means the
+offered. The plain line is **withdrawn**: 702.172's "one or more" means the
 unmodified spell is not a legal cast at all, and a spree card castable for its
 printed cost is a card with none of its text. A card that cannot afford a single
 mode is simply not castable.
@@ -5821,6 +5864,35 @@ The chosen indices ride the stack item and are stamped onto the object **before*
 `spell_effects` run, for the reason `cost_option` is and with more riding on it:
 written afterwards the set would read empty and a spell three extra prices were
 paid for would do nothing at all.
+
+**A spree mode's own targets** are a target spec's `spree_mode`: the index of
+the mode that declares it. Requisition Raid destroys "target artifact" for one
+price, "target enchantment" for another, and counters the creatures of "target
+player" for a third:
+
+```jsonc
+"targets": [
+  { "id": "t1", "kind": "permanent", "spree_mode": 0, "selector": { "types": ["Artifact"] } },
+  { "id": "t2", "kind": "permanent", "spree_mode": 1, "selector": { "types": ["Enchantment"] } },
+  { "id": "t3", "kind": "player", "spree_mode": 2 }
+]
+```
+
+Legal because the modes are bought at 601.2b, one step before 601.2c declares
+targets. The loader keeps the printed list in `CardDef.spree_targets` and only
+the specs naming no mode in `targets`; `CardDef.targets_for` returns the shared
+specs plus the bought modes' own, in printed order, and the cast line, the
+cast, resolution and a copy (707.10 copies the bought modes) all read that one
+list. So each subset's line declares exactly its own targets, and a mode whose
+required target is missing withdraws only the subsets containing it: with no
+enchantment on the battlefield Raid still casts for its artifact and player
+modes. Every subset's list obeys the variable-size-last rule on its own. The
+near misses are both wrong: unconditional card-level targets demand an
+artifact, an enchantment and a player on every cast, and `optional` ones let a
+cast that bought a mode skip its target. Refused on a card without that many
+`spree` modes, on an ability's targets, beside `mode`, `gift_promised`,
+`cost_option` or `count_if_kicked`, and on a card that also gates a target on
+its gift.
 
 ### `mana_spent_of` — what was paid, not what is printed
 
@@ -5848,6 +5920,36 @@ played:
 
 A {3}{R} spell cast under a cost reducer is mana value 4 and three mana spent,
 and that case is what the tests pin.
+
+### `mana_spent_from` — how much of the payment came from a kind of permanent
+
+"For each mana from a **Desert** spent to cast this spell, create a tapped
+Treasure token" — Cataclysmic Prospecting.
+
+```jsonc
+{ "op": "create_token", "token": "treasure_token", "tapped": true,
+  "amount": { "mana_spent_from": { "subtypes": ["Desert"] } } }
+```
+
+The number of **units** of mana spent to cast the source object whose
+producing permanent matched the filter, as that permanent was when it made the
+mana. `pay_mana` keeps one `ManaOrigin` per pip spent
+(`GameObject.mana_spent_origins`), accumulated across a cast's payments; mana an
+effect made has no source and never counts. The filter takes `paid_by`'s
+closed keys (`name`, `types`, `any_types`, `not_types`, `subtypes`,
+`supertypes`, `controller` relative to the source object's controller), because
+it describes a memory of a permanent that may be gone — a Treasure is
+sacrificed to make its mana. Read off the source object like
+`colors_of_mana_spent`: a spell's own `spell_effects`, or the permanent it
+became, since the record survives the move onto the battlefield and is cleared
+on every other move, so a card cast again starts over. A copy was never cast
+and reads 0.
+
+The near miss is `paid_by`, which answers whether **any** mana from such a
+source was spent: it reads a set with one entry per source, so a Desert that
+taps for two is one entry there and two here. `mana_spent_of` is the total
+with no filter. The loader refuses an empty filter and any key a remembered
+source cannot answer.
 
 ### Discarding a whole hand, and reading the greatest that went
 

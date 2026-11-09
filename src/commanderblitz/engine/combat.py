@@ -1156,7 +1156,7 @@ def can_block(
             return False
 
     # Nonbasic landwalk: the same rule with the test inverted. A supertype the
-    # land must *lack*, which is why it is its own keyword rather than a sixth
+    # land must *lack*, which is why it is its own keyword rather than a
     # `LANDWALK_SUBTYPE` row.
     if Keyword.NONBASIC_LANDWALK.value in ac.keywords and _controls_nonbasic_land(
         state, defender

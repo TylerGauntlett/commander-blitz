@@ -9,10 +9,9 @@ friends. This is a permission granted by a *permanent*, so legality has to ask
 the board instead, and none of them could be narrowed by card type or rate
 limited anyway.
 
-`play_lands_from_graveyard` is the only graveyard-play permission that existed
-and it is strictly narrower: `legality` reads it solely through
-`player_plays_lands_from_graveyard` for the **land drop**, it cannot authorise a
-spell cast, it takes no type filter, and it carries no per-turn count.
+`play_lands_from_graveyard` is the graveyard permission for the other half of
+"play", and it is strictly narrower: `legality` reads it solely for the **land
+drop**, it cannot authorise a spell cast, and it carries no per-turn count.
 
 Three things the printed line turns on, and each is asserted:
 

@@ -2347,6 +2347,26 @@ def player_plays_lands_from_graveyard(state: GameState, pid: int) -> bool:
     return _player_static(state, pid, "play_lands_from_graveyard")
 
 
+def graveyard_land_play_allows(state: GameState, pid: int, card: CardDef) -> bool:
+    """Whether some `play_lands_from_graveyard` reaching ``pid`` covers *this* land.
+
+    The per-card half of the permission. Crucible of Worlds prints no filter and
+    lets every land out; Hazezon, Shaper of Sand's "Desert lands" and Titania,
+    Nature's Force's "Forests" carry an ``affects_spells`` filter on the printed
+    face, the same filter and the same matcher `graveyard_cast_allows` uses,
+    because a card in a graveyard has a printed face and nothing else to read.
+    Any one permission covering the card is enough: two statics are two
+    separate permissions (Hazezon beside Crucible frees every land).
+    """
+    for obj, static in _active_player_statics(state, "play_lands_from_graveyard"):
+        if not _reaches_player(obj, static, pid):
+            continue
+        filt = static.get("affects_spells")
+        if filt is None or _matches_printed(card, filt):
+            return True
+    return False
+
+
 def graveyard_cast_permissions(
     state: GameState, pid: int
 ) -> list[tuple[GameObject, Mapping[str, Any]]]:

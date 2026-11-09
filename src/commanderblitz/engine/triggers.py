@@ -52,6 +52,7 @@ from .effects.selectors import ZONE_NAMES, attacking_player_matches, has_printed
 from .enums import Keyword, Zone
 from .errors import DslError, RulesLoopError
 from .events import EventType, GameEvent
+from .mana import origin_matches
 from .objects import GameObject
 from .player_statics import commander_subtypes, goaders, players_doubling_land_triggers
 from .state import MAX_TRIGGERS_PER_STEP
@@ -68,6 +69,26 @@ TRIGGER_EVENTS: dict[str, str] = {
     "dies": EventType.DIES,
     "leaves_battlefield": EventType.LEAVES_BATTLEFIELD,
     "leaves_graveyard": EventType.LEAVES_GRAVEYARD,
+    #: "Whenever one or more land cards are put into your graveyard from
+    #: anywhere" (The Gitrog Monster, Turntimber Sower), "whenever a Desert
+    #: card is put into your graveyard from anywhere" (Yuma), "…from anywhere
+    #: other than the battlefield" (Disa, Syr Konrad). One event per card
+    #: arriving in a graveyard from another zone; see
+    #: `EventType.PUT_INTO_GRAVEYARD`.
+    #:
+    #: The subject is the card (see `OBJECT_SUBJECT_TRIGGERS`), already in the
+    #: graveyard, so a `filter` asks its printed face and `{"binding":
+    #: "subject"}` is "it". `_actor` reads `event.player`, the graveyard's
+    #: owner, so `controller: "you"` is "into **your** graveyard". `from_zones`
+    #: narrows where it came from; `batched` is "one or more", with the group's
+    #: matching cards bound as `moved` ("put one of **them**"); `nth` is "for
+    #: the first time each turn", counted off the turn ledger.
+    #:
+    #: The near misses each see one road in: `dies` and `leaves_battlefield`
+    #: the battlefield, `discard` the hand, and nothing at all saw a mill, a
+    #: surveil or a spell leaving the stack. Two of them together still miss
+    #: the library and fire twice for one simultaneous move.
+    "put_into_graveyard": EventType.PUT_INTO_GRAVEYARD,
     "land_played": EventType.LAND_PLAYED,
     "spell_cast": EventType.SPELL_CAST,
     #: "Magecraft -- Whenever you cast **or copy** an instant or sorcery spell…"
@@ -496,6 +517,7 @@ BATCHED_EVENTS = frozenset(
     {
         "permanent_enters",
         "leaves_graveyard",
+        "put_into_graveyard",
         "token_created",
         "attacks_unblocked",
         "dealt_damage",
@@ -522,6 +544,11 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         # `discard`. Without this the filter had no subject and matched nothing,
         # so the trigger silently never fired.
         "leaves_graveyard",
+        # The card that arrived, for `leaves_graveyard`'s reason one direction
+        # over: it is in the graveyard when the event fires, so "a **land**
+        # card" asks its printed face and `source: "self"` is "when **this
+        # card** is put into a graveyard" (Worldspine Wurm).
+        "put_into_graveyard",
         "spell_cast",
         # The *original* spell, which is what `put_copy_on_stack` puts on the
         # event as `source`. A filter on a magecraft trigger therefore asks
@@ -889,6 +916,8 @@ def _collect_one(
     if not _matches(state, obj, spec, event):
         return
     if _joins_batched_damage(state, obj, ability, event):
+        return
+    if _joins_batched_arrival(state, obj, ability, event):
         return
     _queue(state, obj, ability, event)
     if obj.controller in doubled:
@@ -1320,6 +1349,10 @@ def _candidate_abilities(state: GameState, event: GameEvent):
     subject = (
         event.data.get("oid")
         if event.type in (EventType.DIES, EventType.LEAVES_BATTLEFIELD, EventType.DISCARD)
+        or (
+            event.type == EventType.PUT_INTO_GRAVEYARD
+            and event.data.get("from_zone") == Zone.BATTLEFIELD.value
+        )
         else None
     )
     if subject is not None and subject not in seen:
@@ -1360,6 +1393,21 @@ def _candidate_abilities(state: GameState, event: GameEvent):
                     # not one that also functions in the zone the object went
                     # to: the zone walk above has already offered that one, and
                     # offering it again would fire it twice.
+                    yield obj, ability
+                elif (
+                    event.type == EventType.PUT_INTO_GRAVEYARD
+                    and ability.trigger.event == "put_into_graveyard"
+                    and Zone.BATTLEFIELD in ability.active_zones
+                    and obj.zone not in ability.active_zones
+                ):
+                    # A permanent put into a graveyard from the battlefield is
+                    # a leaves-the-battlefield event, and those look back in
+                    # time (603.10a): a land creature reading "whenever a land
+                    # card is put into your graveyard" hears its own death. Only
+                    # from the battlefield -- a card discarded or milled had no
+                    # abilities working where it was -- and not when the ability
+                    # also works in the graveyard, which the zone walk above has
+                    # already offered.
                     yield obj, ability
                 elif (
                     event.type is EventType.DISCARD
@@ -1678,8 +1726,12 @@ ORDINAL_FILTER_KEYS = frozenset(
 def _played_from(
     state: GameState, dsl_event: str, event: GameEvent, subject_oid: int | None
 ) -> str | None:
-    """The zone a cast spell or a played land came from, for `from_zones`."""
-    if dsl_event == "land_played":
+    """The zone a cast spell or a played land came from, for `from_zones`.
+
+    Or, on `put_into_graveyard`, the zone the card was put into the graveyard
+    from, which `zones.move_object` puts on the payload as it does for a land.
+    """
+    if dsl_event in ("land_played", "put_into_graveyard"):
         return event.data.get("from_zone")
     obj = state.objects.get(subject_oid) if subject_oid is not None else None
     return obj.cast_from_zone if obj is not None else None
@@ -1719,10 +1771,54 @@ def _ordinal(
     A draw's is on the event. So is a cast's, and that answers an unfiltered
     `spell_cast` trigger; a filtered one is sent to `_spell_ordinal`.
     """
+    if spec.event == "put_into_graveyard":
+        return _graveyard_ordinal(state, spec, event, ability_source)
     nth = event.data.get("nth")
     if spec.event != "spell_cast" or spec.filter is None or nth is None:
         return nth
     return _spell_ordinal(state, spec.filter, event.player, int(nth), ability_source)
+
+
+def _graveyard_ordinal(
+    state: GameState, spec: TriggerSpec, event: GameEvent, ability_source: GameObject
+) -> int | None:
+    """This arrival's group's place among this turn's groups the trigger names.
+
+    "Whenever one or more land cards are put into your graveyard from anywhere
+    **for the first time each turn**" (Crawling Sensation) is a run of
+    simultaneous groups (603.2c), counted from the start of the turn: the first
+    group holding a land card that reached *your* graveyard is the first time,
+    and a later one never is -- even when the enchantment entered between them,
+    which is the case a per-permanent `max_per_turn: 1` gets wrong.
+
+    Counted off `TurnLedger.graveyard_arrivals`, which this event has already
+    been folded into: the earlier groups are the distinct batches other than
+    this one holding an arrival that answers the trigger's `controller` clause
+    (the graveyard's owner), its `from_zones` and its `filter` -- the last on
+    the card's printed face, since the card may have left the graveyard since,
+    which is why the loader holds that filter to `ORDINAL_FILTER_KEYS`.
+    """
+    batch = event.data.get("batch")
+    if batch is None:
+        return None
+    you = ability_source.controller
+    earlier: set[int] = set()
+    for arrival in state.turn_ledger.graveyard_arrivals:
+        if arrival.batch == batch or arrival.batch in earlier:
+            continue
+        if spec.controller == "you" and arrival.owner != you:
+            continue
+        if spec.controller == "opponent" and arrival.owner == you:
+            continue
+        if spec.from_zones is not None and arrival.from_zone not in spec.from_zones:
+            continue
+        if spec.filter is not None and (
+            arrival.card not in state.registry
+            or not _matches_printed(state.registry.get(arrival.card), spec.filter)
+        ):
+            continue
+        earlier.add(arrival.batch)
+    return len(earlier) + 1
 
 
 def _spell_ordinal(
@@ -2111,7 +2207,10 @@ def _actor(
     # who **flipped**, and the event's `source` is the card whose effect made
     # the flip -- on a flip one player's card makes another player take, a
     # subject read off it would be the wrong seat.
-    if dsl_event in ("land_played", "spell_cast", "spell_copied", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target", "becomes_monarch", "ability_activated", "damage_prevented", "creatures_attack_player", "creatures_deal_combat_damage", "searches_library", "wins_coin_flip", "gives_gift"):
+    # `put_into_graveyard` is listed for `discard`'s reason: the clause asks
+    # whose **graveyard**, which is the owner's (400.3) and is on the event,
+    # while the subject's controller is whatever `reset_permanent_state` left.
+    if dsl_event in ("land_played", "spell_cast", "spell_copied", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target", "becomes_monarch", "ability_activated", "damage_prevented", "creatures_attack_player", "creatures_deal_combat_damage", "searches_library", "wins_coin_flip", "gives_gift", "put_into_graveyard"):
         return event.player
     # `deals_damage_to_player` is here beside the combat-only trigger it
     # generalises, and for the same reason: `event.player` on a damage event is
@@ -2635,41 +2734,10 @@ def _origin_matches(
 ) -> bool:
     """Whether one remembered mana source answers a selector-valued ``paid_by``.
 
-    ``origin`` is a :class:`mana.ManaOrigin` -- what a permanent was when it
-    made a unit of mana this spell's payment consumed. Matched on the snapshot
-    and never on the live board: the whole point is that the object may be gone.
-
-    ``controller`` is relative to the *ability source*, as everywhere else in a
-    trigger filter, and compares the controller the source had when it made the
-    mana. That is the printed reading: "mana from a Treasure you control" is
-    about the Treasure you tapped, not about who would control it now.
+    `mana.origin_matches`, with ``controller`` relative to the *ability
+    source*, as everywhere else in a trigger filter.
     """
-    name = filt.get("name")
-    if name is not None:
-        wanted = [name] if isinstance(name, str) else list(name)
-        if origin.name not in wanted:
-            return False
-    types = filt.get("types")
-    if types and not set(types).issubset(origin.types):
-        return False
-    any_types = filt.get("any_types")
-    if any_types and not (set(any_types) & origin.types):
-        return False
-    not_types = filt.get("not_types")
-    if not_types and set(not_types) & origin.types:
-        return False
-    subtypes = filt.get("subtypes")
-    if subtypes and not (set(subtypes) & origin.subtypes):
-        return False
-    supertypes = filt.get("supertypes")
-    if supertypes and not set(supertypes).issubset(origin.supertypes):
-        return False
-    controller = filt.get("controller")
-    if controller == "you" and origin.controller != ability_source.controller:
-        return False
-    if controller == "opponent" and origin.controller == ability_source.controller:
-        return False
-    return True
+    return origin_matches(origin, filt, ability_source.controller)
 
 
 def _compare(value: int, spec: Mapping[str, Any]) -> bool:
@@ -2778,6 +2846,12 @@ def _queue(state: GameState, obj: GameObject, ability: Ability, event: GameEvent
     if batched_key is not None and spec.event == "dealt_damage":
         # What `_joins_batched_damage` finds this firing by.
         bindings["batch"] = batched_key[2]
+    if batched_key is not None and spec.event == "put_into_graveyard":
+        # "…put one of **them** onto the battlefield" (Colossal Grave-Reaver):
+        # the group's matching cards, this one first and the rest added by
+        # `_joins_batched_arrival` as they arrive.
+        bindings["batch"] = batched_key[2]
+        bindings["moved"] = [bindings["subject"]] if "subject" in bindings else []
 
     card = state.card_of(obj)
     # `ability_index` is read back against whichever list `granted_by` names, so
@@ -2842,6 +2916,42 @@ def _joins_batched_damage(
             and pending.bindings.get("batch") == batch
         ):
             pending.bindings["amount"] = int(pending.bindings.get("amount", 0)) + amount
+    return True
+
+
+def _joins_batched_arrival(
+    state: GameState, obj: GameObject, ability: Ability, event: GameEvent
+) -> bool:
+    """Add a later card of a group to the batched `put_into_graveyard` firing it joins.
+
+    "Whenever one or more creature cards are put into your graveyard from your
+    library, put **one of them** onto the battlefield" (Colossal Grave-Reaver).
+    The firing is queued on the group's first matching card, and "them" is
+    every card of the group the trigger's filter named -- so each later one is
+    appended to that firing's `moved` binding here, once per heard event, for
+    the reason `_joins_batched_damage` sums there rather than in `_queue`. True
+    when the event belonged to a group that already fired this ability.
+    """
+    spec = ability.trigger
+    if spec is None or not spec.batched or spec.event != "put_into_graveyard":
+        return False
+    batch = event.data.get("batch")
+    if batch is None or (obj.oid, ability.index, batch) not in state.batched_triggers:
+        return False
+    oid = event.data.get("oid")
+    granted_by, ability_index = _granter_of(state, obj, ability)
+    for pending in state.pending_triggers:
+        if (
+            oid is not None
+            and pending.source_oid == obj.oid
+            and pending.ability_index == ability_index
+            and pending.granted_by == granted_by
+            and pending.bindings.get("batch") == batch
+        ):
+            moved = list(pending.bindings.get("moved") or ())
+            if int(oid) not in moved:
+                moved.append(int(oid))
+            pending.bindings["moved"] = moved
     return True
 
 

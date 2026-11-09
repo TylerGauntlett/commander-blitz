@@ -10,12 +10,11 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**290 cards** blocked by **263** capabilities.
+**283 cards** blocked by **263** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
-| [put-into-graveyard-from-anywhere](#put-into-graveyard-from-anywhere) | 9 | 256 | trigger_event |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
 | [rooms](#rooms) | 6 | 4163 | engine |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
@@ -65,6 +64,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [attack-tax-x-count](#attack-tax-x-count) | 1 | 671 | value |
 | [attacking-opponents-of-player](#attacking-opponents-of-player) | 1 | 705 | selector |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
+| [bat-1-1-b-flying](#bat-1-1-b-flying) | 1 | 20382 | token |
 | [batched-combat-damage-amount](#batched-combat-damage-amount) | 1 | 3943 | value |
 | [block-restriction-relative-power](#block-restriction-relative-power) | 1 | 6993 | static_effect |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
@@ -98,7 +98,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [copy-all-on-stack](#copy-all-on-stack) | 1 | 4558 | op |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
 | [copy-spell-forced-target](#copy-spell-forced-target) | 1 | 13586 | op |
-| [copy-this-spell-on-resolution](#copy-this-spell-on-resolution) | 1 | 338 | op |
 | [cost-reduction-per-attacker-this-turn](#cost-reduction-per-attacker-this-turn) | 1 | 9578 | value |
 | [coven](#coven) | 1 | 1129 | value |
 | [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
@@ -114,7 +113,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [distribute-counters-spell](#distribute-counters-spell) | 1 | 6993 | op |
 | [divided-damage-on-activated](#divided-damage-on-activated) | 1 | 13459 | engine |
 | [double-x](#double-x) | 1 | 2672 | op |
-| [dragon-egg-0-2-r-defender-token](#dragon-egg-0-2-r-defender-token) | 1 | 3556 | token |
 | [each-player-chooses-color](#each-player-chooses-color) | 1 | 3587 | op |
 | [echo](#echo) | 1 | 961 | keyword |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
@@ -140,7 +138,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [face-down-counters-pt](#face-down-counters-pt) | 1 | 6774 | engine |
 | [face-down-exile-controller-may-look](#face-down-exile-controller-may-look) | 1 | 1073 | op |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
-| [filtered-discard](#filtered-discard) | 1 | 9279 | op |
 | [first-mate-ragavan](#first-mate-ragavan) | 1 | 7016 | token |
 | [first-x-spell-cost-reduction](#first-x-spell-cost-reduction) | 1 | 8360 | static_effect |
 | [fixed-piles-opponent-chooses](#fixed-piles-opponent-chooses) | 1 | 12369 | op |
@@ -190,6 +187,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [manifest-from-hand](#manifest-from-hand) | 1 | 3975 | op |
 | [maximum-hand-size-modifier](#maximum-hand-size-modifier) | 1 | 1712 | static_effect |
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
+| [mercenary-1-1-r-pump](#mercenary-1-1-r-pump) | 1 | 18634 | token |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
 | [miracle-x](#miracle-x) | 1 | 4945 | engine |
 | [modal-variable-targets](#modal-variable-targets) | 1 | 4339 | engine |
@@ -209,7 +207,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [pay-any-amount-of-life](#pay-any-amount-of-life) | 1 | 4322 | cost |
 | [pay-energy-x](#pay-energy-x) | 1 | 5591 | cost |
 | [play-cost-paid-card](#play-cost-paid-card) | 1 | 6544 | op |
-| [play-lands-from-graveyard-filtered](#play-lands-from-graveyard-filtered) | 1 | 3993 | static_effect |
 | [playable-condition-opponent-lost-life](#playable-condition-opponent-lost-life) | 1 | 4478 | engine |
 | [playable-spell-type-restriction](#playable-spell-type-restriction) | 1 | 4763 | op |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
@@ -217,6 +214,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [players-attacked-last-combat](#players-attacked-last-combat) | 1 | 6681 | value |
 | [players-lost-the-game-count](#players-lost-the-game-count) | 1 | 4941 | value |
 | [plot](#plot) | 1 | 7506 | op |
+| [prevent-damage-from-source-to-permanent](#prevent-damage-from-source-to-permanent) | 1 | 29255 | static_effect |
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
 | [prime-number](#prime-number) | 1 | 11527 | value |
 | [primo-the-indivisible](#primo-the-indivisible) | 1 | 11527 | token |
@@ -239,6 +237,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
 | [salamander-warrior-4-3-u](#salamander-warrior-4-3-u) | 1 | 3395 | token |
+| [same-target-for-each-target-word](#same-target-for-each-target-word) | 1 | 5003 | engine |
 | [sandbox-graveyard-spell-prop](#sandbox-graveyard-spell-prop) | 1 | 5082 | engine |
 | [sandbox-low-mana-value-permanent](#sandbox-low-mana-value-permanent) | 1 | 14140 | engine |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
@@ -248,6 +247,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
+| [spirit-2-2-w-flying](#spirit-2-2-w-flying) | 1 | 12596 | token |
 | [stack-wipe](#stack-wipe) | 1 | 8784 | op |
 | [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
@@ -346,55 +346,6 @@ Blocks **15** cards.
   - {3}{W}: Prevent all combat damage that would be dealt to and dealt by this creature this turn.
 - **Urborg Phantom** (rank 31912) — `urborg_phantom`
   - {U}: Prevent all combat damage that would be dealt to and dealt by this creature this turn.
-
-</details>
-
-## put-into-graveyard-from-anywhere
-
-Blocks **9** cards.
-
-- **(trigger_event)** a trigger event that fires whenever a card matching a filter (here: a land card, any owner) is put into a graveyard from ANY zone -- battlefield, hand (discard), library (mill), stack -- usable on an ability with active_zones ["graveyard"] so the card triggers while it sits in its owner's graveyard (Ashen Ghoul / Vengevine style recursion)
-  <br>Why the existing vocabulary won't do: leaves_battlefield with to_zones ["graveyard"] only sees permanents leaving the battlefield (a sacrificed or destroyed land) and misses discarded, milled and countered-from-stack cards; discard covers only the hand; dies is creatures only; there is no mill or generic zone-change-to-graveyard event in trigger_events. The may-pay {G}{G} and return_to_hand halves are expressible once the event exists.
-- **(trigger_event)** a trigger event that fires when cards matching a filter (here: creature cards, owner = you) are put into a graveyard, narrowed by `from_zones: ["library"]` (mill, surveil, self-mill costs), with `batched: true` so one simultaneous move of several creature cards triggers once ("one or more"), and binding the batch of moved cards so the effect can be `put_onto_battlefield` over exactly one of THEM chosen by the controller ("put one of them"), still in the graveyard on resolution
-  <br>Why the existing vocabulary won't do: trigger_events has no zone-change-to-graveyard event: leaves_battlefield only sees permanents leaving the battlefield, dies is battlefield creatures, discard is the hand, leaves_graveyard is the reverse direction; the trigger's from_zones key is read only for spell_cast and land_played. Without the event there is also no binding for 'them', so a put_onto_battlefield over any creature card in the graveyard would wrongly reach creature cards milled earlier. The Flying keyword and the enters-or-attacks mill three (self_enters + attacks triggers with mill) are expressible today.
-- **(trigger_event)** a trigger event that fires when one or more cards matching a filter (here: land cards, owner = you) are put into a graveyard from ANY zone -- battlefield, hand (discard), library (mill, surveil), stack -- supporting `batched: true` so one simultaneous move of several land cards triggers once, and `max_per_turn: 1` for "for the first time each turn"
-  <br>Why the existing vocabulary won't do: trigger_events has no generic zone-change-to-graveyard event: leaves_battlefield with to_zones ["graveyard"] (and dies) only sees permanents leaving the battlefield and misses milled and discarded land cards, which is what this card's own upkeep mill feeds; discard covers only the hand; leaves_graveyard is the opposite direction. The upkeep `may` + `mill` line and the insect_1_1_g token are expressible today.
-- **(trigger_event)** a trigger event that fires whenever a card matching a filter (here: a Desert card you own) is put into your graveyard from your hand or library (discard, mill, any other effect), restricted by from-zone, binding the card as subject so a delayed end-step trigger can return it to the battlefield under your control
-  <br>Why the existing vocabulary won't do: discard covers only cards discarded from hand, not other hand-to-graveyard moves; there is no mill or library-to-graveyard event in trigger_events; sacrificed covers the sacrifice half only, and leaves_battlefield sees only permanents
-- **(trigger_event)** a trigger event that fires when a card matching a filter (here: a permanent card with subtype Lhurgoyf, owner = you) is put into a graveyard, narrowed by `from_zones` to every zone except the battlefield (hand via discard, library via mill/surveil, stack via countered/resolved, exile), binding the moved card as the subject so the effect can `put_onto_battlefield` exactly that card ("put it") if it is still in the graveyard on resolution
-  <br>Why the existing vocabulary won't do: trigger_events has no zone-change-to-graveyard event: leaves_battlefield/dies only see permanents leaving the battlefield (exactly the source this card excludes), discard covers only the hand, leaves_graveyard is the reverse direction, and the trigger's from_zones key is read only for spell_cast and land_played. Without the event there is also no binding for 'it'.
-- **(trigger_event)** a trigger event that fires once per card matching a filter (here: a land card, owner = you, i.e. into YOUR graveyard) put into a graveyard from ANY zone -- battlefield, hand (discard), library (mill, surveil), stack -- unbatched, so milling two lands gains 2 life
-  <br>Why the existing vocabulary won't do: trigger_events has no generic zone-change-to-graveyard event: leaves_battlefield with to_zones ["graveyard"] only sees permanents leaving the battlefield and misses milled and discarded land cards, which this card's own {2}{G} mill ability is built to feed; discard covers only the hand; dies is creatures/permanents dying; leaves_graveyard is the opposite direction. The {2}{G}: mill 1 activated ability and the gain_life effect are expressible today.
-- **(trigger_event)** a trigger event that fires whenever a card matching a filter (here: a creature card, any owner, any graveyard) is put into a graveyard, with a from_zones/except-battlefield clause so it can be narrowed to arrivals from anywhere other than the battlefield -- hand (discard), library (mill), stack (countered or resolved), exile, command zone
-  <br>Why the existing vocabulary won't do: The other two clauses are expressible (`creature_dies` / `dies` with exclude_self, and `leaves_graveyard` filtered to creature cards you own), but there is no zone-change-to-graveyard event in trigger_events: `discard` covers only the hand, `dies` and `leaves_battlefield` only the battlefield, and there is no mill event; the trigger's `from_zones` key is read only for spell_cast and land_played. Writing just the two expressible clauses would silently drop the milled/discarded-creature half, which is the card's main engine with its own {1}{B} mill ability.
-- **(trigger_event)** a trigger event that fires when a card matching a filter (here: a land card, owner = you) is put into a graveyard from ANY zone -- battlefield (sacrifice/destroy), hand (discard), library (mill, surveil), stack -- and supports `batched: true` so that several land cards moved by one event (a mill of three lands, a discard of two lands) trigger it exactly once ("one or more")
-  <br>Why the existing vocabulary won't do: leaves_battlefield with to_zones ["graveyard"] sees only permanents leaving the battlefield and misses discarded, milled and surveilled land cards, which are the card's whole engine (Gitrog + discard/dredge loops); discard covers only the hand and carries no card-type filter on the moved card from library; there is no mill or generic zone-change-to-graveyard event in trigger_events. Combining leaves_battlefield and discard triggers would still miss mill/surveil and would trigger twice for a single simultaneous event that moves lands from two zones. The draw half is a plain draw op once the event exists. The upkeep 'sacrifice unless you sacrifice a land' and extra_land_drops lines are expressible today.
-- **(trigger_event)** a self trigger that fires when this card is put into a graveyard from ANY zone (battlefield, hand via discard, library via mill/surveil, stack via counter), so the triggered ability works from the graveyard and can shuffle the card (bound as the trigger subject) into its owner's library -- the Eldrazi titan clause shared by Emrakul, Ulamog and Kozilek
-  <br>Why the existing vocabulary won't do: `trigger_events` has `dies` and `leaves_battlefield` (with `to_zones`), which only see the battlefield and miss discard, mill and a countered spell -- the cases the clause exists for. `discard` covers only the hand. No event observes a card arriving in a graveyard from the library or stack, and no `card_level_rider_keys` entry (`tucks_itself` is a resolving spell's own fate) replaces it. Writing only the `dies` half would make a different card that stays in the graveyard when milled or discarded.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Syr Konrad, the Grim** (rank 256) — `syr_konrad_the_grim`
-  - Whenever another creature dies, or a creature card is put into a graveyard from anywhere other than the battlefield, or a creature card leaves your graveyard, Syr Konrad deals 1 damage to each opponent.
-- **The Gitrog Monster** (rank 902) — `the_gitrog_monster`
-  - Whenever one or more land cards are put into your graveyard from anywhere, draw a card.
-- **Colossal Grave-Reaver** (rank 1942) — `colossal_grave_reaver`
-  - Whenever one or more creature cards are put into your graveyard from your library, put one of them onto the battlefield.
-- **Worldspine Wurm** (rank 2387) — `worldspine_wurm`
-  - When this creature dies, create three 5/5 green Wurm creature tokens with trample.
-  - When Worldspine Wurm is put into a graveyard from anywhere, shuffle it into its owner's library.
-- **Crawling Sensation** (rank 3007) — `crawling_sensation`
-  - Whenever one or more land cards are put into your graveyard from anywhere for the first time each turn, create a 1/1 green Insect creature token.
-- **Desert Warfare** (rank 7493) — `desert_warfare`
-  - Whenever you sacrifice a Desert and whenever a Desert card is put into your graveyard from your hand or library, put that card onto the battlefield under your control at the beginning of your next end step.
-  - At the beginning of combat on your turn, if you control five or more Deserts, create that many 1/1 red, green, and white Sand Warrior creature tokens. They gain haste.
-- **Disa the Restless** (rank 8872) — `disa_the_restless`
-  - Whenever a Lhurgoyf permanent card is put into your graveyard from anywhere other than the battlefield, put it onto the battlefield.
-  - Whenever one or more creatures you control deal combat damage to a player, create a Tarmogoyf token.
-- **Centaur Vinecrasher** (rank 10988) — `centaur_vinecrasher`
-  - Whenever a land card is put into a graveyard from anywhere, you may pay {G}{G}. If you do, return this card from your graveyard to your hand.
-- **Skola Grovedancer** (rank 12300) — `skola_grovedancer`
-  - Whenever a land card is put into your graveyard from anywhere, you gain 1 life.
 
 </details>
 
@@ -1401,6 +1352,20 @@ Blocks **1** card.
 
 </details>
 
+## bat-1-1-b-flying
+
+Blocks **1** card.
+
+- **(token)** a 1/1 black Bat creature token with flying
+  <br>Why the existing vocabulary won't do: token_ids has no Bat token; the count itself is `mana_spent_from` with {"subtypes": ["Cave"]}
+
+<details><summary>Cards waiting on this</summary>
+
+- **Bat Colony** (rank 20382) — `bat_colony`
+  - When this enchantment enters, create a 1/1 black Bat creature token with flying for each mana from a Cave spent to cast it.
+
+</details>
+
 ## batched-combat-damage-amount
 
 Blocks **1** card.
@@ -1877,20 +1842,6 @@ Blocks **1** card.
 
 </details>
 
-## copy-this-spell-on-resolution
-
-Blocks **1** card.
-
-- **(op)** a way for a resolving instant or sorcery's own spell_effects to copy that same spell ("you may copy this spell and may choose a new target for the copy"), with new_targets: copy_spell must be able to name the spell currently resolving, which stack.resolve_top has already popped off the stack before _resolve_spell runs its effects
-  <br>Why the existing vocabulary won't do: copy_spell (sid, target, new_targets) finds its original through _spell_named_by -> state.stack_item(sid), and the resolving spell is no longer on the stack (resolve_top pops it first), nor does the resolution context bind its own sid -- so a copy_spell inside spell_effects copies nothing. The cast_from_graveyard condition itself works. Moving the copy to a spell_cast trigger (the storm shape) would be a different card: the copy would exist even if the original is countered, and it would be made at cast rather than at resolution
-
-<details><summary>Cards waiting on this</summary>
-
-- **Sevinne's Reclamation** (rank 338) — `sevinne_s_reclamation`
-  - If this spell was cast from a graveyard, you may copy this spell and may choose a new target for the copy.
-
-</details>
-
 ## cost-reduction-per-attacker-this-turn
 
 Blocks **1** card.
@@ -2102,20 +2053,6 @@ Blocks **1** card.
 - **Unbound Flourishing** (rank 2672) — `unbound_flourishing`
   - Whenever you cast a permanent spell with a mana cost that contains {X}, double the value of X.
   - Whenever you cast an instant or sorcery spell or activate an ability, if that spell's mana cost or that ability's activation cost contains {X}, copy that spell or ability. You may choose new targets for the copy.
-
-</details>
-
-## dragon-egg-0-2-r-defender-token
-
-Blocks **1** card.
-
-- **(token)** a 0/2 red Dragon Egg creature token with defender and "When this token dies, create a 2/2 red Dragon creature token with flying and '{R}: This token gets +1/+0 until end of turn.'" -- which in turn needs a second token, a 2/2 red Dragon creature token with flying and "{R}: This token gets +1/+0 until end of turn."
-  <br>Why the existing vocabulary won't do: token_ids is a closed list with no Dragon Egg and no 2/2 firebreathing Dragon; the nearest red Dragons (dragon_4_4_r_flying, dragon_5_5_r_flying, dragon_6_6_r_flying) are the wrong size and lack the pump ability. The rest of the card is expressible: flying from starting_point, and the landfall line is a permanent_enters trigger filtered to lands you control with a create_token effect
-
-<details><summary>Cards waiting on this</summary>
-
-- **Nesting Dragon** (rank 3556) — `nesting_dragon`
-  - Landfall — Whenever a land you control enters, create a 0/2 red Dragon Egg creature token with defender and "When this token dies, create a 2/2 red Dragon creature token with flying and '{R}: This token gets +1/+0 until end of turn.'"
 
 </details>
 
@@ -2471,20 +2408,6 @@ Blocks **1** card.
 
 - **Alela, Cunning Conqueror** (rank 3457) — `alela_cunning_conqueror`
   - Whenever you cast your first spell during each opponent's turn, create a 1/1 black Faerie Rogue creature token with flying.
-
-</details>
-
-## filtered-discard
-
-Blocks **1** card.
-
-- **(op)** a `selector` (card filter over the discarding player's hand, here `{"types": ["Land"]}`) on the `discard` effect op, so a resolving ability can say "you may discard one or more land cards": only matching cards are offered, any number from 0 (up_to, read with `cards_in_hand`-style ceiling over the matching cards) and they are discarded simultaneously as one discard event, recorded by `as` so a following `reflexive_trigger` can set its target `count` to `{"count": {"binding": ...}}` with `up_to`
-  <br>Why the existing vocabulary won't do: op_discard takes only amount, as, player, random, up_to and whole_hand and offers the player's whole hand to `ask_objects`, so a nonland card could be discarded and counted toward "that many". The cost key `discard` + `discard_selector` does filter to lands, but it is a fixed count, so a `may` with `pay` cannot express "one or more"; looping a one-card `may pay` via `repeat_while` would discard the lands as separate events (a batched "whenever you discard one or more land cards" trigger such as Doctor Doom's would fire once per land) and is an approximation.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Loamcrafter Faun** (rank 9279) — `loamcrafter_faun`
-  - When this creature enters, you may discard one or more land cards. When you do, return up to that many target nonland permanent cards from your graveyard to your hand.
 
 </details>
 
@@ -3189,6 +3112,20 @@ Blocks **1** card.
 
 </details>
 
+## mercenary-1-1-r-pump
+
+Blocks **1** card.
+
+- **(token)** a 1/1 red Mercenary creature token with "{T}: Target creature you control gets +1/+0 until end of turn. Activate only as a sorcery."
+  <br>Why the existing vocabulary won't do: token_ids has no Mercenary token at all
+
+<details><summary>Cards waiting on this</summary>
+
+- **Unfortunate Accident** (rank 18634) — `unfortunate_accident`
+  - + {1} — Create a 1/1 red Mercenary creature token with "{T}: Target creature you control gets +1/+0 until end of turn. Activate only as a sorcery."
+
+</details>
+
 ## merfolk-token
 
 Blocks **1** card.
@@ -3463,20 +3400,6 @@ Blocks **1** card.
 
 </details>
 
-## play-lands-from-graveyard-filtered
-
-Blocks **1** card.
-
-- **(static_effect)** a land-filter on the player-wide play_lands_from_graveyard static (e.g. an affects_cards selector with subtypes: ["Forest"]) so the land drop offers only matching lands from the graveyard; still one land drop per turn
-  <br>Why the existing vocabulary won't do: play_lands_from_graveyard is a yes/no permission (player_statics.player_plays_lands_from_graveyard), and legality._land_actions then offers every land in the graveyard; it cannot be narrowed by land subtype, so using it would let Titania play Plains, Islands and nonbasic lands from the graveyard too. cast_from_graveyard takes an affects_spells filter but covers spells only, never a land play
-
-<details><summary>Cards waiting on this</summary>
-
-- **Titania, Nature's Force** (rank 3993) — `titania_nature_s_force`
-  - You may play Forests from your graveyard.
-
-</details>
-
 ## playable-condition-opponent-lost-life
 
 Blocks **1** card.
@@ -3572,6 +3495,20 @@ Blocks **1** card.
 
 - **Jace Reawakened** (rank 7506) — `jace_reawakened`
   - +1: You may exile a nonland card with mana value 3 or less from your hand. If you do, it becomes plotted.
+
+</details>
+
+## prevent-damage-from-source-to-permanent
+
+Blocks **1** card.
+
+- **(static_effect)** a `prevent_damage` static over permanents (`affects`, `prevent_all`) that reads `damage_source` -- here {"subtypes": ["Desert"]} -- so only damage from a matching dealer is prevented: `primitives.damage_permanent` must filter its total shield by the source the way `player_statics.prevented_player_damage` does for a seat
+  <br>Why the existing vocabulary won't do: The loader refuses `damage_source` on `prevent_damage` unless the static names `affects_player` and no `affects` -- the permanent half does not read it, so `prevent_all` over self would prevent every source's damage. `protection` from Deserts is a bigger card: it also stops the creature being blocked, targeted and enchanted by Deserts. Desertwalk itself is the shipped `desertwalk` keyword
+
+<details><summary>Cards waiting on this</summary>
+
+- **Desert Nomads** (rank 29255) — `desert_nomads`
+  - Prevent all damage that would be dealt to this creature by Deserts.
 
 </details>
 
@@ -3887,6 +3824,22 @@ Blocks **1** card.
 
 </details>
 
+## same-target-for-each-target-word
+
+Blocks **1** card.
+
+- **(engine)** rule 115.3: the same player or object may be chosen once for each instance of the word "target" on a spell, so Rush of Dread's three "target opponent" modes may all name one opponent; enumerate_target_tuples has to let separate specs of one spell share a ref (while one spec's own count still needs distinct choices)
+  <br>Why the existing vocabulary won't do: targeting.enumerate_target_tuples drops any tuple in which two specs pick the same ref ("the same object cannot fill two targets"), so with spree_mode targets t1/t2/t3 every subset of two or more modes needs two or three different opponents: in a two-player game only single-mode casts exist, and at a pod each bought mode is forced onto a different opponent -- a different card. One shared spec is no fix: each mode's target opponent is chosen independently
+
+<details><summary>Cards waiting on this</summary>
+
+- **Rush of Dread** (rank 5003) — `rush_of_dread`
+  - + {1} — Target opponent sacrifices half the creatures they control of their choice, rounded up.
+  - + {2} — Target opponent discards half the cards in their hand, rounded up.
+  - + {2} — Target opponent loses half their life, rounded up.
+
+</details>
+
 ## sandbox-graveyard-spell-prop
 
 Blocks **1** card.
@@ -4013,6 +3966,20 @@ Blocks **1** card.
 - **Mindbreak Trap** (rank 539) — `mindbreak_trap`
   - If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.
   - Exile any number of target spells.
+
+</details>
+
+## spirit-2-2-w-flying
+
+Blocks **1** card.
+
+- **(token)** a 2/2 white Spirit creature token with flying
+  <br>Why the existing vocabulary won't do: token_ids has spirit_2_2_w (no flying) and spirit_1_1_w_flying (1/1); neither is the printed token (111.4)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Phantom Interference** (rank 12596) — `phantom_interference`
+  - + {3} — Create a 2/2 white Spirit creature token with flying.
 
 </details>
 
@@ -4330,13 +4297,12 @@ Blocks **1** card.
 Blocks **1** card.
 
 - **(token)** a 5/5 green Wurm creature token with trample
-  <br>Why the existing vocabulary won't do: `token_ids` has no Wurm token at all; the only 5/5 tokens are dragon_5_5_r_flying and elemental_5_5_rg, which differ in color, creature type and keyword. The `dies` trigger and `create_token` with `amount: {"const": 3}` are otherwise ready.
+  <br>Why the existing vocabulary won't do: `token_ids` has `wurm_5_5_g`, a 5/5 green Wurm without trample, which is a different token (111.4); the other 5/5 tokens differ in color, creature type or keyword. The `dies` trigger and `create_token` with `amount: {"const": 3}` are otherwise ready. The third line is expressible: a `put_into_graveyard` trigger with `source: "self"` and `active_zones: ["graveyard"]` that shuffles this card into its owner's library, as Sin's dies trigger does; it waits only on the token so the card is not shipped without its dies line.
 
 <details><summary>Cards waiting on this</summary>
 
 - **Worldspine Wurm** (rank 2387) — `worldspine_wurm`
   - When this creature dies, create three 5/5 green Wurm creature tokens with trample.
-  - When Worldspine Wurm is put into a graveyard from anywhere, shuffle it into its owner's library.
 
 </details>
 

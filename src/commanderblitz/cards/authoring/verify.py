@@ -831,7 +831,7 @@ def _has_unmatched_spell_spec(game: Game, card: CardDef) -> bool:
         not any(
             matches(ctx, oid, spec.selector, default_zone="stack") for oid in on_stack
         )
-        for spec in card.targets
+        for spec in (card.spree_targets or card.targets)
         if spec.kind == "spell"
     )
 
@@ -1463,7 +1463,11 @@ def _cast(
     # when it is activated -- which is not a thing this harness does.
     # A `spell_or_ability` target (Disallow) wants a stack object too, and a
     # dummy spell is one; the sandbox raises no ability for it to aim at.
-    if any(spec.kind in ("spell", "spell_or_ability") for spec in card.targets):
+    # A spree mode's own target counts: the gate buys every mode (`find_play`).
+    if any(
+        spec.kind in ("spell", "spell_or_ability")
+        for spec in (card.spree_targets or card.targets)
+    ):
         add_dummy_spell(game, registry, card)
     game._advance()
     if card.cast_only_during is not None:

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
+from itertools import combinations
 from typing import Any
 
 from commanderblitz.engine.carddef import (
@@ -38,6 +39,7 @@ def _compile_targets(
     has_kicker: bool = False,
     has_gift: bool = False,
     cost_options: int = 0,
+    spree_modes: int = 0,
 ) -> tuple[TargetSpec, ...]:
     """Compile a card's or ability's target list, with the one ordering rule.
 
@@ -209,17 +211,25 @@ def _compile_targets(
             )
     _check_gift_targets(specs, where, on_spell=on_spell, has_gift=has_gift)
     _check_tier_targets(specs, where, on_spell=on_spell, cost_options=cost_options)
+    _check_spree_targets(specs, where, on_spell=on_spell, spree_modes=spree_modes)
     fixed = [spec for spec in specs if spec.mode is None]
     # A gift-gated or tiered card declares one of several lists, and the
     # ordering rule is about the refs one cast stores -- so each list has to
     # satisfy it, not the printed union, which no cast ever declares.
     gated = any(spec.gift_promised is not None for spec in fixed)
     tiered = any(spec.cost_option is not None for spec in fixed)
+    spreed = any(spec.spree_mode is not None for spec in fixed)
     sides = (
         [("gift", False), ("gift", True)]
         if gated
         else [("tier", n) for n in range(cost_options)]
         if tiered
+        else [
+            ("spree", set(subset))
+            for size in range(1, spree_modes + 1)
+            for subset in combinations(range(spree_modes), size)
+        ]
+        if spreed
         else [(None, None)]
     )
     for gate, side in sides:
@@ -229,6 +239,7 @@ def _compile_targets(
             if gate is None
             or (gate == "gift" and spec.gift_promised in (None, side))
             or (gate == "tier" and spec.cost_option in (None, side))
+            or (gate == "spree" and (spec.spree_mode is None or spec.spree_mode in side))
         ]
         variable = [i for i, spec in enumerate(declared) if spec.variable_size]
         if len(variable) > 1:
@@ -366,6 +377,45 @@ def _check_tier_targets(
             raise DslError(
                 f"{label}: 'cost_option' and 'count_if_kicked' on one target "
                 f"are two cast-time choices sizing one spec -- no printing does it"
+            )
+
+
+def _check_spree_targets(
+    specs: tuple[TargetSpec, ...], where: str, *, on_spell: bool, spree_modes: int
+) -> None:
+    """Every restriction on a target's ``spree_mode``, each a card that would
+    load wrong.
+
+    Legal at all because spree (702.172) buys its modes as additional costs at
+    601.2b, one step before 601.2c declares the targets, so a cast line knows
+    which modes' targets it declares. Each refusal is a place with no such
+    cast, a mode the card lacks, or a second cast-time choice deciding the
+    same spec.
+    """
+    for spec in specs:
+        if spec.spree_mode is None:
+            continue
+        label = f"{where}.target[{spec.id}]"
+        if not on_spell:
+            raise DslError(
+                f"{label}: 'spree_mode' is about a cast, and an ability's "
+                f"targets are declared without one"
+            )
+        if not 0 <= spec.spree_mode < spree_modes:
+            raise DslError(
+                f"{label}: spree mode {spec.spree_mode} does not exist -- the card "
+                f"offers {spree_modes} 'spree' modes"
+            )
+        if (
+            spec.mode is not None
+            or spec.gift_promised is not None
+            or spec.cost_option is not None
+            or spec.count_if_kicked is not None
+        ):
+            raise DslError(
+                f"{label}: 'spree_mode' beside 'mode', 'gift_promised', "
+                f"'cost_option' or 'count_if_kicked' is two choices deciding one "
+                f"target -- no printing does it"
             )
 
 
@@ -747,6 +797,7 @@ def _compile_target(
         mode=model.mode,
         gift_promised=model.gift_promised,
         cost_option=model.cost_option,
+        spree_mode=model.spree_mode,
     )
 
 

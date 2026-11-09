@@ -897,9 +897,13 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
     # And the side of the gift promise it was cast on, for the same reason:
     # "if the gift was promised, return target creature card…" is a spec only
     # the promised cast declared, so only its refs have a bucket for it.
-    # And the tier it paid (702.183), whose list the cast declared.
+    # And the tier it paid (702.183), whose list the cast declared, and the
+    # spree modes it bought (702.172), whose targets only it declared.
     specs = card.specs_for_modes(
-        item.modes, gift_promised=item.gift_to is not None, cost_option=item.cost_option
+        item.modes,
+        gift_promised=item.gift_to is not None,
+        cost_option=item.cost_option,
+        spree_modes=item.spree_modes,
     )
     if item.fused and card.second_face is not None:
         # Both halves' targets, in the order legality offered them.
@@ -1011,6 +1015,7 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
         modes_answered=item.modes_answered,
         source_name=card.name if card else item.description,
         source_def_id=card.id if card else "",
+        resolving_spell=item,
     )
     if card.gift is not None and card.gift_ability is None:
         # 702.174: an instant or sorcery with a promised gift gives it as it

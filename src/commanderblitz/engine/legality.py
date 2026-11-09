@@ -43,6 +43,7 @@ from .enums import ActionKind, DecisionKind, Step, Zone
 from .mana import OTHER_PAYMENT, ManaCost, format_symbols, max_affordable_x
 from .objects import playable_condition_met
 from .player_statics import (
+    graveyard_land_play_allows,
     player_cant_activate,
     player_doubles_mana_from,
     player_plays_lands_from_graveyard,
@@ -377,8 +378,16 @@ def _land_actions(state: GameState, pid: int) -> list[Action]:
     if player_plays_lands_from_graveyard(state, pid):
         # Ramunap Excavator, Crucible of Worlds, Ancient Greenwarden. Still one
         # land drop -- this widens *where* a land may be played from, not how
-        # many, which `lands_played` already governs.
-        zones.append(state.players[pid].graveyard)
+        # many, which `lands_played` already governs. Per card, because the
+        # permission may name a land type -- Hazezon's "Desert lands" opens the
+        # Deserts and leaves every other land where it is.
+        zones.append(
+            [
+                oid
+                for oid in state.players[pid].graveyard
+                if graveyard_land_play_allows(state, pid, state.card(oid))
+            ]
+        )
     # "You may **play** the exiled card this turn" covers a land, which is
     # played rather than cast -- so the permission has to reach both halves or
     # Florian's land half silently does nothing. Filtered per object below,
@@ -556,6 +565,11 @@ def unplayable_reason(state: GameState, pid: int, oid: int) -> str | None:
             card.gift_targets,
             kicked,
             *card.cost_option_targets.values(),
+            # One spree mode's list each: a larger subset only adds targets.
+            *(
+                card.targets_for(gift_promised=False, spree_modes=(n,))
+                for n in range(len(card.spree) if card.spree_targets else 0)
+            ),
         )
         if specs is not None
     ):
