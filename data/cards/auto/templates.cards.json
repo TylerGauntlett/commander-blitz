@@ -59643,6 +59643,95 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "drown_in_dreams",
+      "mana_cost": "{X}{2}{U}",
+      "name": "Drown in Dreams",
+      "oracle_text": "Choose one. If you control a commander as you cast this spell, you may choose both instead.\n• Target player draws X cards.\n• Target player mills twice X cards.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "x": true
+                  },
+                  "op": "draw",
+                  "player": {
+                    "target": "drawer"
+                  }
+                }
+              ],
+              "label": "Target player draws X cards."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "times": [
+                      {
+                        "const": 2
+                      },
+                      {
+                        "x": true
+                      }
+                    ]
+                  },
+                  "op": "mill",
+                  "player": {
+                    "target": "miller"
+                  }
+                }
+              ],
+              "label": "Target player mills twice X cards."
+            }
+          ],
+          "op": "choose_mode",
+          "up_to_if": {
+            "condition": {
+              "exists": {
+                "controller": "you",
+                "is_commander": true,
+                "zone": "battlefield"
+              }
+            },
+            "count": 2
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "drawer",
+          "kind": "player",
+          "mode": 0,
+          "selector": {
+            "controller": "any"
+          }
+        },
+        {
+          "count": 1,
+          "id": "miller",
+          "kind": "player",
+          "mode": 1,
+          "selector": {
+            "controller": "any"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -63490,6 +63579,57 @@
       "subtypes": [
         "Elf",
         "Ranger"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 5
+              },
+              "destination": "battlefield",
+              "objects": {
+                "count": 1,
+                "optional": true,
+                "types": [
+                  "Land"
+                ]
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "rest_to_bottom": true,
+              "tapped": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, look at the top five cards of your library. You may put a land card from among them onto the battlefield tapped. Put the rest on the bottom of your library in a random order.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "elvish_rejuvenator",
+      "mana_cost": "{2}{G}",
+      "name": "Elvish Rejuvenator",
+      "oracle_text": "When this creature enters, look at the top five cards of your library. You may put a land card from among them onto the battlefield tapped. Put the rest on the bottom of your library in a random order.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Druid"
       ],
       "toughness": 1,
       "types": [
@@ -73449,6 +73589,82 @@
     },
     {
       "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "exiles_itself": true,
+      "id": "finale_of_revelation",
+      "mana_cost": "{X}{U}{U}",
+      "name": "Finale of Revelation",
+      "oracle_text": "Draw X cards. If X is 10 or more, instead shuffle your graveyard into your library, draw X cards, untap up to five lands, and you have no maximum hand size for the rest of the game.\nExile Finale of Revelation.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "x": true
+            },
+            "right": {
+              "const": 10
+            }
+          },
+          "else": [
+            {
+              "amount": {
+                "x": true
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "op": "if",
+          "then": [
+            {
+              "objects": {
+                "count": "all",
+                "player": "you",
+                "zone": "graveyard"
+              },
+              "op": "put_on_top"
+            },
+            {
+              "op": "shuffle",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "x": true
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "objects": {
+                "count": 5,
+                "optional": true,
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "untap"
+            },
+            {
+              "op": "no_maximum_hand_size",
+              "player": "you"
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "B",
         "G"
       ],
@@ -76129,6 +76345,59 @@
         "Legendary"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 6
+              },
+              "destination": "hand",
+              "objects": {
+                "count": 1,
+                "optional": true,
+                "types": [
+                  "Land"
+                ]
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, look at the top six cards of your library. You may reveal a land card from among them and put it into your hand. Put the rest on the bottom of your library in a random order.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "floriferous_vinewall",
+      "keywords": [
+        "defender"
+      ],
+      "mana_cost": "{1}{G}",
+      "name": "Floriferous Vinewall",
+      "oracle_text": "Defender\nWhen this creature enters, look at the top six cards of your library. You may reveal a land card from among them and put it into your hand. Put the rest on the bottom of your library in a random order.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Plant",
+        "Wall"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -86211,6 +86480,58 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "subtypes": [
+                    "Locus"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this land enters, you gain 1 life for each Locus on the battlefield.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "glimmerpost",
+      "name": "Glimmerpost",
+      "oracle_text": "When this land enters, you gain 1 life for each Locus on the battlefield.\n{T}: Add {C}.",
+      "source": "auto",
+      "subtypes": [
+        "Locus"
+      ],
+      "types": [
+        "Land"
       ]
     },
     {

@@ -5045,6 +5045,15 @@
   "drossforge_bridge": {
     "zone": "battlefield"
   },
+  "drown_in_dreams": {
+    "hand_size": {
+      "0": 21
+    },
+    "library_size": {
+      "0": 20
+    },
+    "zone": "graveyard"
+  },
   "drowned_catacomb": {
     "zone": "battlefield"
   },
@@ -5384,6 +5393,13 @@
     "zone": "battlefield"
   },
   "elvish_ranger": {
+    "zone": "battlefield"
+  },
+  "elvish_rejuvenator": {
+    "battlefield_count": 34,
+    "library_size": {
+      "0": 39
+    },
     "zone": "battlefield"
   },
   "elvish_warrior": {
@@ -6317,6 +6333,12 @@
     },
     "zone": "graveyard"
   },
+  "finale_of_revelation": {
+    "graveyard_size": {
+      "0": 0
+    },
+    "zone": "exile"
+  },
   "find_finality": {
     "graveyard_size": {
       "0": 1
@@ -6563,6 +6585,16 @@
     },
     "life": {
       "0": 40
+    },
+    "zone": "battlefield"
+  },
+  "floriferous_vinewall": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
     },
     "zone": "battlefield"
   },
@@ -7426,6 +7458,13 @@
       "0": 38
     },
     "zone": "graveyard"
+  },
+  "glimmerpost": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 41
+    },
+    "zone": "battlefield"
   },
   "glissa_s_courier": {
     "zone": "battlefield"

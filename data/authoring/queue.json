@@ -75882,12 +75882,12 @@
     },
     "Drown in Dreams": {
       "edhrec_rank": 2066,
-      "gate": "template",
+      "gate": null,
       "name": "Drown in Dreams",
-      "reason": "no template for: Choose one. If you control a commander as you cast this spell, you may choose both instead",
+      "reason": "",
       "scryfall_id": "047cc3eb-7ec2-4813-899c-890b74fbbed1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Drown in Filth": {
@@ -82132,12 +82132,12 @@
     },
     "Elvish Rejuvenator": {
       "edhrec_rank": 5153,
-      "gate": "template",
+      "gate": null,
       "name": "Elvish Rejuvenator",
-      "reason": "no template for: When this creature enters, look at the top five cards of your library. You may put a land ",
+      "reason": "",
       "scryfall_id": "5deb7010-131c-40e9-a4c2-dee1b700e6c9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Elvish Scout": {
@@ -95192,12 +95192,12 @@
     },
     "Finale of Revelation": {
       "edhrec_rank": 1295,
-      "gate": "template",
+      "gate": null,
       "name": "Finale of Revelation",
-      "reason": "no template for: Draw X cards. If X is 10 or more, instead shuffle your graveyard into your library, draw X",
+      "reason": "",
       "scryfall_id": "0a77e063-e8f6-4cb2-954e-74cf41ce73da",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Finch Formation": {
@@ -98562,12 +98562,12 @@
     },
     "Floriferous Vinewall": {
       "edhrec_rank": 13441,
-      "gate": "template",
+      "gate": null,
       "name": "Floriferous Vinewall",
-      "reason": "no template for: When this creature enters, look at the top six cards of your library. You may reveal a lan",
+      "reason": "",
       "scryfall_id": "c3c27704-7886-4cce-ad66-fb94668822c4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Flotsam // Jetsam": {
@@ -110792,12 +110792,12 @@
     },
     "Glimmerpost": {
       "edhrec_rank": 6468,
-      "gate": "template",
+      "gate": null,
       "name": "Glimmerpost",
-      "reason": "no template for: When this land enters, you gain 1 life for each Locus on the battlefield",
+      "reason": "",
       "scryfall_id": "3ba372ea-b4a0-4db3-baec-9cbf5d3384b1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Glimmervoid": {
