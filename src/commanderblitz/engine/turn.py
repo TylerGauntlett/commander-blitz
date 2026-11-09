@@ -51,6 +51,7 @@ from .temp_effects import (
     clear_goad,
     clear_life_floors,
     clear_life_locks,
+    clear_next_spell_discounts,
     clear_outcome_locks,
     clear_permanent_shields,
     clear_player_protections,
@@ -790,6 +791,7 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int]]:
     # the next one.
     clear_outcome_locks(state, "this_turn")
     clear_flash_permissions(state, "this_turn")
+    clear_next_spell_discounts(state)
     # "Creature spells you cast this turn can't be countered" (Domri, Anarch of
     # Bolas). Owned by no permanent: the walker may be long gone.
     clear_uncounterable_grants(state, "this_turn")

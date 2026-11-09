@@ -60,6 +60,7 @@
   "COST_REDUCTION_KEYS": [
    "amount",
    "count",
+   "distinct_mana_values",
    "energy_spent_this_turn",
    "greatest_count",
    "greatest_mana_value",
@@ -1056,6 +1057,7 @@
   "must_attack_player",
   "must_block",
   "must_block_any",
+  "next_spell_cost_reduction",
   "no_maximum_hand_size",
   "noop",
   "pair",

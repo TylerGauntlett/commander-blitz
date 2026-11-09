@@ -10,7 +10,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 171 |
+| [Effect ops](#effect-ops) | 172 |
 | [Selectors](#selectors) | 76 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 72 |
@@ -20,9 +20,9 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Static effects](#static-effects) | 96 |
 | [Player-wide statics](#player-wide-statics) | 46 |
 | [Grantable statics](#grantable-statics) | 43 |
-| [Cost reduction](#cost-reduction) | 7 |
+| [Cost reduction](#cost-reduction) | 8 |
 | [Ability costs](#ability-costs) | 32 |
-| [Card-level costs](#card-level-costs) | 32 |
+| [Card-level costs](#card-level-costs) | 33 |
 | [Keywords](#keywords) | 45 |
 | [Card types and supertypes](#card-types-and-supertypes) | 12 |
 | [Durations](#durations) | 6 |
@@ -179,6 +179,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `extra_loyalty_activation` | Players |  | A player may activate loyalty abilities an extra time this turn. | [Effect ops](card-dsl.md#effect-ops) |
 | `grant_flash_permission` | Players |  | A player may cast matching spells (or, with `next_spell`, the next one) as though they had flash. | [Effect ops](card-dsl.md#effect-ops) |
 | `lose_game` | Players |  | A player loses the game. | ["That player loses the game"](card-dsl-cookbook.md#that-player-loses-the-game) |
+| `next_spell_cost_reduction` | Players |  | A player's next spell of the given types this turn costs N less, N read as it resolves. | [The next spell costs less](card-dsl.md#the-next-spell-costs-less) |
 | `no_maximum_hand_size` | Players |  | A player has no maximum hand size for the rest of the game. | ["No maximum hand size for the rest of the game"](card-dsl-cookbook.md#no-maximum-hand-size-for-the-rest-of-the-game) |
 | `win_game` | Players |  | A player wins the game. | ["You win the game"](card-dsl-cookbook.md#you-win-the-game) |
 | `add_mana` | Mana |  | Add mana to a player's pool. | [Mana abilities](card-dsl-cookbook.md#mana-abilities) |
@@ -754,6 +755,7 @@ The arithmetic heads a card-level `cost_reduction`, a `spell_cost_reduction` sta
 |---|---|---|
 | `amount` | Costs N less (usually gated on a `condition`). | [An activated ability that gets cheaper](card-dsl-cookbook.md#an-activated-ability-that-gets-cheaper) |
 | `count` | Costs {1} less for each object a filter finds. | [An activated ability that gets cheaper](card-dsl-cookbook.md#an-activated-ability-that-gets-cheaper) |
+| `distinct_mana_values` | …for each different printed mana value among a filter's objects. | [A reduction that counts mana values](card-dsl.md#a-reduction-that-counts-mana-values) |
 | `energy_spent_this_turn` | Costs {1} less for each {E} a player paid or lost this turn. | [A reduction that reads energy paid or lost](card-dsl.md#a-reduction-that-reads-energy-paid-or-lost) |
 | `greatest_count` | …for the greatest number any one player has. | [A reduction that maximises a per-player tally](card-dsl.md#a-reduction-that-maximises-a-per-player-tally) |
 | `greatest_mana_value` | …by the greatest mana value among a filter's objects. | […by the greatest mana value of a commander you own](card-dsl-cookbook.md#by-the-greatest-mana-value-of-a-commander-you-own) |

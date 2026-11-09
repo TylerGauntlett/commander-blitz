@@ -1079,6 +1079,32 @@ class FlashPermission:
     source: int | None = None
 
 
+@dataclass(frozen=True)
+class NextSpellDiscount:
+    """ "The next instant or sorcery spell you cast this turn costs {X} less to
+    cast, where X is the number of Wizards you control as this ability
+    resolves." -- Kaza, Roil Chaser.
+
+    `FlashPermission`'s ``next_spell`` shape with a price instead of a timing:
+    owned by the player, not by a permanent (Kaza may be gone before the spell
+    is cast), single-use, and over at cleanup. ``amount`` is a number by the
+    time it is here -- "as this ability resolves" is read once, by the op --
+    so a Wizard dying in between changes nothing. ``types`` narrows it to
+    spells of any of those card types; empty, it is the next spell of any kind
+    (Mutated Cultist). Read by `cost_reduction.cost_reduction`, spent by
+    `temp_effects.consume_next_spell_discounts` off the cast.
+    """
+
+    #: Whose next spell is cheaper.
+    player: int
+    #: How much generic mana less, fixed when the effect resolved.
+    amount: int
+    #: The card types it covers (any of them); empty for every spell.
+    types: tuple[str, ...] = ()
+    #: What installed it, for the log.
+    source: int | None = None
+
+
 #: The durations a `FlashPermission` may carry.
 FLASH_PERMISSION_DURATIONS = ("this_turn", "until_your_next_turn")
 

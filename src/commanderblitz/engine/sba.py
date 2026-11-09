@@ -21,6 +21,7 @@ from .temp_effects import (
     clear_attack_taxes,
     clear_flash_permissions,
     clear_goad,
+    clear_next_spell_discounts,
     clear_permanent_shields,
     drop_attack_requirements,
 )
@@ -288,6 +289,7 @@ def _eliminate(state: GameState, pid: int, reason: LossReason) -> None:
     clear_until_next_turn(state, pid)
     # And a timed flash permission keyed to a seat that has left.
     clear_flash_permissions(state, "until_your_next_turn", pid)
+    clear_next_spell_discounts(state, pid)
     # And a timed attack tax protecting a seat that has left: nobody attacks
     # that seat again, so the row is dead weight on every attack mask.
     clear_attack_taxes(state, "until_your_next_turn", pid)

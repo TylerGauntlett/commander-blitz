@@ -399,6 +399,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                                  None),
     "grant_flash_permission": ("Players", "A player may cast matching spells (or, with `next_spell`, the next one) as though they had flash.",
                                None),
+    "next_spell_cost_reduction": ("Players", "A player's next spell of the given types this turn costs N less, N read as it resolves.",
+                                  "The next spell costs less"),
     "win_game": ("Players", "A player wins the game.", '"You win the game"'),
     "no_maximum_hand_size": ("Players", "A player has no maximum hand size for the rest of the game.",
                              '"No maximum hand size for the rest of the game"'),
@@ -1029,6 +1031,8 @@ STATICS: dict[str, Entry] = {
 COST_REDUCTION: dict[str, Entry] = {
     "amount": ("Costs N less (usually gated on a `condition`).", H_CHEAPER),
     "count": ("Costs {1} less for each object a filter finds.", H_CHEAPER),
+    "distinct_mana_values": ("…for each different printed mana value among a filter's objects.",
+                             "A reduction that counts mana values"),
     "energy_spent_this_turn": ("Costs {1} less for each {E} a player paid or lost this turn.",
                                "A reduction that reads energy paid or lost"),
     "greatest_count": ("…for the greatest number any one player has.",

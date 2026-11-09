@@ -3242,6 +3242,16 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 )
         if not isinstance(effect.get("next_spell", False), bool):
             raise DslError(f"{where}: grant_flash_permission's 'next_spell' is true or false")
+    if op == "next_spell_cost_reduction":
+        # Without an amount there is nothing to take off, and a misspelt type
+        # would narrow the discount to no spell -- an activation doing nothing.
+        if "amount" not in effect:
+            raise DslError(f"{where}: next_spell_cost_reduction needs an 'amount'")
+        for t in effect.get("types") or ():
+            if t not in KNOWN_TYPES:
+                raise DslError(f"{where}: unknown card type {t!r}")
+        if effect.get("player") is not None:
+            _validate_player_spec(effect["player"], f"{where}.player", target_kinds)
     if op == "multiply_token_creation":
         # Without a duration the doubling would have no clock to end on; a
         # misspelt one would never be swept and double every token for the rest

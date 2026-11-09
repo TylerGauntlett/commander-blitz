@@ -1324,9 +1324,14 @@ WAS_CAST_TRIGGERS = frozenset({"self_enters"})
 #: value leaf of the same name reads, taking a player spec rather than a
 #: filter. A ledger is answerable at pricing time -- it is written only by
 #: `GameState._tally`, never by anything on the stack.
+#: ``distinct_mana_values`` is Eris, Roar of the Storm's "for each **different**
+#: mana value among instant and sorcery cards in your graveyard": a count of
+#: printed mana values rather than of cards, so two instants of mana value 2
+#: are one, where `count` would read two.
 COST_REDUCTION_KEYS = frozenset(
     {
         "count",
+        "distinct_mana_values",
         "energy_spent_this_turn",
         "greatest_count",
         "total_power",
@@ -1343,6 +1348,10 @@ COST_REDUCTION_KEYS = frozenset(
 #: accepted and `_reduction_zone_oids` did not walk would load and match nothing.
 #: `total_power` is battlefield-only whatever this says -- see below.
 COST_REDUCTION_ZONES = REDUCTION_ZONES
+
+#: "Costs **{2}** less for each …": the generic each unit of a counting head is
+#: worth, beside that head. Omitted, a unit is {1}.
+COST_REDUCTION_EACH = "each"
 
 #: Extra filter keys a cost reduction accepts on top of `STATIC_FILTER_KEYS`.
 #:
