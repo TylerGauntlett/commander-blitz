@@ -41012,12 +41012,12 @@
     },
     "Cataclysmic Prospecting": {
       "edhrec_rank": 11590,
-      "gate": "template",
+      "gate": null,
       "name": "Cataclysmic Prospecting",
-      "reason": "no template for: deals X damage to each creature. For each mana from a Desert spent to cast this spell, cre",
+      "reason": "",
       "scryfall_id": "149829e6-94bd-49a0-be35-51f37bea7ffb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Catacomb Crocodile": {
@@ -168492,12 +168492,12 @@
     },
     "Marut": {
       "edhrec_rank": 13178,
-      "gate": "template",
+      "gate": null,
       "name": "Marut",
-      "reason": "no template for: When this creature enters, if mana from a Treasure was spent to cast it, create a Treasure",
+      "reason": "",
       "scryfall_id": "a3ce857f-2870-4dc9-a763-9ce710e4b375",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Marvel Boy, Noh-Varr": {
@@ -260832,12 +260832,12 @@
     },
     "Spoils of the Hunt": {
       "edhrec_rank": 27240,
-      "gate": "template",
+      "gate": null,
       "name": "Spoils of the Hunt",
-      "reason": "no template for: Target creature you control gets +1/+0 until end of turn for each mana from a Treasure tha",
+      "reason": "",
       "scryfall_id": "10dfdfd4-8621-40ef-a60f-74e9c107bbaf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spoils of the Vault": {

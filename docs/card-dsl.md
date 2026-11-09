@@ -5921,6 +5921,36 @@ played:
 A {3}{R} spell cast under a cost reducer is mana value 4 and three mana spent,
 and that case is what the tests pin.
 
+### `mana_spent_from` — how much of the payment came from a kind of permanent
+
+"For each mana from a **Desert** spent to cast this spell, create a tapped
+Treasure token" — Cataclysmic Prospecting.
+
+```jsonc
+{ "op": "create_token", "token": "treasure_token", "tapped": true,
+  "amount": { "mana_spent_from": { "subtypes": ["Desert"] } } }
+```
+
+The number of **units** of mana spent to cast the source object whose
+producing permanent matched the filter, as that permanent was when it made the
+mana. `pay_mana` keeps one `ManaOrigin` per pip spent
+(`GameObject.mana_spent_origins`), accumulated across a cast's payments; mana an
+effect made has no source and never counts. The filter takes `paid_by`'s
+closed keys (`name`, `types`, `any_types`, `not_types`, `subtypes`,
+`supertypes`, `controller` relative to the source object's controller), because
+it describes a memory of a permanent that may be gone — a Treasure is
+sacrificed to make its mana. Read off the source object like
+`colors_of_mana_spent`: a spell's own `spell_effects`, or the permanent it
+became, since the record survives the move onto the battlefield and is cleared
+on every other move, so a card cast again starts over. A copy was never cast
+and reads 0.
+
+The near miss is `paid_by`, which answers whether **any** mana from such a
+source was spent: it reads a set with one entry per source, so a Desert that
+taps for two is one entry there and two here. `mana_spent_of` is the total
+with no filter. The loader refuses an empty filter and any key a remembered
+source cannot answer.
+
 ### Discarding a whole hand, and reading the greatest that went
 
 Windfall: "Each player discards their hand, then draws cards equal to the

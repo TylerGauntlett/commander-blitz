@@ -13,7 +13,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Effect ops](#effect-ops) | 173 |
 | [Selectors](#selectors) | 76 |
 | [Player specs](#player-specs) | 9 |
-| [Values](#values) | 73 |
+| [Values](#values) | 74 |
 | [Conditions](#conditions) | 34 |
 | [Trigger events](#trigger-events) | 54 |
 | [Trigger filters](#trigger-filters) | 37 |
@@ -362,6 +362,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `life_of` | A player's life total (summed over a plural spec). | [Value expressions](card-dsl.md#value-expressions) |
 | `loop_value` | The current item of an enclosing `for_each`. | [Value expressions](card-dsl.md#value-expressions) |
 | `loyalty_activations_this_turn` | Loyalty abilities the player activated this turn. | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
+| `mana_spent_from` | Units of mana spent to cast this whose source matched a `paid_by`-style filter ("for each mana from a Desert"). | [mana_spent_from — how much of the payment came from a kind of permanent](card-dsl.md#mana_spent_from--how-much-of-the-payment-came-from-a-kind-of-permanent) |
 | `mana_spent_of` | Mana of a color actually spent to cast this. | [mana_spent_of — what was paid, not what is printed](card-dsl.md#mana_spent_of--what-was-paid-not-what-is-printed) |
 | `mana_symbols` | Pips of a color among a pool's mana costs (chroma). | [Counting mana symbols](card-dsl.md#counting-mana-symbols) |
 | `mana_value_of` | Mana value of an object (summed over a pool). | [Value expressions](card-dsl.md#value-expressions) |

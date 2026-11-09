@@ -2583,6 +2583,10 @@
     "artist": "Melissa A. Benson",
     "scryfall_id": "90823485-83cd-4260-b860-7f05d8588905"
   },
+  "cataclysmic_prospecting": {
+    "artist": "PINDURSKI",
+    "scryfall_id": "149829e6-94bd-49a0-be35-51f37bea7ffb"
+  },
   "catacomb_crocodile": {
     "artist": "Nils Hamm",
     "scryfall_id": "77b36db1-f56f-49dd-912a-6f312955d13e"
@@ -10350,6 +10354,10 @@
     "artist": "Greg Staples",
     "scryfall_id": "d32e68b4-2584-4b1c-9268-642e3678bae7"
   },
+  "marut": {
+    "artist": "Campbell White",
+    "scryfall_id": "a3ce857f-2870-4dc9-a763-9ce710e4b375"
+  },
   "mask_of_avacyn": {
     "artist": "James Paick",
     "scryfall_id": "0aa1b193-c80e-4026-bd82-f16314e14431"
@@ -15795,6 +15803,10 @@
   "splendid_reclamation": {
     "artist": "Uriah Voth",
     "scryfall_id": "63c7f172-0aec-4629-967c-37253aed0f0d"
+  },
+  "spoils_of_the_hunt": {
+    "artist": "Justine Cruz",
+    "scryfall_id": "10dfdfd4-8621-40ef-a60f-74e9c107bbaf"
   },
   "spore_frog": {
     "artist": "Donato Giancola",

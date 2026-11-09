@@ -34305,6 +34305,50 @@
     },
     {
       "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "cataclysmic_prospecting",
+      "mana_cost": "{X}{R}{R}",
+      "name": "Cataclysmic Prospecting",
+      "oracle_text": "Cataclysmic Prospecting deals X damage to each creature. For each mana from a Desert spent to cast this spell, create a tapped Treasure token.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "x": true
+          },
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "damage"
+        },
+        {
+          "amount": {
+            "mana_spent_from": {
+              "subtypes": [
+                "Desert"
+              ]
+            }
+          },
+          "op": "create_token",
+          "tapped": true,
+          "token": "treasure_token"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "B"
       ],
       "colors": [
@@ -137885,6 +137929,63 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "mana_spent_from": {
+                  "subtypes": [
+                    "Treasure"
+                  ]
+                }
+              },
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, if mana from a Treasure was spent to cast it, create a Treasure token for each mana from a Treasure spent to cast it.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "mana_spent_from": {
+                  "subtypes": [
+                    "Treasure"
+                  ]
+                }
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "marut",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{8}",
+      "name": "Marut",
+      "oracle_text": "Trample\nWhen this creature enters, if mana from a Treasure was spent to cast it, create a Treasure token for each mana from a Treasure spent to cast it. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Construct"
+      ],
+      "toughness": 7,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -208875,6 +208976,81 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "spoils_of_the_hunt",
+      "mana_cost": "{2}{G}",
+      "name": "Spoils of the Hunt",
+      "oracle_text": "Target creature you control gets +1/+0 until end of turn for each mana from a Treasure that was spent to cast this spell. Then that creature deals damage equal to its power to target creature an opponent controls.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "duration": "until_end_of_turn",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "pump",
+          "power": {
+            "mana_spent_from": {
+              "subtypes": [
+                "Treasure"
+              ]
+            }
+          },
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "amount": {
+            "power_of": {
+              "target": "t1"
+            }
+          },
+          "objects": {
+            "target": "t2"
+          },
+          "op": "damage",
+          "source_object": {
+            "target": "t1"
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "t2",
+          "kind": "permanent",
+          "selector": {
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {

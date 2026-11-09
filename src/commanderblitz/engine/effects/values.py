@@ -66,12 +66,14 @@ from ..characteristics import (
 )
 from ..enums import KEYWORD_COUNTERS, Keyword
 from ..errors import DslError
+from ..mana import origin_matches
 from ..objects import ANY_COUNTER_KIND, FINALITY, PLUS_ONE, SHIELD, STUN
 from .context import EffectContext
 from .selectors import (
     ENCHANTED_BY_CONTROLLERS,
     ENCHANTED_BY_KEYS,
     KNOWN_TYPES,
+    PAID_BY_SELECTOR_KEYS,
     PLAYER_SPEC_NAMES,
     resolve_pool,
     select_players,
@@ -394,6 +396,11 @@ VALUE_KEYS = frozenset(
         # Sunburst artifact cast for {4} off five different lands enters with
         # five counters, and its printed cost has no coloured pip at all.
         "colors_of_mana_spent",
+        # "For each mana from a Desert spent to cast this spell" -- Cataclysmic
+        # Prospecting. How many *units* of the payment came from permanents
+        # matching a `paid_by`-style filter: `paid_by` itself only says whether
+        # any did, over a set that holds one entry per source.
+        "mana_spent_from",
         #: "…the number of colors in your commanders' color identity". A deck
         #: fact rather than a board one, so it is the same number wherever the
         #: commander currently is.
@@ -557,6 +564,18 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         # an oid survives the zone change onto the battlefield.
         obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
         return len(obj.colors_spent) if obj is not None else 0
+    if "mana_spent_from" in expr:
+        # Read off the object that was cast, as `colors_of_mana_spent` is: the
+        # spell for its own `spell_effects`, the permanent for its enters
+        # trigger. `controller` in the filter is relative to that object's.
+        obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
+        if obj is None:
+            return 0
+        filt = expr["mana_spent_from"]
+        return sum(
+            1 for origin in obj.mana_spent_origins
+            if origin_matches(origin, filt, obj.controller)
+        )
     if "mana_symbols" in expr:
         # Chroma. Read off the **printed** cost, which is what the keyword says
         # and also what makes it safe inside a static: a mana cost is a pipeline
@@ -1866,6 +1885,32 @@ def validate_characteristic_ref(ref: Any, where: str) -> None:
     )
 
 
+def validate_mana_spent_from(filt: Any, where: str) -> None:
+    """The filter is a remembered mana source's, so `paid_by`'s closed keys.
+
+    An empty filter would count every unit of mana a permanent made, which is
+    not "from a Desert" and is printed nowhere; `mana_spent_of` is the total.
+    """
+    if not isinstance(filt, Mapping) or not filt:
+        raise DslError(
+            f"{where}: a non-empty filter over what the mana's source was, e.g. "
+            f'{{"subtypes": ["Desert"]}}; for all mana spent use mana_spent_of'
+        )
+    unknown = set(filt) - PAID_BY_SELECTOR_KEYS
+    if unknown:
+        raise DslError(
+            f"{where}: {sorted(unknown)} cannot be asked of a remembered mana "
+            f"source -- it may have left the battlefield to make the mana. Use "
+            f"only {sorted(PAID_BY_SELECTOR_KEYS)}"
+        )
+    controller = filt.get("controller")
+    if controller is not None and controller not in ("you", "opponent", "any"):
+        raise DslError(
+            f"{where}.controller: only 'you', 'opponent' and 'any' can be asked "
+            f"of the one player the snapshot records, got {controller!r}"
+        )
+
+
 def validate_value(expr: Any, where: str) -> None:
     """Load-time check that a value expression uses only known forms."""
     if expr is None or isinstance(expr, (int, bool)):
@@ -1887,6 +1932,8 @@ def validate_value(expr: Any, where: str) -> None:
                 validate_value(sub, f"{where}.{key}[{i}]")
     if "half" in expr:
         validate_half(expr["half"], f"{where}.half")
+    if "mana_spent_from" in expr:
+        validate_mana_spent_from(expr["mana_spent_from"], f"{where}.mana_spent_from")
     for key in CHARACTERISTIC_OF_KEYS:
         if key in expr:
             validate_characteristic_ref(expr[key], f"{where}.{key}")

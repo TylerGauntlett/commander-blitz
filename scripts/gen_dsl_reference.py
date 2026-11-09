@@ -671,6 +671,8 @@ VALUES: dict[str, Entry] = {
     "loyalty_activations_this_turn": ("Loyalty abilities the player activated this turn.", H_LEDGER),
     "mana_spent_of": ("Mana of a color actually spent to cast this.",
                       "`mana_spent_of` — what was paid, not what is printed"),
+    "mana_spent_from": ("Units of mana spent to cast this whose source matched a `paid_by`-style filter (\"for each mana from a Desert\").",
+                        "`mana_spent_from` — how much of the payment came from a kind of permanent"),
     "mana_symbols": ("Pips of a color among a pool's mana costs (chroma).", "Counting mana symbols"),
     "mana_value_of": ("Mana value of an object (summed over a pool).", None),
     "max": ("The greatest of several values.", None),

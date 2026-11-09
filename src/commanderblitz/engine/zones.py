@@ -337,6 +337,7 @@ def move_object(
     # only for a battlefield destination, so a countered creature spell does not
     # sit in its graveyard holding a haste to cash on a later cast.
     mana_granted_keywords = obj.mana_granted_keywords
+    mana_spent_origins = obj.mana_spent_origins
     cast_rider = obj.cast_rider
     cast_enters_with = obj.cast_enters_with
 
@@ -395,6 +396,7 @@ def move_object(
     obj.left_with = left_with
     if to_zone is Zone.BATTLEFIELD:
         obj.mana_granted_keywords = mana_granted_keywords
+        obj.mana_spent_origins = mana_spent_origins
         obj.cast_rider = cast_rider
         obj.cast_enters_with = cast_enters_with
     _add_to_zone(state, obj, to_zone, target_player, to_top=to_top, to_index=to_index)

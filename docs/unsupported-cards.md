@@ -64,6 +64,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [attack-tax-x-count](#attack-tax-x-count) | 1 | 671 | value |
 | [attacking-opponents-of-player](#attacking-opponents-of-player) | 1 | 705 | selector |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
+| [bat-1-1-b-flying](#bat-1-1-b-flying) | 1 | 20382 | token |
 | [batched-combat-damage-amount](#batched-combat-damage-amount) | 1 | 3943 | value |
 | [block-restriction-relative-power](#block-restriction-relative-power) | 1 | 6993 | static_effect |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
@@ -181,7 +182,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mana-restriction-cast-from-zone](#mana-restriction-cast-from-zone) | 1 | 9291 | engine |
 | [mana-restriction-turn-face-up](#mana-restriction-turn-face-up) | 1 | 6766 | value |
 | [mana-spent-enters-with-counters](#mana-spent-enters-with-counters) | 1 | 653 | replacement |
-| [mana-spent-from-source-count](#mana-spent-from-source-count) | 1 | 11590 | value |
 | [mana-spent-trigger-on-activation](#mana-spent-trigger-on-activation) | 1 | 4444 | trigger_event |
 | [mana-tap-trigger-damage-rider](#mana-tap-trigger-damage-rider) | 1 | 7929 | static_effect |
 | [manifest-from-hand](#manifest-from-hand) | 1 | 3975 | op |
@@ -1349,6 +1349,20 @@ Blocks **1** card.
 
 - **Primo, the Unbounded** (rank 8933) — `primo_the_unbounded`
   - Whenever one or more creatures you control with base power 0 deal combat damage to a player, create a 0/0 green and blue Fractal creature token. Put a number of +1/+1 counters on it equal to the damage dealt.
+
+</details>
+
+## bat-1-1-b-flying
+
+Blocks **1** card.
+
+- **(token)** a 1/1 black Bat creature token with flying
+  <br>Why the existing vocabulary won't do: token_ids has no Bat token; the count itself is `mana_spent_from` with {"subtypes": ["Cave"]}
+
+<details><summary>Cards waiting on this</summary>
+
+- **Bat Colony** (rank 20382) — `bat_colony`
+  - When this enchantment enters, create a 1/1 black Bat creature token with flying for each mana from a Cave spent to cast it.
 
 </details>
 
@@ -3025,20 +3039,6 @@ Blocks **1** card.
 
 - **Opal Palace** (rank 653) — `opal_palace`
   - {1}, {T}: Add one mana of any color in your commander's color identity. If you spend this mana to cast your commander, it enters with a number of additional +1/+1 counters on it equal to the number of times it's been cast from the command zone this game.
-
-</details>
-
-## mana-spent-from-source-count
-
-Blocks **1** card.
-
-- **(value)** a value that counts how many units of mana spent to cast this spell came from permanents matching a selector (here subtypes ["Desert"]), read off the cast object, e.g. {"mana_spent_from": {"subtypes": ["Desert"]}}, so the Treasure create_token (treasure_token, tapped: true) can take it as its amount
-  <br>Why the existing vocabulary won't do: mana_spent_of is the total mana spent with no source filter, colors_of_mana_spent counts colours, and the paid_by selector/trigger filter only answers whether any mana from a matching source was spent (a boolean over the deduplicated mana_spent_traits set of ManaOrigin), not how many pips came from it
-
-<details><summary>Cards waiting on this</summary>
-
-- **Cataclysmic Prospecting** (rank 11590) — `cataclysmic_prospecting`
-  - For each mana from a Desert spent to cast this spell, create a tapped Treasure token.
 
 </details>
 

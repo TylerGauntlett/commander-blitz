@@ -2308,6 +2308,9 @@ def pay_mana(
         # mana. (`mana_sources_spent` above predates that reading and keeps its
         # assignment, so this change cannot alter any shipped card's behaviour.)
         obj.mana_spent_traits = obj.mana_spent_traits | spent.source_traits
+        # And one entry per unit, accumulated for the same reason: "for each
+        # mana from a Desert spent to cast this spell" counts them.
+        obj.mana_spent_origins = obj.mana_spent_origins + spent.origins
         # Accumulated with `or`, not assigned, for `mana_spent`'s reason: a cast
         # pays in more than one call when it has an additional cost, and a spell
         # paid for partly with Cavern mana was paid for with Cavern mana.

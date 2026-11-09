@@ -2889,6 +2889,11 @@
   "cat_warriors": {
     "zone": "battlefield"
   },
+  "cataclysmic_prospecting": {
+    "battlefield_count": 30,
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
+  },
   "catacomb_crocodile": {
     "zone": "battlefield"
   },
@@ -11628,6 +11633,10 @@
     },
     "zone": "battlefield"
   },
+  "marut": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "mask_of_avacyn": {
     "zone": "battlefield"
   },
@@ -17688,6 +17697,13 @@
     "battlefield_count": 32,
     "graveyard_size": {
       "0": 3
+    },
+    "zone": "graveyard"
+  },
+  "spoils_of_the_hunt": {
+    "target_pt_delta": {
+      "power": 0,
+      "toughness": 0
     },
     "zone": "graveyard"
   },

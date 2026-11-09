@@ -651,6 +651,44 @@ class ManaOrigin(NamedTuple):
     controller: int | None = None
 
 
+def origin_matches(origin: ManaOrigin, filt: Mapping[str, Any], controller: int | None) -> bool:
+    """Whether one remembered mana source answers a selector-valued ``paid_by``.
+
+    Matched on the snapshot and never on the live board: the whole point is
+    that the object may be gone. ``controller`` is whom the filter's
+    ``controller`` clause is relative to, compared with the controller the
+    source had when it made the mana -- "mana from a Treasure you control" is
+    about the Treasure you tapped, not about who would control it now. The keys
+    are `selectors.PAID_BY_SELECTOR_KEYS`.
+    """
+    name = filt.get("name")
+    if name is not None:
+        wanted = [name] if isinstance(name, str) else list(name)
+        if origin.name not in wanted:
+            return False
+    types = filt.get("types")
+    if types and not set(types).issubset(origin.types):
+        return False
+    any_types = filt.get("any_types")
+    if any_types and not (set(any_types) & origin.types):
+        return False
+    not_types = filt.get("not_types")
+    if not_types and set(not_types) & origin.types:
+        return False
+    subtypes = filt.get("subtypes")
+    if subtypes and not (set(subtypes) & origin.subtypes):
+        return False
+    supertypes = filt.get("supertypes")
+    if supertypes and not set(supertypes).issubset(origin.supertypes):
+        return False
+    wanted_controller = filt.get("controller")
+    if wanted_controller == "you" and origin.controller != controller:
+        return False
+    if wanted_controller == "opponent" and origin.controller == controller:
+        return False
+    return True
+
+
 class Pip(NamedTuple):
     """One unit of mana in the pool, and what is known about where it came from.
 
@@ -731,6 +769,12 @@ class SpentMana:
     #: Treasure was sacrificed to make the mana, so the oid resolves to nothing
     #: by the time anything asks. See :class:`ManaOrigin`.
     source_traits: frozenset[ManaOrigin] = frozenset()
+    #: The same memory **per unit of mana**, in the order the pips were taken:
+    #: "for each mana from a Desert spent to cast this spell" (Cataclysmic
+    #: Prospecting) is a count, and `source_traits` is a set in which two pips
+    #: from one Desert are one entry. Mana an effect made has no source and no
+    #: entry.
+    origins: tuple[ManaOrigin, ...] = ()
     #: Whether **any** pip this payment consumed carried Cavern of Souls' rider.
     #: Any, not all: the printed sentence makes the spell uncounterable if that
     #: mana was spent on it, and says nothing about the rest of its cost.
@@ -997,6 +1041,8 @@ class ManaPool:
         # two activations of one Study Hall build equal tags, and each is its own
         # "this mana" with its own trigger.
         spend_triggers: list[ManaSpendTrigger] = []
+        # One entry per pip with a known source -- see `SpentMana.origins`.
+        origins: list[ManaOrigin] = []
 
         # The pool as this payment may spend it, kept in step with every take
         # below: a restricted pip is not in these counts and is not taken.
@@ -1009,6 +1055,7 @@ class ManaPool:
                     made_by.add(pip.source)
                 if pip.source_traits is not None:
                     made_by_traits.add(pip.source_traits)
+                    origins.append(pip.source_traits)
                 rider = rider or pip.uncounterable
                 if pip.grant is not None and pip.grant not in grants:
                     grants.append(pip.grant)
@@ -1059,6 +1106,7 @@ class ManaPool:
             colors=frozenset(spent),
             sources=frozenset(made_by),
             source_traits=frozenset(made_by_traits),
+            origins=tuple(origins),
             uncounterable=rider,
             grants=tuple(grants),
             spend_triggers=tuple(spend_triggers),

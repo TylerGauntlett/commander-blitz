@@ -52,6 +52,7 @@ from .effects.selectors import ZONE_NAMES, attacking_player_matches, has_printed
 from .enums import Keyword, Zone
 from .errors import DslError, RulesLoopError
 from .events import EventType, GameEvent
+from .mana import origin_matches
 from .objects import GameObject
 from .player_statics import commander_subtypes, goaders, players_doubling_land_triggers
 from .state import MAX_TRIGGERS_PER_STEP
@@ -2733,41 +2734,10 @@ def _origin_matches(
 ) -> bool:
     """Whether one remembered mana source answers a selector-valued ``paid_by``.
 
-    ``origin`` is a :class:`mana.ManaOrigin` -- what a permanent was when it
-    made a unit of mana this spell's payment consumed. Matched on the snapshot
-    and never on the live board: the whole point is that the object may be gone.
-
-    ``controller`` is relative to the *ability source*, as everywhere else in a
-    trigger filter, and compares the controller the source had when it made the
-    mana. That is the printed reading: "mana from a Treasure you control" is
-    about the Treasure you tapped, not about who would control it now.
+    `mana.origin_matches`, with ``controller`` relative to the *ability
+    source*, as everywhere else in a trigger filter.
     """
-    name = filt.get("name")
-    if name is not None:
-        wanted = [name] if isinstance(name, str) else list(name)
-        if origin.name not in wanted:
-            return False
-    types = filt.get("types")
-    if types and not set(types).issubset(origin.types):
-        return False
-    any_types = filt.get("any_types")
-    if any_types and not (set(any_types) & origin.types):
-        return False
-    not_types = filt.get("not_types")
-    if not_types and set(not_types) & origin.types:
-        return False
-    subtypes = filt.get("subtypes")
-    if subtypes and not (set(subtypes) & origin.subtypes):
-        return False
-    supertypes = filt.get("supertypes")
-    if supertypes and not set(supertypes).issubset(origin.supertypes):
-        return False
-    controller = filt.get("controller")
-    if controller == "you" and origin.controller != ability_source.controller:
-        return False
-    if controller == "opponent" and origin.controller == ability_source.controller:
-        return False
-    return True
+    return origin_matches(origin, filt, ability_source.controller)
 
 
 def _compare(value: int, spec: Mapping[str, Any]) -> bool:
