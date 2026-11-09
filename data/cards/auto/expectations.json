@@ -10916,6 +10916,14 @@
   "llanowar_wastes": {
     "zone": "battlefield"
   },
+  "loamcrafter_faun": {
+    "graveyard_size": {
+      "0": 2
+    },
+    "hand_size": {
+      "0": 1
+    }
+  },
   "loamdragger_giant": {
     "zone": "battlefield"
   },
@@ -11936,6 +11944,15 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "mind_maggots": {
+    "graveyard_size": {
+      "0": 2
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "mind_s_dilation": {
     "zone": "battlefield"
   },
@@ -12581,6 +12598,21 @@
   },
   "namor_atlantean_king": {
     "zone": "battlefield"
+  },
+  "nantuko_cultivator": {
+    "counters": {
+      "amount": 1,
+      "kind": "+1/+1"
+    },
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 39
+    }
   },
   "nantuko_elder": {
     "zone": "battlefield"

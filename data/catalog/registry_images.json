@@ -9745,6 +9745,10 @@
     "artist": "Lucas Graciano",
     "scryfall_id": "266316d3-3bbc-4283-aab8-69629855909f"
   },
+  "loamcrafter_faun": {
+    "artist": "Mark Zug",
+    "scryfall_id": "066de4d6-3fa4-44e0-ab02-8d97b603015a"
+  },
   "loamdragger_giant": {
     "artist": "Pete Venters",
     "scryfall_id": "0a27bbe4-5341-4b2b-9ae8-eb56585a9c3a"
@@ -10610,6 +10614,10 @@
     "artist": "Martina Pilcerova",
     "scryfall_id": "638c45e2-91d0-4ced-8bf7-64b2817b281a"
   },
+  "mind_maggots": {
+    "artist": "Ron Spencer",
+    "scryfall_id": "c3c92a7f-a250-4497-aa7a-0394e94ef13d"
+  },
   "mind_s_dilation": {
     "artist": "Rafater",
     "scryfall_id": "b9de3ca6-d62f-422b-a67f-199f535cb56f"
@@ -11161,6 +11169,10 @@
   "namor_atlantean_king": {
     "artist": "Mintautas \u0160ukys",
     "scryfall_id": "6b06f1aa-53f1-49e1-b9f7-e4b489ef7d55"
+  },
+  "nantuko_cultivator": {
+    "artist": "Jehan Choo",
+    "scryfall_id": "c6e02dbb-4cbb-469a-a377-c856625f956f"
   },
   "nantuko_elder": {
     "artist": "Daren Bader",

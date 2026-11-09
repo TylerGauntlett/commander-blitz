@@ -151,6 +151,14 @@ def op_discard(ctx: EffectContext, spec: Mapping[str, Any]):
     The binding **accumulates** across players rather than being overwritten,
     because Mog discards one card per player in a single resolution and then
     asks what was discarded *at all*, not what the last player pitched.
+
+    ``selector`` narrows which cards in hand may go -- Nantuko Cultivator's
+    "discard any number of **land** cards", Loamcrafter Faun's "one or more
+    land cards". Only matching cards are offered, and ``amount`` is then capped
+    by the matching cards rather than the whole hand, so "any number" is
+    ``up_to`` with ``amount`` reading the hand size, exactly as for Celes. The
+    chosen cards still go in one `replacements.discard` call, one discard event
+    (603.2c), and ``as`` records them for "that many".
     """
     amount = evaluate_value(ctx, spec.get("amount", 1))
     random = bool(spec.get("random"))
@@ -164,9 +172,15 @@ def op_discard(ctx: EffectContext, spec: Mapping[str, Any]):
     # seven and leaves four.
     whole_hand = bool(spec.get("whole_hand"))
     name = spec.get("as")
+    selector = spec.get("selector")
     taken: list[int] = []
     for pid in select_players(ctx, spec.get("player", "you")):
         hand = list(ctx.state.players[pid].hand)
+        if selector:
+            # The pool, not a check after the choice: a nonland card is never
+            # offered, so it can neither be discarded nor counted as one.
+            hand_spec = {**dict(selector), "zone": "hand"}
+            hand = [oid for oid in hand if matches(ctx, oid, hand_spec)]
         if not hand:
             continue
         if forced_discard_or_sacrifice_barred(ctx.state, pid, ctx.controller):

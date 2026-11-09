@@ -169,8 +169,9 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     # ---- Cards -----------------------------------------------------------
     "draw": ("Cards", "A player draws N cards; `as` records who drew.",
              "`draw`'s `as` — \"each opponent who drew a card this way\""),
-    "discard": ("Cards", "A player discards N cards, chosen or at random; `as` records them.",
-                "`discard`: `up_to` and `as`"),
+    "discard": ("Cards", "A player discards N cards, chosen or at random, from the hand or only the "
+                "cards in it matching `selector`; `as` records them.",
+                "`discard`: `up_to`, `selector` and `as`"),
     "mill": ("Cards", "Put the top N cards of a library into its graveyard.", None),
     "search_library": ("Cards", "Search a library for cards matching a selector, then shuffle; `may_destination` (gated by `may_destination_if`) offers the found card onto the battlefield.",
                        None),

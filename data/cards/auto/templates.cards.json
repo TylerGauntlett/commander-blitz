@@ -129562,6 +129562,109 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "cards_in_hand": "you"
+              },
+              "as": "pitched",
+              "op": "discard",
+              "player": "you",
+              "selector": {
+                "types": [
+                  "Land"
+                ]
+              },
+              "up_to": true
+            },
+            {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "count": {
+                    "binding": "pitched"
+                  }
+                },
+                "right": {
+                  "const": 1
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "ability": "loamcrafter_faun_return",
+                  "op": "reflexive_trigger"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, you may discard one or more land cards.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "destination": "hand",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "id": "loamcrafter_faun_return",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "count": {
+                "count": {
+                  "binding": "pitched"
+                }
+              },
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "not_types": [
+                  "Land",
+                  "Instant",
+                  "Sorcery"
+                ],
+                "zone": "graveyard"
+              },
+              "up_to": true
+            }
+          ],
+          "text": "When you do, return up to that many target nonland permanent cards from your graveyard to your hand."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "loamcrafter_faun",
+      "mana_cost": "{2}{G}",
+      "name": "Loamcrafter Faun",
+      "oracle_text": "When this creature enters, you may discard one or more land cards. When you do, return up to that many target nonland permanent cards from your graveyard to your hand.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Satyr",
+        "Druid"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G",
         "R"
@@ -141156,6 +141259,72 @@
           "effects": [
             {
               "amount": {
+                "cards_in_hand": "you"
+              },
+              "as": "pitched",
+              "op": "discard",
+              "player": "you",
+              "selector": {
+                "types": [
+                  "Creature"
+                ]
+              },
+              "up_to": true
+            },
+            {
+              "amount": {
+                "times": [
+                  {
+                    "const": 2
+                  },
+                  {
+                    "count": {
+                      "binding": "pitched"
+                    }
+                  }
+                ]
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, discard any number of creature cards. For each card discarded this way, put two +1/+1 counters on this creature.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "mind_maggots",
+      "mana_cost": "{3}{B}",
+      "name": "Mind Maggots",
+      "oracle_text": "When this creature enters, discard any number of creature cards. For each card discarded this way, put two +1/+1 counters on this creature.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Insect"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
                 "const": 1
               },
               "as": "exiled",
@@ -148150,6 +148319,75 @@
       ],
       "supertypes": [
         "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "cards_in_hand": "you"
+              },
+              "as": "pitched",
+              "op": "discard",
+              "player": "you",
+              "selector": {
+                "types": [
+                  "Land"
+                ]
+              },
+              "up_to": true
+            },
+            {
+              "amount": {
+                "count": {
+                  "binding": "pitched"
+                }
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            },
+            {
+              "amount": {
+                "count": {
+                  "binding": "pitched"
+                }
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, you may discard any number of land cards. Put that many +1/+1 counters on this creature and draw that many cards.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "nantuko_cultivator",
+      "mana_cost": "{3}{G}",
+      "name": "Nantuko Cultivator",
+      "oracle_text": "When this creature enters, you may discard any number of land cards. Put that many +1/+1 counters on this creature and draw that many cards.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Insect",
+        "Druid"
       ],
       "toughness": 2,
       "types": [

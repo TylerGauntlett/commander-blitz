@@ -1006,13 +1006,34 @@ survivor. The binding accumulates across a loop, as `exile`'s does.
   "then": [ … ] }
 ```
 
-### `discard`: `up_to` and `as`
+### `discard`: `up_to`, `selector` and `as`
 
 `up_to` makes `amount` a **ceiling** with a floor of zero, so "discard up to two
 cards" is satisfiable with none and, with `amount` reading your hand size, so is
 "discard any number of cards". It is opt-in on purpose: an exact discard offered
 as a range would let a player keep a card the effect was meant to take. It may
 not be combined with `random`, which has no choice to relax.
+
+`selector` narrows the cards in hand the discard may take: only matching cards
+are offered, and `amount` is capped by how many match rather than by the hand.
+"You may discard any number of **land** cards" (Nantuko Cultivator) is
+`up_to` with `amount` reading the hand size and `selector: {"types": ["Land"]}`;
+the cards chosen go together as one discard event (603.2c), so a batched
+`discard` trigger hears them once. The selector takes no `zone` (the hand is
+the only one), and is refused beside `whole_hand` and `random`. The near miss
+is the `discard` cost with `discard_selector`, which fixes the number before
+anything resolves; and a `may` + `repeat` loop paying one land at a time is as
+many discard events as lands, which a "one or more" trigger counts wrongly.
+
+```jsonc
+// Nantuko Cultivator — "you may discard any number of land cards. Put that many
+// +1/+1 counters on this creature and draw that many cards."
+{ "op": "discard", "player": "you", "amount": { "cards_in_hand": "you" },
+  "up_to": true, "selector": { "types": ["Land"] }, "as": "pitched" },
+{ "op": "add_counters", "counter": "+1/+1", "objects": { "self_only": true },
+  "amount": { "count": { "binding": "pitched" } } },
+{ "op": "draw", "player": "you", "amount": { "count": { "binding": "pitched" } } }
+```
 
 `as` records what actually went, so "then draw **that many** cards" (Joshua),
 "that many cards **plus one**" (Celes) and "if a **creature card** was discarded

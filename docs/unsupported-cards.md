@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**284 cards** blocked by **263** capabilities.
+**282 cards** blocked by **262** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -39,7 +39,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
 | [experience-counters](#experience-counters) | 2 | 1480 | engine |
 | [face-down-filter](#face-down-filter) | 2 | 5772 | selector |
-| [filtered-discard](#filtered-discard) | 2 | 9279 | op |
 | [manifest-dread](#manifest-dread) | 2 | 5772 | op |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
@@ -935,24 +934,6 @@ Blocks **2** cards.
   - Landfall — Whenever a land you control enters, manifest dread if this is the first time this ability has resolved this turn. Otherwise, you may turn a permanent you control face up
 - **Primordial Mist** (rank 6544) — `primordial_mist`
   - Exile a face-down permanent you control face up: You may play that card this turn. (You still pay its costs. Timing rules still apply.)
-
-</details>
-
-## filtered-discard
-
-Blocks **2** cards.
-
-- **(op)** a `selector` (card filter over the discarding player's hand, here `{"types": ["Land"]}`) on the `discard` effect op, so a resolving ability can say "you may discard one or more land cards": only matching cards are offered, any number from 0 (up_to, read with `cards_in_hand`-style ceiling over the matching cards) and they are discarded simultaneously as one discard event, recorded by `as` so a following `reflexive_trigger` can set its target `count` to `{"count": {"binding": ...}}` with `up_to`
-  <br>Why the existing vocabulary won't do: op_discard takes only amount, as, player, random, up_to and whole_hand and offers the player's whole hand to `ask_objects`, so a nonland card could be discarded and counted toward "that many". The cost key `discard` + `discard_selector` does filter to lands, but it is a fixed count, so a `may` with `pay` cannot express "one or more"; looping a one-card `may pay` via `repeat_while` would discard the lands as separate events (a batched "whenever you discard one or more land cards" trigger such as Doctor Doom's would fire once per land) and is an approximation.
-- **(op)** a `selector` (card filter over the discarding player's hand, here `{"types": ["Land"]}`) on the `discard` effect op, so a resolving trigger can say "you may discard any number of land cards": only matching cards are offered, any number from 0 up to the matching cards in hand (`up_to` with a ceiling counted over the filtered hand), discarded simultaneously as one event and recorded by `as`, so the following `add_counters` and `draw` read `{"count": {"binding": ...}}` for "that many"
-  <br>Why the existing vocabulary won't do: op_discard takes only amount, as, player, random, up_to and whole_hand and offers the whole hand to `ask_objects`, so a nonland card could be discarded and counted. The cost route fails too: `may` with `pay: {discard_x, discard_selector: Land}` and `x` announces X through `_announce_x`, which bounds it by `max_affordable_x` over the mana cost only, and with no {X} in the mana that returns 0, so X is always 0. A `may` + `repeat` loop paying `discard: 1` with a land `discard_selector` and drawing each time interleaves the draws with the discards (lands drawn mid-loop could then be discarded, and it is separate discard events), and reading the draw count off `counters_on` self is wrong when a counter replacement doubles the counters or the creature has left the battlefield.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Loamcrafter Faun** (rank 9279) — `loamcrafter_faun`
-  - When this creature enters, you may discard one or more land cards. When you do, return up to that many target nonland permanent cards from your graveyard to your hand.
-- **Nantuko Cultivator** (rank 13415) — `nantuko_cultivator`
-  - When this creature enters, you may discard any number of land cards. Put that many +1/+1 counters on this creature and draw that many cards.
 
 </details>
 

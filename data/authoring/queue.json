@@ -160272,12 +160272,12 @@
     },
     "Loamcrafter Faun": {
       "edhrec_rank": 9279,
-      "gate": "template",
+      "gate": null,
       "name": "Loamcrafter Faun",
-      "reason": "no template for: When this creature enters, you may discard one or more land cards. When you do, return up ",
+      "reason": "",
       "scryfall_id": "066de4d6-3fa4-44e0-ab02-8d97b603015a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Loamdragger Giant": {
@@ -173672,12 +173672,12 @@
     },
     "Mind Maggots": {
       "edhrec_rank": 27661,
-      "gate": "template",
+      "gate": null,
       "name": "Mind Maggots",
-      "reason": "no template for: When this creature enters, discard any number of creature cards. For each card discarded t",
+      "reason": "",
       "scryfall_id": "c3c92a7f-a250-4497-aa7a-0394e94ef13d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mind Meanderer": {
@@ -183212,12 +183212,12 @@
     },
     "Nantuko Cultivator": {
       "edhrec_rank": 13415,
-      "gate": "template",
+      "gate": null,
       "name": "Nantuko Cultivator",
-      "reason": "no template for: When this creature enters, you may discard any number of land cards. Put that many +1/+1 c",
+      "reason": "",
       "scryfall_id": "c6e02dbb-4cbb-469a-a377-c856625f956f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nantuko Disciple": {
