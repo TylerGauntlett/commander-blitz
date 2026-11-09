@@ -1542,6 +1542,13 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             )
         if not isinstance(effect["new_targets"], bool):
             raise DslError(f"{where}: 'new_targets' is a boolean, got {effect['new_targets']!r}")
+    if op == "copy_spell" and "spells" in effect:
+        # "Copy each of those spells": a pool, so it names the spells instead
+        # of `sid` or `target` -- beside either, one of the two would be read
+        # and the other ignored.
+        if {"sid", "target"} & set(effect):
+            raise DslError(f"{where}: copy_spell's 'spells' replaces 'sid' and 'target'")
+        validate_selector(effect["spells"], f"{where}.spells")
     if op == "copy_spell" and "controller" in effect:
         # Demonstrate's "choose an opponent to **also** copy it". A full player
         # spec, so it is checked as one: until the op read this key it loaded

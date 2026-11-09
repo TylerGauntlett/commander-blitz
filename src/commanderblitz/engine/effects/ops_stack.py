@@ -24,7 +24,7 @@ from ..triggers import fire
 from ..zones import move_object
 from .context import EffectContext, ask_mode
 from .registry import register
-from .selectors import select_players
+from .selectors import resolve_pool, select_players
 from .values import evaluate_value
 
 
@@ -99,6 +99,10 @@ def op_copy_spell(ctx: EffectContext, spec: Mapping[str, Any]):
     The question is only put when there is something to decide: a spell with no
     targets, or one whose targets cannot legally be moved, is not asked.
 
+    ``spells`` is a pool instead of one spell -- "copy **each of** those
+    spells twice" (Finale of Promise), over a `cast_from_hand` binding of the
+    cards it cast. Each spell in it still on the stack is copied as above.
+
     ``controller`` is a **player spec** naming whose copy it is, and it is
     **demonstrate**: "choose an opponent to also copy it." Every copy this op
     could make used to be the resolving player's, because the controller was
@@ -117,9 +121,23 @@ def op_copy_spell(ctx: EffectContext, spec: Mapping[str, Any]):
     """
 
     state = ctx.state
-    original = _spell_named_by(ctx, spec)
-    if original is None:
-        return
+    if "spells" in spec:
+        # "Copy each of those spells twice" (Finale of Promise): every spell
+        # still on the stack whose card is in the binding, each copied as one
+        # `original` would be. A card that has already left the stack -- it
+        # resolved, or was countered -- is not a spell to copy.
+        named = set(resolve_pool(ctx, spec["spells"]))
+        originals = [item for item in state.stack if item.is_spell and item.oid in named]
+    else:
+        original = _spell_named_by(ctx, spec)
+        originals = [original] if original is not None else []
+    for original in originals:
+        yield from _copy_one_spell(ctx, spec, original)
+
+
+def _copy_one_spell(ctx: EffectContext, spec: Mapping[str, Any], original):
+    """`op_copy_spell` for one original: ``amount`` copies per named controller."""
+    state = ctx.state
     times = evaluate_value(ctx, spec.get("amount", 1)) if "amount" in spec else 1
     if "controller" in spec:
         # A named seat that has already lost the game is not handed a copy, and

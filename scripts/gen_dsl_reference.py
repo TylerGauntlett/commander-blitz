@@ -214,7 +214,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                        H_PLAYABLE),
     "grant_graveyard_cast": ("Cards", "Permit casting matching spells from graveyards until end of turn.",
                              "Casting out of every graveyard, until end of turn"),
-    "cast_from_hand": ("Cards", "Cast a spell from hand (or listed zones, or a named pool once per owner) without paying its mana cost; `exiles` exiles the spell instead of putting it into a graveyard.",
+    "cast_from_hand": ("Cards", "Cast a spell from hand (or listed zones, or a named pool once per owner) without paying its mana cost; `exiles` exiles the spell instead of putting it into a graveyard; `as` records what was cast, accumulating.",
                        None),
     "cast_card": ("Cards", "Cast a named card during resolution, paying its mana cost; `exiles` exiles the spell instead of putting it into a graveyard; `as` records what was cast.",
                   H_CAST_CARD),

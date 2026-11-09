@@ -156,6 +156,18 @@ is countered, and the same card cast later by another route goes back to the
 graveyard. `exiles` must be a boolean. `cast_card` is the near miss and charges
 the mana cost; `play_exiled` is free but defaults its pool to cards in exile.
 
+`as` records the cards actually cast (a declined offer, or a card with no legal
+target, is not in it) and **accumulates** across the ops of one resolution.
+Finale of Promise casts an instant and a sorcery by two ops over two targets,
+then copies "each of those spells twice" with `copy_spell`'s `spells`, a pool
+in place of `sid` or `target` that copies each spell in it still on the stack:
+
+```jsonc
+{ "op": "cast_from_hand", "objects": { "target": "t1" }, "exiles": true, "as": "cast" },
+{ "op": "cast_from_hand", "objects": { "target": "t2" }, "exiles": true, "as": "cast" },
+{ "op": "copy_spell", "spells": { "binding": "cast" }, "amount": { "const": 2 }, "new_targets": true }
+```
+
 `scry` takes `player` (whose library) and `chooser` (who decides) separately.
 They are the same person for scry and different people for **fateseal** —
 `{"op": "scry", "player": {"target": "t1"}, "chooser": "you"}` — and that is

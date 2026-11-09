@@ -41,6 +41,13 @@ RECORDING_OPS = frozenset(
         #: the cards offered: a declined offer and a card with no payable line
         #: are not in it. See `ops_cards.op_cast_card`.
         "cast_card",
+        #: The cards actually **cast** for free, accumulating across the ops of
+        #: one resolution -- Finale of Promise's "copy each of those spells",
+        #: where an instant and a sorcery are two `cast_from_hand` ops over
+        #: two targets and one sentence about both. A declined offer, or a
+        #: card with no legal target, is not in it. See
+        #: `ops_cards.op_cast_from_hand`.
+        "cast_from_hand",
         #: The one recorder whose binding is a **card name** -- a string, read
         #: back only by a selector's ``{"name": {"binding": …}}``. Tamiyo,
         #: Collector of Tales. See `ops_control.op_choose_card_name`.
