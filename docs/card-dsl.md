@@ -7558,6 +7558,29 @@ Last-known information, made explicit:
 Without the `snapshot`, the creature would already be gone by the time the life gain
 is computed. Declaring it is the engine's substitute for a general LKI system.
 
+A `target` that names a **spell** is read through its stack item to the spell's
+object, so "that spell's mana value" counts the X it was cast with (202.3e) and
+is the number it had as it last existed on the stack (608.2h). Plasm Capture
+takes it before the counter and hands it to a delayed trigger, whose bindings
+are fixed as it is created (603.7c):
+
+```jsonc
+{ "op": "snapshot", "target": "t1", "as": "countered" },
+{ "op": "counter", "target": "t1" },
+{ "op": "delayed_trigger", "duration": "until_it_fires",
+  "trigger": { "event": "precombat_main", "controller": "you" },
+  "effects": [ { "op": "add_mana", "split": ["W", "U", "B", "R", "G"],
+                 "amount": { "mana_value_of": { "binding": "countered" } } } ] }
+```
+
+The near miss is `counter`'s `as`, which binds the card the counter put into a
+graveyard: read there the card has X = 0, a copy has ceased to exist, and a
+spell that can't be countered was never moved, while the printed card pays the
+full mana value in all three cases. A target that is an ability has no object
+and captures an empty record. "Your next first main phase" is `precombat_main`
+watched `until_it_fires`: cast during that phase, its beginning has already
+passed, so the trigger waits for the next turn's.
+
 ## Mechanics
 
 The cookbook's subsystem chapters, one line each:

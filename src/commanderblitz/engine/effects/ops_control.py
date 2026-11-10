@@ -1164,10 +1164,24 @@ def op_snapshot(ctx: EffectContext, spec: Mapping[str, Any]):
     This is the engine's answer to LKI: rather than tracking every object's last
     known state globally, a card that needs a value *after* its target has left
     the battlefield declares the snapshot explicitly.  See ``docs/card-dsl.md``.
+
+    A ``target`` that is a **spell** is read through its stack item to the
+    spell's object -- "that spell's mana value" after Plasm Capture countered it
+    (608.2h). Taken before the counter, so a copy (gone at once, 707.10a), an
+    uncounterable spell (still on the stack) and a card that leaves the
+    graveyard later all read the same number, and the X the spell was cast
+    with counts (202.3e). An ability target has no object and captures nothing.
     """
     name = str(spec.get("as", "snapshot"))
     if "target" in spec:
-        oids = ctx.target_oids(str(spec["target"]))
+        oids = []
+        for ref in ctx.target_refs(str(spec["target"])):
+            if ref.kind == "object":
+                oids.append(ref.id)
+            elif ref.kind == "stack":
+                item = ctx.state.stack_item(ref.id)
+                if item is not None and item.is_spell and item.oid is not None:
+                    oids.append(item.oid)
     else:
         oids = resolve_pool(ctx, spec.get("objects"))
     if oids:

@@ -204012,12 +204012,12 @@
     },
     "Plasm Capture": {
       "edhrec_rank": 6553,
-      "gate": "template",
+      "gate": null,
       "name": "Plasm Capture",
-      "reason": "no template for: Counter target spell. At the beginning of your next first main phase, add X mana in any co",
+      "reason": "",
       "scryfall_id": "11ee15d5-1c93-4c30-911f-32e2aabf020e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Plasma Bolt": {

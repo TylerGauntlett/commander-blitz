@@ -14079,6 +14079,12 @@
   "plargg_and_nassari": {
     "zone": "battlefield"
   },
+  "plasm_capture": {
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "plateau": {
     "zone": "battlefield"
   },

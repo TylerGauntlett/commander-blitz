@@ -217,7 +217,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `noop` | Control flow |  | Do nothing (a placeholder for text with no effect). | [Effect ops](card-dsl.md#effect-ops) |
 | `repeat` | Control flow |  | Run effects N times. | [Effect ops](card-dsl.md#effect-ops) |
 | `repeat_while` | Control flow |  | Run effects while a condition holds. | [Effect ops](card-dsl.md#effect-ops) |
-| `snapshot` | Control flow | yes | Remember what objects are now, for a later value or spec. | [sacrifice's snapshot — what the creature had](card-dsl.md#sacrifices-snapshot--what-the-creature-had) |
+| `snapshot` | Control flow | yes | Remember what an object or a target spell is now, for a later value or spec. | [sacrifice's snapshot — what the creature had](card-dsl.md#sacrifices-snapshot--what-the-creature-had) |
 
 ## Selectors
 

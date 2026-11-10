@@ -25,7 +25,7 @@ from .effects import execute
 from .effects.conditions import evaluate_condition
 from .effects.context import EffectContext, ask_mode, ask_objects, ask_player, ask_yes_no
 from .effects.selectors import resolve_pool, select_players
-from .effects.values import evaluate_value
+from .effects.values import evaluate_value, object_mana_value
 from .enums import Keyword, Zone
 from .events import EventType
 from .mana import OTHER_PAYMENT
@@ -2448,7 +2448,9 @@ def snapshot(state: GameState, oid: int) -> dict[str, Any]:
         "owner": obj.owner,
         "power": c.power,
         "toughness": c.toughness,
-        "mana_value": card.mana_value,
+        # A spell's, read while it is still on the stack, counts its X
+        # (202.3e) -- "that spell's mana value" after Plasm Capture countered it.
+        "mana_value": object_mana_value(state, obj),
         "types": sorted(c.types),
         "subtypes": sorted(c.subtypes),
         "colors": sorted(c.colors),

@@ -167109,6 +167109,67 @@
       ]
     },
     {
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "plasm_capture",
+      "mana_cost": "{G}{G}{U}{U}",
+      "name": "Plasm Capture",
+      "oracle_text": "Counter target spell. At the beginning of your next first main phase, add X mana in any combination of colors, where X is that spell's mana value.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "countered",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "op": "counter",
+          "target": "t1"
+        },
+        {
+          "duration": "until_it_fires",
+          "effects": [
+            {
+              "amount": {
+                "mana_value_of": {
+                  "binding": "countered"
+                }
+              },
+              "op": "add_mana",
+              "split": [
+                "W",
+                "U",
+                "B",
+                "R",
+                "G"
+              ]
+            }
+          ],
+          "op": "delayed_trigger",
+          "text": "At the beginning of your next first main phase, add X mana in any combination of colors, where X is that spell's mana value.",
+          "trigger": {
+            "controller": "you",
+            "event": "precombat_main"
+          }
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "spell"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {

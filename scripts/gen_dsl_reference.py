@@ -470,7 +470,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                           H_CHOOSE_PERMANENTS),
     "repeat": ("Control flow", "Run effects N times.", None),
     "repeat_while": ("Control flow", "Run effects while a condition holds.", None),
-    "snapshot": ("Control flow", "Remember what objects are now, for a later value or spec.",
+    "snapshot": ("Control flow", "Remember what an object or a target spell is now, for a later value or spec.",
                  "`sacrifice`'s `snapshot` — what the creature *had*"),
     "noop": ("Control flow", "Do nothing (a placeholder for text with no effect).", None),
     "delay": ("Control flow", "Run effects at the beginning of a named later step.",

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**286 cards** blocked by **265** capabilities.
+**285 cards** blocked by **264** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -257,7 +257,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [target-if-cast-during](#target-if-cast-during) | 1 | 1524 | selector |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
-| [target-spell-mana-value-lki](#target-spell-mana-value-lki) | 1 | 6553 | value |
 | [targets-only-self](#targets-only-self) | 1 | 8216 | trigger_event |
 | [targets-only-single](#targets-only-single) | 1 | 13586 | trigger_event |
 | [teammates](#teammates) | 1 | 26785 | selector |
@@ -4107,20 +4106,6 @@ Blocks **1** card.
 
 - **Hope of Ghirapur** (rank 3240) — `hope_of_ghirapur`
   - Sacrifice Hope of Ghirapur: Until your next turn, target player who was dealt combat damage by Hope of Ghirapur this turn can't cast noncreature spells.
-
-</details>
-
-## target-spell-mana-value-lki
-
-Blocks **1** card.
-
-- **(value)** A way to capture the mana value of a TARGET SPELL as it last existed on the stack (X included, copies included, uncounterable spells included) at resolution, before the counter, so a later delayed effect can read it: e.g. `snapshot` accepting a spell target (`{"op": "snapshot", "target": "t1", "as": "countered"}` resolving the stack ref to its StackItem and recording its mana value), read later as `{"mana_value_of": {"binding": "countered"}}` inside a `delayed_trigger` on `precombat_main` with `duration: "until_it_fires"` whose effect is `add_mana` with `split: [W,U,B,R,G]` and that amount.
-  <br>Why the existing vocabulary won't do: `snapshot` with `target` reads `ctx.target_oids`, which drops stack refs, so it captures nothing for a spell target; `mana_value_of {"target": ...}` likewise reads object targets only, and the delayed trigger's context has no targets at all. `counter`'s `as` binds the oids of the cards that reached the graveyard: reading `mana_value_of {"objects": {"binding": ...}}` from that gives the graveyard card's mana value (X counted as 0), gives 0 for a countered copy or a spell that can't be countered (which per the rulings still yields the mana), and gives 0 if the card has left the graveyard before the next main phase. The rest of the card is expressible (delayed_trigger on precombat_main, add_mana split), so this value is the only missing piece.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Plasm Capture** (rank 6553) — `plasm_capture`
-  - Counter target spell. At the beginning of your next first main phase, add X mana in any combination of colors, where X is that spell's mana value.
 
 </details>
 
