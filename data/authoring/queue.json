@@ -45022,12 +45022,12 @@
     },
     "Charred Graverobber": {
       "edhrec_rank": 12128,
-      "gate": "template",
+      "gate": null,
       "name": "Charred Graverobber",
-      "reason": "no template for: When this creature enters, return target outlaw card from your graveyard to your hand",
+      "reason": "",
       "scryfall_id": "7bbebce1-88d1-4002-8c28-746b0976d662",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chart a Course": {

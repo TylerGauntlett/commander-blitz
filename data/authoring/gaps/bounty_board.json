@@ -1,0 +1,18 @@
+{
+  "card_id": "bounty_board",
+  "name": "Bounty Board",
+  "oracle_text": "{T}: Add one mana of any color.\n{1}, {T}: Put a bounty counter on target creature. Activate only as a sorcery.\nWhenever a creature with a bounty counter on it dies, each of its controller's opponents draws a card and gains 2 life.",
+  "blocked_sentences": [
+    "Whenever a creature with a bounty counter on it dies, each of its controller's opponents draws a card and gains 2 life."
+  ],
+  "needs": [
+    {
+      "capability": "last_known_controller",
+      "kind": "value",
+      "what": "a player spec (or a DIES/LEAVES_BATTLEFIELD event binding such as `had_controller`) naming the player who controlled the creature as it last existed on the battlefield (608.2h), so \"each of its controller's opponents\" can be written as {\"not\": {<that controller>}} on a creature_dies trigger",
+      "why_existing_wont_do": "`{\"not\": {\"controller_of\": \"subject\"}}` is the near miss: `controller_of` reads the bound object's current `controller`, and on a death that object is already in the graveyard after `reset_permanent_state` has put control back to the owner. zones.move_object snapshots `controller_before` but passes it only to the SACRIFICED event, and the DIES payload carries had_counters/had_power/etc. but no controller. So a stolen creature with a bounty counter dying would reward the owner's opponents (including the thief) instead of the controller's opponents (including the owner) -- a different card. The rest of the line is expressible: creature_dies with controller any, condition counters_had \"bounty\" >= 1, then draw 1 and gain_life 2 for each player in the spec."
+    }
+  ],
+  "closest_existing": ["controller_of", "counters_had", "creature_dies"],
+  "confidence": "high"
+}

@@ -38663,6 +38663,83 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "destination": "hand",
+              "objects": {
+                "target": "gy_outlaw"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "gy_outlaw",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "subtypes": [
+                  "Assassin",
+                  "Mercenary",
+                  "Pirate",
+                  "Rogue",
+                  "Warlock"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When this creature enters, return target outlaw card from your graveyard to your hand.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "graveyard_cast": "graveyard",
+      "graveyard_cost": {
+        "exile_from_graveyard": {
+          "count": 4,
+          "exclude_self": true
+        },
+        "mana": "{3}{B}{B}"
+      },
+      "id": "charred_graverobber",
+      "mana_cost": "{2}{B}",
+      "name": "Charred Graverobber",
+      "oracle_text": "When this creature enters, return target outlaw card from your graveyard to your hand.\nEscape—{3}{B}{B}, Exile four other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)\nThis creature escapes with a +1/+1 counter on it.",
+      "power": 3,
+      "replacements": [
+        {
+          "amount": 1,
+          "condition": {
+            "escaped": true
+          },
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Skeleton",
+        "Mercenary"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],

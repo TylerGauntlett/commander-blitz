@@ -3226,6 +3226,10 @@
   "charity_extractor": {
     "zone": "battlefield"
   },
+  "charred_graverobber": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "chart_a_course": {
     "graveyard_size": {
       "0": 4
