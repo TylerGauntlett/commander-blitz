@@ -606,7 +606,7 @@ class GameObject:
     #: `face_down` on the way onto the battlefield. Identity state, like
     #: `cast_kicked`, so it survives that reset.
     pending_face_down: bool = False
-    #: Cipher (702.97a): the creature this exiled card is **encoded on**. Haunt's
+    #: Cipher (702.99a): the creature this exiled card is **encoded on**. Haunt's
     #: link pointed a third way -- the card in exile names a creature, and the
     #: card is what has to notice that creature connecting. The two are separate
     #: fields rather than one "linked_to", because a card could in principle be

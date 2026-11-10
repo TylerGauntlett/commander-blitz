@@ -1084,7 +1084,7 @@ def op_encode(ctx: EffectContext, spec: Mapping[str, Any]):
         return
     source = ctx.state.objects.get(ctx.source_oid)
     if source is None or source.is_token:
-        # A **copy** of a ciphered spell does not encode again (702.97b): a copy
+        # A **copy** of a ciphered spell does not encode again (702.99b): a copy
         # is not a card, and there is nothing to exile. Epic's `not is_token`
         # guard for the same reason -- both keywords make copies that resolve
         # through the very code that armed them.

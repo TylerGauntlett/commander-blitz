@@ -4440,9 +4440,14 @@ an encoded card is in exile with nothing on the stack to point at. It shares
 exactly as a storm copy does — and the original stays in exile, which is why
 cipher keeps paying.
 
-A copy does **not** encode again (702.97b): it is not a card. Epic carries the
+A copy does **not** encode again (702.99b): it is not a card. Epic carries the
 same `not is_token` guard, and both keywords make copies that resolve through
 the very code that armed them.
+
+The encoding ends when its creature leaves the battlefield (702.99c).
+`zones.move_object` clears every `encoded_on` naming a departing permanent, so
+the creature that comes back under the same oid is a new object (400.7) with
+nothing encoded on it.
 
 ## Casting a copy for a printed price
 

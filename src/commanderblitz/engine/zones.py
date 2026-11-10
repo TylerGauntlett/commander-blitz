@@ -369,6 +369,13 @@ def move_object(
         # "…for as long as you control this creature" is over (611.2b), and
         # the permanent that may come back under the same oid is not it.
         end_source_bound(state, oid)
+        # 702.99c: an encoded card stops being encoded once its creature
+        # leaves the battlefield, and the creature that may come back under the
+        # same oid is a new object (400.7) that nothing is encoded on. The link
+        # lives on the card in exile, so it is cut from that end.
+        for other in state.objects.values():
+            if other.encoded_on == oid:
+                other.encoded_on = None
         # "Each creature that convoked this spell" (702.51c) is that object,
         # and the one that may come back under the same oid is not it.
         for item in state.stack:
