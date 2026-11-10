@@ -69852,12 +69852,12 @@
     },
     "Discreet Retreat": {
       "edhrec_rank": 10651,
-      "gate": "template",
+      "gate": null,
       "name": "Discreet Retreat",
-      "reason": "no template for: Enchanted land has \"{T}: Add two mana of any one color. Spend this mana only to cast outla",
+      "reason": "",
       "scryfall_id": "93c60cd8-00c9-4bbd-9c12-c111fae64149",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Disdainful Stroke": {
@@ -131312,12 +131312,12 @@
     },
     "Humble Defector": {
       "edhrec_rank": 1778,
-      "gate": "template",
+      "gate": null,
       "name": "Humble Defector",
-      "reason": "no template for: {T}: Draw two cards. Target opponent gains control of this creature. Activate only during ",
+      "reason": "",
       "scryfall_id": "e2ea145d-3be2-4660-8cf2-0157c76ec9c1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Humble Naturalist": {
@@ -135102,12 +135102,12 @@
     },
     "Impulsive Pilferer": {
       "edhrec_rank": 1738,
-      "gate": "template",
+      "gate": null,
       "name": "Impulsive Pilferer",
-      "reason": "no template for: When this creature dies, create a Treasure token",
+      "reason": "",
       "scryfall_id": "d9e8f74a-fb7d-4291-b3c0-72c1796f3c70",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Impulsivity": {

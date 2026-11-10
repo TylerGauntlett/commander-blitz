@@ -1,0 +1,18 @@
+{
+  "card_id": "glittering_stockpile",
+  "name": "Glittering Stockpile",
+  "oracle_text": "{T}: Add {R}. Put a stash counter on this artifact.\n{T}, Sacrifice this artifact: Add X mana of any one color, where X is the number of stash counters on this artifact.",
+  "blocked_sentences": [
+    "{T}, Sacrifice this artifact: Add X mana of any one color, where X is the number of stash counters on this artifact"
+  ],
+  "needs": [
+    {
+      "capability": "mana_ability_cost_lki",
+      "kind": "value",
+      "what": "a mana ability whose add_mana amount reads the counters its own source had as the source was sacrificed to pay the ability's cost: `counters_on` over the `as` binding of a self-sacrifice cost (or a pre-cost snapshot of the source) honoured by `costs.mana_amount`",
+      "why_existing_wont_do": "Non-mana activated abilities already do this (Crowded Crypt, Wickersmith's Tools: cost `sacrifice` with `as: \"sacrificed\"`, effect reads `counters_on {binding: sacrificed}`), but a mana ability never runs its effects: `Game._activate_mana` pays the cost (sacrificing the artifact) and then `activate_mana_ability` -> `costs.mana_amount` evaluates `ability.mana_amount` in a fresh EffectContext with no cost bindings, reading the live source, which is by then in the graveyard with its counters gone, so X would be 0. `counters_had` is bound only by dies/leaves triggers, and `snapshot` is an effect op, which a mana ability may not contain. The first line ({T}: Add {R} with an `add_counters` stash rider on self) is expressible; the card is filed whole because a partial answer is not allowed."
+    }
+  ],
+  "closest_existing": ["counters_on", "counters_had", "snapshot", "add_mana any_one_color"],
+  "confidence": "high"
+}

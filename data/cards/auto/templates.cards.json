@@ -58499,6 +58499,115 @@
     {
       "abilities": [
         {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Enchanted land has \"{T}: Add two mana of any one color. Spend this mana only to cast outlaw spells or activate abilities of outlaw sources.\""
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast your first outlaw spell each turn, you draw a card and you lose 1 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "subtypes": [
+                "Assassin",
+                "Mercenary",
+                "Pirate",
+                "Rogue",
+                "Warlock"
+              ]
+            },
+            "nth": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": 2,
+              "any_one_color": true,
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "mana_restriction": {
+            "activate": [
+              "assassin",
+              "mercenary",
+              "pirate",
+              "rogue",
+              "warlock"
+            ],
+            "cast": [
+              "assassin",
+              "mercenary",
+              "pirate",
+              "rogue",
+              "warlock"
+            ]
+          },
+          "text": "{T}: Add two mana of any one color. Spend this mana only to cast outlaw spells or activate abilities of outlaw sources."
+        }
+      ],
+      "id": "discreet_retreat",
+      "mana_cost": "{3}{B}",
+      "name": "Discreet Retreat",
+      "oracle_text": "Enchant land\nEnchanted land has \"{T}: Add two mana of any one color. Spend this mana only to cast outlaw spells or activate abilities of outlaw sources.\" (Assassins, Mercenaries, Pirates, Rogues, and Warlocks are outlaws.)\nWhenever you cast your first outlaw spell each turn, you draw a card and you lose 1 life.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -108695,6 +108804,69 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "condition": {
+            "is_your_turn": true
+          },
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "duration": "permanent",
+              "objects": {
+                "self_only": true
+              },
+              "op": "gain_control",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "{T}: Draw two cards. Target opponent gains control of this creature. Activate only during your turn."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "humble_defector",
+      "mana_cost": "{1}{R}",
+      "name": "Humble Defector",
+      "oracle_text": "{T}: Draw two cards. Target opponent gains control of this creature. Activate only during your turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Rogue"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -110800,6 +110972,117 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, create a Treasure token.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "exile_from_graveyard": {
+              "count": 1,
+              "self_only": true
+            },
+            "mana": "{3}{R}"
+          },
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "encore_copy",
+                  "controller": "you",
+                  "objects": {
+                    "controller": "any",
+                    "self_only": true,
+                    "zone": "exile"
+                  },
+                  "op": "copy_permanent"
+                },
+                {
+                  "defender": {
+                    "binding": "each_player"
+                  },
+                  "duration": "this_turn",
+                  "objects": {
+                    "binding": "encore_copy",
+                    "count": "all"
+                  },
+                  "op": "must_attack_player"
+                },
+                {
+                  "duration": "permanent",
+                  "keywords": [
+                    "haste"
+                  ],
+                  "objects": {
+                    "binding": "encore_copy",
+                    "count": "all"
+                  },
+                  "op": "grant_keyword"
+                },
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "binding": "encore_copy",
+                        "count": "all"
+                      },
+                      "op": "sacrifice"
+                    }
+                  ],
+                  "op": "delay",
+                  "step": "end_step",
+                  "text": "Sacrifice them at the beginning of the next end step."
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Encore {3}{R} ({3}{R}, Exile this card from your graveyard: For each opponent, create a token copy that attacks that opponent this turn if able. They gain haste. Sacrifice them at the beginning of the next end step. Activate only as a sorcery.)"
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "impulsive_pilferer",
+      "mana_cost": "{R}",
+      "name": "Impulsive Pilferer",
+      "oracle_text": "When this creature dies, create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")\nEncore {3}{R} ({3}{R}, Exile this card from your graveyard: For each opponent, create a token copy that attacks that opponent this turn if able. They gain haste. Sacrifice them at the beginning of the next end step. Activate only as a sorcery.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Goblin",
+        "Pirate"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
       ]
     },
     {
