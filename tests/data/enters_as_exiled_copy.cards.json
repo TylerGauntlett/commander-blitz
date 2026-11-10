@@ -1,0 +1,110 @@
+{
+  "_comment": "Shapes for tests/unit/copies/test_enters_as_exiled_copy.py. t_meac_mimic is The Mimeoplasm's line on a printed 0/0: a self_enters_as_copy replacement whose as_enters effects may exile exactly two creature cards from any graveyards, bound as 'exiled'; it enters as a copy of one of them ('copying' is that binding) with +1/+1 counters equal to the power of the other. t_meac_ogre is a 4/3 flier and t_meac_imp a 1/1, the two models; t_meac_star is a */3 whose CDA counts the Forests its owner controls, so its power in exile is a number. t_meac_altar is a noncreature card in a graveyard, which may not be exiled.",
+  "cards": [
+    {
+      "id": "t_meac_mimic",
+      "name": "Test Mimic Ooze",
+      "oracle_text": "As Test Mimic Ooze enters, you may exile two creature cards from graveyards. If you do, it enters as a copy of one of those cards with a number of additional +1/+1 counters on it equal to the power of the other card.",
+      "mana_cost": "{2}",
+      "types": ["Creature"],
+      "subtypes": ["Ooze"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": 0,
+      "toughness": 0,
+      "replacements": [
+        {
+          "event": "self_enters_as_copy",
+          "as_enters": [
+            {
+              "op": "if",
+              "condition": {
+                "cmp": ">=",
+                "left": {"count": {"zone": "graveyard", "controller": "any", "types": ["Creature"], "exclude_self": true}},
+                "right": {"const": 2}
+              },
+              "then": [
+                {
+                  "op": "may",
+                  "prompt": "Exile two creature cards from graveyards?",
+                  "effects": [
+                    {
+                      "op": "exile",
+                      "objects": {"zone": "graveyard", "controller": "any", "types": ["Creature"], "exclude_self": true, "count": 2},
+                      "as": "exiled"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "copying": {"binding": "exiled"},
+          "except_": {
+            "enters_with": [
+              {
+                "counter": "+1/+1",
+                "amount": {"power_of": {"objects": {"binding": "exiled", "exclude_binding": "copied"}}}
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_meac_ogre",
+      "name": "Test Mimic Ogre",
+      "oracle_text": "Flying",
+      "mana_cost": "{4}",
+      "types": ["Creature"],
+      "subtypes": ["Ogre"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "power": 4,
+      "toughness": 3,
+      "keywords": ["flying"]
+    },
+    {
+      "id": "t_meac_imp",
+      "name": "Test Mimic Imp",
+      "oracle_text": "",
+      "mana_cost": "{1}",
+      "types": ["Creature"],
+      "subtypes": ["Imp"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "power": 1,
+      "toughness": 1
+    },
+    {
+      "id": "t_meac_star",
+      "name": "Test Mimic Star",
+      "oracle_text": "Test Mimic Star's power is equal to the number of Forests you control.",
+      "mana_cost": "{3}",
+      "types": ["Creature"],
+      "subtypes": ["Elemental"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": 0,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Test Mimic Star's power is equal to the number of Forests you control.",
+          "effect": "set_pt",
+          "affects": {"self_only": true},
+          "power": {"count": {"controller": "you", "subtypes": ["Forest"]}},
+          "toughness": {"const": 3}
+        }
+      ]
+    },
+    {
+      "id": "t_meac_altar",
+      "name": "Test Mimic Altar",
+      "oracle_text": "",
+      "mana_cost": "{1}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": []
+    }
+  ]
+}

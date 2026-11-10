@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**281 cards** blocked by **260** capabilities.
+**280 cards** blocked by **259** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -123,7 +123,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [entered-without-being-cast](#entered-without-being-cast) | 1 | 7379 | selector |
 | [enters-as-copy-add-subtypes](#enters-as-copy-add-subtypes) | 1 | 3852 | replacement |
 | [enters-as-copy-embalmed-exception](#enters-as-copy-embalmed-exception) | 1 | 4333 | replacement |
-| [enters-as-copy-of-exiled-card](#enters-as-copy-of-exiled-card) | 1 | 7671 | replacement |
 | [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [every-nonbasic-land-type](#every-nonbasic-land-type) | 1 | 2635 | engine |
@@ -2192,20 +2191,6 @@ Blocks **1** card.
 - **Vizier of Many Faces** (rank 4333) — `vizier_of_many_faces`
   - You may have this creature enter as a copy of any creature on the battlefield, except if this creature was embalmed, the token has no mana cost, it's white, and it's a Zombie in addition to its other types
   - Embalm {3}{U}{U}
-
-</details>
-
-## enters-as-copy-of-exiled-card
-
-Blocks **1** card.
-
-- **(replacement)** an as-enters replacement (614.1c / 707.9) that optionally exiles exactly two creature cards from any graveyards as the permanent arrives; if both were exiled, the controller picks one of them as the copy model (the permanent enters with that card's copiable values) and it enters with additional +1/+1 counters equal to the printed power of the other exiled card. Needs: a graveyard (any player) card pool instead of a battlefield permanent pool, an exile-N-as-you-may step bound by name, a choice of which bound card is the model, and an `enters_with` counter amount reading `power_of` the other bound card
-  <br>Why the existing vocabulary won't do: The packet's reference lists no replacement vocabulary at all (`self_enters_as_copy` is not in it). The engine's `self_enters_as_copy` (`offer_enters_copy`) picks one object from a `copying` pool and copies it, with no exile step, no second card, and its `except_.enters_with` amount cannot bind the other exiled card's power. A `self_enters` trigger with `exile` + `become_copy` + `add_counters` would make the copy and counters a later effect, so a 0/0 Mimeoplasm dies to state-based actions before the trigger resolves, and `become_copy`/`copy_permanent` copy permanents, not cards in exile
-
-<details><summary>Cards waiting on this</summary>
-
-- **The Mimeoplasm** (rank 7671) — `the_mimeoplasm`
-  - As The Mimeoplasm enters, you may exile two creature cards from graveyards. If you do, it enters as a copy of one of those cards with a number of additional +1/+1 counters on it equal to the power of the other card.
 
 </details>
 

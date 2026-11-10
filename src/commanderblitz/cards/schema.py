@@ -1341,6 +1341,13 @@ class ReplacementModel(BaseModel):
     #: `zones.offer_as_enters_effects`, on every route that can stop to ask; an
     #: arrival that cannot (a token) runs none of them and binds nothing. No
     #: targets: "as this enters" chooses, it does not target.
+    #:
+    #: Also read by `self_enters_as_copy`, whose ``copying`` is then a pool the
+    #: effects bound -- The Mimeoplasm's "you may exile two creature cards from
+    #: graveyards. If you do, it enters as a copy of one of those cards" is
+    #: ``copying: {"binding": "exiled"}``. The copy is not offered separately
+    #: (the effects carry the "you may"), the chosen model is bound as
+    #: ``copied``, and ``except_.enters_with`` amounts read both names.
     as_enters: list[dict[str, Any]] | None = None
     #: Applied only when this holds, evaluated as the permanent enters with the
     #: entering object as the source -- so `exclude_self` means "other lands you

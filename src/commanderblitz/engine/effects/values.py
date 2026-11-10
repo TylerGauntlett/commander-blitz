@@ -58,13 +58,14 @@ from ..characteristics import (
     _compare,
     _matches_printed,
     auras_matching,
+    card_in_exile_characteristics,
     chars,
     counters_of_kind,
     greatest_commander_mana_value,
     min_count,
     min_life,
 )
-from ..enums import KEYWORD_COUNTERS, Keyword
+from ..enums import KEYWORD_COUNTERS, Keyword, Zone
 from ..errors import DslError
 from ..mana import origin_matches
 from ..objects import ANY_COUNTER_KIND, FINALITY, PLUS_ONE, SHIELD, STUN
@@ -1318,6 +1319,13 @@ def _from_oid(ctx: EffectContext, oid: int | None, which: str) -> int:
         return obj.mana_spent
     if which == "mana_value":
         return object_mana_value(ctx.state, obj)
+    if obj.zone in (Zone.GRAVEYARD, Zone.EXILE, Zone.HAND, Zone.LIBRARY):
+        # A card off the battlefield has its printed power and toughness, with
+        # its own characteristic-defining ability applied (604.3): The
+        # Mimeoplasm's "equal to the power of the other card" reads a */*
+        # card in exile as its CDA's number, not the 0 printed beside the star.
+        power, toughness, _ = card_in_exile_characteristics(ctx.state, obj)
+        return power if which == "power" else toughness
     c = chars(ctx.state, oid)
     return c.power if which == "power" else c.toughness
 

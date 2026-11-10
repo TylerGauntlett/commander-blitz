@@ -231641,6 +231641,99 @@
       ]
     },
     {
+      "color_identity": [
+        "B",
+        "G",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "U"
+      ],
+      "id": "the_mimeoplasm",
+      "mana_cost": "{2}{B}{G}{U}",
+      "name": "The Mimeoplasm",
+      "oracle_text": "As The Mimeoplasm enters, you may exile two creature cards from graveyards. If you do, it enters as a copy of one of those cards with a number of additional +1/+1 counters on it equal to the power of the other card.",
+      "power": 0,
+      "replacements": [
+        {
+          "as_enters": [
+            {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "count": {
+                    "controller": "any",
+                    "exclude_self": true,
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "graveyard"
+                  }
+                },
+                "right": {
+                  "const": 2
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "effects": [
+                    {
+                      "as": "exiled",
+                      "objects": {
+                        "controller": "any",
+                        "count": 2,
+                        "exclude_self": true,
+                        "types": [
+                          "Creature"
+                        ],
+                        "zone": "graveyard"
+                      },
+                      "op": "exile"
+                    }
+                  ],
+                  "op": "may",
+                  "prompt": "Exile two creature cards from graveyards?"
+                }
+              ]
+            }
+          ],
+          "copying": {
+            "binding": "exiled"
+          },
+          "event": "self_enters_as_copy",
+          "except_": {
+            "enters_with": [
+              {
+                "amount": {
+                  "power_of": {
+                    "objects": {
+                      "binding": "exiled",
+                      "exclude_binding": "copied"
+                    }
+                  }
+                },
+                "counter": "+1/+1"
+              }
+            ]
+          }
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Ooze"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 0,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {

@@ -3224,6 +3224,44 @@ offer, because every printed card in this family says "you may"; an empty pool
 asks nothing, and the arriving permanent is not on the battlefield yet, so it
 cannot find itself.
 
+#### A copy of a card the arrival exiles
+
+```jsonc
+// The Mimeoplasm
+{ "event": "self_enters_as_copy",
+  "as_enters": [
+    { "op": "if",
+      "condition": { "cmp": ">=", "right": { "const": 2 },
+        "left": { "count": { "zone": "graveyard", "controller": "any",
+                             "types": ["Creature"], "exclude_self": true } } },
+      "then": [ { "op": "may", "prompt": "Exile two creature cards from graveyards?",
+        "effects": [ { "op": "exile", "as": "exiled",
+          "objects": { "zone": "graveyard", "controller": "any",
+                       "types": ["Creature"], "exclude_self": true, "count": 2 } } ] } ] } ],
+  "copying": { "binding": "exiled" },
+  "except_": { "enters_with": [ { "counter": "+1/+1",
+    "amount": { "power_of": { "objects": { "binding": "exiled",
+                                           "exclude_binding": "copied" } } } } ] } }
+```
+
+`as_enters` on this event is Sin's key on Sin's terms (614.1c): the effects run
+as part of the arrival, by `zones.offer_as_enters_effects`, on every route that
+runs them — cast, land drop, reanimation, blink, `put_onto_battlefield`. Then
+`copying` is resolved against what they bound, and the loader requires it to
+name a `binding`: "if you do, it enters as a copy of one of **those** cards".
+The copy is not offered a second time, because the "you may" is the effects'
+own; an empty pool is the "if you don't", and the card enters as itself. The
+controller chooses the model, forced when the pool holds one card, and it is
+bound as `copied` beside the effects' names, which is how an `enters_with`
+amount says "the other card". The model is a card in exile, so the copy takes
+the card's copiable values (707.2), and `power_of` reads a card off the
+battlefield with its characteristic-defining ability applied (604.3).
+
+"Exile two" is two or none, which `optional: true` beside `count: 2` does not
+say — that is zero to two. The `if` asks only when two other creature cards
+exist, and `may` then makes the mandatory pick of exactly two. `exclude_self`
+keeps a Mimeoplasm being reanimated out of its own pool: it is on its way in.
+
 ### A permanent that becomes a copy, except it keeps this ability
 
 ```jsonc

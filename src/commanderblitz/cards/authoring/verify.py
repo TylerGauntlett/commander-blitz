@@ -2507,6 +2507,16 @@ def _covered(card: CardDef, line: str) -> bool:
                 continue
             if "enters with" in lowered and not exception.get("enters_with"):
                 continue
+            # "…with a number of additional +1/+1 counters on it" (The
+            # Mimeoplasm) is the same half without the words "enters with".
+            if "additional" in lowered and "counter" in lowered and not exception.get(
+                "enters_with"
+            ):
+                continue
+            # "As The Mimeoplasm enters, you may exile two creature cards…"
+            # is the half that makes the pool, carried by ``as_enters``.
+            if "exile" in lowered and not replacement.get("as_enters"):
+                continue
             return True
         if event == "self_enters_replaced" and "would enter" in lowered:
             # "If this artifact would enter, you may discard a land card

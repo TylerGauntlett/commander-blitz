@@ -281672,12 +281672,12 @@
     },
     "The Mimeoplasm": {
       "edhrec_rank": 7671,
-      "gate": "template",
+      "gate": null,
       "name": "The Mimeoplasm",
-      "reason": "no template for: As enters, you may exile two creature cards from graveyards. If you do, it enters as a cop",
+      "reason": "",
       "scryfall_id": "ada30541-faea-45af-853c-de85ff8e251e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Mind Stone": {

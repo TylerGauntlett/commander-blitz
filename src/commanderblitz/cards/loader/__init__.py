@@ -1416,6 +1416,16 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             validate_selector(
                 replacement.copying, f"{where}.replacements[{i}].copying"
             )
+            # With ``as_enters`` the copy is not offered on its own: the "you
+            # may" is the effects', and "if you do, it enters as a copy of one
+            # of **those** cards" is a pool they bound. Any other pool would
+            # be a forced copy of something nobody chose to exile.
+            if replacement.as_enters is not None and "binding" not in replacement.copying:
+                raise DslError(
+                    f"{where}.replacements[{i}].copying: an as-enters copy with "
+                    f"'as_enters' copies what those effects bound -- name it "
+                    f"with {{'binding': ...}}"
+                )
             if replacement.except_ is not None:
                 _check_enters_copy_except(
                     replacement.except_, f"{where}.replacements[{i}].except_"
@@ -1465,10 +1475,14 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             # `zones.offer_as_enters_effects` a moment before the arrival, and
             # only the counters this replacement puts on read what they bind --
             # on any other event they would run and change nothing about it.
-            if replacement.event != "self_enters_with_counters":
+            # The one other reader is an as-enters copy whose pool they bind:
+            # "As The Mimeoplasm enters, you may exile two creature cards from
+            # graveyards. If you do, it enters as a copy of one of those cards".
+            if replacement.event not in ("self_enters_with_counters", "self_enters_as_copy"):
                 raise DslError(
                     f"{where}.replacements[{i}]: 'as_enters' is read only by "
-                    f"'self_enters_with_counters', not by {replacement.event!r}"
+                    f"'self_enters_with_counters' and 'self_enters_as_copy', not "
+                    f"by {replacement.event!r}"
                 )
             if not replacement.as_enters:
                 raise DslError(
