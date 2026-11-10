@@ -13490,6 +13490,10 @@
   "old_growth_dryads": {
     "zone": "battlefield"
   },
+  "olivia_opulent_outlaw": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "olivia_s_wrath": {
     "graveyard_size": {
       "0": 3
@@ -16570,6 +16574,10 @@
     },
     "zone": "graveyard"
   },
+  "seize_the_spotlight": {
+    "battlefield_count": 33,
+    "zone": "graveyard"
+  },
   "sejiri_refuge": {
     "life": {
       "0": 41
@@ -17023,6 +17031,9 @@
   },
   "shivan_reef": {
     "zone": "battlefield"
+  },
+  "shoot_the_sheriff": {
+    "zone": "graveyard"
   },
   "shore_lurker": {
     "zone": "battlefield"
