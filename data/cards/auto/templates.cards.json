@@ -23218,6 +23218,60 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "chooser": {
+                  "binding": "event_player"
+                },
+                "controller": "opponent",
+                "not_types": [
+                  "Land"
+                ]
+              }
+            }
+          ],
+          "text": "Whenever this creature deals combat damage to a player, destroy target nonland permanent of that player's choice that one of your opponents controls.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "bladegriff_prototype",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{5}",
+      "name": "Bladegriff Prototype",
+      "oracle_text": "Flying\nWhenever this creature deals combat damage to a player, destroy target nonland permanent of that player's choice that one of your opponents controls.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Griffin"
+      ],
+      "toughness": 2,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],

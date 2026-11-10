@@ -500,7 +500,7 @@ SELECTORS: dict[str, Entry] = {
     "binding": ("Exactly the objects a named `as` recorded.", H_RECORDING),
     "blocked": ("An attacker that is blocked (or unblocked) once blockers are declared (509.1h); neither before, nor for a non-attacker.", None),
     "blocking": ("Is blocking.", None),
-    "chooser": ("Who picks: `controller`, `owner` or `none`.",
+    "chooser": ("Who picks: `controller`, `owner`, `none` or a player spec; on a triggered ability's one target spec, the player who declares the target.",
                 "`chooser` — when somebody else picks the mode"),
     "colors": ("Has one of these colors.", None),
     "controller": ("Controlled by `you`/`opponent`/`any` or a player spec.", None),

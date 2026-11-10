@@ -172,6 +172,7 @@ def ask_targets(
     max_count: int,
     chooser: int,
     purpose: str = "target",
+    extra: Mapping[str, Any] | None = None,
 ) -> Generator[PendingDecision, list[int], list[TargetRef]]:
     """Declare targets as a **decision** rather than as part of an action.
 
@@ -196,6 +197,9 @@ def ask_targets(
     always a target: a token put onto the battlefield "attacking that player or
     a planeswalker they control" chooses between exactly these two kinds of ref
     (508.4) and targets nothing, so it says ``"attack"`` instead.
+
+    ``extra`` is merged into the decision's context -- a trigger's target
+    chosen by another player tags whose ability it is (``chosen_for``).
     """
     available = list(refs)
     if not available or max_count <= 0:
@@ -216,6 +220,7 @@ def ask_targets(
             "source": ctx.source_oid,
             "source_name": ctx.source_name,
             "purpose": purpose,
+            **(extra or {}),
         },
     )
     answer = yield decision

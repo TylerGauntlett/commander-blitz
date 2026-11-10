@@ -1397,6 +1397,32 @@ ability's targets are chosen in legality, where nothing would read the clause.
 The near miss is an untargeted `exile` with `random` in its `objects`, which
 never fizzles and goes on the stack with nothing to exile.
 
+### "Target … of that player's choice"
+
+```jsonc
+// Bladegriff Prototype: "Whenever this creature deals combat damage to a
+// player, destroy target nonland permanent of that player's choice that one
+// of your opponents controls."
+{ "id": "t1", "kind": "permanent",
+  "selector": { "controller": "opponent", "not_types": ["Land"],
+                "chooser": { "binding": "event_player" } } }
+```
+
+A target selector's `chooser` is a player spec naming the seat that declares
+the target as the triggered ability goes on the stack (603.3d,
+`stack.target_chooser`), resolved against the trigger's bindings. It is still
+the ability's target: the candidates are the ones legal for the ability's
+controller — so hexproof, shroud and protection apply, and "one of your
+opponents" is every opponent of the controller, not only the chooser — ward
+triggers against the controller, and the target is re-checked on resolution.
+The decision carries `chosen_for` (the controller's seat) so an agent knows
+the ability is not its own. A chooser naming nobody alive chooses nothing, so
+the ability has no target. The loader allows it only on a **triggered**
+ability's one target spec, with a fixed `count`, no `mode`, `optional`,
+`up_to` or `random`, and a player spec rather than `owner` or `none`. The near
+miss is an untargeted `destroy` with `chooser` in its `objects`, which picks on
+resolution, ignores hexproof and never fizzles.
+
 ### "One, two, or three targets" -- `min_count`
 
 ```jsonc

@@ -1978,6 +1978,11 @@
   "bladed_pinions": {
     "zone": "battlefield"
   },
+  "bladegriff_prototype": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "bladetusk_boar": {
     "zone": "battlefield"
   },

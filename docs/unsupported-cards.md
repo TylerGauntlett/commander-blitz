@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**285 cards** blocked by **264** capabilities.
+**284 cards** blocked by **263** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -253,7 +253,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
 | [switch-power-toughness](#switch-power-toughness) | 1 | 10418 | op |
-| [target-chosen-by-other-player](#target-chosen-by-other-player) | 1 | 6919 | engine |
 | [target-if-cast-during](#target-if-cast-during) | 1 | 1524 | selector |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
@@ -4050,20 +4049,6 @@ Blocks **1** card.
 
 - **Inversion Behemoth** (rank 10418) — `inversion_behemoth`
   - At the beginning of combat on your turn, switch the power and toughness of each of any number of target creatures until end of turn.
-
-</details>
-
-## target-chosen-by-other-player
-
-Blocks **1** card.
-
-- **(engine)** a target spec key naming which player chooses the target when the ability is put on the stack (here the damaged player, bound from the deals_combat_damage_to_player trigger), so the target is still a real target (hexproof/ward/shroud apply, fizzles if illegal) but picked by someone other than the ability's controller, among nonland permanents any opponent of the controller controls
-  <br>Why the existing vocabulary won't do: target_keys has no chooser key; targets are always declared by the ability's controller. The selector key `chooser` (as annihilator uses) picks a non-targeted object at resolution, which would drop the targeting and its hexproof/ward/fizzle consequences, so it is an approximation
-
-<details><summary>Cards waiting on this</summary>
-
-- **Bladegriff Prototype** (rank 6919) — `bladegriff_prototype`
-  - Whenever this creature deals combat damage to a player, destroy target nonland permanent of that player's choice that one of your opponents controls.
 
 </details>
 

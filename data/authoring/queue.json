@@ -26172,12 +26172,12 @@
     },
     "Bladegriff Prototype": {
       "edhrec_rank": 6919,
-      "gate": "template",
+      "gate": null,
       "name": "Bladegriff Prototype",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, destroy target nonland permanent o",
+      "reason": "",
       "scryfall_id": "0093bdcf-6626-40ab-9b87-8ab9e4a306a4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bladehold War-Whip": {

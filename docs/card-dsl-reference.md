@@ -238,7 +238,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `binding` | Exactly the objects a named `as` recorded. | [Recording what an op consumed or produced — "this way", "the token"](card-dsl.md#recording-what-an-op-consumed-or-produced--this-way-the-token) |
 | `blocked` | An attacker that is blocked (or unblocked) once blockers are declared (509.1h); neither before, nor for a non-attacker. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `blocking` | Is blocking. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
-| `chooser` | Who picks: `controller`, `owner` or `none`. | [chooser — when somebody else picks the mode](card-dsl-cookbook.md#chooser--when-somebody-else-picks-the-mode) |
+| `chooser` | Who picks: `controller`, `owner`, `none` or a player spec; on a triggered ability's one target spec, the player who declares the target. | [chooser — when somebody else picks the mode](card-dsl-cookbook.md#chooser--when-somebody-else-picks-the-mode) |
 | `colorless` | Has no colors (105.2c); true only. | ["Colorless" — colorless](card-dsl.md#colorless--colorless) |
 | `colors` | Has one of these colors. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `controller` | Controlled by `you`/`opponent`/`any` or a player spec. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
