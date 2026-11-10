@@ -1,0 +1,63 @@
+{
+ "_comment": "Shapes for tests/unit/keywords/test_manifest_from_library.py. t_mfl_thief is Thieving Amalgam's 'At the beginning of each opponent's upkeep, you manifest the top card of that player's library', the library bound to the upkeeping player and the 2/2 put under the trigger's controller; t_mfl_gift is the same trigger without `controller`, so the upkeeping player manifests their own card; t_mfl_toll is Thieving Amalgam's 'Whenever a creature you control but don't own dies, its owner loses 2 life and you gain 2 life'.",
+ "cards": [
+  {
+   "id": "t_mfl_thief",
+   "name": "Test Manifest Thief",
+   "oracle_text": "At the beginning of each opponent's upkeep, you manifest the top card of that player's library.",
+   "mana_cost": "{3}{U}",
+   "types": ["Enchantment"],
+   "colors": ["U"],
+   "color_identity": ["U"],
+   "abilities": [
+    {
+     "kind": "triggered",
+     "text": "At the beginning of each opponent's upkeep, you manifest the top card of that player's library.",
+     "trigger": {"event": "upkeep", "controller": "opponent"},
+     "effects": [
+      {"op": "manifest", "player": {"binding": "event_player"}, "controller": "you"}
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t_mfl_gift",
+   "name": "Test Manifest Gift",
+   "oracle_text": "At the beginning of each opponent's upkeep, that player manifests the top card of their library.",
+   "mana_cost": "{3}{U}",
+   "types": ["Enchantment"],
+   "colors": ["U"],
+   "color_identity": ["U"],
+   "abilities": [
+    {
+     "kind": "triggered",
+     "text": "At the beginning of each opponent's upkeep, that player manifests the top card of their library.",
+     "trigger": {"event": "upkeep", "controller": "opponent"},
+     "effects": [
+      {"op": "manifest", "player": {"binding": "event_player"}}
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t_mfl_toll",
+   "name": "Test Manifest Toll",
+   "oracle_text": "Whenever a creature you control but don't own dies, its owner loses 2 life and you gain 2 life.",
+   "mana_cost": "{2}{B}",
+   "types": ["Enchantment"],
+   "colors": ["B"],
+   "color_identity": ["B"],
+   "abilities": [
+    {
+     "kind": "triggered",
+     "text": "Whenever a creature you control but don't own dies, its owner loses 2 life and you gain 2 life.",
+     "trigger": {"event": "creature_dies", "filter": {"controller": "you", "owner": "opponent"}},
+     "effects": [
+      {"op": "lose_life", "player": {"owner_of": "subject"}, "amount": {"const": 2}},
+      {"op": "gain_life", "amount": {"const": 2}}
+     ]
+    }
+   ]
+  }
+ ]
+}

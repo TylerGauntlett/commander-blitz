@@ -963,19 +963,33 @@ def op_manifest(ctx: EffectContext, spec: Mapping[str, Any]):
     creature card" -- so cloak is a flag on manifest rather than an op of its
     own. Written as a plain manifest, Unexplained Absence's cloaked permanents
     would be free to remove, which is most of what the keyword is worth.
+
+    ``player`` is whose library, and by default the same player manifests.
+    ``controller: "you"`` is "**you** manifest the top card of **that
+    player's** library" (Orochi Soul-Reaver, Thieving Amalgam): the effect's
+    controller puts it onto the battlefield under their own control (701.34a),
+    may look at it (708.5) and is the one who may turn it face up. The library's
+    player stays its owner, so wherever it goes next it goes to *their* zone.
+    Without the key, binding ``player`` to the damaged or upkeeping opponent
+    would hand them the 2/2.
     """
     cloak = bool(spec.get("cloak"))
     amount = max(1, evaluate_value(ctx, spec.get("amount", 1)))
+    under_you = spec.get("controller") == "you"
     for pid in _players(ctx, spec.get("player", "you")):
         library = ctx.state.players[pid].library
         for _ in range(amount):
             if not library:
                 break
-            _manifest_card(ctx, pid, library[0], cloak=cloak)
+            controller = ctx.controller if under_you else pid
+            _manifest_card(ctx, controller, library[0], cloak=cloak)
 
 
 def _manifest_card(ctx: EffectContext, pid: int, oid: int, *, cloak: bool = False) -> None:
     """Put library card ``oid`` onto the battlefield face down under ``pid``.
+
+    ``pid`` is the manifesting player, who need not own the card: `manifest`
+    with ``controller: "you"`` takes it from another player's library.
 
     The one placement `manifest` and `manifest_dread` share. The `"manifest"`
     cause is what `zones._enter_battlefield` reads to mark the card face down

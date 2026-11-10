@@ -11970,6 +11970,10 @@
     "artist": "Raoul Vitale",
     "scryfall_id": "9e5c677e-397d-4a0c-994e-2f35eadb8a33"
   },
+  "orochi_soul_reaver": {
+    "artist": "Bram Sels",
+    "scryfall_id": "5ba1d8a7-2249-4c74-adb7-d13a9b347571"
+  },
   "orochi_sustainer": {
     "artist": "rk post",
     "scryfall_id": "5fb40d7a-f2d3-4c9a-a1ab-6b08bd143fe5"
@@ -17370,6 +17374,10 @@
   "thief_of_sanity": {
     "artist": "Igor Kieryluk",
     "scryfall_id": "94946d6c-1edb-46e9-a5ae-0ca2a016a7cd"
+  },
+  "thieving_amalgam": {
+    "artist": "Johan Grenier",
+    "scryfall_id": "c6225b97-396f-4969-954c-f2885da70c1b"
   },
   "think_twice": {
     "artist": "Riccardo Federici",

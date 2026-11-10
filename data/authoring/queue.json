@@ -194892,12 +194892,12 @@
     },
     "Orochi Soul-Reaver": {
       "edhrec_rank": 3759,
-      "gate": "template",
+      "gate": null,
       "name": "Orochi Soul-Reaver",
-      "reason": "no template for: Ninjutsu {3}{B}",
+      "reason": "",
       "scryfall_id": "5ba1d8a7-2249-4c74-adb7-d13a9b347571",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Orochi Sustainer": {
@@ -283462,12 +283462,12 @@
     },
     "Thieving Amalgam": {
       "edhrec_rank": 5301,
-      "gate": "template",
+      "gate": null,
       "name": "Thieving Amalgam",
-      "reason": "no template for: At the beginning of each opponent's upkeep, you manifest the top card of that player's lib",
+      "reason": "",
       "scryfall_id": "c6225b97-396f-4969-954c-f2885da70c1b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thieving Magpie": {

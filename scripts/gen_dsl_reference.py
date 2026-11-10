@@ -317,7 +317,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                "Cipher — the third direction an exile link can point"),
     "cast_copy": ("Board", "Cast a copy of an encoded or linked card, free or for a `cost` instead.",
                   "Casting a copy for a printed price"),
-    "manifest": ("Board", "Manifest the top card of a library face down as a 2/2.", H_MORPH),
+    "manifest": ("Board", "Manifest the top card of a library face down as a 2/2; `controller: \"you\"` "
+                 "manifests another player's under yours.", H_MORPH),
     "manifest_dread": ("Board", "Manifest dread: look at the top two cards, manifest one, put the other "
                        "into the graveyard; `as` records the manifest.", "Manifest dread"),
     "meld": ("Board", "Meld the source with its named partner into one permanent.", H_MELD),

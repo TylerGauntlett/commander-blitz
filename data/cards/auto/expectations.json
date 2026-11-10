@@ -13477,6 +13477,10 @@
   "ornithopter_of_paradise": {
     "zone": "battlefield"
   },
+  "orochi_soul_reaver": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "orochi_sustainer": {
     "zone": "battlefield"
   },
@@ -19540,6 +19544,10 @@
     "zone": "battlefield"
   },
   "thief_of_sanity": {
+    "zone": "battlefield"
+  },
+  "thieving_amalgam": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "think_twice": {

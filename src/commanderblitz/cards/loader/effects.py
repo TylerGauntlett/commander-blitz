@@ -1676,6 +1676,14 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             )
         if "players" in effect:
             _validate_player_spec(effect["players"], f"{where}.players", target_kinds)
+    if op == "manifest" and "controller" in effect and effect["controller"] != "you":
+        # "You manifest the top card of that player's library." The only value
+        # is "you": without the key the library's player manifests it, which is
+        # every other seat a printed manifest names.
+        raise DslError(
+            f"{where}: manifest 'controller' is \"you\" -- you manifest the top "
+            f"card of another player's library; omit it for the library's player"
+        )
     if op == "manifest_dread":
         # 701.62a fixes the whole action: the top two, one manifested, the other
         # to the graveyard. A key borrowed from `manifest` or `look_at_top`
@@ -1690,6 +1698,7 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             "rest_to",
             "rest_to_bottom",
             "face_down",
+            "controller",
         ):
             if key in effect:
                 raise DslError(

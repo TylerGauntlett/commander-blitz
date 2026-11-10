@@ -4163,6 +4163,30 @@ creature is still affected by both. And "any time you have priority" is here an
 ordinary activation rather than a special action, which is observable only to
 something that could respond to it, and nothing can.
 
+### Another player's library — `controller: "you"`
+
+```jsonc
+// Thieving Amalgam — "At the beginning of each opponent's upkeep, you manifest
+// the top card of that player's library."
+{ "kind": "triggered",
+  "trigger": { "event": "upkeep", "controller": "opponent" },
+  "effects": [ { "op": "manifest", "player": { "binding": "event_player" },
+                 "controller": "you" } ] }
+```
+
+`player` is whose library the card comes from, and without `controller` that
+same player manifests it. `controller: "you"` is "**you** manifest the top card
+of **that player's** library" (701.34a): the card enters under the effect's
+controller, who may look at it (708.5) and is the only player who may turn it
+face up, for the hidden card's own mana cost. The library's player stays its
+owner, so when it leaves the battlefield it goes to their graveyard, hand or
+library, and "a creature you control but don't own" (`controller: "you"`,
+`owner: "opponent"` in a trigger filter) matches it. `"you"` is the only value
+the loader accepts.
+
+Written without the key, `player: {"binding": "event_player"}` hands the 2/2 to
+the opponent whose library it was.
+
 ## "When this creature is turned face up"
 
 ```jsonc
@@ -4295,8 +4319,9 @@ manifest dread draws nothing. The graveyard card is put there by an ordinary
 move, so graveyard replacements apply to it and a graveyard count sees it.
 
 The loader refuses `cloak`, `objects`, `selector`, `destination`,
-`destinations`, `rest_to`, `rest_to_bottom` and `face_down`: 701.62a fixes the
-pool, the two destinations and the shell.
+`destinations`, `rest_to`, `rest_to_bottom`, `face_down` and `controller`:
+701.62a fixes the pool, the two destinations and the shell, and the library is
+the manifesting player's own.
 
 `manifest` is the near miss: it manifests the top card without a choice and
 puts nothing into the graveyard. `look_at_top` with `rest_to: "graveyard"`

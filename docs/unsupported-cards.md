@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**298 cards** blocked by **274** capabilities.
+**296 cards** blocked by **273** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -41,7 +41,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [experience-counters](#experience-counters) | 2 | 1480 | engine |
 | [face-down-filter](#face-down-filter) | 2 | 5772 | selector |
 | [manifest-dread](#manifest-dread) | 2 | 5772 | op |
-| [manifest-from-opponent-library](#manifest-from-opponent-library) | 2 | 3759 | op |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
 | [process](#process) | 2 | 14187 | cost |
@@ -985,24 +984,6 @@ Blocks **2** cards.
   - When you unlock this door, manifest dread, then put two +1/+1 counters and a trample counter on that creature.
   - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
   - Whenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it.
-
-</details>
-
-## manifest-from-opponent-library
-
-Blocks **2** cards.
-
-- **(op)** a manifest whose source library and controlling player differ: the effect's controller puts the top card of another player's library (the damaged player, bound by a per_player creatures_deal_combat_damage trigger) onto the battlefield face down as a 2/2 under the effect controller's control, turnable face up for its mana cost if it is a creature card
-  <br>Why the existing vocabulary won't do: op manifest takes only amount, cloak and player, and op_manifest/_manifest_card use that one player both as the library read and as the new controller (obj.controller = pid), so player: {binding: event_player} would hand the manifested 2/2 to the opponent; there is no controller key to separate the two. Ninjutsu, the per_player creatures_deal_combat_damage trigger and treasure_token are all expressible
-- **(op)** a manifest whose source library and controlling player differ: the trigger's controller puts the top card of another player's library (the active opponent, bound by an upkeep trigger with controller: opponent) onto the battlefield face down as a 2/2 under the effect controller's control, turnable face up for its mana cost if it is a creature card
-  <br>Why the existing vocabulary won't do: op manifest takes only amount, cloak and player, and op_manifest/_manifest_card use that one player both as the library read and as the new controller (obj.controller = pid), so player bound to the upkeep's active player would hand the manifested 2/2 to the opponent; there is no controller key to separate the two. The upkeep trigger and the second sentence (creature_dies filtered controller you, owner opponent, lose_life/gain_life) look expressible
-
-<details><summary>Cards waiting on this</summary>
-
-- **Orochi Soul-Reaver** (rank 3759) — `orochi_soul_reaver`
-  - Whenever one or more creatures you control deal combat damage to a player, create a Treasure token and manifest the top card of that player's library
-- **Thieving Amalgam** (rank 5301) — `thieving_amalgam`
-  - At the beginning of each opponent's upkeep, you manifest the top card of that player's library. (Put it onto the battlefield face down as a 2/2 creature. Turn it face up any time for its mana cost if it's a creature card.)
 
 </details>
 
