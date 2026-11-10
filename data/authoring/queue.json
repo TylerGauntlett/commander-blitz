@@ -145492,12 +145492,12 @@
     },
     "Kamber, the Plunderer": {
       "edhrec_rank": 8162,
-      "gate": "template",
+      "gate": null,
       "name": "Kamber, the Plunderer",
-      "reason": "no template for: Partner with Laurine, the Diversion",
+      "reason": "",
       "scryfall_id": "fc7714b3-bcbd-4a63-b517-53166e3facb1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kami of Ancient Law": {
@@ -155042,12 +155042,12 @@
     },
     "Laurine, the Diversion": {
       "edhrec_rank": 12023,
-      "gate": "template",
+      "gate": null,
       "name": "Laurine, the Diversion",
-      "reason": "no template for: Partner with Kamber, the Plunderer",
+      "reason": "",
       "scryfall_id": "ca2b008e-e144-45b1-9bc7-eb49e03a8a8f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lava Axe": {

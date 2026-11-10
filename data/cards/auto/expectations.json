@@ -10156,6 +10156,13 @@
   "kalonian_tusker": {
     "zone": "battlefield"
   },
+  "kamber_the_plunderer": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "kami_of_ancient_law": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 6,
@@ -10831,6 +10838,13 @@
       "id": "thopter_1_1_c_flying"
     },
     "zone": "graveyard"
+  },
+  "laurine_the_diversion": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "lava_serpent": {
     "zone": "battlefield"

@@ -120001,6 +120001,98 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "count": 1,
+                  "destination": "hand",
+                  "op": "search_library",
+                  "player": {
+                    "target": "t1"
+                  },
+                  "selector": {
+                    "name": "Laurine, the Diversion"
+                  },
+                  "shuffle": true
+                }
+              ],
+              "op": "may",
+              "player": {
+                "target": "t1"
+              },
+              "prompt": "Put Laurine, the Diversion into your hand from your library?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player"
+            }
+          ],
+          "text": "Partner with Laurine, the Diversion (When this creature enters, target player may put Laurine into their hand from their library, then shuffle.)",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "blood_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature an opponent controls dies, you gain 1 life and create a Blood token.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "creature_dies"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "kamber_the_plunderer",
+      "keywords": [
+        "lifelink"
+      ],
+      "mana_cost": "{3}{B}",
+      "name": "Kamber, the Plunderer",
+      "oracle_text": "Partner with Laurine, the Diversion (When this creature enters, target player may put Laurine into their hand from their library, then shuffle.)\nLifelink\nWhenever a creature an opponent controls dies, you gain 1 life and create a Blood token. (It's an artifact with \"{1}, {T}, Discard a card, Sacrifice this token: Draw a card.\")",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Rogue"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "sacrifice": {
               "controller": "you",
@@ -128375,6 +128467,110 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "count": 1,
+                  "destination": "hand",
+                  "op": "search_library",
+                  "player": {
+                    "target": "t1"
+                  },
+                  "selector": {
+                    "name": "Kamber, the Plunderer"
+                  },
+                  "shuffle": true
+                }
+              ],
+              "op": "may",
+              "player": {
+                "target": "t1"
+              },
+              "prompt": "Put Kamber, the Plunderer into your hand from your library?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player"
+            }
+          ],
+          "text": "Partner with Kamber, the Plunderer (When this creature enters, target player may put Kamber into their hand from their library, then shuffle.)",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "sacrifice": {
+              "any_types": [
+                "Artifact",
+                "Creature"
+              ],
+              "controller": "you",
+              "count": 1,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "goad"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{2}, Sacrifice an artifact or creature: Goad target creature."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "laurine_the_diversion",
+      "keywords": [
+        "first_strike"
+      ],
+      "mana_cost": "{2}{R}",
+      "name": "Laurine, the Diversion",
+      "oracle_text": "Partner with Kamber, the Plunderer (When this creature enters, target player may put Kamber into their hand from their library, then shuffle.)\nFirst strike\n{2}, Sacrifice an artifact or creature: Goad target creature. (Until your next turn, that creature attacks each combat if able and attacks a player other than you if able.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Rogue"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {

@@ -1,0 +1,14 @@
+{
+  "card_id": "mistmeadow_skulk",
+  "name": "Mistmeadow Skulk",
+  "oracle_text": "Lifelink, protection from mana value 3 or greater",
+  "blocked_sentences": ["Lifelink, protection from mana value 3 or greater"],
+  "needs": [{
+    "capability": "protection_from_mana_value",
+    "kind": "static_effect",
+    "what": "a protection quality keyed on mana value: the `protection` static (and `grant_protection` op) taking a mana-value comparison such as `from_mana_value: {\"op\": \">=\", \"value\": 3}`, so that damage from, blocking by, targeting by, and enchanting/equipping by any source or spell with mana value 3 or greater is stopped (702.16)",
+    "why_existing_wont_do": "The `protection` static's qualities are only `from_colors`, `from_colorless`, `from_subtypes` and `from_types` (plus `from_everything` on `grant_protection`); none reads a source's mana value. Lifelink alone is a keyword, but writing it without the protection clause would be a partial card"
+  }],
+  "closest_existing": ["protection", "grant_protection"],
+  "confidence": "high"
+}

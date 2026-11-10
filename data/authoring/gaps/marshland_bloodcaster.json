@@ -1,0 +1,18 @@
+{
+  "card_id": "marshland_bloodcaster",
+  "name": "Marshland Bloodcaster",
+  "oracle_text": "Flying\n{1}{B}, {T}: Rather than pay the mana cost of the next spell you cast this turn, you may pay life equal to that spell's mana value.",
+  "blocked_sentences": [
+    "{1}{B}, {T}: Rather than pay the mana cost of the next spell you cast this turn, you may pay life equal to that spell's mana value."
+  ],
+  "needs": [
+    {
+      "capability": "next_spell_alternative_cost",
+      "kind": "op",
+      "what": "a one-shot op, usable from an activated ability, that gives its controller an optional alternative cost (118.9) for the next spell they cast this turn: pay life equal to that spell's mana value instead of its mana cost. The grant is used up by the next spell cast (whether or not the option is taken) and expires at end of turn",
+      "why_existing_wont_do": "next_spell_cost_reduction is single-use and lasts this turn but only takes a fixed generic `amount` off the cost, with no alternative price. The granted_alternative_cost static replaces the mana cost with life, but it is a continuous static tied to its permanent rather than a one-shot next-spell grant, and its loader only accepts a fixed whole-number pay_life, not life equal to the spell's mana value. playable_pay_life_instead and the Citadel's pay_life_instead do charge life equal to mana value, but only on cards an effect made playable (exiled cards, the library top), not on any next spell cast from hand"
+    }
+  ],
+  "closest_existing": ["next_spell_cost_reduction", "granted_alternative_cost", "playable_pay_life_instead"],
+  "confidence": "high"
+}
