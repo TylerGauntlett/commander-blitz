@@ -757,8 +757,11 @@ class Game:
         min_x = cast_lock_min_x(
             state, pid, _spell_as_cast(card, action.face_down, action.bestowed)
         )
+        # And by the card's own "X can't be 0" (107.3), which `_ask_x` reads
+        # only when this line's cost has an X to announce.
         x = yield from self._ask_x(
-            pid, card.name, cost, extra, spell_purpose(card), min_x=min_x or 0
+            pid, card.name, cost, extra, spell_purpose(card),
+            min_x=max(min_x or 0, card.x_minimum),
         )
         # The one X a spell has is the one the player announced, whichever half
         # of the cost it belongs to: `_ask_x` returned 0 for a card whose X is
@@ -1193,6 +1196,8 @@ class Game:
                 # the answer off `cost.x_value` and never asks.
                 cost_node=ability.cost,
                 cost_source=oid,
+                # "X can't be 0" -- Lair of the Hydra.
+                min_x=ability.cost.x_minimum,
             )
 
         if action.ability_modes:
@@ -1555,8 +1560,9 @@ class Game:
         """How big is X, if this cost has one at all?
 
         ``min_x`` is the floor a mana-value casting lock puts under it -- see
-        `player_statics.cast_lock_min_x`. Legality offered the cast only when
-        the ceiling reached it.
+        `player_statics.cast_lock_min_x` -- or a printed "X can't be 0"
+        (`CardDef.x_minimum`, `Cost.x_minimum`). Legality offered the cast or
+        activation only when the ceiling reached it.
 
         The ceiling is recomputed here rather than taken from the action,
         because the board can have moved between legality offering the spell and

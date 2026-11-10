@@ -307,6 +307,7 @@
    "tap",
    "tap_x",
    "untap",
+   "x_minimum",
    "x_value"
   ],
   "NUMBER_CARRYING_GRANT_KEYWORDS": [

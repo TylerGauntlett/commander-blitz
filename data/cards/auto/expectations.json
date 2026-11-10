@@ -10648,6 +10648,10 @@
   "lagac_lizard": {
     "zone": "battlefield"
   },
+  "lair_of_the_hydra": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "lamentation": {
     "battlefield_count": 33,
     "life": {
@@ -19552,6 +19556,9 @@
   },
   "thieving_amalgam": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "thieving_skydiver": {
     "zone": "battlefield"
   },
   "think_twice": {

@@ -485,6 +485,10 @@ class Cost:
     #:
     #: `None` means "X is announced" (601.2b), which is every other X cost.
     x_value: Mapping[str, Any] | None = None
+    #: "X can't be 0" -- the least announced X (107.3), read by
+    #: `legality._ability_aims` (the ability is offered only while that much X
+    #: is payable) and `game._activate` (the ``CHOOSE_X`` floor). 0 is no floor.
+    x_minimum: int = 0
 
     @staticmethod
     def from_spec(spec: Mapping[str, Any] | None) -> Cost | None:
@@ -570,6 +574,7 @@ class Cost:
                 dict(spec["mana_reduction"]) if spec.get("mana_reduction") else None
             ),
             x_value=(dict(spec["x_value"]) if spec.get("x_value") else None),
+            x_minimum=int(spec.get("x_minimum", 0) or 0),
         )
 
     def without_mana(self) -> Cost:
@@ -1618,6 +1623,12 @@ class CardDef:
     #: not folded into `mana_cost` because mana value must stay what is printed,
     #: and because the choice is the mechanic: legality offers the spell twice.
     kicker: ManaCost | None = None
+    #: "X can't be 0" -- the least X the caster may announce on a cast line
+    #: whose cost carries ``{X}`` (601.2b, 107.3), from the mana cost or a
+    #: ``{X}`` kicker. Read by `casting._cast_variant` (the line is offered only
+    #: while that much X is payable) and `game._cast` (the ``CHOOSE_X`` floor),
+    #: beside the mana-value lock's floor and never below it. 0 is no floor.
+    x_minimum: int = 0
     #: **Gift a tapped Fish** (702.164a) -- what is promised, as the printed noun
     #: phrase. Not a cost: a gift is paid for with nothing, so the promised line
     #: is offered at the printed price. What it names instead is a **seat**, so

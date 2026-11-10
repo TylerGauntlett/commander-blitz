@@ -2182,7 +2182,11 @@ def _cast_variant(
             # floor.  Pinning it to the maximum, as this used to, meant every
             # Fireball was cast for everything the player had and the choice was
             # never offered at all.
-            if price.x_count and max_affordable_x(price, pool, sources, extra_generic=net) < min_x:
+            # "X can't be 0" (Thieving Skydiver's kicker {X}) floors the same
+            # announcement, on any line whose price carries an X to announce.
+            if price.x_count and max_affordable_x(
+                price, pool, sources, extra_generic=net
+            ) < max(min_x, card.x_minimum):
                 continue
             # Solved per target count for strive, once for everything else -- see
             # `_priced_tuples`. `x` is 0 here, as the gate above explains.

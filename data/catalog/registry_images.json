@@ -9489,6 +9489,10 @@
     "artist": "Svetlin Velinov",
     "scryfall_id": "b47e9cfa-5547-4ef3-9e36-8d0f36dfa59a"
   },
+  "lair_of_the_hydra": {
+    "artist": "Johannes Voss",
+    "scryfall_id": "51aabe5e-161b-4c8a-bdb2-983f402a29ef"
+  },
   "lamentation": {
     "artist": "Lars Grant-West",
     "scryfall_id": "2dbc775a-ec2b-442f-a817-4108c05d7fab"
@@ -17382,6 +17386,10 @@
   "thieving_amalgam": {
     "artist": "Johan Grenier",
     "scryfall_id": "c6225b97-396f-4969-954c-f2885da70c1b"
+  },
+  "thieving_skydiver": {
+    "artist": "Kieran Yanner",
+    "scryfall_id": "06996ff1-7f57-4e73-940a-a58c4482cadd"
   },
   "think_twice": {
     "artist": "Riccardo Federici",

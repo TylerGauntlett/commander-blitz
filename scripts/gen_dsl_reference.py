@@ -1122,6 +1122,8 @@ ABILITY_COSTS: dict[str, Entry] = {
     "untap_permanents": ("Untap N other permanents.", None),
     "x_value": ("X fixed by the card rather than announced.",
                 "`x_value` — an X the card fixes, not the player"),
+    "x_minimum": ("The least X an activated ability may announce (\"X can't be 0\").",
+                  "`x_minimum` — X can't be 0"),
 }
 
 CARD_LEVEL_COSTS: dict[str, Entry] = {
@@ -1142,7 +1144,9 @@ CARD_LEVEL_COSTS: dict[str, Entry] = {
     "flashback": ("Flashback cost.", "Flashback"),
     "foretell": ("Foretell cost.", "Foretell"),
     "gift": ("The gift promised (a noun phrase).", H_GIFT),
-    "kicker": ("Kicker cost.", "Kicker"),
+    "kicker": ("Kicker cost, `{X}` allowed.", "Kicker"),
+    "x_minimum": ("The least X the spell may be cast for, on any line whose cost has `{X}` (\"X can't be 0\").",
+                  "`x_minimum` — X can't be 0"),
     "madness": ("Madness cost.", H_DREDGE),
     "mayhem": ("Mayhem cost: castable from the graveyard if discarded this turn.", "Mayhem"),
     "morph": ("Morph cost.", H_MORPH),

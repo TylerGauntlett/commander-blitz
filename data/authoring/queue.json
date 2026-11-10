@@ -154012,12 +154012,12 @@
     },
     "Lair of the Hydra": {
       "edhrec_rank": 2447,
-      "gate": "template",
+      "gate": null,
       "name": "Lair of the Hydra",
-      "reason": "no template for: {X}{G}: Until end of turn, this land becomes an X/X green Hydra creature. It's still a lan",
+      "reason": "",
       "scryfall_id": "51aabe5e-161b-4c8a-bdb2-983f402a29ef",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lairwatch Giant": {
@@ -283492,12 +283492,12 @@
     },
     "Thieving Skydiver": {
       "edhrec_rank": 2275,
-      "gate": "template",
+      "gate": null,
       "name": "Thieving Skydiver",
-      "reason": "no template for: Kicker {X}. X can't be 0",
+      "reason": "",
       "scryfall_id": "06996ff1-7f57-4e73-940a-a58c4482cadd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thieving Sprite": {

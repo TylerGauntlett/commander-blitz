@@ -2808,6 +2808,12 @@ extra mana is there — and the two are different actions, not one action with a
 flag the client sets. `kicker` is deliberately not folded into `mana_cost`: mana
 value stays what is printed, and the choice is the mechanic.
 
+A `kicker` of `{X}` is announced with the rest of the cast (601.2b): the kicked
+line's price folds the X in, the `CHOOSE_X` question is asked for it, and the
+permanent keeps the answer as the `{"x": true}` its enters trigger reads. It
+never touches mana value. "X can't be 0" is the card-level
+[`x_minimum`](card-dsl.md#x_minimum--x-cant-be-0).
+
 The loader rejects **half** a kicker in either direction: a `kicker` cost that no
 effect reads via `kicked`, and a `kicked` condition on a card with no `kicker`.
 One is a spell that charges more and does the same thing; the other is a clause

@@ -265,6 +265,16 @@ class CostModel(BaseModel):
     #: Not ``times`` below, which multiplies the whole mana half rather than
     #: filling in one symbol, and is read only by `may`'s ``pay``.
     x_value: dict[str, Any] | None = None
+    #: "X can't be 0" -- Lair of the Hydra. The least X the player may
+    #: announce for this cost's ``{X}`` (601.2b, 107.3): legality offers the
+    #: ability only while that much X is payable, and the ``CHOOSE_X`` question
+    #: starts there. ``0`` is the unbounded announcement every other X cost has.
+    #:
+    #: Only on an **activated ability's** cost, beside a ``mana`` containing
+    #: ``{X}`` and without ``x_value`` -- a defined X is never announced, so
+    #: there is nothing for a floor to bound. A spell's X takes the card-level
+    #: ``x_minimum`` instead.
+    x_minimum: int = 0
     #: Cumulative upkeep: "pay its upkeep cost **for each age counter on it**".
     #: A value expression multiplying the ``mana`` half, and the only part of a
     #: cost that is not fixed when the card is written. Read only where an
@@ -1640,6 +1650,14 @@ class CardModel(BaseModel):
     #: cast.  What being kicked then *does* is an ordinary ``if`` on the
     #: ``{"kicked": true}`` condition, so no card needs new effect vocabulary.
     kicker: str | None = None
+    #: "Kicker {X}. **X can't be 0**" -- Thieving Skydiver. The least X the
+    #: caster may announce for a spell (601.2b, 107.3), on every cast line whose
+    #: cost carries ``{X}`` -- the mana cost's or a ``kicker`` of ``{X}``.
+    #: Legality offers such a line only while that much X is payable, and the
+    #: ``CHOOSE_X`` question starts there; a line with no ``{X}`` in its cost
+    #: (the unkicked cast) announces nothing and is unaffected. Refused on a card
+    #: with no ``{X}`` in its mana cost or kicker.
+    x_minimum: int = 0
     #: **Gift a tapped Fish** (702.164a): "You may promise an opponent a gift as
     #: you cast this spell." The string is *what is promised* -- ``"a tapped
     #: Fish"``, ``"a card"``, ``"a Food"`` -- and it is the printed noun phrase,

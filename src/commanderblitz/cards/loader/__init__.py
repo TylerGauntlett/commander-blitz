@@ -1251,11 +1251,23 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
 
     mana_cost = ManaCost.parse(model.mana_cost)
     kicker = ManaCost.parse(model.kicker) if model.kicker else None
-    if kicker is not None:
-        if kicker.x_count:
-            raise DslError(f"{where}: a kicker cost with X is not implemented")
-        if kicker.mana_value() == 0:
-            raise DslError(f"{where}: kicker {model.kicker!r} costs nothing")
+    # "Kicker {X}" (Thieving Skydiver) is announced with the rest of the cast
+    # (601.2b): `ManaCost.plus` folds its X into the kicked line's price,
+    # `game._cast` asks it, and the permanent keeps it as `cast_x` for its
+    # enters trigger. Its mana value is 0 and it still costs X.
+    if kicker is not None and kicker.mana_value() == 0 and not kicker.x_count:
+        raise DslError(f"{where}: kicker {model.kicker!r} costs nothing")
+    if model.x_minimum:
+        # "X can't be 0." A floor on an X the caster announces, so it needs an
+        # X to announce -- in the mana cost or the kicker -- or it loads and
+        # bounds nothing.
+        if model.x_minimum < 0:
+            raise DslError(f"{where}: 'x_minimum' cannot be negative (got {model.x_minimum})")
+        if not mana_cost.x_count and not (kicker is not None and kicker.x_count):
+            raise DslError(
+                f"{where}: 'x_minimum' bounds the X announced as the spell is cast, "
+                f"and neither its mana cost nor its kicker has an '{{X}}'"
+            )
 
     if CardType.CREATURE.value in model.types and (model.power is None or model.toughness is None):
         raise DslError(f"{where}: creatures need power and toughness")
@@ -2689,6 +2701,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         additional_repeatable=additional_repeatable,
         kicker_label=model.kicker_label,
         kicker=kicker,
+        x_minimum=model.x_minimum,
         gift=model.gift,
         gift_ability=gift_ability,
         multikicker=multikicker,

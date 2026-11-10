@@ -891,13 +891,17 @@ def _ability_aims(
             state.players[pid].mana_pool.spendable(purpose),
             mana_sources(state, pid, purpose=purpose),
         )
-        < 0
+        # "X can't be 0" (Lair of the Hydra): offered only while the floor is
+        # payable; with no floor, while any X is.
+        < ability.cost.x_minimum
     ):
         return None
-    # ``x=0`` is the floor for an announced X and is ignored outright for a
-    # defined one -- `costs.ability_mana` is the single place either is priced,
-    # so the number legality tests is the number `costs.pay` charges.
-    if not can_pay(state, pid, ability.cost, oid, x=0, purpose=purpose, ability=ability):
+    # The floor (0, or a printed "X can't be 0") is the least announced X and
+    # is ignored outright for a defined one -- `costs.ability_mana` is the
+    # single place either is priced, so the number legality tests is the number
+    # `costs.pay` charges.
+    x_floor = ability.cost.x_minimum if ability.cost is not None else 0
+    if not can_pay(state, pid, ability.cost, oid, x=x_floor, purpose=purpose, ability=ability):
         return None
     # `mode_targets`, not `targets`: the loader lifts a mode-owned spec out of
     # the flat list into the per-mode map, so `ability.targets` holds only the
@@ -942,7 +946,7 @@ def _ability_aims(
                 sources,
             )
             out_x: list[tuple] = []
-            for value in range(max(0, ceiling) + 1):
+            for value in range(ability.cost.x_minimum, max(0, ceiling) + 1):
                 tuples = enumerate_target_tuples(
                     state, pid, ability.targets, oid, x=value
                 )

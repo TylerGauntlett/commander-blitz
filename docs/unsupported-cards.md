@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**295 cards** blocked by **272** capabilities.
+**293 cards** blocked by **271** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -52,7 +52,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 2 | 5182 | engine |
 | [x-maximum](#x-maximum) | 2 | 1665 | engine |
-| [x-minimum](#x-minimum) | 2 | 2275 | cost |
 | [zombie-1-1-w](#zombie-1-1-w) | 2 | 3702 | token |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
@@ -1187,24 +1186,6 @@ Blocks **2** cards.
   - Cast this spell only during combat before blockers are declared.
   - X can't be greater than the number of snow lands you control.
   - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
-
-</details>
-
-## x-minimum
-
-Blocks **2** cards.
-
-- **(cost)** a floor on an activated ability's announced X ("X can't be 0", i.e. X >= 1), so the CHOOSE_X question for an {X} mana cost on an activated ability starts at 1 instead of 0
-  <br>Why the existing vocabulary won't do: cost_keys has x_value (a defined X, never announced) but nothing that bounds an announced X; Game's activation path calls _ask_x with a hard-coded floor of 0, and the only min_x in the engine is the cast-lock floor from player_statics.cast_lock_min_x and the fixed min_x=1 inside ops_control. Without it the land could be animated as a 0/0 and die to state-based actions, which the printed card forbids. The rest of the line is expressible with animate (power/toughness {x}, colors G, subtypes Hydra, types Creature, duration this turn)
-- **(cost)** a floor on a spell's announced X ("X can't be 0", X >= 1) that applies to the kicked cast line of a card whose kicker is {X}, so the kicked line is offered only when at least {1} extra is payable and the CHOOSE_X question starts at 1
-  <br>Why the existing vocabulary won't do: `kicker: "{X}"` folds the X into the paid cost via ManaCost.plus and the permanent's cast_x reaches its enters trigger, but Game._cast asks X with min_x taken only from player_statics.cast_lock_min_x (a mana-value lock like Brisela), defaulting to 0. Without a card-level floor the spell can be kicked for X = 0 and steal a mana-value-0 artifact, which the printed card forbids. The trigger itself is otherwise expressible: an intervening-if `kicked` condition, a target artifact with mana_value <= x, gain_control, then an `if` on the target being an Equipment around `attach`
-
-<details><summary>Cards waiting on this</summary>
-
-- **Thieving Skydiver** (rank 2275) — `thieving_skydiver`
-  - Kicker {X}. X can't be 0
-- **Lair of the Hydra** (rank 2447) — `lair_of_the_hydra`
-  - {X}{G}: Until end of turn, this land becomes an X/X green Hydra creature. It's still a land. X can't be 0
 
 </details>
 

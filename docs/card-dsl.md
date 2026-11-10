@@ -4728,6 +4728,43 @@ the battlefield, so this one reaches the player through
 answer as well as the only one — the solver exiling cards out of a hand it was
 never asked about is not a thing anybody wants.
 
+### `x_minimum` — X can't be 0
+
+A floor under an **announced** X (107.3): the player still chooses X at 601.2b
+(602.2b for an activation), but not below the floor. Two spellings, one per
+place an X is announced:
+
+```jsonc
+// Thieving Skydiver: "Kicker {X}. X can't be 0."
+{ "mana_cost": "{1}{U}", "kicker": "{X}", "x_minimum": 1, ... }
+
+// Lair of the Hydra: "{X}{G}: ... X can't be 0."
+{ "kind": "activated", "cost": { "mana": "{X}{G}", "x_minimum": 1 }, ... }
+```
+
+The card-level `x_minimum` applies to every cast line whose cost carries an
+`{X}` — the mana cost's, or the kicked line's when the kicker is `{X}` — and to
+none that does not: the unkicked Skydiver announces no X and is cast as usual.
+The permanent keeps the announced X as `cast_x`, which its enters trigger reads
+as `{"x": true}` in its effects and in its target selectors ("target artifact
+with mana value X or less").
+`casting._cast_variant` offers a floored line only while that much X is payable,
+and `game._cast` puts the `CHOOSE_X` question from the floor up, beside a
+mana-value lock's floor (`cast_lock_min_x`) and never below it. A cast that
+fixes X at 0 (`cast_copy` at a price without X) is not offered at all.
+
+The cost-level `x_minimum` is the same floor on an activated ability:
+`legality._ability_aims` offers it only while the floor is payable, and
+`game._activate` asks from the floor up. Refused on any other ability's cost,
+on cast-time costs (`alternative_cost`, `evoke`, the graveyard costs), on
+`may`'s `pay`, beside a `mana` with no `{X}`, and beside `x_value` — a defined X
+is never announced. The card-level field is refused on a card whose mana cost
+and kicker have no `{X}`.
+
+Without the floor both printed cards load as stronger ones: a Skydiver kicked
+for nothing steals a mana-value-0 artifact, and a Lair animated for X = 0 is a
+0/0 that state-based actions put in the graveyard.
+
 ### `x_value` — an X the card fixes, not the player
 
 The other one, and it goes the other way: `x_value` is read **only** on an

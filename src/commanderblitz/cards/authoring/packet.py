@@ -135,6 +135,9 @@ CARD_LEVEL_COST_KEYS = (
     #: the price, so a `delayed_trigger` ability spelling out the riders would
     #: be a line with no printed sentence to claim.
     "warp",
+    #: int; "X can't be 0" -- the least X on any cast line whose cost has an
+    #: {X}, a kicker of {X} included (Thieving Skydiver).
+    "x_minimum",
 )
 
 #: The card-level fields that join two printed faces into one card entry.

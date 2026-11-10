@@ -21,8 +21,8 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Player-wide statics](#player-wide-statics) | 46 |
 | [Grantable statics](#grantable-statics) | 43 |
 | [Cost reduction](#cost-reduction) | 8 |
-| [Ability costs](#ability-costs) | 32 |
-| [Card-level costs](#card-level-costs) | 33 |
+| [Ability costs](#ability-costs) | 33 |
+| [Card-level costs](#card-level-costs) | 34 |
 | [Keywords](#keywords) | 46 |
 | [Card types and supertypes](#card-types-and-supertypes) | 12 |
 | [Durations](#durations) | 6 |
@@ -803,6 +803,7 @@ Every field an activated ability's `cost` (or a `may`'s `pay`) may carry -- the 
 | `times` | Pay the whole cost that many times (cumulative upkeep). | [Costs](card-dsl.md#costs) |
 | `untap` | {Q}: untap the source. | [Costs](card-dsl.md#costs) |
 | `untap_permanents` | Untap N other permanents. | [Costs](card-dsl.md#costs) |
+| `x_minimum` | The least X an activated ability may announce ("X can't be 0"). | [x_minimum — X can't be 0](card-dsl.md#x_minimum--x-cant-be-0) |
 | `x_value` | X fixed by the card rather than announced. | [x_value — an X the card fixes, not the player](card-dsl.md#x_value--an-x-the-card-fixes-not-the-player) |
 
 ## Card-level costs
@@ -830,7 +831,7 @@ The alternative and additional costs that live on the *card* rather than inside 
 | `gift` | The gift promised (a noun phrase). | [Gift — a promise made to one opponent, for nothing](card-dsl-cookbook.md#gift--a-promise-made-to-one-opponent-for-nothing) |
 | `graveyard_additional_cost` | Castable from the graveyard at the printed price plus this cost (retrace's slot). | [Retrace and "by discarding a card"](card-dsl-cookbook.md#retrace-and-by-discarding-a-card) |
 | `impending` | Impending N and its cost. | [Impending — a creature that is not one until it counts down](card-dsl-cookbook.md#impending--a-creature-that-is-not-one-until-it-counts-down) |
-| `kicker` | Kicker cost. | [Kicker](card-dsl-cookbook.md#kicker) |
+| `kicker` | Kicker cost, `{X}` allowed. | [Kicker](card-dsl-cookbook.md#kicker) |
 | `madness` | Madness cost. | [Dredge, madness and miracle — replacements that stop to ask](card-dsl-cookbook.md#dredge-madness-and-miracle--replacements-that-stop-to-ask) |
 | `mayhem` | Mayhem cost: castable from the graveyard if discarded this turn. | [Mayhem](card-dsl-cookbook.md#mayhem) |
 | `morph` | Morph cost. | [Face-down permanents — morph, megamorph and manifest](card-dsl-cookbook.md#face-down-permanents--morph-megamorph-and-manifest) |
@@ -844,6 +845,7 @@ The alternative and additional costs that live on the *card* rather than inside 
 | `strive` | Strive: more per target beyond the first. | [Strive](card-dsl-cookbook.md#strive) |
 | `suspend` | Suspend N and its cost. | [Alternative ways to play a card](card-dsl-cookbook.md#alternative-ways-to-play-a-card) |
 | `warp` | Warp cost. | [Alternative ways to play a card](card-dsl-cookbook.md#alternative-ways-to-play-a-card) |
+| `x_minimum` | The least X the spell may be cast for, on any line whose cost has `{X}` ("X can't be 0"). | [x_minimum — X can't be 0](card-dsl.md#x_minimum--x-cant-be-0) |
 
 ## Keywords
 

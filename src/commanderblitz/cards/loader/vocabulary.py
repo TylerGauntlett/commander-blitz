@@ -49,6 +49,8 @@ DEFENDING_TRIGGERS = frozenset(
 #: never once offered the line: the silently inert card, which is worse than a
 #: load error. `x_value` is here for the neighbouring reason -- only
 #: `costs.ability_mana` reads it, and a cast variant is never priced through it.
+#: `x_minimum` likewise: only an activation reads a cost's floor, and a spell's
+#: "X can't be 0" is the card-level `x_minimum`.
 NOT_A_CAST_TIME_COST = frozenset(
     {
         "tap",
@@ -64,6 +66,7 @@ NOT_A_CAST_TIME_COST = frozenset(
         "tap_x",
         "pay_life_x",
         "x_value",
+        "x_minimum",
     }
 )
 

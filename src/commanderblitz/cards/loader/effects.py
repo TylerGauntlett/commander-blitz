@@ -1366,6 +1366,13 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}.pay: 'x_value' belongs to an activated ability's cost, "
                 f"not to an optional payment"
             )
+        if effect["pay"].get("x_minimum"):
+            # The floor `game._activate` puts under an activated ability's
+            # announced X; an optional payment's X is the effect's own `x`.
+            raise DslError(
+                f"{where}.pay: 'x_minimum' belongs to an activated ability's cost, "
+                f"not to an optional payment"
+            )
         x_symbols = ManaCost.parse(effect["pay"].get("mana")).x_count
         if x_symbols and "x" not in effect:
             # Nothing announces an X for an optional payment unless the effect

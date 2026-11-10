@@ -2063,6 +2063,9 @@ def _cast_paying_mana_cost(ctx: EffectContext, pid: int, oid: int, *, exiles: bo
     min_x = cast_lock_min_x(state, pid, card)
     if min_x is None:
         return False
+    if card.mana_cost.x_count:
+        # "X can't be 0" floors the announcement this path asks.
+        min_x = max(min_x, card.x_minimum)
 
     cost = card.mana_cost
     purpose = spell_purpose(card)
@@ -2222,8 +2225,9 @@ def cast_copy_paying(ctx: EffectContext, pid: int, oid: int, price: str):
     if player_cant_cast_while_resolving(state, pid, card):
         return False
     min_x = cast_lock_min_x(state, pid, card)
-    if min_x is None or min_x > 0:
-        # A mana-value floor the copy cannot meet: X is 0 under this price.
+    if min_x is None or min_x > 0 or (card.x_minimum and card.mana_cost.x_count):
+        # A mana-value floor the copy cannot meet, or a printed "X can't be
+        # 0": X is 0 under this price.
         return False
     cost = ManaCost.parse(price)
     purpose = spell_purpose(card)
