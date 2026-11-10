@@ -167692,12 +167692,12 @@
     },
     "Mari, the Killing Quill": {
       "edhrec_rank": 2486,
-      "gate": "template",
+      "gate": null,
       "name": "Mari, the Killing Quill",
-      "reason": "no template for: Whenever a creature an opponent controls dies, exile it with a hit counter on it",
+      "reason": "",
       "scryfall_id": "6b4b3c1a-671c-422d-a98c-7d750760ca46",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Marina Vendrell": {
@@ -168842,12 +168842,12 @@
     },
     "Mass Mutiny": {
       "edhrec_rank": 6956,
-      "gate": "template",
+      "gate": null,
       "name": "Mass Mutiny",
-      "reason": "no template for: For each opponent, gain control of up to one target creature that player controls until en",
+      "reason": "",
       "scryfall_id": "b817473f-599d-45bb-a3b0-a96986ec5102",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mass Polymorph": {
@@ -175682,12 +175682,12 @@
     },
     "Misfortune Teller": {
       "edhrec_rank": 11876,
-      "gate": "template",
+      "gate": null,
       "name": "Misfortune Teller",
-      "reason": "no template for: Whenever this creature enters or deals combat damage to a player, exile target card from a",
+      "reason": "",
       "scryfall_id": "7c9e6ca9-14cf-4476-8c55-b98a6ebe6101",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Misfortune's Gain": {
@@ -186622,12 +186622,12 @@
     },
     "Nighthawk Scavenger": {
       "edhrec_rank": 1854,
-      "gate": "template",
+      "gate": null,
       "name": "Nighthawk Scavenger",
-      "reason": "no template for: 's power is equal to 1 plus the number of card types among cards in your opponents' gravey",
+      "reason": "",
       "scryfall_id": "47433ce9-1ac6-4359-a5e4-4ec68490cb0c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nighthawk, Dark Defender": {

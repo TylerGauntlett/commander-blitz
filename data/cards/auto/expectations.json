@@ -11779,6 +11779,10 @@
     },
     "zone": "battlefield"
   },
+  "mari_the_killing_quill": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "marisi_s_twinclaws": {
     "zone": "battlefield"
   },
@@ -11870,6 +11874,14 @@
     "library_size": {
       "0": 40
     },
+    "zone": "graveyard"
+  },
+  "mass_mutiny": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "opponent_battlefield_count": 5,
     "zone": "graveyard"
   },
   "mass_of_ghouls": {
@@ -12266,6 +12278,17 @@
     "zone": "battlefield"
   },
   "mischievous_sneakling": {
+    "zone": "battlefield"
+  },
+  "misfortune_teller": {
+    "battlefield_count": 34,
+    "graveyard_size": {
+      "0": 1
+    },
+    "tokens": {
+      "count": 1,
+      "id": "rogue_2_2_b"
+    },
     "zone": "battlefield"
   },
   "mishra_s_workshop": {
@@ -13044,6 +13067,10 @@
     "zone": "battlefield"
   },
   "nightguard_patrol": {
+    "zone": "battlefield"
+  },
+  "nighthawk_scavenger": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "nightmare_shepherd": {

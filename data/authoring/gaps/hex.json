@@ -1,0 +1,14 @@
+{
+  "card_id": "hex",
+  "name": "Hex",
+  "oracle_text": "Destroy six target creatures.",
+  "blocked_sentences": ["Destroy six target creatures."],
+  "needs": [{
+    "capability": "exact_target_count",
+    "kind": "engine",
+    "what": "A fixed-size target spec (`count: 6`, no `up_to`, no `min_count`, not `optional`) must be declarable only when that many distinct legal targets exist (601.2c): with fewer than six creatures on the battlefield Hex cannot be cast at all. `targeting._spec_options` must return no choice when len(options) < count for a fixed count above 1, instead of offering combinations of min(count, len(options))",
+    "why_existing_wont_do": "Every printed word is expressible: a `permanent` target spec t1 with `count: 6` and selector {types: [Creature], zone: battlefield}, and `destroy` on {target: t1}. But `targeting._spec_options` builds `itertools.combinations(options, min(count, len(options)))` for a fixed count > 1, so the spell is offered with fewer targets than printed. Verified with a scratch run of verify(): the draft passed all six gates by casting Hex at the sandbox's FOUR creatures (battlefield_count 30, opponent_battlefield_count 3 including a dependent Aura), a position where the printed card is uncastable -- the shipped card would be strictly better than printed (a one-sided wipe of a small board). `up_to`/`min_count` describe 'up to six' / 'one to six', which are different cards"
+  }],
+  "closest_existing": ["aether_gale", "aberrant_return"],
+  "confidence": "high"
+}
