@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**289 cards** blocked by **268** capabilities.
+**288 cards** blocked by **267** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -144,7 +144,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [fixed-piles-opponent-chooses](#fixed-piles-opponent-chooses) | 1 | 12369 | op |
 | [flash-if-targets](#flash-if-targets) | 1 | 1651 | engine |
 | [flip-coins-count](#flip-coins-count) | 1 | 6651 | value |
-| [foretell](#foretell) | 1 | 4794 | engine |
 | [foretold](#foretold) | 1 | 3713 | value |
 | [free-cast-by-other-player](#free-cast-by-other-player) | 1 | 11704 | op |
 | [free-cast-once-per-turn](#free-cast-once-per-turn) | 1 | 1913 | static_effect |
@@ -2502,20 +2501,6 @@ Blocks **1** card.
 
 - **Yusri, Fortune's Flame** (rank 6651) — `yusri_fortune_s_flame`
   - Whenever Yusri attacks, choose a number between 1 and 5. Flip that many coins. For each flip you win, draw a card. For each flip you lose, Yusri deals 2 damage to you. If you won five flips this way, you may cast spells from your hand this turn without paying their mana costs.
-
-</details>
-
-## foretell
-
-Blocks **1** card.
-
-- **(engine)** a residual-gate claimant for a PERMANENT card's printed "Foretell {cost}" line: verify._covered should claim it when the card-level `foretell` field is set and its cost matches the printed cost exactly (the strict _declares_printed_cost shape warp, mutate and mayhem use)
-  <br>Why the existing vocabulary won't do: The card-level `foretell` field exists and the engine implements the special action and the cast from exile, but `foretell` is not in KNOWN_KEYWORDS and verify._covered has no foretell branch, so the line is only consumed on instants and sorceries (whose spell_effects claim every line). A creature declaring foretell "{4}{U}" was rejected at gate 3 with residual exactly "Foretell {4}{U}" (checked with --collect --dry-run). The other two lines are expressible: the flying keyword, and a spell_cost_reduction static with affects_spells {controller: you, not_from_zone: hand} as shipped on Advanced Reconstruction.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Sage of the Beyond** (rank 4794) — `sage_of_the_beyond`
-  - Foretell {4}{U} (During your turn, you may pay {2} and exile this card from your hand face down. Cast it on a later turn for its foretell cost.)
 
 </details>
 

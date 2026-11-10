@@ -2149,6 +2149,16 @@ def _covered(card: CardDef, line: str) -> bool:
     if card.plot is not None and stripped.lower().startswith("plot "):
         return _declares_printed_cost(stripped[len("plot ") :], card.plot)
 
+    # "Foretell {4}{U} (During your turn, you may pay {2} and exile this card
+    # from your hand face down…)" -- plot's shape: the line is the price of the
+    # later cast, carried by the card-level `foretell` field and read by the
+    # special action `suspend.foretell_card` and the cast from exile in
+    # `casting`. An instant or sorcery's `spell_effects` claim the line
+    # wholesale; a permanent has nothing else that could. Strict for warp's
+    # reason: a card declaring `{1}{U}` cannot claim a printed `{4}{U}`.
+    if card.foretell is not None and stripped.lower().startswith("foretell "):
+        return _declares_printed_cost(stripped[len("foretell ") :], card.foretell)
+
     # "Escape—{3}{B}{B}, Exile four other cards from your graveyard." -- the
     # graveyard-cost slot once more, with escape's destination (the card goes
     # where it normally would, so `graveyard_cast_exiles` is False and it is not

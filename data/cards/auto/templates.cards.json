@@ -187729,6 +187729,46 @@
     {
       "abilities": [
         {
+          "affects_spells": {
+            "controller": "you",
+            "not_from_zone": "hand"
+          },
+          "amount": {
+            "const": 2
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Spells you cast from anywhere other than your hand cost {2} less to cast."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "foretell": "{4}{U}",
+      "id": "sage_of_the_beyond",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{5}{U}{U}",
+      "name": "Sage of the Beyond",
+      "oracle_text": "Flying\nSpells you cast from anywhere other than your hand cost {2} less to cast.\nForetell {4}{U} (During your turn, you may pay {2} and exile this card from your hand face down. Cast it on a later turn for its foretell cost.)",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Giant"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

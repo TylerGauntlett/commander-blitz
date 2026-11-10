@@ -7212,6 +7212,16 @@ problem. Foretell needs only the first.
 the printed cost paid in two instalments with the discount thrown in — so
 `foretold_turn` is recorded and compared.
 
+**Any card type may carry it.** A foretold creature, artifact or enchantment is
+cast from exile at its own timing and resolves onto the battlefield face up, an
+ordinary permanent (Sage of the Beyond). On an instant or sorcery the printed
+"Foretell {4}{U}" line is claimed by `spell_effects` with the rest of the spell;
+on a permanent the residual gate claims it off the `foretell` field itself, and
+only when the declared cost is the printed one. The foretelling belongs to the
+card in exile: `reset_permanent_state` clears `foretold_by` whenever the card
+changes zones (400.7), so a foretold permanent that is cast, resolves and is
+later exiled again is not castable a second time for its foretell cost.
+
 **"If this spell was cast from exile"** is the condition `cast_from_exile`, the
 third sibling of `cast_from_hand` and `cast_from_graveyard`. It reads
 `cast_from_zone`, the zone `stack.push_spell` records as the card leaves for the

@@ -1,0 +1,19 @@
+{
+  "_comment": "Cards that exist only for tests/unit/casting/test_foretell_permanent.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_foretold_drake` is Sage of the Beyond's shape without its static: a blue flying creature with a printed {3}{U}{U} and foretell {1}{U}.",
+  "cards": [
+    {
+      "id": "t_foretold_drake",
+      "name": "Test Foretold Drake",
+      "oracle_text": "Flying\nForetell {1}{U} (During your turn, you may pay {2} and exile this card from your hand face down. Cast it on a later turn for its foretell cost.)",
+      "mana_cost": "{3}{U}{U}",
+      "types": ["Creature"],
+      "subtypes": ["Drake"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "power": 3,
+      "toughness": 3,
+      "keywords": ["flying"],
+      "foretell": "{1}{U}"
+    }
+  ]
+}

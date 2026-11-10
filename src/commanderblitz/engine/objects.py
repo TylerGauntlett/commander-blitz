@@ -1431,6 +1431,12 @@ class GameObject:
         self.exiled_from = None
         self.prepared = False
         self.revealed_to = set()
+        # A foretold card that leaves exile is a new object nobody foretold
+        # (400.7): cast, resolved and exiled again, a foretold creature must
+        # not be castable a second time for its foretell cost. `foretell_card`
+        # writes both after its own move, as it writes `revealed_to`.
+        self.foretold_by = None
+        self.foretold_turn = -1
         # `enters_cost_paid` is deliberately *not* reset either, and for the
         # same reason as `hasted_by_suspend` below: it is the answer to a
         # question asked a moment before the move, and this runs on the way in

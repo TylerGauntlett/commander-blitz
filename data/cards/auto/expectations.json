@@ -15895,6 +15895,10 @@
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
   },
+  "sage_of_the_beyond": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sage_of_the_maze": {
     "battlefield_count": 33,
     "zone": "battlefield"
