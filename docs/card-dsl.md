@@ -1141,7 +1141,7 @@ spell, a copy (707.10a) and a commander its owner moved to the command zone
 The near miss is an `exile` op after the counter. By then the card is in a
 graveyard, has fired whatever watches one, and is a new object (400.7) that no
 selector names as "that spell". Exiling a spell *without* countering it is a
-different action and is not this key.
+different action and is not this key: it is `exile` aimed at the spell, below.
 
 ### Doing something to a spell that is not countering it
 
@@ -1176,6 +1176,43 @@ Where the card goes is its **owner's** hand — a spell whose controller is not
 its owner still goes home. And a *copy* of a spell is not a card (706.10), so
 there is nothing to put anywhere: 704.5e removes it and it ceases to exist.
 `stack.pull_spell_off_stack` is the one place all of that lives.
+
+### Exiling a spell
+
+```jsonc
+// Smirking Spelljacker — "When this creature enters, exile target spell an
+// opponent controls. Whenever this creature attacks, if a card is exiled with
+// it, you may cast the exiled card without paying its mana cost."
+{ "kind": "triggered", "trigger": { "event": "self_enters", "source": "self" },
+  "targets": [ { "id": "t1", "kind": "spell", "selector": { "controller": "opponent" } } ],
+  "effects": [ { "op": "exile", "objects": { "target": "t1" }, "link": true } ] },
+{ "kind": "triggered",
+  "trigger": { "event": "attacks", "source": "self",
+               "condition": { "exists": { "zone": "exile", "exiled_with": "self",
+                                          "controller": "any" } } },
+  "effects": [ { "op": "may", "effects": [ { "op": "play_exiled" } ] } ] }
+```
+
+`exile` whose `objects` is `{"target": …}` alone, naming a `kind: "spell"` or
+`"spell_or_permanent"` target, takes the spell off the stack through
+`pull_spell_off_stack` into its owner's exile. It is a zone change and not a
+counter (701.5a), exactly as Reprieve's is: an uncounterable spell is exiled,
+no `spell_countered` event fires, and the card never visits a graveyard. A copy
+of a spell has no card (706.10) and ceases to exist, so it is in neither `as`
+nor the link; a commander its owner moves to the command zone (903.9a) is not
+exiled and is linked to nothing.
+
+The op's other keys mean what they mean on a permanent. `link` records the
+607.2a link (`zones.link_exiled`), which `exiled_with: "self"` reads back; `as`
+binds the exiled card; `playable` and its riders grant a permission on it. The
+card is stamped with no `exiled_from`, so "return it to the zone it came from"
+leaves it in exile rather than putting it back on the stack.
+
+The near miss is `counter` with `exiles`, which is stopped by "can't be
+countered", fires counter triggers and links nothing. The loader refuses a
+spell target's `objects` narrowed by any other clause, since that pool is
+`choose_objects`' object refs and the spell is never in it — narrow the target
+spec instead.
 
 ### "Target spell or nonland permanent"
 

@@ -205127,6 +205127,93 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "link": true,
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "spell",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "When this creature enters, exile target spell an opponent controls.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "controller": "any",
+                    "exiled_with": "self",
+                    "zone": "exile"
+                  },
+                  "op": "play_exiled"
+                }
+              ],
+              "op": "may",
+              "prompt": "Cast the exiled card without paying its mana cost?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, if a card is exiled with it, you may cast the exiled card without paying its mana cost.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "controller": "any",
+                "exiled_with": "self",
+                "zone": "exile"
+              }
+            },
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "smirking_spelljacker",
+      "keywords": [
+        "flash",
+        "flying"
+      ],
+      "mana_cost": "{4}{U}",
+      "name": "Smirking Spelljacker",
+      "oracle_text": "Flash\nFlying\nWhen this creature enters, exile target spell an opponent controls.\nWhenever this creature attacks, if a card is exiled with it, you may cast the exiled card without paying its mana cost.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Djinn",
+        "Wizard",
+        "Rogue"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

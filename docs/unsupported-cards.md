@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**296 cards** blocked by **273** capabilities.
+**295 cards** blocked by **272** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -37,7 +37,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [council-s-dilemma](#council-s-dilemma) | 2 | 4067 | decision |
 | [devotion](#devotion) | 2 | 2401 | value |
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
-| [exile-target-spell](#exile-target-spell) | 2 | 539 | op |
 | [experience-counters](#experience-counters) | 2 | 1480 | engine |
 | [face-down-filter](#face-down-filter) | 2 | 5772 | selector |
 | [manifest-dread](#manifest-dread) | 2 | 5772 | op |
@@ -907,25 +906,6 @@ Blocks **2** cards.
   - Magma Opus deals 4 damage divided as you choose among any number of targets.
 - **Skarrgan Hellkite** (rank 13459) — `skarrgan_hellkite`
   - {3}{R}: This creature deals 2 damage divided as you choose among one or two targets. Activate only if this creature has a +1/+1 counter on it.
-
-</details>
-
-## exile-target-spell
-
-Blocks **2** cards.
-
-- **(op)** a way to move a *targeted* spell off the stack into exile without countering it -- either an `exile` op that accepts a `kind: "spell"` target (reading its stack refs, pulling the item out of `state.stack` and exiling the underlying card), or a `to: "exile"` destination on `counter`. It must work for a variable-size spec, since Mindbreak Trap exiles *any number of* target spells at once, and it must not be a counter: a spell exiled this way was never countered, which is the entire reason the card beats "this spell can't be countered" and "when this spell is countered" triggers. Wanted by Mindbreak Trap, Nexus of Fate-proof exile removal, Spell Queller's cousins and the whole exile-from-the-stack family.
-  <br>Why the existing vocabulary won't do: `op_exile` (src/commanderblitz/engine/effects/ops_board.py) works entirely in oid space -- it calls `choose_objects` on a selector pool, and `{"target": "t1"}` resolves through `ctx.target_oids`, which keeps only refs of `kind == "object"` (src/commanderblitz/engine/effects/context.py). A spell target produces a `stack` ref carrying a *sid*, so pointing `exile` at the target binds nothing and the card would resolve doing literally nothing. `counter` is the only op that reads `ctx.target_sids`, and its `exiles: true` does send the spell to exile -- but as a counter: it is stopped by "can't be countered" and fires `spell_countered`, which is exactly what this card avoids. Reaching for `{"zone": "stack"}` in the `exile` op's `objects` does return stack oids (src/commanderblitz/engine/effects/selectors.py), but that is "exile every spell on the stack", not "exile any number of *target* spells" -- it announces no targets, so nothing is checked at 601.2c or re-checked at 608.2b, and it would eat Mindbreak Trap itself.
-- **(op)** an op that moves a targeted spell (a kind: "spell" target, by ctx.target_sids) from the stack to exile -- not a counter, so it works on a spell that can't be countered and emits no SPELL_COUNTERED -- and records the 607.2a link (link_exiled) from the exiled card to the source, so a later {"zone": "exile", "exiled_with": "self"} selector finds it. With that, the attack trigger is an `attacks` trigger with an `exists` condition on that selector and a `may` around `play_exiled`, all of which already exist
-  <br>Why the existing vocabulary won't do: `exile` resolves `objects: {"target": "t1"}` through resolve_pool, which keeps only object refs, so on a spell target it is a silent no-op (the same trap op_return_spell_to_hand documents); `objects: {"zone": "stack"}` is untargeted and sweeps every spell. `counter` with `exiles: true` and `as` is countering, not exiling: it fails against an uncounterable spell and fires counter triggers, and it never calls link_exiled, while its `as` binding dies with the resolution, so the later attack trigger's "exiled with it" cannot read the card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Mindbreak Trap** (rank 539) — `mindbreak_trap`
-  - If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.
-  - Exile any number of target spells.
-- **Smirking Spelljacker** (rank 6946) — `smirking_spelljacker`
-  - When this creature enters, exile target spell an opponent controls
 
 </details>
 
@@ -4113,7 +4093,6 @@ Blocks **1** card.
 
 - **Mindbreak Trap** (rank 539) — `mindbreak_trap`
   - If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.
-  - Exile any number of target spells.
 
 </details>
 

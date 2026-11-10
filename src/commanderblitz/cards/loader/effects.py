@@ -1147,6 +1147,22 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             f"moved by put_on_top with objects {{'target': ...}} alone, or by "
             f"return_spell_to_hand -- {op!r} would never reach the spell half"
         )
+    if (
+        op == "exile"
+        and isinstance(objects, Mapping)
+        and "target" in objects
+        and set(objects) != {"target"}
+        and isinstance(target_kinds, Mapping)
+        and target_kinds.get(str(objects["target"])) in ("spell", "spell_or_permanent")
+    ):
+        # "Exile target spell": `exile` takes the spell off the stack only when
+        # its selector is the target alone. Narrowed by another clause, the
+        # pool is `choose_objects`' object refs, the spell is never in it, and
+        # the card would load and exile nothing.
+        raise DslError(
+            f"{where}.objects: exile reaches a spell target only through "
+            f"objects {{'target': ...}} alone -- narrow the target spec instead"
+        )
     if op == "return_spell_to_hand":
         # "Return target **spell** to its owner's hand." The op reads
         # `ctx.target_sids`, which keeps only refs of kind `"stack"` -- so aimed

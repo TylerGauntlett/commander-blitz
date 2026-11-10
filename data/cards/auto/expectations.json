@@ -17390,6 +17390,10 @@
     },
     "zone": "battlefield"
   },
+  "smirking_spelljacker": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "smokebraider": {
     "battlefield_count": 33,
     "hand_size": {

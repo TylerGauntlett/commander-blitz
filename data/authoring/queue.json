@@ -252822,12 +252822,12 @@
     },
     "Smirking Spelljacker": {
       "edhrec_rank": 6946,
-      "gate": "template",
+      "gate": null,
       "name": "Smirking Spelljacker",
-      "reason": "no template for: When this creature enters, exile target spell an opponent controls",
+      "reason": "",
       "scryfall_id": "01d1e394-1b0c-4b40-ba85-f55973703d41",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Smite": {

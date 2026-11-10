@@ -11,6 +11,7 @@ from ..errors import DslError
 from ..objects import playable_duration_of
 from ..player_statics import forced_discard_or_sacrifice_barred
 from ..primitives import add_counters, attach, create_token
+from ..stack import pull_spell_off_stack
 from ..temp_effects import sacrifice_forbidden
 from ..turn import phase_in, phase_out
 from ..zones import (
@@ -286,6 +287,19 @@ def op_exile(ctx: EffectContext, spec: Mapping[str, Any]):
     everything else that has ever been exiled, so no selector can name them
     afterwards. Not ``until_leaves``, which is the O-Ring *link* and declares a
     return; a card that only counts what it exiled hands nothing back.
+
+    **A spell target.** ``objects: {"target": …}`` naming a `kind: "spell"`
+    target exiles that spell off the stack -- "exile target spell an opponent
+    controls" (Smirking Spelljacker). Not `counter` with ``exiles``: exiling a
+    spell is a zone change and not a counter (701.5a), so "this spell can't be
+    countered" does not stop it and nothing watching for a countered spell
+    fires. `pull_spell_off_stack` does the move, the card goes to its owner's
+    exile, and a copy of a spell simply ceases to exist (706.10, 707.10a), so
+    it is in neither ``as`` nor the link. ``link`` then records the 607.2a
+    link, which a later ``{"zone": "exile", "exiled_with": "self"}`` reads --
+    the attack trigger's "if a card is exiled with it, you may cast the exiled
+    card". The selector must be the target alone: a `{"target": …}` pool keeps
+    object refs only, so any narrowing beside it never reaches the spell.
     """
     # `until_leaves` is the O-Ring name for the link and `link` is the neutral
     # one. The same record either way -- `exiled_by`, which a later
@@ -306,6 +320,24 @@ def op_exile(ctx: EffectContext, spec: Mapping[str, Any]):
     playable_duration = playable_duration_of(spec)
     playable = playable_duration is not None
     oids = yield from choose_objects(ctx, spec.get("objects"), "Exile", "destroy")
+    # The spells a `kind: "spell"` target names, which `choose_objects` never
+    # sees: its `{"target": …}` pool keeps object refs, and a spell is a stack
+    # ref. A copy has no card to exile and is pulled without joining `oids`.
+    spells: dict[int, int] = {}
+    objects = spec.get("objects")
+    if isinstance(objects, Mapping) and set(objects) == {"target"}:
+        for sid in ctx.target_sids(str(objects["target"])):
+            item = ctx.state.stack_item(sid)
+            if item is None or not item.is_spell or item.oid is None:
+                continue
+            card = ctx.state.objects.get(item.oid)
+            if card is None or card.is_token:
+                pull_spell_off_stack(
+                    ctx.state, sid, Zone.EXILE, cause="exiled", by=ctx.source_oid
+                )
+                continue
+            spells[item.oid] = sid
+            oids = [*oids, item.oid]
     if name := spec.get("as"):
         # Written before the move, so the binding records what this op exiled
         # rather than whatever is in exile once it is done -- exactly where
@@ -329,7 +361,17 @@ def op_exile(ctx: EffectContext, spec: Mapping[str, Any]):
         # together here keep the permissions granted together below.
         end_permissions_until_next_exile(ctx.state, ctx.source_oid)
     for oid in oids:
-        exile(ctx.state, oid, by=ctx.source_oid)
+        if oid in spells:
+            pull_spell_off_stack(
+                ctx.state, spells[oid], Zone.EXILE, cause="exiled", by=ctx.source_oid
+            )
+            # A commander its owner sends to the command zone instead (903.9a)
+            # is not exiled, so it is linked to nothing and granted nothing.
+            card = ctx.state.objects.get(oid)
+            if card is None or card.zone is not Zone.EXILE:
+                continue
+        else:
+            exile(ctx.state, oid, by=ctx.source_oid)
         if playable:
             # After the move, for the same reason `exiled_by` below is:
             # `move_object` runs `reset_permanent_state` on the way and would
