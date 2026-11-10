@@ -334,6 +334,22 @@ def draw_cap(state: GameState, pid: int) -> int | None:
     return cap
 
 
+def plot_cost_reduction(state: GameState, pid: int) -> int:
+    """How much less generic mana ``pid`` pays to plot a card (`plot_cost_reduction`).
+
+    Doc Aurlock, Grizzled Genius: "Plotting cards from your hand costs {2}
+    less." Plot (702.171a) is a special action (116.2k), so neither
+    `spell_cost_reduction` nor `ability_cost_reduction` is asked when it is
+    priced; this is. Several add up, as every cost reduction does. The total is
+    clamped against the plot cost's generic part by `suspend.plot_price`.
+    """
+    total = 0
+    for obj, static in _active_player_statics(state, "plot_cost_reduction"):
+        if _reaches_player(obj, static, pid):
+            total += max(0, _static_value(state, static.get("amount"), obj))
+    return total
+
+
 def search_forbidden(state: GameState, searcher: int, cause_controller: int | None) -> bool:
     """May ``searcher`` not search their own library right now (`cant_search_library`)?
 
@@ -1307,6 +1323,7 @@ def spell_cost_reduction(
     targets: Sequence[Any] | None = None,
     *,
     zone: Any = None,
+    owner: int | None = None,
 ) -> int:
     """How much less ``pid`` pays for ``card`` because of statics on the board.
 
@@ -1349,6 +1366,12 @@ def spell_cost_reduction(
     ``from_zone`` / ``not_from_zone`` keys through `cast_zone_matches` -- a
     graveyard discount must reach flashback, a granted graveyard cast and a
     resolving `cast_card` alike, and never the hand or the command zone.
+
+    ``owner`` is the owner of the object being cast (108.3), read by the
+    ``not_owned`` key -- "spells you cast **but don't own**" (Gonti, Canny
+    Acquisitor). A printed face has no owner, so every pricer hands down the
+    object's, and a copy's caster (707.10). ``None`` fails closed, as ``zone``
+    does: a lane that does not say discounts nothing.
     """
     total = 0
     # The spell is on the stack under ``pid``'s control while its cost is
@@ -1372,6 +1395,8 @@ def spell_cost_reduction(
         if filt.get("exclude_self") and card.id == state.card_of(source_obj).id:
             continue
         if not cast_zone_matches(filt, zone):
+            continue
+        if filt.get("not_owned") and (owner is None or owner == pid):
             continue
         filt = {k: v for k, v in filt.items() if k not in CAST_ZONE_KEYS}
         # "Creature spells you cast **of the chosen type** cost {1} less."

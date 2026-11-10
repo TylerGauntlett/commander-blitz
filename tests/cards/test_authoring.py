@@ -269,6 +269,109 @@ class TestTheSandboxGraveyardFeedsAnExileCost:
         assert len(self._graveyard(hand_written, DIVINATION)) == 2
 
 
+class TestTheGraveyardSpellProp:
+    """An instant or sorcery card in a graveyard for a spell that must target one.
+
+    Player 0's graveyard holds creature cards and player 1's holds nothing, so
+    Surge to Victory's "exile target instant or sorcery card from your
+    graveyard" and Arcane Heist's "... from an opponent's graveyard" had no
+    legal choice (601.2c) and gate 4 rejected correct cards as "not playable in
+    the sandbox". The prop is added, and only for a card that needs it.
+    """
+
+    OWN = {
+        **DIVINATION,
+        "id": "auto_test_spell_exiler",
+        "name": "Auto Test Spell Exiler",
+        "oracle_text": "Exile target instant or sorcery card from your graveyard.",
+        "targets": [
+            {
+                "id": "t1",
+                "kind": "card_in_graveyard",
+                "count": 1,
+                "selector": {
+                    "any_types": ["Instant", "Sorcery"],
+                    "controller": "you",
+                    "zone": "graveyard",
+                },
+            }
+        ],
+        "spell_effects": [{"op": "exile", "objects": {"target": "t1"}}],
+    }
+    OPPONENTS = {
+        **OWN,
+        "id": "auto_test_heist_exiler",
+        "name": "Auto Test Heist Exiler",
+        "oracle_text": "Exile target instant or sorcery card from an opponent's graveyard.",
+        "targets": [
+            {
+                **OWN["targets"][0],
+                "selector": {**OWN["targets"][0]["selector"], "controller": "opponent"},
+            }
+        ],
+    }
+
+    def _graveyards(self, pool: CardRegistry, payload: dict) -> tuple[list[str], list[str]]:
+        card = V.compile_card(V.CardModel.model_validate(payload))
+        merged = V.CardRegistry({**{c.id: c for c in pool}, card.id: card})
+        game = V.build_sandbox(merged, card.id)
+        return tuple(
+            [game.state.objects[oid].def_id for oid in game.state.players[pid].graveyard]
+            for pid in (0, 1)
+        )
+
+    def test_your_graveyard_gets_one_for_a_your_graveyard_target(self, hand_written):
+        own, theirs = self._graveyards(hand_written, self.OWN)
+        assert len(own) == 3 and not theirs
+        prop = hand_written.get(own[-1])
+        assert prop.is_instant or prop.is_sorcery
+        assert all(hand_written.get(c).is_creature for c in own[:2])
+
+    def test_the_opponents_graveyard_gets_one_for_an_opponents_target(self, hand_written):
+        own, theirs = self._graveyards(hand_written, self.OPPONENTS)
+        assert len(own) == 2 and len(theirs) == 1
+        prop = hand_written.get(theirs[0])
+        assert prop.is_instant or prop.is_sorcery
+
+    def test_both_cards_clear_every_gate(self, hand_written):
+        own = V.verify(self.OWN, {"zone": "graveyard", "graveyard_size": {"0": 3}}, hand_written)
+        assert own.ok, str(own)
+        theirs = V.verify(
+            self.OPPONENTS, {"zone": "graveyard", "graveyard_size": {"0": 3, "1": 0}}, hand_written
+        )
+        assert theirs.ok, str(theirs)
+
+    def test_an_optional_target_needs_no_prop(self, hand_written):
+        """Mizzix's Mastery's shape: castable with no choice, so its position is unchanged."""
+        payload = {
+            **self.OPPONENTS,
+            "id": "auto_test_optional_heist",
+            "targets": [{**self.OPPONENTS["targets"][0], "optional": True}],
+        }
+        assert self._graveyards(hand_written, payload) == self._graveyards(hand_written, DIVINATION)
+
+    def test_a_creature_card_target_needs_no_prop(self, hand_written):
+        target = self.OPPONENTS["targets"][0]
+        payload = {
+            **self.OPPONENTS,
+            "id": "auto_test_creature_heist",
+            "targets": [{**target, "selector": {"types": ["Creature"], "controller": "opponent", "zone": "graveyard"}}],
+        }
+        assert self._graveyards(hand_written, payload) == self._graveyards(hand_written, DIVINATION)
+
+    def test_every_other_card_keeps_its_graveyards(self, hand_written):
+        own, theirs = self._graveyards(hand_written, DIVINATION)
+        assert len(own) == 2 and not theirs
+
+    def test_the_prop_asks_nothing(self, pool, hand_written):
+        """It is cast, not just pointed at, so it may want no choice and carry no ability."""
+        for registry in (pool, hand_written):
+            pick = registry.get(V.quiet_graveyard_spell(registry, {"any_types": ["Instant", "Sorcery"]}))
+            assert pick.is_instant or pick.is_sorcery
+            assert not pick.targets and not pick.mode_targets and not pick.abilities
+            assert pick.cast_time_modes is None and pick.additional_cost is None
+
+
 class TestTheSandboxMeetsACastWindow:
     """A `cast_only_during` card is cast inside its window, not in your main phase.
 
@@ -497,6 +600,107 @@ class TestASelfLegalTriggerIsExercisedAgainstTheBoard:
         verdict = V.verify(self.VANISHES, {"zone": "graveyard"}, hand_written)
         assert verdict.failed_gate == "playable"
         assert "ended in graveyard" in verdict.reason
+
+
+_CIPHER_TEXT = (
+    "Cipher (Then you may exile this spell card encoded on a creature you control. "
+    "Whenever that creature deals combat damage to a player, its controller may cast "
+    "a copy of the encoded card without paying its mana cost.)"
+)
+
+
+def _cipher_spell(**encode_selector) -> dict:
+    """ "Draw a card. Cipher" -- the smallest spell that carries the rider."""
+    return {
+        "id": "auto_test_ciphered_insight",
+        "name": "Auto Test Ciphered Insight",
+        "oracle_text": f"Draw a card.\n{_CIPHER_TEXT}",
+        "mana_cost": "{2}{U}",
+        "types": ["Sorcery"],
+        "colors": ["U"],
+        "color_identity": ["U"],
+        "spell_effects": [
+            {"op": "draw", "amount": 1},
+            {
+                "op": "encode",
+                "objects": {
+                    "zone": "battlefield",
+                    "controller": "you",
+                    "types": ["Creature"],
+                    "count": 1,
+                    "optional": True,
+                    **encode_selector,
+                },
+            },
+        ],
+        "abilities": [
+            {
+                "kind": "triggered",
+                "text": _CIPHER_TEXT,
+                "active_zones": ["exile"],
+                "trigger": {
+                    "event": "deals_combat_damage_to_player",
+                    "controller": "any",
+                    "filter": {"controller": "any", "encoded_by": "self"},
+                },
+                "effects": [{"op": "cast_copy", "optional": True}],
+            }
+        ],
+    }
+
+
+class TestACipherSpellThatEncodedEndsInExile:
+    """Gate 4 admits exile for a cipher spell -- on the link, not the keyword.
+
+    702.99a: "as a spell with cipher resolves, you may exile it encoded on a
+    creature you control". Arcane Heist resolved correctly, encoded on the
+    sandbox's creature, ended in exile, and gate 4 rejected it as "a spell but
+    ended in exile", because the spell-zone set widened only for declared
+    flags. Cipher is optional and needs a creature, though, so declaring
+    `encode` is not enough: a cipher spell that encoded nothing must still end
+    in the graveyard. Both halves are asserted, because the second is what
+    stops the first from being a weakened gate.
+    """
+
+    def test_a_cipher_spell_that_encoded_clears_every_gate_in_exile(self, hand_written):
+        verdict = V.verify(_cipher_spell(), {"zone": "exile"}, hand_written)
+        assert verdict.ok, str(verdict)
+
+    def test_it_is_exiled_because_it_encoded(self, hand_written):
+        card = V.compile_card(V.CardModel.model_validate(_cipher_spell()))
+        merged = V.CardRegistry({**{c.id: c for c in hand_written}, card.id: card})
+        game, oid, _, _ = V._cast(merged, card)
+
+        obj = game.state.objects[oid]
+        assert obj.zone is V.Zone.EXILE
+        encoded = game.state.objects[obj.encoded_on]
+        assert encoded.zone is V.Zone.BATTLEFIELD and encoded.controller == 0
+        assert V.encoded_itself(card, obj)
+
+    def test_a_cipher_spell_with_nothing_to_encode_goes_to_the_graveyard(self, hand_written):
+        """No snow creature in the sandbox, so the rider never arms."""
+        payload = _cipher_spell(supertypes=["Snow"])
+        assert V.verify(payload, {"zone": "graveyard"}, hand_written).ok
+
+        card = V.compile_card(V.CardModel.model_validate(payload))
+        merged = V.CardRegistry({**{c.id: c for c in hand_written}, card.id: card})
+        game, oid, _, _ = V._cast(merged, card)
+        obj = game.state.objects[oid]
+        assert obj.zone is V.Zone.GRAVEYARD
+        # Had it ended in exile anyway, gate 4 would have refused it: the
+        # declaration alone admits nothing.
+        assert obj.encoded_on is None
+        assert not V.encoded_itself(card, obj)
+
+    def test_the_link_without_the_declaration_admits_nothing(self, hand_written):
+        """A spell that never declared `encode` is not excused by a stray link."""
+        cipher = V.compile_card(V.CardModel.model_validate(_cipher_spell()))
+        merged = V.CardRegistry({**{c.id: c for c in hand_written}, cipher.id: cipher})
+        game, oid, _, _ = V._cast(merged, cipher)
+        obj = game.state.objects[oid]
+        assert obj.encoded_on is not None
+        plain = V.compile_card(V.CardModel.model_validate(DIVINATION))
+        assert not V.encoded_itself(plain, obj)
 
 
 class TestTheLegendaryProp:

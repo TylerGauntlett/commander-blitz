@@ -1,0 +1,77 @@
+{
+  "_comment": "Cards that exist only for tests/unit/casting/test_playable_cast_only.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_hostage_heist` is Hostage Taker's 'you may cast that card for as long as it remains exiled' on a plain `exile` of an opponent's hand, and `t_play_heist` is the same with 'play', the counterfactual. `t_gonti_heist` is Gonti, Lord of Luxury's cast-only permission on `look_at_top` to exile, face down.",
+  "cards": [
+    {
+      "id": "t_hostage_heist",
+      "name": "Test Hostage Heist",
+      "oracle_text": "Exile all cards from each opponent's hand. You may cast them for as long as they remain exiled.",
+      "mana_cost": "{0}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "spell_effects": [
+        {
+          "op": "exile",
+          "objects": {
+            "zone": "hand",
+            "controller": "opponent",
+            "count": "all"
+          },
+          "playable": "while_exiled",
+          "playable_cast_only": true
+        }
+      ]
+    },
+    {
+      "id": "t_play_heist",
+      "name": "Test Play Heist",
+      "oracle_text": "Exile all cards from each opponent's hand. You may play them for as long as they remain exiled.",
+      "mana_cost": "{0}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "spell_effects": [
+        {
+          "op": "exile",
+          "objects": {
+            "zone": "hand",
+            "controller": "opponent",
+            "count": "all"
+          },
+          "playable": "while_exiled"
+        }
+      ]
+    },
+    {
+      "id": "t_gonti_heist",
+      "name": "Test Gonti Heist",
+      "oracle_text": "Look at the top card of each opponent's library, then exile it face down. You may cast that card for as long as it remains exiled.",
+      "mana_cost": "{0}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "spell_effects": [
+        {
+          "op": "look_at_top",
+          "player": "each_opponent",
+          "amount": {
+            "const": 1
+          },
+          "objects": {
+            "count": "all"
+          },
+          "destination": "exile",
+          "face_down": true,
+          "playable": "while_exiled",
+          "playable_cast_only": true
+        }
+      ]
+    }
+  ]
+}

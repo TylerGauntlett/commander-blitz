@@ -1251,11 +1251,23 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
 
     mana_cost = ManaCost.parse(model.mana_cost)
     kicker = ManaCost.parse(model.kicker) if model.kicker else None
-    if kicker is not None:
-        if kicker.x_count:
-            raise DslError(f"{where}: a kicker cost with X is not implemented")
-        if kicker.mana_value() == 0:
-            raise DslError(f"{where}: kicker {model.kicker!r} costs nothing")
+    # "Kicker {X}" (Thieving Skydiver) is announced with the rest of the cast
+    # (601.2b): `ManaCost.plus` folds its X into the kicked line's price,
+    # `game._cast` asks it, and the permanent keeps it as `cast_x` for its
+    # enters trigger. Its mana value is 0 and it still costs X.
+    if kicker is not None and kicker.mana_value() == 0 and not kicker.x_count:
+        raise DslError(f"{where}: kicker {model.kicker!r} costs nothing")
+    if model.x_minimum:
+        # "X can't be 0." A floor on an X the caster announces, so it needs an
+        # X to announce -- in the mana cost or the kicker -- or it loads and
+        # bounds nothing.
+        if model.x_minimum < 0:
+            raise DslError(f"{where}: 'x_minimum' cannot be negative (got {model.x_minimum})")
+        if not mana_cost.x_count and not (kicker is not None and kicker.x_count):
+            raise DslError(
+                f"{where}: 'x_minimum' bounds the X announced as the spell is cast, "
+                f"and neither its mana cost nor its kicker has an '{{X}}'"
+            )
 
     if CardType.CREATURE.value in model.types and (model.power is None or model.toughness is None):
         raise DslError(f"{where}: creatures need power and toughness")
@@ -1404,6 +1416,16 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             validate_selector(
                 replacement.copying, f"{where}.replacements[{i}].copying"
             )
+            # With ``as_enters`` the copy is not offered on its own: the "you
+            # may" is the effects', and "if you do, it enters as a copy of one
+            # of **those** cards" is a pool they bound. Any other pool would
+            # be a forced copy of something nobody chose to exile.
+            if replacement.as_enters is not None and "binding" not in replacement.copying:
+                raise DslError(
+                    f"{where}.replacements[{i}].copying: an as-enters copy with "
+                    f"'as_enters' copies what those effects bound -- name it "
+                    f"with {{'binding': ...}}"
+                )
             if replacement.except_ is not None:
                 _check_enters_copy_except(
                     replacement.except_, f"{where}.replacements[{i}].except_"
@@ -1453,10 +1475,14 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             # `zones.offer_as_enters_effects` a moment before the arrival, and
             # only the counters this replacement puts on read what they bind --
             # on any other event they would run and change nothing about it.
-            if replacement.event != "self_enters_with_counters":
+            # The one other reader is an as-enters copy whose pool they bind:
+            # "As The Mimeoplasm enters, you may exile two creature cards from
+            # graveyards. If you do, it enters as a copy of one of those cards".
+            if replacement.event not in ("self_enters_with_counters", "self_enters_as_copy"):
                 raise DslError(
                     f"{where}.replacements[{i}]: 'as_enters' is read only by "
-                    f"'self_enters_with_counters', not by {replacement.event!r}"
+                    f"'self_enters_with_counters' and 'self_enters_as_copy', not "
+                    f"by {replacement.event!r}"
                 )
             if not replacement.as_enters:
                 raise DslError(
@@ -2689,6 +2715,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         additional_repeatable=additional_repeatable,
         kicker_label=model.kicker_label,
         kicker=kicker,
+        x_minimum=model.x_minimum,
         gift=model.gift,
         gift_ability=gift_ability,
         multikicker=multikicker,
@@ -4722,6 +4749,16 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"{where}.cause_events: unknown trigger event {name!r} "
                     f"(implemented: {sorted(TRIGGER_EVENTS)})"
                 )
+        if model.cause_combat_damage_to_player and (
+            model.cause_events is not None or model.cause_filter is not None
+        ):
+            # The flag *is* the event clause -- four event shapes, each asked
+            # whether a player was dealt combat damage -- and a `cause_filter`
+            # has no single subject to read on a batch of damagers.
+            raise DslError(
+                f"{where}: 'cause_combat_damage_to_player' names the cause by "
+                f"itself; it does not combine with 'cause_events' or 'cause_filter'"
+            )
         if model.cause_filter is not None:
             unknown = set(model.cause_filter) - STATIC_FILTER_KEYS
             if unknown:
@@ -4734,7 +4771,12 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             # `attacking`, `not_keywords`, the count heads) would load here
             # and be ignored.
             validate_trigger_filter(model.cause_filter, f"{where}.cause_filter")
-    elif model.cause_events or model.cause_controller or model.cause_filter:
+    elif (
+        model.cause_events
+        or model.cause_controller
+        or model.cause_filter
+        or model.cause_combat_damage_to_player
+    ):
         raise DslError(
             f"{where}: a cause clause only means something to 'double_triggers', "
             f"not to {model.effect!r}"
@@ -5119,6 +5161,13 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"and no board state; unsupported keys {sorted(unknown)}"
             )
         _validate_cast_zone_keys(model.affects_spells, f"{where}.affects_spells")
+        # "Spells you cast but don't own": only the literal word. `false` would
+        # load clean and say nothing, and a string would read as true.
+        if "not_owned" in model.affects_spells and model.affects_spells["not_owned"] is not True:
+            raise DslError(
+                f"{where}.affects_spells.not_owned: 'spells you cast but don't own' "
+                f"is written true or left out; got {model.affects_spells['not_owned']!r}"
+            )
         if model.amount is None:
             raise DslError(
                 f"{where}: spell_cost_reduction needs an 'amount' -- a reduction "
@@ -5794,6 +5843,26 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             raise DslError(
                 f"{where}: draw_limit takes 'affects_player', 'amount' and an "
                 f"optional 'condition', and no 'affects'"
+            )
+    if model.effect == "plot_cost_reduction":
+        # "Plotting cards from your hand costs {2} less." Without the number
+        # `_static_value` reads 0 and the line discounts nothing; a negative
+        # one would be a tax the clamp in `suspend.plot_price` rounds away. A
+        # permanent filter has nothing to mean on a card in hand.
+        if model.amount is None:
+            raise DslError(
+                f"{where}: plot_cost_reduction needs an 'amount' -- how much "
+                f"less generic mana plotting costs"
+            )
+        size = model.amount.get("const") if isinstance(model.amount, dict) else model.amount
+        if isinstance(size, int) and size < 1:
+            raise DslError(
+                f"{where}.amount: a plot cost reduction is 1 or more, got {size!r}"
+            )
+        if model.affects is not None:
+            raise DslError(
+                f"{where}: plot_cost_reduction takes 'affects_player', 'amount' "
+                f"and an optional 'condition', and no 'affects'"
             )
     if model.effect == "maximum_hand_size":
         # "Your maximum hand size is twenty." Without the number `_static_value`
@@ -6793,6 +6862,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["cause_controller"] = model.cause_controller
     if model.cause_filter is not None:
         static["cause_filter"] = dict(model.cause_filter)
+    if model.cause_combat_damage_to_player:
+        static["cause_combat_damage_to_player"] = True
     for field_name in ("power", "toughness", "amount"):
         value = getattr(model, field_name)
         if value is not None:

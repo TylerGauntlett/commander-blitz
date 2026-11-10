@@ -60,6 +60,28 @@ def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
                 f"worth, and there is no '{{X}}' in {model.mana!r} for it to fill in"
             )
         validate_value(model.x_value, f"{where}.cost.x_value")
+    if model.x_minimum:
+        # "X can't be 0." Read only where an activated ability's announced X is
+        # asked and offered (`game._activate`, `legality._ability_aims`), so it
+        # is refused anywhere else, on a cost with no '{X}' in its mana, and
+        # beside a defined X that is never announced.
+        if not defines_x:
+            raise DslError(
+                f"{where}.cost: 'x_minimum' bounds the X announced for an activated "
+                f"ability's cost, and this is not one -- it would load and be ignored"
+            )
+        if model.x_minimum < 0:
+            raise DslError(f"{where}.cost: 'x_minimum' cannot be negative (got {model.x_minimum})")
+        if "X" not in str(model.mana or "").upper():
+            raise DslError(
+                f"{where}.cost: 'x_minimum' bounds the '{{X}}' in this cost's mana, "
+                f"and there is no '{{X}}' in {model.mana!r}"
+            )
+        if model.x_value is not None:
+            raise DslError(
+                f"{where}.cost: 'x_minimum' bounds an announced X, and 'x_value' "
+                f"defines this one -- nothing is announced"
+            )
     sacrifice_selector = dict(model.sacrifice) if model.sacrifice is not None else None
     if sacrifice_selector is not None and "as" in sacrifice_selector:
         # "…where X is **the sacrificed creature's** power" (Ghoulcaller Gisa).
@@ -287,6 +309,12 @@ def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
         raise DslError(
             f"{where}.cost: 'blight' is how many -1/-1 counters go on a creature "
             f"you control, so it cannot be negative (got {model.blight})"
+        )
+    if model.process < 0:
+        raise DslError(
+            f"{where}.cost: 'process' is how many cards opponents own go from "
+            f"exile to their owners' graveyards, so it cannot be negative "
+            f"(got {model.process})"
         )
     if model.mill < 0:
         raise DslError(

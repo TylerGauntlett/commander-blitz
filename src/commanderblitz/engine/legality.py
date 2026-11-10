@@ -14,7 +14,7 @@ from . import combat as combat_mod
 from . import suspend as suspend_mod
 from .actions import Action, PendingDecision
 from .carddef import CardDef, Cost
-from .casting import _cast_actions, _timing_ok
+from .casting import GRAVEYARD_CAST_SLOT, _cast_actions, _timing_ok
 from .characteristics import (
     abilities_of,
     loyalty_activation_timing_waived,
@@ -345,7 +345,9 @@ def _suspend_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Ac
             card = state.card(oid)
             if card.plot is None:
                 continue
-            if not can_pay_mana(state, pid, card.plot, purpose=OTHER_PAYMENT):
+            if not can_pay_mana(
+                state, pid, suspend_mod.plot_price(state, pid, card), purpose=OTHER_PAYMENT
+            ):
                 continue
             out.append(
                 Action(
@@ -404,7 +406,19 @@ def _land_actions(state: GameState, pid: int) -> list[Action]:
         for oid in player.exile
         if state.objects[oid].playable_by == pid
         and state.objects[oid].playable_live(state.turn)
+        # "You may **cast** that card" (Hostage Taker) reaches no land: a land
+        # is played, never cast (305.9), so the permission opens no land drop.
+        and not state.objects[oid].playable_cast_only
         and playable_condition_met(state, state.objects[oid])
+        # "…you may play **one** of those cards" (Nashi): a group whose one
+        # play is spent offers no land either. `casting._cast_actions` asks
+        # the same ledger slot for the cast side.
+        and not (
+            state.objects[oid].playable_group is not None
+            and state.turn_ledger.activations(
+                state.objects[oid].playable_group, GRAVEYARD_CAST_SLOT
+            )
+        )
     ]
     if exiled:
         zones.append(exiled)
@@ -519,8 +533,10 @@ def unplayable_reason(state: GameState, pid: int, oid: int) -> str | None:
         return "timing"
 
     # Hand cards never owe commander tax -- that is a command-zone cost only.
-    discount = cost_reduction(state, pid, card, zone=Zone.HAND)
-    purpose = spell_purpose(card)
+    discount = cost_reduction(
+        state, pid, card, zone=Zone.HAND, owner=state.objects[oid].owner
+    )
+    purpose = spell_purpose(card, caster=pid, owner=state.objects[oid].owner)
     x = 0
     # The same gate `_cast_variant` applies, and it must stay X = 0
     # afterwards for the same reason: this diagnostic has to agree with the
@@ -888,13 +904,17 @@ def _ability_aims(
             state.players[pid].mana_pool.spendable(purpose),
             mana_sources(state, pid, purpose=purpose),
         )
-        < 0
+        # "X can't be 0" (Lair of the Hydra): offered only while the floor is
+        # payable; with no floor, while any X is.
+        < ability.cost.x_minimum
     ):
         return None
-    # ``x=0`` is the floor for an announced X and is ignored outright for a
-    # defined one -- `costs.ability_mana` is the single place either is priced,
-    # so the number legality tests is the number `costs.pay` charges.
-    if not can_pay(state, pid, ability.cost, oid, x=0, purpose=purpose, ability=ability):
+    # The floor (0, or a printed "X can't be 0") is the least announced X and
+    # is ignored outright for a defined one -- `costs.ability_mana` is the
+    # single place either is priced, so the number legality tests is the number
+    # `costs.pay` charges.
+    x_floor = ability.cost.x_minimum if ability.cost is not None else 0
+    if not can_pay(state, pid, ability.cost, oid, x=x_floor, purpose=purpose, ability=ability):
         return None
     # `mode_targets`, not `targets`: the loader lifts a mode-owned spec out of
     # the flat list into the per-mode map, so `ability.targets` holds only the
@@ -939,7 +959,7 @@ def _ability_aims(
                 sources,
             )
             out_x: list[tuple] = []
-            for value in range(max(0, ceiling) + 1):
+            for value in range(ability.cost.x_minimum, max(0, ceiling) + 1):
                 tuples = enumerate_target_tuples(
                     state, pid, ability.targets, oid, x=value
                 )

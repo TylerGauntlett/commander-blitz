@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**283 cards** blocked by **263** capabilities.
+**281 cards** blocked by **259** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -44,6 +44,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
 | [remove-x-counters-cost](#remove-x-counters-cost) | 2 | 5399 | cost |
 | [return-face-down](#return-face-down) | 2 | 3081 | op |
+| [reveal-until-rest-to-graveyard](#reveal-until-rest-to-graveyard) | 2 | 1606 | op |
 | [static-greatest-power-in-graveyard](#static-greatest-power-in-graveyard) | 2 | 7077 | value |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [turn-face-up](#turn-face-up) | 2 | 5772 | op |
@@ -131,7 +132,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exile-cards-with-card-types-among-them](#exile-cards-with-card-types-among-them) | 1 | 9107 | selector |
 | [exile-face-down](#exile-face-down) | 1 | 1363 | op |
 | [exile-permanent-cost](#exile-permanent-cost) | 1 | 6544 | cost |
-| [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [exile-x-from-graveyard-cost](#exile-x-from-graveyard-cost) | 1 | 17252 | cost |
 | [exiled-this-way-lki](#exiled-this-way-lki) | 1 | 6960 | value |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
@@ -218,7 +218,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
 | [prime-number](#prime-number) | 1 | 11527 | value |
 | [primo-the-indivisible](#primo-the-indivisible) | 1 | 11527 | token |
-| [process](#process) | 1 | 14187 | cost |
 | [proliferate-binding](#proliferate-binding) | 1 | 957 | op |
 | [protection-from-multicolored](#protection-from-multicolored) | 1 | 1516 | static_effect |
 | [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
@@ -232,13 +231,11 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [replace-graveyard-with-counter](#replace-graveyard-with-counter) | 1 | 386 | replacement |
 | [retrace](#retrace) | 1 | 5451 | engine |
 | [reveal-from-hand](#reveal-from-hand) | 1 | 3623 | cost |
-| [reveal-until-rest-to-graveyard](#reveal-until-rest-to-graveyard) | 1 | 1606 | op |
 | [sacrifice-multiple-distinct](#sacrifice-multiple-distinct) | 1 | 1918 | cost |
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
 | [salamander-warrior-4-3-u](#salamander-warrior-4-3-u) | 1 | 3395 | token |
 | [same-target-for-each-target-word](#same-target-for-each-target-word) | 1 | 5003 | engine |
-| [sandbox-graveyard-spell-prop](#sandbox-graveyard-spell-prop) | 1 | 5082 | engine |
 | [sandbox-low-mana-value-permanent](#sandbox-low-mana-value-permanent) | 1 | 14140 | engine |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
@@ -272,7 +269,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [while-source-on-battlefield-duration](#while-source-on-battlefield-duration) | 1 | 8222 | engine |
 | [wurm-5-5-g-trample](#wurm-5-5-g-trample) | 1 | 2387 | token |
 | [x-cost-mana-restriction](#x-cost-mana-restriction) | 1 | 4046 | decision |
-| [x-minimum](#x-minimum) | 1 | 2447 | cost |
 | [x-sized-ability-targets](#x-sized-ability-targets) | 1 | 1668 | engine |
 | [x-sized-linked-targets](#x-sized-linked-targets) | 1 | 12855 | engine |
 | [x-starting-loyalty](#x-starting-loyalty) | 1 | 6660 | engine |
@@ -1028,6 +1024,24 @@ Blocks **2** cards.
   - Whenever another nontoken creature you control dies, you may return it to the battlefield face down under its owner's control. It's a Forest land.
 - **Deathmist Raptor** (rank 6493) — `deathmist_raptor`
   - Whenever a permanent you control is turned face up, you may return this card from your graveyard to the battlefield face up or face down.
+
+</details>
+
+## reveal-until-rest-to-graveyard
+
+Blocks **2** cards.
+
+- **(op)** a remainder destination on `reveal_until` (e.g. `rest_to: "graveyard"`) so the revealed cards walked past before the match are put into their owner's graveyard together with the match (`destination: "graveyard"`), as one move -- "reveals cards from the top of their library until they reveal a land card, then puts those cards into their graveyard" (Consuming Aberration, Mind Funeral's kin with no count)
+  <br>Why the existing vocabulary won't do: `op_reveal_until` (ops_cards.py) moves only the hits to `destination`; the non-matching revealed cards either go to the bottom in a random order (`rest_to_bottom`, defaulted on) or are shuffled back (`shuffle_rest`), and switching both off leaves them on top -- there is no key sending them to the graveyard. `look_at_top` has `rest_to` but a fixed window, not an unbounded 'until'. `repeat_while` around `mill` 1 with an `as` binding and a 'not a land' condition is an approximation: it is a mill (701.13), so it fires mill triggers and `replace_mill` the printed reveal never does, moves the cards one at a time instead of together, and is capped at the 100-iteration guard. The first sentence is expressible (static `set_pt` self_only with `count` of `{controller: opponent, zone: graveyard}` on both power and toughness, as Haughty Djinn does), and the trigger is a plain `spell_cast` with `controller: you` over `for_each_player each_opponent`; only the reveal-and-bin is blocked.
+- **(op)** a remainder destination on `reveal_until` (e.g. `rest_to: "graveyard"`) so the non-land cards revealed before the X-th land go to their owner's graveyard together with the matched lands (`destination: "graveyard"`, `amount: {"x": true}`, `player: "each_opponent"`), as one move -- "reveals cards from the top of their library until they reveal X land cards, then puts all cards revealed this way into their graveyard" (Mind Grind, Mind Funeral)
+  <br>Why the existing vocabulary won't do: `op_reveal_until` (ops_cards.py) already counts `amount` matches and walks each opponent's library, but moves only the hits to `destination`; the other revealed cards go to the bottom in a random order (`rest_to_bottom`, defaulted on) or are shuffled back (`shuffle_rest`), and switching both off leaves them on top -- no key sends them to the graveyard. `look_at_top` has `rest_to` but a fixed window, not an unbounded 'until'. `repeat_while` around `mill` 1 is an approximation: it is a mill (701.13), firing mill triggers and `replace_mill` the printed reveal never does, moving cards one at a time, and capped by the iteration guard. "X can't be 0" is expressible as card-level `x_minimum: 1`; only the reveal-and-bin is blocked.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Consuming Aberration** (rank 1606) — `consuming_aberration`
+  - Whenever you cast a spell, each opponent reveals cards from the top of their library until they reveal a land card, then puts those cards into their graveyard.
+- **Mind Grind** (rank 5575) — `mind_grind`
+  - Each opponent reveals cards from the top of their library until they reveal X land cards, then puts all cards revealed this way into their graveyard.
 
 </details>
 
@@ -2311,21 +2325,6 @@ Blocks **1** card.
 
 </details>
 
-## exile-target-spell
-
-Blocks **1** card.
-
-- **(op)** a way to move a *targeted* spell off the stack into exile without countering it -- either an `exile` op that accepts a `kind: "spell"` target (reading its stack refs, pulling the item out of `state.stack` and exiling the underlying card), or a `to: "exile"` destination on `counter`. It must work for a variable-size spec, since Mindbreak Trap exiles *any number of* target spells at once, and it must not be a counter: a spell exiled this way was never countered, which is the entire reason the card beats "this spell can't be countered" and "when this spell is countered" triggers. Wanted by Mindbreak Trap, Nexus of Fate-proof exile removal, Spell Queller's cousins and the whole exile-from-the-stack family.
-  <br>Why the existing vocabulary won't do: `op_exile` (src/commanderblitz/engine/effects/ops_board.py) works entirely in oid space -- it calls `choose_objects` on a selector pool, and `{"target": "t1"}` resolves through `ctx.target_oids`, which keeps only refs of `kind == "object"` (src/commanderblitz/engine/effects/context.py). A spell target produces a `stack` ref carrying a *sid*, so pointing `exile` at the target binds nothing and the card would resolve doing literally nothing. `counter` is the only op that reads `ctx.target_sids`, and its `exiles: true` does send the spell to exile -- but as a counter: it is stopped by "can't be countered" and fires `spell_countered`, which is exactly what this card avoids. Reaching for `{"zone": "stack"}` in the `exile` op's `objects` does return stack oids (src/commanderblitz/engine/effects/selectors.py), but that is "exile every spell on the stack", not "exile any number of *target* spells" -- it announces no targets, so nothing is checked at 601.2c or re-checked at 608.2b, and it would eat Mindbreak Trap itself.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Mindbreak Trap** (rank 539) — `mindbreak_trap`
-  - If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.
-  - Exile any number of target spells.
-
-</details>
-
 ## exile-x-from-graveyard-cost
 
 Blocks **1** card.
@@ -3554,20 +3553,6 @@ Blocks **1** card.
 
 </details>
 
-## process
-
-Blocks **1** card.
-
-- **(cost)** the Eldrazi processor payment: a cost key usable as a `may` op's `pay` (and on activated abilities) that puts N cards chosen from exile, owned by opponents of the payer, into their owners' graveyards, and is unpayable (so the `if you do` branch is skipped) when fewer than N such cards are in exile
-  <br>Why the existing vocabulary won't do: cost_keys has exile_from_graveyard and exile_from_hand but nothing whose source zone is exile; search_zones with zones ["exile"] and destination graveyard is a search effect, not a payment, so it can move fewer than two cards and still let the counter happen, and it carries search semantics (reveal/shuffle) the card does not print
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ulamog's Nullifier** (rank 14187) — `ulamog_s_nullifier`
-  - When this creature enters, you may put two cards your opponents own from exile into their owners' graveyards. If you do, counter target spell.
-
-</details>
-
 ## proliferate-binding
 
 Blocks **1** card.
@@ -3754,20 +3739,6 @@ Blocks **1** card.
 
 </details>
 
-## reveal-until-rest-to-graveyard
-
-Blocks **1** card.
-
-- **(op)** a remainder destination on `reveal_until` (e.g. `rest_to: "graveyard"`) so the revealed cards walked past before the match are put into their owner's graveyard together with the match (`destination: "graveyard"`), as one move -- "reveals cards from the top of their library until they reveal a land card, then puts those cards into their graveyard" (Consuming Aberration, Mind Funeral's kin with no count)
-  <br>Why the existing vocabulary won't do: `op_reveal_until` (ops_cards.py) moves only the hits to `destination`; the non-matching revealed cards either go to the bottom in a random order (`rest_to_bottom`, defaulted on) or are shuffled back (`shuffle_rest`), and switching both off leaves them on top -- there is no key sending them to the graveyard. `look_at_top` has `rest_to` but a fixed window, not an unbounded 'until'. `repeat_while` around `mill` 1 with an `as` binding and a 'not a land' condition is an approximation: it is a mill (701.13), so it fires mill triggers and `replace_mill` the printed reveal never does, moves the cards one at a time instead of together, and is capped at the 100-iteration guard. The first sentence is expressible (static `set_pt` self_only with `count` of `{controller: opponent, zone: graveyard}` on both power and toughness, as Haughty Djinn does), and the trigger is a plain `spell_cast` with `controller: you` over `for_each_player each_opponent`; only the reveal-and-bin is blocked.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Consuming Aberration** (rank 1606) — `consuming_aberration`
-  - Whenever you cast a spell, each opponent reveals cards from the top of their library until they reveal a land card, then puts those cards into their graveyard.
-
-</details>
-
 ## sacrifice-multiple-distinct
 
 Blocks **1** card.
@@ -3837,20 +3808,6 @@ Blocks **1** card.
   - + {1} — Target opponent sacrifices half the creatures they control of their choice, rounded up.
   - + {2} — Target opponent discards half the cards in their hand, rounded up.
   - + {2} — Target opponent loses half their life, rounded up.
-
-</details>
-
-## sandbox-graveyard-spell-prop
-
-Blocks **1** card.
-
-- **(engine)** a verification-sandbox prop: an instant or sorcery card in player 0's graveyard, swapped in (like swap_in_legendary_body / swap_in_artifact_body) only for a card whose required card_in_graveyard target selects Instant or Sorcery, so a mandatory 'target instant or sorcery card from your graveyard' spell is castable at gate 4
-  <br>Why the existing vocabulary won't do: The DSL already says the whole card: a card_in_graveyard target (any_types Instant/Sorcery, controller you), exile as 'banked', pump of creatures you control with power {mana_value_of: {binding: banked}}, and a this_turn delayed_trigger on deals_combat_damage_to_player (controller you) whose effect is cast_copy {objects: {binding: banked}, optional: true}. It passes schema, compile and residual, then fails gate 4 'not playable in the sandbox' because OWN_GRAVEYARD_ROLES is (small_creature, flier) and no instant or sorcery card is ever in the graveyard, so a required target has no legal choice (601.2c). Marking the target optional (as mizzix_s_mastery does) would describe a different card. With OWN_GRAVEYARD_ROLES patched in memory to include noncreature_spell (Anticipate, MV 2) the same answer passes gate 4 and resolves with graveyard_size {0: 2}.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Surge to Victory** (rank 5082) — `surge_to_victory`
-  - Exile target instant or sorcery card from your graveyard.
 
 </details>
 
@@ -3965,7 +3922,6 @@ Blocks **1** card.
 
 - **Mindbreak Trap** (rank 539) — `mindbreak_trap`
   - If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.
-  - Exile any number of target spells.
 
 </details>
 
@@ -4317,20 +4273,6 @@ Blocks **1** card.
 
 - **Elementalist's Palette** (rank 4046) — `elementalist_s_palette`
   - {T}: Add {C} for each charge counter on this artifact. Spend this mana only on costs that contain {X}.
-
-</details>
-
-## x-minimum
-
-Blocks **1** card.
-
-- **(cost)** a floor on an activated ability's announced X ("X can't be 0", i.e. X >= 1), so the CHOOSE_X question for an {X} mana cost on an activated ability starts at 1 instead of 0
-  <br>Why the existing vocabulary won't do: cost_keys has x_value (a defined X, never announced) but nothing that bounds an announced X; Game's activation path calls _ask_x with a hard-coded floor of 0, and the only min_x in the engine is the cast-lock floor from player_statics.cast_lock_min_x and the fixed min_x=1 inside ops_control. Without it the land could be animated as a 0/0 and die to state-based actions, which the printed card forbids. The rest of the line is expressible with animate (power/toughness {x}, colors G, subtypes Hydra, types Creature, duration this turn)
-
-<details><summary>Cards waiting on this</summary>
-
-- **Lair of the Hydra** (rank 2447) — `lair_of_the_hydra`
-  - {X}{G}: Until end of turn, this land becomes an X/X green Hydra creature. It's still a land. X can't be 0
 
 </details>
 

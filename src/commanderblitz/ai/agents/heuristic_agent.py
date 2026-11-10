@@ -415,6 +415,19 @@ class HeuristicAgent:
         # which casts Blue Sun's Zenith for nothing. Spending everything is both
         # the better play in almost every position and exactly what the agent
         # saw before `CHOOSE_X` existed, when legality pinned X to the maximum.
+        chosen_for = decision.context.get("chosen_for")
+        if chosen_for is not None and chosen_for != seat:
+            # Another seat's trigger, its target of our choice (Bladegriff
+            # Prototype): point it away from us when the rules let us, and at
+            # our least valuable permanent when they do not.
+            def not_ours(a: Action) -> bool:
+                oid = _target_oid(a)
+                return oid in state.objects and state.objects[oid].controller != seat
+
+            elsewhere = [a for a in choices if not_ours(a)]
+            if elsewhere:
+                return max(elsewhere, key=lambda a: self._creature_value(state, a))
+            return min(choices, key=lambda a: self._creature_value(state, a))
         if purpose == "choose_x":
             if decision.context.get("loyalty_cost"):
                 # A planeswalker's -X is paid in its own loyalty, and the

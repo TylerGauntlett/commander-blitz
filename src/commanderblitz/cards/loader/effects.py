@@ -1147,6 +1147,22 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             f"moved by put_on_top with objects {{'target': ...}} alone, or by "
             f"return_spell_to_hand -- {op!r} would never reach the spell half"
         )
+    if (
+        op == "exile"
+        and isinstance(objects, Mapping)
+        and "target" in objects
+        and set(objects) != {"target"}
+        and isinstance(target_kinds, Mapping)
+        and target_kinds.get(str(objects["target"])) in ("spell", "spell_or_permanent")
+    ):
+        # "Exile target spell": `exile` takes the spell off the stack only when
+        # its selector is the target alone. Narrowed by another clause, the
+        # pool is `choose_objects`' object refs, the spell is never in it, and
+        # the card would load and exile nothing.
+        raise DslError(
+            f"{where}.objects: exile reaches a spell target only through "
+            f"objects {{'target': ...}} alone -- narrow the target spec instead"
+        )
     if op == "return_spell_to_hand":
         # "Return target **spell** to its owner's hand." The op reads
         # `ctx.target_sids`, which keeps only refs of kind `"stack"` -- so aimed
@@ -1348,6 +1364,13 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             # nothing tested it is a price nobody checked.
             raise DslError(
                 f"{where}.pay: 'x_value' belongs to an activated ability's cost, "
+                f"not to an optional payment"
+            )
+        if effect["pay"].get("x_minimum"):
+            # The floor `game._activate` puts under an activated ability's
+            # announced X; an optional payment's X is the effect's own `x`.
+            raise DslError(
+                f"{where}.pay: 'x_minimum' belongs to an activated ability's cost, "
                 f"not to an optional payment"
             )
         x_symbols = ManaCost.parse(effect["pay"].get("mana")).x_count
@@ -1676,6 +1699,14 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             )
         if "players" in effect:
             _validate_player_spec(effect["players"], f"{where}.players", target_kinds)
+    if op == "manifest" and "controller" in effect and effect["controller"] != "you":
+        # "You manifest the top card of that player's library." The only value
+        # is "you": without the key the library's player manifests it, which is
+        # every other seat a printed manifest names.
+        raise DslError(
+            f"{where}: manifest 'controller' is \"you\" -- you manifest the top "
+            f"card of another player's library; omit it for the library's player"
+        )
     if op == "manifest_dread":
         # 701.62a fixes the whole action: the top two, one manifested, the other
         # to the graveyard. A key borrowed from `manifest` or `look_at_top`
@@ -1690,6 +1721,7 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             "rest_to",
             "rest_to_bottom",
             "face_down",
+            "controller",
         ):
             if key in effect:
                 raise DslError(
@@ -1912,6 +1944,19 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             validate_selector(effect["cast_free_if"], f"{where}.cast_free_if")
         if "creature_cast_gains" in effect:
             _validate_creature_cast_gains(effect, f"{where}.creature_cast_gains")
+        if "rest_to_bottom" in effect:
+            if not isinstance(effect["rest_to_bottom"], bool):
+                raise DslError(f"{where}: exile_until 'rest_to_bottom' is true or false")
+            if effect["rest_to_bottom"] and not effect.get("cast_free"):
+                # "The exiled cards that weren't cast this way" presupposes the
+                # offer; without it no printed card bottoms an exile walk.
+                raise DslError(f"{where}: exile_until 'rest_to_bottom' needs 'cast_free'")
+            if effect["rest_to_bottom"] and "else_destination" in effect:
+                # Two homes for one uncast hit: the printed card names one.
+                raise DslError(
+                    f"{where}: exile_until takes 'rest_to_bottom' or "
+                    f"'else_destination', not both -- an uncast hit has one home"
+                )
         if "else_destination" in effect:
             if not effect.get("cast_free"):
                 # Without a cast every hit would take the "else" -- that is a
@@ -2637,6 +2682,59 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}: 'playable_free' leaves no mana cost to reduce, so "
                 f"'playable_cost_reduction' beside it discounts nothing"
+            )
+    if "playable_cast_only" in effect:
+        # "You may **cast** that card for as long as it remains exiled" (Hostage
+        # Taker) narrows a "you may play it" permission to the cast, so a land
+        # card carrying it is not a land drop (305.9). On a bare exile it would
+        # load, print its sentence and narrow nothing.
+        grants = op == "grant_playable" or (
+            op in ("exile", "look_at_top")
+            and ("playable" in effect or effect.get("playable_this_turn"))
+        )
+        if not grants:
+            raise DslError(
+                f"{where}: 'playable_cast_only' narrows a 'playable' permission to "
+                f"casting, so it needs one (exile / look_at_top with 'playable', "
+                f"or grant_playable)"
+            )
+        if effect["playable_cast_only"] is not True:
+            raise DslError(f"{where}.playable_cast_only: the only value is true")
+    if "playable_pay_life_instead" in effect:
+        # "If you cast a spell this way, pay life equal to its mana value
+        # rather than paying its mana cost" (Nashi, Moon Sage's Scion) is the
+        # alternative cost of a "you may play it" permission: on a bare exile
+        # it would load, print its sentence and charge nothing.
+        grants = op == "grant_playable" or (
+            op in ("exile", "look_at_top")
+            and ("playable" in effect or effect.get("playable_this_turn"))
+        )
+        if not grants:
+            raise DslError(
+                f"{where}: 'playable_pay_life_instead' prices the casts a 'playable' "
+                f"permission grants, so it needs one (exile / look_at_top with "
+                f"'playable', or grant_playable)"
+            )
+        if effect["playable_pay_life_instead"] is not True:
+            raise DslError(f"{where}.playable_pay_life_instead: the only value is true")
+        # 118.9a: one alternative cost per spell, and no mana cost left for a
+        # discount or a relaxation of what mana may be spent to reach.
+        clash = [
+            key
+            for key in (
+                "playable_free",
+                "playable_cost_reduction",
+                "any_color",
+                "any_type",
+                "as_adventure",
+                "as_flashback",
+            )
+            if effect.get(key)
+        ]
+        if clash:
+            raise DslError(
+                f"{where}: 'playable_pay_life_instead' replaces the mana cost with "
+                f"life, so {clash[0]!r} beside it says a second price nobody printed"
             )
     if "playable" in effect or "playable_this_turn" in effect:
         # Two spellings of one key: `playable_this_turn: true` is what every

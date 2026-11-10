@@ -45,6 +45,7 @@ from .selectors import (
     matches,
     named_hosts,
     pick_from_pool,
+    resolve_chooser,
     resolve_pool,
     select_players,
 )
@@ -72,6 +73,7 @@ LOOK_STEP_KEYS = frozenset(
         "playable",
         "any_color",
         "any_type",
+        "playable_cast_only",
         "face_down",
         "link",
     }
@@ -254,12 +256,19 @@ def op_grant_playable(ctx: EffectContext, spec: Mapping[str, Any]):
     never its creature face, and the half resolves onto its adventure in exile
     (715.3d) so the creature may be cast from there afterwards.
 
-    ``limit`` is "a spell", singular. Counted per granting permanent in the turn
-    ledger, the way a `cast_from_graveyard` permission is, so two Lockes are two
-    spells and one Locke milling three cards is still one.
+    ``limit`` is "a spell", singular -- or "you may play **one** of those
+    cards" (Nashi, Moon Sage's Scion), where a land drop spends it too. Counted
+    per resolution in the turn ledger, under a fresh group id, so two Lockes
+    are two spells, a double-striking Nashi's two triggers are two plays, and
+    one Locke milling three cards is still one.
+
+    ``playable_pay_life_instead`` is Nashi's "If you cast a spell this way, pay
+    life equal to its mana value rather than paying its mana cost": the
+    permission's alternative cost (118.9), and the only price it offers.
     """
     oids = resolve_pool(ctx, spec.get("objects"))
     limit = int(spec.get("limit", 0) or 0)
+    group = ctx.state.alloc_oid() if limit and oids else None
     any_type = bool(spec.get("any_type"))
     for oid in oids:
         obj = ctx.state.objects.get(oid)
@@ -269,7 +278,7 @@ def op_grant_playable(ctx: EffectContext, spec: Mapping[str, Any]):
         obj.playable_turn = ctx.state.turn
         obj.playable_duration = playable_duration_of(spec) or "this_turn"
         obj.playable_condition = spec.get("playable_condition")
-        obj.playable_group = ctx.source_oid if limit else None
+        obj.playable_group = group
         # "…gains **flashback**", rather than a bare permission to cast it: the
         # card is exiled as it resolves, so the grant is worth one cast per card
         # rather than as many as the turn's mana allows.
@@ -290,6 +299,11 @@ def op_grant_playable(ctx: EffectContext, spec: Mapping[str, Any]):
         # Augurelt): a discount on this permission's casts only, read by
         # `casting.permission_cost_reduction` while the permission is live.
         obj.playable_cost_reduction = int(spec.get("playable_cost_reduction", 0) or 0)
+        # "…pay life equal to its mana value rather than paying its mana
+        # cost" (Nashi): the permission's own price, read by the same cast path.
+        obj.playable_pay_life = bool(spec.get("playable_pay_life_instead"))
+        # "You may **cast** …" rather than "play": no land drop out of it.
+        obj.playable_cast_only = bool(spec.get("playable_cast_only"))
         record_playable_source(ctx.state, oid, ctx.source_oid)
 
 
@@ -722,6 +736,10 @@ def _move_found(
                 obj.playable_any_color = bool(spec.get("any_color"))
                 obj.playable_free = bool(spec.get("playable_free"))
                 obj.playable_cost_reduction = int(spec.get("playable_cost_reduction", 0) or 0)
+                obj.playable_pay_life = bool(spec.get("playable_pay_life_instead"))
+                # "You may **cast** that card" (Gonti, Thief of Sanity): a
+                # land among them is exiled and stays there, never played.
+                obj.playable_cast_only = bool(spec.get("playable_cast_only"))
                 record_playable_source(ctx.state, oid, ctx.source_oid)
         # "Exile the top card of your library **face down**." Necropotence.
         # Face-down here is *privacy*, not the 707 morph identity `face_down`
@@ -783,6 +801,16 @@ def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
     per-activation, so a second activation's return would sweep up the first
     one's card too. The binding is per-resolution, which is what the printed
     "that card" means.
+
+    **Who picks** is the selector's ``chooser`` clause, and its default is the
+    effect's controller whoever owns the library -- rule 109.5: Siphon Insight
+    and Gonti, Lord of Luxury look at *target opponent's* library and "you"
+    exile one of them. Passing the library's seat as the chooser is the trap:
+    on an opponent's library it hands them the pick, and they bin the best
+    card for you. ``"owner"`` is the printed "target player looks at the top
+    … and puts one into their hand"; a player spec is "an opponent chooses".
+    A ``destinations`` step reads its own selector's clause first, then the
+    window's.
 
     ``face_down`` is exile without showing it to anybody, and only exile: see
     :func:`_move_found`.
@@ -846,16 +874,25 @@ def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
                 want = max(0, min(int(step.get("count", 1)), len(offered)))
                 if not want:
                     continue
+                # The pool branch's chooser, read the same way: a step's own
+                # clause, else the window's, else "you" (rule 109.5).
+                chooser_spec = (step_selector or {}).get("chooser", selector.get("chooser"))
                 where = DESTINATIONS[step.get("to", "hand")]
-                picked = yield from ask_objects(
-                    ctx,
-                    f"Put on {step.get('to', 'hand')}",
-                    offered,
-                    0 if step.get("up_to") else want,
-                    want,
-                    pid,
-                    "look_at_top",
-                )
+                if chooser_spec == "none":
+                    picked = offered[:want]
+                else:
+                    chooser = resolve_chooser(ctx, offered, chooser_spec)
+                    if chooser is None:
+                        continue
+                    picked = yield from ask_objects(
+                        ctx,
+                        f"Put on {step.get('to', 'hand')}",
+                        offered,
+                        0 if step.get("up_to") else want,
+                        want,
+                        chooser,
+                        "look_at_top",
+                    )
                 # The step carries its own destination flags -- `to` reads as
                 # `destination` for `_move_found`'s `library_top` test, and
                 # `playable_this_turn` belongs to the exile step alone.
@@ -873,7 +910,7 @@ def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
             bound.extend(taken)
         elif pool:
             picked = yield from pick_from_pool(
-                ctx, pool, selector, "Look at the top of your library", "look_at_top", pid
+                ctx, pool, selector, "Look at the top of the library", "look_at_top"
             )
             if cast_free:
                 taken = set((yield from _cast_from_window(ctx, pid, picked)))
@@ -2037,14 +2074,19 @@ def _cast_paying_mana_cost(ctx: EffectContext, pid: int, oid: int, *, exiles: bo
     min_x = cast_lock_min_x(state, pid, card)
     if min_x is None:
         return False
+    if card.mana_cost.x_count:
+        # "X can't be 0" floors the announcement this path asks.
+        min_x = max(min_x, card.x_minimum)
 
     cost = card.mana_cost
-    purpose = spell_purpose(card)
+    purpose = spell_purpose(card, caster=pid, owner=obj.owner)
 
     def extra_for(targets) -> int:
         # The zone the card is cast from -- graveyard, exile or wherever the
         # resolving effect found it -- since it has not reached the stack yet.
-        return -cost_reduction(state, pid, card, targets, zone=zone_of(state, oid))
+        return -cost_reduction(
+            state, pid, card, targets, zone=zone_of(state, oid), owner=obj.owner
+        )
 
     def ceiling(extra: int) -> int:
         """The largest payable X, or -1 when nothing is payable at all."""
@@ -2196,14 +2238,18 @@ def cast_copy_paying(ctx: EffectContext, pid: int, oid: int, price: str):
     if player_cant_cast_while_resolving(state, pid, card):
         return False
     min_x = cast_lock_min_x(state, pid, card)
-    if min_x is None or min_x > 0:
-        # A mana-value floor the copy cannot meet: X is 0 under this price.
+    if min_x is None or min_x > 0 or (card.x_minimum and card.mana_cost.x_count):
+        # A mana-value floor the copy cannot meet, or a printed "X can't be
+        # 0": X is 0 under this price.
         return False
     cost = ManaCost.parse(price)
-    purpose = spell_purpose(card)
+    # A copy is owned by its caster (707.10): never a spell they don't own.
+    purpose = spell_purpose(card, caster=pid, owner=pid)
 
+    # A copy of a card cast is owned by its caster (707.10), so "spells you
+    # cast but don't own" never discounts one, whoever owns the card copied.
     def payable(targets) -> bool:
-        extra = -cost_reduction(state, pid, card, targets)
+        extra = -cost_reduction(state, pid, card, targets, owner=pid)
         return can_pay_mana(state, pid, cost, extra_generic=extra, purpose=purpose)
 
     tuples = [
@@ -2224,7 +2270,7 @@ def cast_copy_paying(ctx: EffectContext, pid: int, oid: int, price: str):
     ):
         return False
     targets = yield from _ask_cast_targets(ctx, pid, card.name, tuples)
-    extra = -cost_reduction(state, pid, card, targets)
+    extra = -cost_reduction(state, pid, card, targets, owner=pid)
     modes, mode_refs = free_cast_modes(state, pid, card, oid)
     template = StackItem(
         sid=-1, kind="spell", controller=pid, def_id=obj.def_id, oid=oid, modes=modes
@@ -2493,10 +2539,10 @@ def op_exile_until(ctx: EffectContext, spec: Mapping[str, Any]):
     value is 8 or less. If you don't, put that card into your hand."
     — Breaching Dragonstorm.
 
-    Cascade's walk with `reveal_until`'s selector stop test, and the one walk
-    that **leaves what it exiled in exile**. That is the printed sentence: it
-    never says to put the walked-past cards anywhere, so they stay where the
-    scan put them. `cascade` and `discover` both bottom them, and `reveal_until`
+    Cascade's walk with `reveal_until`'s selector stop test, and by default the
+    one walk that **leaves what it exiled in exile**. That is the printed
+    sentence: it never says to put the walked-past cards anywhere, so they stay
+    where the scan put them unless ``rest_to_bottom`` prints the cascade tail. `cascade` and `discover` both bottom them, and `reveal_until`
     never moves them out of the library at all -- each is a different card.
 
     - ``objects`` is the stop test, tested as a card in the library (it is still
@@ -2524,6 +2570,14 @@ def op_exile_until(ctx: EffectContext, spec: Mapping[str, Any]):
       step, sacrifice this creature."" (Strago and Relm) is
       ``{"keywords": ["haste"], "abilities": [0]}``, ``abilities`` indexing
       this card's ``grantable_abilities``. See `cast_rider`.
+    - ``rest_to_bottom`` is "then put the exiled cards that weren't cast this
+      way on the bottom of that library in a random order" (Chaos Wand,
+      Dazzling Sphinx). After the offer, every card this walk exiled that is
+      still in exile -- the walked-past cards, and the hit unless it reached
+      the stack -- goes to the bottom of the walked library in one random
+      order (`_bottom_in_random_order`), each library's cards to its own
+      bottom under ``each_player``. A walk that runs the library out bottoms
+      everything it exiled. Without it they all stay in exile.
     - ``as`` records the hits, cast or not, as a list -- one oid per walked
       library that found one; an exhausted library adds nothing, so a single
       walk that finds nothing binds the empty list.
@@ -2542,17 +2596,21 @@ def op_exile_until(ctx: EffectContext, spec: Mapping[str, Any]):
     for pid in select_players(ctx, spec.get("player", "you")):
         library = ctx.state.players[pid].library
         hit: int | None = None
-        walked = 0
+        walked: list[int] = []
         while library:
             oid = library[0]
             found = _matches_library(ctx, oid, selector)
             move_object(ctx.state, oid, Zone.EXILE, cause="exile_until")
-            walked += 1
+            walked.append(oid)
             if found:
                 hit = oid
                 break
-        ctx.state.emit("exile_until", player=pid, source=ctx.source_oid, exiled=walked)
+        ctx.state.emit(
+            "exile_until", player=pid, source=ctx.source_oid, exiled=len(walked)
+        )
         if hit is None:
+            if spec.get("rest_to_bottom"):
+                _bottom_in_random_order(ctx, pid, walked)
             continue
         hits.append(hit)
         if binding:
@@ -2569,6 +2627,20 @@ def op_exile_until(ctx: EffectContext, spec: Mapping[str, Any]):
             )
         if not cast and (where := spec.get("else_destination")):
             move_object(ctx.state, hit, DESTINATIONS[str(where)], cause="exile_until")
+        if spec.get("rest_to_bottom"):
+            # "The exiled cards that weren't cast this way": the cast hit is on
+            # the stack, and anything else that left exile meanwhile (a commander
+            # sent to the command zone) is no longer among the exiled cards.
+            _bottom_in_random_order(
+                ctx,
+                pid,
+                [
+                    oid
+                    for oid in walked
+                    if (obj := ctx.state.objects.get(oid)) is not None
+                    and obj.zone is Zone.EXILE
+                ],
+            )
 
 
 @register("suspend")

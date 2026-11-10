@@ -1700,6 +1700,11 @@ def deal_combat_damage(
     # What each source actually dealt, after prevention -- "deals combat damage"
     # is about damage that was dealt, and a fully prevented blow is none.
     dealt: dict[int, int] = {}
+    # The sources that dealt combat damage to a **player**, for the per-source
+    # event to say so: a doubler whose cause is "a creature dealing combat
+    # damage to a player" (Felix Five-Boots) doubles a "whenever this creature
+    # deals combat damage" trigger only on a swing that reached a seat.
+    hit_player: set[int] = set()
     # Where each blow lands. A hit on a seat that Heroic Sacrifice sends to the
     # chosen creature (614.9) was never dealt to a player, so the monarch's
     # trigger and "deal combat damage to a player" must not see it; asked just
@@ -1708,7 +1713,8 @@ def deal_combat_damage(
     for assignment in assignments:
         amount = 0
         if assignment.to_player is not None:
-            if (redirect := damage_redirect(state, pid=assignment.to_player)) is not None:
+            redirect = damage_redirect(state, pid=assignment.to_player)
+            if redirect is not None:
                 landed.append(replace(assignment, to_player=None, to_object=redirect.to))
             else:
                 landed.append(assignment)
@@ -1716,6 +1722,8 @@ def deal_combat_damage(
                 state, assignment.to_player, assignment.amount, assignment.source,
                 is_combat=True, batch=batch,
             )
+            if amount and redirect is None and assignment.source is not None:
+                hit_player.add(assignment.source)
         else:
             landed.append(assignment)
             if assignment.to_object is not None:
@@ -1728,7 +1736,7 @@ def deal_combat_damage(
 
     _monarch_transfer(state, monarch_before, landed)
     _fire_damage_batch(state, landed)
-    _fire_per_source(state, dealt)
+    _fire_per_source(state, dealt, hit_player)
 
     if first_strike_step:
         combat.first_strike_done = True
@@ -2127,7 +2135,7 @@ def end_combat(state: GameState) -> None:
     ]
 
 
-def _fire_per_source(state: GameState, dealt: dict[int, int]) -> None:
+def _fire_per_source(state: GameState, dealt: dict[int, int], hit_player: set[int]) -> None:
     """"Whenever this creature deals combat damage, …" -- once per creature per
     combat damage step, **whatever it hit and however many things**.
 
@@ -2144,6 +2152,8 @@ def _fire_per_source(state: GameState, dealt: dict[int, int]) -> None:
     step, so first strike and regular damage are two firings (510.4), as for
     every other combat damage event. ``source`` is the dealer and there is no
     ``oid`` key, so `triggers._subject_oid` falls through to it.
+    ``to_player`` says whether any of that damage was dealt to a player, which
+    is what a `cause_combat_damage_to_player` doubler asks of it.
     """
     for source_oid in sorted(dealt):
         source = state.objects.get(source_oid)
@@ -2153,4 +2163,5 @@ def _fire_per_source(state: GameState, dealt: dict[int, int]) -> None:
             player=None if source is None else source.controller,
             source=source_oid,
             amount=dealt[source_oid],
+            to_player=source_oid in hit_player,
         )

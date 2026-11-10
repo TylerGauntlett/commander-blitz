@@ -87,11 +87,13 @@ def _expire_permissions(state: GameState, duration: str, *, after_grant_turn: bo
         obj.playable_any_color = False
         obj.playable_exiles = False
         obj.playable_as_adventure = False
+        obj.playable_cast_only = False
         # The airbend price rides on the permission, so it goes when the
         # permission does -- a card left in exile carrying a {2} nobody may
         # spend would be a live-looking field on a dead grant.
         obj.playable_alt_cost = None
         obj.playable_cost_reduction = 0
+        obj.playable_pay_life = False
 
 
 def begin_step(state: GameState) -> Generator[Any, list[int]]:

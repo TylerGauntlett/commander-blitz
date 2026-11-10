@@ -17,12 +17,12 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Conditions](#conditions) | 34 |
 | [Trigger events](#trigger-events) | 54 |
 | [Trigger filters](#trigger-filters) | 37 |
-| [Static effects](#static-effects) | 96 |
-| [Player-wide statics](#player-wide-statics) | 46 |
+| [Static effects](#static-effects) | 97 |
+| [Player-wide statics](#player-wide-statics) | 47 |
 | [Grantable statics](#grantable-statics) | 43 |
 | [Cost reduction](#cost-reduction) | 8 |
-| [Ability costs](#ability-costs) | 32 |
-| [Card-level costs](#card-level-costs) | 33 |
+| [Ability costs](#ability-costs) | 34 |
+| [Card-level costs](#card-level-costs) | 34 |
 | [Keywords](#keywords) | 46 |
 | [Card types and supertypes](#card-types-and-supertypes) | 12 |
 | [Durations](#durations) | 6 |
@@ -31,7 +31,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Static conditions](#static-conditions) | 14 |
 | [Static values](#static-values) | 20 |
 | [Spell filter keys](#spell-filter-keys) | 12 |
-| [Spell cost-reduction filter keys](#spell-cost-reduction-filter-keys) | 4 |
+| [Spell cost-reduction filter keys](#spell-cost-reduction-filter-keys) | 5 |
 | [Cost-reduction filter keys](#cost-reduction-filter-keys) | 2 |
 | [Mana rider ops](#mana-rider-ops) | 7 |
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
@@ -54,13 +54,13 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `discard` | Cards | yes | A player discards N cards, chosen or at random, from the hand or only the cards in it matching `selector`; `as` records them. | [discard: up_to, selector and as](card-dsl.md#discard-up_to-selector-and-as) |
 | `discover` | Cards | yes | Discover N: exile until a nonland of mana value N or less; cast it free or take it. | [Discover — cascade's walk, N or less, cast or hand](card-dsl-cookbook.md#discover--cascades-walk-n-or-less-cast-or-hand) |
 | `draw` | Cards | yes | A player draws N cards; `as` records who drew. | [draw's as — "each opponent who drew a card this way"](card-dsl-cookbook.md#draws-as--each-opponent-who-drew-a-card-this-way) |
-| `exile_until` | Cards | yes | Exile from the top of a player's library until a card matches; the rest stay exiled, the hit may be cast free by you, a creature with a `creature_cast_gains` rider. | [exile_until — a walk that leaves its cards in exile](card-dsl-cookbook.md#exile_until--a-walk-that-leaves-its-cards-in-exile) |
+| `exile_until` | Cards | yes | Exile from the top of a player's library until a card matches; the rest stay exiled or, with `rest_to_bottom`, go to that library's bottom in a random order; the hit may be cast free by you, a creature with a `creature_cast_gains` rider. | [exile_until — a walk that leaves its cards in exile](card-dsl-cookbook.md#exile_until--a-walk-that-leaves-its-cards-in-exile) |
 | `explore` | Cards |  | Explore: reveal the top card, land to hand or a +1/+1 counter. | [Explore](card-dsl-cookbook.md#explore) |
 | `grant_graveyard_cast` | Cards |  | Permit casting matching spells from graveyards until end of turn. | [Casting out of every graveyard, until end of turn](card-dsl-cookbook.md#casting-out-of-every-graveyard-until-end-of-turn) |
-| `grant_playable` | Cards |  | Permit playing cards from a zone that normally forbids it, for a duration; `as_adventure` narrows it to the card's Adventure half; `playable_cost_reduction` discounts the casts made under it. | [How long "you may play it" lasts](card-dsl-cookbook.md#how-long-you-may-play-it-lasts) |
+| `grant_playable` | Cards |  | Permit playing cards from a zone that normally forbids it, for a duration; `as_adventure` narrows it to the card's Adventure half; `playable_cost_reduction` discounts the casts made under it; `playable_pay_life_instead` prices them in life equal to their mana value instead; `limit` caps one resolution's cards at that many plays; `playable_cast_only` narrows it to casting, so no land is played. | [How long "you may play it" lasts](card-dsl-cookbook.md#how-long-you-may-play-it-lasts) |
 | `hideaway` | Cards |  | Hideaway: look at the top N, exile one face down, the rest to the bottom. | [Hideaway — "that one, from there"](card-dsl-cookbook.md#hideaway--that-one-from-there) |
 | `look_at_hand` | Cards |  | Look at a player's hand (private: only you see it). | [Effect ops](card-dsl.md#effect-ops) |
-| `look_at_top` | Cards | yes | Look at the top N cards; take some, send the rest somewhere. | [Effect ops](card-dsl.md#effect-ops) |
+| `look_at_top` | Cards | yes | Look at the top N cards of any library; you take some (`chooser` says otherwise), send the rest somewhere. | [Effect ops](card-dsl.md#effect-ops) |
 | `mill` | Cards | yes | Put the top N cards of a library into its graveyard. | [Effect ops](card-dsl.md#effect-ops) |
 | `play_exiled` | Cards | yes | Cast the exiled card without paying its mana cost; `exiles` exiles the spell instead of putting it into a graveyard; `as` records what was cast. | ["You may play the exiled card this turn" — impulse draw](card-dsl-cookbook.md#you-may-play-the-exiled-card-this-turn--impulse-draw) |
 | `put_on_top` | Cards | yes | Put objects on top (or bottom) of their owners' libraries; `from_top` is the depth. | [Effect ops](card-dsl.md#effect-ops) |
@@ -103,7 +103,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `empower` | Board |  | Empower Jace N: N loyalty on a Jace token you control, creating one first if none. | [empower — "Empower Jace N"](card-dsl-cookbook.md#empower--empower-jace-n) |
 | `encode` | Board |  | Cipher: exile the spell encoded on a creature. | [Cipher — the third direction an exile link can point](card-dsl-cookbook.md#cipher--the-third-direction-an-exile-link-can-point) |
 | `exchange_control` | Board |  | Exchange control of two permanents. | [Exchanging control](card-dsl-cookbook.md#exchanging-control) |
-| `exile` | Board | yes | Exile objects; `link`/`playable` tie them to the source or a permission; `playable_condition` shuts that permission on some turns. | [Effect ops](card-dsl.md#effect-ops) |
+| `exile` | Board | yes | Exile objects, or a spell a `{"target": …}` selector names off the stack without countering it; `link`/`playable` tie them to the source or a permission; `playable_condition` shuts that permission on some turns; `playable_cast_only` narrows it to casting. | [Effect ops](card-dsl.md#effect-ops) |
 | `exile_and_return` | Board |  | Exile permanents, then return them (transformed, under an owner). | ["Exile it, then return it transformed under its owner's control"](card-dsl-cookbook.md#exile-it-then-return-it-transformed-under-its-owners-control) |
 | `freeze` | Board |  | Tap and it doesn't untap during its controller's next untap step. | [Effect ops](card-dsl.md#effect-ops) |
 | `gain_control` | Board | yes | Gain control of permanents, for a duration (`as_long_as_you_control_source` included) or for good. | [Gaining control of a permanent](card-dsl-cookbook.md#gaining-control-of-a-permanent) |
@@ -112,7 +112,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `haunt` | Board |  | Exile the source haunting a creature. | [Haunt — the exile link pointing the other way](card-dsl-cookbook.md#haunt--the-exile-link-pointing-the-other-way) |
 | `incubate` | Board | yes | Incubate N: create a double-faced Incubator artifact token with N +1/+1 counters on it, which transforms for {2} into a 0/0 Phyrexian artifact creature. | [incubate — "Incubate N"](card-dsl-cookbook.md#incubate--incubate-n) |
 | `lock_abilities` | Board |  | Its activated abilities can't be activated this turn. | ["Its activated abilities can't be activated this turn"](card-dsl-cookbook.md#its-activated-abilities-cant-be-activated-this-turn) |
-| `manifest` | Board |  | Manifest the top card of a library face down as a 2/2. | [Face-down permanents — morph, megamorph and manifest](card-dsl-cookbook.md#face-down-permanents--morph-megamorph-and-manifest) |
+| `manifest` | Board |  | Manifest the top card of a library face down as a 2/2; `controller: "you"` manifests another player's under yours. | [Face-down permanents — morph, megamorph and manifest](card-dsl-cookbook.md#face-down-permanents--morph-megamorph-and-manifest) |
 | `manifest_dread` | Board | yes | Manifest dread: look at the top two cards, manifest one, put the other into the graveyard; `as` records the manifest. | [Manifest dread](card-dsl-cookbook.md#manifest-dread) |
 | `meld` | Board |  | Meld the source with its named partner into one permanent. | [Meld — mutate's merged permanent, with the pair fixed by the card](card-dsl-cookbook.md#meld--mutates-merged-permanent-with-the-pair-fixed-by-the-card) |
 | `monstrosity` | Board |  | Monstrosity N: become monstrous with N +1/+1 counters. | [Monstrosity, and holding creatures down](card-dsl-cookbook.md#monstrosity-and-holding-creatures-down) |
@@ -217,7 +217,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `noop` | Control flow |  | Do nothing (a placeholder for text with no effect). | [Effect ops](card-dsl.md#effect-ops) |
 | `repeat` | Control flow |  | Run effects N times. | [Effect ops](card-dsl.md#effect-ops) |
 | `repeat_while` | Control flow |  | Run effects while a condition holds. | [Effect ops](card-dsl.md#effect-ops) |
-| `snapshot` | Control flow | yes | Remember what objects are now, for a later value or spec. | [sacrifice's snapshot — what the creature had](card-dsl.md#sacrifices-snapshot--what-the-creature-had) |
+| `snapshot` | Control flow | yes | Remember what an object or a target spell is now, for a later value or spec. | [sacrifice's snapshot — what the creature had](card-dsl.md#sacrifices-snapshot--what-the-creature-had) |
 
 ## Selectors
 
@@ -238,7 +238,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `binding` | Exactly the objects a named `as` recorded. | [Recording what an op consumed or produced — "this way", "the token"](card-dsl.md#recording-what-an-op-consumed-or-produced--this-way-the-token) |
 | `blocked` | An attacker that is blocked (or unblocked) once blockers are declared (509.1h); neither before, nor for a non-attacker. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `blocking` | Is blocking. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
-| `chooser` | Who picks: `controller`, `owner` or `none`. | [chooser — when somebody else picks the mode](card-dsl-cookbook.md#chooser--when-somebody-else-picks-the-mode) |
+| `chooser` | Who picks: `controller`, `owner`, `none` or a player spec; on a triggered ability's one target spec, the player who declares the target. | [chooser — when somebody else picks the mode](card-dsl-cookbook.md#chooser--when-somebody-else-picks-the-mode) |
 | `colorless` | Has no colors (105.2c); true only. | ["Colorless" — colorless](card-dsl.md#colorless--colorless) |
 | `colors` | Has one of these colors. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `controller` | Controlled by `you`/`opponent`/`any` or a player spec. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
@@ -618,6 +618,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `play_lands_from_library_top` | yes |  | The player may play lands from the top of their library. | [Static abilities](card-dsl.md#static-abilities) |
 | `player_hexproof` | yes |  | The player has hexproof: opponents' spells and abilities can't target them. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `player_protection` | yes |  | The player has protection from a quality: damage, targeting and enchanting by it. | [Protection](card-dsl-cookbook.md#protection) |
+| `plot_cost_reduction` | yes |  | Plotting a card from the player's hand costs N less generic mana. | [Plot](card-dsl.md#plot) |
 | `prevent_all_but` |  | yes | Prevent all but N of each instance of damage to matching permanents. | [Prevent all but N of that damage](card-dsl-cookbook.md#prevent-all-but-n-of-that-damage) |
 | `prevent_damage` |  | yes | Prevent damage dealt to matching permanents (absorb N, all of it, or all of it as that many +1/+1 counters) or N of each damage to a seat from a matching dealer. | [Absorb, which is not protection with a number](card-dsl-cookbook.md#absorb-which-is-not-protection-with-a-number) |
 | `protection` |  | yes | Matching permanents have protection from a quality. | [Protection](card-dsl-cookbook.md#protection) |
@@ -689,6 +690,7 @@ The static effects that describe the *player* rather than a characteristic, and 
 | `play_lands_from_library_top` | The player may play lands from the top of their library. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `player_hexproof` | The player has hexproof: opponents' spells and abilities can't target them. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `player_protection` | The player has protection from a quality: damage, targeting and enchanting by it. | [Protection](card-dsl-cookbook.md#protection) |
+| `plot_cost_reduction` | Plotting a card from the player's hand costs N less generic mana. | [Plot](card-dsl.md#plot) |
 | `replace_draw` | If the player would draw a card, draw more instead. | ["If you would draw a card, draw two cards instead"](card-dsl-cookbook.md#if-you-would-draw-a-card-draw-two-cards-instead) |
 | `replace_empty_draw` | If the player would draw from an empty library, something else happens. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `replace_life_gain` | If the player would gain life, they gain more instead. | ["If you would gain life, you gain twice that much life instead"](card-dsl-cookbook.md#if-you-would-gain-life-you-gain-twice-that-much-life-instead) |
@@ -791,6 +793,7 @@ Every field an activated ability's `cost` (or a `may`'s `pay`) may carry -- the 
 | `pay_energy` | Pay N energy ({E}); inside `may`, a value expression, or 1 counted by `any_amount`. | ["You may pay one or more {E}" — a variable energy payment](card-dsl-cookbook.md#you-may-pay-one-or-more-e--a-variable-energy-payment) |
 | `pay_life` | Pay N life, or a value expression (inside `may`, read with the effect's bindings). | ["You may pay that much life. If you do…"](card-dsl-cookbook.md#you-may-pay-that-much-life-if-you-do) |
 | `pay_life_x` | Pay X life, X announced. | [Costs](card-dsl.md#costs) |
+| `process` | Put N cards opponents own from exile into their owners' graveyards (the Eldrazi processors). | [process — cards an opponent owns, from exile to a graveyard](card-dsl.md#process--cards-an-opponent-owns-from-exile-to-a-graveyard) |
 | `put_counters` | Put N counters of a kind on the source. | [put_counters — counters on the source, paid on activation](card-dsl.md#put_counters--counters-on-the-source-paid-on-activation) |
 | `remove_counters` | Remove N counters of a kind from the source. | [Costs](card-dsl.md#costs) |
 | `remove_counters_from_among` | Remove N counters of any kinds from among other permanents. | [remove_counters_from_among — counters of any kind, off other permanents](card-dsl.md#remove_counters_from_among--counters-of-any-kind-off-other-permanents) |
@@ -803,6 +806,7 @@ Every field an activated ability's `cost` (or a `may`'s `pay`) may carry -- the 
 | `times` | Pay the whole cost that many times (cumulative upkeep). | [Costs](card-dsl.md#costs) |
 | `untap` | {Q}: untap the source. | [Costs](card-dsl.md#costs) |
 | `untap_permanents` | Untap N other permanents. | [Costs](card-dsl.md#costs) |
+| `x_minimum` | The least X an activated ability may announce ("X can't be 0"). | [x_minimum — X can't be 0](card-dsl.md#x_minimum--x-cant-be-0) |
 | `x_value` | X fixed by the card rather than announced. | [x_value — an X the card fixes, not the player](card-dsl.md#x_value--an-x-the-card-fixes-not-the-player) |
 
 ## Card-level costs
@@ -830,7 +834,7 @@ The alternative and additional costs that live on the *card* rather than inside 
 | `gift` | The gift promised (a noun phrase). | [Gift — a promise made to one opponent, for nothing](card-dsl-cookbook.md#gift--a-promise-made-to-one-opponent-for-nothing) |
 | `graveyard_additional_cost` | Castable from the graveyard at the printed price plus this cost (retrace's slot). | [Retrace and "by discarding a card"](card-dsl-cookbook.md#retrace-and-by-discarding-a-card) |
 | `impending` | Impending N and its cost. | [Impending — a creature that is not one until it counts down](card-dsl-cookbook.md#impending--a-creature-that-is-not-one-until-it-counts-down) |
-| `kicker` | Kicker cost. | [Kicker](card-dsl-cookbook.md#kicker) |
+| `kicker` | Kicker cost, `{X}` allowed. | [Kicker](card-dsl-cookbook.md#kicker) |
 | `madness` | Madness cost. | [Dredge, madness and miracle — replacements that stop to ask](card-dsl-cookbook.md#dredge-madness-and-miracle--replacements-that-stop-to-ask) |
 | `mayhem` | Mayhem cost: castable from the graveyard if discarded this turn. | [Mayhem](card-dsl-cookbook.md#mayhem) |
 | `morph` | Morph cost. | [Face-down permanents — morph, megamorph and manifest](card-dsl-cookbook.md#face-down-permanents--morph-megamorph-and-manifest) |
@@ -844,6 +848,7 @@ The alternative and additional costs that live on the *card* rather than inside 
 | `strive` | Strive: more per target beyond the first. | [Strive](card-dsl-cookbook.md#strive) |
 | `suspend` | Suspend N and its cost. | [Alternative ways to play a card](card-dsl-cookbook.md#alternative-ways-to-play-a-card) |
 | `warp` | Warp cost. | [Alternative ways to play a card](card-dsl-cookbook.md#alternative-ways-to-play-a-card) |
+| `x_minimum` | The least X the spell may be cast for, on any line whose cost has `{X}` ("X can't be 0"). | [x_minimum — X can't be 0](card-dsl.md#x_minimum--x-cant-be-0) |
 
 ## Keywords
 
@@ -1065,6 +1070,7 @@ Keys a `spell_cost_reduction`'s `affects_spells` accepts beyond the spell filter
 | `exclude_self` | Not this card ("other" Dragon spells) -- the eminence case. | [Eminence — a static that works from the command zone](card-dsl-cookbook.md#eminence--a-static-that-works-from-the-command-zone) |
 | `from_zone` | Cast from this zone, or one of a list ("from your graveyard"). | [A discount that asks where the spell is cast from](card-dsl-cookbook.md#a-discount-that-asks-where-the-spell-is-cast-from) |
 | `not_from_zone` | Not cast from this zone or list ("other than your hand"). | [A discount that asks where the spell is cast from](card-dsl-cookbook.md#a-discount-that-asks-where-the-spell-is-cast-from) |
+| `not_owned` | The caster does not own the spell ("spells you cast but don't own"). | [A discount that asks who owns the spell](card-dsl-cookbook.md#a-discount-that-asks-who-owns-the-spell) |
 | `power` | The spell's power as cast: printed, or a `*/*`'s CDA. | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
 
 ## Cost-reduction filter keys

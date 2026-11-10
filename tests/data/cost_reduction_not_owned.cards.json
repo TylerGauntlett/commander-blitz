@@ -1,0 +1,44 @@
+{
+  "_comment": "Shapes for tests/unit/costs/test_cost_reduction_not_owned.py. t_nod_thief is Gonti, Canny Acquisitor's first line on a vanilla 2/2; t_nod_cane is t_cane_copy's cast_copy at {4}, so a {4} copy of an opponent's card has generic mana for a discount to reach. The spells priced are t_czr_relic ({4} artifact) and t_czr_flare ({3}{R} sorcery, flashback {3}{R}).",
+  "cards": [
+    {
+      "id": "t_nod_thief",
+      "name": "Test Unowned Discount",
+      "oracle_text": "Spells you cast but don't own cost {1} less to cast.",
+      "mana_cost": "{2}",
+      "types": ["Creature"],
+      "subtypes": ["Human"],
+      "colors": [],
+      "color_identity": [],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Spells you cast but don't own cost {1} less to cast.",
+          "effect": "spell_cost_reduction",
+          "affects_spells": {"controller": "you", "not_owned": true},
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "id": "t_nod_cane",
+      "name": "Test Unowned Copy Lesson",
+      "oracle_text": "Exile target instant or sorcery card from an opponent's graveyard. Copy it. You may cast the copy by paying {4} rather than paying its mana cost.",
+      "mana_cost": "{U}",
+      "types": ["Sorcery"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "targets": [
+        {"id": "t1", "kind": "card_in_graveyard", "count": 1,
+         "selector": {"zone": "graveyard", "controller": "opponent",
+                      "any_types": ["Instant", "Sorcery"]}}
+      ],
+      "spell_effects": [
+        {"op": "exile", "objects": {"target": "t1"}, "as": "banked"},
+        {"op": "cast_copy", "objects": {"binding": "banked"}, "cost": "{4}"}
+      ]
+    }
+  ]
+}

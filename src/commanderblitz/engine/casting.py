@@ -22,6 +22,7 @@ from .costs import (
     commander_cost,
     life_cost,
     mana_sources,
+    process_pool,
     spell_purpose,
     zone_of,
 )
@@ -221,6 +222,15 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
             )
             continue
         if card.is_land or not _timing_ok(state, pid, card, sorcery_speed):
+            continue
+        # "If you cast a spell this way, pay life equal to its mana value
+        # rather than paying its mana cost" -- Nashi, Moon Sage's Scion. The
+        # permission's own alternative cost, and not an option beside the
+        # printed line: "this way" is the only way the permission reaches, so
+        # the printed price and every other alternative cost (118.9a) are
+        # withheld and only the life lines are offered.
+        if obj.playable_pay_life:
+            out.extend(_pay_life_lines(state, pid, oid, card))
             continue
         out.extend(
             _cast_options(
@@ -597,6 +607,7 @@ def _kicked_lines(
     *,
     extra_generic: int,
     own_specs_only: bool = False,
+    granted_cost: tuple[tuple[str, int], ...] = (),
 ) -> list[Action]:
     """The kicked cast line, on a card with a ``kicker``.
 
@@ -631,7 +642,14 @@ def _kicked_lines(
             defer=deferred_target_spec(state, card, kicked_specs),
         )
     return _cast_variant(
-        state, pid, oid, card, kicked_tuples, extra_generic=extra_generic, kicked=True
+        state,
+        pid,
+        oid,
+        card,
+        kicked_tuples,
+        extra_generic=extra_generic,
+        kicked=True,
+        granted_cost=granted_cost,
     )
 
 
@@ -643,6 +661,7 @@ def _gift_lines(
     tuples,
     *,
     extra_generic: int,
+    granted_cost: tuple[tuple[str, int], ...] = (),
 ) -> list[Action]:
     """One promised cast line per opponent, or none for a card with no gift.
 
@@ -669,9 +688,88 @@ def _gift_lines(
     out: list[Action] = []
     for promisee in state.opponents(pid):
         out += _cast_variant(
-            state, pid, oid, card, tuples, extra_generic=extra_generic, gift_to=promisee
+            state,
+            pid,
+            oid,
+            card,
+            tuples,
+            extra_generic=extra_generic,
+            gift_to=promisee,
+            granted_cost=granted_cost,
         )
     return out
+
+
+def _pay_life_lines(state: GameState, pid: int, oid: int, card: CardDef) -> list[Action]:
+    """Every cast line a `playable_pay_life_instead` permission offers.
+
+    "If you cast a spell this way, pay life equal to its mana value rather than
+    paying its mana cost" -- Nashi, Moon Sage's Scion. An alternative cost
+    (118.9) the permission carries, priced as the `granted_cost` Nissa's energy
+    line already rides on, so `Game._cast` charges exactly what was offered.
+
+    - **X is 0** (107.3b): the mana cost is not paid, so nothing announces X,
+      and the life is the mana value with X at 0 -- ``card.mana_value``.
+    - **Additional costs are still owed** (118.9d): a mandatory one, a kicker,
+      a spree mode and a promised gift are all offered on top of the life.
+    - **Paying life needs that much life** (119.4), except paying 0, which
+      `can_pay` already says; a player who cannot pay is offered nothing.
+    """
+    price = (("pay_life", card.mana_value),)
+    if not can_pay(state, pid, Cost(pay_life=card.mana_value), oid):
+        return []
+    specs = additional_sized_targets(card.targets, 0)
+    tuples = enumerate_target_tuples(
+        state,
+        pid,
+        specs,
+        oid,
+        exclude_sid=state.objects[oid].stack_id,
+        defer=deferred_target_spec(state, card, specs),
+    )
+    if not tuples:
+        # `_cast_options`' reason: only a kicked or promised list of its own
+        # can offer anything.
+        return _kicked_lines(
+            state, pid, oid, card, tuples, extra_generic=0, own_specs_only=True,
+            granted_cost=price,
+        ) + _gift_lines(state, pid, oid, card, tuples, extra_generic=0, granted_cost=price)
+    out = _cast_variant(state, pid, oid, card, tuples, extra_generic=0, granted_cost=price)
+    out += _kicked_lines(state, pid, oid, card, tuples, extra_generic=0, granted_cost=price)
+    out += _gift_lines(state, pid, oid, card, tuples, extra_generic=0, granted_cost=price)
+    out = _charge_additional_cost(
+        state,
+        pid,
+        oid,
+        card,
+        out,
+        lambda times, choice: _cast_variant(
+            state,
+            pid,
+            oid,
+            card,
+            tuples,
+            extra_generic=0,
+            additional_times=times,
+            additional_choice=choice,
+            granted_cost=price,
+        ),
+    )
+    return _spree_lines(
+        state,
+        card,
+        out,
+        lambda subset: _cast_variant(
+            state,
+            pid,
+            oid,
+            card,
+            tuples,
+            extra_generic=0,
+            spree_modes=subset,
+            granted_cost=price,
+        ),
+    )
 
 
 def _cast_options(
@@ -1279,6 +1377,8 @@ def _repeatable_payments(state: GameState, pid: int, oid: int, card: CardDef) ->
         limits.append(len(_tap_cost_pool(state, pid, cost, oid)) // per)
     if cost.discard:
         limits.append(len(state.players[pid].hand) // max(1, cost.discard))
+    if cost.process:
+        limits.append(len(process_pool(state, pid)) // cost.process)
     if cost.pay_life:
         per = life_cost(state, pid, cost, oid)
         limits.append(state.players[pid].life // per if per else MAX_ADDITIONAL_TIMES)
@@ -1951,7 +2051,8 @@ def _cast_variant(
     # Restricted mana ("spend only to cast a creature spell") is offered or
     # withheld here, and `game._cast` must ask the same question with the same
     # answer -- both go through `spell_purpose`.
-    purpose = spell_purpose(card)
+    # Its owner too, for "only to cast spells you don't own" (108.3).
+    purpose = spell_purpose(card, caster=pid, owner=state.objects[oid].owner)
     sources = mana_sources(state, pid, purpose=purpose)
     # The pool asked the same question: a pip carrying "spend this mana only to
     # cast spells" is a restricted *source* that has already been made, and the
@@ -1969,6 +2070,8 @@ def _cast_variant(
     # before `push_spell` moves it, so flashback and foretell price from where
     # the card sits.
     cast_zone = state.objects[oid].zone
+    # And whose card it is, for "spells you cast but don't own" (108.3).
+    cast_owner = state.objects[oid].owner
     # "Spells you cast this way cost {2} less" -- a discount the permission
     # this line casts under carries, not the card (Urianger Augurelt).
     variant_less += permission_cost_reduction(
@@ -2047,6 +2150,11 @@ def _cast_variant(
         # `Game._cast` charges the life. Priced before every discount below, so
         # nothing reduces a cost that is no longer being paid.
         cost = ManaCost.parse("")
+        if kicked and granted_cost and card.kicker is not None:
+            # 118.9 replaces the *mana cost* and nothing else: a kicker is an
+            # additional cost (702.33a) and is still owed on top of the life a
+            # `playable_pay_life_instead` permission charges (Nashi).
+            cost = card.kicker
     # 107.4f: a Phyrexian pip is one mana of its colour **or** 2 life, and the
     # choice is the caster's, made while the cost is being paid. So it is a
     # *line* -- the way kicker, overload and flashback are -- and not something
@@ -2140,7 +2248,10 @@ def _cast_variant(
         # yet, and refusing here would drop a spell that is affordable once
         # discounted. `_priced_tuples` re-prices each tuple exactly.
         def _discount_for(aimed_at):
-            return cost_reduction(state, pid, card, aimed_at, zone=cast_zone) + variant_less
+            return (
+                cost_reduction(state, pid, card, aimed_at, zone=cast_zone, owner=cast_owner)
+                + variant_less
+            )
 
         discount = _discount_for(None)
 
@@ -2182,7 +2293,11 @@ def _cast_variant(
             # floor.  Pinning it to the maximum, as this used to, meant every
             # Fireball was cast for everything the player had and the choice was
             # never offered at all.
-            if price.x_count and max_affordable_x(price, pool, sources, extra_generic=net) < min_x:
+            # "X can't be 0" (Thieving Skydiver's kicker {X}) floors the same
+            # announcement, on any line whose price carries an X to announce.
+            if price.x_count and max_affordable_x(
+                price, pool, sources, extra_generic=net
+            ) < max(min_x, card.x_minimum):
                 continue
             # Solved per target count for strive, once for everything else -- see
             # `_priced_tuples`. `x` is 0 here, as the gate above explains.

@@ -135,6 +135,9 @@ CARD_LEVEL_COST_KEYS = (
     #: the price, so a `delayed_trigger` ability spelling out the riders would
     #: be a line with no printed sentence to claim.
     "warp",
+    #: int; "X can't be 0" -- the least X on any cast line whose cost has an
+    #: {X}, a kicker of {X} included (Thieving Skydiver).
+    "x_minimum",
 )
 
 #: The card-level fields that join two printed faces into one card entry.
@@ -809,7 +812,14 @@ def reference() -> dict:
             " The permission is always the"
             " effect controller's, cards from an opponent's library included;"
             " a land still uses a land drop, a spell keeps its timing and its"
-            " additional costs, and X is 0.",
+            " additional costs, and X is 0. \"You may **cast** that card\""
+            " (never \"play\") is `playable_cast_only: true` beside the"
+            " `playable` duration: a land among those cards is not played and"
+            " stays exiled (305.9). \"If you cast a spell this way, pay life"
+            " equal to its mana value rather than paying its mana cost\" is"
+            " `playable_pay_life_instead: true` on the same permission;"
+            " \"you may play one of those cards\" is `grant_playable` with"
+            " `limit: 1` over the exiled cards' `as` binding.",
             "\"You don't lose unspent red mana as steps and phases end\" is the"
             " player-wide static `mana_retention` with `affects_player: \"you\"`"
             " and `colors: [\"R\"]`; \"Players don't lose unspent mana\" is"
@@ -1002,6 +1012,12 @@ def reference() -> dict:
             " additional cost is `additional_cost` plus `additional_optional`,"
             " read back with `additional_paid`. Not `put_counters`, which puts"
             " them on the source.",
+            "The Eldrazi processor cost \"Put a card an opponent owns from"
+            " exile into that player's graveyard\" is `{\"process\": 1}` on"
+            " any cost node (\"two cards your opponents own\" is 2): unpayable"
+            " without that many, so as a `may`'s `pay` it is \"you may put …"
+            " If you do, …\". Not `search_zones` over exile, which pays at"
+            " resolution.",
             "A quoted ability a permanent GAINS (\"This Saga gains \\\"{T}: Add"
             " {C}.\\\"\", \"It gains \\\"When this creature dies, ...\\\"\") is"
             " written once under the card's `grantable_abilities` and handed"

@@ -1515,28 +1515,37 @@ def pick_from_pool(
     if chooser_spec == "none":
         return pool[:max_count]
     if chooser is None:
-        chooser = ctx.controller
-        if chooser_spec == "owner" and pool:
-            chooser = ctx.state.objects[pool[0]].owner
-        elif chooser_spec not in ("controller", "owner"):
-            # An arbitrary **player spec** -- Rejoin the Fight: "each opponent
-            # chooses a creature card in **your** graveyard". Both existing
-            # names resolve to the spell's controller for a pool in your own
-            # yard, so the caster would pick the cards an opponent is supposed
-            # to, which is the whole card.
-            #
-            # Resolved through `select_players`, so the ordinary vocabulary
-            # works -- `{"binding": "each_player"}` inside a `for_each_player`
-            # loop is the shape that card needs.
-            seats = select_players(ctx, chooser_spec)
-            if not seats:
-                # Nobody to ask, so nothing is chosen -- rather than quietly
-                # letting the controller decide.
-                return []
-            chooser = seats[0]
+        chooser = resolve_chooser(ctx, pool, chooser_spec)
+        if chooser is None:
+            # Nobody to ask, so nothing is chosen -- rather than quietly
+            # letting the controller decide.
+            return []
 
     picked = yield from ask_objects(ctx, prompt, pool, min_count, max_count, chooser, purpose)
     return picked
+
+
+def resolve_chooser(ctx: EffectContext, pool: list[int], chooser_spec: Any) -> int | None:
+    """The seat a selector's ``chooser`` clause names for ``pool``, or ``None``.
+
+    ``"controller"`` is the effect's controller -- rule 109.5, "you" -- and
+    ``"owner"`` the owner of the pool's cards, which for a pool built out of
+    one zone (a library's top, a graveyard) is that zone's player. Anything
+    else is a **player spec** -- Rejoin the Fight: "each opponent chooses a
+    creature card in **your** graveyard". Both names resolve to the spell's
+    controller for a pool in your own yard, so the caster would pick the cards
+    an opponent is supposed to, which is the whole card. Resolved through
+    `select_players`, so the ordinary vocabulary works --
+    `{"binding": "each_player"}` inside a `for_each_player` loop is the shape
+    that card needs. ``None`` when the spec names nobody. ``"none"`` (no
+    chooser at all) is the caller's to handle before asking.
+    """
+    if chooser_spec in (None, "controller"):
+        return ctx.controller
+    if chooser_spec == "owner":
+        return ctx.state.objects[pool[0]].owner if pool else ctx.controller
+    seats = select_players(ctx, chooser_spec)
+    return seats[0] if seats else None
 
 
 def _validate_player_spec_shape(who: Any, where: str) -> None:

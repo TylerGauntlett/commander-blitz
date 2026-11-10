@@ -11342,12 +11342,12 @@
     },
     "Arcane Heist": {
       "edhrec_rank": 5098,
-      "gate": "template",
+      "gate": null,
       "name": "Arcane Heist",
-      "reason": "no template for: You may cast target instant or sorcery card from an opponent's graveyard without paying it",
+      "reason": "",
       "scryfall_id": "3ceb13f4-ac9e-4ddd-9170-545f8d37b87a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Arcane Infusion": {
@@ -26172,12 +26172,12 @@
     },
     "Bladegriff Prototype": {
       "edhrec_rank": 6919,
-      "gate": "template",
+      "gate": null,
       "name": "Bladegriff Prototype",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, destroy target nonland permanent o",
+      "reason": "",
       "scryfall_id": "0093bdcf-6626-40ab-9b87-8ab9e4a306a4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bladehold War-Whip": {
@@ -26952,12 +26952,12 @@
     },
     "Blight Herder": {
       "edhrec_rank": 14430,
-      "gate": "template",
+      "gate": null,
       "name": "Blight Herder",
-      "reason": "no template for: When you cast this spell, you may put two cards your opponents own from exile into their o",
+      "reason": "",
       "scryfall_id": "478c3a74-ff78-4041-8137-93356d370ece",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Blight Keeper": {
@@ -32872,12 +32872,12 @@
     },
     "Brainstealer Dragon": {
       "edhrec_rank": 2187,
-      "gate": "template",
+      "gate": null,
       "name": "Brainstealer Dragon",
-      "reason": "no template for: At the beginning of your end step, exile the top card of each opponent's library. You may ",
+      "reason": "",
       "scryfall_id": "884d4eea-77c0-4b78-bb83-3f855cc77298",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Brainstone": {
@@ -41872,12 +41872,12 @@
     },
     "Cazur, Ruthless Stalker": {
       "edhrec_rank": 8031,
-      "gate": "template",
+      "gate": null,
       "name": "Cazur, Ruthless Stalker",
-      "reason": "no template for: Partner with Ukkima, Stalking Shadow",
+      "reason": "",
       "scryfall_id": "6ee4fda8-07cd-4091-8850-a6925080b464",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cease // Desist": {
@@ -44442,12 +44442,12 @@
     },
     "Chaos Wand": {
       "edhrec_rank": 4171,
-      "gate": "template",
+      "gate": null,
       "name": "Chaos Wand",
-      "reason": "no template for: {4}, {T}: Target opponent exiles cards from the top of their library until they exile an i",
+      "reason": "",
       "scryfall_id": "67eb6ab9-d264-4ec6-9dac-3b16ee8c9ec0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chaos Warp": {
@@ -49842,12 +49842,12 @@
     },
     "Cold-Eyed Selkie": {
       "edhrec_rank": 2021,
-      "gate": "template",
+      "gate": null,
       "name": "Cold-Eyed Selkie",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, you may draw that many cards",
+      "reason": "",
       "scryfall_id": "8c39dc54-611e-48a8-adba-9cc31afa87d0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cold-Water Snapper": {
@@ -58302,12 +58302,12 @@
     },
     "Cunning Rhetoric": {
       "edhrec_rank": 2607,
-      "gate": "template",
+      "gate": null,
       "name": "Cunning Rhetoric",
-      "reason": "no template for: Whenever an opponent attacks you and/or one or more planeswalkers you control, exile the t",
+      "reason": "",
       "scryfall_id": "4a163794-db93-4cf6-a2ea-1af288109dc1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cunning Sparkmage": {
@@ -62712,12 +62712,12 @@
     },
     "Dazzling Sphinx": {
       "edhrec_rank": 6308,
-      "gate": "template",
+      "gate": null,
       "name": "Dazzling Sphinx",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, that player exiles cards from the ",
+      "reason": "",
       "scryfall_id": "2ddac591-825b-4304-858c-9dc9b311805b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dazzling Theater // Prop Room": {
@@ -68702,12 +68702,12 @@
     },
     "Diluvian Primordial": {
       "edhrec_rank": 3602,
-      "gate": "template",
+      "gate": null,
       "name": "Diluvian Primordial",
-      "reason": "no template for: When this creature enters, for each opponent, you may cast up to one target instant or sor",
+      "reason": "",
       "scryfall_id": "eb14cd77-d37e-4849-816f-cd36e2a37765",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dimension X": {
@@ -71212,12 +71212,12 @@
     },
     "Doc Aurlock, Grizzled Genius": {
       "edhrec_rank": 2483,
-      "gate": "template",
+      "gate": null,
       "name": "Doc Aurlock, Grizzled Genius",
-      "reason": "no template for: Spells you cast from your graveyard or from exile cost {2} less to cast",
+      "reason": "",
       "scryfall_id": "6fc27b30-8c8e-434c-a72c-e1d409efc1ae",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Doc Ock's Henchmen": {
@@ -74952,12 +74952,12 @@
     },
     "Dream-Thief's Bandana": {
       "edhrec_rank": 6284,
-      "gate": "template",
+      "gate": null,
       "name": "Dream-Thief's Bandana",
-      "reason": "no template for: Whenever equipped creature deals combat damage to a player, look at the top card of their ",
+      "reason": "",
       "scryfall_id": "a245a978-8072-4b4b-94d4-237050ba4526",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dreamborn Muse": {
@@ -79522,12 +79522,12 @@
     },
     "Edric, Spymaster of Trest": {
       "edhrec_rank": 3431,
-      "gate": "template",
+      "gate": null,
       "name": "Edric, Spymaster of Trest",
-      "reason": "no template for: Whenever a creature deals combat damage to one of your opponents, its controller may draw ",
+      "reason": "",
       "scryfall_id": "22d6a4c9-4bdd-4e70-8481-95260e6aa7ab",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Edward Kenway": {
@@ -88972,12 +88972,12 @@
     },
     "Extract Brain": {
       "edhrec_rank": 8373,
-      "gate": "template",
+      "gate": null,
       "name": "Extract Brain",
-      "reason": "no template for: Target opponent chooses X cards from their hand. Look at those cards. You may cast a spell",
+      "reason": "",
       "scryfall_id": "8c3a4a44-5e75-42a4-8140-2105c2becff9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Extract Power": {
@@ -93122,12 +93122,12 @@
     },
     "Felix Five-Boots": {
       "edhrec_rank": 4827,
-      "gate": "template",
+      "gate": null,
       "name": "Felix Five-Boots",
-      "reason": "no template for: Menace, ward {2}",
+      "reason": "",
       "scryfall_id": "5058b049-98fb-4f20-ab0c-a50377582789",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fell": {
@@ -104392,12 +104392,12 @@
     },
     "Gale's Redirection": {
       "edhrec_rank": 9000,
-      "gate": "template",
+      "gate": null,
       "name": "Gale's Redirection",
-      "reason": "no template for: Exile target spell, then roll a d20 and add that spell's mana value",
+      "reason": "",
       "scryfall_id": "1f5ddcf8-c87b-4a26-b226-8593f517a74a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gale, Waterdeep Prodigy": {
@@ -108082,12 +108082,12 @@
     },
     "Ghostly Pilferer": {
       "edhrec_rank": 1403,
-      "gate": "template",
+      "gate": null,
       "name": "Ghostly Pilferer",
-      "reason": "no template for: Whenever this creature becomes untapped, you may pay {2}. If you do, draw a card",
+      "reason": "",
       "scryfall_id": "2f6a3605-950d-488b-8e4f-e2c339ef48dc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ghostly Possession": {
@@ -115112,22 +115112,22 @@
     },
     "Gonti, Canny Acquisitor": {
       "edhrec_rank": 8010,
-      "gate": "template",
+      "gate": null,
       "name": "Gonti, Canny Acquisitor",
-      "reason": "no template for: Spells you cast but don't own cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "03a7e79f-625a-49ac-9cb1-e1fe5f51f5a0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gonti, Lord of Luxury": {
       "edhrec_rank": 2005,
-      "gate": "template",
+      "gate": null,
       "name": "Gonti, Lord of Luxury",
-      "reason": "no template for: When Gonti enters, look at the top four cards of target opponent's library, exile one of t",
+      "reason": "",
       "scryfall_id": "fbbb3aef-af1f-4b77-b7d6-64cfd706a9d9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gonti, Night Minister": {
@@ -119612,12 +119612,12 @@
     },
     "Gríma, Saruman's Footman": {
       "edhrec_rank": 3193,
-      "gate": "template",
+      "gate": null,
       "name": "Gríma, Saruman's Footman",
-      "reason": "no template for: Gríma can't be blocked",
+      "reason": "",
       "scryfall_id": "3c8f0bfc-767a-411c-b870-f2764f3706f4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Guac & Marshmallow Pizza": {
@@ -124712,12 +124712,12 @@
     },
     "Heartless Conscription": {
       "edhrec_rank": 5616,
-      "gate": "template",
+      "gate": null,
       "name": "Heartless Conscription",
-      "reason": "no template for: Exile all creatures. For each card exiled this way, you may play that card for as long as ",
+      "reason": "",
       "scryfall_id": "52fc4862-b57b-42d7-be8b-d9915a0bb4fd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Heartless Hidetsugu": {
@@ -130292,12 +130292,12 @@
     },
     "Hostage Taker": {
       "edhrec_rank": 1861,
-      "gate": "template",
+      "gate": null,
       "name": "Hostage Taker",
-      "reason": "no template for: When this creature enters, exile another target creature or artifact until this creature l",
+      "reason": "",
       "scryfall_id": "468f63f2-d783-43e4-9e33-3d9d81dd8642",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hostile Desert": {
@@ -154012,12 +154012,12 @@
     },
     "Lair of the Hydra": {
       "edhrec_rank": 2447,
-      "gate": "template",
+      "gate": null,
       "name": "Lair of the Hydra",
-      "reason": "no template for: {X}{G}: Until end of turn, this land becomes an X/X green Hydra creature. It's still a lan",
+      "reason": "",
       "scryfall_id": "51aabe5e-161b-4c8a-bdb2-983f402a29ef",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lairwatch Giant": {
@@ -183572,12 +183572,12 @@
     },
     "Nashi, Moon Sage's Scion": {
       "edhrec_rank": 1981,
-      "gate": "template",
+      "gate": null,
       "name": "Nashi, Moon Sage's Scion",
-      "reason": "no template for: Ninjutsu {3}{B}",
+      "reason": "",
       "scryfall_id": "1e62de3b-6a41-43e3-93ad-9a1e3894be3b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nashi, Moon's Legacy": {
@@ -194892,12 +194892,12 @@
     },
     "Orochi Soul-Reaver": {
       "edhrec_rank": 3759,
-      "gate": "template",
+      "gate": null,
       "name": "Orochi Soul-Reaver",
-      "reason": "no template for: Ninjutsu {3}{B}",
+      "reason": "",
       "scryfall_id": "5ba1d8a7-2249-4c74-adb7-d13a9b347571",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Orochi Sustainer": {
@@ -204012,12 +204012,12 @@
     },
     "Plasm Capture": {
       "edhrec_rank": 6553,
-      "gate": "template",
+      "gate": null,
       "name": "Plasm Capture",
-      "reason": "no template for: Counter target spell. At the beginning of your next first main phase, add X mana in any co",
+      "reason": "",
       "scryfall_id": "11ee15d5-1c93-4c30-911f-32e2aabf020e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Plasma Bolt": {
@@ -206152,12 +206152,12 @@
     },
     "Predators' Hour": {
       "edhrec_rank": 7408,
-      "gate": "template",
+      "gate": null,
       "name": "Predators' Hour",
-      "reason": "no template for: Until end of turn, creatures you control gain menace and \"Whenever this creature deals com",
+      "reason": "",
       "scryfall_id": "55ddf977-de2c-4850-8ad1-b8adab1d24ee",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Predatory Advantage": {
@@ -214632,12 +214632,12 @@
     },
     "Ramirez DePietro, Pillager": {
       "edhrec_rank": 5168,
-      "gate": "template",
+      "gate": null,
       "name": "Ramirez DePietro, Pillager",
-      "reason": "no template for: When Ramirez DePietro enters, you lose 2 life and create two Treasure tokens",
+      "reason": "",
       "scryfall_id": "11a4e199-faa9-4c41-863d-92170c8f20cc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rammas Echor, Ancient Shield": {
@@ -222342,12 +222342,12 @@
     },
     "Rev, Tithe Extractor": {
       "edhrec_rank": 2404,
-      "gate": "template",
+      "gate": null,
       "name": "Rev, Tithe Extractor",
-      "reason": "no template for: Whenever you attack, target creature gains deathtouch until end of turn",
+      "reason": "",
       "scryfall_id": "8bf88010-799d-4217-8e79-308bec7ad2ff",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Revealing Wind": {
@@ -230992,12 +230992,12 @@
     },
     "Sage of the Beyond": {
       "edhrec_rank": 4794,
-      "gate": "template",
+      "gate": null,
       "name": "Sage of the Beyond",
-      "reason": "no template for: Spells you cast from anywhere other than your hand cost {2} less to cast",
+      "reason": "",
       "scryfall_id": "226a4c5d-bf49-40d8-a7a4-341c18029634",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sage of the Falls": {
@@ -234342,12 +234342,12 @@
     },
     "Savvy Trader": {
       "edhrec_rank": 4285,
-      "gate": "template",
+      "gate": null,
       "name": "Savvy Trader",
-      "reason": "no template for: When this creature enters, exile target permanent card from your graveyard. You may play t",
+      "reason": "",
       "scryfall_id": "118f25cf-faa6-4d60-a156-27bf7aedf7eb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Saw": {
@@ -242152,12 +242152,12 @@
     },
     "Shadowmage Infiltrator": {
       "edhrec_rank": 5483,
-      "gate": "template",
+      "gate": null,
       "name": "Shadowmage Infiltrator",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, you may draw a card",
+      "reason": "",
       "scryfall_id": "2ac920d7-013f-40ad-b79f-0bb59062d42a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shadows of the Past": {
@@ -247192,12 +247192,12 @@
     },
     "Silhana Ledgewalker": {
       "edhrec_rank": 9691,
-      "gate": "template",
+      "gate": null,
       "name": "Silhana Ledgewalker",
-      "reason": "no template for: This creature can't be blocked except by creatures with flying",
+      "reason": "",
       "scryfall_id": "21a2d11e-48b7-4e9a-a574-838cc26c2b17",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Silhana Starfletcher": {
@@ -248602,12 +248602,12 @@
     },
     "Siphon Insight": {
       "edhrec_rank": 4275,
-      "gate": "template",
+      "gate": null,
       "name": "Siphon Insight",
-      "reason": "no template for: Look at the top two cards of target opponent's library. Exile one of them face down and pu",
+      "reason": "",
       "scryfall_id": "28a6b23f-a854-469a-9b06-119507dd9d42",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sir Shandlar of Eberyn": {
@@ -252242,12 +252242,12 @@
     },
     "Slither Blade": {
       "edhrec_rank": 1716,
-      "gate": "template",
+      "gate": null,
       "name": "Slither Blade",
-      "reason": "no template for: This creature can't be blocked",
+      "reason": "",
       "scryfall_id": "859e5ca5-c184-47ee-a2ea-8075847f46d9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Slitherhead": {
@@ -252822,12 +252822,12 @@
     },
     "Smirking Spelljacker": {
       "edhrec_rank": 6946,
-      "gate": "template",
+      "gate": null,
       "name": "Smirking Spelljacker",
-      "reason": "no template for: When this creature enters, exile target spell an opponent controls",
+      "reason": "",
       "scryfall_id": "01d1e394-1b0c-4b40-ba85-f55973703d41",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Smite": {
@@ -265032,12 +265032,12 @@
     },
     "Stolen Goods": {
       "edhrec_rank": 9033,
-      "gate": "template",
+      "gate": null,
       "name": "Stolen Goods",
-      "reason": "no template for: Target opponent exiles cards from the top of their library until they exile a nonland card",
+      "reason": "",
       "scryfall_id": "495c8498-a446-4617-ae5e-f09ef63c7cb7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stolen Grain": {
@@ -270792,12 +270792,12 @@
     },
     "Surge to Victory": {
       "edhrec_rank": 5082,
-      "gate": "template",
+      "gate": null,
       "name": "Surge to Victory",
-      "reason": "no template for: Exile target instant or sorcery card from your graveyard. Creatures you control get +X/+0 ",
+      "reason": "",
       "scryfall_id": "b5345934-60eb-417c-9716-477882c4796d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Surgehacker Mech": {
@@ -281672,12 +281672,12 @@
     },
     "The Mimeoplasm": {
       "edhrec_rank": 7671,
-      "gate": "template",
+      "gate": null,
       "name": "The Mimeoplasm",
-      "reason": "no template for: As enters, you may exile two creature cards from graveyards. If you do, it enters as a cop",
+      "reason": "",
       "scryfall_id": "ada30541-faea-45af-853c-de85ff8e251e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Mind Stone": {
@@ -283402,12 +283402,12 @@
     },
     "Thief of Sanity": {
       "edhrec_rank": 3164,
-      "gate": "template",
+      "gate": null,
       "name": "Thief of Sanity",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, look at the top three cards of tha",
+      "reason": "",
       "scryfall_id": "94946d6c-1edb-46e9-a5ae-0ca2a016a7cd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thief's Knife": {
@@ -283462,12 +283462,12 @@
     },
     "Thieving Amalgam": {
       "edhrec_rank": 5301,
-      "gate": "template",
+      "gate": null,
       "name": "Thieving Amalgam",
-      "reason": "no template for: At the beginning of each opponent's upkeep, you manifest the top card of that player's lib",
+      "reason": "",
       "scryfall_id": "c6225b97-396f-4969-954c-f2885da70c1b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thieving Magpie": {
@@ -283492,12 +283492,12 @@
     },
     "Thieving Skydiver": {
       "edhrec_rank": 2275,
-      "gate": "template",
+      "gate": null,
       "name": "Thieving Skydiver",
-      "reason": "no template for: Kicker {X}. X can't be 0",
+      "reason": "",
       "scryfall_id": "06996ff1-7f57-4e73-940a-a58c4482cadd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thieving Sprite": {
@@ -283512,12 +283512,12 @@
     },
     "Thieving Varmint": {
       "edhrec_rank": 4457,
-      "gate": "template",
+      "gate": null,
       "name": "Thieving Varmint",
-      "reason": "no template for: {T}, Pay 1 life: Add two mana of any one color. Spend this mana only to cast spells you do",
+      "reason": "",
       "scryfall_id": "2b8189ad-6b00-49b3-be39-b98cf6bfa2a5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thijarian Witness": {
@@ -290272,12 +290272,12 @@
     },
     "Tower Winder": {
       "edhrec_rank": 4430,
-      "gate": "template",
+      "gate": null,
       "name": "Tower Winder",
-      "reason": "no template for: When this creature enters, search your library and/or graveyard for a card named Command T",
+      "reason": "",
       "scryfall_id": "97bf6a6a-e377-4f42-84dd-baf6055c0fb1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tower Worker": {
@@ -293042,12 +293042,12 @@
     },
     "Triton Shorestalker": {
       "edhrec_rank": 2001,
-      "gate": "template",
+      "gate": null,
       "name": "Triton Shorestalker",
-      "reason": "no template for: This creature can't be blocked",
+      "reason": "",
       "scryfall_id": "511bff25-3213-42c4-8abd-9eda49f8dc96",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Triton Shorethief": {
@@ -295812,12 +295812,12 @@
     },
     "Ukkima, Stalking Shadow": {
       "edhrec_rank": 9223,
-      "gate": "template",
+      "gate": null,
       "name": "Ukkima, Stalking Shadow",
-      "reason": "no template for: Partner with Cazur, Ruthless Stalker",
+      "reason": "",
       "scryfall_id": "c66b452b-9c49-4c58-9966-6bafbfa34c36",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Uktabi Drake": {
@@ -295922,12 +295922,12 @@
     },
     "Ulamog's Nullifier": {
       "edhrec_rank": 14187,
-      "gate": "template",
+      "gate": null,
       "name": "Ulamog's Nullifier",
-      "reason": "no template for: When this creature enters, you may put two cards your opponents own from exile into their ",
+      "reason": "",
       "scryfall_id": "e991c9ad-de2d-439b-bc4c-6da9da756130",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ulamog's Reclaimer": {
@@ -304912,12 +304912,12 @@
     },
     "Villainous Wealth": {
       "edhrec_rank": 2365,
-      "gate": "template",
+      "gate": null,
       "name": "Villainous Wealth",
-      "reason": "no template for: Target opponent exiles the top X cards of their library. You may cast any number of spells",
+      "reason": "",
       "scryfall_id": "a467072c-99d9-4013-8d28-607a06cf50fe",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Villainous Wrath": {
@@ -306872,12 +306872,12 @@
     },
     "Void Attendant": {
       "edhrec_rank": 18219,
-      "gate": "template",
+      "gate": null,
       "name": "Void Attendant",
-      "reason": "no template for: {1}{G}, Put a card an opponent owns from exile into that player's graveyard: Create a 1/1 ",
+      "reason": "",
       "scryfall_id": "b3ccc905-bd43-4925-8eb9-fb9abcc81e29",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Void Beckoner": {

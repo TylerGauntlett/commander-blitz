@@ -1,0 +1,18 @@
+{
+  "card_id": "mind_grind",
+  "name": "Mind Grind",
+  "oracle_text": "Each opponent reveals cards from the top of their library until they reveal X land cards, then puts all cards revealed this way into their graveyard. X can't be 0.",
+  "blocked_sentences": [
+    "Each opponent reveals cards from the top of their library until they reveal X land cards, then puts all cards revealed this way into their graveyard."
+  ],
+  "needs": [
+    {
+      "capability": "reveal_until_rest_to_graveyard",
+      "kind": "op",
+      "what": "a remainder destination on `reveal_until` (e.g. `rest_to: \"graveyard\"`) so the non-land cards revealed before the X-th land go to their owner's graveyard together with the matched lands (`destination: \"graveyard\"`, `amount: {\"x\": true}`, `player: \"each_opponent\"`), as one move -- \"reveals cards from the top of their library until they reveal X land cards, then puts all cards revealed this way into their graveyard\" (Mind Grind, Mind Funeral)",
+      "why_existing_wont_do": "`op_reveal_until` (ops_cards.py) already counts `amount` matches and walks each opponent's library, but moves only the hits to `destination`; the other revealed cards go to the bottom in a random order (`rest_to_bottom`, defaulted on) or are shuffled back (`shuffle_rest`), and switching both off leaves them on top -- no key sends them to the graveyard. `look_at_top` has `rest_to` but a fixed window, not an unbounded 'until'. `repeat_while` around `mill` 1 is an approximation: it is a mill (701.13), firing mill triggers and `replace_mill` the printed reveal never does, moving cards one at a time, and capped by the iteration guard. \"X can't be 0\" is expressible as card-level `x_minimum: 1`; only the reveal-and-bin is blocked."
+    }
+  ],
+  "closest_existing": ["reveal_until", "look_at_top", "repeat_while", "mill"],
+  "confidence": "high"
+}

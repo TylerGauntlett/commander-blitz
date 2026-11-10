@@ -294,6 +294,25 @@ creatures. A creature land answers one step, never both. `rest_to` (or
 step could take. Unknown step keys, a non-boolean `up_to`, an unknown `to` and a
 malformed step `selector` are load errors.
 
+**Who picks** is the `chooser` clause on `objects`, and it defaults to the
+effect's controller whoever's library `player` names — rule 109.5's "you".
+Siphon Insight and Gonti, Lord of Luxury look at *target opponent's* library
+and the caster exiles one, so they write no `chooser` at all:
+
+```jsonc
+{ "op": "look_at_top", "player": { "target": "t1" }, "amount": 2,
+  "objects": { "count": 1 }, "destination": "exile", "face_down": true,
+  "rest_to_bottom": true }
+```
+
+`"owner"` is the library's player — "target player looks at the top three
+cards of their library and puts one into their hand", and under `player:
+"each_player"` each seat picks from its own library. A player spec is "an
+opponent chooses one of them", and `"none"` takes from the top without asking.
+A `destinations` step reads its own `selector`'s `chooser` first, then the
+window's. `scry` is the near miss in the other direction: its `chooser`
+defaults to the library's owner, because scrying is the player's own action.
+
 `counters` and `counters_if` are a card put onto the battlefield **with**
 counters — Turntimber Symbiosis' "If that card has mana value 3 or less, it
 enters with three additional +1/+1 counters on it":
@@ -1122,7 +1141,7 @@ spell, a copy (707.10a) and a commander its owner moved to the command zone
 The near miss is an `exile` op after the counter. By then the card is in a
 graveyard, has fired whatever watches one, and is a new object (400.7) that no
 selector names as "that spell". Exiling a spell *without* countering it is a
-different action and is not this key.
+different action and is not this key: it is `exile` aimed at the spell, below.
 
 ### Doing something to a spell that is not countering it
 
@@ -1157,6 +1176,43 @@ Where the card goes is its **owner's** hand — a spell whose controller is not
 its owner still goes home. And a *copy* of a spell is not a card (706.10), so
 there is nothing to put anywhere: 704.5e removes it and it ceases to exist.
 `stack.pull_spell_off_stack` is the one place all of that lives.
+
+### Exiling a spell
+
+```jsonc
+// Smirking Spelljacker — "When this creature enters, exile target spell an
+// opponent controls. Whenever this creature attacks, if a card is exiled with
+// it, you may cast the exiled card without paying its mana cost."
+{ "kind": "triggered", "trigger": { "event": "self_enters", "source": "self" },
+  "targets": [ { "id": "t1", "kind": "spell", "selector": { "controller": "opponent" } } ],
+  "effects": [ { "op": "exile", "objects": { "target": "t1" }, "link": true } ] },
+{ "kind": "triggered",
+  "trigger": { "event": "attacks", "source": "self",
+               "condition": { "exists": { "zone": "exile", "exiled_with": "self",
+                                          "controller": "any" } } },
+  "effects": [ { "op": "may", "effects": [ { "op": "play_exiled" } ] } ] }
+```
+
+`exile` whose `objects` is `{"target": …}` alone, naming a `kind: "spell"` or
+`"spell_or_permanent"` target, takes the spell off the stack through
+`pull_spell_off_stack` into its owner's exile. It is a zone change and not a
+counter (701.5a), exactly as Reprieve's is: an uncounterable spell is exiled,
+no `spell_countered` event fires, and the card never visits a graveyard. A copy
+of a spell has no card (706.10) and ceases to exist, so it is in neither `as`
+nor the link; a commander its owner moves to the command zone (903.9a) is not
+exiled and is linked to nothing.
+
+The op's other keys mean what they mean on a permanent. `link` records the
+607.2a link (`zones.link_exiled`), which `exiled_with: "self"` reads back; `as`
+binds the exiled card; `playable` and its riders grant a permission on it. The
+card is stamped with no `exiled_from`, so "return it to the zone it came from"
+leaves it in exile rather than putting it back on the stack.
+
+The near miss is `counter` with `exiles`, which is stopped by "can't be
+countered", fires counter triggers and links nothing. The loader refuses a
+spell target's `objects` narrowed by any other clause, since that pool is
+`choose_objects`' object refs and the spell is never in it — narrow the target
+spec instead.
 
 ### "Target spell or nonland permanent"
 
@@ -1341,6 +1397,32 @@ ability's targets are chosen in legality, where nothing would read the clause.
 The near miss is an untargeted `exile` with `random` in its `objects`, which
 never fizzles and goes on the stack with nothing to exile.
 
+### "Target … of that player's choice"
+
+```jsonc
+// Bladegriff Prototype: "Whenever this creature deals combat damage to a
+// player, destroy target nonland permanent of that player's choice that one
+// of your opponents controls."
+{ "id": "t1", "kind": "permanent",
+  "selector": { "controller": "opponent", "not_types": ["Land"],
+                "chooser": { "binding": "event_player" } } }
+```
+
+A target selector's `chooser` is a player spec naming the seat that declares
+the target as the triggered ability goes on the stack (603.3d,
+`stack.target_chooser`), resolved against the trigger's bindings. It is still
+the ability's target: the candidates are the ones legal for the ability's
+controller — so hexproof, shroud and protection apply, and "one of your
+opponents" is every opponent of the controller, not only the chooser — ward
+triggers against the controller, and the target is re-checked on resolution.
+The decision carries `chosen_for` (the controller's seat) so an agent knows
+the ability is not its own. A chooser naming nobody alive chooses nothing, so
+the ability has no target. The loader allows it only on a **triggered**
+ability's one target spec, with a fixed `count`, no `mode`, `optional`,
+`up_to` or `random`, and a player spec rather than `owner` or `none`. The near
+miss is an untargeted `destroy` with `chooser` in its `objects`, which picks on
+resolution, ignores hexproof and never fizzles.
+
 ### "One, two, or three targets" -- `min_count`
 
 ```jsonc
@@ -1488,6 +1570,24 @@ the stack empty. It leaves the same three riders `grant_plot` leaves, so a card
 plotted from hand and a spell plotted as it resolved are the same object
 afterwards. `grant_plot` is the near miss for it: it marks a spell already on the
 stack and cannot reach a card in hand.
+
+**Cheaper plotting** is a player-wide static:
+
+```jsonc
+// Doc Aurlock, Grizzled Genius: "Plotting cards from your hand costs {2} less."
+{ "kind": "static", "effect": "plot_cost_reduction",
+  "affects_player": "you", "amount": { "const": 2 } }
+```
+
+Plotting is a special action (116.2k), neither a spell nor an activated ability,
+so `spell_cost_reduction` and `ability_cost_reduction` are never asked when it
+is priced. `suspend.plot_price` is: the card's `plot` cost less every matching
+`plot_cost_reduction`, generic only and clamped at zero, asked by both the offer
+in `legality` and the payment in `suspend.plot_card`, so a card offered at the
+reduced price is charged it. The loader requires an `amount` of at least 1 and
+refuses `affects`. The later cast of a plotted card is free and has nothing left
+to reduce; a discount on spells cast *from exile* is `spell_cost_reduction`'s
+`from_zone`, which Doc Aurlock's other line writes.
 
 **Exiled with a source.** `exile_spell_on_resolution` is the same rider with a
 link where plot leaves a permission: "you may exile that spell instead of
@@ -3124,6 +3224,44 @@ offer, because every printed card in this family says "you may"; an empty pool
 asks nothing, and the arriving permanent is not on the battlefield yet, so it
 cannot find itself.
 
+#### A copy of a card the arrival exiles
+
+```jsonc
+// The Mimeoplasm
+{ "event": "self_enters_as_copy",
+  "as_enters": [
+    { "op": "if",
+      "condition": { "cmp": ">=", "right": { "const": 2 },
+        "left": { "count": { "zone": "graveyard", "controller": "any",
+                             "types": ["Creature"], "exclude_self": true } } },
+      "then": [ { "op": "may", "prompt": "Exile two creature cards from graveyards?",
+        "effects": [ { "op": "exile", "as": "exiled",
+          "objects": { "zone": "graveyard", "controller": "any",
+                       "types": ["Creature"], "exclude_self": true, "count": 2 } } ] } ] } ],
+  "copying": { "binding": "exiled" },
+  "except_": { "enters_with": [ { "counter": "+1/+1",
+    "amount": { "power_of": { "objects": { "binding": "exiled",
+                                           "exclude_binding": "copied" } } } } ] } }
+```
+
+`as_enters` on this event is Sin's key on Sin's terms (614.1c): the effects run
+as part of the arrival, by `zones.offer_as_enters_effects`, on every route that
+runs them — cast, land drop, reanimation, blink, `put_onto_battlefield`. Then
+`copying` is resolved against what they bound, and the loader requires it to
+name a `binding`: "if you do, it enters as a copy of one of **those** cards".
+The copy is not offered a second time, because the "you may" is the effects'
+own; an empty pool is the "if you don't", and the card enters as itself. The
+controller chooses the model, forced when the pool holds one card, and it is
+bound as `copied` beside the effects' names, which is how an `enters_with`
+amount says "the other card". The model is a card in exile, so the copy takes
+the card's copiable values (707.2), and `power_of` reads a card off the
+battlefield with its characteristic-defining ability applied (604.3).
+
+"Exile two" is two or none, which `optional: true` beside `count: 2` does not
+say — that is zero to two. The `if` asks only when two other creature cards
+exist, and `may` then makes the mandatory pick of exactly two. `exclude_self`
+keeps a Mimeoplasm being reanimated out of its own pool: it is on its way in.
+
 ### A permanent that becomes a copy, except it keeps this ability
 
 ```jsonc
@@ -4621,6 +4759,45 @@ and asks nothing — as Auntie Ool's ward cost it would shrink Auntie Ool. "Blig
 N" as an **effect** (Sinister Gnarlbark) is not a cost and is written with
 `choose_permanents` and `add_counters`.
 
+### `process` — cards an opponent owns, from exile to a graveyard
+
+The Eldrazi processor cost: "Put a card an opponent owns from exile into that
+player's graveyard."
+
+```jsonc
+// Void Attendant -- "{1}{G}, Put a card an opponent owns from exile into that
+// player's graveyard: Create a 1/1 colorless Eldrazi Scion creature token. …"
+"cost": { "mana": "{1}{G}", "process": 1 }
+
+// Ulamog's Nullifier -- "When this creature enters, you may put two cards your
+// opponents own from exile into their owners' graveyards. If you do, counter
+// target spell."
+{ "op": "may", "pay": { "process": 2 },
+  "effects": [{ "op": "counter", "target": "t1" }] }
+
+// "As an additional cost to cast this spell, put a card an opponent owns from
+// exile into that player's graveyard."
+"additional_cost": { "process": 1 }
+```
+
+A positive integer, how many cards, on any cost node: an activated ability, an
+`additional_cost`, or a `may`'s `pay`. The payer chooses that many among every
+card in exile owned by one of their opponents (`costs.process_pool`) — exiled by
+anything, a card some permanent exiled "until it leaves" included (the link is
+spent with the move, so it does not come back) — and each goes to its **owner's**
+graveyard through the graveyard replacements. A card face down in exile that the
+payer may not look at is offered without a name or an object ref (406.3), so the
+choice shows no face. The payer's own exiled cards are never candidates.
+
+It is payable only while that many such cards exist (118.3): with fewer, the
+activation and the cast line are withheld and a `may` with it as `pay` never
+asks, so its "if you do" branch does not run. The loader refuses a negative
+count.
+
+The near miss is moving the cards with an effect op such as `search_zones` over
+`zones: ["exile"]`: that pays at resolution, can move fewer cards than printed
+and still run the rest, and lets the ability be activated with nothing in exile.
+
 ### `exile_from_hand` — the pitch cost, and why it is not a discard
 
 "You may pay 1 life and **exile a blue card from your hand** rather than pay this
@@ -4671,6 +4848,43 @@ the battlefield, so this one reaches the player through
 `legality._activate_zones`, which already walks their own hand. That is the right
 answer as well as the only one — the solver exiling cards out of a hand it was
 never asked about is not a thing anybody wants.
+
+### `x_minimum` — X can't be 0
+
+A floor under an **announced** X (107.3): the player still chooses X at 601.2b
+(602.2b for an activation), but not below the floor. Two spellings, one per
+place an X is announced:
+
+```jsonc
+// Thieving Skydiver: "Kicker {X}. X can't be 0."
+{ "mana_cost": "{1}{U}", "kicker": "{X}", "x_minimum": 1, ... }
+
+// Lair of the Hydra: "{X}{G}: ... X can't be 0."
+{ "kind": "activated", "cost": { "mana": "{X}{G}", "x_minimum": 1 }, ... }
+```
+
+The card-level `x_minimum` applies to every cast line whose cost carries an
+`{X}` — the mana cost's, or the kicked line's when the kicker is `{X}` — and to
+none that does not: the unkicked Skydiver announces no X and is cast as usual.
+The permanent keeps the announced X as `cast_x`, which its enters trigger reads
+as `{"x": true}` in its effects and in its target selectors ("target artifact
+with mana value X or less").
+`casting._cast_variant` offers a floored line only while that much X is payable,
+and `game._cast` puts the `CHOOSE_X` question from the floor up, beside a
+mana-value lock's floor (`cast_lock_min_x`) and never below it. A cast that
+fixes X at 0 (`cast_copy` at a price without X) is not offered at all.
+
+The cost-level `x_minimum` is the same floor on an activated ability:
+`legality._ability_aims` offers it only while the floor is payable, and
+`game._activate` asks from the floor up. Refused on any other ability's cost,
+on cast-time costs (`alternative_cost`, `evoke`, the graveyard costs), on
+`may`'s `pay`, beside a `mana` with no `{X}`, and beside `x_value` — a defined X
+is never announced. The card-level field is refused on a card whose mana cost
+and kicker have no `{X}`.
+
+Without the floor both printed cards load as stronger ones: a Skydiver kicked
+for nothing steals a mana-value-0 artifact, and a Lair animated for X = 0 is a
+0/0 that state-based actions put in the graveyard.
 
 ### `x_value` — an X the card fixes, not the player
 
@@ -6165,6 +6379,30 @@ carries two independent filters:
   "cause_filter": { "any_types": ["Instant", "Sorcery"] } }
 ```
 
+"A creature you control **dealing combat damage to a player**" (Felix
+Five-Boots) is a cause no list of `cause_events` says, because one blow reaches
+the trigger layer as four events and each counts only sometimes. It is the flag
+`cause_combat_damage_to_player`, with `cause_controller` reading the dealing
+creature's controller:
+
+```jsonc
+{ "kind": "static", "effect": "double_triggers",
+  "affects": { "controller": "you" },
+  "cause_combat_damage_to_player": true,
+  "cause_controller": "you" }
+```
+
+| the ability listens to | doubled when |
+|---|---|
+| `deals_combat_damage_to_player` | always |
+| `creatures_deal_combat_damage` | the batch's `damaged` names a seat, so an `or_battle` trigger on a battle-only swing is not |
+| `deals_combat_damage` | that creature's damage reached a player (the event's `to_player`), so a trampler that hit its blocker and the player is and a blocked creature that hit only its blocker is not |
+| `deals_damage_to_player` | the damage was combat damage |
+| anything else, `deals_combat_damage_to_planeswalker` and `dealt_damage` included | never |
+
+The loader refuses it beside `cause_events` or `cause_filter`: it is the event
+clause itself, and a batch of damagers has no one subject for a filter to read.
+
 Either half omitted means "any", so a card writes only what it prints. Harmonic
 Prodigy has no cause clause and therefore doubles an upkeep trigger as readily
 as a cast one; Veyran has no subtype clause and doubles a Goblin's.
@@ -7407,6 +7645,29 @@ Last-known information, made explicit:
 
 Without the `snapshot`, the creature would already be gone by the time the life gain
 is computed. Declaring it is the engine's substitute for a general LKI system.
+
+A `target` that names a **spell** is read through its stack item to the spell's
+object, so "that spell's mana value" counts the X it was cast with (202.3e) and
+is the number it had as it last existed on the stack (608.2h). Plasm Capture
+takes it before the counter and hands it to a delayed trigger, whose bindings
+are fixed as it is created (603.7c):
+
+```jsonc
+{ "op": "snapshot", "target": "t1", "as": "countered" },
+{ "op": "counter", "target": "t1" },
+{ "op": "delayed_trigger", "duration": "until_it_fires",
+  "trigger": { "event": "precombat_main", "controller": "you" },
+  "effects": [ { "op": "add_mana", "split": ["W", "U", "B", "R", "G"],
+                 "amount": { "mana_value_of": { "binding": "countered" } } } ] }
+```
+
+The near miss is `counter`'s `as`, which binds the card the counter put into a
+graveyard: read there the card has X = 0, a copy has ceased to exist, and a
+spell that can't be countered was never moved, while the printed card pays the
+full mana value in all three cases. A target that is an ability has no object
+and captures an empty record. "Your next first main phase" is `precombat_main`
+watched `until_it_fires`: cast during that phase, its beginning has already
+passed, so the trigger waits for the next turn's.
 
 ## Mechanics
 

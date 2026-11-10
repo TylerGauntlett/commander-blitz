@@ -161,6 +161,16 @@ class CostModel(BaseModel):
     #: is not ``exile_from_hand`` -- "behold a Kithkin **and exile it**" is a
     #: different cost.
     behold: dict[str, Any] | None = None
+    #: "{1}{G}, **Put a card an opponent owns from exile into that player's
+    #: graveyard**: ..." -- Void Attendant, the Eldrazi processors. A positive
+    #: integer, how many cards: the payer chooses them among the cards in exile
+    #: owned by their opponents (face down or not, exiled by anything) and each
+    #: goes to its owner's graveyard. Payable only while that many exist, and
+    #: never with the payer's own cards. Any cost node takes it -- an activated
+    #: ability, an ``additional_cost``, or a ``may``'s ``pay`` (Ulamog's
+    #: Nullifier's "you may put two cards your opponents own from exile into
+    #: their owners' graveyards. If you do, ...").
+    process: int = 0
     #: Usually an integer. A mapping is a value expression evaluated when the
     #: cost is paid -- War Room's "pay life equal to the number of colors in
     #: your commanders' color identity", the only life cost that is not fixed
@@ -265,6 +275,16 @@ class CostModel(BaseModel):
     #: Not ``times`` below, which multiplies the whole mana half rather than
     #: filling in one symbol, and is read only by `may`'s ``pay``.
     x_value: dict[str, Any] | None = None
+    #: "X can't be 0" -- Lair of the Hydra. The least X the player may
+    #: announce for this cost's ``{X}`` (601.2b, 107.3): legality offers the
+    #: ability only while that much X is payable, and the ``CHOOSE_X`` question
+    #: starts there. ``0`` is the unbounded announcement every other X cost has.
+    #:
+    #: Only on an **activated ability's** cost, beside a ``mana`` containing
+    #: ``{X}`` and without ``x_value`` -- a defined X is never announced, so
+    #: there is nothing for a floor to bound. A spell's X takes the card-level
+    #: ``x_minimum`` instead.
+    x_minimum: int = 0
     #: Cumulative upkeep: "pay its upkeep cost **for each age counter on it**".
     #: A value expression multiplying the ``mana`` half, and the only part of a
     #: cost that is not fixed when the card is written. Read only where an
@@ -846,6 +866,15 @@ class AbilityModel(BaseModel):
     #: ``double_triggers``: what the cause must have been, as a card filter on
     #: the event's subject. Veyran's "an **instant or sorcery** spell".
     cause_filter: dict[str, Any] | None = None
+    #: ``double_triggers``: the cause is "**a creature you control dealing
+    #: combat damage to a player**" (Felix Five-Boots), whichever event the
+    #: triggered ability listens to. Not a list of `cause_events`, because the
+    #: same blow reaches four event shapes and each needs its own question
+    #: asked of it: the batch only when it hit a seat, the per-source event only
+    #: when that creature hit a seat, `DAMAGE_DEALT` only when it was combat
+    #: damage to a player. `cause_controller` reads the dealing creature's
+    #: controller. Refused beside `cause_events` and `cause_filter`.
+    cause_combat_damage_to_player: bool = False
     #: "**Once during each of your turns**, you may cast an artifact spell from
     #: your graveyard." Edgar, Master Machinist. How many times a
     #: `cast_from_graveyard` permission may be used per turn, counted per
@@ -1312,6 +1341,13 @@ class ReplacementModel(BaseModel):
     #: `zones.offer_as_enters_effects`, on every route that can stop to ask; an
     #: arrival that cannot (a token) runs none of them and binds nothing. No
     #: targets: "as this enters" chooses, it does not target.
+    #:
+    #: Also read by `self_enters_as_copy`, whose ``copying`` is then a pool the
+    #: effects bound -- The Mimeoplasm's "you may exile two creature cards from
+    #: graveyards. If you do, it enters as a copy of one of those cards" is
+    #: ``copying: {"binding": "exiled"}``. The copy is not offered separately
+    #: (the effects carry the "you may"), the chosen model is bound as
+    #: ``copied``, and ``except_.enters_with`` amounts read both names.
     as_enters: list[dict[str, Any]] | None = None
     #: Applied only when this holds, evaluated as the permanent enters with the
     #: entering object as the source -- so `exclude_self` means "other lands you
@@ -1640,6 +1676,14 @@ class CardModel(BaseModel):
     #: cast.  What being kicked then *does* is an ordinary ``if`` on the
     #: ``{"kicked": true}`` condition, so no card needs new effect vocabulary.
     kicker: str | None = None
+    #: "Kicker {X}. **X can't be 0**" -- Thieving Skydiver. The least X the
+    #: caster may announce for a spell (601.2b, 107.3), on every cast line whose
+    #: cost carries ``{X}`` -- the mana cost's or a ``kicker`` of ``{X}``.
+    #: Legality offers such a line only while that much X is payable, and the
+    #: ``CHOOSE_X`` question starts there; a line with no ``{X}`` in its cost
+    #: (the unkicked cast) announces nothing and is unaffected. Refused on a card
+    #: with no ``{X}`` in its mana cost or kicker.
+    x_minimum: int = 0
     #: **Gift a tapped Fish** (702.164a): "You may promise an opponent a gift as
     #: you cast this spell." The string is *what is promised* -- ``"a tapped
     #: Fish"``, ``"a card"``, ``"a Food"`` -- and it is the printed noun phrase,

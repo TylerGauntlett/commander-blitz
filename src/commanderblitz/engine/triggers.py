@@ -1187,6 +1187,8 @@ def _cause_matches(
     state: GameState, source_obj: GameObject, static: Mapping[str, Any], event: GameEvent
 ) -> bool:
     """Does ``event`` count as the cause this static names?"""
+    if static.get("cause_combat_damage_to_player"):
+        return _combat_damage_to_player_cause(source_obj, static, event)
     names = static.get("cause_events")
     if names is None:
         return True
@@ -1209,6 +1211,56 @@ def _cause_matches(
             return False
         if not matches_card_filter(state, subject, filt, source_obj, departed_auras(event)):
             return False
+    return True
+
+
+def _combat_damage_to_player_cause(
+    source_obj: GameObject, static: Mapping[str, Any], event: GameEvent
+) -> bool:
+    """Is ``event`` a creature dealing combat damage to a player (510.2)?
+
+    Felix Five-Boots: "if a creature you control dealing combat damage to a
+    player causes a triggered ability … to trigger". One blow reaches the
+    trigger layer as up to four events, and an ability triggers off whichever
+    one it listens to (603.2), so each is asked the same question in its own
+    terms:
+
+    - ``COMBAT_DAMAGE_TO_PLAYER`` -- always; it is the connection itself.
+    - ``CREATURES_DEALT_COMBAT_DAMAGE`` -- when its ``damaged`` names a seat.
+      A batch that hit only a battle is not damage to a player.
+    - ``CREATURE_DEALT_COMBAT_DAMAGE`` -- when that creature's damage reached a
+      player (``to_player``); a creature that only hit its blocker did not.
+    - ``DAMAGE_DEALT`` -- the player half, and only combat damage.
+
+    ``COMBAT_DAMAGE_TO_PLANESWALKER`` and the permanent half of
+    ``DAMAGE_DEALT`` are never the cause: damage to a planeswalker or a
+    creature is not damage to a player. The actor every ``cause_controller``
+    reads is the dealing creature's controller, which each of the four carries
+    -- on ``controller`` for the per-connection pair, on ``player`` for the two
+    combat events that are told from the damager's side.
+    """
+    data = event.data
+    if event.type is EventType.COMBAT_DAMAGE_TO_PLAYER:
+        actor = data.get("controller")
+    elif event.type is EventType.CREATURES_DEALT_COMBAT_DAMAGE:
+        if not data.get("damaged"):
+            return False
+        actor = event.player
+    elif event.type is EventType.CREATURE_DEALT_COMBAT_DAMAGE:
+        if not data.get("to_player"):
+            return False
+        actor = event.player
+    elif event.type is EventType.DAMAGE_DEALT:
+        if data.get("to") != "player" or not data.get("combat"):
+            return False
+        actor = data.get("controller")
+    else:
+        return False
+    who = static.get("cause_controller")
+    if who == "you":
+        return actor == source_obj.controller
+    if who == "opponent":
+        return actor is not None and actor != source_obj.controller
     return True
 
 

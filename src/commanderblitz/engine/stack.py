@@ -678,6 +678,9 @@ def _choose_each_target(
         floor, ceiling = count, count
     if not candidates:
         return ()
+    chooser = target_chooser(state, trig, specs)
+    if chooser is None:
+        return ()
     ctx = EffectContext(
         state=state, controller=trig.controller, source_oid=trig.source_oid
     )
@@ -687,9 +690,52 @@ def _choose_each_target(
         [(describe_ref(state, ref), ref) for ref in candidates],
         floor,
         ceiling,
-        trig.controller,
+        chooser,
+        extra=_chosen_for(trig, chooser),
     )
     return tuple(chosen)
+
+
+def target_chooser(
+    state: GameState, trig: TriggerInstance, specs: Sequence[TargetSpec]
+) -> int | None:
+    """The seat that declares this trigger's targets, or ``None`` for nobody.
+
+    The controller (603.3d), unless the one spec's selector names another
+    player with ``chooser`` -- Bladegriff Prototype's "destroy target nonland
+    permanent **of that player's choice** that one of your opponents
+    controls". The target is still the ability's: the candidates are the ones
+    legal for the ability's *controller* (hexproof, ward and protection read
+    the ability, not who pointed it), and only the seat answering the question
+    changes. The loader allows the clause only on a triggered ability's one
+    fixed-size spec, so there is no second spec with a different chooser.
+
+    Resolved through `select_players` against the trigger's bindings, so
+    ``{"binding": "event_player"}`` is the damaged player. ``None`` when the
+    spec names nobody alive -- the selector ``chooser`` rule: nobody to ask,
+    so nothing is chosen, rather than quietly letting the controller decide.
+    """
+    who = specs[0].selector.get("chooser") if len(specs) == 1 else None
+    if who is None or who == "controller":
+        return trig.controller
+    ctx = EffectContext(
+        state=state,
+        controller=trig.controller,
+        source_oid=trig.source_oid,
+        bindings=dict(trig.bindings),
+    )
+    seats = select_players(ctx, who)
+    return seats[0] if seats else None
+
+
+def _chosen_for(trig: TriggerInstance, chooser: int) -> dict[str, int]:
+    """The decision's ``chosen_for`` tag when someone else picks the target.
+
+    Tells an agent answering for ``chooser`` that the ability is not its own:
+    a seat choosing its opponent's removal wants the least of it, not the
+    most.
+    """
+    return {} if chooser == trig.controller else {"chosen_for": trig.controller}
 
 
 def _random_trigger_targets(
@@ -724,7 +770,8 @@ def _random_trigger_targets(
 def _choose_trigger_targets(
     state: GameState, trig: TriggerInstance, specs: Sequence[TargetSpec]
 ) -> Generator[Any, list[int], tuple[TargetRef, ...]]:
-    """Ask the trigger's controller which of the legal target tuples it takes.
+    """Ask the trigger's controller -- or the spec's ``chooser`` -- which of
+    the legal target tuples it takes.
 
     Enumerated at the ordinary cap, the same one casting uses -- a trigger is
     not entitled to fewer choices than a spell with the same targeting line.
@@ -750,11 +797,14 @@ def _choose_trigger_targets(
     )
     if not options:
         return ()
+    chooser = target_chooser(state, trig, specs)
+    if chooser is None:
+        return ()
     if len(options) == 1:
         return options[0]
     decision = PendingDecision(
         kind=DecisionKind.CHOOSE_OBJECTS,
-        player=trig.controller,
+        player=chooser,
         prompt=f"Choose targets for {trig.description}" if trig.description else "Choose targets",
         options=tuple(
             DecisionOption(
@@ -766,7 +816,11 @@ def _choose_trigger_targets(
         ),
         min_count=1,
         max_count=1,
-        context={"source": trig.source_oid, "source_name": trig.description},
+        context={
+            "source": trig.source_oid,
+            "source_name": trig.description,
+            **_chosen_for(trig, chooser),
+        },
     )
     answer = yield decision
     # An empty answer is not "decline": the targets are not optional at this

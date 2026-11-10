@@ -626,6 +626,14 @@ export const DECISION_AUDIT: readonly DecisionRow[] = [
     today: ["dialog"],
     journeys: ["PickOneInTheDialog"],
   },
+  {
+    kind: "choose_objects",
+    purpose: "process_cost",
+    asks: "Which exiled cards opponents own go to their graveyards to pay",
+    of: "exile",
+    today: ["dialog"],
+    journeys: ["PickOneInTheDialog"],
+  },
 
   // --------------------------------------------------------- choose_mode
   {

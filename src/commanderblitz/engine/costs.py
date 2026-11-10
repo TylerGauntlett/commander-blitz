@@ -76,6 +76,7 @@ from .temp_effects import sacrifice_forbidden
 from .triggers import fire
 from .zones import bounce as bounce_object
 from .zones import exile as exile_object
+from .zones import move_object
 from .zones import sacrifice as sacrifice_object
 from .zones import snapshot as capture_snapshot
 
@@ -108,7 +109,9 @@ def mana_sources(
     return out
 
 
-def spell_purpose(card: CardDef) -> SpendPurpose:
+def spell_purpose(
+    card: CardDef, *, caster: int | None = None, owner: int | None = None
+) -> SpendPurpose:
     """What restricted mana would have to allow, to *cast* this card.
 
     Subtypes and supertypes as well as types, because the printed clause names
@@ -139,6 +142,13 @@ def spell_purpose(card: CardDef) -> SpendPurpose:
     a Fireball cast for X=0 is still "a spell with {X} in its mana cost", and
     202.3b scores that X as 0 -- so `mana_value` catches Fireball and Shock
     together or neither, and the symbol question is a different question.
+
+    ``caster`` and ``owner`` answer Thieving Varmint's "…only to cast spells
+    **you don't own**": the player paying and the owner of the object being
+    cast (108.3), which a printed face cannot say. Every cast lane hands both
+    down, as it hands `cost_reduction` the owner; a copy is owned by its caster
+    (707.10). Given neither, `not_owned` stays ``None`` and the restriction
+    fails closed.
     """
     return SpendPurpose(
         kind=CAST,
@@ -148,6 +158,7 @@ def spell_purpose(card: CardDef) -> SpendPurpose:
         mana_value=card.mana_value,
         x_in_mana_cost=card.mana_cost.x_count > 0,
         colorless=not card.colors,
+        not_owned=None if caster is None or owner is None else owner != caster,
     )
 
 
@@ -1323,6 +1334,11 @@ def can_pay(
         behold_pool(state, pid, cost.behold, source_oid, exclude_source=True)
     ) < behold_count(cost.behold):
         return False
+    if cost.process and len(process_pool(state, pid)) < cost.process:
+        # 118.3: a cost that needs cards that are not there cannot be paid, so
+        # Void Attendant with nothing of an opponent's in exile is never
+        # offered, and Ulamog's Nullifier's "you may … if you do" never asks.
+        return False
     if cost.sacrifice is not None and not _sacrifice_pool(state, pid, cost, source_oid):
         return False
     if cost.sacrifice_x is not None and x > sacrifice_x_ceiling(state, pid, cost, source_oid):
@@ -1607,6 +1623,42 @@ def cost_x_ceiling(
     if cost.tap_x is not None:
         return tap_x_ceiling(state, pid, cost, source_oid)
     return None
+
+
+def process_pool(state: GameState, pid: int) -> list[int]:
+    """The cards ``pid`` may process -- "a card **an opponent owns** from exile".
+
+    Every card in exile whose owner is one of ``pid``'s opponents, wherever it
+    came from: a face-down card is a card an opponent owns as much as a
+    face-up one, and a card some other permanent exiled "until it leaves" is
+    still in exile to be taken (the link is spent with the move, so the card
+    simply does not come back). Never the payer's own cards -- the printed cost
+    names an opponent -- which is why the pool is built around the **payer**
+    and not the source's controller.
+    """
+    opponents = set(state.opponents(pid))
+    return [
+        oid
+        for player in state.players
+        for oid in player.exile
+        if (obj := state.objects.get(oid)) is not None and obj.owner in opponents
+    ]
+
+
+def _hidden_from(state: GameState, pid: int, oids: Sequence[int]) -> list[int]:
+    """Which of ``oids`` sit face down in exile where ``pid`` may not look.
+
+    A processor chooses among them without seeing them (406.3): the choice is
+    offered unnamed rather than handing the payer a face `player_view` keeps
+    from them.
+    """
+    return [
+        oid
+        for oid in oids
+        if (obj := state.objects.get(oid)) is not None
+        and obj.hidden_in_exile
+        and pid not in obj.revealed_to
+    ]
 
 
 def _blight_pool(state: GameState, pid: int, source_oid: int | None) -> list[int]:
@@ -2023,6 +2075,26 @@ def pay(
         if len(picked) < count:
             return False
         announce_beheld(state, pid, picked, source_oid)
+
+    if cost.process:
+        # Each card goes to its **owner's** graveyard -- `move_object`'s
+        # default destination -- through the graveyard replacements, so a Rest
+        # in Peace exiles it again and the cost is still paid (614.1).
+        pool = process_pool(state, pid)
+        picked = yield from ask_objects(
+            ctx,
+            "Put into its owner's graveyard",
+            pool,
+            cost.process,
+            cost.process,
+            pid,
+            "process_cost",
+            unseen=_hidden_from(state, pid, pool),
+        )
+        if len(picked) < cost.process:
+            return False
+        for oid in picked:
+            move_object(state, oid, Zone.GRAVEYARD, cause="cost", by=source_oid)
 
     if cost.sacrifice is not None:
         spec = dict(cost.sacrifice)
@@ -2474,6 +2546,12 @@ def activate_mana_ability(
         # **ability** for the reason above: Arena's plain `{R}` ability must not
         # hand out the haste its exerting one pays for.
         grant=ability.mana_grant,
+        # "Spend this mana only to …", read off the **ability** for the same
+        # reason and resolved against this permanent as `_sources_of` resolves
+        # it. The solver spends what it taps at once, but a by-hand activation
+        # -- every ability with a cost beyond {T}, Thieving Varmint's life --
+        # leaves its mana in the pool, and untagged it would pay for anything.
+        restriction=resolve_mana_restriction(ability, obj),
         source_traits=source_traits,
         # Study Hall's "When you spend this mana to cast your commander…", read
         # off the **ability** for the reason above. One tag per activation,

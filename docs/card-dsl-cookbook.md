@@ -462,8 +462,8 @@ creature source of the chosen type**." Three things are load-bearing:
   it would mean a sentinel that only half the substitution path honours. A name
   that is both required and forbidden in one group is refused too — nothing can
   satisfy it, which is the same dead mana a typo makes.
-- **`{"mana_value": …}`, `{"x_in_mana_cost": true}` and `{"colorless": true}`**
-  are the entries that are not names at all. See below.
+- **`{"mana_value": …}`, `{"x_in_mana_cost": true}`, `{"colorless": true}` and
+  `{"not_owned": true}`** are the entries that are not names at all. See below.
 
 #### A restriction that is not a name — `mana_value`, `x_in_mana_cost`
 
@@ -498,6 +498,16 @@ type, so a bare `"colorless"` name would match nothing (and is refused as a
 predicate spelled as a name), while `["eldrazi"]` alone funds coloured Eldrazi.
 `spell_purpose` answers it off the printed colours, `ability_purpose` off the
 source's current ones.
+
+`not_owned` is the fourth, and `true` only: Thieving Varmint's "spend this mana
+only to cast spells **you don't own**" is `{"cast": [[{"not_owned": true}]]}`.
+Ownership belongs to the object, not the printed face (108.3), so
+`spell_purpose` answers it only from the `caster` and `owner` every cast lane
+hands it, the same owner those lanes hand `cost_reduction` for
+`spell_cost_reduction`'s `not_owned`; a copy is owned by its caster (707.10), and
+a purpose given neither fails closed. It belongs to the `cast` half alone: under
+`activate` it is refused, since no ability is a spell anyone owns. The near miss
+is Klauth's `{"cast": "any"}`, which funds the caster's own spells too.
 
 The comparison's value must be a **literal**. A restriction is compiled once at
 load and read during payment, where there is no `EffectContext` to evaluate an
@@ -1026,6 +1036,34 @@ The near misses are both durations alone. `while_exiled` lets the cards be
 played on any turn, a stronger card; `this_turn` opens them only on the turn
 they were exiled and loses them after it, a weaker one.
 
+### "You may cast that card for as long as it remains exiled"
+
+```jsonc
+{ "op": "exile", "objects": { "target": "t1" }, "until_leaves": true,
+  "playable": "while_exiled", "playable_cast_only": true,
+  "any_type": true }                                           // Hostage Taker
+{ "op": "look_at_top", "player": "each_opponent", "amount": { "const": 1 },
+  "objects": { "count": "all" }, "destination": "exile", "face_down": true,
+  "playable": "while_exiled", "playable_cast_only": true }
+```
+
+"Play" is the wider verb: a card is played as a land or cast as a spell, and a
+land is never cast (305.9). `playable` alone is a **play** permission, so a land
+carrying it is offered as a land drop. `playable_cast_only: true` narrows the
+permission to the cast: `GameObject.playable_cast_only`, read by the land half in
+`legality` and nowhere else, since the cast half already offers no land. A land
+exiled this way — an artifact land Hostage Taker takes, a land off the top of a
+library — stays in exile.
+
+It rides on the permission beside `any_type` and `playable_free`, on the same
+three ops, and ends with it: the zone-change reset, the expiry hooks and the
+source's next exile all clear it. The loader refuses it on an effect that
+grants no permission, and its only value is `true`.
+
+The near miss is narrowing the selector to nonland cards, which is a different
+card: Hostage Taker may target an artifact land, and a look at the top of a
+library may have to exile a land; the holder only cannot *play* it.
+
 ### "You may play them without paying their mana costs"
 
 ```jsonc
@@ -1080,6 +1118,38 @@ without a permission to ride on, any value but a positive integer, and beside
 The near miss is a `spell_cost_reduction` static with `from_zone: "exile"`: it
 discounts every exile cast, whatever permission made it castable, and lasts while
 the permanent is on the battlefield rather than as long as the grant.
+
+### "If you cast a spell this way, pay life equal to its mana value rather than paying its mana cost"
+
+```jsonc
+// Nashi, Moon Sage's Scion
+{ "op": "look_at_top", "player": "each_player", "amount": { "const": 1 },
+  "objects": { "count": "all" }, "destination": "exile", "as": "nashi_exiled" },
+{ "op": "grant_playable", "limit": 1, "playable_pay_life_instead": true,
+  "objects": { "binding": "nashi_exiled" } }
+```
+
+`playable_pay_life_instead` is the permission's alternative cost (118.9), on
+`exile`, `look_at_top` to exile or `grant_playable`. It sets the object's
+`playable_pay_life`, and `casting._pay_life_lines` offers that card's cast lines
+priced in life equal to its mana value and **nothing else**: "this way" is the
+only way the permission reaches, so the printed price, a free line and every
+other alternative cost are withheld (118.9a). The price rides on
+`Action.granted_cost`, so `Game._cast` charges the life that was offered. X is 0
+(107.3b), so the life is the mana value with X at 0; additional costs -- a
+mandatory one, a kicker, spree modes, a promised gift -- are still owed on top
+(118.9d). The line is offered only while the player has that much life (119.4;
+paying 0 always works) and their life total may change. A land is played, never
+cast, and pays nothing.
+
+The loader refuses it without a permission to ride on, any value but `true`, and
+beside `playable_free`, `playable_cost_reduction`, `any_color`, `any_type`,
+`as_adventure` or `as_flashback`, each of which names a second price.
+
+The near misses are `cast_from_library_top`'s `pay_life_instead` (Bolas's
+Citadel), which is the same price off the top of your own library and no
+permission at all, and the `granted_alternative_cost` static, which offers its
+price *beside* the printed one.
 
 ## Auras and Equipment
 
@@ -2687,6 +2757,34 @@ either: that discount belongs to one permission rather than to a zone, so it has
 to know which permission the cast took, which a zone filter cannot say. It can
 reuse the same `zone` plumbing, but not these keys.
 
+### A discount that asks who owns the spell
+
+```jsonc
+// Gonti, Canny Acquisitor — "Spells you cast but don't own cost {1} less to
+// cast."
+{ "kind": "static", "effect": "spell_cost_reduction",
+  "affects_spells": { "controller": "you", "not_owned": true },
+  "amount": 1 }
+```
+
+`not_owned: true` matches a spell whose owner (108.3) is not the player casting
+it. Only `true` loads; anything else is refused, since `false` would say nothing.
+It is ANDed with the other keys like `from_zone`.
+
+The owner is read off the object being cast, never the printed face, which has
+none. Every pricer hands it to `cost_reduction.cost_reduction` beside the zone:
+`casting._cast_variant` and `Game._cast` for a cast from hand, exile, a graveyard
+or a library under any permission, `ops_cards._cast_paying_mana_cost` for a
+resolving `cast_card`, and `legality`'s diagnostic. A stolen card cast from exile
+gets the discount wherever it was taken from. The caster's own card does not,
+even from exile. `cast_copy` passes the caster as the owner, because a copy of a
+card cast is owned by its caster (707.10), so it never gets the discount. A
+pricer that passes no owner gets no discount, as with the zone. Free casts are
+not priced and need neither.
+
+**Not `from_zone: "exile"`.** That key discounts your own foretold or impulse-drawn
+cards. It also misses an opponent's card cast from their graveyard or library.
+
 ### Making *other* spells cost more, in life
 
 ```jsonc
@@ -2779,6 +2877,12 @@ Legality offers a kickable card **twice** — unkicked first, then kicked, when 
 extra mana is there — and the two are different actions, not one action with a
 flag the client sets. `kicker` is deliberately not folded into `mana_cost`: mana
 value stays what is printed, and the choice is the mechanic.
+
+A `kicker` of `{X}` is announced with the rest of the cast (601.2b): the kicked
+line's price folds the X in, the `CHOOSE_X` question is asked for it, and the
+permanent keeps the answer as the `{"x": true}` its enters trigger reads. It
+never touches mana value. "X can't be 0" is the card-level
+[`x_minimum`](card-dsl.md#x_minimum--x-cant-be-0).
 
 The loader rejects **half** a kicker in either direction: a `kicker` cost that no
 effect reads via `kicked`, and a `kicked` condition on a card with no `kicker`.
@@ -4135,6 +4239,30 @@ creature is still affected by both. And "any time you have priority" is here an
 ordinary activation rather than a special action, which is observable only to
 something that could respond to it, and nothing can.
 
+### Another player's library — `controller: "you"`
+
+```jsonc
+// Thieving Amalgam — "At the beginning of each opponent's upkeep, you manifest
+// the top card of that player's library."
+{ "kind": "triggered",
+  "trigger": { "event": "upkeep", "controller": "opponent" },
+  "effects": [ { "op": "manifest", "player": { "binding": "event_player" },
+                 "controller": "you" } ] }
+```
+
+`player` is whose library the card comes from, and without `controller` that
+same player manifests it. `controller: "you"` is "**you** manifest the top card
+of **that player's** library" (701.34a): the card enters under the effect's
+controller, who may look at it (708.5) and is the only player who may turn it
+face up, for the hidden card's own mana cost. The library's player stays its
+owner, so when it leaves the battlefield it goes to their graveyard, hand or
+library, and "a creature you control but don't own" (`controller: "you"`,
+`owner: "opponent"` in a trigger filter) matches it. `"you"` is the only value
+the loader accepts.
+
+Written without the key, `player: {"binding": "event_player"}` hands the 2/2 to
+the opponent whose library it was.
+
 ## "When this creature is turned face up"
 
 ```jsonc
@@ -4267,8 +4395,9 @@ manifest dread draws nothing. The graveyard card is put there by an ordinary
 move, so graveyard replacements apply to it and a graveyard count sees it.
 
 The loader refuses `cloak`, `objects`, `selector`, `destination`,
-`destinations`, `rest_to`, `rest_to_bottom` and `face_down`: 701.62a fixes the
-pool, the two destinations and the shell.
+`destinations`, `rest_to`, `rest_to_bottom`, `face_down` and `controller`:
+701.62a fixes the pool, the two destinations and the shell, and the library is
+the manifesting player's own.
 
 `manifest` is the near miss: it manifests the top card without a choice and
 puts nothing into the graveyard. `look_at_top` with `rest_to: "graveyard"`
@@ -4311,9 +4440,14 @@ an encoded card is in exile with nothing on the stack to point at. It shares
 exactly as a storm copy does — and the original stays in exile, which is why
 cipher keeps paying.
 
-A copy does **not** encode again (702.97b): it is not a card. Epic carries the
+A copy does **not** encode again (702.99b): it is not a card. Epic carries the
 same `not is_token` guard, and both keywords make copies that resolve through
 the very code that armed them.
+
+The encoding ends when its creature leaves the battlefield (702.99c).
+`zones.move_object` clears every `encoded_on` naming a departing permanent, so
+the creature that comes back under the same oid is a new object (400.7) with
+nothing encoded on it.
 
 ## Casting a copy for a printed price
 
@@ -7114,6 +7248,16 @@ problem. Foretell needs only the first.
 **"On a later turn" is the whole price** — foretold and cast on the same turn is
 the printed cost paid in two instalments with the discount thrown in — so
 `foretold_turn` is recorded and compared.
+
+**Any card type may carry it.** A foretold creature, artifact or enchantment is
+cast from exile at its own timing and resolves onto the battlefield face up, an
+ordinary permanent (Sage of the Beyond). On an instant or sorcery the printed
+"Foretell {4}{U}" line is claimed by `spell_effects` with the rest of the spell;
+on a permanent the residual gate claims it off the `foretell` field itself, and
+only when the declared cost is the printed one. The foretelling belongs to the
+card in exile: `reset_permanent_state` clears `foretold_by` whenever the card
+changes zones (400.7), so a foretold permanent that is cast, resolves and is
+later exiled again is not castable a second time for its foretell cost.
 
 **"If this spell was cast from exile"** is the condition `cast_from_exile`, the
 third sibling of `cast_from_hand` and `cast_from_graveyard`. It reads
@@ -13502,12 +13646,15 @@ as a grant and grants nothing.
 | the cards move | already in exile | this op exiles them | **not at all** |
 | which zone | exile | exile | any zone the selector names |
 | price | free | printed | printed |
-| how many | one | all of them | `limit`, per granting permanent |
+| how many | one | all of them | `limit`, per resolution |
 
-`limit` is "**a** spell", singular, out of however many were flagged. Counted in
-the turn ledger against the granting permanent (`playable_group`), on the same
-negative slot a `cast_from_graveyard` permission bills, so two Lockes are two
-spells and one Locke milling three cards is still one.
+`limit` is "**a** spell", singular, out of however many were flagged -- or
+"you may **play one** of those cards" (Nashi, Moon Sage's Scion), where a land
+played from exile spends it too. Each resolution draws a fresh group id
+(`playable_group`, from `GameState.alloc_oid`, so it names no object), counted
+in the turn ledger on the same negative slot a `cast_from_graveyard` permission
+bills: two Lockes are two spells, a double-striking Nashi's two triggers are two
+plays, and one Locke milling three cards is still one.
 
 **Every seat's copy of both zones is walked.** Exile is kept per owner, so a
 card taken out of an opponent's graveyard sits in the *opponent's* exile, and a
@@ -15150,9 +15297,9 @@ the rest, and it records nothing.
 
 Exile cards from the top of your library one at a time until one matches
 `objects`, the stop test (required and non-empty: an empty one stops at the first
-card). Every card walked past **stays in exile**, because the sentence never
-moves them; `cascade` and `discover` bottom them and `reveal_until` never takes
-them out of the library.
+card). Every card walked past **stays in exile** unless `rest_to_bottom` is
+set, because Breaching Dragonstorm's sentence never moves them; `cascade` and
+`discover` bottom them and `reveal_until` never takes them out of the library.
 
 - `cast_free` offers the hit as a free cast (`_offer_free_cast`'s yes/no).
 - `cast_free_if` is a selector the hit must match, tested in exile, before the
@@ -15180,6 +15327,14 @@ them out of the library.
   spell becomes, for as long as that permanent lasts (the sentence prints no
   duration); a declined cast, an uncast hit and a noncreature spell get nothing,
   and a permanent that leaves and returns is a new object that owes nothing.
+- `rest_to_bottom` (`true`) is "then put the exiled cards that weren't cast
+  this way on the bottom of that library in a random order". After the offer,
+  every card the walk exiled that is still in exile -- the walked-past cards,
+  and the hit unless its cast reached the stack -- goes to the bottom of the
+  walked library in one random order over those cards only (not a shuffle).
+  A declined hit, one failing `cast_free_if` and one `cast_for_free` refused
+  are all bottomed; a walk that runs the library out bottoms everything it
+  exiled. Under `"each_player"` each library takes back its own cards.
 - `as` records the hits, cast or not, as a list -- one oid for each walked
   library that found one, so a single walk that runs its library out binds the
   empty list.
@@ -15203,6 +15358,18 @@ them out of the library.
   "effects": [{ "op": "sacrifice", "objects": { "self_only": true } }] }]
 ```
 
+```jsonc
+// Chaos Wand -- "{4}, {T}: Target opponent exiles cards from the top of their
+// library until they exile an instant or sorcery card. You may cast that card
+// without paying its mana cost. Then put the exiled cards that weren't cast
+// this way on the bottom of that library in a random order."
+{ "op": "exile_until",
+  "player": { "target": "t1" },
+  "objects": { "any_types": ["Instant", "Sorcery"] },
+  "cast_free": true,
+  "rest_to_bottom": true }
+```
+
 The near misses: a `grant_keyword` and `grant_ability` written after the walk
 reach the spell on the stack (or a hit left in exile), and the battlefield
 arrival sweeps them; a `delay` with `step: "end_step"` is blitz's delayed
@@ -15210,12 +15377,15 @@ trigger, which belongs to no permanent, where the quoted ability is the
 creature's own; `cast_gains_keywords` is the
 `cast_from_library_top` static's until-end-of-turn rider.
 
-The loader refuses an `amount`; `cast_free_if`, `else_destination` or
-`creature_cast_gains` without `cast_free`; and a `creature_cast_gains` that
+The loader refuses an `amount`; `cast_free_if`, `else_destination`,
+`rest_to_bottom` or `creature_cast_gains` without `cast_free`; `rest_to_bottom`
+beside `else_destination` (an uncast hit has one home) or as anything but a
+boolean; and a `creature_cast_gains` that
 grants nothing, names an unknown keyword or key, or indexes a grantable ability
 the card does not have. `reveal_until` with `player` is the near miss for an opponent's
 library: it leaves the walked-past cards in the library and moves only the
-match.
+match. `cascade` and `discover` bottom the rest too, but walk only your own
+library with a mana-value stop test.
 
 ## "It gains suspend" — suspending a card from an effect
 

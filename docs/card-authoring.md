@@ -331,6 +331,17 @@ and a prop must be inert — nothing on it triggers and nothing on it can be
 activated — because a prop that acts folds its own behaviour into every card's
 verdict.
 
+A prop a card needs only for its own shape is added for that card alone, so no
+other card's position moves. The conditional props are the helpers beside
+`build_sandbox`: `swap_in_tribal_body`, `swap_in_legendary_body`,
+`swap_in_artifact_body` and `swap_in_colorless_sources` swap a slot;
+`spare_cards_in_hand` and `spare_graveyard_roles` add fodder for an additional
+cost; `graveyard_spell_props` puts a targetless instant or sorcery card in your
+graveyard or the opponent's (which is otherwise empty) for a spell whose
+required `card_in_graveyard` target selects Instant or Sorcery there.
+`tests/cards/test_every_card_works.py` calls the same helpers, so the two
+sandboxes agree.
+
 ## Where the output lives
 
 ```

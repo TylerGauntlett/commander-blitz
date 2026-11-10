@@ -74,7 +74,16 @@ def candidates(
     Gardens. 601.2b chooses X before 601.2c declares targets, so the pool only
     exists once X is known; left at its 0 default, a selector's ``{"x": true}``
     leaf reads zero and the card offers a pool nobody asked for.
+
+    A trigger announces no X of its own, but its ``bindings`` carry the X its
+    permanent was cast with (`triggers` binds ``obj.cast_x``), and that is the
+    X its target line reads -- "When this creature enters, if it was kicked,
+    gain control of target artifact with mana value **X** or less" (Thieving
+    Skydiver). The stack item takes the same binding as its ``x``, so the
+    declaration and the 608.2b re-check read one number.
     """
+    if not x and bindings:
+        x = int(bindings.get("x", 0) or 0)
     ctx = EffectContext(
         state=state,
         controller=controller,

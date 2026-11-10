@@ -51,6 +51,7 @@ PRECONS = {
     "msc_the_fantastic_four",
     "msc_wakanda_forever",
     "otc_desert_bloom",
+    "otc_grand_larceny",
     "otc_quick_draw",
     "soc_silverquill_influence",
     "soc_witherbloom_pestilence",

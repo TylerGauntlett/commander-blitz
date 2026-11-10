@@ -360,6 +360,17 @@ class Game:
         # a landfall trigger with an intervening-if that counts land drops this
         # turn has to see the post-increment value.
         state.players[pid].lands_played += 1
+        played = state.objects[oid]
+        if (
+            played.zone is Zone.EXILE
+            and played.playable_group is not None
+            and played.playable_by == pid
+            and played.playable_live(state.turn)
+        ):
+            # "…you may **play** one of those cards" (Nashi, Moon Sage's
+            # Scion): a land is one of them, so the drop spends the group the
+            # way a cast does, in the same ledger slot legality reads.
+            state.turn_ledger.activated(played.playable_group, GRAVEYARD_CAST_SLOT)
         # A modal DFC played as its land half shows that face from the moment it
         # arrives, and the flag is set *before* the move so the enters-the-
         # battlefield replacements are read off the land rather than off the
@@ -537,7 +548,7 @@ class Game:
         # this very tuple.
         # ``obj.zone`` is still the zone the card is cast from: `push_spell`
         # has not moved it yet, so a graveyard-only discount reads flashback.
-        extra -= cost_reduction(state, pid, card, targets, zone=obj.zone)
+        extra -= cost_reduction(state, pid, card, targets, zone=obj.zone, owner=obj.owner)
         # "Spells you cast this way cost {2} less" (Urianger Augurelt): the
         # discount the permission this line casts under carries, decided from
         # the same lane flags `_cast_variant` priced it with.
@@ -604,7 +615,7 @@ class Game:
             cost = card.foretell
         elif action.overloaded and card.overload is not None:
             cost = card.overload
-        elif action.kicked:
+        elif action.kicked and not action.granted_cost:
             cost = card.mana_cost.plus(card.kicker)
         elif action.from_library_top:
             # "…pay life equal to its mana value **rather than** pay its mana
@@ -619,6 +630,11 @@ class Game:
             # exactly as `_cast_variant` priced the line, and the price -- read
             # off the action, for `warp`'s reason -- is charged below.
             cost = ManaCost.parse("")
+            if action.kicked and card.kicker is not None:
+                # The kicker is an additional cost (702.33a), still owed under
+                # the life a `playable_pay_life_instead` permission charges --
+                # `_cast_variant` priced the kicked line the same way.
+                cost = card.kicker
         elif action.cast_free:
             # "…without paying its mana cost" (601.2b). Plot's "you may cast it
             # as a sorcery on a later turn without paying its mana cost", and
@@ -757,8 +773,11 @@ class Game:
         min_x = cast_lock_min_x(
             state, pid, _spell_as_cast(card, action.face_down, action.bestowed)
         )
+        # And by the card's own "X can't be 0" (107.3), which `_ask_x` reads
+        # only when this line's cost has an X to announce.
         x = yield from self._ask_x(
-            pid, card.name, cost, extra, spell_purpose(card), min_x=min_x or 0
+            pid, card.name, cost, extra, spell_purpose(card, caster=pid, owner=obj.owner),
+            min_x=max(min_x or 0, card.x_minimum),
         )
         # The one X a spell has is the one the player announced, whichever half
         # of the cost it belongs to: `_ask_x` returned 0 for a card whose X is
@@ -806,7 +825,7 @@ class Game:
             None,
             x=x,
             extra_generic=extra,
-            purpose=spell_purpose(card),
+            purpose=spell_purpose(card, caster=pid, owner=obj.owner),
             # Sunburst and converge. The spell is what the colours are recorded
             # on, and this is the only moment they exist: `spend` decrements the
             # pool and one blue mana is then indistinguishable from another.
@@ -1193,6 +1212,8 @@ class Game:
                 # the answer off `cost.x_value` and never asks.
                 cost_node=ability.cost,
                 cost_source=oid,
+                # "X can't be 0" -- Lair of the Hydra.
+                min_x=ability.cost.x_minimum,
             )
 
         if action.ability_modes:
@@ -1457,7 +1478,7 @@ class Game:
         fewest = min(fewest, most)
         if most <= 0:
             return cost, 0, []
-        purpose = spell_purpose(card)
+        purpose = spell_purpose(card, caster=pid, owner=state.objects[oid].owner)
 
         def price(picked: list[int]) -> tuple[ManaCost, int] | None:
             """What the rest costs once ``picked`` are spent, or ``None`` if unpayable."""
@@ -1555,8 +1576,9 @@ class Game:
         """How big is X, if this cost has one at all?
 
         ``min_x`` is the floor a mana-value casting lock puts under it -- see
-        `player_statics.cast_lock_min_x`. Legality offered the cast only when
-        the ceiling reached it.
+        `player_statics.cast_lock_min_x` -- or a printed "X can't be 0"
+        (`CardDef.x_minimum`, `Cost.x_minimum`). Legality offered the cast or
+        activation only when the ceiling reached it.
 
         The ceiling is recomputed here rather than taken from the action,
         because the board can have moved between legality offering the spell and

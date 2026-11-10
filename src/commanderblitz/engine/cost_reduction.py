@@ -21,7 +21,13 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 def cost_reduction(
-    state: GameState, pid: int, card: CardDef, targets=None, *, zone: Any = None
+    state: GameState,
+    pid: int,
+    card: CardDef,
+    targets=None,
+    *,
+    zone: Any = None,
+    owner: int | None = None,
 ) -> int:
     """How much less this card costs its controller right now.
 
@@ -41,14 +47,16 @@ def cost_reduction(
 
     ``zone`` is the zone the card is being cast from, handed on to
     `spell_cost_reduction` for "spells you cast from your graveyard" -- every
-    cast lane passes the object's zone as it prices the line.
+    cast lane passes the object's zone as it prices the line. ``owner`` is the
+    owner of the object being cast, handed on for "spells you cast but don't
+    own" the same way.
     """
     # Two sources, added together, and they point in opposite directions.
     # `card.cost_reduction` is Ghalta -- "THIS spell costs {X} less", counting
     # permanents. The statics are Warden of Evos Isle -- "creature spells with
     # flying YOU CAST cost {1} less", discounting a different card, picked out
     # by that card's own printed face.
-    total = spell_cost_reduction(state, pid, card, targets, zone=zone)
+    total = spell_cost_reduction(state, pid, card, targets, zone=zone, owner=owner)
     # And the one that points the other way: Kasmina's "spells your opponents
     # cast that target a creature or planeswalker you control cost {2} more".
     # Netted in as a negative discount, so the offer and the charge price it

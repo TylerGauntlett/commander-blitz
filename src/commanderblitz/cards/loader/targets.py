@@ -178,6 +178,8 @@ def _compile_targets(
                 f"{where}.target[{spec.id}]: a random target takes a fixed 'count' "
                 f"-- 'optional', 'up_to' and 'any' are choices nobody makes"
             )
+    for spec in specs:
+        _check_target_chooser(spec, specs, where, on_trigger=on_trigger)
     _check_mode_targets(
         specs, where, on_spell=on_spell, on_trigger=on_trigger, mode_count=mode_count
     )
@@ -254,6 +256,51 @@ def _compile_targets(
                 f"or the targets after it cannot be identified"
             )
     return specs
+
+
+def _check_target_chooser(
+    spec: TargetSpec, specs: Sequence[TargetSpec], where: str, *, on_trigger: bool
+) -> None:
+    """"Target … **of that player's choice**" -- Bladegriff Prototype.
+
+    A target's selector ``chooser`` names the seat that declares it, which
+    `stack.target_chooser` honours as a triggered ability goes on the stack
+    (603.3d). Nothing else reads the clause: a spell's and an activated
+    ability's targets are chosen in legality, by whoever takes the action, so
+    anywhere else it would load and be the controller's choice -- a strictly
+    better card than the printed one.
+
+    One fixed-size spec only, owned by no mode, because the decision asks one
+    seat for the whole declaration; ``optional`` and ``up_to`` would hand that
+    seat a "none" the printed card never offers it. ``"owner"`` and ``"none"``
+    are a resolution-time selector's names, and mean nothing for a target.
+    """
+    who = spec.selector.get("chooser")
+    if who is None:
+        return
+    label = f"{where}.target[{spec.id}]"
+    if not on_trigger:
+        raise DslError(
+            f"{label}: a target 'chooser' is a triggered ability's -- a spell's or "
+            f"an activated ability's targets are chosen by whoever takes the action"
+        )
+    if len(specs) != 1 or spec.mode is not None:
+        raise DslError(
+            f"{label}: a target with a 'chooser' must be the ability's only "
+            f"target, owned by no mode"
+        )
+    if spec.selector.get("random"):
+        raise DslError(f"{label}: a random target has no 'chooser' -- nobody chooses it")
+    if not isinstance(spec.count, int) or spec.count < 1 or spec.optional or spec.up_to:
+        raise DslError(
+            f"{label}: a target with a 'chooser' takes a fixed 'count' -- "
+            f"'optional', 'up_to' and 'any' would let that player choose none"
+        )
+    if who in ("owner", "none"):
+        raise DslError(
+            f"{label}: a target 'chooser' is a player spec, not {who!r}"
+        )
+    _validate_player_spec(who, f"{label}.chooser", {})
 
 
 def _check_kicked_selector(

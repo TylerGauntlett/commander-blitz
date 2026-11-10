@@ -25,7 +25,7 @@ from .effects import execute
 from .effects.conditions import evaluate_condition
 from .effects.context import EffectContext, ask_mode, ask_objects, ask_player, ask_yes_no
 from .effects.selectors import resolve_pool, select_players
-from .effects.values import evaluate_value
+from .effects.values import evaluate_value, object_mana_value
 from .enums import Keyword, Zone
 from .events import EventType
 from .mana import OTHER_PAYMENT
@@ -369,6 +369,13 @@ def move_object(
         # "…for as long as you control this creature" is over (611.2b), and
         # the permanent that may come back under the same oid is not it.
         end_source_bound(state, oid)
+        # 702.99c: an encoded card stops being encoded once its creature
+        # leaves the battlefield, and the creature that may come back under the
+        # same oid is a new object (400.7) that nothing is encoded on. The link
+        # lives on the card in exile, so it is cut from that end.
+        for other in state.objects.values():
+            if other.encoded_on == oid:
+                other.encoded_on = None
         # "Each creature that convoked this spell" (702.51c) is that object,
         # and the one that may come back under the same oid is not it.
         for item in state.stack:
@@ -932,6 +939,13 @@ def offer_enters_copy(state: GameState, oid: int, controller: int):
     for replacement in card.replacements:
         if replacement.get("event") != "self_enters_as_copy":
             continue
+        # "As The Mimeoplasm enters, you may exile two creature cards from
+        # graveyards. If you do, it enters as a copy of one of those cards" --
+        # the pool is what the replacement's own ``as_enters`` effects bind, so
+        # it does not exist yet. `offer_as_enters_effects` runs those effects
+        # and makes this choice after them, on every route that runs them.
+        if replacement.get("as_enters"):
+            continue
         selector = replacement.get("copying") or {}
         ctx = EffectContext(
             state=state, controller=controller, source_oid=oid, source_name=card.name
@@ -1126,6 +1140,23 @@ def offer_as_enters_effects(state: GameState, oid: int, controller: int):
     nothing. What the effects bind is left on `obj.as_enters_bindings`, keyed
     by the replacement's index, for `_enter_battlefield` to evaluate the
     ``amount`` with.
+
+    **An as-enters copy** (The Mimeoplasm). On a `self_enters_as_copy`
+    replacement the effects run first and the ``copying`` pool is resolved
+    against what they bound -- ``{"binding": "exiled"}``, cards in exile rather
+    than permanents. "If you do, it enters as a copy of one of those cards": the
+    "you may" is the effects' own, so the copy is not offered a second time --
+    an empty pool (nothing was exiled) is the printed "if you don't", and the
+    permanent enters as itself; otherwise the controller picks the model, which
+    is forced when the pool holds one card. The model is bound as ``copied``
+    beside the effects' names, so the exception's ``enters_with`` amount can
+    read "the power of **the other** card" as
+    ``{"power_of": {"objects": {"binding": "exiled", "exclude_binding":
+    "copied"}}}``. The model is a **card**, and the copy takes its copiable
+    values as that card (707.2, 707.9): the printed face, with a
+    characteristic-defining ability still applying off the battlefield
+    (604.3). The counters are not copiable values; they are placed as it
+    enters, in the one placement every other "enters with" joins (122.6).
     """
 
     obj = state.objects.get(oid)
@@ -1134,7 +1165,8 @@ def offer_as_enters_effects(state: GameState, oid: int, controller: int):
     card = state.card_of(obj)
     for index, replacement in enumerate(card.replacements):
         effects = replacement.get("as_enters")
-        if not effects or replacement.get("event") != "self_enters_with_counters":
+        event = replacement.get("event")
+        if not effects or event not in ("self_enters_with_counters", "self_enters_as_copy"):
             continue
         if not evaluate_condition(
             state, replacement.get("condition"), controller=controller, source=oid
@@ -1148,6 +1180,22 @@ def offer_as_enters_effects(state: GameState, oid: int, controller: int):
             x=obj.cast_x,
         )
         yield from execute(ctx, effects)
+        if event == "self_enters_as_copy":
+            pool = resolve_pool(ctx, replacement.get("copying") or {})
+            if pool:
+                chosen = yield from ask_objects(
+                    ctx,
+                    f"{card.name} enters as a copy of which card?",
+                    pool,
+                    1,
+                    1,
+                    controller,
+                    purpose="enters_as_copy",
+                )
+                model = state.objects.get(chosen[0]) if chosen else None
+                if model is not None:
+                    obj.enters_copy_of = state.card_of(model).id
+                    ctx.bindings["copied"] = [model.oid]
         bound = obj.as_enters_bindings if obj.as_enters_bindings is not None else {}
         bound[index] = dict(ctx.bindings)
         obj.as_enters_bindings = bound
@@ -1952,6 +2000,11 @@ def _enter_battlefield(
                         source_oid=obj.oid,
                         x=obj.cast_x,
                     )
+                    # "…equal to the power of the other card" (The
+                    # Mimeoplasm): what this replacement's ``as_enters``
+                    # effects exiled, and the model `offer_as_enters_effects`
+                    # bound as ``copied``.
+                    ctx.bindings.update(as_enters_bound.get(index, {}))
                     entering.setdefault(str(entry["counter"]), []).append(
                         evaluate_value(ctx, entry.get("amount", 1))
                     )
@@ -2396,8 +2449,10 @@ def end_permissions_until_next_exile(state: GameState, source_oid: int | None) -
         obj.playable_any_type = False
         obj.playable_any_color = False
         obj.playable_free = False
+        obj.playable_cast_only = False
         obj.playable_alt_cost = None
         obj.playable_cost_reduction = 0
+        obj.playable_pay_life = False
     source.playable_grants = []
 
 
@@ -2446,7 +2501,9 @@ def snapshot(state: GameState, oid: int) -> dict[str, Any]:
         "owner": obj.owner,
         "power": c.power,
         "toughness": c.toughness,
-        "mana_value": card.mana_value,
+        # A spell's, read while it is still on the stack, counts its X
+        # (202.3e) -- "that spell's mana value" after Plasm Capture countered it.
+        "mana_value": object_mana_value(state, obj),
         "types": sorted(c.types),
         "subtypes": sorted(c.subtypes),
         "colors": sorted(c.colors),

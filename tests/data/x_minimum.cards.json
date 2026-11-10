@@ -1,0 +1,63 @@
+{
+  "_comment": "Cards that exist only for the X-floor test (tests/unit/costs/test_x_minimum.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_kicker_x_open` is the same kicker {X} creature without \"X can't be 0\", the contrast the floor is asserted against.",
+  "cards": [
+    {
+      "id": "t_kicker_x_floor",
+      "name": "Test Kicker X Floor",
+      "oracle_text": "Kicker {X}. X can't be 0.\nWhen this creature enters, if it was kicked, you gain X life.",
+      "mana_cost": "{1}{U}",
+      "types": ["Creature"],
+      "subtypes": ["Human"],
+      "power": 1,
+      "toughness": 1,
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "kicker": "{X}",
+      "x_minimum": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature enters, if it was kicked, you gain X life.",
+          "trigger": {"event": "self_enters", "condition": {"kicked": true}},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"x": true}}]
+        }
+      ]
+    },
+    {
+      "id": "t_kicker_x_open",
+      "name": "Test Kicker X Open",
+      "oracle_text": "Kicker {X}.\nWhen this creature enters, if it was kicked, you gain X life.",
+      "mana_cost": "{1}{U}",
+      "types": ["Creature"],
+      "subtypes": ["Human"],
+      "power": 1,
+      "toughness": 1,
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "kicker": "{X}",
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature enters, if it was kicked, you gain X life.",
+          "trigger": {"event": "self_enters", "condition": {"kicked": true}},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"x": true}}]
+        }
+      ]
+    },
+    {
+      "id": "t_x_floor_relic",
+      "name": "Test X Floor Relic",
+      "oracle_text": "{X}{G}: You gain X life. X can't be 0.",
+      "mana_cost": "{1}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{X}{G}: You gain X life. X can't be 0.",
+          "cost": {"mana": "{X}{G}", "x_minimum": 1},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"x": true}}]
+        }
+      ]
+    }
+  ]
+}

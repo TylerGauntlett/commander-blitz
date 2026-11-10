@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/casting/test_plot.py. t_lilah is Lilah, Undefeated Slickshot's second line. t_gold_bolt is a multicolored instant and t_mono_bolt the mono-coloured near miss, which is what separates `min_colors` from `colors`. t_plotter and t_plotted_bear print Plot themselves: an instant, so \"only as a sorcery\" has something to restrict, and a creature with no other text.",
+  "_comment": "Shapes for tests/unit/casting/test_plot.py. t_lilah is Lilah, Undefeated Slickshot's second line. t_gold_bolt is a multicolored instant and t_mono_bolt the mono-coloured near miss, which is what separates `min_colors` from `colors`. t_plotter and t_plotted_bear print Plot themselves: an instant, so \"only as a sorcery\" has something to restrict, and a creature with no other text. t_plot_discounter is Doc Aurlock, Grizzled Genius's second line, for tests/unit/casting/test_plot_cost_reduction.py.",
   "cards": [
     {
       "id": "t_lilah",
@@ -81,6 +81,27 @@
       "colors": ["G"],
       "color_identity": ["G"],
       "plot": "{G}"
+    },
+    {
+      "id": "t_plot_discounter",
+      "name": "Test Plot Discounter",
+      "oracle_text": "Plotting cards from your hand costs {2} less.",
+      "mana_cost": "{U}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Rabbit"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["U", "R"],
+      "color_identity": ["U", "R"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Plotting cards from your hand costs {2} less.",
+          "effect": "plot_cost_reduction",
+          "affects_player": "you",
+          "amount": {"const": 2}
+        }
+      ]
     }
   ]
 }

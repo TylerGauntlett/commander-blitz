@@ -20,16 +20,20 @@ point at. It goes through the same `put_copy_on_stack`, so a cipher copy is a
 token and announces its targets exactly as a storm copy does.
 
 The original stays in exile — it is copied, not cast — which is the whole of why
-cipher keeps paying.
+cipher keeps paying. It stops being encoded the moment its creature leaves the
+battlefield (702.99c): the oid survives the zone change, the object does not
+(400.7). Arcane Heist is the shipped witness.
 """
 
 from __future__ import annotations
 
-from commanderblitz.engine.enums import ActionKind, Zone
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Zone
 from commanderblitz.engine.primitives import damage_player
+from commanderblitz.engine.zones import destroy, move_object
 from tests.conftest import _default_answer, only_oid, pass_until
 
 SWAMP = "swamp"
+FOREST = "forest"
 WHISPER = "t_cipher"
 BEAR = "t_bear"
 
@@ -161,7 +165,7 @@ class TestTheTrigger:
         assert connect(game, bear, amount=1) == 1
 
     def test_the_copy_does_not_encode_itself(self, builder):
-        """702.97b: a copy is not a card, so there is nothing to exile.
+        """702.99b: a copy is not a card, so there is nothing to exile.
 
         Epic needed the same `not is_token` guard, and for the same reason --
         both keywords make copies that resolve through the very code that armed
@@ -198,3 +202,112 @@ class TestTheTrigger:
         )
 
         assert connect(game, other) == 0
+
+
+class TestTheEncodingEnds:
+    """702.99c: the encoding ends when the creature leaves the battlefield.
+
+    The engine keeps one oid across zone changes, so a link left in place
+    would still name the creature that comes back -- a new object (400.7)
+    nothing is encoded on.
+    """
+
+    def test_it_leaves_and_returns(self, builder):
+        game = position(builder)
+        whisper = cast_and_encode(game)
+        bear = only_oid(game, BEAR)
+
+        move_object(game.state, bear, Zone.EXILE)
+        move_object(game.state, bear, Zone.BATTLEFIELD)
+
+        assert game.state.objects[bear].zone is Zone.BATTLEFIELD
+        assert game.state.objects[whisper].encoded_on is None
+        assert connect(game, bear) == 0
+
+    def test_it_is_bounced_and_recast(self, builder):
+        game = (
+            builder(players=2)
+            .battlefield(0, [SWAMP] * 3 + [FOREST] * 2)
+            .battlefield(0, [BEAR])
+            .hand(0, [WHISPER])
+            .library(0, [SWAMP] * 20)
+            .library(1, [SWAMP] * 20)
+            .build()
+        )
+        whisper = cast_and_encode(game)
+        bear = only_oid(game, BEAR)
+
+        move_object(game.state, bear, Zone.HAND)
+
+        def castable(g):
+            return any(
+                a.kind is ActionKind.CAST and a.source == bear
+                for a in g.legal_actions()
+            )
+
+        pass_until(game, castable)
+        game.apply(
+            next(
+                a
+                for a in game.legal_actions()
+                if a.kind is ActionKind.CAST and a.source == bear
+            )
+        )
+        pass_until(game, lambda g: g.state.objects[bear].zone is Zone.BATTLEFIELD)
+
+        assert game.state.objects[whisper].encoded_on is None
+        assert connect(game, bear) == 0
+
+    def test_it_dies(self, builder):
+        game = position(builder)
+        whisper = cast_and_encode(game)
+        bear = only_oid(game, BEAR)
+
+        destroy(game.state, bear)
+
+        assert game.state.objects[bear].zone is Zone.GRAVEYARD
+        assert game.state.objects[whisper].zone is Zone.EXILE, "the card stays"
+        assert game.state.objects[whisper].encoded_on is None
+
+    def test_another_creature_leaving_changes_nothing(self, builder):
+        """Only the encoded creature's departure ends it."""
+        game = (
+            builder(players=2)
+            .battlefield(0, [SWAMP] * 3)
+            .battlefield(0, [BEAR, BEAR])
+            .hand(0, [WHISPER])
+            .library(0, [SWAMP] * 20)
+            .library(1, [SWAMP] * 20)
+            .build()
+        )
+        action = next(
+            a
+            for a in game.legal_actions()
+            if a.kind is ActionKind.CAST
+            and game.state.objects[a.source].def_id == WHISPER
+        )
+        whisper = action.source
+        game.apply(action)
+        pass_until(game, lambda g: g.pending().kind is DecisionKind.CHOOSE_OBJECTS)
+        decision = game.pending()
+        assert decision.context.get("purpose") == "encode"
+        encoded = decision.options[0].ref.id
+        game.apply(
+            next(
+                a
+                for a in game.legal_actions()
+                if a.kind is ActionKind.CHOOSE and a.choice == 0
+            )
+        )
+        pass_until(game, lambda g: game.state.objects[whisper].zone is Zone.EXILE)
+        assert game.state.objects[whisper].encoded_on == encoded
+        other = next(
+            o.oid
+            for o in game.state.battlefield_objects(0)
+            if o.def_id == BEAR and o.oid != encoded
+        )
+
+        destroy(game.state, other)
+
+        assert game.state.objects[whisper].encoded_on == encoded
+        assert connect(game, encoded) == 1

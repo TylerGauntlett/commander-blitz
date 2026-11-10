@@ -606,7 +606,7 @@ class GameObject:
     #: `face_down` on the way onto the battlefield. Identity state, like
     #: `cast_kicked`, so it survives that reset.
     pending_face_down: bool = False
-    #: Cipher (702.97a): the creature this exiled card is **encoded on**. Haunt's
+    #: Cipher (702.99a): the creature this exiled card is **encoded on**. Haunt's
     #: link pointed a third way -- the card in exile names a creature, and the
     #: card is what has to notice that creature connecting. The two are separate
     #: fields rather than one "linked_to", because a card could in principle be
@@ -925,17 +925,27 @@ class GameObject:
     #: *instant* may only be cast at sorcery speed, and its own type line still
     #: says instant.
     playable_sorcery_only: bool = False
+    #: "You may **cast** that card for as long as it remains exiled" -- Hostage
+    #: Taker, Gonti, Lord of Luxury, Thief of Sanity. A restriction on the
+    #: permission, as `playable_sorcery_only` is: it reaches the cast and not
+    #: the land play, so a land card carrying it is never offered as a land
+    #: drop. "Play" is the wider verb (a land is played, never cast -- 305.9),
+    #: and a permission without this flag is a play permission.
+    playable_cast_only: bool = False
     #: "…you may cast it from your graveyard **as an Adventure**" -- Hildibrand
     #: Manderville. A restriction on which *face* the permission reaches: the
     #: Adventure half (the card's `second_face`) is offered, and the front face
     #: is not. Resolving, the half goes on its adventure as any Adventure does
     #: (715.3d), because `showing_second_face` is what that rider reads.
     playable_as_adventure: bool = False
-    #: Which permanent's permission made this card playable, when that
-    #: permission caps how many of its cards may be cast -- Locke, Treasure
-    #: Hunter: "you may cast **a spell** from among those cards", singular, out
-    #: of however many were milled. The cap is counted per granting permanent in
-    #: the turn ledger, so the group has to say which one granted it.
+    #: Which grant made this card playable, when that grant caps how many of
+    #: its cards may be played -- Locke, Treasure Hunter: "you may cast **a
+    #: spell** from among those cards", singular, out of however many were
+    #: milled; Nashi, Moon Sage's Scion: "you may **play one** of those cards",
+    #: a land drop included. A fresh id per resolution (`GameState.alloc_oid`,
+    #: so it names no object), counted in the turn ledger: two resolutions in
+    #: one turn -- a double-striking Nashi -- are two plays, and one
+    #: resolution's cards share one.
     playable_group: int | None = None
     #: "…and mana of any type can be spent to cast that spell" -- Summon: Esper
     #: Valigarmanda. A relaxation of what may be *spent*, riding along with the
@@ -983,6 +993,13 @@ class GameObject:
     #: dies with it, so it ends when the permission does (this turn, for
     #: Urianger) rather than when the granting permanent leaves.
     playable_cost_reduction: int = 0
+    #: "If you cast a spell this way, **pay life equal to its mana value rather
+    #: than paying its mana cost**" -- Nashi, Moon Sage's Scion. An alternative
+    #: cost (118.9) the permission carries, so it rides on the grant and dies
+    #: with it, as `playable_alt_cost` does. Not an option beside the printed
+    #: price: `casting._pay_life_lines` offers the life lines alone. A land
+    #: played under it pays nothing, because it is played, never cast.
+    playable_pay_life: bool = False
     #: The object whose effect granted an ``"until_next_exile_by_source"``
     #: permission -- Superior Foes of Spider-Man: "you may play that card
     #: **until you exile another card with this creature**". Read only by
@@ -1412,6 +1429,7 @@ class GameObject:
         self.playable_duration = "this_turn"
         self.playable_free = False
         self.playable_sorcery_only = False
+        self.playable_cast_only = False
         self.playable_as_adventure = False
         self.playable_group = None
         self.playable_any_type = False
@@ -1419,10 +1437,17 @@ class GameObject:
         self.playable_condition = None
         self.playable_alt_cost = None
         self.playable_cost_reduction = 0
+        self.playable_pay_life = False
         self.playable_source = None
         self.exiled_from = None
         self.prepared = False
         self.revealed_to = set()
+        # A foretold card that leaves exile is a new object nobody foretold
+        # (400.7): cast, resolved and exiled again, a foretold creature must
+        # not be castable a second time for its foretell cost. `foretell_card`
+        # writes both after its own move, as it writes `revealed_to`.
+        self.foretold_by = None
+        self.foretold_turn = -1
         # `enters_cost_paid` is deliberately *not* reset either, and for the
         # same reason as `hasted_by_suspend` below: it is the answer to a
         # question asked a moment before the move, and this runs on the way in

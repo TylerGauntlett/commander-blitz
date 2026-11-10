@@ -384,6 +384,13 @@ class Cost:
     #: beholding (601.2a), and nothing moves: a permanent stays put, a card
     #: goes back among the hand, and the reveal is the whole price.
     behold: Mapping[str, Any] | None = None
+    #: The Eldrazi processor cost -- "Put **a card an opponent owns** from
+    #: exile into that player's graveyard" (Void Attendant), "put **two cards
+    #: your opponents own** from exile into their owners' graveyards" (Ulamog's
+    #: Nullifier). How many cards; the payer picks them among the cards in
+    #: exile owned by their opponents, face-down ones included, and each goes
+    #: to its owner's graveyard. See `costs.process_pool`.
+    process: int = 0
     #: An integer, or a value expression evaluated at payment time -- see
     #: `costs.life_cost`, which both `can_pay` and `pay` go through so the two
     #: cannot price the same cost differently.
@@ -485,6 +492,10 @@ class Cost:
     #:
     #: `None` means "X is announced" (601.2b), which is every other X cost.
     x_value: Mapping[str, Any] | None = None
+    #: "X can't be 0" -- the least announced X (107.3), read by
+    #: `legality._ability_aims` (the ability is offered only while that much X
+    #: is payable) and `game._activate` (the ``CHOOSE_X`` floor). 0 is no floor.
+    x_minimum: int = 0
 
     @staticmethod
     def from_spec(spec: Mapping[str, Any] | None) -> Cost | None:
@@ -566,10 +577,12 @@ class Cost:
             ),
             exile_self_from_hand=bool(spec.get("exile_self_from_hand")),
             behold=(dict(spec["behold"]) if spec.get("behold") else None),
+            process=int(spec.get("process", 0) or 0),
             mana_reduction=(
                 dict(spec["mana_reduction"]) if spec.get("mana_reduction") else None
             ),
             x_value=(dict(spec["x_value"]) if spec.get("x_value") else None),
+            x_minimum=int(spec.get("x_minimum", 0) or 0),
         )
 
     def without_mana(self) -> Cost:
@@ -637,6 +650,7 @@ class Cost:
             and not self.exile_self_from_hand
             and self.exile_from_hand is None
             and self.behold is None
+            and not self.process
             and not self.pay_life
             and not self.pay_energy
             and self.remove_counters is None
@@ -688,6 +702,8 @@ class Cost:
         if self.behold:
             count = self.behold.get("count", 1)
             parts.append("Behold" if count == 1 else f"Behold {count}")
+        if self.process:
+            parts.append(f"Put {self.process} from opponents' exile into graveyards")
         if self.pay_life:
             amount = self.pay_life if isinstance(self.pay_life, int) else "X"
             parts.append(f"Pay {amount} life")
@@ -1618,6 +1634,12 @@ class CardDef:
     #: not folded into `mana_cost` because mana value must stay what is printed,
     #: and because the choice is the mechanic: legality offers the spell twice.
     kicker: ManaCost | None = None
+    #: "X can't be 0" -- the least X the caster may announce on a cast line
+    #: whose cost carries ``{X}`` (601.2b, 107.3), from the mana cost or a
+    #: ``{X}`` kicker. Read by `casting._cast_variant` (the line is offered only
+    #: while that much X is payable) and `game._cast` (the ``CHOOSE_X`` floor),
+    #: beside the mana-value lock's floor and never below it. 0 is no floor.
+    x_minimum: int = 0
     #: **Gift a tapped Fish** (702.164a) -- what is promised, as the printed noun
     #: phrase. Not a cost: a gift is paid for with nothing, so the promised line
     #: is offered at the printed price. What it names instead is a **seat**, so

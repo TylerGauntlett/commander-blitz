@@ -26,6 +26,7 @@ expiring at end of turn.
 from __future__ import annotations
 
 from collections.abc import Generator
+from dataclasses import replace
 from typing import TYPE_CHECKING, Any
 
 from . import stack, triggers
@@ -35,12 +36,13 @@ from .enums import Zone
 from .events import EventType
 from .mana import OTHER_PAYMENT, ManaCost
 from .objects import TIME_COUNTER
-from .player_statics import player_cant_cast_while_resolving
+from .player_statics import player_cant_cast_while_resolving, plot_cost_reduction
 from .primitives import cast_locked_zones
 from .targeting import additional_sized_targets, enumerate_target_tuples
 from .zones import exile, move_object
 
 if TYPE_CHECKING:  # pragma: no cover
+    from .carddef import CardDef
     from .state import GameState
     from .structs import CastRider
 
@@ -152,6 +154,27 @@ def foretell_card(state: GameState, pid: int, oid: int) -> Generator[Any, list[i
     return True
 
 
+def plot_price(state: GameState, pid: int, card: CardDef) -> ManaCost:
+    """What ``pid`` pays to plot ``card`` right now: its plot cost, discounted.
+
+    "Plotting cards from your hand costs {2} less" -- Doc Aurlock, Grizzled
+    Genius (`player_statics.plot_cost_reduction`). Generic only and clamped at
+    zero, like every other reduction: {2} less off a plot cost of {1}{R} is
+    {R}, never less. One function, asked by the plot offer in `legality` and by
+    the payment in `plot_card`, so a card offered at the reduced price is
+    charged it.
+
+    The later cast is untouched: a plotted card is cast without paying its
+    mana cost (702.171a), so there is nothing left there to reduce.
+    """
+    cost = card.plot
+    assert cost is not None
+    less = plot_cost_reduction(state, pid)
+    if not less or not cost.generic:
+        return cost
+    return replace(cost, generic=max(0, cost.generic - less))
+
+
 def plot_card(state: GameState, pid: int, oid: int) -> Generator[Any, list[int], bool]:
     """Pay the plot cost and exile this card from hand, to cast free later.
 
@@ -174,7 +197,9 @@ def plot_card(state: GameState, pid: int, oid: int) -> Generator[Any, list[int],
     if card.plot is None:
         return False
 
-    ok = yield from pay(state, pid, Cost(mana=card.plot), None, purpose=OTHER_PAYMENT)
+    ok = yield from pay(
+        state, pid, Cost(mana=plot_price(state, pid, card)), None, purpose=OTHER_PAYMENT
+    )
     if not ok:  # pragma: no cover - legality already proved payability
         return False
 

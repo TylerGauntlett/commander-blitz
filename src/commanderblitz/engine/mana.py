@@ -1196,6 +1196,12 @@ class SpendPurpose:
     #: Temple. Colour is not a type, so `names` cannot hold it, and an Eldrazi
     #: name alone funds the coloured Eldrazi too.
     colorless: bool | None = None
+    #: Is the object being cast owned by someone other than the player paying
+    #: for it? -- "Spend this mana only to cast spells **you don't own**",
+    #: Thieving Varmint. Ownership is a fact about the object, not the printed
+    #: face (108.3), so `costs.spell_purpose` answers it only when the caller
+    #: hands it both the object's owner and the caster; ``None`` otherwise.
+    not_owned: bool | None = None
 
 
 #: The purpose of every :data:`OTHER` payment. It names nothing, because no
@@ -1223,7 +1229,7 @@ RESTRICTION_OPS: dict[str, Any] = {
 #: be read by nobody, and leave the group permitting everything its names alone
 #: permit -- which is the strictly-better card this whole grammar exists to
 #: refuse.
-RESTRICTION_PREDICATES = frozenset({"mana_value", "x_in_mana_cost", "colorless"})
+RESTRICTION_PREDICATES = frozenset({"mana_value", "x_in_mana_cost", "colorless", "not_owned"})
 
 
 @dataclass(frozen=True)
@@ -1264,6 +1270,9 @@ class RestrictionGroup:
     #: "…only to cast **colorless** Eldrazi spells", true or false. ``None`` is
     #: a group that does not ask.
     colorless: bool | None = None
+    #: "…only to cast spells **you don't own**" -- ``True`` or ``None``. Asked of
+    #: the cast half only; `compile_restriction` refuses it under `activate`.
+    not_owned: bool | None = None
 
     def names(self) -> frozenset[str]:
         """Every name mentioned, either way round -- for `dynamic`'s scan."""
@@ -1285,6 +1294,8 @@ class RestrictionGroup:
             if purpose.mana_value is None or not RESTRICTION_OPS[op](purpose.mana_value, wanted):
                 return False
         if self.colorless is not None and purpose.colorless is not self.colorless:
+            return False
+        if self.not_owned is not None and purpose.not_owned is not self.not_owned:
             return False
         return not (
             self.x_in_mana_cost is not None and purpose.x_in_mana_cost is not self.x_in_mana_cost
@@ -1471,6 +1482,14 @@ def compile_restriction(spec: Any, where: str) -> ManaRestriction:
             activate=_restriction_groups(spec.get("activate"), f"{where}.activate"),
             other=_restriction_groups(other, f"{where}.other"),
         )
+        if any(group.not_owned is not None for group in restriction.activate):
+            # An ability has no "spell you don't own" to ask about, and
+            # `ability_purpose` never answers it: the group would load and
+            # silently pay for nothing.
+            raise DslError(
+                f"{where}.activate: 'not_owned' asks about a spell being cast; "
+                f"it belongs in the 'cast' half"
+            )
         if not restriction.cast and not restriction.activate:
             raise DslError(
                 f"{where}: 'mana_restriction' permits nothing at all; omit it for ordinary mana"
@@ -1579,6 +1598,7 @@ def _restriction_groups(spec: Any, where: str) -> tuple[RestrictionGroup, ...]:
                 mana_value=predicates.get("mana_value"),
                 x_in_mana_cost=predicates.get("x_in_mana_cost"),
                 colorless=predicates.get("colorless"),
+                not_owned=predicates.get("not_owned"),
             )
         )
     return tuple(out)
@@ -1607,6 +1627,16 @@ def _restriction_predicate(entry: Mapping[str, Any], where: str) -> tuple[str, A
             f"{sorted(entry)} as separate entries in the same group"
         )
     key, spec = next(iter(entry.items()))
+    if key == "not_owned":
+        # "…only to cast spells **you don't own**" (Thieving Varmint). `true`
+        # only: no card prints "spells you own", and a `false` that loaded
+        # would be a second meaning nobody tested.
+        if spec is not True:
+            raise DslError(
+                f"{where}.not_owned: true only -- the spell's owner is not the "
+                f"player spending the mana (108.3)"
+            )
+        return key, spec
     if key == "colorless":
         # "…only to cast **colorless** Eldrazi spells" (Eldrazi Temple, Shrine
         # of the Forsaken Gods). A yes-or-no about colour, refused as anything

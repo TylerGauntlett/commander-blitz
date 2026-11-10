@@ -49,6 +49,8 @@ DEFENDING_TRIGGERS = frozenset(
 #: never once offered the line: the silently inert card, which is worse than a
 #: load error. `x_value` is here for the neighbouring reason -- only
 #: `costs.ability_mana` reads it, and a cast variant is never priced through it.
+#: `x_minimum` likewise: only an activation reads a cost's floor, and a spell's
+#: "X can't be 0" is the card-level `x_minimum`.
 NOT_A_CAST_TIME_COST = frozenset(
     {
         "tap",
@@ -64,6 +66,7 @@ NOT_A_CAST_TIME_COST = frozenset(
         "tap_x",
         "pay_life_x",
         "x_value",
+        "x_minimum",
     }
 )
 
@@ -620,6 +623,13 @@ STATIC_EFFECTS = frozenset(
         # the ability could discount it. Strong Back is an Aura discounting
         # somebody else's Equipment.
         "ability_cost_reduction",
+        # Doc Aurlock, Grizzled Genius. "Plotting cards from your hand costs
+        # {2} less." The third member of the family, for the one price neither
+        # line above reaches: plot (702.171a) is a special action (116.2k),
+        # neither a spell nor an activated ability. Player-wide, read by
+        # `suspend.plot_price` -- the one function the plot offer in
+        # `legality` and the payment in `suspend.plot_card` both reach.
+        "plot_cost_reduction",
         # Academy Manufactor, Divine Visitation.  "If you would create a Clue,
         # Food, or Treasure token, instead create one of each."  Read by
         # `primitives.create_token`, which is the only moment a token creation
@@ -913,6 +923,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "damage_life_floor",
         "player_hexproof",
         "player_protection",
+        "plot_cost_reduction",
     }
 )
 
@@ -1039,11 +1050,17 @@ SPELL_FILTER_KEYS = frozenset(
 #: Seat), "…from anywhere other than your hand" (Advanced Reconstruction). One
 #: zone name or a list, out of `CAST_ORIGIN_ZONES`; matched by
 #: `player_statics.cast_zone_matches` with the zone every pricer hands down.
+#:
+#: ``not_owned`` is "spells you cast **but don't own**" (Gonti, Canny
+#: Acquisitor): the spell's owner (108.3) is not its caster. Only ``true``; read
+#: by `player_statics.spell_cost_reduction` off the owner every pricer hands
+#: down beside the zone, never off the printed face, which has no owner.
 SPELL_COST_REDUCTION_FILTER_KEYS = SPELL_FILTER_KEYS | {
     "exclude_self",
     "power",
     "from_zone",
     "not_from_zone",
+    "not_owned",
 }
 
 #: The zones a card can be cast or played **from** -- what a ``from_zone`` /

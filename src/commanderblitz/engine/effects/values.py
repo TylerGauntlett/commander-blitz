@@ -58,13 +58,14 @@ from ..characteristics import (
     _compare,
     _matches_printed,
     auras_matching,
+    card_in_exile_characteristics,
     chars,
     counters_of_kind,
     greatest_commander_mana_value,
     min_count,
     min_life,
 )
-from ..enums import KEYWORD_COUNTERS, Keyword
+from ..enums import KEYWORD_COUNTERS, Keyword, Zone
 from ..errors import DslError
 from ..mana import origin_matches
 from ..objects import ANY_COUNTER_KIND, FINALITY, PLUS_ONE, SHIELD, STUN
@@ -1287,6 +1288,27 @@ def _paid_object_value(ctx: EffectContext, key: Any, which: str) -> int:
     return _from_oid(ctx, record["oid"], which)
 
 
+def object_mana_value(state: Any, obj: Any) -> int:
+    """An object's mana value as it is now -- the one reading `snapshot` shares.
+
+    "…except it's a white Zombie Angel with **no mana cost**." An embalm token's
+    def_id is the original card's, so without the override it would still
+    report the printed cost's mana value.
+
+    202.3e: a spell on the stack counts the X it was cast with, so "that
+    spell's mana value" (Shark Typhoon, Plasm Capture) is 6 for a Fireball cast
+    with X = 5. Everywhere else X is 0 and this is the printed number.
+    """
+    if obj.copy_overrides and obj.copy_overrides.get("no_mana_cost"):
+        return 0
+    card = state.card_of(obj)
+    spell_x = next(
+        (item.x for item in state.stack if item.kind == "spell" and item.oid == obj.oid),
+        0,
+    )
+    return card.mana_value + spell_x * card.mana_cost.x_count
+
+
 def _from_oid(ctx: EffectContext, oid: int | None, which: str) -> int:
     if oid is None:
         return 0
@@ -1296,24 +1318,14 @@ def _from_oid(ctx: EffectContext, oid: int | None, which: str) -> int:
     if which == "mana_spent":
         return obj.mana_spent
     if which == "mana_value":
-        # "…except it's a white Zombie Angel with **no mana cost**." An embalm
-        # token's def_id is the original card's, so without this it would still
-        # report the printed cost's mana value.
-        if obj.copy_overrides and obj.copy_overrides.get("no_mana_cost"):
-            return 0
-        card = ctx.state.card_of(obj)
-        # 202.3e: a spell on the stack counts the X it was cast with, so
-        # "that spell's mana value" (Shark Typhoon) is 6 for a Fireball cast
-        # with X = 5. Everywhere else X is 0 and this is the printed number.
-        spell_x = next(
-            (
-                item.x
-                for item in ctx.state.stack
-                if item.kind == "spell" and item.oid == oid
-            ),
-            0,
-        )
-        return card.mana_value + spell_x * card.mana_cost.x_count
+        return object_mana_value(ctx.state, obj)
+    if obj.zone in (Zone.GRAVEYARD, Zone.EXILE, Zone.HAND, Zone.LIBRARY):
+        # A card off the battlefield has its printed power and toughness, with
+        # its own characteristic-defining ability applied (604.3): The
+        # Mimeoplasm's "equal to the power of the other card" reads a */*
+        # card in exile as its CDA's number, not the 0 printed beside the star.
+        power, toughness, _ = card_in_exile_characteristics(ctx.state, obj)
+        return power if which == "power" else toughness
     c = chars(ctx.state, oid)
     return c.power if which == "power" else c.toughness
 

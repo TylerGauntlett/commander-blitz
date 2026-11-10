@@ -1,0 +1,33 @@
+{
+  "_comment": "Shapes for tests/unit/targets/test_target_chooser.py. t_tc_griff is Bladegriff Prototype's trigger on a vanilla flyer: the target is chosen by the damaged player.",
+  "cards": [
+    {
+      "id": "t_tc_griff",
+      "name": "Test Chooser Griff",
+      "oracle_text": "Flying\nWhenever this creature deals combat damage to a player, destroy target nonland permanent of that player's choice that one of your opponents controls.",
+      "mana_cost": "{4}",
+      "types": ["Artifact", "Creature"],
+      "subtypes": ["Bird"],
+      "power": 3,
+      "toughness": 2,
+      "colors": [],
+      "color_identity": [],
+      "keywords": ["flying"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, destroy target nonland permanent of that player's choice that one of your opponents controls.",
+          "trigger": {"event": "deals_combat_damage_to_player", "source": "self"},
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {"controller": "opponent", "not_types": ["Land"], "chooser": {"binding": "event_player"}}
+            }
+          ],
+          "effects": [{"op": "destroy", "objects": {"target": "t1"}}]
+        }
+      ]
+    }
+  ]
+}
