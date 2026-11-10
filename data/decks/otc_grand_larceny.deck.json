@@ -1,0 +1,848 @@
+{
+  "id": "otc_grand_larceny",
+  "name": "Grand Larceny",
+  "commanders": [
+    "gonti_canny_acquisitor"
+  ],
+  "color_identity": [
+    "B",
+    "G",
+    "U"
+  ],
+  "source": "precon",
+  "release": {
+    "set_code": "OTC",
+    "set_name": "Outlaws of Thunder Junction Commander",
+    "date": "2024-04-19"
+  },
+  "notes": "Outlaws of Thunder Junction Commander precon, card for card (https://mtgjson.com/api/v5/decks/GrandLarceny_OTC.json).",
+  "tags": [
+    "Theft",
+    "Combat damage",
+    "Evasion",
+    "Ninjutsu"
+  ],
+  "strategy": "Gonti, Canny Acquisitor makes every spell you cast but don't own cost {1} less, and each time your creatures connect with a player it exiles that player's top card face down for you to play with any mana. So the deck slips small evasive thieves past blockers -- Slither Blade, Triton Shorestalker, Silhana Ledgewalker, Shadowmage Infiltrator, Thief of Sanity, Ukkima -- and ninjutsus Fallen Shinobi, Nashi and Orochi Soul-Reaver in behind them, stealing a card or a creature with every hit. Hostage Taker, Gonti, Lord of Luxury, Siphon Insight, Stolen Goods and Villainous Wealth take from libraries and battlefields directly, Felix Five-Boots doubles every combat-damage trigger, and Thieving Varmint, Savvy Trader and Sage of the Beyond pay for what was taken.",
+  "archetype": "control",
+  "ratings": {
+    "speed": 3,
+    "complexity": 4,
+    "interaction": 3,
+    "resilience": 2,
+    "pilot": 4
+  },
+  "signature": [
+    {
+      "card_id": "gonti_canny_acquisitor",
+      "why": "Stolen spells cost {1} less, and every hit on a player exiles their top card for you to play with any mana."
+    },
+    {
+      "card_id": "felix_five_boots",
+      "why": "Every combat-damage trigger your permanents have fires twice, so each connection steals double."
+    },
+    {
+      "card_id": "hostage_taker",
+      "why": "Takes a creature or artifact off the table and lets you cast it as your own."
+    },
+    {
+      "card_id": "villainous_wealth",
+      "why": "Exiles the top X of an opponent's library and casts every spell of mana value X or less for free."
+    }
+  ],
+  "printings": {
+    "access_tunnel": {
+      "scryfall_id": "de71e040-bf32-4469-bc18-567dace97dc8",
+      "artist": "Alayna Danner",
+      "set_code": "otc",
+      "collector_number": "270"
+    },
+    "arcane_heist": {
+      "scryfall_id": "3ceb13f4-ac9e-4ddd-9170-545f8d37b87a",
+      "artist": "Anna Pavleeva",
+      "set_code": "otc",
+      "collector_number": "13"
+    },
+    "arcane_signet": {
+      "scryfall_id": "2bfeb9dc-0bf7-4f19-9714-b14114e4627f",
+      "artist": "Dan Murayama Scott",
+      "set_code": "otc",
+      "collector_number": "252"
+    },
+    "baleful_mastery": {
+      "scryfall_id": "579e20e7-1395-4a6c-a836-ae3419fc8808",
+      "artist": "Chris Cold",
+      "set_code": "otc",
+      "collector_number": "126"
+    },
+    "baleful_strix": {
+      "scryfall_id": "be8439e6-f779-49f0-806a-b04995697a6a",
+      "artist": "Nils Hamm",
+      "set_code": "otc",
+      "collector_number": "215"
+    },
+    "bladegriff_prototype": {
+      "scryfall_id": "0093bdcf-6626-40ab-9b87-8ab9e4a306a4",
+      "artist": "Johann Bodin",
+      "set_code": "otc",
+      "collector_number": "253"
+    },
+    "brainstealer_dragon": {
+      "scryfall_id": "884d4eea-77c0-4b78-bb83-3f855cc77298",
+      "artist": "Joshua Raphael",
+      "set_code": "otc",
+      "collector_number": "127"
+    },
+    "cazur_ruthless_stalker": {
+      "scryfall_id": "6ee4fda8-07cd-4091-8850-a6925080b464",
+      "artist": "Daarken",
+      "set_code": "otc",
+      "collector_number": "188"
+    },
+    "chaos_wand": {
+      "scryfall_id": "67eb6ab9-d264-4ec6-9dac-3b16ee8c9ec0",
+      "artist": "Kari Christensen",
+      "set_code": "otc",
+      "collector_number": "254"
+    },
+    "cold_eyed_selkie": {
+      "scryfall_id": "8c39dc54-611e-48a8-adba-9cc31afa87d0",
+      "artist": "Jaime Jones",
+      "set_code": "otc",
+      "collector_number": "218"
+    },
+    "command_tower": {
+      "scryfall_id": "d1d019fb-0498-454b-a03b-4f396def718b",
+      "artist": "Ryan Yee",
+      "set_code": "otc",
+      "collector_number": "280"
+    },
+    "culling_ritual": {
+      "scryfall_id": "4c1f40e7-4d3c-416d-81e2-97f9b925301c",
+      "artist": "Lorenzo Mastroianni",
+      "set_code": "otc",
+      "collector_number": "219"
+    },
+    "cunning_rhetoric": {
+      "scryfall_id": "4a163794-db93-4cf6-a2ea-1af288109dc1",
+      "artist": "Chris Rallis",
+      "set_code": "otc",
+      "collector_number": "129"
+    },
+    "curse_of_the_swine": {
+      "scryfall_id": "c423ecbc-518e-4ff9-ac0c-38c8eec66b54",
+      "artist": "James Ryman",
+      "set_code": "otc",
+      "collector_number": "92"
+    },
+    "darkslick_shores": {
+      "scryfall_id": "c49305d1-ac95-43ea-b02d-c3c7205bcda6",
+      "artist": "Aaron Miller",
+      "set_code": "otc",
+      "collector_number": "281"
+    },
+    "darksteel_ingot": {
+      "scryfall_id": "f279fcf1-e4f5-4873-9d73-8d62e0343b81",
+      "artist": "Martina Pilcerova",
+      "set_code": "otc",
+      "collector_number": "256"
+    },
+    "darkwater_catacombs": {
+      "scryfall_id": "5d2b5e7c-7c96-42d6-9eb5-743c345c4463",
+      "artist": "Monte Michael Moore",
+      "set_code": "otc",
+      "collector_number": "282"
+    },
+    "dazzling_sphinx": {
+      "scryfall_id": "2ddac591-825b-4304-858c-9dc9b311805b",
+      "artist": "Oriana Menendez",
+      "set_code": "otc",
+      "collector_number": "93"
+    },
+    "diluvian_primordial": {
+      "scryfall_id": "eb14cd77-d37e-4849-816f-cd36e2a37765",
+      "artist": "Stephan Martiniere",
+      "set_code": "otc",
+      "collector_number": "96"
+    },
+    "dimir_aqueduct": {
+      "scryfall_id": "2f527759-84c9-4bd3-9763-a2105c9d93f9",
+      "artist": "John Avon",
+      "set_code": "otc",
+      "collector_number": "288"
+    },
+    "doc_aurlock_grizzled_genius": {
+      "scryfall_id": "6fc27b30-8c8e-434c-a72c-e1d409efc1ae",
+      "artist": "Jesper Ejsing",
+      "set_code": "otj",
+      "collector_number": "201"
+    },
+    "dream_thief_s_bandana": {
+      "scryfall_id": "dccdb6cc-dfad-4c7e-9550-3dd12f3e9c79",
+      "artist": "Danny Schwartz",
+      "set_code": "otc",
+      "collector_number": "38"
+    },
+    "drowned_catacomb": {
+      "scryfall_id": "07b4a6dd-0e2f-43be-93c6-7578c34a9443",
+      "artist": "Jung Park",
+      "set_code": "otc",
+      "collector_number": "290"
+    },
+    "edric_spymaster_of_trest": {
+      "scryfall_id": "22d6a4c9-4bdd-4e70-8481-95260e6aa7ab",
+      "artist": "Volkan Baǵa",
+      "set_code": "otc",
+      "collector_number": "221"
+    },
+    "exotic_orchard": {
+      "scryfall_id": "3da63d3f-3752-48cd-8ea4-0ce08b1b8c21",
+      "artist": "Steven Belledin",
+      "set_code": "otc",
+      "collector_number": "293"
+    },
+    "extract_brain": {
+      "scryfall_id": "8c3a4a44-5e75-42a4-8140-2105c2becff9",
+      "artist": "A. M. Sartor",
+      "set_code": "otc",
+      "collector_number": "225"
+    },
+    "fallen_shinobi": {
+      "scryfall_id": "979076a7-313f-4227-a4c3-548e86997e0a",
+      "artist": "Dmitry Burmak",
+      "set_code": "otc",
+      "collector_number": "226"
+    },
+    "feed_the_swarm": {
+      "scryfall_id": "0be3e9b2-db8f-4b1f-8f22-e2e897ed83d6",
+      "artist": "Andrey Kuzinskiy",
+      "set_code": "otc",
+      "collector_number": "134"
+    },
+    "felix_five_boots": {
+      "scryfall_id": "6800e935-d327-464c-ab88-7c0193827da3",
+      "artist": "Chris Rahn",
+      "set_code": "otc",
+      "collector_number": "6"
+    },
+    "fellwar_stone": {
+      "scryfall_id": "33ca68a6-474e-4d86-bffa-ee4bddb4a3cf",
+      "artist": "John Avon",
+      "set_code": "otc",
+      "collector_number": "257"
+    },
+    "fetid_pools": {
+      "scryfall_id": "566a84c0-d6e6-4cce-b9e5-0e7b5439663c",
+      "artist": "Jonas De Ro",
+      "set_code": "otc",
+      "collector_number": "296"
+    },
+    "flooded_grove": {
+      "scryfall_id": "5a1c7863-c831-452d-ab6d-818e68491b05",
+      "artist": "Dave Kendall",
+      "set_code": "otc",
+      "collector_number": "297"
+    },
+    "forest": {
+      "scryfall_id": "dc20a07e-5f92-49c2-9c97-d5eda536d3f6",
+      "artist": "Sergey Glushakov",
+      "set_code": "otj",
+      "collector_number": "285"
+    },
+    "ghostly_pilferer": {
+      "scryfall_id": "2f6a3605-950d-488b-8e4f-e2c339ef48dc",
+      "artist": "Craig J Spearing",
+      "set_code": "otc",
+      "collector_number": "98"
+    },
+    "gonti_canny_acquisitor": {
+      "scryfall_id": "03a7e79f-625a-49ac-9cb1-e1fe5f51f5a0",
+      "artist": "Anna Podedworna",
+      "set_code": "otc",
+      "collector_number": "1"
+    },
+    "gonti_lord_of_luxury": {
+      "scryfall_id": "fbbb3aef-af1f-4b77-b7d6-64cfd706a9d9",
+      "artist": "Daarken",
+      "set_code": "otc",
+      "collector_number": "135"
+    },
+    "heartless_conscription": {
+      "scryfall_id": "52fc4862-b57b-42d7-be8b-d9915a0bb4fd",
+      "artist": "Eli Minaya",
+      "set_code": "otc",
+      "collector_number": "21"
+    },
+    "hinterland_harbor": {
+      "scryfall_id": "5fa1049c-67d0-414f-8bfe-f0c2aabcc835",
+      "artist": "Karl Kopinski",
+      "set_code": "otc",
+      "collector_number": "300"
+    },
+    "hostage_taker": {
+      "scryfall_id": "c168af49-acae-45de-8c62-0e6d1006f325",
+      "artist": "Wayne Reynolds",
+      "set_code": "otc",
+      "collector_number": "231"
+    },
+    "island": {
+      "scryfall_id": "acd6be3f-745c-41ad-95c9-1db66ba56be2",
+      "artist": "Sergey Glushakov",
+      "set_code": "otj",
+      "collector_number": "279"
+    },
+    "kodamas_reach": {
+      "scryfall_id": "eddf5231-7c46-417b-82c3-f6a8ede5ac9c",
+      "artist": "Heather Hudson",
+      "set_code": "otc",
+      "collector_number": "196"
+    },
+    "llanowar_wastes": {
+      "scryfall_id": "bdc7e1ef-cbe0-4057-b528-6c1da07ff90b",
+      "artist": "Lucas Graciano",
+      "set_code": "otc",
+      "collector_number": "305"
+    },
+    "mind_s_dilation": {
+      "scryfall_id": "4f2980ba-2468-4a36-afdb-87e6567797a9",
+      "artist": "Iain McCaig",
+      "set_code": "otc",
+      "collector_number": "101"
+    },
+    "nashi_moon_sage_s_scion": {
+      "scryfall_id": "1e62de3b-6a41-43e3-93ad-9a1e3894be3b",
+      "artist": "Valera Lutfullina",
+      "set_code": "otc",
+      "collector_number": "143"
+    },
+    "oblivion_sower": {
+      "scryfall_id": "82bc94b5-8c22-4120-87ba-6125c62b271b",
+      "artist": "Jaime Jones",
+      "set_code": "otc",
+      "collector_number": "77"
+    },
+    "ohran_frostfang": {
+      "scryfall_id": "0693bcd2-8a3d-4dcf-8360-5b9891044dfe",
+      "artist": "Torstein Nordstrand",
+      "set_code": "otc",
+      "collector_number": "199"
+    },
+    "opulent_palace": {
+      "scryfall_id": "dc691e02-c914-468d-8051-de1289171183",
+      "artist": "Adam Paquette",
+      "set_code": "otc",
+      "collector_number": "307"
+    },
+    "orochi_soul_reaver": {
+      "scryfall_id": "ec8f372a-d8c7-4f5d-a91d-ec7e5eb17104",
+      "artist": "Bram Sels",
+      "set_code": "otc",
+      "collector_number": "22"
+    },
+    "overflowing_basin": {
+      "scryfall_id": "3fc2f320-18e1-4380-a1d7-d8c1e3ca5837",
+      "artist": "Sarah Finnigan",
+      "set_code": "otc",
+      "collector_number": "308"
+    },
+    "plasm_capture": {
+      "scryfall_id": "11ee15d5-1c93-4c30-911f-32e2aabf020e",
+      "artist": "Chase Stone",
+      "set_code": "otc",
+      "collector_number": "237"
+    },
+    "predators_hour": {
+      "scryfall_id": "55ddf977-de2c-4850-8ad1-b8adab1d24ee",
+      "artist": "Tomas Duchek",
+      "set_code": "otc",
+      "collector_number": "147"
+    },
+    "prismatic_lens": {
+      "scryfall_id": "74e8d3a8-5937-4108-b2fe-23e049379345",
+      "artist": "Alan Pollack",
+      "set_code": "otc",
+      "collector_number": "264"
+    },
+    "putrefy": {
+      "scryfall_id": "6fcc6bf7-ccce-4975-be8b-0790ab790e3f",
+      "artist": "Jim Nelson",
+      "set_code": "otc",
+      "collector_number": "238"
+    },
+    "rampant_growth": {
+      "scryfall_id": "6c074663-37be-4329-a21d-9ea551edbb6b",
+      "artist": "Steven Belledin",
+      "set_code": "otc",
+      "collector_number": "201"
+    },
+    "reliquary_tower": {
+      "scryfall_id": "dd9f036d-6ae4-451e-a67a-ecc2e44123e3",
+      "artist": "Jesper Ejsing",
+      "set_code": "otc",
+      "collector_number": "312"
+    },
+    "sage_of_the_beyond": {
+      "scryfall_id": "226a4c5d-bf49-40d8-a7a4-341c18029634",
+      "artist": "Cristi Balanescu",
+      "set_code": "otc",
+      "collector_number": "111"
+    },
+    "savvy_trader": {
+      "scryfall_id": "118f25cf-faa6-4d60-a156-27bf7aedf7eb",
+      "artist": "Scott Murphy",
+      "set_code": "otc",
+      "collector_number": "33"
+    },
+    "shadowmage_infiltrator": {
+      "scryfall_id": "2ac920d7-013f-40ad-b79f-0bb59062d42a",
+      "artist": "Rick Farrell",
+      "set_code": "otc",
+      "collector_number": "240"
+    },
+    "silent_blade_oni": {
+      "scryfall_id": "7ae71886-9e93-4d1c-b8f7-da7aafa83cf9",
+      "artist": "Steve Prescott",
+      "set_code": "otc",
+      "collector_number": "241"
+    },
+    "silhana_ledgewalker": {
+      "scryfall_id": "21a2d11e-48b7-4e9a-a574-838cc26c2b17",
+      "artist": "James Wong",
+      "set_code": "otc",
+      "collector_number": "206"
+    },
+    "siphon_insight": {
+      "scryfall_id": "28a6b23f-a854-469a-9b06-119507dd9d42",
+      "artist": "Livia Prima",
+      "set_code": "otc",
+      "collector_number": "242"
+    },
+    "slither_blade": {
+      "scryfall_id": "859e5ca5-c184-47ee-a2ea-8075847f46d9",
+      "artist": "Zezhou Chen",
+      "set_code": "otc",
+      "collector_number": "114"
+    },
+    "smirking_spelljacker": {
+      "scryfall_id": "01d1e394-1b0c-4b40-ba85-f55973703d41",
+      "artist": "Borja Pindado",
+      "set_code": "otc",
+      "collector_number": "16"
+    },
+    "sol_ring": {
+      "scryfall_id": "6c5c9437-3d99-4a7c-8255-9acdcb1acc40",
+      "artist": "Kekai Kotaki",
+      "set_code": "otc",
+      "collector_number": "267"
+    },
+    "stolen_goods": {
+      "scryfall_id": "495c8498-a446-4617-ae5e-f09ef63c7cb7",
+      "artist": "Anthony Francisco",
+      "set_code": "otc",
+      "collector_number": "115"
+    },
+    "sunken_hollow": {
+      "scryfall_id": "26b8d839-fb07-4221-8b00-8d3775f52f37",
+      "artist": "Adam Paquette",
+      "set_code": "otc",
+      "collector_number": "325"
+    },
+    "swamp": {
+      "scryfall_id": "eb7dc259-9949-4673-a8f1-874396948392",
+      "artist": "Sergey Glushakov",
+      "set_code": "otj",
+      "collector_number": "281"
+    },
+    "temple_of_deceit": {
+      "scryfall_id": "18275b40-8e5d-4ac7-9c62-92d1b1c662ab",
+      "artist": "Raymond Swanland",
+      "set_code": "otc",
+      "collector_number": "328"
+    },
+    "temple_of_malady": {
+      "scryfall_id": "4a717a93-a19b-4f8a-9133-e56466ea8576",
+      "artist": "James Paick",
+      "set_code": "otc",
+      "collector_number": "330"
+    },
+    "temple_of_mystery": {
+      "scryfall_id": "9d3d1d58-c76f-4c06-8c48-382362e932da",
+      "artist": "Piotr Dura",
+      "set_code": "otc",
+      "collector_number": "332"
+    },
+    "the_mimeoplasm": {
+      "scryfall_id": "998b86f3-e53f-4ebb-b111-6f14577fded1",
+      "artist": "Svetlin Velinov",
+      "set_code": "otc",
+      "collector_number": "234"
+    },
+    "thief_of_sanity": {
+      "scryfall_id": "94946d6c-1edb-46e9-a5ae-0ca2a016a7cd",
+      "artist": "Igor Kieryluk",
+      "set_code": "otc",
+      "collector_number": "243"
+    },
+    "thieving_amalgam": {
+      "scryfall_id": "c6225b97-396f-4969-954c-f2885da70c1b",
+      "artist": "Johan Grenier",
+      "set_code": "otc",
+      "collector_number": "150"
+    },
+    "thieving_skydiver": {
+      "scryfall_id": "06996ff1-7f57-4e73-940a-a58c4482cadd",
+      "artist": "Kieran Yanner",
+      "set_code": "otc",
+      "collector_number": "118"
+    },
+    "thieving_varmint": {
+      "scryfall_id": "8e66d567-9f06-47c1-aa9f-f29ba5e9906a",
+      "artist": "Néstor Ossandón Leal",
+      "set_code": "otc",
+      "collector_number": "23"
+    },
+    "three_visits": {
+      "scryfall_id": "4ee4ea37-621f-4ef7-b220-f4da3008e399",
+      "artist": "Yeong-Hao Han",
+      "set_code": "otc",
+      "collector_number": "209"
+    },
+    "tower_winder": {
+      "scryfall_id": "97bf6a6a-e377-4f42-84dd-baf6055c0fb1",
+      "artist": "Kekai Kotaki",
+      "set_code": "otc",
+      "collector_number": "34"
+    },
+    "triton_shorestalker": {
+      "scryfall_id": "511bff25-3213-42c4-8abd-9eda49f8dc96",
+      "artist": "Svetlin Velinov",
+      "set_code": "otc",
+      "collector_number": "121"
+    },
+    "trygon_predator": {
+      "scryfall_id": "c89b3895-de35-48a4-acc0-e0056fa760bf",
+      "artist": "Jack Wang",
+      "set_code": "otc",
+      "collector_number": "246"
+    },
+    "twilight_mire": {
+      "scryfall_id": "4c147332-5cfa-4e18-bc55-e16821489937",
+      "artist": "Rob Alexander",
+      "set_code": "otc",
+      "collector_number": "337"
+    },
+    "ukkima_stalking_shadow": {
+      "scryfall_id": "c66b452b-9c49-4c58-9966-6bafbfa34c36",
+      "artist": "Daarken",
+      "set_code": "otc",
+      "collector_number": "247"
+    },
+    "underground_river": {
+      "scryfall_id": "1dbe5187-efdc-496a-aa52-020016ace47a",
+      "artist": "Volkan Baǵa",
+      "set_code": "otc",
+      "collector_number": "338"
+    },
+    "villainous_wealth": {
+      "scryfall_id": "a467072c-99d9-4013-8d28-607a06cf50fe",
+      "artist": "Erica Yang",
+      "set_code": "otc",
+      "collector_number": "249"
+    },
+    "viridescent_bog": {
+      "scryfall_id": "fb29bc36-aaae-4daa-9b6f-1c07c6abb332",
+      "artist": "Piotr Dura",
+      "set_code": "otc",
+      "collector_number": "340"
+    },
+    "void_attendant": {
+      "scryfall_id": "b3ccc905-bd43-4925-8eb9-fb9abcc81e29",
+      "artist": "Viktor Titov",
+      "set_code": "otc",
+      "collector_number": "212"
+    },
+    "whirler_rogue": {
+      "scryfall_id": "d1054d2b-a424-466d-8ec6-36f014849e43",
+      "artist": "Winona Nelson",
+      "set_code": "otc",
+      "collector_number": "122"
+    },
+    "woodland_cemetery": {
+      "scryfall_id": "85fe379d-c188-4cad-a0ca-74fa5811aac6",
+      "artist": "Lars Grant-West",
+      "set_code": "otc",
+      "collector_number": "341"
+    },
+    "yavimaya_coast": {
+      "scryfall_id": "0e89587e-f027-4c75-a950-f84f0987588a",
+      "artist": "Jesper Ejsing",
+      "set_code": "otc",
+      "collector_number": "342"
+    }
+  },
+  "cards": [
+    {
+      "id": "access_tunnel"
+    },
+    {
+      "id": "arcane_heist"
+    },
+    {
+      "id": "arcane_signet"
+    },
+    {
+      "id": "baleful_mastery"
+    },
+    {
+      "id": "baleful_strix"
+    },
+    {
+      "id": "bladegriff_prototype"
+    },
+    {
+      "id": "brainstealer_dragon"
+    },
+    {
+      "id": "cazur_ruthless_stalker"
+    },
+    {
+      "id": "chaos_wand"
+    },
+    {
+      "id": "cold_eyed_selkie"
+    },
+    {
+      "id": "command_tower"
+    },
+    {
+      "id": "culling_ritual"
+    },
+    {
+      "id": "cunning_rhetoric"
+    },
+    {
+      "id": "curse_of_the_swine"
+    },
+    {
+      "id": "darkslick_shores"
+    },
+    {
+      "id": "darksteel_ingot"
+    },
+    {
+      "id": "darkwater_catacombs"
+    },
+    {
+      "id": "dazzling_sphinx"
+    },
+    {
+      "id": "diluvian_primordial"
+    },
+    {
+      "id": "dimir_aqueduct"
+    },
+    {
+      "id": "doc_aurlock_grizzled_genius"
+    },
+    {
+      "id": "dream_thief_s_bandana"
+    },
+    {
+      "id": "drowned_catacomb"
+    },
+    {
+      "id": "edric_spymaster_of_trest"
+    },
+    {
+      "id": "exotic_orchard"
+    },
+    {
+      "id": "extract_brain"
+    },
+    {
+      "id": "fallen_shinobi"
+    },
+    {
+      "id": "feed_the_swarm"
+    },
+    {
+      "id": "felix_five_boots"
+    },
+    {
+      "id": "fellwar_stone"
+    },
+    {
+      "id": "fetid_pools"
+    },
+    {
+      "id": "flooded_grove"
+    },
+    {
+      "id": "forest",
+      "qty": 4
+    },
+    {
+      "id": "ghostly_pilferer"
+    },
+    {
+      "id": "gonti_lord_of_luxury"
+    },
+    {
+      "id": "heartless_conscription"
+    },
+    {
+      "id": "hinterland_harbor"
+    },
+    {
+      "id": "hostage_taker"
+    },
+    {
+      "id": "island",
+      "qty": 5
+    },
+    {
+      "id": "kodamas_reach"
+    },
+    {
+      "id": "llanowar_wastes"
+    },
+    {
+      "id": "mind_s_dilation"
+    },
+    {
+      "id": "nashi_moon_sage_s_scion"
+    },
+    {
+      "id": "oblivion_sower"
+    },
+    {
+      "id": "ohran_frostfang"
+    },
+    {
+      "id": "opulent_palace"
+    },
+    {
+      "id": "orochi_soul_reaver"
+    },
+    {
+      "id": "overflowing_basin"
+    },
+    {
+      "id": "plasm_capture"
+    },
+    {
+      "id": "predators_hour"
+    },
+    {
+      "id": "prismatic_lens"
+    },
+    {
+      "id": "putrefy"
+    },
+    {
+      "id": "rampant_growth"
+    },
+    {
+      "id": "reliquary_tower"
+    },
+    {
+      "id": "sage_of_the_beyond"
+    },
+    {
+      "id": "savvy_trader"
+    },
+    {
+      "id": "shadowmage_infiltrator"
+    },
+    {
+      "id": "silent_blade_oni"
+    },
+    {
+      "id": "silhana_ledgewalker"
+    },
+    {
+      "id": "siphon_insight"
+    },
+    {
+      "id": "slither_blade"
+    },
+    {
+      "id": "smirking_spelljacker"
+    },
+    {
+      "id": "sol_ring"
+    },
+    {
+      "id": "stolen_goods"
+    },
+    {
+      "id": "sunken_hollow"
+    },
+    {
+      "id": "swamp",
+      "qty": 6
+    },
+    {
+      "id": "temple_of_deceit"
+    },
+    {
+      "id": "temple_of_malady"
+    },
+    {
+      "id": "temple_of_mystery"
+    },
+    {
+      "id": "the_mimeoplasm"
+    },
+    {
+      "id": "thief_of_sanity"
+    },
+    {
+      "id": "thieving_amalgam"
+    },
+    {
+      "id": "thieving_skydiver"
+    },
+    {
+      "id": "thieving_varmint"
+    },
+    {
+      "id": "three_visits"
+    },
+    {
+      "id": "tower_winder"
+    },
+    {
+      "id": "triton_shorestalker"
+    },
+    {
+      "id": "trygon_predator"
+    },
+    {
+      "id": "twilight_mire"
+    },
+    {
+      "id": "ukkima_stalking_shadow"
+    },
+    {
+      "id": "underground_river"
+    },
+    {
+      "id": "villainous_wealth"
+    },
+    {
+      "id": "viridescent_bog"
+    },
+    {
+      "id": "void_attendant"
+    },
+    {
+      "id": "whirler_rogue"
+    },
+    {
+      "id": "woodland_cemetery"
+    },
+    {
+      "id": "yavimaya_coast"
+    }
+  ]
+}
