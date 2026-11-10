@@ -1,0 +1,24 @@
+{
+  "card_id": "rose_cutthroat_raider",
+  "name": "Rose, Cutthroat Raider",
+  "oracle_text": "First strike\nRaid — At end of combat on your turn, if you attacked this turn, create a Junk token for each opponent you attacked. (It's an artifact with \"{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.\")\nWhenever you sacrifice a Junk, add {R}.",
+  "blocked_sentences": [
+    "Raid — At end of combat on your turn, if you attacked this turn, create a Junk token for each opponent you attacked. (It's an artifact with \"{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.\")"
+  ],
+  "needs": [
+    {
+      "capability": "end_of_combat_trigger",
+      "kind": "trigger_event",
+      "what": "a triggered-ability event that fires at the beginning of the end of combat step (\"At end of combat on your turn\"), filterable to the controller's turn, with an intervening-if on attacked_this_turn",
+      "why_existing_wont_do": "trigger_events has begin_combat, postcombat_main and end_step but no end_of_combat; the `delay` op can schedule at end_of_combat, but only from a trigger fired earlier (you_attack), which would miss a Rose that enters after attackers are declared and fire wrongly if she leaves mid-combat"
+    },
+    {
+      "capability": "opponents_attacked_this_turn",
+      "kind": "value",
+      "what": "a value counting the distinct opponents you attacked this turn (across every combat), for \"create a Junk token for each opponent you attacked\"",
+      "why_existing_wont_do": "value_keys has opponents_attacked_this_combat (melee), which counts only the current combat, not the turn"
+    }
+  ],
+  "closest_existing": ["delay", "opponents_attacked_this_combat", "attacked_this_turn", "junk_token"],
+  "confidence": "high"
+}

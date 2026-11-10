@@ -19729,6 +19729,147 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "flag": "ncr",
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "set_flag"
+                    }
+                  ],
+                  "label": "NCR"
+                },
+                {
+                  "effects": [
+                    {
+                      "flag": "legion",
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "set_flag"
+                    }
+                  ],
+                  "label": "Legion"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "triggered",
+          "text": "As this enchantment enters, choose NCR or Legion.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "counters": {
+                "finality": 1
+              },
+              "destination": "battlefield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "const": 3
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "• NCR — At the beginning of your end step, return target creature card with mana value 3 or less from your graveyard to the battlefield with a finality counter on it.",
+          "trigger": {
+            "condition": {
+              "has_flag": "ncr"
+            },
+            "controller": "you",
+            "event": "end_step"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "• Legion — Whenever a creature you control dies, put two +1/+1 counters on target creature you control.",
+          "trigger": {
+            "condition": {
+              "has_flag": "legion"
+            },
+            "event": "creature_dies",
+            "filter": {
+              "controller": "you"
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "battle_of_hoover_dam",
+      "mana_cost": "{3}{W}",
+      "name": "Battle of Hoover Dam",
+      "oracle_text": "As this enchantment enters, choose NCR or Legion.\n• NCR — At the beginning of your end step, return target creature card with mana value 3 or less from your graveyard to the battlefield with a finality counter on it.\n• Legion — Whenever a creature you control dies, put two +1/+1 counters on target creature you control.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -22717,6 +22858,71 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "charge",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature dies, put a charge counter on this enchantment.",
+          "trigger": {
+            "controller": "any",
+            "event": "dies",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "counters_on": {
+                  "counter": "charge",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              },
+              "mana": "{B}",
+              "op": "add_mana"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your first main phase, add {B} for each charge counter on this enchantment.",
+          "trigger": {
+            "controller": "you",
+            "event": "precombat_main"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "black_market",
+      "mana_cost": "{3}{B}{B}",
+      "name": "Black Market",
+      "oracle_text": "Whenever a creature dies, put a charge counter on this enchantment.\nAt the beginning of your first main phase, add {B} for each charge counter on this enchantment.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -26743,6 +26949,104 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "junk_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature enters or attacks, you lose 1 life and create a Junk token. (It's an artifact with \"{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.\")",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "junk_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature enters or attacks, you lose 1 life and create a Junk token. (It's an artifact with \"{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.\")",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a token you control leaves the battlefield, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "leaves_battlefield",
+            "filter": {
+              "is_token": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "boomer_scrapper",
+      "mana_cost": "{1}{B}{R}",
+      "name": "Boomer Scrapper",
+      "oracle_text": "Whenever this creature enters or attacks, you lose 1 life and create a Junk token. (It's an artifact with \"{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.\")\nWhenever a token you control leaves the battlefield, put a +1/+1 counter on this creature.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -31446,6 +31750,118 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "count": {
+                  "controller": "you",
+                  "exclude_self": true,
+                  "subtypes": [
+                    "Rogue",
+                    "Snake"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "toughness": {
+                "count": {
+                  "controller": "you",
+                  "exclude_self": true,
+                  "subtypes": [
+                    "Rogue",
+                    "Snake"
+                  ],
+                  "zone": "battlefield"
+                }
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Tunnel Snakes Rule! — Whenever Butch DeLoria attacks, it gets +1/+1 until end of turn for each other Rogue and/or Snake you control.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{1}{B}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "menace",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_subtype",
+              "subtypes": [
+                "Rogue"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}{B}: Put a menace counter on another target creature. It becomes a Rogue in addition to its other types."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "butch_deloria_tunnel_snake",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{1}{B}",
+      "name": "Butch DeLoria, Tunnel Snake",
+      "oracle_text": "Menace (This creature can't be blocked except by two or more creatures.)\nTunnel Snakes Rule! — Whenever Butch DeLoria attacks, it gets +1/+1 until end of turn for each other Rogue and/or Snake you control.\n{1}{B}: Put a menace counter on another target creature. It becomes a Rogue in addition to its other types.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Rogue"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -47212,6 +47628,140 @@
         "Wizard"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "counter": "quest",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            },
+            {
+              "ability": "craig_boone_one_for_my_baby",
+              "op": "reflexive_trigger"
+            }
+          ],
+          "kind": "triggered",
+          "text": "One for My Baby — Whenever you attack with two or more creatures, put two quest counters on Craig Boone.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "binding": "attackers"
+                }
+              },
+              "right": {
+                "const": 2
+              }
+            },
+            "controller": "you",
+            "event": "you_attack"
+          }
+        },
+        {
+          "effects": [
+            {
+              "condition": {
+                "exists": {
+                  "target": "t1"
+                }
+              },
+              "effects": [
+                {
+                  "amount": {
+                    "counters_on": {
+                      "counter": "quest",
+                      "objects": {
+                        "self_only": true
+                      }
+                    }
+                  },
+                  "op": "damage",
+                  "player": {
+                    "controller_of_target": "t1"
+                  }
+                }
+              ],
+              "else": [
+                {
+                  "amount": {
+                    "counters_on": {
+                      "counter": "quest",
+                      "objects": {
+                        "self_only": true
+                      }
+                    }
+                  },
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "damage"
+                }
+              ],
+              "op": "may",
+              "player": {
+                "controller_of_target": "t1"
+              },
+              "prompt": "Have Craig Boone deal that much damage to you instead of to your creature?"
+            }
+          ],
+          "id": "craig_boone_one_for_my_baby",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When you do, Craig Boone deals damage equal to the number of quest counters on it to up to one target creature unless that creature's controller has Craig Boone deal that much damage to them."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "craig_boone_novac_guard",
+      "keywords": [
+        "reach",
+        "lifelink"
+      ],
+      "mana_cost": "{1}{R}{W}",
+      "name": "Craig Boone, Novac Guard",
+      "oracle_text": "Reach, lifelink\nOne for My Baby — Whenever you attack with two or more creatures, put two quest counters on Craig Boone. When you do, Craig Boone deals damage equal to the number of quest counters on it to up to one target creature unless that creature's controller has Craig Boone deal that much damage to them.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -64667,6 +65217,106 @@
               "amount": {
                 "const": 1
               },
+              "counter": "quest",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "ED-E My Love — Whenever you attack, if the number of attacking creatures is greater than the number of quest counters on ED-E, put a quest counter on it.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "count": {
+                  "attacking": true,
+                  "controller": "any",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "right": {
+                "counters_on": {
+                  "counter": "quest",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              }
+            },
+            "controller": "you",
+            "event": "you_attack"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "sacrifice": {
+              "as": "sacrificed",
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "sum": [
+                  {
+                    "const": 1
+                  },
+                  {
+                    "counters_on": {
+                      "counter": "quest",
+                      "objects": {
+                        "binding": "sacrificed"
+                      }
+                    }
+                  }
+                ]
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, Sacrifice ED-E: Draw a card, then draw an additional card for each quest counter on ED-E."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "ed_e_lonesome_eyebot",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}",
+      "name": "ED-E, Lonesome Eyebot",
+      "oracle_text": "Flying\nED-E My Love — Whenever you attack, if the number of attacking creatures is greater than the number of quest counters on ED-E, put a quest counter on it.\n{2}, Sacrifice ED-E: Draw a card, then draw an additional card for each quest counter on ED-E.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Robot"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 1,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
               "op": "gain_life",
               "player": "you"
             }
@@ -76841,6 +77491,55 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "pump",
+              "power": {
+                "const": 2
+              },
+              "toughness": {
+                "const": 2
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control attacks, it gets +2/+2 until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "R",
+        "W"
+      ],
+      "id": "fervent_charge",
+      "mana_cost": "{1}{R}{W}{B}",
+      "name": "Fervent Charge",
+      "oracle_text": "Whenever a creature you control attacks, it gets +2/+2 until end of turn.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -87125,6 +87824,96 @@
         "Legendary"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Human"
+            ],
+            "supertypes": [
+              "Legendary"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "indestructible"
+          ],
+          "kind": "static",
+          "text": "Legendary Humans you control have indestructible."
+        },
+        {
+          "cost": {
+            "mana": "{2}{W}{B}"
+          },
+          "effects": [
+            {
+              "as": "exiled",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "binding": "exiled",
+                  "types": [
+                    "Creature"
+                  ]
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "create_token",
+                  "token": "human_soldier_1_1_w"
+                }
+              ]
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "any",
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "{2}{W}{B}: Exile target card from a graveyard. If it was a creature card, create a 1/1 white Human Soldier creature token."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "general_s_enforcer",
+      "mana_cost": "{W}{B}",
+      "name": "General's Enforcer",
+      "oracle_text": "Legendary Humans you control have indestructible.\n{2}{W}{B}: Exile target card from a graveyard. If it was a creature card, create a 1/1 white Human Soldier creature token.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -105119,6 +105908,66 @@
     },
     {
       "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "heroic_reinforcements",
+      "mana_cost": "{2}{R}{W}",
+      "name": "Heroic Reinforcements",
+      "oracle_text": "Create two 1/1 white Soldier creature tokens. Until end of turn, creatures you control get +1/+1 and gain haste. (They can attack and {T} this turn.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "create_token",
+          "token": "soldier_1_1_w"
+        },
+        {
+          "duration": "until_end_of_turn",
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "pump",
+          "power": {
+            "const": 1
+          },
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "duration": "until_end_of_turn",
+          "keywords": [
+            "haste"
+          ],
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "grant_keyword"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "W"
       ],
       "colors": [
@@ -110570,6 +111419,53 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another creature you control enters, you gain 1 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "impassioned_orator",
+      "mana_cost": "{1}{W}",
+      "name": "Impassioned Orator",
+      "oracle_text": "Whenever another creature you control enters, you gain 1 life.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Cleric"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -137042,6 +137938,104 @@
         "Human",
         "Noble",
         "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "skulk"
+              ],
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control with power 2 or less attacks, it gains skulk until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "filter": {
+              "power": {
+                "op": "<=",
+                "value": {
+                  "const": 2
+                }
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "lose_life",
+              "player": {
+                "controller_of": "subject"
+              }
+            },
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature with power 4 or greater attacks you, its controller loses 2 life and you gain 2 life.",
+          "trigger": {
+            "controller": "any",
+            "event": "attacks",
+            "filter": {
+              "attacking_player": "you",
+              "power": {
+                "op": ">=",
+                "value": {
+                  "const": 4
+                }
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "maccready_lamplight_mayor",
+      "mana_cost": "{W}{B}",
+      "name": "MacCready, Lamplight Mayor",
+      "oracle_text": "Whenever a creature you control with power 2 or less attacks, it gains skulk until end of turn. (It can't be blocked by creatures with greater power.)\nWhenever a creature with power 4 or greater attacks you, its controller loses 2 life and you gain 2 life.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Advisor"
       ],
       "supertypes": [
         "Legendary"
@@ -164151,6 +165145,98 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "effects": [
+                {
+                  "attacking": true,
+                  "objects": {
+                    "chooser": "controller",
+                    "controller": "you",
+                    "count": 1,
+                    "mana_value": {
+                      "op": "<=",
+                      "value": {
+                        "power_of": {
+                          "self": true
+                        }
+                      }
+                    },
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "hand"
+                  },
+                  "op": "put_onto_battlefield",
+                  "tapped": true
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Put a creature card with mana value X or less from your hand onto the battlefield tapped and attacking?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Battalion — Whenever Paladin Elizabeth Taggerdy and at least two other creatures attack, draw a card, then you may put a creature card with mana value X or less from your hand onto the battlefield tapped and attacking, where X is Paladin Elizabeth Taggerdy's power.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "attacking": true,
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "right": {
+                "const": 3
+              }
+            },
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "paladin_elizabeth_taggerdy",
+      "mana_cost": "{1}{R}{W}",
+      "name": "Paladin Elizabeth Taggerdy",
+      "oracle_text": "Battalion — Whenever Paladin Elizabeth Taggerdy and at least two other creatures attack, draw a card, then you may put a creature card with mana value X or less from your hand onto the battlefield tapped and attacking, where X is Paladin Elizabeth Taggerdy's power.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -170607,6 +171693,83 @@
       "source": "auto",
       "subtypes": [
         "Cat"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "additional_paid": true
+              },
+              "controller": "you",
+              "objects": {
+                "self_only": true
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Squad {2} (As an additional cost to cast this spell, you may pay {2} any number of times. When this creature enters, create that many tokens that are copies of it.)",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, destroy up to one target artifact.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "additional_cost": {
+        "mana": "{2}"
+      },
+      "additional_optional": true,
+      "additional_repeatable": true,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "powder_ganger",
+      "mana_cost": "{2}{R}",
+      "name": "Powder Ganger",
+      "oracle_text": "Squad {2} (As an additional cost to cast this spell, you may pay {2} any number of times. When this creature enters, create that many tokens that are copies of it.)\nWhen this creature enters, destroy up to one target artifact.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Rogue"
       ],
       "toughness": 2,
       "types": [
@@ -203641,6 +204804,113 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 1
+              },
+              "counter": "quest",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "food_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "The Nuka-Cola Challenge — Whenever one or more creatures you control deal combat damage to a player, put a quest counter on Sierra and create a Food token.",
+          "trigger": {
+            "controller": "you",
+            "event": "creatures_deal_combat_damage"
+          }
+        },
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "pump",
+              "power": {
+                "counters_on": {
+                  "counter": "quest",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              },
+              "toughness": {
+                "counters_on": {
+                  "counter": "quest",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              }
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever you sacrifice a Food, target creature you control gets +X/+X until end of turn, where X is the number of quest counters on Sierra.",
+          "trigger": {
+            "controller": "you",
+            "event": "sacrificed",
+            "filter": {
+              "subtypes": [
+                "Food"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "sierra_nuka_s_biggest_fan",
+      "mana_cost": "{3}{W}",
+      "name": "Sierra, Nuka's Biggest Fan",
+      "oracle_text": "The Nuka-Cola Challenge — Whenever one or more creatures you control deal combat damage to a player, put a quest counter on Sierra and create a Food token.\nWhenever you sacrifice a Food, target creature you control gets +X/+X until end of turn, where X is the number of quest counters on Sierra.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Citizen"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "op": "create_token",
               "token": "eldrazi_scion_1_1_c"
             }
@@ -216442,6 +217712,56 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "any_color": true,
+                  "destination": "exile",
+                  "objects": {
+                    "count": "all"
+                  },
+                  "op": "look_at_top",
+                  "playable": "this_turn",
+                  "playable_cast_only": true,
+                  "player": {
+                    "binding": "each_player"
+                  }
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, exile the top card of each opponent's library. Until end of turn, you may cast spells from among those exiled cards, and you may spend mana as though it were mana of any color to cast those spells.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "stolen_strategy",
+      "mana_cost": "{4}{R}",
+      "name": "Stolen Strategy",
+      "oracle_text": "At the beginning of your upkeep, exile the top card of each opponent's library. Until end of turn, you may cast spells from among those exiled cards, and you may spend mana as though it were mana of any color to cast those spells.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -228290,6 +229610,43 @@
     },
     {
       "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "tear",
+      "mana_cost": "{W}",
+      "name": "Tear",
+      "oracle_text": "Destroy target enchantment.\nFuse (You may cast one or both halves of this card from your hand.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "torn_enchantment"
+          },
+          "op": "destroy"
+        }
+      ],
+      "targets": [
+        {
+          "id": "torn_enchantment",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Enchantment"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "B",
         "G"
       ],
@@ -234277,6 +235634,73 @@
       ]
     },
     {
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "the_nipton_lottery",
+      "mana_cost": "{2}{B}{R}",
+      "name": "The Nipton Lottery",
+      "oracle_text": "Choose a creature at random. You gain control of that creature until end of turn. Untap it. It gains haste until end of turn. Then destroy all other creatures.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "lottery_winner",
+          "objects": {
+            "controller": "any",
+            "count": 1,
+            "random": true,
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "choose_permanents",
+          "prompt": "Choose a creature at random"
+        },
+        {
+          "duration": "until_end_of_turn",
+          "objects": {
+            "binding": "lottery_winner"
+          },
+          "op": "gain_control"
+        },
+        {
+          "objects": {
+            "binding": "lottery_winner"
+          },
+          "op": "untap"
+        },
+        {
+          "duration": "until_end_of_turn",
+          "keyword": "haste",
+          "objects": {
+            "binding": "lottery_winner"
+          },
+          "op": "grant_keyword"
+        },
+        {
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "exclude_binding": "lottery_winner",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "destroy"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "ability": 0,
@@ -238310,6 +239734,73 @@
       "toughness": 0,
       "types": [
         "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "additional_paid": true
+              },
+              "controller": "you",
+              "objects": {
+                "self_only": true
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Squad—{1}, Discard a card. (As an additional cost to cast this spell, you may pay its squad cost any number of times. When this creature enters, create that many tokens that are copies of it.)",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "junk_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, create a Junk token.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "additional_cost": {
+        "discard": 1,
+        "mana": "{1}"
+      },
+      "additional_optional": true,
+      "additional_repeatable": true,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "thrill_kill_disciple",
+      "mana_cost": "{2}{R}",
+      "name": "Thrill-Kill Disciple",
+      "oracle_text": "Squad—{1}, Discard a card. (As an additional cost to cast this spell, you may pay its squad cost any number of times. When this creature enters, create that many tokens that are copies of it.)\nWhen this creature dies, create a Junk token.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Mercenary"
+      ],
+      "toughness": 2,
+      "types": [
         "Creature"
       ]
     },
@@ -252520,6 +254011,95 @@
     {
       "abilities": [
         {
+          "chapter": 1,
+          "effects": [
+            {
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "power": {
+                  "op": ">=",
+                  "value": {
+                    "const": 4
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "exile"
+            }
+          ],
+          "kind": "chapter",
+          "text": "I — Exile all creatures with power 4 or greater."
+        },
+        {
+          "chapter": 2,
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "chapter",
+          "text": "II, III — Put a +1/+1 counter on each creature you control."
+        },
+        {
+          "chapter": 3,
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "chapter",
+          "text": "II, III — Put a +1/+1 counter on each creature you control."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "vault_75_middle_school",
+      "mana_cost": "{2}{W}{W}",
+      "name": "Vault 75: Middle School",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Exile all creatures with power 4 or greater.\nII, III — Put a +1/+1 counter on each creature you control.",
+      "source": "auto",
+      "subtypes": [
+        "Saga"
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -260477,6 +262057,84 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "additional_paid": true
+              },
+              "controller": "you",
+              "objects": {
+                "self_only": true
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Squad {2} (As an additional cost to cast this spell, you may pay {2} any number of times. When this creature enters, create that many tokens that are copies of it.)",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "chooser": "owner",
+                    "controller": {
+                      "binding": "each_player"
+                    },
+                    "count": 1,
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, each player sacrifices a creature of their choice.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "additional_cost": {
+        "mana": "{2}"
+      },
+      "additional_optional": true,
+      "additional_repeatable": true,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "wasteland_raider",
+      "mana_cost": "{2}{B}{B}",
+      "name": "Wasteland Raider",
+      "oracle_text": "Squad {2} (As an additional cost to cast this spell, you may pay {2} any number of times. When this creature enters, create that many tokens that are copies of it.)\nWhen this creature enters, each player sacrifices a creature of their choice.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Mercenary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "active_zones": [
             "hand"
           ],
@@ -261087,6 +262745,46 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R"
+      ],
+      "fuse": true,
+      "id": "wear_tear",
+      "mana_cost": "{1}{R}",
+      "name": "Wear // Tear",
+      "oracle_text": "Destroy target artifact.\nFuse (You may cast one or both halves of this card from your hand.)\nDestroy target enchantment.\nFuse (You may cast one or both halves of this card from your hand.)",
+      "second_face": "tear",
+      "second_face_zone": "hand",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "worn_artifact"
+          },
+          "op": "destroy"
+        }
+      ],
+      "targets": [
+        {
+          "id": "worn_artifact",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Artifact"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -263410,6 +265108,52 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "effect": "skip_draw_step",
+          "kind": "static",
+          "text": "Skip your draw step."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "destination": "exile",
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "playable": "this_turn",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, exile the top two cards of your library. You may play those cards this turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "wild_wasteland",
+      "mana_cost": "{2}{R}",
+      "name": "Wild Wasteland",
+      "oracle_text": "Skip your draw step.\nAt the beginning of your upkeep, exile the top two cards of your library. You may play those cards this turn.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {

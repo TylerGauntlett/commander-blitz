@@ -1,0 +1,30 @@
+{
+  "card_id": "aradesh_the_founder",
+  "name": "Aradesh, the Founder",
+  "oracle_text": "Enlist (As this creature attacks, you may tap a nonattacking creature you control without summoning sickness. When you do, add its power to this creature's until end of turn.)\nWhenever a creature you control attacks, if it enlisted a creature this combat, the creature that attacked gains double strike until end of turn. If that creature's power is 4 or greater, draw a card.",
+  "blocked_sentences": [
+    "Enlist (As this creature attacks, you may tap a nonattacking creature you control without summoning sickness. When you do, add its power to this creature's until end of turn.)",
+    "Whenever a creature you control attacks, if it enlisted a creature this combat, the creature that attacked gains double strike until end of turn. If that creature's power is 4 or greater, draw a card."
+  ],
+  "needs": [
+    {
+      "capability": "enlist",
+      "kind": "keyword",
+      "what": "the Enlist keyword (702.154): as the creature is declared as an attacker, its controller may tap a nonattacking, untapped creature they control without summoning sickness; when they do, a reflexive trigger adds the tapped creature's power to the attacker's until end of turn, and the engine records that the attacker enlisted a creature this combat",
+      "why_existing_wont_do": "Enlist is not in keywords; the closest are a tap_permanents cost with `as` (an activated ability, not an optional choice made during attack declaration) and an `attacks` trigger with a may/pump, which would happen after attack declaration rather than as an attack-declaration cost and cannot exclude creatures that are attacking"
+    },
+    {
+      "capability": "enlist",
+      "kind": "value",
+      "what": "a trigger condition 'the attacking creature enlisted a creature this combat' readable on an `attacks` trigger whose subject is any creature you control",
+      "why_existing_wont_do": "condition_keys has has_flag/has_turn_flag but nothing sets a per-combat enlisted flag, since no enlist mechanism exists"
+    }
+  ],
+  "closest_existing": [
+    "tap_permanents",
+    "attacks",
+    "pump",
+    "reflexive_trigger"
+  ],
+  "confidence": "high"
+}

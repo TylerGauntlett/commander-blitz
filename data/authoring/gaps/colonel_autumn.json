@@ -1,0 +1,26 @@
+{
+  "card_id": "colonel_autumn",
+  "name": "Colonel Autumn",
+  "oracle_text": "Lifelink\nExploit (When this creature enters, you may sacrifice a creature.)\nOther legendary creatures you control have exploit.\nWhenever a creature you control exploits a creature, put a +1/+1 counter on each creature you control.",
+  "blocked_sentences": [
+    "Exploit (When this creature enters, you may sacrifice a creature.)",
+    "Other legendary creatures you control have exploit.",
+    "Whenever a creature you control exploits a creature, put a +1/+1 counter on each creature you control."
+  ],
+  "needs": [
+    {
+      "capability": "exploit",
+      "kind": "keyword",
+      "what": "an exploit keyword (702.110): an enters trigger 'you may sacrifice a creature' that the engine marks as an exploit, so the sacrifice can be recognised as 'exploiting', and that a grant_keyword static can hand to other creatures (\"Other legendary creatures you control have exploit\")",
+      "why_existing_wont_do": "exploit is not in `keywords`, so the grant_keyword static cannot name it; a hand-written self_enters trigger with may + sacrifice reproduces the sacrifice but not the keyword identity that other cards (and this card's third line) key on, and a grant_ability static of that trigger would not count as 'having exploit'"
+    },
+    {
+      "capability": "exploit",
+      "kind": "trigger_event",
+      "what": "a trigger event 'a creature you control exploits a creature' -- fires when a creature's exploit trigger resolves with a sacrifice, binding the exploiting creature (filtered by controller) and the sacrificed creature",
+      "why_existing_wont_do": "the `sacrificed` event fires on any sacrifice (costs, edicts, other effects) and nothing in `trigger_keys` or `trigger_filter_keys` restricts it to sacrifices made by an exploit ability, so it would overtrigger"
+    }
+  ],
+  "closest_existing": ["sacrificed", "self_enters", "may", "sacrifice", "grant_keyword"],
+  "confidence": "high"
+}

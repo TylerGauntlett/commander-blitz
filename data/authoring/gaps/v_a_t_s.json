@@ -1,0 +1,18 @@
+{
+  "card_id": "v_a_t_s",
+  "name": "V.A.T.S.",
+  "oracle_text": "Split second (As long as this spell is on the stack, players can't cast spells or activate abilities that aren't mana abilities.)\nChoose any number of target creatures with equal toughness. Destroy the chosen creatures.",
+  "blocked_sentences": [
+    "Choose any number of target creatures with equal toughness. Destroy the chosen creatures."
+  ],
+  "needs": [
+    {
+      "capability": "targets_share_characteristic",
+      "kind": "selector",
+      "what": "a group constraint on a variable-count target spec requiring all chosen targets to have the same value of a characteristic (here equal toughness), checked when targets are chosen and rechecked on resolution",
+      "why_existing_wont_do": "target_keys carry count/min_count/up_to and the group caps total_power and total_mana_value, but nothing that ties the targets to one another by an equal toughness; a fixed `toughness` in the selector would pick a single number instead of letting the caster choose any shared value, and destroying with no constraint would let differing-toughness creatures be chosen"
+    }
+  ],
+  "closest_existing": ["total_power", "total_mana_value", "one_per_player"],
+  "confidence": "high"
+}

@@ -1,0 +1,18 @@
+{
+  "card_id": "legate_lanius_caesar_s_ace",
+  "name": "Legate Lanius, Caesar's Ace",
+  "oracle_text": "Decimate — When Legate Lanius enters, each opponent sacrifices a tenth of the creatures they control of their choice, rounded up.\nWhenever an opponent sacrifices a creature, put a +1/+1 counter on Legate Lanius.",
+  "blocked_sentences": [
+    "Decimate — When Legate Lanius enters, each opponent sacrifices a tenth of the creatures they control of their choice, rounded up."
+  ],
+  "needs": [
+    {
+      "capability": "fraction_of_value",
+      "kind": "value",
+      "what": "a value expression that divides another value by an arbitrary printed divisor with a printed rounding direction, e.g. {\"fraction\": {\"of\": {\"count\": {\"zone\": \"battlefield\", \"types\": [\"Creature\"], \"controller\": {\"binding\": \"each_player\"}}}, \"divisor\": 10, \"round\": \"up\"}}, used as the count of a sacrifice selector inside a for_each_player over opponents so each opponent sacrifices ceil(their creatures / 10) creatures of their choice",
+      "why_existing_wont_do": "The only division in value_keys is `half` ({\"half\": {\"of\": v, \"round\": \"up\"|\"down\"}}), fixed at a divisor of 2; `times`, `minus`, `sum`, `min` and `max` cannot compose an exact ceil(n/10) for every creature count, so the sacrifice can only be a fixed number, half or all of their creatures"
+    }
+  ],
+  "closest_existing": ["half", "count", "sacrifice", "for_each_player"],
+  "confidence": "high"
+}

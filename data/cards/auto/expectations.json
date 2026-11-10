@@ -1686,6 +1686,13 @@
       "graveyard"
     ]
   },
+  "battle_of_hoover_dam": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "battlefield_forge": {
     "zone": "battlefield"
   },
@@ -1936,6 +1943,10 @@
     "zone": "graveyard"
   },
   "black_bolt_inhuman_king": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "black_market": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -2262,6 +2273,17 @@
     "life": {
       "0": 40,
       "1": 40
+    },
+    "zone": "battlefield"
+  },
+  "boomer_scrapper": {
+    "battlefield_count": 34,
+    "life": {
+      "0": 39
+    },
+    "tokens": {
+      "count": 1,
+      "id": "junk_token"
     },
     "zone": "battlefield"
   },
@@ -2638,6 +2660,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "butch_deloria_tunnel_snake": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "buzzard_wasp_colony": {
@@ -3944,6 +3970,17 @@
     "battlefield_count": 33,
     "hand_size": {
       "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "craig_boone_novac_guard": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "reach",
+        "lifelink"
+      ]
     },
     "zone": "battlefield"
   },
@@ -5462,6 +5499,10 @@
   "eclipsed_steppe": {
     "zone": "battlefield"
   },
+  "ed_e_lonesome_eyebot": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "edgar_ancient_bloodlord": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -6594,6 +6635,10 @@
   "ferrous_lake": {
     "zone": "battlefield"
   },
+  "fervent_charge": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "festering_thicket": {
     "zone": "battlefield"
   },
@@ -7494,6 +7539,10 @@
     "graveyard_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "general_s_enforcer": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "general_s_kabuto": {
@@ -8950,6 +8999,20 @@
       ]
     }
   },
+  "heroic_reinforcements": {
+    "battlefield_count": 34,
+    "granted": {
+      "count": 4,
+      "keywords": [
+        "haste"
+      ]
+    },
+    "tokens": {
+      "count": 2,
+      "id": "soldier_1_1_w"
+    },
+    "zone": "graveyard"
+  },
   "heroic_return": {
     "battlefield_count": 33,
     "graveyard_size": {
@@ -9397,6 +9460,13 @@
     },
     "opponent_battlefield_count": 6,
     "zone": "graveyard"
+  },
+  "impassioned_orator": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40
+    },
+    "zone": "battlefield"
   },
   "imperial_outrider": {
     "zone": "battlefield"
@@ -11462,6 +11532,14 @@
   },
   "m_baku_jabari_chieftain": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "maccready_lamplight_mayor": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
     "zone": "battlefield"
   },
   "macetail_hystrodon": {
@@ -13814,6 +13892,13 @@
   "palace_jailer": {
     "opponent_battlefield_count": 5
   },
+  "paladin_elizabeth_taggerdy": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "pale_bears": {
     "zone": "battlefield"
   },
@@ -14346,6 +14431,10 @@
     "zone": "graveyard"
   },
   "pouncing_cheetah": {
+    "zone": "battlefield"
+  },
+  "powder_ganger": {
+    "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
   "power_fist": {
@@ -17180,6 +17269,10 @@
     },
     "zone": "battlefield"
   },
+  "sierra_nuka_s_biggest_fan": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sifter_of_skulls": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -18292,6 +18385,10 @@
       "1": 0
     },
     "zone": "graveyard"
+  },
+  "stolen_strategy": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "stomper_cub": {
     "zone": "battlefield"
@@ -19611,6 +19708,11 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "the_nipton_lottery": {
+    "battlefield_count": 31,
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
+  },
   "the_odd_acorn_gang": {
     "battlefield_count": 33,
     "granted": {
@@ -19943,6 +20045,13 @@
     "tokens": {
       "count": 3,
       "id": "gnome_1_1_c"
+    },
+    "zone": "battlefield"
+  },
+  "thrill_kill_disciple": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
     },
     "zone": "battlefield"
   },
@@ -21197,6 +21306,13 @@
     },
     "zone": "battlefield"
   },
+  "vault_75_middle_school": {
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
+    "zone": "battlefield"
+  },
   "vault_of_the_archangel": {
     "battlefield_count": 33,
     "hand_size": {
@@ -21887,6 +22003,14 @@
   "wasp_lancer": {
     "zone": "battlefield"
   },
+  "wasteland_raider": {
+    "battlefield_count": 32,
+    "opponent_battlefield_count": 5,
+    "zone": [
+      "battlefield",
+      "graveyard"
+    ]
+  },
   "wasteland_scorpion": {
     "zone": "battlefield"
   },
@@ -21940,6 +22064,10 @@
     ]
   },
   "wear_down": {
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
+  },
+  "wear_tear": {
     "opponent_battlefield_count": 4,
     "zone": "graveyard"
   },
@@ -22170,6 +22298,16 @@
     "zone": "battlefield"
   },
   "wild_wanderer": {
+    "zone": "battlefield"
+  },
+  "wild_wasteland": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
     "zone": "battlefield"
   },
   "wilderness_reclamation": {
