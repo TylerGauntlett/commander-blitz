@@ -115122,12 +115122,12 @@
     },
     "Gonti, Lord of Luxury": {
       "edhrec_rank": 2005,
-      "gate": "template",
+      "gate": null,
       "name": "Gonti, Lord of Luxury",
-      "reason": "no template for: When Gonti enters, look at the top four cards of target opponent's library, exile one of t",
+      "reason": "",
       "scryfall_id": "fbbb3aef-af1f-4b77-b7d6-64cfd706a9d9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gonti, Night Minister": {
@@ -283402,12 +283402,12 @@
     },
     "Thief of Sanity": {
       "edhrec_rank": 3164,
-      "gate": "template",
+      "gate": null,
       "name": "Thief of Sanity",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, look at the top three cards of tha",
+      "reason": "",
       "scryfall_id": "94946d6c-1edb-46e9-a5ae-0ca2a016a7cd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thief's Knife": {

@@ -45,6 +45,7 @@ from .selectors import (
     matches,
     named_hosts,
     pick_from_pool,
+    resolve_chooser,
     resolve_pool,
     select_players,
 )
@@ -790,6 +791,16 @@ def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
     one's card too. The binding is per-resolution, which is what the printed
     "that card" means.
 
+    **Who picks** is the selector's ``chooser`` clause, and its default is the
+    effect's controller whoever owns the library -- rule 109.5: Siphon Insight
+    and Gonti, Lord of Luxury look at *target opponent's* library and "you"
+    exile one of them. Passing the library's seat as the chooser is the trap:
+    on an opponent's library it hands them the pick, and they bin the best
+    card for you. ``"owner"`` is the printed "target player looks at the top
+    … and puts one into their hand"; a player spec is "an opponent chooses".
+    A ``destinations`` step reads its own selector's clause first, then the
+    window's.
+
     ``face_down`` is exile without showing it to anybody, and only exile: see
     :func:`_move_found`.
 
@@ -852,16 +863,25 @@ def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
                 want = max(0, min(int(step.get("count", 1)), len(offered)))
                 if not want:
                     continue
+                # The pool branch's chooser, read the same way: a step's own
+                # clause, else the window's, else "you" (rule 109.5).
+                chooser_spec = (step_selector or {}).get("chooser", selector.get("chooser"))
                 where = DESTINATIONS[step.get("to", "hand")]
-                picked = yield from ask_objects(
-                    ctx,
-                    f"Put on {step.get('to', 'hand')}",
-                    offered,
-                    0 if step.get("up_to") else want,
-                    want,
-                    pid,
-                    "look_at_top",
-                )
+                if chooser_spec == "none":
+                    picked = offered[:want]
+                else:
+                    chooser = resolve_chooser(ctx, offered, chooser_spec)
+                    if chooser is None:
+                        continue
+                    picked = yield from ask_objects(
+                        ctx,
+                        f"Put on {step.get('to', 'hand')}",
+                        offered,
+                        0 if step.get("up_to") else want,
+                        want,
+                        chooser,
+                        "look_at_top",
+                    )
                 # The step carries its own destination flags -- `to` reads as
                 # `destination` for `_move_found`'s `library_top` test, and
                 # `playable_this_turn` belongs to the exile step alone.
@@ -879,7 +899,7 @@ def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
             bound.extend(taken)
         elif pool:
             picked = yield from pick_from_pool(
-                ctx, pool, selector, "Look at the top of your library", "look_at_top", pid
+                ctx, pool, selector, "Look at the top of the library", "look_at_top"
             )
             if cast_free:
                 taken = set((yield from _cast_from_window(ctx, pid, picked)))

@@ -7979,6 +7979,12 @@
   "gongaga_reactor_town": {
     "zone": "battlefield"
   },
+  "gonti_lord_of_luxury": {
+    "library_size": {
+      "1": 19
+    },
+    "zone": "battlefield"
+  },
   "gonti_s_aether_heart": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -19523,6 +19529,9 @@
   },
   "thickest_in_the_thicket": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "thief_of_sanity": {
     "zone": "battlefield"
   },
   "think_twice": {

@@ -92838,6 +92838,74 @@
           "effects": [
             {
               "amount": {
+                "const": 4
+              },
+              "any_type": true,
+              "destination": "exile",
+              "face_down": true,
+              "objects": {
+                "count": 1
+              },
+              "op": "look_at_top",
+              "playable": "while_exiled",
+              "playable_cast_only": true,
+              "player": {
+                "target": "t1"
+              },
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "When Gonti enters, look at the top four cards of target opponent's library, exile one of them face down, then put the rest on the bottom of that library in a random order. You may cast that card for as long as it remains exiled, and mana of any type can be spent to cast that spell.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "gonti_lord_of_luxury",
+      "keywords": [
+        "deathtouch"
+      ],
+      "mana_cost": "{2}{B}{B}",
+      "name": "Gonti, Lord of Luxury",
+      "oracle_text": "Deathtouch\nWhen Gonti enters, look at the top four cards of target opponent's library, exile one of them face down, then put the rest on the bottom of that library in a random order. You may cast that card for as long as it remains exiled, and mana of any type can be spent to cast that spell.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Aetherborn",
+        "Rogue"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
                 "const": 2
               },
               "op": "add_energy",
@@ -233208,6 +233276,62 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "any_type": true,
+              "destination": "exile",
+              "face_down": true,
+              "objects": {
+                "count": 1
+              },
+              "op": "look_at_top",
+              "playable": "while_exiled",
+              "playable_cast_only": true,
+              "player": {
+                "binding": "event_player"
+              },
+              "rest_to": "graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, look at the top three cards of that player's library, exile one of them face down, then put the rest into their graveyard. You may cast that card for as long as it remains exiled, and mana of any type can be spent to cast that spell.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "thief_of_sanity",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{U}{B}",
+      "name": "Thief of Sanity",
+      "oracle_text": "Flying\nWhenever this creature deals combat damage to a player, look at the top three cards of that player's library, exile one of them face down, then put the rest into their graveyard. You may cast that card for as long as it remains exiled, and mana of any type can be spent to cast that spell.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Specter"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {

@@ -294,6 +294,25 @@ creatures. A creature land answers one step, never both. `rest_to` (or
 step could take. Unknown step keys, a non-boolean `up_to`, an unknown `to` and a
 malformed step `selector` are load errors.
 
+**Who picks** is the `chooser` clause on `objects`, and it defaults to the
+effect's controller whoever's library `player` names — rule 109.5's "you".
+Siphon Insight and Gonti, Lord of Luxury look at *target opponent's* library
+and the caster exiles one, so they write no `chooser` at all:
+
+```jsonc
+{ "op": "look_at_top", "player": { "target": "t1" }, "amount": 2,
+  "objects": { "count": 1 }, "destination": "exile", "face_down": true,
+  "rest_to_bottom": true }
+```
+
+`"owner"` is the library's player — "target player looks at the top three
+cards of their library and puts one into their hand", and under `player:
+"each_player"` each seat picks from its own library. A player spec is "an
+opponent chooses one of them", and `"none"` takes from the top without asking.
+A `destinations` step reads its own `selector`'s `chooser` first, then the
+window's. `scry` is the near miss in the other direction: its `chooser`
+defaults to the library's owner, because scrying is the player's own action.
+
 `counters` and `counters_if` are a card put onto the battlefield **with**
 counters — Turntimber Symbiosis' "If that card has mana value 3 or less, it
 enters with three additional +1/+1 counters on it":

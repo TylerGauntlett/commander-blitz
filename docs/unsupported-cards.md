@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**302 cards** blocked by **276** capabilities.
+**300 cards** blocked by **275** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -41,7 +41,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exile-until-rest-to-bottom](#exile-until-rest-to-bottom) | 2 | 4171 | op |
 | [experience-counters](#experience-counters) | 2 | 1480 | engine |
 | [face-down-filter](#face-down-filter) | 2 | 5772 | selector |
-| [look-at-top-controller-chooses](#look-at-top-controller-chooses) | 2 | 2005 | selector |
 | [manifest-dread](#manifest-dread) | 2 | 5772 | op |
 | [manifest-from-opponent-library](#manifest-from-opponent-library) | 2 | 3759 | op |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
@@ -985,24 +984,6 @@ Blocks **2** cards.
   - Landfall — Whenever a land you control enters, manifest dread if this is the first time this ability has resolved this turn. Otherwise, you may turn a permanent you control face up
 - **Primordial Mist** (rank 6544) — `primordial_mist`
   - Exile a face-down permanent you control face up: You may play that card this turn. (You still pay its costs. Timing rules still apply.)
-
-</details>
-
-## look-at-top-controller-chooses
-
-Blocks **2** cards.
-
-- **(selector)** look_at_top's pick out of another player's library must be made by the effect's controller when the card says "you": `op_look_at_top` passes the library owner's seat as `chooser` to `pick_from_pool` (and to `ask_objects` for `destinations` steps), which overrides the selector's own `chooser` clause, so for `player` naming an opponent the OPPONENT chooses which card is exiled. Needs look_at_top to honour an explicit `objects.chooser` (e.g. `"chooser": "controller"`) over the library owner
-  <br>Why the existing vocabulary won't do: `playable_cast_only` (shipped) now says the cast-only permission exactly, and an ETB player target, `look_at_top` with `player: {"target": "t1"}`, `amount: 4`, `destination: "exile"`, `face_down`, `rest_to_bottom`, `playable: "while_exiled"` and `any_type` say everything else; but `objects: {"count": 1, "chooser": "controller"}` loads and is ignored because the op's chooser argument wins in `selectors.pick_from_pool`, so the damaged/targeted opponent would pick the worst of the cards for you -- a much weaker card than printed
-- **(selector)** look_at_top's pick out of another player's library must be made by the effect's controller when the card says "you": `op_look_at_top` passes the library owner's seat as `chooser` to `pick_from_pool` (and to `ask_objects` for `destinations` steps), which overrides the selector's own `chooser` clause, so for `player` naming an opponent the OPPONENT chooses which card is exiled. Needs look_at_top to honour an explicit `objects.chooser` (e.g. `"chooser": "controller"`) over the library owner
-  <br>Why the existing vocabulary won't do: `playable_cast_only` (shipped) now says the cast-only permission exactly, and `deals_combat_damage_to_player` with `look_at_top` `player: {"binding": "event_player"}`, `amount: 3`, `destination: "exile"`, `face_down`, `rest_to: "graveyard"`, `playable: "while_exiled"` and `any_type` say everything else; but `objects: {"count": 1, "chooser": "controller"}` loads and is ignored because the op's chooser argument wins in `selectors.pick_from_pool`, so the damaged/targeted opponent would pick the worst of the cards for you -- a much weaker card than printed
-
-<details><summary>Cards waiting on this</summary>
-
-- **Gonti, Lord of Luxury** (rank 2005) — `gonti_lord_of_luxury`
-  - When Gonti enters, look at the top four cards of target opponent's library, exile one of them face down, then put the rest on the bottom of that library in a random order. You may cast that card for as long as it remains exiled, and mana of any type can be spent to cast that spell.
-- **Thief of Sanity** (rank 3164) — `thief_of_sanity`
-  - Whenever this creature deals combat damage to a player, look at the top three cards of that player's library, exile one of them face down, then put the rest into their graveyard. You may cast that card for as long as it remains exiled, and mana of any type can be spent to cast that spell.
 
 </details>
 
