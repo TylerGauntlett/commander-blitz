@@ -7,10 +7,10 @@
   ],
   "needs": [
     {
-      "capability": "sandbox_opponent_graveyard_spell_prop",
+      "capability": "gate_cipher_spell_exile_allowance",
       "kind": "engine",
-      "what": "a verification-sandbox prop: an instant or sorcery card in player 1's (the opponent's) graveyard, added by build_sandbox in cards/authoring/verify.py only for a card whose required card_in_graveyard target selects Instant or Sorcery controlled by an opponent, so a mandatory 'target instant or sorcery card from an opponent's graveyard' spell is castable at gate 4",
-      "why_existing_wont_do": "The DSL already says the whole card: a card_in_graveyard target (any_types Instant/Sorcery, controller opponent), cast_from_hand with objects {target: t1} and exiles: true (the Torrential Gearhulk / Impulsivity shape for a free cast out of a graveyard with the exile-instead rider), and cipher as encode (optional, count 1) plus an exile-zone deals_combat_damage_to_player trigger filtered on encoded_by self running cast_copy. It passes schema, compile and residual, then --collect --dry-run rejects it at the playable gate: 'arcane_heist is not playable in the sandbox', because build_sandbox never puts anything in player 1's graveyard, so the required target has no legal choice (601.2c). Making the target optional would describe a different card. Sibling of sandbox_graveyard_spell_prop (Surge to Victory), which is the same prop in player 0's graveyard.",
+      "what": "a verification-harness allowance: gate 4's spell-zone check (verify._play_once, and its twin in tests/cards/test_every_card_works.py) admits exile for a spell whose spell_effects declare `encode`, the way a declared exiles_itself / rebound / suspends_itself flag does, because cipher's encoding is a rider on the destination that sends the resolved card to exile (702.99a)",
+      "why_existing_wont_do": "The DSL already says the whole card: a card_in_graveyard target (any_types Instant/Sorcery, controller opponent), cast_from_hand with objects {target: t1} and exiles: true, and cipher as encode (optional, count 1) plus an exile-zone deals_combat_damage_to_player trigger filtered on encoded_by self running cast_copy. build_sandbox now puts a targetless instant or sorcery in player 1's graveyard for it (graveyard_spell_props), so the card is cast; but the gate's auto-answer encodes it on a creature, the card correctly ends in exile, and gate 4 rejects it with 'arcane_heist is a spell but ended in exile' because the spell-zone allowance widens only for a declared flag and encode is not one. No shipped card uses encode, so every cipher spell fails the same way. Dropping cipher would describe a different card.",
       "draft_card": {
         "id": "arcane_heist",
         "name": "Arcane Heist",
@@ -95,8 +95,7 @@
   ],
   "closest_existing": [
     "torrential_gearhulk",
-    "impulsivity",
-    "sandbox_graveyard_spell_prop"
+    "impulsivity"
   ],
   "confidence": "high"
 }

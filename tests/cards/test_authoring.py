@@ -269,6 +269,109 @@ class TestTheSandboxGraveyardFeedsAnExileCost:
         assert len(self._graveyard(hand_written, DIVINATION)) == 2
 
 
+class TestTheGraveyardSpellProp:
+    """An instant or sorcery card in a graveyard for a spell that must target one.
+
+    Player 0's graveyard holds creature cards and player 1's holds nothing, so
+    Surge to Victory's "exile target instant or sorcery card from your
+    graveyard" and Arcane Heist's "... from an opponent's graveyard" had no
+    legal choice (601.2c) and gate 4 rejected correct cards as "not playable in
+    the sandbox". The prop is added, and only for a card that needs it.
+    """
+
+    OWN = {
+        **DIVINATION,
+        "id": "auto_test_spell_exiler",
+        "name": "Auto Test Spell Exiler",
+        "oracle_text": "Exile target instant or sorcery card from your graveyard.",
+        "targets": [
+            {
+                "id": "t1",
+                "kind": "card_in_graveyard",
+                "count": 1,
+                "selector": {
+                    "any_types": ["Instant", "Sorcery"],
+                    "controller": "you",
+                    "zone": "graveyard",
+                },
+            }
+        ],
+        "spell_effects": [{"op": "exile", "objects": {"target": "t1"}}],
+    }
+    OPPONENTS = {
+        **OWN,
+        "id": "auto_test_heist_exiler",
+        "name": "Auto Test Heist Exiler",
+        "oracle_text": "Exile target instant or sorcery card from an opponent's graveyard.",
+        "targets": [
+            {
+                **OWN["targets"][0],
+                "selector": {**OWN["targets"][0]["selector"], "controller": "opponent"},
+            }
+        ],
+    }
+
+    def _graveyards(self, pool: CardRegistry, payload: dict) -> tuple[list[str], list[str]]:
+        card = V.compile_card(V.CardModel.model_validate(payload))
+        merged = V.CardRegistry({**{c.id: c for c in pool}, card.id: card})
+        game = V.build_sandbox(merged, card.id)
+        return tuple(
+            [game.state.objects[oid].def_id for oid in game.state.players[pid].graveyard]
+            for pid in (0, 1)
+        )
+
+    def test_your_graveyard_gets_one_for_a_your_graveyard_target(self, hand_written):
+        own, theirs = self._graveyards(hand_written, self.OWN)
+        assert len(own) == 3 and not theirs
+        prop = hand_written.get(own[-1])
+        assert prop.is_instant or prop.is_sorcery
+        assert all(hand_written.get(c).is_creature for c in own[:2])
+
+    def test_the_opponents_graveyard_gets_one_for_an_opponents_target(self, hand_written):
+        own, theirs = self._graveyards(hand_written, self.OPPONENTS)
+        assert len(own) == 2 and len(theirs) == 1
+        prop = hand_written.get(theirs[0])
+        assert prop.is_instant or prop.is_sorcery
+
+    def test_both_cards_clear_every_gate(self, hand_written):
+        own = V.verify(self.OWN, {"zone": "graveyard", "graveyard_size": {"0": 3}}, hand_written)
+        assert own.ok, str(own)
+        theirs = V.verify(
+            self.OPPONENTS, {"zone": "graveyard", "graveyard_size": {"0": 3, "1": 0}}, hand_written
+        )
+        assert theirs.ok, str(theirs)
+
+    def test_an_optional_target_needs_no_prop(self, hand_written):
+        """Mizzix's Mastery's shape: castable with no choice, so its position is unchanged."""
+        payload = {
+            **self.OPPONENTS,
+            "id": "auto_test_optional_heist",
+            "targets": [{**self.OPPONENTS["targets"][0], "optional": True}],
+        }
+        assert self._graveyards(hand_written, payload) == self._graveyards(hand_written, DIVINATION)
+
+    def test_a_creature_card_target_needs_no_prop(self, hand_written):
+        target = self.OPPONENTS["targets"][0]
+        payload = {
+            **self.OPPONENTS,
+            "id": "auto_test_creature_heist",
+            "targets": [{**target, "selector": {"types": ["Creature"], "controller": "opponent", "zone": "graveyard"}}],
+        }
+        assert self._graveyards(hand_written, payload) == self._graveyards(hand_written, DIVINATION)
+
+    def test_every_other_card_keeps_its_graveyards(self, hand_written):
+        own, theirs = self._graveyards(hand_written, DIVINATION)
+        assert len(own) == 2 and not theirs
+
+    def test_the_prop_asks_nothing(self, pool, hand_written):
+        """It is cast, not just pointed at, so it may want no choice and carry no ability."""
+        for registry in (pool, hand_written):
+            pick = registry.get(V.quiet_graveyard_spell(registry, {"any_types": ["Instant", "Sorcery"]}))
+            assert pick.is_instant or pick.is_sorcery
+            assert not pick.targets and not pick.mode_targets and not pick.abilities
+            assert pick.cast_time_modes is None and pick.additional_cost is None
+
+
 class TestTheSandboxMeetsACastWindow:
     """A `cast_only_during` card is cast inside its window, not in your main phase.
 

@@ -18554,6 +18554,13 @@
   "surge_of_thoughtweft": {
     "zone": "graveyard"
   },
+  "surge_to_victory": {
+    "graveyard_size": {
+      "0": 3,
+      "1": 0
+    },
+    "zone": "graveyard"
+  },
   "surrak_and_goreclaw": {
     "battlefield_count": 33,
     "granted": {

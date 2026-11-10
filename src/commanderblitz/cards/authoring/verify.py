@@ -594,8 +594,16 @@ def build_sandbox(registry: CardRegistry, card_id: str, *, in_hand: bool = True)
         ],
     )
     builder.graveyard(
-        0, _props(registry, OWN_GRAVEYARD_ROLES + spare_graveyard_roles(under_test))
+        0,
+        [
+            *_props(registry, OWN_GRAVEYARD_ROLES + spare_graveyard_roles(under_test)),
+            *graveyard_spell_props(registry, under_test, 0),
+        ],
     )
+    # Player 1's graveyard is empty for every card but one that targets an
+    # instant or sorcery card in it -- see `graveyard_spell_props`.
+    if opponent_yard := graveyard_spell_props(registry, under_test, 1):
+        builder.graveyard(1, opponent_yard)
     # Forty cards, and the **second** one is deliberately not a land. The pile
     # used to be forty basic lands, which made Cultivator Colossus -- "put a
     # land card from your hand onto the battlefield, draw a card, and repeat
@@ -754,6 +762,99 @@ def spare_graveyard_roles(card: CardDef | None) -> tuple[str, ...]:
     if not isinstance(needed, int):
         return ()
     return ("small_creature",) * max(0, needed - len(OWN_GRAVEYARD_ROLES))
+
+
+_SPELL_TYPES = frozenset({"Instant", "Sorcery"})
+
+
+def _graveyard_spell_specs(card: CardDef | None, seat: int) -> list[Any]:
+    """``card``'s required spell targets that want an instant or sorcery card in ``seat``'s graveyard.
+
+    Only the spell's own ``targets``: an ability's are the activated-ability
+    test's business, and an ``optional`` or ``up_to`` spec is castable with no
+    choice at all (Mizzix's Mastery, Finale of Promise), so it needs no prop.
+    "Selects Instant/Sorcery" means its ``types`` or ``any_types`` name nothing
+    else. Seat 0 is "your graveyard", the default; seat 1 is a selector whose
+    ``controller`` or ``owner`` is ``opponent``.
+    """
+    if card is None:
+        return []
+    out = []
+    for spec in card.targets:
+        if spec.kind != "card_in_graveyard" or spec.optional or spec.up_to:
+            continue
+        if not isinstance(spec.count, int) or spec.count < 1:
+            continue
+        selector = spec.selector
+        named = {str(t) for t in selector.get("types") or ()} | {
+            str(t) for t in selector.get("any_types") or ()
+        }
+        if not named or not named <= _SPELL_TYPES:
+            continue
+        whose = selector.get("controller", selector.get("owner", "you"))
+        if {"you": 0, "opponent": 1}.get(str(whose)) == seat:
+            out.append(spec)
+    return out
+
+
+def quiet_graveyard_spell(registry: CardRegistry, selector: Any) -> str | None:
+    """The first instant or sorcery card by id that ``selector``'s types accept and that asks nothing.
+
+    The prop is not merely pointed at: Arcane Heist *casts* it and Surge to
+    Victory casts a copy, so it must resolve with no choice the sandbox has to
+    make up -- no targets in any form, no modes, no {X}, no additional cost --
+    and carry no abilities to fold into the verdict. Sorted by id, so the
+    position is identical run to run.
+    """
+    types = {str(t) for t in selector.get("types") or ()}
+    either = {str(t) for t in selector.get("any_types") or ()}
+    for c in sorted(registry, key=lambda c: c.id):
+        if (
+            (c.is_instant or c.is_sorcery)
+            and not c.is_token
+            and c.front_face is None
+            and types <= set(c.types)
+            and (not either or either & set(c.types))
+            and not c.targets
+            and not c.mode_targets
+            and not c.gift_targets
+            and not c.spree_targets
+            and not c.cost_option_targets
+            and c.cast_time_modes is None
+            and c.mana_cost.x_count == 0
+            and c.additional_cost is None
+            and not c.abilities
+        ):
+            return c.id
+    return None
+
+
+def graveyard_spell_props(registry: CardRegistry, card: CardDef | None, seat: int) -> list[str]:
+    """Instant or sorcery cards for ``seat``'s sandbox graveyard, if ``card`` must target one there.
+
+    The sandbox graveyards hold creature cards (player 0's) or nothing (player
+    1's), so a spell with a mandatory "target instant or sorcery card from your
+    graveyard" (Surge to Victory) or "... from an opponent's graveyard" (Arcane
+    Heist) had no legal choice, could not be cast (601.2c), and gate 4 rejected
+    a correct card as "not playable in the sandbox". Marking the target
+    optional would describe a different card, so the prop is added rather than
+    the gate relaxed -- the call `small_creature` and
+    :func:`spare_graveyard_roles` record.
+
+    **Only** for a card :func:`_graveyard_spell_specs` names, one card per
+    target the spec counts, so every other card's graveyards -- and every
+    authored `graveyard_size` -- are what they were. An addition rather than a
+    swap, since the creature props in player 0's graveyard are load-bearing for
+    reanimation and the opponent's graveyard has no slot to swap. Returns
+    nothing when the pool has no quiet instant or sorcery, and the card then
+    fails gate 4 honestly.
+    """
+    out: list[str] = []
+    for spec in _graveyard_spell_specs(card, seat):
+        pick = quiet_graveyard_spell(registry, spec.selector)
+        if pick is not None:
+            out.extend([pick] * spec.count)
+    return out
 
 
 #: The spells every card with a `kind: "spell"` target finds on the stack.

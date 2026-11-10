@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**283 cards** blocked by **262** capabilities.
+**282 cards** blocked by **261** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -150,6 +150,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [free-cast-this-turn](#free-cast-this-turn) | 1 | 6651 | op |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
 | [fully-unlock-room](#fully-unlock-room) | 1 | 3452 | trigger_event |
+| [gate-cipher-spell-exile-allowance](#gate-cipher-spell-exile-allowance) | 1 | 5098 | engine |
 | [goad-without-goaded](#goad-without-goaded) | 1 | 973 | op |
 | [gold-token](#gold-token) | 1 | 705 | token |
 | [grant-cycling-to-cards-in-hand](#grant-cycling-to-cards-in-hand) | 1 | 5169 | static_effect |
@@ -237,9 +238,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
 | [salamander-warrior-4-3-u](#salamander-warrior-4-3-u) | 1 | 3395 | token |
 | [same-target-for-each-target-word](#same-target-for-each-target-word) | 1 | 5003 | engine |
-| [sandbox-graveyard-spell-prop](#sandbox-graveyard-spell-prop) | 1 | 5082 | engine |
 | [sandbox-low-mana-value-permanent](#sandbox-low-mana-value-permanent) | 1 | 14140 | engine |
-| [sandbox-opponent-graveyard-spell-prop](#sandbox-opponent-graveyard-spell-prop) | 1 | 5098 | engine |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
@@ -2586,6 +2585,20 @@ Blocks **1** card.
 
 </details>
 
+## gate-cipher-spell-exile-allowance
+
+Blocks **1** card.
+
+- **(engine)** a verification-harness allowance: gate 4's spell-zone check (verify._play_once, and its twin in tests/cards/test_every_card_works.py) admits exile for a spell whose spell_effects declare `encode`, the way a declared exiles_itself / rebound / suspends_itself flag does, because cipher's encoding is a rider on the destination that sends the resolved card to exile (702.99a)
+  <br>Why the existing vocabulary won't do: The DSL already says the whole card: a card_in_graveyard target (any_types Instant/Sorcery, controller opponent), cast_from_hand with objects {target: t1} and exiles: true, and cipher as encode (optional, count 1) plus an exile-zone deals_combat_damage_to_player trigger filtered on encoded_by self running cast_copy. build_sandbox now puts a targetless instant or sorcery in player 1's graveyard for it (graveyard_spell_props), so the card is cast; but the gate's auto-answer encodes it on a creature, the card correctly ends in exile, and gate 4 rejects it with 'arcane_heist is a spell but ended in exile' because the spell-zone allowance widens only for a declared flag and encode is not one. No shipped card uses encode, so every cipher spell fails the same way. Dropping cipher would describe a different card.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Arcane Heist** (rank 5098) — `arcane_heist`
+  - You may cast target instant or sorcery card from an opponent's graveyard without paying its mana cost. If that spell would be put into their graveyard, exile it instead.
+
+</details>
+
 ## goad-without-goaded
 
 Blocks **1** card.
@@ -3824,20 +3837,6 @@ Blocks **1** card.
 
 </details>
 
-## sandbox-graveyard-spell-prop
-
-Blocks **1** card.
-
-- **(engine)** a verification-sandbox prop: an instant or sorcery card in player 0's graveyard, swapped in (like swap_in_legendary_body / swap_in_artifact_body) only for a card whose required card_in_graveyard target selects Instant or Sorcery, so a mandatory 'target instant or sorcery card from your graveyard' spell is castable at gate 4
-  <br>Why the existing vocabulary won't do: The DSL already says the whole card: a card_in_graveyard target (any_types Instant/Sorcery, controller you), exile as 'banked', pump of creatures you control with power {mana_value_of: {binding: banked}}, and a this_turn delayed_trigger on deals_combat_damage_to_player (controller you) whose effect is cast_copy {objects: {binding: banked}, optional: true}. It passes schema, compile and residual, then fails gate 4 'not playable in the sandbox' because OWN_GRAVEYARD_ROLES is (small_creature, flier) and no instant or sorcery card is ever in the graveyard, so a required target has no legal choice (601.2c). Marking the target optional (as mizzix_s_mastery does) would describe a different card. With OWN_GRAVEYARD_ROLES patched in memory to include noncreature_spell (Anticipate, MV 2) the same answer passes gate 4 and resolves with graveyard_size {0: 2}.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Surge to Victory** (rank 5082) — `surge_to_victory`
-  - Exile target instant or sorcery card from your graveyard.
-
-</details>
-
 ## sandbox-low-mana-value-permanent
 
 Blocks **1** card.
@@ -3849,20 +3848,6 @@ Blocks **1** card.
 
 - **Bloodchief's Thirst** (rank 14140) — `bloodchief_s_thirst`
   - Destroy target creature or planeswalker with mana value 2 or less. If this spell was kicked, instead destroy target creature or planeswalker.
-
-</details>
-
-## sandbox-opponent-graveyard-spell-prop
-
-Blocks **1** card.
-
-- **(engine)** a verification-sandbox prop: an instant or sorcery card in player 1's (the opponent's) graveyard, added by build_sandbox in cards/authoring/verify.py only for a card whose required card_in_graveyard target selects Instant or Sorcery controlled by an opponent, so a mandatory 'target instant or sorcery card from an opponent's graveyard' spell is castable at gate 4
-  <br>Why the existing vocabulary won't do: The DSL already says the whole card: a card_in_graveyard target (any_types Instant/Sorcery, controller opponent), cast_from_hand with objects {target: t1} and exiles: true (the Torrential Gearhulk / Impulsivity shape for a free cast out of a graveyard with the exile-instead rider), and cipher as encode (optional, count 1) plus an exile-zone deals_combat_damage_to_player trigger filtered on encoded_by self running cast_copy. It passes schema, compile and residual, then --collect --dry-run rejects it at the playable gate: 'arcane_heist is not playable in the sandbox', because build_sandbox never puts anything in player 1's graveyard, so the required target has no legal choice (601.2c). Making the target optional would describe a different card. Sibling of sandbox_graveyard_spell_prop (Surge to Victory), which is the same prop in player 0's graveyard.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Arcane Heist** (rank 5098) — `arcane_heist`
-  - You may cast target instant or sorcery card from an opponent's graveyard without paying its mana cost. If that spell would be put into their graveyard, exile it instead.
 
 </details>
 

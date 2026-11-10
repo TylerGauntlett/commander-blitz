@@ -270792,12 +270792,12 @@
     },
     "Surge to Victory": {
       "edhrec_rank": 5082,
-      "gate": "template",
+      "gate": null,
       "name": "Surge to Victory",
-      "reason": "no template for: Exile target instant or sorcery card from your graveyard. Creatures you control get +X/+0 ",
+      "reason": "",
       "scryfall_id": "b5345934-60eb-417c-9716-477882c4796d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Surgehacker Mech": {
