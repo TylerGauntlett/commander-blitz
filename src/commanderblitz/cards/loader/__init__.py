@@ -5132,6 +5132,13 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"and no board state; unsupported keys {sorted(unknown)}"
             )
         _validate_cast_zone_keys(model.affects_spells, f"{where}.affects_spells")
+        # "Spells you cast but don't own": only the literal word. `false` would
+        # load clean and say nothing, and a string would read as true.
+        if "not_owned" in model.affects_spells and model.affects_spells["not_owned"] is not True:
+            raise DslError(
+                f"{where}.affects_spells.not_owned: 'spells you cast but don't own' "
+                f"is written true or left out; got {model.affects_spells['not_owned']!r}"
+            )
         if model.amount is None:
             raise DslError(
                 f"{where}: spell_cost_reduction needs an 'amount' -- a reduction "

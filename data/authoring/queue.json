@@ -115112,12 +115112,12 @@
     },
     "Gonti, Canny Acquisitor": {
       "edhrec_rank": 8010,
-      "gate": "template",
+      "gate": null,
       "name": "Gonti, Canny Acquisitor",
-      "reason": "no template for: Spells you cast but don't own cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "03a7e79f-625a-49ac-9cb1-e1fe5f51f5a0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gonti, Lord of Luxury": {

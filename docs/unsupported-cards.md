@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**291 cards** blocked by **270** capabilities.
+**290 cards** blocked by **269** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -251,7 +251,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [self-bounce-playable-gate](#self-bounce-playable-gate) | 1 | 10013 | engine |
 | [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
-| [spell-cost-reduction-by-owner](#spell-cost-reduction-by-owner) | 1 | 8010 | static_effect |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [spirit-2-2-w-flying](#spirit-2-2-w-flying) | 1 | 12596 | token |
 | [stack-wipe](#stack-wipe) | 1 | 8784 | op |
@@ -4027,20 +4026,6 @@ Blocks **1** card.
 
 - **Misdirection** (rank 1562) — `misdirection`
   - Change the target of target spell with a single target.
-
-</details>
-
-## spell-cost-reduction-by-owner
-
-Blocks **1** card.
-
-- **(static_effect)** an ownership clause on spell_cost_reduction's affects_spells filter: "spells you cast but don't own" discounts a spell only when its caster is not its owner (owner: "opponent" / not_owner: "you"), read off the object being cast (its owner, not its printed face), so a stolen card cast from exile, an opponent's graveyard or library, or a spell cast via cast_card from an opponent's zone all get the {1} discount and the caster's own cards never do
-  <br>Why the existing vocabulary won't do: spell_cost_reduction's affects_spells takes SPELL_COST_REDUCTION_FILTER_KEYS (controller, types, colors, name, mana_cost, exclude_self, power, from_zone, not_from_zone ...) and has no owner key; player_statics.spell_cost_reduction is handed a CardDef and matches it through _matches_printed, so it cannot see who owns the object. from_zone: exile is the nearest spelling and is wrong both ways: it discounts your own cards cast from exile (foretell, impulse draw, adventure) and misses an opponent's card cast from their graveyard or library
-
-<details><summary>Cards waiting on this</summary>
-
-- **Gonti, Canny Acquisitor** (rank 8010) — `gonti_canny_acquisitor`
-  - Spells you cast but don't own cost {1} less to cast.
 
 </details>
 

@@ -537,7 +537,7 @@ class Game:
         # this very tuple.
         # ``obj.zone`` is still the zone the card is cast from: `push_spell`
         # has not moved it yet, so a graveyard-only discount reads flashback.
-        extra -= cost_reduction(state, pid, card, targets, zone=obj.zone)
+        extra -= cost_reduction(state, pid, card, targets, zone=obj.zone, owner=obj.owner)
         # "Spells you cast this way cost {2} less" (Urianger Augurelt): the
         # discount the permission this line casts under carries, decided from
         # the same lane flags `_cast_variant` priced it with.

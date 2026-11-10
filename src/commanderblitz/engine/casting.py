@@ -1972,6 +1972,8 @@ def _cast_variant(
     # before `push_spell` moves it, so flashback and foretell price from where
     # the card sits.
     cast_zone = state.objects[oid].zone
+    # And whose card it is, for "spells you cast but don't own" (108.3).
+    cast_owner = state.objects[oid].owner
     # "Spells you cast this way cost {2} less" -- a discount the permission
     # this line casts under carries, not the card (Urianger Augurelt).
     variant_less += permission_cost_reduction(
@@ -2143,7 +2145,10 @@ def _cast_variant(
         # yet, and refusing here would drop a spell that is affordable once
         # discounted. `_priced_tuples` re-prices each tuple exactly.
         def _discount_for(aimed_at):
-            return cost_reduction(state, pid, card, aimed_at, zone=cast_zone) + variant_less
+            return (
+                cost_reduction(state, pid, card, aimed_at, zone=cast_zone, owner=cast_owner)
+                + variant_less
+            )
 
         discount = _discount_for(None)
 

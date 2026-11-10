@@ -1042,11 +1042,17 @@ SPELL_FILTER_KEYS = frozenset(
 #: Seat), "…from anywhere other than your hand" (Advanced Reconstruction). One
 #: zone name or a list, out of `CAST_ORIGIN_ZONES`; matched by
 #: `player_statics.cast_zone_matches` with the zone every pricer hands down.
+#:
+#: ``not_owned`` is "spells you cast **but don't own**" (Gonti, Canny
+#: Acquisitor): the spell's owner (108.3) is not its caster. Only ``true``; read
+#: by `player_statics.spell_cost_reduction` off the owner every pricer hands
+#: down beside the zone, never off the printed face, which has no owner.
 SPELL_COST_REDUCTION_FILTER_KEYS = SPELL_FILTER_KEYS | {
     "exclude_self",
     "power",
     "from_zone",
     "not_from_zone",
+    "not_owned",
 }
 
 #: The zones a card can be cast or played **from** -- what a ``from_zone`` /

@@ -31,7 +31,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Static conditions](#static-conditions) | 14 |
 | [Static values](#static-values) | 20 |
 | [Spell filter keys](#spell-filter-keys) | 12 |
-| [Spell cost-reduction filter keys](#spell-cost-reduction-filter-keys) | 4 |
+| [Spell cost-reduction filter keys](#spell-cost-reduction-filter-keys) | 5 |
 | [Cost-reduction filter keys](#cost-reduction-filter-keys) | 2 |
 | [Mana rider ops](#mana-rider-ops) | 7 |
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
@@ -1068,6 +1068,7 @@ Keys a `spell_cost_reduction`'s `affects_spells` accepts beyond the spell filter
 | `exclude_self` | Not this card ("other" Dragon spells) -- the eminence case. | [Eminence — a static that works from the command zone](card-dsl-cookbook.md#eminence--a-static-that-works-from-the-command-zone) |
 | `from_zone` | Cast from this zone, or one of a list ("from your graveyard"). | [A discount that asks where the spell is cast from](card-dsl-cookbook.md#a-discount-that-asks-where-the-spell-is-cast-from) |
 | `not_from_zone` | Not cast from this zone or list ("other than your hand"). | [A discount that asks where the spell is cast from](card-dsl-cookbook.md#a-discount-that-asks-where-the-spell-is-cast-from) |
+| `not_owned` | The caster does not own the spell ("spells you cast but don't own"). | [A discount that asks who owns the spell](card-dsl-cookbook.md#a-discount-that-asks-who-owns-the-spell) |
 | `power` | The spell's power as cast: printed, or a `*/*`'s CDA. | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
 
 ## Cost-reduction filter keys

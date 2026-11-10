@@ -2073,7 +2073,9 @@ def _cast_paying_mana_cost(ctx: EffectContext, pid: int, oid: int, *, exiles: bo
     def extra_for(targets) -> int:
         # The zone the card is cast from -- graveyard, exile or wherever the
         # resolving effect found it -- since it has not reached the stack yet.
-        return -cost_reduction(state, pid, card, targets, zone=zone_of(state, oid))
+        return -cost_reduction(
+            state, pid, card, targets, zone=zone_of(state, oid), owner=obj.owner
+        )
 
     def ceiling(extra: int) -> int:
         """The largest payable X, or -1 when nothing is payable at all."""
@@ -2232,8 +2234,10 @@ def cast_copy_paying(ctx: EffectContext, pid: int, oid: int, price: str):
     cost = ManaCost.parse(price)
     purpose = spell_purpose(card)
 
+    # A copy of a card cast is owned by its caster (707.10), so "spells you
+    # cast but don't own" never discounts one, whoever owns the card copied.
     def payable(targets) -> bool:
-        extra = -cost_reduction(state, pid, card, targets)
+        extra = -cost_reduction(state, pid, card, targets, owner=pid)
         return can_pay_mana(state, pid, cost, extra_generic=extra, purpose=purpose)
 
     tuples = [
@@ -2254,7 +2258,7 @@ def cast_copy_paying(ctx: EffectContext, pid: int, oid: int, price: str):
     ):
         return False
     targets = yield from _ask_cast_targets(ctx, pid, card.name, tuples)
-    extra = -cost_reduction(state, pid, card, targets)
+    extra = -cost_reduction(state, pid, card, targets, owner=pid)
     modes, mode_refs = free_cast_modes(state, pid, card, oid)
     template = StackItem(
         sid=-1, kind="spell", controller=pid, def_id=obj.def_id, oid=oid, modes=modes

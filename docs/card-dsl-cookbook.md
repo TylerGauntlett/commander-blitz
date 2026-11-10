@@ -2715,6 +2715,34 @@ either: that discount belongs to one permission rather than to a zone, so it has
 to know which permission the cast took, which a zone filter cannot say. It can
 reuse the same `zone` plumbing, but not these keys.
 
+### A discount that asks who owns the spell
+
+```jsonc
+// Gonti, Canny Acquisitor — "Spells you cast but don't own cost {1} less to
+// cast."
+{ "kind": "static", "effect": "spell_cost_reduction",
+  "affects_spells": { "controller": "you", "not_owned": true },
+  "amount": 1 }
+```
+
+`not_owned: true` matches a spell whose owner (108.3) is not the player casting
+it. Only `true` loads; anything else is refused, since `false` would say nothing.
+It is ANDed with the other keys like `from_zone`.
+
+The owner is read off the object being cast, never the printed face, which has
+none. Every pricer hands it to `cost_reduction.cost_reduction` beside the zone:
+`casting._cast_variant` and `Game._cast` for a cast from hand, exile, a graveyard
+or a library under any permission, `ops_cards._cast_paying_mana_cost` for a
+resolving `cast_card`, and `legality`'s diagnostic. A stolen card cast from exile
+gets the discount wherever it was taken from. The caster's own card does not,
+even from exile. `cast_copy` passes the caster as the owner, because a copy of a
+card cast is owned by its caster (707.10), so it never gets the discount. A
+pricer that passes no owner gets no discount, as with the zone. Free casts are
+not priced and need neither.
+
+**Not `from_zone: "exile"`.** That key discounts your own foretold or impulse-drawn
+cards. It also misses an opponent's card cast from their graveyard or library.
+
 ### Making *other* spells cost more, in life
 
 ```jsonc

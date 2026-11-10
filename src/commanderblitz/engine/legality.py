@@ -522,7 +522,9 @@ def unplayable_reason(state: GameState, pid: int, oid: int) -> str | None:
         return "timing"
 
     # Hand cards never owe commander tax -- that is a command-zone cost only.
-    discount = cost_reduction(state, pid, card, zone=Zone.HAND)
+    discount = cost_reduction(
+        state, pid, card, zone=Zone.HAND, owner=state.objects[oid].owner
+    )
     purpose = spell_purpose(card)
     x = 0
     # The same gate `_cast_variant` applies, and it must stay X = 0

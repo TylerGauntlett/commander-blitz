@@ -92933,6 +92933,74 @@
     {
       "abilities": [
         {
+          "affects_spells": {
+            "controller": "you",
+            "not_owned": true
+          },
+          "amount": 1,
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Spells you cast but don't own cost {1} less to cast."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "any_type": true,
+              "destination": "exile",
+              "face_down": true,
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "playable": "while_exiled",
+              "player": {
+                "binding": "defender"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more creatures you control deal combat damage to a player, look at the top card of that player's library, then exile it face down. You may play that card for as long as it remains exiled, and mana of any type can be spent to cast that spell.",
+          "trigger": {
+            "controller": "you",
+            "event": "creatures_deal_combat_damage",
+            "per_player": true
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "U"
+      ],
+      "id": "gonti_canny_acquisitor",
+      "mana_cost": "{2}{B}{G}{U}",
+      "name": "Gonti, Canny Acquisitor",
+      "oracle_text": "Spells you cast but don't own cost {1} less to cast.\nWhenever one or more creatures you control deal combat damage to a player, look at the top card of that player's library, then exile it face down. You may play that card for as long as it remains exiled, and mana of any type can be spent to cast that spell.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Aetherborn",
+        "Rogue"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {

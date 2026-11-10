@@ -7987,6 +7987,10 @@
   "gongaga_reactor_town": {
     "zone": "battlefield"
   },
+  "gonti_canny_acquisitor": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "gonti_lord_of_luxury": {
     "library_size": {
       "1": 19

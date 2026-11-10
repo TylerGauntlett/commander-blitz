@@ -1068,6 +1068,8 @@ SPELL_COST_REDUCTION_FILTER: dict[str, Entry] = {
                   "A discount that asks where the spell is cast from"),
     "not_from_zone": ("Not cast from this zone or list (\"other than your hand\").",
                       "A discount that asks where the spell is cast from"),
+    "not_owned": ("The caster does not own the spell (\"spells you cast but don't own\").",
+                  "A discount that asks who owns the spell"),
     "power": ("The spell's power as cast: printed, or a `*/*`'s CDA.",
               "`power` / `toughness` — a *derived* characteristic, read at a fixed layer"),
 }

@@ -389,6 +389,7 @@
    "name",
    "not_from_zone",
    "not_keywords",
+   "not_owned",
    "not_types",
    "power",
    "subtypes",
