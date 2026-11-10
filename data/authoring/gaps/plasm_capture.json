@@ -1,0 +1,18 @@
+{
+  "card_id": "plasm_capture",
+  "name": "Plasm Capture",
+  "oracle_text": "Counter target spell. At the beginning of your next first main phase, add X mana in any combination of colors, where X is that spell's mana value.",
+  "blocked_sentences": [
+    "Counter target spell. At the beginning of your next first main phase, add X mana in any combination of colors, where X is that spell's mana value."
+  ],
+  "needs": [
+    {
+      "capability": "target_spell_mana_value_lki",
+      "kind": "value",
+      "what": "A way to capture the mana value of a TARGET SPELL as it last existed on the stack (X included, copies included, uncounterable spells included) at resolution, before the counter, so a later delayed effect can read it: e.g. `snapshot` accepting a spell target (`{\"op\": \"snapshot\", \"target\": \"t1\", \"as\": \"countered\"}` resolving the stack ref to its StackItem and recording its mana value), read later as `{\"mana_value_of\": {\"binding\": \"countered\"}}` inside a `delayed_trigger` on `precombat_main` with `duration: \"until_it_fires\"` whose effect is `add_mana` with `split: [W,U,B,R,G]` and that amount.",
+      "why_existing_wont_do": "`snapshot` with `target` reads `ctx.target_oids`, which drops stack refs, so it captures nothing for a spell target; `mana_value_of {\"target\": ...}` likewise reads object targets only, and the delayed trigger's context has no targets at all. `counter`'s `as` binds the oids of the cards that reached the graveyard: reading `mana_value_of {\"objects\": {\"binding\": ...}}` from that gives the graveyard card's mana value (X counted as 0), gives 0 for a countered copy or a spell that can't be countered (which per the rulings still yields the mana), and gives 0 if the card has left the graveyard before the next main phase. The rest of the card is expressible (delayed_trigger on precombat_main, add_mana split), so this value is the only missing piece."
+    }
+  ],
+  "closest_existing": ["snapshot", "counter.as", "mana_value_of", "delayed_trigger"],
+  "confidence": "high"
+}

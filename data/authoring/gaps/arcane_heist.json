@@ -1,0 +1,102 @@
+{
+  "card_id": "arcane_heist",
+  "name": "Arcane Heist",
+  "oracle_text": "You may cast target instant or sorcery card from an opponent's graveyard without paying its mana cost. If that spell would be put into their graveyard, exile it instead.\nCipher (Then you may exile this spell card encoded on a creature you control. Whenever that creature deals combat damage to a player, its controller may cast a copy of the encoded card without paying its mana cost.)",
+  "blocked_sentences": [
+    "You may cast target instant or sorcery card from an opponent's graveyard without paying its mana cost. If that spell would be put into their graveyard, exile it instead."
+  ],
+  "needs": [
+    {
+      "capability": "sandbox_opponent_graveyard_spell_prop",
+      "kind": "engine",
+      "what": "a verification-sandbox prop: an instant or sorcery card in player 1's (the opponent's) graveyard, added by build_sandbox in cards/authoring/verify.py only for a card whose required card_in_graveyard target selects Instant or Sorcery controlled by an opponent, so a mandatory 'target instant or sorcery card from an opponent's graveyard' spell is castable at gate 4",
+      "why_existing_wont_do": "The DSL already says the whole card: a card_in_graveyard target (any_types Instant/Sorcery, controller opponent), cast_from_hand with objects {target: t1} and exiles: true (the Torrential Gearhulk / Impulsivity shape for a free cast out of a graveyard with the exile-instead rider), and cipher as encode (optional, count 1) plus an exile-zone deals_combat_damage_to_player trigger filtered on encoded_by self running cast_copy. It passes schema, compile and residual, then --collect --dry-run rejects it at the playable gate: 'arcane_heist is not playable in the sandbox', because build_sandbox never puts anything in player 1's graveyard, so the required target has no legal choice (601.2c). Making the target optional would describe a different card. Sibling of sandbox_graveyard_spell_prop (Surge to Victory), which is the same prop in player 0's graveyard.",
+      "draft_card": {
+        "id": "arcane_heist",
+        "name": "Arcane Heist",
+        "oracle_text": "You may cast target instant or sorcery card from an opponent's graveyard without paying its mana cost. If that spell would be put into their graveyard, exile it instead.\nCipher (Then you may exile this spell card encoded on a creature you control. Whenever that creature deals combat damage to a player, its controller may cast a copy of the encoded card without paying its mana cost.)",
+        "mana_cost": "{2}{U}{U}",
+        "types": [
+          "Sorcery"
+        ],
+        "colors": [
+          "U"
+        ],
+        "color_identity": [
+          "U"
+        ],
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "card_in_graveyard",
+            "count": 1,
+            "selector": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ],
+              "controller": "opponent",
+              "zone": "graveyard"
+            }
+          }
+        ],
+        "spell_effects": [
+          {
+            "op": "cast_from_hand",
+            "objects": {
+              "target": "t1"
+            },
+            "exiles": true
+          },
+          {
+            "op": "encode",
+            "objects": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": [
+                "Creature"
+              ],
+              "count": 1,
+              "optional": true
+            }
+          }
+        ],
+        "abilities": [
+          {
+            "kind": "triggered",
+            "text": "Cipher (Then you may exile this spell card encoded on a creature you control. Whenever that creature deals combat damage to a player, its controller may cast a copy of the encoded card without paying its mana cost.)",
+            "active_zones": [
+              "exile"
+            ],
+            "trigger": {
+              "event": "deals_combat_damage_to_player",
+              "controller": "any",
+              "filter": {
+                "controller": "any",
+                "encoded_by": "self"
+              }
+            },
+            "effects": [
+              {
+                "op": "cast_copy",
+                "optional": true
+              }
+            ]
+          }
+        ]
+      },
+      "draft_expectation": {
+        "zone": [
+          "exile",
+          "graveyard"
+        ]
+      }
+    }
+  ],
+  "closest_existing": [
+    "torrential_gearhulk",
+    "impulsivity",
+    "sandbox_graveyard_spell_prop"
+  ],
+  "confidence": "high"
+}

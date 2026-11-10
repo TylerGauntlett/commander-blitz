@@ -1,0 +1,18 @@
+{
+  "card_id": "thieving_skydiver",
+  "name": "Thieving Skydiver",
+  "oracle_text": "Kicker {X}. X can't be 0. (You may pay an additional {X} as you cast this spell.)\nFlying\nWhen this creature enters, if it was kicked, gain control of target artifact with mana value X or less. If that artifact is an Equipment, attach it to this creature.",
+  "blocked_sentences": [
+    "Kicker {X}. X can't be 0"
+  ],
+  "needs": [
+    {
+      "capability": "x_minimum",
+      "kind": "cost",
+      "what": "a floor on a spell's announced X (\"X can't be 0\", X >= 1) that applies to the kicked cast line of a card whose kicker is {X}, so the kicked line is offered only when at least {1} extra is payable and the CHOOSE_X question starts at 1",
+      "why_existing_wont_do": "`kicker: \"{X}\"` folds the X into the paid cost via ManaCost.plus and the permanent's cast_x reaches its enters trigger, but Game._cast asks X with min_x taken only from player_statics.cast_lock_min_x (a mana-value lock like Brisela), defaulting to 0. Without a card-level floor the spell can be kicked for X = 0 and steal a mana-value-0 artifact, which the printed card forbids. The trigger itself is otherwise expressible: an intervening-if `kicked` condition, a target artifact with mana_value <= x, gain_control, then an `if` on the target being an Equipment around `attach`"
+    }
+  ],
+  "closest_existing": ["kicker", "x_value"],
+  "confidence": "high"
+}

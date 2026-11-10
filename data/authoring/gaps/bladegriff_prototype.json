@@ -1,0 +1,18 @@
+{
+  "card_id": "bladegriff_prototype",
+  "name": "Bladegriff Prototype",
+  "oracle_text": "Flying\nWhenever this creature deals combat damage to a player, destroy target nonland permanent of that player's choice that one of your opponents controls.",
+  "blocked_sentences": [
+    "Whenever this creature deals combat damage to a player, destroy target nonland permanent of that player's choice that one of your opponents controls."
+  ],
+  "needs": [
+    {
+      "capability": "target_chosen_by_other_player",
+      "kind": "engine",
+      "what": "a target spec key naming which player chooses the target when the ability is put on the stack (here the damaged player, bound from the deals_combat_damage_to_player trigger), so the target is still a real target (hexproof/ward/shroud apply, fizzles if illegal) but picked by someone other than the ability's controller, among nonland permanents any opponent of the controller controls",
+      "why_existing_wont_do": "target_keys has no chooser key; targets are always declared by the ability's controller. The selector key `chooser` (as annihilator uses) picks a non-targeted object at resolution, which would drop the targeting and its hexproof/ward/fizzle consequences, so it is an approximation"
+    }
+  ],
+  "closest_existing": ["selector.chooser", "destroy", "deals_combat_damage_to_player"],
+  "confidence": "high"
+}

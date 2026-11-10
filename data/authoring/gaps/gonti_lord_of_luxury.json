@@ -1,0 +1,21 @@
+{
+  "card_id": "gonti_lord_of_luxury",
+  "name": "Gonti, Lord of Luxury",
+  "oracle_text": "Deathtouch\nWhen Gonti enters, look at the top four cards of target opponent's library, exile one of them face down, then put the rest on the bottom of that library in a random order. You may cast that card for as long as it remains exiled, and mana of any type can be spent to cast that spell.",
+  "blocked_sentences": [
+    "You may cast that card for as long as it remains exiled, and mana of any type can be spent to cast that spell."
+  ],
+  "needs": [
+    {
+      "capability": "cast_only_exile_permission",
+      "kind": "op",
+      "what": "a flag on look_at_top's (and exile's) playable permission that grants permission to CAST the exiled card only, never to PLAY it as a land, so a land Gonti exiles from an opponent's library stays exiled",
+      "why_existing_wont_do": "look_at_top with playable while_exiled, any_type and face_down says everything else exactly, but the permission is a PLAY permission: legality.py offers an exiled land with playable_by == pid as a land play, which the printed 'cast' forbids"
+    }
+  ],
+  "closest_existing": [
+    "look_at_top",
+    "grant_playable"
+  ],
+  "confidence": "high"
+}

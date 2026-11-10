@@ -1,0 +1,18 @@
+{
+  "card_id": "thief_of_sanity",
+  "name": "Thief of Sanity",
+  "oracle_text": "Flying\nWhenever this creature deals combat damage to a player, look at the top three cards of that player's library, exile one of them face down, then put the rest into their graveyard. You may cast that card for as long as it remains exiled, and mana of any type can be spent to cast that spell.",
+  "blocked_sentences": [
+    "Whenever this creature deals combat damage to a player, look at the top three cards of that player's library, exile one of them face down, then put the rest into their graveyard. You may cast that card for as long as it remains exiled, and mana of any type can be spent to cast that spell."
+  ],
+  "needs": [
+    {
+      "capability": "cast_only_exile_permission",
+      "kind": "op",
+      "what": "a flag on the exile permission of look_at_top / exile / grant_playable (e.g. `playable_cast_only: true`) that lets the controller CAST the exiled card only, never PLAY it as a land: a land among the damaged player's top three that Thief of Sanity exiles face down must not be playable with a land drop and stays exiled",
+      "why_existing_wont_do": "`deals_combat_damage_to_player` plus `look_at_top` with `player` bound to the damaged player, `amount: 3`, `destination: \"exile\"`, `face_down: true`, `rest_to: \"graveyard\"`, `playable: \"while_exiled\"` and `any_type: true` says everything else, but `playable` is a PLAY permission (the notes say \"a land still uses a land drop\"), so an exiled land could be played, which the printed 'cast' forbids. No key in op_options (`playable_*`, `limit`) narrows the permission to casting, and restricting the selector to nonland cards would wrongly forbid exiling a land at all"
+    }
+  ],
+  "closest_existing": ["look_at_top", "exile", "grant_playable"],
+  "confidence": "high"
+}

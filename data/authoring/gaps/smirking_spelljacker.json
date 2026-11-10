@@ -1,0 +1,18 @@
+{
+  "card_id": "smirking_spelljacker",
+  "name": "Smirking Spelljacker",
+  "oracle_text": "Flash\nFlying\nWhen this creature enters, exile target spell an opponent controls.\nWhenever this creature attacks, if a card is exiled with it, you may cast the exiled card without paying its mana cost.",
+  "blocked_sentences": [
+    "When this creature enters, exile target spell an opponent controls"
+  ],
+  "needs": [
+    {
+      "capability": "exile_target_spell",
+      "kind": "op",
+      "what": "an op that moves a targeted spell (a kind: \"spell\" target, by ctx.target_sids) from the stack to exile -- not a counter, so it works on a spell that can't be countered and emits no SPELL_COUNTERED -- and records the 607.2a link (link_exiled) from the exiled card to the source, so a later {\"zone\": \"exile\", \"exiled_with\": \"self\"} selector finds it. With that, the attack trigger is an `attacks` trigger with an `exists` condition on that selector and a `may` around `play_exiled`, all of which already exist",
+      "why_existing_wont_do": "`exile` resolves `objects: {\"target\": \"t1\"}` through resolve_pool, which keeps only object refs, so on a spell target it is a silent no-op (the same trap op_return_spell_to_hand documents); `objects: {\"zone\": \"stack\"}` is untargeted and sweeps every spell. `counter` with `exiles: true` and `as` is countering, not exiling: it fails against an uncounterable spell and fires counter triggers, and it never calls link_exiled, while its `as` binding dies with the resolution, so the later attack trigger's \"exiled with it\" cannot read the card"
+    }
+  ],
+  "closest_existing": ["counter", "exile", "return_spell_to_hand", "play_exiled"],
+  "confidence": "high"
+}

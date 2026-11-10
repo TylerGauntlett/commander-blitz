@@ -1,0 +1,18 @@
+{
+  "card_id": "felix_five_boots",
+  "name": "Felix Five-Boots",
+  "oracle_text": "Menace, ward {2}\nIf a creature you control dealing combat damage to a player causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time.",
+  "blocked_sentences": [
+    "If a creature you control dealing combat damage to a player causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time."
+  ],
+  "needs": [
+    {
+      "capability": "combat_damage_trigger_doubling",
+      "kind": "static_effect",
+      "what": "a double_triggers cause clause meaning 'a creature you control dealt combat damage to a player', matched on every event that combat damage to a player can cause: the per-connection deals_combat_damage_to_player, the batched creatures_deal_combat_damage only when its `damaged` list is non-empty (not a battle-only swing), the per-source deals_combat_damage only when that creature hit a player in the step, and deals_damage_to_player only when the damage was combat damage",
+      "why_existing_wont_do": "double_triggers with cause_events [deals_combat_damage_to_player, creatures_deal_combat_damage] and cause_controller you covers the common cases, but _cause_matches can only filter the cause's event name, actor and subject object: it cannot require that the batch event hit a player rather than only a battle (an or_battle trigger would be wrongly doubled), cannot tell whether a generic 'whenever this creature deals combat damage' firing hit a player (such triggers would be wrongly undoubled, or wrongly doubled on a blocked creature if the event were listed), and cannot tell combat from noncombat damage on deals_damage_to_player. Every spelling either under- or over-doubles some trigger the printed ability covers"
+    }
+  ],
+  "closest_existing": ["double_triggers", "cause_events", "cause_controller", "cause_filter"],
+  "confidence": "low"
+}

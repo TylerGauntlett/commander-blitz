@@ -27838,6 +27838,91 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "any_color": true,
+                  "destination": "exile",
+                  "objects": {
+                    "count": "all"
+                  },
+                  "op": "look_at_top",
+                  "playable": "while_exiled",
+                  "player": {
+                    "binding": "each_player"
+                  }
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, exile the top card of each opponent's library. You may play those cards for as long as they remain exiled. If you cast a spell this way, you may spend mana as though it were mana of any color to cast it.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "mana_value_of": {
+                  "binding": "subject"
+                }
+              },
+              "op": "lose_life",
+              "player": {
+                "owner_of": "subject"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a nonland permanent an opponent owns enters the battlefield under your control, they lose life equal to its mana value.",
+          "trigger": {
+            "event": "permanent_enters",
+            "filter": {
+              "controller": "you",
+              "not_types": [
+                "Land"
+              ],
+              "owner": "opponent"
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "brainstealer_dragon",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{5}{B}{B}",
+      "name": "Brainstealer Dragon",
+      "oracle_text": "Flying\nAt the beginning of your end step, exile the top card of each opponent's library. You may play those cards for as long as they remain exiled. If you cast a spell this way, you may spend mana as though it were mana of any color to cast it.\nWhenever a nonland permanent an opponent owns enters the battlefield under your control, they lose life equal to its mana value.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Dragon",
+        "Horror"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "mana": "{2}",
             "sacrifice": {
@@ -35453,6 +35538,90 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "count": 1,
+                  "destination": "hand",
+                  "op": "search_library",
+                  "player": {
+                    "target": "t1"
+                  },
+                  "selector": {
+                    "name": "Ukkima, Stalking Shadow"
+                  },
+                  "shuffle": true
+                }
+              ],
+              "op": "may",
+              "player": {
+                "target": "t1"
+              },
+              "prompt": "Put Ukkima, Stalking Shadow into your hand from your library?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player"
+            }
+          ],
+          "text": "Partner with Ukkima, Stalking Shadow (When this creature enters, target player may put Ukkima into their hand from their library, then shuffle.)",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control deals combat damage to a player, put a +1/+1 counter on that creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "deals_combat_damage_to_player"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "cazur_ruthless_stalker",
+      "mana_cost": "{3}{G}",
+      "name": "Cazur, Ruthless Stalker",
+      "oracle_text": "Partner with Ukkima, Stalking Shadow (When this creature enters, target player may put Ukkima into their hand from their library, then shuffle.)\nWhenever a creature you control deals combat damage to a player, put a +1/+1 counter on that creature.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -41725,6 +41894,57 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "binding": "amount"
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, you may draw that many cards.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "cold_eyed_selkie",
+      "keywords": [
+        "islandwalk"
+      ],
+      "mana_cost": "{1}{G/U}{G/U}",
+      "name": "Cold-Eyed Selkie",
+      "oracle_text": "Islandwalk (This creature can't be blocked as long as defending player controls an Island.)\nWhenever this creature deals combat damage to a player, you may draw that many cards.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Merfolk",
+        "Rogue"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -48787,6 +49007,50 @@
       "toughness": 5,
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "any_color": true,
+              "destination": "exile",
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "playable": "while_exiled",
+              "player": {
+                "binding": "event_player"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent attacks you and/or one or more planeswalkers you control, exile the top card of that player's library. You may play that card for as long as it remains exiled, and you may spend mana as though it were mana of any color to cast it",
+          "trigger": {
+            "controller": "opponent",
+            "defending": "you",
+            "event": "creatures_attack_player"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "cunning_rhetoric",
+      "mana_cost": "{2}{B}",
+      "name": "Cunning Rhetoric",
+      "oracle_text": "Whenever an opponent attacks you and/or one or more planeswalkers you control, exile the top card of that player's library. You may play that card for as long as it remains exiled, and you may spend mana as though it were mana of any color to cast it.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -56428,6 +56692,65 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "exiles": true,
+              "objects": {
+                "target": "t1"
+              },
+              "op": "cast_from_hand",
+              "per_owner": true
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": "any",
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "one_per_player": true,
+              "selector": {
+                "any_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "controller": "opponent",
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When this creature enters, for each opponent, you may cast up to one target instant or sorcery card from that player's graveyard without paying its mana cost. If a spell cast this way would be put into a graveyard, exile it instead.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "diluvian_primordial",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{5}{U}{U}",
+      "name": "Diluvian Primordial",
+      "oracle_text": "Flying\nWhen this creature enters, for each opponent, you may cast up to one target instant or sorcery card from that player's graveyard without paying its mana cost. If a spell cast this way would be put into a graveyard, exile it instead.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Avatar"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -60885,6 +61208,83 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "any_type": true,
+              "destination": "exile",
+              "face_down": true,
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "playable": "while_exiled",
+              "player": {
+                "binding": "event_player"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever equipped creature deals combat damage to a player, look at the top card of their library, then exile it face down. For as long as it remains exiled, you may play it, and mana of any type can be spent to cast that spell.",
+          "trigger": {
+            "controller": "any",
+            "event": "deals_combat_damage_to_player",
+            "filter": {
+              "attached": true
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {1}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "dream_thief_s_bandana",
+      "mana_cost": "{2}",
+      "name": "Dream-Thief's Bandana",
+      "oracle_text": "Whenever equipped creature deals combat damage to a player, look at the top card of their library, then exile it face down. For as long as it remains exiled, you may play it, and mana of any type can be spent to cast that spell.\nEquip {1}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -63564,6 +63964,78 @@
         "Legendary"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": {
+                    "controller_of": "subject"
+                  }
+                }
+              ],
+              "op": "may",
+              "player": {
+                "controller_of": "subject"
+              },
+              "prompt": "Draw a card (Edric, Spymaster of Trest)?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature deals combat damage to one of your opponents, its controller may draw a card.",
+          "trigger": {
+            "condition": {
+              "cmp": "<",
+              "left": {
+                "player_count": {
+                  "except": "you",
+                  "not": {
+                    "binding": "defender"
+                  }
+                }
+              },
+              "right": {
+                "player_count": "each_opponent"
+              }
+            },
+            "controller": "any",
+            "event": "deals_combat_damage_to_player",
+            "recheck": false
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "edric_spymaster_of_trest",
+      "mana_cost": "{1}{G}{U}",
+      "name": "Edric, Spymaster of Trest",
+      "oracle_text": "Whenever a creature deals combat damage to one of your opponents, its controller may draw a card.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Rogue"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -71774,6 +72246,60 @@
           },
           "op": "gain_life",
           "player": "you"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "extract_brain",
+      "mana_cost": "{X}{U}{B}",
+      "name": "Extract Brain",
+      "oracle_text": "Target opponent chooses X cards from their hand. Look at those cards. You may cast a spell from among them without paying its mana cost.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "chosen",
+          "objects": {
+            "chooser": {
+              "target": "t1"
+            },
+            "count": {
+              "x": true
+            },
+            "player": {
+              "target": "t1"
+            },
+            "zone": "hand"
+          },
+          "op": "choose_permanents",
+          "prompt": "Choose X cards from your hand"
+        },
+        {
+          "objects": {
+            "binding": "chosen"
+          },
+          "op": "cast_from_hand",
+          "player": "you"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "opponent"
+          }
         }
       ],
       "types": [
@@ -86185,6 +86711,97 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{2}"
+              },
+              "player": "you",
+              "prompt": "Pay {2} to draw a card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature becomes untapped, you may pay {2}. If you do, draw a card.",
+          "trigger": {
+            "event": "becomes_untapped",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent casts a spell from anywhere other than their hand, draw a card.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "spell_cast",
+            "from_zones": [
+              "library",
+              "graveyard",
+              "exile",
+              "command"
+            ]
+          }
+        },
+        {
+          "cost": {
+            "discard": 1
+          },
+          "effects": [
+            {
+              "duration": "this_turn",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "unblockable"
+            }
+          ],
+          "kind": "activated",
+          "text": "Discard a card: This creature can't be blocked this turn."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "ghostly_pilferer",
+      "mana_cost": "{1}{U}",
+      "name": "Ghostly Pilferer",
+      "oracle_text": "Whenever this creature becomes untapped, you may pay {2}. If you do, draw a card.\nWhenever an opponent casts a spell from anywhere other than their hand, draw a card.\nDiscard a card: This creature can't be blocked this turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Rogue"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "controller": "any",
             "types": [
@@ -100288,6 +100905,38 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "exiles_itself": true,
+      "id": "heartless_conscription",
+      "mana_cost": "{6}{B}{B}",
+      "name": "Heartless Conscription",
+      "oracle_text": "Exile all creatures. For each card exiled this way, you may play that card for as long as it remains exiled, and mana of any type can be spent to cast that spell. Exile Heartless Conscription.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "any_type": true,
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "exile",
+          "playable": "while_exiled"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -167690,6 +168339,78 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "any_color": true,
+              "destination": "exile",
+              "face_down": true,
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "playable": "while_exiled",
+              "player": {
+                "binding": "event_player"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, exile the top card of that player's library face down. You may look at and play that card for as long as it remains exiled, and you may spend mana as though it were mana of any color to cast that spell.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "predators_hour",
+      "mana_cost": "{1}{B}",
+      "name": "Predators' Hour",
+      "oracle_text": "Until end of turn, creatures you control gain menace and \"Whenever this creature deals combat damage to a player, exile the top card of that player's library face down. You may look at and play that card for as long as it remains exiled, and you may spend mana as though it were mana of any color to cast that spell.\"",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "keywords": [
+            "menace"
+          ],
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "grant_keyword"
+        },
+        {
+          "ability_index": 0,
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "grant_ability"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -189018,6 +189739,74 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile",
+              "playable": "while_exiled"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "not_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When this creature enters, exile target permanent card from your graveyard. You may play that card for as long as it remains exiled.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects_spells": {
+            "controller": "you",
+            "not_from_zone": "hand"
+          },
+          "amount": {
+            "const": 1
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Spells you cast from anywhere other than your hand cost {1} less to cast."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "savvy_trader",
+      "mana_cost": "{3}{G}",
+      "name": "Savvy Trader",
+      "oracle_text": "When this creature enters, exile target permanent card from your graveyard. You may play that card for as long as it remains exiled.\nSpells you cast from anywhere other than your hand cost {1} less to cast.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Citizen"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -194907,6 +195696,59 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Draw a card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, you may draw a card.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "shadowmage_infiltrator",
+      "keywords": [
+        "fear"
+      ],
+      "mana_cost": "{1}{U}{B}",
+      "name": "Shadowmage Infiltrator",
+      "oracle_text": "Fear (This creature can't be blocked except by artifact creatures and/or black creatures.)\nWhenever this creature deals combat damage to a player, you may draw a card.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -199979,6 +200821,49 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "blockers": {
+            "not_keywords": [
+              "flying"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "block_restriction",
+          "kind": "static",
+          "text": "This creature can't be blocked except by creatures with flying."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "silhana_ledgewalker",
+      "keywords": [
+        "hexproof"
+      ],
+      "mana_cost": "{1}{G}",
+      "name": "Silhana Ledgewalker",
+      "oracle_text": "Hexproof (This creature can't be the target of spells or abilities your opponents control.)\nThis creature can't be blocked except by creatures with flying.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Rogue"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -201145,6 +202030,56 @@
             "not_types": [
               "Land"
             ]
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "flashback": {
+        "mana": "{1}{U}{B}"
+      },
+      "id": "siphon_insight",
+      "mana_cost": "{U}{B}",
+      "name": "Siphon Insight",
+      "oracle_text": "Look at the top two cards of target opponent's library. Exile one of them face down and put the other on the bottom of that library. You may play the exiled card for as long as it remains exiled, and you may spend mana as though it were mana of any color to cast that spell.\nFlashback {1}{U}{B}",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "any_color": true,
+          "destination": "exile",
+          "face_down": true,
+          "objects": {
+            "count": 1
+          },
+          "op": "look_at_top",
+          "playable": "while_exiled",
+          "player": {
+            "target": "t1"
+          },
+          "rest_to_bottom": true
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "opponent"
           }
         }
       ],
@@ -203455,6 +204390,41 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "blockers": {
+            "controller": "any"
+          },
+          "effect": "block_restriction",
+          "kind": "static",
+          "text": "This creature can't be blocked."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "slither_blade",
+      "mana_cost": "{U}",
+      "name": "Slither Blade",
+      "oracle_text": "This creature can't be blocked.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Snake",
+        "Rogue"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -212161,6 +213131,53 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "stolen_goods",
+      "mana_cost": "{3}{U}",
+      "name": "Stolen Goods",
+      "oracle_text": "Target opponent exiles cards from the top of their library until they exile a nonland card. Until end of turn, you may cast that card without paying its mana cost.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "stolen",
+          "objects": {
+            "not_types": [
+              "Land"
+            ]
+          },
+          "op": "exile_until",
+          "player": {
+            "target": "t1"
+          }
+        },
+        {
+          "objects": {
+            "binding": "stolen"
+          },
+          "op": "grant_playable",
+          "playable": "this_turn",
+          "playable_free": true
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "opponent"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -237476,6 +238493,57 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "count": 1,
+              "destination": "hand",
+              "op": "search_zones",
+              "player": "you",
+              "reveal": true,
+              "selector": {
+                "name": "Command Tower"
+              },
+              "zones": [
+                "library",
+                "graveyard"
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, search your library and/or graveyard for a card named Command Tower, reveal it, and put it into your hand. If you search your library this way, shuffle.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "tower_winder",
+      "keywords": [
+        "reach",
+        "deathtouch"
+      ],
+      "mana_cost": "{1}{G}",
+      "name": "Tower Winder",
+      "oracle_text": "Reach, deathtouch\nWhen this creature enters, search your library and/or graveyard for a card named Command Tower, reveal it, and put it into your hand. If you search your library this way, shuffle.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Snake"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -239441,6 +240509,41 @@
         "Wizard"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "blockers": {
+            "controller": "any"
+          },
+          "effect": "block_restriction",
+          "kind": "static",
+          "text": "This creature can't be blocked."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "triton_shorestalker",
+      "mana_cost": "{U}",
+      "name": "Triton Shorestalker",
+      "oracle_text": "This creature can't be blocked.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Merfolk",
+        "Rogue"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -242105,6 +243208,114 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "count": 1,
+                  "destination": "hand",
+                  "op": "search_library",
+                  "player": {
+                    "target": "t1"
+                  },
+                  "selector": {
+                    "name": "Cazur, Ruthless Stalker"
+                  },
+                  "shuffle": true
+                }
+              ],
+              "op": "may",
+              "player": {
+                "target": "t1"
+              },
+              "prompt": "Put Cazur, Ruthless Stalker into your hand from your library?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player"
+            }
+          ],
+          "text": "Partner with Cazur, Ruthless Stalker (When this creature enters, target player may put Cazur into their hand from their library, then shuffle.)",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "blockers": {
+            "controller": "any"
+          },
+          "effect": "block_restriction",
+          "kind": "static",
+          "text": "Ukkima can't be blocked."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "power_had": true
+              },
+              "op": "damage",
+              "target": "t1"
+            },
+            {
+              "amount": {
+                "power_had": true
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player"
+            }
+          ],
+          "text": "When Ukkima leaves the battlefield, it deals X damage to target player and you gain X life, where X is its power.",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "ukkima_stalking_shadow",
+      "mana_cost": "{1}{U}{B}",
+      "name": "Ukkima, Stalking Shadow",
+      "oracle_text": "Partner with Cazur, Ruthless Stalker (When this creature enters, target player may put Cazur into their hand from their library, then shuffle.)\nUkkima can't be blocked.\nWhen Ukkima leaves the battlefield, it deals X damage to target player and you gain X life, where X is its power.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Whale",
+        "Wolf"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -250278,6 +251489,67 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "G",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "U"
+      ],
+      "id": "villainous_wealth",
+      "mana_cost": "{X}{B}{G}{U}",
+      "name": "Villainous Wealth",
+      "oracle_text": "Target opponent exiles the top X cards of their library. You may cast any number of spells with mana value X or less from among them without paying their mana costs.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "x": true
+          },
+          "as": "wealth_exiled",
+          "destination": "exile",
+          "objects": {
+            "count": "all"
+          },
+          "op": "look_at_top",
+          "player": {
+            "target": "t1"
+          }
+        },
+        {
+          "objects": {
+            "binding": "wealth_exiled",
+            "count": "any",
+            "mana_value": {
+              "op": "<=",
+              "value": {
+                "x": true
+              }
+            },
+            "not_types": [
+              "Land"
+            ]
+          },
+          "op": "play_exiled"
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "opponent"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {

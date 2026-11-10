@@ -1,0 +1,22 @@
+{
+  "card_id": "sage_of_the_beyond",
+  "name": "Sage of the Beyond",
+  "oracle_text": "Flying\nSpells you cast from anywhere other than your hand cost {2} less to cast.\nForetell {4}{U} (During your turn, you may pay {2} and exile this card from your hand face down. Cast it on a later turn for its foretell cost.)",
+  "blocked_sentences": [
+    "Foretell {4}{U} (During your turn, you may pay {2} and exile this card from your hand face down. Cast it on a later turn for its foretell cost.)"
+  ],
+  "needs": [
+    {
+      "capability": "foretell",
+      "kind": "engine",
+      "what": "a residual-gate claimant for a PERMANENT card's printed \"Foretell {cost}\" line: verify._covered should claim it when the card-level `foretell` field is set and its cost matches the printed cost exactly (the strict _declares_printed_cost shape warp, mutate and mayhem use)",
+      "why_existing_wont_do": "The card-level `foretell` field exists and the engine implements the special action and the cast from exile, but `foretell` is not in KNOWN_KEYWORDS and verify._covered has no foretell branch, so the line is only consumed on instants and sorceries (whose spell_effects claim every line). A creature declaring foretell \"{4}{U}\" was rejected at gate 3 with residual exactly \"Foretell {4}{U}\" (checked with --collect --dry-run). The other two lines are expressible: the flying keyword, and a spell_cost_reduction static with affects_spells {controller: you, not_from_zone: hand} as shipped on Advanced Reconstruction."
+    }
+  ],
+  "closest_existing": [
+    "warp",
+    "mutate",
+    "mayhem"
+  ],
+  "confidence": "high"
+}

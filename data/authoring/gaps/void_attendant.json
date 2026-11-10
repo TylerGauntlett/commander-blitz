@@ -1,0 +1,18 @@
+{
+  "card_id": "void_attendant",
+  "name": "Void Attendant",
+  "oracle_text": "Devoid (This card has no color.)\n{1}{G}, Put a card an opponent owns from exile into that player's graveyard: Create a 1/1 colorless Eldrazi Scion creature token. It has \"Sacrifice this token: Add {C}.\"",
+  "blocked_sentences": [
+    "{1}{G}, Put a card an opponent owns from exile into that player's graveyard: Create a 1/1 colorless Eldrazi Scion creature token. It has \"Sacrifice this token: Add {C}.\""
+  ],
+  "needs": [
+    {
+      "capability": "process",
+      "kind": "cost",
+      "what": "the Eldrazi processor payment as an activated ability cost key: put N cards chosen from exile, owned by an opponent of the payer, into their owner's graveyard; the ability cannot be activated when fewer than N such cards are in exile",
+      "why_existing_wont_do": "cost_keys has exile_from_graveyard, exile_from_hand and mill but nothing whose source zone is exile and destination is the owner's graveyard; moving the card with an effect op instead would shift the payment to resolution and let the ability be activated with nothing in exile"
+    }
+  ],
+  "closest_existing": ["exile_from_graveyard", "create_token"],
+  "confidence": "high"
+}

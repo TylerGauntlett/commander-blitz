@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**283 cards** blocked by **263** capabilities.
+**303 cards** blocked by **276** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -24,6 +24,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
 | [basic-land-type-mana](#basic-land-type-mana) | 3 | 73 | engine |
+| [cast-only-exile-permission](#cast-only-exile-permission) | 3 | 1861 | op |
 | [cast-trigger-x](#cast-trigger-x) | 3 | 1521 | engine, value |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 6346 | op |
 | [escape](#escape) | 3 | 388 | engine, static_effect |
@@ -37,11 +38,15 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [council-s-dilemma](#council-s-dilemma) | 2 | 4067 | decision |
 | [devotion](#devotion) | 2 | 2401 | value |
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
+| [exile-target-spell](#exile-target-spell) | 2 | 539 | op |
+| [exile-until-rest-to-bottom](#exile-until-rest-to-bottom) | 2 | 4171 | op |
 | [experience-counters](#experience-counters) | 2 | 1480 | engine |
 | [face-down-filter](#face-down-filter) | 2 | 5772 | selector |
 | [manifest-dread](#manifest-dread) | 2 | 5772 | op |
+| [manifest-from-opponent-library](#manifest-from-opponent-library) | 2 | 3759 | op |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
+| [process](#process) | 2 | 14187 | cost |
 | [remove-x-counters-cost](#remove-x-counters-cost) | 2 | 5399 | cost |
 | [return-face-down](#return-face-down) | 2 | 3081 | op |
 | [static-greatest-power-in-graveyard](#static-greatest-power-in-graveyard) | 2 | 7077 | value |
@@ -51,6 +56,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 2 | 5182 | engine |
 | [x-maximum](#x-maximum) | 2 | 1665 | engine |
+| [x-minimum](#x-minimum) | 2 | 2275 | cost |
 | [zombie-1-1-w](#zombie-1-1-w) | 2 | 3702 | token |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
@@ -90,6 +96,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [chosen-player](#chosen-player) | 1 | 6383 | selector |
 | [colored-cost-reduction](#colored-cost-reduction) | 1 | 1541 | static_effect |
 | [combat-damage-amount-binding](#combat-damage-amount-binding) | 1 | 8933 | value |
+| [combat-damage-trigger-doubling](#combat-damage-trigger-doubling) | 1 | 4827 | static_effect |
 | [companion](#companion) | 1 | 3861 | engine |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [conditional-play-exiled-with-source](#conditional-play-exiled-with-source) | 1 | 4225 | static_effect |
@@ -123,6 +130,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [entered-without-being-cast](#entered-without-being-cast) | 1 | 7379 | selector |
 | [enters-as-copy-add-subtypes](#enters-as-copy-add-subtypes) | 1 | 3852 | replacement |
 | [enters-as-copy-embalmed-exception](#enters-as-copy-embalmed-exception) | 1 | 4333 | replacement |
+| [enters-as-copy-of-exiled-card](#enters-as-copy-of-exiled-card) | 1 | 7671 | replacement |
 | [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [every-nonbasic-land-type](#every-nonbasic-land-type) | 1 | 2635 | engine |
@@ -131,7 +139,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exile-cards-with-card-types-among-them](#exile-cards-with-card-types-among-them) | 1 | 9107 | selector |
 | [exile-face-down](#exile-face-down) | 1 | 1363 | op |
 | [exile-permanent-cost](#exile-permanent-cost) | 1 | 6544 | cost |
-| [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [exile-x-from-graveyard-cost](#exile-x-from-graveyard-cost) | 1 | 17252 | cost |
 | [exiled-this-way-lki](#exiled-this-way-lki) | 1 | 6960 | value |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
@@ -143,6 +150,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [fixed-piles-opponent-chooses](#fixed-piles-opponent-chooses) | 1 | 12369 | op |
 | [flash-if-targets](#flash-if-targets) | 1 | 1651 | engine |
 | [flip-coins-count](#flip-coins-count) | 1 | 6651 | value |
+| [foretell](#foretell) | 1 | 4794 | engine |
 | [foretold](#foretold) | 1 | 3713 | value |
 | [free-cast-by-other-player](#free-cast-by-other-player) | 1 | 11704 | op |
 | [free-cast-once-per-turn](#free-cast-once-per-turn) | 1 | 1913 | static_effect |
@@ -180,6 +188,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mana-cant-pay-generic](#mana-cant-pay-generic) | 1 | 3861 | value |
 | [mana-doubling-replacement](#mana-doubling-replacement) | 1 | 1807 | replacement |
 | [mana-restriction-cast-from-zone](#mana-restriction-cast-from-zone) | 1 | 9291 | engine |
+| [mana-restriction-spells-you-dont-own](#mana-restriction-spells-you-dont-own) | 1 | 4457 | value |
 | [mana-restriction-turn-face-up](#mana-restriction-turn-face-up) | 1 | 6766 | value |
 | [mana-spent-enters-with-counters](#mana-spent-enters-with-counters) | 1 | 653 | replacement |
 | [mana-spent-trigger-on-activation](#mana-spent-trigger-on-activation) | 1 | 4444 | trigger_event |
@@ -208,17 +217,18 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [pay-energy-x](#pay-energy-x) | 1 | 5591 | cost |
 | [play-cost-paid-card](#play-cost-paid-card) | 1 | 6544 | op |
 | [playable-condition-opponent-lost-life](#playable-condition-opponent-lost-life) | 1 | 4478 | engine |
+| [playable-pay-life-instead](#playable-pay-life-instead) | 1 | 1981 | op |
 | [playable-spell-type-restriction](#playable-spell-type-restriction) | 1 | 4763 | op |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-mana-ability-until-end-of-turn](#player-mana-ability-until-end-of-turn) | 1 | 12705 | op |
 | [players-attacked-last-combat](#players-attacked-last-combat) | 1 | 6681 | value |
 | [players-lost-the-game-count](#players-lost-the-game-count) | 1 | 4941 | value |
 | [plot](#plot) | 1 | 7506 | op |
+| [plot-cost-reduction](#plot-cost-reduction) | 1 | 2483 | static_effect |
 | [prevent-damage-from-source-to-permanent](#prevent-damage-from-source-to-permanent) | 1 | 29255 | static_effect |
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
 | [prime-number](#prime-number) | 1 | 11527 | value |
 | [primo-the-indivisible](#primo-the-indivisible) | 1 | 11527 | token |
-| [process](#process) | 1 | 14187 | cost |
 | [proliferate-binding](#proliferate-binding) | 1 | 957 | op |
 | [protection-from-multicolored](#protection-from-multicolored) | 1 | 1516 | static_effect |
 | [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
@@ -240,21 +250,25 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [same-target-for-each-target-word](#same-target-for-each-target-word) | 1 | 5003 | engine |
 | [sandbox-graveyard-spell-prop](#sandbox-graveyard-spell-prop) | 1 | 5082 | engine |
 | [sandbox-low-mana-value-permanent](#sandbox-low-mana-value-permanent) | 1 | 14140 | engine |
+| [sandbox-opponent-graveyard-spell-prop](#sandbox-opponent-graveyard-spell-prop) | 1 | 5098 | engine |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [self-bounce-playable-gate](#self-bounce-playable-gate) | 1 | 10013 | engine |
 | [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
+| [spell-cost-reduction-by-owner](#spell-cost-reduction-by-owner) | 1 | 8010 | static_effect |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [spirit-2-2-w-flying](#spirit-2-2-w-flying) | 1 | 12596 | token |
 | [stack-wipe](#stack-wipe) | 1 | 8784 | op |
 | [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
 | [switch-power-toughness](#switch-power-toughness) | 1 | 10418 | op |
+| [target-chosen-by-other-player](#target-chosen-by-other-player) | 1 | 6919 | engine |
 | [target-if-cast-during](#target-if-cast-during) | 1 | 1524 | selector |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
+| [target-spell-mana-value-lki](#target-spell-mana-value-lki) | 1 | 6553 | value |
 | [targets-only-self](#targets-only-self) | 1 | 8216 | trigger_event |
 | [targets-only-single](#targets-only-single) | 1 | 13586 | trigger_event |
 | [teammates](#teammates) | 1 | 26785 | selector |
@@ -272,7 +286,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [while-source-on-battlefield-duration](#while-source-on-battlefield-duration) | 1 | 8222 | engine |
 | [wurm-5-5-g-trample](#wurm-5-5-g-trample) | 1 | 2387 | token |
 | [x-cost-mana-restriction](#x-cost-mana-restriction) | 1 | 4046 | decision |
-| [x-minimum](#x-minimum) | 1 | 2447 | cost |
 | [x-sized-ability-targets](#x-sized-ability-targets) | 1 | 1668 | engine |
 | [x-sized-linked-targets](#x-sized-linked-targets) | 1 | 12855 | engine |
 | [x-starting-loyalty](#x-starting-loyalty) | 1 | 6660 | engine |
@@ -635,6 +648,28 @@ Blocks **3** cards.
 
 </details>
 
+## cast-only-exile-permission
+
+Blocks **3** cards.
+
+- **(op)** a flag on look_at_top's (and exile's) playable permission that grants permission to CAST the exiled card only, never to PLAY it as a land, so a land Gonti exiles from an opponent's library stays exiled
+  <br>Why the existing vocabulary won't do: look_at_top with playable while_exiled, any_type and face_down says everything else exactly, but the permission is a PLAY permission: legality.py offers an exiled land with playable_by == pid as a land play, which the printed 'cast' forbids
+- **(op)** a flag on exile's playable permission (e.g. `playable_cast_only: true`) that grants permission to CAST the exiled card only, never to PLAY it as a land: legality.py's exiled-land walk must skip such a card, so an exiled artifact land (Seat of the Synod, Darksteel Citadel) taken by Hostage Taker cannot be played with a land drop and stays exiled until Hostage Taker leaves
+  <br>Why the existing vocabulary won't do: `exile` with `until_leaves`, `playable: "while_exiled"` and `any_type: true` says everything else exactly (the return is the usual `leaves_battlefield` + `put_onto_battlefield` from `exiled_with: self`), but the `playable` permission is a PLAY permission: legality.py offers every exiled card with `playable_by == pid` as a land play, so an exiled artifact land could be played as a land drop, which the printed 'cast' forbids. No key in op_options (`playable_*`, `limit`) narrows the permission to casting, and narrowing the target to nonland would drop legal targets instead
+- **(op)** a flag on the exile permission of look_at_top / exile / grant_playable (e.g. `playable_cast_only: true`) that lets the controller CAST the exiled card only, never PLAY it as a land: a land among the damaged player's top three that Thief of Sanity exiles face down must not be playable with a land drop and stays exiled
+  <br>Why the existing vocabulary won't do: `deals_combat_damage_to_player` plus `look_at_top` with `player` bound to the damaged player, `amount: 3`, `destination: "exile"`, `face_down: true`, `rest_to: "graveyard"`, `playable: "while_exiled"` and `any_type: true` says everything else, but `playable` is a PLAY permission (the notes say "a land still uses a land drop"), so an exiled land could be played, which the printed 'cast' forbids. No key in op_options (`playable_*`, `limit`) narrows the permission to casting, and restricting the selector to nonland cards would wrongly forbid exiling a land at all
+
+<details><summary>Cards waiting on this</summary>
+
+- **Hostage Taker** (rank 1861) — `hostage_taker`
+  - You may cast that card for as long as it remains exiled, and mana of any type can be spent to cast that spell.
+- **Gonti, Lord of Luxury** (rank 2005) — `gonti_lord_of_luxury`
+  - You may cast that card for as long as it remains exiled, and mana of any type can be spent to cast that spell.
+- **Thief of Sanity** (rank 3164) — `thief_of_sanity`
+  - Whenever this creature deals combat damage to a player, look at the top three cards of that player's library, exile one of them face down, then put the rest into their graveyard. You may cast that card for as long as it remains exiled, and mana of any type can be spent to cast that spell.
+
+</details>
+
 ## cast-trigger-x
 
 Blocks **3** cards.
@@ -900,6 +935,43 @@ Blocks **2** cards.
 
 </details>
 
+## exile-target-spell
+
+Blocks **2** cards.
+
+- **(op)** a way to move a *targeted* spell off the stack into exile without countering it -- either an `exile` op that accepts a `kind: "spell"` target (reading its stack refs, pulling the item out of `state.stack` and exiling the underlying card), or a `to: "exile"` destination on `counter`. It must work for a variable-size spec, since Mindbreak Trap exiles *any number of* target spells at once, and it must not be a counter: a spell exiled this way was never countered, which is the entire reason the card beats "this spell can't be countered" and "when this spell is countered" triggers. Wanted by Mindbreak Trap, Nexus of Fate-proof exile removal, Spell Queller's cousins and the whole exile-from-the-stack family.
+  <br>Why the existing vocabulary won't do: `op_exile` (src/commanderblitz/engine/effects/ops_board.py) works entirely in oid space -- it calls `choose_objects` on a selector pool, and `{"target": "t1"}` resolves through `ctx.target_oids`, which keeps only refs of `kind == "object"` (src/commanderblitz/engine/effects/context.py). A spell target produces a `stack` ref carrying a *sid*, so pointing `exile` at the target binds nothing and the card would resolve doing literally nothing. `counter` is the only op that reads `ctx.target_sids`, and its `exiles: true` does send the spell to exile -- but as a counter: it is stopped by "can't be countered" and fires `spell_countered`, which is exactly what this card avoids. Reaching for `{"zone": "stack"}` in the `exile` op's `objects` does return stack oids (src/commanderblitz/engine/effects/selectors.py), but that is "exile every spell on the stack", not "exile any number of *target* spells" -- it announces no targets, so nothing is checked at 601.2c or re-checked at 608.2b, and it would eat Mindbreak Trap itself.
+- **(op)** an op that moves a targeted spell (a kind: "spell" target, by ctx.target_sids) from the stack to exile -- not a counter, so it works on a spell that can't be countered and emits no SPELL_COUNTERED -- and records the 607.2a link (link_exiled) from the exiled card to the source, so a later {"zone": "exile", "exiled_with": "self"} selector finds it. With that, the attack trigger is an `attacks` trigger with an `exists` condition on that selector and a `may` around `play_exiled`, all of which already exist
+  <br>Why the existing vocabulary won't do: `exile` resolves `objects: {"target": "t1"}` through resolve_pool, which keeps only object refs, so on a spell target it is a silent no-op (the same trap op_return_spell_to_hand documents); `objects: {"zone": "stack"}` is untargeted and sweeps every spell. `counter` with `exiles: true` and `as` is countering, not exiling: it fails against an uncounterable spell and fires counter triggers, and it never calls link_exiled, while its `as` binding dies with the resolution, so the later attack trigger's "exiled with it" cannot read the card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Mindbreak Trap** (rank 539) — `mindbreak_trap`
+  - If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.
+  - Exile any number of target spells.
+- **Smirking Spelljacker** (rank 6946) — `smirking_spelljacker`
+  - When this creature enters, exile target spell an opponent controls
+
+</details>
+
+## exile-until-rest-to-bottom
+
+Blocks **2** cards.
+
+- **(op)** a `rest_to_bottom` option on `exile_until` that, after the free-cast offer resolves, puts every card the walk exiled (the walked-past cards plus the hit if it was not cast) on the bottom of the walked library's owner's library in a random order -- the cascade/discover tail, on exile_until's selector stop test and `player` walk of another seat's library
+  <br>Why the existing vocabulary won't do: exile_until (with player {target: t1}, objects {any_types: [Instant, Sorcery]} and cast_free) does the first two sentences exactly as Strago and Relm does, but by design it leaves every walked card in exile; it binds only the hit via `as`, never links the walked-past cards to the source (no `link`, so `exiled_with` cannot find them), and `else_destination` moves only the hit. `cascade` and `discover` bottom the rest but walk only the controller's library with a mana-value stop test; `reveal_until` bottoms the rest but reveals rather than exiles and cannot offer an immediate free cast (only a later `playable_free` permission, leaving an uncast hit in exile instead of on the bottom).
+- **(op)** a `rest_to_bottom` option on `exile_until` that, after the free-cast offer resolves, puts every card the walk exiled (the walked-past cards plus the hit if it was not cast) on the bottom of the walked library's owner's library in a random order -- the cascade/discover tail, on exile_until's selector stop test and `player` walk of another seat's library (here the damaged player, from a deals_combat_damage_to_player trigger)
+  <br>Why the existing vocabulary won't do: exile_until (player = the damaged player, objects {any_types: [Instant, Sorcery]}, cast_free) does the first two sentences, but by design leaves every walked card in exile; `else_destination` moves only the uncast hit, `as` binds only the hit, and the walked-past cards are not linked to the source, so a following put_on_top with `bottom` and `exiled_with` cannot find them (and put_on_top has no random order). `cascade` and `discover` bottom the rest in a random order but walk only the controller's library with a mana-value stop test; `reveal_until` bottoms the rest but reveals rather than exiles and offers no immediate free cast.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Chaos Wand** (rank 4171) — `chaos_wand`
+  - Then put the exiled cards that weren't cast this way on the bottom of that library in a random order.
+- **Dazzling Sphinx** (rank 6308) — `dazzling_sphinx`
+  - Then that player puts the exiled cards that weren't cast this way on the bottom of their library in a random order.
+
+</details>
+
 ## experience-counters
 
 Blocks **2** cards.
@@ -958,6 +1030,24 @@ Blocks **2** cards.
 
 </details>
 
+## manifest-from-opponent-library
+
+Blocks **2** cards.
+
+- **(op)** a manifest whose source library and controlling player differ: the effect's controller puts the top card of another player's library (the damaged player, bound by a per_player creatures_deal_combat_damage trigger) onto the battlefield face down as a 2/2 under the effect controller's control, turnable face up for its mana cost if it is a creature card
+  <br>Why the existing vocabulary won't do: op manifest takes only amount, cloak and player, and op_manifest/_manifest_card use that one player both as the library read and as the new controller (obj.controller = pid), so player: {binding: event_player} would hand the manifested 2/2 to the opponent; there is no controller key to separate the two. Ninjutsu, the per_player creatures_deal_combat_damage trigger and treasure_token are all expressible
+- **(op)** a manifest whose source library and controlling player differ: the trigger's controller puts the top card of another player's library (the active opponent, bound by an upkeep trigger with controller: opponent) onto the battlefield face down as a 2/2 under the effect controller's control, turnable face up for its mana cost if it is a creature card
+  <br>Why the existing vocabulary won't do: op manifest takes only amount, cloak and player, and op_manifest/_manifest_card use that one player both as the library read and as the new controller (obj.controller = pid), so player bound to the upkeep's active player would hand the manifested 2/2 to the opponent; there is no controller key to separate the two. The upkeep trigger and the second sentence (creature_dies filtered controller you, owner opponent, lose_life/gain_life) look expressible
+
+<details><summary>Cards waiting on this</summary>
+
+- **Orochi Soul-Reaver** (rank 3759) — `orochi_soul_reaver`
+  - Whenever one or more creatures you control deal combat damage to a player, create a Treasure token and manifest the top card of that player's library
+- **Thieving Amalgam** (rank 5301) — `thieving_amalgam`
+  - At the beginning of each opponent's upkeep, you manifest the top card of that player's library. (Put it onto the battlefield face down as a 2/2 creature. Turn it face up any time for its mana cost if it's a creature card.)
+
+</details>
+
 ## opening-hand-ability
 
 Blocks **2** cards.
@@ -992,6 +1082,24 @@ Blocks **2** cards.
   - Prevent all combat damage that would be dealt to you and planeswalkers you control this turn.
 - **You Look Upon the Tarrasque** (rank 8030) — `you_look_upon_the_tarrasque`
   - • Run and Hide — Prevent all combat damage that would be dealt to you and creatures you control this turn
+
+</details>
+
+## process
+
+Blocks **2** cards.
+
+- **(cost)** the Eldrazi processor payment: a cost key usable as a `may` op's `pay` (and on activated abilities) that puts N cards chosen from exile, owned by opponents of the payer, into their owners' graveyards, and is unpayable (so the `if you do` branch is skipped) when fewer than N such cards are in exile
+  <br>Why the existing vocabulary won't do: cost_keys has exile_from_graveyard and exile_from_hand but nothing whose source zone is exile; search_zones with zones ["exile"] and destination graveyard is a search effect, not a payment, so it can move fewer than two cards and still let the counter happen, and it carries search semantics (reveal/shuffle) the card does not print
+- **(cost)** the Eldrazi processor payment as an activated ability cost key: put N cards chosen from exile, owned by an opponent of the payer, into their owner's graveyard; the ability cannot be activated when fewer than N such cards are in exile
+  <br>Why the existing vocabulary won't do: cost_keys has exile_from_graveyard, exile_from_hand and mill but nothing whose source zone is exile and destination is the owner's graveyard; moving the card with an effect op instead would shift the payment to resolution and let the ability be activated with nothing in exile
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ulamog's Nullifier** (rank 14187) — `ulamog_s_nullifier`
+  - When this creature enters, you may put two cards your opponents own from exile into their owners' graveyards. If you do, counter target spell.
+- **Void Attendant** (rank 18219) — `void_attendant`
+  - {1}{G}, Put a card an opponent owns from exile into that player's graveyard: Create a 1/1 colorless Eldrazi Scion creature token. It has "Sacrifice this token: Add {C}."
 
 </details>
 
@@ -1160,6 +1268,24 @@ Blocks **2** cards.
   - Cast this spell only during combat before blockers are declared.
   - X can't be greater than the number of snow lands you control.
   - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
+
+</details>
+
+## x-minimum
+
+Blocks **2** cards.
+
+- **(cost)** a floor on an activated ability's announced X ("X can't be 0", i.e. X >= 1), so the CHOOSE_X question for an {X} mana cost on an activated ability starts at 1 instead of 0
+  <br>Why the existing vocabulary won't do: cost_keys has x_value (a defined X, never announced) but nothing that bounds an announced X; Game's activation path calls _ask_x with a hard-coded floor of 0, and the only min_x in the engine is the cast-lock floor from player_statics.cast_lock_min_x and the fixed min_x=1 inside ops_control. Without it the land could be animated as a 0/0 and die to state-based actions, which the printed card forbids. The rest of the line is expressible with animate (power/toughness {x}, colors G, subtypes Hydra, types Creature, duration this turn)
+- **(cost)** a floor on a spell's announced X ("X can't be 0", X >= 1) that applies to the kicked cast line of a card whose kicker is {X}, so the kicked line is offered only when at least {1} extra is payable and the CHOOSE_X question starts at 1
+  <br>Why the existing vocabulary won't do: `kicker: "{X}"` folds the X into the paid cost via ManaCost.plus and the permanent's cast_x reaches its enters trigger, but Game._cast asks X with min_x taken only from player_statics.cast_lock_min_x (a mana-value lock like Brisela), defaulting to 0. Without a card-level floor the spell can be kicked for X = 0 and steal a mana-value-0 artifact, which the printed card forbids. The trigger itself is otherwise expressible: an intervening-if `kicked` condition, a target artifact with mana_value <= x, gain_control, then an `if` on the target being an Equipment around `attach`
+
+<details><summary>Cards waiting on this</summary>
+
+- **Thieving Skydiver** (rank 2275) — `thieving_skydiver`
+  - Kicker {X}. X can't be 0
+- **Lair of the Hydra** (rank 2447) — `lair_of_the_hydra`
+  - {X}{G}: Until end of turn, this land becomes an X/X green Hydra creature. It's still a land. X can't be 0
 
 </details>
 
@@ -1728,6 +1854,20 @@ Blocks **1** card.
 
 </details>
 
+## combat-damage-trigger-doubling
+
+Blocks **1** card.
+
+- **(static_effect)** a double_triggers cause clause meaning 'a creature you control dealt combat damage to a player', matched on every event that combat damage to a player can cause: the per-connection deals_combat_damage_to_player, the batched creatures_deal_combat_damage only when its `damaged` list is non-empty (not a battle-only swing), the per-source deals_combat_damage only when that creature hit a player in the step, and deals_damage_to_player only when the damage was combat damage
+  <br>Why the existing vocabulary won't do: double_triggers with cause_events [deals_combat_damage_to_player, creatures_deal_combat_damage] and cause_controller you covers the common cases, but _cause_matches can only filter the cause's event name, actor and subject object: it cannot require that the batch event hit a player rather than only a battle (an or_battle trigger would be wrongly doubled), cannot tell whether a generic 'whenever this creature deals combat damage' firing hit a player (such triggers would be wrongly undoubled, or wrongly doubled on a blocked creature if the event were listed), and cannot tell combat from noncombat damage on deals_damage_to_player. Every spelling either under- or over-doubles some trigger the printed ability covers
+
+<details><summary>Cards waiting on this</summary>
+
+- **Felix Five-Boots** (rank 4827) — `felix_five_boots`
+  - If a creature you control dealing combat damage to a player causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time.
+
+</details>
+
 ## companion
 
 Blocks **1** card.
@@ -2198,6 +2338,20 @@ Blocks **1** card.
 
 </details>
 
+## enters-as-copy-of-exiled-card
+
+Blocks **1** card.
+
+- **(replacement)** an as-enters replacement (614.1c / 707.9) that optionally exiles exactly two creature cards from any graveyards as the permanent arrives; if both were exiled, the controller picks one of them as the copy model (the permanent enters with that card's copiable values) and it enters with additional +1/+1 counters equal to the printed power of the other exiled card. Needs: a graveyard (any player) card pool instead of a battlefield permanent pool, an exile-N-as-you-may step bound by name, a choice of which bound card is the model, and an `enters_with` counter amount reading `power_of` the other bound card
+  <br>Why the existing vocabulary won't do: The packet's reference lists no replacement vocabulary at all (`self_enters_as_copy` is not in it). The engine's `self_enters_as_copy` (`offer_enters_copy`) picks one object from a `copying` pool and copies it, with no exile step, no second card, and its `except_.enters_with` amount cannot bind the other exiled card's power. A `self_enters` trigger with `exile` + `become_copy` + `add_counters` would make the copy and counters a later effect, so a 0/0 Mimeoplasm dies to state-based actions before the trigger resolves, and `become_copy`/`copy_permanent` copy permanents, not cards in exile
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Mimeoplasm** (rank 7671) — `the_mimeoplasm`
+  - As The Mimeoplasm enters, you may exile two creature cards from graveyards. If you do, it enters as a copy of one of those cards with a number of additional +1/+1 counters on it equal to the power of the other card.
+
+</details>
+
 ## enters-untapped
 
 Blocks **1** card.
@@ -2308,21 +2462,6 @@ Blocks **1** card.
 
 - **Primordial Mist** (rank 6544) — `primordial_mist`
   - Exile a face-down permanent you control face up: You may play that card this turn. (You still pay its costs. Timing rules still apply.)
-
-</details>
-
-## exile-target-spell
-
-Blocks **1** card.
-
-- **(op)** a way to move a *targeted* spell off the stack into exile without countering it -- either an `exile` op that accepts a `kind: "spell"` target (reading its stack refs, pulling the item out of `state.stack` and exiling the underlying card), or a `to: "exile"` destination on `counter`. It must work for a variable-size spec, since Mindbreak Trap exiles *any number of* target spells at once, and it must not be a counter: a spell exiled this way was never countered, which is the entire reason the card beats "this spell can't be countered" and "when this spell is countered" triggers. Wanted by Mindbreak Trap, Nexus of Fate-proof exile removal, Spell Queller's cousins and the whole exile-from-the-stack family.
-  <br>Why the existing vocabulary won't do: `op_exile` (src/commanderblitz/engine/effects/ops_board.py) works entirely in oid space -- it calls `choose_objects` on a selector pool, and `{"target": "t1"}` resolves through `ctx.target_oids`, which keeps only refs of `kind == "object"` (src/commanderblitz/engine/effects/context.py). A spell target produces a `stack` ref carrying a *sid*, so pointing `exile` at the target binds nothing and the card would resolve doing literally nothing. `counter` is the only op that reads `ctx.target_sids`, and its `exiles: true` does send the spell to exile -- but as a counter: it is stopped by "can't be countered" and fires `spell_countered`, which is exactly what this card avoids. Reaching for `{"zone": "stack"}` in the `exile` op's `objects` does return stack oids (src/commanderblitz/engine/effects/selectors.py), but that is "exile every spell on the stack", not "exile any number of *target* spells" -- it announces no targets, so nothing is checked at 601.2c or re-checked at 608.2b, and it would eat Mindbreak Trap itself.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Mindbreak Trap** (rank 539) — `mindbreak_trap`
-  - If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.
-  - Exile any number of target spells.
 
 </details>
 
@@ -2484,6 +2623,20 @@ Blocks **1** card.
 
 - **Yusri, Fortune's Flame** (rank 6651) — `yusri_fortune_s_flame`
   - Whenever Yusri attacks, choose a number between 1 and 5. Flip that many coins. For each flip you win, draw a card. For each flip you lose, Yusri deals 2 damage to you. If you won five flips this way, you may cast spells from your hand this turn without paying their mana costs.
+
+</details>
+
+## foretell
+
+Blocks **1** card.
+
+- **(engine)** a residual-gate claimant for a PERMANENT card's printed "Foretell {cost}" line: verify._covered should claim it when the card-level `foretell` field is set and its cost matches the printed cost exactly (the strict _declares_printed_cost shape warp, mutate and mayhem use)
+  <br>Why the existing vocabulary won't do: The card-level `foretell` field exists and the engine implements the special action and the cast from exile, but `foretell` is not in KNOWN_KEYWORDS and verify._covered has no foretell branch, so the line is only consumed on instants and sorceries (whose spell_effects claim every line). A creature declaring foretell "{4}{U}" was rejected at gate 3 with residual exactly "Foretell {4}{U}" (checked with --collect --dry-run). The other two lines are expressible: the flying keyword, and a spell_cost_reduction static with affects_spells {controller: you, not_from_zone: hand} as shipped on Advanced Reconstruction.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Sage of the Beyond** (rank 4794) — `sage_of_the_beyond`
+  - Foretell {4}{U} (During your turn, you may pay {2} and exile this card from your hand face down. Cast it on a later turn for its foretell cost.)
 
 </details>
 
@@ -3014,6 +3167,20 @@ Blocks **1** card.
 
 </details>
 
+## mana-restriction-spells-you-dont-own
+
+Blocks **1** card.
+
+- **(value)** a mana_restriction predicate on the cast half that asks whether the spell being cast is owned by someone other than the player spending the mana ("spend this mana only to cast spells you don't own") -- e.g. {"cast": [[{"owner": "opponent"}]]}, with SpendPurpose carrying the spell's owner relative to the payer
+  <br>Why the existing vocabulary won't do: mana_restriction groups hold only type/subtype names, {not: name}, and the predicates mana_value, x_in_mana_cost and colorless (RESTRICTION_PREDICATES); SpendPurpose carries no owner, so nothing can tell a spell you own from one you don't. Dropping the restriction makes strictly better unrestricted mana
+
+<details><summary>Cards waiting on this</summary>
+
+- **Thieving Varmint** (rank 4457) — `thieving_varmint`
+  - {T}, Pay 1 life: Add two mana of any one color. Spend this mana only to cast spells you don't own.
+
+</details>
+
 ## mana-restriction-turn-face-up
 
 Blocks **1** card.
@@ -3414,6 +3581,20 @@ Blocks **1** card.
 
 </details>
 
+## playable-pay-life-instead
+
+Blocks **1** card.
+
+- **(op)** a play-permission rider on exile / look_at_top / grant_playable (e.g. `playable_pay_life_instead: true`) so a spell cast from the exiled cards under that permission is paid for with life equal to its mana value instead of its mana cost, while lands are still played normally and the `limit` of one card still applies
+  <br>Why the existing vocabulary won't do: The only life-for-mana-value price is `pay_life_instead` on the `cast_from_library_top` static (Bolas's Citadel), which covers the top of your own library, not cards exiled from every player's library. The playable riders available are `playable_free` (no cost at all, strictly better than printed), `playable_cost_reduction` and `any_color`/`any_type`; the engine's `playable_alt_cost` is a fixed mana string set only by airbend. Ninjutsu and the 'play one of those cards' limit are expressible (activated hand ability with return_to_hand cost + put_onto_battlefield attacking same_as; grant_playable `limit`).
+
+<details><summary>Cards waiting on this</summary>
+
+- **Nashi, Moon Sage's Scion** (rank 1981) — `nashi_moon_sage_s_scion`
+  - If you cast a spell this way, pay life equal to its mana value rather than paying its mana cost.
+
+</details>
+
 ## playable-spell-type-restriction
 
 Blocks **1** card.
@@ -3498,6 +3679,20 @@ Blocks **1** card.
 
 </details>
 
+## plot-cost-reduction
+
+Blocks **1** card.
+
+- **(static_effect)** a player-wide static that reduces the generic mana of the plot special action (702.171a) by {N} for cards its controller plots from hand, read when the plot cost is paid
+  <br>Why the existing vocabulary won't do: spell_cost_reduction and next_spell_cost_reduction discount casting a spell, and ability_cost_reduction discounts activated abilities; plot is a special action whose price (the card-level `plot` cost) is paid as-is by the engine's plot_card with no reduction hook, and no static_effect in reference targets it
+
+<details><summary>Cards waiting on this</summary>
+
+- **Doc Aurlock, Grizzled Genius** (rank 2483) — `doc_aurlock_grizzled_genius`
+  - Plotting cards from your hand costs {2} less.
+
+</details>
+
 ## prevent-damage-from-source-to-permanent
 
 Blocks **1** card.
@@ -3551,20 +3746,6 @@ Blocks **1** card.
 
 - **Zimone, All-Questioning** (rank 11527) — `zimone_all_questioning`
   - At the beginning of your end step, if a land entered the battlefield under your control this turn and you control a prime number of lands, create Primo, the Indivisible, a legendary 0/0 green and blue Fractal creature token, then put that many +1/+1 counters on it.
-
-</details>
-
-## process
-
-Blocks **1** card.
-
-- **(cost)** the Eldrazi processor payment: a cost key usable as a `may` op's `pay` (and on activated abilities) that puts N cards chosen from exile, owned by opponents of the payer, into their owners' graveyards, and is unpayable (so the `if you do` branch is skipped) when fewer than N such cards are in exile
-  <br>Why the existing vocabulary won't do: cost_keys has exile_from_graveyard and exile_from_hand but nothing whose source zone is exile; search_zones with zones ["exile"] and destination graveyard is a search effect, not a payment, so it can move fewer than two cards and still let the counter happen, and it carries search semantics (reveal/shuffle) the card does not print
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ulamog's Nullifier** (rank 14187) — `ulamog_s_nullifier`
-  - When this creature enters, you may put two cards your opponents own from exile into their owners' graveyards. If you do, counter target spell.
 
 </details>
 
@@ -3868,6 +4049,20 @@ Blocks **1** card.
 
 </details>
 
+## sandbox-opponent-graveyard-spell-prop
+
+Blocks **1** card.
+
+- **(engine)** a verification-sandbox prop: an instant or sorcery card in player 1's (the opponent's) graveyard, added by build_sandbox in cards/authoring/verify.py only for a card whose required card_in_graveyard target selects Instant or Sorcery controlled by an opponent, so a mandatory 'target instant or sorcery card from an opponent's graveyard' spell is castable at gate 4
+  <br>Why the existing vocabulary won't do: The DSL already says the whole card: a card_in_graveyard target (any_types Instant/Sorcery, controller opponent), cast_from_hand with objects {target: t1} and exiles: true (the Torrential Gearhulk / Impulsivity shape for a free cast out of a graveyard with the exile-instead rider), and cipher as encode (optional, count 1) plus an exile-zone deals_combat_damage_to_player trigger filtered on encoded_by self running cast_copy. It passes schema, compile and residual, then --collect --dry-run rejects it at the playable gate: 'arcane_heist is not playable in the sandbox', because build_sandbox never puts anything in player 1's graveyard, so the required target has no legal choice (601.2c). Making the target optional would describe a different card. Sibling of sandbox_graveyard_spell_prop (Surge to Victory), which is the same prop in player 0's graveyard.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Arcane Heist** (rank 5098) — `arcane_heist`
+  - You may cast target instant or sorcery card from an opponent's graveyard without paying its mana cost. If that spell would be put into their graveyard, exile it instead.
+
+</details>
+
 ## search-aura-attached
 
 Blocks **1** card.
@@ -3951,6 +4146,20 @@ Blocks **1** card.
 
 - **Misdirection** (rank 1562) — `misdirection`
   - Change the target of target spell with a single target.
+
+</details>
+
+## spell-cost-reduction-by-owner
+
+Blocks **1** card.
+
+- **(static_effect)** an ownership clause on spell_cost_reduction's affects_spells filter: "spells you cast but don't own" discounts a spell only when its caster is not its owner (owner: "opponent" / not_owner: "you"), read off the object being cast (its owner, not its printed face), so a stolen card cast from exile, an opponent's graveyard or library, or a spell cast via cast_card from an opponent's zone all get the {1} discount and the caster's own cards never do
+  <br>Why the existing vocabulary won't do: spell_cost_reduction's affects_spells takes SPELL_COST_REDUCTION_FILTER_KEYS (controller, types, colors, name, mana_cost, exclude_self, power, from_zone, not_from_zone ...) and has no owner key; player_statics.spell_cost_reduction is handed a CardDef and matches it through _matches_printed, so it cannot see who owns the object. from_zone: exile is the nearest spelling and is wrong both ways: it discounts your own cards cast from exile (foretell, impulse draw, adventure) and misses an opponent's card cast from their graveyard or library
+
+<details><summary>Cards waiting on this</summary>
+
+- **Gonti, Canny Acquisitor** (rank 8010) — `gonti_canny_acquisitor`
+  - Spells you cast but don't own cost {1} less to cast.
 
 </details>
 
@@ -4040,6 +4249,20 @@ Blocks **1** card.
 
 </details>
 
+## target-chosen-by-other-player
+
+Blocks **1** card.
+
+- **(engine)** a target spec key naming which player chooses the target when the ability is put on the stack (here the damaged player, bound from the deals_combat_damage_to_player trigger), so the target is still a real target (hexproof/ward/shroud apply, fizzles if illegal) but picked by someone other than the ability's controller, among nonland permanents any opponent of the controller controls
+  <br>Why the existing vocabulary won't do: target_keys has no chooser key; targets are always declared by the ability's controller. The selector key `chooser` (as annihilator uses) picks a non-targeted object at resolution, which would drop the targeting and its hexproof/ward/fizzle consequences, so it is an approximation
+
+<details><summary>Cards waiting on this</summary>
+
+- **Bladegriff Prototype** (rank 6919) — `bladegriff_prototype`
+  - Whenever this creature deals combat damage to a player, destroy target nonland permanent of that player's choice that one of your opponents controls.
+
+</details>
+
 ## target-if-cast-during
 
 Blocks **1** card.
@@ -4079,6 +4302,20 @@ Blocks **1** card.
 
 - **Hope of Ghirapur** (rank 3240) — `hope_of_ghirapur`
   - Sacrifice Hope of Ghirapur: Until your next turn, target player who was dealt combat damage by Hope of Ghirapur this turn can't cast noncreature spells.
+
+</details>
+
+## target-spell-mana-value-lki
+
+Blocks **1** card.
+
+- **(value)** A way to capture the mana value of a TARGET SPELL as it last existed on the stack (X included, copies included, uncounterable spells included) at resolution, before the counter, so a later delayed effect can read it: e.g. `snapshot` accepting a spell target (`{"op": "snapshot", "target": "t1", "as": "countered"}` resolving the stack ref to its StackItem and recording its mana value), read later as `{"mana_value_of": {"binding": "countered"}}` inside a `delayed_trigger` on `precombat_main` with `duration: "until_it_fires"` whose effect is `add_mana` with `split: [W,U,B,R,G]` and that amount.
+  <br>Why the existing vocabulary won't do: `snapshot` with `target` reads `ctx.target_oids`, which drops stack refs, so it captures nothing for a spell target; `mana_value_of {"target": ...}` likewise reads object targets only, and the delayed trigger's context has no targets at all. `counter`'s `as` binds the oids of the cards that reached the graveyard: reading `mana_value_of {"objects": {"binding": ...}}` from that gives the graveyard card's mana value (X counted as 0), gives 0 for a countered copy or a spell that can't be countered (which per the rulings still yields the mana), and gives 0 if the card has left the graveyard before the next main phase. The rest of the card is expressible (delayed_trigger on precombat_main, add_mana split), so this value is the only missing piece.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Plasm Capture** (rank 6553) — `plasm_capture`
+  - Counter target spell. At the beginning of your next first main phase, add X mana in any combination of colors, where X is that spell's mana value.
 
 </details>
 
@@ -4317,20 +4554,6 @@ Blocks **1** card.
 
 - **Elementalist's Palette** (rank 4046) — `elementalist_s_palette`
   - {T}: Add {C} for each charge counter on this artifact. Spend this mana only on costs that contain {X}.
-
-</details>
-
-## x-minimum
-
-Blocks **1** card.
-
-- **(cost)** a floor on an activated ability's announced X ("X can't be 0", i.e. X >= 1), so the CHOOSE_X question for an {X} mana cost on an activated ability starts at 1 instead of 0
-  <br>Why the existing vocabulary won't do: cost_keys has x_value (a defined X, never announced) but nothing that bounds an announced X; Game's activation path calls _ask_x with a hard-coded floor of 0, and the only min_x in the engine is the cast-lock floor from player_statics.cast_lock_min_x and the fixed min_x=1 inside ops_control. Without it the land could be animated as a 0/0 and die to state-based actions, which the printed card forbids. The rest of the line is expressible with animate (power/toughness {x}, colors G, subtypes Hydra, types Creature, duration this turn)
-
-<details><summary>Cards waiting on this</summary>
-
-- **Lair of the Hydra** (rank 2447) — `lair_of_the_hydra`
-  - {X}{G}: Until end of turn, this land becomes an X/X green Hydra creature. It's still a land. X can't be 0
 
 </details>
 

@@ -2354,6 +2354,13 @@
     },
     "zone": "graveyard"
   },
+  "brainstealer_dragon": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "brainstone": {
     "battlefield_count": 33,
     "hand_size": {
@@ -2984,6 +2991,13 @@
     },
     "zone": "battlefield"
   },
+  "cazur_ruthless_stalker": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "ceaseless_conflict": {
     "battlefield_count": 32,
     "opponent_battlefield_count": 4,
@@ -3481,6 +3495,13 @@
     "zone": "battlefield"
   },
   "coin_of_fate": {
+    "zone": "battlefield"
+  },
+  "cold_eyed_selkie": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "cold_water_snapper": {
@@ -4056,6 +4077,10 @@
     "zone": "battlefield"
   },
   "cultivator_s_caravan": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "cunning_rhetoric": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -4791,6 +4816,13 @@
     },
     "zone": "graveyard"
   },
+  "diluvian_primordial": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "zone": "battlefield"
+  },
   "dimension_x": {
     "life": {
       "0": 41
@@ -5135,6 +5167,10 @@
     "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
+  "dream_thief_s_bandana": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "dreamroot_cascade": {
     "zone": "battlefield"
   },
@@ -5361,6 +5397,13 @@
   },
   "edgar_master_machinist": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "edric_spymaster_of_trest": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "eidolon_of_countless_battles": {
@@ -6152,6 +6195,12 @@
     "life": {
       "0": 60,
       "1": 20
+    },
+    "zone": "graveyard"
+  },
+  "extract_brain": {
+    "hand_size": {
+      "0": 1
     },
     "zone": "graveyard"
   },
@@ -7437,6 +7486,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "ghostly_pilferer": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "ghostly_prison": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -8601,6 +8657,11 @@
   },
   "hearthfire_hobgoblin": {
     "zone": "battlefield"
+  },
+  "heartless_conscription": {
+    "battlefield_count": 30,
+    "opponent_battlefield_count": 4,
+    "zone": "exile"
   },
   "heartwood_treefolk": {
     "zone": "battlefield"
@@ -14133,6 +14194,15 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "predators_hour": {
+    "granted": {
+      "count": 2,
+      "keywords": [
+        "menace"
+      ]
+    },
+    "zone": "graveyard"
+  },
   "preeminent_captain": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -15964,6 +16034,13 @@
       "0": 42
     }
   },
+  "savvy_trader": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "saw_in_half": {
     "battlefield_count": 33,
     "graveyard_size": {
@@ -16501,6 +16578,16 @@
   "shadowblood_ridge": {
     "zone": "battlefield"
   },
+  "shadowmage_infiltrator": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "fear"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "shadowy_backstreet": {
     "zone": "battlefield"
   },
@@ -16927,6 +17014,10 @@
   "silent_observer": {
     "zone": "battlefield"
   },
+  "silhana_ledgewalker": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "silkguard": {
     "granted": {
       "count": 2,
@@ -17031,6 +17122,13 @@
       "0": 1
     },
     "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
+  "siphon_insight": {
+    "library_size": {
+      "0": 40,
+      "1": 19
+    },
     "zone": "graveyard"
   },
   "sir_shandlar_of_eberyn": {
@@ -17237,6 +17335,10 @@
     "zone": "battlefield"
   },
   "slippery_karst": {
+    "zone": "battlefield"
+  },
+  "slither_blade": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "slithermuse": {
@@ -17967,6 +18069,13 @@
       "0": 37
     },
     "zone": "battlefield"
+  },
+  "stolen_goods": {
+    "library_size": {
+      "0": 40,
+      "1": 0
+    },
+    "zone": "graveyard"
   },
   "stomper_cub": {
     "zone": "battlefield"
@@ -19945,6 +20054,16 @@
   "tower_gargoyle": {
     "zone": "battlefield"
   },
+  "tower_winder": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "towering_indrik": {
     "zone": "battlefield"
   },
@@ -20121,6 +20240,10 @@
     "library_size": {
       "0": 40
     },
+    "zone": "battlefield"
+  },
+  "triton_shorestalker": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "triton_shorethief": {
@@ -20349,6 +20472,13 @@
       "0": 37
     },
     "zone": "graveyard"
+  },
+  "ukkima_stalking_shadow": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "ukud_cobra": {
     "zone": "battlefield"
@@ -21054,6 +21184,9 @@
   "villainous_hideout": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "villainous_wealth": {
+    "zone": "graveyard"
   },
   "vincent_vengeful_atoner": {
     "battlefield_count": 33,
