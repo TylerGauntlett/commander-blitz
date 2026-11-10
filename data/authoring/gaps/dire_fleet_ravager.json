@@ -1,0 +1,18 @@
+{
+  "card_id": "dire_fleet_ravager",
+  "name": "Dire Fleet Ravager",
+  "oracle_text": "Menace, deathtouch\nWhen this creature enters, each player loses a third of their life, rounded up.",
+  "blocked_sentences": [
+    "When this creature enters, each player loses a third of their life, rounded up."
+  ],
+  "needs": [
+    {
+      "capability": "fraction_of_value",
+      "kind": "value",
+      "what": "a value expression that divides another value by an arbitrary printed divisor with a printed rounding direction, e.g. {\"fraction\": {\"of\": {\"life_of\": {\"binding\": \"each_player\"}}, \"divisor\": 3, \"round\": \"up\"}}, read inside a for_each_player so each player's lose_life amount is ceil(their life / 3)",
+      "why_existing_wont_do": "The only division in value_keys is `half` ({\"half\": {\"of\": v, \"round\": \"up\"|\"down\"}}), fixed at a divisor of 2; `times`, `minus`, `sum`, `min` and `max` cannot compose an exact ceil(n/3) for every life total, so `lose_life` with `life_of` can only take half or all of a life total"
+    }
+  ],
+  "closest_existing": ["half", "life_of", "lose_life", "for_each_player"],
+  "confidence": "high"
+}

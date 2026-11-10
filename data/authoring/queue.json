@@ -62742,12 +62742,12 @@
     },
     "Dead Before Sunrise": {
       "edhrec_rank": 11840,
-      "gate": "template",
+      "gate": null,
       "name": "Dead Before Sunrise",
-      "reason": "no template for: Until end of turn, outlaw creatures you control get +1/+0 and gain \"{T}: This creature dea",
+      "reason": "",
       "scryfall_id": "5e80936a-e2b2-4bc7-ba8d-7aecd822a6eb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dead Drop": {
@@ -90172,12 +90172,12 @@
     },
     "Fain, the Broker": {
       "edhrec_rank": 3209,
-      "gate": "template",
+      "gate": null,
       "name": "Fain, the Broker",
-      "reason": "no template for: {T}, Sacrifice a creature: Put two +1/+1 counters on target creature",
+      "reason": "",
       "scryfall_id": "7f1ff9e5-3d69-43a9-965c-2d87951cfd2b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fairgrounds Patrol": {

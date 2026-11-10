@@ -4487,6 +4487,12 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "dead_before_sunrise": {
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "dead_weight": {
     "zone": [
       "battlefield",
@@ -6330,6 +6336,10 @@
     "zone": "battlefield"
   },
   "faerie_seer": {
+    "zone": "battlefield"
+  },
+  "fain_the_broker": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "faithbearer_paladin": {

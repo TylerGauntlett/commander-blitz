@@ -1,0 +1,14 @@
+{
+  "card_id": "curtains_call",
+  "name": "Curtains' Call",
+  "oracle_text": "Undaunted (This spell costs {1} less to cast for each opponent.)\nDestroy two target creatures.",
+  "blocked_sentences": ["Undaunted (This spell costs {1} less to cast for each opponent.)"],
+  "needs": [{
+    "capability": "undaunted",
+    "kind": "value",
+    "what": "a card-level cost_reduction head that counts players rather than objects: {1} less for each opponent the caster has (e.g. {\"opponents\": \"you\"}, or a player_count head in cost_reduction_keys), read at pricing time, so a four-player pod discounts {3}",
+    "why_existing_wont_do": "cost_reduction_keys (amount, count, distinct_mana_values, energy_spent_this_turn, greatest_count, greatest_mana_value, total_mana_value, total_power) all count objects matched by a filter or a turn ledger; none counts players. `amount` is a flat number, so it would be right only at one pod size. The value leaf `player_count` exists in value_keys but cost_reduction cannot read an arbitrary value."
+  }],
+  "closest_existing": ["cost_reduction", "player_count"],
+  "confidence": "high"
+}
