@@ -23571,6 +23571,53 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 3
+                  },
+                  "op": "create_token",
+                  "token": "eldrazi_scion_1_1_c"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "process": 2
+              },
+              "prompt": "Put two cards your opponents own from exile into their owners' graveyards?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When you cast this spell, you may put two cards your opponents own from exile into their owners' graveyards. If you do, create three 1/1 colorless Eldrazi Scion creature tokens. They have \"Sacrifice this token: Add {C}.\"",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "blight_herder",
+      "mana_cost": "{5}",
+      "name": "Blight Herder",
+      "oracle_text": "When you cast this spell, you may put two cards your opponents own from exile into their owners' graveyards. If you do, create three 1/1 colorless Eldrazi Scion creature tokens. They have \"Sacrifice this token: Add {C}.\"",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Eldrazi",
+        "Processor"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attacking": true,
             "controller": "you",
@@ -84419,6 +84466,99 @@
     },
     {
       "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "gale_s_redirection",
+      "mana_cost": "{3}{U}{U}",
+      "name": "Gale's Redirection",
+      "oracle_text": "Exile target spell, then roll a d20 and add that spell's mana value.\n1—14 | You may cast the exiled card for as long as it remains exiled, and you may spend mana as though it were mana of any color to cast that spell.\n15+ | You may cast the exiled card without paying its mana cost for as long as it remains exiled.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "redirected_spell",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "as": "redirected",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "exile"
+        },
+        {
+          "as": "d20",
+          "count": {
+            "const": 1
+          },
+          "op": "roll_dice",
+          "sides": 20
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "sum": [
+                {
+                  "rolled": {
+                    "binding": "d20",
+                    "total": true
+                  }
+                },
+                {
+                  "mana_value_of": {
+                    "var": "redirected_spell"
+                  }
+                }
+              ]
+            },
+            "right": {
+              "const": 15
+            }
+          },
+          "else": [
+            {
+              "any_color": true,
+              "objects": {
+                "binding": "redirected",
+                "zone": "exile"
+              },
+              "op": "grant_playable",
+              "playable": "while_exiled",
+              "playable_cast_only": true
+            }
+          ],
+          "op": "if",
+          "then": [
+            {
+              "objects": {
+                "binding": "redirected",
+                "zone": "exile"
+              },
+              "op": "grant_playable",
+              "playable": "while_exiled",
+              "playable_cast_only": true,
+              "playable_free": true
+            }
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "spell"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "G"
       ],
       "colors": [
@@ -96569,6 +96709,70 @@
       "toughness": 4,
       "types": [
         "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "blockers": {
+            "controller": "any"
+          },
+          "effect": "block_restriction",
+          "kind": "static",
+          "text": "Gríma can't be blocked."
+        },
+        {
+          "effects": [
+            {
+              "cast_free": true,
+              "objects": {
+                "any_types": [
+                  "Instant",
+                  "Sorcery"
+                ]
+              },
+              "op": "exile_until",
+              "player": {
+                "binding": "event_player"
+              },
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Gríma deals combat damage to a player, that player exiles cards from the top of their library until they exile an instant or sorcery card. You may cast that card without paying its mana cost. Then that player puts the exiled cards that weren't cast this way on the bottom of their library in a random order.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "grima_saruman_s_footman",
+      "mana_cost": "{2}{U}{B}",
+      "name": "Gríma, Saruman's Footman",
+      "oracle_text": "Gríma can't be blocked.\nWhenever Gríma deals combat damage to a player, that player exiles cards from the top of their library until they exile an instant or sorcery card. You may cast that card without paying its mana cost. Then that player puts the exiled cards that weren't cast this way on the bottom of their library in a random order.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Advisor"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
         "Creature"
       ]
     },
@@ -176369,6 +176573,91 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "lose_life",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 2
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Ramirez DePietro enters, you lose 2 life and create two Treasure tokens.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "destination": "exile",
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "playable": "while_exiled",
+              "playable_cast_only": true,
+              "player": {
+                "binding": "defender"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more Pirates you control deal combat damage to a player, exile the top card of that player's library. You may cast that card for as long as it remains exiled.",
+          "trigger": {
+            "controller": "you",
+            "event": "creatures_deal_combat_damage",
+            "filter": {
+              "subtypes": [
+                "Pirate"
+              ]
+            },
+            "per_player": true
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "ramirez_depietro_pillager",
+      "mana_cost": "{2}{U}{B}",
+      "name": "Ramirez DePietro, Pillager",
+      "oracle_text": "When Ramirez DePietro enters, you lose 2 life and create two Treasure tokens.\nWhenever one or more Pirates you control deal combat damage to a player, exile the top card of that player's library. You may cast that card for as long as it remains exiled.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Pirate"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "self_only": true
           },
@@ -182159,6 +182448,100 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "keywords": [
+                "deathtouch"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever you attack, target creature gains deathtouch until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "you_attack"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "treasure_token"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "destination": "exile",
+              "face_down": true,
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "playable": "while_exiled",
+              "playable_cast_only": true,
+              "player": {
+                "binding": "defender"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more creatures you control deal combat damage to a player, create a Treasure token, then look at the top card of that player's library and exile it face down. You may cast that card for as long as it remains exiled.",
+          "trigger": {
+            "controller": "you",
+            "event": "creatures_deal_combat_damage",
+            "per_player": true
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "rev_tithe_extractor",
+      "mana_cost": "{3}{B}",
+      "name": "Rev, Tithe Extractor",
+      "oracle_text": "Whenever you attack, target creature gains deathtouch until end of turn.\nWhenever one or more creatures you control deal combat damage to a player, create a Treasure token, then look at the top card of that player's library and exile it face down. You may cast that card for as long as it remains exiled. (A Treasure token is an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Rogue"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {

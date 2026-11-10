@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**280 cards** blocked by **259** capabilities.
+**281 cards** blocked by **259** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -44,6 +44,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
 | [remove-x-counters-cost](#remove-x-counters-cost) | 2 | 5399 | cost |
 | [return-face-down](#return-face-down) | 2 | 3081 | op |
+| [reveal-until-rest-to-graveyard](#reveal-until-rest-to-graveyard) | 2 | 1606 | op |
 | [static-greatest-power-in-graveyard](#static-greatest-power-in-graveyard) | 2 | 7077 | value |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [turn-face-up](#turn-face-up) | 2 | 5772 | op |
@@ -230,7 +231,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [replace-graveyard-with-counter](#replace-graveyard-with-counter) | 1 | 386 | replacement |
 | [retrace](#retrace) | 1 | 5451 | engine |
 | [reveal-from-hand](#reveal-from-hand) | 1 | 3623 | cost |
-| [reveal-until-rest-to-graveyard](#reveal-until-rest-to-graveyard) | 1 | 1606 | op |
 | [sacrifice-multiple-distinct](#sacrifice-multiple-distinct) | 1 | 1918 | cost |
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
@@ -1024,6 +1024,24 @@ Blocks **2** cards.
   - Whenever another nontoken creature you control dies, you may return it to the battlefield face down under its owner's control. It's a Forest land.
 - **Deathmist Raptor** (rank 6493) — `deathmist_raptor`
   - Whenever a permanent you control is turned face up, you may return this card from your graveyard to the battlefield face up or face down.
+
+</details>
+
+## reveal-until-rest-to-graveyard
+
+Blocks **2** cards.
+
+- **(op)** a remainder destination on `reveal_until` (e.g. `rest_to: "graveyard"`) so the revealed cards walked past before the match are put into their owner's graveyard together with the match (`destination: "graveyard"`), as one move -- "reveals cards from the top of their library until they reveal a land card, then puts those cards into their graveyard" (Consuming Aberration, Mind Funeral's kin with no count)
+  <br>Why the existing vocabulary won't do: `op_reveal_until` (ops_cards.py) moves only the hits to `destination`; the non-matching revealed cards either go to the bottom in a random order (`rest_to_bottom`, defaulted on) or are shuffled back (`shuffle_rest`), and switching both off leaves them on top -- there is no key sending them to the graveyard. `look_at_top` has `rest_to` but a fixed window, not an unbounded 'until'. `repeat_while` around `mill` 1 with an `as` binding and a 'not a land' condition is an approximation: it is a mill (701.13), so it fires mill triggers and `replace_mill` the printed reveal never does, moves the cards one at a time instead of together, and is capped at the 100-iteration guard. The first sentence is expressible (static `set_pt` self_only with `count` of `{controller: opponent, zone: graveyard}` on both power and toughness, as Haughty Djinn does), and the trigger is a plain `spell_cast` with `controller: you` over `for_each_player each_opponent`; only the reveal-and-bin is blocked.
+- **(op)** a remainder destination on `reveal_until` (e.g. `rest_to: "graveyard"`) so the non-land cards revealed before the X-th land go to their owner's graveyard together with the matched lands (`destination: "graveyard"`, `amount: {"x": true}`, `player: "each_opponent"`), as one move -- "reveals cards from the top of their library until they reveal X land cards, then puts all cards revealed this way into their graveyard" (Mind Grind, Mind Funeral)
+  <br>Why the existing vocabulary won't do: `op_reveal_until` (ops_cards.py) already counts `amount` matches and walks each opponent's library, but moves only the hits to `destination`; the other revealed cards go to the bottom in a random order (`rest_to_bottom`, defaulted on) or are shuffled back (`shuffle_rest`), and switching both off leaves them on top -- no key sends them to the graveyard. `look_at_top` has `rest_to` but a fixed window, not an unbounded 'until'. `repeat_while` around `mill` 1 is an approximation: it is a mill (701.13), firing mill triggers and `replace_mill` the printed reveal never does, moving cards one at a time, and capped by the iteration guard. "X can't be 0" is expressible as card-level `x_minimum: 1`; only the reveal-and-bin is blocked.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Consuming Aberration** (rank 1606) — `consuming_aberration`
+  - Whenever you cast a spell, each opponent reveals cards from the top of their library until they reveal a land card, then puts those cards into their graveyard.
+- **Mind Grind** (rank 5575) — `mind_grind`
+  - Each opponent reveals cards from the top of their library until they reveal X land cards, then puts all cards revealed this way into their graveyard.
 
 </details>
 
@@ -3718,20 +3736,6 @@ Blocks **1** card.
 
 - **Flamekin Village** (rank 3623) — `flamekin_village`
   - As this land enters, you may reveal an Elemental card from your hand. If you don't, this land enters tapped.
-
-</details>
-
-## reveal-until-rest-to-graveyard
-
-Blocks **1** card.
-
-- **(op)** a remainder destination on `reveal_until` (e.g. `rest_to: "graveyard"`) so the revealed cards walked past before the match are put into their owner's graveyard together with the match (`destination: "graveyard"`), as one move -- "reveals cards from the top of their library until they reveal a land card, then puts those cards into their graveyard" (Consuming Aberration, Mind Funeral's kin with no count)
-  <br>Why the existing vocabulary won't do: `op_reveal_until` (ops_cards.py) moves only the hits to `destination`; the non-matching revealed cards either go to the bottom in a random order (`rest_to_bottom`, defaulted on) or are shuffled back (`shuffle_rest`), and switching both off leaves them on top -- there is no key sending them to the graveyard. `look_at_top` has `rest_to` but a fixed window, not an unbounded 'until'. `repeat_while` around `mill` 1 with an `as` binding and a 'not a land' condition is an approximation: it is a mill (701.13), so it fires mill triggers and `replace_mill` the printed reveal never does, moves the cards one at a time instead of together, and is capped at the 100-iteration guard. The first sentence is expressible (static `set_pt` self_only with `count` of `{controller: opponent, zone: graveyard}` on both power and toughness, as Haughty Djinn does), and the trigger is a plain `spell_cast` with `controller: you` over `for_each_player each_opponent`; only the reveal-and-bin is blocked.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Consuming Aberration** (rank 1606) — `consuming_aberration`
-  - Whenever you cast a spell, each opponent reveals cards from the top of their library until they reveal a land card, then puts those cards into their graveyard.
 
 </details>
 

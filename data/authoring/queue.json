@@ -26952,12 +26952,12 @@
     },
     "Blight Herder": {
       "edhrec_rank": 14430,
-      "gate": "template",
+      "gate": null,
       "name": "Blight Herder",
-      "reason": "no template for: When you cast this spell, you may put two cards your opponents own from exile into their o",
+      "reason": "",
       "scryfall_id": "478c3a74-ff78-4041-8137-93356d370ece",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Blight Keeper": {
@@ -104392,12 +104392,12 @@
     },
     "Gale's Redirection": {
       "edhrec_rank": 9000,
-      "gate": "template",
+      "gate": null,
       "name": "Gale's Redirection",
-      "reason": "no template for: Exile target spell, then roll a d20 and add that spell's mana value",
+      "reason": "",
       "scryfall_id": "1f5ddcf8-c87b-4a26-b226-8593f517a74a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gale, Waterdeep Prodigy": {
@@ -119612,12 +119612,12 @@
     },
     "Gríma, Saruman's Footman": {
       "edhrec_rank": 3193,
-      "gate": "template",
+      "gate": null,
       "name": "Gríma, Saruman's Footman",
-      "reason": "no template for: Gríma can't be blocked",
+      "reason": "",
       "scryfall_id": "3c8f0bfc-767a-411c-b870-f2764f3706f4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Guac & Marshmallow Pizza": {
@@ -214632,12 +214632,12 @@
     },
     "Ramirez DePietro, Pillager": {
       "edhrec_rank": 5168,
-      "gate": "template",
+      "gate": null,
       "name": "Ramirez DePietro, Pillager",
-      "reason": "no template for: When Ramirez DePietro enters, you lose 2 life and create two Treasure tokens",
+      "reason": "",
       "scryfall_id": "11a4e199-faa9-4c41-863d-92170c8f20cc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rammas Echor, Ancient Shield": {
@@ -222342,12 +222342,12 @@
     },
     "Rev, Tithe Extractor": {
       "edhrec_rank": 2404,
-      "gate": "template",
+      "gate": null,
       "name": "Rev, Tithe Extractor",
-      "reason": "no template for: Whenever you attack, target creature gains deathtouch until end of turn",
+      "reason": "",
       "scryfall_id": "8bf88010-799d-4217-8e79-308bec7ad2ff",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Revealing Wind": {

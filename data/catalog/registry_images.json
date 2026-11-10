@@ -1775,6 +1775,10 @@
     "artist": "Ciruelo",
     "scryfall_id": "eb6a101b-be36-4915-beba-64ed09165469"
   },
+  "blight_herder": {
+    "artist": "Todd Lockwood",
+    "scryfall_id": "478c3a74-ff78-4041-8137-93356d370ece"
+  },
   "blight_mound": {
     "artist": "Oriana Menendez",
     "scryfall_id": "dc060028-e01c-4bc7-8b52-7d0e2a350061"
@@ -6368,6 +6372,10 @@
     "artist": "Raymond Swanland",
     "scryfall_id": "abdd3b41-6bdd-4b35-998c-0358ba72ca12"
   },
+  "gale_s_redirection": {
+    "artist": "Yeong-Hao Han",
+    "scryfall_id": "1f5ddcf8-c87b-4a26-b226-8593f517a74a"
+  },
   "galewind_moose": {
     "artist": "Valera Lutfullina",
     "scryfall_id": "58706bd8-558a-43b9-9f1e-c1ff0044203b"
@@ -7303,6 +7311,10 @@
   "grim_poppet": {
     "artist": "Kev Walker",
     "scryfall_id": "7b23f412-c5eb-48f1-ad84-ae42171944c8"
+  },
+  "grima_saruman_s_footman": {
+    "artist": "Alex Horley-Orlandelli",
+    "scryfall_id": "3c8f0bfc-767a-411c-b870-f2764f3706f4"
   },
   "grisly_salvage": {
     "artist": "Dave Kendall",
@@ -13188,6 +13200,10 @@
     "artist": "Phil Foglio",
     "scryfall_id": "e5c66c61-aadf-433b-9958-fc9b44b327b9"
   },
+  "ramirez_depietro_pillager": {
+    "artist": "Anna Steinbauer",
+    "scryfall_id": "11a4e199-faa9-4c41-863d-92170c8f20cc"
+  },
   "rampaging_aetherhood": {
     "artist": "Ron Spencer",
     "scryfall_id": "b1f36e04-3500-410b-a07c-28a280b5a0fc"
@@ -13619,6 +13635,10 @@
   "reunion_of_the_house": {
     "artist": "Quintin Gleim",
     "scryfall_id": "71e4a360-89dd-4f25-9b85-75d0b131e208"
+  },
+  "rev_tithe_extractor": {
+    "artist": "M.Matsumoto",
+    "scryfall_id": "34d75399-02e1-4ab8-9493-70c1d9d28b42"
   },
   "reverse_engineer": {
     "artist": "Chase Stone",

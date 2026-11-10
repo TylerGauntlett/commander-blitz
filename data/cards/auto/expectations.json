@@ -2011,6 +2011,10 @@
   "blasted_landscape": {
     "zone": "battlefield"
   },
+  "blight_herder": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "blight_mound": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -7278,6 +7282,15 @@
     },
     "zone": "battlefield"
   },
+  "gale_s_redirection": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "galewind_moose": {
     "zone": "battlefield"
   },
@@ -8291,6 +8304,13 @@
     "counters": {
       "amount": 3,
       "kind": "-1/-1"
+    },
+    "zone": "battlefield"
+  },
+  "grima_saruman_s_footman": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
     },
     "zone": "battlefield"
   },
@@ -14874,6 +14894,17 @@
   "ramirez_depietro": {
     "zone": "battlefield"
   },
+  "ramirez_depietro_pillager": {
+    "battlefield_count": 35,
+    "life": {
+      "0": 38
+    },
+    "tokens": {
+      "count": 2,
+      "id": "treasure_token"
+    },
+    "zone": "battlefield"
+  },
   "rampaging_aetherhood": {
     "zone": "battlefield"
   },
@@ -15394,6 +15425,10 @@
   },
   "reunion_of_the_house": {
     "zone": "exile"
+  },
+  "rev_tithe_extractor": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "reverse_engineer": {
     "hand_size": {
