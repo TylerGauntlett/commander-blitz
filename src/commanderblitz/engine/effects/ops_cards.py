@@ -2519,10 +2519,10 @@ def op_exile_until(ctx: EffectContext, spec: Mapping[str, Any]):
     value is 8 or less. If you don't, put that card into your hand."
     — Breaching Dragonstorm.
 
-    Cascade's walk with `reveal_until`'s selector stop test, and the one walk
-    that **leaves what it exiled in exile**. That is the printed sentence: it
-    never says to put the walked-past cards anywhere, so they stay where the
-    scan put them. `cascade` and `discover` both bottom them, and `reveal_until`
+    Cascade's walk with `reveal_until`'s selector stop test, and by default the
+    one walk that **leaves what it exiled in exile**. That is the printed
+    sentence: it never says to put the walked-past cards anywhere, so they stay
+    where the scan put them unless ``rest_to_bottom`` prints the cascade tail. `cascade` and `discover` both bottom them, and `reveal_until`
     never moves them out of the library at all -- each is a different card.
 
     - ``objects`` is the stop test, tested as a card in the library (it is still
@@ -2550,6 +2550,14 @@ def op_exile_until(ctx: EffectContext, spec: Mapping[str, Any]):
       step, sacrifice this creature."" (Strago and Relm) is
       ``{"keywords": ["haste"], "abilities": [0]}``, ``abilities`` indexing
       this card's ``grantable_abilities``. See `cast_rider`.
+    - ``rest_to_bottom`` is "then put the exiled cards that weren't cast this
+      way on the bottom of that library in a random order" (Chaos Wand,
+      Dazzling Sphinx). After the offer, every card this walk exiled that is
+      still in exile -- the walked-past cards, and the hit unless it reached
+      the stack -- goes to the bottom of the walked library in one random
+      order (`_bottom_in_random_order`), each library's cards to its own
+      bottom under ``each_player``. A walk that runs the library out bottoms
+      everything it exiled. Without it they all stay in exile.
     - ``as`` records the hits, cast or not, as a list -- one oid per walked
       library that found one; an exhausted library adds nothing, so a single
       walk that finds nothing binds the empty list.
@@ -2568,17 +2576,21 @@ def op_exile_until(ctx: EffectContext, spec: Mapping[str, Any]):
     for pid in select_players(ctx, spec.get("player", "you")):
         library = ctx.state.players[pid].library
         hit: int | None = None
-        walked = 0
+        walked: list[int] = []
         while library:
             oid = library[0]
             found = _matches_library(ctx, oid, selector)
             move_object(ctx.state, oid, Zone.EXILE, cause="exile_until")
-            walked += 1
+            walked.append(oid)
             if found:
                 hit = oid
                 break
-        ctx.state.emit("exile_until", player=pid, source=ctx.source_oid, exiled=walked)
+        ctx.state.emit(
+            "exile_until", player=pid, source=ctx.source_oid, exiled=len(walked)
+        )
         if hit is None:
+            if spec.get("rest_to_bottom"):
+                _bottom_in_random_order(ctx, pid, walked)
             continue
         hits.append(hit)
         if binding:
@@ -2595,6 +2607,20 @@ def op_exile_until(ctx: EffectContext, spec: Mapping[str, Any]):
             )
         if not cast and (where := spec.get("else_destination")):
             move_object(ctx.state, hit, DESTINATIONS[str(where)], cause="exile_until")
+        if spec.get("rest_to_bottom"):
+            # "The exiled cards that weren't cast this way": the cast hit is on
+            # the stack, and anything else that left exile meanwhile (a commander
+            # sent to the command zone) is no longer among the exiled cards.
+            _bottom_in_random_order(
+                ctx,
+                pid,
+                [
+                    oid
+                    for oid in walked
+                    if (obj := ctx.state.objects.get(oid)) is not None
+                    and obj.zone is Zone.EXILE
+                ],
+            )
 
 
 @register("suspend")

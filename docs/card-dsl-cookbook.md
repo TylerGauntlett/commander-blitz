@@ -15178,9 +15178,9 @@ the rest, and it records nothing.
 
 Exile cards from the top of your library one at a time until one matches
 `objects`, the stop test (required and non-empty: an empty one stops at the first
-card). Every card walked past **stays in exile**, because the sentence never
-moves them; `cascade` and `discover` bottom them and `reveal_until` never takes
-them out of the library.
+card). Every card walked past **stays in exile** unless `rest_to_bottom` is
+set, because Breaching Dragonstorm's sentence never moves them; `cascade` and
+`discover` bottom them and `reveal_until` never takes them out of the library.
 
 - `cast_free` offers the hit as a free cast (`_offer_free_cast`'s yes/no).
 - `cast_free_if` is a selector the hit must match, tested in exile, before the
@@ -15208,6 +15208,14 @@ them out of the library.
   spell becomes, for as long as that permanent lasts (the sentence prints no
   duration); a declined cast, an uncast hit and a noncreature spell get nothing,
   and a permanent that leaves and returns is a new object that owes nothing.
+- `rest_to_bottom` (`true`) is "then put the exiled cards that weren't cast
+  this way on the bottom of that library in a random order". After the offer,
+  every card the walk exiled that is still in exile -- the walked-past cards,
+  and the hit unless its cast reached the stack -- goes to the bottom of the
+  walked library in one random order over those cards only (not a shuffle).
+  A declined hit, one failing `cast_free_if` and one `cast_for_free` refused
+  are all bottomed; a walk that runs the library out bottoms everything it
+  exiled. Under `"each_player"` each library takes back its own cards.
 - `as` records the hits, cast or not, as a list -- one oid for each walked
   library that found one, so a single walk that runs its library out binds the
   empty list.
@@ -15231,6 +15239,18 @@ them out of the library.
   "effects": [{ "op": "sacrifice", "objects": { "self_only": true } }] }]
 ```
 
+```jsonc
+// Chaos Wand -- "{4}, {T}: Target opponent exiles cards from the top of their
+// library until they exile an instant or sorcery card. You may cast that card
+// without paying its mana cost. Then put the exiled cards that weren't cast
+// this way on the bottom of that library in a random order."
+{ "op": "exile_until",
+  "player": { "target": "t1" },
+  "objects": { "any_types": ["Instant", "Sorcery"] },
+  "cast_free": true,
+  "rest_to_bottom": true }
+```
+
 The near misses: a `grant_keyword` and `grant_ability` written after the walk
 reach the spell on the stack (or a hit left in exile), and the battlefield
 arrival sweeps them; a `delay` with `step: "end_step"` is blitz's delayed
@@ -15238,12 +15258,15 @@ trigger, which belongs to no permanent, where the quoted ability is the
 creature's own; `cast_gains_keywords` is the
 `cast_from_library_top` static's until-end-of-turn rider.
 
-The loader refuses an `amount`; `cast_free_if`, `else_destination` or
-`creature_cast_gains` without `cast_free`; and a `creature_cast_gains` that
+The loader refuses an `amount`; `cast_free_if`, `else_destination`,
+`rest_to_bottom` or `creature_cast_gains` without `cast_free`; `rest_to_bottom`
+beside `else_destination` (an uncast hit has one home) or as anything but a
+boolean; and a `creature_cast_gains` that
 grants nothing, names an unknown keyword or key, or indexes a grantable ability
 the card does not have. `reveal_until` with `player` is the near miss for an opponent's
 library: it leaves the walked-past cards in the library and moves only the
-match.
+match. `cascade` and `discover` bottom the rest too, but walk only your own
+library with a mana-value stop test.
 
 ## "It gains suspend" — suspending a card from an effect
 

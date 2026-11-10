@@ -199,7 +199,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                 H_CASCADE),
     "discover": ("Cards", "Discover N: exile until a nonland of mana value N or less; cast it free or take it.",
                  "Discover — cascade's walk, N or less, cast or hand"),
-    "exile_until": ("Cards", "Exile from the top of a player's library until a card matches; the rest stay exiled, the hit may be cast free by you, a creature with a `creature_cast_gains` rider.",
+    "exile_until": ("Cards", "Exile from the top of a player's library until a card matches; the rest stay exiled or, with `rest_to_bottom`, go to that library's bottom in a random order; the hit may be cast free by you, a creature with a `creature_cast_gains` rider.",
                     "exile_until — a walk that leaves its cards in exile"),
     "suspend": ("Cards", "Exile a card (if it is not already in exile) with N time counters; it is suspended, its owner's to tick and cast.",
                 '"It gains suspend" — suspending a card from an effect'),

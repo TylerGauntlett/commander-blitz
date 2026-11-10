@@ -2779,6 +2779,10 @@
     "artist": "Nils Hamm",
     "scryfall_id": "6e604b2e-f257-465d-9342-6eb55b2334c5"
   },
+  "chaos_wand": {
+    "artist": "Kari Christensen",
+    "scryfall_id": "67eb6ab9-d264-4ec6-9dac-3b16ee8c9ec0"
+  },
   "chaos_warp": {
     "artist": "Trevor Claxton",
     "scryfall_id": "fb8d8106-b9bd-405c-886e-72fc301c65e1"
@@ -3890,6 +3894,10 @@
   "dazzling_angel": {
     "artist": "Daneen Wilkerson",
     "scryfall_id": "a1a8cc0d-c2ac-4dfe-a0a1-996bfadb7d54"
+  },
+  "dazzling_sphinx": {
+    "artist": "Oriana Menendez",
+    "scryfall_id": "2ddac591-825b-4304-858c-9dc9b311805b"
   },
   "dead_weight": {
     "artist": "Lake Hurwitz",

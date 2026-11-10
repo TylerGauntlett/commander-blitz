@@ -44442,12 +44442,12 @@
     },
     "Chaos Wand": {
       "edhrec_rank": 4171,
-      "gate": "template",
+      "gate": null,
       "name": "Chaos Wand",
-      "reason": "no template for: {4}, {T}: Target opponent exiles cards from the top of their library until they exile an i",
+      "reason": "",
       "scryfall_id": "67eb6ab9-d264-4ec6-9dac-3b16ee8c9ec0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chaos Warp": {
@@ -62712,12 +62712,12 @@
     },
     "Dazzling Sphinx": {
       "edhrec_rank": 6308,
-      "gate": "template",
+      "gate": null,
       "name": "Dazzling Sphinx",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, that player exiles cards from the ",
+      "reason": "",
       "scryfall_id": "2ddac591-825b-4304-858c-9dc9b311805b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dazzling Theater // Prop Room": {

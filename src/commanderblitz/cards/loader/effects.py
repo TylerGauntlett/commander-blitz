@@ -1912,6 +1912,19 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             validate_selector(effect["cast_free_if"], f"{where}.cast_free_if")
         if "creature_cast_gains" in effect:
             _validate_creature_cast_gains(effect, f"{where}.creature_cast_gains")
+        if "rest_to_bottom" in effect:
+            if not isinstance(effect["rest_to_bottom"], bool):
+                raise DslError(f"{where}: exile_until 'rest_to_bottom' is true or false")
+            if effect["rest_to_bottom"] and not effect.get("cast_free"):
+                # "The exiled cards that weren't cast this way" presupposes the
+                # offer; without it no printed card bottoms an exile walk.
+                raise DslError(f"{where}: exile_until 'rest_to_bottom' needs 'cast_free'")
+            if effect["rest_to_bottom"] and "else_destination" in effect:
+                # Two homes for one uncast hit: the printed card names one.
+                raise DslError(
+                    f"{where}: exile_until takes 'rest_to_bottom' or "
+                    f"'else_destination', not both -- an uncast hit has one home"
+                )
         if "else_destination" in effect:
             if not effect.get("cast_free"):
                 # Without a cast every hit would take the "else" -- that is a

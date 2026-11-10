@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**300 cards** blocked by **275** capabilities.
+**298 cards** blocked by **274** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -38,7 +38,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [devotion](#devotion) | 2 | 2401 | value |
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
 | [exile-target-spell](#exile-target-spell) | 2 | 539 | op |
-| [exile-until-rest-to-bottom](#exile-until-rest-to-bottom) | 2 | 4171 | op |
 | [experience-counters](#experience-counters) | 2 | 1480 | engine |
 | [face-down-filter](#face-down-filter) | 2 | 5772 | selector |
 | [manifest-dread](#manifest-dread) | 2 | 5772 | op |
@@ -928,24 +927,6 @@ Blocks **2** cards.
   - Exile any number of target spells.
 - **Smirking Spelljacker** (rank 6946) — `smirking_spelljacker`
   - When this creature enters, exile target spell an opponent controls
-
-</details>
-
-## exile-until-rest-to-bottom
-
-Blocks **2** cards.
-
-- **(op)** a `rest_to_bottom` option on `exile_until` that, after the free-cast offer resolves, puts every card the walk exiled (the walked-past cards plus the hit if it was not cast) on the bottom of the walked library's owner's library in a random order -- the cascade/discover tail, on exile_until's selector stop test and `player` walk of another seat's library
-  <br>Why the existing vocabulary won't do: exile_until (with player {target: t1}, objects {any_types: [Instant, Sorcery]} and cast_free) does the first two sentences exactly as Strago and Relm does, but by design it leaves every walked card in exile; it binds only the hit via `as`, never links the walked-past cards to the source (no `link`, so `exiled_with` cannot find them), and `else_destination` moves only the hit. `cascade` and `discover` bottom the rest but walk only the controller's library with a mana-value stop test; `reveal_until` bottoms the rest but reveals rather than exiles and cannot offer an immediate free cast (only a later `playable_free` permission, leaving an uncast hit in exile instead of on the bottom).
-- **(op)** a `rest_to_bottom` option on `exile_until` that, after the free-cast offer resolves, puts every card the walk exiled (the walked-past cards plus the hit if it was not cast) on the bottom of the walked library's owner's library in a random order -- the cascade/discover tail, on exile_until's selector stop test and `player` walk of another seat's library (here the damaged player, from a deals_combat_damage_to_player trigger)
-  <br>Why the existing vocabulary won't do: exile_until (player = the damaged player, objects {any_types: [Instant, Sorcery]}, cast_free) does the first two sentences, but by design leaves every walked card in exile; `else_destination` moves only the uncast hit, `as` binds only the hit, and the walked-past cards are not linked to the source, so a following put_on_top with `bottom` and `exiled_with` cannot find them (and put_on_top has no random order). `cascade` and `discover` bottom the rest in a random order but walk only the controller's library with a mana-value stop test; `reveal_until` bottoms the rest but reveals rather than exiles and offers no immediate free cast.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Chaos Wand** (rank 4171) — `chaos_wand`
-  - Then put the exiled cards that weren't cast this way on the bottom of that library in a random order.
-- **Dazzling Sphinx** (rank 6308) — `dazzling_sphinx`
-  - Then that player puts the exiled cards that weren't cast this way on the bottom of their library in a random order.
 
 </details>
 

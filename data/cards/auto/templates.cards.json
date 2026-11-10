@@ -37546,6 +37546,54 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{4}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "cast_free": true,
+              "objects": {
+                "any_types": [
+                  "Instant",
+                  "Sorcery"
+                ]
+              },
+              "op": "exile_until",
+              "player": {
+                "target": "t1"
+              },
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "{4}, {T}: Target opponent exiles cards from the top of their library until they exile an instant or sorcery card. You may cast that card without paying its mana cost. Then put the exiled cards that weren't cast this way on the bottom of that library in a random order."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "chaos_wand",
+      "mana_cost": "{3}",
+      "name": "Chaos Wand",
+      "oracle_text": "{4}, {T}: Target opponent exiles cards from the top of their library until they exile an instant or sorcery card. You may cast that card without paying its mana cost. Then put the exiled cards that weren't cast this way on the bottom of that library in a random order.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -52418,6 +52466,56 @@
         "Angel"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "cast_free": true,
+              "objects": {
+                "any_types": [
+                  "Instant",
+                  "Sorcery"
+                ]
+              },
+              "op": "exile_until",
+              "player": {
+                "binding": "event_player"
+              },
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, that player exiles cards from the top of their library until they exile an instant or sorcery card. You may cast that card without paying its mana cost. Then that player puts the exiled cards that weren't cast this way on the bottom of their library in a random order.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "dazzling_sphinx",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{U}{U}",
+      "name": "Dazzling Sphinx",
+      "oracle_text": "Flying\nWhenever this creature deals combat damage to a player, that player exiles cards from the top of their library until they exile an instant or sorcery card. You may cast that card without paying its mana cost. Then that player puts the exiled cards that weren't cast this way on the bottom of their library in a random order.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Sphinx"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
