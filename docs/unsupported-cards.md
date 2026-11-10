@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**303 cards** blocked by **276** capabilities.
+**302 cards** blocked by **276** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -24,7 +24,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
 | [basic-land-type-mana](#basic-land-type-mana) | 3 | 73 | engine |
-| [cast-only-exile-permission](#cast-only-exile-permission) | 3 | 1861 | op |
 | [cast-trigger-x](#cast-trigger-x) | 3 | 1521 | engine, value |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 6346 | op |
 | [escape](#escape) | 3 | 388 | engine, static_effect |
@@ -42,6 +41,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exile-until-rest-to-bottom](#exile-until-rest-to-bottom) | 2 | 4171 | op |
 | [experience-counters](#experience-counters) | 2 | 1480 | engine |
 | [face-down-filter](#face-down-filter) | 2 | 5772 | selector |
+| [look-at-top-controller-chooses](#look-at-top-controller-chooses) | 2 | 2005 | selector |
 | [manifest-dread](#manifest-dread) | 2 | 5772 | op |
 | [manifest-from-opponent-library](#manifest-from-opponent-library) | 2 | 3759 | op |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
@@ -648,28 +648,6 @@ Blocks **3** cards.
 
 </details>
 
-## cast-only-exile-permission
-
-Blocks **3** cards.
-
-- **(op)** a flag on look_at_top's (and exile's) playable permission that grants permission to CAST the exiled card only, never to PLAY it as a land, so a land Gonti exiles from an opponent's library stays exiled
-  <br>Why the existing vocabulary won't do: look_at_top with playable while_exiled, any_type and face_down says everything else exactly, but the permission is a PLAY permission: legality.py offers an exiled land with playable_by == pid as a land play, which the printed 'cast' forbids
-- **(op)** a flag on exile's playable permission (e.g. `playable_cast_only: true`) that grants permission to CAST the exiled card only, never to PLAY it as a land: legality.py's exiled-land walk must skip such a card, so an exiled artifact land (Seat of the Synod, Darksteel Citadel) taken by Hostage Taker cannot be played with a land drop and stays exiled until Hostage Taker leaves
-  <br>Why the existing vocabulary won't do: `exile` with `until_leaves`, `playable: "while_exiled"` and `any_type: true` says everything else exactly (the return is the usual `leaves_battlefield` + `put_onto_battlefield` from `exiled_with: self`), but the `playable` permission is a PLAY permission: legality.py offers every exiled card with `playable_by == pid` as a land play, so an exiled artifact land could be played as a land drop, which the printed 'cast' forbids. No key in op_options (`playable_*`, `limit`) narrows the permission to casting, and narrowing the target to nonland would drop legal targets instead
-- **(op)** a flag on the exile permission of look_at_top / exile / grant_playable (e.g. `playable_cast_only: true`) that lets the controller CAST the exiled card only, never PLAY it as a land: a land among the damaged player's top three that Thief of Sanity exiles face down must not be playable with a land drop and stays exiled
-  <br>Why the existing vocabulary won't do: `deals_combat_damage_to_player` plus `look_at_top` with `player` bound to the damaged player, `amount: 3`, `destination: "exile"`, `face_down: true`, `rest_to: "graveyard"`, `playable: "while_exiled"` and `any_type: true` says everything else, but `playable` is a PLAY permission (the notes say "a land still uses a land drop"), so an exiled land could be played, which the printed 'cast' forbids. No key in op_options (`playable_*`, `limit`) narrows the permission to casting, and restricting the selector to nonland cards would wrongly forbid exiling a land at all
-
-<details><summary>Cards waiting on this</summary>
-
-- **Hostage Taker** (rank 1861) — `hostage_taker`
-  - You may cast that card for as long as it remains exiled, and mana of any type can be spent to cast that spell.
-- **Gonti, Lord of Luxury** (rank 2005) — `gonti_lord_of_luxury`
-  - You may cast that card for as long as it remains exiled, and mana of any type can be spent to cast that spell.
-- **Thief of Sanity** (rank 3164) — `thief_of_sanity`
-  - Whenever this creature deals combat damage to a player, look at the top three cards of that player's library, exile one of them face down, then put the rest into their graveyard. You may cast that card for as long as it remains exiled, and mana of any type can be spent to cast that spell.
-
-</details>
-
 ## cast-trigger-x
 
 Blocks **3** cards.
@@ -1007,6 +985,24 @@ Blocks **2** cards.
   - Landfall — Whenever a land you control enters, manifest dread if this is the first time this ability has resolved this turn. Otherwise, you may turn a permanent you control face up
 - **Primordial Mist** (rank 6544) — `primordial_mist`
   - Exile a face-down permanent you control face up: You may play that card this turn. (You still pay its costs. Timing rules still apply.)
+
+</details>
+
+## look-at-top-controller-chooses
+
+Blocks **2** cards.
+
+- **(selector)** look_at_top's pick out of another player's library must be made by the effect's controller when the card says "you": `op_look_at_top` passes the library owner's seat as `chooser` to `pick_from_pool` (and to `ask_objects` for `destinations` steps), which overrides the selector's own `chooser` clause, so for `player` naming an opponent the OPPONENT chooses which card is exiled. Needs look_at_top to honour an explicit `objects.chooser` (e.g. `"chooser": "controller"`) over the library owner
+  <br>Why the existing vocabulary won't do: `playable_cast_only` (shipped) now says the cast-only permission exactly, and an ETB player target, `look_at_top` with `player: {"target": "t1"}`, `amount: 4`, `destination: "exile"`, `face_down`, `rest_to_bottom`, `playable: "while_exiled"` and `any_type` say everything else; but `objects: {"count": 1, "chooser": "controller"}` loads and is ignored because the op's chooser argument wins in `selectors.pick_from_pool`, so the damaged/targeted opponent would pick the worst of the cards for you -- a much weaker card than printed
+- **(selector)** look_at_top's pick out of another player's library must be made by the effect's controller when the card says "you": `op_look_at_top` passes the library owner's seat as `chooser` to `pick_from_pool` (and to `ask_objects` for `destinations` steps), which overrides the selector's own `chooser` clause, so for `player` naming an opponent the OPPONENT chooses which card is exiled. Needs look_at_top to honour an explicit `objects.chooser` (e.g. `"chooser": "controller"`) over the library owner
+  <br>Why the existing vocabulary won't do: `playable_cast_only` (shipped) now says the cast-only permission exactly, and `deals_combat_damage_to_player` with `look_at_top` `player: {"binding": "event_player"}`, `amount: 3`, `destination: "exile"`, `face_down`, `rest_to: "graveyard"`, `playable: "while_exiled"` and `any_type` say everything else; but `objects: {"count": 1, "chooser": "controller"}` loads and is ignored because the op's chooser argument wins in `selectors.pick_from_pool`, so the damaged/targeted opponent would pick the worst of the cards for you -- a much weaker card than printed
+
+<details><summary>Cards waiting on this</summary>
+
+- **Gonti, Lord of Luxury** (rank 2005) — `gonti_lord_of_luxury`
+  - When Gonti enters, look at the top four cards of target opponent's library, exile one of them face down, then put the rest on the bottom of that library in a random order. You may cast that card for as long as it remains exiled, and mana of any type can be spent to cast that spell.
+- **Thief of Sanity** (rank 3164) — `thief_of_sanity`
+  - Whenever this creature deals combat damage to a player, look at the top three cards of that player's library, exile one of them face down, then put the rest into their graveyard. You may cast that card for as long as it remains exiled, and mana of any type can be spent to cast that spell.
 
 </details>
 

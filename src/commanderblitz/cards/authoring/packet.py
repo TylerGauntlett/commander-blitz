@@ -809,7 +809,10 @@ def reference() -> dict:
             " The permission is always the"
             " effect controller's, cards from an opponent's library included;"
             " a land still uses a land drop, a spell keeps its timing and its"
-            " additional costs, and X is 0.",
+            " additional costs, and X is 0. \"You may **cast** that card\""
+            " (never \"play\") is `playable_cast_only: true` beside the"
+            " `playable` duration: a land among those cards is not played and"
+            " stays exiled (305.9).",
             "\"You don't lose unspent red mana as steps and phases end\" is the"
             " player-wide static `mana_retention` with `affects_player: \"you\"`"
             " and `colors: [\"R\"]`; \"Players don't lose unspent mana\" is"

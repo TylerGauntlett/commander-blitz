@@ -72,6 +72,7 @@ LOOK_STEP_KEYS = frozenset(
         "playable",
         "any_color",
         "any_type",
+        "playable_cast_only",
         "face_down",
         "link",
     }
@@ -290,6 +291,8 @@ def op_grant_playable(ctx: EffectContext, spec: Mapping[str, Any]):
         # Augurelt): a discount on this permission's casts only, read by
         # `casting.permission_cost_reduction` while the permission is live.
         obj.playable_cost_reduction = int(spec.get("playable_cost_reduction", 0) or 0)
+        # "You may **cast** …" rather than "play": no land drop out of it.
+        obj.playable_cast_only = bool(spec.get("playable_cast_only"))
         record_playable_source(ctx.state, oid, ctx.source_oid)
 
 
@@ -722,6 +725,9 @@ def _move_found(
                 obj.playable_any_color = bool(spec.get("any_color"))
                 obj.playable_free = bool(spec.get("playable_free"))
                 obj.playable_cost_reduction = int(spec.get("playable_cost_reduction", 0) or 0)
+                # "You may **cast** that card" (Gonti, Thief of Sanity): a
+                # land among them is exiled and stays there, never played.
+                obj.playable_cast_only = bool(spec.get("playable_cast_only"))
                 record_playable_source(ctx.state, oid, ctx.source_oid)
         # "Exile the top card of your library **face down**." Necropotence.
         # Face-down here is *privacy*, not the 707 morph identity `face_down`

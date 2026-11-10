@@ -2638,6 +2638,23 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: 'playable_free' leaves no mana cost to reduce, so "
                 f"'playable_cost_reduction' beside it discounts nothing"
             )
+    if "playable_cast_only" in effect:
+        # "You may **cast** that card for as long as it remains exiled" (Hostage
+        # Taker) narrows a "you may play it" permission to the cast, so a land
+        # card carrying it is not a land drop (305.9). On a bare exile it would
+        # load, print its sentence and narrow nothing.
+        grants = op == "grant_playable" or (
+            op in ("exile", "look_at_top")
+            and ("playable" in effect or effect.get("playable_this_turn"))
+        )
+        if not grants:
+            raise DslError(
+                f"{where}: 'playable_cast_only' narrows a 'playable' permission to "
+                f"casting, so it needs one (exile / look_at_top with 'playable', "
+                f"or grant_playable)"
+            )
+        if effect["playable_cast_only"] is not True:
+            raise DslError(f"{where}.playable_cast_only: the only value is true")
     if "playable" in effect or "playable_this_turn" in effect:
         # Two spellings of one key: `playable_this_turn: true` is what every
         # card written before durations existed says, and `playable:

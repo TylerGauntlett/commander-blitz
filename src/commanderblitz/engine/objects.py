@@ -925,6 +925,13 @@ class GameObject:
     #: *instant* may only be cast at sorcery speed, and its own type line still
     #: says instant.
     playable_sorcery_only: bool = False
+    #: "You may **cast** that card for as long as it remains exiled" -- Hostage
+    #: Taker, Gonti, Lord of Luxury, Thief of Sanity. A restriction on the
+    #: permission, as `playable_sorcery_only` is: it reaches the cast and not
+    #: the land play, so a land card carrying it is never offered as a land
+    #: drop. "Play" is the wider verb (a land is played, never cast -- 305.9),
+    #: and a permission without this flag is a play permission.
+    playable_cast_only: bool = False
     #: "…you may cast it from your graveyard **as an Adventure**" -- Hildibrand
     #: Manderville. A restriction on which *face* the permission reaches: the
     #: Adventure half (the card's `second_face`) is offered, and the front face
@@ -1412,6 +1419,7 @@ class GameObject:
         self.playable_duration = "this_turn"
         self.playable_free = False
         self.playable_sorcery_only = False
+        self.playable_cast_only = False
         self.playable_as_adventure = False
         self.playable_group = None
         self.playable_any_type = False

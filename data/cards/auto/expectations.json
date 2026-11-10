@@ -9047,6 +9047,9 @@
     },
     "zone": "battlefield"
   },
+  "hostage_taker": {
+    "zone": "battlefield"
+  },
   "hostile_minotaur": {
     "zone": "battlefield"
   },

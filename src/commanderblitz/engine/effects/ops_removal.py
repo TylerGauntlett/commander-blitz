@@ -353,6 +353,9 @@ def op_exile(ctx: EffectContext, spec: Mapping[str, Any]):
                 # "Spells you cast this way cost {N} less" -- `grant_playable`'s
                 # discount rider, read by the same cast path.
                 obj.playable_cost_reduction = int(spec.get("playable_cost_reduction", 0) or 0)
+                # "You may **cast** that card" (Hostage Taker): an exiled
+                # artifact land is not a land drop. See `GameObject`.
+                obj.playable_cast_only = bool(spec.get("playable_cast_only"))
                 record_playable_source(ctx.state, oid, ctx.source_oid)
         if link and ctx.source_oid is not None:
             # After the move: `move_object` runs `reset_permanent_state` on the

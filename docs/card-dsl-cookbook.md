@@ -1026,6 +1026,34 @@ The near misses are both durations alone. `while_exiled` lets the cards be
 played on any turn, a stronger card; `this_turn` opens them only on the turn
 they were exiled and loses them after it, a weaker one.
 
+### "You may cast that card for as long as it remains exiled"
+
+```jsonc
+{ "op": "exile", "objects": { "target": "t1" }, "until_leaves": true,
+  "playable": "while_exiled", "playable_cast_only": true,
+  "any_type": true }                                           // Hostage Taker
+{ "op": "look_at_top", "player": "each_opponent", "amount": { "const": 1 },
+  "objects": { "count": "all" }, "destination": "exile", "face_down": true,
+  "playable": "while_exiled", "playable_cast_only": true }
+```
+
+"Play" is the wider verb: a card is played as a land or cast as a spell, and a
+land is never cast (305.9). `playable` alone is a **play** permission, so a land
+carrying it is offered as a land drop. `playable_cast_only: true` narrows the
+permission to the cast: `GameObject.playable_cast_only`, read by the land half in
+`legality` and nowhere else, since the cast half already offers no land. A land
+exiled this way — an artifact land Hostage Taker takes, a land off the top of a
+library — stays in exile.
+
+It rides on the permission beside `any_type` and `playable_free`, on the same
+three ops, and ends with it: the zone-change reset, the expiry hooks and the
+source's next exile all clear it. The loader refuses it on an effect that
+grants no permission, and its only value is `true`.
+
+The near miss is narrowing the selector to nonland cards, which is a different
+card: Hostage Taker may target an artifact land, and a look at the top of a
+library may have to exile a land; the holder only cannot *play* it.
+
 ### "You may play them without paying their mana costs"
 
 ```jsonc

@@ -404,6 +404,9 @@ def _land_actions(state: GameState, pid: int) -> list[Action]:
         for oid in player.exile
         if state.objects[oid].playable_by == pid
         and state.objects[oid].playable_live(state.turn)
+        # "You may **cast** that card" (Hostage Taker) reaches no land: a land
+        # is played, never cast (305.9), so the permission opens no land drop.
+        and not state.objects[oid].playable_cast_only
         and playable_condition_met(state, state.objects[oid])
     ]
     if exiled:

@@ -130292,12 +130292,12 @@
     },
     "Hostage Taker": {
       "edhrec_rank": 1861,
-      "gate": "template",
+      "gate": null,
       "name": "Hostage Taker",
-      "reason": "no template for: When this creature enters, exile another target creature or artifact until this creature l",
+      "reason": "",
       "scryfall_id": "468f63f2-d783-43e4-9e33-3d9d81dd8642",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hostile Desert": {
