@@ -70,7 +70,7 @@ each heading; this table is generated from them.
 | [Graveyard Overdrive (Modern Horizons 3 Commander)](#graveyard-overdrive-modern-horizons-3-commander) | L | high | A trigger for cards put into a graveyard | 0 |
 | [Tricky Terrain (Modern Horizons 3 Commander)](#tricky-terrain-modern-horizons-3-commander) | L | high | A trigger for cards put into a graveyard | 0 |
 | [Eldrazi Incursion (Modern Horizons 3 Commander)](#eldrazi-incursion-modern-horizons-3-commander) | L | high | Experience counters | 0 |
-| [Most Wanted (Outlaws of Thunder Junction Commander)](#most-wanted-outlaws-of-thunder-junction-commander) | L | high | nothing | 0 |
+| [Most Wanted (Outlaws of Thunder Junction Commander)](#most-wanted-outlaws-of-thunder-junction-commander) | L | high | Voting: will of the council and council's dilemma | 0 |
 | [Hail, Caesar (Fallout)](#hail-caesar-fallout) | L | high | nothing | 0 |
 | [Scrappy Survivors (Fallout)](#scrappy-survivors-fallout) | L | high | nothing | 0 |
 | [Science! (Fallout)](#science-fallout) | L | high | nothing | 0 |
@@ -133,10 +133,10 @@ each heading; this table is generated from them.
 | [Divided damage that may hit players](#divided-damage-that-may-hit-players) | M | medium | nothing | 5 |
 | [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) | M | medium | nothing | 4 |
 | [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) | M | medium | nothing | 4 |
+| [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) | M | medium | nothing | 3 |
 | [Experience counters](#experience-counters) | M | medium | nothing | 2 |
 | [Outcomes as data](#outcomes-as-data) | M | medium | nothing | 2 |
 | [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) | M | medium | nothing | 2 |
-| [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) | M | medium | nothing | 2 |
 | [Brackets, derived from the list](#brackets-derived-from-the-list) | M | medium | nothing | 1 |
 | [CPU takeover and reconnection](#cpu-takeover-and-reconnection) | M | medium | nothing | 1 |
 | [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) | M | medium | nothing | 1 |
@@ -157,8 +157,6 @@ Derived from the properties: an item is **ready** when nothing it depends
 on is still on this page, and the ready items are ranked by impact, then
 rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
-
-**In progress:** [Most Wanted (Outlaws of Thunder Junction Commander)](#most-wanted-outlaws-of-thunder-junction-commander).
 
 **Ready now, best first:**
 
@@ -224,10 +222,10 @@ same list, and `/extend-roadmap` starts at the top of it.
 60. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
 61. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
 62. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
-63. [Experience counters](#experience-counters) — M, medium
-64. [Outcomes as data](#outcomes-as-data) — M, medium
-65. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
-66. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
+63. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
+64. [Experience counters](#experience-counters) — M, medium
+65. [Outcomes as data](#outcomes-as-data) — M, medium
+66. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
 67. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
 68. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
 69. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
@@ -262,6 +260,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Graveyard Overdrive (Modern Horizons 3 Commander)](#graveyard-overdrive-modern-horizons-3-commander) — [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard)
 - [Tricky Terrain (Modern Horizons 3 Commander)](#tricky-terrain-modern-horizons-3-commander) — [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard)
 - [Eldrazi Incursion (Modern Horizons 3 Commander)](#eldrazi-incursion-modern-horizons-3-commander) — [Experience counters](#experience-counters)
+- [Most Wanted (Outlaws of Thunder Junction Commander)](#most-wanted-outlaws-of-thunder-junction-commander) — [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -710,6 +709,71 @@ generated DSL reference lists the new event.
   Pit ships in it? Recommended: plus both, since each is small and the card
   is the gate.
 
+### Voting: will of the council and council's dilemma
+
+Effort **M** · Impact **medium**, every voting card waits on it, Fateful Tempest in the Lorehold Spirit precon and Council's Judgment among them · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+Voting (701.38) is absent. [rules-coverage.md](rules-coverage.md#not-implemented)
+lists "Voting — will of the council, council's dilemma" as not implemented, and
+the shipped decks avoid it. The nearest shapes in
+`engine/effects/ops_control.py` each miss one half of it: `join_forces` asks
+every player in turn order starting with the controller, which is the order a
+vote is cast in, but it adds up mana paid rather than tallying named choices;
+`choose_mode` and `ask_mode` in `engine/effects/context.py` let one chooser
+pick among labelled options, but bind no per-option count a later effect can
+read. `for_each_player` around `choose_mode` asks the right people and keeps
+nothing.
+
+So every "each player votes for A or B" card is unwritable. Fateful Tempest,
+in the Lorehold Spirit precon, is the card that found it; Council's Judgment,
+Tivit, Seller of Secrets and the Conspiracy council cards are the same
+sentence. Its gap record is `data/authoring/gaps/fateful_tempest.json`.
+
+#### The change
+
+1. A `vote` op in `engine/effects/ops_control.py`: starting with the
+   controller and in turn order (`GameState.turn_order`, as `join_forces`
+   walks it), each player in the game chooses one of the spec's named options
+   through `ask_mode`, with the votes so far in the decision's `context` so a
+   later voter sees them (701.38a). It binds the tally under `as`, one count
+   per option, read back as `{"binding": "<as>.<option>"}`, and the winners
+   (the options with the most votes, all of them on a tie) for will of the
+   council's "if X gets more votes or the vote is tied".
+2. A `vote_cast` event emitted per vote, so "whenever a player votes" has an
+   event to name later, without adding that trigger now.
+3. `cards.loader`'s `_validate_effect` refuses a `vote` with fewer than two
+   options or a missing `as`; the verifier's auto-answer table already answers
+   `CHOOSE_MODE`, so the behaviour gate needs nothing new.
+4. Harvest: Fateful Tempest, then the catalog's other voting cards through the
+   template tier with `--retry` and one `/author-cards` wave.
+
+It does not add extra votes (Brago's Representative, Grudge Keeper's
+"whenever a player votes") or vote-changing effects; those are additions on
+the `vote_cast` event once the op exists.
+
+#### Gate
+
+A unit test under `tests/unit/` for `vote`: players asked in turn order from
+the controller, each later voter's decision carrying the earlier votes, the
+tally bound per option, the tie reported as every leading option, an eliminated
+player not asked, and the loader refusing a one-option vote. Fateful Tempest's
+six gates pass.
+
+#### Open questions
+
+- **Where a vote is asked.** `ask_mode` per voter, or a decision kind of its
+  own? Recommended: `ask_mode` with a `purpose: "vote"` tag, because the
+  client and the CPUs already answer a labelled choice and a new decision kind
+  would need its frontend label, its auto-answer and an e2e path for no new
+  rule.
+- **How the CPUs vote.** Recommended: the heuristic agent's existing label
+  answer for now, with the `purpose` tag left for a strategy to read; voting
+  well is a CPU item, not a rules one.
+- **Is it an ADR.** Recommended: no; it is an additive op, and the line in
+  rules-coverage.md moves from "not implemented" to the implemented table.
+
 ### Experience counters
 
 Effort **M** · Impact **medium**, every experience-counter commander waits on it, Meren of Clan Nel Toth and Ezuri, Claw of Progress among them · Depends on nothing · Awaiting decisions.
@@ -856,71 +920,6 @@ gates.
 - **Scope of the harvest.** The two precon cards only, or every Spacecraft
   the template tier and one wave reach? Recommended: one template-tier
   `--retry` and one `/author-cards` wave, the precon items' convention.
-
-### Voting: will of the council and council's dilemma
-
-Effort **M** · Impact **medium**, every voting card waits on it, Fateful Tempest in the Lorehold Spirit precon and Council's Judgment among them · Depends on nothing · Awaiting decisions.
-
-#### Today
-
-Voting (701.38) is absent. [rules-coverage.md](rules-coverage.md#not-implemented)
-lists "Voting — will of the council, council's dilemma" as not implemented, and
-the shipped decks avoid it. The nearest shapes in
-`engine/effects/ops_control.py` each miss one half of it: `join_forces` asks
-every player in turn order starting with the controller, which is the order a
-vote is cast in, but it adds up mana paid rather than tallying named choices;
-`choose_mode` and `ask_mode` in `engine/effects/context.py` let one chooser
-pick among labelled options, but bind no per-option count a later effect can
-read. `for_each_player` around `choose_mode` asks the right people and keeps
-nothing.
-
-So every "each player votes for A or B" card is unwritable. Fateful Tempest,
-in the Lorehold Spirit precon, is the card that found it; Council's Judgment,
-Tivit, Seller of Secrets and the Conspiracy council cards are the same
-sentence. Its gap record is `data/authoring/gaps/fateful_tempest.json`.
-
-#### The change
-
-1. A `vote` op in `engine/effects/ops_control.py`: starting with the
-   controller and in turn order (`GameState.turn_order`, as `join_forces`
-   walks it), each player in the game chooses one of the spec's named options
-   through `ask_mode`, with the votes so far in the decision's `context` so a
-   later voter sees them (701.38a). It binds the tally under `as`, one count
-   per option, read back as `{"binding": "<as>.<option>"}`, and the winners
-   (the options with the most votes, all of them on a tie) for will of the
-   council's "if X gets more votes or the vote is tied".
-2. A `vote_cast` event emitted per vote, so "whenever a player votes" has an
-   event to name later, without adding that trigger now.
-3. `cards.loader`'s `_validate_effect` refuses a `vote` with fewer than two
-   options or a missing `as`; the verifier's auto-answer table already answers
-   `CHOOSE_MODE`, so the behaviour gate needs nothing new.
-4. Harvest: Fateful Tempest, then the catalog's other voting cards through the
-   template tier with `--retry` and one `/author-cards` wave.
-
-It does not add extra votes (Brago's Representative, Grudge Keeper's
-"whenever a player votes") or vote-changing effects; those are additions on
-the `vote_cast` event once the op exists.
-
-#### Gate
-
-A unit test under `tests/unit/` for `vote`: players asked in turn order from
-the controller, each later voter's decision carrying the earlier votes, the
-tally bound per option, the tie reported as every leading option, an eliminated
-player not asked, and the loader refusing a one-option vote. Fateful Tempest's
-six gates pass.
-
-#### Open questions
-
-- **Where a vote is asked.** `ask_mode` per voter, or a decision kind of its
-  own? Recommended: `ask_mode` with a `purpose: "vote"` tag, because the
-  client and the CPUs already answer a labelled choice and a new decision kind
-  would need its frontend label, its auto-answer and an e2e path for no new
-  rule.
-- **How the CPUs vote.** Recommended: the heuristic agent's existing label
-  answer for now, with the `purpose` tag left for a strategy to read; voting
-  well is a CPU item, not a rules one.
-- **Is it an ADR.** Recommended: no; it is an additive op, and the line in
-  rules-coverage.md moves from "not implemented" to the implemented table.
 
 ### Cycling granted to cards in hand
 
@@ -2231,7 +2230,7 @@ whole-game test able to draw the deck.
 
 ### Most Wanted (Outlaws of Thunder Junction Commander)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing · **In progress**.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma).
 
 #### Today
 

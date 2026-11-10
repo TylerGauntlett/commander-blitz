@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**281 cards** blocked by **259** capabilities.
+**298 cards** blocked by **272** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -26,20 +26,23 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [basic-land-type-mana](#basic-land-type-mana) | 3 | 73 | engine |
 | [cast-trigger-x](#cast-trigger-x) | 3 | 1521 | engine, value |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 6346 | op |
+| [council-s-dilemma](#council-s-dilemma) | 3 | 3539 | decision, op |
 | [escape](#escape) | 3 | 388 | engine, static_effect |
 | [omen](#omen) | 3 | 3355 | cost, engine |
 | [random-player-choice](#random-player-choice) | 3 | 5120 | op |
 | [add-color](#add-color) | 2 | 2040 | op |
+| [all-creature-types](#all-creature-types) | 2 | 958 | static_effect |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-from-library-top-unrestricted](#cast-from-library-top-unrestricted) | 2 | 1913 | static_effect |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
-| [council-s-dilemma](#council-s-dilemma) | 2 | 4067 | decision |
+| [crime](#crime) | 2 | 2244 | trigger_event |
 | [devotion](#devotion) | 2 | 2401 | value |
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
 | [experience-counters](#experience-counters) | 2 | 1480 | engine |
 | [face-down-filter](#face-down-filter) | 2 | 5772 | selector |
 | [manifest-dread](#manifest-dread) | 2 | 5772 | op |
+| [mercenary-token](#mercenary-token) | 2 | 8312 | token |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
 | [remove-x-counters-cost](#remove-x-counters-cost) | 2 | 5399 | cost |
@@ -59,8 +62,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [add-mana-on-tap-any-color](#add-mana-on-tap-any-color) | 1 | 1052 | static_effect |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
-| [all-creature-types](#all-creature-types) | 1 | 4942 | static_effect |
 | [annihilator-grant](#annihilator-grant) | 1 | 3758 | op |
+| [assassin-token](#assassin-token) | 1 | 2604 | token |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [attack-tax-x-count](#attack-tax-x-count) | 1 | 671 | value |
 | [attacking-opponents-of-player](#attacking-opponents-of-player) | 1 | 705 | selector |
@@ -102,7 +105,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cost-reduction-per-attacker-this-turn](#cost-reduction-per-attacker-this-turn) | 1 | 9578 | value |
 | [coven](#coven) | 1 | 1129 | value |
 | [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
-| [crime](#crime) | 1 | 2244 | trigger_event |
 | [damage-player-or-planeswalker](#damage-player-or-planeswalker) | 1 | 5120 | op |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [delayed-creature-dies](#delayed-creature-dies) | 1 | 1661 | trigger_event |
@@ -119,6 +121,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
 | [embalm](#embalm) | 1 | 4333 | cost |
+| [encore](#encore) | 1 | 9330 | static_effect |
 | [energy-alternative-cost](#energy-alternative-cost) | 1 | 7462 | op |
 | [energy-count](#energy-count) | 1 | 7317 | value |
 | [entered-without-being-cast](#entered-without-being-cast) | 1 | 7379 | selector |
@@ -127,6 +130,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [every-nonbasic-land-type](#every-nonbasic-land-type) | 1 | 2635 | engine |
+| [exact-target-count](#exact-target-count) | 1 | 7243 | engine |
 | [excess-damage](#excess-damage) | 1 | 10942 | value |
 | [exile-bottom-of-library](#exile-bottom-of-library) | 1 | 4763 | selector |
 | [exile-cards-with-card-types-among-them](#exile-cards-with-card-types-among-them) | 1 | 9107 | selector |
@@ -144,6 +148,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [flash-if-targets](#flash-if-targets) | 1 | 1651 | engine |
 | [flip-coins-count](#flip-coins-count) | 1 | 6651 | value |
 | [foretold](#foretold) | 1 | 3713 | value |
+| [fraction-of-value](#fraction-of-value) | 1 | 6297 | value |
 | [free-cast-by-other-player](#free-cast-by-other-player) | 1 | 11704 | op |
 | [free-cast-once-per-turn](#free-cast-once-per-turn) | 1 | 1913 | static_effect |
 | [free-cast-one-per-card-type](#free-cast-one-per-card-type) | 1 | 2521 | engine |
@@ -168,6 +173,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [jump-start](#jump-start) | 1 | 14777 | op |
 | [karox-bladewing](#karox-bladewing) | 1 | 8889 | token |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
+| [last-known-controller](#last-known-controller) | 1 | 5109 | value |
 | [life-lost-this-turn-static-value](#life-lost-this-turn-static-value) | 1 | 2559 | value |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
 | [living-metal](#living-metal) | 1 | 11641 | keyword |
@@ -176,6 +182,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [lose-the-game](#lose-the-game) | 1 | 1512 | op |
 | [lure](#lure) | 1 | 31502 | static_effect |
 | [madness](#madness) | 1 | 3016 | replacement |
+| [mana-ability-cost-lki](#mana-ability-cost-lki) | 1 | 2247 | value |
 | [mana-ability-leading-rider](#mana-ability-leading-rider) | 1 | 4080 | engine |
 | [mana-cant-pay-generic](#mana-cant-pay-generic) | 1 | 3861 | value |
 | [mana-doubling-replacement](#mana-doubling-replacement) | 1 | 1807 | replacement |
@@ -195,8 +202,10 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mode-owned-variable-targets-mid-declaration](#mode-owned-variable-targets-mid-declaration) | 1 | 16968 | engine |
 | [modified](#modified) | 1 | 831 | selector |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
+| [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 16393 | op |
 | [multiple-kicker](#multiple-kicker) | 1 | 7023 | cost |
 | [necron-warrior-token](#necron-warrior-token) | 1 | 4207 | token |
+| [next-spell-alternative-cost](#next-spell-alternative-cost) | 1 | 10449 | op |
 | [next-spell-cost-reduction](#next-spell-cost-reduction) | 1 | 8432 | op |
 | [no-mana-cost](#no-mana-cost) | 1 | 2978 | engine |
 | [nonbasic-land-type](#nonbasic-land-type) | 1 | 10422 | selector |
@@ -208,6 +217,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [pay-energy-x](#pay-energy-x) | 1 | 5591 | cost |
 | [play-cost-paid-card](#play-cost-paid-card) | 1 | 6544 | op |
 | [playable-condition-opponent-lost-life](#playable-condition-opponent-lost-life) | 1 | 4478 | engine |
+| [playable-exiles-instead](#playable-exiles-instead) | 1 | 3152 | replacement |
 | [playable-spell-type-restriction](#playable-spell-type-restriction) | 1 | 4763 | op |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-mana-ability-until-end-of-turn](#player-mana-ability-until-end-of-turn) | 1 | 12705 | op |
@@ -219,6 +229,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prime-number](#prime-number) | 1 | 11527 | value |
 | [primo-the-indivisible](#primo-the-indivisible) | 1 | 11527 | token |
 | [proliferate-binding](#proliferate-binding) | 1 | 957 | op |
+| [protection-from-mana-value](#protection-from-mana-value) | 1 | 16276 | static_effect |
 | [protection-from-multicolored](#protection-from-multicolored) | 1 | 1516 | static_effect |
 | [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
 | [random-order-bottom](#random-order-bottom) | 1 | 1343 | op |
@@ -266,11 +277,13 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [two-share-all-card-types](#two-share-all-card-types) | 1 | 7993 | value |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
+| [undaunted](#undaunted) | 1 | 3405 | value |
 | [while-source-on-battlefield-duration](#while-source-on-battlefield-duration) | 1 | 8222 | engine |
 | [wurm-5-5-g-trample](#wurm-5-5-g-trample) | 1 | 2387 | token |
 | [x-cost-mana-restriction](#x-cost-mana-restriction) | 1 | 4046 | decision |
 | [x-sized-ability-targets](#x-sized-ability-targets) | 1 | 1668 | engine |
 | [x-sized-linked-targets](#x-sized-linked-targets) | 1 | 12855 | engine |
+| [x-sized-mode-target](#x-sized-mode-target) | 1 | 1456 | engine |
 | [x-starting-loyalty](#x-starting-loyalty) | 1 | 6660 | engine |
 | [zombie-warrior-4-4-b-vigilance](#zombie-warrior-4-4-b-vigilance) | 1 | 2449 | token |
 
@@ -675,6 +688,32 @@ Blocks **3** cards.
 
 </details>
 
+## council-s-dilemma
+
+Blocks **3** cards.
+
+- **(op)** a vote op (rule 701.38): starting with the spell's controller and going in turn order, each player chooses one object from a selector (here nonland permanents the controller doesn't control) as a vote, without targeting; the tally is kept per candidate, and the op binds 'each candidate with the most votes or tied for most' under an `as` so a following effect (exile) can act on that set
+  <br>Why the existing vocabulary won't do: for_each_player with starting_with can walk the players, but choose_permanents has no per-player chooser (only as/max_total_power/objects/prompt) and no value key counts how many players chose a given object, so neither the per-player vote nor the 'most votes or tied' tally can be said; targeting would be wrong because Council's Judgment does not target (it beats hexproof/shroud)
+- **(decision)** a voting op: starting with the controller and proceeding in turn order, each player chooses one of N named options (here 'past' or 'present'); the op binds the vote tally per option (e.g. as: 'votes' giving {binding: 'votes.past'} / {binding: 'votes.present'}) so later effects in the same spell can use each count as an amount. Each player's vote must be visible to the players voting after them (Council's dilemma / Will of the council)
+  <br>Why the existing vocabulary won't do: choose_mode is one chooser picking modes, not every player casting a public vote with a per-option tally; for_each_player + choose_mode cannot accumulate a count per chosen option into a value, and value_keys has no vote count. Also needed: the damage amount is the total mana value of the cards milled this way, which needs mill's `as` binding to be readable as a sum of mana values (mana_value_of over the binding) -- unverified, but the vote tally is the hard blocker
+- **(decision)** a voting op: starting with the controller and proceeding in turn order, each player publicly chooses one of N named options (here 'wild' or 'free'); the op binds the tally per option (e.g. as: 'votes' giving {binding: 'votes.wild'} / {binding: 'votes.free'}) so later effects in the same spell can use each count as an amount -- here reveal_until's creature count and a repeated optional put-from-hand of a permanent card
+  <br>Why the existing vocabulary won't do: value_keys has no vote count and no op in reference casts a vote; choose_mode is one chooser picking modes, and for_each_player + choose_mode cannot accumulate a per-option tally into a value. join_forces pools mana payments, not choices. Once the tally exists, the rest looks expressible: reveal_until with amount {binding: votes.wild}, selector Creature, destination battlefield, shuffle_rest; and repeat over {binding: votes.free} of a may put_onto_battlefield of a permanent card from hand
+
+<details><summary>Cards waiting on this</summary>
+
+- **Council's Judgment** (rank 3539) — `council_s_judgment`
+  - Will of the council — Starting with you, each player votes for a nonland permanent you don't control. Exile each permanent with the most votes or tied for most votes.
+- **Selvala's Stampede** (rank 4067) — `selvala_s_stampede`
+  - Council's dilemma — Starting with you, each player votes for wild or free.
+  - Reveal cards from the top of your library until you reveal a creature card for each wild vote.
+  - You may put a permanent card from your hand onto the battlefield for each free vote.
+- **Fateful Tempest** (rank 15065) — `fateful_tempest`
+  - Council's dilemma — Starting with you, each player votes for past or present.
+  - You mill a card for each past vote, then Fateful Tempest deals damage to each opponent equal to the total mana value of cards milled this way.
+  - Exile the top card of your library for each present vote.
+
+</details>
+
 ## escape
 
 Blocks **3** cards.
@@ -765,6 +804,26 @@ Blocks **2** cards.
 
 </details>
 
+## all-creature-types
+
+Blocks **2** cards.
+
+- **(static_effect)** A way to say 'is every creature type' (205.3m, the changeling characteristic): as a card's own characteristic-defining static for Changeling, and as a one-shot, until-end-of-turn grant over a selector ('creatures you control ... gain all creature types', e.g. an `add_subtype` op/static flag `all_creature_types: true` with `duration`), which every subtype reader (creature_types_of, printed_creature_types, shares-a-creature-type, subtype filters, tribal cost reductions and triggers) treats as matching every creature type rather than a finite literal list.
+  <br>Why the existing vocabulary won't do: There is no `changeling` keyword in `keywords`. `add_subtype` (op and static) and `animate`'s `subtypes` only grant a literal list, and enums.SUBTYPE_CLASS does not enumerate creature types, so no list is exhaustive; the shipped Avian Changeling template's 30-type `add_subtype` list is an approximation that misses any creature type not on it. The base P/T half is sayable (`animate` with X power/toughness and `duration`), but the card is not complete without the type grant.
+- **(static_effect)** A way for a static to say 'is every creature type' (205.3m, the changeling characteristic) for the objects its `affects` matches -- e.g. an `add_subtype` flag `all_creature_types: true` -- that the subtype readers (creature_types_of, shares-a-creature-type checks, subtype filters, tribal cost reductions and triggers) treat as matching every creature type, rather than a finite literal list.
+  <br>Why the existing vocabulary won't do: `add_subtype` only grants a literal `subtypes` list; enums.SUBTYPE_CLASS enumerates land, artifact, enchantment and planeswalker types but not creature types, so there is no registry to list exhaustively, and the shipped Maskwood Nexus template's 30-type list is an approximation that fails any creature type not on it. There is no `changeling` keyword in `keywords`.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Mirror Entity** (rank 958) — `mirror_entity`
+  - Changeling (This card is every creature type.)
+  - {X}: Until end of turn, creatures you control have base power and toughness X/X and gain all creature types.
+- **Omo, Queen of Vesuva** (rank 4942) — `omo_queen_of_vesuva`
+  - Each land with an everything counter on it is every land type in addition to its other types.
+  - Each nonland creature with an everything counter on it is every creature type.
+
+</details>
+
 ## batched-trigger-objects
 
 Blocks **2** cards.
@@ -838,25 +897,21 @@ Blocks **2** cards.
 
 </details>
 
-## council-s-dilemma
+## crime
 
 Blocks **2** cards.
 
-- **(decision)** a voting op: starting with the controller and proceeding in turn order, each player chooses one of N named options (here 'past' or 'present'); the op binds the vote tally per option (e.g. as: 'votes' giving {binding: 'votes.past'} / {binding: 'votes.present'}) so later effects in the same spell can use each count as an amount. Each player's vote must be visible to the players voting after them (Council's dilemma / Will of the council)
-  <br>Why the existing vocabulary won't do: choose_mode is one chooser picking modes, not every player casting a public vote with a per-option tally; for_each_player + choose_mode cannot accumulate a count per chosen option into a value, and value_keys has no vote count. Also needed: the damage amount is the total mana value of the cards milled this way, which needs mill's `as` binding to be readable as a sum of mana values (mana_value_of over the binding) -- unverified, but the vote tally is the hard blocker
-- **(decision)** a voting op: starting with the controller and proceeding in turn order, each player publicly chooses one of N named options (here 'wild' or 'free'); the op binds the tally per option (e.g. as: 'votes' giving {binding: 'votes.wild'} / {binding: 'votes.free'}) so later effects in the same spell can use each count as an amount -- here reveal_until's creature count and a repeated optional put-from-hand of a permanent card
-  <br>Why the existing vocabulary won't do: value_keys has no vote count and no op in reference casts a vote; choose_mode is one chooser picking modes, and for_each_player + choose_mode cannot accumulate a per-option tally into a value. join_forces pools mana payments, not choices. Once the tally exists, the rest looks expressible: reveal_until with amount {binding: votes.wild}, selector Creature, destination battlefield, shuffle_rest; and repeat over {binding: votes.free} of a may put_onto_battlefield of a permanent card from hand
+- **(trigger_event)** a trigger event fired once per spell cast or ability put on the stack whose targets include one of the controller's opponents, a permanent or spell an opponent of that controller controls, or a card in an opponent's graveyard (rule 700.13), filterable by who committed the crime (here: the trigger's controller, 'you'); combined with the existing max_per_turn: 1 for 'triggers only once each turn'
+  <br>Why the existing vocabulary won't do: becomes_target fires per targeted object and only for permanents, so it misses targeting a player or graveyard cards and would fire multiple times for one spell with several targets; spell_cast and ability_activated carry no information about whether the targets belong to an opponent; the engine has no crime concept at all
+- **(trigger_event)** a trigger event fired once per spell cast or ability put on the stack whose targets include one of the controller's opponents, a permanent or spell an opponent of that controller controls, or a card in an opponent's graveyard (rule 700.13), filterable by who committed the crime (here: cause_controller opponent)
+  <br>Why the existing vocabulary won't do: becomes_target fires per targeted object and only for permanents, so it misses targeting a player or graveyard cards and would fire multiple times for one spell with several targets; spell_cast and ability_activated carry no information about whether the targets belong to an opponent; the engine has no crime concept at all
 
 <details><summary>Cards waiting on this</summary>
 
-- **Selvala's Stampede** (rank 4067) — `selvala_s_stampede`
-  - Council's dilemma — Starting with you, each player votes for wild or free.
-  - Reveal cards from the top of your library until you reveal a creature card for each wild vote.
-  - You may put a permanent card from your hand onto the battlefield for each free vote.
-- **Fateful Tempest** (rank 15065) — `fateful_tempest`
-  - Council's dilemma — Starting with you, each player votes for past or present.
-  - You mill a card for each past vote, then Fateful Tempest deals damage to each opponent equal to the total mana value of cards milled this way.
-  - Exile the top card of your library for each present vote.
+- **Patrolling Peacemaker** (rank 2244) — `patrolling_peacemaker`
+  - Whenever an opponent commits a crime, proliferate
+- **Bandit's Haul** (rank 5311) — `bandit_s_haul`
+  - Whenever you commit a crime, put a loot counter on this artifact. This ability triggers only once each turn
 
 </details>
 
@@ -951,6 +1006,24 @@ Blocks **2** cards.
   - When you unlock this door, manifest dread, then put two +1/+1 counters and a trample counter on that creature.
   - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
   - Whenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it.
+
+</details>
+
+## mercenary-token
+
+Blocks **2** cards.
+
+- **(token)** a 1/1 red Mercenary creature token with "{T}: Target creature you control gets +1/+0 until end of turn. Activate only as a sorcery."
+  <br>Why the existing vocabulary won't do: token_ids has no Mercenary token; the nearest 1/1 red tokens (goblin_1_1_r, warrior_1_1_r, elemental_1_1_r) have the wrong creature type and lack the sorcery-speed tap pump ability
+- **(token)** a 1/1 red Mercenary creature token with "{T}: Target creature you control gets +1/+0 until end of turn. Activate only as a sorcery."
+  <br>Why the existing vocabulary won't do: token_ids has no Mercenary token; the nearest 1/1 red tokens (warrior_1_1_r, goblin_1_1_r, elemental_1_1_r) have the wrong creature type and lack the sorcery-speed tap pump ability. The rest of the card is expressible: the convoke line is a grant_pay_generic_with static (affects_spells Legendary Creature, pay_generic_with tap_creatures) and the trigger is an attacks event filtered to is_commander
+
+<details><summary>Cards waiting on this</summary>
+
+- **Angelic Sell-Sword** (rank 8312) — `angelic_sell_sword`
+  - Whenever this creature or another nontoken creature you control enters, create a 1/1 red Mercenary creature token with "{T}: Target creature you control gets +1/+0 until end of turn. Activate only as a sorcery."
+- **We Ride at Dawn** (rank 9389) — `we_ride_at_dawn`
+  - Whenever your commander attacks, create a 1/1 red Mercenary creature token with "{T}: Target creature you control gets +1/+0 until end of turn. Activate only as a sorcery."
 
 </details>
 
@@ -1281,21 +1354,6 @@ Blocks **1** card.
 
 </details>
 
-## all-creature-types
-
-Blocks **1** card.
-
-- **(static_effect)** A way for a static to say 'is every creature type' (205.3m, the changeling characteristic) for the objects its `affects` matches -- e.g. an `add_subtype` flag `all_creature_types: true` -- that the subtype readers (creature_types_of, shares-a-creature-type checks, subtype filters, tribal cost reductions and triggers) treat as matching every creature type, rather than a finite literal list.
-  <br>Why the existing vocabulary won't do: `add_subtype` only grants a literal `subtypes` list; enums.SUBTYPE_CLASS enumerates land, artifact, enchantment and planeswalker types but not creature types, so there is no registry to list exhaustively, and the shipped Maskwood Nexus template's 30-type list is an approximation that fails any creature type not on it. There is no `changeling` keyword in `keywords`.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Omo, Queen of Vesuva** (rank 4942) — `omo_queen_of_vesuva`
-  - Each land with an everything counter on it is every land type in addition to its other types.
-  - Each nonland creature with an everything counter on it is every creature type.
-
-</details>
-
 ## annihilator-grant
 
 Blocks **1** card.
@@ -1307,6 +1365,20 @@ Blocks **1** card.
 
 - **Hideous Taskmaster** (rank 3758) — `hideous_taskmaster`
   - When you cast this spell, for each opponent, gain control of up to one target creature that player controls until end of turn. Untap those creatures. They gain trample, haste, and annihilator 1 until end of turn.
+
+</details>
+
+## assassin-token
+
+Blocks **1** card.
+
+- **(token)** a 1/1 black Assassin creature token with deathtouch and haste
+  <br>Why the existing vocabulary won't do: token_ids has only assassin_1_1_b_lose_game (no deathtouch or haste, plus an unprinted 'loses the game' trigger) and snake_1_1_b_deathtouch (wrong creature type, no haste); the rest of the card (become_monarch on self_enters, upkeep trigger with an is_monarch condition) is expressible
+
+<details><summary>Cards waiting on this</summary>
+
+- **Queen Marchesa** (rank 2604) — `queen_marchesa`
+  - At the beginning of your upkeep, if an opponent is the monarch, create a 1/1 black Assassin creature token with deathtouch and haste.
 
 </details>
 
@@ -1898,20 +1970,6 @@ Blocks **1** card.
 
 </details>
 
-## crime
-
-Blocks **1** card.
-
-- **(trigger_event)** a trigger event fired once per spell cast or ability put on the stack whose targets include one of the controller's opponents, a permanent or spell an opponent of that controller controls, or a card in an opponent's graveyard (rule 700.13), filterable by who committed the crime (here: cause_controller opponent)
-  <br>Why the existing vocabulary won't do: becomes_target fires per targeted object and only for permanents, so it misses targeting a player or graveyard cards and would fire multiple times for one spell with several targets; spell_cast and ability_activated carry no information about whether the targets belong to an opponent; the engine has no crime concept at all
-
-<details><summary>Cards waiting on this</summary>
-
-- **Patrolling Peacemaker** (rank 2244) — `patrolling_peacemaker`
-  - Whenever an opponent commits a crime, proliferate
-
-</details>
-
 ## damage-player-or-planeswalker
 
 Blocks **1** card.
@@ -2141,6 +2199,20 @@ Blocks **1** card.
 
 </details>
 
+## encore
+
+Blocks **1** card.
+
+- **(static_effect)** a static that grants encore to cards in your graveyard matching a filter (creature cards with an outlaw subtype: Assassin, Mercenary, Pirate, Rogue, Warlock), with the encore cost set per card to generic mana equal to that card's own mana value; encore itself being a graveyard-activated, sorcery-speed ability whose cost exiles the card and whose effect creates, for each opponent, a token copy of it with haste that must attack that opponent this turn and is sacrificed at the beginning of the next end step
+  <br>Why the existing vocabulary won't do: There is no encore keyword or card-level cost key; the grant_ability static only reaches permanents (a granted activated ability works on the battlefield only), cast_from_graveyard/grant_graveyard_cast give cast permissions rather than an activated ability, and no cost or value can price an ability at the mana value of the card it is granted to
+
+<details><summary>Cards waiting on this</summary>
+
+- **Graywater's Fixer** (rank 9330) — `graywater_s_fixer`
+  - Each outlaw creature card in your graveyard has encore {X}, where X is its mana value
+
+</details>
+
 ## energy-alternative-cost
 
 Blocks **1** card.
@@ -2252,6 +2324,20 @@ Blocks **1** card.
 
 - **Planar Nexus** (rank 2635) — `planar_nexus`
   - This land is every nonbasic land type. (Nonbasic land types include Cave, Desert, Gate, Lair, Locus, Mine, Power-Plant, Sphere, Tower, and Urza's.)
+
+</details>
+
+## exact-target-count
+
+Blocks **1** card.
+
+- **(engine)** A fixed-size target spec (`count: 6`, no `up_to`, no `min_count`, not `optional`) must be declarable only when that many distinct legal targets exist (601.2c): with fewer than six creatures on the battlefield Hex cannot be cast at all. `targeting._spec_options` must return no choice when len(options) < count for a fixed count above 1, instead of offering combinations of min(count, len(options))
+  <br>Why the existing vocabulary won't do: Every printed word is expressible: a `permanent` target spec t1 with `count: 6` and selector {types: [Creature], zone: battlefield}, and `destroy` on {target: t1}. But `targeting._spec_options` builds `itertools.combinations(options, min(count, len(options)))` for a fixed count > 1, so the spell is offered with fewer targets than printed. Verified with a scratch run of verify(): the draft passed all six gates by casting Hex at the sandbox's FOUR creatures (battlefield_count 30, opponent_battlefield_count 3 including a dependent Aura), a position where the printed card is uncastable -- the shipped card would be strictly better than printed (a one-sided wipe of a small board). `up_to`/`min_count` describe 'up to six' / 'one to six', which are different cards
+
+<details><summary>Cards waiting on this</summary>
+
+- **Hex** (rank 7243) — `hex`
+  - Destroy six target creatures.
 
 </details>
 
@@ -2497,6 +2583,20 @@ Blocks **1** card.
 
 - **Haunting Voyage** (rank 3713) — `haunting_voyage`
   - If this spell was foretold, return all creature cards of that type from your graveyard to the battlefield instead.
+
+</details>
+
+## fraction-of-value
+
+Blocks **1** card.
+
+- **(value)** a value expression that divides another value by an arbitrary printed divisor with a printed rounding direction, e.g. {"fraction": {"of": {"life_of": {"binding": "each_player"}}, "divisor": 3, "round": "up"}}, read inside a for_each_player so each player's lose_life amount is ceil(their life / 3)
+  <br>Why the existing vocabulary won't do: The only division in value_keys is `half` ({"half": {"of": v, "round": "up"|"down"}}), fixed at a divisor of 2; `times`, `minus`, `sum`, `min` and `max` cannot compose an exact ceil(n/3) for every life total, so `lose_life` with `life_of` can only take half or all of a life total
+
+<details><summary>Cards waiting on this</summary>
+
+- **Dire Fleet Ravager** (rank 6297) — `dire_fleet_ravager`
+  - When this creature enters, each player loses a third of their life, rounded up.
 
 </details>
 
@@ -2840,6 +2940,20 @@ Blocks **1** card.
 
 </details>
 
+## last-known-controller
+
+Blocks **1** card.
+
+- **(value)** a player spec (or a DIES/LEAVES_BATTLEFIELD event binding such as `had_controller`) naming the player who controlled the creature as it last existed on the battlefield (608.2h), so "each of its controller's opponents" can be written as {"not": {<that controller>}} on a creature_dies trigger
+  <br>Why the existing vocabulary won't do: `{"not": {"controller_of": "subject"}}` is the near miss: `controller_of` reads the bound object's current `controller`, and on a death that object is already in the graveyard after `reset_permanent_state` has put control back to the owner. zones.move_object snapshots `controller_before` but passes it only to the SACRIFICED event, and the DIES payload carries had_counters/had_power/etc. but no controller. So a stolen creature with a bounty counter dying would reward the owner's opponents (including the thief) instead of the controller's opponents (including the owner) -- a different card. The rest of the line is expressible: creature_dies with controller any, condition counters_had "bounty" >= 1, then draw 1 and gain_life 2 for each player in the spec.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Bounty Board** (rank 5109) — `bounty_board`
+  - Whenever a creature with a bounty counter on it dies, each of its controller's opponents draws a card and gains 2 life.
+
+</details>
+
 ## life-lost-this-turn-static-value
 
 Blocks **1** card.
@@ -2953,6 +3067,20 @@ Blocks **1** card.
 
 - **Necrogoyf** (rank 3016) — `necrogoyf`
   - Madness {1}{B}{B} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)
+
+</details>
+
+## mana-ability-cost-lki
+
+Blocks **1** card.
+
+- **(value)** a mana ability whose add_mana amount reads the counters its own source had as the source was sacrificed to pay the ability's cost: `counters_on` over the `as` binding of a self-sacrifice cost (or a pre-cost snapshot of the source) honoured by `costs.mana_amount`
+  <br>Why the existing vocabulary won't do: Non-mana activated abilities already do this (Crowded Crypt, Wickersmith's Tools: cost `sacrifice` with `as: "sacrificed"`, effect reads `counters_on {binding: sacrificed}`), but a mana ability never runs its effects: `Game._activate_mana` pays the cost (sacrificing the artifact) and then `activate_mana_ability` -> `costs.mana_amount` evaluates `ability.mana_amount` in a fresh EffectContext with no cost bindings, reading the live source, which is by then in the graveyard with its counters gone, so X would be 0. `counters_had` is bound only by dies/leaves triggers, and `snapshot` is an effect op, which a mana ability may not contain. The first line ({T}: Add {R} with an `add_counters` stash rider on self) is expressible; the card is filed whole because a partial answer is not allowed.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Glittering Stockpile** (rank 2247) — `glittering_stockpile`
+  - {T}, Sacrifice this artifact: Add X mana of any one color, where X is the number of stash counters on this artifact
 
 </details>
 
@@ -3224,6 +3352,20 @@ Blocks **1** card.
 
 </details>
 
+## move-any-number-of-counters
+
+Blocks **1** card.
+
+- **(op)** move_counters with a named counter kind (+1/+1) and any_number: for each permanent matched by `from` (other permanents you control with +1/+1 counters), ask on resolution how many of that kind to move, 0 up to what it holds, and move them onto `objects` (this creature)
+  <br>Why the existing vocabulary won't do: move_counters' any_number path (_move_any_number) only runs beside any_kind and asks once per kind the source holds, ignoring `counter`, so it would let shield, loyalty or other counters move too; plain move_counters with counter +1/+1 moves all of them or a fixed `amount` with no choice; choose_number's max is a printed integer, not a value like counters_on each; may.x needs a mana payment; distribute_moved_counters moves from this creature outward, the reverse direction
+
+<details><summary>Cards waiting on this</summary>
+
+- **Aetherborn Marauder** (rank 16393) — `aetherborn_marauder`
+  - When this creature enters, move any number of +1/+1 counters from other permanents you control onto this creature.
+
+</details>
+
 ## multiple-kicker
 
 Blocks **1** card.
@@ -3251,6 +3393,20 @@ Blocks **1** card.
 
 - **Biotransference** (rank 4207) — `biotransference`
   - Whenever you cast an artifact spell, you lose 1 life and create a 2/2 black Necron Warrior artifact creature token.
+
+</details>
+
+## next-spell-alternative-cost
+
+Blocks **1** card.
+
+- **(op)** a one-shot op, usable from an activated ability, that gives its controller an optional alternative cost (118.9) for the next spell they cast this turn: pay life equal to that spell's mana value instead of its mana cost. The grant is used up by the next spell cast (whether or not the option is taken) and expires at end of turn
+  <br>Why the existing vocabulary won't do: next_spell_cost_reduction is single-use and lasts this turn but only takes a fixed generic `amount` off the cost, with no alternative price. The granted_alternative_cost static replaces the mana cost with life, but it is a continuous static tied to its permanent rather than a one-shot next-spell grant, and its loader only accepts a fixed whole-number pay_life, not life equal to the spell's mana value. playable_pay_life_instead and the Citadel's pay_life_instead do charge life equal to mana value, but only on cards an effect made playable (exiled cards, the library top), not on any next spell cast from hand
+
+<details><summary>Cards waiting on this</summary>
+
+- **Marshland Bloodcaster** (rank 10449) — `marshland_bloodcaster`
+  - {1}{B}, {T}: Rather than pay the mana cost of the next spell you cast this turn, you may pay life equal to that spell's mana value.
 
 </details>
 
@@ -3413,6 +3569,20 @@ Blocks **1** card.
 
 </details>
 
+## playable-exiles-instead
+
+Blocks **1** card.
+
+- **(replacement)** a flag on the `exile` / `grant_playable` play permission (e.g. `playable_exiles: true`) meaning "if a spell cast under this permission would be put into a graveyard, exile it instead" -- applied on resolution, on being countered and on fizzling, for the cast that used the permission
+  <br>Why the existing vocabulary won't do: `exile` takes `playable: this_turn`, `playable_cast_only` and `any_type`, which cover the first two clauses, but has no key for the graveyard-to-exile replacement. `cast_from_hand`/`cast_card` carry `exiles` (StackItem.exiles_instead) but cast immediately during resolution rather than granting a cast-this-turn permission. `grant_playable`'s `as_flashback` sets `obj.playable_exiles`, but that is only read in `_place_after_resolution`; the countered path (ops_stack) and fizzle path read only `StackItem.exiles_instead`, so a countered spell would land in the opponent's graveyard -- not exact, and a misuse of the flashback key
+
+<details><summary>Cards waiting on this</summary>
+
+- **Dire Fleet Daredevil** (rank 3152) — `dire_fleet_daredevil`
+  - When this creature enters, exile target instant or sorcery card from an opponent's graveyard. You may cast it this turn, and mana of any type can be spent to cast that spell. If that spell would be put into a graveyard, exile it instead
+
+</details>
+
 ## playable-spell-type-restriction
 
 Blocks **1** card.
@@ -3564,6 +3734,20 @@ Blocks **1** card.
 
 - **Ripples of Potential** (rank 957) — `ripples_of_potential`
   - Proliferate, then choose any number of permanents you control that had a counter put on them this way. Those permanents phase out
+
+</details>
+
+## protection-from-mana-value
+
+Blocks **1** card.
+
+- **(static_effect)** a protection quality keyed on mana value: the `protection` static (and `grant_protection` op) taking a mana-value comparison such as `from_mana_value: {"op": ">=", "value": 3}`, so that damage from, blocking by, targeting by, and enchanting/equipping by any source or spell with mana value 3 or greater is stopped (702.16)
+  <br>Why the existing vocabulary won't do: The `protection` static's qualities are only `from_colors`, `from_colorless`, `from_subtypes` and `from_types` (plus `from_everything` on `grant_protection`); none reads a source's mana value. Lifelink alone is a keyword, but writing it without the protection clause would be a partial card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Mistmeadow Skulk** (rank 16276) — `mistmeadow_skulk`
+  - Lifelink, protection from mana value 3 or greater
 
 </details>
 
@@ -4234,6 +4418,20 @@ Blocks **1** card.
 
 </details>
 
+## undaunted
+
+Blocks **1** card.
+
+- **(value)** a card-level cost_reduction head that counts players rather than objects: {1} less for each opponent the caster has (e.g. {"opponents": "you"}, or a player_count head in cost_reduction_keys), read at pricing time, so a four-player pod discounts {3}
+  <br>Why the existing vocabulary won't do: cost_reduction_keys (amount, count, distinct_mana_values, energy_spent_this_turn, greatest_count, greatest_mana_value, total_mana_value, total_power) all count objects matched by a filter or a turn ledger; none counts players. `amount` is a flat number, so it would be right only at one pod size. The value leaf `player_count` exists in value_keys but cost_reduction cannot read an arbitrary value.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Curtains' Call** (rank 3405) — `curtains_call`
+  - Undaunted (This spell costs {1} less to cast for each opponent.)
+
+</details>
+
 ## while-source-on-battlefield-duration
 
 Blocks **1** card.
@@ -4301,6 +4499,20 @@ Blocks **1** card.
 
 - **Suffer the Past** (rank 12855) — `suffer_the_past`
   - Exile X target cards from target player's graveyard.
+
+</details>
+
+## x-sized-mode-target
+
+Blocks **1** card.
+
+- **(engine)** a mode-owned target spec (`mode: 0`) whose size is the X announced for the spell (`count: {"x": true}`), so a modal spell's bullet can say "X target artifacts and/or enchantments" and only declare those targets when that mode is chosen
+  <br>Why the existing vocabulary won't do: `count: {"x": true}` is legal on a spell's card-level targets (Pest Infestation, Curse of the Swine), and `mode` is how Abrade gives each bullet its own target, but `loader.targets._check_mode_targets` refuses a mode-owned spec whose count is not a literal or "any" ("a mode-owned target's size must be printed"). Dropping `mode` would demand the artifact targets and the player target together whichever bullet is chosen, and `count: "any"` is not exactly X
+
+<details><summary>Cards waiting on this</summary>
+
+- **Heliod's Intervention** (rank 1456) — `heliod_s_intervention`
+  - • Destroy X target artifacts and/or enchantments.
 
 </details>
 
