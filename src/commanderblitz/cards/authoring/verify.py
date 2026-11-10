@@ -50,6 +50,7 @@ from commanderblitz.engine.state import new_object
 from ..loader import compile_card
 from ..loader.linking import link_faces, validate_token_references
 from ..loader.vocabulary import KNOWN_KEYWORDS, normalize_keyword
+from ..loader.walk import _walk_effect_specs
 from ..proxy import CardFacts, lift_keywords
 from ..proxy import _residual as proxy_residual
 from ..registry import CardRegistry
@@ -1457,9 +1458,10 @@ def _play_once(registry: CardRegistry, card: CardDef) -> list[str]:
     if not played.is_permanent:
         # A spell goes to its owner's graveyard -- unless the card itself says
         # otherwise, which two riders do: "Exile Teferi's Protection" and
-        # rebound's "exile it as it resolves". The gate asks whether the card
-        # ended where a card of *its* kind ends, so it has to read the card
-        # rather than the type. Widened only by a declared flag: a spell that
+        # rebound's "exile it as it resolves" (cipher's encoding is admitted by
+        # `encoded_itself` below, on the link it wrote). The gate asks whether
+        # the card ended where a card of *its* kind ends, so it has to read the
+        # card rather than the type. Widened only by a declared flag: a spell that
         # merely finds itself in exile still fails, which is what this catches.
         spell_zones = {Zone.GRAVEYARD}
         if played.exiles_itself or played.rebound or played.suspends_itself is not None:
@@ -1472,9 +1474,28 @@ def _play_once(registry: CardRegistry, card: CardDef) -> list[str]:
             # same terms as the two above: a **declared** flag, so a spell that
             # merely finds itself in a library still fails the gate.
             spell_zones.add(Zone.LIBRARY)
+        if encoded_itself(played, obj):
+            spell_zones.add(Zone.EXILE)
         if obj.zone not in spell_zones:
             return [f"{card.id} is a spell but ended in {obj.zone.value}"]
     return []
+
+
+def encoded_itself(played: CardDef, obj: Any) -> bool:
+    """Did this cipher spell exile itself encoded on a creature (702.99a)?
+
+    Cipher's exile is a rider on the destination the `encode` op arms during
+    `spell_effects`, so it is admitted the way the declared flags above are --
+    but on the **link**, not the declaration. Cipher is optional and needs a
+    creature you control: a cipher spell that encoded nothing goes to the
+    graveyard like any other, and must still be required to. So both halves:
+    the card declares `encode` among its spell effects, and the resolved card
+    carries `encoded_on`. ``tests/cards/test_every_card_works.py`` reads this
+    same predicate, so the two harnesses cannot disagree about it.
+    """
+    if getattr(obj, "encoded_on", None) is None:
+        return False
+    return any(spec.get("op") == "encode" for spec in _walk_effect_specs(played.spell_effects))
 
 
 def _play_and_check(registry: CardRegistry, card: CardDef, expectation: dict) -> list[str]:

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**282 cards** blocked by **261** capabilities.
+**281 cards** blocked by **260** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -150,7 +150,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [free-cast-this-turn](#free-cast-this-turn) | 1 | 6651 | op |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
 | [fully-unlock-room](#fully-unlock-room) | 1 | 3452 | trigger_event |
-| [gate-cipher-spell-exile-allowance](#gate-cipher-spell-exile-allowance) | 1 | 5098 | engine |
 | [goad-without-goaded](#goad-without-goaded) | 1 | 973 | op |
 | [gold-token](#gold-token) | 1 | 705 | token |
 | [grant-cycling-to-cards-in-hand](#grant-cycling-to-cards-in-hand) | 1 | 5169 | static_effect |
@@ -2582,20 +2581,6 @@ Blocks **1** card.
 - **Fear of Sleep Paralysis** (rank 3452) — `fear_of_sleep_paralysis`
   - Eerie — Whenever this creature or another enchantment you control enters and whenever you fully unlock a Room, tap up to one target creature and put a stun counter on it.
   - Stun counters can't be removed from permanents your opponents control. (They won't untap if they have stun counters.)
-
-</details>
-
-## gate-cipher-spell-exile-allowance
-
-Blocks **1** card.
-
-- **(engine)** a verification-harness allowance: gate 4's spell-zone check (verify._play_once, and its twin in tests/cards/test_every_card_works.py) admits exile for a spell whose spell_effects declare `encode`, the way a declared exiles_itself / rebound / suspends_itself flag does, because cipher's encoding is a rider on the destination that sends the resolved card to exile (702.99a)
-  <br>Why the existing vocabulary won't do: The DSL already says the whole card: a card_in_graveyard target (any_types Instant/Sorcery, controller opponent), cast_from_hand with objects {target: t1} and exiles: true, and cipher as encode (optional, count 1) plus an exile-zone deals_combat_damage_to_player trigger filtered on encoded_by self running cast_copy. build_sandbox now puts a targetless instant or sorcery in player 1's graveyard for it (graveyard_spell_props), so the card is cast; but the gate's auto-answer encodes it on a creature, the card correctly ends in exile, and gate 4 rejects it with 'arcane_heist is a spell but ended in exile' because the spell-zone allowance widens only for a declared flag and encode is not one. No shipped card uses encode, so every cipher spell fails the same way. Dropping cipher would describe a different card.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Arcane Heist** (rank 5098) — `arcane_heist`
-  - You may cast target instant or sorcery card from an opponent's graveyard without paying its mana cost. If that spell would be put into their graveyard, exile it instead.
 
 </details>
 

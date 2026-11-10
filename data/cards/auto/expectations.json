@@ -898,6 +898,12 @@
       "graveyard"
     ]
   },
+  "arcane_heist": {
+    "graveyard_size": {
+      "1": 0
+    },
+    "zone": "exile"
+  },
   "arcane_lighthouse": {
     "zone": "battlefield"
   },

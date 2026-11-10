@@ -11342,12 +11342,12 @@
     },
     "Arcane Heist": {
       "edhrec_rank": 5098,
-      "gate": "template",
+      "gate": null,
       "name": "Arcane Heist",
-      "reason": "no template for: You may cast target instant or sorcery card from an opponent's graveyard without paying it",
+      "reason": "",
       "scryfall_id": "3ceb13f4-ac9e-4ddd-9170-545f8d37b87a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Arcane Infusion": {

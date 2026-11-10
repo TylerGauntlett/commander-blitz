@@ -602,6 +602,107 @@ class TestASelfLegalTriggerIsExercisedAgainstTheBoard:
         assert "ended in graveyard" in verdict.reason
 
 
+_CIPHER_TEXT = (
+    "Cipher (Then you may exile this spell card encoded on a creature you control. "
+    "Whenever that creature deals combat damage to a player, its controller may cast "
+    "a copy of the encoded card without paying its mana cost.)"
+)
+
+
+def _cipher_spell(**encode_selector) -> dict:
+    """ "Draw a card. Cipher" -- the smallest spell that carries the rider."""
+    return {
+        "id": "auto_test_ciphered_insight",
+        "name": "Auto Test Ciphered Insight",
+        "oracle_text": f"Draw a card.\n{_CIPHER_TEXT}",
+        "mana_cost": "{2}{U}",
+        "types": ["Sorcery"],
+        "colors": ["U"],
+        "color_identity": ["U"],
+        "spell_effects": [
+            {"op": "draw", "amount": 1},
+            {
+                "op": "encode",
+                "objects": {
+                    "zone": "battlefield",
+                    "controller": "you",
+                    "types": ["Creature"],
+                    "count": 1,
+                    "optional": True,
+                    **encode_selector,
+                },
+            },
+        ],
+        "abilities": [
+            {
+                "kind": "triggered",
+                "text": _CIPHER_TEXT,
+                "active_zones": ["exile"],
+                "trigger": {
+                    "event": "deals_combat_damage_to_player",
+                    "controller": "any",
+                    "filter": {"controller": "any", "encoded_by": "self"},
+                },
+                "effects": [{"op": "cast_copy", "optional": True}],
+            }
+        ],
+    }
+
+
+class TestACipherSpellThatEncodedEndsInExile:
+    """Gate 4 admits exile for a cipher spell -- on the link, not the keyword.
+
+    702.99a: "as a spell with cipher resolves, you may exile it encoded on a
+    creature you control". Arcane Heist resolved correctly, encoded on the
+    sandbox's creature, ended in exile, and gate 4 rejected it as "a spell but
+    ended in exile", because the spell-zone set widened only for declared
+    flags. Cipher is optional and needs a creature, though, so declaring
+    `encode` is not enough: a cipher spell that encoded nothing must still end
+    in the graveyard. Both halves are asserted, because the second is what
+    stops the first from being a weakened gate.
+    """
+
+    def test_a_cipher_spell_that_encoded_clears_every_gate_in_exile(self, hand_written):
+        verdict = V.verify(_cipher_spell(), {"zone": "exile"}, hand_written)
+        assert verdict.ok, str(verdict)
+
+    def test_it_is_exiled_because_it_encoded(self, hand_written):
+        card = V.compile_card(V.CardModel.model_validate(_cipher_spell()))
+        merged = V.CardRegistry({**{c.id: c for c in hand_written}, card.id: card})
+        game, oid, _, _ = V._cast(merged, card)
+
+        obj = game.state.objects[oid]
+        assert obj.zone is V.Zone.EXILE
+        encoded = game.state.objects[obj.encoded_on]
+        assert encoded.zone is V.Zone.BATTLEFIELD and encoded.controller == 0
+        assert V.encoded_itself(card, obj)
+
+    def test_a_cipher_spell_with_nothing_to_encode_goes_to_the_graveyard(self, hand_written):
+        """No snow creature in the sandbox, so the rider never arms."""
+        payload = _cipher_spell(supertypes=["Snow"])
+        assert V.verify(payload, {"zone": "graveyard"}, hand_written).ok
+
+        card = V.compile_card(V.CardModel.model_validate(payload))
+        merged = V.CardRegistry({**{c.id: c for c in hand_written}, card.id: card})
+        game, oid, _, _ = V._cast(merged, card)
+        obj = game.state.objects[oid]
+        assert obj.zone is V.Zone.GRAVEYARD
+        # Had it ended in exile anyway, gate 4 would have refused it: the
+        # declaration alone admits nothing.
+        assert obj.encoded_on is None
+        assert not V.encoded_itself(card, obj)
+
+    def test_the_link_without_the_declaration_admits_nothing(self, hand_written):
+        """A spell that never declared `encode` is not excused by a stray link."""
+        cipher = V.compile_card(V.CardModel.model_validate(_cipher_spell()))
+        merged = V.CardRegistry({**{c.id: c for c in hand_written}, cipher.id: cipher})
+        game, oid, _, _ = V._cast(merged, cipher)
+        obj = game.state.objects[oid]
+        assert obj.encoded_on is not None
+        plain = V.compile_card(V.CardModel.model_validate(DIVINATION))
+        assert not V.encoded_itself(plain, obj)
+
+
 class TestTheLegendaryProp:
     """What the sandbox gained, and what it was not allowed to cost."""
 

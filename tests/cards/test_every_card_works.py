@@ -19,6 +19,7 @@ import pytest
 from commanderblitz.cards.authoring.verify import (
     _pass_for_the_opponent,
     check_expectation,
+    encoded_itself,
     graveyard_spell_props,
     sandbox_turn,
     spare_cards_in_hand,
@@ -395,6 +396,11 @@ class TestEveryCardIsPlayable:
                 spell_zones.add(Zone.EXILE)
             if played.tucks_itself is not None:
                 spell_zones.add(Zone.LIBRARY)
+            # Cipher (702.99a): exile only when the card actually encoded --
+            # the same predicate `authoring/verify.py` reads, imported rather
+            # than restated so the twins cannot drift.
+            if encoded_itself(played, obj):
+                spell_zones.add(Zone.EXILE)
             assert obj.zone in spell_zones, (
                 f"{card_id} is a spell but ended in {obj.zone.value}"
             )
