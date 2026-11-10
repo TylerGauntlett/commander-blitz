@@ -8621,6 +8621,39 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "damage_multiplier": 2,
+          "damage_source": {
+            "controller": "you"
+          },
+          "effect": "replace_damage",
+          "kind": "static",
+          "text": "If a source you control would deal damage to a permanent or player, it deals double that damage to that permanent or player instead."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "angrath_s_marauders",
+      "mana_cost": "{5}{R}{R}",
+      "name": "Angrath's Marauders",
+      "oracle_text": "If a source you control would deal damage to a permanent or player, it deals double that damage to that permanent or player instead.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Pirate"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B",
         "W"
@@ -16602,6 +16635,54 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "back_in_town",
+      "mana_cost": "{X}{2}{B}",
+      "name": "Back in Town",
+      "oracle_text": "Return X target outlaw creature cards from your graveyard to the battlefield. (Assassins, Mercenaries, Pirates, Rogues, and Warlocks are outlaws.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "you",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "put_onto_battlefield"
+        }
+      ],
+      "targets": [
+        {
+          "count": {
+            "x": true
+          },
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "controller": "you",
+            "subtypes": [
+              "Assassin",
+              "Mercenary",
+              "Pirate",
+              "Rogue",
+              "Warlock"
+            ],
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -27147,6 +27228,99 @@
       ]
     },
     {
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "boros_charm",
+      "mana_cost": "{R}{W}",
+      "name": "Boros Charm",
+      "oracle_text": "Choose one —\n• Boros Charm deals 4 damage to target player or planeswalker.\n• Permanents you control gain indestructible until end of turn.\n• Target creature gains double strike until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 4
+                  },
+                  "op": "damage",
+                  "target": "burned"
+                }
+              ],
+              "label": "Boros Charm deals 4 damage to target player or planeswalker."
+            },
+            {
+              "effects": [
+                {
+                  "keywords": [
+                    "indestructible"
+                  ],
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "zone": "battlefield"
+                  },
+                  "op": "grant_keyword"
+                }
+              ],
+              "label": "Permanents you control gain indestructible until end of turn."
+            },
+            {
+              "effects": [
+                {
+                  "keywords": [
+                    "double_strike"
+                  ],
+                  "objects": {
+                    "target": "striker"
+                  },
+                  "op": "grant_keyword"
+                }
+              ],
+              "label": "Target creature gains double strike until end of turn."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "burned",
+          "kind": "any",
+          "mode": 0,
+          "selector": {
+            "types": [
+              "Planeswalker"
+            ]
+          }
+        },
+        {
+          "count": 1,
+          "id": "striker",
+          "kind": "permanent",
+          "mode": 2,
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -32971,6 +33145,83 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Captain Lannery Storm attacks, create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 0
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you sacrifice a Treasure, Captain Lannery Storm gets +1/+0 until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "sacrificed",
+            "filter": {
+              "subtypes": [
+                "Treasure"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "captain_lannery_storm",
+      "keywords": [
+        "haste"
+      ],
+      "mana_cost": "{2}{R}",
+      "name": "Captain Lannery Storm",
+      "oracle_text": "Haste\nWhenever Captain Lannery Storm attacks, create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")\nWhenever you sacrifice a Treasure, Captain Lannery Storm gets +1/+0 until end of turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Pirate"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_player": "you",
           "condition": {
             "cmp": ">",
@@ -33173,6 +33424,75 @@
       "subtypes": [
         "Human",
         "Soldier"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{3}{R}"
+          },
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "gain_control"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "untap"
+            },
+            {
+              "duration": "until_end_of_turn",
+              "keyword": "haste",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{3}{R}: Gain control of target creature an opponent controls until end of turn. Untap that creature. It gains haste until end of turn. Activate only as a sorcery."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "captivating_crew",
+      "mana_cost": "{3}{R}",
+      "name": "Captivating Crew",
+      "oracle_text": "{3}{R}: Gain control of target creature an opponent controls until end of turn. Untap that creature. It gains haste until end of turn. Activate only as a sorcery.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Pirate"
       ],
       "toughness": 3,
       "types": [
@@ -37396,6 +37716,88 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "add_subtype",
+          "kind": "static",
+          "subtypes": [
+            "Human",
+            "Soldier",
+            "Warrior",
+            "Wizard",
+            "Cleric",
+            "Rogue",
+            "Knight",
+            "Elf",
+            "Goblin",
+            "Zombie",
+            "Vampire",
+            "Spirit",
+            "Beast",
+            "Elemental",
+            "Dragon",
+            "Angel",
+            "Demon",
+            "Sphinx",
+            "Bird",
+            "Cat",
+            "Snake",
+            "Insect",
+            "Serpent",
+            "Giant",
+            "Orc",
+            "Merfolk",
+            "Druid",
+            "Shaman",
+            "Bear",
+            "Wall"
+          ],
+          "text": "Changeling"
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "cant_block",
+          "kind": "static",
+          "text": "This creature can't block and can't be blocked."
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "blockers": {
+            "controller": "any"
+          },
+          "effect": "block_restriction",
+          "kind": "static",
+          "text": "This creature can't block and can't be blocked."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "changeling_outcast",
+      "mana_cost": "{B}",
+      "name": "Changeling Outcast",
+      "oracle_text": "Changeling (This card is every creature type.)\nThis creature can't block and can't be blocked.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Shapeshifter"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
       ]
     },
     {

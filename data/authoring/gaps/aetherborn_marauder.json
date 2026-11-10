@@ -1,0 +1,18 @@
+{
+  "card_id": "aetherborn_marauder",
+  "name": "Aetherborn Marauder",
+  "oracle_text": "Flying, lifelink\nWhen this creature enters, move any number of +1/+1 counters from other permanents you control onto this creature.",
+  "blocked_sentences": [
+    "When this creature enters, move any number of +1/+1 counters from other permanents you control onto this creature."
+  ],
+  "needs": [
+    {
+      "capability": "move_any_number_of_counters",
+      "kind": "op",
+      "what": "move_counters with a named counter kind (+1/+1) and any_number: for each permanent matched by `from` (other permanents you control with +1/+1 counters), ask on resolution how many of that kind to move, 0 up to what it holds, and move them onto `objects` (this creature)",
+      "why_existing_wont_do": "move_counters' any_number path (_move_any_number) only runs beside any_kind and asks once per kind the source holds, ignoring `counter`, so it would let shield, loyalty or other counters move too; plain move_counters with counter +1/+1 moves all of them or a fixed `amount` with no choice; choose_number's max is a printed integer, not a value like counters_on each; may.x needs a mana payment; distribute_moved_counters moves from this creature outward, the reverse direction"
+    }
+  ],
+  "closest_existing": ["move_counters", "distribute_moved_counters"],
+  "confidence": "high"
+}

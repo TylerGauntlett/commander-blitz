@@ -1,0 +1,16 @@
+{
+  "card_id": "bandit_s_haul",
+  "name": "Bandit's Haul",
+  "oracle_text": "Whenever you commit a crime, put a loot counter on this artifact. This ability triggers only once each turn. (Targeting opponents, anything they control, and/or cards in their graveyards is a crime.)\n{T}: Add one mana of any color.\n{2}, {T}, Remove two loot counters from this artifact: Draw a card.",
+  "blocked_sentences": [
+    "Whenever you commit a crime, put a loot counter on this artifact. This ability triggers only once each turn"
+  ],
+  "needs": [{
+    "capability": "crime",
+    "kind": "trigger_event",
+    "what": "a trigger event fired once per spell cast or ability put on the stack whose targets include one of the controller's opponents, a permanent or spell an opponent of that controller controls, or a card in an opponent's graveyard (rule 700.13), filterable by who committed the crime (here: the trigger's controller, 'you'); combined with the existing max_per_turn: 1 for 'triggers only once each turn'",
+    "why_existing_wont_do": "becomes_target fires per targeted object and only for permanents, so it misses targeting a player or graveyard cards and would fire multiple times for one spell with several targets; spell_cast and ability_activated carry no information about whether the targets belong to an opponent; the engine has no crime concept at all"
+  }],
+  "closest_existing": ["becomes_target", "spell_cast", "ability_activated"],
+  "confidence": "high"
+}

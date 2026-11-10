@@ -9192,12 +9192,12 @@
     },
     "Angrath's Marauders": {
       "edhrec_rank": 2528,
-      "gate": "template",
+      "gate": null,
       "name": "Angrath's Marauders",
-      "reason": "no template for: If a source you control would deal damage to a permanent or player, it deals double that d",
+      "reason": "",
       "scryfall_id": "cf0a0bef-ed72-4fdf-9799-6f6430c8a8a7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Angrath's Rampage": {
@@ -18742,12 +18742,12 @@
     },
     "Back in Town": {
       "edhrec_rank": 4508,
-      "gate": "template",
+      "gate": null,
       "name": "Back in Town",
-      "reason": "no template for: Return X target outlaw creature cards from your graveyard to the battlefield",
+      "reason": "",
       "scryfall_id": "393a864c-caa0-4030-b8bd-be0bb967eb72",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Back on Track": {
@@ -31822,12 +31822,12 @@
     },
     "Boros Charm": {
       "edhrec_rank": 179,
-      "gate": "template",
+      "gate": null,
       "name": "Boros Charm",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "e0d8c9f6-cbbd-4694-b100-01cfb81036cc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Boros Cluestone": {
@@ -39452,12 +39452,12 @@
     },
     "Captain Lannery Storm": {
       "edhrec_rank": 1166,
-      "gate": "template",
+      "gate": null,
       "name": "Captain Lannery Storm",
-      "reason": "no template for: Whenever attacks, create a Treasure token",
+      "reason": "",
       "scryfall_id": "7c3aeedd-d41b-44c9-9b0a-e5952202f632",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Captain Mar-Vell, Space-Born": {
@@ -39652,12 +39652,12 @@
     },
     "Captivating Crew": {
       "edhrec_rank": 3422,
-      "gate": "template",
+      "gate": null,
       "name": "Captivating Crew",
-      "reason": "no template for: {3}{R}: Gain control of target creature an opponent controls until end of turn. Untap that",
+      "reason": "",
       "scryfall_id": "13710c49-496d-41f9-87a4-5794dea9145d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Captivating Glance": {
@@ -44172,12 +44172,12 @@
     },
     "Changeling Outcast": {
       "edhrec_rank": 659,
-      "gate": "template",
+      "gate": null,
       "name": "Changeling Outcast",
-      "reason": "no template for: This creature can't block and can't be blocked",
+      "reason": "",
       "scryfall_id": "1494e392-9c00-4002-895b-fac4c16019af",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Changeling Sentinel": {

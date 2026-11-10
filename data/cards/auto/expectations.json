@@ -756,6 +756,10 @@
     },
     "zone": "battlefield"
   },
+  "angrath_s_marauders": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "anguished_unmaking": {
     "battlefield_count": 31,
     "life": {
@@ -1432,6 +1436,9 @@
   },
   "azure_drake": {
     "zone": "battlefield"
+  },
+  "back_in_town": {
+    "zone": "graveyard"
   },
   "back_to_basics": {
     "battlefield_count": 33,
@@ -2301,6 +2308,12 @@
     },
     "zone": "battlefield"
   },
+  "boros_charm": {
+    "life": {
+      "0": 36
+    },
+    "zone": "graveyard"
+  },
   "boros_guildgate": {
     "zone": "battlefield"
   },
@@ -2779,6 +2792,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "captain_lannery_storm": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "captain_mar_vell_space_born": {
     "battlefield_count": 33,
     "granted": {
@@ -2807,6 +2824,10 @@
       "count": 3,
       "id": "soldier_1_1_w"
     },
+    "zone": "battlefield"
+  },
+  "captivating_crew": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "captivating_vampire": {
@@ -3136,6 +3157,13 @@
   },
   "chandra_s_ignition": {
     "zone": "graveyard"
+  },
+  "changeling_outcast": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "changeling_sentinel": {
     "zone": "battlefield"

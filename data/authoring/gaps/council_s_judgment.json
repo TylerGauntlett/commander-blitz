@@ -1,0 +1,16 @@
+{
+  "card_id": "council_s_judgment",
+  "name": "Council's Judgment",
+  "oracle_text": "Will of the council — Starting with you, each player votes for a nonland permanent you don't control. Exile each permanent with the most votes or tied for most votes.",
+  "blocked_sentences": [
+    "Will of the council — Starting with you, each player votes for a nonland permanent you don't control. Exile each permanent with the most votes or tied for most votes."
+  ],
+  "needs": [{
+    "capability": "will_of_the_council",
+    "kind": "op",
+    "what": "a vote op (rule 701.38): starting with the spell's controller and going in turn order, each player chooses one object from a selector (here nonland permanents the controller doesn't control) as a vote, without targeting; the tally is kept per candidate, and the op binds 'each candidate with the most votes or tied for most' under an `as` so a following effect (exile) can act on that set",
+    "why_existing_wont_do": "for_each_player with starting_with can walk the players, but choose_permanents has no per-player chooser (only as/max_total_power/objects/prompt) and no value key counts how many players chose a given object, so neither the per-player vote nor the 'most votes or tied' tally can be said; targeting would be wrong because Council's Judgment does not target (it beats hexproof/shroud)"
+  }],
+  "closest_existing": ["for_each_player", "choose_permanents", "join_forces"],
+  "confidence": "high"
+}
