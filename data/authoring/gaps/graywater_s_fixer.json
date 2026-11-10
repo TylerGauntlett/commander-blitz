@@ -1,0 +1,18 @@
+{
+  "card_id": "graywater_s_fixer",
+  "name": "Graywater's Fixer",
+  "oracle_text": "Each outlaw creature card in your graveyard has encore {X}, where X is its mana value. (Exile it and pay its encore cost: For each opponent, create a token copy that attacks that opponent this turn if able. They gain haste. Sacrifice them at the beginning of the next end step. Activate only as a sorcery.)",
+  "blocked_sentences": [
+    "Each outlaw creature card in your graveyard has encore {X}, where X is its mana value"
+  ],
+  "needs": [
+    {
+      "capability": "encore",
+      "kind": "static_effect",
+      "what": "a static that grants encore to cards in your graveyard matching a filter (creature cards with an outlaw subtype: Assassin, Mercenary, Pirate, Rogue, Warlock), with the encore cost set per card to generic mana equal to that card's own mana value; encore itself being a graveyard-activated, sorcery-speed ability whose cost exiles the card and whose effect creates, for each opponent, a token copy of it with haste that must attack that opponent this turn and is sacrificed at the beginning of the next end step",
+      "why_existing_wont_do": "There is no encore keyword or card-level cost key; the grant_ability static only reaches permanents (a granted activated ability works on the battlefield only), cast_from_graveyard/grant_graveyard_cast give cast permissions rather than an activated ability, and no cost or value can price an ability at the mana value of the card it is granted to"
+    }
+  ],
+  "closest_existing": ["grant_ability", "cast_from_graveyard", "copy_permanent"],
+  "confidence": "high"
+}

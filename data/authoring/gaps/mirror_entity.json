@@ -1,0 +1,19 @@
+{
+  "card_id": "mirror_entity",
+  "name": "Mirror Entity",
+  "oracle_text": "Changeling (This card is every creature type.)\n{X}: Until end of turn, creatures you control have base power and toughness X/X and gain all creature types.",
+  "blocked_sentences": [
+    "Changeling (This card is every creature type.)",
+    "{X}: Until end of turn, creatures you control have base power and toughness X/X and gain all creature types."
+  ],
+  "needs": [
+    {
+      "capability": "all_creature_types",
+      "kind": "static_effect",
+      "what": "A way to say 'is every creature type' (205.3m, the changeling characteristic): as a card's own characteristic-defining static for Changeling, and as a one-shot, until-end-of-turn grant over a selector ('creatures you control ... gain all creature types', e.g. an `add_subtype` op/static flag `all_creature_types: true` with `duration`), which every subtype reader (creature_types_of, printed_creature_types, shares-a-creature-type, subtype filters, tribal cost reductions and triggers) treats as matching every creature type rather than a finite literal list.",
+      "why_existing_wont_do": "There is no `changeling` keyword in `keywords`. `add_subtype` (op and static) and `animate`'s `subtypes` only grant a literal list, and enums.SUBTYPE_CLASS does not enumerate creature types, so no list is exhaustive; the shipped Avian Changeling template's 30-type `add_subtype` list is an approximation that misses any creature type not on it. The base P/T half is sayable (`animate` with X power/toughness and `duration`), but the card is not complete without the type grant."
+    }
+  ],
+  "closest_existing": ["add_subtype", "animate", "set_creature_types"],
+  "confidence": "high"
+}

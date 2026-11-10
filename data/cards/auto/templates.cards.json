@@ -8621,6 +8621,39 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "damage_multiplier": 2,
+          "damage_source": {
+            "controller": "you"
+          },
+          "effect": "replace_damage",
+          "kind": "static",
+          "text": "If a source you control would deal damage to a permanent or player, it deals double that damage to that permanent or player instead."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "angrath_s_marauders",
+      "mana_cost": "{5}{R}{R}",
+      "name": "Angrath's Marauders",
+      "oracle_text": "If a source you control would deal damage to a permanent or player, it deals double that damage to that permanent or player instead.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Pirate"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B",
         "W"
@@ -16602,6 +16635,54 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "back_in_town",
+      "mana_cost": "{X}{2}{B}",
+      "name": "Back in Town",
+      "oracle_text": "Return X target outlaw creature cards from your graveyard to the battlefield. (Assassins, Mercenaries, Pirates, Rogues, and Warlocks are outlaws.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "you",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "put_onto_battlefield"
+        }
+      ],
+      "targets": [
+        {
+          "count": {
+            "x": true
+          },
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "controller": "you",
+            "subtypes": [
+              "Assassin",
+              "Mercenary",
+              "Pirate",
+              "Rogue",
+              "Warlock"
+            ],
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -27147,6 +27228,99 @@
       ]
     },
     {
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "boros_charm",
+      "mana_cost": "{R}{W}",
+      "name": "Boros Charm",
+      "oracle_text": "Choose one —\n• Boros Charm deals 4 damage to target player or planeswalker.\n• Permanents you control gain indestructible until end of turn.\n• Target creature gains double strike until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 4
+                  },
+                  "op": "damage",
+                  "target": "burned"
+                }
+              ],
+              "label": "Boros Charm deals 4 damage to target player or planeswalker."
+            },
+            {
+              "effects": [
+                {
+                  "keywords": [
+                    "indestructible"
+                  ],
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "zone": "battlefield"
+                  },
+                  "op": "grant_keyword"
+                }
+              ],
+              "label": "Permanents you control gain indestructible until end of turn."
+            },
+            {
+              "effects": [
+                {
+                  "keywords": [
+                    "double_strike"
+                  ],
+                  "objects": {
+                    "target": "striker"
+                  },
+                  "op": "grant_keyword"
+                }
+              ],
+              "label": "Target creature gains double strike until end of turn."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "burned",
+          "kind": "any",
+          "mode": 0,
+          "selector": {
+            "types": [
+              "Planeswalker"
+            ]
+          }
+        },
+        {
+          "count": 1,
+          "id": "striker",
+          "kind": "permanent",
+          "mode": 2,
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -32971,6 +33145,83 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Captain Lannery Storm attacks, create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 0
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you sacrifice a Treasure, Captain Lannery Storm gets +1/+0 until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "sacrificed",
+            "filter": {
+              "subtypes": [
+                "Treasure"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "captain_lannery_storm",
+      "keywords": [
+        "haste"
+      ],
+      "mana_cost": "{2}{R}",
+      "name": "Captain Lannery Storm",
+      "oracle_text": "Haste\nWhenever Captain Lannery Storm attacks, create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")\nWhenever you sacrifice a Treasure, Captain Lannery Storm gets +1/+0 until end of turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Pirate"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_player": "you",
           "condition": {
             "cmp": ">",
@@ -33173,6 +33424,75 @@
       "subtypes": [
         "Human",
         "Soldier"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{3}{R}"
+          },
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "gain_control"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "untap"
+            },
+            {
+              "duration": "until_end_of_turn",
+              "keyword": "haste",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{3}{R}: Gain control of target creature an opponent controls until end of turn. Untap that creature. It gains haste until end of turn. Activate only as a sorcery."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "captivating_crew",
+      "mana_cost": "{3}{R}",
+      "name": "Captivating Crew",
+      "oracle_text": "{3}{R}: Gain control of target creature an opponent controls until end of turn. Untap that creature. It gains haste until end of turn. Activate only as a sorcery.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Pirate"
       ],
       "toughness": 3,
       "types": [
@@ -37439,6 +37759,88 @@
             "Wall"
           ],
           "text": "Changeling"
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "cant_block",
+          "kind": "static",
+          "text": "This creature can't block and can't be blocked."
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "blockers": {
+            "controller": "any"
+          },
+          "effect": "block_restriction",
+          "kind": "static",
+          "text": "This creature can't block and can't be blocked."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "changeling_outcast",
+      "mana_cost": "{B}",
+      "name": "Changeling Outcast",
+      "oracle_text": "Changeling (This card is every creature type.)\nThis creature can't block and can't be blocked.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Shapeshifter"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "add_subtype",
+          "kind": "static",
+          "subtypes": [
+            "Human",
+            "Soldier",
+            "Warrior",
+            "Wizard",
+            "Cleric",
+            "Rogue",
+            "Knight",
+            "Elf",
+            "Goblin",
+            "Zombie",
+            "Vampire",
+            "Spirit",
+            "Beast",
+            "Elemental",
+            "Dragon",
+            "Angel",
+            "Demon",
+            "Sphinx",
+            "Bird",
+            "Cat",
+            "Snake",
+            "Insect",
+            "Serpent",
+            "Giant",
+            "Orc",
+            "Merfolk",
+            "Druid",
+            "Shaman",
+            "Bear",
+            "Wall"
+          ],
+          "text": "Changeling"
         }
       ],
       "color_identity": [
@@ -38256,6 +38658,83 @@
         "Knight"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "destination": "hand",
+              "objects": {
+                "target": "gy_outlaw"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "gy_outlaw",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "subtypes": [
+                  "Assassin",
+                  "Mercenary",
+                  "Pirate",
+                  "Rogue",
+                  "Warlock"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When this creature enters, return target outlaw card from your graveyard to your hand.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "graveyard_cast": "graveyard",
+      "graveyard_cost": {
+        "exile_from_graveyard": {
+          "count": 4,
+          "exclude_self": true
+        },
+        "mana": "{3}{B}{B}"
+      },
+      "id": "charred_graverobber",
+      "mana_cost": "{2}{B}",
+      "name": "Charred Graverobber",
+      "oracle_text": "When this creature enters, return target outlaw card from your graveyard to your hand.\nEscape—{3}{B}{B}, Exile four other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)\nThis creature escapes with a +1/+1 counter on it.",
+      "power": 3,
+      "replacements": [
+        {
+          "amount": 1,
+          "condition": {
+            "escaped": true
+          },
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Skeleton",
+        "Mercenary"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -52697,6 +53176,108 @@
       ]
     },
     {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "self": true
+                }
+              },
+              "objects": {
+                "target": "g1"
+              },
+              "op": "damage",
+              "source_object": {
+                "self_only": true,
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "g1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{T}: This creature deals damage equal to its power to target creature."
+        }
+      ],
+      "id": "dead_before_sunrise",
+      "mana_cost": "{3}{R}",
+      "name": "Dead Before Sunrise",
+      "oracle_text": "Until end of turn, outlaw creatures you control get +1/+0 and gain \"{T}: This creature deals damage equal to its power to target creature.\" (Assassins, Mercenaries, Pirates, Rogues, and Warlocks are outlaws.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "duration": "until_end_of_turn",
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "subtypes": [
+              "Assassin",
+              "Mercenary",
+              "Pirate",
+              "Rogue",
+              "Warlock"
+            ],
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "pump",
+          "power": {
+            "const": 1
+          },
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "ability": 0,
+          "duration": "until_end_of_turn",
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "subtypes": [
+              "Assassin",
+              "Mercenary",
+              "Pirate",
+              "Rogue",
+              "Warlock"
+            ],
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "grant_ability"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -57913,6 +58494,115 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Enchanted land has \"{T}: Add two mana of any one color. Spend this mana only to cast outlaw spells or activate abilities of outlaw sources.\""
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast your first outlaw spell each turn, you draw a card and you lose 1 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "subtypes": [
+                "Assassin",
+                "Mercenary",
+                "Pirate",
+                "Rogue",
+                "Warlock"
+              ]
+            },
+            "nth": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": 2,
+              "any_one_color": true,
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "mana_restriction": {
+            "activate": [
+              "assassin",
+              "mercenary",
+              "pirate",
+              "rogue",
+              "warlock"
+            ],
+            "cast": [
+              "assassin",
+              "mercenary",
+              "pirate",
+              "rogue",
+              "warlock"
+            ]
+          },
+          "text": "{T}: Add two mana of any one color. Spend this mana only to cast outlaw spells or activate abilities of outlaw sources."
+        }
+      ],
+      "id": "discreet_retreat",
+      "mana_cost": "{3}{B}",
+      "name": "Discreet Retreat",
+      "oracle_text": "Enchant land\nEnchanted land has \"{T}: Add two mana of any one color. Spend this mana only to cast outlaw spells or activate abilities of outlaw sources.\" (Assassins, Mercenaries, Pirates, Rogues, and Warlocks are outlaws.)\nWhenever you cast your first outlaw spell each turn, you draw a card and you lose 1 life.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -73429,6 +74119,135 @@
         "Wizard"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{T}, Sacrifice a creature: Put two +1/+1 counters on target creature."
+        },
+        {
+          "cost": {
+            "remove_counters_from_among": {
+              "count": 1,
+              "types": [
+                "Creature"
+              ]
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Remove a counter from a creature you control: Create a Treasure token."
+        },
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Artifact"
+              ],
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "inkling_2_1_wb_flying"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Sacrifice an artifact: Create a 2/1 white and black Inkling creature token with flying."
+        },
+        {
+          "cost": {
+            "mana": "{3}{B}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "untap"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}{B}: Untap Fain."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "fain_the_broker",
+      "mana_cost": "{2}{B}",
+      "name": "Fain, the Broker",
+      "oracle_text": "{T}, Sacrifice a creature: Put two +1/+1 counters on target creature.\n{T}, Remove a counter from a creature you control: Create a Treasure token.\n{T}, Sacrifice an artifact: Create a 2/1 white and black Inkling creature token with flying.\n{3}{B}: Untap Fain.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warlock"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -107985,6 +108804,69 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "condition": {
+            "is_your_turn": true
+          },
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "duration": "permanent",
+              "objects": {
+                "self_only": true
+              },
+              "op": "gain_control",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "{T}: Draw two cards. Target opponent gains control of this creature. Activate only during your turn."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "humble_defector",
+      "mana_cost": "{1}{R}",
+      "name": "Humble Defector",
+      "oracle_text": "{T}: Draw two cards. Target opponent gains control of this creature. Activate only during your turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Rogue"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -110090,6 +110972,117 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, create a Treasure token.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "exile_from_graveyard": {
+              "count": 1,
+              "self_only": true
+            },
+            "mana": "{3}{R}"
+          },
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "encore_copy",
+                  "controller": "you",
+                  "objects": {
+                    "controller": "any",
+                    "self_only": true,
+                    "zone": "exile"
+                  },
+                  "op": "copy_permanent"
+                },
+                {
+                  "defender": {
+                    "binding": "each_player"
+                  },
+                  "duration": "this_turn",
+                  "objects": {
+                    "binding": "encore_copy",
+                    "count": "all"
+                  },
+                  "op": "must_attack_player"
+                },
+                {
+                  "duration": "permanent",
+                  "keywords": [
+                    "haste"
+                  ],
+                  "objects": {
+                    "binding": "encore_copy",
+                    "count": "all"
+                  },
+                  "op": "grant_keyword"
+                },
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "binding": "encore_copy",
+                        "count": "all"
+                      },
+                      "op": "sacrifice"
+                    }
+                  ],
+                  "op": "delay",
+                  "step": "end_step",
+                  "text": "Sacrifice them at the beginning of the next end step."
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Encore {3}{R} ({3}{R}, Exile this card from your graveyard: For each opponent, create a token copy that attacks that opponent this turn if able. They gain haste. Sacrifice them at the beginning of the next end step. Activate only as a sorcery.)"
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "impulsive_pilferer",
+      "mana_cost": "{R}",
+      "name": "Impulsive Pilferer",
+      "oracle_text": "When this creature dies, create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")\nEncore {3}{R} ({3}{R}, Exile this card from your graveyard: For each opponent, create a token copy that attacks that opponent this turn if able. They gain haste. Sacrifice them at the beginning of the next end step. Activate only as a sorcery.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Goblin",
+        "Pirate"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -119008,6 +120001,98 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "count": 1,
+                  "destination": "hand",
+                  "op": "search_library",
+                  "player": {
+                    "target": "t1"
+                  },
+                  "selector": {
+                    "name": "Laurine, the Diversion"
+                  },
+                  "shuffle": true
+                }
+              ],
+              "op": "may",
+              "player": {
+                "target": "t1"
+              },
+              "prompt": "Put Laurine, the Diversion into your hand from your library?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player"
+            }
+          ],
+          "text": "Partner with Laurine, the Diversion (When this creature enters, target player may put Laurine into their hand from their library, then shuffle.)",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "blood_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature an opponent controls dies, you gain 1 life and create a Blood token.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "creature_dies"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "kamber_the_plunderer",
+      "keywords": [
+        "lifelink"
+      ],
+      "mana_cost": "{3}{B}",
+      "name": "Kamber, the Plunderer",
+      "oracle_text": "Partner with Laurine, the Diversion (When this creature enters, target player may put Laurine into their hand from their library, then shuffle.)\nLifelink\nWhenever a creature an opponent controls dies, you gain 1 life and create a Blood token. (It's an artifact with \"{1}, {T}, Discard a card, Sacrifice this token: Draw a card.\")",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Rogue"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "sacrifice": {
               "controller": "you",
@@ -127382,6 +128467,110 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "count": 1,
+                  "destination": "hand",
+                  "op": "search_library",
+                  "player": {
+                    "target": "t1"
+                  },
+                  "selector": {
+                    "name": "Kamber, the Plunderer"
+                  },
+                  "shuffle": true
+                }
+              ],
+              "op": "may",
+              "player": {
+                "target": "t1"
+              },
+              "prompt": "Put Kamber, the Plunderer into your hand from your library?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player"
+            }
+          ],
+          "text": "Partner with Kamber, the Plunderer (When this creature enters, target player may put Kamber into their hand from their library, then shuffle.)",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "sacrifice": {
+              "any_types": [
+                "Artifact",
+                "Creature"
+              ],
+              "controller": "you",
+              "count": 1,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "goad"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{2}, Sacrifice an artifact or creature: Goad target creature."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "laurine_the_diversion",
+      "keywords": [
+        "first_strike"
+      ],
+      "mana_cost": "{2}{R}",
+      "name": "Laurine, the Diversion",
+      "oracle_text": "Partner with Kamber, the Plunderer (When this creature enters, target player may put Kamber into their hand from their library, then shuffle.)\nFirst strike\n{2}, Sacrifice an artifact or creature: Goad target creature. (Until your next turn, that creature attacks each combat if able and attacks a player other than you if able.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Rogue"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -138923,6 +140112,147 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "exile"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "hit",
+              "objects": {
+                "binding": "subject",
+                "zone": "exile"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature an opponent controls dies, exile it with a hit counter on it.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "creature_dies"
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Assassin",
+              "Mercenary",
+              "Rogue"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "deathtouch"
+          ],
+          "kind": "static",
+          "text": "Assassins, Mercenaries, and Rogues you control have deathtouch and \"Whenever this creature deals combat damage to a player, you may remove a hit counter from a card that player owns in exile. If you do, draw a card and create two Treasure tokens.\""
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Assassin",
+              "Mercenary",
+              "Rogue"
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Assassins, Mercenaries, and Rogues you control have deathtouch and \"Whenever this creature deals combat damage to a player, you may remove a hit counter from a card that player owns in exile. If you do, draw a card and create two Treasure tokens.\""
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "condition": {
+                "exists": {
+                  "has_counters": "hit",
+                  "owner": {
+                    "binding": "event_player"
+                  },
+                  "zone": "exile"
+                }
+              },
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "counter": "hit",
+                  "objects": {
+                    "count": 1,
+                    "has_counters": "hit",
+                    "owner": {
+                      "binding": "event_player"
+                    },
+                    "zone": "exile"
+                  },
+                  "op": "remove_counters"
+                },
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                },
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "create_token",
+                  "token": "treasure_token"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Remove a hit counter from a card that player owns in exile to draw a card and create two Treasure tokens?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, you may remove a hit counter from a card that player owns in exile. If you do, draw a card and create two Treasure tokens.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "mari_the_killing_quill",
+      "mana_cost": "{1}{B}{B}",
+      "name": "Mari, the Killing Quill",
+      "oracle_text": "Whenever a creature an opponent controls dies, exile it with a hit counter on it.\nAssassins, Mercenaries, and Rogues you control have deathtouch and \"Whenever this creature deals combat damage to a player, you may remove a hit counter from a card that player owns in exile. If you do, draw a card and create two Treasure tokens.\"",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Assassin"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G",
         "R",
@@ -139820,6 +141150,61 @@
             }
           },
           "op": "draw"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "mass_mutiny",
+      "mana_cost": "{3}{R}{R}",
+      "name": "Mass Mutiny",
+      "oracle_text": "For each opponent, gain control of up to one target creature that player controls until end of turn. Untap those creatures. They gain haste until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "mutineers",
+          "duration": "until_end_of_turn",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "gain_control"
+        },
+        {
+          "objects": {
+            "binding": "mutineers"
+          },
+          "op": "untap"
+        },
+        {
+          "duration": "until_end_of_turn",
+          "keyword": "haste",
+          "objects": {
+            "binding": "mutineers"
+          },
+          "op": "grant_keyword"
+        }
+      ],
+      "targets": [
+        {
+          "count": "any",
+          "id": "t1",
+          "kind": "permanent",
+          "one_per_player": true,
+          "selector": {
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
         }
       ],
       "types": [
@@ -143956,6 +145341,215 @@
         "Shapeshifter"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "exiled",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "binding": "exiled",
+                  "types": [
+                    "Creature"
+                  ]
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "create_token",
+                  "token": "rogue_2_2_b"
+                }
+              ]
+            },
+            {
+              "condition": {
+                "exists": {
+                  "binding": "exiled",
+                  "types": [
+                    "Land"
+                  ]
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "create_token",
+                  "token": "treasure_token"
+                }
+              ]
+            },
+            {
+              "condition": {
+                "not": {
+                  "exists": {
+                    "any_types": [
+                      "Creature",
+                      "Land"
+                    ],
+                    "binding": "exiled"
+                  }
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 3
+                  },
+                  "op": "gain_life",
+                  "player": "you"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "any",
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Whenever this creature enters or deals combat damage to a player, exile target card from a graveyard. If it was a creature card, create a 2/2 black Rogue creature token. If it was a land card, create a Treasure token. Otherwise, you gain 3 life.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "as": "exiled",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "binding": "exiled",
+                  "types": [
+                    "Creature"
+                  ]
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "create_token",
+                  "token": "rogue_2_2_b"
+                }
+              ]
+            },
+            {
+              "condition": {
+                "exists": {
+                  "binding": "exiled",
+                  "types": [
+                    "Land"
+                  ]
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "create_token",
+                  "token": "treasure_token"
+                }
+              ]
+            },
+            {
+              "condition": {
+                "not": {
+                  "exists": {
+                    "any_types": [
+                      "Creature",
+                      "Land"
+                    ],
+                    "binding": "exiled"
+                  }
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 3
+                  },
+                  "op": "gain_life",
+                  "player": "you"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "any",
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Whenever this creature enters or deals combat damage to a player, exile target card from a graveyard. If it was a creature card, create a 2/2 black Rogue creature token. If it was a land card, create a Treasure token. Otherwise, you gain 3 life.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "misfortune_teller",
+      "keywords": [
+        "deathtouch"
+      ],
+      "mana_cost": "{3}{B}",
+      "name": "Misfortune Teller",
+      "oracle_text": "Deathtouch\nWhenever this creature enters or deals combat damage to a player, exile target card from a graveyard. If it was a creature card, create a 2/2 black Rogue creature token. If it was a land card, create a Treasure token. Otherwise, you gain 3 life.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warlock"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -152664,6 +154258,62 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "sum": [
+              {
+                "const": 1
+              },
+              {
+                "distinct": {
+                  "objects": {
+                    "controller": "opponent",
+                    "zone": "graveyard"
+                  },
+                  "of": "card_type"
+                }
+              }
+            ]
+          },
+          "text": "Nighthawk Scavenger's power is equal to 1 plus the number of card types among cards in your opponents' graveyards.",
+          "toughness": {
+            "const": 3
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "nighthawk_scavenger",
+      "keywords": [
+        "flying",
+        "deathtouch",
+        "lifelink"
+      ],
+      "mana_cost": "{1}{B}{B}",
+      "name": "Nighthawk Scavenger",
+      "oracle_text": "Flying, deathtouch, lifelink\nNighthawk Scavenger's power is equal to 1 plus the number of card types among cards in your opponents' graveyards.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Rogue"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "condition": {
@@ -158657,6 +160307,102 @@
       "source": "auto",
       "subtypes": [
         "Dryad"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more outlaws you control deal combat damage to a player, create a Treasure token. (Assassins, Mercenaries, Pirates, Rogues, and Warlocks are outlaws.)",
+          "trigger": {
+            "controller": "you",
+            "event": "creatures_deal_combat_damage",
+            "filter": {
+              "subtypes": [
+                "Assassin",
+                "Mercenary",
+                "Pirate",
+                "Rogue",
+                "Warlock"
+              ]
+            },
+            "per_player": true
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 2,
+              "subtypes": [
+                "Treasure"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "{3}, Sacrifice two Treasures: Put two +1/+1 counters on each creature you control. Activate only as a sorcery."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "R",
+        "W"
+      ],
+      "id": "olivia_opulent_outlaw",
+      "keywords": [
+        "flying",
+        "lifelink"
+      ],
+      "mana_cost": "{1}{R}{W}{B}",
+      "name": "Olivia, Opulent Outlaw",
+      "oracle_text": "Flying, lifelink\nWhenever one or more outlaws you control deal combat damage to a player, create a Treasure token. (Assassins, Mercenaries, Pirates, Rogues, and Warlocks are outlaws.)\n{3}, Sacrifice two Treasures: Put two +1/+1 counters on each creature you control. Activate only as a sorcery.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Assassin"
+      ],
+      "supertypes": [
+        "Legendary"
       ],
       "toughness": 3,
       "types": [
@@ -194902,6 +196648,94 @@
       ]
     },
     {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "seize_the_spotlight",
+      "mana_cost": "{2}{R}",
+      "name": "Seize the Spotlight",
+      "oracle_text": "Each opponent chooses fame or fortune. For each player who chose fame, gain control of a creature that player controls until end of turn. Untap those creatures and they gain haste until end of turn. For each player who chose fortune, you draw a card and create a Treasure token.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "chooser": {
+                "binding": "each_player"
+              },
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "as": "spotlighted",
+                      "duration": "until_end_of_turn",
+                      "objects": {
+                        "chooser": "controller",
+                        "controller": {
+                          "binding": "each_player"
+                        },
+                        "count": 1,
+                        "types": [
+                          "Creature"
+                        ],
+                        "zone": "battlefield"
+                      },
+                      "op": "gain_control"
+                    },
+                    {
+                      "objects": {
+                        "binding": "spotlighted"
+                      },
+                      "op": "untap"
+                    },
+                    {
+                      "duration": "until_end_of_turn",
+                      "keyword": "haste",
+                      "objects": {
+                        "binding": "spotlighted"
+                      },
+                      "op": "grant_keyword"
+                    }
+                  ],
+                  "label": "Fame"
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "draw",
+                      "player": "you"
+                    },
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "controller": "you",
+                      "op": "create_token",
+                      "token": "treasure_token"
+                    }
+                  ],
+                  "label": "Fortune"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "op": "for_each_player",
+          "players": "each_opponent"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -200151,6 +201985,50 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "shoot_the_sheriff",
+      "mana_cost": "{1}{B}",
+      "name": "Shoot the Sheriff",
+      "oracle_text": "Destroy target non-outlaw creature. (Assassins, Mercenaries, Pirates, Rogues, and Warlocks are outlaws. Everyone else is fair game.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "not_subtypes": [
+              "Assassin",
+              "Mercenary",
+              "Pirate",
+              "Rogue",
+              "Warlock"
+            ],
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -219687,6 +221565,69 @@
           },
           "effects": [
             {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{2}{R}{W}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "double_strike"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{2}{R}{W}, {T}: Target creature gains double strike until end of turn."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [],
+      "id": "sunhome_fortress_of_the_legion",
+      "name": "Sunhome, Fortress of the Legion",
+      "oracle_text": "{T}: Add {C}.\n{2}{R}{W}, {T}: Target creature gains double strike until end of turn.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
               "modes": [
                 {
                   "effects": [
@@ -229239,6 +231180,94 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, put a +1/+1 counter on target creature.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": "each_opponent"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control with a +1/+1 counter on it attacks, each opponent loses 1 life and you gain 1 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "filter": {
+              "has_counters": "+1/+1",
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "tenured_inkcaster",
+      "mana_cost": "{4}{B}",
+      "name": "Tenured Inkcaster",
+      "oracle_text": "When this creature enters, put a +1/+1 counter on target creature.\nWhenever a creature you control with a +1/+1 counter on it attacks, each opponent loses 1 life and you gain 1 life.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Warlock"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -252896,6 +254925,96 @@
         "Beast"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Assassin",
+              "Mercenary",
+              "Pirate",
+              "Rogue",
+              "Warlock"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "vigilance",
+            "haste"
+          ],
+          "kind": "static",
+          "text": "Other outlaws you control have vigilance and haste."
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "duration": "until_end_of_turn",
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "subtypes": [
+                      "Treasure"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "animate",
+                  "power": 3,
+                  "subtypes": [
+                    "Construct",
+                    "Assassin"
+                  ],
+                  "toughness": 3,
+                  "types": [
+                    "Artifact",
+                    "Creature"
+                  ]
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Have Treasures you control become 3/3 Construct Assassin artifact creatures until end of turn?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of combat on your turn, you may have Treasures you control become 3/3 Construct Assassin artifact creatures in addition to their other types until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "R",
+        "W"
+      ],
+      "id": "vihaan_goldwaker",
+      "mana_cost": "{R}{W}{B}",
+      "name": "Vihaan, Goldwaker",
+      "oracle_text": "Other outlaws you control have vigilance and haste. (Assassins, Mercenaries, Pirates, Rogues, and Warlocks are outlaws.)\nAt the beginning of combat on your turn, you may have Treasures you control become 3/3 Construct Assassin artifact creatures in addition to their other types until end of turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Dwarf",
+        "Warlock"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]

@@ -1,0 +1,16 @@
+{
+  "card_id": "heliod_s_intervention",
+  "name": "Heliod's Intervention",
+  "oracle_text": "Choose one —\n• Destroy X target artifacts and/or enchantments.\n• Target player gains twice X life.",
+  "blocked_sentences": [
+    "• Destroy X target artifacts and/or enchantments."
+  ],
+  "needs": [{
+    "capability": "x_sized_mode_target",
+    "kind": "engine",
+    "what": "a mode-owned target spec (`mode: 0`) whose size is the X announced for the spell (`count: {\"x\": true}`), so a modal spell's bullet can say \"X target artifacts and/or enchantments\" and only declare those targets when that mode is chosen",
+    "why_existing_wont_do": "`count: {\"x\": true}` is legal on a spell's card-level targets (Pest Infestation, Curse of the Swine), and `mode` is how Abrade gives each bullet its own target, but `loader.targets._check_mode_targets` refuses a mode-owned spec whose count is not a literal or \"any\" (\"a mode-owned target's size must be printed\"). Dropping `mode` would demand the artifact targets and the player target together whichever bullet is chosen, and `count: \"any\"` is not exactly X"
+  }],
+  "closest_existing": ["pest_infestation", "abrade"],
+  "confidence": "high"
+}

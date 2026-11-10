@@ -756,6 +756,10 @@
     },
     "zone": "battlefield"
   },
+  "angrath_s_marauders": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "anguished_unmaking": {
     "battlefield_count": 31,
     "life": {
@@ -1432,6 +1436,9 @@
   },
   "azure_drake": {
     "zone": "battlefield"
+  },
+  "back_in_town": {
+    "zone": "graveyard"
   },
   "back_to_basics": {
     "battlefield_count": 33,
@@ -2301,6 +2308,12 @@
     },
     "zone": "battlefield"
   },
+  "boros_charm": {
+    "life": {
+      "0": 36
+    },
+    "zone": "graveyard"
+  },
   "boros_guildgate": {
     "zone": "battlefield"
   },
@@ -2779,6 +2792,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "captain_lannery_storm": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "captain_mar_vell_space_born": {
     "battlefield_count": 33,
     "granted": {
@@ -2807,6 +2824,10 @@
       "count": 3,
       "id": "soldier_1_1_w"
     },
+    "zone": "battlefield"
+  },
+  "captivating_crew": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "captivating_vampire": {
@@ -3137,6 +3158,13 @@
   "chandra_s_ignition": {
     "zone": "graveyard"
   },
+  "changeling_outcast": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "changeling_sentinel": {
     "zone": "battlefield"
   },
@@ -3196,6 +3224,10 @@
     "zone": "battlefield"
   },
   "charity_extractor": {
+    "zone": "battlefield"
+  },
+  "charred_graverobber": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "chart_a_course": {
@@ -4455,6 +4487,12 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "dead_before_sunrise": {
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "dead_weight": {
     "zone": [
       "battlefield",
@@ -4916,6 +4954,16 @@
     "battlefield_count": 32,
     "graveyard_size": {
       "0": 3
+    },
+    "zone": "battlefield"
+  },
+  "discreet_retreat": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "life": {
+      "0": 40
     },
     "zone": "battlefield"
   },
@@ -6298,6 +6346,10 @@
     "zone": "battlefield"
   },
   "faerie_seer": {
+    "zone": "battlefield"
+  },
+  "fain_the_broker": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "faithbearer_paladin": {
@@ -9191,6 +9243,13 @@
   "humble_budoka": {
     "zone": "battlefield"
   },
+  "humble_defector": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "humongulus": {
     "zone": "battlefield"
   },
@@ -9369,6 +9428,10 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "impulsive_pilferer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "impulsivity": {
     "battlefield_count": 33,
@@ -10093,6 +10156,13 @@
   "kalonian_tusker": {
     "zone": "battlefield"
   },
+  "kamber_the_plunderer": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "kami_of_ancient_law": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 6,
@@ -10768,6 +10838,13 @@
       "id": "thopter_1_1_c_flying"
     },
     "zone": "graveyard"
+  },
+  "laurine_the_diversion": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "lava_serpent": {
     "zone": "battlefield"
@@ -11702,6 +11779,10 @@
     },
     "zone": "battlefield"
   },
+  "mari_the_killing_quill": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "marisi_s_twinclaws": {
     "zone": "battlefield"
   },
@@ -11793,6 +11874,14 @@
     "library_size": {
       "0": 40
     },
+    "zone": "graveyard"
+  },
+  "mass_mutiny": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "opponent_battlefield_count": 5,
     "zone": "graveyard"
   },
   "mass_of_ghouls": {
@@ -12189,6 +12278,17 @@
     "zone": "battlefield"
   },
   "mischievous_sneakling": {
+    "zone": "battlefield"
+  },
+  "misfortune_teller": {
+    "battlefield_count": 34,
+    "graveyard_size": {
+      "0": 1
+    },
+    "tokens": {
+      "count": 1,
+      "id": "rogue_2_2_b"
+    },
     "zone": "battlefield"
   },
   "mishra_s_workshop": {
@@ -12969,6 +13069,10 @@
   "nightguard_patrol": {
     "zone": "battlefield"
   },
+  "nighthawk_scavenger": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "nightmare_shepherd": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -13384,6 +13488,10 @@
     "zone": "battlefield"
   },
   "old_growth_dryads": {
+    "zone": "battlefield"
+  },
+  "olivia_opulent_outlaw": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "olivia_s_wrath": {
@@ -16466,6 +16574,10 @@
     },
     "zone": "graveyard"
   },
+  "seize_the_spotlight": {
+    "battlefield_count": 33,
+    "zone": "graveyard"
+  },
   "sejiri_refuge": {
     "life": {
       "0": 41
@@ -16919,6 +17031,9 @@
   },
   "shivan_reef": {
     "zone": "battlefield"
+  },
+  "shoot_the_sheriff": {
+    "zone": "graveyard"
   },
   "shore_lurker": {
     "zone": "battlefield"
@@ -18545,6 +18660,10 @@
   "sungrass_prairie": {
     "zone": "battlefield"
   },
+  "sunhome_fortress_of_the_legion": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sunken_hollow": {
     "zone": "battlefield"
   },
@@ -19255,6 +19374,14 @@
       "0": 1
     },
     "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
+  "tenured_inkcaster": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
     "zone": "battlefield"
   },
   "terastodon": {
@@ -21283,6 +21410,10 @@
     ]
   },
   "vigilant_baloth": {
+    "zone": "battlefield"
+  },
+  "vihaan_goldwaker": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "vile_mutilator": {
