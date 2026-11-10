@@ -21,7 +21,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Player-wide statics](#player-wide-statics) | 46 |
 | [Grantable statics](#grantable-statics) | 43 |
 | [Cost reduction](#cost-reduction) | 8 |
-| [Ability costs](#ability-costs) | 33 |
+| [Ability costs](#ability-costs) | 34 |
 | [Card-level costs](#card-level-costs) | 34 |
 | [Keywords](#keywords) | 46 |
 | [Card types and supertypes](#card-types-and-supertypes) | 12 |
@@ -791,6 +791,7 @@ Every field an activated ability's `cost` (or a `may`'s `pay`) may carry -- the 
 | `pay_energy` | Pay N energy ({E}); inside `may`, a value expression, or 1 counted by `any_amount`. | ["You may pay one or more {E}" — a variable energy payment](card-dsl-cookbook.md#you-may-pay-one-or-more-e--a-variable-energy-payment) |
 | `pay_life` | Pay N life, or a value expression (inside `may`, read with the effect's bindings). | ["You may pay that much life. If you do…"](card-dsl-cookbook.md#you-may-pay-that-much-life-if-you-do) |
 | `pay_life_x` | Pay X life, X announced. | [Costs](card-dsl.md#costs) |
+| `process` | Put N cards opponents own from exile into their owners' graveyards (the Eldrazi processors). | [process — cards an opponent owns, from exile to a graveyard](card-dsl.md#process--cards-an-opponent-owns-from-exile-to-a-graveyard) |
 | `put_counters` | Put N counters of a kind on the source. | [put_counters — counters on the source, paid on activation](card-dsl.md#put_counters--counters-on-the-source-paid-on-activation) |
 | `remove_counters` | Remove N counters of a kind from the source. | [Costs](card-dsl.md#costs) |
 | `remove_counters_from_among` | Remove N counters of any kinds from among other permanents. | [remove_counters_from_among — counters of any kind, off other permanents](card-dsl.md#remove_counters_from_among--counters-of-any-kind-off-other-permanents) |

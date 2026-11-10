@@ -384,6 +384,13 @@ class Cost:
     #: beholding (601.2a), and nothing moves: a permanent stays put, a card
     #: goes back among the hand, and the reveal is the whole price.
     behold: Mapping[str, Any] | None = None
+    #: The Eldrazi processor cost -- "Put **a card an opponent owns** from
+    #: exile into that player's graveyard" (Void Attendant), "put **two cards
+    #: your opponents own** from exile into their owners' graveyards" (Ulamog's
+    #: Nullifier). How many cards; the payer picks them among the cards in
+    #: exile owned by their opponents, face-down ones included, and each goes
+    #: to its owner's graveyard. See `costs.process_pool`.
+    process: int = 0
     #: An integer, or a value expression evaluated at payment time -- see
     #: `costs.life_cost`, which both `can_pay` and `pay` go through so the two
     #: cannot price the same cost differently.
@@ -570,6 +577,7 @@ class Cost:
             ),
             exile_self_from_hand=bool(spec.get("exile_self_from_hand")),
             behold=(dict(spec["behold"]) if spec.get("behold") else None),
+            process=int(spec.get("process", 0) or 0),
             mana_reduction=(
                 dict(spec["mana_reduction"]) if spec.get("mana_reduction") else None
             ),
@@ -642,6 +650,7 @@ class Cost:
             and not self.exile_self_from_hand
             and self.exile_from_hand is None
             and self.behold is None
+            and not self.process
             and not self.pay_life
             and not self.pay_energy
             and self.remove_counters is None
@@ -693,6 +702,8 @@ class Cost:
         if self.behold:
             count = self.behold.get("count", 1)
             parts.append("Behold" if count == 1 else f"Behold {count}")
+        if self.process:
+            parts.append(f"Put {self.process} from opponents' exile into graveyards")
         if self.pay_life:
             amount = self.pay_life if isinstance(self.pay_life, int) else "X"
             parts.append(f"Pay {amount} life")

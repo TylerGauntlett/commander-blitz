@@ -18167,6 +18167,10 @@
     "artist": "Alexander Mokhov",
     "scryfall_id": "b5821c21-8133-40f7-a28d-addf64b1e35f"
   },
+  "ulamog_s_nullifier": {
+    "artist": "Aleksi Briclot",
+    "scryfall_id": "e991c9ad-de2d-439b-bc4c-6da9da756130"
+  },
   "ultimate_magic_holy": {
     "artist": "Ashley Mackenzie",
     "scryfall_id": "6c85ce70-7080-430e-8560-81bc09ca329e"
@@ -18894,6 +18898,10 @@
   "voiceless_spirit": {
     "artist": "Daarken",
     "scryfall_id": "d24d9bd7-5721-4436-a86f-35e376727f46"
+  },
+  "void_attendant": {
+    "artist": "Viktor Titov",
+    "scryfall_id": "b3ccc905-bd43-4925-8eb9-fb9abcc81e29"
   },
   "void_rend": {
     "artist": "Justyna Dura",

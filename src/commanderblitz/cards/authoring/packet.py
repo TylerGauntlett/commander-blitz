@@ -1008,6 +1008,12 @@ def reference() -> dict:
             " additional cost is `additional_cost` plus `additional_optional`,"
             " read back with `additional_paid`. Not `put_counters`, which puts"
             " them on the source.",
+            "The Eldrazi processor cost \"Put a card an opponent owns from"
+            " exile into that player's graveyard\" is `{\"process\": 1}` on"
+            " any cost node (\"two cards your opponents own\" is 2): unpayable"
+            " without that many, so as a `may`'s `pay` it is \"you may put …"
+            " If you do, …\". Not `search_zones` over exile, which pays at"
+            " resolution.",
             "A quoted ability a permanent GAINS (\"This Saga gains \\\"{T}: Add"
             " {C}.\\\"\", \"It gains \\\"When this creature dies, ...\\\"\") is"
             " written once under the card's `grantable_abilities` and handed"

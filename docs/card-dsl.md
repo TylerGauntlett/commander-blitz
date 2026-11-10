@@ -4677,6 +4677,45 @@ and asks nothing — as Auntie Ool's ward cost it would shrink Auntie Ool. "Blig
 N" as an **effect** (Sinister Gnarlbark) is not a cost and is written with
 `choose_permanents` and `add_counters`.
 
+### `process` — cards an opponent owns, from exile to a graveyard
+
+The Eldrazi processor cost: "Put a card an opponent owns from exile into that
+player's graveyard."
+
+```jsonc
+// Void Attendant -- "{1}{G}, Put a card an opponent owns from exile into that
+// player's graveyard: Create a 1/1 colorless Eldrazi Scion creature token. …"
+"cost": { "mana": "{1}{G}", "process": 1 }
+
+// Ulamog's Nullifier -- "When this creature enters, you may put two cards your
+// opponents own from exile into their owners' graveyards. If you do, counter
+// target spell."
+{ "op": "may", "pay": { "process": 2 },
+  "effects": [{ "op": "counter", "target": "t1" }] }
+
+// "As an additional cost to cast this spell, put a card an opponent owns from
+// exile into that player's graveyard."
+"additional_cost": { "process": 1 }
+```
+
+A positive integer, how many cards, on any cost node: an activated ability, an
+`additional_cost`, or a `may`'s `pay`. The payer chooses that many among every
+card in exile owned by one of their opponents (`costs.process_pool`) — exiled by
+anything, a card some permanent exiled "until it leaves" included (the link is
+spent with the move, so it does not come back) — and each goes to its **owner's**
+graveyard through the graveyard replacements. A card face down in exile that the
+payer may not look at is offered without a name or an object ref (406.3), so the
+choice shows no face. The payer's own exiled cards are never candidates.
+
+It is payable only while that many such cards exist (118.3): with fewer, the
+activation and the cast line are withheld and a `may` with it as `pay` never
+asks, so its "if you do" branch does not run. The loader refuses a negative
+count.
+
+The near miss is moving the cards with an effect op such as `search_zones` over
+`zones: ["exile"]`: that pays at resolution, can move fewer cards than printed
+and still run the rest, and lets the ability be activated with nothing in exile.
+
 ### `exile_from_hand` — the pitch cost, and why it is not a discard
 
 "You may pay 1 life and **exile a blue card from your hand** rather than pay this

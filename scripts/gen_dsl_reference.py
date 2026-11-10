@@ -1101,6 +1101,8 @@ ABILITY_COSTS: dict[str, Entry] = {
     "pay_life": ("Pay N life, or a value expression (inside `may`, read with the effect's bindings).",
                  '"You may pay that much life. If you do…"'),
     "pay_life_x": ("Pay X life, X announced.", None),
+    "process": ("Put N cards opponents own from exile into their owners' graveyards (the Eldrazi processors).",
+                "`process` — cards an opponent owns, from exile to a graveyard"),
     "put_counters": ("Put N counters of a kind on the source.",
                      "`put_counters` — counters on the source, paid on activation"),
     "remove_counters": ("Remove N counters of a kind from the source.", None),

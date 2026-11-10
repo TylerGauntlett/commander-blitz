@@ -76,6 +76,7 @@ from .temp_effects import sacrifice_forbidden
 from .triggers import fire
 from .zones import bounce as bounce_object
 from .zones import exile as exile_object
+from .zones import move_object
 from .zones import sacrifice as sacrifice_object
 from .zones import snapshot as capture_snapshot
 
@@ -1323,6 +1324,11 @@ def can_pay(
         behold_pool(state, pid, cost.behold, source_oid, exclude_source=True)
     ) < behold_count(cost.behold):
         return False
+    if cost.process and len(process_pool(state, pid)) < cost.process:
+        # 118.3: a cost that needs cards that are not there cannot be paid, so
+        # Void Attendant with nothing of an opponent's in exile is never
+        # offered, and Ulamog's Nullifier's "you may … if you do" never asks.
+        return False
     if cost.sacrifice is not None and not _sacrifice_pool(state, pid, cost, source_oid):
         return False
     if cost.sacrifice_x is not None and x > sacrifice_x_ceiling(state, pid, cost, source_oid):
@@ -1607,6 +1613,42 @@ def cost_x_ceiling(
     if cost.tap_x is not None:
         return tap_x_ceiling(state, pid, cost, source_oid)
     return None
+
+
+def process_pool(state: GameState, pid: int) -> list[int]:
+    """The cards ``pid`` may process -- "a card **an opponent owns** from exile".
+
+    Every card in exile whose owner is one of ``pid``'s opponents, wherever it
+    came from: a face-down card is a card an opponent owns as much as a
+    face-up one, and a card some other permanent exiled "until it leaves" is
+    still in exile to be taken (the link is spent with the move, so the card
+    simply does not come back). Never the payer's own cards -- the printed cost
+    names an opponent -- which is why the pool is built around the **payer**
+    and not the source's controller.
+    """
+    opponents = set(state.opponents(pid))
+    return [
+        oid
+        for player in state.players
+        for oid in player.exile
+        if (obj := state.objects.get(oid)) is not None and obj.owner in opponents
+    ]
+
+
+def _hidden_from(state: GameState, pid: int, oids: Sequence[int]) -> list[int]:
+    """Which of ``oids`` sit face down in exile where ``pid`` may not look.
+
+    A processor chooses among them without seeing them (406.3): the choice is
+    offered unnamed rather than handing the payer a face `player_view` keeps
+    from them.
+    """
+    return [
+        oid
+        for oid in oids
+        if (obj := state.objects.get(oid)) is not None
+        and obj.hidden_in_exile
+        and pid not in obj.revealed_to
+    ]
 
 
 def _blight_pool(state: GameState, pid: int, source_oid: int | None) -> list[int]:
@@ -2023,6 +2065,26 @@ def pay(
         if len(picked) < count:
             return False
         announce_beheld(state, pid, picked, source_oid)
+
+    if cost.process:
+        # Each card goes to its **owner's** graveyard -- `move_object`'s
+        # default destination -- through the graveyard replacements, so a Rest
+        # in Peace exiles it again and the cost is still paid (614.1).
+        pool = process_pool(state, pid)
+        picked = yield from ask_objects(
+            ctx,
+            "Put into its owner's graveyard",
+            pool,
+            cost.process,
+            cost.process,
+            pid,
+            "process_cost",
+            unseen=_hidden_from(state, pid, pool),
+        )
+        if len(picked) < cost.process:
+            return False
+        for oid in picked:
+            move_object(state, oid, Zone.GRAVEYARD, cause="cost", by=source_oid)
 
     if cost.sacrifice is not None:
         spec = dict(cost.sacrifice)

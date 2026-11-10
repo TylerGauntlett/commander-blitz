@@ -161,6 +161,16 @@ class CostModel(BaseModel):
     #: is not ``exile_from_hand`` -- "behold a Kithkin **and exile it**" is a
     #: different cost.
     behold: dict[str, Any] | None = None
+    #: "{1}{G}, **Put a card an opponent owns from exile into that player's
+    #: graveyard**: ..." -- Void Attendant, the Eldrazi processors. A positive
+    #: integer, how many cards: the payer chooses them among the cards in exile
+    #: owned by their opponents (face down or not, exiled by anything) and each
+    #: goes to its owner's graveyard. Payable only while that many exist, and
+    #: never with the payer's own cards. Any cost node takes it -- an activated
+    #: ability, an ``additional_cost``, or a ``may``'s ``pay`` (Ulamog's
+    #: Nullifier's "you may put two cards your opponents own from exile into
+    #: their owners' graveyards. If you do, ...").
+    process: int = 0
     #: Usually an integer. A mapping is a value expression evaluated when the
     #: cost is paid -- War Room's "pay life equal to the number of colors in
     #: your commanders' color identity", the only life cost that is not fixed

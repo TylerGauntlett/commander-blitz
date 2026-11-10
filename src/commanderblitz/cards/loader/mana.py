@@ -310,6 +310,12 @@ def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
             f"{where}.cost: 'blight' is how many -1/-1 counters go on a creature "
             f"you control, so it cannot be negative (got {model.blight})"
         )
+    if model.process < 0:
+        raise DslError(
+            f"{where}.cost: 'process' is how many cards opponents own go from "
+            f"exile to their owners' graveyards, so it cannot be negative "
+            f"(got {model.process})"
+        )
     if model.mill < 0:
         raise DslError(
             f"{where}.cost: 'mill' is how many cards go from the top of your "

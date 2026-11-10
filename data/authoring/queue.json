@@ -295922,12 +295922,12 @@
     },
     "Ulamog's Nullifier": {
       "edhrec_rank": 14187,
-      "gate": "template",
+      "gate": null,
       "name": "Ulamog's Nullifier",
-      "reason": "no template for: When this creature enters, you may put two cards your opponents own from exile into their ",
+      "reason": "",
       "scryfall_id": "e991c9ad-de2d-439b-bc4c-6da9da756130",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ulamog's Reclaimer": {
@@ -306872,12 +306872,12 @@
     },
     "Void Attendant": {
       "edhrec_rank": 18219,
-      "gate": "template",
+      "gate": null,
       "name": "Void Attendant",
-      "reason": "no template for: {1}{G}, Put a card an opponent owns from exile into that player's graveyard: Create a 1/1 ",
+      "reason": "",
       "scryfall_id": "b3ccc905-bd43-4925-8eb9-fb9abcc81e29",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Void Beckoner": {

@@ -38,6 +38,7 @@ from commanderblitz.engine.primitives import add_counters, lose_life, pay_energy
 from commanderblitz.engine.sandbox import GameBuilder
 from commanderblitz.engine.stack import push_spell
 from commanderblitz.engine.state import new_object
+from commanderblitz.engine.zones import exile as exile_object
 
 EXPECTATIONS_PATH = Path(__file__).resolve().parent / "expectations.json"
 
@@ -431,6 +432,7 @@ class TestActivatedAbilities:
             _pay_the_counters(game, oid, ability)
             _afford_the_life(game, ability)
             _afford_the_energy(game, ability)
+            _provide_the_processed(game, ability)
             _afford_the_colorless(game, registry, ability)
             _provide_the_sacrifice(game, registry, ability)
             _provide_the_tap_fodder(game, registry, ability)
@@ -560,6 +562,21 @@ def _afford_the_energy(game: Game, ability) -> None:
     needed = getattr(cost, "pay_energy", 0) if cost is not None else 0
     if needed:
         game.state.players[0].energy = max(game.state.players[0].energy, int(needed))
+
+
+def _provide_the_processed(game: Game, ability) -> None:
+    """Put cards the opponent owns into exile for a processor cost to take.
+
+    The energy helper's argument: the sandbox's exiles are empty, and 118.3
+    forbids paying "put a card an opponent owns from exile into that player's
+    graveyard" without one, so Void Attendant would report as unusable when it
+    is only unaffordable. Exactly the cost, from seat 1's own library.
+    """
+    cost = ability.cost
+    needed = getattr(cost, "process", 0) if cost is not None else 0
+    library = game.state.players[1].library
+    for oid in list(library[:needed]):
+        exile_object(game.state, oid)
 
 
 def _afford_the_colorless(game: Game, registry, ability) -> None:

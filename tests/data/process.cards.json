@@ -1,0 +1,64 @@
+{
+  "_comment": "Shapes for tests/unit/costs/test_process_cost.py. t_process_attendant is Void Attendant (the processor cost on an activated ability), t_process_nullifier is Ulamog's Nullifier (the cost as a may's pay, 'if you do, counter target spell'), t_process_ritual the cost as an additional cost to cast, the printed shape of the original Ulamog's Nullifier. Never part of a deck list.",
+  "cards": [
+    {
+      "id": "t_process_attendant",
+      "name": "Test Process Attendant",
+      "oracle_text": "{1}{G}, Put a card an opponent owns from exile into that player's graveyard: Create a 1/1 colorless Eldrazi Scion creature token. It has \"Sacrifice this token: Add {C}.\"",
+      "mana_cost": "{2}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Eldrazi", "Drone"],
+      "colors": [],
+      "color_identity": ["G"],
+      "power": 2,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}{G}, Put a card an opponent owns from exile into that player's graveyard: Create a 1/1 colorless Eldrazi Scion creature token. It has \"Sacrifice this token: Add {C}.\"",
+          "cost": {"mana": "{1}{G}", "process": 1},
+          "effects": [{"op": "create_token", "token": "eldrazi_scion_1_1_c", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_process_nullifier",
+      "name": "Test Process Nullifier",
+      "oracle_text": "Flash\nFlying\nWhen this creature enters, you may put two cards your opponents own from exile into their owners' graveyards. If you do, counter target spell.",
+      "mana_cost": "{1}{U}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Eldrazi", "Processor"],
+      "colors": [],
+      "color_identity": ["U", "B"],
+      "power": 2,
+      "toughness": 3,
+      "keywords": ["flash", "flying"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature enters, you may put two cards your opponents own from exile into their owners' graveyards. If you do, counter target spell.",
+          "trigger": {"event": "self_enters", "source": "self"},
+          "targets": [{"id": "t1", "kind": "spell", "count": 1, "selector": {}}],
+          "effects": [
+            {
+              "op": "may",
+              "pay": {"process": 2},
+              "effects": [{"op": "counter", "target": "t1"}]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_process_ritual",
+      "name": "Test Process Ritual",
+      "oracle_text": "As an additional cost to cast this spell, put a card an opponent owns from exile into that player's graveyard.\nDraw a card.",
+      "mana_cost": "{U}",
+      "types": ["Sorcery"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "additional_cost": {"process": 1},
+      "spell_effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+    }
+  ]
+}

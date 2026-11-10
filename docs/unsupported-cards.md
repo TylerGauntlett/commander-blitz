@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**293 cards** blocked by **271** capabilities.
+**291 cards** blocked by **270** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -42,7 +42,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [manifest-dread](#manifest-dread) | 2 | 5772 | op |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
-| [process](#process) | 2 | 14187 | cost |
 | [remove-x-counters-cost](#remove-x-counters-cost) | 2 | 5399 | cost |
 | [return-face-down](#return-face-down) | 2 | 3081 | op |
 | [static-greatest-power-in-graveyard](#static-greatest-power-in-graveyard) | 2 | 7077 | value |
@@ -1000,24 +999,6 @@ Blocks **2** cards.
   - Prevent all combat damage that would be dealt to you and planeswalkers you control this turn.
 - **You Look Upon the Tarrasque** (rank 8030) — `you_look_upon_the_tarrasque`
   - • Run and Hide — Prevent all combat damage that would be dealt to you and creatures you control this turn
-
-</details>
-
-## process
-
-Blocks **2** cards.
-
-- **(cost)** the Eldrazi processor payment: a cost key usable as a `may` op's `pay` (and on activated abilities) that puts N cards chosen from exile, owned by opponents of the payer, into their owners' graveyards, and is unpayable (so the `if you do` branch is skipped) when fewer than N such cards are in exile
-  <br>Why the existing vocabulary won't do: cost_keys has exile_from_graveyard and exile_from_hand but nothing whose source zone is exile; search_zones with zones ["exile"] and destination graveyard is a search effect, not a payment, so it can move fewer than two cards and still let the counter happen, and it carries search semantics (reveal/shuffle) the card does not print
-- **(cost)** the Eldrazi processor payment as an activated ability cost key: put N cards chosen from exile, owned by an opponent of the payer, into their owner's graveyard; the ability cannot be activated when fewer than N such cards are in exile
-  <br>Why the existing vocabulary won't do: cost_keys has exile_from_graveyard, exile_from_hand and mill but nothing whose source zone is exile and destination is the owner's graveyard; moving the card with an effect op instead would shift the payment to resolution and let the ability be activated with nothing in exile
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ulamog's Nullifier** (rank 14187) — `ulamog_s_nullifier`
-  - When this creature enters, you may put two cards your opponents own from exile into their owners' graveyards. If you do, counter target spell.
-- **Void Attendant** (rank 18219) — `void_attendant`
-  - {1}{G}, Put a card an opponent owns from exile into that player's graveyard: Create a 1/1 colorless Eldrazi Scion creature token. It has "Sacrifice this token: Add {C}."
 
 </details>
 

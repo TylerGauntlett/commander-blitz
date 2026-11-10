@@ -9,7 +9,7 @@ which suspends the whole resolution until a driver answers.
 
 from __future__ import annotations
 
-from collections.abc import Generator, Mapping, Sequence
+from collections.abc import Collection, Generator, Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any
 
@@ -116,6 +116,8 @@ def ask_objects(
     max_count: int,
     chooser: int,
     purpose: str = "choose",
+    *,
+    unseen: Collection[int] = (),
 ) -> Generator[PendingDecision, list[int], list[int]]:
     """Ask ``chooser`` to pick between ``min_count`` and ``max_count`` of ``oids``.
 
@@ -125,6 +127,10 @@ def ask_objects(
     ``purpose`` is a machine-readable tag ("sacrifice", "search", "discard", ...)
     carried in the decision's context.  Agents and the UI branch on it; without
     it they would have to pattern-match on the human-readable prompt.
+
+    ``unseen`` are oids the chooser picks among without being shown -- a card
+    face down in exile (406.3). Their options carry no name and no object
+    ref, so the decision `player_view` sends cannot hand over the face.
     """
     available = list(oids)
     if not available or max_count <= 0:
@@ -134,8 +140,11 @@ def ask_objects(
     if min_count == max_count == len(available):
         return available
 
+    hidden = set(unseen)
     options = tuple(
-        DecisionOption(label=ctx.name_of(oid), ref=TargetRef.obj(oid), value=oid)
+        DecisionOption(label="A face-down card", value=oid)
+        if oid in hidden
+        else DecisionOption(label=ctx.name_of(oid), ref=TargetRef.obj(oid), value=oid)
         for oid in available
     )
     decision = PendingDecision(

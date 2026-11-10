@@ -244148,6 +244148,64 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "op": "counter",
+                  "target": "t1"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "process": 2
+              },
+              "prompt": "Put two cards your opponents own from exile into their owners' graveyards?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "spell",
+              "selector": {}
+            }
+          ],
+          "text": "When this creature enters, you may put two cards your opponents own from exile into their owners' graveyards. If you do, counter target spell",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [],
+      "id": "ulamog_s_nullifier",
+      "keywords": [
+        "flash",
+        "flying"
+      ],
+      "mana_cost": "{2}{U}{B}",
+      "name": "Ulamog's Nullifier",
+      "oracle_text": "Devoid (This card has no color.)\nFlash\nFlying\nWhen this creature enters, you may put two cards your opponents own from exile into their owners' graveyards. If you do, counter target spell.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Eldrazi",
+        "Processor"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -253651,6 +253709,45 @@
         "Spirit"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}{G}",
+            "process": 1
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "eldrazi_scion_1_1_c"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{G}, Put a card an opponent owns from exile into that player's graveyard: Create a 1/1 colorless Eldrazi Scion creature token. It has \"Sacrifice this token: Add {C}.\""
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "id": "void_attendant",
+      "mana_cost": "{2}{G}",
+      "name": "Void Attendant",
+      "oracle_text": "Devoid (This card has no color.)\n{1}{G}, Put a card an opponent owns from exile into that player's graveyard: Create a 1/1 colorless Eldrazi Scion creature token. It has \"Sacrifice this token: Add {C}.\"",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Eldrazi",
+        "Processor"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]

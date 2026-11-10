@@ -22,6 +22,7 @@ from .costs import (
     commander_cost,
     life_cost,
     mana_sources,
+    process_pool,
     spell_purpose,
     zone_of,
 )
@@ -1279,6 +1280,8 @@ def _repeatable_payments(state: GameState, pid: int, oid: int, card: CardDef) ->
         limits.append(len(_tap_cost_pool(state, pid, cost, oid)) // per)
     if cost.discard:
         limits.append(len(state.players[pid].hand) // max(1, cost.discard))
+    if cost.process:
+        limits.append(len(process_pool(state, pid)) // cost.process)
     if cost.pay_life:
         per = life_cost(state, pid, cost, oid)
         limits.append(state.players[pid].life // per if per else MAX_ADDITIONAL_TIMES)

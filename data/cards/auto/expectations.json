@@ -20530,6 +20530,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "ulamog_s_nullifier": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "ultimate_magic_holy": {
     "granted": {
       "count": 32,
@@ -21337,6 +21341,10 @@
     "zone": "battlefield"
   },
   "voiceless_spirit": {
+    "zone": "battlefield"
+  },
+  "void_attendant": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "void_rend": {
