@@ -1,0 +1,22 @@
+{
+  "card_id": "ruthless_radrat",
+  "name": "Ruthless Radrat",
+  "oracle_text": "Squad—Exile four cards from your graveyard. (As an additional cost to cast this spell, you may pay its squad cost any number of times. When this creature enters, create that many tokens that are copies of it.)\nMenace (This creature can't be blocked except by two or more creatures.)",
+  "blocked_sentences": [
+    "Squad—Exile four cards from your graveyard"
+  ],
+  "needs": [
+    {
+      "capability": "squad",
+      "kind": "engine",
+      "what": "a repeatable (additional_repeatable) additional cost whose non-mana half is exile_from_graveyard with count N must be offered at most floor(graveyard cards / N) times, and each repeated payment must fail closed when fewer than N cards remain",
+      "why_existing_wont_do": "The shape is already in the DSL (additional_cost {exile_from_graveyard: {count: 4}} + additional_optional + additional_repeatable + a self_enters copy_permanent with amount additional_paid, as Gary Clone and Powder Ganger do with mana squad), but casting._repeatable_payments bounds the exile clause by len(resolve_pool(selector)) -- ignoring count, and resolving the raw selector in the default battlefield zone -- so the ceiling is MAX_ADDITIONAL_TIMES; and game.py repeats pay(additional.without_mana()) whose exile step calls ask_objects on an empty pool, which returns [] and succeeds. With four cards in the graveyard the card could be cast with squad paid six times for four exiled cards, making six copies: a strictly better card than the printed one"
+    }
+  ],
+  "closest_existing": [
+    "additional_repeatable",
+    "exile_from_graveyard",
+    "copy_permanent"
+  ],
+  "confidence": "high"
+}

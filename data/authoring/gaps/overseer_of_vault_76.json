@@ -1,0 +1,18 @@
+{
+  "card_id": "overseer_of_vault_76",
+  "name": "Overseer of Vault 76",
+  "oracle_text": "First Contact — Whenever Overseer of Vault 76 or another creature you control with power 3 or less enters, put a quest counter on Overseer of Vault 76.\nAt the beginning of combat on your turn, you may remove three quest counters from among permanents you control. When you do, put a +1/+1 counter on each creature you control and they gain vigilance until end of turn.",
+  "blocked_sentences": [
+    "At the beginning of combat on your turn, you may remove three quest counters from among permanents you control. When you do, put a +1/+1 counter on each creature you control and they gain vigilance until end of turn."
+  ],
+  "needs": [
+    {
+      "capability": "remove_named_counters_from_among",
+      "kind": "cost",
+      "what": "a counter kind on the `remove_counters_from_among` cost (and op), e.g. {\"remove_counters_from_among\": {\"count\": 3, \"counter\": \"quest\"}}, so the payer removes N counters of THAT kind split however they like across the permanents the selector names, with payability checked against the total of that kind only",
+      "why_existing_wont_do": "`remove_counters_from_among` (cost and op, via `counter_removal.remove_counters_one_at_a_time`) takes any kind of counter, so the payer could pay with +1/+1 counters; `has_counters: \"quest\"` on its selector only narrows which permanents are offered, not which kind comes off; `remove_counters` with `counter: \"quest\"` removes `amount` from each object rather than a total split among them, and the `remove_counters` cost reads only the source"
+    }
+  ],
+  "closest_existing": ["remove_counters_from_among", "remove_counters"],
+  "confidence": "high"
+}

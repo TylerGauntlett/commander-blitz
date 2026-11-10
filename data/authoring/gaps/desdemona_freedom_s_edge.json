@@ -1,0 +1,18 @@
+{
+  "card_id": "desdemona_freedom_s_edge",
+  "name": "Desdemona, Freedom's Edge",
+  "oracle_text": "Vigilance\nWhenever Desdemona attacks, target creature card in your graveyard that's an artifact or that has mana value 3 or less gains escape until end of turn. The escape cost is equal to its mana cost plus exile two other cards from your graveyard. (You may cast it from your graveyard for its escape cost this turn.)",
+  "blocked_sentences": [
+    "Whenever Desdemona attacks, target creature card in your graveyard that's an artifact or that has mana value 3 or less gains escape until end of turn. The escape cost is equal to its mana cost plus exile two other cards from your graveyard."
+  ],
+  "needs": [
+    {
+      "capability": "escape",
+      "kind": "op",
+      "what": "an op that grants escape until end of turn to one targeted card in a graveyard: the card may be cast from the graveyard this turn for its own mana cost plus an additional cost of exiling N other cards from its owner's graveyard (N=2 here), with the escaped condition readable afterwards",
+      "why_existing_wont_do": "grant_playable with playable: this_turn lets the card be cast from the graveyard but carries no extra non-mana cost, so the 'exile two other cards from your graveyard' half would be dropped; grant_graveyard_cast is a player-wide permission over affects_spells (flashback-style), not a per-target grant with an exile_from_graveyard additional cost; the card-level graveyard_cost/graveyard_cast riders describe a card's own printed escape, not one granted to another card"
+    }
+  ],
+  "closest_existing": ["grant_playable", "grant_graveyard_cast", "graveyard_cost", "exile_from_graveyard"],
+  "confidence": "high"
+}

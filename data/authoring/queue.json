@@ -21962,12 +21962,12 @@
     },
     "Battle of Hoover Dam": {
       "edhrec_rank": 8437,
-      "gate": "template",
+      "gate": null,
       "name": "Battle of Hoover Dam",
-      "reason": "no template for: As this enchantment enters, choose NCR or Legion",
+      "reason": "",
       "scryfall_id": "41ad4f5e-ac74-4549-bfc7-bbfdb1eb185e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Battle of Wits": {
@@ -25612,12 +25612,12 @@
     },
     "Black Market": {
       "edhrec_rank": 665,
-      "gate": "template",
+      "gate": null,
       "name": "Black Market",
-      "reason": "no template for: Whenever a creature dies, put a charge counter on this enchantment",
+      "reason": "",
       "scryfall_id": "c60f7be2-1c0e-4529-9bf9-c97760e05950",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Black Market Connections": {
@@ -31362,12 +31362,12 @@
     },
     "Boomer Scrapper": {
       "edhrec_rank": 11820,
-      "gate": "template",
+      "gate": null,
       "name": "Boomer Scrapper",
-      "reason": "no template for: Whenever this creature enters or attacks, you lose 1 life and create a Junk token",
+      "reason": "",
       "scryfall_id": "193d0316-9b94-4ccb-9103-509e6a0963a1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Boomerang": {
@@ -36992,12 +36992,12 @@
     },
     "Butch DeLoria, Tunnel Snake": {
       "edhrec_rank": 11417,
-      "gate": "template",
+      "gate": null,
       "name": "Butch DeLoria, Tunnel Snake",
-      "reason": "no template for: Tunnel Snakes Rule! — Whenever Butch DeLoria attacks, it gets +1/+1 until end of turn for ",
+      "reason": "",
       "scryfall_id": "8edf6c39-6519-4b3e-afed-5e9ab6c4c572",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Butcher Ghoul": {
@@ -55232,12 +55232,12 @@
     },
     "Craig Boone, Novac Guard": {
       "edhrec_rank": 7584,
-      "gate": "template",
+      "gate": null,
       "name": "Craig Boone, Novac Guard",
-      "reason": "no template for: One for My Baby — Whenever you attack with two or more creatures, put two quest counters o",
+      "reason": "",
       "scryfall_id": "1bc98779-5ee4-4169-8a98-02e0f63a599a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cram Session": {
@@ -78122,12 +78122,12 @@
     },
     "ED-E, Lonesome Eyebot": {
       "edhrec_rank": 9234,
-      "gate": "template",
+      "gate": null,
       "name": "ED-E, Lonesome Eyebot",
-      "reason": "no template for: ED-E My Love — Whenever you attack, if the number of attacking creatures is greater than t",
+      "reason": "",
       "scryfall_id": "4bc1e676-2e9e-406a-b01d-b3b4893ffbae",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "EPF Point Squad": {
@@ -93852,12 +93852,12 @@
     },
     "Fervent Charge": {
       "edhrec_rank": 5164,
-      "gate": "template",
+      "gate": null,
       "name": "Fervent Charge",
-      "reason": "no template for: Whenever a creature you control attacks, it gets +2/+2 until end of turn",
+      "reason": "",
       "scryfall_id": "06b2b8a4-3174-4188-959c-f456f9fcd563",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fervent Denial": {
@@ -106612,12 +106612,12 @@
     },
     "General's Enforcer": {
       "edhrec_rank": 3349,
-      "gate": "template",
+      "gate": null,
       "name": "General's Enforcer",
-      "reason": "no template for: Legendary Humans you control have indestructible",
+      "reason": "",
       "scryfall_id": "3fa2050a-711f-4c6e-8b01-5353bd2a4234",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "General's Kabuto": {
@@ -126882,12 +126882,12 @@
     },
     "Heroic Reinforcements": {
       "edhrec_rank": 8025,
-      "gate": "template",
+      "gate": null,
       "name": "Heroic Reinforcements",
-      "reason": "no template for: Create two 1/1 white Soldier creature tokens. Until end of turn, creatures you control get",
+      "reason": "",
       "scryfall_id": "6a05e8d5-c2ad-489a-888d-22622886b620",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Heroic Return": {
@@ -134502,12 +134502,12 @@
     },
     "Impassioned Orator": {
       "edhrec_rank": 4515,
-      "gate": "template",
+      "gate": null,
       "name": "Impassioned Orator",
-      "reason": "no template for: Whenever another creature you control enters, you gain 1 life",
+      "reason": "",
       "scryfall_id": "574c3028-c942-4257-a825-c25318915593",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Impatience": {
@@ -163802,12 +163802,12 @@
     },
     "MacCready, Lamplight Mayor": {
       "edhrec_rank": 3671,
-      "gate": "template",
+      "gate": null,
       "name": "MacCready, Lamplight Mayor",
-      "reason": "no template for: Whenever a creature you control with power 2 or less attacks, it gains skulk until end of ",
+      "reason": "",
       "scryfall_id": "0d2251ce-2d5b-4d0d-8dc9-44f6b40aa7cf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Macabre Mockery": {
@@ -197062,12 +197062,12 @@
     },
     "Paladin Elizabeth Taggerdy": {
       "edhrec_rank": 7026,
-      "gate": "template",
+      "gate": null,
       "name": "Paladin Elizabeth Taggerdy",
-      "reason": "no template for: Battalion — Whenever and at least two other creatures attack, draw a card, then you may pu",
+      "reason": "",
       "scryfall_id": "21f1540f-293c-401a-a8cc-d147334176de",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Paladin en-Vec": {
@@ -205512,12 +205512,12 @@
     },
     "Powder Ganger": {
       "edhrec_rank": 10174,
-      "gate": "template",
+      "gate": null,
       "name": "Powder Ganger",
-      "reason": "no template for: Squad {2}",
+      "reason": "",
       "scryfall_id": "50fa2906-f364-4681-8cf8-1510c7ba749e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Powder Keg": {
@@ -246482,12 +246482,12 @@
     },
     "Sierra, Nuka's Biggest Fan": {
       "edhrec_rank": 9432,
-      "gate": "template",
+      "gate": null,
       "name": "Sierra, Nuka's Biggest Fan",
-      "reason": "no template for: The Nuka-Cola Challenge — Whenever one or more creatures you control deal combat damage to",
+      "reason": "",
       "scryfall_id": "641dd97c-6577-4cab-8672-56f870477961",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sif's Spearmaster": {
@@ -265072,12 +265072,12 @@
     },
     "Stolen Strategy": {
       "edhrec_rank": 4471,
-      "gate": "template",
+      "gate": null,
       "name": "Stolen Strategy",
-      "reason": "no template for: At the beginning of your upkeep, exile the top card of each opponent's library. Until end ",
+      "reason": "",
       "scryfall_id": "40f0adad-207a-4504-9636-75f7ccb5b60c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stolen Uniform": {
@@ -281852,12 +281852,12 @@
     },
     "The Nipton Lottery": {
       "edhrec_rank": 10892,
-      "gate": "template",
+      "gate": null,
       "name": "The Nipton Lottery",
-      "reason": "no template for: Choose a creature at random. You gain control of that creature until end of turn. Untap it",
+      "reason": "",
       "scryfall_id": "099d5706-6595-4129-83d7-ca4ae1c8e363",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Notary Hobbits": {
@@ -285412,12 +285412,12 @@
     },
     "Thrill-Kill Disciple": {
       "edhrec_rank": 16020,
-      "gate": "template",
+      "gate": null,
       "name": "Thrill-Kill Disciple",
-      "reason": "no template for: Squad—{1}, Discard a card",
+      "reason": "",
       "scryfall_id": "5628e781-9f12-49ed-a575-6b467d39510b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thrilling Discovery": {
@@ -301612,12 +301612,12 @@
     },
     "Vault 75: Middle School": {
       "edhrec_rank": 8972,
-      "gate": "template",
+      "gate": null,
       "name": "Vault 75: Middle School",
-      "reason": "no template for: I — Exile all creatures with power 4 or greater",
+      "reason": "",
       "scryfall_id": "3992e262-0491-4379-b74b-13cc8b63065e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vault 87: Forced Evolution": {
@@ -311572,12 +311572,12 @@
     },
     "Wasteland Raider": {
       "edhrec_rank": 8079,
-      "gate": "template",
+      "gate": null,
       "name": "Wasteland Raider",
-      "reason": "no template for: Squad {2}",
+      "reason": "",
       "scryfall_id": "071cb1ec-de98-4a82-b872-9e62ee0198d7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wasteland Scorpion": {
@@ -312642,12 +312642,12 @@
     },
     "Wear // Tear": {
       "edhrec_rank": 1019,
-      "gate": "template",
+      "gate": null,
       "name": "Wear // Tear",
-      "reason": "no template for: Destroy target artifact",
+      "reason": "",
       "scryfall_id": "427d7eab-24e3-41de-8444-d9a2c96f526f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wear Away": {
@@ -315282,12 +315282,12 @@
     },
     "Wild Wasteland": {
       "edhrec_rank": 4318,
-      "gate": "template",
+      "gate": null,
       "name": "Wild Wasteland",
-      "reason": "no template for: Skip your draw step",
+      "reason": "",
       "scryfall_id": "2140ef84-a738-4b85-b67e-ea2d4c03b5e8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wild Wurm": {

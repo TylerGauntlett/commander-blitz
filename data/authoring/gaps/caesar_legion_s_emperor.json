@@ -1,0 +1,21 @@
+{
+  "card_id": "caesar_legion_s_emperor",
+  "name": "Caesar, Legion's Emperor",
+  "oracle_text": "Whenever you attack, you may sacrifice another creature. When you do, choose two —\n• Create two 1/1 red and white Soldier creature tokens with haste that are tapped and attacking.\n• You draw a card and you lose 1 life.\n• Caesar deals damage equal to the number of creature tokens you control to target opponent.",
+  "blocked_sentences": [
+    "• Create two 1/1 red and white Soldier creature tokens with haste that are tapped and attacking."
+  ],
+  "needs": [
+    {
+      "capability": "soldier_1_1_rw_haste",
+      "kind": "token",
+      "what": "a 1/1 red and white Soldier creature token with haste",
+      "why_existing_wont_do": "token_ids has soldier_1_1_w (white, no haste), soldier_1_1_w_lifelink, human_soldier_1_1_w and elemental_1_1_r_haste, but no red-and-white Soldier with haste. The rest of the card is expressible: a you_attack trigger with may (pay: sacrifice another creature) whose effects are a reflexive_trigger holding a choose_mode count 2 over create_token (amount 2, tapped, attacking), draw + lose_life, and damage to target opponent equal to a count of creature tokens you control"
+    }
+  ],
+  "closest_existing": [
+    "soldier_1_1_w",
+    "elemental_1_1_r_haste"
+  ],
+  "confidence": "high"
+}

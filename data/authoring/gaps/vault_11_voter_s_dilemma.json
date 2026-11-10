@@ -1,0 +1,18 @@
+{
+  "card_id": "vault_11_voter_s_dilemma",
+  "name": "Vault 11: Voter's Dilemma",
+  "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — For each opponent, you create a 1/1 white Human Soldier creature token.\nII, III — Each player secretly votes for up to one creature, then those votes are revealed. If no creature got votes, each player draws a card. Otherwise, destroy each creature with the most votes or tied for most votes.",
+  "blocked_sentences": [
+    "II, III — Each player secretly votes for up to one creature, then those votes are revealed. If no creature got votes, each player draws a card. Otherwise, destroy each creature with the most votes or tied for most votes."
+  ],
+  "needs": [
+    {
+      "capability": "council_s_dilemma",
+      "kind": "op",
+      "what": "a vote op: each player (in turn order, here secretly, revealed simultaneously) chooses up to one object from a selector (here any creature on the battlefield), the tally is bound so later effects can read it -- a condition for 'no object got votes' and a selector for 'each object with the most votes or tied for most votes' -- feeding an if/else of draw for each player vs destroy over the top-voted set",
+      "why_existing_wont_do": "choose_permanents and choose_player are made by one player only, join_forces collects payments not choices, and for_each_player wrapping choose_permanents has no way to aggregate the choices into a per-object vote count nor a selector for the most-voted (tied included) objects; no condition reads 'no votes cast'"
+    }
+  ],
+  "closest_existing": ["choose_permanents", "for_each_player", "join_forces"],
+  "confidence": "high"
+}

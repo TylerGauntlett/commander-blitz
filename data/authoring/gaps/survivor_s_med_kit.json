@@ -1,0 +1,18 @@
+{
+  "card_id": "survivor_s_med_kit",
+  "name": "Survivor's Med Kit",
+  "oracle_text": "{1}, {T}: Choose one that hasn't been chosen —\n• Stimpak — Draw a card.\n• Fancy Lads Snack Cakes — Create a Food token. (It's an artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")\n• RadAway — Target player loses all rad counters. Sacrifice this artifact.",
+  "blocked_sentences": [
+    "• RadAway — Target player loses all rad counters. Sacrifice this artifact"
+  ],
+  "needs": [
+    {
+      "capability": "rad_counters",
+      "kind": "engine",
+      "what": "rad as a player counter kind (a PlayerState field plus an entry in player.PLAYER_COUNTER_KINDS, with the rad trigger at the beginning of precombat main phase), and a way to remove all counters of ONE named kind from a target player (e.g. a `counter` option on lose_all_player_counters, or a player-targeted remove_counters)",
+      "why_existing_wont_do": "lose_all_player_counters removes every player counter kind (poison and energy) rather than only rad counters, so it would also strip the target's poison and energy; PLAYER_COUNTER_KINDS carries only poison and energy, so rad counters do not exist; remove_counters acts on objects, not players"
+    }
+  ],
+  "closest_existing": ["lose_all_player_counters", "remove_counters"],
+  "confidence": "high"
+}

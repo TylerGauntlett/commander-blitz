@@ -1,0 +1,18 @@
+{
+  "card_id": "elder_arthur_maxson",
+  "name": "Elder Arthur Maxson",
+  "oracle_text": "Creature tokens you control have training. (Whenever a creature token you control attacks with another creature with greater power, put a +1/+1 counter on that token.)\nBlind Betrayal — Sacrifice another creature: Elder Arthur Maxson gains indestructible until end of turn.",
+  "blocked_sentences": [
+    "Creature tokens you control have training. (Whenever a creature token you control attacks with another creature with greater power, put a +1/+1 counter on that token.)"
+  ],
+  "needs": [
+    {
+      "capability": "training",
+      "kind": "keyword",
+      "what": "the Training keyword (702.149): a triggered ability 'Whenever this creature attacks with another creature with greater power, put a +1/+1 counter on this creature', grantable by a grant_keyword static so 'Creature tokens you control have training' is a static with affects {controller: you, types: [Creature], is_token: true}",
+      "why_existing_wont_do": "training is not in the keyword list, so grant_keyword cannot name it. The nearest spelling, a grant_ability static handing tokens a granted 'attacks' trigger, has no supported way to say 'with another attacking creature with greater power': selector and trigger-filter 'power' take a fixed number, not one relative to the triggering creature's power, and a cmp of extreme_value against power_of self is an unverified guess; it would also leave the tokens without the keyword itself, which cards that check for training read"
+    }
+  ],
+  "closest_existing": ["grant_keyword", "grant_ability", "attacks"],
+  "confidence": "high"
+}

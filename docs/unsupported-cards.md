@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**298 cards** blocked by **272** capabilities.
+**314 cards** blocked by **287** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -19,15 +19,15 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [rooms](#rooms) | 6 | 4163 | engine |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
+| [council-s-dilemma](#council-s-dilemma) | 4 | 3539 | decision, op |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 4 | 2389 | engine |
+| [escape](#escape) | 4 | 388 | engine, op, static_effect |
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 4 | 714 | engine |
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
 | [basic-land-type-mana](#basic-land-type-mana) | 3 | 73 | engine |
 | [cast-trigger-x](#cast-trigger-x) | 3 | 1521 | engine, value |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 6346 | op |
-| [council-s-dilemma](#council-s-dilemma) | 3 | 3539 | decision, op |
-| [escape](#escape) | 3 | 388 | engine, static_effect |
 | [omen](#omen) | 3 | 3355 | cost, engine |
 | [random-player-choice](#random-player-choice) | 3 | 5120 | op |
 | [add-color](#add-color) | 2 | 2040 | op |
@@ -41,6 +41,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
 | [experience-counters](#experience-counters) | 2 | 1480 | engine |
 | [face-down-filter](#face-down-filter) | 2 | 5772 | selector |
+| [fraction-of-value](#fraction-of-value) | 2 | 6297 | value |
 | [manifest-dread](#manifest-dread) | 2 | 5772 | op |
 | [mercenary-token](#mercenary-token) | 2 | 8312 | token |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
@@ -48,6 +49,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [remove-x-counters-cost](#remove-x-counters-cost) | 2 | 5399 | cost |
 | [return-face-down](#return-face-down) | 2 | 3081 | op |
 | [reveal-until-rest-to-graveyard](#reveal-until-rest-to-graveyard) | 2 | 1606 | op |
+| [soldier-1-1-rw-haste](#soldier-1-1-rw-haste) | 2 | 2160 | token |
 | [static-greatest-power-in-graveyard](#static-greatest-power-in-graveyard) | 2 | 7077 | value |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [turn-face-up](#turn-face-up) | 2 | 5772 | op |
@@ -104,6 +106,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [copy-spell-forced-target](#copy-spell-forced-target) | 1 | 13586 | op |
 | [cost-reduction-per-attacker-this-turn](#cost-reduction-per-attacker-this-turn) | 1 | 9578 | value |
 | [coven](#coven) | 1 | 1129 | value |
+| [creatures-died-this-turn-filtered](#creatures-died-this-turn-filtered) | 1 | 13665 | value |
 | [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
 | [damage-player-or-planeswalker](#damage-player-or-planeswalker) | 1 | 5120 | op |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
@@ -112,6 +115,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [demon-token-5-5-b-flying](#demon-token-5-5-b-flying) | 1 | 7993 | token |
 | [devil-token](#devil-token) | 1 | 4163 | token |
 | [devoid](#devoid) | 1 | 6026 | keyword |
+| [die-rolled-trigger](#die-rolled-trigger) | 1 | 5966 | trigger_event |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [distribute-counters-spell](#distribute-counters-spell) | 1 | 6993 | op |
 | [divided-damage-on-activated](#divided-damage-on-activated) | 1 | 13459 | engine |
@@ -122,8 +126,10 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
 | [embalm](#embalm) | 1 | 4333 | cost |
 | [encore](#encore) | 1 | 9330 | static_effect |
+| [end-of-combat-trigger](#end-of-combat-trigger) | 1 | 4544 | trigger_event |
 | [energy-alternative-cost](#energy-alternative-cost) | 1 | 7462 | op |
 | [energy-count](#energy-count) | 1 | 7317 | value |
+| [enlist](#enlist) | 1 | 13396 | keyword, value |
 | [entered-without-being-cast](#entered-without-being-cast) | 1 | 7379 | selector |
 | [enters-as-copy-add-subtypes](#enters-as-copy-add-subtypes) | 1 | 3852 | replacement |
 | [enters-as-copy-embalmed-exception](#enters-as-copy-embalmed-exception) | 1 | 4333 | replacement |
@@ -138,6 +144,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exile-permanent-cost](#exile-permanent-cost) | 1 | 6544 | cost |
 | [exile-x-from-graveyard-cost](#exile-x-from-graveyard-cost) | 1 | 17252 | cost |
 | [exiled-this-way-lki](#exiled-this-way-lki) | 1 | 6960 | value |
+| [exploit](#exploit) | 1 | 8043 | keyword, trigger_event |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [face-down-counters-pt](#face-down-counters-pt) | 1 | 6774 | engine |
 | [face-down-exile-controller-may-look](#face-down-exile-controller-may-look) | 1 | 1073 | op |
@@ -148,7 +155,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [flash-if-targets](#flash-if-targets) | 1 | 1651 | engine |
 | [flip-coins-count](#flip-coins-count) | 1 | 6651 | value |
 | [foretold](#foretold) | 1 | 3713 | value |
-| [fraction-of-value](#fraction-of-value) | 1 | 6297 | value |
 | [free-cast-by-other-player](#free-cast-by-other-player) | 1 | 11704 | op |
 | [free-cast-once-per-turn](#free-cast-once-per-turn) | 1 | 1913 | static_effect |
 | [free-cast-one-per-card-type](#free-cast-one-per-card-type) | 1 | 2521 | engine |
@@ -189,6 +195,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mana-restriction-cast-from-zone](#mana-restriction-cast-from-zone) | 1 | 9291 | engine |
 | [mana-restriction-turn-face-up](#mana-restriction-turn-face-up) | 1 | 6766 | value |
 | [mana-spent-enters-with-counters](#mana-spent-enters-with-counters) | 1 | 653 | replacement |
+| [mana-spent-to-activate](#mana-spent-to-activate) | 1 | 5966 | value |
 | [mana-spent-trigger-on-activation](#mana-spent-trigger-on-activation) | 1 | 4444 | trigger_event |
 | [mana-tap-trigger-damage-rider](#mana-tap-trigger-damage-rider) | 1 | 7929 | static_effect |
 | [manifest-from-hand](#manifest-from-hand) | 1 | 3975 | op |
@@ -212,7 +219,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [noncombat-damage-trigger](#noncombat-damage-trigger) | 1 | 6793 | trigger_event |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [offspring](#offspring) | 1 | 6566 | keyword |
+| [one-target-per-graveyard](#one-target-per-graveyard) | 1 | 9139 | selector |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
+| [opponents-attacked-this-turn](#opponents-attacked-this-turn) | 1 | 4544 | value |
 | [pay-any-amount-of-life](#pay-any-amount-of-life) | 1 | 4322 | cost |
 | [pay-energy-x](#pay-energy-x) | 1 | 5591 | cost |
 | [play-cost-paid-card](#play-cost-paid-card) | 1 | 6544 | op |
@@ -232,8 +241,10 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [protection-from-mana-value](#protection-from-mana-value) | 1 | 16276 | static_effect |
 | [protection-from-multicolored](#protection-from-multicolored) | 1 | 1516 | static_effect |
 | [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
+| [rad-counters](#rad-counters) | 1 | 13179 | engine |
 | [random-order-bottom](#random-order-bottom) | 1 | 1343 | op |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
+| [remove-named-counters-from-among](#remove-named-counters-from-among) | 1 | 10375 | cost |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
 | [repeat-while](#repeat-while) | 1 | 1924 | op |
@@ -242,6 +253,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [replace-graveyard-with-counter](#replace-graveyard-with-counter) | 1 | 386 | replacement |
 | [retrace](#retrace) | 1 | 5451 | engine |
 | [reveal-from-hand](#reveal-from-hand) | 1 | 3623 | cost |
+| [robot-token-3-3](#robot-token-3-3) | 1 | 5966 | token |
 | [sacrifice-multiple-distinct](#sacrifice-multiple-distinct) | 1 | 1918 | cost |
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
@@ -256,6 +268,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [spirit-2-2-w-flying](#spirit-2-2-w-flying) | 1 | 12596 | token |
+| [squad](#squad) | 1 | 13056 | engine |
 | [stack-wipe](#stack-wipe) | 1 | 8784 | op |
 | [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
@@ -265,6 +278,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
 | [targets-only-self](#targets-only-self) | 1 | 8216 | trigger_event |
 | [targets-only-single](#targets-only-single) | 1 | 13586 | trigger_event |
+| [targets-share-characteristic](#targets-share-characteristic) | 1 | 4421 | selector |
 | [teammates](#teammates) | 1 | 26785 | selector |
 | [this-combat-duration](#this-combat-duration) | 1 | 9126 | op |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
@@ -272,6 +286,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [total-mana-value-selection](#total-mana-value-selection) | 1 | 4244 | op |
 | [total-toughness-cost-reduction](#total-toughness-cost-reduction) | 1 | 5188 | value |
 | [toughness-greater-than-power-filter](#toughness-greater-than-power-filter) | 1 | 3557 | selector |
+| [training](#training) | 1 | 8710 | keyword |
 | [treefolk-x-x-g-reach-land-count](#treefolk-x-x-g-reach-land-count) | 1 | 2396 | token |
 | [turned-face-up-trigger](#turned-face-up-trigger) | 1 | 6493 | trigger_event |
 | [two-share-all-card-types](#two-share-all-card-types) | 1 | 7993 | value |
@@ -515,6 +530,36 @@ Blocks **5** cards.
 
 </details>
 
+## council-s-dilemma
+
+Blocks **4** cards.
+
+- **(op)** a vote op (rule 701.38): starting with the spell's controller and going in turn order, each player chooses one object from a selector (here nonland permanents the controller doesn't control) as a vote, without targeting; the tally is kept per candidate, and the op binds 'each candidate with the most votes or tied for most' under an `as` so a following effect (exile) can act on that set
+  <br>Why the existing vocabulary won't do: for_each_player with starting_with can walk the players, but choose_permanents has no per-player chooser (only as/max_total_power/objects/prompt) and no value key counts how many players chose a given object, so neither the per-player vote nor the 'most votes or tied' tally can be said; targeting would be wrong because Council's Judgment does not target (it beats hexproof/shroud)
+- **(decision)** a voting op: starting with the controller and proceeding in turn order, each player chooses one of N named options (here 'past' or 'present'); the op binds the vote tally per option (e.g. as: 'votes' giving {binding: 'votes.past'} / {binding: 'votes.present'}) so later effects in the same spell can use each count as an amount. Each player's vote must be visible to the players voting after them (Council's dilemma / Will of the council)
+  <br>Why the existing vocabulary won't do: choose_mode is one chooser picking modes, not every player casting a public vote with a per-option tally; for_each_player + choose_mode cannot accumulate a count per chosen option into a value, and value_keys has no vote count. Also needed: the damage amount is the total mana value of the cards milled this way, which needs mill's `as` binding to be readable as a sum of mana values (mana_value_of over the binding) -- unverified, but the vote tally is the hard blocker
+- **(decision)** a voting op: starting with the controller and proceeding in turn order, each player publicly chooses one of N named options (here 'wild' or 'free'); the op binds the tally per option (e.g. as: 'votes' giving {binding: 'votes.wild'} / {binding: 'votes.free'}) so later effects in the same spell can use each count as an amount -- here reveal_until's creature count and a repeated optional put-from-hand of a permanent card
+  <br>Why the existing vocabulary won't do: value_keys has no vote count and no op in reference casts a vote; choose_mode is one chooser picking modes, and for_each_player + choose_mode cannot accumulate a per-option tally into a value. join_forces pools mana payments, not choices. Once the tally exists, the rest looks expressible: reveal_until with amount {binding: votes.wild}, selector Creature, destination battlefield, shuffle_rest; and repeat over {binding: votes.free} of a may put_onto_battlefield of a permanent card from hand
+- **(op)** a vote op: each player (in turn order, here secretly, revealed simultaneously) chooses up to one object from a selector (here any creature on the battlefield), the tally is bound so later effects can read it -- a condition for 'no object got votes' and a selector for 'each object with the most votes or tied for most votes' -- feeding an if/else of draw for each player vs destroy over the top-voted set
+  <br>Why the existing vocabulary won't do: choose_permanents and choose_player are made by one player only, join_forces collects payments not choices, and for_each_player wrapping choose_permanents has no way to aggregate the choices into a per-object vote count nor a selector for the most-voted (tied included) objects; no condition reads 'no votes cast'
+
+<details><summary>Cards waiting on this</summary>
+
+- **Council's Judgment** (rank 3539) — `council_s_judgment`
+  - Will of the council — Starting with you, each player votes for a nonland permanent you don't control. Exile each permanent with the most votes or tied for most votes.
+- **Selvala's Stampede** (rank 4067) — `selvala_s_stampede`
+  - Council's dilemma — Starting with you, each player votes for wild or free.
+  - Reveal cards from the top of your library until you reveal a creature card for each wild vote.
+  - You may put a permanent card from your hand onto the battlefield for each free vote.
+- **Vault 11: Voter's Dilemma** (rank 11857) — `vault_11_voter_s_dilemma`
+  - II, III — Each player secretly votes for up to one creature, then those votes are revealed. If no creature got votes, each player draws a card. Otherwise, destroy each creature with the most votes or tied for most votes.
+- **Fateful Tempest** (rank 15065) — `fateful_tempest`
+  - Council's dilemma — Starting with you, each player votes for past or present.
+  - You mill a card for each past vote, then Fateful Tempest deals damage to each opponent equal to the total mana value of cards milled this way.
+  - Exile the top card of your library for each present vote.
+
+</details>
+
 ## divided-damage-on-trigger
 
 Blocks **4** cards.
@@ -538,6 +583,34 @@ Blocks **4** cards.
   - When Dragonlord Atarka enters, it deals 5 damage divided as you choose among any number of target creatures and/or planeswalkers your opponents control.
 - **Blaster Hulk** (rank 7367) — `blaster_hulk`
   - Whenever this creature attacks, you get {E}{E}, then you may pay eight {E}. When you do, this creature deals 8 damage divided as you choose among up to eight targets.
+
+</details>
+
+## escape
+
+Blocks **4** cards.
+
+- **(op)** an op that grants escape until end of turn to one targeted card in a graveyard: the card may be cast from the graveyard this turn for its own mana cost plus an additional cost of exiling N other cards from its owner's graveyard (N=2 here), with the escaped condition readable afterwards
+  <br>Why the existing vocabulary won't do: grant_playable with playable: this_turn lets the card be cast from the graveyard but carries no extra non-mana cost, so the 'exile two other cards from your graveyard' half would be dropped; grant_graveyard_cast is a player-wide permission over affects_spells (flashback-style), not a per-target grant with an exile_from_graveyard additional cost; the card-level graveyard_cost/graveyard_cast riders describe a card's own printed escape, not one granted to another card
+- **(static_effect)** a granted escape permission: a `cast_from_graveyard`-style static (here `affects_spells: {"types": ["Enchantment"]}`) whose granted cast charges an additional cost on top of the card's own mana cost -- `exile_from_graveyard: {"count": 3}` where 'other' excludes the card being escaped, not the granting permanent -- priced and paid when the granted spell is cast, with no per-turn cap (the exile is the brake), and marking the spell as escaped (702.138) rather than exiling it on resolution, so an escaped enchantment returns to the graveyard and can escape again
+  <br>Why the existing vocabulary won't do: `cast_from_graveyard` grants the cast at the printed cost only, carries no additional-cost rider, and the loader requires `static_max_per_turn`, which this card does not print. The card-level `graveyard_cost` / `graveyard_additional_cost` slot is escape and can carry `exile_from_graveyard`, but it is set on the escaping card itself at load time; nothing writes a cost onto other cards. `grant_graveyard_cast` only takes `affects_spells`, `any_graveyard` and `grants_flashback` (flashback exiles the card, escape does not). `grant_keyword` has no escape keyword. Same blocker as underworld_breach.
+- **(static_effect)** an additional-cost rider on the `cast_from_graveyard` static -- a Cost charged on top of the granted spell's own mana cost, drawn from `cost_keys`, so this card's static can carry `exile_from_graveyard: {"count": 3, "exclude_self": true}`. It must be priced and paid by `legality.graveyard_cast_permission` / `Game._cast` at the moment the granted spell is cast (the way `chosen_additional` charges a card's own `additional_cost`), and `exclude_self` has to mean the card being escaped, not the permanent granting the permission -- otherwise a three-card graveyard pays for the escape with the escaping card itself.
+  <br>Why the existing vocabulary won't do: `cast_from_graveyard` is the only static that lets a card out of a graveyard and it grants the cast at the card's printed cost with no price attached. Its whole rider vocabulary is `enters_tapped`, `arrived_this_turn_from` and `affects_spells`; the one cost field on any permission static is `pay_life_instead`, which belongs to `cast_from_library_top`, swaps mana for life rather than adding to it, and cannot express an exile. The card-level `graveyard_cost` / `flashback` slot *is* escape and does carry `exile_from_graveyard` with `exclude_self` -- but it is a field on the escaping card itself, set at load time, and Underworld Breach hands escape to cards it has never seen. There is no op or static that writes a cost onto another card, and `grant_keyword` knows only the 34 ability keywords, none of which is escape.
+- **(static_effect)** an unbounded `cast_from_graveyard` permission -- `static_max_per_turn` made optional (or given an explicit unlimited spelling) for permissions whose price is itself the rate limit, with `legality.graveyard_cast_permission` skipping the `GRAVEYARD_CAST_SLOT` ledger check instead of defaulting `cap` to 1. Underworld Breach prints no cap at all; the three exiled cards per cast are the whole brake.
+  <br>Why the existing vocabulary won't do: The loader hard-refuses `cast_from_graveyard` without `static_max_per_turn` (`if not model.static_max_per_turn`), on the stated grounds that a permission with no rate limit is an unbounded engine rather than a printed line -- which is true of Edgar, Master Machinist's "once during each of your turns" and exactly false of this card. Every accepted value is a finite integer, so any number I could write would be a cap this card does not print: the card is a storm/loop enabler and an invented ceiling is the approximation, not a rounding of one.
+- **(engine)** a verification sandbox that can cast an escape card for its escape cost from the graveyard (the card in the graveyard plus at least five other cards there), or an argued exception in the playable gate for a creature whose own 'sacrifice it unless it escaped' trigger lawfully bins it when cast from hand
+  <br>Why the existing vocabulary won't do: Every line is expressible: graveyard_cost {mana: {G}{G}{U}{U}, exile_from_graveyard: {count: 5, exclude_self: true}} + graveyard_cast: graveyard, a self_enters trigger with if {escaped: false} -> sacrifice self_only, and self_enters/attacks triggers with gain_life 3, draw 1, may put_onto_battlefield a land from hand. A dry run of verify() passes schema/compile/residual but fails the playable gate: '_cast' always casts from hand via build_sandbox (graveyard holds only 2 cards, so escape is unpayable), Uro correctly sacrifices itself, and _play_once allows a permanent only on the battlefield. Its docstring forbids widening that set and says the fix is a sandbox role, not a weaker gate. Dropping or inverting the sacrifice clause would be an approximation.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Underworld Breach** (rank 388) — `underworld_breach`
+  - Each nonland card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard.
+- **Uro, Titan of Nature's Wrath** (rank 1514) — `uro_titan_of_nature_s_wrath`
+  - When Uro enters, sacrifice it unless it escaped.
+- **The Master of Keys** (rank 4992) — `the_master_of_keys`
+  - Each enchantment card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard. (You may cast cards from your graveyard for their escape cost.)
+- **Desdemona, Freedom's Edge** (rank 16346) — `desdemona_freedom_s_edge`
+  - Whenever Desdemona attacks, target creature card in your graveyard that's an artifact or that has mana value 3 or less gains escape until end of turn. The escape cost is equal to its mana cost plus exile two other cards from your graveyard.
 
 </details>
 
@@ -685,56 +758,6 @@ Blocks **3** cards.
   - Whenever another nontoken creature you control dies, exile it. If you do, create a token that's a copy of that creature, except it's a Spirit in addition to its other types and it has "When this token leaves the battlefield, return the exiled card to its owner's graveyard."
 - **Muddle, the Ever-Changing** (rank 11112) — `muddle_the_ever_changing`
   - Whenever you cast an instant or sorcery spell, Muddle becomes a copy of up to one target nonlegendary creature you control until end of turn, except it has myriad
-
-</details>
-
-## council-s-dilemma
-
-Blocks **3** cards.
-
-- **(op)** a vote op (rule 701.38): starting with the spell's controller and going in turn order, each player chooses one object from a selector (here nonland permanents the controller doesn't control) as a vote, without targeting; the tally is kept per candidate, and the op binds 'each candidate with the most votes or tied for most' under an `as` so a following effect (exile) can act on that set
-  <br>Why the existing vocabulary won't do: for_each_player with starting_with can walk the players, but choose_permanents has no per-player chooser (only as/max_total_power/objects/prompt) and no value key counts how many players chose a given object, so neither the per-player vote nor the 'most votes or tied' tally can be said; targeting would be wrong because Council's Judgment does not target (it beats hexproof/shroud)
-- **(decision)** a voting op: starting with the controller and proceeding in turn order, each player chooses one of N named options (here 'past' or 'present'); the op binds the vote tally per option (e.g. as: 'votes' giving {binding: 'votes.past'} / {binding: 'votes.present'}) so later effects in the same spell can use each count as an amount. Each player's vote must be visible to the players voting after them (Council's dilemma / Will of the council)
-  <br>Why the existing vocabulary won't do: choose_mode is one chooser picking modes, not every player casting a public vote with a per-option tally; for_each_player + choose_mode cannot accumulate a count per chosen option into a value, and value_keys has no vote count. Also needed: the damage amount is the total mana value of the cards milled this way, which needs mill's `as` binding to be readable as a sum of mana values (mana_value_of over the binding) -- unverified, but the vote tally is the hard blocker
-- **(decision)** a voting op: starting with the controller and proceeding in turn order, each player publicly chooses one of N named options (here 'wild' or 'free'); the op binds the tally per option (e.g. as: 'votes' giving {binding: 'votes.wild'} / {binding: 'votes.free'}) so later effects in the same spell can use each count as an amount -- here reveal_until's creature count and a repeated optional put-from-hand of a permanent card
-  <br>Why the existing vocabulary won't do: value_keys has no vote count and no op in reference casts a vote; choose_mode is one chooser picking modes, and for_each_player + choose_mode cannot accumulate a per-option tally into a value. join_forces pools mana payments, not choices. Once the tally exists, the rest looks expressible: reveal_until with amount {binding: votes.wild}, selector Creature, destination battlefield, shuffle_rest; and repeat over {binding: votes.free} of a may put_onto_battlefield of a permanent card from hand
-
-<details><summary>Cards waiting on this</summary>
-
-- **Council's Judgment** (rank 3539) — `council_s_judgment`
-  - Will of the council — Starting with you, each player votes for a nonland permanent you don't control. Exile each permanent with the most votes or tied for most votes.
-- **Selvala's Stampede** (rank 4067) — `selvala_s_stampede`
-  - Council's dilemma — Starting with you, each player votes for wild or free.
-  - Reveal cards from the top of your library until you reveal a creature card for each wild vote.
-  - You may put a permanent card from your hand onto the battlefield for each free vote.
-- **Fateful Tempest** (rank 15065) — `fateful_tempest`
-  - Council's dilemma — Starting with you, each player votes for past or present.
-  - You mill a card for each past vote, then Fateful Tempest deals damage to each opponent equal to the total mana value of cards milled this way.
-  - Exile the top card of your library for each present vote.
-
-</details>
-
-## escape
-
-Blocks **3** cards.
-
-- **(static_effect)** a granted escape permission: a `cast_from_graveyard`-style static (here `affects_spells: {"types": ["Enchantment"]}`) whose granted cast charges an additional cost on top of the card's own mana cost -- `exile_from_graveyard: {"count": 3}` where 'other' excludes the card being escaped, not the granting permanent -- priced and paid when the granted spell is cast, with no per-turn cap (the exile is the brake), and marking the spell as escaped (702.138) rather than exiling it on resolution, so an escaped enchantment returns to the graveyard and can escape again
-  <br>Why the existing vocabulary won't do: `cast_from_graveyard` grants the cast at the printed cost only, carries no additional-cost rider, and the loader requires `static_max_per_turn`, which this card does not print. The card-level `graveyard_cost` / `graveyard_additional_cost` slot is escape and can carry `exile_from_graveyard`, but it is set on the escaping card itself at load time; nothing writes a cost onto other cards. `grant_graveyard_cast` only takes `affects_spells`, `any_graveyard` and `grants_flashback` (flashback exiles the card, escape does not). `grant_keyword` has no escape keyword. Same blocker as underworld_breach.
-- **(static_effect)** an additional-cost rider on the `cast_from_graveyard` static -- a Cost charged on top of the granted spell's own mana cost, drawn from `cost_keys`, so this card's static can carry `exile_from_graveyard: {"count": 3, "exclude_self": true}`. It must be priced and paid by `legality.graveyard_cast_permission` / `Game._cast` at the moment the granted spell is cast (the way `chosen_additional` charges a card's own `additional_cost`), and `exclude_self` has to mean the card being escaped, not the permanent granting the permission -- otherwise a three-card graveyard pays for the escape with the escaping card itself.
-  <br>Why the existing vocabulary won't do: `cast_from_graveyard` is the only static that lets a card out of a graveyard and it grants the cast at the card's printed cost with no price attached. Its whole rider vocabulary is `enters_tapped`, `arrived_this_turn_from` and `affects_spells`; the one cost field on any permission static is `pay_life_instead`, which belongs to `cast_from_library_top`, swaps mana for life rather than adding to it, and cannot express an exile. The card-level `graveyard_cost` / `flashback` slot *is* escape and does carry `exile_from_graveyard` with `exclude_self` -- but it is a field on the escaping card itself, set at load time, and Underworld Breach hands escape to cards it has never seen. There is no op or static that writes a cost onto another card, and `grant_keyword` knows only the 34 ability keywords, none of which is escape.
-- **(static_effect)** an unbounded `cast_from_graveyard` permission -- `static_max_per_turn` made optional (or given an explicit unlimited spelling) for permissions whose price is itself the rate limit, with `legality.graveyard_cast_permission` skipping the `GRAVEYARD_CAST_SLOT` ledger check instead of defaulting `cap` to 1. Underworld Breach prints no cap at all; the three exiled cards per cast are the whole brake.
-  <br>Why the existing vocabulary won't do: The loader hard-refuses `cast_from_graveyard` without `static_max_per_turn` (`if not model.static_max_per_turn`), on the stated grounds that a permission with no rate limit is an unbounded engine rather than a printed line -- which is true of Edgar, Master Machinist's "once during each of your turns" and exactly false of this card. Every accepted value is a finite integer, so any number I could write would be a cap this card does not print: the card is a storm/loop enabler and an invented ceiling is the approximation, not a rounding of one.
-- **(engine)** a verification sandbox that can cast an escape card for its escape cost from the graveyard (the card in the graveyard plus at least five other cards there), or an argued exception in the playable gate for a creature whose own 'sacrifice it unless it escaped' trigger lawfully bins it when cast from hand
-  <br>Why the existing vocabulary won't do: Every line is expressible: graveyard_cost {mana: {G}{G}{U}{U}, exile_from_graveyard: {count: 5, exclude_self: true}} + graveyard_cast: graveyard, a self_enters trigger with if {escaped: false} -> sacrifice self_only, and self_enters/attacks triggers with gain_life 3, draw 1, may put_onto_battlefield a land from hand. A dry run of verify() passes schema/compile/residual but fails the playable gate: '_cast' always casts from hand via build_sandbox (graveyard holds only 2 cards, so escape is unpayable), Uro correctly sacrifices itself, and _play_once allows a permanent only on the battlefield. Its docstring forbids widening that set and says the fix is a sandbox role, not a weaker gate. Dropping or inverting the sacrifice clause would be an approximation.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Underworld Breach** (rank 388) — `underworld_breach`
-  - Each nonland card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard.
-- **Uro, Titan of Nature's Wrath** (rank 1514) — `uro_titan_of_nature_s_wrath`
-  - When Uro enters, sacrifice it unless it escaped.
-- **The Master of Keys** (rank 4992) — `the_master_of_keys`
-  - Each enchantment card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard. (You may cast cards from your graveyard for their escape cost.)
 
 </details>
 
@@ -989,6 +1012,24 @@ Blocks **2** cards.
 
 </details>
 
+## fraction-of-value
+
+Blocks **2** cards.
+
+- **(value)** a value expression that divides another value by an arbitrary printed divisor with a printed rounding direction, e.g. {"fraction": {"of": {"life_of": {"binding": "each_player"}}, "divisor": 3, "round": "up"}}, read inside a for_each_player so each player's lose_life amount is ceil(their life / 3)
+  <br>Why the existing vocabulary won't do: The only division in value_keys is `half` ({"half": {"of": v, "round": "up"|"down"}}), fixed at a divisor of 2; `times`, `minus`, `sum`, `min` and `max` cannot compose an exact ceil(n/3) for every life total, so `lose_life` with `life_of` can only take half or all of a life total
+- **(value)** a value expression that divides another value by an arbitrary printed divisor with a printed rounding direction, e.g. {"fraction": {"of": {"count": {"zone": "battlefield", "types": ["Creature"], "controller": {"binding": "each_player"}}}, "divisor": 10, "round": "up"}}, used as the count of a sacrifice selector inside a for_each_player over opponents so each opponent sacrifices ceil(their creatures / 10) creatures of their choice
+  <br>Why the existing vocabulary won't do: The only division in value_keys is `half` ({"half": {"of": v, "round": "up"|"down"}}), fixed at a divisor of 2; `times`, `minus`, `sum`, `min` and `max` cannot compose an exact ceil(n/10) for every creature count, so the sacrifice can only be a fixed number, half or all of their creatures
+
+<details><summary>Cards waiting on this</summary>
+
+- **Dire Fleet Ravager** (rank 6297) — `dire_fleet_ravager`
+  - When this creature enters, each player loses a third of their life, rounded up.
+- **Legate Lanius, Caesar's Ace** (rank 10854) — `legate_lanius_caesar_s_ace`
+  - Decimate — When Legate Lanius enters, each opponent sacrifices a tenth of the creatures they control of their choice, rounded up.
+
+</details>
+
 ## manifest-dread
 
 Blocks **2** cards.
@@ -1115,6 +1156,24 @@ Blocks **2** cards.
   - Whenever you cast a spell, each opponent reveals cards from the top of their library until they reveal a land card, then puts those cards into their graveyard.
 - **Mind Grind** (rank 5575) — `mind_grind`
   - Each opponent reveals cards from the top of their library until they reveal X land cards, then puts all cards revealed this way into their graveyard.
+
+</details>
+
+## soldier-1-1-rw-haste
+
+Blocks **2** cards.
+
+- **(token)** a 1/1 red and white Soldier creature token with haste
+  <br>Why the existing vocabulary won't do: token_ids has soldier_1_1_w (white, no haste), soldier_1_1_w_lifelink, human_soldier_1_1_w and elemental_1_1_r_haste, but no red-and-white Soldier with haste; the rest of the line is expressible as an upkeep trigger doing add_counters (muster, self) then create_token with amount {counters_on: {counter: muster, objects: {self_only: true}}}
+- **(token)** a 1/1 red and white Soldier creature token with haste
+  <br>Why the existing vocabulary won't do: token_ids has soldier_1_1_w (white, no haste), soldier_1_1_w_lifelink, human_soldier_1_1_w and elemental_1_1_r_haste, but no red-and-white Soldier with haste. The rest of the card is expressible: a you_attack trigger with may (pay: sacrifice another creature) whose effects are a reflexive_trigger holding a choose_mode count 2 over create_token (amount 2, tapped, attacking), draw + lose_life, and damage to target opponent equal to a count of creature tokens you control
+
+<details><summary>Cards waiting on this</summary>
+
+- **Assemble the Legion** (rank 2160) — `assemble_the_legion`
+  - At the beginning of your upkeep, put a muster counter on this enchantment. Then create a 1/1 red and white Soldier creature token with haste for each muster counter on this enchantment.
+- **Caesar, Legion's Emperor** (rank 2721) — `caesar_legion_s_emperor`
+  - • Create two 1/1 red and white Soldier creature tokens with haste that are tapped and attacking.
 
 </details>
 
@@ -1956,6 +2015,20 @@ Blocks **1** card.
 
 </details>
 
+## creatures-died-this-turn-filtered
+
+Blocks **1** card.
+
+- **(value)** a turn-ledger value counting creatures that died this turn under a given player's control, filtered by the dead creature's last-known characteristics (here subtypes: ["Human"]) and excluding the source itself ("another Human"), usable as an end_step trigger's intervening-if condition
+  <br>Why the existing vocabulary won't do: creatures_died_this_turn, nontoken_creatures_died_this_turn and modified_creatures_died_this_turn are keyed only by player and take no creature filter, so they cannot ask whether the dead creature was a Human or someone other than this one; a creature_dies trigger setting a turn flag would be an unprinted ability that misses Humans that died before this creature entered
+
+<details><summary>Cards waiting on this</summary>
+
+- **White Glove Gourmand** (rank 13665) — `white_glove_gourmand`
+  - At the beginning of your end step, if another Human died under your control this turn, create a Food token.
+
+</details>
+
 ## crew-with-toughness
 
 Blocks **1** card.
@@ -2067,6 +2140,21 @@ Blocks **1** card.
 
 - **Corrupted Crossroads** (rank 6026) — `corrupted_crossroads`
   - {T}, Pay 1 life: Add one mana of any color. Spend this mana only to cast a spell with devoid.
+
+</details>
+
+## die-rolled-trigger
+
+Blocks **1** card.
+
+- **(trigger_event)** a trigger event fired once per die a player rolls (controller: you), carrying the rolled result so a trigger filter/condition can ask 'rolled >= 4' and the effect can branch on 'rolled >= 6'
+  <br>Why the existing vocabulary won't do: trigger_events has wins_coin_flip but nothing for dice; the roll_dice op and the `rolled` value exist, but `rolled` reads an op's own `as` binding, not a roll made by some other source
+
+<details><summary>Cards waiting on this</summary>
+
+- **Mr. House, President and CEO** (rank 5966) — `mr_house_president_and_ceo`
+  - Whenever you roll a 4 or higher, create a 3/3 colorless Robot artifact creature token. If you rolled 6 or higher, instead create that token and a Treasure token.
+  - {4}, {T}: Roll a six-sided die plus an additional six-sided die for each mana from Treasures spent to activate this ability.
 
 </details>
 
@@ -2213,6 +2301,20 @@ Blocks **1** card.
 
 </details>
 
+## end-of-combat-trigger
+
+Blocks **1** card.
+
+- **(trigger_event)** a triggered-ability event that fires at the beginning of the end of combat step ("At end of combat on your turn"), filterable to the controller's turn, with an intervening-if on attacked_this_turn
+  <br>Why the existing vocabulary won't do: trigger_events has begin_combat, postcombat_main and end_step but no end_of_combat; the `delay` op can schedule at end_of_combat, but only from a trigger fired earlier (you_attack), which would miss a Rose that enters after attackers are declared and fire wrongly if she leaves mid-combat
+
+<details><summary>Cards waiting on this</summary>
+
+- **Rose, Cutthroat Raider** (rank 4544) — `rose_cutthroat_raider`
+  - Raid — At end of combat on your turn, if you attacked this turn, create a Junk token for each opponent you attacked. (It's an artifact with "{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.")
+
+</details>
+
 ## energy-alternative-cost
 
 Blocks **1** card.
@@ -2238,6 +2340,23 @@ Blocks **1** card.
 
 - **Razorfield Ripper** (rank 7317) — `razorfield_ripper`
   - Whenever this creature or equipped creature attacks, you get {E} (an energy counter), then it gets +X/+X until end of turn, where X is the amount of {E} you have.
+
+</details>
+
+## enlist
+
+Blocks **1** card.
+
+- **(keyword)** the Enlist keyword (702.154): as the creature is declared as an attacker, its controller may tap a nonattacking, untapped creature they control without summoning sickness; when they do, a reflexive trigger adds the tapped creature's power to the attacker's until end of turn, and the engine records that the attacker enlisted a creature this combat
+  <br>Why the existing vocabulary won't do: Enlist is not in keywords; the closest are a tap_permanents cost with `as` (an activated ability, not an optional choice made during attack declaration) and an `attacks` trigger with a may/pump, which would happen after attack declaration rather than as an attack-declaration cost and cannot exclude creatures that are attacking
+- **(value)** a trigger condition 'the attacking creature enlisted a creature this combat' readable on an `attacks` trigger whose subject is any creature you control
+  <br>Why the existing vocabulary won't do: condition_keys has has_flag/has_turn_flag but nothing sets a per-combat enlisted flag, since no enlist mechanism exists
+
+<details><summary>Cards waiting on this</summary>
+
+- **Aradesh, the Founder** (rank 13396) — `aradesh_the_founder`
+  - Enlist (As this creature attacks, you may tap a nonattacking creature you control without summoning sickness. When you do, add its power to this creature's until end of turn.)
+  - Whenever a creature you control attacks, if it enlisted a creature this combat, the creature that attacked gains double strike until end of turn. If that creature's power is 4 or greater, draw a card.
 
 </details>
 
@@ -2439,6 +2558,24 @@ Blocks **1** card.
 
 </details>
 
+## exploit
+
+Blocks **1** card.
+
+- **(keyword)** an exploit keyword (702.110): an enters trigger 'you may sacrifice a creature' that the engine marks as an exploit, so the sacrifice can be recognised as 'exploiting', and that a grant_keyword static can hand to other creatures ("Other legendary creatures you control have exploit")
+  <br>Why the existing vocabulary won't do: exploit is not in `keywords`, so the grant_keyword static cannot name it; a hand-written self_enters trigger with may + sacrifice reproduces the sacrifice but not the keyword identity that other cards (and this card's third line) key on, and a grant_ability static of that trigger would not count as 'having exploit'
+- **(trigger_event)** a trigger event 'a creature you control exploits a creature' -- fires when a creature's exploit trigger resolves with a sacrifice, binding the exploiting creature (filtered by controller) and the sacrificed creature
+  <br>Why the existing vocabulary won't do: the `sacrificed` event fires on any sacrifice (costs, edicts, other effects) and nothing in `trigger_keys` or `trigger_filter_keys` restricts it to sacrifices made by an exploit ability, so it would overtrigger
+
+<details><summary>Cards waiting on this</summary>
+
+- **Colonel Autumn** (rank 8043) — `colonel_autumn`
+  - Exploit (When this creature enters, you may sacrifice a creature.)
+  - Other legendary creatures you control have exploit.
+  - Whenever a creature you control exploits a creature, put a +1/+1 counter on each creature you control.
+
+</details>
+
 ## extra-turn
 
 Blocks **1** card.
@@ -2583,20 +2720,6 @@ Blocks **1** card.
 
 - **Haunting Voyage** (rank 3713) — `haunting_voyage`
   - If this spell was foretold, return all creature cards of that type from your graveyard to the battlefield instead.
-
-</details>
-
-## fraction-of-value
-
-Blocks **1** card.
-
-- **(value)** a value expression that divides another value by an arbitrary printed divisor with a printed rounding direction, e.g. {"fraction": {"of": {"life_of": {"binding": "each_player"}}, "divisor": 3, "round": "up"}}, read inside a for_each_player so each player's lose_life amount is ceil(their life / 3)
-  <br>Why the existing vocabulary won't do: The only division in value_keys is `half` ({"half": {"of": v, "round": "up"|"down"}}), fixed at a divisor of 2; `times`, `minus`, `sum`, `min` and `max` cannot compose an exact ceil(n/3) for every life total, so `lose_life` with `life_of` can only take half or all of a life total
-
-<details><summary>Cards waiting on this</summary>
-
-- **Dire Fleet Ravager** (rank 6297) — `dire_fleet_ravager`
-  - When this creature enters, each player loses a third of their life, rounded up.
 
 </details>
 
@@ -3169,6 +3292,21 @@ Blocks **1** card.
 
 </details>
 
+## mana-spent-to-activate
+
+Blocks **1** card.
+
+- **(value)** a value counting mana from sources matching a filter (here Treasures) spent to pay THIS activated ability's cost, so roll_dice count can be 1 + that number
+  <br>Why the existing vocabulary won't do: mana_spent_from reads mana_spent_origins of the cast object (source_oid), i.e. what was spent casting the permanent, not what was spent on an activation
+
+<details><summary>Cards waiting on this</summary>
+
+- **Mr. House, President and CEO** (rank 5966) — `mr_house_president_and_ceo`
+  - Whenever you roll a 4 or higher, create a 3/3 colorless Robot artifact creature token. If you rolled 6 or higher, instead create that token and a Treasure token.
+  - {4}, {T}: Roll a six-sided die plus an additional six-sided die for each mana from Treasures spent to activate this ability.
+
+</details>
+
 ## mana-spent-trigger-on-activation
 
 Blocks **1** card.
@@ -3497,6 +3635,20 @@ Blocks **1** card.
 
 </details>
 
+## one-target-per-graveyard
+
+Blocks **1** card.
+
+- **(selector)** a target spec whose size is mandatory and set by the board: exactly one target instant or sorcery card from EACH graveyard that holds one (no two from the same graveyard, none skipped), so the caster cannot leave a graveyard out
+  <br>Why the existing vocabulary won't do: `one_per_player` caps a caster-sized choice (the loader requires count 'any' or up_to), so it says 'up to one from each graveyard' and lets the controller skip graveyards, which changes whether two or more cards get exiled and so whether the random copy happens; a fixed count cannot follow the number of qualifying graveyards. The rest of the sentence looks expressible (exile with `as`, an `if` on the count of that binding >= 2, `cast_copy` over the binding with `random` and `optional`), so only the targeting is blocked
+
+<details><summary>Cards waiting on this</summary>
+
+- **Mysterious Stranger** (rank 9139) — `mysterious_stranger`
+  - When this creature enters, for each graveyard with an instant or sorcery card in it, exile target instant or sorcery card from that graveyard.
+
+</details>
+
 ## opponent-choice-of-payment
 
 Blocks **1** card.
@@ -3510,6 +3662,20 @@ Blocks **1** card.
   - Cast this spell only during combat before blockers are declared.
   - X can't be greater than the number of snow lands you control.
   - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
+
+</details>
+
+## opponents-attacked-this-turn
+
+Blocks **1** card.
+
+- **(value)** a value counting the distinct opponents you attacked this turn (across every combat), for "create a Junk token for each opponent you attacked"
+  <br>Why the existing vocabulary won't do: value_keys has opponents_attacked_this_combat (melee), which counts only the current combat, not the turn
+
+<details><summary>Cards waiting on this</summary>
+
+- **Rose, Cutthroat Raider** (rank 4544) — `rose_cutthroat_raider`
+  - Raid — At end of combat on your turn, if you attacked this turn, create a Junk token for each opponent you attacked. (It's an artifact with "{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.")
 
 </details>
 
@@ -3779,6 +3945,20 @@ Blocks **1** card.
 
 </details>
 
+## rad-counters
+
+Blocks **1** card.
+
+- **(engine)** rad as a player counter kind (a PlayerState field plus an entry in player.PLAYER_COUNTER_KINDS, with the rad trigger at the beginning of precombat main phase), and a way to remove all counters of ONE named kind from a target player (e.g. a `counter` option on lose_all_player_counters, or a player-targeted remove_counters)
+  <br>Why the existing vocabulary won't do: lose_all_player_counters removes every player counter kind (poison and energy) rather than only rad counters, so it would also strip the target's poison and energy; PLAYER_COUNTER_KINDS carries only poison and energy, so rad counters do not exist; remove_counters acts on objects, not players
+
+<details><summary>Cards waiting on this</summary>
+
+- **Survivor's Med Kit** (rank 13179) — `survivor_s_med_kit`
+  - • RadAway — Target player loses all rad counters. Sacrifice this artifact
+
+</details>
+
 ## random-order-bottom
 
 Blocks **1** card.
@@ -3804,6 +3984,20 @@ Blocks **1** card.
 
 - **Nexus Mentality** (rank 12132) — `nexus_mentality`
   - • Remove all counters from target nonland permanent you control. Draw a card for each counter removed this way.
+
+</details>
+
+## remove-named-counters-from-among
+
+Blocks **1** card.
+
+- **(cost)** a counter kind on the `remove_counters_from_among` cost (and op), e.g. {"remove_counters_from_among": {"count": 3, "counter": "quest"}}, so the payer removes N counters of THAT kind split however they like across the permanents the selector names, with payability checked against the total of that kind only
+  <br>Why the existing vocabulary won't do: `remove_counters_from_among` (cost and op, via `counter_removal.remove_counters_one_at_a_time`) takes any kind of counter, so the payer could pay with +1/+1 counters; `has_counters: "quest"` on its selector only narrows which permanents are offered, not which kind comes off; `remove_counters` with `counter: "quest"` removes `amount` from each object rather than a total split among them, and the `remove_counters` cost reads only the source
+
+<details><summary>Cards waiting on this</summary>
+
+- **Overseer of Vault 76** (rank 10375) — `overseer_of_vault_76`
+  - At the beginning of combat on your turn, you may remove three quest counters from among permanents you control. When you do, put a +1/+1 counter on each creature you control and they gain vigilance until end of turn.
 
 </details>
 
@@ -3920,6 +4114,21 @@ Blocks **1** card.
 
 - **Flamekin Village** (rank 3623) — `flamekin_village`
   - As this land enters, you may reveal an Elemental card from your hand. If you don't, this land enters tapped.
+
+</details>
+
+## robot-token-3-3
+
+Blocks **1** card.
+
+- **(token)** a 3/3 colorless Robot artifact creature token
+  <br>Why the existing vocabulary won't do: token_ids has robot_villain_2_2_c (2/2 Robot Villain) and golem_3_3_c_artifact (3/3 Golem); neither is a 3/3 Robot
+
+<details><summary>Cards waiting on this</summary>
+
+- **Mr. House, President and CEO** (rank 5966) — `mr_house_president_and_ceo`
+  - Whenever you roll a 4 or higher, create a 3/3 colorless Robot artifact creature token. If you rolled 6 or higher, instead create that token and a Treasure token.
+  - {4}, {T}: Roll a six-sided die plus an additional six-sided die for each mana from Treasures spent to activate this ability.
 
 </details>
 
@@ -4123,6 +4332,20 @@ Blocks **1** card.
 
 </details>
 
+## squad
+
+Blocks **1** card.
+
+- **(engine)** a repeatable (additional_repeatable) additional cost whose non-mana half is exile_from_graveyard with count N must be offered at most floor(graveyard cards / N) times, and each repeated payment must fail closed when fewer than N cards remain
+  <br>Why the existing vocabulary won't do: The shape is already in the DSL (additional_cost {exile_from_graveyard: {count: 4}} + additional_optional + additional_repeatable + a self_enters copy_permanent with amount additional_paid, as Gary Clone and Powder Ganger do with mana squad), but casting._repeatable_payments bounds the exile clause by len(resolve_pool(selector)) -- ignoring count, and resolving the raw selector in the default battlefield zone -- so the ceiling is MAX_ADDITIONAL_TIMES; and game.py repeats pay(additional.without_mana()) whose exile step calls ask_objects on an empty pool, which returns [] and succeeds. With four cards in the graveyard the card could be cast with squad paid six times for four exiled cards, making six copies: a strictly better card than the printed one
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ruthless Radrat** (rank 13056) — `ruthless_radrat`
+  - Squad—Exile four cards from your graveyard
+
+</details>
+
 ## stack-wipe
 
 Blocks **1** card.
@@ -4250,6 +4473,20 @@ Blocks **1** card.
 
 </details>
 
+## targets-share-characteristic
+
+Blocks **1** card.
+
+- **(selector)** a group constraint on a variable-count target spec requiring all chosen targets to have the same value of a characteristic (here equal toughness), checked when targets are chosen and rechecked on resolution
+  <br>Why the existing vocabulary won't do: target_keys carry count/min_count/up_to and the group caps total_power and total_mana_value, but nothing that ties the targets to one another by an equal toughness; a fixed `toughness` in the selector would pick a single number instead of letting the caster choose any shared value, and destroying with no constraint would let differing-toughness creatures be chosen
+
+<details><summary>Cards waiting on this</summary>
+
+- **V.A.T.S.** (rank 4421) — `v_a_t_s`
+  - Choose any number of target creatures with equal toughness. Destroy the chosen creatures.
+
+</details>
+
 ## teammates
 
 Blocks **1** card.
@@ -4345,6 +4582,20 @@ Blocks **1** card.
 
 - **Bedrock Tortoise** (rank 3557) — `bedrock_tortoise`
   - Each creature you control with toughness greater than its power assigns combat damage equal to its toughness rather than its power.
+
+</details>
+
+## training
+
+Blocks **1** card.
+
+- **(keyword)** the Training keyword (702.149): a triggered ability 'Whenever this creature attacks with another creature with greater power, put a +1/+1 counter on this creature', grantable by a grant_keyword static so 'Creature tokens you control have training' is a static with affects {controller: you, types: [Creature], is_token: true}
+  <br>Why the existing vocabulary won't do: training is not in the keyword list, so grant_keyword cannot name it. The nearest spelling, a grant_ability static handing tokens a granted 'attacks' trigger, has no supported way to say 'with another attacking creature with greater power': selector and trigger-filter 'power' take a fixed number, not one relative to the triggering creature's power, and a cmp of extreme_value against power_of self is an unverified guess; it would also leave the tokens without the keyword itself, which cards that check for training read
+
+<details><summary>Cards waiting on this</summary>
+
+- **Elder Arthur Maxson** (rank 8710) — `elder_arthur_maxson`
+  - Creature tokens you control have training. (Whenever a creature token you control attacks with another creature with greater power, put a +1/+1 counter on that token.)
 
 </details>
 

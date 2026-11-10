@@ -1,0 +1,31 @@
+{
+  "card_id": "mr_house_president_and_ceo",
+  "name": "Mr. House, President and CEO",
+  "oracle_text": "Whenever you roll a 4 or higher, create a 3/3 colorless Robot artifact creature token. If you rolled 6 or higher, instead create that token and a Treasure token.\n{4}, {T}: Roll a six-sided die plus an additional six-sided die for each mana from Treasures spent to activate this ability.",
+  "blocked_sentences": [
+    "Whenever you roll a 4 or higher, create a 3/3 colorless Robot artifact creature token. If you rolled 6 or higher, instead create that token and a Treasure token.",
+    "{4}, {T}: Roll a six-sided die plus an additional six-sided die for each mana from Treasures spent to activate this ability."
+  ],
+  "needs": [
+    {
+      "capability": "die_rolled_trigger",
+      "kind": "trigger_event",
+      "what": "a trigger event fired once per die a player rolls (controller: you), carrying the rolled result so a trigger filter/condition can ask 'rolled >= 4' and the effect can branch on 'rolled >= 6'",
+      "why_existing_wont_do": "trigger_events has wins_coin_flip but nothing for dice; the roll_dice op and the `rolled` value exist, but `rolled` reads an op's own `as` binding, not a roll made by some other source"
+    },
+    {
+      "capability": "robot_token_3_3",
+      "kind": "token",
+      "what": "a 3/3 colorless Robot artifact creature token",
+      "why_existing_wont_do": "token_ids has robot_villain_2_2_c (2/2 Robot Villain) and golem_3_3_c_artifact (3/3 Golem); neither is a 3/3 Robot"
+    },
+    {
+      "capability": "mana_spent_to_activate",
+      "kind": "value",
+      "what": "a value counting mana from sources matching a filter (here Treasures) spent to pay THIS activated ability's cost, so roll_dice count can be 1 + that number",
+      "why_existing_wont_do": "mana_spent_from reads mana_spent_origins of the cast object (source_oid), i.e. what was spent casting the permanent, not what was spent on an activation"
+    }
+  ],
+  "closest_existing": ["roll_dice", "rolled", "mana_spent_from", "wins_coin_flip", "golem_3_3_c_artifact"],
+  "confidence": "high"
+}

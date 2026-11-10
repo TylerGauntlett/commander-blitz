@@ -1,0 +1,18 @@
+{
+  "card_id": "white_glove_gourmand",
+  "name": "White Glove Gourmand",
+  "oracle_text": "When this creature enters, create two 1/1 white Human Soldier creature tokens.\nAt the beginning of your end step, if another Human died under your control this turn, create a Food token.",
+  "blocked_sentences": [
+    "At the beginning of your end step, if another Human died under your control this turn, create a Food token."
+  ],
+  "needs": [
+    {
+      "capability": "creatures_died_this_turn_filtered",
+      "kind": "value",
+      "what": "a turn-ledger value counting creatures that died this turn under a given player's control, filtered by the dead creature's last-known characteristics (here subtypes: [\"Human\"]) and excluding the source itself (\"another Human\"), usable as an end_step trigger's intervening-if condition",
+      "why_existing_wont_do": "creatures_died_this_turn, nontoken_creatures_died_this_turn and modified_creatures_died_this_turn are keyed only by player and take no creature filter, so they cannot ask whether the dead creature was a Human or someone other than this one; a creature_dies trigger setting a turn flag would be an unprinted ability that misses Humans that died before this creature entered"
+    }
+  ],
+  "closest_existing": ["creatures_died_this_turn", "nontoken_creatures_died_this_turn", "has_turn_flag"],
+  "confidence": "high"
+}
