@@ -256,12 +256,19 @@ def op_grant_playable(ctx: EffectContext, spec: Mapping[str, Any]):
     never its creature face, and the half resolves onto its adventure in exile
     (715.3d) so the creature may be cast from there afterwards.
 
-    ``limit`` is "a spell", singular. Counted per granting permanent in the turn
-    ledger, the way a `cast_from_graveyard` permission is, so two Lockes are two
-    spells and one Locke milling three cards is still one.
+    ``limit`` is "a spell", singular -- or "you may play **one** of those
+    cards" (Nashi, Moon Sage's Scion), where a land drop spends it too. Counted
+    per resolution in the turn ledger, under a fresh group id, so two Lockes
+    are two spells, a double-striking Nashi's two triggers are two plays, and
+    one Locke milling three cards is still one.
+
+    ``playable_pay_life_instead`` is Nashi's "If you cast a spell this way, pay
+    life equal to its mana value rather than paying its mana cost": the
+    permission's alternative cost (118.9), and the only price it offers.
     """
     oids = resolve_pool(ctx, spec.get("objects"))
     limit = int(spec.get("limit", 0) or 0)
+    group = ctx.state.alloc_oid() if limit and oids else None
     any_type = bool(spec.get("any_type"))
     for oid in oids:
         obj = ctx.state.objects.get(oid)
@@ -271,7 +278,7 @@ def op_grant_playable(ctx: EffectContext, spec: Mapping[str, Any]):
         obj.playable_turn = ctx.state.turn
         obj.playable_duration = playable_duration_of(spec) or "this_turn"
         obj.playable_condition = spec.get("playable_condition")
-        obj.playable_group = ctx.source_oid if limit else None
+        obj.playable_group = group
         # "…gains **flashback**", rather than a bare permission to cast it: the
         # card is exiled as it resolves, so the grant is worth one cast per card
         # rather than as many as the turn's mana allows.
@@ -292,6 +299,9 @@ def op_grant_playable(ctx: EffectContext, spec: Mapping[str, Any]):
         # Augurelt): a discount on this permission's casts only, read by
         # `casting.permission_cost_reduction` while the permission is live.
         obj.playable_cost_reduction = int(spec.get("playable_cost_reduction", 0) or 0)
+        # "…pay life equal to its mana value rather than paying its mana
+        # cost" (Nashi): the permission's own price, read by the same cast path.
+        obj.playable_pay_life = bool(spec.get("playable_pay_life_instead"))
         # "You may **cast** …" rather than "play": no land drop out of it.
         obj.playable_cast_only = bool(spec.get("playable_cast_only"))
         record_playable_source(ctx.state, oid, ctx.source_oid)
@@ -726,6 +736,7 @@ def _move_found(
                 obj.playable_any_color = bool(spec.get("any_color"))
                 obj.playable_free = bool(spec.get("playable_free"))
                 obj.playable_cost_reduction = int(spec.get("playable_cost_reduction", 0) or 0)
+                obj.playable_pay_life = bool(spec.get("playable_pay_life_instead"))
                 # "You may **cast** that card" (Gonti, Thief of Sanity): a
                 # land among them is exiled and stays there, never played.
                 obj.playable_cast_only = bool(spec.get("playable_cast_only"))

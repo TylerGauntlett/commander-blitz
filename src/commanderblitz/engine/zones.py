@@ -2399,6 +2399,7 @@ def end_permissions_until_next_exile(state: GameState, source_oid: int | None) -
         obj.playable_cast_only = False
         obj.playable_alt_cost = None
         obj.playable_cost_reduction = 0
+        obj.playable_pay_life = False
     source.playable_grants = []
 
 

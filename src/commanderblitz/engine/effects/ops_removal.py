@@ -395,6 +395,9 @@ def op_exile(ctx: EffectContext, spec: Mapping[str, Any]):
                 # "Spells you cast this way cost {N} less" -- `grant_playable`'s
                 # discount rider, read by the same cast path.
                 obj.playable_cost_reduction = int(spec.get("playable_cost_reduction", 0) or 0)
+                # "…pay life equal to its mana value rather than paying its
+                # mana cost" -- `grant_playable`'s alternative-cost rider.
+                obj.playable_pay_life = bool(spec.get("playable_pay_life_instead"))
                 # "You may **cast** that card" (Hostage Taker): an exiled
                 # artifact land is not a land drop. See `GameObject`.
                 obj.playable_cast_only = bool(spec.get("playable_cast_only"))

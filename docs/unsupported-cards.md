@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**287 cards** blocked by **266** capabilities.
+**286 cards** blocked by **265** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -209,7 +209,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [pay-energy-x](#pay-energy-x) | 1 | 5591 | cost |
 | [play-cost-paid-card](#play-cost-paid-card) | 1 | 6544 | op |
 | [playable-condition-opponent-lost-life](#playable-condition-opponent-lost-life) | 1 | 4478 | engine |
-| [playable-pay-life-instead](#playable-pay-life-instead) | 1 | 1981 | op |
 | [playable-spell-type-restriction](#playable-spell-type-restriction) | 1 | 4763 | op |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-mana-ability-until-end-of-turn](#player-mana-ability-until-end-of-turn) | 1 | 12705 | op |
@@ -3427,20 +3426,6 @@ Blocks **1** card.
 
 - **Theater of Horrors** (rank 4478) — `theater_of_horrors`
   - During your turn, if an opponent lost life this turn, you may play lands and cast spells from among cards exiled with this enchantment.
-
-</details>
-
-## playable-pay-life-instead
-
-Blocks **1** card.
-
-- **(op)** a play-permission rider on exile / look_at_top / grant_playable (e.g. `playable_pay_life_instead: true`) so a spell cast from the exiled cards under that permission is paid for with life equal to its mana value instead of its mana cost, while lands are still played normally and the `limit` of one card still applies
-  <br>Why the existing vocabulary won't do: The only life-for-mana-value price is `pay_life_instead` on the `cast_from_library_top` static (Bolas's Citadel), which covers the top of your own library, not cards exiled from every player's library. The playable riders available are `playable_free` (no cost at all, strictly better than printed), `playable_cost_reduction` and `any_color`/`any_type`; the engine's `playable_alt_cost` is a fixed mana string set only by airbend. Ninjutsu and the 'play one of those cards' limit are expressible (activated hand ability with return_to_hand cost + put_onto_battlefield attacking same_as; grant_playable `limit`).
-
-<details><summary>Cards waiting on this</summary>
-
-- **Nashi, Moon Sage's Scion** (rank 1981) — `nashi_moon_sage_s_scion`
-  - If you cast a spell this way, pay life equal to its mana value rather than paying its mana cost.
 
 </details>
 

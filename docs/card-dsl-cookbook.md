@@ -1119,6 +1119,38 @@ The near miss is a `spell_cost_reduction` static with `from_zone: "exile"`: it
 discounts every exile cast, whatever permission made it castable, and lasts while
 the permanent is on the battlefield rather than as long as the grant.
 
+### "If you cast a spell this way, pay life equal to its mana value rather than paying its mana cost"
+
+```jsonc
+// Nashi, Moon Sage's Scion
+{ "op": "look_at_top", "player": "each_player", "amount": { "const": 1 },
+  "objects": { "count": "all" }, "destination": "exile", "as": "nashi_exiled" },
+{ "op": "grant_playable", "limit": 1, "playable_pay_life_instead": true,
+  "objects": { "binding": "nashi_exiled" } }
+```
+
+`playable_pay_life_instead` is the permission's alternative cost (118.9), on
+`exile`, `look_at_top` to exile or `grant_playable`. It sets the object's
+`playable_pay_life`, and `casting._pay_life_lines` offers that card's cast lines
+priced in life equal to its mana value and **nothing else**: "this way" is the
+only way the permission reaches, so the printed price, a free line and every
+other alternative cost are withheld (118.9a). The price rides on
+`Action.granted_cost`, so `Game._cast` charges the life that was offered. X is 0
+(107.3b), so the life is the mana value with X at 0; additional costs -- a
+mandatory one, a kicker, spree modes, a promised gift -- are still owed on top
+(118.9d). The line is offered only while the player has that much life (119.4;
+paying 0 always works) and their life total may change. A land is played, never
+cast, and pays nothing.
+
+The loader refuses it without a permission to ride on, any value but `true`, and
+beside `playable_free`, `playable_cost_reduction`, `any_color`, `any_type`,
+`as_adventure` or `as_flashback`, each of which names a second price.
+
+The near misses are `cast_from_library_top`'s `pay_life_instead` (Bolas's
+Citadel), which is the same price off the top of your own library and no
+permission at all, and the `granted_alternative_cost` static, which offers its
+price *beside* the printed one.
+
 ## Auras and Equipment
 
 An Aura's "Enchant creature" line is not an ability — it is the spell's
@@ -13609,12 +13641,15 @@ as a grant and grants nothing.
 | the cards move | already in exile | this op exiles them | **not at all** |
 | which zone | exile | exile | any zone the selector names |
 | price | free | printed | printed |
-| how many | one | all of them | `limit`, per granting permanent |
+| how many | one | all of them | `limit`, per resolution |
 
-`limit` is "**a** spell", singular, out of however many were flagged. Counted in
-the turn ledger against the granting permanent (`playable_group`), on the same
-negative slot a `cast_from_graveyard` permission bills, so two Lockes are two
-spells and one Locke milling three cards is still one.
+`limit` is "**a** spell", singular, out of however many were flagged -- or
+"you may **play one** of those cards" (Nashi, Moon Sage's Scion), where a land
+played from exile spends it too. Each resolution draws a fresh group id
+(`playable_group`, from `GameState.alloc_oid`, so it names no object), counted
+in the turn ledger on the same negative slot a `cast_from_graveyard` permission
+bills: two Lockes are two spells, a double-striking Nashi's two triggers are two
+plays, and one Locke milling three cards is still one.
 
 **Every seat's copy of both zones is walked.** Exile is kept per owner, so a
 card taken out of an opponent's graveyard sits in the *opponent's* exile, and a

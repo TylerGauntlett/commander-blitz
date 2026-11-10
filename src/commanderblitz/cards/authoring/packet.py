@@ -815,7 +815,11 @@ def reference() -> dict:
             " additional costs, and X is 0. \"You may **cast** that card\""
             " (never \"play\") is `playable_cast_only: true` beside the"
             " `playable` duration: a land among those cards is not played and"
-            " stays exiled (305.9).",
+            " stays exiled (305.9). \"If you cast a spell this way, pay life"
+            " equal to its mana value rather than paying its mana cost\" is"
+            " `playable_pay_life_instead: true` on the same permission;"
+            " \"you may play one of those cards\" is `grant_playable` with"
+            " `limit: 1` over the exiled cards' `as` binding.",
             "\"You don't lose unspent red mana as steps and phases end\" is the"
             " player-wide static `mana_retention` with `affects_player: \"you\"`"
             " and `colors: [\"R\"]`; \"Players don't lose unspent mana\" is"

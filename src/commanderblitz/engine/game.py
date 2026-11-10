@@ -360,6 +360,17 @@ class Game:
         # a landfall trigger with an intervening-if that counts land drops this
         # turn has to see the post-increment value.
         state.players[pid].lands_played += 1
+        played = state.objects[oid]
+        if (
+            played.zone is Zone.EXILE
+            and played.playable_group is not None
+            and played.playable_by == pid
+            and played.playable_live(state.turn)
+        ):
+            # "…you may **play** one of those cards" (Nashi, Moon Sage's
+            # Scion): a land is one of them, so the drop spends the group the
+            # way a cast does, in the same ledger slot legality reads.
+            state.turn_ledger.activated(played.playable_group, GRAVEYARD_CAST_SLOT)
         # A modal DFC played as its land half shows that face from the moment it
         # arrives, and the flag is set *before* the move so the enters-the-
         # battlefield replacements are read off the land rather than off the
@@ -604,7 +615,7 @@ class Game:
             cost = card.foretell
         elif action.overloaded and card.overload is not None:
             cost = card.overload
-        elif action.kicked:
+        elif action.kicked and not action.granted_cost:
             cost = card.mana_cost.plus(card.kicker)
         elif action.from_library_top:
             # "…pay life equal to its mana value **rather than** pay its mana
@@ -619,6 +630,11 @@ class Game:
             # exactly as `_cast_variant` priced the line, and the price -- read
             # off the action, for `warp`'s reason -- is charged below.
             cost = ManaCost.parse("")
+            if action.kicked and card.kicker is not None:
+                # The kicker is an additional cost (702.33a), still owed under
+                # the life a `playable_pay_life_instead` permission charges --
+                # `_cast_variant` priced the kicked line the same way.
+                cost = card.kicker
         elif action.cast_free:
             # "…without paying its mana cost" (601.2b). Plot's "you may cast it
             # as a sorcery on a later turn without paying its mana cost", and

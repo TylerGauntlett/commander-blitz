@@ -14,7 +14,7 @@ from . import combat as combat_mod
 from . import suspend as suspend_mod
 from .actions import Action, PendingDecision
 from .carddef import CardDef, Cost
-from .casting import _cast_actions, _timing_ok
+from .casting import GRAVEYARD_CAST_SLOT, _cast_actions, _timing_ok
 from .characteristics import (
     abilities_of,
     loyalty_activation_timing_waived,
@@ -410,6 +410,15 @@ def _land_actions(state: GameState, pid: int) -> list[Action]:
         # is played, never cast (305.9), so the permission opens no land drop.
         and not state.objects[oid].playable_cast_only
         and playable_condition_met(state, state.objects[oid])
+        # "…you may play **one** of those cards" (Nashi): a group whose one
+        # play is spent offers no land either. `casting._cast_actions` asks
+        # the same ledger slot for the cast side.
+        and not (
+            state.objects[oid].playable_group is not None
+            and state.turn_ledger.activations(
+                state.objects[oid].playable_group, GRAVEYARD_CAST_SLOT
+            )
+        )
     ]
     if exiled:
         zones.append(exiled)

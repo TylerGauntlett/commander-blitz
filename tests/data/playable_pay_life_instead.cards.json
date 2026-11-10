@@ -1,0 +1,51 @@
+{
+  "_comment": "Shapes for tests/unit/casting/test_playable_pay_life_instead.py. t_ppl_raid is Nashi, Moon Sage's Scion's trigger as a sorcery (exile the top card of each player's library, play one of them, spells for life); t_ppl_plain_raid the same play-one permission without the life clause; t_ppl_heist puts the rider on the exile op itself.",
+  "cards": [
+    {
+      "id": "t_ppl_raid",
+      "name": "Test Moon Raid",
+      "oracle_text": "Exile the top card of each player's library. Until end of turn, you may play one of those cards. If you cast a spell this way, pay life equal to its mana value rather than paying its mana cost.",
+      "mana_cost": "{B}",
+      "types": ["Sorcery"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "spell_effects": [
+        {"op": "look_at_top", "player": "each_player", "amount": {"const": 1},
+         "objects": {"count": "all"}, "destination": "exile", "as": "raided"},
+        {"op": "grant_playable", "limit": 1, "playable_pay_life_instead": true,
+         "objects": {"binding": "raided"}}
+      ]
+    },
+    {
+      "id": "t_ppl_plain_raid",
+      "name": "Test Plain Moon Raid",
+      "oracle_text": "Exile the top card of each player's library. Until end of turn, you may play one of those cards.",
+      "mana_cost": "{B}",
+      "types": ["Sorcery"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "spell_effects": [
+        {"op": "look_at_top", "player": "each_player", "amount": {"const": 1},
+         "objects": {"count": "all"}, "destination": "exile", "as": "raided"},
+        {"op": "grant_playable", "limit": 1, "objects": {"binding": "raided"}}
+      ]
+    },
+    {
+      "id": "t_ppl_heist",
+      "name": "Test Life Heist",
+      "oracle_text": "Exile target card from an opponent's graveyard. You may cast it this turn. If you cast a spell this way, pay life equal to its mana value rather than paying its mana cost.",
+      "mana_cost": "{B}",
+      "types": ["Sorcery"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "targets": [
+        {"id": "t1", "kind": "card_in_graveyard", "count": 1,
+         "selector": {"zone": "graveyard", "player": "opponent"}}
+      ],
+      "spell_effects": [
+        {"op": "exile", "objects": {"target": "t1"}, "playable": "this_turn",
+         "playable_cast_only": true, "playable_pay_life_instead": true}
+      ]
+    }
+  ]
+}

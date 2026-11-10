@@ -2700,6 +2700,42 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             )
         if effect["playable_cast_only"] is not True:
             raise DslError(f"{where}.playable_cast_only: the only value is true")
+    if "playable_pay_life_instead" in effect:
+        # "If you cast a spell this way, pay life equal to its mana value
+        # rather than paying its mana cost" (Nashi, Moon Sage's Scion) is the
+        # alternative cost of a "you may play it" permission: on a bare exile
+        # it would load, print its sentence and charge nothing.
+        grants = op == "grant_playable" or (
+            op in ("exile", "look_at_top")
+            and ("playable" in effect or effect.get("playable_this_turn"))
+        )
+        if not grants:
+            raise DslError(
+                f"{where}: 'playable_pay_life_instead' prices the casts a 'playable' "
+                f"permission grants, so it needs one (exile / look_at_top with "
+                f"'playable', or grant_playable)"
+            )
+        if effect["playable_pay_life_instead"] is not True:
+            raise DslError(f"{where}.playable_pay_life_instead: the only value is true")
+        # 118.9a: one alternative cost per spell, and no mana cost left for a
+        # discount or a relaxation of what mana may be spent to reach.
+        clash = [
+            key
+            for key in (
+                "playable_free",
+                "playable_cost_reduction",
+                "any_color",
+                "any_type",
+                "as_adventure",
+                "as_flashback",
+            )
+            if effect.get(key)
+        ]
+        if clash:
+            raise DslError(
+                f"{where}: 'playable_pay_life_instead' replaces the mana cost with "
+                f"life, so {clash[0]!r} beside it says a second price nobody printed"
+            )
     if "playable" in effect or "playable_this_turn" in effect:
         # Two spellings of one key: `playable_this_turn: true` is what every
         # card written before durations existed says, and `playable:

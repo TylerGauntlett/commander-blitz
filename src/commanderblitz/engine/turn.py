@@ -93,6 +93,7 @@ def _expire_permissions(state: GameState, duration: str, *, after_grant_turn: bo
         # spend would be a live-looking field on a dead grant.
         obj.playable_alt_cost = None
         obj.playable_cost_reduction = 0
+        obj.playable_pay_life = False
 
 
 def begin_step(state: GameState) -> Generator[Any, list[int]]:

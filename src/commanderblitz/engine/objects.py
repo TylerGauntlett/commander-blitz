@@ -938,11 +938,14 @@ class GameObject:
     #: is not. Resolving, the half goes on its adventure as any Adventure does
     #: (715.3d), because `showing_second_face` is what that rider reads.
     playable_as_adventure: bool = False
-    #: Which permanent's permission made this card playable, when that
-    #: permission caps how many of its cards may be cast -- Locke, Treasure
-    #: Hunter: "you may cast **a spell** from among those cards", singular, out
-    #: of however many were milled. The cap is counted per granting permanent in
-    #: the turn ledger, so the group has to say which one granted it.
+    #: Which grant made this card playable, when that grant caps how many of
+    #: its cards may be played -- Locke, Treasure Hunter: "you may cast **a
+    #: spell** from among those cards", singular, out of however many were
+    #: milled; Nashi, Moon Sage's Scion: "you may **play one** of those cards",
+    #: a land drop included. A fresh id per resolution (`GameState.alloc_oid`,
+    #: so it names no object), counted in the turn ledger: two resolutions in
+    #: one turn -- a double-striking Nashi -- are two plays, and one
+    #: resolution's cards share one.
     playable_group: int | None = None
     #: "…and mana of any type can be spent to cast that spell" -- Summon: Esper
     #: Valigarmanda. A relaxation of what may be *spent*, riding along with the
@@ -990,6 +993,13 @@ class GameObject:
     #: dies with it, so it ends when the permission does (this turn, for
     #: Urianger) rather than when the granting permanent leaves.
     playable_cost_reduction: int = 0
+    #: "If you cast a spell this way, **pay life equal to its mana value rather
+    #: than paying its mana cost**" -- Nashi, Moon Sage's Scion. An alternative
+    #: cost (118.9) the permission carries, so it rides on the grant and dies
+    #: with it, as `playable_alt_cost` does. Not an option beside the printed
+    #: price: `casting._pay_life_lines` offers the life lines alone. A land
+    #: played under it pays nothing, because it is played, never cast.
+    playable_pay_life: bool = False
     #: The object whose effect granted an ``"until_next_exile_by_source"``
     #: permission -- Superior Foes of Spider-Man: "you may play that card
     #: **until you exile another card with this creature**". Read only by
@@ -1427,6 +1437,7 @@ class GameObject:
         self.playable_condition = None
         self.playable_alt_cost = None
         self.playable_cost_reduction = 0
+        self.playable_pay_life = False
         self.playable_source = None
         self.exiled_from = None
         self.prepared = False

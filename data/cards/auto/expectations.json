@@ -12753,6 +12753,10 @@
     },
     "zone": "battlefield"
   },
+  "nashi_moon_sage_s_scion": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "nature_s_lore": {
     "battlefield_count": 33,
     "graveyard_size": {

@@ -183572,12 +183572,12 @@
     },
     "Nashi, Moon Sage's Scion": {
       "edhrec_rank": 1981,
-      "gate": "template",
+      "gate": null,
       "name": "Nashi, Moon Sage's Scion",
-      "reason": "no template for: Ninjutsu {3}{B}",
+      "reason": "",
       "scryfall_id": "1e62de3b-6a41-43e3-93ad-9a1e3894be3b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nashi, Moon's Legacy": {
