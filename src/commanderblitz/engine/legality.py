@@ -525,7 +525,7 @@ def unplayable_reason(state: GameState, pid: int, oid: int) -> str | None:
     discount = cost_reduction(
         state, pid, card, zone=Zone.HAND, owner=state.objects[oid].owner
     )
-    purpose = spell_purpose(card)
+    purpose = spell_purpose(card, caster=pid, owner=state.objects[oid].owner)
     x = 0
     # The same gate `_cast_variant` applies, and it must stay X = 0
     # afterwards for the same reason: this diagnostic has to agree with the

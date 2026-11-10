@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**290 cards** blocked by **269** capabilities.
+**289 cards** blocked by **268** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -182,7 +182,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mana-cant-pay-generic](#mana-cant-pay-generic) | 1 | 3861 | value |
 | [mana-doubling-replacement](#mana-doubling-replacement) | 1 | 1807 | replacement |
 | [mana-restriction-cast-from-zone](#mana-restriction-cast-from-zone) | 1 | 9291 | engine |
-| [mana-restriction-spells-you-dont-own](#mana-restriction-spells-you-dont-own) | 1 | 4457 | value |
 | [mana-restriction-turn-face-up](#mana-restriction-turn-face-up) | 1 | 6766 | value |
 | [mana-spent-enters-with-counters](#mana-spent-enters-with-counters) | 1 | 653 | replacement |
 | [mana-spent-trigger-on-activation](#mana-spent-trigger-on-activation) | 1 | 4444 | trigger_event |
@@ -3044,20 +3043,6 @@ Blocks **1** card.
 
 - **Lord of the Forsaken** (rank 9291) — `lord_of_the_forsaken`
   - Pay 1 life: Add {C}. Spend this mana only to cast a spell from your graveyard.
-
-</details>
-
-## mana-restriction-spells-you-dont-own
-
-Blocks **1** card.
-
-- **(value)** a mana_restriction predicate on the cast half that asks whether the spell being cast is owned by someone other than the player spending the mana ("spend this mana only to cast spells you don't own") -- e.g. {"cast": [[{"owner": "opponent"}]]}, with SpendPurpose carrying the spell's owner relative to the payer
-  <br>Why the existing vocabulary won't do: mana_restriction groups hold only type/subtype names, {not: name}, and the predicates mana_value, x_in_mana_cost and colorless (RESTRICTION_PREDICATES); SpendPurpose carries no owner, so nothing can tell a spell you own from one you don't. Dropping the restriction makes strictly better unrestricted mana
-
-<details><summary>Cards waiting on this</summary>
-
-- **Thieving Varmint** (rank 4457) — `thieving_varmint`
-  - {T}, Pay 1 life: Add two mana of any one color. Spend this mana only to cast spells you don't own.
 
 </details>
 

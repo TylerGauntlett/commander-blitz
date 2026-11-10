@@ -2068,7 +2068,7 @@ def _cast_paying_mana_cost(ctx: EffectContext, pid: int, oid: int, *, exiles: bo
         min_x = max(min_x, card.x_minimum)
 
     cost = card.mana_cost
-    purpose = spell_purpose(card)
+    purpose = spell_purpose(card, caster=pid, owner=obj.owner)
 
     def extra_for(targets) -> int:
         # The zone the card is cast from -- graveyard, exile or wherever the
@@ -2232,7 +2232,8 @@ def cast_copy_paying(ctx: EffectContext, pid: int, oid: int, price: str):
         # 0": X is 0 under this price.
         return False
     cost = ManaCost.parse(price)
-    purpose = spell_purpose(card)
+    # A copy is owned by its caster (707.10): never a spell they don't own.
+    purpose = spell_purpose(card, caster=pid, owner=pid)
 
     # A copy of a card cast is owned by its caster (707.10), so "spells you
     # cast but don't own" never discounts one, whoever owns the card copied.

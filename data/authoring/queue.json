@@ -283512,12 +283512,12 @@
     },
     "Thieving Varmint": {
       "edhrec_rank": 4457,
-      "gate": "template",
+      "gate": null,
       "name": "Thieving Varmint",
-      "reason": "no template for: {T}, Pay 1 life: Add two mana of any one color. Spend this mana only to cast spells you do",
+      "reason": "",
       "scryfall_id": "2b8189ad-6b00-49b3-be39-b98cf6bfa2a5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thijarian Witness": {

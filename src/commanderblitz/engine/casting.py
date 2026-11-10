@@ -1954,7 +1954,8 @@ def _cast_variant(
     # Restricted mana ("spend only to cast a creature spell") is offered or
     # withheld here, and `game._cast` must ask the same question with the same
     # answer -- both go through `spell_purpose`.
-    purpose = spell_purpose(card)
+    # Its owner too, for "only to cast spells you don't own" (108.3).
+    purpose = spell_purpose(card, caster=pid, owner=state.objects[oid].owner)
     sources = mana_sources(state, pid, purpose=purpose)
     # The pool asked the same question: a pip carrying "spend this mana only to
     # cast spells" is a restricted *source* that has already been made, and the

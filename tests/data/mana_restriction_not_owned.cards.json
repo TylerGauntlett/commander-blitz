@@ -1,0 +1,45 @@
+{
+  "_comment": "Shapes for tests/unit/mana/test_mana_restriction_not_owned.py. t_varmint_mana is Thieving Varmint's mana ability on a vanilla 1/1: '{T}, Pay 1 life: Add two mana of any one color. Spend this mana only to cast spells you don't own.' Its life cost keeps it out of the solver, so its mana reaches the pool and is spent from there. t_unowned_font is the same restriction on a tap-only '{T}: Add {C}{C}', the source the solver taps itself. The spells priced are t_czr_relic ({4} artifact) and t_nod_cane's cast_copy at {4}.",
+  "cards": [
+    {
+      "id": "t_varmint_mana",
+      "name": "Test Unowned Varmint",
+      "oracle_text": "{T}, Pay 1 life: Add two mana of any one color. Spend this mana only to cast spells you don't own.",
+      "mana_cost": "{1}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Rat"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}, Pay 1 life: Add two mana of any one color. Spend this mana only to cast spells you don't own.",
+          "is_mana_ability": true,
+          "cost": {"tap": true, "pay_life": 1},
+          "mana_restriction": {"cast": [[{"not_owned": true}]]},
+          "effects": [{"op": "add_mana", "any_one_color": true, "amount": 2}]
+        }
+      ]
+    },
+    {
+      "id": "t_unowned_font",
+      "name": "Test Unowned Font",
+      "oracle_text": "{T}: Add {C}{C}. Spend this mana only to cast spells you don't own.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {C}{C}. Spend this mana only to cast spells you don't own.",
+          "cost": {"tap": true},
+          "is_mana_ability": true,
+          "mana_restriction": [[{"not_owned": true}]],
+          "effects": [{"op": "add_mana", "mana": "{C}{C}", "player": "you"}]
+        }
+      ]
+    }
+  ]
+}

@@ -19565,6 +19565,9 @@
   "thieving_skydiver": {
     "zone": "battlefield"
   },
+  "thieving_varmint": {
+    "zone": "battlefield"
+  },
   "think_twice": {
     "graveyard_size": {
       "0": 3

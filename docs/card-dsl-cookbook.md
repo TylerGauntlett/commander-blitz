@@ -462,8 +462,8 @@ creature source of the chosen type**." Three things are load-bearing:
   it would mean a sentinel that only half the substitution path honours. A name
   that is both required and forbidden in one group is refused too — nothing can
   satisfy it, which is the same dead mana a typo makes.
-- **`{"mana_value": …}`, `{"x_in_mana_cost": true}` and `{"colorless": true}`**
-  are the entries that are not names at all. See below.
+- **`{"mana_value": …}`, `{"x_in_mana_cost": true}`, `{"colorless": true}` and
+  `{"not_owned": true}`** are the entries that are not names at all. See below.
 
 #### A restriction that is not a name — `mana_value`, `x_in_mana_cost`
 
@@ -498,6 +498,16 @@ type, so a bare `"colorless"` name would match nothing (and is refused as a
 predicate spelled as a name), while `["eldrazi"]` alone funds coloured Eldrazi.
 `spell_purpose` answers it off the printed colours, `ability_purpose` off the
 source's current ones.
+
+`not_owned` is the fourth, and `true` only: Thieving Varmint's "spend this mana
+only to cast spells **you don't own**" is `{"cast": [[{"not_owned": true}]]}`.
+Ownership belongs to the object, not the printed face (108.3), so
+`spell_purpose` answers it only from the `caster` and `owner` every cast lane
+hands it, the same owner those lanes hand `cost_reduction` for
+`spell_cost_reduction`'s `not_owned`; a copy is owned by its caster (707.10), and
+a purpose given neither fails closed. It belongs to the `cast` half alone: under
+`activate` it is refused, since no ability is a spell anyone owns. The near miss
+is Klauth's `{"cast": "any"}`, which funds the caster's own spells too.
 
 The comparison's value must be a **literal**. A restriction is compiled once at
 load and read during payment, where there is no `EffectContext` to evaluate an

@@ -109,7 +109,9 @@ def mana_sources(
     return out
 
 
-def spell_purpose(card: CardDef) -> SpendPurpose:
+def spell_purpose(
+    card: CardDef, *, caster: int | None = None, owner: int | None = None
+) -> SpendPurpose:
     """What restricted mana would have to allow, to *cast* this card.
 
     Subtypes and supertypes as well as types, because the printed clause names
@@ -140,6 +142,13 @@ def spell_purpose(card: CardDef) -> SpendPurpose:
     a Fireball cast for X=0 is still "a spell with {X} in its mana cost", and
     202.3b scores that X as 0 -- so `mana_value` catches Fireball and Shock
     together or neither, and the symbol question is a different question.
+
+    ``caster`` and ``owner`` answer Thieving Varmint's "…only to cast spells
+    **you don't own**": the player paying and the owner of the object being
+    cast (108.3), which a printed face cannot say. Every cast lane hands both
+    down, as it hands `cost_reduction` the owner; a copy is owned by its caster
+    (707.10). Given neither, `not_owned` stays ``None`` and the restriction
+    fails closed.
     """
     return SpendPurpose(
         kind=CAST,
@@ -149,6 +158,7 @@ def spell_purpose(card: CardDef) -> SpendPurpose:
         mana_value=card.mana_value,
         x_in_mana_cost=card.mana_cost.x_count > 0,
         colorless=not card.colors,
+        not_owned=None if caster is None or owner is None else owner != caster,
     )
 
 
@@ -2536,6 +2546,12 @@ def activate_mana_ability(
         # **ability** for the reason above: Arena's plain `{R}` ability must not
         # hand out the haste its exerting one pays for.
         grant=ability.mana_grant,
+        # "Spend this mana only to …", read off the **ability** for the same
+        # reason and resolved against this permanent as `_sources_of` resolves
+        # it. The solver spends what it taps at once, but a by-hand activation
+        # -- every ability with a cost beyond {T}, Thieving Varmint's life --
+        # leaves its mana in the pool, and untagged it would pay for anything.
+        restriction=resolve_mana_restriction(ability, obj),
         source_traits=source_traits,
         # Study Hall's "When you spend this mana to cast your commander…", read
         # off the **ability** for the reason above. One tag per activation,

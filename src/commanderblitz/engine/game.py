@@ -760,7 +760,7 @@ class Game:
         # And by the card's own "X can't be 0" (107.3), which `_ask_x` reads
         # only when this line's cost has an X to announce.
         x = yield from self._ask_x(
-            pid, card.name, cost, extra, spell_purpose(card),
+            pid, card.name, cost, extra, spell_purpose(card, caster=pid, owner=obj.owner),
             min_x=max(min_x or 0, card.x_minimum),
         )
         # The one X a spell has is the one the player announced, whichever half
@@ -809,7 +809,7 @@ class Game:
             None,
             x=x,
             extra_generic=extra,
-            purpose=spell_purpose(card),
+            purpose=spell_purpose(card, caster=pid, owner=obj.owner),
             # Sunburst and converge. The spell is what the colours are recorded
             # on, and this is the only moment they exist: `spend` decrements the
             # pool and one blue mana is then indistinguishable from another.
@@ -1462,7 +1462,7 @@ class Game:
         fewest = min(fewest, most)
         if most <= 0:
             return cost, 0, []
-        purpose = spell_purpose(card)
+        purpose = spell_purpose(card, caster=pid, owner=state.objects[oid].owner)
 
         def price(picked: list[int]) -> tuple[ManaCost, int] | None:
             """What the rest costs once ``picked`` are spent, or ``None`` if unpayable."""
