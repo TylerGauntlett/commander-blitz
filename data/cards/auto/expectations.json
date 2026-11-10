@@ -18660,6 +18660,10 @@
   "sungrass_prairie": {
     "zone": "battlefield"
   },
+  "sunhome_fortress_of_the_legion": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sunken_hollow": {
     "zone": "battlefield"
   },
@@ -19370,6 +19374,14 @@
       "0": 1
     },
     "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
+  "tenured_inkcaster": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
     "zone": "battlefield"
   },
   "terastodon": {
@@ -21398,6 +21410,10 @@
     ]
   },
   "vigilant_baloth": {
+    "zone": "battlefield"
+  },
+  "vihaan_goldwaker": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "vile_mutilator": {

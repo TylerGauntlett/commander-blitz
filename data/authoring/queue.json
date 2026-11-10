@@ -269782,12 +269782,12 @@
     },
     "Sunhome, Fortress of the Legion": {
       "edhrec_rank": 1805,
-      "gate": "template",
+      "gate": null,
       "name": "Sunhome, Fortress of the Legion",
-      "reason": "no template for: {2}{R}{W}, {T}: Target creature gains double strike until end of turn",
+      "reason": "",
       "scryfall_id": "4ebb97da-e4d5-41ba-9a70-2a1de91f513c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sunken Citadel": {
@@ -278042,12 +278042,12 @@
     },
     "Tenured Inkcaster": {
       "edhrec_rank": 13726,
-      "gate": "template",
+      "gate": null,
       "name": "Tenured Inkcaster",
-      "reason": "no template for: When this creature enters, put a +1/+1 counter on target creature",
+      "reason": "",
       "scryfall_id": "e315f7ab-14c3-4ad6-8d8d-ac83cee39272",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tenured Oilcaster": {
@@ -304642,12 +304642,12 @@
     },
     "Vihaan, Goldwaker": {
       "edhrec_rank": 5873,
-      "gate": "template",
+      "gate": null,
       "name": "Vihaan, Goldwaker",
-      "reason": "no template for: Other outlaws you control have vigilance and haste",
+      "reason": "",
       "scryfall_id": "7b09ab3a-344c-42d0-9f71-e8374214cda1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vikya, Scorching Stalwart": {
