@@ -17,8 +17,8 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Conditions](#conditions) | 34 |
 | [Trigger events](#trigger-events) | 54 |
 | [Trigger filters](#trigger-filters) | 37 |
-| [Static effects](#static-effects) | 96 |
-| [Player-wide statics](#player-wide-statics) | 46 |
+| [Static effects](#static-effects) | 97 |
+| [Player-wide statics](#player-wide-statics) | 47 |
 | [Grantable statics](#grantable-statics) | 43 |
 | [Cost reduction](#cost-reduction) | 8 |
 | [Ability costs](#ability-costs) | 34 |
@@ -618,6 +618,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `play_lands_from_library_top` | yes |  | The player may play lands from the top of their library. | [Static abilities](card-dsl.md#static-abilities) |
 | `player_hexproof` | yes |  | The player has hexproof: opponents' spells and abilities can't target them. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `player_protection` | yes |  | The player has protection from a quality: damage, targeting and enchanting by it. | [Protection](card-dsl-cookbook.md#protection) |
+| `plot_cost_reduction` | yes |  | Plotting a card from the player's hand costs N less generic mana. | [Plot](card-dsl.md#plot) |
 | `prevent_all_but` |  | yes | Prevent all but N of each instance of damage to matching permanents. | [Prevent all but N of that damage](card-dsl-cookbook.md#prevent-all-but-n-of-that-damage) |
 | `prevent_damage` |  | yes | Prevent damage dealt to matching permanents (absorb N, all of it, or all of it as that many +1/+1 counters) or N of each damage to a seat from a matching dealer. | [Absorb, which is not protection with a number](card-dsl-cookbook.md#absorb-which-is-not-protection-with-a-number) |
 | `protection` |  | yes | Matching permanents have protection from a quality. | [Protection](card-dsl-cookbook.md#protection) |
@@ -689,6 +690,7 @@ The static effects that describe the *player* rather than a characteristic, and 
 | `play_lands_from_library_top` | The player may play lands from the top of their library. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `player_hexproof` | The player has hexproof: opponents' spells and abilities can't target them. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `player_protection` | The player has protection from a quality: damage, targeting and enchanting by it. | [Protection](card-dsl-cookbook.md#protection) |
+| `plot_cost_reduction` | Plotting a card from the player's hand costs N less generic mana. | [Plot](card-dsl.md#plot) |
 | `replace_draw` | If the player would draw a card, draw more instead. | ["If you would draw a card, draw two cards instead"](card-dsl-cookbook.md#if-you-would-draw-a-card-draw-two-cards-instead) |
 | `replace_empty_draw` | If the player would draw from an empty library, something else happens. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `replace_life_gain` | If the player would gain life, they gain more instead. | ["If you would gain life, you gain twice that much life instead"](card-dsl-cookbook.md#if-you-would-gain-life-you-gain-twice-that-much-life-instead) |

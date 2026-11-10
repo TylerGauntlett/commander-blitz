@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**288 cards** blocked by **267** capabilities.
+**287 cards** blocked by **266** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -216,7 +216,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [players-attacked-last-combat](#players-attacked-last-combat) | 1 | 6681 | value |
 | [players-lost-the-game-count](#players-lost-the-game-count) | 1 | 4941 | value |
 | [plot](#plot) | 1 | 7506 | op |
-| [plot-cost-reduction](#plot-cost-reduction) | 1 | 2483 | static_effect |
 | [prevent-damage-from-source-to-permanent](#prevent-damage-from-source-to-permanent) | 1 | 29255 | static_effect |
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
 | [prime-number](#prime-number) | 1 | 11527 | value |
@@ -3526,20 +3525,6 @@ Blocks **1** card.
 
 - **Jace Reawakened** (rank 7506) — `jace_reawakened`
   - +1: You may exile a nonland card with mana value 3 or less from your hand. If you do, it becomes plotted.
-
-</details>
-
-## plot-cost-reduction
-
-Blocks **1** card.
-
-- **(static_effect)** a player-wide static that reduces the generic mana of the plot special action (702.171a) by {N} for cards its controller plots from hand, read when the plot cost is paid
-  <br>Why the existing vocabulary won't do: spell_cost_reduction and next_spell_cost_reduction discount casting a spell, and ability_cost_reduction discounts activated abilities; plot is a special action whose price (the card-level `plot` cost) is paid as-is by the engine's plot_card with no reduction hook, and no static_effect in reference targets it
-
-<details><summary>Cards waiting on this</summary>
-
-- **Doc Aurlock, Grizzled Genius** (rank 2483) — `doc_aurlock_grizzled_genius`
-  - Plotting cards from your hand costs {2} less.
 
 </details>
 

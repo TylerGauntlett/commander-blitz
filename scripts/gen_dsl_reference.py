@@ -991,6 +991,7 @@ STATICS: dict[str, Entry] = {
                                   "only those whose printed face matches `affects_spells`.",
                                   None),
     "play_lands_from_library_top": ("The player may play lands from the top of their library.", None),
+    "plot_cost_reduction": ("Plotting a card from the player's hand costs N less generic mana.", "Plot"),
     "prevent_all_but": ("Prevent all but N of each instance of damage to matching permanents.",
                         "Prevent all but N of that damage"),
     "prevent_damage": ("Prevent damage dealt to matching permanents (absorb N, all of it, or all of it as that many +1/+1 counters) or N of each damage to a seat from a matching dealer.",

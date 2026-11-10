@@ -4961,6 +4961,10 @@
   "djinn_of_the_lamp": {
     "zone": "battlefield"
   },
+  "doc_aurlock_grizzled_genius": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "doctor_doom_king_of_latveria": {
     "battlefield_count": 33,
     "zone": "battlefield"

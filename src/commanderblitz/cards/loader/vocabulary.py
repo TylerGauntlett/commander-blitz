@@ -623,6 +623,13 @@ STATIC_EFFECTS = frozenset(
         # the ability could discount it. Strong Back is an Aura discounting
         # somebody else's Equipment.
         "ability_cost_reduction",
+        # Doc Aurlock, Grizzled Genius. "Plotting cards from your hand costs
+        # {2} less." The third member of the family, for the one price neither
+        # line above reaches: plot (702.171a) is a special action (116.2k),
+        # neither a spell nor an activated ability. Player-wide, read by
+        # `suspend.plot_price` -- the one function the plot offer in
+        # `legality` and the payment in `suspend.plot_card` both reach.
+        "plot_cost_reduction",
         # Academy Manufactor, Divine Visitation.  "If you would create a Clue,
         # Food, or Treasure token, instead create one of each."  Read by
         # `primitives.create_token`, which is the only moment a token creation
@@ -916,6 +923,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "damage_life_floor",
         "player_hexproof",
         "player_protection",
+        "plot_cost_reduction",
     }
 )
 

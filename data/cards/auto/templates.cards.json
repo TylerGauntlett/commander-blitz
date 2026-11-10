@@ -58403,6 +58403,59 @@
     {
       "abilities": [
         {
+          "affects_spells": {
+            "controller": "you",
+            "from_zone": [
+              "graveyard",
+              "exile"
+            ]
+          },
+          "amount": {
+            "const": 2
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Spells you cast from your graveyard or from exile cost {2} less to cast."
+        },
+        {
+          "affects_player": "you",
+          "amount": {
+            "const": 2
+          },
+          "effect": "plot_cost_reduction",
+          "kind": "static",
+          "text": "Plotting cards from your hand costs {2} less."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "doc_aurlock_grizzled_genius",
+      "mana_cost": "{G}{U}",
+      "name": "Doc Aurlock, Grizzled Genius",
+      "oracle_text": "Spells you cast from your graveyard or from exile cost {2} less to cast.\nPlotting cards from your hand costs {2} less.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Bear",
+        "Druid"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {

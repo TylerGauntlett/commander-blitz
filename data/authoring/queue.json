@@ -71212,12 +71212,12 @@
     },
     "Doc Aurlock, Grizzled Genius": {
       "edhrec_rank": 2483,
-      "gate": "template",
+      "gate": null,
       "name": "Doc Aurlock, Grizzled Genius",
-      "reason": "no template for: Spells you cast from your graveyard or from exile cost {2} less to cast",
+      "reason": "",
       "scryfall_id": "6fc27b30-8c8e-434c-a72c-e1d409efc1ae",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Doc Ock's Henchmen": {

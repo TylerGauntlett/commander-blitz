@@ -345,7 +345,9 @@ def _suspend_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Ac
             card = state.card(oid)
             if card.plot is None:
                 continue
-            if not can_pay_mana(state, pid, card.plot, purpose=OTHER_PAYMENT):
+            if not can_pay_mana(
+                state, pid, suspend_mod.plot_price(state, pid, card), purpose=OTHER_PAYMENT
+            ):
                 continue
             out.append(
                 Action(

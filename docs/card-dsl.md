@@ -1545,6 +1545,24 @@ plotted from hand and a spell plotted as it resolved are the same object
 afterwards. `grant_plot` is the near miss for it: it marks a spell already on the
 stack and cannot reach a card in hand.
 
+**Cheaper plotting** is a player-wide static:
+
+```jsonc
+// Doc Aurlock, Grizzled Genius: "Plotting cards from your hand costs {2} less."
+{ "kind": "static", "effect": "plot_cost_reduction",
+  "affects_player": "you", "amount": { "const": 2 } }
+```
+
+Plotting is a special action (116.2k), neither a spell nor an activated ability,
+so `spell_cost_reduction` and `ability_cost_reduction` are never asked when it
+is priced. `suspend.plot_price` is: the card's `plot` cost less every matching
+`plot_cost_reduction`, generic only and clamped at zero, asked by both the offer
+in `legality` and the payment in `suspend.plot_card`, so a card offered at the
+reduced price is charged it. The loader requires an `amount` of at least 1 and
+refuses `affects`. The later cast of a plotted card is free and has nothing left
+to reduce; a discount on spells cast *from exile* is `spell_cost_reduction`'s
+`from_zone`, which Doc Aurlock's other line writes.
+
 **Exiled with a source.** `exile_spell_on_resolution` is the same rider with a
 link where plot leaves a permission: "you may exile that spell instead of
 putting it into its owner's graveyard as it resolves" (Forger's Foundry). The
