@@ -71,7 +71,7 @@ each heading; this table is generated from them.
 | [Tricky Terrain (Modern Horizons 3 Commander)](#tricky-terrain-modern-horizons-3-commander) | L | high | A trigger for cards put into a graveyard | 0 |
 | [Eldrazi Incursion (Modern Horizons 3 Commander)](#eldrazi-incursion-modern-horizons-3-commander) | L | high | Experience counters | 0 |
 | [Most Wanted (Outlaws of Thunder Junction Commander)](#most-wanted-outlaws-of-thunder-junction-commander) | L | high | Voting: will of the council and council's dilemma | 0 |
-| [Hail, Caesar (Fallout)](#hail-caesar-fallout) | L | high | nothing | 0 |
+| [Hail, Caesar (Fallout)](#hail-caesar-fallout) | L | high | Voting: will of the council and council's dilemma | 0 |
 | [Scrappy Survivors (Fallout)](#scrappy-survivors-fallout) | L | high | nothing | 0 |
 | [Science! (Fallout)](#science-fallout) | L | high | nothing | 0 |
 | [Mutant Menace (Fallout)](#mutant-menace-fallout) | L | high | nothing | 0 |
@@ -133,7 +133,7 @@ each heading; this table is generated from them.
 | [Divided damage that may hit players](#divided-damage-that-may-hit-players) | M | medium | nothing | 5 |
 | [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) | M | medium | nothing | 4 |
 | [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) | M | medium | nothing | 4 |
-| [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) | M | medium | nothing | 3 |
+| [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) | M | medium | nothing | 4 |
 | [Experience counters](#experience-counters) | M | medium | nothing | 2 |
 | [Outcomes as data](#outcomes-as-data) | M | medium | nothing | 2 |
 | [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) | M | medium | nothing | 2 |
@@ -157,8 +157,6 @@ Derived from the properties: an item is **ready** when nothing it depends
 on is still on this page, and the ready items are ranked by impact, then
 rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
-
-**In progress:** [Hail, Caesar (Fallout)](#hail-caesar-fallout).
 
 **Ready now, best first:**
 
@@ -262,6 +260,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Tricky Terrain (Modern Horizons 3 Commander)](#tricky-terrain-modern-horizons-3-commander) — [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard)
 - [Eldrazi Incursion (Modern Horizons 3 Commander)](#eldrazi-incursion-modern-horizons-3-commander) — [Experience counters](#experience-counters)
 - [Most Wanted (Outlaws of Thunder Junction Commander)](#most-wanted-outlaws-of-thunder-junction-commander) — [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma)
+- [Hail, Caesar (Fallout)](#hail-caesar-fallout) — [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -2280,7 +2279,7 @@ whole-game test able to draw the deck.
 
 ### Hail, Caesar (Fallout)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing · **In progress**.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma).
 
 #### Today
 
