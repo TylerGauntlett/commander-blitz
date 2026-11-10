@@ -328,7 +328,8 @@ class EventType:
     CREATURES_DEALT_COMBAT_DAMAGE = "creatures_dealt_combat_damage"
     #: "Whenever this creature **deals combat damage**, …" -- to anything. One
     #: per dealing permanent per combat damage step, carrying ``source`` (the
-    #: dealer) and ``amount`` (what it dealt in total, after prevention). Fired
+    #: dealer), ``amount`` (what it dealt in total, after prevention) and
+    #: ``to_player`` (whether any of it was dealt to a player). Fired
     #: beside the per-recipient events rather than instead of them: they are
     #: one per *hit*, and a trampler hitting a blocker and a player is two hits
     #: and one "deals combat damage". See `combat._fire_per_source`.

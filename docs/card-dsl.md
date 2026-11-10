@@ -6341,6 +6341,30 @@ carries two independent filters:
   "cause_filter": { "any_types": ["Instant", "Sorcery"] } }
 ```
 
+"A creature you control **dealing combat damage to a player**" (Felix
+Five-Boots) is a cause no list of `cause_events` says, because one blow reaches
+the trigger layer as four events and each counts only sometimes. It is the flag
+`cause_combat_damage_to_player`, with `cause_controller` reading the dealing
+creature's controller:
+
+```jsonc
+{ "kind": "static", "effect": "double_triggers",
+  "affects": { "controller": "you" },
+  "cause_combat_damage_to_player": true,
+  "cause_controller": "you" }
+```
+
+| the ability listens to | doubled when |
+|---|---|
+| `deals_combat_damage_to_player` | always |
+| `creatures_deal_combat_damage` | the batch's `damaged` names a seat, so an `or_battle` trigger on a battle-only swing is not |
+| `deals_combat_damage` | that creature's damage reached a player (the event's `to_player`), so a trampler that hit its blocker and the player is and a blocked creature that hit only its blocker is not |
+| `deals_damage_to_player` | the damage was combat damage |
+| anything else, `deals_combat_damage_to_planeswalker` and `dealt_damage` included | never |
+
+The loader refuses it beside `cause_events` or `cause_filter`: it is the event
+clause itself, and a batch of damagers has no one subject for a filter to read.
+
 Either half omitted means "any", so a card writes only what it prints. Harmonic
 Prodigy has no cause clause and therefore doubles an upkeep trigger as readily
 as a cast one; Veyran has no subtype clause and doubles a Goblin's.

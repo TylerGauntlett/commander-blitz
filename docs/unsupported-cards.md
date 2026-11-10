@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**284 cards** blocked by **263** capabilities.
+**283 cards** blocked by **262** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -90,7 +90,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [chosen-player](#chosen-player) | 1 | 6383 | selector |
 | [colored-cost-reduction](#colored-cost-reduction) | 1 | 1541 | static_effect |
 | [combat-damage-amount-binding](#combat-damage-amount-binding) | 1 | 8933 | value |
-| [combat-damage-trigger-doubling](#combat-damage-trigger-doubling) | 1 | 4827 | static_effect |
 | [companion](#companion) | 1 | 3861 | engine |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [conditional-play-exiled-with-source](#conditional-play-exiled-with-source) | 1 | 4225 | static_effect |
@@ -1725,20 +1724,6 @@ Blocks **1** card.
 
 - **Primo, the Unbounded** (rank 8933) — `primo_the_unbounded`
   - Whenever one or more creatures you control with base power 0 deal combat damage to a player, create a 0/0 green and blue Fractal creature token. Put a number of +1/+1 counters on it equal to the damage dealt.
-
-</details>
-
-## combat-damage-trigger-doubling
-
-Blocks **1** card.
-
-- **(static_effect)** a double_triggers cause clause meaning 'a creature you control dealt combat damage to a player', matched on every event that combat damage to a player can cause: the per-connection deals_combat_damage_to_player, the batched creatures_deal_combat_damage only when its `damaged` list is non-empty (not a battle-only swing), the per-source deals_combat_damage only when that creature hit a player in the step, and deals_damage_to_player only when the damage was combat damage
-  <br>Why the existing vocabulary won't do: double_triggers with cause_events [deals_combat_damage_to_player, creatures_deal_combat_damage] and cause_controller you covers the common cases, but _cause_matches can only filter the cause's event name, actor and subject object: it cannot require that the batch event hit a player rather than only a battle (an or_battle trigger would be wrongly doubled), cannot tell whether a generic 'whenever this creature deals combat damage' firing hit a player (such triggers would be wrongly undoubled, or wrongly doubled on a blocked creature if the event were listed), and cannot tell combat from noncombat damage on deals_damage_to_player. Every spelling either under- or over-doubles some trigger the printed ability covers
-
-<details><summary>Cards waiting on this</summary>
-
-- **Felix Five-Boots** (rank 4827) — `felix_five_boots`
-  - If a creature you control dealing combat damage to a player causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time.
 
 </details>
 

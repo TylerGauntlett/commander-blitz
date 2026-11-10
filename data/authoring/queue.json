@@ -93122,12 +93122,12 @@
     },
     "Felix Five-Boots": {
       "edhrec_rank": 4827,
-      "gate": "template",
+      "gate": null,
       "name": "Felix Five-Boots",
-      "reason": "no template for: Menace, ward {2}",
+      "reason": "",
       "scryfall_id": "5058b049-98fb-4f20-ab0c-a50377582789",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fell": {

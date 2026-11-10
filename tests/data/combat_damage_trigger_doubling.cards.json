@@ -1,0 +1,148 @@
+{
+  "_comment": "Shapes for tests/unit/triggers/test_combat_damage_trigger_doubling.py. t_fx_felix is Felix Five-Boots' doubling line on a 0/4 body that stays home. t_fx_any_damage hears every damage to a player, combat or not, so the noncombat half can be asserted; t_fx_hit_me hears creatures hitting its controller, for the two 'you control' halves; t_fx_brawler hears damage dealt to itself, the creature half. The per-connection, per-source, planeswalker and batch listeners are reused from their own test files.",
+  "cards": [
+    {
+      "id": "t_fx_felix",
+      "name": "Test Five-Boots",
+      "oracle_text": "If a creature you control dealing combat damage to a player causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time.",
+      "mana_cost": "{2}{B}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Rat",
+        "Rogue"
+      ],
+      "power": 0,
+      "toughness": 4,
+      "colors": [
+        "B",
+        "G"
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If a creature you control dealing combat damage to a player causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time.",
+          "effect": "double_triggers",
+          "affects": {
+            "controller": "you"
+          },
+          "cause_combat_damage_to_player": true,
+          "cause_controller": "you"
+        }
+      ]
+    },
+    {
+      "id": "t_fx_any_damage",
+      "name": "Test Spite Ledger",
+      "oracle_text": "Whenever a source you control deals damage to a player, draw a card.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a source you control deals damage to a player, draw a card.",
+          "trigger": {
+            "event": "deals_damage_to_player",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_fx_hit_me",
+      "name": "Test Bruise Ledger",
+      "oracle_text": "Whenever one or more creatures deal combat damage to you, you gain 1 life.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever one or more creatures deal combat damage to you, you gain 1 life.",
+          "trigger": {
+            "event": "creatures_deal_combat_damage",
+            "controller": "any",
+            "defending": "you"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_fx_brawler",
+      "name": "Test Thin-Skinned Brawler",
+      "oracle_text": "Whenever this creature is dealt damage, draw a card.",
+      "mana_cost": "{1}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Warrior"
+      ],
+      "power": 2,
+      "toughness": 4,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature is dealt damage, draw a card.",
+          "trigger": {
+            "event": "dealt_damage",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

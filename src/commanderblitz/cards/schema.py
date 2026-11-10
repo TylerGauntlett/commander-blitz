@@ -866,6 +866,15 @@ class AbilityModel(BaseModel):
     #: ``double_triggers``: what the cause must have been, as a card filter on
     #: the event's subject. Veyran's "an **instant or sorcery** spell".
     cause_filter: dict[str, Any] | None = None
+    #: ``double_triggers``: the cause is "**a creature you control dealing
+    #: combat damage to a player**" (Felix Five-Boots), whichever event the
+    #: triggered ability listens to. Not a list of `cause_events`, because the
+    #: same blow reaches four event shapes and each needs its own question
+    #: asked of it: the batch only when it hit a seat, the per-source event only
+    #: when that creature hit a seat, `DAMAGE_DEALT` only when it was combat
+    #: damage to a player. `cause_controller` reads the dealing creature's
+    #: controller. Refused beside `cause_events` and `cause_filter`.
+    cause_combat_damage_to_player: bool = False
     #: "**Once during each of your turns**, you may cast an artifact spell from
     #: your graveyard." Edgar, Master Machinist. How many times a
     #: `cast_from_graveyard` permission may be used per turn, counted per

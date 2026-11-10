@@ -4735,6 +4735,16 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"{where}.cause_events: unknown trigger event {name!r} "
                     f"(implemented: {sorted(TRIGGER_EVENTS)})"
                 )
+        if model.cause_combat_damage_to_player and (
+            model.cause_events is not None or model.cause_filter is not None
+        ):
+            # The flag *is* the event clause -- four event shapes, each asked
+            # whether a player was dealt combat damage -- and a `cause_filter`
+            # has no single subject to read on a batch of damagers.
+            raise DslError(
+                f"{where}: 'cause_combat_damage_to_player' names the cause by "
+                f"itself; it does not combine with 'cause_events' or 'cause_filter'"
+            )
         if model.cause_filter is not None:
             unknown = set(model.cause_filter) - STATIC_FILTER_KEYS
             if unknown:
@@ -4747,7 +4757,12 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             # `attacking`, `not_keywords`, the count heads) would load here
             # and be ignored.
             validate_trigger_filter(model.cause_filter, f"{where}.cause_filter")
-    elif model.cause_events or model.cause_controller or model.cause_filter:
+    elif (
+        model.cause_events
+        or model.cause_controller
+        or model.cause_filter
+        or model.cause_combat_damage_to_player
+    ):
         raise DslError(
             f"{where}: a cause clause only means something to 'double_triggers', "
             f"not to {model.effect!r}"
@@ -6833,6 +6848,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["cause_controller"] = model.cause_controller
     if model.cause_filter is not None:
         static["cause_filter"] = dict(model.cause_filter)
+    if model.cause_combat_damage_to_player:
+        static["cause_combat_damage_to_player"] = True
     for field_name in ("power", "toughness", "amount"):
         value = getattr(model, field_name)
         if value is not None:

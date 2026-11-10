@@ -75261,6 +75261,61 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "cost": {
+            "mana": "{2}"
+          },
+          "effect": "ward",
+          "kind": "static",
+          "text": "Menace, ward {2}"
+        },
+        {
+          "affects": {
+            "controller": "you"
+          },
+          "cause_combat_damage_to_player": true,
+          "cause_controller": "you",
+          "effect": "double_triggers",
+          "kind": "static",
+          "text": "If a creature you control dealing combat damage to a player causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "U"
+      ],
+      "id": "felix_five_boots",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{2}{B}{G}{U}",
+      "name": "Felix Five-Boots",
+      "oracle_text": "Menace, ward {2}\nIf a creature you control dealing combat damage to a player causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Ooze",
+        "Rogue"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
