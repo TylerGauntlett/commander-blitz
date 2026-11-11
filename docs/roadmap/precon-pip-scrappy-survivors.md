@@ -5,8 +5,8 @@ area: decks
 effort: L
 impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
-depends_on: []
-status: in_progress
+depends_on: [rad-counters]
+status: proposed
 rank: 46
 ---
 
@@ -19,6 +19,21 @@ coming-soon shell on the shelf: its row `pip_scrappy_survivors` is in
 `python scripts/sync_precons.py --missing pip_scrappy_survivors` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+
+Every card on the list has been through `/author-cards` once. What is left
+is fifteen cards, each with a gap record naming what it waits on: Acquired
+Mutation and Megaton's Fate on rad counters (their own item, which this one
+depends on); Codsworth, Handy Helper and Inventory Management on `attach`
+checking an Aura's enchant clause; Cass, Hand of Vengeance on the Auras and
+Equipment a dying creature had; Dogmeat, Ever Loyal on an "equipped" trigger
+filter; Duchess, Wayward Tavernkeep on removing one named kind of counter as
+a cost; Fertile Ground on an any-colour `add_mana_on_tap`; Gunner Conscript on
+whether a dying creature was equipped; Moira Brown and Preston Garvey on the
+Wasteland Survival Guide and Settlement tokens; Single Combat on a cast lock
+by spell type until the end of your next turn; Three Dog on token copies of
+an Aura entering attached; Vault 21: House Gambit on a shared-mana-value
+selector; and Veronica, Dissident Scribe on a discard trigger for the first
+time each turn.
 
 ## The change
 
