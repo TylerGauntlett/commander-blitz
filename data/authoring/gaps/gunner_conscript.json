@@ -1,0 +1,16 @@
+{
+  "card_id": "gunner_conscript",
+  "name": "Gunner Conscript",
+  "oracle_text": "Trample\nThis creature gets +1/+1 for each Aura and Equipment attached to it.\nWhen this creature dies, if it was enchanted, create a Junk token.\nWhen this creature dies, if it was equipped, create a Junk token.",
+  "blocked_sentences": [
+    "When this creature dies, if it was equipped, create a Junk token."
+  ],
+  "needs": [{
+    "capability": "equipment_had",
+    "kind": "value",
+    "what": "a value key, the Equipment twin of `auras_had`, that reads on a departure (dies) trigger how many Equipment were attached to the creature as it left, so 'if it was equipped' is a trigger `condition` cmp `{\"equipment_had\": true}` > 0",
+    "why_existing_wont_do": "`zones._equipment_had` already snapshots the count as the creature leaves, but only folds it into `was_modified`; it is not put on the DIES event data nor in the trigger binding list (triggers.py binds `had_auras`, `had_counters`, `had_power`, `had_toughness`, `had_keywords` but no Equipment snapshot), and no value key reads it. `auras_had` covers the sibling 'if it was enchanted' line only, and a live `equipped` selector at resolution sees a graveyard card with nothing attached"
+  }],
+  "closest_existing": ["auras_had", "counters_had"],
+  "confidence": "high"
+}

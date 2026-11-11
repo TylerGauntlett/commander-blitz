@@ -1,0 +1,21 @@
+{
+  "card_id": "duchess_wayward_tavernkeep",
+  "name": "Duchess, Wayward Tavernkeep",
+  "oracle_text": "Hunters for Hire — Whenever a creature you control deals combat damage to a player, put a quest counter on it.\n{1}, Remove a quest counter from a permanent you control: Create a Junk token. (It's an artifact with \"{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.\")",
+  "blocked_sentences": [
+    "{1}, Remove a quest counter from a permanent you control: Create a Junk token. (It's an artifact with \"{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.\")"
+  ],
+  "needs": [
+    {
+      "capability": "remove_named_counters_from_among",
+      "kind": "cost",
+      "what": "a counter kind on the `remove_counters_from_among` cost, e.g. {\"mana\": \"{1}\", \"remove_counters_from_among\": {\"count\": 1, \"counter\": \"quest\"}}, so the payer removes a counter of THAT kind from a permanent they control, with payability checked against counters of that kind only",
+      "why_existing_wont_do": "The `remove_counters_from_among` cost (costs._counter_removal_pool / counter_removal.remove_counters_one_at_a_time) removes a counter of any kind, so a permanent carrying a quest and a +1/+1 counter could pay with the +1/+1; `has_counters: \"quest\"` on its selector only narrows which permanents are offered, not which kind comes off; the `remove_counters` cost names a kind but reads only the source. The trigger line (deals_combat_damage_to_player, controller you, add_counters quest on subject) and junk_token are both expressible"
+    }
+  ],
+  "closest_existing": [
+    "remove_counters_from_among",
+    "remove_counters"
+  ],
+  "confidence": "high"
+}

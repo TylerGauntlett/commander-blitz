@@ -2625,6 +2625,10 @@
     },
     "zone": "battlefield"
   },
+  "brotherhood_outcast": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "brudiclad_telchor_engineer": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -2748,6 +2752,15 @@
     "zone": "battlefield"
   },
   "caelorna_coral_tyrant": {
+    "zone": "battlefield"
+  },
+  "cait_cage_brawler": {
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "indestructible"
+      ]
+    },
     "zone": "battlefield"
   },
   "cait_sith_fortune_teller": {
@@ -9415,6 +9428,10 @@
     },
     "zone": "battlefield"
   },
+  "ian_the_reckless": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "icatian_phalanx": {
     "zone": "battlefield"
   },
@@ -9444,6 +9461,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "idolized": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "idyllic_beachfront": {

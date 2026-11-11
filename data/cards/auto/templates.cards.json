@@ -31383,6 +31383,109 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "controller": "you",
+                      "destination": "battlefield",
+                      "objects": {
+                        "target": "t1",
+                        "zone": "graveyard"
+                      },
+                      "op": "return_from_graveyard"
+                    }
+                  ],
+                  "label": "Return target Aura or Equipment card with mana value 3 or less from your graveyard to the battlefield."
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "counter": "shield",
+                      "objects": {
+                        "target": "t2"
+                      },
+                      "op": "add_counters"
+                    }
+                  ],
+                  "label": "Put a shield counter on target creature."
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "mode": 0,
+              "selector": {
+                "controller": "you",
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "const": 3
+                  }
+                },
+                "subtypes": [
+                  "Aura",
+                  "Equipment"
+                ],
+                "zone": "graveyard"
+              }
+            },
+            {
+              "count": 1,
+              "id": "t2",
+              "kind": "permanent",
+              "mode": 1,
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, choose one —\n• Return target Aura or Equipment card with mana value 3 or less from your graveyard to the battlefield.\n• Put a shield counter on target creature. (If it would be dealt damage or destroyed, remove a shield counter from it instead.)",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "brotherhood_outcast",
+      "mana_cost": "{2}{W}",
+      "name": "Brotherhood Outcast",
+      "oracle_text": "When this creature enters, choose one —\n• Return target Aura or Equipment card with mana value 3 or less from your graveyard to the battlefield.\n• Put a shield counter on target creature. (If it would be dealt damage or destroyed, remove a shield counter from it instead.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "controller": "you",
             "is_token": true,
@@ -32831,6 +32934,145 @@
         "Legendary"
       ],
       "toughness": 8,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "is_your_turn": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "indestructible"
+          ],
+          "kind": "static",
+          "text": "During your turn, Cait has indestructible."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": {
+                "binding": "defender"
+              }
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "you_discarded",
+              "op": "discard",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "they_discarded",
+              "op": "discard",
+              "player": {
+                "binding": "defender"
+              }
+            },
+            {
+              "condition": {
+                "all": [
+                  {
+                    "exists": {
+                      "binding": "you_discarded"
+                    }
+                  },
+                  {
+                    "cmp": ">=",
+                    "left": {
+                      "extreme_value": {
+                        "objects": {
+                          "binding": "you_discarded"
+                        },
+                        "of": "mana_value",
+                        "pick": "greatest"
+                      }
+                    },
+                    "right": {
+                      "extreme_value": {
+                        "objects": {
+                          "union": [
+                            {
+                              "binding": "you_discarded"
+                            },
+                            {
+                              "binding": "they_discarded"
+                            }
+                          ]
+                        },
+                        "of": "mana_value",
+                        "pick": "greatest"
+                      }
+                    }
+                  }
+                ]
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "add_counters"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Cait attacks, you and defending player each draw a card, then discard a card. Put two +1/+1 counters on Cait if you discarded the card with the greatest mana value among those cards or tied for greatest.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "cait_cage_brawler",
+      "mana_cost": "{R}{G}",
+      "name": "Cait, Cage Brawler",
+      "oracle_text": "During your turn, Cait has indestructible.\nWhenever Cait attacks, you and defending player each draw a card, then discard a card. Put two +1/+1 counters on Cait if you discarded the card with the greatest mana value among those cards or tied for greatest.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -110913,6 +111155,74 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "power_of": {
+                      "self": true
+                    }
+                  },
+                  "op": "damage",
+                  "player": "you",
+                  "target": "t1"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Have Ian the Reckless deal damage equal to its power to you and the target?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any"
+            }
+          ],
+          "text": "Whenever Ian the Reckless attacks, if it's modified, you may have it deal damage equal to its power to you and any target.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "modified": true,
+                "self_only": true,
+                "zone": "battlefield"
+              }
+            },
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "ian_the_reckless",
+      "mana_cost": "{1}{R}",
+      "name": "Ian the Reckless",
+      "oracle_text": "Whenever Ian the Reckless attacks, if it's modified, you may have it deal damage equal to its power to you and any target. (Equipment, Auras you control, and counters are modifications.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -111201,6 +111511,98 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Enchanted creature has \"Whenever this creature attacks alone, it gets +X/+X until end of turn, where X is the number of nonland permanents you control.\""
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "count": {
+                  "controller": "you",
+                  "not_types": [
+                    "Land"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "toughness": {
+                "count": {
+                  "controller": "you",
+                  "not_types": [
+                    "Land"
+                  ],
+                  "zone": "battlefield"
+                }
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks alone, it gets +X/+X until end of turn, where X is the number of nonland permanents you control.",
+          "trigger": {
+            "condition": {
+              "cmp": "==",
+              "left": {
+                "count": {
+                  "attacking": true,
+                  "controller": "you",
+                  "zone": "battlefield"
+                }
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "idolized",
+      "mana_cost": "{1}{W}",
+      "name": "Idolized",
+      "oracle_text": "Enchant creature\nEnchanted creature has \"Whenever this creature attacks alone, it gets +X/+X until end of turn, where X is the number of nonland permanents you control.\"",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {

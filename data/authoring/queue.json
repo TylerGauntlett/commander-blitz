@@ -35442,12 +35442,12 @@
     },
     "Brotherhood Outcast": {
       "edhrec_rank": 9639,
-      "gate": "residual",
+      "gate": null,
       "name": "Brotherhood Outcast",
-      "reason": "printed text not represented: • Put a shield counter on target creature",
+      "reason": "",
       "scryfall_id": "0949fcab-5aa2-4277-bf4d-f5855a863cb6",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Brotherhood Patriarch": {
@@ -37762,12 +37762,12 @@
     },
     "Cait, Cage Brawler": {
       "edhrec_rank": 12106,
-      "gate": "template",
+      "gate": null,
       "name": "Cait, Cage Brawler",
-      "reason": "no template for: During your turn, Cait has indestructible",
+      "reason": "",
       "scryfall_id": "499a55e3-d231-4c2b-9035-d7835a62e649",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Calamitous Cave-In": {
@@ -132652,12 +132652,12 @@
     },
     "Ian the Reckless": {
       "edhrec_rank": 16037,
-      "gate": "template",
+      "gate": null,
       "name": "Ian the Reckless",
-      "reason": "no template for: Whenever attacks, if it's modified, you may have it deal damage equal to its power to you ",
+      "reason": "",
       "scryfall_id": "4cd46b6a-eb20-4ffa-94e0-47d1d2d46087",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ib Halfheart, Goblin Tactician": {
@@ -133392,12 +133392,12 @@
     },
     "Idolized": {
       "edhrec_rank": 3521,
-      "gate": "template",
+      "gate": null,
       "name": "Idolized",
-      "reason": "no template for: Enchanted creature has \"Whenever this creature attacks alone, it gets +X/+X until end of t",
+      "reason": "",
       "scryfall_id": "682f0d75-0c08-4a4f-990c-2cc14761b616",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Idris, Soul of the TARDIS": {
