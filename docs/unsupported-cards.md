@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**314 cards** blocked by **287** capabilities.
+**328 cards** blocked by **297** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -29,9 +29,11 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-trigger-x](#cast-trigger-x) | 3 | 1521 | engine, value |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 6346 | op |
 | [omen](#omen) | 3 | 3355 | cost, engine |
+| [rad-counters](#rad-counters) | 3 | 9006 | engine |
 | [random-player-choice](#random-player-choice) | 3 | 5120 | op |
 | [add-color](#add-color) | 2 | 2040 | op |
 | [all-creature-types](#all-creature-types) | 2 | 958 | static_effect |
+| [attach-enchant-legality](#attach-enchant-legality) | 2 | 1540 | engine |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-from-library-top-unrestricted](#cast-from-library-top-unrestricted) | 2 | 1913 | static_effect |
@@ -46,6 +48,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mercenary-token](#mercenary-token) | 2 | 8312 | token |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
+| [remove-named-counters-from-among](#remove-named-counters-from-among) | 2 | 10375 | cost |
 | [remove-x-counters-cost](#remove-x-counters-cost) | 2 | 5399 | cost |
 | [return-face-down](#return-face-down) | 2 | 3081 | op |
 | [reveal-until-rest-to-graveyard](#reveal-until-rest-to-graveyard) | 2 | 1606 | op |
@@ -67,6 +70,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [annihilator-grant](#annihilator-grant) | 1 | 3758 | op |
 | [assassin-token](#assassin-token) | 1 | 2604 | token |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
+| [attachments-had](#attachments-had) | 1 | 10726 | selector |
 | [attack-tax-x-count](#attack-tax-x-count) | 1 | 671 | value |
 | [attacking-opponents-of-player](#attacking-opponents-of-player) | 1 | 705 | selector |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
@@ -116,6 +120,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [devil-token](#devil-token) | 1 | 4163 | token |
 | [devoid](#devoid) | 1 | 6026 | keyword |
 | [die-rolled-trigger](#die-rolled-trigger) | 1 | 5966 | trigger_event |
+| [discard-first-time-each-turn](#discard-first-time-each-turn) | 1 | 8688 | trigger_event |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [distribute-counters-spell](#distribute-counters-spell) | 1 | 6993 | op |
 | [divided-damage-on-activated](#divided-damage-on-activated) | 1 | 13459 | engine |
@@ -134,6 +139,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [enters-as-copy-add-subtypes](#enters-as-copy-add-subtypes) | 1 | 3852 | replacement |
 | [enters-as-copy-embalmed-exception](#enters-as-copy-embalmed-exception) | 1 | 4333 | replacement |
 | [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
+| [equipment-had](#equipment-had) | 1 | 14101 | value |
+| [equipped-trigger-filter](#equipped-trigger-filter) | 1 | 9043 | selector |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [every-nonbasic-land-type](#every-nonbasic-land-type) | 1 | 2635 | engine |
 | [exact-target-count](#exact-target-count) | 1 | 7243 | engine |
@@ -241,10 +248,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [protection-from-mana-value](#protection-from-mana-value) | 1 | 16276 | static_effect |
 | [protection-from-multicolored](#protection-from-multicolored) | 1 | 1516 | static_effect |
 | [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
-| [rad-counters](#rad-counters) | 1 | 13179 | engine |
 | [random-order-bottom](#random-order-bottom) | 1 | 1343 | op |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
-| [remove-named-counters-from-among](#remove-named-counters-from-among) | 1 | 10375 | cost |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
 | [repeat-while](#repeat-while) | 1 | 1924 | op |
@@ -264,7 +269,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [self-bounce-playable-gate](#self-bounce-playable-gate) | 1 | 10013 | engine |
+| [settlement-token](#settlement-token) | 1 | 12594 | token |
 | [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
+| [shares-mana-value-with](#shares-mana-value-with) | 1 | 11266 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [spirit-2-2-w-flying](#spirit-2-2-w-flying) | 1 | 12596 | token |
@@ -282,7 +289,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [teammates](#teammates) | 1 | 26785 | selector |
 | [this-combat-duration](#this-combat-duration) | 1 | 9126 | op |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
+| [timed-spell-type-cast-lock](#timed-spell-type-cast-lock) | 1 | 2008 | op |
 | [times-attacked-this-turn](#times-attacked-this-turn) | 1 | 988 | value |
+| [token-copy-attached](#token-copy-attached) | 1 | 11547 | op |
 | [total-mana-value-selection](#total-mana-value-selection) | 1 | 4244 | op |
 | [total-toughness-cost-reduction](#total-toughness-cost-reduction) | 1 | 5188 | value |
 | [toughness-greater-than-power-filter](#toughness-greater-than-power-filter) | 1 | 3557 | selector |
@@ -293,6 +302,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
 | [undaunted](#undaunted) | 1 | 3405 | value |
+| [wasteland-survival-guide-token](#wasteland-survival-guide-token) | 1 | 14880 | token |
 | [while-source-on-battlefield-duration](#while-source-on-battlefield-duration) | 1 | 8222 | engine |
 | [wurm-5-5-g-trample](#wurm-5-5-g-trample) | 1 | 2387 | token |
 | [x-cost-mana-restriction](#x-cost-mana-restriction) | 1 | 4046 | decision |
@@ -787,6 +797,28 @@ Blocks **3** cards.
 
 </details>
 
+## rad-counters
+
+Blocks **3** cards.
+
+- **(engine)** rad as a player counter kind (a PlayerState field plus an entry in the player counter kinds, with the rule-725 rad trigger at the beginning of each player's precombat main phase: mill that many cards, lose 1 life and remove one rad counter per nonland card milled), and an op that gives a player N rad counters (e.g. an `add_rad` op shaped like add_poison/add_energy with `amount` and `player`, accepting the attack trigger's defending player)
+  <br>Why the existing vocabulary won't do: add_poison and add_energy are the only ops that put counters on a player and each is fixed to its own kind; add_counters acts on objects, not players; no rad counter kind or rad precombat-main trigger exists in the engine
+- **(engine)** rad as a player counter kind (a PlayerState field plus an entry in the player counter kinds, with the rule-725 rad trigger at the beginning of each player's precombat main phase: mill that many cards, lose 1 life and remove one rad counter per nonland card milled), and an op that gives a player N rad counters (e.g. an `add_rad` op shaped like add_poison/add_energy with `amount` and `player`, here run over each player via for_each_player)
+  <br>Why the existing vocabulary won't do: add_poison and add_energy are the only ops that put counters on a player and each is fixed to its own kind; add_counters acts on objects, not players; double_player_counters and lose_all_player_counters only modify existing kinds; no rad counter kind or rad precombat-main trigger exists in the engine
+- **(engine)** rad as a player counter kind (a PlayerState field plus an entry in player.PLAYER_COUNTER_KINDS, with the rad trigger at the beginning of precombat main phase), and a way to remove all counters of ONE named kind from a target player (e.g. a `counter` option on lose_all_player_counters, or a player-targeted remove_counters)
+  <br>Why the existing vocabulary won't do: lose_all_player_counters removes every player counter kind (poison and energy) rather than only rad counters, so it would also strip the target's poison and energy; PLAYER_COUNTER_KINDS carries only poison and energy, so rad counters do not exist; remove_counters acts on objects, not players
+
+<details><summary>Cards waiting on this</summary>
+
+- **Megaton's Fate** (rank 9006) — `megaton_s_fate`
+  - • Detonate — Megaton's Fate deals 8 damage to each creature. Each player gets four rad counters.
+- **Acquired Mutation** (rank 9790) — `acquired_mutation`
+  - Whenever enchanted creature attacks, defending player gets two rad counters.
+- **Survivor's Med Kit** (rank 13179) — `survivor_s_med_kit`
+  - • RadAway — Target player loses all rad counters. Sacrifice this artifact
+
+</details>
+
 ## random-player-choice
 
 Blocks **3** cards.
@@ -844,6 +876,24 @@ Blocks **2** cards.
 - **Omo, Queen of Vesuva** (rank 4942) — `omo_queen_of_vesuva`
   - Each land with an everything counter on it is every land type in addition to its other types.
   - Each nonland creature with an everything counter on it is every creature type.
+
+</details>
+
+## attach-enchant-legality
+
+Blocks **2** cards.
+
+- **(engine)** the attach op, when its `attachment` selector moves an Aura that is already on the battlefield onto a new host, must test the host against that Aura's enchant clause (its first target spec, read for the Aura's controller) and leave the Aura where it is if the host is illegal (701.3b), exactly as zones.offer_named_host already does for an Aura arriving with host_named
+  <br>Why the existing vocabulary won't do: op_attach with `attachment` calls primitives.attach, which checks only zone, self-attachment (301.5c) and protection. Its docstring says 'The host this op names with `attachment` is not re-tested against the clause', and docs/rules-coverage.md says an attach naming a host with `attachment` is trusted. That is safe for Equipment (Barret, Avalanche Leader), but Codsworth also moves Auras, so an 'Enchant land' Aura (Utopia Sprawl) or an 'Enchant creature an opponent controls' Aura could be moved onto your creature, which the rules forbid. The rest of the card is expressible: a ward static with affects {controller: you, is_commander: true}, cost {mana: {2}}; a mana ability {T}: add_mana {W}{W} with mana_restriction {cast: [["aura"], ["equipment"]]}; and for this line, two permanent targets plus attach {attachment: {target: t1}, objects: {target: t2}} with sorcery_speed_only and cost {tap: true}
+- **(engine)** the `attach` op, when its `attachment` is an existing Aura, must offer only hosts that Aura's enchant clause allows (its first target spec, as `zones.offer_aura_host` and `stack._attach_aura` read it) and, per 701.3b, leave the Aura where it is when the chosen host is illegal. Then this card is `split_second: true` plus `for_each` over `{zone: battlefield, controller: you, subtypes: [Aura, Equipment]}` whose body is `attach` with `attachment: {binding: each}` and `objects: {controller: you, types: [Creature], zone: battlefield, count: 1, optional: true}`
+  <br>Why the existing vocabulary won't do: `op_attach` documents that the host it names through `attachment` 'is not re-tested against the clause', and `primitives.attach` checks only protection, self-attachment and zone; `sba` keeps any Aura whose host is still on the battlefield. Here the attachments are every Aura you control, not one that just entered, so an Enchant land Aura (Utopia Sprawl), an Enchant artifact Aura or a Curse on a player could be moved onto a creature and keep working there, which 303.4 and 701.3b forbid. The `split_second` rider covers the first line; only the attach legality is missing
+
+<details><summary>Cards waiting on this</summary>
+
+- **Codsworth, Handy Helper** (rank 1540) — `codsworth_handy_helper`
+  - {T}: Attach target Aura or Equipment you control to target creature you control. Activate only as a sorcery.
+- **Inventory Management** (rank 3346) — `inventory_management`
+  - For each Aura and Equipment you control, you may attach it to a creature you control.
 
 </details>
 
@@ -1102,6 +1152,24 @@ Blocks **2** cards.
   - Prevent all combat damage that would be dealt to you and planeswalkers you control this turn.
 - **You Look Upon the Tarrasque** (rank 8030) — `you_look_upon_the_tarrasque`
   - • Run and Hide — Prevent all combat damage that would be dealt to you and creatures you control this turn
+
+</details>
+
+## remove-named-counters-from-among
+
+Blocks **2** cards.
+
+- **(cost)** a counter kind on the `remove_counters_from_among` cost, e.g. {"mana": "{1}", "remove_counters_from_among": {"count": 1, "counter": "quest"}}, so the payer removes a counter of THAT kind from a permanent they control, with payability checked against counters of that kind only
+  <br>Why the existing vocabulary won't do: The `remove_counters_from_among` cost (costs._counter_removal_pool / counter_removal.remove_counters_one_at_a_time) removes a counter of any kind, so a permanent carrying a quest and a +1/+1 counter could pay with the +1/+1; `has_counters: "quest"` on its selector only narrows which permanents are offered, not which kind comes off; the `remove_counters` cost names a kind but reads only the source. The trigger line (deals_combat_damage_to_player, controller you, add_counters quest on subject) and junk_token are both expressible
+- **(cost)** a counter kind on the `remove_counters_from_among` cost (and op), e.g. {"remove_counters_from_among": {"count": 3, "counter": "quest"}}, so the payer removes N counters of THAT kind split however they like across the permanents the selector names, with payability checked against the total of that kind only
+  <br>Why the existing vocabulary won't do: `remove_counters_from_among` (cost and op, via `counter_removal.remove_counters_one_at_a_time`) takes any kind of counter, so the payer could pay with +1/+1 counters; `has_counters: "quest"` on its selector only narrows which permanents are offered, not which kind comes off; `remove_counters` with `counter: "quest"` removes `amount` from each object rather than a total split among them, and the `remove_counters` cost reads only the source
+
+<details><summary>Cards waiting on this</summary>
+
+- **Overseer of Vault 76** (rank 10375) — `overseer_of_vault_76`
+  - At the beginning of combat on your turn, you may remove three quest counters from among permanents you control. When you do, put a +1/+1 counter on each creature you control and they gain vigilance until end of turn.
+- **Duchess, Wayward Tavernkeep** (rank 14635) — `duchess_wayward_tavernkeep`
+  - {1}, Remove a quest counter from a permanent you control: Create a Junk token. (It's an artifact with "{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.")
 
 </details>
 
@@ -1375,8 +1443,8 @@ Blocks **1** card.
 
 Blocks **1** card.
 
-- **(static_effect)** an add_mana_on_tap payload meaning 'one mana of any color', chosen by the tapping player each time the triggered mana ability resolves (605.1b), e.g. add_mana: {"any_color": 1}, with the mana solver treating it as a wildcard pip
-  <br>Why the existing vocabulary won't do: add_mana_on_tap with tapped_permanent {attached: true} covers the enchanted-land trigger (Wild Growth, Utopia Sprawl), but its add_mana accepts only a literal production string or {"chosen_color_of": "self"}; the loader refuses any other dynamic form, and player_statics._mana_added runs inside cost payment where no choice can be asked, so a per-tap color choice cannot be expressed
+- **(static_effect)** an add_mana_on_tap payload meaning 'one mana of any color', chosen by the tapping player each time the triggered mana ability resolves (605.1b), e.g. add_mana: {"any_color": 1}, with the mana solver and payment treating it as a wildcard pip
+  <br>Why the existing vocabulary won't do: add_mana_on_tap with tapped_permanent {attached: true} covers the enchanted-land trigger (Wild Growth, Utopia Sprawl), but its add_mana accepts only a literal production string or {"chosen_color_of": "self"}; the loader (_validate_add_mana_on_tap) refuses any other dynamic form, and player_statics._mana_added runs inside cost payment where no choice can be asked. A literal '{G}' or a chosen colour would each be a different, narrower card
 
 <details><summary>Cards waiting on this</summary>
 
@@ -1452,6 +1520,20 @@ Blocks **1** card.
 
 - **Witchbane Orb** (rank 16177) — `witchbane_orb`
   - When this artifact enters, destroy all Curses attached to you
+
+</details>
+
+## attachments-had
+
+Blocks **1** card.
+
+- **(selector)** a selector key on a departure (dies) trigger that matches, by identity, the objects that were attached to the departed creature as it left: the Aura cards now in your graveyard (as new objects, 400.7, but traced from the snapshot) and the Equipment still on the battlefield, so `return_from_graveyard` (with `host_named` pointing at the target creature) and `attach` can each take 'any number' of them; plus a trigger condition for 'if it was enchanted or equipped' that reads the snapshot of both Auras and Equipment
+  <br>Why the existing vocabulary won't do: The dies snapshot records only the controllers of the departed creature's Auras (`had_auras`, read by the `auras_had` value) and a bare count of its Equipment (`zones._equipment_had`), never their object ids, so nothing can select those particular cards. `was_attached_to` is the near miss but reads only a sacrifice cost's `as` snapshot (the loader requires it to name one), not a dies trigger's subject, and it matches only permanents still on the battlefield, so it cannot find the Auras that went to the graveyard
+
+<details><summary>Cards waiting on this</summary>
+
+- **Cass, Hand of Vengeance** (rank 10726) — `cass_hand_of_vengeance`
+  - Whenever Cass or another creature you control dies, if it was enchanted or equipped, return any number of Aura cards that were attached to it from your graveyard to the battlefield attached to target creature, then attach any number of Equipment that were attached to it to that creature.
 
 </details>
 
@@ -2158,6 +2240,20 @@ Blocks **1** card.
 
 </details>
 
+## discard-first-time-each-turn
+
+Blocks **1** card.
+
+- **(trigger_event)** an `nth` ordinal on the `discard` trigger event, counted off the turn ledger: the place of this discard batch among this turn's discard batches by the trigger's controller that contained a card matching the trigger's `filter` (here `not_types: ["Land"]`), so "whenever you discard one or more nonland cards for the first time each turn" fires on the first such batch of the turn only -- and never later that turn if that batch happened before the permanent entered
+  <br>Why the existing vocabulary won't do: `discard` supports `batched` (Doctor Doom) but its events carry no `nth`, so `_ordinal` returns None and an `nth: 1` trigger never fires; `TurnLedger.cards_discarded` is a bare per-player count with no batch or card record to filter by type. `max_per_turn: 1` with `batched` is a per-permanent cap, which the engine itself documents as wrong for "for the first time each turn" (`_graveyard_ordinal`, Crawling Sensation): Veronica cast after a nonland discard would still fire on a later one. `put_into_graveyard` has the ledger-counted ordinal but also sees mills and deaths, so it is not a discard.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Veronica, Dissident Scribe** (rank 8688) — `veronica_dissident_scribe`
+  - Whenever you discard one or more nonland cards for the first time each turn, create a Junk token. (It's an artifact with "{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.")
+
+</details>
+
 ## discard-your-hand
 
 Blocks **1** card.
@@ -2414,6 +2510,34 @@ Blocks **1** card.
 
 - **Horizon Explorer** (rank 1877) — `horizon_explorer`
   - Lands you control enter untapped.
+
+</details>
+
+## equipment-had
+
+Blocks **1** card.
+
+- **(value)** a value key, the Equipment twin of `auras_had`, that reads on a departure (dies) trigger how many Equipment were attached to the creature as it left, so 'if it was equipped' is a trigger `condition` cmp `{"equipment_had": true}` > 0
+  <br>Why the existing vocabulary won't do: `zones._equipment_had` already snapshots the count as the creature leaves, but only folds it into `was_modified`; it is not put on the DIES event data nor in the trigger binding list (triggers.py binds `had_auras`, `had_counters`, `had_power`, `had_toughness`, `had_keywords` but no Equipment snapshot), and no value key reads it. `auras_had` covers the sibling 'if it was enchanted' line only, and a live `equipped` selector at resolution sees a graveyard card with nothing attached
+
+<details><summary>Cards waiting on this</summary>
+
+- **Gunner Conscript** (rank 14101) — `gunner_conscript`
+  - When this creature dies, if it was equipped, create a Junk token.
+
+</details>
+
+## equipped-trigger-filter
+
+Blocks **1** card.
+
+- **(selector)** an `equipped` key in the trigger filter language (TRIGGER_FILTER_KEYS), so an `attacks` trigger can match "a creature you control that's enchanted or equipped" as `any_of: [{enchanted_by: true}, {equipped: true}]` -- true when any Equipment is attached to the attacking creature, whoever controls it
+  <br>Why the existing vocabulary won't do: trigger_filter_keys has `enchanted_by` (covers the Aura half) and `attached` (only the one permanent the trigger's source is attached to, i.e. 'equipped creature' on an Equipment), but no 'is equipped by any Equipment' key; `equipped` and `modified` exist only in the effect selector language, not in trigger filters, so dropping the equipped branch or using `attached` would approximate the card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Dogmeat, Ever Loyal** (rank 9043) — `dogmeat_ever_loyal`
+  - Whenever a creature you control that's enchanted or equipped attacks, create a Junk token. (It's an artifact with "{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.")
 
 </details>
 
@@ -3945,20 +4069,6 @@ Blocks **1** card.
 
 </details>
 
-## rad-counters
-
-Blocks **1** card.
-
-- **(engine)** rad as a player counter kind (a PlayerState field plus an entry in player.PLAYER_COUNTER_KINDS, with the rad trigger at the beginning of precombat main phase), and a way to remove all counters of ONE named kind from a target player (e.g. a `counter` option on lose_all_player_counters, or a player-targeted remove_counters)
-  <br>Why the existing vocabulary won't do: lose_all_player_counters removes every player counter kind (poison and energy) rather than only rad counters, so it would also strip the target's poison and energy; PLAYER_COUNTER_KINDS carries only poison and energy, so rad counters do not exist; remove_counters acts on objects, not players
-
-<details><summary>Cards waiting on this</summary>
-
-- **Survivor's Med Kit** (rank 13179) — `survivor_s_med_kit`
-  - • RadAway — Target player loses all rad counters. Sacrifice this artifact
-
-</details>
-
 ## random-order-bottom
 
 Blocks **1** card.
@@ -3984,20 +4094,6 @@ Blocks **1** card.
 
 - **Nexus Mentality** (rank 12132) — `nexus_mentality`
   - • Remove all counters from target nonland permanent you control. Draw a card for each counter removed this way.
-
-</details>
-
-## remove-named-counters-from-among
-
-Blocks **1** card.
-
-- **(cost)** a counter kind on the `remove_counters_from_among` cost (and op), e.g. {"remove_counters_from_among": {"count": 3, "counter": "quest"}}, so the payer removes N counters of THAT kind split however they like across the permanents the selector names, with payability checked against the total of that kind only
-  <br>Why the existing vocabulary won't do: `remove_counters_from_among` (cost and op, via `counter_removal.remove_counters_one_at_a_time`) takes any kind of counter, so the payer could pay with +1/+1 counters; `has_counters: "quest"` on its selector only narrows which permanents are offered, not which kind comes off; `remove_counters` with `counter: "quest"` removes `amount` from each object rather than a total split among them, and the `remove_counters` cost reads only the source
-
-<details><summary>Cards waiting on this</summary>
-
-- **Overseer of Vault 76** (rank 10375) — `overseer_of_vault_76`
-  - At the beginning of combat on your turn, you may remove three quest counters from among permanents you control. When you do, put a +1/+1 counter on each creature you control and they gain vigilance until end of turn.
 
 </details>
 
@@ -4276,6 +4372,20 @@ Blocks **1** card.
 
 </details>
 
+## settlement-token
+
+Blocks **1** card.
+
+- **(token)** a green Aura enchantment token named Settlement with enchant land and "Enchanted land has '{T}: Add one mana of any color.'"
+  <br>Why the existing vocabulary won't do: token_ids holds no Settlement token; the only Aura tokens are contract (white, enchant creature, attack trigger) and wicked_role (a Role granting +1/+1), neither enchants a land nor grants a mana ability. create_token with attached_to and the begin_combat trigger would carry the rest of the sentence once the token exists
+
+<details><summary>Cards waiting on this</summary>
+
+- **Preston Garvey, Minuteman** (rank 12594) — `preston_garvey_minuteman`
+  - At the beginning of combat on your turn, create a green Aura enchantment token named Settlement attached to up to one target land you control. It has enchant land and "Enchanted land has '{T}: Add one mana of any color.'"
+
+</details>
+
 ## shares-card-type-with-sacrificed
 
 Blocks **1** card.
@@ -4287,6 +4397,20 @@ Blocks **1** card.
 
 - **Braids, Arisen Nightmare** (rank 291) — `braids_arisen_nightmare`
   - If you do, each opponent may sacrifice a permanent of their choice that shares a card type with it. For each opponent who doesn't, that player loses 2 life and you draw a card.
+
+</details>
+
+## shares-mana-value-with
+
+Blocks **1** card.
+
+- **(selector)** a selector (or value) over a bound set of revealed cards that matches each card whose mana value equals that of at least one OTHER card in the same set, so a `for_each`/`count` over a chosen-and-revealed `as` binding of up to five nonland hand cards can create one Treasure per matching card; the reveal also needs a player choice of up to N cards from hand
+  <br>Why the existing vocabulary won't do: `reveal` takes only `objects` and `as` with no up-to-N choice from hand; the selector has `shares_a_name_with`/`shares_a_color_with`/`shares_a_type_with` but no mana-value analogue, and `distinct` (number of distinct mana values) does not give the count of cards whose mana value is duplicated (e.g. MVs 1,1,2 should give 2 Treasures; count minus distinct gives 1)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Vault 21: House Gambit** (rank 11266) — `vault_21_house_gambit`
+  - III — Reveal up to five nonland cards from your hand. For each of those cards that has the same mana value as another card revealed this way, create a Treasure token.
 
 </details>
 
@@ -4529,6 +4653,20 @@ Blocks **1** card.
 
 </details>
 
+## timed-spell-type-cast-lock
+
+Blocks **1** card.
+
+- **(op)** a one-shot, timed casting prohibition installed by a resolving spell that applies to every player and only to spells matching a spell filter (here any_types Creature or Planeswalker), with a duration lasting until the end of the caster's next turn (through that turn's cleanup, not ending as it begins)
+  <br>Why the existing vocabulary won't do: The cant_cast_spells op takes only player and duration and is a total lock over every castable zone, with no affects_spells filter; its durations are only this_turn and until_your_next_turn (structs.CAST_LOCK_DURATIONS), and until_your_next_turn ends as the next turn begins rather than at its end. The cant_cast_spells static does take affects_spells but lasts only while a permanent carries it, and a sorcery has none.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Single Combat** (rank 2008) — `single_combat`
+  - Players can't cast creature or planeswalker spells until the end of your next turn.
+
+</details>
+
 ## times-attacked-this-turn
 
 Blocks **1** card.
@@ -4540,6 +4678,20 @@ Blocks **1** card.
 
 - **Moraug, Fury of Akoum** (rank 988) — `moraug_fury_of_akoum`
   - Each creature you control gets +1/+0 for each time it has attacked this turn.
+
+</details>
+
+## token-copy-attached
+
+Blocks **1** card.
+
+- **(op)** copy_permanent taking an `attached_to` selector (as create_token already does for Roles), so a token copy of an Aura enters attached to a named host (303.4f), once per matching host inside a for_each over the other attacking creatures you control; plus a way for the `may` pay node's sacrifice cost to bind the sacrificed Aura (last-known information) so the reflexive trigger can name 'that Aura' as the copy source
+  <br>Why the existing vocabulary won't do: copy_permanent's options are amount, as, attacking, controller, except, objects, or_planeswalker, tapped: no attached_to, so the copy would enter unattached; copy_permanent followed by attach is the pattern the reference explicitly forbids for attached tokens (the Aura enters with no host). create_token has attached_to but only makes ids in token_ids, never a copy of an arbitrary Aura. The sacrificed Aura is in the graveyard by the time the reflexive trigger resolves, and no cost key records which permanent a `may` pay sacrifice took
+
+<details><summary>Cards waiting on this</summary>
+
+- **Three Dog, Galaxy News DJ** (rank 11547) — `three_dog_galaxy_news_dj`
+  - Whenever you attack, you may pay {2} and sacrifice an Aura attached to Three Dog. When you sacrifice an Aura this way, for each other attacking creature you control, create a token that's a copy of that Aura attached to that creature.
 
 </details>
 
@@ -4680,6 +4832,20 @@ Blocks **1** card.
 
 - **Curtains' Call** (rank 3405) — `curtains_call`
   - Undaunted (This spell costs {1} less to cast for each opponent.)
+
+</details>
+
+## wasteland-survival-guide-token
+
+Blocks **1** card.
+
+- **(token)** a colorless Book Equipment artifact token named Wasteland Survival Guide with "Equipped creature gets +1/+1 for each quest counter among permanents you control" and equip {1}
+  <br>Why the existing vocabulary won't do: token_ids is a closed list and has no such token; the only Book token is tamiyos_notebook (cost reduction, not Equipment), so nothing create_token may name matches the printed token
+
+<details><summary>Cards waiting on this</summary>
+
+- **Moira Brown, Guide Author** (rank 14880) — `moira_brown_guide_author`
+  - When Moira Brown enters, create a colorless Book Equipment artifact token named Wasteland Survival Guide with "Equipped creature gets +1/+1 for each quest counter among permanents you control" and equip {1}.
 
 </details>
 

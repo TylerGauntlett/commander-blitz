@@ -1,0 +1,16 @@
+{
+  "card_id": "cass_hand_of_vengeance",
+  "name": "Cass, Hand of Vengeance",
+  "oracle_text": "Vigilance\nWhenever Cass or another creature you control dies, if it was enchanted or equipped, return any number of Aura cards that were attached to it from your graveyard to the battlefield attached to target creature, then attach any number of Equipment that were attached to it to that creature.",
+  "blocked_sentences": [
+    "Whenever Cass or another creature you control dies, if it was enchanted or equipped, return any number of Aura cards that were attached to it from your graveyard to the battlefield attached to target creature, then attach any number of Equipment that were attached to it to that creature."
+  ],
+  "needs": [{
+    "capability": "attachments_had",
+    "kind": "selector",
+    "what": "a selector key on a departure (dies) trigger that matches, by identity, the objects that were attached to the departed creature as it left: the Aura cards now in your graveyard (as new objects, 400.7, but traced from the snapshot) and the Equipment still on the battlefield, so `return_from_graveyard` (with `host_named` pointing at the target creature) and `attach` can each take 'any number' of them; plus a trigger condition for 'if it was enchanted or equipped' that reads the snapshot of both Auras and Equipment",
+    "why_existing_wont_do": "The dies snapshot records only the controllers of the departed creature's Auras (`had_auras`, read by the `auras_had` value) and a bare count of its Equipment (`zones._equipment_had`), never their object ids, so nothing can select those particular cards. `was_attached_to` is the near miss but reads only a sacrifice cost's `as` snapshot (the loader requires it to name one), not a dies trigger's subject, and it matches only permanents still on the battlefield, so it cannot find the Auras that went to the graveyard"
+  }],
+  "closest_existing": ["was_attached_to", "auras_had", "return_from_graveyard.host_named", "attach"],
+  "confidence": "high"
+}

@@ -1,0 +1,22 @@
+{
+  "card_id": "dogmeat_ever_loyal",
+  "name": "Dogmeat, Ever Loyal",
+  "oracle_text": "When Dogmeat enters, mill five cards, then return an Aura or Equipment card from your graveyard to your hand.\nWhenever a creature you control that's enchanted or equipped attacks, create a Junk token. (It's an artifact with \"{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.\")",
+  "blocked_sentences": [
+    "Whenever a creature you control that's enchanted or equipped attacks, create a Junk token. (It's an artifact with \"{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.\")"
+  ],
+  "needs": [
+    {
+      "capability": "equipped_trigger_filter",
+      "kind": "selector",
+      "what": "an `equipped` key in the trigger filter language (TRIGGER_FILTER_KEYS), so an `attacks` trigger can match \"a creature you control that's enchanted or equipped\" as `any_of: [{enchanted_by: true}, {equipped: true}]` -- true when any Equipment is attached to the attacking creature, whoever controls it",
+      "why_existing_wont_do": "trigger_filter_keys has `enchanted_by` (covers the Aura half) and `attached` (only the one permanent the trigger's source is attached to, i.e. 'equipped creature' on an Equipment), but no 'is equipped by any Equipment' key; `equipped` and `modified` exist only in the effect selector language, not in trigger filters, so dropping the equipped branch or using `attached` would approximate the card"
+    }
+  ],
+  "closest_existing": [
+    "enchanted_by",
+    "attached",
+    "any_of"
+  ],
+  "confidence": "high"
+}

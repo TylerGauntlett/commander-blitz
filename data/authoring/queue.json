@@ -4152,12 +4152,12 @@
     },
     "Agility Bobblehead": {
       "edhrec_rank": 5019,
-      "gate": "template",
+      "gate": null,
       "name": "Agility Bobblehead",
-      "reason": "no template for: {3}, {T}: Up to X target creatures you control each gain haste until end of turn and can't",
+      "reason": "",
       "scryfall_id": "16414b32-2e70-4da6-9556-fcac07528e5f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Agitator Ant": {
@@ -6212,12 +6212,12 @@
     },
     "All That Glitters": {
       "edhrec_rank": 616,
-      "gate": "template",
+      "gate": null,
       "name": "All That Glitters",
-      "reason": "no template for: Enchanted creature gets +1/+1 for each artifact and/or enchantment you control",
+      "reason": "",
       "scryfall_id": "15d9fb74-9f2d-40f1-88b8-514a460a4f86",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "All Will Be One": {
@@ -6522,12 +6522,12 @@
     },
     "Almost Perfect": {
       "edhrec_rank": 8789,
-      "gate": "template",
+      "gate": null,
       "name": "Almost Perfect",
-      "reason": "no template for: Enchanted creature has base power and toughness 9/10 and has indestructible",
+      "reason": "",
       "scryfall_id": "0b645f84-4213-41ba-8860-332971606f26",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Alms": {
@@ -9332,12 +9332,12 @@
     },
     "Animal Friend": {
       "edhrec_rank": 9754,
-      "gate": "template",
+      "gate": null,
       "name": "Animal Friend",
-      "reason": "no template for: Enchanted creature has \"Whenever this creature attacks, create a 1/1 green Squirrel creatu",
+      "reason": "",
       "scryfall_id": "66faa677-14d5-4a4e-8587-c777f5b55869",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Animal Magnetism": {
@@ -13622,12 +13622,12 @@
     },
     "Armory Paladin": {
       "edhrec_rank": 8168,
-      "gate": "template",
+      "gate": null,
       "name": "Armory Paladin",
-      "reason": "no template for: Whenever you cast an Aura or Equipment spell, exile the top card of your library. You may ",
+      "reason": "",
       "scryfall_id": "4e5ffa95-5c5f-449b-820a-7d5bc1688d29",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Armory Veteran": {
@@ -24602,12 +24602,12 @@
     },
     "Bighorner Rancher": {
       "edhrec_rank": 6123,
-      "gate": "template",
+      "gate": null,
       "name": "Bighorner Rancher",
-      "reason": "no template for: Sacrifice this creature: You gain life equal to the greatest toughness among other creatur",
+      "reason": "",
       "scryfall_id": "861361bc-b357-4ff8-931b-a48d08817191",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bilbo Baggins, Burglar // Take a Glance": {
@@ -33582,12 +33582,12 @@
     },
     "Break Down": {
       "edhrec_rank": 11467,
-      "gate": "template",
+      "gate": null,
       "name": "Break Down",
-      "reason": "no template for: Destroy target artifact or enchantment. Create a Junk token",
+      "reason": "",
       "scryfall_id": "acfe026f-75a7-45b9-b7e8-e1a76855ea94",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Break Down the Door": {
@@ -35442,12 +35442,12 @@
     },
     "Brotherhood Outcast": {
       "edhrec_rank": 9639,
-      "gate": "template",
+      "gate": null,
       "name": "Brotherhood Outcast",
-      "reason": "no template for: When this creature enters, choose one —",
+      "reason": "",
       "scryfall_id": "0949fcab-5aa2-4277-bf4d-f5855a863cb6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Brotherhood Patriarch": {
@@ -37762,12 +37762,12 @@
     },
     "Cait, Cage Brawler": {
       "edhrec_rank": 12106,
-      "gate": "template",
+      "gate": null,
       "name": "Cait, Cage Brawler",
-      "reason": "no template for: During your turn, Cait has indestructible",
+      "reason": "",
       "scryfall_id": "499a55e3-d231-4c2b-9035-d7835a62e649",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Calamitous Cave-In": {
@@ -56062,12 +56062,12 @@
     },
     "Crimson Caravaneer": {
       "edhrec_rank": 10498,
-      "gate": "template",
+      "gate": null,
       "name": "Crimson Caravaneer",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, create a Junk token",
+      "reason": "",
       "scryfall_id": "3acc522b-6297-455e-8bb5-6187061496d0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Crimson Cowl, Master of Evil": {
@@ -118282,12 +118282,12 @@
     },
     "Grim Reaper's Sprint": {
       "edhrec_rank": 4518,
-      "gate": "template",
+      "gate": null,
       "name": "Grim Reaper's Sprint",
-      "reason": "no template for: Morbid — This spell costs {3} less to cast if a creature died this turn",
+      "reason": "",
       "scryfall_id": "18e76286-9e06-42de-b322-eb8aa2cdca3a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Grim Reaper, Lethal Legionnaire": {
@@ -132652,12 +132652,12 @@
     },
     "Ian the Reckless": {
       "edhrec_rank": 16037,
-      "gate": "template",
+      "gate": null,
       "name": "Ian the Reckless",
-      "reason": "no template for: Whenever attacks, if it's modified, you may have it deal damage equal to its power to you ",
+      "reason": "",
       "scryfall_id": "4cd46b6a-eb20-4ffa-94e0-47d1d2d46087",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ib Halfheart, Goblin Tactician": {
@@ -133392,12 +133392,12 @@
     },
     "Idolized": {
       "edhrec_rank": 3521,
-      "gate": "template",
+      "gate": null,
       "name": "Idolized",
-      "reason": "no template for: Enchanted creature has \"Whenever this creature attacks alone, it gets +X/+X until end of t",
+      "reason": "",
       "scryfall_id": "682f0d75-0c08-4a4f-990c-2cc14761b616",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Idris, Soul of the TARDIS": {
@@ -144542,12 +144542,12 @@
     },
     "Junk Jet": {
       "edhrec_rank": 9441,
-      "gate": "template",
+      "gate": null,
       "name": "Junk Jet",
-      "reason": "no template for: When this Equipment enters, create a Junk token",
+      "reason": "",
       "scryfall_id": "16e74c30-fcd8-4ee2-87b1-e8b7f3a846d0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Junk Winder": {
@@ -144572,12 +144572,12 @@
     },
     "Junktown": {
       "edhrec_rank": 9771,
-      "gate": "template",
+      "gate": null,
       "name": "Junktown",
-      "reason": "no template for: {4}{R}, {T}, Sacrifice this land: Create three Junk tokens",
+      "reason": "",
       "scryfall_id": "3b7d23ba-2e8f-46ef-805e-b00405417760",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Junktroller": {
@@ -166932,12 +166932,12 @@
     },
     "Mantle of the Ancients": {
       "edhrec_rank": 1367,
-      "gate": "template",
+      "gate": null,
       "name": "Mantle of the Ancients",
-      "reason": "no template for: When this Aura enters, return any number of target Aura and/or Equipment cards from your g",
+      "reason": "",
       "scryfall_id": "17b32d84-2d56-4ffe-a433-3d033f16045c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mantle of the Wolf": {
@@ -176132,12 +176132,12 @@
     },
     "Mister Gutsy": {
       "edhrec_rank": 9515,
-      "gate": "template",
+      "gate": null,
       "name": "Mister Gutsy",
-      "reason": "no template for: Whenever you cast an Aura or Equipment spell, put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "69e1ad95-4587-49b0-ac26-ba788b55a847",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mister Hyde, Monster Within": {
@@ -215092,12 +215092,12 @@
     },
     "Rancor": {
       "edhrec_rank": 815,
-      "gate": "template",
+      "gate": null,
       "name": "Rancor",
-      "reason": "no template for: When this Aura is put into a graveyard from the battlefield, return it to its owner's hand",
+      "reason": "",
       "scryfall_id": "377792bf-2d72-40eb-9e47-1d4a86980fa4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rancorous Archaic": {
@@ -225922,12 +225922,12 @@
     },
     "Roadside Reliquary": {
       "edhrec_rank": 3763,
-      "gate": "template",
+      "gate": null,
       "name": "Roadside Reliquary",
-      "reason": "no template for: {2}, {T}, Sacrifice this land: Draw a card if you control an artifact. Draw a card if you ",
+      "reason": "",
       "scryfall_id": "deca57c8-ac90-4fce-83b5-74adf45622e5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Roalesk, Apex Hybrid": {
@@ -247592,12 +247592,12 @@
     },
     "Silver Shroud Costume": {
       "edhrec_rank": 1809,
-      "gate": "template",
+      "gate": null,
       "name": "Silver Shroud Costume",
-      "reason": "no template for: When this Equipment enters, attach it to target creature you control. That creature gains ",
+      "reason": "",
       "scryfall_id": "a04fc3fa-119f-4dbf-a1b3-6f92812cd07d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Silver Surfer, Cosmic Voyager": {
@@ -264362,12 +264362,12 @@
     },
     "Sticky Fingers": {
       "edhrec_rank": 1839,
-      "gate": "template",
+      "gate": null,
       "name": "Sticky Fingers",
-      "reason": "no template for: Enchanted creature has menace and \"Whenever this creature deals combat damage to a player,",
+      "reason": "",
       "scryfall_id": "deae46e9-29db-426a-a92b-fc10ebbacd7f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stickytongue Sentinel": {
@@ -270272,12 +270272,12 @@
     },
     "Super Mutant Scavenger": {
       "edhrec_rank": 14923,
-      "gate": "template",
+      "gate": null,
       "name": "Super Mutant Scavenger",
-      "reason": "no template for: When this creature enters or dies, return up to one target Aura or Equipment card from you",
+      "reason": "",
       "scryfall_id": "41f48a99-eaf7-42ec-bab3-9ebbc735a82a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Super Shredder": {
@@ -313392,12 +313392,12 @@
     },
     "Well Rested": {
       "edhrec_rank": 3912,
-      "gate": "template",
+      "gate": null,
       "name": "Well Rested",
-      "reason": "no template for: Enchanted creature has \"Whenever this creature becomes untapped, put two +1/+1 counters on",
+      "reason": "",
       "scryfall_id": "9831a905-55c2-4d88-b7ec-463df05e4d7a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Well of Discovery": {
