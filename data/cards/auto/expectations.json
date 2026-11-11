@@ -8466,6 +8466,14 @@
     },
     "zone": "battlefield"
   },
+  "grim_reaper_s_sprint": {
+    "battlefield_count": 33,
+    "target_pt_delta": {
+      "power": 2,
+      "toughness": 2
+    },
+    "zone": "battlefield"
+  },
   "grima_saruman_s_footman": {
     "battlefield_count": 33,
     "hand_size": {
@@ -10229,11 +10237,23 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "junk_jet": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "junk_token"
+    },
+    "zone": "battlefield"
+  },
   "junk_winder": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
   "junkblade_bruiser": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "junktown": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -11857,6 +11877,14 @@
   "mantis_rider": {
     "zone": "battlefield"
   },
+  "mantle_of_the_ancients": {
+    "battlefield_count": 33,
+    "target_pt_delta": {
+      "power": 1,
+      "toughness": 1
+    },
+    "zone": "battlefield"
+  },
   "mantle_of_webs": {
     "zone": [
       "battlefield",
@@ -12467,6 +12495,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "mister_gutsy": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "mistral_charger": {

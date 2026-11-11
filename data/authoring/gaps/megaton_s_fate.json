@@ -1,0 +1,18 @@
+{
+  "card_id": "megaton_s_fate",
+  "name": "Megaton's Fate",
+  "oracle_text": "Choose one —\n• Disarm — Destroy target artifact. Create four Treasure tokens.\n• Detonate — Megaton's Fate deals 8 damage to each creature. Each player gets four rad counters.",
+  "blocked_sentences": [
+    "• Detonate — Megaton's Fate deals 8 damage to each creature. Each player gets four rad counters."
+  ],
+  "needs": [
+    {
+      "capability": "rad_counters",
+      "kind": "engine",
+      "what": "rad as a player counter kind (a PlayerState field plus an entry in the player counter kinds, with the rule-725 rad trigger at the beginning of each player's precombat main phase: mill that many cards, lose 1 life and remove one rad counter per nonland card milled), and an op that gives a player N rad counters (e.g. an `add_rad` op shaped like add_poison/add_energy with `amount` and `player`, here run over each player via for_each_player)",
+      "why_existing_wont_do": "add_poison and add_energy are the only ops that put counters on a player and each is fixed to its own kind; add_counters acts on objects, not players; double_player_counters and lose_all_player_counters only modify existing kinds; no rad counter kind or rad precombat-main trigger exists in the engine"
+    }
+  ],
+  "closest_existing": ["add_poison", "add_energy"],
+  "confidence": "high"
+}

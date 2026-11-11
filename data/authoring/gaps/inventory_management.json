@@ -1,0 +1,18 @@
+{
+  "card_id": "inventory_management",
+  "name": "Inventory Management",
+  "oracle_text": "Split second (As long as this spell is on the stack, players can't cast spells or activate abilities that aren't mana abilities.)\nFor each Aura and Equipment you control, you may attach it to a creature you control.",
+  "blocked_sentences": [
+    "For each Aura and Equipment you control, you may attach it to a creature you control."
+  ],
+  "needs": [
+    {
+      "capability": "attach_enchant_legality",
+      "kind": "engine",
+      "what": "the `attach` op, when its `attachment` is an existing Aura, must offer only hosts that Aura's enchant clause allows (its first target spec, as `zones.offer_aura_host` and `stack._attach_aura` read it) and, per 701.3b, leave the Aura where it is when the chosen host is illegal. Then this card is `split_second: true` plus `for_each` over `{zone: battlefield, controller: you, subtypes: [Aura, Equipment]}` whose body is `attach` with `attachment: {binding: each}` and `objects: {controller: you, types: [Creature], zone: battlefield, count: 1, optional: true}`",
+      "why_existing_wont_do": "`op_attach` documents that the host it names through `attachment` 'is not re-tested against the clause', and `primitives.attach` checks only protection, self-attachment and zone; `sba` keeps any Aura whose host is still on the battlefield. Here the attachments are every Aura you control, not one that just entered, so an Enchant land Aura (Utopia Sprawl), an Enchant artifact Aura or a Curse on a player could be moved onto a creature and keep working there, which 303.4 and 701.3b forbid. The `split_second` rider covers the first line; only the attach legality is missing"
+    }
+  ],
+  "closest_existing": ["attach", "for_each", "split_second"],
+  "confidence": "high"
+}

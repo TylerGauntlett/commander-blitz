@@ -118282,12 +118282,12 @@
     },
     "Grim Reaper's Sprint": {
       "edhrec_rank": 4518,
-      "gate": "template",
+      "gate": null,
       "name": "Grim Reaper's Sprint",
-      "reason": "no template for: Morbid — This spell costs {3} less to cast if a creature died this turn",
+      "reason": "",
       "scryfall_id": "18e76286-9e06-42de-b322-eb8aa2cdca3a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Grim Reaper, Lethal Legionnaire": {
@@ -144542,12 +144542,12 @@
     },
     "Junk Jet": {
       "edhrec_rank": 9441,
-      "gate": "template",
+      "gate": null,
       "name": "Junk Jet",
-      "reason": "no template for: When this Equipment enters, create a Junk token",
+      "reason": "",
       "scryfall_id": "16e74c30-fcd8-4ee2-87b1-e8b7f3a846d0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Junk Winder": {
@@ -144572,12 +144572,12 @@
     },
     "Junktown": {
       "edhrec_rank": 9771,
-      "gate": "template",
+      "gate": null,
       "name": "Junktown",
-      "reason": "no template for: {4}{R}, {T}, Sacrifice this land: Create three Junk tokens",
+      "reason": "",
       "scryfall_id": "3b7d23ba-2e8f-46ef-805e-b00405417760",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Junktroller": {
@@ -166932,12 +166932,12 @@
     },
     "Mantle of the Ancients": {
       "edhrec_rank": 1367,
-      "gate": "template",
+      "gate": null,
       "name": "Mantle of the Ancients",
-      "reason": "no template for: When this Aura enters, return any number of target Aura and/or Equipment cards from your g",
+      "reason": "",
       "scryfall_id": "17b32d84-2d56-4ffe-a433-3d033f16045c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mantle of the Wolf": {
@@ -176132,12 +176132,12 @@
     },
     "Mister Gutsy": {
       "edhrec_rank": 9515,
-      "gate": "template",
+      "gate": null,
       "name": "Mister Gutsy",
-      "reason": "no template for: Whenever you cast an Aura or Equipment spell, put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "69e1ad95-4587-49b0-ac26-ba788b55a847",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mister Hyde, Monster Within": {

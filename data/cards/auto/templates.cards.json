@@ -99153,6 +99153,117 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "untap"
+            },
+            {
+              "condition": {
+                "all": [
+                  {
+                    "is_your_turn": true
+                  },
+                  {
+                    "step_is": [
+                      "precombat_main",
+                      "postcombat_main"
+                    ]
+                  }
+                ]
+              },
+              "op": "if",
+              "then": [
+                {
+                  "op": "extra_combat"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this Aura enters, untap each creature you control. If it's your main phase, there is an additional combat phase after this phase.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Enchanted creature gets +2/+2 and has haste.",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "haste"
+          ],
+          "kind": "static",
+          "text": "Enchanted creature gets +2/+2 and has haste."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "cost_reduction": {
+        "amount": 3,
+        "condition": {
+          "cmp": ">",
+          "left": {
+            "creatures_died_this_turn": "all"
+          },
+          "right": {
+            "const": 0
+          }
+        }
+      },
+      "id": "grim_reaper_s_sprint",
+      "mana_cost": "{4}{R}",
+      "name": "Grim Reaper's Sprint",
+      "oracle_text": "Morbid — This spell costs {3} less to cast if a creature died this turn.\nEnchant creature\nWhen this Aura enters, untap each creature you control. If it's your main phase, there is an additional combat phase after this phase.\nEnchanted creature gets +2/+2 and has haste.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "self_only": true
           },
@@ -121111,6 +121222,117 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "junk_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this Equipment enters, create a Junk token. (It's an artifact with \"{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.\")",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "exclude_self": true,
+              "types": [
+                "Artifact"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "attached": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "power_of": {
+                  "objects": {
+                    "attached": true,
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  }
+                }
+              },
+              "toughness": {
+                "const": 0
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}, Sacrifice another artifact: Double equipped creature's power until end of turn."
+        },
+        {
+          "cost": {
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {1}"
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "junk_jet",
+      "mana_cost": "{1}{R}",
+      "name": "Junk Jet",
+      "oracle_text": "When this Equipment enters, create a Junk token. (It's an artifact with \"{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.\")\n{3}, Sacrifice another artifact: Double equipped creature's power until end of turn.\nEquip {1}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "objects": {
                 "target": "t1"
               },
@@ -121225,6 +121447,58 @@
       "toughness": 5,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{4}{R}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "create_token",
+              "token": "junk_token"
+            }
+          ],
+          "kind": "activated",
+          "text": "{4}{R}, {T}, Sacrifice this land: Create three Junk tokens."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "id": "junktown",
+      "name": "Junktown",
+      "oracle_text": "{T}: Add {C}.\n{4}{R}, {T}, Sacrifice this land: Create three Junk tokens. (They're artifacts with \"{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.\")",
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -141452,6 +141726,108 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "host_named": {
+                "attached": true,
+                "zone": "battlefield"
+              },
+              "objects": {
+                "target": "t1",
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": "any",
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "subtypes": [
+                  "Aura",
+                  "Equipment"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When this Aura enters, return any number of target Aura and/or Equipment cards from your graveyard to the battlefield attached to enchanted creature.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "count": {
+              "attached_to_host": true,
+              "controller": "any",
+              "subtypes": [
+                "Aura",
+                "Equipment"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "text": "Enchanted creature gets +1/+1 for each Aura and Equipment attached to it.",
+          "toughness": {
+            "count": {
+              "attached_to_host": true,
+              "controller": "any",
+              "subtypes": [
+                "Aura",
+                "Equipment"
+              ],
+              "zone": "battlefield"
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "mantle_of_the_ancients",
+      "mana_cost": "{3}{W}{W}",
+      "name": "Mantle of the Ancients",
+      "oracle_text": "Enchant creature you control\nWhen this Aura enters, return any number of target Aura and/or Equipment cards from your graveyard to the battlefield attached to enchanted creature.\nEnchanted creature gets +1/+1 for each Aura and Equipment attached to it.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -147937,6 +148313,78 @@
       ],
       "toughness": 4,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast an Aura or Equipment spell, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_of": [
+                {
+                  "subtypes": [
+                    "Aura"
+                  ]
+                },
+                {
+                  "subtypes": [
+                    "Equipment"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "counters_had": "+1/+1"
+              },
+              "op": "create_token",
+              "token": "junk_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, create X Junk tokens, where X is the number of +1/+1 counters on it. (They're artifacts with \"{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.\")",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "mister_gutsy",
+      "mana_cost": "{2}",
+      "name": "Mister Gutsy",
+      "oracle_text": "Whenever you cast an Aura or Equipment spell, put a +1/+1 counter on this creature.\nWhen this creature dies, create X Junk tokens, where X is the number of +1/+1 counters on it. (They're artifacts with \"{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.\")",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Robot",
+        "Soldier"
+      ],
+      "toughness": 1,
+      "types": [
+        "Artifact",
         "Creature"
       ]
     },
