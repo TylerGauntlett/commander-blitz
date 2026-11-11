@@ -282,6 +282,10 @@
   "agent_of_atlas": {
     "zone": "battlefield"
   },
+  "agility_bobblehead": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "ainok_strike_leader": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -446,10 +450,20 @@
     "opponent_battlefield_count": 3,
     "zone": "graveyard"
   },
+  "all_that_glitters": {
+    "target_pt_delta": {
+      "power": 1,
+      "toughness": 1
+    },
+    "zone": "battlefield"
+  },
   "alley_strangler": {
     "zone": "battlefield"
   },
   "alloy_myr": {
+    "zone": "battlefield"
+  },
+  "almost_perfect": {
     "zone": "battlefield"
   },
   "alpha_myr": {
@@ -768,6 +782,10 @@
     "zone": "graveyard"
   },
   "animal_attendant": {
+    "zone": "battlefield"
+  },
+  "animal_friend": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "animate_dead": {
@@ -1133,6 +1151,13 @@
   },
   "armory_automaton": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "armory_paladin": {
+    "battlefield_count": 33,
+    "library_size": {
+      "0": 40
+    },
     "zone": "battlefield"
   },
   "army_of_the_damned": {
@@ -2482,6 +2507,15 @@
       "0": 37
     },
     "zone": "battlefield"
+  },
+  "break_down": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5,
+    "tokens": {
+      "count": 1,
+      "id": "junk_token"
+    },
+    "zone": "graveyard"
   },
   "breakneck_berserker": {
     "zone": "battlefield"

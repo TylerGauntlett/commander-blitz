@@ -4152,12 +4152,12 @@
     },
     "Agility Bobblehead": {
       "edhrec_rank": 5019,
-      "gate": "template",
+      "gate": null,
       "name": "Agility Bobblehead",
-      "reason": "no template for: {3}, {T}: Up to X target creatures you control each gain haste until end of turn and can't",
+      "reason": "",
       "scryfall_id": "16414b32-2e70-4da6-9556-fcac07528e5f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Agitator Ant": {
@@ -6212,12 +6212,12 @@
     },
     "All That Glitters": {
       "edhrec_rank": 616,
-      "gate": "template",
+      "gate": null,
       "name": "All That Glitters",
-      "reason": "no template for: Enchanted creature gets +1/+1 for each artifact and/or enchantment you control",
+      "reason": "",
       "scryfall_id": "15d9fb74-9f2d-40f1-88b8-514a460a4f86",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "All Will Be One": {
@@ -6522,12 +6522,12 @@
     },
     "Almost Perfect": {
       "edhrec_rank": 8789,
-      "gate": "template",
+      "gate": null,
       "name": "Almost Perfect",
-      "reason": "no template for: Enchanted creature has base power and toughness 9/10 and has indestructible",
+      "reason": "",
       "scryfall_id": "0b645f84-4213-41ba-8860-332971606f26",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Alms": {
@@ -9332,12 +9332,12 @@
     },
     "Animal Friend": {
       "edhrec_rank": 9754,
-      "gate": "template",
+      "gate": null,
       "name": "Animal Friend",
-      "reason": "no template for: Enchanted creature has \"Whenever this creature attacks, create a 1/1 green Squirrel creatu",
+      "reason": "",
       "scryfall_id": "66faa677-14d5-4a4e-8587-c777f5b55869",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Animal Magnetism": {
@@ -13622,12 +13622,12 @@
     },
     "Armory Paladin": {
       "edhrec_rank": 8168,
-      "gate": "template",
+      "gate": null,
       "name": "Armory Paladin",
-      "reason": "no template for: Whenever you cast an Aura or Equipment spell, exile the top card of your library. You may ",
+      "reason": "",
       "scryfall_id": "4e5ffa95-5c5f-449b-820a-7d5bc1688d29",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Armory Veteran": {
@@ -33582,12 +33582,12 @@
     },
     "Break Down": {
       "edhrec_rank": 11467,
-      "gate": "template",
+      "gate": null,
       "name": "Break Down",
-      "reason": "no template for: Destroy target artifact or enchantment. Create a Junk token",
+      "reason": "",
       "scryfall_id": "acfe026f-75a7-45b9-b7e8-e1a76855ea94",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Break Down the Door": {
