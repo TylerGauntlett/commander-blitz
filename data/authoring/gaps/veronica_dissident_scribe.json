@@ -1,0 +1,18 @@
+{
+  "card_id": "veronica_dissident_scribe",
+  "name": "Veronica, Dissident Scribe",
+  "oracle_text": "Menace\nWhenever Veronica attacks, you may discard a card. If you do, draw a card.\nWhenever you discard one or more nonland cards for the first time each turn, create a Junk token. (It's an artifact with \"{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.\")",
+  "blocked_sentences": [
+    "Whenever you discard one or more nonland cards for the first time each turn, create a Junk token. (It's an artifact with \"{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.\")"
+  ],
+  "needs": [
+    {
+      "capability": "discard_first_time_each_turn",
+      "kind": "trigger_event",
+      "what": "an `nth` ordinal on the `discard` trigger event, counted off the turn ledger: the place of this discard batch among this turn's discard batches by the trigger's controller that contained a card matching the trigger's `filter` (here `not_types: [\"Land\"]`), so \"whenever you discard one or more nonland cards for the first time each turn\" fires on the first such batch of the turn only -- and never later that turn if that batch happened before the permanent entered",
+      "why_existing_wont_do": "`discard` supports `batched` (Doctor Doom) but its events carry no `nth`, so `_ordinal` returns None and an `nth: 1` trigger never fires; `TurnLedger.cards_discarded` is a bare per-player count with no batch or card record to filter by type. `max_per_turn: 1` with `batched` is a per-permanent cap, which the engine itself documents as wrong for \"for the first time each turn\" (`_graveyard_ordinal`, Crawling Sensation): Veronica cast after a nonland discard would still fire on a later one. `put_into_graveyard` has the ledger-counted ordinal but also sees mills and deaths, so it is not a discard."
+    }
+  ],
+  "closest_existing": ["discard batched trigger", "max_per_turn", "put_into_graveyard nth (_graveyard_ordinal)"],
+  "confidence": "low"
+}
