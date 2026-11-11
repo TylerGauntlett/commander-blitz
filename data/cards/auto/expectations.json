@@ -15240,6 +15240,13 @@
   "rancid_rats": {
     "zone": "battlefield"
   },
+  "rancor": {
+    "target_pt_delta": {
+      "power": 2,
+      "toughness": 0
+    },
+    "zone": "battlefield"
+  },
   "ranger_s_longbow": {
     "zone": "battlefield"
   },
@@ -15982,6 +15989,10 @@
   "riveteers_charm": {
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
+  },
+  "roadside_reliquary": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "roaming_throne": {
     "battlefield_count": 33,

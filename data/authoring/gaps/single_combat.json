@@ -1,0 +1,18 @@
+{
+  "card_id": "single_combat",
+  "name": "Single Combat",
+  "oracle_text": "Each player chooses a creature or planeswalker they control, then sacrifices the rest. Players can't cast creature or planeswalker spells until the end of your next turn.",
+  "blocked_sentences": [
+    "Players can't cast creature or planeswalker spells until the end of your next turn."
+  ],
+  "needs": [
+    {
+      "capability": "timed_spell_type_cast_lock",
+      "kind": "op",
+      "what": "a one-shot, timed casting prohibition installed by a resolving spell that applies to every player and only to spells matching a spell filter (here any_types Creature or Planeswalker), with a duration lasting until the end of the caster's next turn (through that turn's cleanup, not ending as it begins)",
+      "why_existing_wont_do": "The cant_cast_spells op takes only player and duration and is a total lock over every castable zone, with no affects_spells filter; its durations are only this_turn and until_your_next_turn (structs.CAST_LOCK_DURATIONS), and until_your_next_turn ends as the next turn begins rather than at its end. The cant_cast_spells static does take affects_spells but lasts only while a permanent carries it, and a sorcery has none."
+    }
+  ],
+  "closest_existing": ["cant_cast_spells"],
+  "confidence": "high"
+}

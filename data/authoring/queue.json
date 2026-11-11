@@ -215092,12 +215092,12 @@
     },
     "Rancor": {
       "edhrec_rank": 815,
-      "gate": "template",
+      "gate": null,
       "name": "Rancor",
-      "reason": "no template for: When this Aura is put into a graveyard from the battlefield, return it to its owner's hand",
+      "reason": "",
       "scryfall_id": "377792bf-2d72-40eb-9e47-1d4a86980fa4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rancorous Archaic": {
@@ -225922,12 +225922,12 @@
     },
     "Roadside Reliquary": {
       "edhrec_rank": 3763,
-      "gate": "template",
+      "gate": null,
       "name": "Roadside Reliquary",
-      "reason": "no template for: {2}, {T}, Sacrifice this land: Draw a card if you control an artifact. Draw a card if you ",
+      "reason": "",
       "scryfall_id": "deca57c8-ac90-4fce-83b5-74adf45622e5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Roalesk, Apex Hybrid": {
