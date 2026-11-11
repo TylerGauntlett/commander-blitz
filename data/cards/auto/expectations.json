@@ -17450,6 +17450,16 @@
   "silver_raven": {
     "zone": "battlefield"
   },
+  "silver_shroud_costume": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "shroud"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "silver_surfer_cosmic_voyager": {
     "zone": "battlefield"
   },
@@ -18461,6 +18471,13 @@
   "steward_of_valeron": {
     "zone": "battlefield"
   },
+  "sticky_fingers": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "stilt_man_towering_terror": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -18896,6 +18913,16 @@
     "zone": "battlefield"
   },
   "suntail_hawk": {
+    "zone": "battlefield"
+  },
+  "super_mutant_scavenger": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "super_villain_lockup": {
@@ -22231,6 +22258,13 @@
   },
   "well_of_lost_dreams": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "well_rested": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40
+    },
     "zone": "battlefield"
   },
   "west_coast_expansion": {

@@ -247592,12 +247592,12 @@
     },
     "Silver Shroud Costume": {
       "edhrec_rank": 1809,
-      "gate": "template",
+      "gate": null,
       "name": "Silver Shroud Costume",
-      "reason": "no template for: When this Equipment enters, attach it to target creature you control. That creature gains ",
+      "reason": "",
       "scryfall_id": "a04fc3fa-119f-4dbf-a1b3-6f92812cd07d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Silver Surfer, Cosmic Voyager": {
@@ -264362,12 +264362,12 @@
     },
     "Sticky Fingers": {
       "edhrec_rank": 1839,
-      "gate": "template",
+      "gate": null,
       "name": "Sticky Fingers",
-      "reason": "no template for: Enchanted creature has menace and \"Whenever this creature deals combat damage to a player,",
+      "reason": "",
       "scryfall_id": "deae46e9-29db-426a-a92b-fc10ebbacd7f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stickytongue Sentinel": {
@@ -270272,12 +270272,12 @@
     },
     "Super Mutant Scavenger": {
       "edhrec_rank": 14923,
-      "gate": "template",
+      "gate": null,
       "name": "Super Mutant Scavenger",
-      "reason": "no template for: When this creature enters or dies, return up to one target Aura or Equipment card from you",
+      "reason": "",
       "scryfall_id": "41f48a99-eaf7-42ec-bab3-9ebbc735a82a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Super Shredder": {
@@ -313392,12 +313392,12 @@
     },
     "Well Rested": {
       "edhrec_rank": 3912,
-      "gate": "template",
+      "gate": null,
       "name": "Well Rested",
-      "reason": "no template for: Enchanted creature has \"Whenever this creature becomes untapped, put two +1/+1 counters on",
+      "reason": "",
       "scryfall_id": "9831a905-55c2-4d88-b7ec-463df05e4d7a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Well of Discovery": {
