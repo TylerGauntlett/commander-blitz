@@ -1,0 +1,18 @@
+{
+  "card_id": "codsworth_handy_helper",
+  "name": "Codsworth, Handy Helper",
+  "oracle_text": "Commanders you control have ward {2}.\n{T}: Add {W}{W}. Spend this mana only to cast Aura and/or Equipment spells.\n{T}: Attach target Aura or Equipment you control to target creature you control. Activate only as a sorcery.",
+  "blocked_sentences": [
+    "{T}: Attach target Aura or Equipment you control to target creature you control. Activate only as a sorcery."
+  ],
+  "needs": [
+    {
+      "capability": "attach_aura_enchant_check",
+      "kind": "engine",
+      "what": "the attach op, when its `attachment` selector moves an Aura that is already on the battlefield onto a new host, must test the host against that Aura's enchant clause (its first target spec, read for the Aura's controller) and leave the Aura where it is if the host is illegal (701.3b), exactly as zones.offer_named_host already does for an Aura arriving with host_named",
+      "why_existing_wont_do": "op_attach with `attachment` calls primitives.attach, which checks only zone, self-attachment (301.5c) and protection. Its docstring says 'The host this op names with `attachment` is not re-tested against the clause', and docs/rules-coverage.md says an attach naming a host with `attachment` is trusted. That is safe for Equipment (Barret, Avalanche Leader), but Codsworth also moves Auras, so an 'Enchant land' Aura (Utopia Sprawl) or an 'Enchant creature an opponent controls' Aura could be moved onto your creature, which the rules forbid. The rest of the card is expressible: a ward static with affects {controller: you, is_commander: true}, cost {mana: {2}}; a mana ability {T}: add_mana {W}{W} with mana_restriction {cast: [[\"aura\"], [\"equipment\"]]}; and for this line, two permanent targets plus attach {attachment: {target: t1}, objects: {target: t2}} with sorcery_speed_only and cost {tap: true}"
+    }
+  ],
+  "closest_existing": ["attach", "barret_avalanche_leader"],
+  "confidence": "high"
+}

@@ -1893,6 +1893,13 @@
     },
     "zone": "graveyard"
   },
+  "bighorner_rancher": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "binding_mummy": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -4075,6 +4082,10 @@
     "battlefield_count": 32,
     "opponent_battlefield_count": 6,
     "zone": "graveyard"
+  },
+  "crimson_caravaneer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "crimson_kobolds": {
     "zone": "battlefield"

@@ -22330,6 +22330,92 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "extreme_value": {
+                  "objects": {
+                    "controller": "you",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "of": "power",
+                  "pick": "greatest"
+                }
+              },
+              "mana": "{G}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add an amount of {G} equal to the greatest power among creatures you control."
+        },
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "extreme_value": {
+                  "objects": {
+                    "controller": "you",
+                    "exclude_self": true,
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "of": "toughness",
+                  "pick": "greatest"
+                }
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "Sacrifice this creature: You gain life equal to the greatest toughness among other creatures you control."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "bighorner_rancher",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{4}{G}",
+      "name": "Bighorner Rancher",
+      "oracle_text": "Vigilance\n{T}: Add an amount of {G} equal to the greatest power among creatures you control.\nSacrifice this creature: You gain life equal to the greatest toughness among other creatures you control.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Ranger"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "effects": [
@@ -48929,6 +49015,51 @@
       "types": [
         "Kindred",
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "junk_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, create a Junk token. (It's an artifact with \"{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.\")",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "crimson_caravaneer",
+      "keywords": [
+        "double_strike",
+        "trample"
+      ],
+      "mana_cost": "{2}{R}",
+      "name": "Crimson Caravaneer",
+      "oracle_text": "Double strike, trample\nWhenever this creature deals combat damage to a player, create a Junk token. (It's an artifact with \"{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.\")",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Scout"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {

@@ -24602,12 +24602,12 @@
     },
     "Bighorner Rancher": {
       "edhrec_rank": 6123,
-      "gate": "template",
+      "gate": null,
       "name": "Bighorner Rancher",
-      "reason": "no template for: Sacrifice this creature: You gain life equal to the greatest toughness among other creatur",
+      "reason": "",
       "scryfall_id": "861361bc-b357-4ff8-931b-a48d08817191",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bilbo Baggins, Burglar // Take a Glance": {
@@ -35442,12 +35442,12 @@
     },
     "Brotherhood Outcast": {
       "edhrec_rank": 9639,
-      "gate": "template",
+      "gate": "residual",
       "name": "Brotherhood Outcast",
-      "reason": "no template for: When this creature enters, choose one —",
+      "reason": "printed text not represented: • Put a shield counter on target creature",
       "scryfall_id": "0949fcab-5aa2-4277-bf4d-f5855a863cb6",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Brotherhood Patriarch": {
@@ -56062,12 +56062,12 @@
     },
     "Crimson Caravaneer": {
       "edhrec_rank": 10498,
-      "gate": "template",
+      "gate": null,
       "name": "Crimson Caravaneer",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, create a Junk token",
+      "reason": "",
       "scryfall_id": "3acc522b-6297-455e-8bb5-6187061496d0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Crimson Cowl, Master of Evil": {
