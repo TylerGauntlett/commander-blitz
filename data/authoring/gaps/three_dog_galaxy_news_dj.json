@@ -1,0 +1,18 @@
+{
+  "card_id": "three_dog_galaxy_news_dj",
+  "name": "Three Dog, Galaxy News DJ",
+  "oracle_text": "Whenever you attack, you may pay {2} and sacrifice an Aura attached to Three Dog. When you sacrifice an Aura this way, for each other attacking creature you control, create a token that's a copy of that Aura attached to that creature.",
+  "blocked_sentences": [
+    "Whenever you attack, you may pay {2} and sacrifice an Aura attached to Three Dog. When you sacrifice an Aura this way, for each other attacking creature you control, create a token that's a copy of that Aura attached to that creature."
+  ],
+  "needs": [
+    {
+      "capability": "token_copy_attached",
+      "kind": "op",
+      "what": "copy_permanent taking an `attached_to` selector (as create_token already does for Roles), so a token copy of an Aura enters attached to a named host (303.4f), once per matching host inside a for_each over the other attacking creatures you control; plus a way for the `may` pay node's sacrifice cost to bind the sacrificed Aura (last-known information) so the reflexive trigger can name 'that Aura' as the copy source",
+      "why_existing_wont_do": "copy_permanent's options are amount, as, attacking, controller, except, objects, or_planeswalker, tapped: no attached_to, so the copy would enter unattached; copy_permanent followed by attach is the pattern the reference explicitly forbids for attached tokens (the Aura enters with no host). create_token has attached_to but only makes ids in token_ids, never a copy of an arbitrary Aura. The sacrificed Aura is in the graveyard by the time the reflexive trigger resolves, and no cost key records which permanent a `may` pay sacrifice took"
+    }
+  ],
+  "closest_existing": ["copy_permanent", "create_token", "reflexive_trigger", "you_attack"],
+  "confidence": "high"
+}

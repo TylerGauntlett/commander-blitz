@@ -1,0 +1,23 @@
+{
+  "card_id": "vault_21_house_gambit",
+  "name": "Vault 21: House Gambit",
+  "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI, II — Discard a card, then draw a card.\nIII — Reveal up to five nonland cards from your hand. For each of those cards that has the same mana value as another card revealed this way, create a Treasure token.",
+  "blocked_sentences": [
+    "III — Reveal up to five nonland cards from your hand. For each of those cards that has the same mana value as another card revealed this way, create a Treasure token."
+  ],
+  "needs": [
+    {
+      "capability": "shares_mana_value_with",
+      "kind": "selector",
+      "what": "a selector (or value) over a bound set of revealed cards that matches each card whose mana value equals that of at least one OTHER card in the same set, so a `for_each`/`count` over a chosen-and-revealed `as` binding of up to five nonland hand cards can create one Treasure per matching card; the reveal also needs a player choice of up to N cards from hand",
+      "why_existing_wont_do": "`reveal` takes only `objects` and `as` with no up-to-N choice from hand; the selector has `shares_a_name_with`/`shares_a_color_with`/`shares_a_type_with` but no mana-value analogue, and `distinct` (number of distinct mana values) does not give the count of cards whose mana value is duplicated (e.g. MVs 1,1,2 should give 2 Treasures; count minus distinct gives 1)"
+    }
+  ],
+  "closest_existing": [
+    "shares_a_name_with",
+    "distinct",
+    "reveal",
+    "for_each"
+  ],
+  "confidence": "high"
+}
