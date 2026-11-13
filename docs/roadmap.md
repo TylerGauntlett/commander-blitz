@@ -74,7 +74,7 @@ each heading; this table is generated from them.
 | [Hail, Caesar (Fallout)](#hail-caesar-fallout) | L | high | Voting: will of the council and council's dilemma | 0 |
 | [Scrappy Survivors (Fallout)](#scrappy-survivors-fallout) | L | high | Rad counters | 0 |
 | [Science! (Fallout)](#science-fallout) | L | high | Secret choices | 0 |
-| [Mutant Menace (Fallout)](#mutant-menace-fallout) | L | high | nothing | 0 |
+| [Mutant Menace (Fallout)](#mutant-menace-fallout) | L | high | Rad counters | 0 |
 | [Deep Clue Sea (Murders at Karlov Manor Commander)](#deep-clue-sea-murders-at-karlov-manor-commander) | L | high | nothing | 0 |
 | [Revenant Recon (Murders at Karlov Manor Commander)](#revenant-recon-murders-at-karlov-manor-commander) | L | high | nothing | 0 |
 | [Blame Game (Murders at Karlov Manor Commander)](#blame-game-murders-at-karlov-manor-commander) | L | high | nothing | 0 |
@@ -136,12 +136,12 @@ each heading; this table is generated from them.
 | [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) | M | medium | nothing | 4 |
 | [Experience counters](#experience-counters) | M | medium | nothing | 2 |
 | [Outcomes as data](#outcomes-as-data) | M | medium | nothing | 2 |
+| [Rad counters](#rad-counters) | M | medium | nothing | 2 |
 | [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) | M | medium | nothing | 2 |
 | [Brackets, derived from the list](#brackets-derived-from-the-list) | M | medium | nothing | 1 |
 | [CPU takeover and reconnection](#cpu-takeover-and-reconnection) | M | medium | nothing | 1 |
 | [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) | M | medium | nothing | 1 |
 | [Distributing counters from a spell](#distributing-counters-from-a-spell) | M | medium | nothing | 1 |
-| [Rad counters](#rad-counters) | M | medium | nothing | 1 |
 | [Replays and sharing](#replays-and-sharing) | M | medium | nothing | 1 |
 | [Secret choices](#secret-choices) | M | medium | nothing | 1 |
 | [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) | M | medium | nothing | 0 |
@@ -159,8 +159,6 @@ Derived from the properties: an item is **ready** when nothing it depends
 on is still on this page, and the ready items are ranked by impact, then
 rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
-
-**In progress:** [Mutant Menace (Fallout)](#mutant-menace-fallout).
 
 **Ready now, best first:**
 
@@ -225,12 +223,12 @@ same list, and `/extend-roadmap` starts at the top of it.
 59. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
 60. [Experience counters](#experience-counters) — M, medium
 61. [Outcomes as data](#outcomes-as-data) — M, medium
-62. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
-63. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
-64. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
-65. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
-66. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
-67. [Rad counters](#rad-counters) — M, medium
+62. [Rad counters](#rad-counters) — M, medium
+63. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
+64. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
+65. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
+66. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
+67. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
 68. [Replays and sharing](#replays-and-sharing) — M, medium
 69. [Secret choices](#secret-choices) — M, medium
 70. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
@@ -266,6 +264,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Hail, Caesar (Fallout)](#hail-caesar-fallout) — [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma)
 - [Scrappy Survivors (Fallout)](#scrappy-survivors-fallout) — [Rad counters](#rad-counters)
 - [Science! (Fallout)](#science-fallout) — [Secret choices](#secret-choices)
+- [Mutant Menace (Fallout)](#mutant-menace-fallout) — [Rad counters](#rad-counters)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -843,6 +842,96 @@ removes them. Meren's six gates pass, and the generated DSL reference
   rule (122.1), and its line moves from "not implemented" to the
   implemented table in rules-coverage.md.
 
+### Rad counters
+
+Effort **M** · Impact **medium**, every rad-counter card in the Fallout precons waits on it, Acquired Mutation and Megaton's Fate among them · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+A player's counters are the kinds in `player.PLAYER_COUNTER_KINDS`, which
+lists poison and energy only; the comment above it names rad as one of the
+kinds that would need a field on `PlayerState` and an entry there. Each kind
+has its own funnel in `primitives` (`add_poison`, `add_energy`), and
+`ops_combat_flags` (proliferate) and `ops_life.op_lose_all_player_counters`
+walk `PLAYER_COUNTER_KINDS`, so a new kind reaches both once it is listed and
+funnelled. "Lose all counters" takes every kind at once; nothing removes one
+named kind from a player.
+
+Rad counters are more than a kind: a player with any has an inherent
+triggered ability at the beginning of their precombat main phase, which
+mills that many cards, then loses 1 life and removes one rad counter for
+each nonland card milled. The engine already has the two shapes this needs:
+`turn.begin_step`'s `Step.PRECOMBAT_MAIN` branch runs `sagas.turn_based_lore`
+and fires `EventType.PRECOMBAT_MAIN`, and `turn._monarch_draw` is a sourceless
+inherent trigger the game controls, resolved inline rather than on the stack.
+[rules-coverage.md](rules-coverage.md#not-implemented) does not mention rad
+counters at all.
+
+So no card can give a player a rad counter, and none can remove them. The
+Scrappy Survivors precon found it through Acquired Mutation and Megaton's
+Fate, and Hail, Caesar through Survivor's Med Kit; their gap records are
+`data/authoring/gaps/acquired_mutation.json`, `megaton_s_fate.json` and
+`survivor_s_med_kit.json`.
+
+#### The change
+
+1. `rad` joins `PLAYER_COUNTER_KINDS`, with a field on `PlayerState`, an
+   `add_rad` funnel in `primitives` in `add_energy`'s shape (counter
+   replacements applied, then an event of its own), and a key beside poison
+   and energy in the player's serialized view.
+2. An op that gives a player rad counters ("defending player gets two rad
+   counters", "each player gets four rad counters"), in the shape of
+   `add_energy`, reaching a trigger's defending player and `for_each_player`.
+3. The rad trigger at the beginning of the precombat main phase of a player
+   who has rad counters: mill that many, then for each nonland card milled
+   lose 1 life and remove one rad counter, through the existing mill and
+   life-loss funnels so their replacements and triggers still apply.
+4. A way to remove every counter of one named kind from a target player
+   ("target player loses all rad counters"), as an option on the existing
+   lose-all-counters op rather than a second op.
+5. Harvest: Acquired Mutation and Megaton's Fate through `/author-cards`,
+   then the catalog's other rad cards in one wave. Survivor's Med Kit also
+   needs "choose one that hasn't been chosen", which this item does not
+   build.
+
+It adds no other player counter kind (experience is
+[its own item](experience-counters.md), ticket is unplanned) and no client
+surface beyond the existing player-counter readout.
+
+#### Gate
+
+A unit test under `tests/unit/` for rad counters: the op adds them to the
+named player and to each player, the precombat-main trigger mills that many
+and costs 1 life and one counter per nonland card milled (a land-only mill
+costs nothing and leaves the counters), it does not fire for a player with
+none or on another player's turn, proliferate adds one to a player who has
+any, and losing all rad counters leaves poison and energy alone. Acquired
+Mutation's and Megaton's Fate's six gates pass, and the generated DSL
+reference (`tests/cards/test_dsl_reference.py`) lists the new op.
+
+#### Open questions
+
+- **How the counter is stored.** A field of its own on `PlayerState` beside
+  `poison` and `energy`, or a general `counters` mapping? Recommended: a
+  field of its own, the shape the two existing kinds have and the one
+  [experience counters](experience-counters.md) recommends, so the change
+  stays additive.
+- **On the stack or inline.** The printed rule makes the rad trigger a
+  triggered ability that uses the stack, so players can respond with the mill
+  pending. `_monarch_draw` resolves its sourceless trigger inline and records
+  that as a divergence. Recommended: on the stack, as the rules say, because
+  a player who sees the mill coming can sacrifice a Food or cast an instant
+  first; inline only if the engine has no seam for a sourceless trigger on
+  the stack, and then recorded as a deliberate divergence in
+  rules-coverage.md beside the monarch's.
+- **Where the client shows it.** Recommended: the same player-counter readout
+  that shows poison and energy, hidden at zero, with no new component; a
+  surface beyond that would need its story and floor (ADR 0013).
+- **Is it an ADR.** Recommended: no; it is one more player counter kind under
+  an existing rule, and its line goes into the implemented table in
+  rules-coverage.md. An ADR only if the stack question is answered with a
+  new seam for sourceless triggers.
+
 ### Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number
 
 Effort **M** · Impact **medium**, every Spacecraft in Edge of Eternities waits on it, two in the Counter Intelligence precon and two in World Shaper, whose commander is one · Depends on nothing · Awaiting decisions.
@@ -1082,96 +1171,6 @@ pass.
 - **Is it an ADR.** Recommended: no; it moves an existing announcement to the
   cast line, where divided damage already sits, and the line in
   rules-coverage.md narrows to triggered abilities.
-
-### Rad counters
-
-Effort **M** · Impact **medium**, every rad-counter card in the Fallout precons waits on it, Acquired Mutation and Megaton's Fate among them · Depends on nothing · Awaiting decisions.
-
-#### Today
-
-A player's counters are the kinds in `player.PLAYER_COUNTER_KINDS`, which
-lists poison and energy only; the comment above it names rad as one of the
-kinds that would need a field on `PlayerState` and an entry there. Each kind
-has its own funnel in `primitives` (`add_poison`, `add_energy`), and
-`ops_combat_flags` (proliferate) and `ops_life.op_lose_all_player_counters`
-walk `PLAYER_COUNTER_KINDS`, so a new kind reaches both once it is listed and
-funnelled. "Lose all counters" takes every kind at once; nothing removes one
-named kind from a player.
-
-Rad counters are more than a kind: a player with any has an inherent
-triggered ability at the beginning of their precombat main phase, which
-mills that many cards, then loses 1 life and removes one rad counter for
-each nonland card milled. The engine already has the two shapes this needs:
-`turn.begin_step`'s `Step.PRECOMBAT_MAIN` branch runs `sagas.turn_based_lore`
-and fires `EventType.PRECOMBAT_MAIN`, and `turn._monarch_draw` is a sourceless
-inherent trigger the game controls, resolved inline rather than on the stack.
-[rules-coverage.md](rules-coverage.md#not-implemented) does not mention rad
-counters at all.
-
-So no card can give a player a rad counter, and none can remove them. The
-Scrappy Survivors precon found it through Acquired Mutation and Megaton's
-Fate, and Hail, Caesar through Survivor's Med Kit; their gap records are
-`data/authoring/gaps/acquired_mutation.json`, `megaton_s_fate.json` and
-`survivor_s_med_kit.json`.
-
-#### The change
-
-1. `rad` joins `PLAYER_COUNTER_KINDS`, with a field on `PlayerState`, an
-   `add_rad` funnel in `primitives` in `add_energy`'s shape (counter
-   replacements applied, then an event of its own), and a key beside poison
-   and energy in the player's serialized view.
-2. An op that gives a player rad counters ("defending player gets two rad
-   counters", "each player gets four rad counters"), in the shape of
-   `add_energy`, reaching a trigger's defending player and `for_each_player`.
-3. The rad trigger at the beginning of the precombat main phase of a player
-   who has rad counters: mill that many, then for each nonland card milled
-   lose 1 life and remove one rad counter, through the existing mill and
-   life-loss funnels so their replacements and triggers still apply.
-4. A way to remove every counter of one named kind from a target player
-   ("target player loses all rad counters"), as an option on the existing
-   lose-all-counters op rather than a second op.
-5. Harvest: Acquired Mutation and Megaton's Fate through `/author-cards`,
-   then the catalog's other rad cards in one wave. Survivor's Med Kit also
-   needs "choose one that hasn't been chosen", which this item does not
-   build.
-
-It adds no other player counter kind (experience is
-[its own item](experience-counters.md), ticket is unplanned) and no client
-surface beyond the existing player-counter readout.
-
-#### Gate
-
-A unit test under `tests/unit/` for rad counters: the op adds them to the
-named player and to each player, the precombat-main trigger mills that many
-and costs 1 life and one counter per nonland card milled (a land-only mill
-costs nothing and leaves the counters), it does not fire for a player with
-none or on another player's turn, proliferate adds one to a player who has
-any, and losing all rad counters leaves poison and energy alone. Acquired
-Mutation's and Megaton's Fate's six gates pass, and the generated DSL
-reference (`tests/cards/test_dsl_reference.py`) lists the new op.
-
-#### Open questions
-
-- **How the counter is stored.** A field of its own on `PlayerState` beside
-  `poison` and `energy`, or a general `counters` mapping? Recommended: a
-  field of its own, the shape the two existing kinds have and the one
-  [experience counters](experience-counters.md) recommends, so the change
-  stays additive.
-- **On the stack or inline.** The printed rule makes the rad trigger a
-  triggered ability that uses the stack, so players can respond with the mill
-  pending. `_monarch_draw` resolves its sourceless trigger inline and records
-  that as a divergence. Recommended: on the stack, as the rules say, because
-  a player who sees the mill coming can sacrifice a Food or cast an instant
-  first; inline only if the engine has no seam for a sourceless trigger on
-  the stack, and then recorded as a deliberate divergence in
-  rules-coverage.md beside the monarch's.
-- **Where the client shows it.** Recommended: the same player-counter readout
-  that shows poison and energy, hidden at zero, with no new component; a
-  surface beyond that would need its story and floor (ADR 0013).
-- **Is it an ADR.** Recommended: no; it is one more player counter kind under
-  an existing rule, and its line goes into the implemented table in
-  rules-coverage.md. An ADR only if the stack question is answered with a
-  new seam for sourceless triggers.
 
 ### Secret choices
 
@@ -2662,7 +2661,7 @@ whole-game test able to draw the deck.
 
 ### Mutant Menace (Fallout)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing · **In progress**.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Rad counters](#rad-counters).
 
 #### Today
 
@@ -2673,6 +2672,31 @@ coming-soon shell on the shelf: its row `pip_mutant_menace` is in
 `python scripts/sync_precons.py --missing pip_mutant_menace` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+
+Every card on the list has been through `/author-cards` once. Twenty-nine
+cards are left, and each has a gap record naming what it waits on:
+
+- Nineteen print rad counters, which have [their own item](rad-counters.md);
+  this item depends on it. They are Bloatfly Swarm, Contaminated Drink,
+  Feral Ghoul, Glowing One, Harold and Bob, Infesting Radroach, Mariposa
+  Military Base, Mirelurk Queen, Nightkin Ambusher, Nuclear Fallout,
+  Nuka-Nuke Launcher, Screeching Scorchbeast, Strong, Struggle for Project
+  Purity, Tato Farmer, The Master, The Wise Mothman, Vault 12 and Vexing
+  Radgull.
+- Raul, Trouble Shooter needs a selector for cards milled this turn, and
+  Tato Farmer and The Master need it too, beside rad counters.
+- Agent Frank Horrigan needs an "attacked this turn" condition on a static.
+- Fraying Sanity needs the cards put into one player's graveyard this turn.
+- Jason Bright, Glowing Prophet needs the base power a creature had as it
+  died.
+- Lumbering Megasloth needs a cost reduction counted per counter among
+  players and permanents.
+- Rampaging Yao Guai needs a total mana value cap read from X.
+- Recon Craft Theta needs the 0/0 blue Alien creature token.
+- Watchful Radstag needs a trigger for a creature evolving.
+- Winding Constrictor needs a counter replacement that reaches only its
+  controller as a player.
+- Young Deathclaws needs scavenge granted to creature cards in a graveyard.
 
 #### The change
 
