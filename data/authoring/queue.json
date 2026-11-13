@@ -279192,12 +279192,12 @@
     },
     "Tezzeret, Betrayer of Flesh": {
       "edhrec_rank": 3874,
-      "gate": "template",
+      "gate": null,
       "name": "Tezzeret, Betrayer of Flesh",
-      "reason": "no template for: The first activated ability of an artifact you activate each turn costs {2} less to activa",
+      "reason": "",
       "scryfall_id": "35f30004-13e0-42c1-9842-eea52793fcfc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tezzeret, Betrayer of Flesh Emblem": {

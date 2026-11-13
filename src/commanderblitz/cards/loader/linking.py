@@ -318,8 +318,12 @@ def validate_token_references(cards: Mapping[str, CardDef]) -> None:
                         f"{card.id}: create_token 'attached_to' needs an Aura token, "
                         f"and {effect.get('token')!r} is not one"
                     )
-            if effect.get("op") == "animate" and effect.get("keep_pt") and (
-                card.power is None or card.toughness is None
+            if (
+                effect.get("op") == "animate"
+                and effect.get("keep_pt")
+                and isinstance(effect.get("objects"), Mapping)
+                and effect["objects"].get("self_only")
+                and (card.power is None or card.toughness is None)
             ):
                 # "Becomes an artifact creature" naming no size is a Vehicle's
                 # crew: the size is the card's own (301.7). On a card with no

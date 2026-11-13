@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**375 cards** blocked by **324** capabilities.
+**374 cards** blocked by **323** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -74,7 +74,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [adventure](#adventure) | 1 | 8561 | engine |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
 | [alien-token](#alien-token) | 1 | 5885 | token |
-| [animate-target-keep-pt](#animate-target-keep-pt) | 1 | 3874 | op |
 | [annihilator-grant](#annihilator-grant) | 1 | 3758 | op |
 | [assassin-token](#assassin-token) | 1 | 2604 | token |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
@@ -1667,20 +1666,6 @@ Blocks **1** card.
 
 - **Recon Craft Theta** (rank 5885) — `recon_craft_theta`
   - When this Vehicle enters, create a 0/0 blue Alien creature token. Put a +1/+1 counter on it.
-
-</details>
-
-## animate-target-keep-pt
-
-Blocks **1** card.
-
-- **(op)** an `animate` of a TARGET permanent (not the Vehicle itself) that adds the Creature type with no duration and leaves its base power and toughness alone when it is a Vehicle (301.7c: a Vehicle that becomes a creature keeps its printed P/T), so the -2 reads `if` the target is a Vehicle -> animate types [Creature], duration permanent, keep_pt; else -> the same with power/toughness 4/4 -- i.e. `keep_pt: true` accepted on a `{"target": ...}` pool guarded to Vehicles
-  <br>Why the existing vocabulary won't do: `animate`'s `keep_pt` is refused by the loader unless `objects` is `self_only` (crew's Vehicle animating itself), and without it a creature animation must name `power`/`toughness`; writing `power_of`/`toughness_of` the target snapshots the numbers into a layer 7b base-P/T effect with this ability's timestamp instead of leaving the printed 7a values, which a Vehicle with a characteristic-defining or later-set P/T answers differently. The first line (`ability_cost_reduction` with `first_each_turn`), the +1 (Thirst for Knowledge's `may` pay discard of an artifact card, else discard two) and the -6 (`emblems` + `emblem` op with a `becomes_tapped` trigger filtered to artifacts you control) are expressible
-
-<details><summary>Cards waiting on this</summary>
-
-- **Tezzeret, Betrayer of Flesh** (rank 3874) — `tezzeret_betrayer_of_flesh`
-  - −2: Target artifact becomes an artifact creature. If it isn't a Vehicle, it has base power and toughness 4/4.
 
 </details>
 

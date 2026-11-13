@@ -20042,6 +20042,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "tezzeret_betrayer_of_flesh": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 4,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
   "tezzeret_s_gambit": {
     "hand_size": {
       "0": 3

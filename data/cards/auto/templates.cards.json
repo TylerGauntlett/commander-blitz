@@ -239832,6 +239832,193 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "activated_by": "you",
+          "affects": {
+            "controller": "any",
+            "types": [
+              "Artifact"
+            ]
+          },
+          "affects_abilities": {
+            "any": true
+          },
+          "amount": {
+            "const": 2
+          },
+          "effect": "ability_cost_reduction",
+          "first_each_turn": true,
+          "kind": "static",
+          "text": "The first activated ability of an artifact you activate each turn costs {2} less to activate."
+        },
+        {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "effects": [
+                {
+                  "op": "noop"
+                }
+              ],
+              "else": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "discard",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "discard": 1,
+                "discard_selector": {
+                  "types": [
+                    "Artifact"
+                  ]
+                }
+              },
+              "player": "you",
+              "prompt": "Discard an artifact card instead of discarding two cards?"
+            }
+          ],
+          "kind": "activated",
+          "text": "+1: Draw two cards. Then discard two cards unless you discard an artifact card."
+        },
+        {
+          "cost": {
+            "loyalty": -2
+          },
+          "effects": [
+            {
+              "duration": "permanent",
+              "keep_pt": true,
+              "objects": {
+                "subtypes": [
+                  "Vehicle"
+                ],
+                "target": "t1"
+              },
+              "op": "animate",
+              "types": [
+                "Artifact",
+                "Creature"
+              ]
+            },
+            {
+              "duration": "permanent",
+              "objects": {
+                "not_subtypes": [
+                  "Vehicle"
+                ],
+                "target": "t1"
+              },
+              "op": "animate",
+              "power": {
+                "const": 4
+              },
+              "toughness": {
+                "const": 4
+              },
+              "types": [
+                "Artifact",
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "−2: Target artifact becomes an artifact creature. If it isn't a Vehicle, it has base power and toughness 4/4."
+        },
+        {
+          "cost": {
+            "loyalty": -6
+          },
+          "effects": [
+            {
+              "emblem": 0,
+              "op": "emblem",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "−6: You get an emblem with \"Whenever an artifact you control becomes tapped, draw a card.\""
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "emblems": [
+        {
+          "abilities": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "kind": "triggered",
+              "text": "Whenever an artifact you control becomes tapped, draw a card.",
+              "trigger": {
+                "controller": "you",
+                "event": "becomes_tapped",
+                "filter": {
+                  "types": [
+                    "Artifact"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "id": "tezzeret_betrayer_of_flesh",
+      "loyalty": 4,
+      "mana_cost": "{2}{U}{U}",
+      "name": "Tezzeret, Betrayer of Flesh",
+      "oracle_text": "The first activated ability of an artifact you activate each turn costs {2} less to activate.\n+1: Draw two cards. Then discard two cards unless you discard an artifact card.\n−2: Target artifact becomes an artifact creature. If it isn't a Vehicle, it has base power and toughness 4/4.\n−6: You get an emblem with \"Whenever an artifact you control becomes tapped, draw a card.\"",
+      "source": "auto",
+      "subtypes": [
+        "Tezzeret"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],

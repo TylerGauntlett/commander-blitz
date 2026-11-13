@@ -4670,6 +4670,14 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # Aetherjet, sized by the effect that made it (301.7, 111.4). It says
         # out loud that the size is deliberately left alone, and the linking
         # pass holds it to a source that has a printed power and toughness.
+        # Tezzeret, Betrayer of Flesh's "target artifact becomes an artifact
+        # creature. If it isn't a Vehicle, it has base power and toughness
+        # 4/4" is the same words aimed at a *target*: the Vehicle half is a
+        # `{"target": …}` pool narrowed to `subtypes: ["Vehicle"]`, so every
+        # object it can reach prints a size of its own (301.7), and the other
+        # half is a sized animate over `not_subtypes: ["Vehicle"]`. A pool
+        # that is not a target narrowed that way is still refused: nothing
+        # else guarantees a printed size.
         sized = ("power" in effect, "toughness" in effect)
         becomes_creature = "Creature" in (effect.get("types") or ("Creature",))
         keep_pt = effect.get("keep_pt", False)
@@ -4680,11 +4688,17 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: 'keep_pt' keeps the permanent's own size, so there is no "
                 f"'power' or 'toughness' to give as well"
             )
+        pool = effect.get("objects")
         if keep_pt and not (
-            isinstance(effect.get("objects"), Mapping) and effect["objects"].get("self_only")
+            isinstance(pool, Mapping)
+            and (
+                pool.get("self_only")
+                or ("target" in pool and pool.get("subtypes") == ["Vehicle"])
+            )
         ):
             raise DslError(
-                f"{where}: 'keep_pt' animates the Vehicle itself ('objects' self_only)"
+                f"{where}: 'keep_pt' animates the Vehicle itself ('objects' self_only) "
+                f"or a target narrowed to Vehicles ('target' with subtypes [\"Vehicle\"])"
             )
         if not keep_pt and sized != (True, True) and (becomes_creature or any(sized)):
             raise DslError(

@@ -5081,9 +5081,26 @@ A Vehicle whose size is not printed -- an X/X token like the Nalaar Aetherjet,
 sized by the effect that made it -- crews with `"keep_pt": true` in place of
 `power` and `toughness`: "becomes an artifact creature" (702.122a) and keeps its
 own base size, so a second crew or a +1/+1 counter does not move it. `keep_pt`
-is refused beside `power` or `toughness`, on anything but `objects` `self_only`,
-and on a card with no printed power and toughness; an animation into a creature
-without it still needs both.
+is refused beside `power` or `toughness`, and on any pool but `objects`
+`self_only` or a `{"target": …}` narrowed to `"subtypes": ["Vehicle"]`; a
+`self_only` one is refused on a card with no printed power and toughness. An
+animation into a creature without it still needs both.
+
+The targeted form is Tezzeret, Betrayer of Flesh's "target artifact becomes an
+artifact creature. If it isn't a Vehicle, it has base power and toughness 4/4":
+two animations over the one target, each narrowed so exactly one applies.
+
+```jsonc
+{ "op": "animate", "objects": { "target": "t1", "subtypes": ["Vehicle"] },
+  "types": ["Artifact", "Creature"], "duration": "permanent", "keep_pt": true },
+{ "op": "animate", "objects": { "target": "t1", "not_subtypes": ["Vehicle"] },
+  "types": ["Artifact", "Creature"], "duration": "permanent",
+  "power": { "const": 4 }, "toughness": { "const": 4 } }
+```
+
+The near miss is `power_of`/`toughness_of` the target, which snapshots the
+Vehicle's size into a base-P/T effect of its own instead of leaving the printed
+one (301.7) under it.
 
 ### Crews Vehicles as though its power were N greater
 
