@@ -1,0 +1,21 @@
+{
+  "card": {
+    "id": "confirm_suspicions",
+    "name": "Confirm Suspicions",
+    "oracle_text": "Counter target spell.\nInvestigate three times. (To investigate, create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")",
+    "mana_cost": "{3}{U}{U}",
+    "types": ["Instant"],
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "targets": [{"id": "t1", "kind": "spell", "count": 1}],
+    "spell_effects": [
+      {"op": "counter", "target": "t1"},
+      {"op": "create_token", "token": "clue_token", "amount": {"const": 3}}
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "battlefield_count": 35,
+    "tokens": {"id": "clue_token", "count": 3}
+  }
+}

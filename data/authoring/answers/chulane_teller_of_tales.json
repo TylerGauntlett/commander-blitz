@@ -1,0 +1,70 @@
+{
+  "card": {
+    "id": "chulane_teller_of_tales",
+    "name": "Chulane, Teller of Tales",
+    "oracle_text": "Vigilance\nWhenever you cast a creature spell, draw a card, then you may put a land card from your hand onto the battlefield.\n{3}, {T}: Return target creature you control to its owner's hand.",
+    "mana_cost": "{2}{G}{W}{U}",
+    "supertypes": ["Legendary"],
+    "types": ["Creature"],
+    "subtypes": ["Human", "Druid"],
+    "power": 2,
+    "toughness": 4,
+    "colors": ["G", "U", "W"],
+    "color_identity": ["G", "U", "W"],
+    "keywords": ["vigilance"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever you cast a creature spell, draw a card, then you may put a land card from your hand onto the battlefield.",
+        "trigger": {
+          "event": "spell_cast",
+          "controller": "you",
+          "filter": {"types": ["Creature"]}
+        },
+        "effects": [
+          {"op": "draw", "player": "you", "amount": {"const": 1}},
+          {
+            "op": "may",
+            "prompt": "Put a land card from your hand onto the battlefield?",
+            "condition": {
+              "exists": {"controller": "you", "types": ["Land"], "zone": "hand"}
+            },
+            "effects": [
+              {
+                "op": "put_onto_battlefield",
+                "objects": {
+                  "chooser": "controller",
+                  "controller": "you",
+                  "count": 1,
+                  "types": ["Land"],
+                  "zone": "hand"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{3}, {T}: Return target creature you control to its owner's hand.",
+        "cost": {"mana": "{3}", "tap": true},
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "count": 1,
+            "selector": {"controller": "you", "types": ["Creature"], "zone": "battlefield"}
+          }
+        ],
+        "effects": [
+          {"op": "return_to_hand", "objects": {"target": "t1"}}
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {"0": 1}
+  }
+}

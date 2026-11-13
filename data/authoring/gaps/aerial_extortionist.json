@@ -1,0 +1,18 @@
+{
+  "card_id": "aerial_extortionist",
+  "name": "Aerial Extortionist",
+  "oracle_text": "Flying\nWhenever this creature enters or deals combat damage to a player, exile up to one target nonland permanent. For as long as that card remains exiled, its owner may cast it.\nWhenever another player casts a spell from anywhere other than their hand, draw a card.",
+  "blocked_sentences": [
+    "Whenever this creature enters or deals combat damage to a player, exile up to one target nonland permanent. For as long as that card remains exiled, its owner may cast it."
+  ],
+  "needs": [
+    {
+      "capability": "owner_cast_permission",
+      "kind": "op",
+      "what": "an `exile` play permission granted to each exiled card's OWNER rather than the effect's controller, at its normal mana cost, lasting while the card remains exiled -- e.g. a `playable_by: \"owner\"` key beside `playable: \"while_exiled\"` and `playable_cast_only: true` on the `exile` op",
+      "why_existing_wont_do": "`exile`'s `playable` always sets `playable_by = ctx.controller` (the packet notes say the permission is always the effect controller's), which would let me cast my opponent's exiled permanent; `airbend` does set `playable_by = obj.owner` with `while_exiled`, but it hard-codes an alternative cost (default {2}) in place of the card's mana cost and is not cast-only, so it is a different card"
+    }
+  ],
+  "closest_existing": ["exile", "airbend", "grant_playable"],
+  "confidence": "high"
+}
