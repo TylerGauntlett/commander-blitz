@@ -1,0 +1,18 @@
+{
+  "card_id": "tezzeret_betrayer_of_flesh",
+  "name": "Tezzeret, Betrayer of Flesh",
+  "oracle_text": "The first activated ability of an artifact you activate each turn costs {2} less to activate.\n+1: Draw two cards. Then discard two cards unless you discard an artifact card.\n−2: Target artifact becomes an artifact creature. If it isn't a Vehicle, it has base power and toughness 4/4.\n−6: You get an emblem with \"Whenever an artifact you control becomes tapped, draw a card.\"",
+  "blocked_sentences": [
+    "The first activated ability of an artifact you activate each turn costs {2} less to activate."
+  ],
+  "needs": [
+    {
+      "capability": "first_activation_cost_reduction",
+      "kind": "static_effect",
+      "what": "an ability_cost_reduction static that discounts every activated ability (mana abilities included) whose SOURCE is an artifact, limited to the first such activation by you in EACH turn (yours and opponents'), with no targeting clause: a 'first each turn' counter over activations matched on their source permanent's types, plus the payment solver honouring the discount for artifact mana abilities",
+      "why_existing_wont_do": "ability_cost_reduction's affects_abilities knows only 'equip' and 'any', and the loader refuses 'any' without a 'targeting' clause because mana abilities are priced where the static is never read; first_during_your_turn counts only the activator's own turn, requires 'targeting', and the loader forbids 'affects' beside it because an earlier activation's source is not snapshotted in TurnLedger.targeted_activations. static_max_per_turn is a permission cap for cast-from-graveyard statics, not a discount counter"
+    }
+  ],
+  "closest_existing": ["ability_cost_reduction", "first_during_your_turn", "professor_hojo"],
+  "confidence": "high"
+}
