@@ -1,0 +1,121 @@
+{
+  "card": {
+    "color_identity": [
+      "G"
+    ],
+    "colors": [
+      "G"
+    ],
+    "id": "innocuous_researcher",
+    "mana_cost": "{3}{G}",
+    "name": "Innocuous Researcher",
+    "oracle_text": "Parley — Whenever this creature attacks, each player reveals the top card of their library. For each nonland card revealed this way, you investigate. Then each player draws a card.\nAt the beginning of your end step, you may untap all lands you control. If you do, you can't cast spells until your next turn.",
+    "power": 3,
+    "subtypes": [
+      "Centaur",
+      "Detective"
+    ],
+    "toughness": 4,
+    "types": [
+      "Creature"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Parley — Whenever this creature attacks, each player reveals the top card of their library. For each nonland card revealed this way, you investigate. Then each player draws a card.",
+        "trigger": {
+          "event": "attacks",
+          "source": "self"
+        },
+        "effects": [
+          {
+            "op": "for_each_player",
+            "players": "each_player",
+            "effects": [
+              {
+                "op": "snapshot",
+                "as": "parley_card",
+                "objects": {
+                  "player": {
+                    "binding": "each_player"
+                  },
+                  "zone": "library"
+                }
+              },
+              {
+                "op": "reveal",
+                "objects": {
+                  "binding": "parley_card"
+                }
+              },
+              {
+                "op": "if",
+                "condition": {
+                  "exists": {
+                    "binding": "parley_card",
+                    "not_types": [
+                      "Land"
+                    ],
+                    "zone": "library"
+                  }
+                },
+                "then": [
+                  {
+                    "op": "create_token",
+                    "token": "clue_token",
+                    "amount": {
+                      "const": 1
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "op": "draw",
+            "amount": {
+              "const": 1
+            },
+            "player": "each_player"
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "At the beginning of your end step, you may untap all lands you control. If you do, you can't cast spells until your next turn.",
+        "trigger": {
+          "event": "end_step",
+          "controller": "you"
+        },
+        "effects": [
+          {
+            "op": "may",
+            "prompt": "Untap all lands you control? If you do, you can't cast spells until your next turn.",
+            "effects": [
+              {
+                "op": "untap",
+                "objects": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "types": [
+                    "Land"
+                  ],
+                  "count": "all"
+                }
+              },
+              {
+                "op": "cant_cast_spells",
+                "player": "you",
+                "duration": "until_your_next_turn"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}
