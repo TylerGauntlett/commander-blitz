@@ -1,0 +1,18 @@
+{
+  "card_id": "fraying_sanity",
+  "name": "Fraying Sanity",
+  "oracle_text": "Enchant player\nAt the beginning of each end step, enchanted player mills X cards, where X is the number of cards put into their graveyard from anywhere this turn.",
+  "blocked_sentences": [
+    "At the beginning of each end step, enchanted player mills X cards, where X is the number of cards put into their graveyard from anywhere this turn."
+  ],
+  "needs": [
+    {
+      "capability": "cards_to_graveyard_this_turn_per_player",
+      "kind": "value",
+      "what": "a value leaf counting the cards put into ONE player's graveyard from anywhere this turn, taking a player spec (here `enchanted_player`) -- a per-owner tally on TurnLedger beside the existing turn-wide `cards_to_graveyard`, cards only, tokens excluded, counting mills, discards, deaths and resolved spells",
+      "why_existing_wont_do": "`cards_to_graveyard_this_turn` reads `TurnLedger.cards_to_graveyard`, a single integer over every graveyard that takes no player spec, so it would also count the controller's and other opponents' cards and mill far more than printed; `permanents_to_graveyard_this_turn` is table-wide and battlefield-only, and `count` over the graveyard counts cards already there before this turn"
+    }
+  ],
+  "closest_existing": ["cards_to_graveyard_this_turn", "permanents_to_graveyard_this_turn"],
+  "confidence": "high"
+}
