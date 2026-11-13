@@ -1,0 +1,48 @@
+{
+  "card": {
+    "id": "mortuary_mire",
+    "name": "Mortuary Mire",
+    "oracle_text": "This land enters tapped.\nWhen this land enters, you may put target creature card from your graveyard on top of your library.\n{T}: Add {B}.",
+    "mana_cost": "",
+    "types": ["Land"],
+    "colors": [],
+    "color_identity": ["B"],
+    "replacements": [{"event": "self_enters_tapped"}],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this land enters, you may put target creature card from your graveyard on top of your library.",
+        "trigger": {"event": "self_enters", "source": "self"},
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "card_in_graveyard",
+            "count": 1,
+            "selector": {"types": ["Creature"], "controller": "you", "zone": "graveyard"}
+          }
+        ],
+        "effects": [
+          {
+            "op": "may",
+            "prompt": "Put the targeted creature card on top of your library?",
+            "condition": {"exists": {"target": "t1"}},
+            "effects": [{"op": "put_on_top", "objects": {"target": "t1"}}]
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{T}: Add {B}.",
+        "cost": {"tap": true},
+        "effects": [{"op": "add_mana", "mana": "{B}"}],
+        "is_mana_ability": true
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "graveyard_size": {"0": 1},
+    "library_size": {"0": 41}
+  }
+}
