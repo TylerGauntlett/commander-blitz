@@ -1023,7 +1023,7 @@ STATICS: dict[str, Entry] = {
     "replace_mill": ("If the player would mill, they mill more instead.", "Doubling a mill"),
     "replace_proliferate": ("If the player would proliferate, they proliferate again.",
                             "Proliferating twice"),
-    "replace_token_creation": ("If the player would create tokens, create more, different or additional ones instead; `copy_instead` asks whether to make that many copies of a chosen creature instead.",
+    "replace_token_creation": ("If the player would create tokens, create more, different or additional ones instead; `copy_instead` asks whether to make that many copies of a chosen creature instead, `first_during_your_turn` only on the first creation of your turn.",
                                '"If you would create a … token, instead …"'),
     "reveal_library_top": ("The player plays with the top card of their library revealed.", None),
     "set_colors": ("Matching permanents are the given colors.", "`set_colors`"),

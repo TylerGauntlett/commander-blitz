@@ -5384,10 +5384,20 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: 'first_each_turn' only means anything on an "
             f"ability_cost_reduction static, not on {model.effect!r}"
         )
-    if model.first_during_your_turn and model.effect != "ability_cost_reduction":
+    if model.first_during_your_turn and model.effect == "replace_token_creation":
+        # Esix, Fractal Bloom's "the first time you would create one or more
+        # tokens during each of your turns": the window is asked where the
+        # copy question is (`effects.tokens.ask_token_copies`), so it means
+        # nothing on a mode that asks none.
+        if model.copy_instead is None:
+            raise DslError(
+                f"{where}: 'first_during_your_turn' on replace_token_creation "
+                f"limits a 'copy_instead' replacement; no other mode reads it"
+            )
+    elif model.first_during_your_turn and model.effect != "ability_cost_reduction":
         raise DslError(
             f"{where}: 'first_during_your_turn' only means anything on an "
-            f"ability_cost_reduction static, not on {model.effect!r}"
+            f"ability_cost_reduction or replace_token_creation static, not on {model.effect!r}"
         )
 
     # `targeting` belongs to **both** reductions: Strong Back prints one line of

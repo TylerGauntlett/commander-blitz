@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**374 cards** blocked by **323** capabilities.
+**373 cards** blocked by **321** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -172,7 +172,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [face-down-exile-controller-may-look](#face-down-exile-controller-may-look) | 1 | 1073 | op |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
 | [first-mate-ragavan](#first-mate-ragavan) | 1 | 7016 | token |
-| [first-time-each-turn-replacement](#first-time-each-turn-replacement) | 1 | 5567 | replacement |
 | [first-x-spell-cost-reduction](#first-x-spell-cost-reduction) | 1 | 8360 | static_effect |
 | [fixed-piles-opponent-chooses](#fixed-piles-opponent-chooses) | 1 | 12369 | op |
 | [flash-if-targets](#flash-if-targets) | 1 | 1651 | engine |
@@ -316,7 +315,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [timed-spell-type-cast-lock](#timed-spell-type-cast-lock) | 1 | 2008 | op |
 | [times-attacked-this-turn](#times-attacked-this-turn) | 1 | 988 | value |
 | [token-copy-attached](#token-copy-attached) | 1 | 11547 | op |
-| [token-creation-copy-replacement](#token-creation-copy-replacement) | 1 | 5567 | replacement |
 | [total-mana-value-selection](#total-mana-value-selection) | 1 | 4244 | op |
 | [total-mana-value-x](#total-mana-value-x) | 1 | 3066 | selector |
 | [total-toughness-cost-reduction](#total-toughness-cost-reduction) | 1 | 5188 | value |
@@ -3072,20 +3070,6 @@ Blocks **1** card.
 
 </details>
 
-## first-time-each-turn-replacement
-
-Blocks **1** card.
-
-- **(replacement)** a per-turn limit on a replacement static: it applies only to the first token-creation event during each of your turns (and that event consumes it whether or not the optional replacement is taken)
-  <br>Why the existing vocabulary won't do: first_during_your_turn exists only on ability_cost_reduction (the loader refuses it elsewhere), and static_max_per_turn / max_per_turn are trigger or other-static rate limits, not a 'first time you would create tokens during your turn' window on replace_token_creation
-
-<details><summary>Cards waiting on this</summary>
-
-- **Esix, Fractal Bloom** (rank 5567) — `esix_fractal_bloom`
-  - The first time you would create one or more tokens during each of your turns, you may instead choose a creature other than Esix and create that many tokens that are copies of that creature
-
-</details>
-
 ## first-x-spell-cost-reduction
 
 Blocks **1** card.
@@ -5118,20 +5102,6 @@ Blocks **1** card.
 
 - **Three Dog, Galaxy News DJ** (rank 11547) — `three_dog_galaxy_news_dj`
   - Whenever you attack, you may pay {2} and sacrifice an Aura attached to Three Dog. When you sacrifice an Aura this way, for each other attacking creature you control, create a token that's a copy of that Aura attached to that creature.
-
-</details>
-
-## token-creation-copy-replacement
-
-Blocks **1** card.
-
-- **(replacement)** an optional replacement of token creation under your control that, instead of the printed tokens, has you choose a creature other than the source (any controller) and creates that many tokens that are copies of it (token count kept, identity replaced by a copy of the chosen creature)
-  <br>Why the existing vocabulary won't do: replace_token_creation's create_instead only substitutes fixed token ids from token_ids; it cannot name a copy of a creature chosen at replacement time, offers no 'you may' choice, and copy_permanent is an op, not something a replacement can substitute for the created tokens
-
-<details><summary>Cards waiting on this</summary>
-
-- **Esix, Fractal Bloom** (rank 5567) — `esix_fractal_bloom`
-  - The first time you would create one or more tokens during each of your turns, you may instead choose a creature other than Esix and create that many tokens that are copies of that creature
 
 </details>
 

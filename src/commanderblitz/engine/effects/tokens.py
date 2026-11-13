@@ -31,6 +31,10 @@ def ask_token_copies(ctx: EffectContext, pid: int, count: int):
     "choose" purpose, as `add_counters` asks: one permanent off the board,
     which the client's board picker already answers.
 
+    ``first_during_your_turn`` narrows a static to the first creation event
+    under ``pid`` during its controller's own turn, read off
+    `TurnLedger.token_creations` before this creation is counted.
+
     The chosen creature's copiable values are read now, as `copy_permanent`
     reads them: its ``def_id`` and the ``copy_overrides`` its own creating
     effect set (707.2).
@@ -40,6 +44,14 @@ def ask_token_copies(ctx: EffectContext, pid: int, count: int):
     copies: list[tuple[str, Mapping[str, Any] | None]] = []
     state = ctx.state
     for source, static in token_copy_replacements(state, pid):
+        if static.get("first_during_your_turn") and not (
+            state.active_player == source.controller
+            and state.turn_ledger.token_creations.get(pid, 0) == 0
+        ):
+            # "The first time you would create one or more tokens during each
+            # of your turns": the window is the turn's first creation event,
+            # spent by it whatever happened to it.
+            continue
         name = state.card_of(source).name
         own = EffectContext(
             state=state,

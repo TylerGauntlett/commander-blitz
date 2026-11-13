@@ -2241,6 +2241,14 @@ class TurnLedger:
     #: is. Counted whether or not anything is listening, so investigating
     #: before the Illuminator arrives spends the turn's first time.
     investigations: dict[int, int] = field(default_factory=dict)
+    #: How many times each player has created tokens this turn -- creation
+    #: **events**, one per `primitives.create_token` call that makes at least
+    #: one, keyed by the player the tokens arrive under. Esix, Fractal Bloom's
+    #: "the first time you would create one or more tokens during each of your
+    #: turns": counted whether or not anything is listening, and whether or not
+    #: a replacement was taken, so the turn's first creation spends the window
+    #: even before Esix arrived (614: the event happened).
+    token_creations: dict[int, int] = field(default_factory=dict)
     #: Spells cast this turn, per caster.  Storm counts every spell cast before
     #: it by anybody, which is the sum.
     spells_cast: dict[int, int] = field(default_factory=dict)
@@ -2588,6 +2596,7 @@ class TurnLedger:
         self.life_gains.clear()
         self.life_losses.clear()
         self.investigations.clear()
+        self.token_creations.clear()
         self.spells_cast.clear()
         self.mana_spent_on_spells.clear()
         self.spells_cast_ids.clear()

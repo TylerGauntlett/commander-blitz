@@ -6195,6 +6195,10 @@
   "esika_s_chariot": {
     "zone": "battlefield"
   },
+  "esix_fractal_bloom": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "esper_cormorants": {
     "zone": "battlefield"
   },

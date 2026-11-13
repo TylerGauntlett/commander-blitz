@@ -85972,12 +85972,12 @@
     },
     "Esix, Fractal Bloom": {
       "edhrec_rank": 5567,
-      "gate": "template",
+      "gate": null,
       "name": "Esix, Fractal Bloom",
-      "reason": "no template for: The first time you would create one or more tokens during each of your turns, you may inst",
+      "reason": "",
       "scryfall_id": "2e390f8e-1dd5-4383-83f5-45f20f18d410",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Esoteric Duplicator": {

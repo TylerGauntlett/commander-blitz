@@ -1086,7 +1086,9 @@ def reference() -> dict:
             " Bloom) is a `replace_token_creation` static with `copy_instead`, a"
             " battlefield selector naming what may be chosen (`{\"types\":"
             " [\"Creature\"], \"exclude_self\": true}`); it is always optional"
-            " and takes no `affects_token` and no other mode.",
+            " and takes no `affects_token` and no other mode. \"The first time you"
+            " would create one or more tokens during each of your turns\" adds"
+            " `first_during_your_turn: true`.",
             "\"Until end of turn, if one or more tokens would be created under"
             " your control, twice that many of those tokens are created"
             " instead\" on a spell or an activated/loyalty ability is the"

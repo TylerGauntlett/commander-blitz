@@ -73596,6 +73596,49 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "copy_instead": {
+            "exclude_self": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "replace_token_creation",
+          "first_during_your_turn": true,
+          "kind": "static",
+          "text": "The first time you would create one or more tokens during each of your turns, you may instead choose a creature other than Esix and create that many tokens that are copies of that creature."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "esix_fractal_bloom",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{G}{U}",
+      "name": "Esix, Fractal Bloom",
+      "oracle_text": "Flying\nThe first time you would create one or more tokens during each of your turns, you may instead choose a creature other than Esix and create that many tokens that are copies of that creature.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Fractal"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U",
         "W"

@@ -1719,6 +1719,12 @@ def create_token(
     copies. A copy is a substitution for ``overrides``' purposes: the creating
     effect's exceptions described a token that was never made.
     """
+    if count > 0:
+        # The creation event, for "the first time you would create one or more
+        # tokens" (`TurnLedger.token_creations`). Counted before anything is
+        # replaced: the event is the one that *would* happen.
+        ledger = state.turn_ledger.token_creations
+        ledger[controller] = ledger.get(controller, 0) + 1
     plan = _token_creation_plan(state, def_id, controller, count)
     if plan is None:
         plan = [(def_id, count, False)]

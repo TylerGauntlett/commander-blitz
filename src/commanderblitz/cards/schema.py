@@ -834,6 +834,13 @@ class AbilityModel(BaseModel):
     #: this permanent arrived included, because "the first" is a fact about the
     #: activation and not about the static. Requires `targeting`, read on the
     #: snapshots in `TurnLedger.targeted_activations`.
+    #:
+    #: `replace_token_creation` with `copy_instead`: "**the first time** you
+    #: would create one or more tokens **during each of your turns**" (Esix,
+    #: Fractal Bloom). The copy is offered only on the turn's first creation
+    #: event under you, on your own turn, counted by
+    #: `TurnLedger.token_creations` -- so that event spends it whether or not
+    #: the copy is taken, and one before this permanent arrived spends it too.
     first_during_your_turn: bool = False
     #: `ability_cost_reduction`: "**The first** activated ability **of an
     #: artifact** you activate **each turn** costs {2} less to activate"
