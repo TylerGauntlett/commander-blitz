@@ -135,6 +135,17 @@ describe("describeEvent", () => {
     );
   });
 
+  it("says who investigated", () => {
+    // The Clue's own line says a token arrived; this one says it was an
+    // investigation, which is what "whenever you investigate" waits for.
+    expect(describeEvent(event({ type: "investigated", player: 0 }), names, 0)).toBe(
+      "You investigate",
+    );
+    expect(describeEvent(event({ type: "investigated", player: 1 }), names, 0)).toBe(
+      "AI 1 investigates",
+    );
+  });
+
   it("says who turned a permanent face up, and what it was", () => {
     // No zone change happens, so without this line the 2/2 on the board
     // becomes a different card with nothing in the log to say why.

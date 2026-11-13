@@ -46,6 +46,7 @@ PRECONS = {
     "fic_revival_trance_final_fantasy_vi",
     "fic_scions_spellcraft_final_fantasy_xiv",
     "frc_multiverse_reforged",
+    "mkc_deep_clue_sea",
     "msc_avengers_assemble",
     "msc_doom_prevails",
     "msc_the_fantastic_four",

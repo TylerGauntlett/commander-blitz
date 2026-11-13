@@ -30,7 +30,7 @@ expectation are authored together and rejected together.
 from __future__ import annotations
 
 import re
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field, replace
 from typing import Any
 
@@ -451,6 +451,48 @@ def toughness_counts_own_artifacts(card: CardDef | None) -> bool:
     )
 
 
+#: The selector keys :func:`must_target_own_artifact` reads a target by. A
+#: selector naming anything else (a mana value, a tapped state, "nontoken")
+#: asks a question the quiet artifact creature may not answer, so it is not
+#: promised one.
+_OWN_ARTIFACT_TARGET_KEYS = frozenset({"zone", "controller", "types"})
+
+
+def must_target_own_artifact(card: CardDef | None) -> bool:
+    """Must this card, as it is cast, target an artifact you control?
+
+    "Enchant artifact you control" (Mechanized Production): an Aura spell
+    targets what it will enchant (303.4a), your board holds no artifact, so
+    the cast had no legal target (601.2c) and gate 4 rejected the card as "not
+    playable in the sandbox". Making the target optional or widening it to any
+    controller would describe a different card, so the prop is added and the
+    gate left alone.
+
+    Only the spell's own ``targets`` and only a required one -- an
+    ``optional`` or ``up_to`` spec is castable with no choice at all, which is
+    :func:`_graveyard_spell_specs`' reading. The selector must be a plain
+    "artifact (creature) you control" on the battlefield, which the quiet
+    artifact creature :func:`swap_in_artifact_body` brings satisfies exactly.
+    """
+    if card is None:
+        return False
+    for spec in card.targets:
+        if spec.kind != "permanent" or spec.optional or spec.up_to:
+            continue
+        selector = spec.selector
+        if not isinstance(selector, Mapping) or set(selector) - _OWN_ARTIFACT_TARGET_KEYS:
+            continue
+        types = {str(t) for t in selector.get("types") or ()}
+        if (
+            selector.get("controller") == "you"
+            and str(selector.get("zone", "battlefield")) == "battlefield"
+            and "Artifact" in types
+            and types <= {"Artifact", "Creature"}
+        ):
+            return True
+    return False
+
+
 def quiet_artifact_body(registry: CardRegistry) -> str | None:
     """The quietest artifact creature in this pool, or None if it has none.
 
@@ -502,8 +544,13 @@ def swap_in_artifact_body(
     two creatures. It takes the **last** slot, so it composes with the tribal
     swap, which takes the first. Returns the board untouched when the pool has
     no quiet artifact creature, and the card then fails gate 4 honestly.
+
+    A card that :func:`must_target_own_artifact` -- "Enchant artifact you
+    control" -- gets the same swap on the same terms: the artifact creature is
+    the legal target its cast needed.
     """
-    if not toughness_counts_own_artifacts(card) or not board:
+    needs = toughness_counts_own_artifacts(card) or must_target_own_artifact(card)
+    if not needs or not board:
         return board
     pick = quiet_artifact_body(registry)
     if pick is None:

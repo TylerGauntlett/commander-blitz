@@ -700,7 +700,9 @@ def _provide_the_sacrifice(game: Game, registry, ability) -> None:
     # prevent, one order of magnitude up.
     count = spec.get("count", 1)
     wanted = max(1, int(count) if isinstance(count, int) else 1)
-    match = _fodder_for(registry, spec, wanted)
+    # Sophia, Dogged Detective sacrifices *an artifact token*: no printed card
+    # is a token, so the search over printed cards can never match.
+    match = None if spec.get("is_token") else _fodder_for(registry, spec, wanted)
     # Professional Face-Breaker sacrifices *a Treasure*, and the only Treasures
     # are tokens: no printed card has the subtype, so the creature-shaped search
     # above finds nothing. A subtype with no card type names its own kind, so
@@ -715,10 +717,25 @@ def _provide_the_sacrifice(game: Game, registry, ability) -> None:
             ),
             None,
         )
+    if match is None and spec.get("is_token"):
+        wanted_types = {str(t) for t in spec.get("types") or []}
+        wanted_subtypes = {str(s) for s in spec.get("subtypes") or []}
+        match = next(
+            (
+                c
+                for c in sorted(registry, key=lambda c: c.id)
+                if c.is_token
+                and wanted_types <= set(c.types)
+                and wanted_subtypes <= set(c.subtypes)
+            ),
+            None,
+        )
     if match is None:
         return
     for _ in range(wanted):
-        fodder = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
+        fodder = new_object(
+            game.state, match.id, owner=0, zone=Zone.BATTLEFIELD, is_token=match.is_token
+        )
         game.state.battlefield.append(fodder.oid)
         # Sephiroth's Reunion sacrifices *a modified creature*: one with a
         # counter on it is the cheapest way to be one.

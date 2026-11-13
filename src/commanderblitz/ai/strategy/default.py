@@ -372,7 +372,7 @@ class DefaultStrategy(Strategy):
                 score += 8.0 if opposing_spell else -5.0
             elif op in INTERACTION_OPS:
                 score += 6.0 if their_board else -2.0
-            elif op in ("draw", "create_token", "search_library", "put_onto_battlefield"):
+            elif op in ("draw", "create_token", "investigate", "search_library", "put_onto_battlefield"):
                 score += 4.0
             elif op == "add_counters" or op in ("pump", "grant_keyword"):
                 score += 3.0 if ours else 0.0

@@ -179,6 +179,19 @@ describe("beatsFor", () => {
     expect(beat.text).toBe("Ultron Unlimited connives");
   });
 
+  it("gives an investigation its own beat and line", () => {
+    // The Clue has its own beat; without this one an Erdwal Illuminator
+    // trigger would arrive with nothing to say an investigation happened.
+    const [beat] = beatsFor(
+      [event("investigated", {}, { player: 1, source: 12 })],
+      NAMES,
+      undefined,
+      0,
+    );
+    expect(beat).toMatchObject({ hold: 200 });
+    expect(beat.text).toBe("Edgar AI investigates");
+  });
+
   it("redraws a permanent turned face up in place", () => {
     // `transformed`'s beat: the card changes without moving, and a "when this
     // is turned face up" trigger follows it.

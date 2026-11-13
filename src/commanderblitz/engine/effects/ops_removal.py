@@ -48,6 +48,7 @@ from .selectors import (
     pick_from_pool,
     resolve_pool,
 )
+from .tokens import ask_token_copies
 from .values import evaluate_value
 
 
@@ -378,7 +379,13 @@ def op_exile(ctx: EffectContext, spec: Mapping[str, Any]):
             # wipe this if it were set first.
             obj = ctx.state.objects.get(oid)
             if obj is not None:
-                obj.playable_by = ctx.controller
+                # "For as long as that card remains exiled, **its owner** may
+                # cast it" (Aerial Extortionist): `playable_by: "owner"` hands
+                # the permission to the seat that owns the card (108.3), at its
+                # printed price -- airbend's holder without airbend's {2}.
+                obj.playable_by = (
+                    obj.owner if spec.get("playable_by") == "owner" else ctx.controller
+                )
                 obj.playable_turn = ctx.state.turn
                 obj.playable_duration = playable_duration
                 obj.playable_condition = spec.get("playable_condition")
@@ -792,6 +799,7 @@ def op_create_token(ctx: EffectContext, spec: Mapping[str, Any]):
     attacking = _attacking_player(ctx, spec, _attack_target)
     made: list[int] = []
     for pid in _players(ctx, spec.get("controller", "you")):
+        copies = yield from ask_token_copies(ctx, pid, amount)
         made.extend(
             create_token(
                 ctx.state,
@@ -802,6 +810,7 @@ def op_create_token(ctx: EffectContext, spec: Mapping[str, Any]):
                 attacking=attacking,
                 overrides=dict(size) if size else None,
                 source=ctx.source_oid,
+                copies=copies,
             )
         )
     if host is not None:
@@ -912,6 +921,7 @@ def op_copy_permanent(ctx: EffectContext, spec: Mapping[str, Any]):
                 set(inherited) | set((exception or {}).get("add_keywords") or ())
             )
         for pid in controllers:
+            copies = yield from ask_token_copies(ctx, pid, amount)
             made.extend(
                 create_token(
                     ctx.state,
@@ -922,6 +932,7 @@ def op_copy_permanent(ctx: EffectContext, spec: Mapping[str, Any]):
                     attacking=attacking,
                     overrides=dict(overrides) if overrides else None,
                     source=ctx.source_oid,
+                    copies=copies,
                 )
             )
     if made and attacking is not None:

@@ -121,6 +121,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "adrix_and_nev_twincasters": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "adult_gold_dragon": {
     "zone": "battlefield"
   },
@@ -142,6 +146,10 @@
     "zone": "battlefield"
   },
   "aegis_turtle": {
+    "zone": "battlefield"
+  },
+  "aerial_extortionist": {
+    "battlefield_count": 32,
     "zone": "battlefield"
   },
   "aerial_responder": {
@@ -1124,6 +1132,14 @@
     "opponent_battlefield_count": 4,
     "zone": "graveyard"
   },
+  "armed_with_proof": {
+    "battlefield_count": 35,
+    "tokens": {
+      "count": 2,
+      "id": "clue_token"
+    },
+    "zone": "battlefield"
+  },
   "armored_cancrix": {
     "zone": "battlefield"
   },
@@ -1848,6 +1864,13 @@
   },
   "benevolent_hydra": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "bennie_bracks_zoologist": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "benthic_anomaly": {
@@ -2754,6 +2777,9 @@
       "graveyard"
     ]
   },
+  "bygone_bishop": {
+    "zone": "battlefield"
+  },
   "cabal_coffers": {
     "zone": "battlefield"
   },
@@ -3436,6 +3462,13 @@
     },
     "zone": "battlefield"
   },
+  "chulane_teller_of_tales": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "cid_freeflier_pilot": {
     "battlefield_count": 33,
     "hand_size": {
@@ -3826,6 +3859,14 @@
   },
   "conduit_pylons": {
     "zone": "battlefield"
+  },
+  "confirm_suspicions": {
+    "battlefield_count": 35,
+    "tokens": {
+      "count": 3,
+      "id": "clue_token"
+    },
+    "zone": "graveyard"
   },
   "confiscation_coup": {
     "zone": "graveyard"
@@ -5112,6 +5153,13 @@
   "dismember": {
     "zone": "graveyard"
   },
+  "disorder_in_the_court": {
+    "tokens": {
+      "count": 20,
+      "id": "clue_token"
+    },
+    "zone": "graveyard"
+  },
   "disorienting_choice": {
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
@@ -6094,6 +6142,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "erdwal_illuminator": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "erebos_god_of_the_dead": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -6141,6 +6193,10 @@
     "zone": "battlefield"
   },
   "esika_s_chariot": {
+    "zone": "battlefield"
+  },
+  "esix_fractal_bloom": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "esper_cormorants": {
@@ -6194,6 +6250,14 @@
     ]
   },
   "ethercaste_knight": {
+    "zone": "battlefield"
+  },
+  "ethereal_investigator": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "clue_token"
+    },
     "zone": "battlefield"
   },
   "etherium_sculptor": {
@@ -6971,6 +7035,19 @@
       "0": 41
     }
   },
+  "fists_of_flame": {
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "target_pt_delta": {
+      "power": 1,
+      "toughness": 0
+    },
+    "zone": "graveyard"
+  },
   "flame_of_anor": {
     "graveyard_size": {
       "0": 3
@@ -7160,6 +7237,14 @@
   "folk_hero": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "follow_the_bodies": {
+    "battlefield_count": 33,
+    "tokens": {
+      "count": 1,
+      "id": "clue_token"
+    },
+    "zone": "graveyard"
   },
   "fomori_nomad": {
     "zone": "battlefield"
@@ -8066,6 +8151,15 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "gluttonous_hellkite": {
+    "battlefield_count": 31,
+    "counters": {
+      "amount": 8,
+      "kind": "+1/+1"
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "battlefield"
+  },
   "gluttonous_zombie": {
     "zone": "battlefield"
   },
@@ -8309,6 +8403,10 @@
       "1": 40
     },
     "zone": "graveyard"
+  },
+  "graf_mole": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "grand_coliseum": {
     "zone": "battlefield"
@@ -9491,6 +9589,22 @@
   "hydra_troopers": {
     "zone": "battlefield"
   },
+  "hydroid_krasis": {
+    "counters": {
+      "amount": 20,
+      "kind": "+1/+1"
+    },
+    "hand_size": {
+      "0": 11
+    },
+    "library_size": {
+      "0": 30
+    },
+    "life": {
+      "0": 50
+    },
+    "zone": "battlefield"
+  },
   "hyena_pack": {
     "zone": "battlefield"
   },
@@ -9763,6 +9877,10 @@
     "zone": "battlefield"
   },
   "innkeeper_s_talent": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "innocuous_researcher": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -10611,6 +10729,14 @@
     },
     "zone": "battlefield"
   },
+  "killer_service": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "food_token"
+    },
+    "zone": "battlefield"
+  },
   "killian_decisive_mentor": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -10848,6 +10974,13 @@
     ]
   },
   "knotvine_mystic": {
+    "zone": "battlefield"
+  },
+  "knowledge_is_power": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "koala_sheep": {
@@ -11447,6 +11580,9 @@
   "longbow_archer": {
     "zone": "battlefield"
   },
+  "lonis_cryptozoologist": {
+    "zone": "battlefield"
+  },
   "looming_altisaur": {
     "zone": "battlefield"
   },
@@ -11794,6 +11930,10 @@
       "0": 38
     },
     "zone": "graveyard"
+  },
+  "magnifying_glass": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "magnigoth_sentry": {
     "zone": "battlefield"
@@ -12209,6 +12349,13 @@
     "zone": "battlefield"
   },
   "mazirek_kraul_death_priest": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "mechanized_production": {
     "battlefield_count": 33,
     "hand_size": {
       "0": 1
@@ -12781,6 +12928,13 @@
     "zone": "battlefield"
   },
   "moriok_reaver": {
+    "zone": "battlefield"
+  },
+  "morska_undersea_sleuth": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "mortality_spear": {
@@ -13827,6 +13981,13 @@
   "omnath_locus_of_the_void": {
     "zone": "battlefield"
   },
+  "on_the_trail": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "onakke_ogre": {
     "zone": "battlefield"
   },
@@ -13851,6 +14012,10 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "ongoing_investigation": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "oona_s_gatewarden": {
     "zone": "battlefield"
@@ -14892,6 +15057,15 @@
     },
     "zone": "battlefield"
   },
+  "proft_s_eidetic_memory": {
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "battlefield"
+  },
   "progenitor_s_icon": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -15395,6 +15569,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "ransom_note": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "rapacious_dragon": {
     "battlefield_count": 35,
     "tokens": {
@@ -15652,6 +15830,10 @@
       "count": 4,
       "id": "dog_1_1_w"
     },
+    "zone": "graveyard"
+  },
+  "release_to_the_wind": {
+    "battlefield_count": 31,
     "zone": "graveyard"
   },
   "relentless_advance": {
@@ -16936,6 +17118,13 @@
   "selesnya_guildgate": {
     "zone": "battlefield"
   },
+  "selesnya_sanctuary": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 2
+    },
+    "zone": "battlefield"
+  },
   "selesnya_signet": {
     "zone": "battlefield"
   },
@@ -17036,6 +17225,13 @@
     "battlefield_count": 33,
     "life": {
       "0": 41
+    },
+    "zone": "battlefield"
+  },
+  "serene_sleuth": {
+    "tokens": {
+      "count": 1,
+      "id": "clue_token"
     },
     "zone": "battlefield"
   },
@@ -18126,6 +18322,14 @@
     "zone": "battlefield"
   },
   "songbirds_blessing": {
+    "zone": "battlefield"
+  },
+  "sophia_dogged_detective": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "tiny_2_2_g_trample"
+    },
     "zone": "battlefield"
   },
   "sorin_grim_nemesis": {
@@ -19463,6 +19667,10 @@
   "tanglepool_bridge": {
     "zone": "battlefield"
   },
+  "tangletrove_kelp": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "tangleweave_armor": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -19862,6 +20070,14 @@
   },
   "tetsuko_umezawa_fugitive": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "tezzeret_betrayer_of_flesh": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 4,
+      "kind": "loyalty"
+    },
     "zone": "battlefield"
   },
   "tezzeret_s_gambit": {
@@ -20430,6 +20646,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "thundering_djinn": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "thundering_falls": {
@@ -21192,6 +21412,10 @@
     "library_size": {
       "0": 39
     },
+    "zone": "battlefield"
+  },
+  "ulvenwald_mysteries": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "ulvenwald_tracker": {
@@ -22349,6 +22573,14 @@
   },
   "wave_of_reckoning": {
     "zone": "graveyard"
+  },
+  "wavesifter": {
+    "battlefield_count": 35,
+    "tokens": {
+      "count": 2,
+      "id": "clue_token"
+    },
+    "zone": "battlefield"
   },
   "waveskimmer_aven": {
     "zone": "battlefield"

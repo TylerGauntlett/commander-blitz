@@ -11,6 +11,7 @@ from commanderblitz.engine.carddef import (
 )
 from commanderblitz.engine.effects.ops_counters import (
     AMASS_TOKENS,
+    CLUE_TOKEN,
     EMPOWER_TOKEN,
     INCUBATOR_TOKEN,
 )
@@ -251,6 +252,8 @@ def token_references(card: CardDef) -> set[str]:
             # The op names its token itself; the bundle's `references` then
             # carries the Incubator's back face along with it.
             out.add(INCUBATOR_TOKEN)
+        if effect.get("op") == "investigate":
+            out.add(CLUE_TOKEN)
         if effect.get("op") == "empower":
             out.add(EMPOWER_TOKEN)
         if effect.get("op") == "amass" and str(effect.get("subtype")) in AMASS_TOKENS:
@@ -315,8 +318,12 @@ def validate_token_references(cards: Mapping[str, CardDef]) -> None:
                         f"{card.id}: create_token 'attached_to' needs an Aura token, "
                         f"and {effect.get('token')!r} is not one"
                     )
-            if effect.get("op") == "animate" and effect.get("keep_pt") and (
-                card.power is None or card.toughness is None
+            if (
+                effect.get("op") == "animate"
+                and effect.get("keep_pt")
+                and isinstance(effect.get("objects"), Mapping)
+                and effect["objects"].get("self_only")
+                and (card.power is None or card.toughness is None)
             ):
                 # "Becomes an artifact creature" naming no size is a Vehicle's
                 # crew: the size is the card's own (301.7). On a card with no
@@ -335,6 +342,8 @@ def validate_token_references(cards: Mapping[str, CardDef]) -> None:
                 check(card, AMASS_TOKENS[str(effect.get("subtype"))], "amass")
             if effect.get("op") == "incubate":
                 check(card, INCUBATOR_TOKEN, "incubate")
+            if effect.get("op") == "investigate":
+                check(card, CLUE_TOKEN, "investigate")
         for ability in card.abilities:
             static = ability.static or {}
             for key in ("create_instead", "and_create"):

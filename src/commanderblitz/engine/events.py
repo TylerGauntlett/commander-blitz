@@ -114,6 +114,18 @@ class EventType:
     #: that discards nothing (an opponent's ability under a discard shield) is
     #: still a connive, and connive 2 is one connive, not two.
     CONNIVED = "connived"
+    #: A player investigated (701.16) -- "Whenever you investigate for the
+    #: first time each turn" (Erdwal Illuminator). ``player`` is the
+    #: **investigator**; ``data["nth"]`` is that investigation's ordinal for
+    #: its player this turn, written by `GameState._tally` from
+    #: `TurnLedger.investigations`.
+    #:
+    #: One event per investigation, fired by `ops_counters.op_investigate`
+    #: once its Clue is created, so "investigate twice" is two. Its own type
+    #: because `token_created` filtered to Clues is the near miss and wrong both
+    #: ways: a Clue made by "create a Clue token" is not an investigation, and
+    #: one investigation whose Clue a token doubler doubles is still one.
+    INVESTIGATED = "investigated"
     #: A player gave a gift (702.174) -- "Whenever you give a gift" (Jolly
     #: Gerbils). ``player`` is the **giver**, the controller of the spell or
     #: ability that gave it; ``source`` is the gift card's object, ``card`` its

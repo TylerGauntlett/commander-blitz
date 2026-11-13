@@ -1064,6 +1064,27 @@ The near miss is narrowing the selector to nonland cards, which is a different
 card: Hostage Taker may target an artifact land, and a look at the top of a
 library may have to exile a land; the holder only cannot *play* it.
 
+### "For as long as that card remains exiled, its owner may cast it"
+
+```jsonc
+{ "op": "exile", "objects": { "target": "t1" },
+  "playable": "while_exiled", "playable_cast_only": true,
+  "playable_by": "owner" }                                     // Aerial Extortionist
+```
+
+`playable_by: "owner"` hands the permission to each exiled card's owner (108.3)
+instead of the effect's controller, so a permanent taken from an opponent — or
+one you had stolen from them — is theirs to cast again, never yours. The price
+is the printed one, with every rider the permission carries beside it.
+
+The loader takes it only on `exile` with `playable: "while_exiled"`: every other
+duration is counted on the holder's own turns or the source's next exile, which
+no owner sentence prints. Its only value is `"owner"`; the default holder is the
+effect's controller.
+
+The near miss is `airbend`, which also grants to the owner but replaces the
+mana cost with a flat {2} (118.9).
+
 ### "You may play them without paying their mana costs"
 
 ```jsonc
@@ -4540,21 +4561,59 @@ shortcut and it leaves cards whose `zone` still says `EXILE` sitting inside a
 library; a test guards it, because nothing else in the
 engine would notice.
 
-## Keyword actions that are only a token
+## Investigate — the `investigate` op and the `investigates` trigger
 
-Some printed keywords add no vocabulary at all. **Investigate** is the clearest
-case: the reminder text on Bygone Bishop *(Create a Clue token. It's an artifact
-with "{2}, Sacrifice this token: Draw a card.")* is the entire specification, so
-it is spelled with the ops that already exist —
+Investigating (701.16a) is "create a Clue token", and the reminder text on
+Bygone Bishop *(Create a Clue token. It's an artifact with "{2}, Sacrifice this
+token: Draw a card.")* is the whole of what it makes. It is still an op rather
+than a `create_token` naming the Clue, because investigating is an event a card
+can hear:
 
 ```jsonc
-{ "op": "create_token", "token": "clue_token", "amount": { "const": 1 } }
+// Bygone Bishop — "…, investigate."
+{ "op": "investigate" }
+// Wavesifter — "investigate twice."
+{ "op": "investigate", "amount": { "const": 2 } }
+// Fateful Absence — "Its controller investigates."
+{ "op": "investigate", "player": { "controller_of": "victim" } }
 ```
 
-— and the work is adding `clue_token` to `data/cards/tokens.cards.json`. Reach
-for this shape before writing an op. A keyword action that names a token, and
-whose token's text is all cost-and-effect the DSL can already say, is a data
-change.
+`amount` is "investigate N times", any value expression, defaulting to one and
+read below zero as zero. Each of the N is its own investigation: it creates one
+`clue_token` through `primitives.create_token`, so token replacements and
+doublers apply to it as to any token, and then fires one `investigated` event.
+`player` is who investigates, defaulting to `"you"`; every seat it names
+investigates and gets its own Clue. The loader refuses `create_token`'s `token`
+and `controller` on the op, and `validate_token_references` refuses a pool with
+no `clue_token`.
+
+The trigger is `investigates`, whose subject is the investigating player, so
+`controller: "you"` is "whenever you investigate". `nth` is the investigation's
+ordinal for that player this turn, folded into `TurnLedger.investigations`
+whether or not anything is listening:
+
+```jsonc
+// Erdwal Illuminator — "Whenever you investigate for the first time each turn,
+// investigate an additional time."
+{ "trigger": { "event": "investigates", "controller": "you", "nth": 1 },
+  "effects": [ { "op": "investigate" } ] }
+```
+
+The Illuminator's own investigation is the turn's second and does not trigger
+it again, and an investigation made before it entered spends the turn's first.
+Two near misses, both wrong:
+
+- `token_created` filtered to Clues. "Create a Clue token" (Overencumbered,
+  which writes `create_token` because it does not investigate) is not
+  investigating, and one investigation whose Clue Doubling Season doubles is
+  still one.
+- `max_per_turn: 1` for "the first time each turn". It counts the ability's
+  firings, so an Illuminator entering after your first investigation would fire
+  on your second.
+
+A card whose printed text investigates and writes `create_token` of a Clue is
+refused by `tests/unit/triggers/test_investigates.py`, since it would make its
+Clue and never be heard investigating.
 
 The catch is what the token's ability *costs*. A Clue pays for itself by
 sacrificing itself, and a token that leaves the battlefield does not go to a
@@ -4571,8 +4630,8 @@ happened — not just that the token went away.
 
 ### The near-miss token, and why it is silent
 
-The other half of a token being a data change is that **nothing checks the id
-against the words that asked for it**. `validate_token_references` asks only
+A token is a data change (`data/cards/tokens.cards.json`), and the other side of
+that is that **nothing checks the id against the words that asked for it**. `validate_token_references` asks only
 whether the id exists and is a token; no gate compares the token that arrives
 against the sentence on the card that made it, because a token is never cast and
 so gates 4 and 5 cannot reach one. So a card reaching for a token that is *nearly*
@@ -5566,6 +5625,43 @@ compulsion is real and printed on a permanent.
 |---|---|
 | the `goad` op on an enters trigger | a mark with a clock: it ends at the goader's untap step (or never, with `"permanent"`), and in either case not when the Aura leaves or moves |
 | `attacks_if_able` + `cant_attack_you` | `cant_attack_you` forbids attacking the goader outright, where goad only steers away "if able" — in a two-player game a goaded creature must still attack you — and neither names a goader for the `goaded` filter |
+
+### "…is no longer goaded" — `ungoad`
+
+    Serene Sleuth — "At the beginning of combat on your turn, investigate for
+                     each goaded creature you control. Then each creature you
+                     control is no longer goaded."
+
+```jsonc
+{ "kind": "triggered",
+  "trigger": { "event": "begin_combat", "controller": "you" },
+  "effects": [
+    { "op": "investigate",
+      "amount": { "count": { "zone": "battlefield", "controller": "you",
+                             "types": ["Creature"], "goaded": true } } },
+    { "op": "ungoad",
+      "objects": { "zone": "battlefield", "controller": "you",
+                   "types": ["Creature"] } } ] }
+```
+
+`ungoad` ends every goad on each creature in `objects`, whoever goaded it and on
+whichever clock: `temp_effects.end_goad` empties `GameObject.goaded_by` and
+`goaded_permanently_by`, so Dack Fayden's "for the rest of the game" goes with the
+timed marks. Both halves of 701.38a lift at once — the compulsion and the target
+restriction — because every reader asks `player_statics.goaders`. It ends what
+is there and forbids nothing: a creature goaded afterwards is goaded.
+
+A **`goaded` static survives it.** A static ability's effect applies at every
+moment its text matches (611.3a), so a one-shot "no longer goaded" ends the goads
+resolving effects created, and an Impetus Aura's creature is goaded by the Aura's
+controller again the instant the op is done, until the Aura stops enchanting it.
+
+The order is the card: the count reads `goaded` before the goads end. The loader
+refuses `ungoad` without `objects`, and with a `player` or `duration` — the
+sentence names no goader and no clock, so either would load as a narrower card.
+`lose_keyword` and `lose_all_abilities` are the near misses and touch abilities,
+which goad is not; `remove_from_combat` ends an attack, not the requirement to
+make one.
 
 ### "Goaded creatures" — `goaded`
 
@@ -7763,6 +7859,30 @@ the hand and exile. The stack is scanned separately rather than added to that
 loop, because it is not a player zone: it is shared, ordered, and holds the
 spell under its own trigger.
 
+**X on a cast trigger** is the X the spell was cast with. Every cast path puts
+`x` on the `SPELL_CAST` event, and `x` is in `triggers.EVENT_BINDING_KEYS`, so
+`{"x": true}` in a `spell_cast` trigger's effects reads the triggering spell's
+X, over the trigger source's own `cast_x`:
+
+```jsonc
+// Hydroid Krasis: "When you cast this spell, you gain half X life and draw half
+// X cards. Round down each time."
+{ "kind": "triggered", "active_zones": ["stack"],
+  "trigger": { "event": "spell_cast", "source": "self", "controller": "you" },
+  "effects": [
+    { "op": "gain_life", "player": "you",
+      "amount": { "half": { "of": { "x": true }, "round": "down" } } },
+    { "op": "draw", "player": "you",
+      "amount": { "half": { "of": { "x": true }, "round": "down" } } } ] }
+```
+
+The same binding answers a watcher on the battlefield ("put X +1/+1 counters on
+Nev", X the cast spell's), and reads 0 for a spell with no X or one cast without
+paying its mana cost (107.3b). `cast_x` is the near miss: `stack.resolve`
+writes it as the spell resolves, after its cast trigger has already resolved,
+and on a watcher it is the watcher's own X. `mana_value_of` the spell reads its
+mana value, not the X.
+
 **Emerge** is `evoke` with a price that is not fixed: it replaces the printed
 cost *and* is reduced by the mana value of a creature you sacrifice. Because the
 creature decides the number, legality offers **one line per sacrificeable
@@ -7937,6 +8057,59 @@ no stack, the substitution's rulings.
   one Treasure and three Squirrels.
 - The flag is refused without a non-empty `and_create` and on any effect but
   `replace_token_creation`.
+
+**"You may instead choose a creature … and create that many tokens that are
+copies of that creature."** The fourth mode is a **copy**, `copy_instead`, a
+selector over the battlefield naming what may be chosen:
+
+```jsonc
+// The copy replacement alone (Esix adds a once-a-turn window, below)
+{ "kind": "static",
+  "effect": "replace_token_creation",
+  "copy_instead": { "types": ["Creature"], "exclude_self": true } }
+```
+
+**The static's controller is asked just before the creation, and may choose
+nothing.** Chosen, every token the event would make becomes a copy of that
+creature, the count kept — its copiable values as `copy_permanent` reads them
+(707.2), so a copy of an X/X token keeps its X. The selector is resolved for the
+static's own source: `exclude_self` is "other than Esix", and with no
+`controller` any player's creature may be chosen. An opponent's creation, an
+empty pool, or a creation of no tokens asks nothing.
+
+- **It goes last.** Every other replacement applies first and the whole result
+  becomes copies: one Treasure under a Doubling Season is two copies in either
+  battlefield order, and a Stridehangar's Thopter is turned into a copy too.
+- The creating effect's `tapped`, `attacking` and `as` still apply to the
+  copies; its `overrides` (an X/X size, embalm's exception) do not, since they
+  described the token that was never made.
+- The question is asked by the ops that create tokens (`create_token`,
+  `copy_permanent`, `investigate`, `incubate`, `amass`, `empower`); a token a
+  `replace_dies` `and_create` rider makes inside a zone change is created as
+  printed, because nothing can ask there.
+- Refused beside another mode, beside `affects_token`, empty, or naming a zone
+  other than the battlefield.
+
+**"The first time you would create one or more tokens during each of your
+turns …"** is `first_during_your_turn: true` beside `copy_instead`:
+
+```jsonc
+// Esix, Fractal Bloom
+{ "kind": "static",
+  "text": "The first time you would create one or more tokens during each of your turns, you may instead choose a creature other than Esix and create that many tokens that are copies of that creature.",
+  "effect": "replace_token_creation",
+  "copy_instead": { "types": ["Creature"], "exclude_self": true },
+  "first_during_your_turn": true }
+```
+
+The copy is offered only on the **first creation event under you during your
+own turn**, counted by `TurnLedger.token_creations`, which every `create_token`
+call that makes a token writes whether or not anything is listening. So that
+event spends the window **whether or not the copy is taken** — declining it, a
+creation with no creature to choose, and one made before Esix arrived all
+spend it — and an opponent's creation does not. A creation of no tokens is not
+an event. The key is refused on any other mode, which asks nothing for it to
+limit.
 
 `affects_token`, not `affects`: the token being asked about **does not exist
 yet**, so there is no permanent for a static filter to find and no board state to

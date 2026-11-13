@@ -3600,10 +3600,11 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             "counter_placed",
             "expend",
             "put_into_graveyard",
+            "investigates",
         ):
             # Same reasoning as `counter` and `mana_ability` above: only `draw`,
-            # `spell_cast`, `you_gain_life`, `life_lost` and `attacks` carry an
-            # ordinal, and `counter_placed` and `expend` the count before the
+            # `spell_cast`, `you_gain_life`, `life_lost`, `attacks` and
+            # `investigates` carry an ordinal, and `counter_placed` and `expend` the count before the
             # placement or payment, so
             # accepting it elsewhere would look like "your second card each
             # turn" and be a restriction that never matches -- an ability that
@@ -3612,7 +3613,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 f"{where}: 'nth' only means anything on a draw, spell_cast or "
                 f"you_gain_life trigger, or a life_lost trigger, or an attacks "
                 f"trigger, or a counter_placed or expend trigger, or a "
-                f"put_into_graveyard trigger, not on "
+                f"put_into_graveyard or investigates trigger, not on "
                 f"{model.trigger.event!r}"
             )
         if model.trigger.event == "expend":
@@ -5298,7 +5299,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             raise DslError(
                 f"{where}.activated_by: must be 'you', 'opponent' or 'any', got {who!r}"
             )
-        if model.affects_abilities.get("any") and model.targeting is None:
+        if model.affects_abilities.get("any") and model.targeting is None and not model.first_each_turn:
             # A mana ability is priced by the payment solver, which never
             # reaches this static, so "every activated ability" with nothing
             # else said would quietly skip them. A `targeting` clause makes the
@@ -5334,16 +5335,69 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"{where}: first_during_your_turn does not read 'affects' -- "
                     f"an earlier activation's source is not snapshotted"
                 )
+        if model.first_each_turn:
+            # "The first activated ability **of an artifact** you activate each
+            # turn" (Tezzeret): the count is of the activator's own
+            # activations whose *source* matches `affects`, every one of them
+            # -- so the class is every activated ability, mana abilities
+            # included (a tap-only one has no mana to reduce and a Signet's
+            # {1} is priced through `pay`, which reads this static), and the
+            # source filter is matched on a snapshot of controller, types and
+            # subtypes, since an earlier source may have been sacrificed.
+            if who != "you":
+                raise DslError(
+                    f"{where}: first_each_turn counts your own activations; "
+                    f"'activated_by' must be 'you', got {who!r}"
+                )
+            if not model.affects_abilities.get("any") or len(model.affects_abilities) != 1:
+                raise DslError(
+                    f"{where}: first_each_turn counts every activated ability of "
+                    f"its source, so 'affects_abilities' must be {{'any': true}}"
+                )
+            if model.first_during_your_turn or model.targeting is not None:
+                raise DslError(
+                    f"{where}: first_each_turn picks the activation out by its "
+                    f"source alone; 'first_during_your_turn' and 'targeting' are "
+                    f"Professor Hojo's other sentence"
+                )
+            if not model.affects:
+                raise DslError(
+                    f"{where}: first_each_turn needs 'affects' -- the permanents "
+                    f"whose activations are counted, e.g. {{'types': ['Artifact']}}"
+                )
+            stray = set(model.affects) - FIRST_ACTIVATION_TARGETING_KEYS
+            if stray:
+                raise DslError(
+                    f"{where}.affects: an earlier activation's source is matched "
+                    f"on a snapshot that keeps only "
+                    f"{sorted(FIRST_ACTIVATION_TARGETING_KEYS)}; unsupported keys "
+                    f"{sorted(stray)}"
+                )
 
     elif model.activated_by is not None or model.affects_abilities is not None:
         raise DslError(
             f"{where}: 'affects_abilities'/'activated_by' only mean anything on an "
             f"ability_cost_reduction static, not on {model.effect!r}"
         )
-    if model.first_during_your_turn and model.effect != "ability_cost_reduction":
+    if model.first_each_turn and model.effect != "ability_cost_reduction":
+        raise DslError(
+            f"{where}: 'first_each_turn' only means anything on an "
+            f"ability_cost_reduction static, not on {model.effect!r}"
+        )
+    if model.first_during_your_turn and model.effect == "replace_token_creation":
+        # Esix, Fractal Bloom's "the first time you would create one or more
+        # tokens during each of your turns": the window is asked where the
+        # copy question is (`effects.tokens.ask_token_copies`), so it means
+        # nothing on a mode that asks none.
+        if model.copy_instead is None:
+            raise DslError(
+                f"{where}: 'first_during_your_turn' on replace_token_creation "
+                f"limits a 'copy_instead' replacement; no other mode reads it"
+            )
+    elif model.first_during_your_turn and model.effect != "ability_cost_reduction":
         raise DslError(
             f"{where}: 'first_during_your_turn' only means anything on an "
-            f"ability_cost_reduction static, not on {model.effect!r}"
+            f"ability_cost_reduction or replace_token_creation static, not on {model.effect!r}"
         )
 
     # `targeting` belongs to **both** reductions: Strong Back prints one line of
@@ -5384,6 +5438,25 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"made with 'affects_token', not 'affects' (which picks out "
                 f"permanents already on the battlefield)"
             )
+        if model.copy_instead is not None:
+            # Esix's "one or more tokens" names no token, and a filtered copy
+            # replacement is a sentence no printed card takes: which tokens
+            # "that many" would count beside the unmatched ones is unsaid.
+            if model.affects_token is not None:
+                raise DslError(
+                    f"{where}: copy_instead replaces the whole creation, so it "
+                    f"takes no 'affects_token'"
+                )
+            if not isinstance(model.copy_instead, Mapping) or not model.copy_instead:
+                raise DslError(
+                    f"{where}.copy_instead: a selector naming the creature that may "
+                    f"be chosen, e.g. {{\"types\": [\"Creature\"], \"exclude_self\": true}}"
+                )
+            if model.copy_instead.get("zone", "battlefield") != "battlefield":
+                raise DslError(
+                    f"{where}.copy_instead: the creature copied is on the battlefield"
+                )
+            validate_selector(model.copy_instead, f"{where}.copy_instead")
         if model.affects_token is not None:
             unknown = set(model.affects_token) - TOKEN_FILTER_KEYS
             if unknown:
@@ -5399,6 +5472,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 ("create_instead", bool(model.create_instead)),
                 ("token_multiplier", model.token_multiplier is not None),
                 ("and_create", bool(model.and_create)),
+                ("copy_instead", model.copy_instead is not None),
             )
             if present
         ]
@@ -5406,7 +5480,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             raise DslError(
                 f"{where}: replace_token_creation takes one of 'create_instead' "
                 f"(which tokens), 'token_multiplier' (how many of those tokens) or "
-                f"'and_create' (those tokens plus these), not both {modes[0]!r} and {modes[1]!r}"
+                f"'and_create' (those tokens plus these) or 'copy_instead' (copies of "
+                f"a chosen creature), not both {modes[0]!r} and {modes[1]!r}"
             )
         if model.token_multiplier is not None:
             # 1 replaces a creation with itself, and 0 is "no tokens are
@@ -5422,7 +5497,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # one of each", "that many are created instead" and "those tokens plus
         # an additional …" all name what is made; an empty list would silently *delete* every token its filter
         # matched, which is a different and much stronger card.
-        elif not model.create_instead and not model.and_create:
+        elif not model.create_instead and not model.and_create and model.copy_instead is None:
             raise DslError(
                 f"{where}: replace_token_creation needs 'create_instead' -- the "
                 f"token ids created instead, one of each per token replaced -- "
@@ -5433,9 +5508,10 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         model.affects_token is not None
         or model.create_instead
         or model.token_multiplier is not None
+        or model.copy_instead is not None
     ):
         raise DslError(
-            f"{where}: 'affects_token'/'create_instead'/'token_multiplier' only mean "
+            f"{where}: 'affects_token'/'create_instead'/'token_multiplier'/'copy_instead' only mean "
             f"anything on a replace_token_creation static, not on {model.effect!r}"
         )
 
@@ -6777,6 +6853,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["create_instead"] = list(model.create_instead)
     if model.token_multiplier is not None:
         static["token_multiplier"] = model.token_multiplier
+    if model.copy_instead is not None:
+        static["copy_instead"] = dict(model.copy_instead)
     # `replace_counters`' three. Copied explicitly for the whitelist reason
     # spelled out below: a field the schema accepts and this loop forgets
     # loads, compiles and applies with the clause absent -- here that would be
@@ -6796,6 +6874,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["targeting"] = dict(model.targeting)
     if model.first_during_your_turn:
         static["first_during_your_turn"] = True
+    if model.first_each_turn:
+        static["first_each_turn"] = True
     if model.damage_multiplier is not None:
         static["damage_multiplier"] = model.damage_multiplier
     if model.damage_addend is not None:

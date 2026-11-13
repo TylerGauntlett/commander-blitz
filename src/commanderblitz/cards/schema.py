@@ -834,7 +834,22 @@ class AbilityModel(BaseModel):
     #: this permanent arrived included, because "the first" is a fact about the
     #: activation and not about the static. Requires `targeting`, read on the
     #: snapshots in `TurnLedger.targeted_activations`.
+    #:
+    #: `replace_token_creation` with `copy_instead`: "**the first time** you
+    #: would create one or more tokens **during each of your turns**" (Esix,
+    #: Fractal Bloom). The copy is offered only on the turn's first creation
+    #: event under you, on your own turn, counted by
+    #: `TurnLedger.token_creations` -- so that event spends it whether or not
+    #: the copy is taken, and one before this permanent arrived spends it too.
     first_during_your_turn: bool = False
+    #: `ability_cost_reduction`: "**The first** activated ability **of an
+    #: artifact** you activate **each turn** costs {2} less to activate"
+    #: (Tezzeret, Betrayer of Flesh). The discount reaches only the
+    #: activator's first activation, on any turn, of an ability whose source
+    #: permanent matches `affects` -- mana abilities included (605.1a) --
+    #: counted on the source snapshots in `TurnLedger.ability_sources`.
+    #: Requires `affects_abilities: {"any": true}` and `affects`.
+    first_each_turn: bool = False
     affects_player: Literal["you", "opponent", "any"] | None = None
     #: ``cast_from_graveyard``: this permission is **flashback** -- Lier's "each
     #: instant and sorcery card in your graveyard has flashback. The flashback
@@ -1131,6 +1146,16 @@ class AbilityModel(BaseModel):
     #: id could be listed, and listing one would convert every token into it.
     #: Refused below 2 for the reason `loss_multiplier` is.
     token_multiplier: int | None = None
+    #: ``replace_token_creation``: the fourth mode -- "you may **instead choose
+    #: a creature other than Esix** and create that many tokens that are
+    #: copies of that creature" (Esix, Fractal Bloom). A selector over the
+    #: battlefield naming what may be chosen, resolved for the static's source
+    #: (so `exclude_self` is "other than Esix"). Always optional: the static's
+    #: controller is asked just before the creation and may choose nothing.
+    #: Chosen, every token the event would make -- after every other
+    #: replacement -- becomes a copy of that creature, the count kept. See
+    #: `primitives._token_creation_plan`.
+    copy_instead: dict[str, Any] | None = None
     #: `replace_counters`: how many counters are put on instead. "Twice that
     #: many" is ``counter_multiplier: 2``; "that many plus one" is
     #: ``counter_addend: 1``. A card uses exactly one, and the addend is why

@@ -176,7 +176,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "search_library": ("Cards", "Search a library for cards matching a selector, then shuffle; `may_destination` (gated by `may_destination_if`) offers the found card onto the battlefield.",
                        None),
     "search_zones": ("Cards", "One search over the union of two or more of your own zones.", None),
-    "look_at_top": ("Cards", "Look at the top N cards of any library; you take some (`chooser` says otherwise), send the rest somewhere.", None),
+    "look_at_top": ("Cards", "Look at the top N cards of any library; you take some (`chooser` says otherwise), onto the battlefield under `controller: you` if named, send the rest somewhere.", None),
     "look_at_hand": ("Cards", "Look at a player's hand (private: only you see it).", None),
     "return_to_hand": ("Cards", "Return objects to their owners' hands.", None),
     "return_from_graveyard": ("Cards", "Return cards from a graveyard to hand or the battlefield; an Aura chooses its host as it enters, or enters on the host `host_named` names if it can enchant it; `link` records the card as returned with this source.",
@@ -225,7 +225,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                                '"Return it to the command zone" — `return_to_command_zone`'),
     # ---- Board -----------------------------------------------------------
     "destroy": ("Board", "Destroy permanents; `no_regeneration` forbids regeneration; `as` records what was destroyed.", None),
-    "exile": ("Board", "Exile objects, or a spell a `{\"target\": …}` selector names off the stack without countering it; `link`/`playable` tie them to the source or a permission; `playable_condition` shuts that permission on some turns; `playable_cast_only` narrows it to casting.",
+    "exile": ("Board", "Exile objects, or a spell a `{\"target\": …}` selector names off the stack without countering it; `link`/`playable` tie them to the source or a permission; `playable_condition` shuts that permission on some turns; `playable_cast_only` narrows it to casting; `playable_by: \"owner\"` hands a `while_exiled` permission to each card's owner.",
               None),
     "sacrifice": ("Board", "A player sacrifices permanents; `snapshot` remembers what they had.",
                   None),
@@ -243,6 +243,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
               '`amass` — "Amass Zombies N"'),
     "incubate": ("Board", "Incubate N: create a double-faced Incubator artifact token with N +1/+1 counters on it, which transforms for {2} into a 0/0 Phyrexian artifact creature.",
                  '`incubate` — "Incubate N"'),
+    "investigate": ("Board", "Investigate N times: each investigation creates a Clue token for `player` and fires `investigates` once.",
+                    "Investigate — the `investigate` op and the `investigates` trigger"),
     "remove_counters": ("Board", "Remove N counters of a kind; with `any_kind`, of whichever kinds the controller picks, one at a time, and `up_to` makes N a ceiling; with `all_kinds`, every counter of every kind. `as` binds the total removed.",
                         "Removing counters of any kind — `any_kind`"),
     "remove_counters_from_among": ("Board", "Remove counters of any kinds from among a pool of permanents, one at a time; `as` records how many.",
@@ -275,6 +277,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "attack_tax": ("Board", "Until your next turn (or this turn), creatures can't attack you unless their controller pays a mana cost for each (the timed form of the static).",
                    "Pricing an attack rather than forbidding it"),
     "goad": ("Board", "Goad creatures until your next turn, or for the rest of the game.", "Goad"),
+    "ungoad": ("Board", "End every goad on creatures, any goader and any clock; a `goaded` static still applies.",
+               '"…is no longer goaded" — `ungoad`'),
     "redirect_attack": ("Board", "Reselect what an attacking creature attacks; nothing is declared.",
                         "Reselecting an attack — `redirect_attack`"),
     "remove_from_combat": ("Board", "Remove creatures from combat (506.4); what they fought stays blocked or blocking.",
@@ -349,7 +353,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "grant_protection": ("Modify", "Permanents or players gain protection for a duration.",
                          "Granting protection"),
     "set_pt": ("Modify", "Set base power and toughness for a duration.", None),
-    "animate": ("Modify", "A permanent becomes a creature, or another type (types, P/T, colors), for a duration; `exact` replaces, `keep_colors` keeps the colours, a non-creature animation may omit P/T, `keep_pt` keeps a Vehicle's own size.",
+    "animate": ("Modify", "A permanent becomes a creature, or another type (types, P/T, colors), for a duration; `exact` replaces, `keep_colors` keeps the colours, a non-creature animation may omit P/T, `keep_pt` keeps a Vehicle's own size (on itself, or on a target narrowed to Vehicles).",
                 "Creature-lands"),
     "add_subtype": ("Modify", "Permanents gain a subtype in addition to their others, "
                     "for good or for a duration.",
@@ -716,7 +720,7 @@ VALUES: dict[str, Entry] = {
     "times": ("a * b.", None),
     "toughness_had": ("The toughness the dying creature had.", None),
     "toughness_of": ("An object's toughness.", None),
-    "x": ("The X paid when this was cast or activated.", None),
+    "x": ("The X paid when this was cast or activated; on a `spell_cast` trigger, the X the cast spell was cast with.", None),
 }
 
 CONDITIONS: dict[str, Entry] = {
@@ -773,6 +777,8 @@ STATIC_VALUE_EXTRAS: dict[str, Entry] = {
     "distinct": ("The number of card types among a counting filter's pool off the battlefield "
                  "(delirium); `of: \"card_type\"` only.",
                  "Counting different values rather than objects"),
+    "cards_drawn_this_turn": ("Cards a player spec's players have drawn this turn, re-read as each "
+                              "card is drawn; the bare player spec only.", None),
     "commander_casts_this_game": ("Times you have cast your commanders from the command zone this game "
                                   "(903.8's tally); `\"you\"` only.",
                                   "An anthem for each commander cast"),
@@ -847,6 +853,8 @@ TRIGGER_EVENT_DESCRIPTIONS: dict[str, Entry] = {
     "leaves_graveyard": ("A card leaves a graveyard.", None),
     "life_lost": ("A player loses life; with `nth`, that player's Nth separate loss this turn; `batched` fires once per simultaneous loss, however many players it reaches.",
                   '"Whenever an opponent loses life"'),
+    "investigates": ("A player investigates, once per investigation; `nth` counts that player's investigations this turn.",
+                     "Investigate — the `investigate` op and the `investigates` trigger"),
     "mutates": ("A creature mutates.", '"Whenever this creature mutates…"'),
     "permanent_enters": ("A permanent enters the battlefield.", None),
     "postcombat_main": ("At the beginning of the postcombat main phase.", None),
@@ -872,7 +880,7 @@ TRIGGER_EVENT_DESCRIPTIONS: dict[str, Entry] = {
 }
 
 STATICS: dict[str, Entry] = {
-    "ability_cost_reduction": ("Activated abilities of a class (`equip`, or `any` beside `targeting`) cost less; `first_during_your_turn` limits it to your first matching activation of your turn.",
+    "ability_cost_reduction": ("Activated abilities of a class (`equip`, or `any` beside `targeting` or `first_each_turn`) cost less; `first_during_your_turn` limits it to your first matching activation of your turn; `first_each_turn` to your first activation each turn of an ability whose source matches `affects`, mana abilities included.",
                                "A static that discounts another permanent's activated ability"),
     "activate_loyalty_as_though_instant": ("The player may activate loyalty abilities any time they could cast an instant.",
                                            None),
@@ -1015,7 +1023,7 @@ STATICS: dict[str, Entry] = {
     "replace_mill": ("If the player would mill, they mill more instead.", "Doubling a mill"),
     "replace_proliferate": ("If the player would proliferate, they proliferate again.",
                             "Proliferating twice"),
-    "replace_token_creation": ("If the player would create tokens, create more, different or additional ones instead.",
+    "replace_token_creation": ("If the player would create tokens, create more, different or additional ones instead; `copy_instead` asks whether to make that many copies of a chosen creature instead, `first_during_your_turn` only on the first creation of your turn.",
                                '"If you would create a … token, instead …"'),
     "reveal_library_top": ("The player plays with the top card of their library revealed.", None),
     "set_colors": ("Matching permanents are the given colors.", "`set_colors`"),

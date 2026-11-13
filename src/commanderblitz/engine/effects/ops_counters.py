@@ -10,6 +10,7 @@ from ..characteristics import chars
 from ..effects.ops_stack import put_copy_on_stack
 from ..enums import Zone
 from ..errors import DslError
+from ..events import EventType
 from ..player_statics import player_cant_cast_while_resolving
 from ..primitives import (
     add_counters,
@@ -24,6 +25,7 @@ from ..primitives import (
     untap_permanent,
 )
 from ..structs import StackItem
+from ..triggers import fire
 from ..zones import exile, move_object
 from .board_helpers import (
     _players,
@@ -38,6 +40,7 @@ from .selectors import (
     pick_from_pool,
     resolve_pool,
 )
+from .tokens import ask_token_copies
 from .values import evaluate_value
 
 
@@ -107,7 +110,10 @@ def op_empower(ctx: EffectContext, spec: Mapping[str, Any]):
     amount = max(0, evaluate_value(ctx, spec.get("amount", 1)))
     pool = resolve_pool(ctx, _JACE_TOKENS)
     if not pool:
-        create_token(ctx.state, EMPOWER_TOKEN, ctx.controller, source=ctx.source_oid)
+        copies = yield from ask_token_copies(ctx, ctx.controller, 1)
+        create_token(
+            ctx.state, EMPOWER_TOKEN, ctx.controller, source=ctx.source_oid, copies=copies
+        )
         pool = resolve_pool(ctx, _JACE_TOKENS)
     # The plain "choose" purpose, as `add_counters` asks: one permanent off the
     # board, which the client's existing board picker already answers.
@@ -164,7 +170,14 @@ def op_amass(ctx: EffectContext, spec: Mapping[str, Any]):
     amount = max(0, evaluate_value(ctx, spec.get("amount", 1)))
     pool = resolve_pool(ctx, _ARMY_CREATURES)
     if not pool:
-        create_token(ctx.state, AMASS_TOKENS[subtype], ctx.controller, source=ctx.source_oid)
+        copies = yield from ask_token_copies(ctx, ctx.controller, 1)
+        create_token(
+            ctx.state,
+            AMASS_TOKENS[subtype],
+            ctx.controller,
+            source=ctx.source_oid,
+            copies=copies,
+        )
         pool = resolve_pool(ctx, _ARMY_CREATURES)
     picked = yield from pick_from_pool(ctx, pool, {"count": 1}, "Amass onto which Army?")
     for oid in picked:
@@ -183,7 +196,7 @@ INCUBATOR_TOKEN = "incubator_token"
 
 
 @register("incubate")
-def op_incubate(ctx: EffectContext, spec: Mapping[str, Any]) -> None:
+def op_incubate(ctx: EffectContext, spec: Mapping[str, Any]):
     """ "Incubate N." -- rule 701.53a: *Create an Incubator token with N +1/+1
     counters on it and "{2}: Transform this artifact." It transforms into a 0/0
     Phyrexian artifact creature.*
@@ -210,15 +223,52 @@ def op_incubate(ctx: EffectContext, spec: Mapping[str, Any]) -> None:
     records the Incubators made.
     """
     amount = max(0, evaluate_value(ctx, spec.get("amount", 1)))
+    copies = yield from ask_token_copies(ctx, ctx.controller, 1)
     made = create_token(
         ctx.state,
         INCUBATOR_TOKEN,
         ctx.controller,
         source=ctx.source_oid,
         enters_with={"+1/+1": amount} if amount else None,
+        copies=copies,
     )
     if name := spec.get("as"):
         ctx.bindings[str(name)] = list(made)
+
+
+#: The token investigate creates (701.16a): a colorless Clue artifact with
+#: "{2}, Sacrifice this token: Draw a card."
+CLUE_TOKEN = "clue_token"
+
+
+@register("investigate")
+def op_investigate(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Investigate." -- rule 701.16a: *Create a Clue token.*
+
+    An op rather than `create_token` naming the Clue, because investigating is
+    an event a card can hear and creating a Clue is not: "whenever you
+    investigate for the first time each turn" (Erdwal Illuminator) counts
+    investigations, and a Clue made by "create a Clue token" (Overencumbered)
+    is not one, while one investigate whose Clue a token doubler doubles is
+    still one. So each investigation creates its Clue through
+    `primitives.create_token` -- every token replacement applies to it as to
+    any other -- and then fires one `EventType.INVESTIGATED`, which carries the
+    investigation's ordinal for its player this turn (`TurnLedger.investigations`).
+
+    ``amount`` is "investigate N times", any value expression, read once and
+    below zero as zero (107.1b); each of the N is its own investigation and
+    its own event, so "investigate twice" is two. ``player`` is who
+    investigates -- "its controller investigates" (Fateful Absence) -- and
+    every seat it names investigates, each creating its own Clue.
+    """
+    amount = max(0, evaluate_value(ctx, spec.get("amount", 1)))
+    for pid in _players(ctx, spec.get("player", "you")):
+        for _ in range(amount):
+            copies = yield from ask_token_copies(ctx, pid, 1)
+            create_token(ctx.state, CLUE_TOKEN, pid, source=ctx.source_oid, copies=copies)
+            # Fired, not emitted: "whenever you investigate" listens for it.
+            # After the Clue, so the investigation is finished when it is heard.
+            fire(ctx.state, EventType.INVESTIGATED, player=pid, source=ctx.source_oid)
 
 
 @register("distribute_counters")

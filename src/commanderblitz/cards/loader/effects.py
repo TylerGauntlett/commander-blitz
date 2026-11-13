@@ -1822,6 +1822,28 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}: look_at_top 'link' is a boolean and needs destination 'exile'"
             )
+        # "…onto the battlefield **under your control**" (Lonis,
+        # Cryptozoologist). The only value is "you": every other seat a card
+        # could enter under is the looked-at library's, which is the default.
+        # Only a battlefield arrival has a controller to set -- the window's
+        # `destination` or a `destinations` step's `to` -- and `cast_free`
+        # replaces the arrival with a cast, so anywhere else the key would load
+        # and say nothing.
+        if "controller" in effect:
+            arrives = effect.get("cast_free") is not True and (
+                destination == "battlefield"
+                if not effect.get("destinations")
+                else any(
+                    isinstance(step, Mapping) and step.get("to") == "battlefield"
+                    for step in effect["destinations"]
+                )
+            )
+            if effect["controller"] != "you" or not arrives:
+                raise DslError(
+                    f"{where}: look_at_top 'controller' is \"you\" and needs a "
+                    f"card put onto the battlefield (destination 'battlefield' or "
+                    f"a destinations step to it, without cast_free)"
+                )
         # "…then put them back in any order." Beside another instruction for
         # "the rest" it would arrange cards that op had already sent away, or
         # that a shuffle then scatters: two different remainders, and a card
@@ -2129,6 +2151,19 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # goad; when a card does spell it out it must be a player the engine can
         # resolve -- which the general `player` check above now does for every
         # op, goad included.
+    if op == "ungoad":
+        # "Each creature you control is no longer goaded." Without `objects` it
+        # ends nobody's goad and the card resolves saying nothing -- goad's own
+        # guard. It names no goader and no clock: it ends all of them, so a
+        # borrowed `player` or `duration` would load as a narrower card.
+        if not effect.get("objects"):
+            raise DslError(f"{where}: ungoad needs 'objects' naming the creatures no longer goaded")
+        for key in ("player", "duration"):
+            if key in effect:
+                raise DslError(
+                    f"{where}: ungoad takes no {key!r} -- \"no longer goaded\" ends "
+                    f"every goad on the creature, whoever goaded it and for how long"
+                )
     if op == "must_attack_player":
         # All three are the card. Without `objects` nobody is compelled;
         # without `defender` there is no "that player" to attack, and guessing
@@ -2785,6 +2820,25 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                     f"exile, so it needs cards being exiled or already there "
                     f"(exile, look_at_top to exile, grant_playable over zone exile)"
                 )
+    if "playable_by" in effect:
+        # "For as long as that card remains exiled, its owner may cast it"
+        # (Aerial Extortionist). Who holds the permission; the default is the
+        # effect's controller, so the key has one value. Only on `exile` with
+        # `while_exiled`: every other duration is measured on the holder's own
+        # turns ("your next end step") or on the source's next exile, which a
+        # sentence about the owner never prints, and on a bare exile it would
+        # load, read "its owner may cast it" and grant nothing.
+        if op != "exile" or effect.get("playable") != "while_exiled":
+            raise DslError(
+                f"{where}: 'playable_by' names who holds an exile's 'playable': "
+                f"\"while_exiled\" permission, so it needs one (exile with "
+                f"'playable': \"while_exiled\")"
+            )
+        if effect["playable_by"] != "owner":
+            raise DslError(
+                f"{where}.playable_by: the only value is \"owner\" (the default "
+                f"holder is the effect's controller); got {effect['playable_by']!r}"
+            )
     if "playable_condition" in effect:
         # "During any turn you attacked with a commander, you may play those
         # cards" (Neriv). A condition on the turn a permission is *used* in, so
@@ -3169,6 +3223,15 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # would load and make a 1/1 where it prints a 3/3 -- or, for Sunfall,
         # one counter where it counts the creatures it exiled.
         raise DslError(f"{where}: incubate needs an 'amount', the N of 'Incubate N'")
+    if op == "investigate" and ("token" in effect or "controller" in effect):
+        # `create_token`'s spellings, which `investigate` does not read: the op
+        # names its Clue itself, and who investigates is `player`. Accepted
+        # and ignored, a `controller` would quietly give the Clue -- and the
+        # investigation -- to the wrong seat (Fateful Absence).
+        raise DslError(
+            f"{where}: investigate names its own Clue and takes 'player' for who "
+            f"investigates, not create_token's 'token' or 'controller'"
+        )
     if op == "empower" and "amount" not in effect:
         # "Empower Jace N" always prints its N. Defaulted, a card missing the
         # key would load and empower by one -- Mindseeker Oculus putting one
@@ -4607,6 +4670,14 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # Aetherjet, sized by the effect that made it (301.7, 111.4). It says
         # out loud that the size is deliberately left alone, and the linking
         # pass holds it to a source that has a printed power and toughness.
+        # Tezzeret, Betrayer of Flesh's "target artifact becomes an artifact
+        # creature. If it isn't a Vehicle, it has base power and toughness
+        # 4/4" is the same words aimed at a *target*: the Vehicle half is a
+        # `{"target": …}` pool narrowed to `subtypes: ["Vehicle"]`, so every
+        # object it can reach prints a size of its own (301.7), and the other
+        # half is a sized animate over `not_subtypes: ["Vehicle"]`. A pool
+        # that is not a target narrowed that way is still refused: nothing
+        # else guarantees a printed size.
         sized = ("power" in effect, "toughness" in effect)
         becomes_creature = "Creature" in (effect.get("types") or ("Creature",))
         keep_pt = effect.get("keep_pt", False)
@@ -4617,11 +4688,17 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: 'keep_pt' keeps the permanent's own size, so there is no "
                 f"'power' or 'toughness' to give as well"
             )
+        pool = effect.get("objects")
         if keep_pt and not (
-            isinstance(effect.get("objects"), Mapping) and effect["objects"].get("self_only")
+            isinstance(pool, Mapping)
+            and (
+                pool.get("self_only")
+                or ("target" in pool and pool.get("subtypes") == ["Vehicle"])
+            )
         ):
             raise DslError(
-                f"{where}: 'keep_pt' animates the Vehicle itself ('objects' self_only)"
+                f"{where}: 'keep_pt' animates the Vehicle itself ('objects' self_only) "
+                f"or a target narrowed to Vehicles ('target' with subtypes [\"Vehicle\"])"
             )
         if not keep_pt and sized != (True, True) and (becomes_creature or any(sized)):
             raise DslError(

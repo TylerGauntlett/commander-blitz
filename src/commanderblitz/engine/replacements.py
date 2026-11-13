@@ -329,6 +329,7 @@ def _offer_cast(
         spell_oid=oid,
         sid=item.sid,
         card=card.id,
+        x=item.x,
         **{label: 1},
     )
     return True

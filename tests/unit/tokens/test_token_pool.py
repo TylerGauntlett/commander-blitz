@@ -2763,3 +2763,27 @@ class TestThunderJunctionsPlantWarriorHasReach:
     def test_the_near_misses_are_still_separate(self, pool):
         assert (pool.get("plant_0_1_g").power, pool.get("plant_0_1_g").toughness) == (0, 1)
         assert "reach" not in pool.get("rhino_warrior_4_4_g").keywords
+
+
+class TestSophiasTinyIsALegendaryDogDetective:
+    """Sophia, Dogged Detective: *"create **Tiny**, a **legendary** 2/2 green
+    **Dog Detective** creature token with **trample**."*
+
+    Its near misses are `wolf_2_2_g`, a plain green 2/2, and `dog_1_1_w`, the
+    white 1/1 Dog (111.4: a token is exactly what its creating effect says).
+    """
+
+    def test_tiny_is_a_legendary_green_two_two_dog_detective_with_trample(self, pool):
+        token = pool.get("tiny_2_2_g_trample")
+        assert token is not None and token.is_token and token.is_creature
+        assert token.name == "Tiny"
+        assert sorted(token.supertypes) == ["Legendary"]
+        assert (token.power, token.toughness) == (2, 2)
+        assert list(token.colors) == ["G"]
+        assert sorted(token.subtypes) == ["Detective", "Dog"]
+        assert list(token.keywords) == ["trample"]
+        assert not token.abilities
+
+    def test_the_near_misses_are_still_separate(self, pool):
+        assert not pool.get("wolf_2_2_g").keywords
+        assert (pool.get("dog_1_1_w").power, pool.get("dog_1_1_w").toughness) == (1, 1)

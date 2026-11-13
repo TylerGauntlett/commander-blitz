@@ -19,6 +19,7 @@ from .characteristics import (
     _matches_printed,
     _static_active,
     _static_value,
+    activation_source_traits,
     card_in_exile_characteristics,
     chars,
     compare_pt,
@@ -1638,8 +1639,10 @@ def ability_cost_reduction(
     `Ability.is_equip` exists -- an equip ability is otherwise
     indistinguishable from any other that attaches something -- and ``any`` is
     every activated ability (Professor Hojo), which the loader accepts only
-    beside a `targeting` clause, since a mana ability is priced where this
-    function is never asked and has no targets anyway (605.1a).
+    beside a `targeting` clause -- a mana ability has no targets (605.1a) --
+    or `first_each_turn`, which counts mana abilities: a tap-only one is the
+    payment solver's and has no mana to discount, and one with a mana cost is
+    activated by hand and priced here.
     ``affects`` says whose permanent prints it, matched as an ordinary static
     filter against the permanent the ability is on.
 
@@ -1660,6 +1663,9 @@ def ability_cost_reduction(
 
     ``first_during_your_turn`` limits the discount to the activator's first
     matching activation of their own turn; see `_first_matching_activation`.
+    ``first_each_turn`` limits it to the activator's first activation, on any
+    turn, of an ability whose source matches ``affects``, mana abilities
+    included; see `_first_activation_each_turn`.
 
     Returns a total, clamped and applied by `costs.ability_mana` -- the one
     function `can_pay` and `pay` both reach, so an ability offered at the
@@ -1686,7 +1692,12 @@ def ability_cost_reduction(
             continue
         if who == "opponent" and source_obj.controller == pid:
             continue
-        if (filt := static.get("affects")) is not None:
+        if static.get("first_each_turn"):
+            # Asks `affects` of a snapshot, this activation's and every earlier
+            # one's alike, so both are judged on the same characteristics.
+            if not _first_activation_each_turn(state, pid, source_oid, source_obj, static):
+                continue
+        elif (filt := static.get("affects")) is not None:
             obj = state.objects.get(source_oid) if source_oid is not None else None
             if obj is None or not _matches(state, obj, source_obj, filt):
                 continue
@@ -1745,6 +1756,53 @@ def _first_matching_activation(
         if any(_snapshot_matches(snap, source_obj, aimed) for snap in targets):
             return False
     return True
+
+
+def _first_activation_each_turn(
+    state: GameState,
+    pid: int,
+    source_oid: int | None,
+    source_obj: GameObject,
+    static: Mapping[str, Any],
+) -> bool:
+    """Is an activation by ``pid`` from ``source_oid`` the first this static counts?
+
+    "**The first** activated ability **of an artifact** you activate **each
+    turn** costs {2} less to activate" -- Tezzeret, Betrayer of Flesh. Two
+    questions, both about the activation's *source*: is it a permanent matching
+    the static's ``affects`` (109.2: "an artifact" is a permanent), and has
+    ``pid`` activated, earlier this turn -- any turn, not only their own -- an
+    ability whose source matched? The earlier sources are asked of
+    `TurnLedger.ability_sources`, because the cost may have sacrificed them.
+
+    **Mana abilities count** (605.1a; Tezzeret's rulings): tapping Sol Ring
+    for mana is the turn's first activated ability of an artifact, so the
+    discount is spent even though a {T} has no mana to reduce. That is why the
+    payment solver files its taps. A mana ability with a mana cost -- a
+    Signet's {1} -- is activated by hand and priced through `costs.pay`, which
+    reaches this function, so it is the one mana ability the {2} can save.
+
+    As with `_first_matching_activation`, every activation of the turn counts,
+    one made before this permanent arrived included, and a first activation
+    whose cost had no generic mana to reduce still spends the use.
+    """
+    filt = static.get("affects") or {}
+    now = activation_source_traits(state, source_oid)
+    if now is None or not _origin_matches(now, source_obj, filt):
+        return False
+    return not any(
+        _origin_matches(earlier, source_obj, filt)
+        for earlier in state.turn_ledger.ability_sources.get(pid, ())
+    )
+
+
+def _origin_matches(origin: Any, source_obj: GameObject, filt: Mapping[str, Any]) -> bool:
+    """An ``affects`` filter asked of a filed activation source, as `_snapshot_matches`."""
+    return _snapshot_matches(
+        (origin.controller, frozenset(origin.types), frozenset(origin.subtypes)),
+        source_obj,
+        filt,
+    )
 
 
 def _snapshot_matches(
@@ -2825,7 +2883,27 @@ def token_creation_replacements(state: GameState, pid: int) -> list[Mapping[str,
     return [
         static
         for obj, static in _active_player_statics(state, "replace_token_creation")
-        if _reaches_player(obj, static, pid)
+        if _reaches_player(obj, static, pid) and "copy_instead" not in static
+    ]
+
+
+def token_copy_replacements(
+    state: GameState, pid: int
+) -> list[tuple[GameObject, Mapping[str, Any]]]:
+    """The active ``copy_instead`` ``replace_token_creation`` statics reaching
+    ``pid``, each beside its source, in battlefield order.
+
+    Esix, Fractal Bloom. Kept apart from `token_creation_replacements` because
+    this mode asks a question -- "you may instead choose a creature" -- and
+    `primitives.create_token` cannot stop for one. The effect layer asks it
+    just before the creation (`effects.tokens.ask_token_copies`) and hands the
+    answer down; the source is returned because the choice is its
+    controller's and "other than Esix" is resolved against it.
+    """
+    return [
+        (obj, static)
+        for obj, static in _active_player_statics(state, "replace_token_creation")
+        if _reaches_player(obj, static, pid) and "copy_instead" in static
     ]
 
 

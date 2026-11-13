@@ -313,6 +313,31 @@ A `destinations` step reads its own `selector`'s `chooser` first, then the
 window's. `scry` is the near miss in the other direction: its `chooser`
 defaults to the library's owner, because scrying is the player's own action.
 
+**Who it enters under** is `controller`. A card put onto the battlefield
+enters under the seat whose library `player` names unless `controller: "you"`
+says it is the effect's controller's — Lonis, Cryptozoologist's "target
+opponent reveals the top X cards of their library. You may put a nonland
+permanent card with mana value X or less from among them onto the battlefield
+**under your control**":
+
+```jsonc
+{ "op": "look_at_top", "player": { "target": "t1" }, "amount": { "x": true },
+  "destination": "battlefield", "controller": "you",
+  "objects": { "count": 1, "optional": true,
+               "not_types": ["Land", "Instant", "Sorcery"],
+               "mana_value": { "op": "<=", "value": { "x": true } } },
+  "rest_to_bottom": true }
+```
+
+The pick and the arrival are separate questions: the chooser above already
+hands the pick to "you", and without `controller` the picked card still enters
+under its owner — Lonis would sacrifice its Clues to give the opponent a free
+permanent. The library's player stays the owner, and "the rest" goes back to
+that library. It is the spelling `reveal_until`, `put_onto_battlefield` and
+`return_from_graveyard` use. The loader admits only `"you"`, and only beside a
+battlefield arrival — `destination: "battlefield"` or a `destinations` step
+`to` it — never with `cast_free`.
+
 `counters` and `counters_if` are a card put onto the battlefield **with**
 counters — Turntimber Symbiosis' "If that card has mana value 3 or less, it
 enters with three additional +1/+1 counters on it":
@@ -2753,9 +2778,10 @@ is that both apply. Generic only and clamped at zero, like every other reduction
 ```
 
 `affects_abilities: {"any": true}` is every activated ability. The loader
-accepts it only beside `targeting`: a mana ability is priced by the payment
-solver, where this static is never read, and with a `targeting` clause that
-gap is moot because a mana ability has no targets (605.1a).
+accepts it only beside `targeting` or `first_each_turn`: a tap-only mana
+ability is activated by the payment solver, which counts it but has no mana to
+discount, and with a `targeting` clause the question is moot because a mana
+ability has no targets (605.1a).
 
 `first_during_your_turn` limits the discount to one activation: the activator's
 first of their own turn that matches the class and `targeting`. The count is of
@@ -2776,6 +2802,44 @@ refuses `affects` and any `activated_by` but `you`.
 The near miss is `condition: {"is_your_turn": true}`, which discounts every
 activation of the turn rather than the first. `static_max_per_turn` is metered
 per permanent, and only on graveyard-cast permissions.
+
+### "The first activated ability of an artifact you activate each turn …"
+
+```jsonc
+// Tezzeret, Betrayer of Flesh
+{ "kind": "static", "effect": "ability_cost_reduction",
+  "affects_abilities": { "any": true },
+  "activated_by": "you",
+  "affects": { "types": ["Artifact"], "controller": "any" },
+  "first_each_turn": true,
+  "amount": { "const": 2 } }
+```
+
+`first_each_turn` limits the discount to the activator's first activation **on
+any turn** of an ability whose **source** matches `affects` — a permanent, since
+"an artifact" names one (109.2), so an artifact card cycled from a hand is not
+counted. Every such activation counts, one before this permanent arrived
+included, and a first one with no generic mana to reduce still spends the use.
+
+**Mana abilities count** (605.1a): tapping Sol Ring for mana is the turn's first
+activated ability of an artifact. The payment solver files every mana ability it
+activates, so Sol Ring tapped to pay for a spell spends the discount too. A mana
+ability with a mana cost — a Signet's `{1}` — is activated by hand and priced
+through `costs.pay`, which reads this static, so the {2} reaches it; a tap-only
+one has nothing to reduce. This is why the loader accepts `affects_abilities:
+{"any": true}` here without `targeting`.
+
+Each activation's source is filed in `TurnLedger.ability_sources` as it was
+before its cost was paid — its controller, card types and subtypes — because a
+cost may sacrifice it (Mind Stone, a Treasure). The current activation is judged
+on the same snapshot. So `affects` may read only `controller`, `types` and
+`subtypes`, and it is required; the loader refuses `targeting`,
+`first_during_your_turn`, any `activated_by` but `you` and any class but `any`
+beside it. `affects` defaults `controller` to `"you"`; Tezzeret says `"any"`,
+since an artifact you activate need not be yours.
+
+The near miss is `first_during_your_turn`, which counts only the activator's own
+turn and picks activations out by their targets.
 
 ### A delayed trigger scoped to one chosen object
 
@@ -5017,9 +5081,26 @@ A Vehicle whose size is not printed -- an X/X token like the Nalaar Aetherjet,
 sized by the effect that made it -- crews with `"keep_pt": true` in place of
 `power` and `toughness`: "becomes an artifact creature" (702.122a) and keeps its
 own base size, so a second crew or a +1/+1 counter does not move it. `keep_pt`
-is refused beside `power` or `toughness`, on anything but `objects` `self_only`,
-and on a card with no printed power and toughness; an animation into a creature
-without it still needs both.
+is refused beside `power` or `toughness`, and on any pool but `objects`
+`self_only` or a `{"target": …}` narrowed to `"subtypes": ["Vehicle"]`; a
+`self_only` one is refused on a card with no printed power and toughness. An
+animation into a creature without it still needs both.
+
+The targeted form is Tezzeret, Betrayer of Flesh's "target artifact becomes an
+artifact creature. If it isn't a Vehicle, it has base power and toughness 4/4":
+two animations over the one target, each narrowed so exactly one applies.
+
+```jsonc
+{ "op": "animate", "objects": { "target": "t1", "subtypes": ["Vehicle"] },
+  "types": ["Artifact", "Creature"], "duration": "permanent", "keep_pt": true },
+{ "op": "animate", "objects": { "target": "t1", "not_subtypes": ["Vehicle"] },
+  "types": ["Artifact", "Creature"], "duration": "permanent",
+  "power": { "const": 4 }, "toughness": { "const": 4 } }
+```
+
+The near miss is `power_of`/`toughness_of` the target, which snapshots the
+Vehicle's size into a base-P/T effect of its own instead of leaving the printed
+one (301.7) under it.
 
 ### Crews Vehicles as though its power were N greater
 
@@ -6995,6 +7076,7 @@ smaller than the effect-side `value_keys`:
 | `{"unspent_mana_count": …}` | [the unspent mana in the players' pools](#for-each-unspent-mana-you-have) |
 | `{"spells_cast_this_turn": …}` | [how many spells the players have cast this turn](#as-long-as-an-opponent-has-cast-a-spell-this-turn) — a bare player spec, or `{"player", "filter"}` for spells of a type |
 | `{"creatures_died_this_turn": …}` | how many creatures died under the players' control this turn, off `TurnLedger.creatures_died`; the bare player spec only, and the death fold and the cleanup step both bump `char_version` (Gorma, the Gullet's [entering counters](card-dsl-cookbook.md#enters_with_additional_counters--a-static-about-other-arrivals)) |
+| `{"cards_drawn_this_turn": …}` | how many cards the players have drawn this turn, off `GameState.cards_drawn_this_turn`; the bare player spec only, and `primitives.draw_cards` and the untap step's reset both bump `char_version`, so an anthem grows with each draw (Knowledge Is Power) |
 | `{"max_count_of": …}` / `{"min_count_of": …}` | [one player's count at a time](#counting-one-player-at-a-time) |
 | `{"starting_life_of": "you"}` | [your starting life total](#at-least-7-life-more-than-your-starting-life-total) — `"you"` only |
 | `{"greatest_commander_mana_value": "you"}` | the greatest printed mana value among your commanders, wherever they are (Tangleweave Armor); 0 with none — `"you"` only |
@@ -7701,7 +7783,7 @@ The cookbook's subsystem chapters, one line each:
 - [Cipher — the third direction an exile link can point](card-dsl-cookbook.md#cipher--the-third-direction-an-exile-link-can-point)
 - [Haunt — the exile link pointing the other way](card-dsl-cookbook.md#haunt--the-exile-link-pointing-the-other-way)
 - [Hideaway — "that one, from there"](card-dsl-cookbook.md#hideaway--that-one-from-there)
-- [Keyword actions that are only a token](card-dsl-cookbook.md#keyword-actions-that-are-only-a-token)
+- [Investigate — the `investigate` op and the `investigates` trigger](card-dsl-cookbook.md#investigate--the-investigate-op-and-the-investigates-trigger)
 - [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on)
 - [The inert keywords — partner, and choose a Background](card-dsl-cookbook.md#the-inert-keywords--partner-and-choose-a-background)
 - [Landwalk, and global attack prohibitions](card-dsl-cookbook.md#landwalk-and-global-attack-prohibitions)

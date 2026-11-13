@@ -1,0 +1,69 @@
+{
+  "_comment": "Shapes for tests/unit/triggers/test_cast_trigger_x.py. `t_cast_x_krasis` is Hydroid Krasis's cast trigger (half X life, half X cards, rounded down), `t_cast_x_watcher` a permanent with its own X watching other spells' X (Nev's referent), and `t_x_burn` an X sorcery for it to watch.",
+  "cards": [
+    {
+      "id": "t_cast_x_krasis",
+      "name": "Test Cast X Krasis",
+      "oracle_text": "When you cast this spell, you gain half X life and draw half X cards. Round down each time.\nThis creature enters with X +1/+1 counters on it.",
+      "mana_cost": "{X}{G}{U}",
+      "types": ["Creature"],
+      "subtypes": ["Jellyfish", "Hydra", "Beast"],
+      "power": 0,
+      "toughness": 0,
+      "colors": ["G", "U"],
+      "color_identity": ["G", "U"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "active_zones": ["stack"],
+          "text": "When you cast this spell, you gain half X life and draw half X cards. Round down each time.",
+          "trigger": {"event": "spell_cast", "source": "self", "controller": "you"},
+          "effects": [
+            {"op": "gain_life", "player": "you", "amount": {"half": {"of": {"x": true}, "round": "down"}}},
+            {"op": "draw", "player": "you", "amount": {"half": {"of": {"x": true}, "round": "down"}}}
+          ]
+        }
+      ],
+      "replacements": [
+        {"event": "self_enters_with_counters", "counter": "+1/+1", "amount": {"x": true}}
+      ]
+    },
+    {
+      "id": "t_cast_x_watcher",
+      "name": "Test Cast X Watcher",
+      "oracle_text": "This creature enters with X +1/+1 counters on it.\nWhenever you cast a spell, you gain X life, where X is that spell's X.",
+      "mana_cost": "{X}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Hydra"],
+      "power": 1,
+      "toughness": 1,
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you cast a spell, you gain X life, where X is that spell's X.",
+          "trigger": {"event": "spell_cast", "controller": "you"},
+          "effects": [
+            {"op": "gain_life", "player": "you", "amount": {"x": true}}
+          ]
+        }
+      ],
+      "replacements": [
+        {"event": "self_enters_with_counters", "counter": "+1/+1", "amount": {"x": true}}
+      ]
+    },
+    {
+      "id": "t_x_burn",
+      "name": "Test X Burn",
+      "oracle_text": "Test X Burn deals X damage to each opponent.",
+      "mana_cost": "{X}{R}",
+      "types": ["Sorcery"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "spell_effects": [
+        {"op": "damage", "player": "each_opponent", "amount": {"x": true}}
+      ]
+    }
+  ]
+}

@@ -221,6 +221,21 @@ def mana_source_traits(state: GameState, oid: int | None) -> ManaOrigin | None:
     )
 
 
+def activation_source_traits(state: GameState, oid: int | None) -> ManaOrigin | None:
+    """What the permanent an ability is activated from **is**, for the ledger.
+
+    `mana_source_traits`, narrowed to the battlefield: "the first activated
+    ability **of an artifact**" (Tezzeret, Betrayer of Flesh) names a permanent
+    (109.2), so an ability activated from a hand or a graveyard -- cycling an
+    artifact card -- has no source to file and answers ``None``. Taken before
+    the cost is paid, since the cost may sacrifice the source.
+    """
+    obj = state.objects.get(oid) if oid is not None else None
+    if obj is None or not obj.on_battlefield:
+        return None
+    return mana_source_traits(state, oid)
+
+
 #: What a face-down permanent is, whatever is underneath it (707.2).
 FACE_DOWN_CHARS = Characteristics(
     power=2,
@@ -2149,6 +2164,15 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
         # it off DIES, the cleanup step empties it, and no layer touches it.
         pids = _static_players(state, source, expr["creatures_died_this_turn"])
         return sum(state.turn_ledger.creatures_died.get(p, 0) for p in pids)
+    if "cards_drawn_this_turn" in expr:
+        # Knowledge Is Power: "Creatures you control get +X/+X, where X is the
+        # number of cards you've drawn this turn." The effect side's draw tally
+        # in its bare player-spec form. A pipeline input on
+        # `creatures_died_this_turn`'s terms: `primitives.draw_cards` writes it
+        # and the untap step empties it, no layer touches it, and both bump
+        # `char_version`, so the anthem grows with each draw as it happens.
+        pids = _static_players(state, source, expr["cards_drawn_this_turn"])
+        return sum(state.cards_drawn_this_turn.get(p, 0) for p in pids)
     if "max_count_of" in expr:
         # "As long as an opponent controls more lands than you." A count per
         # player rather than over the merged pool -- `count` with

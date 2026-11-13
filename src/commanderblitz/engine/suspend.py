@@ -380,6 +380,7 @@ def cast_for_free(
         spell_oid=oid,
         sid=item.sid,
         card=card.id,
+        x=item.x,
         free=1,
     )
     return True

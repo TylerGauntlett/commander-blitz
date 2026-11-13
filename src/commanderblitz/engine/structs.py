@@ -2234,6 +2234,21 @@ class TurnLedger:
     #: not life, for `life_gains`' reason. Intermediate Chirography's "whenever
     #: you lose life **for the first time** each turn".
     life_losses: dict[int, int] = field(default_factory=dict)
+    #: How many times each player has **investigated** this turn (701.16).
+    #: Erdwal Illuminator's "whenever you investigate **for the first time**
+    #: each turn" is an `investigates` trigger with `nth: 1`, and the ordinal
+    #: is written onto the INVESTIGATED event from this count, as a life gain's
+    #: is. Counted whether or not anything is listening, so investigating
+    #: before the Illuminator arrives spends the turn's first time.
+    investigations: dict[int, int] = field(default_factory=dict)
+    #: How many times each player has created tokens this turn -- creation
+    #: **events**, one per `primitives.create_token` call that makes at least
+    #: one, keyed by the player the tokens arrive under. Esix, Fractal Bloom's
+    #: "the first time you would create one or more tokens during each of your
+    #: turns": counted whether or not anything is listening, and whether or not
+    #: a replacement was taken, so the turn's first creation spends the window
+    #: even before Esix arrived (614: the event happened).
+    token_creations: dict[int, int] = field(default_factory=dict)
     #: Spells cast this turn, per caster.  Storm counts every spell cast before
     #: it by anybody, which is the sum.
     spells_cast: dict[int, int] = field(default_factory=dict)
@@ -2365,6 +2380,19 @@ class TurnLedger:
     targeted_activations: dict[
         int, list[tuple[bool, tuple[tuple[int, frozenset[str], frozenset[str]], ...]]]
     ] = field(default_factory=dict)
+    #: Every activated ability each player has activated this turn, **mana
+    #: abilities included** (605.1a), as what its source permanent was: player
+    #: id -> one `ManaOrigin` per activation. Tezzeret, Betrayer of Flesh's "the
+    #: first activated ability **of an artifact** you activate each turn" asks
+    #: whether an earlier activation's source matched, and that source may
+    #: since have been sacrificed by the very cost it paid -- a Treasure, a
+    #: Mind Stone -- so its characteristics are filed, not its oid. An
+    #: activation from any zone but the battlefield is not filed: "an artifact"
+    #: names a permanent (109.2). Written by `Game._activate` and
+    #: `Game._activate_mana` once the cost is paid, and by `costs.pay_mana` for
+    #: each mana ability the payment solver activates; read by
+    #: `player_statics.ability_cost_reduction`'s `first_each_turn`.
+    ability_sources: dict[int, list[ManaOrigin]] = field(default_factory=dict)
 
     #: Words written onto a permanent that wear off at the turn boundary:
     #: object id -> the flags it has been given **this turn**.  "If this creature
@@ -2567,6 +2595,8 @@ class TurnLedger:
         self.life_gained.clear()
         self.life_gains.clear()
         self.life_losses.clear()
+        self.investigations.clear()
+        self.token_creations.clear()
         self.spells_cast.clear()
         self.mana_spent_on_spells.clear()
         self.spells_cast_ids.clear()
@@ -2576,6 +2606,7 @@ class TurnLedger:
         self.loyalty_activations.clear()
         self.extra_loyalty_activations.clear()
         self.targeted_activations.clear()
+        self.ability_sources.clear()
         self.cards_to_graveyard = 0
         self.permanents_to_graveyard = 0
         self.cards_from_graveyard.clear()
