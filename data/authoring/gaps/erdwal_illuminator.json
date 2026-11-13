@@ -1,0 +1,14 @@
+{
+  "card_id": "erdwal_illuminator",
+  "name": "Erdwal Illuminator",
+  "oracle_text": "Flying\nWhenever you investigate for the first time each turn, investigate an additional time.",
+  "blocked_sentences": ["Whenever you investigate for the first time each turn, investigate an additional time."],
+  "needs": [{
+    "capability": "investigate",
+    "kind": "trigger_event",
+    "what": "a trigger event fired when a player investigates (701.16: the investigate action itself, once per investigate instruction), with max_per_turn: 1 for 'the first time each turn', whose effect investigates again (create clue_token for you)",
+    "why_existing_wont_do": "trigger_events has no investigate event and there is no investigate op; token_created filtered to Clue tokens is not the same, since creating a Clue by any other means (e.g. a 'create a Clue token' effect or a token doubler's extra Clue) is not investigating, and one investigate doubled by a replacement must still count once"
+  }],
+  "closest_existing": ["token_created", "create_token"],
+  "confidence": "high"
+}

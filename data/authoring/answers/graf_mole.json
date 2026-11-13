@@ -1,0 +1,29 @@
+{
+  "card": {
+    "id": "graf_mole",
+    "name": "Graf Mole",
+    "oracle_text": "Whenever you sacrifice a Clue, you gain 3 life.",
+    "mana_cost": "{2}{G}",
+    "types": ["Creature"],
+    "subtypes": ["Mole", "Beast"],
+    "power": 2,
+    "toughness": 4,
+    "colors": ["G"],
+    "color_identity": ["G"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever you sacrifice a Clue, you gain 3 life.",
+        "trigger": {
+          "event": "sacrificed",
+          "controller": "you",
+          "filter": {"subtypes": ["Clue"]}
+        },
+        "effects": [
+          {"op": "gain_life", "amount": {"const": 3}, "player": "you"}
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}
