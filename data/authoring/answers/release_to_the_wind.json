@@ -1,0 +1,25 @@
+{
+  "card": {
+    "id": "release_to_the_wind",
+    "name": "Release to the Wind",
+    "oracle_text": "Exile target nonland permanent. For as long as that card remains exiled, its owner may cast it without paying its mana cost.",
+    "mana_cost": "{2}{U}",
+    "types": ["Instant"],
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "targets": [
+      {"id": "t1", "kind": "permanent", "selector": {"zone": "battlefield", "not_types": ["Land"]}}
+    ],
+    "spell_effects": [
+      {
+        "op": "exile",
+        "objects": {"target": "t1"},
+        "playable": "while_exiled",
+        "playable_by": "owner",
+        "playable_cast_only": true,
+        "playable_free": true
+      }
+    ]
+  },
+  "expectation": {"zone": "graveyard", "battlefield_count": 31}
+}

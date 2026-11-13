@@ -1,0 +1,16 @@
+{
+  "card_id": "duelist_of_the_mind",
+  "name": "Duelist of the Mind",
+  "oracle_text": "Flying, vigilance\nDuelist of the Mind's power is equal to the number of cards you've drawn this turn.\nWhenever you commit a crime, you may draw a card. If you do, discard a card. This ability triggers only once each turn.",
+  "blocked_sentences": [
+    "Whenever you commit a crime, you may draw a card. If you do, discard a card. This ability triggers only once each turn"
+  ],
+  "needs": [{
+    "capability": "crime",
+    "kind": "trigger_event",
+    "what": "a trigger event fired once per spell cast or ability put on the stack whose targets include one of the controller's opponents, a permanent or spell an opponent of that controller controls, or a card in an opponent's graveyard (rule 700.13), filterable by who committed the crime (here: the trigger's controller, 'you'); combined with the existing max_per_turn: 1 for 'triggers only once each turn'",
+    "why_existing_wont_do": "becomes_target fires per targeted object and only for permanents, so it misses targeting a player or graveyard cards and would fire multiple times for one spell with several targets; spell_cast and ability_activated carry no information about whether the targets belong to an opponent; the engine has no crime concept at all. The rest of the card is expressible: the power line is a set_pt static reading cards_drawn_this_turn, and the loot is may + draw then discard"
+  }],
+  "closest_existing": ["becomes_target", "spell_cast", "ability_activated"],
+  "confidence": "high"
+}

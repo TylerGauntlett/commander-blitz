@@ -1,0 +1,26 @@
+{
+  "card": {
+    "id": "fists_of_flame",
+    "name": "Fists of Flame",
+    "oracle_text": "Draw a card. Until end of turn, target creature gains trample and gets +1/+0 for each card you've drawn this turn. (A creature with trample can deal excess combat damage to the player or planeswalker it's attacking.)",
+    "mana_cost": "{1}{R}",
+    "types": ["Instant"],
+    "colors": ["R"],
+    "color_identity": ["R"],
+    "targets": [
+      {"id": "t1", "kind": "permanent", "selector": {"types": ["Creature"], "zone": "battlefield"}}
+    ],
+    "spell_effects": [
+      {"op": "draw", "amount": {"const": 1}, "player": "you"},
+      {"op": "grant_keyword", "keywords": ["trample"], "duration": "until_end_of_turn", "objects": {"target": "t1"}},
+      {"op": "pump", "duration": "until_end_of_turn", "objects": {"target": "t1"},
+       "power": {"cards_drawn_this_turn": "you"}, "toughness": {"const": 0}}
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "hand_size": {"0": 2},
+    "library_size": {"0": 39},
+    "target_pt_delta": {"power": 1, "toughness": 0}
+  }
+}
