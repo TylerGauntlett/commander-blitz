@@ -4540,21 +4540,59 @@ shortcut and it leaves cards whose `zone` still says `EXILE` sitting inside a
 library; a test guards it, because nothing else in the
 engine would notice.
 
-## Keyword actions that are only a token
+## Investigate — the `investigate` op and the `investigates` trigger
 
-Some printed keywords add no vocabulary at all. **Investigate** is the clearest
-case: the reminder text on Bygone Bishop *(Create a Clue token. It's an artifact
-with "{2}, Sacrifice this token: Draw a card.")* is the entire specification, so
-it is spelled with the ops that already exist —
+Investigating (701.16a) is "create a Clue token", and the reminder text on
+Bygone Bishop *(Create a Clue token. It's an artifact with "{2}, Sacrifice this
+token: Draw a card.")* is the whole of what it makes. It is still an op rather
+than a `create_token` naming the Clue, because investigating is an event a card
+can hear:
 
 ```jsonc
-{ "op": "create_token", "token": "clue_token", "amount": { "const": 1 } }
+// Bygone Bishop — "…, investigate."
+{ "op": "investigate" }
+// Wavesifter — "investigate twice."
+{ "op": "investigate", "amount": { "const": 2 } }
+// Fateful Absence — "Its controller investigates."
+{ "op": "investigate", "player": { "controller_of": "victim" } }
 ```
 
-— and the work is adding `clue_token` to `data/cards/tokens.cards.json`. Reach
-for this shape before writing an op. A keyword action that names a token, and
-whose token's text is all cost-and-effect the DSL can already say, is a data
-change.
+`amount` is "investigate N times", any value expression, defaulting to one and
+read below zero as zero. Each of the N is its own investigation: it creates one
+`clue_token` through `primitives.create_token`, so token replacements and
+doublers apply to it as to any token, and then fires one `investigated` event.
+`player` is who investigates, defaulting to `"you"`; every seat it names
+investigates and gets its own Clue. The loader refuses `create_token`'s `token`
+and `controller` on the op, and `validate_token_references` refuses a pool with
+no `clue_token`.
+
+The trigger is `investigates`, whose subject is the investigating player, so
+`controller: "you"` is "whenever you investigate". `nth` is the investigation's
+ordinal for that player this turn, folded into `TurnLedger.investigations`
+whether or not anything is listening:
+
+```jsonc
+// Erdwal Illuminator — "Whenever you investigate for the first time each turn,
+// investigate an additional time."
+{ "trigger": { "event": "investigates", "controller": "you", "nth": 1 },
+  "effects": [ { "op": "investigate" } ] }
+```
+
+The Illuminator's own investigation is the turn's second and does not trigger
+it again, and an investigation made before it entered spends the turn's first.
+Two near misses, both wrong:
+
+- `token_created` filtered to Clues. "Create a Clue token" (Overencumbered,
+  which writes `create_token` because it does not investigate) is not
+  investigating, and one investigation whose Clue Doubling Season doubles is
+  still one.
+- `max_per_turn: 1` for "the first time each turn". It counts the ability's
+  firings, so an Illuminator entering after your first investigation would fire
+  on your second.
+
+A card whose printed text investigates and writes `create_token` of a Clue is
+refused by `tests/unit/triggers/test_investigates.py`, since it would make its
+Clue and never be heard investigating.
 
 The catch is what the token's ability *costs*. A Clue pays for itself by
 sacrificing itself, and a token that leaves the battlefield does not go to a
@@ -4571,8 +4609,8 @@ happened — not just that the token went away.
 
 ### The near-miss token, and why it is silent
 
-The other half of a token being a data change is that **nothing checks the id
-against the words that asked for it**. `validate_token_references` asks only
+A token is a data change (`data/cards/tokens.cards.json`), and the other side of
+that is that **nothing checks the id against the words that asked for it**. `validate_token_references` asks only
 whether the id exists and is a token; no gate compares the token that arrives
 against the sentence on the card that made it, because a token is never cast and
 so gates 4 and 5 cannot reach one. So a card reaching for a token that is *nearly*

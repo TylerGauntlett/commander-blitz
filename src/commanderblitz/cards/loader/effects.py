@@ -3169,6 +3169,15 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # would load and make a 1/1 where it prints a 3/3 -- or, for Sunfall,
         # one counter where it counts the creatures it exiled.
         raise DslError(f"{where}: incubate needs an 'amount', the N of 'Incubate N'")
+    if op == "investigate" and ("token" in effect or "controller" in effect):
+        # `create_token`'s spellings, which `investigate` does not read: the op
+        # names its Clue itself, and who investigates is `player`. Accepted
+        # and ignored, a `controller` would quietly give the Clue -- and the
+        # investigation -- to the wrong seat (Fateful Absence).
+        raise DslError(
+            f"{where}: investigate names its own Clue and takes 'player' for who "
+            f"investigates, not create_token's 'token' or 'controller'"
+        )
     if op == "empower" and "amount" not in effect:
         # "Empower Jace N" always prints its N. Defaulted, a card missing the
         # key would load and empower by one -- Mindseeker Oculus putting one

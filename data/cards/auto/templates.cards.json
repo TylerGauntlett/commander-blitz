@@ -8882,11 +8882,7 @@
         {
           "effects": [
             {
-              "amount": {
-                "const": 1
-              },
-              "op": "create_token",
-              "token": "clue_token"
+              "op": "investigate"
             }
           ],
           "kind": "triggered",
@@ -13043,9 +13039,7 @@
               "amount": {
                 "const": 2
               },
-              "controller": "you",
-              "op": "create_token",
-              "token": "clue_token"
+              "op": "investigate"
             }
           ],
           "kind": "triggered",
@@ -33289,6 +33283,51 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "op": "investigate"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a creature spell with mana value 3 or less, investigate.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "mana_value": {
+                "op": "<=",
+                "value": {
+                  "const": 3
+                }
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "id": "bygone_bishop",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{W}",
+      "name": "Bygone Bishop",
+      "oracle_text": "Flying\nWhenever you cast a creature spell with mana value 3 or less, investigate. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Cleric"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "mana": "{2}",
             "tap": true
@@ -46582,8 +46621,7 @@
           "amount": {
             "const": 3
           },
-          "op": "create_token",
-          "token": "clue_token"
+          "op": "investigate"
         }
       ],
       "targets": [
@@ -61225,8 +61263,7 @@
           "amount": {
             "x": true
           },
-          "op": "create_token",
-          "token": "clue_token"
+          "op": "investigate"
         },
         {
           "effects": [
@@ -72685,6 +72722,46 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "op": "investigate"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you investigate for the first time each turn, investigate an additional time.",
+          "trigger": {
+            "controller": "you",
+            "event": "investigates",
+            "nth": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "erdwal_illuminator",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{U}",
+      "name": "Erdwal Illuminator",
+      "oracle_text": "Flying\nWhenever you investigate for the first time each turn, investigate an additional time.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Spirit"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "self_only": true
           },
@@ -74058,9 +74135,7 @@
               "amount": {
                 "player_count": "each_opponent"
               },
-              "controller": "you",
-              "op": "create_token",
-              "token": "clue_token"
+              "op": "investigate"
             }
           ],
           "kind": "triggered",
@@ -78273,14 +78348,10 @@
           "op": "destroy"
         },
         {
-          "amount": {
-            "const": 1
-          },
-          "controller": {
+          "op": "investigate",
+          "player": {
             "controller_of": "victim"
-          },
-          "op": "create_token",
-          "token": "clue_token"
+          }
         }
       ],
       "targets": [
@@ -84192,11 +84263,7 @@
       "source": "auto",
       "spell_effects": [
         {
-          "amount": {
-            "const": 1
-          },
-          "op": "create_token",
-          "token": "clue_token"
+          "op": "investigate"
         }
       ],
       "types": [
@@ -116609,11 +116676,7 @@
                   "op": "if",
                   "then": [
                     {
-                      "amount": {
-                        "const": 1
-                      },
-                      "op": "create_token",
-                      "token": "clue_token"
+                      "op": "investigate"
                     }
                   ]
                 }
@@ -138059,11 +138122,7 @@
         {
           "effects": [
             {
-              "amount": {
-                "const": 1
-              },
-              "op": "create_token",
-              "token": "clue_token"
+              "op": "investigate"
             }
           ],
           "kind": "triggered",
@@ -142400,11 +142459,7 @@
           },
           "effects": [
             {
-              "amount": {
-                "const": 1
-              },
-              "op": "create_token",
-              "token": "clue_token"
+              "op": "investigate"
             }
           ],
           "kind": "activated",
@@ -147417,8 +147472,7 @@
         {
           "effects": [
             {
-              "op": "create_token",
-              "token": "clue_token"
+              "op": "investigate"
             }
           ],
           "kind": "triggered",
@@ -152697,11 +152751,7 @@
         {
           "effects": [
             {
-              "amount": {
-                "const": 1
-              },
-              "op": "create_token",
-              "token": "clue_token"
+              "op": "investigate"
             }
           ],
           "kind": "triggered",
@@ -159135,11 +159185,7 @@
             {
               "effects": [
                 {
-                  "amount": {
-                    "const": 1
-                  },
-                  "op": "create_token",
-                  "token": "clue_token"
+                  "op": "investigate"
                 }
               ],
               "op": "may",
@@ -166332,12 +166378,7 @@
         {
           "effects": [
             {
-              "amount": {
-                "const": 1
-              },
-              "controller": "you",
-              "op": "create_token",
-              "token": "clue_token"
+              "op": "investigate"
             }
           ],
           "kind": "triggered",
@@ -166360,12 +166401,7 @@
           },
           "effects": [
             {
-              "amount": {
-                "const": 1
-              },
-              "controller": "you",
-              "op": "create_token",
-              "token": "clue_token"
+              "op": "investigate"
             },
             {
               "amount": {
@@ -174096,9 +174132,7 @@
               "amount": {
                 "binding": "amount"
               },
-              "controller": "you",
-              "op": "create_token",
-              "token": "clue_token"
+              "op": "investigate"
             }
           ],
           "kind": "triggered",
@@ -201748,11 +201782,7 @@
         {
           "effects": [
             {
-              "amount": {
-                "const": 1
-              },
-              "op": "create_token",
-              "token": "clue_token"
+              "op": "investigate"
             }
           ],
           "kind": "triggered",
@@ -216560,11 +216590,7 @@
               "token": "food_token"
             },
             {
-              "amount": {
-                "const": 1
-              },
-              "op": "create_token",
-              "token": "clue_token"
+              "op": "investigate"
             }
           ],
           "kind": "triggered",
@@ -247772,12 +247798,7 @@
         {
           "effects": [
             {
-              "amount": {
-                "const": 1
-              },
-              "controller": "you",
-              "op": "create_token",
-              "token": "clue_token"
+              "op": "investigate"
             }
           ],
           "kind": "triggered",
@@ -255095,12 +255116,7 @@
         {
           "effects": [
             {
-              "amount": {
-                "const": 1
-              },
-              "controller": "you",
-              "op": "create_token",
-              "token": "clue_token"
+              "op": "investigate"
             }
           ],
           "kind": "triggered",
@@ -268653,8 +268669,7 @@
               "amount": {
                 "const": 2
               },
-              "op": "create_token",
-              "token": "clue_token"
+              "op": "investigate"
             }
           ],
           "kind": "triggered",
@@ -274795,11 +274810,7 @@
                   "op": "if",
                   "then": [
                     {
-                      "amount": {
-                        "const": 1
-                      },
-                      "op": "create_token",
-                      "token": "clue_token"
+                      "op": "investigate"
                     }
                   ]
                 }

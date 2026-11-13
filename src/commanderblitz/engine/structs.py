@@ -2234,6 +2234,13 @@ class TurnLedger:
     #: not life, for `life_gains`' reason. Intermediate Chirography's "whenever
     #: you lose life **for the first time** each turn".
     life_losses: dict[int, int] = field(default_factory=dict)
+    #: How many times each player has **investigated** this turn (701.16).
+    #: Erdwal Illuminator's "whenever you investigate **for the first time**
+    #: each turn" is an `investigates` trigger with `nth: 1`, and the ordinal
+    #: is written onto the INVESTIGATED event from this count, as a life gain's
+    #: is. Counted whether or not anything is listening, so investigating
+    #: before the Illuminator arrives spends the turn's first time.
+    investigations: dict[int, int] = field(default_factory=dict)
     #: Spells cast this turn, per caster.  Storm counts every spell cast before
     #: it by anybody, which is the sum.
     spells_cast: dict[int, int] = field(default_factory=dict)
@@ -2567,6 +2574,7 @@ class TurnLedger:
         self.life_gained.clear()
         self.life_gains.clear()
         self.life_losses.clear()
+        self.investigations.clear()
         self.spells_cast.clear()
         self.mana_spent_on_spells.clear()
         self.spells_cast_ids.clear()

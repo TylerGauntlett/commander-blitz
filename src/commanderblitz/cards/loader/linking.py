@@ -11,6 +11,7 @@ from commanderblitz.engine.carddef import (
 )
 from commanderblitz.engine.effects.ops_counters import (
     AMASS_TOKENS,
+    CLUE_TOKEN,
     EMPOWER_TOKEN,
     INCUBATOR_TOKEN,
 )
@@ -251,6 +252,8 @@ def token_references(card: CardDef) -> set[str]:
             # The op names its token itself; the bundle's `references` then
             # carries the Incubator's back face along with it.
             out.add(INCUBATOR_TOKEN)
+        if effect.get("op") == "investigate":
+            out.add(CLUE_TOKEN)
         if effect.get("op") == "empower":
             out.add(EMPOWER_TOKEN)
         if effect.get("op") == "amass" and str(effect.get("subtype")) in AMASS_TOKENS:
@@ -335,6 +338,8 @@ def validate_token_references(cards: Mapping[str, CardDef]) -> None:
                 check(card, AMASS_TOKENS[str(effect.get("subtype"))], "amass")
             if effect.get("op") == "incubate":
                 check(card, INCUBATOR_TOKEN, "incubate")
+            if effect.get("op") == "investigate":
+                check(card, CLUE_TOKEN, "investigate")
         for ability in card.abilities:
             static = ability.static or {}
             for key in ("create_instead", "and_create"):

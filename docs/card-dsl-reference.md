@@ -10,12 +10,12 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 173 |
+| [Effect ops](#effect-ops) | 174 |
 | [Selectors](#selectors) | 76 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 74 |
 | [Conditions](#conditions) | 34 |
-| [Trigger events](#trigger-events) | 54 |
+| [Trigger events](#trigger-events) | 55 |
 | [Trigger filters](#trigger-filters) | 37 |
 | [Static effects](#static-effects) | 97 |
 | [Player-wide statics](#player-wide-statics) | 47 |
@@ -37,7 +37,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
 | [Card-level face keys](#card-level-face-keys) | 6 |
 | [Card-level rider keys](#card-level-rider-keys) | 21 |
-| [Engine events](#engine-events) | 80 |
+| [Engine events](#engine-events) | 81 |
 
 ## Effect ops
 
@@ -111,6 +111,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `grant_ability` | Board |  | Give permanents one of the card's `grantable_abilities`. | [Granting an ability](card-dsl-cookbook.md#granting-an-ability) |
 | `haunt` | Board |  | Exile the source haunting a creature. | [Haunt — the exile link pointing the other way](card-dsl-cookbook.md#haunt--the-exile-link-pointing-the-other-way) |
 | `incubate` | Board | yes | Incubate N: create a double-faced Incubator artifact token with N +1/+1 counters on it, which transforms for {2} into a 0/0 Phyrexian artifact creature. | [incubate — "Incubate N"](card-dsl-cookbook.md#incubate--incubate-n) |
+| `investigate` | Board |  | Investigate N times: each investigation creates a Clue token for `player` and fires `investigates` once. | [Investigate — the investigate op and the investigates trigger](card-dsl-cookbook.md#investigate--the-investigate-op-and-the-investigates-trigger) |
 | `lock_abilities` | Board |  | Its activated abilities can't be activated this turn. | ["Its activated abilities can't be activated this turn"](card-dsl-cookbook.md#its-activated-abilities-cant-be-activated-this-turn) |
 | `manifest` | Board |  | Manifest the top card of a library face down as a 2/2; `controller: "you"` manifests another player's under yours. | [Face-down permanents — morph, megamorph and manifest](card-dsl-cookbook.md#face-down-permanents--morph-megamorph-and-manifest) |
 | `manifest_dread` | Board | yes | Manifest dread: look at the top two cards, manifest one, put the other into the graveyard; `as` records the manifest. | [Manifest dread](card-dsl-cookbook.md#manifest-dread) |
@@ -478,6 +479,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `end_step` | `end_step` | At the beginning of the end step. | [Triggers](card-dsl.md#triggers) |
 | `expend` | `mana_spent` | You expend N (`nth`): the spell payment that takes your mana spent to cast spells this turn to N or more. | [Expend — "Whenever you expend N"](card-dsl-cookbook.md#expend--whenever-you-expend-n) |
 | `gives_gift` | `gift_given` | A player gives a gift (702.174): a spell with a promised gift resolves, or a permanent's gift trigger does; `gift_to` binds the recipient. | ["Whenever you give a gift"](card-dsl-cookbook.md#whenever-you-give-a-gift) |
+| `investigates` | `investigated` | A player investigates, once per investigation; `nth` counts that player's investigations this turn. | [Investigate — the investigate op and the investigates trigger](card-dsl-cookbook.md#investigate--the-investigate-op-and-the-investigates-trigger) |
 | `land_played` | `land_played` | A land is played. | [Triggers](card-dsl.md#triggers) |
 | `last_counter_removed` | `counter_removed` | The last counter of the `counter` kind is removed from a permanent, by anything. | [Vanishing — a permanent that counts itself out](card-dsl-cookbook.md#vanishing--a-permanent-that-counts-itself-out) |
 | `leaves_battlefield` | `leaves_battlefield` | A permanent leaves the battlefield. | [Triggers](card-dsl.md#triggers) |
@@ -1198,6 +1200,7 @@ Every `EventType` the engine emits, and which trigger events listen to it. An ev
 | `game_over` |  |  | [Triggers](card-dsl.md#triggers) |
 | `gift_given` | `gives_gift` |  | [Triggers](card-dsl.md#triggers) |
 | `hand_kept` |  |  | [Triggers](card-dsl.md#triggers) |
+| `investigated` | `investigates` |  | [Triggers](card-dsl.md#triggers) |
 | `land_played` | `land_played` |  | [Triggers](card-dsl.md#triggers) |
 | `leaves_battlefield` | `leaves_battlefield` |  | [Triggers](card-dsl.md#triggers) |
 | `leaves_graveyard` | `leaves_graveyard` |  | [Triggers](card-dsl.md#triggers) |

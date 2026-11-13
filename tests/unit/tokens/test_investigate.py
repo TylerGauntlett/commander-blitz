@@ -1,16 +1,16 @@
-"""Investigate: a keyword action that is entirely a token.
+"""Investigate: a keyword action whose result is a token.
 
 "Whenever you cast a creature spell with mana value 3 or less, investigate."
 Bygone Bishop is the shipped witness, and the parenthetical on it is the whole
-specification: *(Create a Clue token. It's an artifact with "{2}, Sacrifice this
-token: Draw a card.")*
+of what investigating *makes*: *(Create a Clue token. It's an artifact with
+"{2}, Sacrifice this token: Draw a card.")*
 
-So there is no `investigate` op and there should not be one. `create_token`
-already names any token in the pool, `Cost` already carries mana and a
-`self_only` sacrifice together (Mind Stone pays exactly that shape), and `draw`
-is an op -- the only thing missing was a Clue for `create_token` to point at.
-`validate_token_references` makes that a load-time failure rather than a silent
-no-op, which is why the card could not be written half.
+The `investigate` op creates that Clue through `primitives.create_token` and
+then fires the investigation's own event, which `test_investigates.py` pins.
+The Clue itself is ordinary DSL: `Cost` already carries mana and a
+`self_only` sacrifice together (Mind Stone pays exactly that shape), and
+`draw` is an op. `validate_token_references` makes a missing Clue a load-time
+failure rather than a silent no-op.
 
 What is worth pinning, then, is not that a token appears but that it is the
 *right* token, because every way of getting it wrong is invisible on screen:

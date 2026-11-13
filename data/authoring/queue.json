@@ -37126,7 +37126,7 @@
       "name": "Bygone Bishop",
       "reason": "",
       "scryfall_id": "cf879fc7-9f84-40a7-a7be-9cc98a720af5",
-      "source": "",
+      "source": "agent",
       "status": "done",
       "wanted": false
     },
@@ -85292,12 +85292,12 @@
     },
     "Erdwal Illuminator": {
       "edhrec_rank": 5642,
-      "gate": "template",
+      "gate": null,
       "name": "Erdwal Illuminator",
-      "reason": "no template for: Whenever you investigate for the first time each turn, investigate an additional time",
+      "reason": "",
       "scryfall_id": "5c39fa19-ca75-49f4-8e1e-8b59bc9b664a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Erdwal Ripper": {

@@ -308,6 +308,19 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: discard would pay at all, and a connive whose discard an opponent's
     #: shield stopped would not pay -- and neither event names the creature.
     "connives": EventType.CONNIVED,
+    #: "Whenever you investigate for the first time each turn, investigate an
+    #: additional time." -- Erdwal Illuminator. Once per investigation
+    #: (701.16), fired by `ops_counters.op_investigate` after its Clue is
+    #: created, so "investigate twice" fires twice. `nth` is the
+    #: investigation's ordinal for its player this turn, counted by the ledger
+    #: whether or not anything listened, so investigating before the
+    #: Illuminator arrived leaves no first time for it.
+    #:
+    #: The subject is a **player** -- the investigator -- so it is absent from
+    #: `OBJECT_SUBJECT_TRIGGERS` and `_actor` reads `event.player`.
+    #: `token_created` over Clues is the near miss: "create a Clue token" is
+    #: not investigating, and a doubled Clue is still one investigation.
+    "investigates": EventType.INVESTIGATED,
     #: "Whenever you give a gift, draw a card." -- Jolly Gerbils. Once per gift
     #: given (702.174), fired by `stack` as an instant or sorcery with a
     #: promised gift resolves, or as a permanent's gift trigger resolves
@@ -2264,10 +2277,13 @@ def _actor(
     # who **flipped**, and the event's `source` is the card whose effect made
     # the flip -- on a flip one player's card makes another player take, a
     # subject read off it would be the wrong seat.
+    # `investigates` is listed for `searches_library`'s reason: the actor is
+    # the player who **investigated**, and on Fateful Absence that is the
+    # destroyed creature's controller, not the controller of the spell.
     # `put_into_graveyard` is listed for `discard`'s reason: the clause asks
     # whose **graveyard**, which is the owner's (400.3) and is on the event,
     # while the subject's controller is whatever `reset_permanent_state` left.
-    if dsl_event in ("land_played", "spell_cast", "spell_copied", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target", "becomes_monarch", "ability_activated", "damage_prevented", "creatures_attack_player", "creatures_deal_combat_damage", "searches_library", "wins_coin_flip", "gives_gift", "put_into_graveyard"):
+    if dsl_event in ("land_played", "spell_cast", "spell_copied", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target", "becomes_monarch", "ability_activated", "damage_prevented", "creatures_attack_player", "creatures_deal_combat_damage", "searches_library", "wins_coin_flip", "gives_gift", "put_into_graveyard", "investigates"):
         return event.player
     # `deals_damage_to_player` is here beside the combat-only trigger it
     # generalises, and for the same reason: `event.player` on a damage event is

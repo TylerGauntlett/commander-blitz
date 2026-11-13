@@ -3600,10 +3600,11 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             "counter_placed",
             "expend",
             "put_into_graveyard",
+            "investigates",
         ):
             # Same reasoning as `counter` and `mana_ability` above: only `draw`,
-            # `spell_cast`, `you_gain_life`, `life_lost` and `attacks` carry an
-            # ordinal, and `counter_placed` and `expend` the count before the
+            # `spell_cast`, `you_gain_life`, `life_lost`, `attacks` and
+            # `investigates` carry an ordinal, and `counter_placed` and `expend` the count before the
             # placement or payment, so
             # accepting it elsewhere would look like "your second card each
             # turn" and be a restriction that never matches -- an ability that
@@ -3612,7 +3613,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 f"{where}: 'nth' only means anything on a draw, spell_cast or "
                 f"you_gain_life trigger, or a life_lost trigger, or an attacks "
                 f"trigger, or a counter_placed or expend trigger, or a "
-                f"put_into_graveyard trigger, not on "
+                f"put_into_graveyard or investigates trigger, not on "
                 f"{model.trigger.event!r}"
             )
         if model.trigger.event == "expend":

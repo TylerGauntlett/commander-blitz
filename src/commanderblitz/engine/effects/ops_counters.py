@@ -10,6 +10,7 @@ from ..characteristics import chars
 from ..effects.ops_stack import put_copy_on_stack
 from ..enums import Zone
 from ..errors import DslError
+from ..events import EventType
 from ..player_statics import player_cant_cast_while_resolving
 from ..primitives import (
     add_counters,
@@ -24,6 +25,7 @@ from ..primitives import (
     untap_permanent,
 )
 from ..structs import StackItem
+from ..triggers import fire
 from ..zones import exile, move_object
 from .board_helpers import (
     _players,
@@ -219,6 +221,40 @@ def op_incubate(ctx: EffectContext, spec: Mapping[str, Any]) -> None:
     )
     if name := spec.get("as"):
         ctx.bindings[str(name)] = list(made)
+
+
+#: The token investigate creates (701.16a): a colorless Clue artifact with
+#: "{2}, Sacrifice this token: Draw a card."
+CLUE_TOKEN = "clue_token"
+
+
+@register("investigate")
+def op_investigate(ctx: EffectContext, spec: Mapping[str, Any]) -> None:
+    """ "Investigate." -- rule 701.16a: *Create a Clue token.*
+
+    An op rather than `create_token` naming the Clue, because investigating is
+    an event a card can hear and creating a Clue is not: "whenever you
+    investigate for the first time each turn" (Erdwal Illuminator) counts
+    investigations, and a Clue made by "create a Clue token" (Overencumbered)
+    is not one, while one investigate whose Clue a token doubler doubles is
+    still one. So each investigation creates its Clue through
+    `primitives.create_token` -- every token replacement applies to it as to
+    any other -- and then fires one `EventType.INVESTIGATED`, which carries the
+    investigation's ordinal for its player this turn (`TurnLedger.investigations`).
+
+    ``amount`` is "investigate N times", any value expression, read once and
+    below zero as zero (107.1b); each of the N is its own investigation and
+    its own event, so "investigate twice" is two. ``player`` is who
+    investigates -- "its controller investigates" (Fateful Absence) -- and
+    every seat it names investigates, each creating its own Clue.
+    """
+    amount = max(0, evaluate_value(ctx, spec.get("amount", 1)))
+    for pid in _players(ctx, spec.get("player", "you")):
+        for _ in range(amount):
+            create_token(ctx.state, CLUE_TOKEN, pid, source=ctx.source_oid)
+            # Fired, not emitted: "whenever you investigate" listens for it.
+            # After the Clue, so the investigation is finished when it is heard.
+            fire(ctx.state, EventType.INVESTIGATED, player=pid, source=ctx.source_oid)
 
 
 @register("distribute_counters")

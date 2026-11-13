@@ -43,6 +43,7 @@ HELPFUL_TO_PLAYER = frozenset(
         "draw",
         "gain_life",
         "create_token",
+        "investigate",
         "search_library",
         "add_counters",
         "add_energy",
@@ -115,7 +116,7 @@ def intent_of(effects: Iterable[Mapping[str, Any]]) -> str | None:
 
 
 def is_token_maker(card: CardDef) -> bool:
-    return "create_token" in card_ops(card)
+    return bool({"create_token", "investigate"} & card_ops(card))
 
 
 # ----------------------------------------------------------------------

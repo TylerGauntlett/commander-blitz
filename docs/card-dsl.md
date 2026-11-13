@@ -7701,7 +7701,7 @@ The cookbook's subsystem chapters, one line each:
 - [Cipher — the third direction an exile link can point](card-dsl-cookbook.md#cipher--the-third-direction-an-exile-link-can-point)
 - [Haunt — the exile link pointing the other way](card-dsl-cookbook.md#haunt--the-exile-link-pointing-the-other-way)
 - [Hideaway — "that one, from there"](card-dsl-cookbook.md#hideaway--that-one-from-there)
-- [Keyword actions that are only a token](card-dsl-cookbook.md#keyword-actions-that-are-only-a-token)
+- [Investigate — the `investigate` op and the `investigates` trigger](card-dsl-cookbook.md#investigate--the-investigate-op-and-the-investigates-trigger)
 - [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on)
 - [The inert keywords — partner, and choose a Background](card-dsl-cookbook.md#the-inert-keywords--partner-and-choose-a-background)
 - [Landwalk, and global attack prohibitions](card-dsl-cookbook.md#landwalk-and-global-attack-prohibitions)

@@ -510,6 +510,13 @@ export function describeEvent(
     case "connived":
       return `${card ?? "A creature"} connives`;
     /*
+     * A player investigated (701.16). The Clue has its own `token_created`
+     * line; this one says it was an investigation, which is what "whenever
+     * you investigate" triggers off -- a Clue made any other way gets none.
+     */
+    case "investigated":
+      return `${who} ${v("investigate", "investigates")}`;
+    /*
      * A library search (701.19) -- a tutor, a fetchland, landcycling.
      *
      * Nothing else in the log says it: the shuffle that ends a search emits

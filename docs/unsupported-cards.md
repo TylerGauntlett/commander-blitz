@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**381 cards** blocked by **330** capabilities.
+**380 cards** blocked by **329** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -205,7 +205,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [harmonize](#harmonize) | 1 | 7442 | cost |
 | [human-knight-2-2-w-artifact-entered-buff](#human-knight-2-2-w-artifact-entered-buff) | 1 | 6715 | token |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
-| [investigate](#investigate) | 1 | 5642 | trigger_event |
 | [jump-start](#jump-start) | 1 | 14777 | op |
 | [karox-bladewing](#karox-bladewing) | 1 | 8889 | token |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
@@ -3548,20 +3547,6 @@ Blocks **1** card.
 
 - **Ragavan, Nimble Pilferer** (rank 271) — `ragavan_nimble_pilferer`
   - Whenever Ragavan deals combat damage to a player, create a Treasure token and exile the top card of that player's library. Until end of turn, you may cast that card.
-
-</details>
-
-## investigate
-
-Blocks **1** card.
-
-- **(trigger_event)** a trigger event fired when a player investigates (701.16: the investigate action itself, once per investigate instruction), with max_per_turn: 1 for 'the first time each turn', whose effect investigates again (create clue_token for you)
-  <br>Why the existing vocabulary won't do: trigger_events has no investigate event and there is no investigate op; token_created filtered to Clue tokens is not the same, since creating a Clue by any other means (e.g. a 'create a Clue token' effect or a token doubler's extra Clue) is not investigating, and one investigate doubled by a replacement must still count once
-
-<details><summary>Cards waiting on this</summary>
-
-- **Erdwal Illuminator** (rank 5642) — `erdwal_illuminator`
-  - Whenever you investigate for the first time each turn, investigate an additional time.
 
 </details>
 

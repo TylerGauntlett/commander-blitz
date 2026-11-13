@@ -291,7 +291,7 @@ This is the long tail, and where the build order comes from.
 | Infect † | shipped | `Keyword`, read by `damage_permanent` and `damage_player` -- wither's counters, plus poison to players | `infect` |
 | Inspired | free | `becomes_untapped` trigger — the event existed; the untap *step* now says which permanents it untapped | — |
 | Intimidate † | shipped | `Keyword`, comparing the two creatures' **derived** colors in `combat.can_block`, with an artifact escape | `intimidate` |
-| Investigate | free | `create_token` naming a Clue — a token whose own ability is `{2}`, sacrifice self, `draw`. Bygone Bishop is the witness | — |
+| Investigate | shipped | the `investigate` op: one Clue token (`{2}`, sacrifice self, `draw`) and one `investigates` event per investigation, with the turn's ordinal for `nth` — Erdwal Illuminator is the witness | `investigate` |
 | Jump-start | free | `graveyard_cost` repeating the printed mana plus `discard: 1`; the exile rider is the default | — |
 | Kicker | shipped | card-level field, and the `kicked` condition, readable on the object after resolution | `kicker` |
 | Landwalk — plainswalk | shipped | `Keyword`, read by `combat.can_block` against the defender's board | `plainswalk` |

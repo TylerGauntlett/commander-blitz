@@ -2773,6 +2773,9 @@
       "graveyard"
     ]
   },
+  "bygone_bishop": {
+    "zone": "battlefield"
+  },
   "cabal_coffers": {
     "zone": "battlefield"
   },
@@ -6132,6 +6135,10 @@
     ]
   },
   "era_of_innovation": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "erdwal_illuminator": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

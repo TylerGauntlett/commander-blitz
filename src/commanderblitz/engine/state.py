@@ -1079,6 +1079,13 @@ class GameState:
                 # `you_gain_life` trigger with `nth` reads it at queue time.
                 ledger.life_gains[pid] = ledger.life_gains.get(pid, 0) + 1
                 data["nth"] = ledger.life_gains[pid]
+        elif event.type == EventType.INVESTIGATED:
+            # "Whenever you investigate for the first time each turn." The
+            # ordinal goes on the event, as a life gain's does above, so an
+            # `investigates` trigger with `nth` reads it at queue time.
+            if pid is not None:
+                ledger.investigations[pid] = ledger.investigations.get(pid, 0) + 1
+                data["nth"] = ledger.investigations[pid]
         elif event.type == EventType.DISCARD:
             # "If you discarded a card this turn" (Typhoid Mary, Fractured).
             # Counted per discarding seat off the event, which both the plain
