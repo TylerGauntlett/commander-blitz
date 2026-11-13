@@ -8058,6 +8058,38 @@ no stack, the substitution's rulings.
 - The flag is refused without a non-empty `and_create` and on any effect but
   `replace_token_creation`.
 
+**"You may instead choose a creature … and create that many tokens that are
+copies of that creature."** The fourth mode is a **copy**, `copy_instead`, a
+selector over the battlefield naming what may be chosen:
+
+```jsonc
+// Esix, Fractal Bloom's replacement, without its once-a-turn window
+{ "kind": "static",
+  "effect": "replace_token_creation",
+  "copy_instead": { "types": ["Creature"], "exclude_self": true } }
+```
+
+**The static's controller is asked just before the creation, and may choose
+nothing.** Chosen, every token the event would make becomes a copy of that
+creature, the count kept — its copiable values as `copy_permanent` reads them
+(707.2), so a copy of an X/X token keeps its X. The selector is resolved for the
+static's own source: `exclude_self` is "other than Esix", and with no
+`controller` any player's creature may be chosen. An opponent's creation, an
+empty pool, or a creation of no tokens asks nothing.
+
+- **It goes last.** Every other replacement applies first and the whole result
+  becomes copies: one Treasure under a Doubling Season is two copies in either
+  battlefield order, and a Stridehangar's Thopter is turned into a copy too.
+- The creating effect's `tapped`, `attacking` and `as` still apply to the
+  copies; its `overrides` (an X/X size, embalm's exception) do not, since they
+  described the token that was never made.
+- The question is asked by the ops that create tokens (`create_token`,
+  `copy_permanent`, `investigate`, `incubate`, `amass`, `empower`); a token a
+  `replace_dies` `and_create` rider makes inside a zone change is created as
+  printed, because nothing can ask there.
+- Refused beside another mode, beside `affects_token`, empty, or naming a zone
+  other than the battlefield.
+
 `affects_token`, not `affects`: the token being asked about **does not exist
 yet**, so there is no permanent for a static filter to find and no board state to
 read. It takes the printed-face keys (`types`, `not_types`, `subtypes`,

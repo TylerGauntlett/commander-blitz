@@ -1139,6 +1139,16 @@ class AbilityModel(BaseModel):
     #: id could be listed, and listing one would convert every token into it.
     #: Refused below 2 for the reason `loss_multiplier` is.
     token_multiplier: int | None = None
+    #: ``replace_token_creation``: the fourth mode -- "you may **instead choose
+    #: a creature other than Esix** and create that many tokens that are
+    #: copies of that creature" (Esix, Fractal Bloom). A selector over the
+    #: battlefield naming what may be chosen, resolved for the static's source
+    #: (so `exclude_self` is "other than Esix"). Always optional: the static's
+    #: controller is asked just before the creation and may choose nothing.
+    #: Chosen, every token the event would make -- after every other
+    #: replacement -- becomes a copy of that creature, the count kept. See
+    #: `primitives._token_creation_plan`.
+    copy_instead: dict[str, Any] | None = None
     #: `replace_counters`: how many counters are put on instead. "Twice that
     #: many" is ``counter_multiplier: 2``; "that many plus one" is
     #: ``counter_addend: 1``. A card uses exactly one, and the addend is why

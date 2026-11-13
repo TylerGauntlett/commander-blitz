@@ -1528,6 +1528,14 @@ def _token_creation_plan(
       same `token_created` batch, and the later replacements in the pass see
       it.
 
+    A fourth mode, ``copy_instead`` (Esix, Fractal Bloom), is not read here:
+    it asks a question, so the effect layer asks it before the call and
+    `create_token` applies the answer to this plan's result, **after** every
+    replacement below. 616.1 would let the controller order it; last is the
+    order that copies every token the others made -- a doubler commutes with
+    it, and an addition or a substitution applied first is turned into copies
+    too rather than left beside them.
+
     **What this is not.** It is not rule 616 and it is not a general replacement
     system.  There is no event object, nothing else in the engine can be
     replaced, and nothing outside `create_token` consults these statics.
@@ -1661,6 +1669,7 @@ def create_token(
     overrides: dict[str, Any] | None = None,
     source: int | None = None,
     enters_with: Mapping[str, int] | None = None,
+    copies: Sequence[tuple[str, Mapping[str, Any] | None]] = (),
 ) -> list[int]:
     """Put ``count`` copies of a token onto the battlefield under ``controller``.
 
@@ -1697,10 +1706,29 @@ def create_token(
     `move_object` so they are one placement with any other "enters with"
     (122.6) and every counter replacement that applies to the token as it
     arrives sees them -- the token is never on the battlefield without them.
+
+    ``copies`` is the answer to a ``copy_instead`` static, asked by the effect
+    layer before this call (`effects.tokens.ask_token_copies`): Esix, Fractal
+    Bloom's "you may instead choose a creature ... and create that many tokens
+    that are copies of that creature". Each entry is the chosen creature's
+    copiable values -- its ``def_id`` and the ``copy_overrides`` its own
+    creating effect set (707.2) -- and replaces the **whole** event as the
+    other replacements left it: every token in the plan becomes one copy, the
+    count kept. It goes after every other replacement (see
+    `_token_creation_plan` on 616.1), which is the order that makes the most
+    copies. A copy is a substitution for ``overrides``' purposes: the creating
+    effect's exceptions described a token that was never made.
     """
     plan = _token_creation_plan(state, def_id, controller, count)
     if plan is None:
         plan = [(def_id, count, False)]
+    copy_overrides: Mapping[str, Any] | None = None
+    for copied_id, copied_overrides in copies:
+        total = sum(max(0, n) for _, n, _ in plan)
+        if total <= 0:
+            break
+        plan = [(copied_id, total, True)]
+        copy_overrides = copied_overrides
     # "Whenever you create **one or more** creature tokens" (Staff of the
     # Storyteller) fires once per creation, and every token this call makes --
     # doubled or substituted -- is that one creation (603.2c). Read once,
@@ -1718,7 +1746,9 @@ def create_token(
                 controller=controller,
                 is_token=True,
             )
-            if overrides and not substituted:
+            if copy_overrides:
+                obj.copy_overrides = dict(copy_overrides)
+            elif overrides and not substituted:
                 obj.copy_overrides = dict(overrides)
             # Before the move, so the token's own enters-triggers already see
             # which object created it.

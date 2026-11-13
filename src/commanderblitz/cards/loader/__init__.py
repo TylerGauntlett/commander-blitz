@@ -5428,6 +5428,25 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"made with 'affects_token', not 'affects' (which picks out "
                 f"permanents already on the battlefield)"
             )
+        if model.copy_instead is not None:
+            # Esix's "one or more tokens" names no token, and a filtered copy
+            # replacement is a sentence no printed card takes: which tokens
+            # "that many" would count beside the unmatched ones is unsaid.
+            if model.affects_token is not None:
+                raise DslError(
+                    f"{where}: copy_instead replaces the whole creation, so it "
+                    f"takes no 'affects_token'"
+                )
+            if not isinstance(model.copy_instead, Mapping) or not model.copy_instead:
+                raise DslError(
+                    f"{where}.copy_instead: a selector naming the creature that may "
+                    f"be chosen, e.g. {{\"types\": [\"Creature\"], \"exclude_self\": true}}"
+                )
+            if model.copy_instead.get("zone", "battlefield") != "battlefield":
+                raise DslError(
+                    f"{where}.copy_instead: the creature copied is on the battlefield"
+                )
+            validate_selector(model.copy_instead, f"{where}.copy_instead")
         if model.affects_token is not None:
             unknown = set(model.affects_token) - TOKEN_FILTER_KEYS
             if unknown:
@@ -5443,6 +5462,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 ("create_instead", bool(model.create_instead)),
                 ("token_multiplier", model.token_multiplier is not None),
                 ("and_create", bool(model.and_create)),
+                ("copy_instead", model.copy_instead is not None),
             )
             if present
         ]
@@ -5450,7 +5470,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             raise DslError(
                 f"{where}: replace_token_creation takes one of 'create_instead' "
                 f"(which tokens), 'token_multiplier' (how many of those tokens) or "
-                f"'and_create' (those tokens plus these), not both {modes[0]!r} and {modes[1]!r}"
+                f"'and_create' (those tokens plus these) or 'copy_instead' (copies of "
+                f"a chosen creature), not both {modes[0]!r} and {modes[1]!r}"
             )
         if model.token_multiplier is not None:
             # 1 replaces a creation with itself, and 0 is "no tokens are
@@ -5466,7 +5487,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # one of each", "that many are created instead" and "those tokens plus
         # an additional …" all name what is made; an empty list would silently *delete* every token its filter
         # matched, which is a different and much stronger card.
-        elif not model.create_instead and not model.and_create:
+        elif not model.create_instead and not model.and_create and model.copy_instead is None:
             raise DslError(
                 f"{where}: replace_token_creation needs 'create_instead' -- the "
                 f"token ids created instead, one of each per token replaced -- "
@@ -5477,9 +5498,10 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         model.affects_token is not None
         or model.create_instead
         or model.token_multiplier is not None
+        or model.copy_instead is not None
     ):
         raise DslError(
-            f"{where}: 'affects_token'/'create_instead'/'token_multiplier' only mean "
+            f"{where}: 'affects_token'/'create_instead'/'token_multiplier'/'copy_instead' only mean "
             f"anything on a replace_token_creation static, not on {model.effect!r}"
         )
 
@@ -6821,6 +6843,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["create_instead"] = list(model.create_instead)
     if model.token_multiplier is not None:
         static["token_multiplier"] = model.token_multiplier
+    if model.copy_instead is not None:
+        static["copy_instead"] = dict(model.copy_instead)
     # `replace_counters`' three. Copied explicitly for the whitelist reason
     # spelled out below: a field the schema accepts and this loop forgets
     # loads, compiles and applies with the clause absent -- here that would be

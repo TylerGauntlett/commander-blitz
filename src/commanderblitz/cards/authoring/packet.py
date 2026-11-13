@@ -1081,6 +1081,12 @@ def reference() -> dict:
             " one. \"Creature tokens\""
             " is an `affects_token` filter; a sentence naming no player (\"if one"
             " or more tokens would be created\") adds `affects_player: \"any\"`.",
+            "\"You may instead choose a creature other than <this> and create"
+            " that many tokens that are copies of that creature\" (Esix, Fractal"
+            " Bloom) is a `replace_token_creation` static with `copy_instead`, a"
+            " battlefield selector naming what may be chosen (`{\"types\":"
+            " [\"Creature\"], \"exclude_self\": true}`); it is always optional"
+            " and takes no `affects_token` and no other mode.",
             "\"Until end of turn, if one or more tokens would be created under"
             " your control, twice that many of those tokens are created"
             " instead\" on a spell or an activated/loyalty ability is the"

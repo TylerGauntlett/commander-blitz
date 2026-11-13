@@ -48,6 +48,7 @@ from .selectors import (
     pick_from_pool,
     resolve_pool,
 )
+from .tokens import ask_token_copies
 from .values import evaluate_value
 
 
@@ -798,6 +799,7 @@ def op_create_token(ctx: EffectContext, spec: Mapping[str, Any]):
     attacking = _attacking_player(ctx, spec, _attack_target)
     made: list[int] = []
     for pid in _players(ctx, spec.get("controller", "you")):
+        copies = yield from ask_token_copies(ctx, pid, amount)
         made.extend(
             create_token(
                 ctx.state,
@@ -808,6 +810,7 @@ def op_create_token(ctx: EffectContext, spec: Mapping[str, Any]):
                 attacking=attacking,
                 overrides=dict(size) if size else None,
                 source=ctx.source_oid,
+                copies=copies,
             )
         )
     if host is not None:
@@ -918,6 +921,7 @@ def op_copy_permanent(ctx: EffectContext, spec: Mapping[str, Any]):
                 set(inherited) | set((exception or {}).get("add_keywords") or ())
             )
         for pid in controllers:
+            copies = yield from ask_token_copies(ctx, pid, amount)
             made.extend(
                 create_token(
                     ctx.state,
@@ -928,6 +932,7 @@ def op_copy_permanent(ctx: EffectContext, spec: Mapping[str, Any]):
                     attacking=attacking,
                     overrides=dict(overrides) if overrides else None,
                     source=ctx.source_oid,
+                    copies=copies,
                 )
             )
     if made and attacking is not None:

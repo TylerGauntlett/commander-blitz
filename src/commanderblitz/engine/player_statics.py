@@ -2883,7 +2883,27 @@ def token_creation_replacements(state: GameState, pid: int) -> list[Mapping[str,
     return [
         static
         for obj, static in _active_player_statics(state, "replace_token_creation")
-        if _reaches_player(obj, static, pid)
+        if _reaches_player(obj, static, pid) and "copy_instead" not in static
+    ]
+
+
+def token_copy_replacements(
+    state: GameState, pid: int
+) -> list[tuple[GameObject, Mapping[str, Any]]]:
+    """The active ``copy_instead`` ``replace_token_creation`` statics reaching
+    ``pid``, each beside its source, in battlefield order.
+
+    Esix, Fractal Bloom. Kept apart from `token_creation_replacements` because
+    this mode asks a question -- "you may instead choose a creature" -- and
+    `primitives.create_token` cannot stop for one. The effect layer asks it
+    just before the creation (`effects.tokens.ask_token_copies`) and hands the
+    answer down; the source is returned because the choice is its
+    controller's and "other than Esix" is resolved against it.
+    """
+    return [
+        (obj, static)
+        for obj, static in _active_player_statics(state, "replace_token_creation")
+        if _reaches_player(obj, static, pid) and "copy_instead" in static
     ]
 
 
