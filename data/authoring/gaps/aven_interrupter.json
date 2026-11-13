@@ -1,0 +1,14 @@
+{
+  "card_id": "aven_interrupter",
+  "name": "Aven Interrupter",
+  "oracle_text": "Flash\nFlying\nWhen this creature enters, exile target spell. It becomes plotted. (Its owner may cast it as a sorcery on a later turn without paying its mana cost.)\nSpells your opponents cast from graveyards or from exile cost {2} more to cast.",
+  "blocked_sentences": ["When this creature enters, exile target spell. It becomes plotted"],
+  "needs": [{
+    "capability": "plot",
+    "kind": "op",
+    "what": "an op that removes a target spell from the stack straight to exile without it resolving or being countered (so it works on uncounterable spells), and leaves its owner the plotted permission: castable as a sorcery on a later turn without paying its mana cost",
+    "why_existing_wont_do": "grant_plot only marks a spell to be exiled and plotted when it resolves (and stack.py restricts that rider to spells cast from hand), so the spell would still resolve; counter with exiles counters rather than exiles, fails against uncounterable spells and leaves no plot permission; exile targets permanents/cards in zones, not stack items"
+  }],
+  "closest_existing": ["grant_plot", "counter", "exile_spell_on_resolution"],
+  "confidence": "high"
+}
