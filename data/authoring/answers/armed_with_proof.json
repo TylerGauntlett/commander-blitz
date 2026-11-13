@@ -1,0 +1,68 @@
+{
+  "card": {
+    "id": "armed_with_proof",
+    "name": "Armed with Proof",
+    "oracle_text": "When this enchantment enters, investigate twice. (To investigate, create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")\nClues you control are Equipment in addition to their other types and have \"Equipped creature gets +2/+0\" and equip {2}.",
+    "mana_cost": "{2}{W}",
+    "types": ["Enchantment"],
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this enchantment enters, investigate twice",
+        "trigger": {"event": "self_enters", "source": "self"},
+        "effects": [
+          {"op": "create_token", "token": "clue_token", "controller": "you", "amount": {"const": 2}}
+        ]
+      },
+      {
+        "kind": "static",
+        "effect": "add_subtype",
+        "affects": {"controller": "you", "subtypes": ["Clue"]},
+        "subtypes": ["Equipment"],
+        "text": "Clues you control are Equipment in addition to their other types and have \"Equipped creature gets +2/+0\" and equip {2}"
+      },
+      {
+        "kind": "static",
+        "effect": "grant_ability",
+        "ability": 0,
+        "affects": {"controller": "you", "subtypes": ["Clue"]},
+        "text": "Clues you control are Equipment in addition to their other types and have \"Equipped creature gets +2/+0\" and equip {2}"
+      },
+      {
+        "kind": "static",
+        "effect": "grant_ability",
+        "ability": 1,
+        "affects": {"controller": "you", "subtypes": ["Clue"]},
+        "text": "Clues you control are Equipment in addition to their other types and have \"Equipped creature gets +2/+0\" and equip {2}"
+      }
+    ],
+    "grantable_abilities": [
+      {
+        "kind": "static",
+        "effect": "buff",
+        "affects": {"attached": true},
+        "power": {"const": 2},
+        "toughness": {"const": 0},
+        "text": "Equipped creature gets +2/+0"
+      },
+      {
+        "kind": "activated",
+        "text": "Equip {2}",
+        "cost": {"mana": "{2}"},
+        "is_equip": true,
+        "sorcery_speed_only": true,
+        "targets": [
+          {"id": "equip_target", "kind": "permanent", "count": 1, "selector": {"controller": "you", "types": ["Creature"], "zone": "battlefield"}}
+        ],
+        "effects": [{"op": "attach", "objects": {"target": "equip_target"}}]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "tokens": {"id": "clue_token", "count": 2},
+    "battlefield_count": 35
+  }
+}
