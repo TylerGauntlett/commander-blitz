@@ -8123,6 +8123,15 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "gluttonous_hellkite": {
+    "battlefield_count": 31,
+    "counters": {
+      "amount": 8,
+      "kind": "+1/+1"
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "battlefield"
+  },
   "gluttonous_zombie": {
     "zone": "battlefield"
   },
@@ -9550,6 +9559,22 @@
     "zone": "battlefield"
   },
   "hydra_troopers": {
+    "zone": "battlefield"
+  },
+  "hydroid_krasis": {
+    "counters": {
+      "amount": 20,
+      "kind": "+1/+1"
+    },
+    "hand_size": {
+      "0": 11
+    },
+    "library_size": {
+      "0": 30
+    },
+    "life": {
+      "0": 50
+    },
     "zone": "battlefield"
   },
   "hyena_pack": {

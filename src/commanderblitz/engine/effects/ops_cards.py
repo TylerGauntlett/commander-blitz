@@ -2153,6 +2153,7 @@ def _cast_paying_mana_cost(ctx: EffectContext, pid: int, oid: int, *, exiles: bo
         spell_oid=oid,
         sid=item.sid,
         card=card.id,
+        x=item.x,
     )
     return True
 

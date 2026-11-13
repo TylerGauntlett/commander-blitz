@@ -716,7 +716,7 @@ VALUES: dict[str, Entry] = {
     "times": ("a * b.", None),
     "toughness_had": ("The toughness the dying creature had.", None),
     "toughness_of": ("An object's toughness.", None),
-    "x": ("The X paid when this was cast or activated.", None),
+    "x": ("The X paid when this was cast or activated; on a `spell_cast` trigger, the X the cast spell was cast with.", None),
 }
 
 CONDITIONS: dict[str, Entry] = {

@@ -111722,12 +111722,12 @@
     },
     "Gluttonous Hellkite": {
       "edhrec_rank": 10097,
-      "gate": "template",
+      "gate": null,
       "name": "Gluttonous Hellkite",
-      "reason": "no template for: When you cast this spell, each player sacrifices X creatures. This creature enters with tw",
+      "reason": "",
       "scryfall_id": "63f6e8da-31ea-4edf-89a9-f2b7f2234d7e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gluttonous Slime": {
@@ -132292,12 +132292,12 @@
     },
     "Hydroid Krasis": {
       "edhrec_rank": 1521,
-      "gate": "template",
+      "gate": null,
       "name": "Hydroid Krasis",
-      "reason": "no template for: When you cast this spell, you gain half X life and draw half X cards. Round down each time",
+      "reason": "",
       "scryfall_id": "52e5d3fe-46bc-4014-9819-5aa7c7e64838",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hydrolash": {

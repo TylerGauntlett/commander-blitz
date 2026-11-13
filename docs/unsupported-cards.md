@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**384 cards** blocked by **332** capabilities.
+**381 cards** blocked by **330** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -27,7 +27,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
 | [basic-land-type-mana](#basic-land-type-mana) | 3 | 73 | engine |
-| [cast-trigger-x](#cast-trigger-x) | 3 | 1521 | engine, value |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 6346 | op |
 | [milled-this-turn](#milled-this-turn) | 3 | 4283 | selector |
 | [omen](#omen) | 3 | 3355 | cost, engine |
@@ -322,7 +321,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
 | [timed-spell-type-cast-lock](#timed-spell-type-cast-lock) | 1 | 2008 | op |
 | [times-attacked-this-turn](#times-attacked-this-turn) | 1 | 988 | value |
-| [tiny-token](#tiny-token) | 1 | 12436 | token |
 | [token-copy-attached](#token-copy-attached) | 1 | 11547 | op |
 | [token-creation-copy-replacement](#token-creation-copy-replacement) | 1 | 5567 | replacement |
 | [total-mana-value-selection](#total-mana-value-selection) | 1 | 4244 | op |
@@ -825,28 +823,6 @@ Blocks **3** cards.
 - **Omo, Queen of Vesuva** (rank 4942) — `omo_queen_of_vesuva`
   - Each land with an everything counter on it is every land type in addition to its other types.
   - Each nonland creature with an everything counter on it is every creature type.
-
-</details>
-
-## cast-trigger-x
-
-Blocks **3** cards.
-
-- **(value)** a value (or a binding on the spell_cast event) that reads the X chosen for the spell that fired a spell_cast trigger -- for a `source: self` cast trigger, the X of this spell while it is still on the stack -- so the trigger can say 'each player sacrifices X creatures' as a for_each_player sacrifice with `count` equal to that X
-  <br>Why the existing vocabulary won't do: The value `x` evaluates `ctx.x`, which for a triggered ability comes from `event_bindings` reading `obj.cast_x`; `cast_x` is only written in `stack.py` when the spell resolves (`obj.cast_x = item.x`), and `Game._cast` fires SPELL_CAST without an `x` in its payload (`x` in EVENT_BINDING_KEYS is carried only by `cycle`). So a cast trigger always reads X as 0 and the edict would sacrifice nothing. No value key reads a stack item's X by `sid`. The rest is expressible: `for_each_player` over each player with `sacrifice` (`as` binding) then `spell_enters_with_counters` adding `times [2, count(binding)]` +1/+1 counters to the spell named by the trigger's `sid` accumulates across iterations.
-- **(engine)** a cast trigger (`spell_cast`, `source: self`, `active_zones: ["stack"]`) whose effects can read the X the spell was cast with via `{"x": true}` (then `half`, rounded down) -- the SPELL_CAST event fired by `Game._cast` must carry `x=item.x` and `x` must be in `triggers.EVENT_BINDING_KEYS` (or `event_bindings` must read the stack item's X) so it overrides the object's `cast_x`
-  <br>Why the existing vocabulary won't do: `event_bindings` sets the trigger's `x` from `obj.cast_x`, which `stack.resolve` writes only when the spell resolves; the SPELL_CAST payload in `Game._cast` has no `x`, so a cast trigger reads X as 0 and gains/draws nothing. `half` of (`mana_value_of` self minus 2) would read mana value rather than the printed X and is a stand-in, not the referent
-- **(value)** a value reading the X chosen for the triggering spell (the spell bound as `subject` on a spell_cast trigger), e.g. the SPELL_CAST event payload carrying `x` so `event_bindings` overrides the source's `cast_x` and `{"x": true}` means the cast spell's X
-  <br>Why the existing vocabulary won't do: `{"x": true}` in a triggered ability reads the `x` binding, which `triggers.event_bindings` takes from the trigger source's own `cast_x` (Nev's, 0); the SPELL_CAST payload carries no `x` (only the cycle event does via EVENT_BINDING_KEYS), and `mana_value_of` the subject reads mana value, not X
-
-<details><summary>Cards waiting on this</summary>
-
-- **Hydroid Krasis** (rank 1521) — `hydroid_krasis`
-  - When you cast this spell, you gain half X life and draw half X cards. Round down each time.
-- **Nev, the Practical Dean** (rank 9566) — `nev_the_practical_dean`
-  - Whenever you cast your first spell with {X} in its mana cost each turn, put X +1/+1 counters on Nev.
-- **Gluttonous Hellkite** (rank 10097) — `gluttonous_hellkite`
-  - When you cast this spell, each player sacrifices X creatures. This creature enters with two +1/+1 counters on it for each creature sacrificed this way.
 
 </details>
 
@@ -5219,20 +5195,6 @@ Blocks **1** card.
 
 - **Moraug, Fury of Akoum** (rank 988) — `moraug_fury_of_akoum`
   - Each creature you control gets +1/+0 for each time it has attacked this turn.
-
-</details>
-
-## tiny-token
-
-Blocks **1** card.
-
-- **(token)** a token named Tiny: a legendary 2/2 green Dog Detective creature token with trample
-  <br>Why the existing vocabulary won't do: token_ids has no legendary token, no token named Tiny and no green Dog Detective; dog_1_1_w is a 1/1 white Dog and wolf_2_2_g / cat_2_2_g are the wrong subtypes, lack trample and are not legendary. The other two lines look expressible (sacrifice cost with is_token + Artifact, add_counters over subtypes Dog; deals_combat_damage_to_player trigger with a Dog filter creating food_token then clue_token)
-
-<details><summary>Cards waiting on this</summary>
-
-- **Sophia, Dogged Detective** (rank 12436) — `sophia_dogged_detective`
-  - When Sophia enters, create Tiny, a legendary 2/2 green Dog Detective creature token with trample.
 
 </details>
 

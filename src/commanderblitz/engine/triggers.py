@@ -2090,10 +2090,15 @@ EVENT_BINDING_KEYS = (
     # `gives_gift`, so a card rewarding the recipient can aim at the seat the
     # gift went to. `event_player` is the giver.
     "gift_to",
-    # The X paid for the ability whose event this is, written over the `x`
-    # `event_bindings` reads off the permanent. Only `cycle` carries it: "When
-    # you cycle this card, create an X/X…" (Shark Typhoon) means the X in the
-    # cycling cost, and a card cycled from hand has no `cast_x` to read.
+    # The X paid for the spell or ability whose event this is, written over the
+    # `x` `event_bindings` reads off the permanent. `cycle` carries the X in the
+    # cycling cost: "When you cycle this card, create an X/X…" (Shark Typhoon),
+    # and a card cycled from hand has no `cast_x` to read. `spell_cast` carries
+    # the X the spell was cast with: "When you cast this spell, you gain half X
+    # life" (Hydroid Krasis) fires while the spell is on the stack, before
+    # `stack.resolve` writes `cast_x`, and "Whenever you cast your first spell
+    # with {X}…, put X +1/+1 counters on Nev" means the cast spell's X, not
+    # Nev's. A spell cast without paying its cost carries 0 (107.3b).
     "x",
 )
 

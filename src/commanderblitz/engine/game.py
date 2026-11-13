@@ -1095,6 +1095,12 @@ class Game:
             # has to name the face that was actually cast.
             card=item.def_id,
             kicked=1 if action.kicked else 0,
+            # The X this spell was cast with (601.2b), so "When you cast this
+            # spell, …X…" (Hydroid Krasis) and "Whenever you cast a spell with
+            # {X}…, …X…" (Nev) read the triggering spell's X. Bound over the
+            # `x` `event_bindings` reads off the trigger source's `cast_x`,
+            # which `stack.resolve` writes only as the spell resolves.
+            x=item.x,
             # "…**if it targets** one or more other permanents you control"
             # (Orvar, the All-Form). The objects this spell chose, so a trigger
             # watching the cast can ask about them and then point an effect at

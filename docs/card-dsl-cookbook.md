@@ -7763,6 +7763,30 @@ the hand and exile. The stack is scanned separately rather than added to that
 loop, because it is not a player zone: it is shared, ordered, and holds the
 spell under its own trigger.
 
+**X on a cast trigger** is the X the spell was cast with. Every cast path puts
+`x` on the `SPELL_CAST` event, and `x` is in `triggers.EVENT_BINDING_KEYS`, so
+`{"x": true}` in a `spell_cast` trigger's effects reads the triggering spell's
+X, over the trigger source's own `cast_x`:
+
+```jsonc
+// Hydroid Krasis: "When you cast this spell, you gain half X life and draw half
+// X cards. Round down each time."
+{ "kind": "triggered", "active_zones": ["stack"],
+  "trigger": { "event": "spell_cast", "source": "self", "controller": "you" },
+  "effects": [
+    { "op": "gain_life", "player": "you",
+      "amount": { "half": { "of": { "x": true }, "round": "down" } } },
+    { "op": "draw", "player": "you",
+      "amount": { "half": { "of": { "x": true }, "round": "down" } } } ] }
+```
+
+The same binding answers a watcher on the battlefield ("put X +1/+1 counters on
+Nev", X the cast spell's), and reads 0 for a spell with no X or one cast without
+paying its mana cost (107.3b). `cast_x` is the near miss: `stack.resolve`
+writes it as the spell resolves, after its cast trigger has already resolved,
+and on a watcher it is the watcher's own X. `mana_value_of` the spell reads its
+mana value, not the X.
+
 **Emerge** is `evoke` with a price that is not fixed: it replaces the printed
 cost *and* is reduced by the mana value of a creature you sacrifice. Because the
 creature decides the number, legality offers **one line per sacrificeable

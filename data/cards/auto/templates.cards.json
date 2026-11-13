@@ -95114,6 +95114,91 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "sacrificed",
+                  "objects": {
+                    "chooser": "owner",
+                    "controller": {
+                      "binding": "each_player"
+                    },
+                    "count": {
+                      "x": true
+                    },
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "sacrifice"
+                },
+                {
+                  "counters": {
+                    "+1/+1": {
+                      "times": [
+                        {
+                          "const": 2
+                        },
+                        {
+                          "count": {
+                            "binding": "sacrificed"
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "op": "spell_enters_with_counters"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When you cast this spell, each player sacrifices X creatures. This creature enters with two +1/+1 counters on it for each creature sacrificed this way.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R"
+      ],
+      "id": "gluttonous_hellkite",
+      "keywords": [
+        "flying",
+        "trample"
+      ],
+      "mana_cost": "{X}{X}{B}{R}{G}",
+      "name": "Gluttonous Hellkite",
+      "oracle_text": "When you cast this spell, each player sacrifices X creatures. This creature enters with two +1/+1 counters on it for each creature sacrificed this way.\nFlying, trample",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -112841,6 +112926,84 @@
         "Villain"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "amount": {
+                "half": {
+                  "of": {
+                    "x": true
+                  },
+                  "round": "down"
+                }
+              },
+              "op": "gain_life",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "half": {
+                  "of": {
+                    "x": true
+                  },
+                  "round": "down"
+                }
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When you cast this spell, you gain half X life and draw half X cards. Round down each time.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "hydroid_krasis",
+      "keywords": [
+        "flying",
+        "trample"
+      ],
+      "mana_cost": "{X}{G}{U}",
+      "name": "Hydroid Krasis",
+      "oracle_text": "When you cast this spell, you gain half X life and draw half X cards. Round down each time.\nFlying, trample\nThis creature enters with X +1/+1 counters on it.",
+      "power": 0,
+      "replacements": [
+        {
+          "amount": {
+            "x": true
+          },
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Jellyfish",
+        "Hydra",
+        "Beast"
+      ],
+      "toughness": 0,
       "types": [
         "Creature"
       ]

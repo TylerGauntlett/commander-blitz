@@ -397,7 +397,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `toughness_had` | The toughness the dying creature had. | [Value expressions](card-dsl.md#value-expressions) |
 | `toughness_of` | An object's toughness. | [Value expressions](card-dsl.md#value-expressions) |
 | `unspent_mana_count` | The unspent mana in a spec's players' mana pools. | ["For each unspent mana you have"](card-dsl.md#for-each-unspent-mana-you-have) |
-| `x` | The X paid when this was cast or activated. | [Value expressions](card-dsl.md#value-expressions) |
+| `x` | The X paid when this was cast or activated; on a `spell_cast` trigger, the X the cast spell was cast with. | [Value expressions](card-dsl.md#value-expressions) |
 
 ## Conditions
 

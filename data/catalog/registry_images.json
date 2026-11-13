@@ -7020,6 +7020,10 @@
     "artist": "Sam Burley",
     "scryfall_id": "3277ad99-5682-4baa-b106-de15721876a6"
   },
+  "gluttonous_hellkite": {
+    "artist": "Josiah \"Jo\" Cameron",
+    "scryfall_id": "63f6e8da-31ea-4edf-89a9-f2b7f2234d7e"
+  },
   "gluttonous_zombie": {
     "artist": "Thomas M. Baxa",
     "scryfall_id": "7741c976-000d-476c-9b53-34ef1ee701e1"
@@ -8420,6 +8424,10 @@
   "hydra_x_x_g": {
     "artist": "Simon Dominic",
     "scryfall_id": "9bbc253b-6557-47bd-b3f3-9bc9ef6275f7"
+  },
+  "hydroid_krasis": {
+    "artist": "Jason Felix",
+    "scryfall_id": "52e5d3fe-46bc-4014-9819-5aa7c7e64838"
   },
   "hyena_pack": {
     "artist": "Winona Nelson",
@@ -18154,6 +18162,10 @@
   "tine_shrike": {
     "artist": "Adrian Smith",
     "scryfall_id": "845b665e-8236-4ab9-bee4-414f075461d2"
+  },
+  "tiny_2_2_g_trample": {
+    "artist": "Campbell White",
+    "scryfall_id": "b387ee34-f68a-44ce-a648-20a2f266c80f"
   },
   "tip_the_scales": {
     "artist": "Volkan Ba\u01f5a",
