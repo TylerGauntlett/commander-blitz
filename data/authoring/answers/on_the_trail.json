@@ -1,0 +1,33 @@
+{
+  "card": {
+    "id": "on_the_trail",
+    "name": "On the Trail",
+    "oracle_text": "Whenever you draw your second card each turn, you may put a land card from your hand onto the battlefield tapped.",
+    "mana_cost": "{1}{G}",
+    "types": ["Enchantment"],
+    "colors": ["G"],
+    "color_identity": ["G"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever you draw your second card each turn, you may put a land card from your hand onto the battlefield tapped.",
+        "trigger": {"event": "draw", "controller": "you", "nth": 2},
+        "effects": [
+          {
+            "op": "may",
+            "prompt": "Put a land card from your hand onto the battlefield tapped?",
+            "condition": {"exists": {"controller": "you", "types": ["Land"], "zone": "hand"}},
+            "effects": [
+              {
+                "op": "put_onto_battlefield",
+                "tapped": true,
+                "objects": {"chooser": "controller", "controller": "you", "count": 1, "types": ["Land"], "zone": "hand"}
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33, "hand_size": {"0": 1}}
+}

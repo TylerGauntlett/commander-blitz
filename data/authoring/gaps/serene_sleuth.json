@@ -1,0 +1,20 @@
+{
+  "card_id": "serene_sleuth",
+  "name": "Serene Sleuth",
+  "oracle_text": "When this creature enters, investigate. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")\nAt the beginning of combat on your turn, investigate for each goaded creature you control. Then each creature you control is no longer goaded.",
+  "blocked_sentences": [
+    "At the beginning of combat on your turn, investigate for each goaded creature you control. Then each creature you control is no longer goaded."
+  ],
+  "needs": [
+    {
+      "capability": "ungoad",
+      "kind": "op",
+      "what": "an op that ends every goad on the matched permanents (\"each creature you control is no longer goaded\"): clears both goaded_by and goaded_permanently_by on each object in `objects`, regardless of which player goaded it or for how long",
+      "why_existing_wont_do": "The only goad op is `goad` (duration, objects, player), which adds a goader and never removes one; lose_keyword, lose_all_abilities and remove_from_combat touch keywords, abilities and combat, not the goad sets. The first half of the sentence is expressible (begin_combat trigger with an is_your_turn condition, create_token clue_token with amount {count: {controller: you, types: [Creature], goaded: true}}), but writing it without the ungoad clause would leave the creatures goaded, so the line is blocked as a whole"
+    }
+  ],
+  "closest_existing": [
+    "goad"
+  ],
+  "confidence": "high"
+}
