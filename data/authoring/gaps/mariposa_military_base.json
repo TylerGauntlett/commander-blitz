@@ -1,0 +1,22 @@
+{
+  "card_id": "mariposa_military_base",
+  "name": "Mariposa Military Base",
+  "oracle_text": "You may have this land enter tapped. If you do, you get two rad counters.\n{T}: Add {C}.\n{5}, {T}: Draw a card. This ability costs {1} less to activate for each rad counter you have.",
+  "blocked_sentences": [
+    "If you do, you get two rad counters.",
+    "This ability costs {1} less to activate for each rad counter you have."
+  ],
+  "needs": [
+    {
+      "capability": "rad_counters",
+      "kind": "engine",
+      "what": "rad as a player counter kind (a PlayerState field plus an entry in the player counter kinds, with the rule-725 rad trigger at the beginning of each player's precombat main phase: mill that many cards, lose 1 life and remove one rad counter per nonland card milled), and an op that gives a player N rad counters (e.g. an `add_rad` op shaped like add_poison/add_energy with `amount` and `player`, accepting the attack trigger's defending player)",
+      "why_existing_wont_do": "add_poison and add_energy are the only ops that put counters on a player and each is fixed to its own kind; add_counters acts on objects, not players; no rad counter kind or rad precombat-main trigger exists in the engine"
+    }
+  ],
+  "closest_existing": [
+    "add_poison",
+    "add_energy"
+  ],
+  "confidence": "high"
+}
