@@ -1,0 +1,50 @@
+{
+  "card": {
+    "id": "killer_service",
+    "name": "Killer Service",
+    "oracle_text": "When this enchantment enters, create a number of Food tokens equal to the number of opponents you have. (They're artifacts with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")\nAt the beginning of your end step, you may pay {2} and sacrifice a token. If you do, create a 4/4 green Rhino Warrior creature token.",
+    "mana_cost": "{2}{G}",
+    "types": ["Enchantment"],
+    "colors": ["G"],
+    "color_identity": ["G"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this enchantment enters, create a number of Food tokens equal to the number of opponents you have.",
+        "trigger": {"event": "self_enters", "source": "self"},
+        "effects": [
+          {
+            "op": "create_token",
+            "token": "food_token",
+            "controller": "you",
+            "amount": {"player_count": "each_opponent"}
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "At the beginning of your end step, you may pay {2} and sacrifice a token. If you do, create a 4/4 green Rhino Warrior creature token.",
+        "trigger": {"event": "end_step", "controller": "you"},
+        "effects": [
+          {
+            "op": "may",
+            "player": "you",
+            "prompt": "Pay {2} and sacrifice a token to create a 4/4 Rhino Warrior?",
+            "pay": {
+              "mana": "{2}",
+              "sacrifice": {"controller": "you", "count": 1, "is_token": true, "zone": "battlefield"}
+            },
+            "effects": [
+              {"op": "create_token", "token": "rhino_warrior_4_4_g", "controller": "you", "amount": {"const": 1}}
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "tokens": {"id": "food_token", "count": 1},
+    "battlefield_count": 34
+  }
+}
