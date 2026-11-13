@@ -1,0 +1,25 @@
+{
+  "card": {
+    "id": "corpsejack_menace",
+    "name": "Corpsejack Menace",
+    "oracle_text": "If one or more +1/+1 counters would be put on a creature you control, twice that many +1/+1 counters are put on it instead.",
+    "mana_cost": "{2}{B}{G}",
+    "types": ["Creature"],
+    "subtypes": ["Fungus"],
+    "power": 4,
+    "toughness": 4,
+    "colors": ["B", "G"],
+    "color_identity": ["B", "G"],
+    "abilities": [
+      {
+        "kind": "static",
+        "effect": "replace_counters",
+        "affects": {"controller": "you", "types": ["Creature"]},
+        "counter": "+1/+1",
+        "counter_multiplier": 2,
+        "text": "If one or more +1/+1 counters would be put on a creature you control, twice that many +1/+1 counters are put on it instead."
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}

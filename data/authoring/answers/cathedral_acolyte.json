@@ -1,0 +1,39 @@
+{
+  "card": {
+    "id": "cathedral_acolyte",
+    "name": "Cathedral Acolyte",
+    "oracle_text": "Each creature you control with a counter on it has ward {1}. (Whenever it becomes the target of a spell or ability an opponent controls, counter it unless that player pays {1}.)\n{T}: Put a +1/+1 counter on target creature that entered this turn.",
+    "mana_cost": "{1}{G}",
+    "types": ["Creature"],
+    "subtypes": ["Human", "Cleric"],
+    "power": 1,
+    "toughness": 2,
+    "colors": ["G"],
+    "color_identity": ["G"],
+    "abilities": [
+      {
+        "kind": "static",
+        "effect": "ward",
+        "affects": {"controller": "you", "types": ["Creature"], "has_counters": true},
+        "cost": {"mana": "{1}"},
+        "text": "Each creature you control with a counter on it has ward {1}. (Whenever it becomes the target of a spell or ability an opponent controls, counter it unless that player pays {1}.)"
+      },
+      {
+        "kind": "activated",
+        "cost": {"tap": true},
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "selector": {"types": ["Creature"], "zone": "battlefield", "controller": "any", "entered_this_turn": true}
+          }
+        ],
+        "effects": [
+          {"op": "add_counters", "counter": "+1/+1", "amount": {"const": 1}, "objects": {"target": "t1"}}
+        ],
+        "text": "{T}: Put a +1/+1 counter on target creature that entered this turn."
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}
