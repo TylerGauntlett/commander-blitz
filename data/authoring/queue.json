@@ -255112,12 +255112,12 @@
     },
     "Sophia, Dogged Detective": {
       "edhrec_rank": 12436,
-      "gate": "template",
+      "gate": null,
       "name": "Sophia, Dogged Detective",
-      "reason": "no template for: When Sophia enters, create Tiny, a legendary 2/2 green Dog Detective creature token with t",
+      "reason": "",
       "scryfall_id": "6c22504f-45a4-41b1-9e75-63712162f55b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sophic Centaur": {

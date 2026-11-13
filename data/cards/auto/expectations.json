@@ -18259,6 +18259,14 @@
   "songbirds_blessing": {
     "zone": "battlefield"
   },
+  "sophia_dogged_detective": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "tiny_2_2_g_trample"
+    },
+    "zone": "battlefield"
+  },
   "sorin_grim_nemesis": {
     "battlefield_count": 33,
     "counters": {
