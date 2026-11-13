@@ -273092,12 +273092,12 @@
     },
     "Synth Eradicator": {
       "edhrec_rank": 8595,
-      "gate": "template",
+      "gate": null,
       "name": "Synth Eradicator",
-      "reason": "no template for: Whenever this creature attacks, exile the top card of your library. You may get {E}{E} . I",
+      "reason": "",
       "scryfall_id": "084d641b-7740-471f-bf93-671858ea720f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Synth Infiltrator": {
@@ -273432,12 +273432,12 @@
     },
     "T-45 Power Armor": {
       "edhrec_rank": 8573,
-      "gate": "template",
+      "gate": null,
       "name": "T-45 Power Armor",
-      "reason": "no template for: When this Equipment enters, you get {E}{E}",
+      "reason": "",
       "scryfall_id": "5065ae25-c96e-489b-aea9-d077c2df513d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "TARDIS": {

@@ -228749,6 +228749,109 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "eradicator_exiled",
+              "destination": "exile",
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "player": "you"
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "add_energy"
+                }
+              ],
+              "else": [
+                {
+                  "objects": {
+                    "binding": "eradicator_exiled",
+                    "zone": "exile"
+                  },
+                  "op": "grant_playable",
+                  "playable": "this_turn"
+                }
+              ],
+              "op": "may",
+              "prompt": "Get {E}{E}? (If you don't, you may play the exiled card this turn.)"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, exile the top card of your library. You may get {E}{E} (two energy counters). If you don't, you may play that card this turn.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "pay_energy": 3,
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker",
+                  "Battle"
+                ]
+              }
+            }
+          ],
+          "text": "{T}, Pay {E}{E}{E}: This creature deals 3 damage to any target."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "synth_eradicator",
+      "keywords": [
+        "haste"
+      ],
+      "mana_cost": "{2}{R}",
+      "name": "Synth Eradicator",
+      "oracle_text": "Haste\nWhenever this creature attacks, exile the top card of your library. You may get {E}{E} (two energy counters). If you don't, you may play that card this turn.\n{T}, Pay {E}{E}{E}: This creature deals 3 damage to any target.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Synth",
+        "Soldier"
+      ],
+      "toughness": 3,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -229082,6 +229185,176 @@
       "toughness": 5,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "add_energy"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this Equipment enters, you get {E}{E} (two energy counters).",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 3
+          },
+          "text": "Equipped creature gets +3/+3 and doesn't untap during its controller's untap step.",
+          "toughness": {
+            "const": 3
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "skip_untap_step",
+          "kind": "static",
+          "text": "Equipped creature gets +3/+3 and doesn't untap during its controller's untap step."
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "attached": true,
+                    "controller": "any",
+                    "count": "all",
+                    "zone": "battlefield"
+                  },
+                  "op": "untap"
+                },
+                {
+                  "modes": [
+                    {
+                      "effects": [
+                        {
+                          "amount": {
+                            "const": 1
+                          },
+                          "counter": "menace",
+                          "objects": {
+                            "attached": true,
+                            "controller": "any",
+                            "count": "all",
+                            "zone": "battlefield"
+                          },
+                          "op": "add_counters"
+                        }
+                      ]
+                    },
+                    {
+                      "effects": [
+                        {
+                          "amount": {
+                            "const": 1
+                          },
+                          "counter": "trample",
+                          "objects": {
+                            "attached": true,
+                            "controller": "any",
+                            "count": "all",
+                            "zone": "battlefield"
+                          },
+                          "op": "add_counters"
+                        }
+                      ]
+                    },
+                    {
+                      "effects": [
+                        {
+                          "amount": {
+                            "const": 1
+                          },
+                          "counter": "lifelink",
+                          "objects": {
+                            "attached": true,
+                            "controller": "any",
+                            "count": "all",
+                            "zone": "battlefield"
+                          },
+                          "op": "add_counters"
+                        }
+                      ]
+                    }
+                  ],
+                  "op": "choose_mode"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "pay_energy": 1
+              },
+              "player": "you",
+              "prompt": "Pay {E} to untap equipped creature?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, you may pay {E}. If you do, untap equipped creature, then put your choice of a menace, trample, or lifelink counter on it.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {3}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "t_45_power_armor",
+      "mana_cost": "{2}",
+      "name": "T-45 Power Armor",
+      "oracle_text": "When this Equipment enters, you get {E}{E} (two energy counters).\nEquipped creature gets +3/+3 and doesn't untap during its controller's untap step.\nAt the beginning of your upkeep, you may pay {E}. If you do, untap equipped creature, then put your choice of a menace, trample, or lifelink counter on it.\nEquip {3}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {

@@ -1,0 +1,20 @@
+{
+  "card_id": "the_motherlode_excavator",
+  "name": "The Motherlode, Excavator",
+  "oracle_text": "When The Motherlode enters, choose target opponent. You get an amount of {E} (energy counters) equal to the number of nonbasic lands that player controls.\nWhenever The Motherlode attacks, you may pay {E}{E}{E}{E}. When you do, destroy target nonbasic land defending player controls, and creatures that player controls without flying can't block this turn.",
+  "blocked_sentences": [
+    "Whenever The Motherlode attacks, you may pay {E}{E}{E}{E}. When you do, destroy target nonbasic land defending player controls, and creatures that player controls without flying can't block this turn."
+  ],
+  "needs": [
+    {
+      "capability": "cant_block_filtered_group",
+      "kind": "op",
+      "what": "a one-shot cant_block whose restriction is a continuous rule-changing effect over a filter rather than a fixed set: 'creatures <player> controls without flying can't block this turn' -- applied when blocks are declared to every creature matching {types: [Creature], controller: <defending player>, not_keywords: [flying]} at that moment, so a creature that enters later (flash during declare attackers) or loses flying is also restricted (611.2c: not a characteristic change, so not locked in at resolution)",
+      "why_existing_wont_do": "The cant_block op has exactly two shapes: `objects`, a set fixed at resolution (its docstring: 'a creature that enters afterwards was not one of those', and writing a group form as a snapshot is 'a strictly weaker card than the printed one'), and `all_creatures`, which restricts every creature with no controller or keyword filter. The cant_block static lives on the permanent for as long as it stays and cannot end at end of turn or name the defending player. The rest of the line (ETB energy from target opponent's nonbasic lands, attack trigger, may pay_energy 4, reflexive destroy of a nonbasic land with controller {binding: defender}) is expressible."
+    }
+  ],
+  "closest_existing": [
+    "cant_block"
+  ],
+  "confidence": "low"
+}

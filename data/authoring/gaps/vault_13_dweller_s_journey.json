@@ -1,0 +1,18 @@
+{
+  "card_id": "vault_13_dweller_s_journey",
+  "name": "Vault 13: Dweller's Journey",
+  "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — For each player, exile up to one other target enchantment or creature that player controls until this Saga leaves the battlefield.\nII — You gain 2 life and scry 2.\nIII — Return two cards exiled with this Saga to the battlefield under their owners' control and put the rest on the bottom of their owners' libraries.",
+  "blocked_sentences": [
+    "III — Return two cards exiled with this Saga to the battlefield under their owners' control and put the rest on the bottom of their owners' libraries."
+  ],
+  "needs": [
+    {
+      "capability": "choose_from_linked_exile",
+      "kind": "op",
+      "what": "an op that has the controller choose exactly N cards (N fixed, all if fewer) from the cards exiled with the source (exiled_with: self, owned by any player), puts the chosen ones onto the battlefield under their owners' control, and puts every unchosen one on the bottom of its owner's library",
+      "why_existing_wont_do": "put_onto_battlefield over {exiled_with: self} moves all of them with no choice; search_zones can read zones: [exile] but only pools the searching player's own zones (players[pid].zone_list), so cards owned by opponents are unreachable, and its pick is 0..count (up to), not exactly two; choose_permanents selects battlefield permanents, not exiled cards; put_on_top with bottom could send the rest down only if the chosen two had a binding to exclude, which nothing produces from the exile pile"
+    }
+  ],
+  "closest_existing": ["search_zones", "put_onto_battlefield", "put_on_top"],
+  "confidence": "high"
+}
