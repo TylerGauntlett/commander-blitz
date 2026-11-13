@@ -218392,12 +218392,12 @@
     },
     "Red Death, Shipwrecker": {
       "edhrec_rank": 6327,
-      "gate": "template",
+      "gate": null,
       "name": "Red Death, Shipwrecker",
-      "reason": "no template for: Alluring Eyes — {T}: Goad target creature an opponent controls. That player draws a card. ",
+      "reason": "",
       "scryfall_id": "2172a39d-7481-4a4a-861b-b4a1204d28ef",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Red Dragon": {
@@ -226172,12 +226172,12 @@
     },
     "Robobrain War Mind": {
       "edhrec_rank": 10756,
-      "gate": "template",
+      "gate": null,
       "name": "Robobrain War Mind",
-      "reason": "no template for: 's power is equal to the number of cards in your hand",
+      "reason": "",
       "scryfall_id": "19c0791d-f0c5-4673-a0c5-40540c1e6d8c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Robot Domination": {
@@ -240192,12 +240192,12 @@
     },
     "Sentinel Sarah Lyons": {
       "edhrec_rank": 7618,
-      "gate": "template",
+      "gate": null,
       "name": "Sentinel Sarah Lyons",
-      "reason": "no template for: As long as an artifact entered the battlefield under your control this turn, creatures you",
+      "reason": "",
       "scryfall_id": "23b76965-528c-48f9-9ee6-332b09cae664",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sentinel Sliver": {
@@ -243362,12 +243362,12 @@
     },
     "Shaun, Father of Synths": {
       "edhrec_rank": 6606,
-      "gate": "template",
+      "gate": null,
       "name": "Shaun, Father of Synths",
-      "reason": "no template for: Whenever you attack, you may create a tapped and attacking token that's a copy of target a",
+      "reason": "",
       "scryfall_id": "5b1414e2-a43b-46b9-ba77-de9a9c50b0cf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shay Cormac": {

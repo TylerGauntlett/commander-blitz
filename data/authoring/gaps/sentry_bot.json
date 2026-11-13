@@ -1,0 +1,18 @@
+{
+  "card_id": "sentry_bot",
+  "name": "Sentry Bot",
+  "oracle_text": "Flash\nThis spell costs {1} less to cast for each creature attacking you.\nWhen this creature enters, you get {E} for each creature attacking you.\nAt the beginning of combat on your turn, you may pay {E}{E}{E}. If you do, put a +1/+1 counter on each creature you control.",
+  "blocked_sentences": [
+    "This spell costs {1} less to cast for each creature attacking you."
+  ],
+  "needs": [
+    {
+      "capability": "cost_reduction_attacking_player",
+      "kind": "selector",
+      "what": "the `attacking_player` filter key (\"you\") honoured inside a card-level `cost_reduction` `count` filter, so \"costs {1} less for each creature attacking you\" counts only creatures attacking the caster, not planeswalkers/battles and not other opponents",
+      "why_existing_wont_do": "cost_reduction_filter_keys only carries the boolean `attacking`, which in multiplayer counts creatures attacking any player; `attacking_player` exists in selector_keys (Arachnogenesis, Heroic Return's `amount`+`condition` form uses it) but the loader validates a reduction filter against STATIC_FILTER_KEYS | COST_REDUCTION_FILTER_KEYS and engine/cost_reduction.py never reads it. The flat `amount`+`condition` form cannot scale per creature"
+    }
+  ],
+  "closest_existing": ["cost_reduction", "attacking_player"],
+  "confidence": "high"
+}

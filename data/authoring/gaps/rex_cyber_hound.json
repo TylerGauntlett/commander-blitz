@@ -1,0 +1,18 @@
+{
+  "card_id": "rex_cyber_hound",
+  "name": "Rex, Cyber-Hound",
+  "oracle_text": "Whenever Rex deals combat damage to a player, they mill two cards and you get {E}{E} (two energy counters).\nPay {E}{E}: Choose target creature card in a graveyard. Exile it with a brain counter on it. Activate only as a sorcery.\nRex has all activated abilities of all cards in exile with brain counters on them.",
+  "blocked_sentences": [
+    "Rex has all activated abilities of all cards in exile with brain counters on them."
+  ],
+  "needs": [
+    {
+      "capability": "grant_exiled_abilities_by_counter",
+      "kind": "static_effect",
+      "what": "a static that gives the affected permanent every activated ability printed on every card in exile (any owner, any exiler) that has a given counter kind on it -- here, brain counters -- so the abilities survive Rex leaving and returning and include cards another Rex exiled",
+      "why_existing_wont_do": "grant_exiled_abilities (Hazel's Brewmaster, Steward of the Harvest) walks only the source's own exiled_cards and keeps a card only while its exiled_by is that source (607.2a linked abilities), filtered by printed types; it cannot select exiled cards by has_counters, so a new incarnation of Rex would lose the abilities of cards exiled earlier and cards brained by another source would be missed. The other two lines (deals_combat_damage_to_player trigger with mill + add_energy; pay_energy cost exiling a graveyard creature card then add_counters 'brain' on the bound card) look expressible, but the card cannot be written partially."
+    }
+  ],
+  "closest_existing": ["grant_exiled_abilities", "grant_ability"],
+  "confidence": "high"
+}

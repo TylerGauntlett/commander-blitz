@@ -15465,6 +15465,10 @@
     },
     "zone": "exile"
   },
+  "red_death_shipwrecker": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "red_elemental_blast": {
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
@@ -16065,6 +16069,13 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "robobrain_war_mind": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "roc_hunter": {
     "zone": "battlefield"
@@ -16890,6 +16901,10 @@
     },
     "zone": "battlefield"
   },
+  "sentinel_sarah_lyons": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sentinel_spider": {
     "zone": "battlefield"
   },
@@ -17144,6 +17159,10 @@
     "zone": "battlefield"
   },
   "shatterskull_recruit": {
+    "zone": "battlefield"
+  },
+  "shaun_father_of_synths": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "she_hulk_wallbreaker": {
