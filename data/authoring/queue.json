@@ -6632,12 +6632,12 @@
     },
     "Alpha Deathclaw": {
       "edhrec_rank": 5296,
-      "gate": "template",
+      "gate": null,
       "name": "Alpha Deathclaw",
-      "reason": "no template for: When this creature enters or becomes monstrous, destroy target permanent",
+      "reason": "",
       "scryfall_id": "1e2dc5b0-ac26-4829-9716-f213eda5df30",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Alpha Kavu": {
@@ -15772,12 +15772,12 @@
     },
     "Atomize": {
       "edhrec_rank": 2035,
-      "gate": "template",
+      "gate": null,
       "name": "Atomize",
-      "reason": "no template for: Destroy target nonland permanent. Proliferate",
+      "reason": "",
       "scryfall_id": "2ddb065c-6edd-4ef4-a5ee-cd65e5c65573",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Atraxa's Fall": {
@@ -33102,12 +33102,12 @@
     },
     "Branching Evolution": {
       "edhrec_rank": 368,
-      "gate": "template",
+      "gate": null,
       "name": "Branching Evolution",
-      "reason": "no template for: If one or more +1/+1 counters would be put on a creature you control, twice that many +1/+",
+      "reason": "",
       "scryfall_id": "c0f1a736-8b12-4f58-a031-bf1733f65c51",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Branchloft Pathway // Boulderloft Pathway": {
@@ -41332,12 +41332,12 @@
     },
     "Cathedral Acolyte": {
       "edhrec_rank": 6273,
-      "gate": "template",
+      "gate": null,
       "name": "Cathedral Acolyte",
-      "reason": "no template for: Each creature you control with a counter on it has ward {1}",
+      "reason": "",
       "scryfall_id": "4879129a-33db-479f-a24a-bfe92b3541a0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cathedral Membrane": {
@@ -53662,12 +53662,12 @@
     },
     "Corpsejack Menace": {
       "edhrec_rank": 1538,
-      "gate": "template",
+      "gate": null,
       "name": "Corpsejack Menace",
-      "reason": "no template for: If one or more +1/+1 counters would be put on a creature you control, twice that many +1/+",
+      "reason": "",
       "scryfall_id": "85caf05a-035b-47c0-975c-dec76799ffcf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Corpses of the Lost": {
@@ -122062,12 +122062,12 @@
     },
     "Hancock, Ghoulish Mayor": {
       "edhrec_rank": 6399,
-      "gate": "template",
+      "gate": null,
       "name": "Hancock, Ghoulish Mayor",
-      "reason": "no template for: Each other creature you control that's a Zombie or Mutant gets +X/+X, where X is the numbe",
+      "reason": "",
       "scryfall_id": "24419ecc-c740-4972-8510-8fd15a65dd4e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hand That Feeds": {
@@ -159062,12 +159062,12 @@
     },
     "Lily Bowen, Raging Grandma": {
       "edhrec_rank": 6908,
-      "gate": "template",
+      "gate": null,
       "name": "Lily Bowen, Raging Grandma",
-      "reason": "no template for: Lily Bowen enters with two +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "052dc548-d356-43fe-9484-665db7e1f505",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lilypad Village": {
@@ -167492,12 +167492,12 @@
     },
     "Marcus, Mutant Mayor": {
       "edhrec_rank": 6416,
-      "gate": "template",
+      "gate": null,
       "name": "Marcus, Mutant Mayor",
-      "reason": "no template for: Whenever a creature you control deals combat damage to a player, draw a card if that creat",
+      "reason": "",
       "scryfall_id": "122cbe69-1ea2-4448-94d9-db5119339563",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mardu Ascendancy": {
@@ -179692,12 +179692,12 @@
     },
     "Mortuary Mire": {
       "edhrec_rank": 676,
-      "gate": "template",
+      "gate": null,
       "name": "Mortuary Mire",
-      "reason": "no template for: When this land enters, you may put target creature card from your graveyard on top of your",
+      "reason": "",
       "scryfall_id": "31b7472f-48f5-4ab5-8896-3eee29d13d59",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mortus Strider": {
@@ -181452,12 +181452,12 @@
     },
     "Mutational Advantage": {
       "edhrec_rank": 1980,
-      "gate": "template",
+      "gate": null,
       "name": "Mutational Advantage",
-      "reason": "no template for: Permanents you control with counters on them gain hexproof and indestructible until end of",
+      "reason": "",
       "scryfall_id": "4a778448-bcdd-4294-a947-fcadbffaac56",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mutavault": {
@@ -202872,12 +202872,12 @@
     },
     "Piper Wright, Publick Reporter": {
       "edhrec_rank": 6208,
-      "gate": "template",
+      "gate": null,
       "name": "Piper Wright, Publick Reporter",
-      "reason": "no template for: Whenever Piper Wright deals combat damage to a player, investigate that many times",
+      "reason": "",
       "scryfall_id": "54f00cff-9999-4d81-ac3d-2a74f4ae19e1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Piper of the Swarm": {
@@ -212952,12 +212952,12 @@
     },
     "Radstorm": {
       "edhrec_rank": 3000,
-      "gate": "template",
+      "gate": null,
       "name": "Radstorm",
-      "reason": "no template for: Storm",
+      "reason": "",
       "scryfall_id": "5796f354-5836-438c-a6c3-b688028e5016",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Raff Capashen, Ship's Mage": {
@@ -301622,12 +301622,12 @@
     },
     "Vault 87: Forced Evolution": {
       "edhrec_rank": 10961,
-      "gate": "template",
+      "gate": null,
       "name": "Vault 87: Forced Evolution",
-      "reason": "no template for: I — Gain control of target non-Mutant creature for as long as you control this Saga",
+      "reason": "",
       "scryfall_id": "33bf267b-f41c-447a-aa35-0c01aad8a489",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vault Guardsman": {

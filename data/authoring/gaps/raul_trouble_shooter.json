@@ -1,0 +1,22 @@
+{
+  "card_id": "raul_trouble_shooter",
+  "name": "Raul, Trouble Shooter",
+  "oracle_text": "Once during each of your turns, you may cast a spell from among cards in your graveyard that were milled this turn.\n{T}: Each player mills a card. (They each put the top card of their library into their graveyard.)",
+  "blocked_sentences": [
+    "Once during each of your turns, you may cast a spell from among cards in your graveyard that were milled this turn."
+  ],
+  "needs": [
+    {
+      "capability": "milled_this_turn",
+      "kind": "selector",
+      "what": "a per-turn record of which cards were put into a graveyard by milling this turn (any source, any player's mill), exposed as a spell filter key (e.g. `milled_this_turn: true` in `affects_spells`) that the `cast_from_graveyard` static can read, so 'once during each of your turns, you may cast a spell from among cards in your graveyard that were milled this turn' is `cast_from_graveyard` with `affects_player: \"you\"`, `max_per_turn: 1`, `condition: {is_your_turn: true}` and that filter; the same record would also serve Tato Farmer and The Master, Transcendent's 'card in a graveyard that was milled this turn' target selectors",
+      "why_existing_wont_do": "cast_from_graveyard's affects_spells only takes SPELL_FILTER_KEYS (types, colors, mana_value, ...), none of which reads how a card arrived in the graveyard; the mill op's `as` binding only records cards milled by that one resolution (Locke's 'milled this way' / grant_playable), not every card milled this turn by any source, and selector_keys has drawn_this_turn and entered_this_turn but no milled equivalent"
+    }
+  ],
+  "closest_existing": [
+    "cast_from_graveyard",
+    "grant_playable",
+    "drawn_this_turn"
+  ],
+  "confidence": "high"
+}

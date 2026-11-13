@@ -5,7 +5,7 @@ area: decks
 effort: L
 impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
-depends_on: []
+depends_on: [rad-counters]
 status: proposed
 rank: 48
 ---
@@ -19,6 +19,31 @@ coming-soon shell on the shelf: its row `pip_mutant_menace` is in
 `python scripts/sync_precons.py --missing pip_mutant_menace` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+
+Every card on the list has been through `/author-cards` once. Twenty-nine
+cards are left, and each has a gap record naming what it waits on:
+
+- Nineteen print rad counters, which have [their own item](rad-counters.md);
+  this item depends on it. They are Bloatfly Swarm, Contaminated Drink,
+  Feral Ghoul, Glowing One, Harold and Bob, Infesting Radroach, Mariposa
+  Military Base, Mirelurk Queen, Nightkin Ambusher, Nuclear Fallout,
+  Nuka-Nuke Launcher, Screeching Scorchbeast, Strong, Struggle for Project
+  Purity, Tato Farmer, The Master, The Wise Mothman, Vault 12 and Vexing
+  Radgull.
+- Raul, Trouble Shooter needs a selector for cards milled this turn, and
+  Tato Farmer and The Master need it too, beside rad counters.
+- Agent Frank Horrigan needs an "attacked this turn" condition on a static.
+- Fraying Sanity needs the cards put into one player's graveyard this turn.
+- Jason Bright, Glowing Prophet needs the base power a creature had as it
+  died.
+- Lumbering Megasloth needs a cost reduction counted per counter among
+  players and permanents.
+- Rampaging Yao Guai needs a total mana value cap read from X.
+- Recon Craft Theta needs the 0/0 blue Alien creature token.
+- Watchful Radstag needs a trigger for a creature evolving.
+- Winding Constrictor needs a counter replacement that reaches only its
+  controller as a player.
+- Young Deathclaws needs scavenge granted to creature cards in a graveyard.
 
 ## The change
 

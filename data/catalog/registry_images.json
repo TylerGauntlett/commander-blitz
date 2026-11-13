@@ -383,6 +383,10 @@
     "artist": "Elizabeth Peir\u00f3",
     "scryfall_id": "0b645f84-4213-41ba-8860-332971606f26"
   },
+  "alpha_deathclaw": {
+    "artist": "Robin Olausson",
+    "scryfall_id": "1e2dc5b0-ac26-4829-9716-f213eda5df30"
+  },
   "alpha_myr": {
     "artist": "Dany Orizio",
     "scryfall_id": "f3f792d7-75be-429e-8f62-0b563b103642"
@@ -1058,6 +1062,10 @@
   "atarka_world_render": {
     "artist": "Camille Alquier",
     "scryfall_id": "719f172b-f9ad-4960-af66-757eb54147f6"
+  },
+  "atomize": {
+    "artist": "Robin Olausson",
+    "scryfall_id": "2ddb065c-6edd-4ef4-a5ee-cd65e5c65573"
   },
   "atraxa_praetors_voice": {
     "artist": "Justin Hernandez & Alexis Hernandez",
@@ -2211,6 +2219,10 @@
     "artist": "Florian de Gesincourt",
     "scryfall_id": "1c759e94-e437-4dda-af0f-6578c0a50619"
   },
+  "branching_evolution": {
+    "artist": "Lucas Graciano",
+    "scryfall_id": "c0f1a736-8b12-4f58-a031-bf1733f65c51"
+  },
   "brash_taunter": {
     "artist": "Edgar S\u00e1nchez Hidalgo",
     "scryfall_id": "275f8721-a6e5-489b-851f-1676aad5ec39"
@@ -2714,6 +2726,10 @@
   "cathartic_reunion": {
     "artist": "MSCHF",
     "scryfall_id": "9e7baa5f-f505-4200-9a38-465bdca8ad76"
+  },
+  "cathedral_acolyte": {
+    "artist": "Jeremy Paillotin",
+    "scryfall_id": "4879129a-33db-479f-a24a-bfe92b3541a0"
   },
   "cathedral_of_war": {
     "artist": "Jason A. Engle",
@@ -3490,6 +3506,10 @@
   "corpse_knight": {
     "artist": "Filip Burburan",
     "scryfall_id": "8859c03c-6c75-402f-9870-d4067a4ec4ed"
+  },
+  "corpsejack_menace": {
+    "artist": "Benjamin Ee",
+    "scryfall_id": "85caf05a-035b-47c0-975c-dec76799ffcf"
   },
   "corrupted_conviction": {
     "artist": "Joseph Weston",
@@ -7652,6 +7672,10 @@
     "artist": "Andrea Radeck",
     "scryfall_id": "711274ae-1a4e-491c-aa71-b2d29c890578"
   },
+  "hancock_ghoulish_mayor": {
+    "artist": "Wonchun Choi",
+    "scryfall_id": "24419ecc-c740-4972-8510-8fd15a65dd4e"
+  },
   "hand_of_emrakul": {
     "artist": "Chippy",
     "scryfall_id": "84d602f4-5876-416a-95e5-821a285358bf"
@@ -9989,6 +10013,10 @@
     "artist": "Jaime Jones",
     "scryfall_id": "50269303-0bd9-474e-bd16-e0d13a5cbb74"
   },
+  "lily_bowen_raging_grandma": {
+    "artist": "Villarrte",
+    "scryfall_id": "052dc548-d356-43fe-9484-665db7e1f505"
+  },
   "lingering_souls": {
     "artist": "John Stanko",
     "scryfall_id": "e5b16141-d185-4be2-97c1-5b0ef5483728"
@@ -10573,6 +10601,10 @@
   "marchesa_s_smuggler": {
     "artist": "Dan Murayama Scott",
     "scryfall_id": "ff3a2dc1-3549-4a92-a5fa-6297cb894d22"
+  },
+  "marcus_mutant_mayor": {
+    "artist": "Josu Hernaiz",
+    "scryfall_id": "122cbe69-1ea2-4448-94d9-db5119339563"
   },
   "mardu_hateblade": {
     "artist": "Ryan Alexander Lee",
@@ -11230,6 +11262,10 @@
     "artist": "Anthony S. Waters",
     "scryfall_id": "2731f8a0-3e9d-43a5-b1a3-28b3a8f1f18c"
   },
+  "mortuary_mire": {
+    "artist": "Zuzanna Wu\u017cyk",
+    "scryfall_id": "31b7472f-48f5-4ab5-8896-3eee29d13d59"
+  },
   "moss_diamond": {
     "artist": "Phil Stone",
     "scryfall_id": "89149fb5-3afd-4da0-9a44-9366feb20804"
@@ -11393,6 +11429,10 @@
   "mutant_town": {
     "artist": "Josu Solano",
     "scryfall_id": "c6eac43d-08b6-45a4-803b-10a321a241d7"
+  },
+  "mutational_advantage": {
+    "artist": "Nicholas Gregory",
+    "scryfall_id": "4a778448-bcdd-4294-a947-fcadbffaac56"
   },
   "mutavault": {
     "artist": "Andrew Mar",
@@ -12728,6 +12768,10 @@
     "artist": "Mirko Failoni",
     "scryfall_id": "00cf7bd2-be3f-4cae-82a1-3232b2dc2815"
   },
+  "piper_wright_publick_reporter": {
+    "artist": "Rafater",
+    "scryfall_id": "54f00cff-9999-4d81-ac3d-2a74f4ae19e1"
+  },
   "piranha_fly": {
     "artist": "Kekai Kotaki",
     "scryfall_id": "cd891675-12d4-40df-996a-97d694155227"
@@ -13339,6 +13383,10 @@
   "radical_idea": {
     "artist": "Izzy",
     "scryfall_id": "aa32ec44-d29b-4ebe-82f5-4fe67bca07eb"
+  },
+  "radstorm": {
+    "artist": "Salvatorre Zee Yazzie",
+    "scryfall_id": "5796f354-5836-438c-a6c3-b688028e5016"
   },
   "raffine_s_guidance": {
     "artist": "R\u00e9mi Jacquot",
@@ -18978,6 +19026,10 @@
   "vault_75_middle_school": {
     "artist": "Victor Harmatiuk",
     "scryfall_id": "3992e262-0491-4379-b74b-13cc8b63065e"
+  },
+  "vault_87_forced_evolution": {
+    "artist": "Nicholas Gregory",
+    "scryfall_id": "33bf267b-f41c-447a-aa35-0c01aad8a489"
   },
   "vault_of_the_archangel": {
     "artist": "John Avon",

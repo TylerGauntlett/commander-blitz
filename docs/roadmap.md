@@ -74,7 +74,7 @@ each heading; this table is generated from them.
 | [Hail, Caesar (Fallout)](#hail-caesar-fallout) | L | high | Voting: will of the council and council's dilemma | 0 |
 | [Scrappy Survivors (Fallout)](#scrappy-survivors-fallout) | L | high | Rad counters | 0 |
 | [Science! (Fallout)](#science-fallout) | L | high | Secret choices | 0 |
-| [Mutant Menace (Fallout)](#mutant-menace-fallout) | L | high | nothing | 0 |
+| [Mutant Menace (Fallout)](#mutant-menace-fallout) | L | high | Rad counters | 0 |
 | [Deep Clue Sea (Murders at Karlov Manor Commander)](#deep-clue-sea-murders-at-karlov-manor-commander) | L | high | nothing | 0 |
 | [Revenant Recon (Murders at Karlov Manor Commander)](#revenant-recon-murders-at-karlov-manor-commander) | L | high | nothing | 0 |
 | [Blame Game (Murders at Karlov Manor Commander)](#blame-game-murders-at-karlov-manor-commander) | L | high | nothing | 0 |
@@ -136,12 +136,12 @@ each heading; this table is generated from them.
 | [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) | M | medium | nothing | 4 |
 | [Experience counters](#experience-counters) | M | medium | nothing | 2 |
 | [Outcomes as data](#outcomes-as-data) | M | medium | nothing | 2 |
+| [Rad counters](#rad-counters) | M | medium | nothing | 2 |
 | [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) | M | medium | nothing | 2 |
 | [Brackets, derived from the list](#brackets-derived-from-the-list) | M | medium | nothing | 1 |
 | [CPU takeover and reconnection](#cpu-takeover-and-reconnection) | M | medium | nothing | 1 |
 | [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) | M | medium | nothing | 1 |
 | [Distributing counters from a spell](#distributing-counters-from-a-spell) | M | medium | nothing | 1 |
-| [Rad counters](#rad-counters) | M | medium | nothing | 1 |
 | [Replays and sharing](#replays-and-sharing) | M | medium | nothing | 1 |
 | [Secret choices](#secret-choices) | M | medium | nothing | 1 |
 | [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) | M | medium | nothing | 0 |
@@ -163,82 +163,81 @@ same list, and `/extend-roadmap` starts at the top of it.
 **Ready now, best first:**
 
 1. [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) — L, high
-2. [Mutant Menace (Fallout)](#mutant-menace-fallout) — L, high
-3. [Deep Clue Sea (Murders at Karlov Manor Commander)](#deep-clue-sea-murders-at-karlov-manor-commander) — L, high
-4. [Revenant Recon (Murders at Karlov Manor Commander)](#revenant-recon-murders-at-karlov-manor-commander) — L, high
-5. [Blame Game (Murders at Karlov Manor Commander)](#blame-game-murders-at-karlov-manor-commander) — L, high
-6. [Deadly Disguise (Murders at Karlov Manor Commander)](#deadly-disguise-murders-at-karlov-manor-commander) — L, high
-7. [Blood Rites (The Lost Caverns of Ixalan Commander)](#blood-rites-the-lost-caverns-of-ixalan-commander) — M, high
-8. [Veloci-Ramp-Tor (The Lost Caverns of Ixalan Commander)](#veloci-ramp-tor-the-lost-caverns-of-ixalan-commander) — L, high
-9. [Ahoy Mateys (The Lost Caverns of Ixalan Commander)](#ahoy-mateys-the-lost-caverns-of-ixalan-commander) — L, high
-10. [Explorers of the Deep (The Lost Caverns of Ixalan Commander)](#explorers-of-the-deep-the-lost-caverns-of-ixalan-commander) — L, high
-11. [Masters of Evil (Doctor Who)](#masters-of-evil-doctor-who) — L, high
-12. [Paradox Power (Doctor Who)](#paradox-power-doctor-who) — L, high
-13. [Blast from the Past (Doctor Who)](#blast-from-the-past-doctor-who) — L, high
-14. [Timey-Wimey (Doctor Who)](#timey-wimey-doctor-who) — L, high
-15. [Fae Dominion (Wilds of Eldraine Commander)](#fae-dominion-wilds-of-eldraine-commander) — L, high
-16. [Virtue and Valor (Wilds of Eldraine Commander)](#virtue-and-valor-wilds-of-eldraine-commander) — L, high
-17. [Riders of Rohan (Tales of Middle-earth Commander)](#riders-of-rohan-tales-of-middle-earth-commander) — S, high
-18. [Food and Fellowship (Tales of Middle-earth Commander)](#food-and-fellowship-tales-of-middle-earth-commander) — L, high
-19. [Elven Council (Tales of Middle-earth Commander)](#elven-council-tales-of-middle-earth-commander) — L, high
-20. [The Hosts of Mordor (Tales of Middle-earth Commander)](#the-hosts-of-mordor-tales-of-middle-earth-commander) — L, high
-21. [Cavalry Charge (March of the Machine Commander)](#cavalry-charge-march-of-the-machine-commander) — L, high
-22. [Divine Convocation (March of the Machine Commander)](#divine-convocation-march-of-the-machine-commander) — L, high
-23. [Tinker Time (March of the Machine Commander)](#tinker-time-march-of-the-machine-commander) — L, high
-24. [Growing Threat (March of the Machine Commander)](#growing-threat-march-of-the-machine-commander) — L, high
-25. [Call for Backup (March of the Machine Commander)](#call-for-backup-march-of-the-machine-commander) — L, high
-26. [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander) — M, high
-27. [Corrupting Influence (Phyrexia: All Will Be One Commander)](#corrupting-influence-phyrexia-all-will-be-one-commander) — L, high
-28. [Draconic Destruction (Starter Commander Decks)](#draconic-destruction-starter-commander-decks) — M, high
-29. [Grave Danger (Starter Commander Decks)](#grave-danger-starter-commander-decks) — M, high
-30. [First Flight (Starter Commander Decks)](#first-flight-starter-commander-decks) — M, high
-31. [Chaos Incarnate (Starter Commander Decks)](#chaos-incarnate-starter-commander-decks) — M, high
-32. [Token Triumph (Starter Commander Decks)](#token-triumph-starter-commander-decks) — L, high
-33. [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) — M, high
-34. [Mishra's Burnished Banner (The Brothers' War Commander)](#mishras-burnished-banner-the-brothers-war-commander) — L, high
-35. [Forces of the Imperium (Warhammer 40,000 Commander)](#forces-of-the-imperium-warhammer-40000-commander) — L, high
-36. [The Ruinous Powers (Warhammer 40,000 Commander)](#the-ruinous-powers-warhammer-40000-commander) — L, high
-37. [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) — L, high
-38. [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) — L, high
-39. [Legends' Legacy (Dominaria United Commander)](#legends-legacy-dominaria-united-commander) — L, high
-40. [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — L, high
-41. [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — L, high
-42. [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — L, high
-43. [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — L, high
-44. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
-45. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
-46. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
-47. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
-48. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
-49. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
-50. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
-51. [Difficulty](#difficulty) — S, medium
-52. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
-53. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
-54. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
-55. [Why a press is refused](#why-a-press-is-refused) — S, medium
-56. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
-57. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
-58. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
-59. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
-60. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
-61. [Experience counters](#experience-counters) — M, medium
-62. [Outcomes as data](#outcomes-as-data) — M, medium
+2. [Deep Clue Sea (Murders at Karlov Manor Commander)](#deep-clue-sea-murders-at-karlov-manor-commander) — L, high
+3. [Revenant Recon (Murders at Karlov Manor Commander)](#revenant-recon-murders-at-karlov-manor-commander) — L, high
+4. [Blame Game (Murders at Karlov Manor Commander)](#blame-game-murders-at-karlov-manor-commander) — L, high
+5. [Deadly Disguise (Murders at Karlov Manor Commander)](#deadly-disguise-murders-at-karlov-manor-commander) — L, high
+6. [Blood Rites (The Lost Caverns of Ixalan Commander)](#blood-rites-the-lost-caverns-of-ixalan-commander) — M, high
+7. [Veloci-Ramp-Tor (The Lost Caverns of Ixalan Commander)](#veloci-ramp-tor-the-lost-caverns-of-ixalan-commander) — L, high
+8. [Ahoy Mateys (The Lost Caverns of Ixalan Commander)](#ahoy-mateys-the-lost-caverns-of-ixalan-commander) — L, high
+9. [Explorers of the Deep (The Lost Caverns of Ixalan Commander)](#explorers-of-the-deep-the-lost-caverns-of-ixalan-commander) — L, high
+10. [Masters of Evil (Doctor Who)](#masters-of-evil-doctor-who) — L, high
+11. [Paradox Power (Doctor Who)](#paradox-power-doctor-who) — L, high
+12. [Blast from the Past (Doctor Who)](#blast-from-the-past-doctor-who) — L, high
+13. [Timey-Wimey (Doctor Who)](#timey-wimey-doctor-who) — L, high
+14. [Fae Dominion (Wilds of Eldraine Commander)](#fae-dominion-wilds-of-eldraine-commander) — L, high
+15. [Virtue and Valor (Wilds of Eldraine Commander)](#virtue-and-valor-wilds-of-eldraine-commander) — L, high
+16. [Riders of Rohan (Tales of Middle-earth Commander)](#riders-of-rohan-tales-of-middle-earth-commander) — S, high
+17. [Food and Fellowship (Tales of Middle-earth Commander)](#food-and-fellowship-tales-of-middle-earth-commander) — L, high
+18. [Elven Council (Tales of Middle-earth Commander)](#elven-council-tales-of-middle-earth-commander) — L, high
+19. [The Hosts of Mordor (Tales of Middle-earth Commander)](#the-hosts-of-mordor-tales-of-middle-earth-commander) — L, high
+20. [Cavalry Charge (March of the Machine Commander)](#cavalry-charge-march-of-the-machine-commander) — L, high
+21. [Divine Convocation (March of the Machine Commander)](#divine-convocation-march-of-the-machine-commander) — L, high
+22. [Tinker Time (March of the Machine Commander)](#tinker-time-march-of-the-machine-commander) — L, high
+23. [Growing Threat (March of the Machine Commander)](#growing-threat-march-of-the-machine-commander) — L, high
+24. [Call for Backup (March of the Machine Commander)](#call-for-backup-march-of-the-machine-commander) — L, high
+25. [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander) — M, high
+26. [Corrupting Influence (Phyrexia: All Will Be One Commander)](#corrupting-influence-phyrexia-all-will-be-one-commander) — L, high
+27. [Draconic Destruction (Starter Commander Decks)](#draconic-destruction-starter-commander-decks) — M, high
+28. [Grave Danger (Starter Commander Decks)](#grave-danger-starter-commander-decks) — M, high
+29. [First Flight (Starter Commander Decks)](#first-flight-starter-commander-decks) — M, high
+30. [Chaos Incarnate (Starter Commander Decks)](#chaos-incarnate-starter-commander-decks) — M, high
+31. [Token Triumph (Starter Commander Decks)](#token-triumph-starter-commander-decks) — L, high
+32. [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) — M, high
+33. [Mishra's Burnished Banner (The Brothers' War Commander)](#mishras-burnished-banner-the-brothers-war-commander) — L, high
+34. [Forces of the Imperium (Warhammer 40,000 Commander)](#forces-of-the-imperium-warhammer-40000-commander) — L, high
+35. [The Ruinous Powers (Warhammer 40,000 Commander)](#the-ruinous-powers-warhammer-40000-commander) — L, high
+36. [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) — L, high
+37. [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) — L, high
+38. [Legends' Legacy (Dominaria United Commander)](#legends-legacy-dominaria-united-commander) — L, high
+39. [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — L, high
+40. [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — L, high
+41. [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — L, high
+42. [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — L, high
+43. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
+44. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
+45. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
+46. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
+47. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
+48. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
+49. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
+50. [Difficulty](#difficulty) — S, medium
+51. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+52. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
+53. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
+54. [Why a press is refused](#why-a-press-is-refused) — S, medium
+55. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
+56. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
+57. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
+58. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
+59. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
+60. [Experience counters](#experience-counters) — M, medium
+61. [Outcomes as data](#outcomes-as-data) — M, medium
+62. [Rad counters](#rad-counters) — M, medium
 63. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
 64. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
 65. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
 66. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
 67. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
-68. [Rad counters](#rad-counters) — M, medium
-69. [Replays and sharing](#replays-and-sharing) — M, medium
-70. [Secret choices](#secret-choices) — M, medium
-71. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-72. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
-73. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
-74. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
-75. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-76. [Archidekt import](#archidekt-import) — S, low
-77. [Sound](#sound) — S, low
+68. [Replays and sharing](#replays-and-sharing) — M, medium
+69. [Secret choices](#secret-choices) — M, medium
+70. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+71. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
+72. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
+73. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
+74. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+75. [Archidekt import](#archidekt-import) — S, low
+76. [Sound](#sound) — S, low
 
 **Blocked, and by what:**
 
@@ -265,6 +264,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Hail, Caesar (Fallout)](#hail-caesar-fallout) — [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma)
 - [Scrappy Survivors (Fallout)](#scrappy-survivors-fallout) — [Rad counters](#rad-counters)
 - [Science! (Fallout)](#science-fallout) — [Secret choices](#secret-choices)
+- [Mutant Menace (Fallout)](#mutant-menace-fallout) — [Rad counters](#rad-counters)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -842,6 +842,96 @@ removes them. Meren's six gates pass, and the generated DSL reference
   rule (122.1), and its line moves from "not implemented" to the
   implemented table in rules-coverage.md.
 
+### Rad counters
+
+Effort **M** · Impact **medium**, every rad-counter card in the Fallout precons waits on it, Acquired Mutation and Megaton's Fate among them · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+A player's counters are the kinds in `player.PLAYER_COUNTER_KINDS`, which
+lists poison and energy only; the comment above it names rad as one of the
+kinds that would need a field on `PlayerState` and an entry there. Each kind
+has its own funnel in `primitives` (`add_poison`, `add_energy`), and
+`ops_combat_flags` (proliferate) and `ops_life.op_lose_all_player_counters`
+walk `PLAYER_COUNTER_KINDS`, so a new kind reaches both once it is listed and
+funnelled. "Lose all counters" takes every kind at once; nothing removes one
+named kind from a player.
+
+Rad counters are more than a kind: a player with any has an inherent
+triggered ability at the beginning of their precombat main phase, which
+mills that many cards, then loses 1 life and removes one rad counter for
+each nonland card milled. The engine already has the two shapes this needs:
+`turn.begin_step`'s `Step.PRECOMBAT_MAIN` branch runs `sagas.turn_based_lore`
+and fires `EventType.PRECOMBAT_MAIN`, and `turn._monarch_draw` is a sourceless
+inherent trigger the game controls, resolved inline rather than on the stack.
+[rules-coverage.md](rules-coverage.md#not-implemented) does not mention rad
+counters at all.
+
+So no card can give a player a rad counter, and none can remove them. The
+Scrappy Survivors precon found it through Acquired Mutation and Megaton's
+Fate, and Hail, Caesar through Survivor's Med Kit; their gap records are
+`data/authoring/gaps/acquired_mutation.json`, `megaton_s_fate.json` and
+`survivor_s_med_kit.json`.
+
+#### The change
+
+1. `rad` joins `PLAYER_COUNTER_KINDS`, with a field on `PlayerState`, an
+   `add_rad` funnel in `primitives` in `add_energy`'s shape (counter
+   replacements applied, then an event of its own), and a key beside poison
+   and energy in the player's serialized view.
+2. An op that gives a player rad counters ("defending player gets two rad
+   counters", "each player gets four rad counters"), in the shape of
+   `add_energy`, reaching a trigger's defending player and `for_each_player`.
+3. The rad trigger at the beginning of the precombat main phase of a player
+   who has rad counters: mill that many, then for each nonland card milled
+   lose 1 life and remove one rad counter, through the existing mill and
+   life-loss funnels so their replacements and triggers still apply.
+4. A way to remove every counter of one named kind from a target player
+   ("target player loses all rad counters"), as an option on the existing
+   lose-all-counters op rather than a second op.
+5. Harvest: Acquired Mutation and Megaton's Fate through `/author-cards`,
+   then the catalog's other rad cards in one wave. Survivor's Med Kit also
+   needs "choose one that hasn't been chosen", which this item does not
+   build.
+
+It adds no other player counter kind (experience is
+[its own item](experience-counters.md), ticket is unplanned) and no client
+surface beyond the existing player-counter readout.
+
+#### Gate
+
+A unit test under `tests/unit/` for rad counters: the op adds them to the
+named player and to each player, the precombat-main trigger mills that many
+and costs 1 life and one counter per nonland card milled (a land-only mill
+costs nothing and leaves the counters), it does not fire for a player with
+none or on another player's turn, proliferate adds one to a player who has
+any, and losing all rad counters leaves poison and energy alone. Acquired
+Mutation's and Megaton's Fate's six gates pass, and the generated DSL
+reference (`tests/cards/test_dsl_reference.py`) lists the new op.
+
+#### Open questions
+
+- **How the counter is stored.** A field of its own on `PlayerState` beside
+  `poison` and `energy`, or a general `counters` mapping? Recommended: a
+  field of its own, the shape the two existing kinds have and the one
+  [experience counters](experience-counters.md) recommends, so the change
+  stays additive.
+- **On the stack or inline.** The printed rule makes the rad trigger a
+  triggered ability that uses the stack, so players can respond with the mill
+  pending. `_monarch_draw` resolves its sourceless trigger inline and records
+  that as a divergence. Recommended: on the stack, as the rules say, because
+  a player who sees the mill coming can sacrifice a Food or cast an instant
+  first; inline only if the engine has no seam for a sourceless trigger on
+  the stack, and then recorded as a deliberate divergence in
+  rules-coverage.md beside the monarch's.
+- **Where the client shows it.** Recommended: the same player-counter readout
+  that shows poison and energy, hidden at zero, with no new component; a
+  surface beyond that would need its story and floor (ADR 0013).
+- **Is it an ADR.** Recommended: no; it is one more player counter kind under
+  an existing rule, and its line goes into the implemented table in
+  rules-coverage.md. An ADR only if the stack question is answered with a
+  new seam for sourceless triggers.
+
 ### Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number
 
 Effort **M** · Impact **medium**, every Spacecraft in Edge of Eternities waits on it, two in the Counter Intelligence precon and two in World Shaper, whose commander is one · Depends on nothing · Awaiting decisions.
@@ -1081,96 +1171,6 @@ pass.
 - **Is it an ADR.** Recommended: no; it moves an existing announcement to the
   cast line, where divided damage already sits, and the line in
   rules-coverage.md narrows to triggered abilities.
-
-### Rad counters
-
-Effort **M** · Impact **medium**, every rad-counter card in the Fallout precons waits on it, Acquired Mutation and Megaton's Fate among them · Depends on nothing · Awaiting decisions.
-
-#### Today
-
-A player's counters are the kinds in `player.PLAYER_COUNTER_KINDS`, which
-lists poison and energy only; the comment above it names rad as one of the
-kinds that would need a field on `PlayerState` and an entry there. Each kind
-has its own funnel in `primitives` (`add_poison`, `add_energy`), and
-`ops_combat_flags` (proliferate) and `ops_life.op_lose_all_player_counters`
-walk `PLAYER_COUNTER_KINDS`, so a new kind reaches both once it is listed and
-funnelled. "Lose all counters" takes every kind at once; nothing removes one
-named kind from a player.
-
-Rad counters are more than a kind: a player with any has an inherent
-triggered ability at the beginning of their precombat main phase, which
-mills that many cards, then loses 1 life and removes one rad counter for
-each nonland card milled. The engine already has the two shapes this needs:
-`turn.begin_step`'s `Step.PRECOMBAT_MAIN` branch runs `sagas.turn_based_lore`
-and fires `EventType.PRECOMBAT_MAIN`, and `turn._monarch_draw` is a sourceless
-inherent trigger the game controls, resolved inline rather than on the stack.
-[rules-coverage.md](rules-coverage.md#not-implemented) does not mention rad
-counters at all.
-
-So no card can give a player a rad counter, and none can remove them. The
-Scrappy Survivors precon found it through Acquired Mutation and Megaton's
-Fate, and Hail, Caesar through Survivor's Med Kit; their gap records are
-`data/authoring/gaps/acquired_mutation.json`, `megaton_s_fate.json` and
-`survivor_s_med_kit.json`.
-
-#### The change
-
-1. `rad` joins `PLAYER_COUNTER_KINDS`, with a field on `PlayerState`, an
-   `add_rad` funnel in `primitives` in `add_energy`'s shape (counter
-   replacements applied, then an event of its own), and a key beside poison
-   and energy in the player's serialized view.
-2. An op that gives a player rad counters ("defending player gets two rad
-   counters", "each player gets four rad counters"), in the shape of
-   `add_energy`, reaching a trigger's defending player and `for_each_player`.
-3. The rad trigger at the beginning of the precombat main phase of a player
-   who has rad counters: mill that many, then for each nonland card milled
-   lose 1 life and remove one rad counter, through the existing mill and
-   life-loss funnels so their replacements and triggers still apply.
-4. A way to remove every counter of one named kind from a target player
-   ("target player loses all rad counters"), as an option on the existing
-   lose-all-counters op rather than a second op.
-5. Harvest: Acquired Mutation and Megaton's Fate through `/author-cards`,
-   then the catalog's other rad cards in one wave. Survivor's Med Kit also
-   needs "choose one that hasn't been chosen", which this item does not
-   build.
-
-It adds no other player counter kind (experience is
-[its own item](experience-counters.md), ticket is unplanned) and no client
-surface beyond the existing player-counter readout.
-
-#### Gate
-
-A unit test under `tests/unit/` for rad counters: the op adds them to the
-named player and to each player, the precombat-main trigger mills that many
-and costs 1 life and one counter per nonland card milled (a land-only mill
-costs nothing and leaves the counters), it does not fire for a player with
-none or on another player's turn, proliferate adds one to a player who has
-any, and losing all rad counters leaves poison and energy alone. Acquired
-Mutation's and Megaton's Fate's six gates pass, and the generated DSL
-reference (`tests/cards/test_dsl_reference.py`) lists the new op.
-
-#### Open questions
-
-- **How the counter is stored.** A field of its own on `PlayerState` beside
-  `poison` and `energy`, or a general `counters` mapping? Recommended: a
-  field of its own, the shape the two existing kinds have and the one
-  [experience counters](experience-counters.md) recommends, so the change
-  stays additive.
-- **On the stack or inline.** The printed rule makes the rad trigger a
-  triggered ability that uses the stack, so players can respond with the mill
-  pending. `_monarch_draw` resolves its sourceless trigger inline and records
-  that as a divergence. Recommended: on the stack, as the rules say, because
-  a player who sees the mill coming can sacrifice a Food or cast an instant
-  first; inline only if the engine has no seam for a sourceless trigger on
-  the stack, and then recorded as a deliberate divergence in
-  rules-coverage.md beside the monarch's.
-- **Where the client shows it.** Recommended: the same player-counter readout
-  that shows poison and energy, hidden at zero, with no new component; a
-  surface beyond that would need its story and floor (ADR 0013).
-- **Is it an ADR.** Recommended: no; it is one more player counter kind under
-  an existing rule, and its line goes into the implemented table in
-  rules-coverage.md. An ADR only if the stack question is answered with a
-  new seam for sourceless triggers.
 
 ### Secret choices
 
@@ -2661,7 +2661,7 @@ whole-game test able to draw the deck.
 
 ### Mutant Menace (Fallout)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Rad counters](#rad-counters).
 
 #### Today
 
@@ -2672,6 +2672,31 @@ coming-soon shell on the shelf: its row `pip_mutant_menace` is in
 `python scripts/sync_precons.py --missing pip_mutant_menace` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+
+Every card on the list has been through `/author-cards` once. Twenty-nine
+cards are left, and each has a gap record naming what it waits on:
+
+- Nineteen print rad counters, which have [their own item](rad-counters.md);
+  this item depends on it. They are Bloatfly Swarm, Contaminated Drink,
+  Feral Ghoul, Glowing One, Harold and Bob, Infesting Radroach, Mariposa
+  Military Base, Mirelurk Queen, Nightkin Ambusher, Nuclear Fallout,
+  Nuka-Nuke Launcher, Screeching Scorchbeast, Strong, Struggle for Project
+  Purity, Tato Farmer, The Master, The Wise Mothman, Vault 12 and Vexing
+  Radgull.
+- Raul, Trouble Shooter needs a selector for cards milled this turn, and
+  Tato Farmer and The Master need it too, beside rad counters.
+- Agent Frank Horrigan needs an "attacked this turn" condition on a static.
+- Fraying Sanity needs the cards put into one player's graveyard this turn.
+- Jason Bright, Glowing Prophet needs the base power a creature had as it
+  died.
+- Lumbering Megasloth needs a cost reduction counted per counter among
+  players and permanents.
+- Rampaging Yao Guai needs a total mana value cap read from X.
+- Recon Craft Theta needs the 0/0 blue Alien creature token.
+- Watchful Radstag needs a trigger for a creature evolving.
+- Winding Constrictor needs a counter replacement that reaches only its
+  controller as a player.
+- Young Deathclaws needs scavenge granted to creature cards in a graveyard.
 
 #### The change
 

@@ -5943,6 +5943,102 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters or becomes monstrous, destroy target permanent.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters or becomes monstrous, destroy target permanent.",
+          "trigger": {
+            "event": "becomes_monstrous",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{5}{B}{G}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "monstrosity"
+            }
+          ],
+          "kind": "activated",
+          "text": "{5}{B}{G}: Monstrosity 4. (If this creature isn't monstrous, put four +1/+1 counters on it and it becomes monstrous.)"
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "alpha_deathclaw",
+      "keywords": [
+        "menace",
+        "trample"
+      ],
+      "mana_cost": "{4}{B}{G}",
+      "name": "Alpha Deathclaw",
+      "oracle_text": "Menace, trample\nWhen this creature enters or becomes monstrous, destroy target permanent.\n{5}{B}{G}: Monstrosity 4. (If this creature isn't monstrous, put four +1/+1 counters on it and it becomes monstrous.)",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Lizard",
+        "Mutant"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "alpha_myr",
@@ -14652,6 +14748,48 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "atomize",
+      "mana_cost": "{2}{B}{G}",
+      "name": "Atomize",
+      "oracle_text": "Destroy target nonland permanent. Proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        },
+        {
+          "op": "proliferate"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -29502,6 +29640,37 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "counter": "+1/+1",
+          "counter_multiplier": 2,
+          "effect": "replace_counters",
+          "kind": "static",
+          "text": "If one or more +1/+1 counters would be put on a creature you control, twice that many +1/+1 counters are put on that creature instead."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "branching_evolution",
+      "mana_cost": "{2}{G}",
+      "name": "Branching Evolution",
+      "oracle_text": "If one or more +1/+1 counters would be put on a creature you control, twice that many +1/+1 counters are put on that creature instead.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -36742,6 +36911,78 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "has_counters": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "cost": {
+            "mana": "{1}"
+          },
+          "effect": "ward",
+          "kind": "static",
+          "text": "Each creature you control with a counter on it has ward {1}. (Whenever it becomes the target of a spell or ability an opponent controls, counter it unless that player pays {1}.)"
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "entered_this_turn": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{T}: Put a +1/+1 counter on target creature that entered this turn."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "cathedral_acolyte",
+      "mana_cost": "{1}{G}",
+      "name": "Cathedral Acolyte",
+      "oracle_text": "Each creature you control with a counter on it has ward {1}. (Whenever it becomes the target of a spell or ability an opponent controls, counter it unless that player pays {1}.)\n{T}: Put a +1/+1 counter on target creature that entered this turn.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Cleric"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -47834,6 +48075,44 @@
         "Knight"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "counter": "+1/+1",
+          "counter_multiplier": 2,
+          "effect": "replace_counters",
+          "kind": "static",
+          "text": "If one or more +1/+1 counters would be put on a creature you control, twice that many +1/+1 counters are put on it instead."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "corpsejack_menace",
+      "mana_cost": "{2}{B}{G}",
+      "name": "Corpsejack Menace",
+      "oracle_text": "If one or more +1/+1 counters would be put on a creature you control, twice that many +1/+1 counters are put on it instead.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Fungus"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -102388,6 +102667,104 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "any_of": [
+              {
+                "subtypes": [
+                  "Zombie"
+                ]
+              },
+              {
+                "subtypes": [
+                  "Mutant"
+                ]
+              }
+            ],
+            "controller": "you",
+            "exclude_self": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "counters_on": {
+              "counter": "any",
+              "objects": {
+                "self_only": true
+              }
+            }
+          },
+          "text": "Each other creature you control that's a Zombie or Mutant gets +X/+X, where X is the number of counters on Hancock",
+          "toughness": {
+            "counters_on": {
+              "counter": "any",
+              "objects": {
+                "self_only": true
+              }
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "counters": {
+                "+1/+1": 1
+              },
+              "destination": "battlefield",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Undying (When this creature dies, if it had no +1/+1 counters on it, return it to the battlefield under its owner's control with a +1/+1 counter on it.)",
+          "trigger": {
+            "condition": {
+              "cmp": "==",
+              "left": {
+                "counters_had": "+1/+1"
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "hancock_ghoulish_mayor",
+      "mana_cost": "{2}{B}",
+      "name": "Hancock, Ghoulish Mayor",
+      "oracle_text": "Each other creature you control that's a Zombie or Mutant gets +X/+X, where X is the number of counters on Hancock.\nUndying (When this creature dies, if it had no +1/+1 counters on it, return it to the battlefield under its owner's control with a +1/+1 counter on it.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Mutant",
+        "Advisor"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "alternative_cost": {
         "sacrifice": {
           "controller": "you",
@@ -134820,6 +135197,123 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "condition": {
+                "cmp": "<=",
+                "left": {
+                  "power_of": {
+                    "self": true
+                  }
+                },
+                "right": {
+                  "const": 16
+                }
+              },
+              "else": [
+                {
+                  "amount": {
+                    "max": [
+                      {
+                        "const": 0
+                      },
+                      {
+                        "minus": [
+                          {
+                            "counters_on": {
+                              "counter": "+1/+1",
+                              "objects": {
+                                "self_only": true
+                              }
+                            }
+                          },
+                          {
+                            "const": 1
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "as": "removed",
+                  "counter": "+1/+1",
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "remove_counters"
+                },
+                {
+                  "amount": {
+                    "binding": "removed"
+                  },
+                  "op": "gain_life",
+                  "player": "you"
+                }
+              ],
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "counters_on": {
+                      "counter": "+1/+1",
+                      "objects": {
+                        "self_only": true
+                      }
+                    }
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "add_counters"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, double the number of +1/+1 counters on Lily Bowen if its power is 16 or less. Otherwise, remove all but one +1/+1 counter from it, then you gain 1 life for each +1/+1 counter removed this way",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "lily_bowen_raging_grandma",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{3}{G}",
+      "name": "Lily Bowen, Raging Grandma",
+      "oracle_text": "Vigilance\nLily Bowen enters with two +1/+1 counters on it.\nAt the beginning of your upkeep, double the number of +1/+1 counters on Lily Bowen if its power is 16 or less. Otherwise, remove all but one +1/+1 counter from it, then you gain 1 life for each +1/+1 counter removed this way.",
+      "power": 0,
+      "replacements": [
+        {
+          "amount": 2,
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Mutant",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 0,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B",
         "W"
@@ -143156,6 +143650,87 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "condition": {
+                "cmp": ">",
+                "left": {
+                  "counters_on": {
+                    "counter": "+1/+1",
+                    "objects": {
+                      "binding": "subject"
+                    }
+                  }
+                },
+                "right": {
+                  "const": 0
+                }
+              },
+              "else": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "binding": "subject"
+                  },
+                  "op": "add_counters"
+                }
+              ],
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control deals combat damage to a player, draw a card if that creature has a +1/+1 counter on it. If it doesn't, put a +1/+1 counter on it.",
+          "trigger": {
+            "controller": "you",
+            "event": "deals_combat_damage_to_player"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "marcus_mutant_mayor",
+      "keywords": [
+        "vigilance",
+        "trample"
+      ],
+      "mana_cost": "{3}{G}{U}",
+      "name": "Marcus, Mutant Mayor",
+      "oracle_text": "Vigilance, trample\nWhenever a creature you control deals combat damage to a player, draw a card if that creature has a +1/+1 counter on it. If it doesn't, put a +1/+1 counter on it.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Mutant",
+        "Advisor"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "additional_cost": {
         "discard": 1
       },
@@ -151286,6 +151861,82 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "condition": {
+                "exists": {
+                  "target": "t1"
+                }
+              },
+              "effects": [
+                {
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "put_on_top"
+                }
+              ],
+              "op": "may",
+              "prompt": "Put the targeted creature card on top of your library?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When this land enters, you may put target creature card from your graveyard on top of your library.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{B}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {B}."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [],
+      "id": "mortuary_mire",
+      "mana_cost": "",
+      "name": "Mortuary Mire",
+      "oracle_text": "This land enters tapped.\nWhen this land enters, you may put target creature card from your graveyard on top of your library.\n{T}: Add {B}.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -153391,6 +154042,53 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "mutational_advantage",
+      "mana_cost": "{1}{G}{U}",
+      "name": "Mutational Advantage",
+      "oracle_text": "Permanents you control with counters on them gain hexproof and indestructible until end of turn. Prevent all damage that would be dealt to those permanents this turn. Proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "keywords": [
+            "hexproof",
+            "indestructible"
+          ],
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "has_counters": true,
+            "zone": "battlefield"
+          },
+          "op": "grant_keyword"
+        },
+        {
+          "dealt": "to",
+          "duration": "this_turn",
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "has_counters": true,
+            "zone": "battlefield"
+          },
+          "op": "prevent_damage_permanent"
+        },
+        {
+          "op": "proliferate"
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -172206,6 +172904,90 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "clue_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Piper Wright deals combat damage to a player, investigate that many times. (To investigate, create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever you sacrifice a Clue, put a +1/+1 counter on target creature you control.",
+          "trigger": {
+            "controller": "you",
+            "event": "sacrificed",
+            "filter": {
+              "subtypes": [
+                "Clue"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "piper_wright_publick_reporter",
+      "mana_cost": "{1}{U}",
+      "name": "Piper Wright, Publick Reporter",
+      "oracle_text": "Whenever Piper Wright deals combat damage to a player, investigate that many times. (To investigate, create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")\nWhenever you sacrifice a Clue, put a +1/+1 counter on target creature you control.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Detective"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -180766,6 +181548,55 @@
           },
           "op": "draw",
           "player": "you"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "amount": {
+                "minus": [
+                  {
+                    "spells_cast_this_turn": "all"
+                  },
+                  {
+                    "const": 1
+                  }
+                ]
+              },
+              "op": "copy_spell"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Storm (When you cast this spell, copy it for each spell cast before it this turn.)",
+          "trigger": {
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "radstorm",
+      "mana_cost": "{3}{U}",
+      "name": "Radstorm",
+      "oracle_text": "Storm (When you cast this spell, copy it for each spell cast before it this turn.)\nProliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "op": "proliferate"
         }
       ],
       "types": [
@@ -257648,6 +258479,123 @@
       "mana_cost": "{2}{W}{W}",
       "name": "Vault 75: Middle School",
       "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Exile all creatures with power 4 or greater.\nII, III — Put a +1/+1 counter on each creature you control.",
+      "source": "auto",
+      "subtypes": [
+        "Saga"
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "chapter": 1,
+          "effects": [
+            {
+              "duration": "as_long_as_you_control_source",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "gain_control"
+            }
+          ],
+          "kind": "chapter",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "not_subtypes": [
+                  "Mutant"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "I — Gain control of target non-Mutant creature for as long as you control this Saga."
+        },
+        {
+          "chapter": 2,
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_subtype",
+              "subtypes": [
+                "Mutant"
+              ]
+            }
+          ],
+          "kind": "chapter",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "II — Put a +1/+1 counter on target creature you control. It becomes a Mutant in addition to its other types."
+        },
+        {
+          "chapter": 3,
+          "effects": [
+            {
+              "amount": {
+                "extreme_value": {
+                  "objects": {
+                    "controller": "you",
+                    "subtypes": [
+                      "Mutant"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "of": "power",
+                  "pick": "greatest"
+                }
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "chapter",
+          "text": "III — Draw cards equal to the greatest power among Mutants you control."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "vault_87_forced_evolution",
+      "mana_cost": "{3}{G}{U}",
+      "name": "Vault 87: Forced Evolution",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Gain control of target non-Mutant creature for as long as you control this Saga.\nII — Put a +1/+1 counter on target creature you control. It becomes a Mutant in addition to its other types.\nIII — Draw cards equal to the greatest power among Mutants you control.",
       "source": "auto",
       "subtypes": [
         "Saga"

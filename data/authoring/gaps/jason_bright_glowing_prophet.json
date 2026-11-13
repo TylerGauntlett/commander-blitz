@@ -1,0 +1,18 @@
+{
+  "card_id": "jason_bright_glowing_prophet",
+  "name": "Jason Bright, Glowing Prophet",
+  "oracle_text": "Whenever a Zombie or Mutant you control dies, if its power was different from its base power, draw a card.\nCome Fly With Me — {2}, Sacrifice a creature: Put a +1/+1 counter on target creature you control. It gains flying until end of turn.",
+  "blocked_sentences": [
+    "Whenever a Zombie or Mutant you control dies, if its power was different from its base power, draw a card."
+  ],
+  "needs": [
+    {
+      "capability": "base_power_had",
+      "kind": "value",
+      "what": "a last-known-information value key for the BASE power (layer 7b result, before counters and modifiers) the departed creature had as it left the battlefield, snapshotted on the dies event beside had_power, so a dies trigger's intervening-if can compare {\"power_had\": true} against it with cmp '!='",
+      "why_existing_wont_do": "power_had reads the creature's last-known derived power, but nothing snapshots its base power. power_of on the card in the graveyard returns the printed power, which is wrong for a token (it has ceased to exist, e.g. a decayed Zombie token), for a copy, and for a creature whose base P/T was set by an effect (set_pt, animate); the base_power selector key only matches objects still on the battlefield"
+    }
+  ],
+  "closest_existing": ["power_had", "power_of", "base_power", "modified_creatures_died_this_turn"],
+  "confidence": "high"
+}

@@ -1,0 +1,18 @@
+{
+  "card_id": "recon_craft_theta",
+  "name": "Recon Craft Theta",
+  "oracle_text": "Flying\nWhen this Vehicle enters, create a 0/0 blue Alien creature token. Put a +1/+1 counter on it.\nWhenever this Vehicle attacks, proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)\nCrew 2",
+  "blocked_sentences": [
+    "When this Vehicle enters, create a 0/0 blue Alien creature token. Put a +1/+1 counter on it."
+  ],
+  "needs": [
+    {
+      "capability": "alien_token",
+      "kind": "token",
+      "what": "a 0/0 blue Alien creature token (no abilities), e.g. id alien_0_0_u",
+      "why_existing_wont_do": "token_ids has no Alien token; the nearest 0/0 blue tokens (illusion_x_x_u, shark_x_x_u_flying) have the wrong creature type or keywords. The rest of the card is expressible: create_token with `as` to bind it then add_counters +1/+1 on it, proliferate on an attacks trigger, and Crew 2 as tap_permanents total_power 2."
+    }
+  ],
+  "closest_existing": ["illusion_x_x_u"],
+  "confidence": "high"
+}

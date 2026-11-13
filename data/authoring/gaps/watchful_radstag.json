@@ -1,0 +1,14 @@
+{
+  "card_id": "watchful_radstag",
+  "name": "Watchful Radstag",
+  "oracle_text": "Evolve (Whenever a creature you control enters, if that creature has greater power or toughness than this creature, put a +1/+1 counter on this creature.)\nWhenever this creature evolves, create a token that's a copy of it.",
+  "blocked_sentences": ["Whenever this creature evolves, create a token that's a copy of it."],
+  "needs": [{
+    "capability": "evolve",
+    "kind": "trigger_event",
+    "what": "a trigger event 'evolves' (702.100d) that fires when this permanent's own evolve ability resolves and puts a +1/+1 counter on it, bound to self, so a separate triggered ability can then copy_permanent the source",
+    "why_existing_wont_do": "Evolve itself is a permanent_enters trigger with an intervening-if (as Fathom Mage writes it), but nothing marks that resolution as an evolve event. counter_placed with source self and counter +1/+1 also fires for proliferate, other cards' counters and any other source of +1/+1 counters, which is a broader card; folding copy_permanent into the evolve trigger's own effects removes the separate trigger that goes on the stack and claims two printed lines with one ability"
+  }],
+  "closest_existing": ["counter_placed", "permanent_enters", "copy_permanent"],
+  "confidence": "high"
+}

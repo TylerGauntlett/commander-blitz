@@ -1,0 +1,18 @@
+{
+  "card_id": "rampaging_yao_guai",
+  "name": "Rampaging Yao Guai",
+  "oracle_text": "Vigilance, trample\nThis creature enters with X +1/+1 counters on it.\nWhen this creature enters, destroy any number of target artifacts and/or enchantments with total mana value X or less.",
+  "blocked_sentences": [
+    "When this creature enters, destroy any number of target artifacts and/or enchantments with total mana value X or less."
+  ],
+  "needs": [
+    {
+      "capability": "total_mana_value_x",
+      "kind": "selector",
+      "what": "a target spec's `total_mana_value` cap that takes a value (the X paid to cast the permanent, read by its own enters trigger, e.g. {\"x\": true}) instead of only a printed integer, so an any-number target's picks together are limited to mana value X or less",
+      "why_existing_wont_do": "The target key `total_mana_value` exists (Phoenix, Warden of Fire) but is typed `int | None` in the schema and loader, so only a constant cap like 6 can be written; a per-candidate `mana_value` selector clause caps each pick separately, which is a much wider card"
+    }
+  ],
+  "closest_existing": ["total_mana_value", "total_power"],
+  "confidence": "high"
+}
