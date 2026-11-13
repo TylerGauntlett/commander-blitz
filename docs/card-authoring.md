@@ -339,6 +339,10 @@ other card's position moves. The conditional props are the helpers beside
 cost; `graveyard_spell_props` puts a targetless instant or sorcery card in your
 graveyard or the opponent's (which is otherwise empty) for a spell whose
 required `card_in_graveyard` target selects Instant or Sorcery there.
+`swap_in_artifact_body` serves two shapes: a non-artifact card whose toughness
+counts your artifacts, and a card whose required target is a plain artifact (or
+artifact creature) you control, "Enchant artifact you control"
+(`must_target_own_artifact`).
 `tests/cards/test_every_card_works.py` calls the same helpers, so the two
 sandboxes agree.
 

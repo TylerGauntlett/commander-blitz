@@ -929,6 +929,86 @@ class TestTheArtifactProp:
         assert not pick.is_token
 
 
+class TestTheOwnArtifactTargetProp:
+    """An Aura that must enchant an artifact you control needs one to enchant.
+
+    Your board is lands and two non-artifact creatures, so "Enchant artifact
+    you control" had no legal target (601.2c, 303.4a) and Mechanized
+    Production failed gate 4 as "not playable in the sandbox". The second
+    creature is swapped for the quiet artifact creature `swap_in_artifact_body`
+    brings, and only for a card whose required target is that artifact.
+    """
+
+    AURA = {
+        "id": "auto_test_own_artifact_aura",
+        "name": "Auto Test Own Artifact Aura",
+        "oracle_text": "Enchant artifact you control",
+        "mana_cost": "{2}{U}",
+        "types": ["Enchantment"],
+        "subtypes": ["Aura"],
+        "colors": ["U"],
+        "targets": [
+            {
+                "id": "enchanted",
+                "kind": "permanent",
+                "selector": {"zone": "battlefield", "controller": "you", "types": ["Artifact"]},
+            }
+        ],
+    }
+
+    def _merged(self, pool: CardRegistry, payload: dict) -> tuple[CardRegistry, object]:
+        card = V.compile_card(V.CardModel.model_validate(payload))
+        return V.CardRegistry({**{c.id: c for c in pool}, card.id: card}), card
+
+    def _own_artifacts(self, game) -> list:
+        return [
+            o
+            for o in game.state.battlefield_objects(0)
+            if "Artifact" in game.state.registry.get(o.def_id).types
+        ]
+
+    def _variant(self, **changes) -> dict:
+        payload = {**self.AURA, "id": "auto_test_aura_variant", "name": "Auto Test Aura Variant"}
+        spec = {**self.AURA["targets"][0], **changes.pop("spec", {})}
+        return {**payload, "targets": [spec], **changes}
+
+    def test_it_is_cast_onto_an_artifact_of_yours(self, hand_written):
+        verdict = V.verify(self.AURA, {"zone": "battlefield", "battlefield_count": 33}, hand_written)
+        assert verdict.ok, str(verdict)
+
+    def test_the_prop_is_one_artifact_creature_and_the_boards_hold(self, hand_written):
+        merged, card = self._merged(hand_written, self.AURA)
+        assert V.must_target_own_artifact(card)
+        game = V.build_sandbox(merged, card.id)
+        artifacts = self._own_artifacts(game)
+        assert len(artifacts) == 1
+        assert merged.get(artifacts[0].def_id).is_creature
+        assert len(game.state.battlefield_objects(0)) == 32
+        assert len(game.state.battlefield_objects(1)) == 6
+
+    def test_an_artifact_creature_target_is_met_too(self, hand_written):
+        payload = self._variant(
+            spec={"selector": {"controller": "you", "types": ["Artifact", "Creature"]}}
+        )
+        _, card = self._merged(hand_written, payload)
+        assert V.must_target_own_artifact(card)
+
+    @pytest.mark.parametrize(
+        "spec",
+        [
+            {"optional": True},
+            {"selector": {"zone": "battlefield", "types": ["Artifact"]}},
+            {"selector": {"zone": "battlefield", "controller": "you", "types": ["Creature"]}},
+            {"selector": {"controller": "you", "types": ["Artifact"], "is_token": True}},
+        ],
+        ids=["optional", "any_controller", "not_an_artifact", "a_question_the_prop_may_fail"],
+    )
+    def test_a_card_that_does_not_need_it_sees_the_old_board(self, hand_written, spec):
+        merged, card = self._merged(hand_written, self._variant(spec=spec))
+        assert not V.must_target_own_artifact(card)
+        assert not self._own_artifacts(V.build_sandbox(merged, card.id))
+
+
 class TestTheColorlessPipGetsWastes:
     """A ``{C}`` pip needs a land that makes colorless mana.
 

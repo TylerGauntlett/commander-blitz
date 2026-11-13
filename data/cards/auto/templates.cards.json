@@ -147046,6 +147046,82 @@
         {
           "effects": [
             {
+              "objects": {
+                "attached": true
+              },
+              "op": "copy_permanent"
+            },
+            {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "most_sharing_a_name": {
+                    "objects": {
+                      "controller": "you",
+                      "types": [
+                        "Artifact"
+                      ],
+                      "zone": "battlefield"
+                    }
+                  }
+                },
+                "right": {
+                  "const": 8
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "op": "win_game",
+                  "player": "you"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, create a token that's a copy of enchanted artifact. Then if you control eight or more artifacts with the same name as one another, you win the game.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "mechanized_production",
+      "mana_cost": "{2}{U}{U}",
+      "name": "Mechanized Production",
+      "oracle_text": "Enchant artifact you control\nAt the beginning of your upkeep, create a token that's a copy of enchanted artifact. Then if you control eight or more artifacts with the same name as one another, you win the game.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Artifact"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 1
               },

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**377 cards** blocked by **326** capabilities.
+**376 cards** blocked by **325** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -288,7 +288,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [salamander-warrior-4-3-u](#salamander-warrior-4-3-u) | 1 | 3395 | token |
 | [same-target-for-each-target-word](#same-target-for-each-target-word) | 1 | 5003 | engine |
 | [sandbox-low-mana-value-permanent](#sandbox-low-mana-value-permanent) | 1 | 14140 | engine |
-| [sandbox-own-artifact-prop](#sandbox-own-artifact-prop) | 1 | 986 | engine |
 | [scavenge](#scavenge) | 1 | 11499 | static_effect |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
@@ -4726,20 +4725,6 @@ Blocks **1** card.
 
 - **Bloodchief's Thirst** (rank 14140) — `bloodchief_s_thirst`
   - Destroy target creature or planeswalker with mana value 2 or less. If this spell was kicked, instead destroy target creature or planeswalker.
-
-</details>
-
-## sandbox-own-artifact-prop
-
-Blocks **1** card.
-
-- **(engine)** the verification sandbox (verify.build_sandbox / _own_board) needs an artifact you control for a card whose mandatory Aura target is 'artifact you control' -- a swap like swap_in_artifact_body or an added prop, as graveyard_spell_props does for graveyard targets. The DSL already spells the whole card: Aura with targets [{id: enchanted, kind: permanent, selector: {zone: battlefield, controller: you, types: [Artifact]}}]; a triggered ability on {event: upkeep, controller: you} with effects copy_permanent {objects: {attached: true}} then if {cmp: >=, left: {most_sharing_a_name: {objects: {zone: battlefield, controller: you, types: [Artifact]}}}, right: {const: 8}} then win_game {player: you}
-  <br>Why the existing vocabulary won't do: The sandbox board's two creatures are non-artifacts and its 30 lands are basics, so 'Enchant artifact you control' has no legal target, the Aura cannot be cast (601.2c, 303.4a) and gate 4 rejects it as 'not playable in the sandbox'. swap_in_artifact_body only fires for a non-artifact card whose toughness counts your artifacts. Relaxing the target to any controller or making it optional would describe a different card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Mechanized Production** (rank 986) — `mechanized_production`
-  - Enchant artifact you control
 
 </details>
 

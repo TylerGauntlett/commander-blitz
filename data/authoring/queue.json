@@ -170152,12 +170152,12 @@
     },
     "Mechanized Production": {
       "edhrec_rank": 986,
-      "gate": "template",
+      "gate": null,
       "name": "Mechanized Production",
-      "reason": "no template for: At the beginning of your upkeep, create a token that's a copy of enchanted artifact. Then ",
+      "reason": "",
       "scryfall_id": "27bd54ab-5512-4011-a60f-ec2899b34327",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mechanized Warfare": {
