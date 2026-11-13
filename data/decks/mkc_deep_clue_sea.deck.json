@@ -24,6 +24,31 @@
   ],
   "strategy": "Morska, Undersea Sleuth investigates every upkeep, has no maximum hand size and grows with each second card drawn in a turn, so the deck turns Clues into a stream of cards. Ethereal Investigator, Wavesifter, Confirm Suspicions, Disorder in the Court, Follow the Bodies, Search the Premises, Ongoing Investigation and Tireless Tracker make the Clues; Erdwal Illuminator doubles the first investigation each turn, Armed with Proof turns them into Equipment, Tangletrove Kelp into 6/6 Plants, and Graf Mole and Ulvenwald Mysteries pay for cracking them. Swords to Plowshares, Farewell, Fumigate and Organic Extinction answer the board while the hand refills, and Knowledge Is Power, Psychosis Crawler, Hydroid Krasis and Koma, Cosmos Serpent close the game.",
   "archetype": "control",
+  "ratings": {
+    "speed": 2,
+    "complexity": 3,
+    "interaction": 3,
+    "resilience": 3,
+    "pilot": 3
+  },
+  "signature": [
+    {
+      "card_id": "morska_undersea_sleuth",
+      "why": "Investigates every upkeep, keeps every card you draw and grows with each second draw in a turn."
+    },
+    {
+      "card_id": "erdwal_illuminator",
+      "why": "The first investigation each turn happens twice."
+    },
+    {
+      "card_id": "tangletrove_kelp",
+      "why": "Every other Clue you control attacks as a 6/6 Plant each combat."
+    },
+    {
+      "card_id": "knowledge_is_power",
+      "why": "Each card you draw this turn makes your creatures bigger."
+    }
+  ],
   "printings": {
     "academy_manufactor": {
       "scryfall_id": "60709d98-c98d-48c0-ac4a-4ff73e7a0c4b",
