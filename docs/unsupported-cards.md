@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**376 cards** blocked by **325** capabilities.
+**375 cards** blocked by **324** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -251,7 +251,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [one-target-per-graveyard](#one-target-per-graveyard) | 1 | 9139 | selector |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
 | [opponents-attacked-this-turn](#opponents-attacked-this-turn) | 1 | 4544 | value |
-| [owner-cast-permission](#owner-cast-permission) | 1 | 2699 | op |
 | [pay-any-amount-of-life](#pay-any-amount-of-life) | 1 | 4322 | cost |
 | [play-cost-paid-card](#play-cost-paid-card) | 1 | 6544 | op |
 | [play-exiled-land](#play-exiled-land) | 1 | 11125 | op |
@@ -4201,20 +4200,6 @@ Blocks **1** card.
 
 - **Rose, Cutthroat Raider** (rank 4544) — `rose_cutthroat_raider`
   - Raid — At end of combat on your turn, if you attacked this turn, create a Junk token for each opponent you attacked. (It's an artifact with "{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.")
-
-</details>
-
-## owner-cast-permission
-
-Blocks **1** card.
-
-- **(op)** an `exile` play permission granted to each exiled card's OWNER rather than the effect's controller, at its normal mana cost, lasting while the card remains exiled -- e.g. a `playable_by: "owner"` key beside `playable: "while_exiled"` and `playable_cast_only: true` on the `exile` op
-  <br>Why the existing vocabulary won't do: `exile`'s `playable` always sets `playable_by = ctx.controller` (the packet notes say the permission is always the effect controller's), which would let me cast my opponent's exiled permanent; `airbend` does set `playable_by = obj.owner` with `while_exiled`, but it hard-codes an alternative cost (default {2}) in place of the card's mana cost and is not cast-only, so it is a different card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Aerial Extortionist** (rank 2699) — `aerial_extortionist`
-  - Whenever this creature enters or deals combat damage to a player, exile up to one target nonland permanent. For as long as that card remains exiled, its owner may cast it.
 
 </details>
 

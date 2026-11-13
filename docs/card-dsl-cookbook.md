@@ -1064,6 +1064,27 @@ The near miss is narrowing the selector to nonland cards, which is a different
 card: Hostage Taker may target an artifact land, and a look at the top of a
 library may have to exile a land; the holder only cannot *play* it.
 
+### "For as long as that card remains exiled, its owner may cast it"
+
+```jsonc
+{ "op": "exile", "objects": { "target": "t1" },
+  "playable": "while_exiled", "playable_cast_only": true,
+  "playable_by": "owner" }                                     // Aerial Extortionist
+```
+
+`playable_by: "owner"` hands the permission to each exiled card's owner (108.3)
+instead of the effect's controller, so a permanent taken from an opponent — or
+one you had stolen from them — is theirs to cast again, never yours. The price
+is the printed one, with every rider the permission carries beside it.
+
+The loader takes it only on `exile` with `playable: "while_exiled"`: every other
+duration is counted on the holder's own turns or the source's next exile, which
+no owner sentence prints. Its only value is `"owner"`; the default holder is the
+effect's controller.
+
+The near miss is `airbend`, which also grants to the owner but replaces the
+mana cost with a flat {2} (118.9).
+
 ### "You may play them without paying their mana costs"
 
 ```jsonc

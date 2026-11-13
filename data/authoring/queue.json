@@ -2662,12 +2662,12 @@
     },
     "Aerial Extortionist": {
       "edhrec_rank": 2699,
-      "gate": "template",
+      "gate": null,
       "name": "Aerial Extortionist",
-      "reason": "no template for: Whenever this creature enters or deals combat damage to a player, exile up to one target n",
+      "reason": "",
       "scryfall_id": "5353bcb9-800d-4d74-95fa-42350a0f25de",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aerial Formation": {

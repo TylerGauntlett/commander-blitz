@@ -1,0 +1,26 @@
+{
+  "_comment": "Witnesses for tests/unit/casting/test_owner_cast_permission.py. `t_owner_extortion` is Aerial Extortionist's exile on a free sorcery: target nonland permanent, and its OWNER may cast it while it remains exiled. It reuses the airbend test's `t_stone_yak` ({G}) and `t_thunder_drake` ({4}{U}{U}) so the printed price is measurable against a seat's lands.",
+  "cards": [
+    {
+      "id": "t_owner_extortion",
+      "name": "Test Owner Extortion",
+      "oracle_text": "Exile target nonland permanent. For as long as that card remains exiled, its owner may cast it.",
+      "mana_cost": "{0}",
+      "types": ["Sorcery"],
+      "colors": [],
+      "color_identity": [],
+      "targets": [
+        {"id": "t1", "kind": "permanent", "selector": {"zone": "battlefield", "not_types": ["Land"]}}
+      ],
+      "spell_effects": [
+        {
+          "op": "exile",
+          "objects": {"target": "t1"},
+          "playable": "while_exiled",
+          "playable_cast_only": true,
+          "playable_by": "owner"
+        }
+      ]
+    }
+  ]
+}

@@ -378,7 +378,13 @@ def op_exile(ctx: EffectContext, spec: Mapping[str, Any]):
             # wipe this if it were set first.
             obj = ctx.state.objects.get(oid)
             if obj is not None:
-                obj.playable_by = ctx.controller
+                # "For as long as that card remains exiled, **its owner** may
+                # cast it" (Aerial Extortionist): `playable_by: "owner"` hands
+                # the permission to the seat that owns the card (108.3), at its
+                # printed price -- airbend's holder without airbend's {2}.
+                obj.playable_by = (
+                    obj.owner if spec.get("playable_by") == "owner" else ctx.controller
+                )
                 obj.playable_turn = ctx.state.turn
                 obj.playable_duration = playable_duration
                 obj.playable_condition = spec.get("playable_condition")

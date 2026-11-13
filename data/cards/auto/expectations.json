@@ -148,6 +148,10 @@
   "aegis_turtle": {
     "zone": "battlefield"
   },
+  "aerial_extortionist": {
+    "battlefield_count": 32,
+    "zone": "battlefield"
+  },
   "aerial_responder": {
     "zone": "battlefield"
   },

@@ -2820,6 +2820,25 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                     f"exile, so it needs cards being exiled or already there "
                     f"(exile, look_at_top to exile, grant_playable over zone exile)"
                 )
+    if "playable_by" in effect:
+        # "For as long as that card remains exiled, its owner may cast it"
+        # (Aerial Extortionist). Who holds the permission; the default is the
+        # effect's controller, so the key has one value. Only on `exile` with
+        # `while_exiled`: every other duration is measured on the holder's own
+        # turns ("your next end step") or on the source's next exile, which a
+        # sentence about the owner never prints, and on a bare exile it would
+        # load, read "its owner may cast it" and grant nothing.
+        if op != "exile" or effect.get("playable") != "while_exiled":
+            raise DslError(
+                f"{where}: 'playable_by' names who holds an exile's 'playable': "
+                f"\"while_exiled\" permission, so it needs one (exile with "
+                f"'playable': \"while_exiled\")"
+            )
+        if effect["playable_by"] != "owner":
+            raise DslError(
+                f"{where}.playable_by: the only value is \"owner\" (the default "
+                f"holder is the effect's controller); got {effect['playable_by']!r}"
+            )
     if "playable_condition" in effect:
         # "During any turn you attacked with a commander, you may play those
         # cards" (Neriv). A condition on the turn a permission is *used* in, so
