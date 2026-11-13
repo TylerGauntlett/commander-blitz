@@ -74,6 +74,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [adventure](#adventure) | 1 | 8561 | engine |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
 | [alien-token](#alien-token) | 1 | 5885 | token |
+| [animate-target-keep-pt](#animate-target-keep-pt) | 1 | 3874 | op |
 | [annihilator-grant](#annihilator-grant) | 1 | 3758 | op |
 | [assassin-token](#assassin-token) | 1 | 2604 | token |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
@@ -171,7 +172,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [face-down-counters-pt](#face-down-counters-pt) | 1 | 6774 | engine |
 | [face-down-exile-controller-may-look](#face-down-exile-controller-may-look) | 1 | 1073 | op |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
-| [first-activation-cost-reduction](#first-activation-cost-reduction) | 1 | 3874 | static_effect |
 | [first-mate-ragavan](#first-mate-ragavan) | 1 | 7016 | token |
 | [first-time-each-turn-replacement](#first-time-each-turn-replacement) | 1 | 5567 | replacement |
 | [first-x-spell-cost-reduction](#first-x-spell-cost-reduction) | 1 | 8360 | static_effect |
@@ -1670,6 +1670,20 @@ Blocks **1** card.
 
 </details>
 
+## animate-target-keep-pt
+
+Blocks **1** card.
+
+- **(op)** an `animate` of a TARGET permanent (not the Vehicle itself) that adds the Creature type with no duration and leaves its base power and toughness alone when it is a Vehicle (301.7c: a Vehicle that becomes a creature keeps its printed P/T), so the -2 reads `if` the target is a Vehicle -> animate types [Creature], duration permanent, keep_pt; else -> the same with power/toughness 4/4 -- i.e. `keep_pt: true` accepted on a `{"target": ...}` pool guarded to Vehicles
+  <br>Why the existing vocabulary won't do: `animate`'s `keep_pt` is refused by the loader unless `objects` is `self_only` (crew's Vehicle animating itself), and without it a creature animation must name `power`/`toughness`; writing `power_of`/`toughness_of` the target snapshots the numbers into a layer 7b base-P/T effect with this ability's timestamp instead of leaving the printed 7a values, which a Vehicle with a characteristic-defining or later-set P/T answers differently. The first line (`ability_cost_reduction` with `first_each_turn`), the +1 (Thirst for Knowledge's `may` pay discard of an artifact card, else discard two) and the -6 (`emblems` + `emblem` op with a `becomes_tapped` trigger filtered to artifacts you control) are expressible
+
+<details><summary>Cards waiting on this</summary>
+
+- **Tezzeret, Betrayer of Flesh** (rank 3874) — `tezzeret_betrayer_of_flesh`
+  - −2: Target artifact becomes an artifact creature. If it isn't a Vehicle, it has base power and toughness 4/4.
+
+</details>
+
 ## annihilator-grant
 
 Blocks **1** card.
@@ -3056,20 +3070,6 @@ Blocks **1** card.
 
 - **Alela, Cunning Conqueror** (rank 3457) — `alela_cunning_conqueror`
   - Whenever you cast your first spell during each opponent's turn, create a 1/1 black Faerie Rogue creature token with flying.
-
-</details>
-
-## first-activation-cost-reduction
-
-Blocks **1** card.
-
-- **(static_effect)** an ability_cost_reduction static that discounts every activated ability (mana abilities included) whose SOURCE is an artifact, limited to the first such activation by you in EACH turn (yours and opponents'), with no targeting clause: a 'first each turn' counter over activations matched on their source permanent's types, plus the payment solver honouring the discount for artifact mana abilities
-  <br>Why the existing vocabulary won't do: ability_cost_reduction's affects_abilities knows only 'equip' and 'any', and the loader refuses 'any' without a 'targeting' clause because mana abilities are priced where the static is never read; first_during_your_turn counts only the activator's own turn, requires 'targeting', and the loader forbids 'affects' beside it because an earlier activation's source is not snapshotted in TurnLedger.targeted_activations. static_max_per_turn is a permission cap for cast-from-graveyard statics, not a discount counter
-
-<details><summary>Cards waiting on this</summary>
-
-- **Tezzeret, Betrayer of Flesh** (rank 3874) — `tezzeret_betrayer_of_flesh`
-  - The first activated ability of an artifact you activate each turn costs {2} less to activate.
 
 </details>
 

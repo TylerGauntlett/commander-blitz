@@ -39,7 +39,12 @@ from .casting import (
     permission_cost_reduction,
     strive_surcharge,
 )
-from .characteristics import abilities_of, chars, mana_source_traits
+from .characteristics import (
+    abilities_of,
+    activation_source_traits,
+    chars,
+    mana_source_traits,
+)
 from .combat import add_attacker, add_blocker, attack_tax_cost, block_tax_cost, finish_attackers
 from .cost_reduction import cost_reduction, variant_reduction
 from .costs import (
@@ -1285,6 +1290,9 @@ class Game:
         # activation is aimed at, read now -- a cost may sacrifice the very
         # creature it targets -- and filed only once the cost is paid, so the
         # pricing below never sees this activation as its own predecessor.
+        # What its source is, for "the first activated ability **of an
+        # artifact**" (Tezzeret), on the same terms: read now, filed after.
+        source_traits = activation_source_traits(state, oid)
         aimed = tuple(
             (
                 target.controller,
@@ -1315,6 +1323,8 @@ class Game:
         state.turn_ledger.targeted_activations.setdefault(pid, []).append(
             (bool(getattr(ability, "is_equip", False)), aimed)
         )
+        if source_traits is not None:
+            state.turn_ledger.ability_sources.setdefault(pid, []).append(source_traits)
 
         stack.push_activated_ability(
             state,
@@ -2031,6 +2041,11 @@ class Game:
         # was. `activate_mana_ability` takes its own snapshot when handed none,
         # which is right for the solver's path -- that one only ever taps.
         traits = mana_source_traits(state, oid)
+        # The same snapshot for "the first activated ability of an artifact you
+        # activate" (Tezzeret): a mana ability is an activated ability (605.1a),
+        # so this activation counts, and is filed once its cost is paid -- the
+        # Signet's {1} is priced before it is its own predecessor.
+        activation_traits = activation_source_traits(state, oid)
 
         # "Tap X untapped tokens you control: Add X mana in any combination of
         # colors" -- Hazel of the Rootbloom. A cost that takes X permanents or
@@ -2061,6 +2076,8 @@ class Game:
         )
         if not ok:  # pragma: no cover - legality already proved payability
             return
+        if activation_traits is not None:
+            state.turn_ledger.ability_sources.setdefault(pid, []).append(activation_traits)
 
         # With X announced the yield is chosen now rather than off the action:
         # legality offered one row for this ability (`_mana_option_indices`),

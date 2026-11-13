@@ -2778,9 +2778,10 @@ is that both apply. Generic only and clamped at zero, like every other reduction
 ```
 
 `affects_abilities: {"any": true}` is every activated ability. The loader
-accepts it only beside `targeting`: a mana ability is priced by the payment
-solver, where this static is never read, and with a `targeting` clause that
-gap is moot because a mana ability has no targets (605.1a).
+accepts it only beside `targeting` or `first_each_turn`: a tap-only mana
+ability is activated by the payment solver, which counts it but has no mana to
+discount, and with a `targeting` clause the question is moot because a mana
+ability has no targets (605.1a).
 
 `first_during_your_turn` limits the discount to one activation: the activator's
 first of their own turn that matches the class and `targeting`. The count is of
@@ -2801,6 +2802,44 @@ refuses `affects` and any `activated_by` but `you`.
 The near miss is `condition: {"is_your_turn": true}`, which discounts every
 activation of the turn rather than the first. `static_max_per_turn` is metered
 per permanent, and only on graveyard-cast permissions.
+
+### "The first activated ability of an artifact you activate each turn …"
+
+```jsonc
+// Tezzeret, Betrayer of Flesh
+{ "kind": "static", "effect": "ability_cost_reduction",
+  "affects_abilities": { "any": true },
+  "activated_by": "you",
+  "affects": { "types": ["Artifact"], "controller": "any" },
+  "first_each_turn": true,
+  "amount": { "const": 2 } }
+```
+
+`first_each_turn` limits the discount to the activator's first activation **on
+any turn** of an ability whose **source** matches `affects` — a permanent, since
+"an artifact" names one (109.2), so an artifact card cycled from a hand is not
+counted. Every such activation counts, one before this permanent arrived
+included, and a first one with no generic mana to reduce still spends the use.
+
+**Mana abilities count** (605.1a): tapping Sol Ring for mana is the turn's first
+activated ability of an artifact. The payment solver files every mana ability it
+activates, so Sol Ring tapped to pay for a spell spends the discount too. A mana
+ability with a mana cost — a Signet's `{1}` — is activated by hand and priced
+through `costs.pay`, which reads this static, so the {2} reaches it; a tap-only
+one has nothing to reduce. This is why the loader accepts `affects_abilities:
+{"any": true}` here without `targeting`.
+
+Each activation's source is filed in `TurnLedger.ability_sources` as it was
+before its cost was paid — its controller, card types and subtypes — because a
+cost may sacrifice it (Mind Stone, a Treasure). The current activation is judged
+on the same snapshot. So `affects` may read only `controller`, `types` and
+`subtypes`, and it is required; the loader refuses `targeting`,
+`first_during_your_turn`, any `activated_by` but `you` and any class but `any`
+beside it. `affects` defaults `controller` to `"you"`; Tezzeret says `"any"`,
+since an artifact you activate need not be yours.
+
+The near miss is `first_during_your_turn`, which counts only the activator's own
+turn and picks activations out by their targets.
 
 ### A delayed trigger scoped to one chosen object
 

@@ -5299,7 +5299,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             raise DslError(
                 f"{where}.activated_by: must be 'you', 'opponent' or 'any', got {who!r}"
             )
-        if model.affects_abilities.get("any") and model.targeting is None:
+        if model.affects_abilities.get("any") and model.targeting is None and not model.first_each_turn:
             # A mana ability is priced by the payment solver, which never
             # reaches this static, so "every activated ability" with nothing
             # else said would quietly skip them. A `targeting` clause makes the
@@ -5335,10 +5335,53 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"{where}: first_during_your_turn does not read 'affects' -- "
                     f"an earlier activation's source is not snapshotted"
                 )
+        if model.first_each_turn:
+            # "The first activated ability **of an artifact** you activate each
+            # turn" (Tezzeret): the count is of the activator's own
+            # activations whose *source* matches `affects`, every one of them
+            # -- so the class is every activated ability, mana abilities
+            # included (a tap-only one has no mana to reduce and a Signet's
+            # {1} is priced through `pay`, which reads this static), and the
+            # source filter is matched on a snapshot of controller, types and
+            # subtypes, since an earlier source may have been sacrificed.
+            if who != "you":
+                raise DslError(
+                    f"{where}: first_each_turn counts your own activations; "
+                    f"'activated_by' must be 'you', got {who!r}"
+                )
+            if not model.affects_abilities.get("any") or len(model.affects_abilities) != 1:
+                raise DslError(
+                    f"{where}: first_each_turn counts every activated ability of "
+                    f"its source, so 'affects_abilities' must be {{'any': true}}"
+                )
+            if model.first_during_your_turn or model.targeting is not None:
+                raise DslError(
+                    f"{where}: first_each_turn picks the activation out by its "
+                    f"source alone; 'first_during_your_turn' and 'targeting' are "
+                    f"Professor Hojo's other sentence"
+                )
+            if not model.affects:
+                raise DslError(
+                    f"{where}: first_each_turn needs 'affects' -- the permanents "
+                    f"whose activations are counted, e.g. {{'types': ['Artifact']}}"
+                )
+            stray = set(model.affects) - FIRST_ACTIVATION_TARGETING_KEYS
+            if stray:
+                raise DslError(
+                    f"{where}.affects: an earlier activation's source is matched "
+                    f"on a snapshot that keeps only "
+                    f"{sorted(FIRST_ACTIVATION_TARGETING_KEYS)}; unsupported keys "
+                    f"{sorted(stray)}"
+                )
 
     elif model.activated_by is not None or model.affects_abilities is not None:
         raise DslError(
             f"{where}: 'affects_abilities'/'activated_by' only mean anything on an "
+            f"ability_cost_reduction static, not on {model.effect!r}"
+        )
+    if model.first_each_turn and model.effect != "ability_cost_reduction":
+        raise DslError(
+            f"{where}: 'first_each_turn' only means anything on an "
             f"ability_cost_reduction static, not on {model.effect!r}"
         )
     if model.first_during_your_turn and model.effect != "ability_cost_reduction":
@@ -6797,6 +6840,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["targeting"] = dict(model.targeting)
     if model.first_during_your_turn:
         static["first_during_your_turn"] = True
+    if model.first_each_turn:
+        static["first_each_turn"] = True
     if model.damage_multiplier is not None:
         static["damage_multiplier"] = model.damage_multiplier
     if model.damage_addend is not None:

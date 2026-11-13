@@ -835,6 +835,14 @@ class AbilityModel(BaseModel):
     #: activation and not about the static. Requires `targeting`, read on the
     #: snapshots in `TurnLedger.targeted_activations`.
     first_during_your_turn: bool = False
+    #: `ability_cost_reduction`: "**The first** activated ability **of an
+    #: artifact** you activate **each turn** costs {2} less to activate"
+    #: (Tezzeret, Betrayer of Flesh). The discount reaches only the
+    #: activator's first activation, on any turn, of an ability whose source
+    #: permanent matches `affects` -- mana abilities included (605.1a) --
+    #: counted on the source snapshots in `TurnLedger.ability_sources`.
+    #: Requires `affects_abilities: {"any": true}` and `affects`.
+    first_each_turn: bool = False
     affects_player: Literal["you", "opponent", "any"] | None = None
     #: ``cast_from_graveyard``: this permission is **flashback** -- Lier's "each
     #: instant and sorcery card in your graveyard has flashback. The flashback

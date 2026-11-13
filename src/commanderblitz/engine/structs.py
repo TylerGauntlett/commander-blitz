@@ -2372,6 +2372,19 @@ class TurnLedger:
     targeted_activations: dict[
         int, list[tuple[bool, tuple[tuple[int, frozenset[str], frozenset[str]], ...]]]
     ] = field(default_factory=dict)
+    #: Every activated ability each player has activated this turn, **mana
+    #: abilities included** (605.1a), as what its source permanent was: player
+    #: id -> one `ManaOrigin` per activation. Tezzeret, Betrayer of Flesh's "the
+    #: first activated ability **of an artifact** you activate each turn" asks
+    #: whether an earlier activation's source matched, and that source may
+    #: since have been sacrificed by the very cost it paid -- a Treasure, a
+    #: Mind Stone -- so its characteristics are filed, not its oid. An
+    #: activation from any zone but the battlefield is not filed: "an artifact"
+    #: names a permanent (109.2). Written by `Game._activate` and
+    #: `Game._activate_mana` once the cost is paid, and by `costs.pay_mana` for
+    #: each mana ability the payment solver activates; read by
+    #: `player_statics.ability_cost_reduction`'s `first_each_turn`.
+    ability_sources: dict[int, list[ManaOrigin]] = field(default_factory=dict)
 
     #: Words written onto a permanent that wear off at the turn boundary:
     #: object id -> the flags it has been given **this turn**.  "If this creature
@@ -2584,6 +2597,7 @@ class TurnLedger:
         self.loyalty_activations.clear()
         self.extra_loyalty_activations.clear()
         self.targeted_activations.clear()
+        self.ability_sources.clear()
         self.cards_to_graveyard = 0
         self.permanents_to_graveyard = 0
         self.cards_from_graveyard.clear()

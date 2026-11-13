@@ -1,0 +1,54 @@
+{
+  "_comment": "Witnesses for tests/unit/costs/test_first_activation_each_turn.py. `t_fae_tezzeret` carries Tezzeret, Betrayer of Flesh's first line on an enchantment, so nothing else about a planeswalker is in the way. `t_fae_engine` is an artifact with a repeatable {3}: draw ability (no tap), so two activations of one permanent can be priced in a row; `t_fae_rune` is the same ability on an enchantment, the non-artifact near miss. Sol Ring (tap-only mana, which the payment solver activates) and Dimir Signet ({1}, {T}: by-hand mana) are the shipped artifacts whose mana abilities count.",
+  "cards": [
+    {
+      "id": "t_fae_tezzeret",
+      "name": "Test First Artifact Discount",
+      "oracle_text": "The first activated ability of an artifact you activate each turn costs {2} less to activate.",
+      "mana_cost": "{0}",
+      "types": ["Enchantment"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "The first activated ability of an artifact you activate each turn costs {2} less to activate.",
+          "effect": "ability_cost_reduction",
+          "affects_abilities": {"any": true},
+          "activated_by": "you",
+          "affects": {"types": ["Artifact"], "controller": "any"},
+          "first_each_turn": true,
+          "amount": {"const": 2}
+        }
+      ]
+    },
+    {
+      "id": "t_fae_engine",
+      "name": "Test Draw Engine",
+      "oracle_text": "{3}: Draw a card.",
+      "mana_cost": "{1}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{3}: Draw a card.",
+          "cost": {"mana": "{3}"},
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_fae_rune",
+      "name": "Test Draw Rune",
+      "oracle_text": "{3}: Draw a card.",
+      "mana_cost": "{1}",
+      "types": ["Enchantment"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{3}: Draw a card.",
+          "cost": {"mana": "{3}"},
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    }
+  ]
+}

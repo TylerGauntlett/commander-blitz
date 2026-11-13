@@ -1749,7 +1749,8 @@ ABILITY_CLASS_KEYS = frozenset({"equip", "any"})
 #: targets may since have changed or left; each is matched against the
 #: snapshot `Game._activate` filed in `TurnLedger.targeted_activations` -- its
 #: controller, card types and subtypes as it was targeted -- so only those can
-#: be asked.
+#: be asked. The same keys are all a `first_each_turn` static's `affects` may
+#: read, matched on the source snapshots in `TurnLedger.ability_sources`.
 FIRST_ACTIVATION_TARGETING_KEYS = frozenset({"controller", "types", "subtypes"})
 
 

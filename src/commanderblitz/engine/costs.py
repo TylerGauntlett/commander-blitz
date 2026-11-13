@@ -15,6 +15,7 @@ from typing import TYPE_CHECKING, Any
 from .carddef import Ability, CardDef, Cost
 from .characteristics import (
     abilities_of,
+    activation_source_traits,
     borrowed_ability,
     chars,
     crew_power_bonus,
@@ -2364,6 +2365,14 @@ def pay_mana(
                 f"payment plan taps {state.card(oid).name} (#{oid}) but it is "
                 "already tapped; the solver must never tap one permanent twice"
             )
+        # A mana ability the solver activates is still an activated ability
+        # (605.1a), and Tezzeret's "the first activated ability of an artifact
+        # you activate each turn" counts it -- tapping Sol Ring to pay for
+        # anything spends the turn's discount. Filed here, beside the by-hand
+        # path's `Game._activate_mana`; the ability being paid for was priced
+        # before this plan was made (601.2f), so it is not affected.
+        if (traits := activation_source_traits(state, oid)) is not None:
+            state.turn_ledger.ability_sources.setdefault(pid, []).append(traits)
         activate_mana_ability(state, oid, ability_index, pid, option_index)
     spent = player.mana_pool.spend(req, purpose)
     # The pool is a static's input ("+1/+1 for each unspent mana you have",

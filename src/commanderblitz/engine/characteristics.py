@@ -221,6 +221,21 @@ def mana_source_traits(state: GameState, oid: int | None) -> ManaOrigin | None:
     )
 
 
+def activation_source_traits(state: GameState, oid: int | None) -> ManaOrigin | None:
+    """What the permanent an ability is activated from **is**, for the ledger.
+
+    `mana_source_traits`, narrowed to the battlefield: "the first activated
+    ability **of an artifact**" (Tezzeret, Betrayer of Flesh) names a permanent
+    (109.2), so an ability activated from a hand or a graveyard -- cycling an
+    artifact card -- has no source to file and answers ``None``. Taken before
+    the cost is paid, since the cost may sacrifice the source.
+    """
+    obj = state.objects.get(oid) if oid is not None else None
+    if obj is None or not obj.on_battlefield:
+        return None
+    return mana_source_traits(state, oid)
+
+
 #: What a face-down permanent is, whatever is underneath it (707.2).
 FACE_DOWN_CHARS = Characteristics(
     power=2,
