@@ -1,0 +1,18 @@
+{
+  "card_id": "bottle_cap_blast",
+  "name": "Bottle-Cap Blast",
+  "oracle_text": "Improvise (Your artifacts can help cast this spell. Each artifact you tap after you're done activating mana abilities pays for {1}.)\nBottle-Cap Blast deals 5 damage to any target. If excess damage was dealt to a permanent this way, create that many tapped Treasure tokens. (They're artifacts with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+  "blocked_sentences": [
+    "If excess damage was dealt to a permanent this way, create that many tapped Treasure tokens."
+  ],
+  "needs": [
+    {
+      "capability": "excess_damage",
+      "kind": "value",
+      "what": "a value reading how much excess damage (120.4a: damage beyond lethal for a creature, beyond loyalty for a planeswalker, beyond defense for a battle) the preceding damage effect dealt to the permanent it hit, bindable (e.g. `as` on the `damage` op, read as {\"binding\": ...}) so a following create_token amount can be 'that many'; 0 when the target was a player",
+      "why_existing_wont_do": "The damage op's `excess_to` only redirects the remainder to the creature's controller (Gandalf's Sanction) and splits the event; here all 5 damage is dealt to the permanent and the excess is only measured. No value_key reports excess damage, and composing minus/toughness_of/snapshot cannot account for damage already marked, planeswalker loyalty or battle defense, nor zero it for a player target"
+    }
+  ],
+  "closest_existing": ["damage.excess_to", "snapshot", "minus"],
+  "confidence": "high"
+}

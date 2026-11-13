@@ -1,0 +1,18 @@
+{
+  "card_id": "arcade_gannon",
+  "name": "Arcade Gannon",
+  "oracle_text": "{T}: Draw a card, then discard a card. Put a quest counter on Arcade Gannon.\nFor Auld Lang Syne — Once during each of your turns, you may cast an artifact or Human spell from your graveyard with mana value less than or equal to the number of quest counters on Arcade Gannon.",
+  "blocked_sentences": [
+    "For Auld Lang Syne — Once during each of your turns, you may cast an artifact or Human spell from your graveyard with mana value less than or equal to the number of quest counters on Arcade Gannon."
+  ],
+  "needs": [
+    {
+      "capability": "graveyard_cast_dynamic_mana_value_cap",
+      "kind": "static_effect",
+      "what": "a cast_from_graveyard permission (Edgar shape: affects_player you, static_max_per_turn 1, condition is_your_turn) whose affects_spells filter compares the card's mana value against a value evaluated on the granting permanent at cast time -- here `mana_value <= counters_on(quest, self)` -- together with an artifact-OR-Human disjunction (any_of [{types: [Artifact]}, {subtypes: [Human]}]) in that spell filter",
+      "why_existing_wont_do": "graveyard_cast_allows matches affects_spells with characteristics._matches_printed, whose mana_value clause goes through _compare_printed over literal numbers only (and the loader admits mana_value only in a cant_cast_spells filter), so the cap cannot read the quest counters on the source; a fixed number would make the card strictly better or worse than printed as counters accrue"
+    }
+  ],
+  "closest_existing": ["cast_from_graveyard", "static_max_per_turn", "counters_on"],
+  "confidence": "high"
+}

@@ -1,0 +1,18 @@
+{
+  "card_id": "automated_assembly_line",
+  "name": "Automated Assembly Line",
+  "oracle_text": "Whenever one or more artifact creatures you control deal combat damage to a player, you get {E} (an energy counter).\nPay {E}{E}{E}: Create a tapped 3/3 colorless Robot artifact creature token.",
+  "blocked_sentences": [
+    "Pay {E}{E}{E}: Create a tapped 3/3 colorless Robot artifact creature token."
+  ],
+  "needs": [
+    {
+      "capability": "robot_token_3_3",
+      "kind": "token",
+      "what": "a 3/3 colorless Robot artifact creature token",
+      "why_existing_wont_do": "token_ids has robot_villain_2_2_c (2/2 Robot Villain) and golem_3_3_c_artifact (3/3 Golem); neither is a 3/3 Robot. The pay_energy cost and create_token with tapped: true already cover the rest of the line"
+    }
+  ],
+  "closest_existing": ["golem_3_3_c_artifact", "robot_villain_2_2_c", "pay_energy", "create_token"],
+  "confidence": "high"
+}

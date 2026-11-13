@@ -14279,6 +14279,124 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "add_energy",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, you get {E}{E} (two energy counters).",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "count": 1,
+                  "modes": [
+                    {
+                      "effects": [
+                        {
+                          "amount": {
+                            "const": 1
+                          },
+                          "counter": "+1/+1",
+                          "objects": {
+                            "binding": "subject"
+                          },
+                          "op": "add_counters"
+                        }
+                      ],
+                      "label": "Put a +1/+1 counter on that creature."
+                    },
+                    {
+                      "effects": [
+                        {
+                          "amount": {
+                            "const": 1
+                          },
+                          "counter": "first_strike",
+                          "objects": {
+                            "binding": "subject"
+                          },
+                          "op": "add_counters"
+                        }
+                      ],
+                      "label": "Put a first strike counter on that creature."
+                    },
+                    {
+                      "effects": [
+                        {
+                          "amount": {
+                            "const": 1
+                          },
+                          "counter": "trample",
+                          "objects": {
+                            "binding": "subject"
+                          },
+                          "op": "add_counters"
+                        }
+                      ],
+                      "label": "Put a trample counter on that creature."
+                    }
+                  ],
+                  "op": "choose_mode"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "pay_energy": 1
+              },
+              "player": "you",
+              "prompt": "Pay {E} to put a +1/+1, first strike, or trample counter on that creature?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an artifact creature you control attacks, you may pay {E}. If you do, put your choice of a +1/+1, first strike, or trample counter on that creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "filter": {
+              "types": [
+                "Artifact",
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "assaultron_dominator",
+      "mana_cost": "{1}{R}",
+      "name": "Assaultron Dominator",
+      "oracle_text": "When this creature enters, you get {E}{E} (two energy counters).\nWhenever an artifact creature you control attacks, you may pay {E}. If you do, put your choice of a +1/+1, first strike, or trample counter on that creature.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Robot"
+      ],
+      "toughness": 2,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -21050,6 +21168,112 @@
       ],
       "toughness": 2,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "add_energy",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, you get {E}{E}{E}{E} (four energy counters).",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "behemoth_victim",
+                  "objects": {
+                    "count": "all",
+                    "target": "t1",
+                    "zone": "battlefield"
+                  },
+                  "op": "choose_permanents"
+                },
+                {
+                  "ability": "behemoth_destroy",
+                  "op": "reflexive_trigger"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "pay_energy": {
+                  "mana_value_of": {
+                    "target": "t1"
+                  }
+                }
+              },
+              "player": "you",
+              "prompt": "Pay {E} equal to the target's mana value to destroy it?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature dies, you may pay an amount of {E} equal to target nonland permanent's mana value.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "binding": "behemoth_victim",
+                "controller": "any",
+                "count": "all",
+                "zone": "battlefield"
+              },
+              "op": "destroy"
+            }
+          ],
+          "id": "behemoth_destroy",
+          "kind": "reflexive",
+          "text": "When you do, destroy that permanent."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "behemoth_of_vault_0",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{6}",
+      "name": "Behemoth of Vault 0",
+      "oracle_text": "Trample\nWhen this creature enters, you get {E}{E}{E}{E} (four energy counters).\nWhen this creature dies, you may pay an amount of {E} equal to target nonland permanent's mana value. When you do, destroy that permanent.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Robot"
+      ],
+      "toughness": 6,
+      "types": [
+        "Artifact",
         "Creature"
       ]
     },

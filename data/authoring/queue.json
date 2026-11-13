@@ -15262,12 +15262,12 @@
     },
     "Assaultron Dominator": {
       "edhrec_rank": 6900,
-      "gate": "template",
+      "gate": null,
       "name": "Assaultron Dominator",
-      "reason": "no template for: When this creature enters, you get {E}{E}",
+      "reason": "",
       "scryfall_id": "4112fadb-da03-441a-beeb-1dc90425e3f3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Assemble the Entmoot": {
@@ -23142,12 +23142,12 @@
     },
     "Behemoth of Vault 0": {
       "edhrec_rank": 7179,
-      "gate": "template",
+      "gate": null,
       "name": "Behemoth of Vault 0",
-      "reason": "no template for: When this creature enters, you get {E}{E}{E}{E}",
+      "reason": "",
       "scryfall_id": "592d6e5b-a94e-460c-ab2f-21fd842c3d9a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Behemoth's Herald": {
@@ -32234,7 +32234,7 @@
       "edhrec_rank": 4086,
       "gate": "template",
       "name": "Bottle-Cap Blast",
-      "reason": "no template for: Improvise",
+      "reason": "no template for: deals 5 damage to any target. If excess damage was dealt to a permanent this way, create t",
       "scryfall_id": "4c4d8bfb-aaf0-41f3-a000-1df6363fb25c",
       "source": "",
       "status": "pending",
@@ -273104,7 +273104,7 @@
       "edhrec_rank": 8844,
       "gate": "template",
       "name": "Synth Infiltrator",
-      "reason": "no template for: Improvise",
+      "reason": "no template for: You may have this creature enter as a copy of any creature on the battlefield, except it's",
       "scryfall_id": "3fe16bc4-8457-4c5f-902a-0746112e80a4",
       "source": "",
       "status": "pending",

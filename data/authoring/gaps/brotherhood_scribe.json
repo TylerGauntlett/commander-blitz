@@ -1,0 +1,18 @@
+{
+  "card_id": "brotherhood_scribe",
+  "name": "Brotherhood Scribe",
+  "oracle_text": "Metalcraft — {T}: You get {E} (an energy counter). Activate only if you control three or more artifacts.\nWhenever you get one or more {E} during your turn, creatures you control get +1/+1 until end of turn.",
+  "blocked_sentences": [
+    "Whenever you get one or more {E} during your turn, creatures you control get +1/+1 until end of turn."
+  ],
+  "needs": [
+    {
+      "capability": "energy_gained_trigger",
+      "kind": "trigger_event",
+      "what": "a trigger event for a player getting one or more energy counters ('whenever you get one or more {E}'), firing once per energy-gain event with a controller filter, combinable with an is_your_turn condition",
+      "why_existing_wont_do": "The engine already emits EventType.ENERGY_ADDED from primitives.add_energy, but no trigger_events entry maps to it; counter_placed covers counters on permanents (and its counter key), not a player's energy, and you_gain_life/life_lost are other player events"
+    }
+  ],
+  "closest_existing": ["counter_placed", "you_gain_life"],
+  "confidence": "high"
+}

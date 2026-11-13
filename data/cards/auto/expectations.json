@@ -1244,6 +1244,10 @@
   "assault_zeppelid": {
     "zone": "battlefield"
   },
+  "assaultron_dominator": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "astral_cornucopia": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -1785,6 +1789,10 @@
       "count": 2,
       "id": "goblin_1_1_r"
     },
+    "zone": "battlefield"
+  },
+  "behemoth_of_vault_0": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "behemoth_sledge": {
