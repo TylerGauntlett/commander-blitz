@@ -1,0 +1,16 @@
+{
+  "card_id": "knowledge_is_power",
+  "name": "Knowledge Is Power",
+  "oracle_text": "Creatures you control get +X/+X, where X is the number of cards you've drawn this turn.",
+  "blocked_sentences": [
+    "Creatures you control get +X/+X, where X is the number of cards you've drawn this turn."
+  ],
+  "needs": [{
+    "capability": "cards_drawn_this_turn",
+    "kind": "value",
+    "what": "the static magnitude leaf {\"cards_drawn_this_turn\": \"you\"} in static_value_keys, so a `buff` static's power and toughness can be the number of cards its controller has drawn this turn, recomputed continuously as cards are drawn",
+    "why_existing_wont_do": "cards_drawn_this_turn exists only in value_keys (effect amounts); static_value_keys has spells_cast_this_turn, creatures_died_this_turn and permanents_entered_this_turn but no draw tally, and a leaf outside static_value_keys is a load error. A pump trigger on `draw` would miss creatures entering later and would not be an anthem"
+  }],
+  "closest_existing": ["buff", "spells_cast_this_turn", "cards_drawn_this_turn"],
+  "confidence": "high"
+}

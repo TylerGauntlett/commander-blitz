@@ -1,0 +1,27 @@
+{
+  "card": {
+    "id": "magnifying_glass",
+    "name": "Magnifying Glass",
+    "oracle_text": "{T}: Add {C}.\n{4}, {T}: Investigate. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")",
+    "mana_cost": "{3}",
+    "types": ["Artifact"],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "activated",
+        "is_mana_ability": true,
+        "cost": {"tap": true},
+        "effects": [{"op": "add_mana", "mana": "{C}"}],
+        "text": "{T}: Add {C}."
+      },
+      {
+        "kind": "activated",
+        "cost": {"mana": "{4}", "tap": true},
+        "effects": [{"op": "create_token", "token": "clue_token", "amount": {"const": 1}}],
+        "text": "{4}, {T}: Investigate"
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}
