@@ -1,0 +1,36 @@
+{
+  "card": {
+    "id": "marcus_mutant_mayor",
+    "name": "Marcus, Mutant Mayor",
+    "oracle_text": "Vigilance, trample\nWhenever a creature you control deals combat damage to a player, draw a card if that creature has a +1/+1 counter on it. If it doesn't, put a +1/+1 counter on it.",
+    "mana_cost": "{3}{G}{U}",
+    "supertypes": ["Legendary"],
+    "types": ["Creature"],
+    "subtypes": ["Mutant", "Advisor"],
+    "power": 4,
+    "toughness": 4,
+    "colors": ["G", "U"],
+    "color_identity": ["G", "U"],
+    "keywords": ["vigilance", "trample"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever a creature you control deals combat damage to a player, draw a card if that creature has a +1/+1 counter on it. If it doesn't, put a +1/+1 counter on it.",
+        "trigger": {"event": "deals_combat_damage_to_player", "controller": "you"},
+        "effects": [
+          {
+            "op": "if",
+            "condition": {
+              "cmp": ">",
+              "left": {"counters_on": {"counter": "+1/+1", "objects": {"binding": "subject"}}},
+              "right": {"const": 0}
+            },
+            "then": [{"op": "draw", "player": "you", "amount": {"const": 1}}],
+            "else": [{"op": "add_counters", "counter": "+1/+1", "amount": {"const": 1}, "objects": {"binding": "subject"}}]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}

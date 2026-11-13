@@ -1,0 +1,61 @@
+{
+  "card": {
+    "id": "lily_bowen_raging_grandma",
+    "name": "Lily Bowen, Raging Grandma",
+    "oracle_text": "Vigilance\nLily Bowen enters with two +1/+1 counters on it.\nAt the beginning of your upkeep, double the number of +1/+1 counters on Lily Bowen if its power is 16 or less. Otherwise, remove all but one +1/+1 counter from it, then you gain 1 life for each +1/+1 counter removed this way.",
+    "mana_cost": "{3}{G}",
+    "types": ["Creature"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Mutant", "Warrior"],
+    "colors": ["G"],
+    "color_identity": ["G"],
+    "power": 0,
+    "toughness": 0,
+    "keywords": ["vigilance"],
+    "replacements": [
+      {"event": "self_enters_with_counters", "counter": "+1/+1", "amount": 2}
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "At the beginning of your upkeep, double the number of +1/+1 counters on Lily Bowen if its power is 16 or less. Otherwise, remove all but one +1/+1 counter from it, then you gain 1 life for each +1/+1 counter removed this way",
+        "trigger": {"event": "upkeep", "controller": "you"},
+        "effects": [
+          {
+            "op": "if",
+            "condition": {"cmp": "<=", "left": {"power_of": {"self": true}}, "right": {"const": 16}},
+            "then": [
+              {
+                "op": "add_counters",
+                "counter": "+1/+1",
+                "objects": {"self_only": true},
+                "amount": {"counters_on": {"counter": "+1/+1", "objects": {"self_only": true}}}
+              }
+            ],
+            "else": [
+              {
+                "op": "remove_counters",
+                "counter": "+1/+1",
+                "objects": {"self_only": true},
+                "amount": {"max": [
+                  {"const": 0},
+                  {"minus": [
+                    {"counters_on": {"counter": "+1/+1", "objects": {"self_only": true}}},
+                    {"const": 1}
+                  ]}
+                ]},
+                "as": "removed"
+              },
+              {"op": "gain_life", "player": "you", "amount": {"binding": "removed"}}
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "counters": {"kind": "+1/+1", "amount": 2},
+    "battlefield_count": 33
+  }
+}

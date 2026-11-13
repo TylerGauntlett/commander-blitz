@@ -1,0 +1,106 @@
+{
+  "card": {
+    "color_identity": [
+      "B"
+    ],
+    "colors": [
+      "B"
+    ],
+    "id": "hancock_ghoulish_mayor",
+    "mana_cost": "{2}{B}",
+    "name": "Hancock, Ghoulish Mayor",
+    "oracle_text": "Each other creature you control that's a Zombie or Mutant gets +X/+X, where X is the number of counters on Hancock.\nUndying (When this creature dies, if it had no +1/+1 counters on it, return it to the battlefield under its owner's control with a +1/+1 counter on it.)",
+    "power": 2,
+    "subtypes": [
+      "Zombie",
+      "Mutant",
+      "Advisor"
+    ],
+    "supertypes": [
+      "Legendary"
+    ],
+    "toughness": 1,
+    "types": [
+      "Creature"
+    ],
+    "abilities": [
+      {
+        "kind": "static",
+        "effect": "buff",
+        "text": "Each other creature you control that's a Zombie or Mutant gets +X/+X, where X is the number of counters on Hancock",
+        "affects": {
+          "controller": "you",
+          "types": [
+            "Creature"
+          ],
+          "exclude_self": true,
+          "any_of": [
+            {
+              "subtypes": [
+                "Zombie"
+              ]
+            },
+            {
+              "subtypes": [
+                "Mutant"
+              ]
+            }
+          ]
+        },
+        "power": {
+          "counters_on": {
+            "counter": "any",
+            "objects": {
+              "self_only": true
+            }
+          }
+        },
+        "toughness": {
+          "counters_on": {
+            "counter": "any",
+            "objects": {
+              "self_only": true
+            }
+          }
+        }
+      },
+      {
+        "kind": "triggered",
+        "text": "Undying (When this creature dies, if it had no +1/+1 counters on it, return it to the battlefield under its owner's control with a +1/+1 counter on it.)",
+        "trigger": {
+          "event": "dies",
+          "source": "self",
+          "condition": {
+            "cmp": "==",
+            "left": {
+              "counters_had": "+1/+1"
+            },
+            "right": {
+              "const": 0
+            }
+          }
+        },
+        "effects": [
+          {
+            "op": "return_from_graveyard",
+            "destination": "battlefield",
+            "objects": {
+              "self_only": true,
+              "zone": "graveyard"
+            },
+            "counters": {
+              "+1/+1": 1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    }
+  }
+}
