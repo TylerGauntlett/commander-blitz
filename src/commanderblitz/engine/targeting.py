@@ -413,6 +413,23 @@ def _one_each(state: GameState, refs: Sequence[TargetRef]) -> bool:
     return True
 
 
+def _controller_count(state: GameState, refs: Sequence[TargetRef]) -> int:
+    """How many distinct controllers ``refs`` have -- the most `_one_each` admits.
+
+    A ref with no object counts as its own seat, the way `_one_each` skips it
+    rather than rejecting the set.
+    """
+    seats: set[int] = set()
+    loose = 0
+    for ref in refs:
+        obj = state.objects.get(ref.id)
+        if obj is None:
+            loose += 1
+        else:
+            seats.add(obj.controller)
+    return len(seats) + loose
+
+
 def _room(limit: int, empty: list[tuple[TargetRef, ...]]) -> int:
     """How many real candidates fit under ``limit`` beside the decline option."""
     return max(1, limit - len(empty))
@@ -624,6 +641,13 @@ def _spec_options(
         ceiling = len(options) if count == "any" else min(int(count), len(options))
         if size_cap is not None:
             ceiling = min(ceiling, size_cap)
+        if spec.one_per_player:
+            # No subset larger than the number of controllers can pass
+            # `_one_each`, so none is enumerated: Diluvian Primordial's "for
+            # each opponent, up to one target card from that player's
+            # graveyard" over a few dozen cards would otherwise walk every
+            # combination of every size from all of them down, rejecting each.
+            ceiling = min(ceiling, _controller_count(state, options))
         # "One, two, or three target creature cards" (Aberrant Return): a floor
         # under the ceiling, so neither the empty subset nor any smaller one is
         # a choice -- and with fewer legal targets than the floor the spec
