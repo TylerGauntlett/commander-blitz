@@ -1,0 +1,18 @@
+{
+  "card_id": "agent_frank_horrigan",
+  "name": "Agent Frank Horrigan",
+  "oracle_text": "Trample\nAgent Frank Horrigan has indestructible as long as it attacked this turn.\nWhenever Agent Frank Horrigan enters or attacks, proliferate twice. (To proliferate, choose any number of permanents and/or players, then give each another counter of each kind already there.)",
+  "blocked_sentences": [
+    "Agent Frank Horrigan has indestructible as long as it attacked this turn."
+  ],
+  "needs": [
+    {
+      "capability": "attacked_this_turn_static_condition",
+      "kind": "static_effect",
+      "what": "a static-ability condition that is true while the static's own source attacked this turn (the turn ledger's has_attacked for the source), so a grant_keyword static on self (indestructible) switches on once it is declared as an attacker and stays on for the rest of the turn even if removed from combat",
+      "why_existing_wont_do": "static_condition_keys (all, any, cmp, counters, exists, exists_derived, has_flag, is_attached, ...) has no attacked-this-turn leaf; `exists` reads static_value_count_filter_keys, which lack the effect selector's `attacked_this_turn`; `has_flag` reads a permanent one-way flag from set_flag that never clears, and `has_turn_flag` (cleared at turn end) is only a condition_key, not a static condition -- and writing either would also need an unprinted attacks trigger to set it. The `attacking` filter key is the near miss but is false again after combat or removal from combat, which the printed 'attacked this turn' is not"
+    }
+  ],
+  "closest_existing": ["grant_keyword", "has_flag", "set_turn_flag", "attacking"],
+  "confidence": "high"
+}
