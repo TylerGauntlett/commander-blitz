@@ -6108,6 +6108,10 @@
     "artist": "Arthur Yuan",
     "scryfall_id": "7690e624-93c1-46f4-8f33-e28d881787d3"
   },
+  "fists_of_flame": {
+    "artist": "Steve Argyle",
+    "scryfall_id": "0e7c9403-fb7f-4334-a3b2-0932b4a13eb8"
+  },
   "flame_of_anor": {
     "artist": "Jeff Miracola",
     "scryfall_id": "1c8873a1-e324-4342-ba63-0bc1bc812e3b"
@@ -13220,6 +13224,10 @@
     "artist": "Kieran Yanner",
     "scryfall_id": "b8d8e608-6de4-4b90-aeb7-d060d1f44844"
   },
+  "proft_s_eidetic_memory": {
+    "artist": "Julie Dillon",
+    "scryfall_id": "a3472756-0305-4567-b425-f7dbf9b3cc7f"
+  },
   "progenitor_s_icon": {
     "artist": "Jonas De Ro",
     "scryfall_id": "5457025c-9720-4717-8ee5-fb048815a895"
@@ -13863,6 +13871,10 @@
   "release_the_dogs": {
     "artist": "Jason Kang",
     "scryfall_id": "07f10906-4fd5-44e8-99c7-3f9dcc988c48"
+  },
+  "release_to_the_wind": {
+    "artist": "Joseph Meehan",
+    "scryfall_id": "4b4f72ef-3939-467c-8fe4-fd1c215f2b1e"
   },
   "relentless_advance": {
     "artist": "Stanton Feng",
@@ -18114,6 +18126,10 @@
   "thunderfoot_baloth": {
     "artist": "Nicholas Gregory",
     "scryfall_id": "f2723228-402a-406d-90cb-3a0a657e38bc"
+  },
+  "thundering_djinn": {
+    "artist": "Anastasia Ovchinnikova",
+    "scryfall_id": "28642fbe-90c8-4beb-9950-91af28d93326"
   },
   "thundering_falls": {
     "artist": "Grady Frederick",

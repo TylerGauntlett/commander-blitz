@@ -7035,6 +7035,19 @@
       "0": 41
     }
   },
+  "fists_of_flame": {
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "target_pt_delta": {
+      "power": 1,
+      "toughness": 0
+    },
+    "zone": "graveyard"
+  },
   "flame_of_anor": {
     "graveyard_size": {
       "0": 3
@@ -15044,6 +15057,15 @@
     },
     "zone": "battlefield"
   },
+  "proft_s_eidetic_memory": {
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "battlefield"
+  },
   "progenitor_s_icon": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -15808,6 +15830,10 @@
       "count": 4,
       "id": "dog_1_1_w"
     },
+    "zone": "graveyard"
+  },
+  "release_to_the_wind": {
+    "battlefield_count": 31,
     "zone": "graveyard"
   },
   "relentless_advance": {
@@ -20620,6 +20646,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "thundering_djinn": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "thundering_falls": {

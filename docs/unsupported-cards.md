@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**373 cards** blocked by **321** capabilities.
+**375 cards** blocked by **321** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -28,6 +28,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
 | [basic-land-type-mana](#basic-land-type-mana) | 3 | 73 | engine |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 6346 | op |
+| [crime](#crime) | 3 | 2244 | trigger_event |
 | [milled-this-turn](#milled-this-turn) | 3 | 4283 | selector |
 | [omen](#omen) | 3 | 3355 | cost, engine |
 | [random-player-choice](#random-player-choice) | 3 | 5120 | op |
@@ -38,7 +39,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-from-library-top-unrestricted](#cast-from-library-top-unrestricted) | 2 | 1913 | static_effect |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
-| [crime](#crime) | 2 | 2244 | trigger_event |
 | [devotion](#devotion) | 2 | 2401 | value |
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
 | [enters-as-copy-add-subtypes](#enters-as-copy-add-subtypes) | 2 | 3852 | replacement |
@@ -51,6 +51,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mercenary-token](#mercenary-token) | 2 | 8312 | token |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [pay-energy-x](#pay-energy-x) | 2 | 5122 | cost |
+| [plot](#plot) | 2 | 1873 | op |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
 | [remove-named-counters-from-among](#remove-named-counters-from-among) | 2 | 10375 | cost |
 | [remove-x-counters-cost](#remove-x-counters-cost) | 2 | 5399 | cost |
@@ -260,7 +261,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [player-mana-ability-until-end-of-turn](#player-mana-ability-until-end-of-turn) | 1 | 12705 | op |
 | [players-attacked-last-combat](#players-attacked-last-combat) | 1 | 6681 | value |
 | [players-lost-the-game-count](#players-lost-the-game-count) | 1 | 4941 | value |
-| [plot](#plot) | 1 | 7506 | op |
 | [prevent-damage-from-source-to-permanent](#prevent-damage-from-source-to-permanent) | 1 | 29255 | static_effect |
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
 | [prime-number](#prime-number) | 1 | 11527 | value |
@@ -839,6 +839,28 @@ Blocks **3** cards.
 
 </details>
 
+## crime
+
+Blocks **3** cards.
+
+- **(trigger_event)** a trigger event fired once per spell cast or ability put on the stack whose targets include one of the controller's opponents, a permanent or spell an opponent of that controller controls, or a card in an opponent's graveyard (rule 700.13), filterable by who committed the crime (here: the trigger's controller, 'you'); combined with the existing max_per_turn: 1 for 'triggers only once each turn'
+  <br>Why the existing vocabulary won't do: becomes_target fires per targeted object and only for permanents, so it misses targeting a player or graveyard cards and would fire multiple times for one spell with several targets; spell_cast and ability_activated carry no information about whether the targets belong to an opponent; the engine has no crime concept at all
+- **(trigger_event)** a trigger event fired once per spell cast or ability put on the stack whose targets include one of the controller's opponents, a permanent or spell an opponent of that controller controls, or a card in an opponent's graveyard (rule 700.13), filterable by who committed the crime (here: the trigger's controller, 'you'); combined with the existing max_per_turn: 1 for 'triggers only once each turn'
+  <br>Why the existing vocabulary won't do: becomes_target fires per targeted object and only for permanents, so it misses targeting a player or graveyard cards and would fire multiple times for one spell with several targets; spell_cast and ability_activated carry no information about whether the targets belong to an opponent; the engine has no crime concept at all. The rest of the card is expressible: the power line is a set_pt static reading cards_drawn_this_turn, and the loot is may + draw then discard
+- **(trigger_event)** a trigger event fired once per spell cast or ability put on the stack whose targets include one of the controller's opponents, a permanent or spell an opponent of that controller controls, or a card in an opponent's graveyard (rule 700.13), filterable by who committed the crime (here: cause_controller opponent)
+  <br>Why the existing vocabulary won't do: becomes_target fires per targeted object and only for permanents, so it misses targeting a player or graveyard cards and would fire multiple times for one spell with several targets; spell_cast and ability_activated carry no information about whether the targets belong to an opponent; the engine has no crime concept at all
+
+<details><summary>Cards waiting on this</summary>
+
+- **Patrolling Peacemaker** (rank 2244) — `patrolling_peacemaker`
+  - Whenever an opponent commits a crime, proliferate
+- **Bandit's Haul** (rank 5311) — `bandit_s_haul`
+  - Whenever you commit a crime, put a loot counter on this artifact. This ability triggers only once each turn
+- **Duelist of the Mind** (rank 10244) — `duelist_of_the_mind`
+  - Whenever you commit a crime, you may draw a card. If you do, discard a card. This ability triggers only once each turn
+
+</details>
+
 ## milled-this-turn
 
 Blocks **3** cards.
@@ -1033,24 +1055,6 @@ Blocks **2** cards.
   - You may choose new targets for target spell or ability.
 - **Misdirection** (rank 1562) — `misdirection`
   - Change the target of target spell with a single target.
-
-</details>
-
-## crime
-
-Blocks **2** cards.
-
-- **(trigger_event)** a trigger event fired once per spell cast or ability put on the stack whose targets include one of the controller's opponents, a permanent or spell an opponent of that controller controls, or a card in an opponent's graveyard (rule 700.13), filterable by who committed the crime (here: the trigger's controller, 'you'); combined with the existing max_per_turn: 1 for 'triggers only once each turn'
-  <br>Why the existing vocabulary won't do: becomes_target fires per targeted object and only for permanents, so it misses targeting a player or graveyard cards and would fire multiple times for one spell with several targets; spell_cast and ability_activated carry no information about whether the targets belong to an opponent; the engine has no crime concept at all
-- **(trigger_event)** a trigger event fired once per spell cast or ability put on the stack whose targets include one of the controller's opponents, a permanent or spell an opponent of that controller controls, or a card in an opponent's graveyard (rule 700.13), filterable by who committed the crime (here: cause_controller opponent)
-  <br>Why the existing vocabulary won't do: becomes_target fires per targeted object and only for permanents, so it misses targeting a player or graveyard cards and would fire multiple times for one spell with several targets; spell_cast and ability_activated carry no information about whether the targets belong to an opponent; the engine has no crime concept at all
-
-<details><summary>Cards waiting on this</summary>
-
-- **Patrolling Peacemaker** (rank 2244) — `patrolling_peacemaker`
-  - Whenever an opponent commits a crime, proliferate
-- **Bandit's Haul** (rank 5311) — `bandit_s_haul`
-  - Whenever you commit a crime, put a loot counter on this artifact. This ability triggers only once each turn
 
 </details>
 
@@ -1273,6 +1277,24 @@ Blocks **2** cards.
   - {3}, {T}, Pay X {E}, Sacrifice this land: Destroy target nonland permanent with mana value X. Activate only as a sorcery.
 - **Sphinx of the Revelation** (rank 5591) — `sphinx_of_the_revelation`
   - {W}{U}{U}, {T}, Pay X {E}: Draw X cards.
+
+</details>
+
+## plot
+
+Blocks **2** cards.
+
+- **(op)** an op that removes a target spell from the stack straight to exile without it resolving or being countered (so it works on uncounterable spells), and leaves its owner the plotted permission: castable as a sorcery on a later turn without paying its mana cost
+  <br>Why the existing vocabulary won't do: grant_plot only marks a spell to be exiled and plotted when it resolves (and stack.py restricts that rider to spells cast from hand), so the spell would still resolve; counter with exiles counters rather than exiles, fails against uncounterable spells and leaves no plot permission; exile targets permanents/cards in zones, not stack items
+- **(op)** an op (or an `exile` option) that exiles a chosen card from a zone other than the stack -- here a nonland card with mana value 3 or less from your hand -- and makes it plotted: the standing 702.171a permission to cast it as a sorcery on a later turn without paying its mana cost (playable_duration 'later_turns' + playable_free + playable_sorcery_only), emitting the 'plotted' event
+  <br>Why the existing vocabulary won't do: `grant_plot` takes only `sid`/`target` and marks a resolving spell on the stack (Lilah), turning it into the plotted permission in stack._place_after_resolution; it cannot reach a card in hand. `exile` with `playable: "later_turns"` gives the later-turn start but no way to set `playable_free` or `playable_sorcery_only`, so the card would be castable at its full price and at instant speed -- a different card. `cast_from_hand`/`play_exiled` cast now, not later.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Aven Interrupter** (rank 1873) — `aven_interrupter`
+  - When this creature enters, exile target spell. It becomes plotted
+- **Jace Reawakened** (rank 7506) — `jace_reawakened`
+  - +1: You may exile a nonland card with mana value 3 or less from your hand. If you do, it becomes plotted.
 
 </details>
 
@@ -4323,20 +4345,6 @@ Blocks **1** card.
 
 - **Rampant Frogantua** (rank 4941) — `rampant_frogantua`
   - This creature gets +10/+10 for each player who has lost the game.
-
-</details>
-
-## plot
-
-Blocks **1** card.
-
-- **(op)** an op (or an `exile` option) that exiles a chosen card from a zone other than the stack -- here a nonland card with mana value 3 or less from your hand -- and makes it plotted: the standing 702.171a permission to cast it as a sorcery on a later turn without paying its mana cost (playable_duration 'later_turns' + playable_free + playable_sorcery_only), emitting the 'plotted' event
-  <br>Why the existing vocabulary won't do: `grant_plot` takes only `sid`/`target` and marks a resolving spell on the stack (Lilah), turning it into the plotted permission in stack._place_after_resolution; it cannot reach a card in hand. `exile` with `playable: "later_turns"` gives the later-turn start but no way to set `playable_free` or `playable_sorcery_only`, so the card would be castable at its full price and at instant speed -- a different card. `cast_from_hand`/`play_exiled` cast now, not later.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Jace Reawakened** (rank 7506) — `jace_reawakened`
-  - +1: You may exile a nonland card with mana value 3 or less from your hand. If you do, it becomes plotted.
 
 </details>
 

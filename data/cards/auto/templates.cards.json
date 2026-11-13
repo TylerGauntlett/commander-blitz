@@ -82538,6 +82538,66 @@
     },
     {
       "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "fists_of_flame",
+      "mana_cost": "{1}{R}",
+      "name": "Fists of Flame",
+      "oracle_text": "Draw a card. Until end of turn, target creature gains trample and gets +1/+0 for each card you've drawn this turn. (A creature with trample can deal excess combat damage to the player or planeswalker it's attacking.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "duration": "until_end_of_turn",
+          "keywords": [
+            "trample"
+          ],
+          "objects": {
+            "target": "t1"
+          },
+          "op": "grant_keyword"
+        },
+        {
+          "duration": "until_end_of_turn",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "pump",
+          "power": {
+            "cards_drawn_this_turn": "you"
+          },
+          "toughness": {
+            "const": 0
+          }
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "R",
         "U"
       ],
@@ -179555,6 +179615,99 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Proft's Eidetic Memory enters, draw a card.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "affects_player": "you",
+          "effect": "no_hand_limit",
+          "kind": "static",
+          "text": "You have no maximum hand size."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "minus": [
+                  {
+                    "cards_drawn_this_turn": "you"
+                  },
+                  {
+                    "const": 1
+                  }
+                ]
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "At the beginning of combat on your turn, if you've drawn more than one card this turn, put X +1/+1 counters on target creature you control, where X is the number of cards you've drawn this turn minus one.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "cards_drawn_this_turn": "you"
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "proft_s_eidetic_memory",
+      "mana_cost": "{1}{U}",
+      "name": "Proft's Eidetic Memory",
+      "oracle_text": "When Proft's Eidetic Memory enters, draw a card.\nYou have no maximum hand size.\nAt the beginning of combat on your turn, if you've drawn more than one card this turn, put X +1/+1 counters on target creature you control, where X is the number of cards you've drawn this turn minus one.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "op": "choose_type",
               "prompt": "Choose a creature type"
             }
@@ -187825,6 +187978,46 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "release_to_the_wind",
+      "mana_cost": "{2}{U}",
+      "name": "Release to the Wind",
+      "oracle_text": "Exile target nonland permanent. For as long as that card remains exiled, its owner may cast it without paying its mana cost.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "exile",
+          "playable": "while_exiled",
+          "playable_by": "owner",
+          "playable_cast_only": true,
+          "playable_free": true
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -247211,6 +247404,65 @@
         "Beast"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "cards_drawn_this_turn": "you"
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker",
+                  "Battle"
+                ]
+              }
+            }
+          ],
+          "text": "Whenever this creature attacks, it deals damage to any target equal to the number of cards you've drawn this turn.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "thundering_djinn",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{U}{R}",
+      "name": "Thundering Djinn",
+      "oracle_text": "Flying\nWhenever this creature attacks, it deals damage to any target equal to the number of cards you've drawn this turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Djinn"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]

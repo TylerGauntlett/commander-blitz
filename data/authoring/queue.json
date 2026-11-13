@@ -96502,12 +96502,12 @@
     },
     "Fists of Flame": {
       "edhrec_rank": 1865,
-      "gate": "template",
+      "gate": null,
       "name": "Fists of Flame",
-      "reason": "no template for: Draw a card. Until end of turn, target creature gains trample and gets +1/+0 for each card",
+      "reason": "",
       "scryfall_id": "0e7c9403-fb7f-4334-a3b2-0932b4a13eb8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fists of Ironwood": {
@@ -208182,12 +208182,12 @@
     },
     "Proft's Eidetic Memory": {
       "edhrec_rank": 1782,
-      "gate": "template",
+      "gate": null,
       "name": "Proft's Eidetic Memory",
-      "reason": "no template for: When enters, draw a card",
+      "reason": "",
       "scryfall_id": "a3472756-0305-4567-b425-f7dbf9b3cc7f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Proft, Consulting Detective": {
@@ -219612,12 +219612,12 @@
     },
     "Release to the Wind": {
       "edhrec_rank": 9521,
-      "gate": "template",
+      "gate": null,
       "name": "Release to the Wind",
-      "reason": "no template for: Exile target nonland permanent. For as long as that card remains exiled, its owner may cas",
+      "reason": "",
       "scryfall_id": "4b4f72ef-3939-467c-8fe4-fd1c215f2b1e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Relentless Advance": {
@@ -286222,12 +286222,12 @@
     },
     "Thundering Djinn": {
       "edhrec_rank": 21462,
-      "gate": "template",
+      "gate": null,
       "name": "Thundering Djinn",
-      "reason": "no template for: Whenever this creature attacks, it deals damage to any target equal to the number of cards",
+      "reason": "",
       "scryfall_id": "28642fbe-90c8-4beb-9950-91af28d93326",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thundering Falls": {
