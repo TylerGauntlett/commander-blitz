@@ -5141,6 +5141,33 @@
       "keywords": [
         "reach"
       ]
+    },
+    {
+      "id": "tiny_2_2_g_trample",
+      "name": "Tiny",
+      "oracle_text": "Tiny, a legendary 2/2 green Dog Detective creature token with trample.",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Dog",
+        "Detective"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "trample"
+      ],
+      "is_token": true
     }
   ]
 }
