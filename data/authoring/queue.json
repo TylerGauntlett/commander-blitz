@@ -150972,12 +150972,12 @@
     },
     "Knowledge Is Power": {
       "edhrec_rank": 7927,
-      "gate": "template",
+      "gate": null,
       "name": "Knowledge Is Power",
-      "reason": "no template for: Creatures you control get +X/+X, where X is the number of cards you've drawn this turn",
+      "reason": "",
       "scryfall_id": "1afe55c3-53c3-4257-afb6-32a553639f50",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Knowledge Pool": {

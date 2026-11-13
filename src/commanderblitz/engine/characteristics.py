@@ -2149,6 +2149,15 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
         # it off DIES, the cleanup step empties it, and no layer touches it.
         pids = _static_players(state, source, expr["creatures_died_this_turn"])
         return sum(state.turn_ledger.creatures_died.get(p, 0) for p in pids)
+    if "cards_drawn_this_turn" in expr:
+        # Knowledge Is Power: "Creatures you control get +X/+X, where X is the
+        # number of cards you've drawn this turn." The effect side's draw tally
+        # in its bare player-spec form. A pipeline input on
+        # `creatures_died_this_turn`'s terms: `primitives.draw_cards` writes it
+        # and the untap step empties it, no layer touches it, and both bump
+        # `char_version`, so the anthem grows with each draw as it happens.
+        pids = _static_players(state, source, expr["cards_drawn_this_turn"])
+        return sum(state.cards_drawn_this_turn.get(p, 0) for p in pids)
     if "max_count_of" in expr:
         # "As long as an opponent controls more lands than you." A count per
         # player rather than over the merged pool -- `count` with

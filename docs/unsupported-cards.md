@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**378 cards** blocked by **327** capabilities.
+**377 cards** blocked by **326** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -94,7 +94,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cant-attack-this-turn](#cant-attack-this-turn) | 1 | 2358 | op |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cant-block-filtered-group](#cant-block-filtered-group) | 1 | 7948 | op |
-| [cards-drawn-this-turn](#cards-drawn-this-turn) | 1 | 7927 | value |
 | [cards-exiled-trigger](#cards-exiled-trigger) | 1 | 1303 | trigger_event |
 | [cards-put-into-graveyard-from-library](#cards-put-into-graveyard-from-library) | 1 | 6299 | trigger_event |
 | [cards-to-graveyard-this-turn-per-player](#cards-to-graveyard-this-turn-per-player) | 1 | 2881 | value |
@@ -1953,20 +1952,6 @@ Blocks **1** card.
 
 - **The Motherlode, Excavator** (rank 7948) — `the_motherlode_excavator`
   - Whenever The Motherlode attacks, you may pay {E}{E}{E}{E}. When you do, destroy target nonbasic land defending player controls, and creatures that player controls without flying can't block this turn.
-
-</details>
-
-## cards-drawn-this-turn
-
-Blocks **1** card.
-
-- **(value)** the static magnitude leaf {"cards_drawn_this_turn": "you"} in static_value_keys, so a `buff` static's power and toughness can be the number of cards its controller has drawn this turn, recomputed continuously as cards are drawn
-  <br>Why the existing vocabulary won't do: cards_drawn_this_turn exists only in value_keys (effect amounts); static_value_keys has spells_cast_this_turn, creatures_died_this_turn and permanents_entered_this_turn but no draw tally, and a leaf outside static_value_keys is a load error. A pump trigger on `draw` would miss creatures entering later and would not be an anthem
-
-<details><summary>Cards waiting on this</summary>
-
-- **Knowledge Is Power** (rank 7927) — `knowledge_is_power`
-  - Creatures you control get +X/+X, where X is the number of cards you've drawn this turn.
 
 </details>
 

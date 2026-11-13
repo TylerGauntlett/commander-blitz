@@ -1,0 +1,24 @@
+{
+  "_comment": "Shapes for tests/unit/statics/test_cards_drawn_static.py. t_draw_anthem is Knowledge Is Power's anthem on a card the test suite owns, so the tally is the only thing moving its creatures' size.",
+  "cards": [
+    {
+      "id": "t_draw_anthem",
+      "name": "Test Draw Anthem",
+      "oracle_text": "Creatures you control get +X/+X, where X is the number of cards you've drawn this turn.",
+      "mana_cost": "{3}{U}",
+      "types": ["Enchantment"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures you control get +X/+X, where X is the number of cards you've drawn this turn.",
+          "effect": "buff",
+          "affects": {"controller": "you", "types": ["Creature"]},
+          "power": {"cards_drawn_this_turn": "you"},
+          "toughness": {"cards_drawn_this_turn": "you"}
+        }
+      ]
+    }
+  ]
+}

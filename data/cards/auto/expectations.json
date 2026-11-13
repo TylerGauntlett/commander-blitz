@@ -10955,6 +10955,13 @@
   "knotvine_mystic": {
     "zone": "battlefield"
   },
+  "knowledge_is_power": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "koala_sheep": {
     "life": {
       "0": 43

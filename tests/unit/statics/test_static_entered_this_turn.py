@@ -146,7 +146,7 @@ class TestTheLoaderStillRefusesWhatItShould:
     def test_an_unknown_leaf_is_still_refused(self, registry):
         """Widening the language must not have opened it."""
         model = self._variant(
-            registry, "t_entered_anthem_bad2", {"cards_drawn_this_turn": "you"}
+            registry, "t_entered_anthem_bad2", {"life_gained_this_turn": "you"}
         )
         with pytest.raises(DslError, match="static values may only use"):
             compile_card(model)

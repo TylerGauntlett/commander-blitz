@@ -82,6 +82,10 @@ def draw_cards(state: GameState, pid: int, count: int) -> list[int]:
         # card can never be drawn without the tally seeing it.
         nth = state.cards_drawn_this_turn.get(pid, 0) + 1
         state.cards_drawn_this_turn[pid] = nth
+        # The tally is a static's input (`cards_drawn_this_turn`), and `chars`
+        # caches per `char_version`. The move above bumped it before this
+        # write, so an answer read in between would otherwise miss the draw.
+        state.bump_chars()
         # ...and the same fact per card, for "cards in your hand drawn this
         # turn" (Sylvan Library). Written here for the tally's reason: every
         # draw passes through this function, so a card cannot be drawn without

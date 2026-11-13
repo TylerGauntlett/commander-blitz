@@ -777,6 +777,8 @@ STATIC_VALUE_EXTRAS: dict[str, Entry] = {
     "distinct": ("The number of card types among a counting filter's pool off the battlefield "
                  "(delirium); `of: \"card_type\"` only.",
                  "Counting different values rather than objects"),
+    "cards_drawn_this_turn": ("Cards a player spec's players have drawn this turn, re-read as each "
+                              "card is drawn; the bare player spec only.", None),
     "commander_casts_this_game": ("Times you have cast your commanders from the command zone this game "
                                   "(903.8's tally); `\"you\"` only.",
                                   "An anthem for each commander cast"),

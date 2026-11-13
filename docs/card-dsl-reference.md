@@ -29,7 +29,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Decision kinds](#decision-kinds) | 11 |
 | [Static filter keys](#static-filter-keys) | 34 |
 | [Static conditions](#static-conditions) | 14 |
-| [Static values](#static-values) | 20 |
+| [Static values](#static-values) | 21 |
 | [Spell filter keys](#spell-filter-keys) | 12 |
 | [Spell cost-reduction filter keys](#spell-cost-reduction-filter-keys) | 5 |
 | [Cost-reduction filter keys](#cost-reduction-filter-keys) | 2 |
@@ -1024,6 +1024,7 @@ The subset of the value language a static's magnitude (`power`, `amount`, …) m
 
 | Name | Description | Defined in |
 |---|---|---|
+| `cards_drawn_this_turn` | Cards a player spec's players have drawn this turn, re-read as each card is drawn; the bare player spec only. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `commander_casts_this_game` | Times you have cast your commanders from the command zone this game (903.8's tally); `"you"` only. | [An anthem for each commander cast](card-dsl-cookbook.md#an-anthem-for-each-commander-cast) |
 | `const` | A literal number. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `count` | How many objects a counting filter matches; on the battlefield it may be an `any_of` union, each object counted once. | [any_of in a count — "base power or toughness 1"](card-dsl.md#any_of-in-a-count--base-power-or-toughness-1) |

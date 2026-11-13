@@ -130200,6 +130200,43 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "cards_drawn_this_turn": "you"
+          },
+          "text": "Creatures you control get +X/+X, where X is the number of cards you've drawn this turn.",
+          "toughness": {
+            "cards_drawn_this_turn": "you"
+          }
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "knowledge_is_power",
+      "mana_cost": "{3}{W}{U}",
+      "name": "Knowledge Is Power",
+      "oracle_text": "Creatures you control get +X/+X, where X is the number of cards you've drawn this turn.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {

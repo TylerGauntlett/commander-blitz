@@ -706,6 +706,7 @@
    "zone"
   ],
   "STATIC_VALUE_KEYS": [
+   "cards_drawn_this_turn",
    "commander_casts_this_game",
    "const",
    "count",

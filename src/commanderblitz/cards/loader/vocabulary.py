@@ -1653,6 +1653,14 @@ STATIC_SPELLS_CAST_KEYS = frozenset({"spells_cast_this_turn"})
 #: `spells_cast_this_turn`'s terms, and takes the same bare player specs.
 STATIC_DEATHS_KEYS = frozenset({"creatures_died_this_turn"})
 
+#: The per-turn draw leaf -- Knowledge Is Power's "creatures you control get
+#: +X/+X, where X is the number of cards you've drawn this turn".
+#: `GameState.cards_drawn_this_turn` is written only by `primitives.draw_cards`
+#: and emptied only by the untap step, never by a layer, and both funnels bump
+#: `char_version`. So it is a pipeline input on `creatures_died_this_turn`'s
+#: terms, and takes the same bare player specs.
+STATIC_DRAWS_KEYS = frozenset({"cards_drawn_this_turn"})
+
 
 #: Every leaf a static ability's magnitude may use -- a `buff`'s `power`, a
 #: `set_pt`, a `spell_cost_reduction`'s `amount`, either side of a `cmp`.
@@ -1713,6 +1721,7 @@ STATIC_VALUE_KEYS = (
     | STATIC_MANA_POOL_KEYS
     | STATIC_SPELLS_CAST_KEYS
     | STATIC_DEATHS_KEYS
+    | STATIC_DRAWS_KEYS
     | PER_PLAYER_COUNT_KEYS
 )
 
