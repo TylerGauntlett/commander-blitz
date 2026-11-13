@@ -161012,12 +161012,12 @@
     },
     "Lonis, Cryptozoologist": {
       "edhrec_rank": 5042,
-      "gate": "template",
+      "gate": null,
       "name": "Lonis, Cryptozoologist",
-      "reason": "no template for: Whenever another nontoken creature you control enters, investigate",
+      "reason": "",
       "scryfall_id": "e786423d-3a49-4318-ac77-791918bcafcb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lonis, Genetics Expert": {

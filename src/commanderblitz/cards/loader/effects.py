@@ -1822,6 +1822,28 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}: look_at_top 'link' is a boolean and needs destination 'exile'"
             )
+        # "…onto the battlefield **under your control**" (Lonis,
+        # Cryptozoologist). The only value is "you": every other seat a card
+        # could enter under is the looked-at library's, which is the default.
+        # Only a battlefield arrival has a controller to set -- the window's
+        # `destination` or a `destinations` step's `to` -- and `cast_free`
+        # replaces the arrival with a cast, so anywhere else the key would load
+        # and say nothing.
+        if "controller" in effect:
+            arrives = effect.get("cast_free") is not True and (
+                destination == "battlefield"
+                if not effect.get("destinations")
+                else any(
+                    isinstance(step, Mapping) and step.get("to") == "battlefield"
+                    for step in effect["destinations"]
+                )
+            )
+            if effect["controller"] != "you" or not arrives:
+                raise DslError(
+                    f"{where}: look_at_top 'controller' is \"you\" and needs a "
+                    f"card put onto the battlefield (destination 'battlefield' or "
+                    f"a destinations step to it, without cast_free)"
+                )
         # "…then put them back in any order." Beside another instruction for
         # "the rest" it would arrange cards that op had already sent away, or
         # that a shuffle then scatters: two different remainders, and a card

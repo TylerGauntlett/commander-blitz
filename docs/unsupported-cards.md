@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**380 cards** blocked by **329** capabilities.
+**379 cards** blocked by **328** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -214,7 +214,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [living-metal](#living-metal) | 1 | 11641 | keyword |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
 | [look-at-top-attacking](#look-at-top-attacking) | 1 | 7846 | op |
-| [look-at-top-under-your-control](#look-at-top-under-your-control) | 1 | 5042 | op |
 | [lose-the-game](#lose-the-game) | 1 | 1512 | op |
 | [lure](#lure) | 1 | 31502 | static_effect |
 | [madness](#madness) | 1 | 3016 | replacement |
@@ -3675,20 +3674,6 @@ Blocks **1** card.
 
 - **Arthur, Marigold Knight** (rank 7846) — `arthur_marigold_knight`
   - Whenever Arthur and at least one other creature attack, look at the top six cards of your library. You may put a creature card from among them onto the battlefield tapped and attacking. Put the rest on the bottom of your library in a random order. Return that creature to its owner's hand at end of combat
-
-</details>
-
-## look-at-top-under-your-control
-
-Blocks **1** card.
-
-- **(op)** a `controller: "you"` key on `look_at_top` (as `reveal_until` and `search_library` already have) so a card a lookup of an OPPONENT's library puts onto the battlefield with `destination: "battlefield"` enters under the effect controller's control. With it the line is: cost `{tap: true, sacrifice_x: {subtypes: ["Clue"]}}`, target `{id: t1, kind: player, selector: {controller: opponent}}`, effect `look_at_top {player: {target: t1}, amount: {x: true}, destination: "battlefield", controller: "you", objects: {count: 1, optional: true, not_types: ["Land", "Instant", "Sorcery"], mana_value: {op: "<=", value: {x: true}}}, rest_to_bottom: true}`. Shared by Gonti-style and Jhoira-style 'steal from the top of their library' cards
-  <br>Why the existing vocabulary won't do: `op_look_at_top` (engine/effects/ops_cards.py) calls `_move_found` without its `controller` argument, so `entering_under` defaults to `pid`, the seat whose library was looked at -- the stolen permanent would enter under the opponent's control, the opposite of the card. `reveal_until` does forward `controller: "you"` but reveals until a match rather than a fixed top-X window. `search_library`/`search_zones` take `controller` but search the whole library, which is a tutor, not the top X. Splitting into look_at_top + `put_onto_battlefield {controller: you}` over an `as` binding needs an intermediate zone the printed card never uses and breaks `rest_to_bottom`'s 'the rest' bookkeeping. The first sentence (a `permanent_enters` trigger with `controller: you`, filter `types: [Creature]`, `is_token: false`, `exclude_self`, creating `clue_token`) and the `sacrifice_x` + `tap` cost are expressible; only the under-your-control arrival is missing
-
-<details><summary>Cards waiting on this</summary>
-
-- **Lonis, Cryptozoologist** (rank 5042) — `lonis_cryptozoologist`
-  - {T}, Sacrifice X Clues: Target opponent reveals the top X cards of their library. You may put a nonland permanent card with mana value X or less from among them onto the battlefield under your control. That player puts the rest on the bottom of their library in a random order.
 
 </details>
 

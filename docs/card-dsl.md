@@ -313,6 +313,31 @@ A `destinations` step reads its own `selector`'s `chooser` first, then the
 window's. `scry` is the near miss in the other direction: its `chooser`
 defaults to the library's owner, because scrying is the player's own action.
 
+**Who it enters under** is `controller`. A card put onto the battlefield
+enters under the seat whose library `player` names unless `controller: "you"`
+says it is the effect's controller's — Lonis, Cryptozoologist's "target
+opponent reveals the top X cards of their library. You may put a nonland
+permanent card with mana value X or less from among them onto the battlefield
+**under your control**":
+
+```jsonc
+{ "op": "look_at_top", "player": { "target": "t1" }, "amount": { "x": true },
+  "destination": "battlefield", "controller": "you",
+  "objects": { "count": 1, "optional": true,
+               "not_types": ["Land", "Instant", "Sorcery"],
+               "mana_value": { "op": "<=", "value": { "x": true } } },
+  "rest_to_bottom": true }
+```
+
+The pick and the arrival are separate questions: the chooser above already
+hands the pick to "you", and without `controller` the picked card still enters
+under its owner — Lonis would sacrifice its Clues to give the opponent a free
+permanent. The library's player stays the owner, and "the rest" goes back to
+that library. It is the spelling `reveal_until`, `put_onto_battlefield` and
+`return_from_graveyard` use. The loader admits only `"you"`, and only beside a
+battlefield arrival — `destination: "battlefield"` or a `destinations` step
+`to` it — never with `cast_free`.
+
 `counters` and `counters_if` are a card put onto the battlefield **with**
 counters — Turntimber Symbiosis' "If that card has mana value 3 or less, it
 enters with three additional +1/+1 counters on it":

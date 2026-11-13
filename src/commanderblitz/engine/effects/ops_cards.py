@@ -815,6 +815,14 @@ def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
     ``face_down`` is exile without showing it to anybody, and only exile: see
     :func:`_move_found`.
 
+    ``controller: "you"`` is who a card put onto the battlefield enters
+    under -- Lonis, Cryptozoologist: "Target opponent reveals the top X cards of
+    their library. You may put a nonland permanent card … onto the battlefield
+    **under your control**." The pick already belongs to the effect's
+    controller (the chooser above); this is the arrival, which otherwise
+    defaults to the seat whose library was looked at, as `reveal_until`'s and
+    the search ops' do (rule 110.2).
+
     ``counters`` and ``counters_if`` are a card put onto the battlefield *with*
     counters -- Turntimber Symbiosis: "If that card has mana value 3 or less, it
     enters with three additional +1/+1 counters on it." See :func:`_enters_with`.
@@ -827,6 +835,9 @@ def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
     cast_free = bool(spec.get("cast_free"))
     selector = spec.get("objects") or spec.get("selector") or {}
     binding = spec.get("as")
+    # "…onto the battlefield **under your control**" (Lonis, Cryptozoologist):
+    # without the key a card enters under the seat whose library was looked at.
+    controller = ctx.controller if spec.get("controller") == "you" else None
     bound: list[int] = []
     for pid in select_players(ctx, spec.get("player", "you")):
         top = list(ctx.state.players[pid].library[: max(0, int(amount))])
@@ -904,6 +915,7 @@ def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
                     {**step, "destination": step.get("to", "hand")},
                     tapped,
                     "look_at_top",
+                    controller=controller,
                 )
                 taken.update(picked)
                 remaining = [oid for oid in remaining if oid not in picked]
@@ -916,7 +928,18 @@ def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
                 taken = set((yield from _cast_from_window(ctx, pid, picked)))
             else:
                 taken = set(
-                    (yield from _move_found(ctx, picked, pid, destination, spec, tapped, "look_at_top"))
+                    (
+                        yield from _move_found(
+                            ctx,
+                            picked,
+                            pid,
+                            destination,
+                            spec,
+                            tapped,
+                            "look_at_top",
+                            controller=controller,
+                        )
+                    )
                 )
             # Accumulated across seats rather than assigned, for the reason
             # `exile`'s own `as` accumulates: a `player: "each_player"` look
