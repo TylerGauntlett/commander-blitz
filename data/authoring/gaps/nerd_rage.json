@@ -1,0 +1,18 @@
+{
+  "card_id": "nerd_rage",
+  "name": "Nerd Rage",
+  "oracle_text": "Enchant creature\nWhen this Aura enters, draw two cards.\nEnchanted creature has \"You have no maximum hand size\" and \"Whenever this creature attacks, if you have ten or more cards in hand, it gets +10/+10 until end of turn.\"",
+  "blocked_sentences": [
+    "Enchanted creature has \"You have no maximum hand size\" and \"Whenever this creature attacks, if you have ten or more cards in hand, it gets +10/+10 until end of turn.\""
+  ],
+  "needs": [
+    {
+      "capability": "granted_player_wide_static",
+      "kind": "static_effect",
+      "what": "a grant_ability static that hands the enchanted creature a player-wide static (here `no_hand_limit` with affects_player \"you\"), where \"you\" resolves to the creature's controller and the permission lasts while the creature has the ability",
+      "why_existing_wont_do": "loader.vocabulary.UNGRANTABLE_STATIC_EFFECTS includes every PLAYER_WIDE_STATIC_EFFECTS member, no_hand_limit among them, so a grantable_abilities entry carrying it is refused; and player_statics._active_player_statics walks only each permanent's printed abilities, so a granted one would grant nothing. Putting no_hand_limit on the Aura itself is wrong when the Aura enchants a creature another player controls (the Aura's controller would get the permission instead of the creature's). The second quoted ability (attacks trigger with a cards_in_hand >= 10 condition and a self pump) is expressible as a granted triggered ability; only the first half blocks the line"
+    }
+  ],
+  "closest_existing": ["grant_ability", "no_hand_limit", "no_maximum_hand_size"],
+  "confidence": "high"
+}

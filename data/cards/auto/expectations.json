@@ -13281,6 +13281,10 @@
   "nick_fury_spymaster": {
     "zone": "battlefield"
   },
+  "nick_valentine_private_eye": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "night_market": {
     "zone": "battlefield"
   },
@@ -13438,6 +13442,10 @@
     "zone": "battlefield"
   },
   "noxious_newt": {
+    "zone": "battlefield"
+  },
+  "nuka_cola_vending_machine": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "nyx_fleece_ram": {
@@ -13792,6 +13800,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "open_the_vaults": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
   "ophidian_eye": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -14031,6 +14047,10 @@
   },
   "palace_jailer": {
     "opponent_battlefield_count": 5
+  },
+  "paladin_danse_steel_maverick": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "paladin_elizabeth_taggerdy": {
     "battlefield_count": 33,
