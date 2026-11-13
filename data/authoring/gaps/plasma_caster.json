@@ -1,0 +1,18 @@
+{
+  "card_id": "plasma_caster",
+  "name": "Plasma Caster",
+  "oracle_text": "Equipped creature gets +1/+1.\nWhenever equipped creature attacks, you get {E}{E} (two energy counters).\nPay {E}{E}: Choose target creature that's blocking equipped creature. Flip a coin. If you win the flip, exile the chosen creature. Otherwise, this Equipment deals 1 damage to it.\nEquip {2}",
+  "blocked_sentences": [
+    "Pay {E}{E}: Choose target creature that's blocking equipped creature. Flip a coin. If you win the flip, exile the chosen creature. Otherwise, this Equipment deals 1 damage to it."
+  ],
+  "needs": [
+    {
+      "capability": "blocking_equipped_creature",
+      "kind": "selector",
+      "what": "a target selector for an activated ability on an Equipment matching a creature that is blocking the creature this Equipment is attached to (\"target creature that's blocking equipped creature\")",
+      "why_existing_wont_do": "The selector key `blocking` takes either a boolean (blocking anything, which would let the ability hit a creature blocking a different attacker) or `{\"binding\": ...}` naming an attacker oid held in ctx.bindings; only triggers populate such a binding (Flanking's `self`), and an activated ability's target selection has no binding for the equipped creature. `attached`/`equipped` match the equipped creature itself, not its blockers. Pay {E}{E} (`pay_energy`), `flip_coin` with `else`, `exile` and `damage` are all available; only the target restriction is missing."
+    }
+  ],
+  "closest_existing": ["blocking", "attached", "flip_coin"],
+  "confidence": "high"
+}

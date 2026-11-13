@@ -15262,12 +15262,12 @@
     },
     "Assaultron Dominator": {
       "edhrec_rank": 6900,
-      "gate": "template",
+      "gate": null,
       "name": "Assaultron Dominator",
-      "reason": "no template for: When this creature enters, you get {E}{E}",
+      "reason": "",
       "scryfall_id": "4112fadb-da03-441a-beeb-1dc90425e3f3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Assemble the Entmoot": {
@@ -23142,12 +23142,12 @@
     },
     "Behemoth of Vault 0": {
       "edhrec_rank": 7179,
-      "gate": "template",
+      "gate": null,
       "name": "Behemoth of Vault 0",
-      "reason": "no template for: When this creature enters, you get {E}{E}{E}{E}",
+      "reason": "",
       "scryfall_id": "592d6e5b-a94e-460c-ab2f-21fd842c3d9a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Behemoth's Herald": {
@@ -32234,7 +32234,7 @@
       "edhrec_rank": 4086,
       "gate": "template",
       "name": "Bottle-Cap Blast",
-      "reason": "no template for: Improvise",
+      "reason": "no template for: deals 5 damage to any target. If excess damage was dealt to a permanent this way, create t",
       "scryfall_id": "4c4d8bfb-aaf0-41f3-a000-1df6363fb25c",
       "source": "",
       "status": "pending",
@@ -35492,12 +35492,12 @@
     },
     "Brotherhood Vertibird": {
       "edhrec_rank": 4767,
-      "gate": "template",
+      "gate": null,
       "name": "Brotherhood Vertibird",
-      "reason": "no template for: 's power is equal to the number of artifacts you control",
+      "reason": "",
       "scryfall_id": "900da9ff-01d5-429e-b11a-48e0dca5df69",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Brotherhood's End": {
@@ -57122,12 +57122,12 @@
     },
     "Crush Contraband": {
       "edhrec_rank": 4202,
-      "gate": "template",
+      "gate": null,
       "name": "Crush Contraband",
-      "reason": "no template for: Choose one or both —",
+      "reason": "",
       "scryfall_id": "e0941279-8695-4b71-b27a-5477a1858525",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Crush Dissent": {
@@ -72792,12 +72792,12 @@
     },
     "Dr. Madison Li": {
       "edhrec_rank": 6935,
-      "gate": "template",
+      "gate": null,
       "name": "Dr. Madison Li",
-      "reason": "no template for: Whenever you cast an artifact spell, you get {E}",
+      "reason": "",
       "scryfall_id": "3e356527-66a6-4d71-bc59-0c3bdde3d14c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Drach'Nyen": {
@@ -80142,12 +80142,12 @@
     },
     "Elder Owyn Lyons": {
       "edhrec_rank": 11337,
-      "gate": "template",
+      "gate": null,
       "name": "Elder Owyn Lyons",
-      "reason": "no template for: Artifacts you control have ward {1}",
+      "reason": "",
       "scryfall_id": "73bc8fe5-736c-4baf-bd0f-a0c95721225e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Elder Pine of Jukai": {
@@ -80512,12 +80512,12 @@
     },
     "Electrosiphon": {
       "edhrec_rank": 5583,
-      "gate": "template",
+      "gate": null,
       "name": "Electrosiphon",
-      "reason": "no template for: Counter target spell. You get an amount of {E} equal to its mana value",
+      "reason": "",
       "scryfall_id": "5f388077-d7a5-41a2-a9e9-4c3a5f7c6b48",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Electrostatic Bolt": {
@@ -157342,12 +157342,12 @@
     },
     "Liberty Prime, Recharged": {
       "edhrec_rank": 7568,
-      "gate": "template",
+      "gate": null,
       "name": "Liberty Prime, Recharged",
-      "reason": "no template for: Whenever Liberty Prime attacks or blocks, sacrifice it unless you pay {E}{E}",
+      "reason": "",
       "scryfall_id": "2da11337-ceb2-4744-9696-c06fec2f2daa",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Library": {
@@ -186322,12 +186322,12 @@
     },
     "Nick Valentine, Private Eye": {
       "edhrec_rank": 10797,
-      "gate": "template",
+      "gate": null,
       "name": "Nick Valentine, Private Eye",
-      "reason": "no template for: Nick Valentine can't be blocked except by artifact creatures",
+      "reason": "",
       "scryfall_id": "0a7c9553-d4a8-4d51-8e8a-8a0ffbdf1715",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nico Minoru, Runaway": {
@@ -189242,12 +189242,12 @@
     },
     "Nuka-Cola Vending Machine": {
       "edhrec_rank": 1288,
-      "gate": "template",
+      "gate": null,
       "name": "Nuka-Cola Vending Machine",
-      "reason": "no template for: {1}, {T}: Create a Food token",
+      "reason": "",
       "scryfall_id": "bd5cc052-7175-4bb8-a52c-f1fb80cb731a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nuka-Nuke Launcher": {
@@ -193382,12 +193382,12 @@
     },
     "Open the Vaults": {
       "edhrec_rank": 3949,
-      "gate": "template",
+      "gate": null,
       "name": "Open the Vaults",
-      "reason": "no template for: Return all artifact and enchantment cards from all graveyards to the battlefield under the",
+      "reason": "",
       "scryfall_id": "1727b15d-2918-489f-a5b8-8ac3ca86d670",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Open the Way": {
@@ -197052,12 +197052,12 @@
     },
     "Paladin Danse, Steel Maverick": {
       "edhrec_rank": 7122,
-      "gate": "template",
+      "gate": null,
       "name": "Paladin Danse, Steel Maverick",
-      "reason": "no template for: Exile Paladin Danse: Each creature you control that's an artifact or Human gains indestruc",
+      "reason": "",
       "scryfall_id": "ba05d535-e457-40f1-8496-9a38e7023ce4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Paladin Elizabeth Taggerdy": {
@@ -218392,12 +218392,12 @@
     },
     "Red Death, Shipwrecker": {
       "edhrec_rank": 6327,
-      "gate": "template",
+      "gate": null,
       "name": "Red Death, Shipwrecker",
-      "reason": "no template for: Alluring Eyes — {T}: Goad target creature an opponent controls. That player draws a card. ",
+      "reason": "",
       "scryfall_id": "2172a39d-7481-4a4a-861b-b4a1204d28ef",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Red Dragon": {
@@ -226172,12 +226172,12 @@
     },
     "Robobrain War Mind": {
       "edhrec_rank": 10756,
-      "gate": "template",
+      "gate": null,
       "name": "Robobrain War Mind",
-      "reason": "no template for: 's power is equal to the number of cards in your hand",
+      "reason": "",
       "scryfall_id": "19c0791d-f0c5-4673-a0c5-40540c1e6d8c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Robot Domination": {
@@ -240192,12 +240192,12 @@
     },
     "Sentinel Sarah Lyons": {
       "edhrec_rank": 7618,
-      "gate": "template",
+      "gate": null,
       "name": "Sentinel Sarah Lyons",
-      "reason": "no template for: As long as an artifact entered the battlefield under your control this turn, creatures you",
+      "reason": "",
       "scryfall_id": "23b76965-528c-48f9-9ee6-332b09cae664",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sentinel Sliver": {
@@ -243362,12 +243362,12 @@
     },
     "Shaun, Father of Synths": {
       "edhrec_rank": 6606,
-      "gate": "template",
+      "gate": null,
       "name": "Shaun, Father of Synths",
-      "reason": "no template for: Whenever you attack, you may create a tapped and attacking token that's a copy of target a",
+      "reason": "",
       "scryfall_id": "5b1414e2-a43b-46b9-ba77-de9a9c50b0cf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shay Cormac": {
@@ -273092,19 +273092,19 @@
     },
     "Synth Eradicator": {
       "edhrec_rank": 8595,
-      "gate": "template",
+      "gate": null,
       "name": "Synth Eradicator",
-      "reason": "no template for: Whenever this creature attacks, exile the top card of your library. You may get {E}{E} . I",
+      "reason": "",
       "scryfall_id": "084d641b-7740-471f-bf93-671858ea720f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Synth Infiltrator": {
       "edhrec_rank": 8844,
       "gate": "template",
       "name": "Synth Infiltrator",
-      "reason": "no template for: Improvise",
+      "reason": "no template for: You may have this creature enter as a copy of any creature on the battlefield, except it's",
       "scryfall_id": "3fe16bc4-8457-4c5f-902a-0746112e80a4",
       "source": "",
       "status": "pending",
@@ -273432,12 +273432,12 @@
     },
     "T-45 Power Armor": {
       "edhrec_rank": 8573,
-      "gate": "template",
+      "gate": null,
       "name": "T-45 Power Armor",
-      "reason": "no template for: When this Equipment enters, you get {E}{E}",
+      "reason": "",
       "scryfall_id": "5065ae25-c96e-489b-aea9-d077c2df513d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "TARDIS": {

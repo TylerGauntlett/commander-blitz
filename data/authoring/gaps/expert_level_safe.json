@@ -1,0 +1,21 @@
+{
+  "card_id": "expert_level_safe",
+  "name": "Expert-Level Safe",
+  "oracle_text": "When this artifact enters, exile the top two cards of your library face down.\n{1}, {T}: You and target opponent each secretly choose 1, 2, or 3. Then those choices are revealed. If they match, sacrifice this artifact and put all cards exiled with it into their owners' hands. Otherwise, exile the top card of your library face down.",
+  "blocked_sentences": [
+    "{1}, {T}: You and target opponent each secretly choose 1, 2, or 3. Then those choices are revealed. If they match, sacrifice this artifact and put all cards exiled with it into their owners' hands. Otherwise, exile the top card of your library face down."
+  ],
+  "needs": [
+    {
+      "capability": "secret_choice",
+      "kind": "decision",
+      "what": "a decision where several players (you and a target opponent) each secretly and simultaneously choose a number from a fixed set (1, 2 or 3), revealed together and bound per player so a condition can compare them for equality",
+      "why_existing_wont_do": "choose_number takes only min/max/as/prompt with no chooser or player key, so the opponent cannot make the choice; wrapping it in for_each_player would make the choices sequential and public, letting the second chooser see the first, which changes the card"
+    }
+  ],
+  "closest_existing": [
+    "choose_number",
+    "for_each_player"
+  ],
+  "confidence": "high"
+}

@@ -1043,6 +1043,10 @@
     "artist": "Jeremy Jarvis",
     "scryfall_id": "12bf6443-c941-418a-a766-05bba088a117"
   },
+  "assaultron_dominator": {
+    "artist": "Viko Menezes",
+    "scryfall_id": "4112fadb-da03-441a-beeb-1dc90425e3f3"
+  },
   "astral_cornucopia": {
     "artist": "Aleksi Briclot",
     "scryfall_id": "15175742-11ae-4819-a5bd-412084b0b686"
@@ -1574,6 +1578,10 @@
   "beetleback_chief": {
     "artist": "Lorenzo Mastroianni",
     "scryfall_id": "9eb27caf-57e4-4fca-a734-148195dcad1b"
+  },
+  "behemoth_of_vault_0": {
+    "artist": "Eddie Mendoza",
+    "scryfall_id": "592d6e5b-a94e-460c-ab2f-21fd842c3d9a"
   },
   "behemoth_sledge": {
     "artist": "Nakamura8",
@@ -2342,6 +2350,10 @@
   "brotherhood_outcast": {
     "artist": "Brian Valeza",
     "scryfall_id": "0949fcab-5aa2-4277-bf4d-f5855a863cb6"
+  },
+  "brotherhood_vertibird": {
+    "artist": "Daarken",
+    "scryfall_id": "900da9ff-01d5-429e-b11a-48e0dca5df69"
   },
   "brudiclad_telchor_engineer": {
     "artist": "Daarken",
@@ -3647,6 +3659,10 @@
     "artist": "Shahab Alizadeh",
     "scryfall_id": "d28542af-936f-44e5-a4e3-119f23c9f0d6"
   },
+  "crush_contraband": {
+    "artist": "Xavier Ribeiro",
+    "scryfall_id": "e0941279-8695-4b71-b27a-5477a1858525"
+  },
   "crux_of_fate": {
     "artist": "Alexander Mokhov",
     "scryfall_id": "4d507db6-29a6-4816-8e37-5b6e318d740f"
@@ -4519,6 +4535,10 @@
     "artist": "Tyler Jacobson",
     "scryfall_id": "2344e710-4570-41b6-af84-a3e7d784003a"
   },
+  "dr_madison_li": {
+    "artist": "John Stanko",
+    "scryfall_id": "3e356527-66a6-4d71-bc59-0c3bdde3d14c"
+  },
   "dracogenesis": {
     "artist": "Kai Carpenter",
     "scryfall_id": "4ea86de4-64d0-445f-b83a-f2c41d54462a"
@@ -4960,6 +4980,10 @@
     "artist": "Nicholas Gregory",
     "scryfall_id": "be0d51ff-9a01-41bd-8e80-ee1e7117d695"
   },
+  "elder_owyn_lyons": {
+    "artist": "David Astruga",
+    "scryfall_id": "73bc8fe5-736c-4baf-bd0f-a0c95721225e"
+  },
   "eldrazi_10_10_c": {
     "artist": "Jack Wang",
     "scryfall_id": "4d88f2e5-eaff-4d23-ae6e-d118deb21bb5"
@@ -5019,6 +5043,10 @@
   "electrodominance": {
     "artist": "Mark A. Nelson",
     "scryfall_id": "6d550bc9-2cb5-4947-a48d-2c92b5c72541"
+  },
+  "electrosiphon": {
+    "artist": "Antonio Jos\u00e9 Manzanedo",
+    "scryfall_id": "5f388077-d7a5-41a2-a9e9-4c3a5f7c6b48"
   },
   "electrostatic_field": {
     "artist": "Dan Murayama Scott",
@@ -9857,6 +9885,10 @@
     "artist": "Pete Venters",
     "scryfall_id": "e5093316-dc00-4155-babf-d6ca222f2bd3"
   },
+  "liberty_prime_recharged": {
+    "artist": "Pascal Quidault",
+    "scryfall_id": "2da11337-ceb2-4744-9696-c06fec2f2daa"
+  },
   "lier_disciple_of_the_drowned": {
     "artist": "Mica Angela Hendricks",
     "scryfall_id": "faead665-3070-4e29-9bc5-0d87708e600f"
@@ -11646,6 +11678,10 @@
     "artist": "Michael MacRae",
     "scryfall_id": "169b6c86-60f2-462b-877f-481354ef2d20"
   },
+  "nick_valentine_private_eye": {
+    "artist": "Viko Menezes",
+    "scryfall_id": "0a7c9553-d4a8-4d51-8e8a-8a0ffbdf1715"
+  },
   "night_market": {
     "artist": "David \u00c1lvarez",
     "scryfall_id": "a8c1dce3-6136-4294-9d2b-5ef8527d733b"
@@ -11809,6 +11845,10 @@
   "noxious_newt": {
     "artist": "Aaron Miller",
     "scryfall_id": "3a028306-c5d7-4f8f-b6f4-0d103fd47000"
+  },
+  "nuka_cola_vending_machine": {
+    "artist": "Bartek Fedyczak",
+    "scryfall_id": "bd5cc052-7175-4bb8-a52c-f1fb80cb731a"
   },
   "nyx_fleece_ram": {
     "artist": "Hasani Claxton",
@@ -12122,6 +12162,10 @@
     "artist": "Vincent Proce",
     "scryfall_id": "9a6bc939-3d31-4a78-9925-27435bec2a67"
   },
+  "open_the_vaults": {
+    "artist": "Ilker Yildiz",
+    "scryfall_id": "1727b15d-2918-489f-a5b8-8ac3ca86d670"
+  },
   "ophidian_eye": {
     "artist": "Zoltan Boros & Gabor Szikszai",
     "scryfall_id": "d3c58997-5555-423a-822e-749fac90e392"
@@ -12329,6 +12373,10 @@
   "palace_jailer": {
     "artist": "Bastien L. Deharme",
     "scryfall_id": "3a8c2a84-e0f2-4611-af3d-42f4578ad4e3"
+  },
+  "paladin_danse_steel_maverick": {
+    "artist": "Dan Murayama Scott",
+    "scryfall_id": "ba05d535-e457-40f1-8496-9a38e7023ce4"
   },
   "paladin_elizabeth_taggerdy": {
     "artist": "Wisnu Tan",
@@ -13596,6 +13644,10 @@
     "artist": "Gintas Galvanauskas",
     "scryfall_id": "592bed07-73ce-4390-90b0-111ab2be2c77"
   },
+  "red_death_shipwrecker": {
+    "artist": "Jeremy Paillotin",
+    "scryfall_id": "2172a39d-7481-4a4a-861b-b4a1204d28ef"
+  },
   "red_elemental_blast": {
     "artist": "Izzy",
     "scryfall_id": "70a45e9b-699e-425a-9f3d-267274830d3e"
@@ -14067,6 +14119,10 @@
   "robe_of_mirrors": {
     "artist": "Christopher Moeller",
     "scryfall_id": "110b92c8-6bc3-4b2d-b71d-d04db8c3b465"
+  },
+  "robobrain_war_mind": {
+    "artist": "Leonardo Borazio",
+    "scryfall_id": "19c0791d-f0c5-4673-a0c5-40540c1e6d8c"
   },
   "robot_villain_2_2_c": {
     "artist": "L J Koh",
@@ -14876,6 +14932,10 @@
     "artist": "Wisnu Tan",
     "scryfall_id": "9f50278a-06fc-4b11-a1d2-d28cd213ff8f"
   },
+  "sentinel_sarah_lyons": {
+    "artist": "David Astruga",
+    "scryfall_id": "23b76965-528c-48f9-9ee6-332b09cae664"
+  },
   "sentinel_spider": {
     "artist": "Vincent Proce",
     "scryfall_id": "067f3e83-53c0-40f4-a745-dee354be7af1"
@@ -15095,6 +15155,10 @@
   "shatterskull_recruit": {
     "artist": "David Palumbo",
     "scryfall_id": "c8add5f2-4ccf-4505-86f6-cc36aff1c3fe"
+  },
+  "shaun_father_of_synths": {
+    "artist": "Zuzanna Wu\u017cyk",
+    "scryfall_id": "5b1414e2-a43b-46b9-ba77-de9a9c50b0cf"
   },
   "she_hulk_wallbreaker": {
     "artist": "Julia Vasilyeva",
@@ -16920,6 +16984,10 @@
     "artist": "Carmen Sinek",
     "scryfall_id": "ab2b349a-1555-4aaa-8302-28667404e630"
   },
+  "synth_eradicator": {
+    "artist": "Kekai Kotaki",
+    "scryfall_id": "084d641b-7740-471f-bf93-671858ea720f"
+  },
   "synthetic_destiny": {
     "artist": "Dave Kendall",
     "scryfall_id": "78ab1d69-da01-424b-9d09-ef985aef4cbd"
@@ -16939,6 +17007,10 @@
   "szarel_genesis_shepherd": {
     "artist": "Matt Stewart",
     "scryfall_id": "89b61123-b10f-4bcf-b5f9-1f302f9b22d1"
+  },
+  "t_45_power_armor": {
+    "artist": "JB Casacop",
+    "scryfall_id": "5065ae25-c96e-489b-aea9-d077c2df513d"
   },
   "t_chaka_venerable_king": {
     "artist": "L.A. Draws",

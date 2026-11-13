@@ -1,0 +1,24 @@
+{
+  "card_id": "c_a_m_p",
+  "name": "C.A.M.P.",
+  "oracle_text": "Whenever fortified land is tapped for mana, put a +1/+1 counter on target creature you control. If that creature shares a color with the mana that land produced, create a Junk token. (It's an artifact with \"{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.\")\nFortify {3} ({3}: Attach to target land you control. Fortify only as a sorcery.)",
+  "blocked_sentences": [
+    "Whenever fortified land is tapped for mana, put a +1/+1 counter on target creature you control. If that creature shares a color with the mana that land produced, create a Junk token."
+  ],
+  "needs": [
+    {
+      "capability": "tapped_for_mana_trigger",
+      "kind": "trigger_event",
+      "what": "a non-mana triggered ability (uses the stack, may target) that fires whenever the permanent this source is attached to is tapped for mana -- on every tap, including the lands the payment solver taps -- and binds the mana that tap produced so effects can read its colors",
+      "why_existing_wont_do": "The `tapped_permanent` key with `attached`/`produced` only drives the inline added-mana statics (Wild Growth style) that resolve inside payment and can only add mana; `becomes_tapped` is any tap, and `ability_activated` with `mana_ability: true` is fired only on the by-hand mana path (game.py says solver-tapped lands emit nothing) and carries no produced mana"
+    },
+    {
+      "capability": "mana_produced_color",
+      "kind": "value",
+      "what": "a condition \"target creature shares a color with the mana that land produced\", comparing a target's colors against the colors of the mana bound by the tapped-for-mana trigger",
+      "why_existing_wont_do": "`two_share_a_color` compares objects matched by one selector, and `colors_of_mana_spent` reads mana spent on a spell, not mana produced by a land's tap"
+    }
+  ],
+  "closest_existing": ["tapped_permanent", "becomes_tapped", "two_share_a_color", "colors_of_mana_spent"],
+  "confidence": "high"
+}

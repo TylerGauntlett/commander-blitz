@@ -122,6 +122,18 @@ class TestTheSizesInBetween:
         assert len(casts(game)[-1].targets) == 0
 
 
+class TestABigBoardStaysCheap:
+    def test_no_subset_larger_than_the_pod_is_tried(self, builder):
+        """Every subset larger than the number of seats fails `_one_each`, so
+        none is enumerated. With a dozen permanents a seat, trying them all was
+        every combination of every size from forty-eight down to five -- the
+        Diluvian Primordial pod that never finished."""
+        game = board(builder, players=4, each=12)
+        offers = casts(game)
+        assert len(offers[0].targets) == 4
+        assert len(set(controllers(game, offers[0]))) == 4
+
+
 class TestItResolves:
     def test_one_permanent_per_player_is_exiled(self, builder):
         game = board(builder, players=3, each=1)

@@ -1,0 +1,18 @@
+{
+  "card_id": "the_prydwen_steel_flagship",
+  "name": "The Prydwen, Steel Flagship",
+  "oracle_text": "Flying\nWhenever another nontoken artifact you control enters, create a 2/2 white Human Knight creature token with \"This token gets +2/+2 as long as an artifact entered the battlefield under your control this turn.\"\nCrew 2",
+  "blocked_sentences": [
+    "Whenever another nontoken artifact you control enters, create a 2/2 white Human Knight creature token with \"This token gets +2/+2 as long as an artifact entered the battlefield under your control this turn.\""
+  ],
+  "needs": [
+    {
+      "capability": "human_knight_2_2_w_artifact_entered_buff",
+      "kind": "token",
+      "what": "a 2/2 white Human Knight creature token with \"This token gets +2/+2 as long as an artifact entered the battlefield under your control this turn.\" (a self buff static whose condition reads whether an artifact entered under its controller's control this turn)",
+      "why_existing_wont_do": "token_ids has knight_2_2_w (a plain Knight, not a Human Knight, and without the conditional +2/+2) and human_knight_2_2_r_trample_haste (red, with trample and haste); neither is the printed token, and the conditional static may also need an 'artifact entered under your control this turn' static condition"
+    }
+  ],
+  "closest_existing": ["knight_2_2_w", "human_knight_2_2_r_trample_haste"],
+  "confidence": "high"
+}

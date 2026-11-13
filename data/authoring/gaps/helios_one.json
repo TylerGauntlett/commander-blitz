@@ -1,0 +1,18 @@
+{
+  "card_id": "helios_one",
+  "name": "HELIOS One",
+  "oracle_text": "{T}: Add {C}.\n{1}, {T}: You get {E} (an energy counter).\n{3}, {T}, Pay X {E}, Sacrifice this land: Destroy target nonland permanent with mana value X. Activate only as a sorcery.",
+  "blocked_sentences": [
+    "{3}, {T}, Pay X {E}, Sacrifice this land: Destroy target nonland permanent with mana value X. Activate only as a sorcery."
+  ],
+  "needs": [
+    {
+      "capability": "pay_energy_x",
+      "kind": "cost",
+      "what": "an activated-ability cost \"Pay X {E}\": the activator announces X (602.2b/601.2b), spends X energy counters as part of the cost (refused if they have fewer than X), and X is then readable by the ability's target selector (mana_value equal to X) and effects, like pay_life_x does for life",
+      "why_existing_wont_do": "Cost.pay_energy is a fixed int (Roil Cartographer's \"Pay six {E}\"); the X-variant costs are pay_life_x, discard_x, sacrifice_x, tap_x and loyalty_x but there is no energy one, and putting {X} in the mana cost would charge mana instead of energy"
+    }
+  ],
+  "closest_existing": ["pay_energy", "pay_life_x", "x_value"],
+  "confidence": "high"
+}
