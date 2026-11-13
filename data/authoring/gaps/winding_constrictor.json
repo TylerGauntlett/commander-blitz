@@ -1,0 +1,18 @@
+{
+  "card_id": "winding_constrictor",
+  "name": "Winding Constrictor",
+  "oracle_text": "If one or more counters would be put on an artifact or creature you control, that many plus one of each of those kinds of counters are put on that permanent instead.\nIf you would get one or more counters, you get that many plus one of each of those kinds of counters instead.",
+  "blocked_sentences": [
+    "If you would get one or more counters, you get that many plus one of each of those kinds of counters instead."
+  ],
+  "needs": [
+    {
+      "capability": "player_counter_replacement",
+      "kind": "static_effect",
+      "what": "a replace_counters static that reaches only the controller as a player (affects_player: \"you\"), for every kind of player counter (poison and energy alike, no `counter`), without also reaching any permanent -- i.e. the loader should accept `affects_player` in place of `affects` on replace_counters, the way it already accepts `put_by` in place of it",
+      "why_existing_wont_do": "The loader refuses replace_counters without `affects` or `put_by`. Izzet Generatorium and Aether Refinery get away with a dummy `affects: {controller: you}` only because `counter: \"energy\"` keeps the static off permanents; with no counter kind (\"one or more counters\", \"each of those kinds\") that dummy affects would add a second +1 to every permanent you control, stacking with the first sentence on artifacts and creatures and wrongly reaching lands and enchantments. `put_by: \"you\"` is a different sentence (keyed on who puts the counters, not on you receiving them). The first sentence is expressible as replace_counters with counter_addend 1 and affects {any_types: [Artifact, Creature], controller: you}; the only non-gap spelling of the second would be an affects filter crafted to match no permanent (e.g. types [Instant]), which is a workaround rather than the printed sentence."
+    }
+  ],
+  "closest_existing": ["replace_counters", "izzet_generatorium", "innkeeper_s_talent"],
+  "confidence": "low"
+}
