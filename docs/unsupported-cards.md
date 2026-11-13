@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**328 cards** blocked by **297** capabilities.
+**347 cards** blocked by **313** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -41,17 +41,22 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [crime](#crime) | 2 | 2244 | trigger_event |
 | [devotion](#devotion) | 2 | 2401 | value |
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
+| [enters-as-copy-add-subtypes](#enters-as-copy-add-subtypes) | 2 | 3852 | replacement |
+| [excess-damage](#excess-damage) | 2 | 4086 | value |
+| [exile-permanent-cost](#exile-permanent-cost) | 2 | 6544 | cost |
 | [experience-counters](#experience-counters) | 2 | 1480 | engine |
 | [face-down-filter](#face-down-filter) | 2 | 5772 | selector |
 | [fraction-of-value](#fraction-of-value) | 2 | 6297 | value |
 | [manifest-dread](#manifest-dread) | 2 | 5772 | op |
 | [mercenary-token](#mercenary-token) | 2 | 8312 | token |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
+| [pay-energy-x](#pay-energy-x) | 2 | 5122 | cost |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
 | [remove-named-counters-from-among](#remove-named-counters-from-among) | 2 | 10375 | cost |
 | [remove-x-counters-cost](#remove-x-counters-cost) | 2 | 5399 | cost |
 | [return-face-down](#return-face-down) | 2 | 3081 | op |
 | [reveal-until-rest-to-graveyard](#reveal-until-rest-to-graveyard) | 2 | 1606 | op |
+| [robot-token-3-3](#robot-token-3-3) | 2 | 5966 | token |
 | [soldier-1-1-rw-haste](#soldier-1-1-rw-haste) | 2 | 2160 | token |
 | [static-greatest-power-in-graveyard](#static-greatest-power-in-graveyard) | 2 | 7077 | value |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
@@ -66,6 +71,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [add-card-type-to-spells](#add-card-type-to-spells) | 1 | 4178 | static_effect |
 | [add-mana-on-tap-any-color](#add-mana-on-tap-any-color) | 1 | 1052 | static_effect |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
+| [adventure](#adventure) | 1 | 8561 | engine |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
 | [annihilator-grant](#annihilator-grant) | 1 | 3758 | op |
 | [assassin-token](#assassin-token) | 1 | 2604 | token |
@@ -73,15 +79,18 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [attachments-had](#attachments-had) | 1 | 10726 | selector |
 | [attack-tax-x-count](#attack-tax-x-count) | 1 | 671 | value |
 | [attacking-opponents-of-player](#attacking-opponents-of-player) | 1 | 705 | selector |
+| [base-power](#base-power) | 1 | 8936 | value |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
 | [bat-1-1-b-flying](#bat-1-1-b-flying) | 1 | 20382 | token |
 | [batched-combat-damage-amount](#batched-combat-damage-amount) | 1 | 3943 | value |
 | [block-restriction-relative-power](#block-restriction-relative-power) | 1 | 6993 | static_effect |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
+| [blocking-equipped-creature](#blocking-equipped-creature) | 1 | 8137 | selector |
 | [bloodthirst](#bloodthirst) | 1 | 6438 | keyword |
 | [can-block-only](#can-block-only) | 1 | 2673 | static_effect |
 | [cant-attack-this-turn](#cant-attack-this-turn) | 1 | 2358 | op |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
+| [cant-block-filtered-group](#cant-block-filtered-group) | 1 | 7948 | op |
 | [cards-exiled-trigger](#cards-exiled-trigger) | 1 | 1303 | trigger_event |
 | [cards-put-into-graveyard-from-library](#cards-put-into-graveyard-from-library) | 1 | 6299 | trigger_event |
 | [cards-to-your-graveyard-from-zones-this-turn](#cards-to-your-graveyard-from-zones-this-turn) | 1 | 7412 | value |
@@ -94,6 +103,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-trigger-reads-x](#cast-trigger-reads-x) | 1 | 3909 | value |
 | [characteristics-outside-battlefield](#characteristics-outside-battlefield) | 1 | 1924 | static_effect |
 | [choose-card-type-from-list](#choose-card-type-from-list) | 1 | 611 | op |
+| [choose-from-linked-exile](#choose-from-linked-exile) | 1 | 14457 | op |
 | [choose-land-type](#choose-land-type) | 1 | 11432 | decision |
 | [chosen-card-type-cost-reduction](#chosen-card-type-cost-reduction) | 1 | 611 | static_effect |
 | [chosen-number](#chosen-number) | 1 | 1610 | engine |
@@ -108,6 +118,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [copy-all-on-stack](#copy-all-on-stack) | 1 | 4558 | op |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
 | [copy-spell-forced-target](#copy-spell-forced-target) | 1 | 13586 | op |
+| [cost-reduction-attacking-player](#cost-reduction-attacking-player) | 1 | 9998 | selector |
 | [cost-reduction-per-attacker-this-turn](#cost-reduction-per-attacker-this-turn) | 1 | 9578 | value |
 | [coven](#coven) | 1 | 1129 | value |
 | [creatures-died-this-turn-filtered](#creatures-died-this-turn-filtered) | 1 | 13665 | value |
@@ -134,9 +145,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [end-of-combat-trigger](#end-of-combat-trigger) | 1 | 4544 | trigger_event |
 | [energy-alternative-cost](#energy-alternative-cost) | 1 | 7462 | op |
 | [energy-count](#energy-count) | 1 | 7317 | value |
+| [energy-gained-trigger](#energy-gained-trigger) | 1 | 7466 | trigger_event |
 | [enlist](#enlist) | 1 | 13396 | keyword, value |
 | [entered-without-being-cast](#entered-without-being-cast) | 1 | 7379 | selector |
-| [enters-as-copy-add-subtypes](#enters-as-copy-add-subtypes) | 1 | 3852 | replacement |
 | [enters-as-copy-embalmed-exception](#enters-as-copy-embalmed-exception) | 1 | 4333 | replacement |
 | [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
 | [equipment-had](#equipment-had) | 1 | 14101 | value |
@@ -144,11 +155,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [every-nonbasic-land-type](#every-nonbasic-land-type) | 1 | 2635 | engine |
 | [exact-target-count](#exact-target-count) | 1 | 7243 | engine |
-| [excess-damage](#excess-damage) | 1 | 10942 | value |
 | [exile-bottom-of-library](#exile-bottom-of-library) | 1 | 4763 | selector |
 | [exile-cards-with-card-types-among-them](#exile-cards-with-card-types-among-them) | 1 | 9107 | selector |
 | [exile-face-down](#exile-face-down) | 1 | 1363 | op |
-| [exile-permanent-cost](#exile-permanent-cost) | 1 | 6544 | cost |
 | [exile-x-from-graveyard-cost](#exile-x-from-graveyard-cost) | 1 | 17252 | cost |
 | [exiled-this-way-lki](#exiled-this-way-lki) | 1 | 6960 | value |
 | [exploit](#exploit) | 1 | 8043 | keyword, trigger_event |
@@ -172,9 +181,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [gold-token](#gold-token) | 1 | 705 | token |
 | [grant-cycling-to-cards-in-hand](#grant-cycling-to-cards-in-hand) | 1 | 5169 | static_effect |
 | [grant-evoke](#grant-evoke) | 1 | 5749 | static_effect |
+| [grant-exiled-abilities-by-counter](#grant-exiled-abilities-by-counter) | 1 | 9571 | static_effect |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
 | [granted-alternative-cost-life-equal-to-mana-value](#granted-alternative-cost-life-equal-to-mana-value) | 1 | 3022 | static_effect |
 | [granted-miracle-from-mana-cost](#granted-miracle-from-mana-cost) | 1 | 5025 | static_effect |
+| [granted-player-wide-static](#granted-player-wide-static) | 1 | 4512 | static_effect |
+| [graveyard-cast-dynamic-mana-value-cap](#graveyard-cast-dynamic-mana-value-cap) | 1 | 11023 | static_effect |
 | [graveyard-cast-per-permanent-type](#graveyard-cast-per-permanent-type) | 1 | 1104 | static_effect |
 | [graveyard-cast-permission-additional-cost](#graveyard-cast-permission-additional-cost) | 1 | 7356 | static_effect |
 | [graveyard-play-from-library-this-turn](#graveyard-play-from-library-this-turn) | 1 | 7077 | static_effect |
@@ -182,6 +194,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 1 | 3531 | static_effect |
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
 | [harmonize](#harmonize) | 1 | 7442 | cost |
+| [human-knight-2-2-w-artifact-entered-buff](#human-knight-2-2-w-artifact-entered-buff) | 1 | 6715 | token |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [jump-start](#jump-start) | 1 | 14777 | op |
 | [karox-bladewing](#karox-bladewing) | 1 | 8889 | token |
@@ -199,6 +212,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mana-ability-leading-rider](#mana-ability-leading-rider) | 1 | 4080 | engine |
 | [mana-cant-pay-generic](#mana-cant-pay-generic) | 1 | 3861 | value |
 | [mana-doubling-replacement](#mana-doubling-replacement) | 1 | 1807 | replacement |
+| [mana-produced-color](#mana-produced-color) | 1 | 13900 | value |
 | [mana-restriction-cast-from-zone](#mana-restriction-cast-from-zone) | 1 | 9291 | engine |
 | [mana-restriction-turn-face-up](#mana-restriction-turn-face-up) | 1 | 6766 | value |
 | [mana-spent-enters-with-counters](#mana-spent-enters-with-counters) | 1 | 653 | replacement |
@@ -230,8 +244,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
 | [opponents-attacked-this-turn](#opponents-attacked-this-turn) | 1 | 4544 | value |
 | [pay-any-amount-of-life](#pay-any-amount-of-life) | 1 | 4322 | cost |
-| [pay-energy-x](#pay-energy-x) | 1 | 5591 | cost |
 | [play-cost-paid-card](#play-cost-paid-card) | 1 | 6544 | op |
+| [play-exiled-land](#play-exiled-land) | 1 | 11125 | op |
 | [playable-condition-opponent-lost-life](#playable-condition-opponent-lost-life) | 1 | 4478 | engine |
 | [playable-exiles-instead](#playable-exiles-instead) | 1 | 3152 | replacement |
 | [playable-spell-type-restriction](#playable-spell-type-restriction) | 1 | 4763 | op |
@@ -258,16 +272,17 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [replace-graveyard-with-counter](#replace-graveyard-with-counter) | 1 | 386 | replacement |
 | [retrace](#retrace) | 1 | 5451 | engine |
 | [reveal-from-hand](#reveal-from-hand) | 1 | 3623 | cost |
-| [robot-token-3-3](#robot-token-3-3) | 1 | 5966 | token |
 | [sacrifice-multiple-distinct](#sacrifice-multiple-distinct) | 1 | 1918 | cost |
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
 | [salamander-warrior-4-3-u](#salamander-warrior-4-3-u) | 1 | 3395 | token |
 | [same-target-for-each-target-word](#same-target-for-each-target-word) | 1 | 5003 | engine |
 | [sandbox-low-mana-value-permanent](#sandbox-low-mana-value-permanent) | 1 | 14140 | engine |
+| [sandbox-own-artifact-prop](#sandbox-own-artifact-prop) | 1 | 986 | engine |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
+| [secret-choice](#secret-choice) | 1 | 17791 | decision |
 | [self-bounce-playable-gate](#self-bounce-playable-gate) | 1 | 10013 | engine |
 | [settlement-token](#settlement-token) | 1 | 12594 | token |
 | [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
@@ -280,6 +295,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
 | [switch-power-toughness](#switch-power-toughness) | 1 | 10418 | op |
+| [tapped-for-mana-trigger](#tapped-for-mana-trigger) | 1 | 13900 | trigger_event |
 | [target-if-cast-during](#target-if-cast-during) | 1 | 1524 | selector |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
@@ -1024,6 +1040,61 @@ Blocks **2** cards.
 
 </details>
 
+## enters-as-copy-add-subtypes
+
+Blocks **2** cards.
+
+- **(replacement)** an `add_subtypes` key in a `self_enters_as_copy` replacement's `except_` (707.9b), written into the copy's copiable values like `add_types`, so "except it's a Dragon in addition to its other types" is {"add_subtypes": ["Dragon"], "add_keywords": ["flying"]}
+  <br>Why the existing vocabulary won't do: The packet's reference does not list the `self_enters_as_copy` replacement at all, and the engine's ENTERS_COPY_EXCEPT_KEYS is only add_keywords, add_types, remove_supertypes, name and enters_with: `add_types` adds card types (Phyrexian Metamorph's artifact), not a creature subtype. A self_enters trigger with `become_copy` or `add_subtype` would let the 1/1 be seen as itself first and make the subtype a later effect rather than part of the copy, which is a different card
+- **(replacement)** an `add_subtypes` key in a `self_enters_as_copy` replacement's `except_`, written into the copiable values as the permanent enters (707.9b) so the copy is a Synth in addition to the copied creature's subtypes, beside the existing `add_types: ["Artifact"]`
+  <br>Why the existing vocabulary won't do: `self_enters_as_copy`'s `except_` accepts only ENTERS_COPY_EXCEPT_KEYS (add_keywords, add_types, remove_supertypes, name, enters_with); `zones._enter_battlefield` sets copying_add_types but has no subtype field. `characteristics` already reads `add_subtypes` from `copy_overrides`, but only token copies (`copy_permanent`) set that. A self_enters trigger with `add_subtype` would be a separate, later effect rather than a copiable value, and a copy of this permanent would not be a Synth
+
+<details><summary>Cards waiting on this</summary>
+
+- **Deceptive Frostkite** (rank 3852) — `deceptive_frostkite`
+  - You may have this creature enter as a copy of a creature you control with power 4 or greater, except it's a Dragon in addition to its other types and it has flying.
+- **Synth Infiltrator** (rank 8844) — `synth_infiltrator`
+  - You may have this creature enter as a copy of any creature on the battlefield, except it's a Synth artifact creature in addition to its other types.
+
+</details>
+
+## excess-damage
+
+Blocks **2** cards.
+
+- **(value)** a value reading how much excess damage (120.4a: damage beyond lethal for a creature, beyond loyalty for a planeswalker, beyond defense for a battle) the preceding damage effect dealt to the permanent it hit, bindable (e.g. `as` on the `damage` op, read as {"binding": ...}) so a following create_token amount can be 'that many'; 0 when the target was a player
+  <br>Why the existing vocabulary won't do: The damage op's `excess_to` only redirects the remainder to the creature's controller (Gandalf's Sanction) and splits the event; here all 5 damage is dealt to the permanent and the excess is only measured. No value_key reports excess damage, and composing minus/toughness_of/snapshot cannot account for damage already marked, planeswalker loyalty or battle defense, nor zero it for a player target
+- **(value)** a value (and condition) reading the excess damage (damage beyond lethal, 120.4a) dealt to a damaged creature this turn, readable from a deals_combat_damage trigger whose damaged creature is bound, so the trigger can intervene on excess > 0 and add_energy that amount
+  <br>Why the existing vocabulary won't do: value_keys has damage_dealt_to_this_turn and max_damage_taken_this_turn but nothing that subtracts the creature's lethal threshold; the damage op's excess_to only redirects excess from its own damage and is not a readable value; deals_combat_damage exposes no per-creature excess amount
+
+<details><summary>Cards waiting on this</summary>
+
+- **Bottle-Cap Blast** (rank 4086) — `bottle_cap_blast`
+  - If excess damage was dealt to a permanent this way, create that many tapped Treasure tokens.
+- **Overclocked Electromancer** (rank 10942) — `overclocked_electromancer`
+  - Whenever this creature deals combat damage to a creature, if that creature was dealt excess damage this turn, you get X {E}, where X is that excess damage.
+
+</details>
+
+## exile-permanent-cost
+
+Blocks **2** cards.
+
+- **(cost)** an activated-ability cost that exiles another permanent you control from the battlefield chosen by selector (here: another nontoken artifact creature you control), binding it with `as` so the effects can read it ("Curie becomes a copy of the exiled creature")
+  <br>Why the existing vocabulary won't do: cost_keys has exile_self (the source only), exile_from_hand and exile_from_graveyard; sacrifice moves the permanent to the graveyard, not exile, and an `exile` op in effects would move the payment to resolution and let the ability be activated with nothing to exile
+- **(cost)** an activated-ability cost that exiles a permanent you control matching a selector (here a face-down one, exiled face up), bound with `as` so the ability's effects can read the exiled card -- the exile counterpart of `sacrifice`
+  <br>Why the existing vocabulary won't do: `cost_keys` exile only the source (`exile_self`), a card from hand (`exile_from_hand`, `exile_self_from_hand`) or a card from the graveyard (`exile_from_graveyard`); nothing exiles another permanent from the battlefield as a cost, and moving it into an `exile` op would shift payment to resolution and let the ability be activated without a face-down permanent
+
+<details><summary>Cards waiting on this</summary>
+
+- **Primordial Mist** (rank 6544) — `primordial_mist`
+  - Exile a face-down permanent you control face up: You may play that card this turn. (You still pay its costs. Timing rules still apply.)
+- **Curie, Emergent Intelligence** (rank 8936) — `curie_emergent_intelligence`
+  - Whenever Curie deals combat damage to a player, draw cards equal to its base power.
+  - {1}{U}, Exile another nontoken artifact creature you control: Curie becomes a copy of the exiled creature, except it has "Whenever this creature deals combat damage to a player, draw cards equal to its base power."
+
+</details>
+
 ## experience-counters
 
 Blocks **2** cards.
@@ -1137,6 +1208,24 @@ Blocks **2** cards.
 
 </details>
 
+## pay-energy-x
+
+Blocks **2** cards.
+
+- **(cost)** an activated-ability cost "Pay X {E}": the activator announces X (602.2b/601.2b), spends X energy counters as part of the cost (refused if they have fewer than X), and X is then readable by the ability's target selector (mana_value equal to X) and effects, like pay_life_x does for life
+  <br>Why the existing vocabulary won't do: Cost.pay_energy is a fixed int (Roil Cartographer's "Pay six {E}"); the X-variant costs are pay_life_x, discard_x, sacrifice_x, tap_x and loyalty_x but there is no energy one, and putting {X} in the mana cost would charge mana instead of energy
+- **(cost)** an activated-ability cost "Pay X {E}" where X is announced on activation (bounded by the payer's energy, 0 allowed) and bound as `x` so the effect reads it -- the energy twin of `pay_life_x`/`discard_x`/`sacrifice_x`/`tap_x`, e.g. `{"pay_energy_x": true}`
+  <br>Why the existing vocabulary won't do: `pay_energy` in cost_keys is a fixed integer; its mapping form is a value expression read only by a resolving `may` (Confiscation Coup), not an announced X. `x_value` fixes X from the board rather than letting the player choose it, and the ability has no {X} mana symbol to announce X through
+
+<details><summary>Cards waiting on this</summary>
+
+- **HELIOS One** (rank 5122) — `helios_one`
+  - {3}, {T}, Pay X {E}, Sacrifice this land: Destroy target nonland permanent with mana value X. Activate only as a sorcery.
+- **Sphinx of the Revelation** (rank 5591) — `sphinx_of_the_revelation`
+  - {W}{U}{U}, {T}, Pay X {E}: Draw X cards.
+
+</details>
+
 ## prevent-damage-to-controlled-permanents
 
 Blocks **2** cards.
@@ -1224,6 +1313,25 @@ Blocks **2** cards.
   - Whenever you cast a spell, each opponent reveals cards from the top of their library until they reveal a land card, then puts those cards into their graveyard.
 - **Mind Grind** (rank 5575) — `mind_grind`
   - Each opponent reveals cards from the top of their library until they reveal X land cards, then puts all cards revealed this way into their graveyard.
+
+</details>
+
+## robot-token-3-3
+
+Blocks **2** cards.
+
+- **(token)** a 3/3 colorless Robot artifact creature token
+  <br>Why the existing vocabulary won't do: token_ids has robot_villain_2_2_c (2/2 Robot Villain) and golem_3_3_c_artifact (3/3 Golem); neither is a 3/3 Robot. The pay_energy cost and create_token with tapped: true already cover the rest of the line
+- **(token)** a 3/3 colorless Robot artifact creature token
+  <br>Why the existing vocabulary won't do: token_ids has robot_villain_2_2_c (2/2 Robot Villain) and golem_3_3_c_artifact (3/3 Golem); neither is a 3/3 Robot
+
+<details><summary>Cards waiting on this</summary>
+
+- **Mr. House, President and CEO** (rank 5966) — `mr_house_president_and_ceo`
+  - Whenever you roll a 4 or higher, create a 3/3 colorless Robot artifact creature token. If you rolled 6 or higher, instead create that token and a Treasure token.
+  - {4}, {T}: Roll a six-sided die plus an additional six-sided die for each mana from Treasures spent to activate this ability.
+- **Automated Assembly Line** (rank 7338) — `automated_assembly_line`
+  - Pay {E}{E}{E}: Create a tapped 3/3 colorless Robot artifact creature token.
 
 </details>
 
@@ -1467,6 +1575,20 @@ Blocks **1** card.
 
 </details>
 
+## adventure
+
+Blocks **1** card.
+
+- **(engine)** the packet and the catalog row (data/catalog/cards.sqlite, layout 'adventure') carry no text for the Adventure half Follow Him ({X}{U}{U} Instant — Adventure): back_oracle_text is empty and back_face is {}, and oracle_text holds only the creature half. The packet builder needs to fill the Adventure face (name, cost, type line, text) from card_faces so the card can be written as a front plus a second_face with adventure: true
+  <br>Why the existing vocabulary won't do: The DSL can already say both halves (second_face + second_face_zone 'hand' + adventure: true, as Hildibrand Manderville does; the front's mana ability is add_mana {C}{C} with mana_restriction {"activate": "any"}), but the Adventure half's sentences cannot be written from the packet without inventing them, and an answer with the front alone would be a creature that can never be cast as Follow Him. The catalog's keywords field says 'Investigate', suggesting the half is 'Investigate X times', but that is not printed text in the packet
+
+<details><summary>Cards waiting on this</summary>
+
+- **James, Wandering Dad // Follow Him** (rank 8561) — `james_wandering_dad_follow_him`
+  - Follow Him {X}{U}{U} (Instant — Adventure): printed text absent from the packet
+
+</details>
+
 ## adventure-half-in-index
 
 Blocks **1** card.
@@ -1565,6 +1687,21 @@ Blocks **1** card.
 
 </details>
 
+## base-power
+
+Blocks **1** card.
+
+- **(value)** a value reading an object's base power (its printed or copiable power, 208.3 / copy-effect power, ignoring counters, pumps and anthems) for "draw cards equal to its base power"
+  <br>Why the existing vocabulary won't do: value_keys has power_of and power_had, which read current (modified) power; base power is only spelled `power` inside static filters, not as an amount
+
+<details><summary>Cards waiting on this</summary>
+
+- **Curie, Emergent Intelligence** (rank 8936) — `curie_emergent_intelligence`
+  - Whenever Curie deals combat damage to a player, draw cards equal to its base power.
+  - {1}{U}, Exile another nontoken artifact creature you control: Curie becomes a copy of the exiled creature, except it has "Whenever this creature deals combat damage to a player, draw cards equal to its base power."
+
+</details>
+
 ## base-power-trigger-filter
 
 Blocks **1** card.
@@ -1637,6 +1774,20 @@ Blocks **1** card.
 
 </details>
 
+## blocking-equipped-creature
+
+Blocks **1** card.
+
+- **(selector)** a target selector for an activated ability on an Equipment matching a creature that is blocking the creature this Equipment is attached to ("target creature that's blocking equipped creature")
+  <br>Why the existing vocabulary won't do: The selector key `blocking` takes either a boolean (blocking anything, which would let the ability hit a creature blocking a different attacker) or `{"binding": ...}` naming an attacker oid held in ctx.bindings; only triggers populate such a binding (Flanking's `self`), and an activated ability's target selection has no binding for the equipped creature. `attached`/`equipped` match the equipped creature itself, not its blockers. Pay {E}{E} (`pay_energy`), `flip_coin` with `else`, `exile` and `damage` are all available; only the target restriction is missing.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Plasma Caster** (rank 8137) — `plasma_caster`
+  - Pay {E}{E}: Choose target creature that's blocking equipped creature. Flip a coin. If you win the flip, exile the chosen creature. Otherwise, this Equipment deals 1 damage to it.
+
+</details>
+
 ## bloodthirst
 
 Blocks **1** card.
@@ -1690,6 +1841,20 @@ Blocks **1** card.
 
 - **Hexing Squelcher** (rank 717) — `hexing_squelcher`
   - Spells you control can't be countered.
+
+</details>
+
+## cant-block-filtered-group
+
+Blocks **1** card.
+
+- **(op)** a one-shot cant_block whose restriction is a continuous rule-changing effect over a filter rather than a fixed set: 'creatures <player> controls without flying can't block this turn' -- applied when blocks are declared to every creature matching {types: [Creature], controller: <defending player>, not_keywords: [flying]} at that moment, so a creature that enters later (flash during declare attackers) or loses flying is also restricted (611.2c: not a characteristic change, so not locked in at resolution)
+  <br>Why the existing vocabulary won't do: The cant_block op has exactly two shapes: `objects`, a set fixed at resolution (its docstring: 'a creature that enters afterwards was not one of those', and writing a group form as a snapshot is 'a strictly weaker card than the printed one'), and `all_creatures`, which restricts every creature with no controller or keyword filter. The cant_block static lives on the permanent for as long as it stays and cannot end at end of turn or name the defending player. The rest of the line (ETB energy from target opponent's nonbasic lands, attack trigger, may pay_energy 4, reflexive destroy of a nonbasic land with controller {binding: defender}) is expressible.
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Motherlode, Excavator** (rank 7948) — `the_motherlode_excavator`
+  - Whenever The Motherlode attacks, you may pay {E}{E}{E}{E}. When you do, destroy target nonbasic land defending player controls, and creatures that player controls without flying can't block this turn.
 
 </details>
 
@@ -1865,6 +2030,20 @@ Blocks **1** card.
 - **Cloud Key** (rank 611) — `cloud_key`
   - As this artifact enters, choose artifact, creature, enchantment, instant, or sorcery
   - Spells you cast of the chosen type cost {1} less to cast
+
+</details>
+
+## choose-from-linked-exile
+
+Blocks **1** card.
+
+- **(op)** an op that has the controller choose exactly N cards (N fixed, all if fewer) from the cards exiled with the source (exiled_with: self, owned by any player), puts the chosen ones onto the battlefield under their owners' control, and puts every unchosen one on the bottom of its owner's library
+  <br>Why the existing vocabulary won't do: put_onto_battlefield over {exiled_with: self} moves all of them with no choice; search_zones can read zones: [exile] but only pools the searching player's own zones (players[pid].zone_list), so cards owned by opponents are unreachable, and its pick is 0..count (up to), not exactly two; choose_permanents selects battlefield permanents, not exiled cards; put_on_top with bottom could send the rest down only if the chosen two had a binding to exclude, which nothing produces from the exile pile
+
+<details><summary>Cards waiting on this</summary>
+
+- **Vault 13: Dweller's Journey** (rank 14457) — `vault_13_dweller_s_journey`
+  - III — Return two cards exiled with this Saga to the battlefield under their owners' control and put the rest on the bottom of their owners' libraries.
 
 </details>
 
@@ -2066,6 +2245,20 @@ Blocks **1** card.
 
 - **Exterminator Magmarch** (rank 13586) — `exterminator_magmarch`
   - Whenever you cast an instant or sorcery spell that targets only a single nonland permanent an opponent controls, if another opponent controls one or more nonland permanents that spell could target, choose one of those permanents. Copy that spell. The copy targets the chosen permanent.
+
+</details>
+
+## cost-reduction-attacking-player
+
+Blocks **1** card.
+
+- **(selector)** the `attacking_player` filter key ("you") honoured inside a card-level `cost_reduction` `count` filter, so "costs {1} less for each creature attacking you" counts only creatures attacking the caster, not planeswalkers/battles and not other opponents
+  <br>Why the existing vocabulary won't do: cost_reduction_filter_keys only carries the boolean `attacking`, which in multiplayer counts creatures attacking any player; `attacking_player` exists in selector_keys (Arachnogenesis, Heroic Return's `amount`+`condition` form uses it) but the loader validates a reduction filter against STATIC_FILTER_KEYS | COST_REDUCTION_FILTER_KEYS and engine/cost_reduction.py never reads it. The flat `amount`+`condition` form cannot scale per creature
+
+<details><summary>Cards waiting on this</summary>
+
+- **Sentry Bot** (rank 9998) — `sentry_bot`
+  - This spell costs {1} less to cast for each creature attacking you.
 
 </details>
 
@@ -2439,6 +2632,20 @@ Blocks **1** card.
 
 </details>
 
+## energy-gained-trigger
+
+Blocks **1** card.
+
+- **(trigger_event)** a trigger event for a player getting one or more energy counters ('whenever you get one or more {E}'), firing once per energy-gain event with a controller filter, combinable with an is_your_turn condition
+  <br>Why the existing vocabulary won't do: The engine already emits EventType.ENERGY_ADDED from primitives.add_energy, but no trigger_events entry maps to it; counter_placed covers counters on permanents (and its counter key), not a player's energy, and you_gain_life/life_lost are other player events
+
+<details><summary>Cards waiting on this</summary>
+
+- **Brotherhood Scribe** (rank 7466) — `brotherhood_scribe`
+  - Whenever you get one or more {E} during your turn, creatures you control get +1/+1 until end of turn.
+
+</details>
+
 ## enlist
 
 Blocks **1** card.
@@ -2467,20 +2674,6 @@ Blocks **1** card.
 
 - **Rapid Augmenter** (rank 7379) — `rapid_augmenter`
   - Whenever another creature you control enters, if it wasn't cast, put a +1/+1 counter on this creature and this creature can't be blocked this turn.
-
-</details>
-
-## enters-as-copy-add-subtypes
-
-Blocks **1** card.
-
-- **(replacement)** an `add_subtypes` key in a `self_enters_as_copy` replacement's `except_` (707.9b), written into the copy's copiable values like `add_types`, so "except it's a Dragon in addition to its other types" is {"add_subtypes": ["Dragon"], "add_keywords": ["flying"]}
-  <br>Why the existing vocabulary won't do: The packet's reference does not list the `self_enters_as_copy` replacement at all, and the engine's ENTERS_COPY_EXCEPT_KEYS is only add_keywords, add_types, remove_supertypes, name and enters_with: `add_types` adds card types (Phyrexian Metamorph's artifact), not a creature subtype. A self_enters trigger with `become_copy` or `add_subtype` would let the 1/1 be seen as itself first and make the subtype a later effect rather than part of the copy, which is a different card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Deceptive Frostkite** (rank 3852) — `deceptive_frostkite`
-  - You may have this creature enter as a copy of a creature you control with power 4 or greater, except it's a Dragon in addition to its other types and it has flying.
 
 </details>
 
@@ -2584,20 +2777,6 @@ Blocks **1** card.
 
 </details>
 
-## excess-damage
-
-Blocks **1** card.
-
-- **(value)** a value (and condition) reading the excess damage (damage beyond lethal, 120.4a) dealt to a damaged creature this turn, readable from a deals_combat_damage trigger whose damaged creature is bound, so the trigger can intervene on excess > 0 and add_energy that amount
-  <br>Why the existing vocabulary won't do: value_keys has damage_dealt_to_this_turn and max_damage_taken_this_turn but nothing that subtracts the creature's lethal threshold; the damage op's excess_to only redirects excess from its own damage and is not a readable value; deals_combat_damage exposes no per-creature excess amount
-
-<details><summary>Cards waiting on this</summary>
-
-- **Overclocked Electromancer** (rank 10942) — `overclocked_electromancer`
-  - Whenever this creature deals combat damage to a creature, if that creature was dealt excess damage this turn, you get X {E}, where X is that excess damage.
-
-</details>
-
 ## exile-bottom-of-library
 
 Blocks **1** card.
@@ -2637,20 +2816,6 @@ Blocks **1** card.
 
 - **Scroll Rack** (rank 1363) — `scroll_rack`
   - {1}, {T}: Exile any number of cards from your hand face down. Put that many cards from the top of your library into your hand. Then look at the exiled cards and put them on top of your library in any order.
-
-</details>
-
-## exile-permanent-cost
-
-Blocks **1** card.
-
-- **(cost)** an activated-ability cost that exiles a permanent you control matching a selector (here a face-down one, exiled face up), bound with `as` so the ability's effects can read the exiled card -- the exile counterpart of `sacrifice`
-  <br>Why the existing vocabulary won't do: `cost_keys` exile only the source (`exile_self`), a card from hand (`exile_from_hand`, `exile_self_from_hand`) or a card from the graveyard (`exile_from_graveyard`); nothing exiles another permanent from the battlefield as a cost, and moving it into an `exile` op would shift payment to resolution and let the ability be activated without a face-down permanent
-
-<details><summary>Cards waiting on this</summary>
-
-- **Primordial Mist** (rank 6544) — `primordial_mist`
-  - Exile a face-down permanent you control face up: You may play that card this turn. (You still pay its costs. Timing rules still apply.)
 
 </details>
 
@@ -2990,6 +3155,20 @@ Blocks **1** card.
 
 </details>
 
+## grant-exiled-abilities-by-counter
+
+Blocks **1** card.
+
+- **(static_effect)** a static that gives the affected permanent every activated ability printed on every card in exile (any owner, any exiler) that has a given counter kind on it -- here, brain counters -- so the abilities survive Rex leaving and returning and include cards another Rex exiled
+  <br>Why the existing vocabulary won't do: grant_exiled_abilities (Hazel's Brewmaster, Steward of the Harvest) walks only the source's own exiled_cards and keeps a card only while its exiled_by is that source (607.2a linked abilities), filtered by printed types; it cannot select exiled cards by has_counters, so a new incarnation of Rex would lose the abilities of cards exiled earlier and cards brained by another source would be missed. The other two lines (deals_combat_damage_to_player trigger with mill + add_energy; pay_energy cost exiling a graveyard creature card then add_counters 'brain' on the bound card) look expressible, but the card cannot be written partially.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Rex, Cyber-Hound** (rank 9571) — `rex_cyber_hound`
+  - Rex has all activated abilities of all cards in exile with brain counters on them.
+
+</details>
+
 ## grantable-player-statics
 
 Blocks **1** card.
@@ -3029,6 +3208,34 @@ Blocks **1** card.
 
 - **Aminatou, Veil Piercer** (rank 5025) — `aminatou_veil_piercer`
   - Each enchantment card in your hand has miracle. Its miracle cost is equal to its mana cost reduced by {4}.
+
+</details>
+
+## granted-player-wide-static
+
+Blocks **1** card.
+
+- **(static_effect)** a grant_ability static that hands the enchanted creature a player-wide static (here `no_hand_limit` with affects_player "you"), where "you" resolves to the creature's controller and the permission lasts while the creature has the ability
+  <br>Why the existing vocabulary won't do: loader.vocabulary.UNGRANTABLE_STATIC_EFFECTS includes every PLAYER_WIDE_STATIC_EFFECTS member, no_hand_limit among them, so a grantable_abilities entry carrying it is refused; and player_statics._active_player_statics walks only each permanent's printed abilities, so a granted one would grant nothing. Putting no_hand_limit on the Aura itself is wrong when the Aura enchants a creature another player controls (the Aura's controller would get the permission instead of the creature's). The second quoted ability (attacks trigger with a cards_in_hand >= 10 condition and a self pump) is expressible as a granted triggered ability; only the first half blocks the line
+
+<details><summary>Cards waiting on this</summary>
+
+- **Nerd Rage** (rank 4512) — `nerd_rage`
+  - Enchanted creature has "You have no maximum hand size" and "Whenever this creature attacks, if you have ten or more cards in hand, it gets +10/+10 until end of turn."
+
+</details>
+
+## graveyard-cast-dynamic-mana-value-cap
+
+Blocks **1** card.
+
+- **(static_effect)** a cast_from_graveyard permission (Edgar shape: affects_player you, static_max_per_turn 1, condition is_your_turn) whose affects_spells filter compares the card's mana value against a value evaluated on the granting permanent at cast time -- here `mana_value <= counters_on(quest, self)` -- together with an artifact-OR-Human disjunction (any_of [{types: [Artifact]}, {subtypes: [Human]}]) in that spell filter
+  <br>Why the existing vocabulary won't do: graveyard_cast_allows matches affects_spells with characteristics._matches_printed, whose mana_value clause goes through _compare_printed over literal numbers only (and the loader admits mana_value only in a cant_cast_spells filter), so the cap cannot read the quest counters on the source; a fixed number would make the card strictly better or worse than printed as counters accrue
+
+<details><summary>Cards waiting on this</summary>
+
+- **Arcade Gannon** (rank 11023) — `arcade_gannon`
+  - For Auld Lang Syne — Once during each of your turns, you may cast an artifact or Human spell from your graveyard with mana value less than or equal to the number of quest counters on Arcade Gannon.
 
 </details>
 
@@ -3128,6 +3335,20 @@ Blocks **1** card.
 
 - **Zenith Festival** (rank 7442) — `zenith_festival`
   - Harmonize {X}{R}{R}
+
+</details>
+
+## human-knight-2-2-w-artifact-entered-buff
+
+Blocks **1** card.
+
+- **(token)** a 2/2 white Human Knight creature token with "This token gets +2/+2 as long as an artifact entered the battlefield under your control this turn." (a self buff static whose condition reads whether an artifact entered under its controller's control this turn)
+  <br>Why the existing vocabulary won't do: token_ids has knight_2_2_w (a plain Knight, not a Human Knight, and without the conditional +2/+2) and human_knight_2_2_r_trample_haste (red, with trample and haste); neither is the printed token, and the conditional static may also need an 'artifact entered under your control this turn' static condition
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Prydwen, Steel Flagship** (rank 6715) — `the_prydwen_steel_flagship`
+  - Whenever another nontoken artifact you control enters, create a 2/2 white Human Knight creature token with "This token gets +2/+2 as long as an artifact entered the battlefield under your control this turn."
 
 </details>
 
@@ -3371,6 +3592,20 @@ Blocks **1** card.
 
 - **Mana Reflection** (rank 1807) — `mana_reflection`
   - If you tap a permanent for mana, it produces twice as much of that mana instead.
+
+</details>
+
+## mana-produced-color
+
+Blocks **1** card.
+
+- **(value)** a condition "target creature shares a color with the mana that land produced", comparing a target's colors against the colors of the mana bound by the tapped-for-mana trigger
+  <br>Why the existing vocabulary won't do: `two_share_a_color` compares objects matched by one selector, and `colors_of_mana_spent` reads mana spent on a spell, not mana produced by a land's tap
+
+<details><summary>Cards waiting on this</summary>
+
+- **C.A.M.P.** (rank 13900) — `c_a_m_p`
+  - Whenever fortified land is tapped for mana, put a +1/+1 counter on target creature you control. If that creature shares a color with the mana that land produced, create a Junk token.
 
 </details>
 
@@ -3817,20 +4052,6 @@ Blocks **1** card.
 
 </details>
 
-## pay-energy-x
-
-Blocks **1** card.
-
-- **(cost)** an activated-ability cost "Pay X {E}" where X is announced on activation (bounded by the payer's energy, 0 allowed) and bound as `x` so the effect reads it -- the energy twin of `pay_life_x`/`discard_x`/`sacrifice_x`/`tap_x`, e.g. `{"pay_energy_x": true}`
-  <br>Why the existing vocabulary won't do: `pay_energy` in cost_keys is a fixed integer; its mapping form is a value expression read only by a resolving `may` (Confiscation Coup), not an announced X. `x_value` fixes X from the board rather than letting the player choose it, and the ability has no {X} mana symbol to announce X through
-
-<details><summary>Cards waiting on this</summary>
-
-- **Sphinx of the Revelation** (rank 5591) — `sphinx_of_the_revelation`
-  - {W}{U}{U}, {T}, Pay X {E}: Draw X cards.
-
-</details>
-
 ## play-cost-paid-card
 
 Blocks **1** card.
@@ -3842,6 +4063,20 @@ Blocks **1** card.
 
 - **Primordial Mist** (rank 6544) — `primordial_mist`
   - Exile a face-down permanent you control face up: You may play that card this turn. (You still pay its costs. Timing rules still apply.)
+
+</details>
+
+## play-exiled-land
+
+Blocks **1** card.
+
+- **(op)** play_exiled able to PLAY (not only cast) one card from a bound pool of exiled cards during the resolution of the ability, free, including playing a land among them (using the land drop), limited to one card
+  <br>Why the existing vocabulary won't do: grant_playable with limit 1 and playable_free leaves a permission that lasts the whole turn (default this_turn), not a play during resolution, so it lets the player wait; play_exiled plays during resolution but goes through suspend.cast_for_free, which only casts spells and cannot play a land among the exiled cards
+
+<details><summary>Cards waiting on this</summary>
+
+- **Vault 112: Sadistic Simulation** (rank 11125) — `vault_112_sadistic_simulation`
+  - III — Pay any amount of {E}. If you paid one or more {E} this way, shuffle your library, then exile that many cards from the top. You may play one of those cards without paying its mana cost.
 
 </details>
 
@@ -4213,21 +4448,6 @@ Blocks **1** card.
 
 </details>
 
-## robot-token-3-3
-
-Blocks **1** card.
-
-- **(token)** a 3/3 colorless Robot artifact creature token
-  <br>Why the existing vocabulary won't do: token_ids has robot_villain_2_2_c (2/2 Robot Villain) and golem_3_3_c_artifact (3/3 Golem); neither is a 3/3 Robot
-
-<details><summary>Cards waiting on this</summary>
-
-- **Mr. House, President and CEO** (rank 5966) — `mr_house_president_and_ceo`
-  - Whenever you roll a 4 or higher, create a 3/3 colorless Robot artifact creature token. If you rolled 6 or higher, instead create that token and a Treasure token.
-  - {4}, {T}: Roll a six-sided die plus an additional six-sided die for each mana from Treasures spent to activate this ability.
-
-</details>
-
 ## sacrifice-multiple-distinct
 
 Blocks **1** card.
@@ -4314,6 +4534,20 @@ Blocks **1** card.
 
 </details>
 
+## sandbox-own-artifact-prop
+
+Blocks **1** card.
+
+- **(engine)** the verification sandbox (verify.build_sandbox / _own_board) needs an artifact you control for a card whose mandatory Aura target is 'artifact you control' -- a swap like swap_in_artifact_body or an added prop, as graveyard_spell_props does for graveyard targets. The DSL already spells the whole card: Aura with targets [{id: enchanted, kind: permanent, selector: {zone: battlefield, controller: you, types: [Artifact]}}]; a triggered ability on {event: upkeep, controller: you} with effects copy_permanent {objects: {attached: true}} then if {cmp: >=, left: {most_sharing_a_name: {objects: {zone: battlefield, controller: you, types: [Artifact]}}}, right: {const: 8}} then win_game {player: you}
+  <br>Why the existing vocabulary won't do: The sandbox board's two creatures are non-artifacts and its 30 lands are basics, so 'Enchant artifact you control' has no legal target, the Aura cannot be cast (601.2c, 303.4a) and gate 4 rejects it as 'not playable in the sandbox'. swap_in_artifact_body only fires for a non-artifact card whose toughness counts your artifacts. Relaxing the target to any controller or making it optional would describe a different card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Mechanized Production** (rank 986) — `mechanized_production`
+  - Enchant artifact you control
+
+</details>
+
 ## search-aura-attached
 
 Blocks **1** card.
@@ -4355,6 +4589,20 @@ Blocks **1** card.
 - **Intuition** (rank 1971) — `intuition`
   - Target opponent chooses one.
   - Put that card into your hand and the rest into your graveyard.
+
+</details>
+
+## secret-choice
+
+Blocks **1** card.
+
+- **(decision)** a decision where several players (you and a target opponent) each secretly and simultaneously choose a number from a fixed set (1, 2 or 3), revealed together and bound per player so a condition can compare them for equality
+  <br>Why the existing vocabulary won't do: choose_number takes only min/max/as/prompt with no chooser or player key, so the opponent cannot make the choice; wrapping it in for_each_player would make the choices sequential and public, letting the second chooser see the first, which changes the card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Expert-Level Safe** (rank 17791) — `expert_level_safe`
+  - {1}, {T}: You and target opponent each secretly choose 1, 2, or 3. Then those choices are revealed. If they match, sacrifice this artifact and put all cards exiled with it into their owners' hands. Otherwise, exile the top card of your library face down.
 
 </details>
 
@@ -4524,6 +4772,20 @@ Blocks **1** card.
 
 - **Inversion Behemoth** (rank 10418) — `inversion_behemoth`
   - At the beginning of combat on your turn, switch the power and toughness of each of any number of target creatures until end of turn.
+
+</details>
+
+## tapped-for-mana-trigger
+
+Blocks **1** card.
+
+- **(trigger_event)** a non-mana triggered ability (uses the stack, may target) that fires whenever the permanent this source is attached to is tapped for mana -- on every tap, including the lands the payment solver taps -- and binds the mana that tap produced so effects can read its colors
+  <br>Why the existing vocabulary won't do: The `tapped_permanent` key with `attached`/`produced` only drives the inline added-mana statics (Wild Growth style) that resolve inside payment and can only add mana; `becomes_tapped` is any tap, and `ability_activated` with `mana_ability: true` is fired only on the by-hand mana path (game.py says solver-tapped lands emit nothing) and carries no produced mana
+
+<details><summary>Cards waiting on this</summary>
+
+- **C.A.M.P.** (rank 13900) — `c_a_m_p`
+  - Whenever fortified land is tapped for mana, put a +1/+1 counter on target creature you control. If that creature shares a color with the mana that land produced, create a Junk token.
 
 </details>
 
