@@ -1,0 +1,37 @@
+{
+  "card": {
+    "id": "ulvenwald_mysteries",
+    "name": "Ulvenwald Mysteries",
+    "oracle_text": "Whenever a nontoken creature you control dies, investigate. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")\nWhenever you sacrifice a Clue, create a 1/1 white Human Soldier creature token.",
+    "mana_cost": "{2}{G}",
+    "types": ["Enchantment"],
+    "colors": ["G"],
+    "color_identity": ["G"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever a nontoken creature you control dies, investigate. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")",
+        "trigger": {
+          "event": "creature_dies",
+          "filter": {"controller": "you", "is_token": false}
+        },
+        "effects": [
+          {"op": "create_token", "token": "clue_token", "amount": {"const": 1}, "controller": "you"}
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever you sacrifice a Clue, create a 1/1 white Human Soldier creature token.",
+        "trigger": {
+          "event": "sacrificed",
+          "controller": "you",
+          "filter": {"subtypes": ["Clue"]}
+        },
+        "effects": [
+          {"op": "create_token", "token": "human_soldier_1_1_w", "amount": {"const": 1}, "controller": "you"}
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}
