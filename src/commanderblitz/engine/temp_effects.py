@@ -215,6 +215,32 @@ def goad_creature(state: GameState, oid: int, player: int, *, permanent: bool = 
     return True
 
 
+def end_goad(state: GameState, oid: int) -> bool:
+    """End every goad on ``oid`` -- "that creature is no longer goaded".
+
+    Every goader's mark goes, timed and "for the rest of the game" alike:
+    Serene Sleuth's "each creature you control is no longer goaded" names no
+    goader and no clock, so a creature goaded by two players loses both, and
+    Dack Fayden's permanent goad ends with the rest. This is the one thing that
+    ends a permanent mark short of the creature or its goader leaving.
+
+    A ``goaded`` static is not touched, and cannot be. It writes nothing onto the
+    object -- `player_statics.goaders` reads it live -- and a continuous effect
+    from a static ability applies at every moment its text matches (611.3a), so
+    a one-shot "is no longer goaded" ends the goads resolving effects created
+    and leaves the Impetus Aura's goad in force for as long as the Aura
+    enchants the creature.
+
+    Returns whether a mark was removed.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.goaded_by:
+        return False
+    obj.goaded_by.clear()
+    obj.goaded_permanently_by.clear()
+    return True
+
+
 def clear_goad(state: GameState, player: int, *, leaving: bool = False) -> None:
     """Drop every goad ``player`` placed -- goad's wearing-off.
 

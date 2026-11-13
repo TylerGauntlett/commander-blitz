@@ -24,6 +24,7 @@ from ..structs import (
     TargetRef,
 )
 from ..temp_effects import (
+    end_goad,
     forbid_attack_next_combat,
     forbid_attack_while_counter,
     forbid_block,
@@ -603,6 +604,32 @@ def op_goad(ctx: EffectContext, spec: Mapping[str, Any]):
             # Battlefield and liveness are checked in the primitive, which is
             # also what makes a creature that left in response get nothing.
             goad_creature(ctx.state, oid, player, permanent=permanent)
+    yield from ()
+
+
+@register("ungoad")
+def op_ungoad(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Then each creature you control is no longer goaded." (Serene Sleuth)
+
+    Ends every goad on each creature in ``objects`` (required), whoever goaded
+    it and on whichever clock: the `goad` op's marks in `GameObject.goaded_by`
+    and the "for the rest of the game" ones in `goaded_permanently_by` -- see
+    `temp_effects.end_goad`. Both halves of 701.38a go with the mark, the
+    compulsion and the target restriction, because both are read off
+    `player_statics.goaders`.
+
+    A ``goaded`` static (the Impetus Auras) survives it: a static ability's
+    effect applies continuously (611.3a), so the creature is goaded again the
+    instant the op is done, for exactly as long as the static still applies.
+
+    It ends what is there and forbids nothing: a creature goaded after the op
+    resolves is goaded again. Why not the near
+    misses: `lose_keyword` and `lose_all_abilities` touch abilities, and goad
+    is not one; `remove_from_combat` ends an attack, not the requirement to
+    make one.
+    """
+    for oid in resolve_pool(ctx, spec.get("objects") or {}):
+        end_goad(ctx.state, oid)
     yield from ()
 
 

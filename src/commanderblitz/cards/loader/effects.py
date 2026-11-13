@@ -2151,6 +2151,19 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # goad; when a card does spell it out it must be a player the engine can
         # resolve -- which the general `player` check above now does for every
         # op, goad included.
+    if op == "ungoad":
+        # "Each creature you control is no longer goaded." Without `objects` it
+        # ends nobody's goad and the card resolves saying nothing -- goad's own
+        # guard. It names no goader and no clock: it ends all of them, so a
+        # borrowed `player` or `duration` would load as a narrower card.
+        if not effect.get("objects"):
+            raise DslError(f"{where}: ungoad needs 'objects' naming the creatures no longer goaded")
+        for key in ("player", "duration"):
+            if key in effect:
+                raise DslError(
+                    f"{where}: ungoad takes no {key!r} -- \"no longer goaded\" ends "
+                    f"every goad on the creature, whoever goaded it and for how long"
+                )
     if op == "must_attack_player":
         # All three are the card. Without `objects` nobody is compelled;
         # without `defender` there is no "that player" to attack, and guessing

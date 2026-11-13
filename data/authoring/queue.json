@@ -240652,12 +240652,12 @@
     },
     "Serene Sleuth": {
       "edhrec_rank": 19962,
-      "gate": "template",
+      "gate": null,
       "name": "Serene Sleuth",
-      "reason": "no template for: When this creature enters, investigate",
+      "reason": "",
       "scryfall_id": "61e691ff-ab3e-42ae-b160-54b53f5f961e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Serene Steward": {

@@ -10,7 +10,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 174 |
+| [Effect ops](#effect-ops) | 175 |
 | [Selectors](#selectors) | 76 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 74 |
@@ -144,6 +144,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `tap` | Board |  | Tap permanents. | [Effect ops](card-dsl.md#effect-ops) |
 | `unattach` | Board |  | Unattach the source (reconfigure). | [Reconfigure — taking it off again](card-dsl-cookbook.md#reconfigure--taking-it-off-again) |
 | `unblockable` | Board |  | Creatures can't be blocked this turn (optionally except by blockers matching a filter, or only by opponents' creatures with `by_opponents`). | [The unblockable op — the same wire, read from the attacker's end](card-dsl-cookbook.md#the-unblockable-op--the-same-wire-read-from-the-attackers-end) |
+| `ungoad` | Board |  | End every goad on creatures, any goader and any clock; a `goaded` static still applies. | ["…is no longer goaded" — ungoad](card-dsl-cookbook.md#is-no-longer-goaded--ungoad) |
 | `untap` | Board |  | Untap permanents. | [Untapping on somebody else's turn](card-dsl-cookbook.md#untapping-on-somebody-elses-turn) |
 | `add_subtype` | Modify |  | Permanents gain a subtype in addition to their others, for good or for a duration. | ["It becomes a Vampire in addition to its other types"](card-dsl-cookbook.md#it-becomes-a-vampire-in-addition-to-its-other-types) |
 | `animate` | Modify |  | A permanent becomes a creature, or another type (types, P/T, colors), for a duration; `exact` replaces, `keep_colors` keeps the colours, a non-creature animation may omit P/T, `keep_pt` keeps a Vehicle's own size. | [Creature-lands](card-dsl-cookbook.md#creature-lands) |

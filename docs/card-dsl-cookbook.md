@@ -5605,6 +5605,43 @@ compulsion is real and printed on a permanent.
 | the `goad` op on an enters trigger | a mark with a clock: it ends at the goader's untap step (or never, with `"permanent"`), and in either case not when the Aura leaves or moves |
 | `attacks_if_able` + `cant_attack_you` | `cant_attack_you` forbids attacking the goader outright, where goad only steers away "if able" — in a two-player game a goaded creature must still attack you — and neither names a goader for the `goaded` filter |
 
+### "…is no longer goaded" — `ungoad`
+
+    Serene Sleuth — "At the beginning of combat on your turn, investigate for
+                     each goaded creature you control. Then each creature you
+                     control is no longer goaded."
+
+```jsonc
+{ "kind": "triggered",
+  "trigger": { "event": "begin_combat", "controller": "you" },
+  "effects": [
+    { "op": "investigate",
+      "amount": { "count": { "zone": "battlefield", "controller": "you",
+                             "types": ["Creature"], "goaded": true } } },
+    { "op": "ungoad",
+      "objects": { "zone": "battlefield", "controller": "you",
+                   "types": ["Creature"] } } ] }
+```
+
+`ungoad` ends every goad on each creature in `objects`, whoever goaded it and on
+whichever clock: `temp_effects.end_goad` empties `GameObject.goaded_by` and
+`goaded_permanently_by`, so Dack Fayden's "for the rest of the game" goes with the
+timed marks. Both halves of 701.38a lift at once — the compulsion and the target
+restriction — because every reader asks `player_statics.goaders`. It ends what
+is there and forbids nothing: a creature goaded afterwards is goaded.
+
+A **`goaded` static survives it.** A static ability's effect applies at every
+moment its text matches (611.3a), so a one-shot "no longer goaded" ends the goads
+resolving effects created, and an Impetus Aura's creature is goaded by the Aura's
+controller again the instant the op is done, until the Aura stops enchanting it.
+
+The order is the card: the count reads `goaded` before the goads end. The loader
+refuses `ungoad` without `objects`, and with a `player` or `duration` — the
+sentence names no goader and no clock, so either would load as a narrower card.
+`lose_keyword` and `lose_all_abilities` are the near misses and touch abilities,
+which goad is not; `remove_from_combat` ends an attack, not the requirement to
+make one.
+
 ### "Goaded creatures" — `goaded`
 
     Puppet Master, String Puller — "Whenever you attack, goad target creature an

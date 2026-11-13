@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**379 cards** blocked by **328** capabilities.
+**378 cards** blocked by **327** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -332,7 +332,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
 | [undaunted](#undaunted) | 1 | 3405 | value |
-| [ungoad](#ungoad) | 1 | 19962 | op |
 | [wasteland-survival-guide-token](#wasteland-survival-guide-token) | 1 | 14880 | token |
 | [while-source-on-battlefield-duration](#while-source-on-battlefield-duration) | 1 | 8222 | engine |
 | [wurm-5-5-g-trample](#wurm-5-5-g-trample) | 1 | 2387 | token |
@@ -5347,20 +5346,6 @@ Blocks **1** card.
 
 - **Curtains' Call** (rank 3405) — `curtains_call`
   - Undaunted (This spell costs {1} less to cast for each opponent.)
-
-</details>
-
-## ungoad
-
-Blocks **1** card.
-
-- **(op)** an op that ends every goad on the matched permanents ("each creature you control is no longer goaded"): clears both goaded_by and goaded_permanently_by on each object in `objects`, regardless of which player goaded it or for how long
-  <br>Why the existing vocabulary won't do: The only goad op is `goad` (duration, objects, player), which adds a goader and never removes one; lose_keyword, lose_all_abilities and remove_from_combat touch keywords, abilities and combat, not the goad sets. The first half of the sentence is expressible (begin_combat trigger with an is_your_turn condition, create_token clue_token with amount {count: {controller: you, types: [Creature], goaded: true}}), but writing it without the ungoad clause would leave the creatures goaded, so the line is blocked as a whole
-
-<details><summary>Cards waiting on this</summary>
-
-- **Serene Sleuth** (rank 19962) — `serene_sleuth`
-  - At the beginning of combat on your turn, investigate for each goaded creature you control. Then each creature you control is no longer goaded.
 
 </details>
 
