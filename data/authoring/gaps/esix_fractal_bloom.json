@@ -1,0 +1,24 @@
+{
+  "card_id": "esix_fractal_bloom",
+  "name": "Esix, Fractal Bloom",
+  "oracle_text": "Flying\nThe first time you would create one or more tokens during each of your turns, you may instead choose a creature other than Esix and create that many tokens that are copies of that creature.",
+  "blocked_sentences": [
+    "The first time you would create one or more tokens during each of your turns, you may instead choose a creature other than Esix and create that many tokens that are copies of that creature"
+  ],
+  "needs": [
+    {
+      "capability": "token_creation_copy_replacement",
+      "kind": "replacement",
+      "what": "an optional replacement of token creation under your control that, instead of the printed tokens, has you choose a creature other than the source (any controller) and creates that many tokens that are copies of it (token count kept, identity replaced by a copy of the chosen creature)",
+      "why_existing_wont_do": "replace_token_creation's create_instead only substitutes fixed token ids from token_ids; it cannot name a copy of a creature chosen at replacement time, offers no 'you may' choice, and copy_permanent is an op, not something a replacement can substitute for the created tokens"
+    },
+    {
+      "capability": "first_time_each_turn_replacement",
+      "kind": "replacement",
+      "what": "a per-turn limit on a replacement static: it applies only to the first token-creation event during each of your turns (and that event consumes it whether or not the optional replacement is taken)",
+      "why_existing_wont_do": "first_during_your_turn exists only on ability_cost_reduction (the loader refuses it elsewhere), and static_max_per_turn / max_per_turn are trigger or other-static rate limits, not a 'first time you would create tokens during your turn' window on replace_token_creation"
+    }
+  ],
+  "closest_existing": ["replace_token_creation", "copy_permanent", "first_during_your_turn"],
+  "confidence": "high"
+}

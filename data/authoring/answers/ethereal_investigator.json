@@ -1,0 +1,38 @@
+{
+  "card": {
+    "id": "ethereal_investigator",
+    "name": "Ethereal Investigator",
+    "oracle_text": "Flying\nWhen this creature enters, investigate X times, where X is the number of opponents you have. (To investigate, create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")\nWhenever you draw your second card each turn, create a 1/1 white Spirit creature token with flying.",
+    "mana_cost": "{3}{U}",
+    "types": ["Creature"],
+    "subtypes": ["Spirit"],
+    "power": 2,
+    "toughness": 3,
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "keywords": ["flying"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature enters, investigate X times, where X is the number of opponents you have.",
+        "trigger": {"event": "self_enters", "source": "self"},
+        "effects": [
+          {"op": "create_token", "token": "clue_token", "controller": "you", "amount": {"player_count": "each_opponent"}}
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever you draw your second card each turn, create a 1/1 white Spirit creature token with flying.",
+        "trigger": {"event": "draw", "controller": "you", "nth": 2},
+        "effects": [
+          {"op": "create_token", "token": "spirit_1_1_w_flying", "controller": "you"}
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "tokens": {"id": "clue_token", "count": 1},
+    "battlefield_count": 34
+  }
+}

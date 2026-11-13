@@ -1,0 +1,30 @@
+{
+  "card": {
+    "id": "follow_the_bodies",
+    "name": "Follow the Bodies",
+    "oracle_text": "Gravestorm (When you cast this spell, copy it for each permanent put into a graveyard from the battlefield this turn.)\nInvestigate. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")",
+    "mana_cost": "{2}{U}",
+    "types": ["Sorcery"],
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "active_zones": ["stack"],
+        "text": "Gravestorm (When you cast this spell, copy it for each permanent put into a graveyard from the battlefield this turn.)",
+        "trigger": {"event": "spell_cast", "source": "self", "controller": "you"},
+        "effects": [
+          {"op": "copy_spell", "amount": {"permanents_to_graveyard_this_turn": true}}
+        ]
+      }
+    ],
+    "spell_effects": [
+      {"op": "create_token", "token": "clue_token", "amount": {"const": 1}}
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "tokens": {"id": "clue_token", "count": 1},
+    "battlefield_count": 33
+  }
+}
