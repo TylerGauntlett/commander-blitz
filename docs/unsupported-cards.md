@@ -10,10 +10,11 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**347 cards** blocked by **313** capabilities.
+**376 cards** blocked by **323** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
+| [rad-counters](#rad-counters) | 22 | 2709 | engine |
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
 | [rooms](#rooms) | 6 | 4163 | engine |
@@ -28,8 +29,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [basic-land-type-mana](#basic-land-type-mana) | 3 | 73 | engine |
 | [cast-trigger-x](#cast-trigger-x) | 3 | 1521 | engine, value |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 6346 | op |
+| [milled-this-turn](#milled-this-turn) | 3 | 4283 | selector |
 | [omen](#omen) | 3 | 3355 | cost, engine |
-| [rad-counters](#rad-counters) | 3 | 9006 | engine |
 | [random-player-choice](#random-player-choice) | 3 | 5120 | op |
 | [add-color](#add-color) | 2 | 2040 | op |
 | [all-creature-types](#all-creature-types) | 2 | 958 | static_effect |
@@ -73,13 +74,16 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [adventure](#adventure) | 1 | 8561 | engine |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
+| [alien-token](#alien-token) | 1 | 5885 | token |
 | [annihilator-grant](#annihilator-grant) | 1 | 3758 | op |
 | [assassin-token](#assassin-token) | 1 | 2604 | token |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [attachments-had](#attachments-had) | 1 | 10726 | selector |
 | [attack-tax-x-count](#attack-tax-x-count) | 1 | 671 | value |
+| [attacked-this-turn-static-condition](#attacked-this-turn-static-condition) | 1 | 3425 | static_effect |
 | [attacking-opponents-of-player](#attacking-opponents-of-player) | 1 | 705 | selector |
 | [base-power](#base-power) | 1 | 8936 | value |
+| [base-power-had](#base-power-had) | 1 | 8762 | value |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
 | [bat-1-1-b-flying](#bat-1-1-b-flying) | 1 | 20382 | token |
 | [batched-combat-damage-amount](#batched-combat-damage-amount) | 1 | 3943 | value |
@@ -93,6 +97,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cant-block-filtered-group](#cant-block-filtered-group) | 1 | 7948 | op |
 | [cards-exiled-trigger](#cards-exiled-trigger) | 1 | 1303 | trigger_event |
 | [cards-put-into-graveyard-from-library](#cards-put-into-graveyard-from-library) | 1 | 6299 | trigger_event |
+| [cards-to-graveyard-this-turn-per-player](#cards-to-graveyard-this-turn-per-player) | 1 | 2881 | value |
 | [cards-to-your-graveyard-from-zones-this-turn](#cards-to-your-graveyard-from-zones-this-turn) | 1 | 7412 | value |
 | [cast-exiled-for-life-equal-to-mana-value](#cast-exiled-for-life-equal-to-mana-value) | 1 | 7161 | op |
 | [cast-from-hand-result](#cast-from-hand-result) | 1 | 7016 | op |
@@ -120,6 +125,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [copy-spell-forced-target](#copy-spell-forced-target) | 1 | 13586 | op |
 | [cost-reduction-attacking-player](#cost-reduction-attacking-player) | 1 | 9998 | selector |
 | [cost-reduction-per-attacker-this-turn](#cost-reduction-per-attacker-this-turn) | 1 | 9578 | value |
+| [cost-reduction-per-counter](#cost-reduction-per-counter) | 1 | 11563 | value |
 | [coven](#coven) | 1 | 1129 | value |
 | [creatures-died-this-turn-filtered](#creatures-died-this-turn-filtered) | 1 | 13665 | value |
 | [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
@@ -154,6 +160,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [equipped-trigger-filter](#equipped-trigger-filter) | 1 | 9043 | selector |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [every-nonbasic-land-type](#every-nonbasic-land-type) | 1 | 2635 | engine |
+| [evolve](#evolve) | 1 | 6178 | trigger_event |
 | [exact-target-count](#exact-target-count) | 1 | 7243 | engine |
 | [exile-bottom-of-library](#exile-bottom-of-library) | 1 | 4763 | selector |
 | [exile-cards-with-card-types-among-them](#exile-cards-with-card-types-among-them) | 1 | 9107 | selector |
@@ -250,6 +257,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [playable-exiles-instead](#playable-exiles-instead) | 1 | 3152 | replacement |
 | [playable-spell-type-restriction](#playable-spell-type-restriction) | 1 | 4763 | op |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
+| [player-counter-replacement](#player-counter-replacement) | 1 | 2056 | static_effect |
 | [player-mana-ability-until-end-of-turn](#player-mana-ability-until-end-of-turn) | 1 | 12705 | op |
 | [players-attacked-last-combat](#players-attacked-last-combat) | 1 | 6681 | value |
 | [players-lost-the-game-count](#players-lost-the-game-count) | 1 | 4941 | value |
@@ -279,6 +287,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [same-target-for-each-target-word](#same-target-for-each-target-word) | 1 | 5003 | engine |
 | [sandbox-low-mana-value-permanent](#sandbox-low-mana-value-permanent) | 1 | 14140 | engine |
 | [sandbox-own-artifact-prop](#sandbox-own-artifact-prop) | 1 | 986 | engine |
+| [scavenge](#scavenge) | 1 | 11499 | static_effect |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
@@ -309,6 +318,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [times-attacked-this-turn](#times-attacked-this-turn) | 1 | 988 | value |
 | [token-copy-attached](#token-copy-attached) | 1 | 11547 | op |
 | [total-mana-value-selection](#total-mana-value-selection) | 1 | 4244 | op |
+| [total-mana-value-x](#total-mana-value-x) | 1 | 3066 | selector |
 | [total-toughness-cost-reduction](#total-toughness-cost-reduction) | 1 | 5188 | value |
 | [toughness-greater-than-power-filter](#toughness-greater-than-power-filter) | 1 | 3557 | selector |
 | [training](#training) | 1 | 8710 | keyword |
@@ -327,6 +337,72 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [x-sized-mode-target](#x-sized-mode-target) | 1 | 1456 | engine |
 | [x-starting-loyalty](#x-starting-loyalty) | 1 | 6660 | engine |
 | [zombie-warrior-4-4-b-vigilance](#zombie-warrior-4-4-b-vigilance) | 1 | 2449 | token |
+
+## rad-counters
+
+Blocks **22** cards.
+
+- **(engine)** rad as a player counter kind (a PlayerState field plus an entry in the player counter kinds, with the rule-725 rad trigger at the beginning of each player's precombat main phase: mill that many cards, lose 1 life and remove one rad counter per nonland card milled), and an op that gives a player N rad counters (e.g. an `add_rad` op shaped like add_poison/add_energy with `amount` and `player`, accepting the attack trigger's defending player)
+  <br>Why the existing vocabulary won't do: add_poison and add_energy are the only ops that put counters on a player and each is fixed to its own kind; add_counters acts on objects, not players; no rad counter kind or rad precombat-main trigger exists in the engine
+- **(engine)** rad as a player counter kind (a PlayerState field plus an entry in the player counter kinds, with the rule-725 rad trigger at the beginning of each player's precombat main phase: mill that many cards, lose 1 life and remove one rad counter per nonland card milled), and an op that gives a player N rad counters (e.g. an `add_rad` op shaped like add_poison/add_energy with `amount` and `player`, here run over each player via for_each_player)
+  <br>Why the existing vocabulary won't do: add_poison and add_energy are the only ops that put counters on a player and each is fixed to its own kind; add_counters acts on objects, not players; double_player_counters and lose_all_player_counters only modify existing kinds; no rad counter kind or rad precombat-main trigger exists in the engine
+- **(engine)** rad as a player counter kind (a PlayerState field plus an entry in player.PLAYER_COUNTER_KINDS, with the rad trigger at the beginning of precombat main phase), and a way to remove all counters of ONE named kind from a target player (e.g. a `counter` option on lose_all_player_counters, or a player-targeted remove_counters)
+  <br>Why the existing vocabulary won't do: lose_all_player_counters removes every player counter kind (poison and energy) rather than only rad counters, so it would also strip the target's poison and energy; PLAYER_COUNTER_KINDS carries only poison and energy, so rad counters do not exist; remove_counters acts on objects, not players
+
+<details><summary>Cards waiting on this</summary>
+
+- **Struggle for Project Purity** (rank 2709) — `struggle_for_project_purity`
+  - • Enclave — Whenever a player attacks you with one or more creatures, that player gets twice that many rad counters.
+- **Nuclear Fallout** (rank 2986) — `nuclear_fallout`
+  - Each player gets X rad counters.
+- **The Wise Mothman** (rank 3641) — `the_wise_mothman`
+  - Whenever The Wise Mothman enters or attacks, each player gets a rad counter.
+- **Feral Ghoul** (rank 4085) — `feral_ghoul`
+  - When this creature dies, each opponent gets a number of rad counters equal to its power.
+- **Screeching Scorchbeast** (rank 4123) — `screeching_scorchbeast`
+  - Whenever this creature attacks, each player gets two rad counters.
+- **Mirelurk Queen** (rank 4243) — `mirelurk_queen`
+  - When this creature enters, target player gets two rad counters.
+- **Tato Farmer** (rank 4283) — `tato_farmer`
+  - Landfall — Whenever a land you control enters, you may get two rad counters.
+  - {T}: Put target land card in a graveyard that was milled this turn onto the battlefield under your control tapped.
+- **Glowing One** (rank 4485) — `glowing_one`
+  - Whenever this creature deals combat damage to a player, they get four rad counters.
+- **Vexing Radgull** (rank 4685) — `vexing_radgull`
+  - Whenever this creature deals combat damage to a player, that player gets two rad counters if they don't have any rad counters.
+- **Infesting Radroach** (rank 4980) — `infesting_radroach`
+  - Whenever this creature deals combat damage to a player, they get that many rad counters.
+- **The Master, Transcendent** (rank 5158) — `the_master_transcendent`
+  - When The Master enters, target player gets two rad counters.
+  - {T}: Put target creature card in a graveyard that was milled this turn onto the battlefield under your control. It's a green Mutant with base power and toughness 3/3. (It loses its other colors and creature types.)
+- **Bloatfly Swarm** (rank 5223) — `bloatfly_swarm`
+  - If damage would be dealt to this creature while it has a +1/+1 counter on it, prevent that damage, remove that many +1/+1 counters from it, then give each player a rad counter for each +1/+1 counter removed this way.
+- **Mariposa Military Base** (rank 5346) — `mariposa_military_base`
+  - If you do, you get two rad counters.
+  - This ability costs {1} less to activate for each rad counter you have.
+- **Strong, the Brutish Thespian** (rank 6080) — `strong_the_brutish_thespian`
+  - Enrage — Whenever Strong is dealt damage, you get three rad counters and put three +1/+1 counters on Strong.
+  - You gain life rather than lose life from radiation.
+- **Vault 12: The Necropolis** (rank 6510) — `vault_12_the_necropolis`
+  - I — Each player gets three rad counters.
+  - II — Create X 2/2 black Zombie Mutant creature tokens, where X is the total number of rad counters among players.
+- **Nightkin Ambusher** (rank 7061) — `nightkin_ambusher`
+  - When this creature enters, target player gets four rad counters.
+  - This creature can't be blocked as long as defending player has a rad counter.
+- **Nuka-Nuke Launcher** (rank 7116) — `nuka_nuke_launcher`
+  - Whenever equipped creature attacks, until the end of defending player's next turn, that player gets two rad counters whenever they cast a spell.
+- **Contaminated Drink** (rank 8399) — `contaminated_drink`
+  - Draw X cards, then you get half X rad counters, rounded up.
+- **Harold and Bob, First Numens** (rank 8770) — `harold_and_bob_first_numens`
+  - When Harold and Bob dies, if it was a creature, return it to the battlefield. It's an Aura enchantment with enchant Forest you control and "Enchanted Forest has '{T}: Add three mana of any one color. You get two rad counters.'" Harold and Bob loses all other abilities.
+- **Megaton's Fate** (rank 9006) — `megaton_s_fate`
+  - • Detonate — Megaton's Fate deals 8 damage to each creature. Each player gets four rad counters.
+- **Acquired Mutation** (rank 9790) — `acquired_mutation`
+  - Whenever enchanted creature attacks, defending player gets two rad counters.
+- **Survivor's Med Kit** (rank 13179) — `survivor_s_med_kit`
+  - • RadAway — Target player loses all rad counters. Sacrifice this artifact
+
+</details>
 
 ## combat-only-permanent-shield
 
@@ -787,6 +863,26 @@ Blocks **3** cards.
 
 </details>
 
+## milled-this-turn
+
+Blocks **3** cards.
+
+- **(selector)** a per-turn record of which cards were put into a graveyard by milling this turn (any source, any player's mill), exposed as a spell filter key (e.g. `milled_this_turn: true` in `affects_spells`) that the `cast_from_graveyard` static can read, so 'once during each of your turns, you may cast a spell from among cards in your graveyard that were milled this turn' is `cast_from_graveyard` with `affects_player: "you"`, `max_per_turn: 1`, `condition: {is_your_turn: true}` and that filter; the same record would also serve Tato Farmer and The Master, Transcendent's 'card in a graveyard that was milled this turn' target selectors
+  <br>Why the existing vocabulary won't do: cast_from_graveyard's affects_spells only takes SPELL_FILTER_KEYS (types, colors, mana_value, ...), none of which reads how a card arrived in the graveyard; the mill op's `as` binding only records cards milled by that one resolution (Locke's 'milled this way' / grant_playable), not every card milled this turn by any source, and selector_keys has drawn_this_turn and entered_this_turn but no milled equivalent
+
+<details><summary>Cards waiting on this</summary>
+
+- **Tato Farmer** (rank 4283) — `tato_farmer`
+  - Landfall — Whenever a land you control enters, you may get two rad counters.
+  - {T}: Put target land card in a graveyard that was milled this turn onto the battlefield under your control tapped.
+- **The Master, Transcendent** (rank 5158) — `the_master_transcendent`
+  - When The Master enters, target player gets two rad counters.
+  - {T}: Put target creature card in a graveyard that was milled this turn onto the battlefield under your control. It's a green Mutant with base power and toughness 3/3. (It loses its other colors and creature types.)
+- **Raul, Trouble Shooter** (rank 5441) — `raul_trouble_shooter`
+  - Once during each of your turns, you may cast a spell from among cards in your graveyard that were milled this turn.
+
+</details>
+
 ## omen
 
 Blocks **3** cards.
@@ -810,28 +906,6 @@ Blocks **3** cards.
   - Flush Out -- Sorcery - Omen, {1}{R}: <the Omen half's rules text, absent from the packet and from the local catalog> (Then shuffle this card into its owner's library.)
 - **Whirlwing Stormbrood // Dynamic Soar** (rank 6636) — `whirlwing_stormbrood_dynamic_soar`
   - Dynamic Soar -- Sorcery - Omen, {2}{G}: Put three +1/+1 counters on target creature you control. (Then shuffle this card into its owner's library.)
-
-</details>
-
-## rad-counters
-
-Blocks **3** cards.
-
-- **(engine)** rad as a player counter kind (a PlayerState field plus an entry in the player counter kinds, with the rule-725 rad trigger at the beginning of each player's precombat main phase: mill that many cards, lose 1 life and remove one rad counter per nonland card milled), and an op that gives a player N rad counters (e.g. an `add_rad` op shaped like add_poison/add_energy with `amount` and `player`, accepting the attack trigger's defending player)
-  <br>Why the existing vocabulary won't do: add_poison and add_energy are the only ops that put counters on a player and each is fixed to its own kind; add_counters acts on objects, not players; no rad counter kind or rad precombat-main trigger exists in the engine
-- **(engine)** rad as a player counter kind (a PlayerState field plus an entry in the player counter kinds, with the rule-725 rad trigger at the beginning of each player's precombat main phase: mill that many cards, lose 1 life and remove one rad counter per nonland card milled), and an op that gives a player N rad counters (e.g. an `add_rad` op shaped like add_poison/add_energy with `amount` and `player`, here run over each player via for_each_player)
-  <br>Why the existing vocabulary won't do: add_poison and add_energy are the only ops that put counters on a player and each is fixed to its own kind; add_counters acts on objects, not players; double_player_counters and lose_all_player_counters only modify existing kinds; no rad counter kind or rad precombat-main trigger exists in the engine
-- **(engine)** rad as a player counter kind (a PlayerState field plus an entry in player.PLAYER_COUNTER_KINDS, with the rad trigger at the beginning of precombat main phase), and a way to remove all counters of ONE named kind from a target player (e.g. a `counter` option on lose_all_player_counters, or a player-targeted remove_counters)
-  <br>Why the existing vocabulary won't do: lose_all_player_counters removes every player counter kind (poison and energy) rather than only rad counters, so it would also strip the target's poison and energy; PLAYER_COUNTER_KINDS carries only poison and energy, so rad counters do not exist; remove_counters acts on objects, not players
-
-<details><summary>Cards waiting on this</summary>
-
-- **Megaton's Fate** (rank 9006) — `megaton_s_fate`
-  - • Detonate — Megaton's Fate deals 8 damage to each creature. Each player gets four rad counters.
-- **Acquired Mutation** (rank 9790) — `acquired_mutation`
-  - Whenever enchanted creature attacks, defending player gets two rad counters.
-- **Survivor's Med Kit** (rank 13179) — `survivor_s_med_kit`
-  - • RadAway — Target player loses all rad counters. Sacrifice this artifact
 
 </details>
 
@@ -1603,6 +1677,20 @@ Blocks **1** card.
 
 </details>
 
+## alien-token
+
+Blocks **1** card.
+
+- **(token)** a 0/0 blue Alien creature token (no abilities), e.g. id alien_0_0_u
+  <br>Why the existing vocabulary won't do: token_ids has no Alien token; the nearest 0/0 blue tokens (illusion_x_x_u, shark_x_x_u_flying) have the wrong creature type or keywords. The rest of the card is expressible: create_token with `as` to bind it then add_counters +1/+1 on it, proliferate on an attacks trigger, and Crew 2 as tap_permanents total_power 2.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Recon Craft Theta** (rank 5885) — `recon_craft_theta`
+  - When this Vehicle enters, create a 0/0 blue Alien creature token. Put a +1/+1 counter on it.
+
+</details>
+
 ## annihilator-grant
 
 Blocks **1** card.
@@ -1673,6 +1761,20 @@ Blocks **1** card.
 
 </details>
 
+## attacked-this-turn-static-condition
+
+Blocks **1** card.
+
+- **(static_effect)** a static-ability condition that is true while the static's own source attacked this turn (the turn ledger's has_attacked for the source), so a grant_keyword static on self (indestructible) switches on once it is declared as an attacker and stays on for the rest of the turn even if removed from combat
+  <br>Why the existing vocabulary won't do: static_condition_keys (all, any, cmp, counters, exists, exists_derived, has_flag, is_attached, ...) has no attacked-this-turn leaf; `exists` reads static_value_count_filter_keys, which lack the effect selector's `attacked_this_turn`; `has_flag` reads a permanent one-way flag from set_flag that never clears, and `has_turn_flag` (cleared at turn end) is only a condition_key, not a static condition -- and writing either would also need an unprinted attacks trigger to set it. The `attacking` filter key is the near miss but is false again after combat or removal from combat, which the printed 'attacked this turn' is not
+
+<details><summary>Cards waiting on this</summary>
+
+- **Agent Frank Horrigan** (rank 3425) — `agent_frank_horrigan`
+  - Agent Frank Horrigan has indestructible as long as it attacked this turn.
+
+</details>
+
 ## attacking-opponents-of-player
 
 Blocks **1** card.
@@ -1699,6 +1801,20 @@ Blocks **1** card.
 - **Curie, Emergent Intelligence** (rank 8936) — `curie_emergent_intelligence`
   - Whenever Curie deals combat damage to a player, draw cards equal to its base power.
   - {1}{U}, Exile another nontoken artifact creature you control: Curie becomes a copy of the exiled creature, except it has "Whenever this creature deals combat damage to a player, draw cards equal to its base power."
+
+</details>
+
+## base-power-had
+
+Blocks **1** card.
+
+- **(value)** a last-known-information value key for the BASE power (layer 7b result, before counters and modifiers) the departed creature had as it left the battlefield, snapshotted on the dies event beside had_power, so a dies trigger's intervening-if can compare {"power_had": true} against it with cmp '!='
+  <br>Why the existing vocabulary won't do: power_had reads the creature's last-known derived power, but nothing snapshots its base power. power_of on the card in the graveyard returns the printed power, which is wrong for a token (it has ceased to exist, e.g. a decayed Zombie token), for a copy, and for a creature whose base P/T was set by an effect (set_pt, animate); the base_power selector key only matches objects still on the battlefield
+
+<details><summary>Cards waiting on this</summary>
+
+- **Jason Bright, Glowing Prophet** (rank 8762) — `jason_bright_glowing_prophet`
+  - Whenever a Zombie or Mutant you control dies, if its power was different from its base power, draw a card.
 
 </details>
 
@@ -1885,6 +2001,20 @@ Blocks **1** card.
   - Whenever one or more cards are put into your graveyard from your library, each opponent loses 1 life for each card type among those cards.
   - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
   - When you unlock this door, mill three cards, then return a creature card from your graveyard to the battlefield.
+
+</details>
+
+## cards-to-graveyard-this-turn-per-player
+
+Blocks **1** card.
+
+- **(value)** a value leaf counting the cards put into ONE player's graveyard from anywhere this turn, taking a player spec (here `enchanted_player`) -- a per-owner tally on TurnLedger beside the existing turn-wide `cards_to_graveyard`, cards only, tokens excluded, counting mills, discards, deaths and resolved spells
+  <br>Why the existing vocabulary won't do: `cards_to_graveyard_this_turn` reads `TurnLedger.cards_to_graveyard`, a single integer over every graveyard that takes no player spec, so it would also count the controller's and other opponents' cards and mill far more than printed; `permanents_to_graveyard_this_turn` is table-wide and battlefield-only, and `count` over the graveyard counts cards already there before this turn
+
+<details><summary>Cards waiting on this</summary>
+
+- **Fraying Sanity** (rank 2881) — `fraying_sanity`
+  - At the beginning of each end step, enchanted player mills X cards, where X is the number of cards put into their graveyard from anywhere this turn.
 
 </details>
 
@@ -2273,6 +2403,20 @@ Blocks **1** card.
 
 - **Rowdy Research** (rank 9578) — `rowdy_research`
   - This spell costs {1} less to cast for each creature that attacked this turn.
+
+</details>
+
+## cost-reduction-per-counter
+
+Blocks **1** card.
+
+- **(value)** a cost_reduction key that sums every counter of every kind on all permanents (any controller) plus every counter on all players (poison, energy, experience, rad, ...), reducing generic cost by {1} per counter
+  <br>Why the existing vocabulary won't do: cost_reduction_keys offers count (with has_counters it counts permanents having counters, not the counters themselves, and never sees player counters), total_power, total_mana_value, greatest_* and energy_spent_this_turn; none sums counters on permanents and players
+
+<details><summary>Cards waiting on this</summary>
+
+- **Lumbering Megasloth** (rank 11563) — `lumbering_megasloth`
+  - This spell costs {1} less to cast for each counter among players and permanents.
 
 </details>
 
@@ -2760,6 +2904,20 @@ Blocks **1** card.
 
 - **Planar Nexus** (rank 2635) — `planar_nexus`
   - This land is every nonbasic land type. (Nonbasic land types include Cave, Desert, Gate, Lair, Locus, Mine, Power-Plant, Sphere, Tower, and Urza's.)
+
+</details>
+
+## evolve
+
+Blocks **1** card.
+
+- **(trigger_event)** a trigger event 'evolves' (702.100d) that fires when this permanent's own evolve ability resolves and puts a +1/+1 counter on it, bound to self, so a separate triggered ability can then copy_permanent the source
+  <br>Why the existing vocabulary won't do: Evolve itself is a permanent_enters trigger with an intervening-if (as Fathom Mage writes it), but nothing marks that resolution as an evolve event. counter_placed with source self and counter +1/+1 also fires for proliferate, other cards' counters and any other source of +1/+1 counters, which is a broader card; folding copy_permanent into the evolve trigger's own effects removes the separate trigger that goes on the stack and claims two printed lines with one ability
+
+<details><summary>Cards waiting on this</summary>
+
+- **Watchful Radstag** (rank 6178) — `watchful_radstag`
+  - Whenever this creature evolves, create a token that's a copy of it.
 
 </details>
 
@@ -4136,6 +4294,20 @@ Blocks **1** card.
 
 </details>
 
+## player-counter-replacement
+
+Blocks **1** card.
+
+- **(static_effect)** a replace_counters static that reaches only the controller as a player (affects_player: "you"), for every kind of player counter (poison and energy alike, no `counter`), without also reaching any permanent -- i.e. the loader should accept `affects_player` in place of `affects` on replace_counters, the way it already accepts `put_by` in place of it
+  <br>Why the existing vocabulary won't do: The loader refuses replace_counters without `affects` or `put_by`. Izzet Generatorium and Aether Refinery get away with a dummy `affects: {controller: you}` only because `counter: "energy"` keeps the static off permanents; with no counter kind ("one or more counters", "each of those kinds") that dummy affects would add a second +1 to every permanent you control, stacking with the first sentence on artifacts and creatures and wrongly reaching lands and enchantments. `put_by: "you"` is a different sentence (keyed on who puts the counters, not on you receiving them). The first sentence is expressible as replace_counters with counter_addend 1 and affects {any_types: [Artifact, Creature], controller: you}; the only non-gap spelling of the second would be an affects filter crafted to match no permanent (e.g. types [Instant]), which is a workaround rather than the printed sentence.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Winding Constrictor** (rank 2056) — `winding_constrictor`
+  - If you would get one or more counters, you get that many plus one of each of those kinds of counters instead.
+
+</details>
+
 ## player-mana-ability-until-end-of-turn
 
 Blocks **1** card.
@@ -4545,6 +4717,20 @@ Blocks **1** card.
 
 - **Mechanized Production** (rank 986) — `mechanized_production`
   - Enchant artifact you control
+
+</details>
+
+## scavenge
+
+Blocks **1** card.
+
+- **(static_effect)** a static on a permanent that grants each creature card in its controller's graveyard a sorcery-speed activated ability usable from the graveyard, whose cost is exiling that card plus paying that card's own mana cost, and whose effect puts +1/+1 counters equal to that card's power on target creature
+  <br>Why the existing vocabulary won't do: The grant_ability static hands a granted activated ability to permanents on the battlefield only, never to cards in a graveyard; no cost key pays 'the source card's mana cost' (mana takes a fixed string) and exile_self requires the source on the battlefield; there is no scavenge keyword or graveyard-activated ability grant (grant_graveyard_cast and cast_from_graveyard grant casting, not activation)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Young Deathclaws** (rank 11499) — `young_deathclaws`
+  - Each creature card in your graveyard has scavenge. The scavenge cost is equal to its mana cost.
 
 </details>
 
@@ -4968,6 +5154,20 @@ Blocks **1** card.
 
 - **Ao, the Dawn Sky** (rank 4244) — `ao_the_dawn_sky`
   - • Look at the top seven cards of your library. Put any number of nonland permanent cards with total mana value 4 or less from among them onto the battlefield. Put the rest on the bottom of your library in a random order.
+
+</details>
+
+## total-mana-value-x
+
+Blocks **1** card.
+
+- **(selector)** a target spec's `total_mana_value` cap that takes a value (the X paid to cast the permanent, read by its own enters trigger, e.g. {"x": true}) instead of only a printed integer, so an any-number target's picks together are limited to mana value X or less
+  <br>Why the existing vocabulary won't do: The target key `total_mana_value` exists (Phoenix, Warden of Fire) but is typed `int | None` in the schema and loader, so only a constant cap like 6 can be written; a per-candidate `mana_value` selector clause caps each pick separately, which is a much wider card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Rampaging Yao Guai** (rank 3066) — `rampaging_yao_guai`
+  - When this creature enters, destroy any number of target artifacts and/or enchantments with total mana value X or less.
 
 </details>
 
