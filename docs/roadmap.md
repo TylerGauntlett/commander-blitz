@@ -73,7 +73,7 @@ each heading; this table is generated from them.
 | [Most Wanted (Outlaws of Thunder Junction Commander)](#most-wanted-outlaws-of-thunder-junction-commander) | L | high | Voting: will of the council and council's dilemma | 0 |
 | [Hail, Caesar (Fallout)](#hail-caesar-fallout) | L | high | Voting: will of the council and council's dilemma | 0 |
 | [Scrappy Survivors (Fallout)](#scrappy-survivors-fallout) | L | high | Rad counters | 0 |
-| [Science! (Fallout)](#science-fallout) | L | high | nothing | 0 |
+| [Science! (Fallout)](#science-fallout) | L | high | Secret choices | 0 |
 | [Mutant Menace (Fallout)](#mutant-menace-fallout) | L | high | nothing | 0 |
 | [Deep Clue Sea (Murders at Karlov Manor Commander)](#deep-clue-sea-murders-at-karlov-manor-commander) | L | high | nothing | 0 |
 | [Revenant Recon (Murders at Karlov Manor Commander)](#revenant-recon-murders-at-karlov-manor-commander) | L | high | nothing | 0 |
@@ -143,6 +143,7 @@ each heading; this table is generated from them.
 | [Distributing counters from a spell](#distributing-counters-from-a-spell) | M | medium | nothing | 1 |
 | [Rad counters](#rad-counters) | M | medium | nothing | 1 |
 | [Replays and sharing](#replays-and-sharing) | M | medium | nothing | 1 |
+| [Secret choices](#secret-choices) | M | medium | nothing | 1 |
 | [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) | M | medium | nothing | 0 |
 | [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) | M | medium | nothing | 0 |
 | [Every creature type means every creature type](#every-creature-type-means-every-creature-type) | M | medium | nothing | 0 |
@@ -158,8 +159,6 @@ Derived from the properties: an item is **ready** when nothing it depends
 on is still on this page, and the ready items are ranked by impact, then
 rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
-
-**In progress:** [Science! (Fallout)](#science-fallout).
 
 **Ready now, best first:**
 
@@ -232,13 +231,14 @@ same list, and `/extend-roadmap` starts at the top of it.
 67. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
 68. [Rad counters](#rad-counters) — M, medium
 69. [Replays and sharing](#replays-and-sharing) — M, medium
-70. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-71. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
-72. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
-73. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
-74. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-75. [Archidekt import](#archidekt-import) — S, low
-76. [Sound](#sound) — S, low
+70. [Secret choices](#secret-choices) — M, medium
+71. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+72. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
+73. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
+74. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
+75. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+76. [Archidekt import](#archidekt-import) — S, low
+77. [Sound](#sound) — S, low
 
 **Blocked, and by what:**
 
@@ -264,6 +264,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Most Wanted (Outlaws of Thunder Junction Commander)](#most-wanted-outlaws-of-thunder-junction-commander) — [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma)
 - [Hail, Caesar (Fallout)](#hail-caesar-fallout) — [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma)
 - [Scrappy Survivors (Fallout)](#scrappy-survivors-fallout) — [Rad counters](#rad-counters)
+- [Science! (Fallout)](#science-fallout) — [Secret choices](#secret-choices)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -1170,6 +1171,98 @@ reference (`tests/cards/test_dsl_reference.py`) lists the new op.
   an existing rule, and its line goes into the implemented table in
   rules-coverage.md. An ADR only if the stack question is answered with a
   new seam for sourceless triggers.
+
+### Secret choices
+
+Effort **M** · Impact **medium**, every card where players secretly choose and then reveal waits on it, Expert-Level Safe in the Science! precon and Menacing Ogre among them · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+Every choice the engine asks is one player's, one at a time. An op asks
+through `ask_mode` in `engine/effects/context.py`, which yields a
+`PendingDecision` (`engine/actions.py`) for a single `player`, and binds the
+answer in the effect context as soon as it comes back. `choose_number` in
+`engine/effects/ops_control.py` asks only `ctx.controller`, and nothing
+asks a second player the same question. Wrap it in `for_each_player` and the
+players answer in turn, each answer bound before the next is asked. The
+view does hide some things: `serialize._pending` puts card faces only on the
+seat that has to answer, `event_log_for` drops object ids from
+`_PRIVATE_EVENTS`, and face-down exile has `hidden_in_exile` and
+`revealed_to`. But no seat can hold an answer the other players must not
+see until everyone has chosen. [rules-coverage.md](rules-coverage.md#not-implemented)
+does not mention secret choices. It lists voting as not implemented, and
+secret council is the secret form of voting.
+
+So "you and target opponent each secretly choose 1, 2, or 3. Then those
+choices are revealed" cannot be written. Neither can "each player secretly
+chooses a number", "secretly choose an opponent", or a secret vote. Asked in
+turn, the later chooser answers after seeing the earlier choice, and that
+changes the card. The Science! precon found it through Expert-Level Safe,
+whose gap record is `data/authoring/gaps/expert_level_safe.json`. The
+catalog has a few dozen cards printing "secretly", among them Menacing Ogre,
+Prisoner's Dilemma, Círdan the Shipwright, Elrond of the White Council,
+Stalking Leonin, The Toymaker's Trap and the secret council cards (Vault 11:
+Voter's Dilemma, Marchesa's Surprise Party, Mob Verdict).
+
+#### The change
+
+1. A secret answer. Each chooser is asked in turn through `ask_mode`, as
+   today, but the answers are held unrevealed until the last chooser has
+   answered. Until then a later chooser's decision context and every other
+   seat's view show only that a choice has been made, never what it is. The
+   reveal is one event carrying every answer.
+2. An op for the shape the cards print: a number, or one of a fixed set of
+   labels, chosen secretly by a named set of players (you and a target
+   opponent, each player, each opponent). Each answer is bound per player,
+   so a later `condition` can compare the answers ("if they match", "the
+   player who chose the highest number").
+3. The CPUs answer through the label path the heuristic agent already uses
+   for `choose_number`. A strategy reads only what its own seat's view
+   shows, so it never sees an unrevealed answer.
+4. The loader's `_validate_effect` refuses the op without choosers or
+   without `as`. The authoring verifier answers it the way it answers
+   `choose_number`.
+5. Harvest: Expert-Level Safe through `/author-cards`, then one wave over the
+   catalog's other secret-choice cards that need nothing else.
+
+It does not build voting. Secret council is
+[voting](voting.md) with its votes cast secretly; once both items land, it
+is the vote op asking through this one's secret answer.
+
+#### Gate
+
+A unit test under `tests/unit/` for the secret choice:
+
+- every named chooser is asked;
+- a later chooser's decision and every other seat's `player_view` and
+  `event_log_for` do not carry an earlier answer before the reveal;
+- the reveal event carries all answers, and each answer is bound per player
+  for a condition to compare;
+- an eliminated player is not asked;
+- the loader refuses the op with no choosers.
+
+Expert-Level Safe passes its six gates, and the generated DSL reference
+(`tests/cards/test_dsl_reference.py`) lists the new op.
+
+#### Open questions
+
+- **How an answer is kept secret.** An unrevealed answer can live in the
+  effect context's bindings, which no view serializes, or in a field on
+  `GameState` that `player_view` redacts per seat. Recommended: the
+  bindings, with the reveal as one event, because nothing serializes them
+  today. That makes "not leaked" a property the test can check, not a
+  redaction someone has to remember.
+- **One decision kind or `ask_mode`.** Recommended: `ask_mode` with
+  `purpose: "secret_choice"`. The client and the CPUs already answer a
+  labelled choice, and a new `DecisionKind` would need its frontend label,
+  its auto-answer and an e2e path, with no new rule to show for it.
+- **What the client shows while others choose.** Recommended: nothing new.
+  Each chooser sees their own prompt, and the reveal is narrated from its
+  event in the log. A surface beyond that would need its story and floor
+  ([ADR 0013](adr/0013-handheld-floors-are-ci-gates.md)).
+- **Is it an ADR.** Recommended: no, if the answer stays in the bindings,
+  because it is an additive op. Yes, if it adds per-seat redaction of game
+  state, because that is a rule the views would be built around from then on.
 
 ### Every creature type means every creature type
 
@@ -2485,7 +2578,7 @@ whole-game test able to draw the deck.
 
 ### Science! (Fallout)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing · **In progress**.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Secret choices](#secret-choices).
 
 #### Today
 
@@ -2496,6 +2589,40 @@ coming-soon shell on the shelf: its row `pip_science` is in
 `python scripts/sync_precons.py --missing pip_science` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+
+Every card on the list has been through `/author-cards` once. Twenty cards
+are left, and each has a gap record naming what it waits on:
+
+- Expert-Level Safe needs secret choices, which have
+  [their own item](secret-choices.md); this item depends on it.
+- Automated Assembly Line needs the 3/3 Robot artifact creature token, and
+  The Prydwen, Steel Flagship needs its Human Knight token.
+- Arcade Gannon needs a graveyard-cast permission capped by a counted mana
+  value.
+- Bottle-Cap Blast needs the excess damage a spell dealt.
+- Brotherhood Scribe needs a trigger for getting energy, and HELIOS One needs
+  paying X energy as a cost.
+- C.A.M.P. needs a trigger for a permanent being tapped for mana, with the
+  colour it produced.
+- Curie, Emergent Intelligence needs exiling a permanent as a cost and its
+  base power.
+- James, Wandering Dad needs its Adventure half, which the catalog row
+  carries no text for.
+- Mechanized Production needs an artifact you control in the authoring
+  sandbox.
+- Mystic Forge needs `colorless` in `cast_from_library_top`'s spell filter.
+- Nerd Rage needs a granted ability that carries a player-wide static.
+- Plasma Caster needs a "creature blocking equipped creature" target.
+- Rex, Cyber-Hound needs the activated abilities of exiled cards chosen by
+  their counters.
+- Sentry Bot needs a cost reduction counted per attacking player.
+- Synth Infiltrator needs `add_subtypes` on an enters-as-a-copy.
+- The Motherlode, Excavator needs a can't-block over a filtered group,
+  checked at declare blockers.
+- Vault 13: Dweller's Journey needs a choice among the cards a permanent
+  exiled.
+- Vault 112: Sadistic Simulation needs to play an exiled land during
+  resolution.
 
 #### The change
 
