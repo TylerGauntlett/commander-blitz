@@ -1,0 +1,18 @@
+{
+  "card_id": "james_wandering_dad_follow_him",
+  "name": "James, Wandering Dad // Follow Him",
+  "oracle_text": "{T}: Add {C}{C}. Spend this mana only to activate abilities.",
+  "blocked_sentences": [
+    "Follow Him {X}{U}{U} (Instant — Adventure): printed text absent from the packet"
+  ],
+  "needs": [
+    {
+      "capability": "adventure",
+      "kind": "engine",
+      "what": "the packet and the catalog row (data/catalog/cards.sqlite, layout 'adventure') carry no text for the Adventure half Follow Him ({X}{U}{U} Instant — Adventure): back_oracle_text is empty and back_face is {}, and oracle_text holds only the creature half. The packet builder needs to fill the Adventure face (name, cost, type line, text) from card_faces so the card can be written as a front plus a second_face with adventure: true",
+      "why_existing_wont_do": "The DSL can already say both halves (second_face + second_face_zone 'hand' + adventure: true, as Hildibrand Manderville does; the front's mana ability is add_mana {C}{C} with mana_restriction {\"activate\": \"any\"}), but the Adventure half's sentences cannot be written from the packet without inventing them, and an answer with the front alone would be a creature that can never be cast as Follow Him. The catalog's keywords field says 'Investigate', suggesting the half is 'Investigate X times', but that is not printed text in the packet"
+    }
+  ],
+  "closest_existing": ["second_face", "adventure", "mana_restriction"],
+  "confidence": "low"
+}

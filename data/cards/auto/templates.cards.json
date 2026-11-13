@@ -50057,6 +50057,77 @@
     },
     {
       "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "crush_contraband",
+      "mana_cost": "{3}{W}",
+      "name": "Crush Contraband",
+      "oracle_text": "Choose one or both —\n• Exile target artifact.\n• Exile target enchantment.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "artifact"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "label": "Exile target artifact."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "enchantment"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "label": "Exile target enchantment."
+            }
+          ],
+          "op": "choose_mode",
+          "or_more": true
+        }
+      ],
+      "targets": [
+        {
+          "id": "artifact",
+          "kind": "permanent",
+          "mode": 0,
+          "selector": {
+            "types": [
+              "Artifact"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "id": "enchantment",
+          "kind": "permanent",
+          "mode": 1,
+          "selector": {
+            "types": [
+              "Enchantment"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "B"
       ],
       "colors": [
@@ -68271,6 +68342,50 @@
               "Battle"
             ]
           }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "electrosiphon",
+      "mana_cost": "{U}{U}{R}",
+      "name": "Electrosiphon",
+      "oracle_text": "Counter target spell. You get an amount of {E} (energy counters) equal to its mana value.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "countered",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "op": "counter",
+          "target": "t1"
+        },
+        {
+          "amount": {
+            "mana_value_of": {
+              "binding": "countered"
+            }
+          },
+          "op": "add_energy",
+          "player": "you"
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "spell"
         }
       ],
       "types": [
@@ -133022,6 +133137,132 @@
       ],
       "toughness": 0,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [],
+              "else": [
+                {
+                  "objects": {
+                    "count": "all",
+                    "self_only": true,
+                    "zone": "battlefield"
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "pay_energy": 2
+              },
+              "player": "you",
+              "prompt": "Pay {E}{E} to keep Liberty Prime?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Liberty Prime attacks or blocks, sacrifice it unless you pay {E}{E} (two energy counters).",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [],
+              "else": [
+                {
+                  "objects": {
+                    "count": "all",
+                    "self_only": true,
+                    "zone": "battlefield"
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "pay_energy": 2
+              },
+              "player": "you",
+              "prompt": "Pay {E}{E} to keep Liberty Prime?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Liberty Prime attacks or blocks, sacrifice it unless you pay {E}{E} (two energy counters).",
+          "trigger": {
+            "event": "blocks",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Artifact"
+              ],
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "add_energy",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, {T}, Sacrifice an artifact: You get {E}{E} and draw a card."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "U",
+        "W"
+      ],
+      "id": "liberty_prime_recharged",
+      "keywords": [
+        "vigilance",
+        "trample",
+        "haste"
+      ],
+      "mana_cost": "{2}{U}{R}{W}",
+      "name": "Liberty Prime, Recharged",
+      "oracle_text": "Vigilance, trample, haste\nWhenever Liberty Prime attacks or blocks, sacrifice it unless you pay {E}{E} (two energy counters).\n{2}, {T}, Sacrifice an artifact: You get {E}{E} and draw a card.",
+      "power": 8,
+      "source": "auto",
+      "subtypes": [
+        "Robot"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 8,
+      "types": [
+        "Artifact",
         "Creature"
       ]
     },

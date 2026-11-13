@@ -4160,6 +4160,9 @@
   "crumbling_necropolis": {
     "zone": "battlefield"
   },
+  "crush_contraband": {
+    "zone": "graveyard"
+  },
   "crux_of_fate": {
     "battlefield_count": 30,
     "graveyard_size": {
@@ -5716,6 +5719,12 @@
     },
     "library_size": {
       "0": 40
+    },
+    "zone": "graveyard"
+  },
+  "electrosiphon": {
+    "hand_size": {
+      "0": 1
     },
     "zone": "graveyard"
   },
@@ -11140,6 +11149,10 @@
     "zone": "battlefield"
   },
   "lhurgoyf": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "liberty_prime_recharged": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

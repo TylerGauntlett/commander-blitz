@@ -1,0 +1,14 @@
+{
+  "card_id": "mechanized_production",
+  "name": "Mechanized Production",
+  "oracle_text": "Enchant artifact you control\nAt the beginning of your upkeep, create a token that's a copy of enchanted artifact. Then if you control eight or more artifacts with the same name as one another, you win the game.",
+  "blocked_sentences": ["Enchant artifact you control"],
+  "needs": [{
+    "capability": "sandbox_own_artifact_prop",
+    "kind": "engine",
+    "what": "the verification sandbox (verify.build_sandbox / _own_board) needs an artifact you control for a card whose mandatory Aura target is 'artifact you control' -- a swap like swap_in_artifact_body or an added prop, as graveyard_spell_props does for graveyard targets. The DSL already spells the whole card: Aura with targets [{id: enchanted, kind: permanent, selector: {zone: battlefield, controller: you, types: [Artifact]}}]; a triggered ability on {event: upkeep, controller: you} with effects copy_permanent {objects: {attached: true}} then if {cmp: >=, left: {most_sharing_a_name: {objects: {zone: battlefield, controller: you, types: [Artifact]}}}, right: {const: 8}} then win_game {player: you}",
+    "why_existing_wont_do": "The sandbox board's two creatures are non-artifacts and its 30 lands are basics, so 'Enchant artifact you control' has no legal target, the Aura cannot be cast (601.2c, 303.4a) and gate 4 rejects it as 'not playable in the sandbox'. swap_in_artifact_body only fires for a non-artifact card whose toughness counts your artifacts. Relaxing the target to any controller or making it optional would describe a different card"
+  }],
+  "closest_existing": ["swap_in_artifact_body", "graveyard_spell_props", "copy_permanent", "most_sharing_a_name", "win_game"],
+  "confidence": "high"
+}

@@ -57122,12 +57122,12 @@
     },
     "Crush Contraband": {
       "edhrec_rank": 4202,
-      "gate": "behaviour",
+      "gate": null,
       "name": "Crush Contraband",
-      "reason": "opponent battlefield is 4, expected 5",
+      "reason": "",
       "scryfall_id": "e0941279-8695-4b71-b27a-5477a1858525",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Crush Dissent": {
@@ -80512,12 +80512,12 @@
     },
     "Electrosiphon": {
       "edhrec_rank": 5583,
-      "gate": "template",
+      "gate": null,
       "name": "Electrosiphon",
-      "reason": "no template for: Counter target spell. You get an amount of {E} equal to its mana value",
+      "reason": "",
       "scryfall_id": "5f388077-d7a5-41a2-a9e9-4c3a5f7c6b48",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Electrostatic Bolt": {
@@ -157342,12 +157342,12 @@
     },
     "Liberty Prime, Recharged": {
       "edhrec_rank": 7568,
-      "gate": "template",
+      "gate": null,
       "name": "Liberty Prime, Recharged",
-      "reason": "no template for: Whenever Liberty Prime attacks or blocks, sacrifice it unless you pay {E}{E}",
+      "reason": "",
       "scryfall_id": "2da11337-ceb2-4744-9696-c06fec2f2daa",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Library": {
