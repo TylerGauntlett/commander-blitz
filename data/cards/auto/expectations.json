@@ -2637,6 +2637,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "brotherhood_vertibird": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "brudiclad_telchor_engineer": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -5199,6 +5203,13 @@
     },
     "zone": "battlefield"
   },
+  "dr_madison_li": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "dracogenesis": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -5618,6 +5629,16 @@
   },
   "elder_gargaroth": {
     "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "elder_owyn_lyons": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
     "hand_size": {
       "0": 1
     },

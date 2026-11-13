@@ -1,0 +1,29 @@
+{
+  "card_id": "curie_emergent_intelligence",
+  "name": "Curie, Emergent Intelligence",
+  "oracle_text": "Whenever Curie deals combat damage to a player, draw cards equal to its base power.\n{1}{U}, Exile another nontoken artifact creature you control: Curie becomes a copy of the exiled creature, except it has \"Whenever this creature deals combat damage to a player, draw cards equal to its base power.\"",
+  "blocked_sentences": [
+    "Whenever Curie deals combat damage to a player, draw cards equal to its base power.",
+    "{1}{U}, Exile another nontoken artifact creature you control: Curie becomes a copy of the exiled creature, except it has \"Whenever this creature deals combat damage to a player, draw cards equal to its base power.\""
+  ],
+  "needs": [
+    {
+      "capability": "exile_permanent_cost",
+      "kind": "cost",
+      "what": "an activated-ability cost that exiles another permanent you control from the battlefield chosen by selector (here: another nontoken artifact creature you control), binding it with `as` so the effects can read it (\"Curie becomes a copy of the exiled creature\")",
+      "why_existing_wont_do": "cost_keys has exile_self (the source only), exile_from_hand and exile_from_graveyard; sacrifice moves the permanent to the graveyard, not exile, and an `exile` op in effects would move the payment to resolution and let the ability be activated with nothing to exile"
+    },
+    {
+      "capability": "base_power",
+      "kind": "value",
+      "what": "a value reading an object's base power (its printed or copiable power, 208.3 / copy-effect power, ignoring counters, pumps and anthems) for \"draw cards equal to its base power\"",
+      "why_existing_wont_do": "value_keys has power_of and power_had, which read current (modified) power; base power is only spelled `power` inside static filters, not as an amount"
+    }
+  ],
+  "closest_existing": [
+    "become_copy",
+    "exile_self",
+    "power_of"
+  ],
+  "confidence": "high"
+}

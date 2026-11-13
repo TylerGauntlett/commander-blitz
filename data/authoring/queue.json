@@ -35492,12 +35492,12 @@
     },
     "Brotherhood Vertibird": {
       "edhrec_rank": 4767,
-      "gate": "template",
+      "gate": null,
       "name": "Brotherhood Vertibird",
-      "reason": "no template for: 's power is equal to the number of artifacts you control",
+      "reason": "",
       "scryfall_id": "900da9ff-01d5-429e-b11a-48e0dca5df69",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Brotherhood's End": {
@@ -57122,12 +57122,12 @@
     },
     "Crush Contraband": {
       "edhrec_rank": 4202,
-      "gate": "template",
+      "gate": "behaviour",
       "name": "Crush Contraband",
-      "reason": "no template for: Choose one or both —",
+      "reason": "opponent battlefield is 4, expected 5",
       "scryfall_id": "e0941279-8695-4b71-b27a-5477a1858525",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Crush Dissent": {
@@ -72792,12 +72792,12 @@
     },
     "Dr. Madison Li": {
       "edhrec_rank": 6935,
-      "gate": "template",
+      "gate": null,
       "name": "Dr. Madison Li",
-      "reason": "no template for: Whenever you cast an artifact spell, you get {E}",
+      "reason": "",
       "scryfall_id": "3e356527-66a6-4d71-bc59-0c3bdde3d14c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Drach'Nyen": {
@@ -80142,12 +80142,12 @@
     },
     "Elder Owyn Lyons": {
       "edhrec_rank": 11337,
-      "gate": "template",
+      "gate": null,
       "name": "Elder Owyn Lyons",
-      "reason": "no template for: Artifacts you control have ward {1}",
+      "reason": "",
       "scryfall_id": "73bc8fe5-736c-4baf-bd0f-a0c95721225e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Elder Pine of Jukai": {

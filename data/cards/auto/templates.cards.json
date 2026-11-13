@@ -31711,6 +31711,73 @@
       "abilities": [
         {
           "affects": {
+            "self_only": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Artifact"
+              ]
+            }
+          },
+          "text": "Brotherhood Vertibird's power is equal to the number of artifacts you control.",
+          "toughness": {
+            "const": 4
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 2,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "keep_pt": true,
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 2"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "brotherhood_vertibird",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}",
+      "name": "Brotherhood Vertibird",
+      "oracle_text": "Flying\nBrotherhood Vertibird's power is equal to the number of artifacts you control.\nCrew 2 (Tap any number of creatures you control with total power 2 or greater: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
             "controller": "you",
             "is_token": true,
             "types": [
@@ -61873,6 +61940,155 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "add_energy"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast an artifact spell, you get {E} (an energy counter).",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "types": [
+                "Artifact"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "pay_energy": 1,
+            "tap": true
+          },
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 0
+              }
+            },
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "trample",
+                "haste"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{T}, Pay {E}: Target creature gets +1/+0 and gains trample and haste until end of turn."
+        },
+        {
+          "cost": {
+            "pay_energy": 3,
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Pay {E}{E}{E}: Draw a card."
+        },
+        {
+          "cost": {
+            "pay_energy": 5,
+            "tap": true
+          },
+          "effects": [
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard",
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "{T}, Pay {E}{E}{E}{E}{E}: Return target artifact card from your graveyard to the battlefield tapped."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "U",
+        "W"
+      ],
+      "id": "dr_madison_li",
+      "mana_cost": "{U}{R}{W}",
+      "name": "Dr. Madison Li",
+      "oracle_text": "Whenever you cast an artifact spell, you get {E} (an energy counter).\n{T}, Pay {E}: Target creature gets +1/+0 and gains trample and haste until end of turn.\n{T}, Pay {E}{E}{E}: Draw a card.\n{T}, Pay {E}{E}{E}{E}{E}: Return target artifact card from your graveyard to the battlefield tapped.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Scientist"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_player": "you",
           "affects_spells": {
             "subtypes": [
@@ -67248,6 +67464,111 @@
         "Beast"
       ],
       "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Artifact"
+            ]
+          },
+          "cost": {
+            "mana": "{1}"
+          },
+          "effect": "ward",
+          "kind": "static",
+          "text": "Artifacts you control have ward {1}."
+        },
+        {
+          "effects": [
+            {
+              "destination": "hand",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When Elder Owyn Lyons enters or dies, return target artifact card from your graveyard to your hand.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "destination": "hand",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When Elder Owyn Lyons enters or dies, return target artifact card from your graveyard to your hand.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "elder_owyn_lyons",
+      "mana_cost": "{2}{W}{U}",
+      "name": "Elder Owyn Lyons",
+      "oracle_text": "Artifacts you control have ward {1}. (Whenever an artifact you control becomes the target of a spell or ability an opponent controls, counter it unless that player pays {1}.)\nWhen Elder Owyn Lyons enters or dies, return target artifact card from your graveyard to your hand.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
