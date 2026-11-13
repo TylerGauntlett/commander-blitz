@@ -1,0 +1,34 @@
+{
+  "card": {
+    "id": "radstorm",
+    "name": "Radstorm",
+    "oracle_text": "Storm (When you cast this spell, copy it for each spell cast before it this turn.)\nProliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)",
+    "mana_cost": "{3}{U}",
+    "types": ["Instant"],
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Storm (When you cast this spell, copy it for each spell cast before it this turn.)",
+        "active_zones": ["stack"],
+        "trigger": {"event": "spell_cast", "source": "self"},
+        "effects": [
+          {
+            "op": "copy_spell",
+            "amount": {"minus": [{"spells_cast_this_turn": "all"}, {"const": 1}]}
+          }
+        ]
+      }
+    ],
+    "spell_effects": [
+      {"op": "proliferate"}
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "graveyard_size": {"0": 3},
+    "hand_size": {"0": 1},
+    "battlefield_count": 32
+  }
+}
