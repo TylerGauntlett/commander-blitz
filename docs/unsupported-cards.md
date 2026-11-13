@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**376 cards** blocked by **323** capabilities.
+**384 cards** blocked by **332** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -95,6 +95,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cant-attack-this-turn](#cant-attack-this-turn) | 1 | 2358 | op |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cant-block-filtered-group](#cant-block-filtered-group) | 1 | 7948 | op |
+| [cards-drawn-this-turn](#cards-drawn-this-turn) | 1 | 7927 | value |
 | [cards-exiled-trigger](#cards-exiled-trigger) | 1 | 1303 | trigger_event |
 | [cards-put-into-graveyard-from-library](#cards-put-into-graveyard-from-library) | 1 | 6299 | trigger_event |
 | [cards-to-graveyard-this-turn-per-player](#cards-to-graveyard-this-turn-per-player) | 1 | 2881 | value |
@@ -172,7 +173,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [face-down-counters-pt](#face-down-counters-pt) | 1 | 6774 | engine |
 | [face-down-exile-controller-may-look](#face-down-exile-controller-may-look) | 1 | 1073 | op |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
+| [first-activation-cost-reduction](#first-activation-cost-reduction) | 1 | 3874 | static_effect |
 | [first-mate-ragavan](#first-mate-ragavan) | 1 | 7016 | token |
+| [first-time-each-turn-replacement](#first-time-each-turn-replacement) | 1 | 5567 | replacement |
 | [first-x-spell-cost-reduction](#first-x-spell-cost-reduction) | 1 | 8360 | static_effect |
 | [fixed-piles-opponent-chooses](#fixed-piles-opponent-chooses) | 1 | 12369 | op |
 | [flash-if-targets](#flash-if-targets) | 1 | 1651 | engine |
@@ -203,6 +206,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [harmonize](#harmonize) | 1 | 7442 | cost |
 | [human-knight-2-2-w-artifact-entered-buff](#human-knight-2-2-w-artifact-entered-buff) | 1 | 6715 | token |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
+| [investigate](#investigate) | 1 | 5642 | trigger_event |
 | [jump-start](#jump-start) | 1 | 14777 | op |
 | [karox-bladewing](#karox-bladewing) | 1 | 8889 | token |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
@@ -212,6 +216,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [living-metal](#living-metal) | 1 | 11641 | keyword |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
 | [look-at-top-attacking](#look-at-top-attacking) | 1 | 7846 | op |
+| [look-at-top-under-your-control](#look-at-top-under-your-control) | 1 | 5042 | op |
 | [lose-the-game](#lose-the-game) | 1 | 1512 | op |
 | [lure](#lure) | 1 | 31502 | static_effect |
 | [madness](#madness) | 1 | 3016 | replacement |
@@ -250,6 +255,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [one-target-per-graveyard](#one-target-per-graveyard) | 1 | 9139 | selector |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
 | [opponents-attacked-this-turn](#opponents-attacked-this-turn) | 1 | 4544 | value |
+| [owner-cast-permission](#owner-cast-permission) | 1 | 2699 | op |
 | [pay-any-amount-of-life](#pay-any-amount-of-life) | 1 | 4322 | cost |
 | [play-cost-paid-card](#play-cost-paid-card) | 1 | 6544 | op |
 | [play-exiled-land](#play-exiled-land) | 1 | 11125 | op |
@@ -316,7 +322,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
 | [timed-spell-type-cast-lock](#timed-spell-type-cast-lock) | 1 | 2008 | op |
 | [times-attacked-this-turn](#times-attacked-this-turn) | 1 | 988 | value |
+| [tiny-token](#tiny-token) | 1 | 12436 | token |
 | [token-copy-attached](#token-copy-attached) | 1 | 11547 | op |
+| [token-creation-copy-replacement](#token-creation-copy-replacement) | 1 | 5567 | replacement |
 | [total-mana-value-selection](#total-mana-value-selection) | 1 | 4244 | op |
 | [total-mana-value-x](#total-mana-value-x) | 1 | 3066 | selector |
 | [total-toughness-cost-reduction](#total-toughness-cost-reduction) | 1 | 5188 | value |
@@ -328,6 +336,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
 | [undaunted](#undaunted) | 1 | 3405 | value |
+| [ungoad](#ungoad) | 1 | 19962 | op |
 | [wasteland-survival-guide-token](#wasteland-survival-guide-token) | 1 | 14880 | token |
 | [while-source-on-battlefield-duration](#while-source-on-battlefield-duration) | 1 | 8222 | engine |
 | [wurm-5-5-g-trample](#wurm-5-5-g-trample) | 1 | 2387 | token |
@@ -1974,6 +1983,20 @@ Blocks **1** card.
 
 </details>
 
+## cards-drawn-this-turn
+
+Blocks **1** card.
+
+- **(value)** the static magnitude leaf {"cards_drawn_this_turn": "you"} in static_value_keys, so a `buff` static's power and toughness can be the number of cards its controller has drawn this turn, recomputed continuously as cards are drawn
+  <br>Why the existing vocabulary won't do: cards_drawn_this_turn exists only in value_keys (effect amounts); static_value_keys has spells_cast_this_turn, creatures_died_this_turn and permanents_entered_this_turn but no draw tally, and a leaf outside static_value_keys is a load error. A pump trigger on `draw` would miss creatures entering later and would not be an anthem
+
+<details><summary>Cards waiting on this</summary>
+
+- **Knowledge Is Power** (rank 7927) — `knowledge_is_power`
+  - Creatures you control get +X/+X, where X is the number of cards you've drawn this turn.
+
+</details>
+
 ## cards-exiled-trigger
 
 Blocks **1** card.
@@ -3080,6 +3103,20 @@ Blocks **1** card.
 
 </details>
 
+## first-activation-cost-reduction
+
+Blocks **1** card.
+
+- **(static_effect)** an ability_cost_reduction static that discounts every activated ability (mana abilities included) whose SOURCE is an artifact, limited to the first such activation by you in EACH turn (yours and opponents'), with no targeting clause: a 'first each turn' counter over activations matched on their source permanent's types, plus the payment solver honouring the discount for artifact mana abilities
+  <br>Why the existing vocabulary won't do: ability_cost_reduction's affects_abilities knows only 'equip' and 'any', and the loader refuses 'any' without a 'targeting' clause because mana abilities are priced where the static is never read; first_during_your_turn counts only the activator's own turn, requires 'targeting', and the loader forbids 'affects' beside it because an earlier activation's source is not snapshotted in TurnLedger.targeted_activations. static_max_per_turn is a permission cap for cast-from-graveyard statics, not a discount counter
+
+<details><summary>Cards waiting on this</summary>
+
+- **Tezzeret, Betrayer of Flesh** (rank 3874) — `tezzeret_betrayer_of_flesh`
+  - The first activated ability of an artifact you activate each turn costs {2} less to activate.
+
+</details>
+
 ## first-mate-ragavan
 
 Blocks **1** card.
@@ -3091,6 +3128,20 @@ Blocks **1** card.
 
 - **Baral and Kari Zev** (rank 7016) — `baral_and_kari_zev`
   - Whenever you cast your first instant or sorcery spell each turn, you may cast a spell with lesser mana value that shares a card type with it from your hand without paying its mana cost. If you don't, create First Mate Ragavan, a legendary 2/1 red Monkey Pirate creature token. It gains haste until end of turn.
+
+</details>
+
+## first-time-each-turn-replacement
+
+Blocks **1** card.
+
+- **(replacement)** a per-turn limit on a replacement static: it applies only to the first token-creation event during each of your turns (and that event consumes it whether or not the optional replacement is taken)
+  <br>Why the existing vocabulary won't do: first_during_your_turn exists only on ability_cost_reduction (the loader refuses it elsewhere), and static_max_per_turn / max_per_turn are trigger or other-static rate limits, not a 'first time you would create tokens during your turn' window on replace_token_creation
+
+<details><summary>Cards waiting on this</summary>
+
+- **Esix, Fractal Bloom** (rank 5567) — `esix_fractal_bloom`
+  - The first time you would create one or more tokens during each of your turns, you may instead choose a creature other than Esix and create that many tokens that are copies of that creature
 
 </details>
 
@@ -3524,6 +3575,20 @@ Blocks **1** card.
 
 </details>
 
+## investigate
+
+Blocks **1** card.
+
+- **(trigger_event)** a trigger event fired when a player investigates (701.16: the investigate action itself, once per investigate instruction), with max_per_turn: 1 for 'the first time each turn', whose effect investigates again (create clue_token for you)
+  <br>Why the existing vocabulary won't do: trigger_events has no investigate event and there is no investigate op; token_created filtered to Clue tokens is not the same, since creating a Clue by any other means (e.g. a 'create a Clue token' effect or a token doubler's extra Clue) is not investigating, and one investigate doubled by a replacement must still count once
+
+<details><summary>Cards waiting on this</summary>
+
+- **Erdwal Illuminator** (rank 5642) — `erdwal_illuminator`
+  - Whenever you investigate for the first time each turn, investigate an additional time.
+
+</details>
+
 ## jump-start
 
 Blocks **1** card.
@@ -3649,6 +3714,20 @@ Blocks **1** card.
 
 - **Arthur, Marigold Knight** (rank 7846) — `arthur_marigold_knight`
   - Whenever Arthur and at least one other creature attack, look at the top six cards of your library. You may put a creature card from among them onto the battlefield tapped and attacking. Put the rest on the bottom of your library in a random order. Return that creature to its owner's hand at end of combat
+
+</details>
+
+## look-at-top-under-your-control
+
+Blocks **1** card.
+
+- **(op)** a `controller: "you"` key on `look_at_top` (as `reveal_until` and `search_library` already have) so a card a lookup of an OPPONENT's library puts onto the battlefield with `destination: "battlefield"` enters under the effect controller's control. With it the line is: cost `{tap: true, sacrifice_x: {subtypes: ["Clue"]}}`, target `{id: t1, kind: player, selector: {controller: opponent}}`, effect `look_at_top {player: {target: t1}, amount: {x: true}, destination: "battlefield", controller: "you", objects: {count: 1, optional: true, not_types: ["Land", "Instant", "Sorcery"], mana_value: {op: "<=", value: {x: true}}}, rest_to_bottom: true}`. Shared by Gonti-style and Jhoira-style 'steal from the top of their library' cards
+  <br>Why the existing vocabulary won't do: `op_look_at_top` (engine/effects/ops_cards.py) calls `_move_found` without its `controller` argument, so `entering_under` defaults to `pid`, the seat whose library was looked at -- the stolen permanent would enter under the opponent's control, the opposite of the card. `reveal_until` does forward `controller: "you"` but reveals until a match rather than a fixed top-X window. `search_library`/`search_zones` take `controller` but search the whole library, which is a tutor, not the top X. Splitting into look_at_top + `put_onto_battlefield {controller: you}` over an `as` binding needs an intermediate zone the printed card never uses and breaks `rest_to_bottom`'s 'the rest' bookkeeping. The first sentence (a `permanent_enters` trigger with `controller: you`, filter `types: [Creature]`, `is_token: false`, `exclude_self`, creating `clue_token`) and the `sacrifice_x` + `tap` cost are expressible; only the under-your-control arrival is missing
+
+<details><summary>Cards waiting on this</summary>
+
+- **Lonis, Cryptozoologist** (rank 5042) — `lonis_cryptozoologist`
+  - {T}, Sacrifice X Clues: Target opponent reveals the top X cards of their library. You may put a nonland permanent card with mana value X or less from among them onto the battlefield under your control. That player puts the rest on the bottom of their library in a random order.
 
 </details>
 
@@ -4193,6 +4272,20 @@ Blocks **1** card.
 
 - **Rose, Cutthroat Raider** (rank 4544) — `rose_cutthroat_raider`
   - Raid — At end of combat on your turn, if you attacked this turn, create a Junk token for each opponent you attacked. (It's an artifact with "{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.")
+
+</details>
+
+## owner-cast-permission
+
+Blocks **1** card.
+
+- **(op)** an `exile` play permission granted to each exiled card's OWNER rather than the effect's controller, at its normal mana cost, lasting while the card remains exiled -- e.g. a `playable_by: "owner"` key beside `playable: "while_exiled"` and `playable_cast_only: true` on the `exile` op
+  <br>Why the existing vocabulary won't do: `exile`'s `playable` always sets `playable_by = ctx.controller` (the packet notes say the permission is always the effect controller's), which would let me cast my opponent's exiled permanent; `airbend` does set `playable_by = obj.owner` with `while_exiled`, but it hard-codes an alternative cost (default {2}) in place of the card's mana cost and is not cast-only, so it is a different card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Aerial Extortionist** (rank 2699) — `aerial_extortionist`
+  - Whenever this creature enters or deals combat damage to a player, exile up to one target nonland permanent. For as long as that card remains exiled, its owner may cast it.
 
 </details>
 
@@ -5129,6 +5222,20 @@ Blocks **1** card.
 
 </details>
 
+## tiny-token
+
+Blocks **1** card.
+
+- **(token)** a token named Tiny: a legendary 2/2 green Dog Detective creature token with trample
+  <br>Why the existing vocabulary won't do: token_ids has no legendary token, no token named Tiny and no green Dog Detective; dog_1_1_w is a 1/1 white Dog and wolf_2_2_g / cat_2_2_g are the wrong subtypes, lack trample and are not legendary. The other two lines look expressible (sacrifice cost with is_token + Artifact, add_counters over subtypes Dog; deals_combat_damage_to_player trigger with a Dog filter creating food_token then clue_token)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Sophia, Dogged Detective** (rank 12436) — `sophia_dogged_detective`
+  - When Sophia enters, create Tiny, a legendary 2/2 green Dog Detective creature token with trample.
+
+</details>
+
 ## token-copy-attached
 
 Blocks **1** card.
@@ -5140,6 +5247,20 @@ Blocks **1** card.
 
 - **Three Dog, Galaxy News DJ** (rank 11547) — `three_dog_galaxy_news_dj`
   - Whenever you attack, you may pay {2} and sacrifice an Aura attached to Three Dog. When you sacrifice an Aura this way, for each other attacking creature you control, create a token that's a copy of that Aura attached to that creature.
+
+</details>
+
+## token-creation-copy-replacement
+
+Blocks **1** card.
+
+- **(replacement)** an optional replacement of token creation under your control that, instead of the printed tokens, has you choose a creature other than the source (any controller) and creates that many tokens that are copies of it (token count kept, identity replaced by a copy of the chosen creature)
+  <br>Why the existing vocabulary won't do: replace_token_creation's create_instead only substitutes fixed token ids from token_ids; it cannot name a copy of a creature chosen at replacement time, offers no 'you may' choice, and copy_permanent is an op, not something a replacement can substitute for the created tokens
+
+<details><summary>Cards waiting on this</summary>
+
+- **Esix, Fractal Bloom** (rank 5567) — `esix_fractal_bloom`
+  - The first time you would create one or more tokens during each of your turns, you may instead choose a creature other than Esix and create that many tokens that are copies of that creature
 
 </details>
 
@@ -5294,6 +5415,20 @@ Blocks **1** card.
 
 - **Curtains' Call** (rank 3405) — `curtains_call`
   - Undaunted (This spell costs {1} less to cast for each opponent.)
+
+</details>
+
+## ungoad
+
+Blocks **1** card.
+
+- **(op)** an op that ends every goad on the matched permanents ("each creature you control is no longer goaded"): clears both goaded_by and goaded_permanently_by on each object in `objects`, regardless of which player goaded it or for how long
+  <br>Why the existing vocabulary won't do: The only goad op is `goad` (duration, objects, player), which adds a goader and never removes one; lose_keyword, lose_all_abilities and remove_from_combat touch keywords, abilities and combat, not the goad sets. The first half of the sentence is expressible (begin_combat trigger with an is_your_turn condition, create_token clue_token with amount {count: {controller: you, types: [Creature], goaded: true}}), but writing it without the ungoad clause would leave the creatures goaded, so the line is blocked as a whole
+
+<details><summary>Cards waiting on this</summary>
+
+- **Serene Sleuth** (rank 19962) — `serene_sleuth`
+  - At the beginning of combat on your turn, investigate for each goaded creature you control. Then each creature you control is no longer goaded.
 
 </details>
 

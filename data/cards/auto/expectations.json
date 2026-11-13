@@ -121,6 +121,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "adrix_and_nev_twincasters": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "adult_gold_dragon": {
     "zone": "battlefield"
   },
@@ -1124,6 +1128,14 @@
     "opponent_battlefield_count": 4,
     "zone": "graveyard"
   },
+  "armed_with_proof": {
+    "battlefield_count": 35,
+    "tokens": {
+      "count": 2,
+      "id": "clue_token"
+    },
+    "zone": "battlefield"
+  },
   "armored_cancrix": {
     "zone": "battlefield"
   },
@@ -1848,6 +1860,13 @@
   },
   "benevolent_hydra": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "bennie_bracks_zoologist": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "benthic_anomaly": {
@@ -3436,6 +3455,13 @@
     },
     "zone": "battlefield"
   },
+  "chulane_teller_of_tales": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "cid_freeflier_pilot": {
     "battlefield_count": 33,
     "hand_size": {
@@ -3826,6 +3852,14 @@
   },
   "conduit_pylons": {
     "zone": "battlefield"
+  },
+  "confirm_suspicions": {
+    "battlefield_count": 35,
+    "tokens": {
+      "count": 3,
+      "id": "clue_token"
+    },
+    "zone": "graveyard"
   },
   "confiscation_coup": {
     "zone": "graveyard"
@@ -5112,6 +5146,13 @@
   "dismember": {
     "zone": "graveyard"
   },
+  "disorder_in_the_court": {
+    "tokens": {
+      "count": 20,
+      "id": "clue_token"
+    },
+    "zone": "graveyard"
+  },
   "disorienting_choice": {
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
@@ -6196,6 +6237,14 @@
   "ethercaste_knight": {
     "zone": "battlefield"
   },
+  "ethereal_investigator": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "clue_token"
+    },
+    "zone": "battlefield"
+  },
   "etherium_sculptor": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -7160,6 +7209,14 @@
   "folk_hero": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "follow_the_bodies": {
+    "battlefield_count": 33,
+    "tokens": {
+      "count": 1,
+      "id": "clue_token"
+    },
+    "zone": "graveyard"
   },
   "fomori_nomad": {
     "zone": "battlefield"
@@ -8309,6 +8366,10 @@
       "1": 40
     },
     "zone": "graveyard"
+  },
+  "graf_mole": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "grand_coliseum": {
     "zone": "battlefield"
@@ -9766,6 +9827,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "innocuous_researcher": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "inquisitor_s_flail": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -10608,6 +10673,14 @@
     "battlefield_count": 33,
     "hand_size": {
       "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "killer_service": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "food_token"
     },
     "zone": "battlefield"
   },
@@ -11795,6 +11868,10 @@
     },
     "zone": "graveyard"
   },
+  "magnifying_glass": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "magnigoth_sentry": {
     "zone": "battlefield"
   },
@@ -12781,6 +12858,13 @@
     "zone": "battlefield"
   },
   "moriok_reaver": {
+    "zone": "battlefield"
+  },
+  "morska_undersea_sleuth": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "mortality_spear": {
@@ -13827,6 +13911,13 @@
   "omnath_locus_of_the_void": {
     "zone": "battlefield"
   },
+  "on_the_trail": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "onakke_ogre": {
     "zone": "battlefield"
   },
@@ -13851,6 +13942,10 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "ongoing_investigation": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "oona_s_gatewarden": {
     "zone": "battlefield"
@@ -15395,6 +15490,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "ransom_note": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "rapacious_dragon": {
     "battlefield_count": 35,
     "tokens": {
@@ -16934,6 +17033,13 @@
     }
   },
   "selesnya_guildgate": {
+    "zone": "battlefield"
+  },
+  "selesnya_sanctuary": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 2
+    },
     "zone": "battlefield"
   },
   "selesnya_signet": {
@@ -19463,6 +19569,10 @@
   "tanglepool_bridge": {
     "zone": "battlefield"
   },
+  "tangletrove_kelp": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "tangleweave_armor": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -21194,6 +21304,10 @@
     },
     "zone": "battlefield"
   },
+  "ulvenwald_mysteries": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "ulvenwald_tracker": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -22349,6 +22463,14 @@
   },
   "wave_of_reckoning": {
     "zone": "graveyard"
+  },
+  "wavesifter": {
+    "battlefield_count": 35,
+    "tokens": {
+      "count": 2,
+      "id": "clue_token"
+    },
+    "zone": "battlefield"
   },
   "waveskimmer_aven": {
     "zone": "battlefield"

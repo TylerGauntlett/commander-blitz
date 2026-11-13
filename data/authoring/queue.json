@@ -2252,12 +2252,12 @@
     },
     "Adrix and Nev, Twincasters": {
       "edhrec_rank": 1417,
-      "gate": "template",
+      "gate": null,
       "name": "Adrix and Nev, Twincasters",
-      "reason": "no template for: Ward {2}",
+      "reason": "",
       "scryfall_id": "5a052dd2-6b5e-4f50-b481-7eee3d63a221",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Adrix and Nev, Twincasters // Adrix and Nev, Twincasters": {
@@ -13312,12 +13312,12 @@
     },
     "Armed with Proof": {
       "edhrec_rank": 11792,
-      "gate": "template",
+      "gate": null,
       "name": "Armed with Proof",
-      "reason": "no template for: When this enchantment enters, investigate twice",
+      "reason": "",
       "scryfall_id": "6e75470f-fe57-4b6e-a76b-5daf9d9caf0b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Armguard Familiar": {
@@ -23902,12 +23902,12 @@
     },
     "Bennie Bracks, Zoologist": {
       "edhrec_rank": 1825,
-      "gate": "template",
+      "gate": null,
       "name": "Bennie Bracks, Zoologist",
-      "reason": "no template for: Convoke",
+      "reason": "",
       "scryfall_id": "90645549-20f1-4fe9-8363-7f67c20fa3b6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Benthic Anomaly": {
@@ -46452,12 +46452,12 @@
     },
     "Chulane, Teller of Tales": {
       "edhrec_rank": 2540,
-      "gate": "template",
+      "gate": null,
       "name": "Chulane, Teller of Tales",
-      "reason": "no template for: Whenever you cast a creature spell, draw a card, then you may put a land card from your ha",
+      "reason": "",
       "scryfall_id": "d1499a4b-1af1-4913-8e26-57d0707264db",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chulane, Teller of Tales // Chulane, Teller of Tales": {
@@ -51642,12 +51642,12 @@
     },
     "Confirm Suspicions": {
       "edhrec_rank": 9809,
-      "gate": "template",
+      "gate": null,
       "name": "Confirm Suspicions",
-      "reason": "no template for: Counter target spell",
+      "reason": "",
       "scryfall_id": "1d1463af-8f22-4771-af19-3799ffe706b8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Confiscate": {
@@ -70062,12 +70062,12 @@
     },
     "Disorder in the Court": {
       "edhrec_rank": 5354,
-      "gate": "template",
+      "gate": null,
       "name": "Disorder in the Court",
-      "reason": "no template for: Exile X target creatures, then investigate X times. Return the exiled cards to the battlef",
+      "reason": "",
       "scryfall_id": "07277df0-d306-4c3a-baa7-d7a49332c7dd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Disorient": {
@@ -86802,12 +86802,12 @@
     },
     "Ethereal Investigator": {
       "edhrec_rank": 4036,
-      "gate": "template",
+      "gate": null,
       "name": "Ethereal Investigator",
-      "reason": "no template for: When this creature enters, investigate X times, where X is the number of opponents you hav",
+      "reason": "",
       "scryfall_id": "c675428b-2dc4-408d-9632-81c1a700090f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ethereal Usher": {
@@ -99472,12 +99472,12 @@
     },
     "Follow the Bodies": {
       "edhrec_rank": 12358,
-      "gate": "template",
+      "gate": null,
       "name": "Follow the Bodies",
-      "reason": "no template for: Gravestorm",
+      "reason": "",
       "scryfall_id": "387f3f54-d26c-4b2c-ab8b-8bdba0b11b1a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Follow the Lumarets": {
@@ -115702,12 +115702,12 @@
     },
     "Graf Mole": {
       "edhrec_rank": 14782,
-      "gate": "template",
+      "gate": null,
       "name": "Graf Mole",
-      "reason": "no template for: Whenever you sacrifice a Clue, you gain 3 life",
+      "reason": "",
       "scryfall_id": "70e3e14e-796b-4592-9eb0-758d30ba3a1c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Graf Rats": {
@@ -137172,12 +137172,12 @@
     },
     "Innocuous Researcher": {
       "edhrec_rank": 13046,
-      "gate": "template",
+      "gate": null,
       "name": "Innocuous Researcher",
-      "reason": "no template for: Parley — Whenever this creature attacks, each player reveals the top card of their library",
+      "reason": "",
       "scryfall_id": "32e2a1e7-0f26-4f5e-8206-928c2bf12f12",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Innovative Commons": {
@@ -148732,12 +148732,12 @@
     },
     "Killer Service": {
       "edhrec_rank": 6521,
-      "gate": "template",
+      "gate": null,
       "name": "Killer Service",
-      "reason": "no template for: When this enchantment enters, create a number of Food tokens equal to the number of oppone",
+      "reason": "",
       "scryfall_id": "b86b0177-0533-4b5a-9da7-1e11d398d828",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Killer Whale": {
@@ -165002,12 +165002,12 @@
     },
     "Magnifying Glass": {
       "edhrec_rank": 9226,
-      "gate": "template",
+      "gate": null,
       "name": "Magnifying Glass",
-      "reason": "no template for: {4}, {T}: Investigate",
+      "reason": "",
       "scryfall_id": "c606a71f-8fb0-486b-955f-727ebf436946",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Magnigoth Sentry": {
@@ -179532,12 +179532,12 @@
     },
     "Morska, Undersea Sleuth": {
       "edhrec_rank": 8604,
-      "gate": "template",
+      "gate": null,
       "name": "Morska, Undersea Sleuth",
-      "reason": "no template for: You have no maximum hand size",
+      "reason": "",
       "scryfall_id": "87a9e169-0556-4354-bf9d-76f6a5188118",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mortal Combat": {
@@ -192692,12 +192692,12 @@
     },
     "On the Trail": {
       "edhrec_rank": 4662,
-      "gate": "template",
+      "gate": null,
       "name": "On the Trail",
-      "reason": "no template for: Whenever you draw your second card each turn, you may put a land card from your hand onto ",
+      "reason": "",
       "scryfall_id": "0d36eeb4-7c11-4c55-848a-182351e5e3eb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Onakke Javelineer": {
@@ -192972,12 +192972,12 @@
     },
     "Ongoing Investigation": {
       "edhrec_rank": 9893,
-      "gate": "template",
+      "gate": null,
       "name": "Ongoing Investigation",
-      "reason": "no template for: Whenever one or more creatures you control deal combat damage to a player, investigate",
+      "reason": "",
       "scryfall_id": "ff084438-2e70-41bc-a208-30ab16c026c1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Oni Possession": {
@@ -215332,12 +215332,12 @@
     },
     "Ransom Note": {
       "edhrec_rank": 11082,
-      "gate": "template",
+      "gate": null,
       "name": "Ransom Note",
-      "reason": "no template for: {2}, Sacrifice this artifact: Choose one —",
+      "reason": "",
       "scryfall_id": "05f9437a-50c2-415f-afa9-39f64f3aa3da",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rapacious Dragon": {
@@ -239652,12 +239652,12 @@
     },
     "Selesnya Sanctuary": {
       "edhrec_rank": 564,
-      "gate": "template",
+      "gate": null,
       "name": "Selesnya Sanctuary",
-      "reason": "no template for: When this land enters, return a land you control to its owner's hand",
+      "reason": "",
       "scryfall_id": "fdc53c6a-8e28-4314-9bcf-b31b6c6f56d7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Selesnya Sentry": {
@@ -275132,12 +275132,12 @@
     },
     "Tangletrove Kelp": {
       "edhrec_rank": 5520,
-      "gate": "template",
+      "gate": null,
       "name": "Tangletrove Kelp",
-      "reason": "no template for: Ward {2}",
+      "reason": "",
       "scryfall_id": "2bce10ad-5b6b-4347-9786-51b177366046",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tanglewalker": {
@@ -296282,12 +296282,12 @@
     },
     "Ulvenwald Mysteries": {
       "edhrec_rank": 7528,
-      "gate": "template",
+      "gate": null,
       "name": "Ulvenwald Mysteries",
-      "reason": "no template for: Whenever a nontoken creature you control dies, investigate",
+      "reason": "",
       "scryfall_id": "88a7bf3a-9c87-4937-a6e1-dfbc589c8e35",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ulvenwald Mystics // Ulvenwald Primordials": {
@@ -312222,12 +312222,12 @@
     },
     "Wavesifter": {
       "edhrec_rank": 10723,
-      "gate": "template",
+      "gate": null,
       "name": "Wavesifter",
-      "reason": "no template for: When this creature enters, investigate twice",
+      "reason": "",
       "scryfall_id": "7ca787d2-eee4-4474-9db7-e8efa161ceec",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Waveskimmer Aven": {
