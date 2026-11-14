@@ -774,6 +774,10 @@ class TriggerSpec:
     #: counters on this creature" -- the event's ``put_by`` (the putter,
     #: 122.6a) must be this ability's controller.  Exemplar of Light.
     put_by: str | None = None
+    #: ``counter_removed`` only: "whenever **you** remove a time counter from
+    #: this card" -- the event's ``removed_by`` (the remover) must be this
+    #: ability's controller.  Watcher of Hours.
+    removed_by: str | None = None
     #: ``ability_activated`` only: "…**if it isn't a mana ability**".  ``False``
     #: means only non-mana activations fire it, ``True`` only mana ones, and
     #: ``None`` is every activation.

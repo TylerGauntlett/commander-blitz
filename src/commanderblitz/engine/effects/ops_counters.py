@@ -417,7 +417,7 @@ def op_remove_counters(ctx: EffectContext, spec: Mapping[str, Any]):
                 continue
             for kind, there in list(obj.counters.items()):
                 if there > 0:
-                    removed += remove_counters(ctx.state, oid, kind, there)
+                    removed += remove_counters(ctx.state, oid, kind, there, by=ctx.controller)
     elif spec.get("any_kind"):
         most = (
             max(0, evaluate_value(ctx, spec["amount"])) if "amount" in spec else None
@@ -438,7 +438,7 @@ def op_remove_counters(ctx: EffectContext, spec: Mapping[str, Any]):
         kind = str(spec.get("counter", "+1/+1"))
         oids = yield from choose_objects(ctx, spec.get("objects"), "Remove counters from")
         for oid in oids:
-            removed += remove_counters(ctx.state, oid, kind, amount)
+            removed += remove_counters(ctx.state, oid, kind, amount, by=ctx.controller)
     if name := spec.get("as"):
         ctx.bindings[str(name)] = removed
 

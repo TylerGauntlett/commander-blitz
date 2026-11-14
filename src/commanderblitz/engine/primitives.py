@@ -1423,7 +1423,9 @@ def add_counters(
     return amount
 
 
-def remove_counters(state: GameState, oid: int, kind: str, amount: int) -> int:
+def remove_counters(
+    state: GameState, oid: int, kind: str, amount: int, *, by: int | None = None
+) -> int:
     """Take up to ``amount`` counters of ``kind`` off a permanent, and return how many.
 
     The removal funnel for a permanent's counters -- an effect, a cost and
@@ -1432,6 +1434,11 @@ def remove_counters(state: GameState, oid: int, kind: str, amount: int) -> int:
     the trigger bus, so "when the last time counter is removed from it"
     (`last_counter_removed`) hears every road to zero; nothing fires when there
     was none to take.
+
+    ``by`` is the player removing them, for "whenever **you** remove a time
+    counter" (Watcher of Hours, `removed_by` on `counter_removed`): the
+    controller of the removing effect, or suspend's suspending player;
+    omitted, it is the object's own controller, which is who pays a cost.
     """
     obj = state.objects.get(oid)
     if obj is None:
@@ -1448,6 +1455,7 @@ def remove_counters(state: GameState, oid: int, kind: str, amount: int) -> int:
             counter=kind,
             amount=taken,
             total=obj.counter(kind),
+            removed_by=obj.controller if by is None else by,
         )
     return taken
 

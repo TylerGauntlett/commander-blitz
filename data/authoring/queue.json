@@ -311692,12 +311692,12 @@
     },
     "Watcher of Hours": {
       "edhrec_rank": 10358,
-      "gate": "template",
+      "gate": null,
       "name": "Watcher of Hours",
-      "reason": "no template for: Flying, ward {3}",
+      "reason": "",
       "scryfall_id": "d827fc3c-bc86-4ee9-9db9-461cb0276f6b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Watcher of the Roost": {

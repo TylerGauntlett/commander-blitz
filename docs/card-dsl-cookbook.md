@@ -4160,6 +4160,40 @@ strictly: the printed N must be the card's.
 `last_counter_removed` is an ordinary trigger as well, for any printed "when
 the last <kind> counter is removed from it"; it needs `counter`.
 
+## "Whenever you remove a time counter" — `counter_removed`
+
+```jsonc
+// Watcher of Hours: "Whenever you remove a time counter from this card while
+// it's exiled, surveil 1."
+{ "kind": "triggered", "active_zones": ["exile"],
+  "trigger": { "event": "counter_removed", "source": "self",
+               "counter": "time", "removed_by": "you" },
+  "effects": [ { "op": "surveil", "amount": { "const": 1 } } ] }
+```
+
+`counter_removed` hears counters coming off an object, by any road:
+`primitives.remove_counters` is the one funnel, and an effect, a cost,
+vanishing's tick and suspend's upkeep tick all come through it. It is heard
+**once per counter** (603.2c): a removal of three is three firings, each with
+`amount` 1. A player's counters (energy, poison) carry no object and are not
+heard.
+
+- `counter` names the kind. Without it every kind fires.
+- `removed_by: "you"` is "whenever **you** remove". The event's `removed_by` is
+  the controller of the removing effect, the payer of a cost, or the suspending
+  player for suspend's tick, and otherwise the object's own controller; the
+  clause requires it to be the ability's controller, so an opponent's effect
+  taking counters off your card does not fire it. `"you"` is the only value,
+  and the loader refuses it on any other event.
+- "While it's exiled" is `active_zones: ["exile"]` with `source: "self"`.
+
+On suspend's last tick the trigger is queued before `suspend.cast_for_free`
+puts the card on the stack, and is stacked above that spell, so the surveil
+resolves first.
+
+`last_counter_removed` is the near miss: it fires only on the removal that
+leaves none of the kind.
+
 ## Fuse — the case where the answer is *both* faces
 
 ```jsonc

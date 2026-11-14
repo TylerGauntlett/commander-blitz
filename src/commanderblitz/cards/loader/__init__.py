@@ -3566,14 +3566,16 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
 
         if model.trigger.counter is not None and model.trigger.event not in (
             "counter_placed",
+            "counter_removed",
             "last_counter_removed",
         ):
             # Same reasoning as `not_cause` above: only the counter events carry
             # a counter kind, so accepting it elsewhere would look like a filter
             # and be one that never applies.
             raise DslError(
-                f"{where}: 'counter' only means anything on a counter_placed or "
-                f"last_counter_removed trigger, not on {model.trigger.event!r}"
+                f"{where}: 'counter' only means anything on a counter_placed, "
+                f"counter_removed or last_counter_removed trigger, not on "
+                f"{model.trigger.event!r}"
             )
         if model.trigger.event == "last_counter_removed" and model.trigger.counter is None:
             # "The last" is the last of one kind: without it the trigger would
@@ -3589,6 +3591,14 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             raise DslError(
                 f"{where}: 'put_by' on a trigger only means anything on "
                 f"counter_placed, not on {model.trigger.event!r}"
+            )
+        if model.trigger.removed_by is not None and model.trigger.event != "counter_removed":
+            # Only an object's COUNTER_REMOVED records who removed something;
+            # on any other event the clause would read an absent remover and
+            # never fire.
+            raise DslError(
+                f"{where}: 'removed_by' on a trigger only means anything on "
+                f"counter_removed, not on {model.trigger.event!r}"
             )
         if model.trigger.counter is not None:
             # "Whenever a vigilance counter is put on this creature." The filter
@@ -3847,6 +3857,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             cause_controller=model.trigger.cause_controller,
             counter=model.trigger.counter,
             put_by=model.trigger.put_by,
+            removed_by=model.trigger.removed_by,
             mana_ability=model.trigger.mana_ability,
             targeted_by=model.trigger.targeted_by,
             nth=model.trigger.nth,

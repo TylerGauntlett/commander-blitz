@@ -5637,8 +5637,9 @@ and the filter keys are
     "recheck": false,                // makes `condition` a "while": checked as it triggers only
     "defending": "you",              // attack and damage triggers: whom it hit
     "not_cause": "kodama_of_the_east_tree", // enters triggers only: a loop guard
-    "counter": "+1/+1",              // `counter_placed` only: which kind
+    "counter": "+1/+1",              // counter triggers only: which kind
     "put_by": "you",                 // `counter_placed` only: YOU put them
+    "removed_by": "you",             // `counter_removed` only: YOU removed them
     "mana_ability": false,           // `ability_activated` only: exclude mana abilities
     "targeted_by": "spell",          // `becomes_target` only: a spell, an ability, or an activated ability
     "to_zones": ["graveyard", "exile"], // `leaves_battlefield` only: where it went
@@ -5808,8 +5809,10 @@ false`, because only the active player declares attackers (508.1).
 trigger fires on *every* kind — and the pool places `charge` and `slumber`
 counters, so Fathom Mage's "whenever a +1/+1 counter is put on this creature"
 would also draw off Arixmethes waking up. The kind is also copied into `bindings`
-beside `amount`, so effects can read what fired them. Rejected on any other event,
-for the same reason as `defending`.
+beside `amount`, so effects can read what fired them. It also names the kind on
+`counter_removed` and `last_counter_removed` (see the cookbook's
+["Whenever you remove a time counter"](card-dsl-cookbook.md#whenever-you-remove-a-time-counter--counter_removed)).
+Rejected on any other event, for the same reason as `defending`.
 
 `put_by: "you"` is "whenever **you** put one or more +1/+1 counters on this
 creature" -- Exemplar of Light. `controller` on `counter_placed` reads the

@@ -522,6 +522,12 @@ class TriggerModel(BaseModel):
     #: the recipient's controller, so an opponent's counter on your creature
     #: passes it. Mirrors ``put_by`` on the ``replace_counters`` static.
     put_by: Literal["you"] | None = None
+    #: For ``counter_removed``: "whenever **you** remove a time counter from
+    #: this card" (Watcher of Hours). The player who removed the counters --
+    #: the controller of the removing effect, the payer of a cost, the
+    #: suspending player for suspend's upkeep tick -- must be this ability's
+    #: controller.
+    removed_by: Literal["you"] | None = None
     #: For ``ability_activated``: "…if it isn't a mana ability".  ``false``
     #: excludes mana abilities, ``true`` keeps only them, omitted is both.
     #: Both activation paths tag the event, so the two stop being

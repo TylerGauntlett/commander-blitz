@@ -253,6 +253,18 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: only when the tick took the last counter, and as part of the tick rather
     #: than as a trigger of its own.
     "last_counter_removed": EventType.COUNTER_REMOVED,
+    #: "Whenever you remove a time counter from this card while it's exiled"
+    #: -- Watcher of Hours. Counters coming off an object, by anything: an
+    #: effect, a cost, vanishing's tick and suspend's upkeep tick all come
+    #: through `primitives.remove_counters`. Heard **once per counter** (603.2c:
+    #: one removal of three is three occurrences of "a counter is removed"),
+    #: each firing with `amount` 1; `counter` names the kind and `removed_by:
+    #: "you"` requires the remover to be this ability's controller. A player's
+    #: counters carry no `oid` and are not heard.
+    #:
+    #: `last_counter_removed` is the near miss: it hears only the removal that
+    #: leaves none.
+    "counter_removed": EventType.COUNTER_REMOVED,
     "creature_dies": EventType.DIES,
     #: "Whenever you **sacrifice** a token…" -- Mirkwood Bats. Not `dies`: a
     #: sacrifice is one specific way of leaving, and the printed line is about
@@ -608,6 +620,7 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         # The permanent the counter came off, so `source: "self"` is "from
         # *this* permanent".
         "last_counter_removed",
+        "counter_removed",
         "land_played",
         # The merged permanent, so `source: "self"` scopes the trigger to the
         # creature that mutated rather than to every mutation on the table.
@@ -850,9 +863,27 @@ def collect(state: GameState, event: GameEvent) -> None:
         spec = ability.trigger
         if spec is None:
             continue
-        for heard in _per_player_events(state, obj, spec, event):
+        for heard in _per_counter_events(spec, _per_player_events(state, obj, spec, event)):
             _collect_one(state, obj, ability, heard, doubled, doublers)
     _arm_delayed(state, event)
+
+
+def _per_counter_events(spec: TriggerSpec, events: list[GameEvent]) -> list[GameEvent]:
+    """A `counter_removed` trigger hears one copy per counter that came off.
+
+    "Whenever you remove **a** time counter" is one occurrence per counter
+    (603.2c), and `remove_counters` fires one event per removal however many it
+    takes, so a removal of N is handed over as N copies, each with `amount` 1.
+    Copies rather than more fired events, `_per_player_events`' reason: a second
+    event would fire every other listener again.
+    """
+    if spec.event != "counter_removed":
+        return events
+    heard: list[GameEvent] = []
+    for event in events:
+        amount = int(event.data.get("amount") or 0)
+        heard.extend(replace(event, data={**event.data, "amount": 1}) for _ in range(amount))
+    return heard
 
 
 def _per_player_events(
@@ -1619,6 +1650,19 @@ def _matches(
         event.data.get("oid") is None or event.data.get("total") != 0
     ):
         return False
+
+    # "Whenever you remove a time counter **from this card**": an object's
+    # counters, never a player's, and "you" is the remover rather than the
+    # object's controller -- an opponent's effect taking counters off your
+    # exiled card fails it. An emission with no remover fails too.
+    if spec.event == "counter_removed":
+        if event.data.get("oid") is None:
+            return False
+        if spec.removed_by == "you" and (
+            event.data.get("removed_by") is None
+            or event.data.get("removed_by") != obj.controller
+        ):
+            return False
 
     # "Whenever **you** put one or more +1/+1 counters on this creature" --
     # Exemplar of Light. The putter, not the recipient's controller: the

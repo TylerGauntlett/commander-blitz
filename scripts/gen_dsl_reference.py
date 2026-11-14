@@ -822,6 +822,8 @@ TRIGGER_EVENT_DESCRIPTIONS: dict[str, Entry] = {
                  '"Whenever a creature you control connives"'),
     "counter_placed": ("Counters are put on a permanent or player; with `counter` and `nth`, the placement that puts the Nth counter of that kind on it.",
                        None),
+    "counter_removed": ("Counters are removed from a permanent or card, once per counter; `counter` names the kind and `removed_by: \"you\"` requires you to be the remover.",
+                        '"Whenever you remove a time counter" — `counter_removed`'),
     "creature_dies": ("A creature dies.", None),
     "creatures_attack_player": ("One or more creatures attack a player.",
                                 '"Whenever one or more creatures attack one of your opponents"'),

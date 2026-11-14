@@ -22717,6 +22717,9 @@
   "watcher_in_the_mist": {
     "zone": "battlefield"
   },
+  "watcher_of_hours": {
+    "zone": "battlefield"
+  },
   "watcher_of_the_wayside": {
     "battlefield_count": 33,
     "life": {

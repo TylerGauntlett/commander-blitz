@@ -1774,6 +1774,8 @@ _STRIVE_LINE = re.compile(
 #: "Impending 4—{2}{W}{W} (…)": the count, then the price after the em dash
 #: (or a hyphen, for text typed without one).
 _IMPENDING_LINE = re.compile(r"^impending (\d+)\s*[—-]\s*(\{.*)$", re.IGNORECASE)
+#: "Suspend 6—{1}{U} (…)": impending's shape, the count then the price.
+_SUSPEND_LINE = re.compile(r"^suspend (\d+)\s*[—-]\s*(\{.*)$", re.IGNORECASE)
 #: "Vanishing 3 (…)": the count, with or without its reminder text.
 _VANISHING_LINE = re.compile(r"^vanishing (\d+)(?:\s*\(.*\))?$", re.IGNORECASE)
 
@@ -2363,6 +2365,18 @@ def _covered(card: CardDef, line: str) -> bool:
         if card.impending is None:
             return False
         cost, counters = card.impending
+        return int(match.group(1)) == counters and _declares_printed_cost(match.group(2), cost)
+
+    # "Suspend 6—{1}{U} (Rather than cast this card from your hand, …)" is the
+    # card-level `suspend` field, read by the special action and the upkeep
+    # tick in `suspend`, so a permanent card with suspend has no ability to
+    # claim it (an instant or sorcery's `spell_effects` claim it wholesale).
+    # Impending's shape and strictness: the count and the price must both be
+    # the printed ones, and the line stays residual on a card without it.
+    if (match := _SUSPEND_LINE.match(stripped)) is not None:
+        if card.suspend is None:
+            return False
+        cost, counters = card.suspend
         return int(match.group(1)) == counters and _declares_printed_cost(match.group(2), cost)
 
     # "Vanishing 3 (This creature enters with three time counters on it…)" is

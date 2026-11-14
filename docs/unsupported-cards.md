@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**380 cards** blocked by **327** capabilities.
+**379 cards** blocked by **326** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -316,7 +316,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [targets-share-characteristic](#targets-share-characteristic) | 1 | 4421 | selector |
 | [teammates](#teammates) | 1 | 26785 | selector |
 | [this-combat-duration](#this-combat-duration) | 1 | 9126 | op |
-| [time-counter-removed-trigger](#time-counter-removed-trigger) | 1 | 10358 | trigger_event |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
 | [timed-spell-type-cast-lock](#timed-spell-type-cast-lock) | 1 | 2008 | op |
 | [times-attacked-this-turn](#times-attacked-this-turn) | 1 | 988 | value |
@@ -5131,20 +5130,6 @@ Blocks **1** card.
 
 - **Suppressor Skyguard** (rank 9126) — `suppressor_skyguard`
   - Whenever a player attacks you, if that player has another opponent who isn't being attacked, prevent all combat damage that would be dealt to you this combat.
-
-</details>
-
-## time-counter-removed-trigger
-
-Blocks **1** card.
-
-- **(trigger_event)** a trigger event that fires each time a time counter is removed from this card while it is in exile (every suspend upkeep tick, the last one included), heard by an ability with active_zones ["exile"] and controlled by the card's owner; the engine already emits TIME_COUNTER_REMOVED from suspend.py, but no DSL trigger event exposes it
-  <br>Why the existing vocabulary won't do: trigger_events has `last_counter_removed`, which fires only when the final counter goes, not on each removal, and `counter_placed`, which is the opposite direction; there is no `counter_removed` / `time_counter_removed` event in reference, so a per-tick surveil from exile cannot be said
-
-<details><summary>Cards waiting on this</summary>
-
-- **Watcher of Hours** (rank 10358) — `watcher_of_hours`
-  - Whenever you remove a time counter from this card while it's exiled, surveil 1.
 
 </details>
 

@@ -15,7 +15,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 74 |
 | [Conditions](#conditions) | 34 |
-| [Trigger events](#trigger-events) | 57 |
+| [Trigger events](#trigger-events) | 58 |
 | [Trigger filters](#trigger-filters) | 37 |
 | [Static effects](#static-effects) | 97 |
 | [Player-wide statics](#player-wide-statics) | 47 |
@@ -463,6 +463,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `chapter` | `chapter_reached` | A Saga reaches a chapter (supplied by rule, never written). | [Sagas](card-dsl-cookbook.md#sagas) |
 | `connives` | `connived` | A permanent connives, once per connive after it completes; the subject is the conniver. | ["Whenever a creature you control connives"](card-dsl-cookbook.md#whenever-a-creature-you-control-connives) |
 | `counter_placed` | `counter_placed` | Counters are put on a permanent or player; with `counter` and `nth`, the placement that puts the Nth counter of that kind on it. | [Triggers](card-dsl.md#triggers) |
+| `counter_removed` | `counter_removed` | Counters are removed from a permanent or card, once per counter; `counter` names the kind and `removed_by: "you"` requires you to be the remover. | ["Whenever you remove a time counter" — counter_removed](card-dsl-cookbook.md#whenever-you-remove-a-time-counter--counter_removed) |
 | `creature_dies` | `dies` | A creature dies. | [Triggers](card-dsl.md#triggers) |
 | `creatures_attack_player` | `creatures_attacked_player` | One or more creatures attack a player. | ["Whenever one or more creatures attack one of your opponents"](card-dsl-cookbook.md#whenever-one-or-more-creatures-attack-one-of-your-opponents) |
 | `creatures_deal_combat_damage` | `creatures_dealt_combat_damage` | One or more creatures deal combat damage to one or more players. | ["One or more creatures … one or more players"](card-dsl-cookbook.md#one-or-more-creatures--one-or-more-players) |
@@ -1186,7 +1187,7 @@ Every `EventType` the engine emits, and which trigger events listen to it. An ev
 | `connived` | `connives` |  | [Triggers](card-dsl.md#triggers) |
 | `control_changed` |  |  | [Triggers](card-dsl.md#triggers) |
 | `counter_placed` | `counter_placed` |  | [Triggers](card-dsl.md#triggers) |
-| `counter_removed` | `last_counter_removed` |  | [Triggers](card-dsl.md#triggers) |
+| `counter_removed` | `last_counter_removed` `counter_removed` |  | [Triggers](card-dsl.md#triggers) |
 | `creature_dealt_combat_damage` | `deals_combat_damage` |  | [Triggers](card-dsl.md#triggers) |
 | `creatures_attacked_player` | `creatures_attack_player` |  | [Triggers](card-dsl.md#triggers) |
 | `creatures_dealt_combat_damage` | `creatures_deal_combat_damage` |  | [Triggers](card-dsl.md#triggers) |
