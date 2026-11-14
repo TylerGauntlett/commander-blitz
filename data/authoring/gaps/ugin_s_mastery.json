@@ -1,0 +1,16 @@
+{
+  "card_id": "ugin_s_mastery",
+  "name": "Ugin's Mastery",
+  "oracle_text": "Whenever you cast a colorless creature spell, manifest the top card of your library. (Put it onto the battlefield face down as a 2/2 creature. Turn it face up any time for its mana cost if it's a creature card.)\nWhenever you attack with creatures with total power 6 or greater, you may turn a face-down creature you control face up.",
+  "blocked_sentences": [
+    "Whenever you attack with creatures with total power 6 or greater, you may turn a face-down creature you control face up."
+  ],
+  "needs": [{
+    "capability": "turn_face_up",
+    "kind": "op",
+    "what": "an effect op that turns a chosen face-down permanent (selector, e.g. {controller: you, face_down: true, types: [Creature]}) face up without paying any cost, revealing its front face and firing turned_face_up; it must work for any face-down permanent, including a manifested noncreature card (701.40/708.8 effect-driven turn face up)",
+    "why_existing_wont_do": "The engine has the turned_face_up trigger event, the face_down selector key and the manifest/manifest_dread ops, but no op that turns a permanent face up; transform flips double-faced cards, not face-down ones, and the only face-up route is the special action paying the morph/manifest cost. The trigger half is likely expressible as you_attack with a condition on attack_power_this_combat >= 6"
+  }],
+  "closest_existing": ["manifest", "transform", "turned_face_up"],
+  "confidence": "high"
+}

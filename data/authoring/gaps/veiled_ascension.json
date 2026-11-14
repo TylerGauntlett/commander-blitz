@@ -1,0 +1,14 @@
+{
+  "card_id": "veiled_ascension",
+  "name": "Veiled Ascension",
+  "oracle_text": "When this enchantment enters, put a flying counter on each face-down creature you control.\nFace-down creatures you control enter with a flying counter on them.\nAt the beginning of your upkeep, you may cloak the top card of your library.",
+  "blocked_sentences": ["Face-down creatures you control enter with a flying counter on them."],
+  "needs": [{
+    "capability": "face_down_static_filter",
+    "kind": "static_effect",
+    "what": "`face_down: true` accepted in a static's `affects` filter (STATIC_AFFECTS_FILTER_KEYS), so the `enters_with_additional_counters` static can be written as {\"affects\": {\"controller\": \"you\", \"types\": [\"Creature\"], \"face_down\": true}, \"counter\": \"flying\", \"amount\": 1}; the arrival must be matched after zones._enter_battlefield marks it face down (708.2), i.e. the static's `_matches` must see obj.face_down set for a morph/manifest/cloak arrival",
+    "why_existing_wont_do": "`enters_with_additional_counters` is the right static (614.1c arrival counters, a flying counter is a 122.1c keyword counter), but `face_down` is only a selector and trigger-filter key; the loader refuses it in a static `affects` (cards/loader/__init__.py checks STATIC_AFFECTS_FILTER_KEYS, which lacks it). Without it the static would put flying counters on every creature you control. A `permanent_enters` trigger filtered on face_down running add_counters is respondable and lets the creature enter without the counter, so it is a different card. The other two lines are expressible (self_enters add_counters with objects face_down true; upkeep may + manifest with cloak: true)"
+  }],
+  "closest_existing": ["enters_with_additional_counters", "manifest"],
+  "confidence": "high"
+}
