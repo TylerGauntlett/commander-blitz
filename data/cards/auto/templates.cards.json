@@ -161702,6 +161702,76 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "lose_life",
+              "player": {
+                "binding": "defender"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Afflict 3 (Whenever this creature becomes blocked, defending player loses 3 life.)",
+          "trigger": {
+            "controller": "you",
+            "event": "becomes_blocked",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "life_lost_this_turn": "opponent"
+              },
+              "effects": [
+                {
+                  "mana": "{R}",
+                  "op": "add_mana"
+                }
+              ],
+              "op": "repeat"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each of your postcombat main phases, add {R} for each 1 life your opponents have lost this turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "postcombat_main"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "neheb_the_eternal",
+      "mana_cost": "{3}{R}{R}",
+      "name": "Neheb, the Eternal",
+      "oracle_text": "Afflict 3 (Whenever this creature becomes blocked, defending player loses 3 life.)\nAt the beginning of each of your postcombat main phases, add {R} for each 1 life your opponents have lost this turn.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Minotaur",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -197761,6 +197831,57 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "controller": "you",
+                    "count": 1,
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "hand"
+                  },
+                  "op": "put_onto_battlefield"
+                }
+              ],
+              "op": "may",
+              "prompt": "Put a creature card from your hand onto the battlefield?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature is turned face up, you may put a creature card from your hand onto the battlefield.",
+          "trigger": {
+            "event": "turned_face_up",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "root_elemental",
+      "mana_cost": "{4}{G}{G}",
+      "morph": "{5}{G}{G}",
+      "name": "Root Elemental",
+      "oracle_text": "Morph {5}{G}{G} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)\nWhen this creature is turned face up, you may put a creature card from your hand onto the battlefield.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Elemental"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -201485,6 +201606,65 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 2
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "binding": "subject",
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another permanent you control is turned face up, if it's a creature, put two +1/+1 counters on it.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "binding": "subject",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "controller": "you",
+            "event": "turned_face_up",
+            "filter": {
+              "exclude_self": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "salt_road_ambushers",
+      "mana_cost": "{3}{G}",
+      "morph": "{3}{G}{G}",
+      "morph_counter": true,
+      "name": "Salt Road Ambushers",
+      "oracle_text": "Whenever another permanent you control is turned face up, if it's a creature, put two +1/+1 counters on it.\nMegamorph {3}{G}{G} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its megamorph cost and put a +1/+1 counter on it.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Dog",
+        "Warrior"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "duration": "until_end_of_turn",
               "objects": {
                 "controller": "you",
@@ -202302,6 +202482,97 @@
       "subtypes": [
         "Human",
         "Shaman"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "tapped": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "deathtouch"
+          ],
+          "kind": "static",
+          "text": "Other tapped creatures you control have deathtouch."
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "tapped": false,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "hexproof"
+          ],
+          "kind": "static",
+          "text": "Other untapped creatures you control have hexproof."
+        },
+        {
+          "cost": {
+            "mana": "{1}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "untap"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Land"
+                ],
+                "controller": "you",
+                "exclude_self": true,
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}, {T}: Untap another target creature or land you control."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "saryth_the_viper_s_fang",
+      "mana_cost": "{2}{G}{G}",
+      "name": "Saryth, the Viper's Fang",
+      "oracle_text": "Other tapped creatures you control have deathtouch.\nOther untapped creatures you control have hexproof.\n{1}, {T}: Untap another target creature or land you control.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warlock"
       ],
       "supertypes": [
         "Legendary"
@@ -248611,6 +248882,65 @@
         "Legendary"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "any",
+            "subtypes": [
+              "Saproling"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "All Saprolings get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "create_token",
+              "token": "saproling_1_1_g"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature is turned face up, create four 1/1 green Saproling creature tokens.",
+          "trigger": {
+            "event": "turned_face_up",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "thelonite_hermit",
+      "mana_cost": "{3}{G}",
+      "morph": "{3}{G}{G}",
+      "name": "Thelonite Hermit",
+      "oracle_text": "All Saprolings get +1/+1.\nMorph {3}{G}{G} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)\nWhen this creature is turned face up, create four 1/1 green Saproling creature tokens.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Shaman"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]

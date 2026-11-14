@@ -1,0 +1,18 @@
+{
+  "card_id": "true_identity",
+  "name": "True Identity",
+  "oracle_text": "Whenever this enchantment or another permanent you control is turned face up, scry 1, then draw a card. This ability triggers only once each turn.\nDisguise {W} (You may cast this card face down for {3} as a 2/2 creature with ward {2}. Turn it face up any time for its disguise cost.)",
+  "blocked_sentences": [
+    "Disguise {W} (You may cast this card face down for {3} as a 2/2 creature with ward {2}. Turn it face up any time for its disguise cost.)"
+  ],
+  "needs": [
+    {
+      "capability": "disguise",
+      "kind": "cost",
+      "what": "the disguise alternative cast (702.168): cast face down for {3} as a 2/2 colourless nameless creature that has ward {2}, turnable face up for the printed disguise cost as a special action",
+      "why_existing_wont_do": "`morph` in card_level_cost_keys gives the face-down {3} 2/2 and the turn-face-up action, but its face-down characteristics carry no abilities, so a disguised permanent would lack ward {2}; the engine's only face-down ward is CLOAK_WARD, supplied by the cloak rule to cloaked permanents, and nothing on a card can select it for its own face-down cast"
+    }
+  ],
+  "closest_existing": ["morph", "turned_face_up", "ward"],
+  "confidence": "high"
+}

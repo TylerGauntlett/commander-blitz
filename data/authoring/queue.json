@@ -184972,12 +184972,12 @@
     },
     "Neheb, the Eternal": {
       "edhrec_rank": 1170,
-      "gate": "template",
+      "gate": null,
       "name": "Neheb, the Eternal",
-      "reason": "no template for: Afflict 3",
+      "reason": "",
       "scryfall_id": "767c5831-2195-4efa-802d-2ea2e6dabb5b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Neheb, the Worthy": {
@@ -227172,12 +227172,12 @@
     },
     "Root Elemental": {
       "edhrec_rank": 13496,
-      "gate": "template",
+      "gate": null,
       "name": "Root Elemental",
-      "reason": "no template for: Morph {5}{G}{G}",
+      "reason": "",
       "scryfall_id": "e8d6e393-7378-4113-a5ff-44e9518eff76",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Root Greevil": {
@@ -231592,12 +231592,12 @@
     },
     "Salt Road Ambushers": {
       "edhrec_rank": 11825,
-      "gate": "template",
+      "gate": null,
       "name": "Salt Road Ambushers",
-      "reason": "no template for: Whenever another permanent you control is turned face up, if it's a creature, put two +1/+",
+      "reason": "",
       "scryfall_id": "741e7d92-1570-4eb2-8195-e48c44672648",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Salt Road Packbeast": {
@@ -233632,12 +233632,12 @@
     },
     "Saryth, the Viper's Fang": {
       "edhrec_rank": 1230,
-      "gate": "template",
+      "gate": null,
       "name": "Saryth, the Viper's Fang",
-      "reason": "no template for: Other tapped creatures you control have deathtouch",
+      "reason": "",
       "scryfall_id": "8050afb7-3c16-4456-aa34-4cc999fac7f5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sasaya, Orochi Ascendant // Sasaya's Essence": {
@@ -283102,12 +283102,12 @@
     },
     "Thelonite Hermit": {
       "edhrec_rank": 7636,
-      "gate": "template",
+      "gate": null,
       "name": "Thelonite Hermit",
-      "reason": "no template for: All Saprolings get +1/+1",
+      "reason": "",
       "scryfall_id": "4271f5b2-32ca-4349-9a09-afffbdacf636",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thelonite Monk": {

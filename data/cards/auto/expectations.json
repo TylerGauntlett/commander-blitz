@@ -13666,6 +13666,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "neheb_the_eternal": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "nema_siltlurker": {
     "zone": "battlefield"
   },
@@ -16685,6 +16689,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "root_elemental": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "root_maze": {
     "zone": "battlefield"
   },
@@ -16958,6 +16969,11 @@
   "salt_marsh": {
     "zone": "battlefield"
   },
+  "salt_road_ambushers": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "salvation_colossus": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -17012,6 +17028,16 @@
   },
   "sarkhan_soul_aflame": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "saryth_the_viper_s_fang": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 2,
+      "keywords": [
+        "hexproof"
+      ]
+    },
     "zone": "battlefield"
   },
   "satya_aetherflux_genius": {
@@ -20682,6 +20708,13 @@
     "zone": "battlefield"
   },
   "the_whizzer_classic_speedster": {
+    "zone": "battlefield"
+  },
+  "thelonite_hermit": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "theoden_king_of_rohan": {
