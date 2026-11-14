@@ -75,7 +75,7 @@ each heading; this table is generated from them.
 | [Scrappy Survivors (Fallout)](#scrappy-survivors-fallout) | L | high | Rad counters | 0 |
 | [Science! (Fallout)](#science-fallout) | L | high | Secret choices | 0 |
 | [Mutant Menace (Fallout)](#mutant-menace-fallout) | L | high | Rad counters | 0 |
-| [Blame Game (Murders at Karlov Manor Commander)](#blame-game-murders-at-karlov-manor-commander) | L | high | nothing | 0 |
+| [Blame Game (Murders at Karlov Manor Commander)](#blame-game-murders-at-karlov-manor-commander) | L | high | Voting: will of the council and council's dilemma, Secret choices | 0 |
 | [Deadly Disguise (Murders at Karlov Manor Commander)](#deadly-disguise-murders-at-karlov-manor-commander) | L | high | nothing | 0 |
 | [Blood Rites (The Lost Caverns of Ixalan Commander)](#blood-rites-the-lost-caverns-of-ixalan-commander) | M | high | nothing | 0 |
 | [Veloci-Ramp-Tor (The Lost Caverns of Ixalan Commander)](#veloci-ramp-tor-the-lost-caverns-of-ixalan-commander) | L | high | nothing | 0 |
@@ -129,19 +129,19 @@ each heading; this table is generated from them.
 | [Why a press is refused](#why-a-press-is-refused) | S | medium | nothing | 0 |
 | [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) | M | medium | nothing | 6 |
 | [Divided damage that may hit players](#divided-damage-that-may-hit-players) | M | medium | nothing | 5 |
+| [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) | M | medium | nothing | 5 |
 | [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) | M | medium | nothing | 4 |
 | [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) | M | medium | nothing | 4 |
-| [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) | M | medium | nothing | 4 |
 | [Experience counters](#experience-counters) | M | medium | nothing | 2 |
 | [Outcomes as data](#outcomes-as-data) | M | medium | nothing | 2 |
 | [Rad counters](#rad-counters) | M | medium | nothing | 2 |
+| [Secret choices](#secret-choices) | M | medium | nothing | 2 |
 | [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) | M | medium | nothing | 2 |
 | [Brackets, derived from the list](#brackets-derived-from-the-list) | M | medium | nothing | 1 |
 | [CPU takeover and reconnection](#cpu-takeover-and-reconnection) | M | medium | nothing | 1 |
 | [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) | M | medium | nothing | 1 |
 | [Distributing counters from a spell](#distributing-counters-from-a-spell) | M | medium | nothing | 1 |
 | [Replays and sharing](#replays-and-sharing) | M | medium | nothing | 1 |
-| [Secret choices](#secret-choices) | M | medium | nothing | 1 |
 | [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) | M | medium | nothing | 0 |
 | [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) | M | medium | nothing | 0 |
 | [Every creature type means every creature type](#every-creature-type-means-every-creature-type) | M | medium | nothing | 0 |
@@ -157,8 +157,6 @@ Derived from the properties: an item is **ready** when nothing it depends
 on is still on this page, and the ready items are ranked by impact, then
 rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
-
-**In progress:** [Blame Game (Murders at Karlov Manor Commander)](#blame-game-murders-at-karlov-manor-commander).
 
 **Ready now, best first:**
 
@@ -215,19 +213,19 @@ same list, and `/extend-roadmap` starts at the top of it.
 51. [Why a press is refused](#why-a-press-is-refused) — S, medium
 52. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
 53. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
-54. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
-55. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
-56. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
+54. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
+55. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
+56. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
 57. [Experience counters](#experience-counters) — M, medium
 58. [Outcomes as data](#outcomes-as-data) — M, medium
 59. [Rad counters](#rad-counters) — M, medium
-60. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
-61. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
-62. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
-63. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
-64. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
-65. [Replays and sharing](#replays-and-sharing) — M, medium
-66. [Secret choices](#secret-choices) — M, medium
+60. [Secret choices](#secret-choices) — M, medium
+61. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
+62. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
+63. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
+64. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
+65. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
+66. [Replays and sharing](#replays-and-sharing) — M, medium
 67. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
 68. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
 69. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
@@ -262,6 +260,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Scrappy Survivors (Fallout)](#scrappy-survivors-fallout) — [Rad counters](#rad-counters)
 - [Science! (Fallout)](#science-fallout) — [Secret choices](#secret-choices)
 - [Mutant Menace (Fallout)](#mutant-menace-fallout) — [Rad counters](#rad-counters)
+- [Blame Game (Murders at Karlov Manor Commander)](#blame-game-murders-at-karlov-manor-commander) — [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma), [Secret choices](#secret-choices)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -554,6 +553,71 @@ gates pass.
   (601.2d) without changing what is announced or when, and the line in
   rules-coverage.md moves from "not implemented" to the implemented table.
 
+### Voting: will of the council and council's dilemma
+
+Effort **M** · Impact **medium**, every voting card waits on it, Fateful Tempest in the Lorehold Spirit precon and Council's Judgment among them · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+Voting (701.38) is absent. [rules-coverage.md](rules-coverage.md#not-implemented)
+lists "Voting — will of the council, council's dilemma" as not implemented, and
+the shipped decks avoid it. The nearest shapes in
+`engine/effects/ops_control.py` each miss one half of it: `join_forces` asks
+every player in turn order starting with the controller, which is the order a
+vote is cast in, but it adds up mana paid rather than tallying named choices;
+`choose_mode` and `ask_mode` in `engine/effects/context.py` let one chooser
+pick among labelled options, but bind no per-option count a later effect can
+read. `for_each_player` around `choose_mode` asks the right people and keeps
+nothing.
+
+So every "each player votes for A or B" card is unwritable. Fateful Tempest,
+in the Lorehold Spirit precon, is the card that found it; Council's Judgment,
+Tivit, Seller of Secrets and the Conspiracy council cards are the same
+sentence. Its gap record is `data/authoring/gaps/fateful_tempest.json`.
+
+#### The change
+
+1. A `vote` op in `engine/effects/ops_control.py`: starting with the
+   controller and in turn order (`GameState.turn_order`, as `join_forces`
+   walks it), each player in the game chooses one of the spec's named options
+   through `ask_mode`, with the votes so far in the decision's `context` so a
+   later voter sees them (701.38a). It binds the tally under `as`, one count
+   per option, read back as `{"binding": "<as>.<option>"}`, and the winners
+   (the options with the most votes, all of them on a tie) for will of the
+   council's "if X gets more votes or the vote is tied".
+2. A `vote_cast` event emitted per vote, so "whenever a player votes" has an
+   event to name later, without adding that trigger now.
+3. `cards.loader`'s `_validate_effect` refuses a `vote` with fewer than two
+   options or a missing `as`; the verifier's auto-answer table already answers
+   `CHOOSE_MODE`, so the behaviour gate needs nothing new.
+4. Harvest: Fateful Tempest, then the catalog's other voting cards through the
+   template tier with `--retry` and one `/author-cards` wave.
+
+It does not add extra votes (Brago's Representative, Grudge Keeper's
+"whenever a player votes") or vote-changing effects; those are additions on
+the `vote_cast` event once the op exists.
+
+#### Gate
+
+A unit test under `tests/unit/` for `vote`: players asked in turn order from
+the controller, each later voter's decision carrying the earlier votes, the
+tally bound per option, the tie reported as every leading option, an eliminated
+player not asked, and the loader refusing a one-option vote. Fateful Tempest's
+six gates pass.
+
+#### Open questions
+
+- **Where a vote is asked.** `ask_mode` per voter, or a decision kind of its
+  own? Recommended: `ask_mode` with a `purpose: "vote"` tag, because the
+  client and the CPUs already answer a labelled choice and a new decision kind
+  would need its frontend label, its auto-answer and an e2e path for no new
+  rule.
+- **How the CPUs vote.** Recommended: the heuristic agent's existing label
+  answer for now, with the `purpose` tag left for a strategy to read; voting
+  well is a CPU item, not a rules one.
+- **Is it an ADR.** Recommended: no; it is an additive op, and the line in
+  rules-coverage.md moves from "not implemented" to the implemented table.
+
 ### Divided damage from a triggered or activated ability
 
 Effort **M** · Impact **medium**, every creature whose enters or attack trigger divides its damage waits on it, Fury and Inferno Titan among them · Depends on nothing · Awaiting decisions.
@@ -710,71 +774,6 @@ generated DSL reference lists the new event.
   Pit ships in it? Recommended: plus both, since each is small and the card
   is the gate.
 
-### Voting: will of the council and council's dilemma
-
-Effort **M** · Impact **medium**, every voting card waits on it, Fateful Tempest in the Lorehold Spirit precon and Council's Judgment among them · Depends on nothing · Awaiting decisions.
-
-#### Today
-
-Voting (701.38) is absent. [rules-coverage.md](rules-coverage.md#not-implemented)
-lists "Voting — will of the council, council's dilemma" as not implemented, and
-the shipped decks avoid it. The nearest shapes in
-`engine/effects/ops_control.py` each miss one half of it: `join_forces` asks
-every player in turn order starting with the controller, which is the order a
-vote is cast in, but it adds up mana paid rather than tallying named choices;
-`choose_mode` and `ask_mode` in `engine/effects/context.py` let one chooser
-pick among labelled options, but bind no per-option count a later effect can
-read. `for_each_player` around `choose_mode` asks the right people and keeps
-nothing.
-
-So every "each player votes for A or B" card is unwritable. Fateful Tempest,
-in the Lorehold Spirit precon, is the card that found it; Council's Judgment,
-Tivit, Seller of Secrets and the Conspiracy council cards are the same
-sentence. Its gap record is `data/authoring/gaps/fateful_tempest.json`.
-
-#### The change
-
-1. A `vote` op in `engine/effects/ops_control.py`: starting with the
-   controller and in turn order (`GameState.turn_order`, as `join_forces`
-   walks it), each player in the game chooses one of the spec's named options
-   through `ask_mode`, with the votes so far in the decision's `context` so a
-   later voter sees them (701.38a). It binds the tally under `as`, one count
-   per option, read back as `{"binding": "<as>.<option>"}`, and the winners
-   (the options with the most votes, all of them on a tie) for will of the
-   council's "if X gets more votes or the vote is tied".
-2. A `vote_cast` event emitted per vote, so "whenever a player votes" has an
-   event to name later, without adding that trigger now.
-3. `cards.loader`'s `_validate_effect` refuses a `vote` with fewer than two
-   options or a missing `as`; the verifier's auto-answer table already answers
-   `CHOOSE_MODE`, so the behaviour gate needs nothing new.
-4. Harvest: Fateful Tempest, then the catalog's other voting cards through the
-   template tier with `--retry` and one `/author-cards` wave.
-
-It does not add extra votes (Brago's Representative, Grudge Keeper's
-"whenever a player votes") or vote-changing effects; those are additions on
-the `vote_cast` event once the op exists.
-
-#### Gate
-
-A unit test under `tests/unit/` for `vote`: players asked in turn order from
-the controller, each later voter's decision carrying the earlier votes, the
-tally bound per option, the tie reported as every leading option, an eliminated
-player not asked, and the loader refusing a one-option vote. Fateful Tempest's
-six gates pass.
-
-#### Open questions
-
-- **Where a vote is asked.** `ask_mode` per voter, or a decision kind of its
-  own? Recommended: `ask_mode` with a `purpose: "vote"` tag, because the
-  client and the CPUs already answer a labelled choice and a new decision kind
-  would need its frontend label, its auto-answer and an e2e path for no new
-  rule.
-- **How the CPUs vote.** Recommended: the heuristic agent's existing label
-  answer for now, with the `purpose` tag left for a strategy to read; voting
-  well is a CPU item, not a rules one.
-- **Is it an ADR.** Recommended: no; it is an additive op, and the line in
-  rules-coverage.md moves from "not implemented" to the implemented table.
-
 ### Experience counters
 
 Effort **M** · Impact **medium**, every experience-counter commander waits on it, Meren of Clan Nel Toth and Ezuri, Claw of Progress among them · Depends on nothing · Awaiting decisions.
@@ -928,6 +927,98 @@ reference (`tests/cards/test_dsl_reference.py`) lists the new op.
   an existing rule, and its line goes into the implemented table in
   rules-coverage.md. An ADR only if the stack question is answered with a
   new seam for sourceless triggers.
+
+### Secret choices
+
+Effort **M** · Impact **medium**, every card where players secretly choose and then reveal waits on it, Expert-Level Safe in the Science! precon and Menacing Ogre among them · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+Every choice the engine asks is one player's, one at a time. An op asks
+through `ask_mode` in `engine/effects/context.py`, which yields a
+`PendingDecision` (`engine/actions.py`) for a single `player`, and binds the
+answer in the effect context as soon as it comes back. `choose_number` in
+`engine/effects/ops_control.py` asks only `ctx.controller`, and nothing
+asks a second player the same question. Wrap it in `for_each_player` and the
+players answer in turn, each answer bound before the next is asked. The
+view does hide some things: `serialize._pending` puts card faces only on the
+seat that has to answer, `event_log_for` drops object ids from
+`_PRIVATE_EVENTS`, and face-down exile has `hidden_in_exile` and
+`revealed_to`. But no seat can hold an answer the other players must not
+see until everyone has chosen. [rules-coverage.md](rules-coverage.md#not-implemented)
+does not mention secret choices. It lists voting as not implemented, and
+secret council is the secret form of voting.
+
+So "you and target opponent each secretly choose 1, 2, or 3. Then those
+choices are revealed" cannot be written. Neither can "each player secretly
+chooses a number", "secretly choose an opponent", or a secret vote. Asked in
+turn, the later chooser answers after seeing the earlier choice, and that
+changes the card. The Science! precon found it through Expert-Level Safe,
+whose gap record is `data/authoring/gaps/expert_level_safe.json`. The
+catalog has a few dozen cards printing "secretly", among them Menacing Ogre,
+Prisoner's Dilemma, Círdan the Shipwright, Elrond of the White Council,
+Stalking Leonin, The Toymaker's Trap and the secret council cards (Vault 11:
+Voter's Dilemma, Marchesa's Surprise Party, Mob Verdict).
+
+#### The change
+
+1. A secret answer. Each chooser is asked in turn through `ask_mode`, as
+   today, but the answers are held unrevealed until the last chooser has
+   answered. Until then a later chooser's decision context and every other
+   seat's view show only that a choice has been made, never what it is. The
+   reveal is one event carrying every answer.
+2. An op for the shape the cards print: a number, or one of a fixed set of
+   labels, chosen secretly by a named set of players (you and a target
+   opponent, each player, each opponent). Each answer is bound per player,
+   so a later `condition` can compare the answers ("if they match", "the
+   player who chose the highest number").
+3. The CPUs answer through the label path the heuristic agent already uses
+   for `choose_number`. A strategy reads only what its own seat's view
+   shows, so it never sees an unrevealed answer.
+4. The loader's `_validate_effect` refuses the op without choosers or
+   without `as`. The authoring verifier answers it the way it answers
+   `choose_number`.
+5. Harvest: Expert-Level Safe through `/author-cards`, then one wave over the
+   catalog's other secret-choice cards that need nothing else.
+
+It does not build voting. Secret council is
+[voting](voting.md) with its votes cast secretly; once both items land, it
+is the vote op asking through this one's secret answer.
+
+#### Gate
+
+A unit test under `tests/unit/` for the secret choice:
+
+- every named chooser is asked;
+- a later chooser's decision and every other seat's `player_view` and
+  `event_log_for` do not carry an earlier answer before the reveal;
+- the reveal event carries all answers, and each answer is bound per player
+  for a condition to compare;
+- an eliminated player is not asked;
+- the loader refuses the op with no choosers.
+
+Expert-Level Safe passes its six gates, and the generated DSL reference
+(`tests/cards/test_dsl_reference.py`) lists the new op.
+
+#### Open questions
+
+- **How an answer is kept secret.** An unrevealed answer can live in the
+  effect context's bindings, which no view serializes, or in a field on
+  `GameState` that `player_view` redacts per seat. Recommended: the
+  bindings, with the reveal as one event, because nothing serializes them
+  today. That makes "not leaked" a property the test can check, not a
+  redaction someone has to remember.
+- **One decision kind or `ask_mode`.** Recommended: `ask_mode` with
+  `purpose: "secret_choice"`. The client and the CPUs already answer a
+  labelled choice, and a new `DecisionKind` would need its frontend label,
+  its auto-answer and an e2e path, with no new rule to show for it.
+- **What the client shows while others choose.** Recommended: nothing new.
+  Each chooser sees their own prompt, and the reveal is narrated from its
+  event in the log. A surface beyond that would need its story and floor
+  ([ADR 0013](adr/0013-handheld-floors-are-ci-gates.md)).
+- **Is it an ADR.** Recommended: no, if the answer stays in the bindings,
+  because it is an additive op. Yes, if it adds per-seat redaction of game
+  state, because that is a rule the views would be built around from then on.
 
 ### Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number
 
@@ -1168,98 +1259,6 @@ pass.
 - **Is it an ADR.** Recommended: no; it moves an existing announcement to the
   cast line, where divided damage already sits, and the line in
   rules-coverage.md narrows to triggered abilities.
-
-### Secret choices
-
-Effort **M** · Impact **medium**, every card where players secretly choose and then reveal waits on it, Expert-Level Safe in the Science! precon and Menacing Ogre among them · Depends on nothing · Awaiting decisions.
-
-#### Today
-
-Every choice the engine asks is one player's, one at a time. An op asks
-through `ask_mode` in `engine/effects/context.py`, which yields a
-`PendingDecision` (`engine/actions.py`) for a single `player`, and binds the
-answer in the effect context as soon as it comes back. `choose_number` in
-`engine/effects/ops_control.py` asks only `ctx.controller`, and nothing
-asks a second player the same question. Wrap it in `for_each_player` and the
-players answer in turn, each answer bound before the next is asked. The
-view does hide some things: `serialize._pending` puts card faces only on the
-seat that has to answer, `event_log_for` drops object ids from
-`_PRIVATE_EVENTS`, and face-down exile has `hidden_in_exile` and
-`revealed_to`. But no seat can hold an answer the other players must not
-see until everyone has chosen. [rules-coverage.md](rules-coverage.md#not-implemented)
-does not mention secret choices. It lists voting as not implemented, and
-secret council is the secret form of voting.
-
-So "you and target opponent each secretly choose 1, 2, or 3. Then those
-choices are revealed" cannot be written. Neither can "each player secretly
-chooses a number", "secretly choose an opponent", or a secret vote. Asked in
-turn, the later chooser answers after seeing the earlier choice, and that
-changes the card. The Science! precon found it through Expert-Level Safe,
-whose gap record is `data/authoring/gaps/expert_level_safe.json`. The
-catalog has a few dozen cards printing "secretly", among them Menacing Ogre,
-Prisoner's Dilemma, Círdan the Shipwright, Elrond of the White Council,
-Stalking Leonin, The Toymaker's Trap and the secret council cards (Vault 11:
-Voter's Dilemma, Marchesa's Surprise Party, Mob Verdict).
-
-#### The change
-
-1. A secret answer. Each chooser is asked in turn through `ask_mode`, as
-   today, but the answers are held unrevealed until the last chooser has
-   answered. Until then a later chooser's decision context and every other
-   seat's view show only that a choice has been made, never what it is. The
-   reveal is one event carrying every answer.
-2. An op for the shape the cards print: a number, or one of a fixed set of
-   labels, chosen secretly by a named set of players (you and a target
-   opponent, each player, each opponent). Each answer is bound per player,
-   so a later `condition` can compare the answers ("if they match", "the
-   player who chose the highest number").
-3. The CPUs answer through the label path the heuristic agent already uses
-   for `choose_number`. A strategy reads only what its own seat's view
-   shows, so it never sees an unrevealed answer.
-4. The loader's `_validate_effect` refuses the op without choosers or
-   without `as`. The authoring verifier answers it the way it answers
-   `choose_number`.
-5. Harvest: Expert-Level Safe through `/author-cards`, then one wave over the
-   catalog's other secret-choice cards that need nothing else.
-
-It does not build voting. Secret council is
-[voting](voting.md) with its votes cast secretly; once both items land, it
-is the vote op asking through this one's secret answer.
-
-#### Gate
-
-A unit test under `tests/unit/` for the secret choice:
-
-- every named chooser is asked;
-- a later chooser's decision and every other seat's `player_view` and
-  `event_log_for` do not carry an earlier answer before the reveal;
-- the reveal event carries all answers, and each answer is bound per player
-  for a condition to compare;
-- an eliminated player is not asked;
-- the loader refuses the op with no choosers.
-
-Expert-Level Safe passes its six gates, and the generated DSL reference
-(`tests/cards/test_dsl_reference.py`) lists the new op.
-
-#### Open questions
-
-- **How an answer is kept secret.** An unrevealed answer can live in the
-  effect context's bindings, which no view serializes, or in a field on
-  `GameState` that `player_view` redacts per seat. Recommended: the
-  bindings, with the reveal as one event, because nothing serializes them
-  today. That makes "not leaked" a property the test can check, not a
-  redaction someone has to remember.
-- **One decision kind or `ask_mode`.** Recommended: `ask_mode` with
-  `purpose: "secret_choice"`. The client and the CPUs already answer a
-  labelled choice, and a new `DecisionKind` would need its frontend label,
-  its auto-answer and an e2e path, with no new rule to show for it.
-- **What the client shows while others choose.** Recommended: nothing new.
-  Each chooser sees their own prompt, and the reveal is narrated from its
-  event in the log. A surface beyond that would need its story and floor
-  ([ADR 0013](adr/0013-handheld-floors-are-ci-gates.md)).
-- **Is it an ADR.** Recommended: no, if the answer stays in the bindings,
-  because it is an additive op. Yes, if it adds per-seat redaction of game
-  state, because that is a rule the views would be built around from then on.
 
 ### Every creature type means every creature type
 
@@ -2732,7 +2731,7 @@ whole-game test able to draw the deck.
 
 ### Blame Game (Murders at Karlov Manor Commander)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing · **In progress**.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma), [Secret choices](#secret-choices).
 
 #### Today
 
@@ -2743,6 +2742,46 @@ coming-soon shell on the shelf: its row `mkc_blame_game` is in
 `python scripts/sync_precons.py --missing mkc_blame_game` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+
+Every card on the list has been through `/author-cards` once. Twenty cards
+are left, and each has a gap record naming what it waits on:
+
+- Mob Verdict is a secret council vote, which [voting](voting.md) covers;
+  this item depends on it.
+- Prisoner's Dilemma and Stalking Leonin choose in secret, which
+  [secret choices](secret-choices.md) covers; this item depends on it.
+  Stalking Leonin also needs a reveal cost and "activate only once".
+- Hot Pursuit and Nelly Borca, Impulsive Accuser need suspect; Hot Pursuit
+  also needs a goad that lasts while the enchantment stays and a count of
+  players who have lost.
+- Immortal Obligation needs a goad and a "can't block creatures you
+  control" that last while a duty counter stays.
+- Feather, Radiant Arbiter needs a "targets only this" spell trigger and a
+  copy for each other creature, as Mirrorwing Dragon does.
+- Otherworldly Escort needs a return with new creature types and a
+  selector for creatures that dealt damage to you this turn.
+- Take the Bait needs a this-turn combat prevention over the planeswalkers
+  you control, read as the damage is dealt.
+- Comeuppance needs a shield for damage from sources you don't control
+  that knows the prevented source.
+- Deflecting Palm needs "prevent the next damage a chosen source would
+  deal" and its reflection.
+- Gisela, Blade of Goldnight needs a static that prevents half of each
+  damage event, rounded up.
+- Darien, King of Kjeldor needs a trigger for a player being dealt damage,
+  once for all damage dealt at the same time.
+- Anya, Merciless Angel needs a count of opponents below half their own
+  starting life.
+- Orzhov Advokist needs an attack restriction lasting until your next turn.
+- Soul Snare needs a selector for creatures attacking you or a planeswalker
+  you control.
+- Smuggler's Share needs one opponent's own count of lands entered this
+  turn.
+- Curse of Opulence needs the Gold token and a selector for opponents
+  attacking the enchanted player.
+- Kazuul, Tyrant of the Cliffs needs the 3/3 red Ogre token.
+- Rite of the Raging Storm needs the Lightning Rager token and a name filter
+  on a static.
 
 #### The change
 
