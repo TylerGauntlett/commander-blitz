@@ -1087,6 +1087,7 @@ def _manifest_card(ctx: EffectContext, pid: int, oid: int, *, cloak: bool = Fals
     # which is right for every other permanent and wrong for this one.
     obj.face_down = True
     obj.cloaked = cloak
+    obj.manifested = True
     obj.revealed_to.add(pid)
     ctx.state.bump_chars()
     ctx.state.emit("cloaked" if cloak else "manifested", player=pid, source=oid)

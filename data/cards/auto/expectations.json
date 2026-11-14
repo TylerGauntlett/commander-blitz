@@ -1240,6 +1240,10 @@
       "graveyard"
     ]
   },
+  "ashcloud_phoenix": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "ashcoat_bear": {
     "zone": "battlefield"
   },
@@ -4820,6 +4824,10 @@
     "zone": "battlefield"
   },
   "deathless_knight": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "deathmist_raptor": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

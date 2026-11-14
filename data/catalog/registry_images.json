@@ -1031,6 +1031,10 @@
     "artist": "Donato Giancola",
     "scryfall_id": "28b817f7-ae05-4d31-8a2c-29d8082b4132"
   },
+  "ashcloud_phoenix": {
+    "artist": "Howard Lyon",
+    "scryfall_id": "f628c7de-516b-4907-a3c8-b6361f2bd071"
+  },
   "ashcoat_bear": {
     "artist": "Carl Critchlow",
     "scryfall_id": "9b7a6ab5-8a8f-492c-8484-3089354ce8cf"
@@ -4186,6 +4190,10 @@
   "deathless_knight": {
     "artist": "Igor Kieryluk",
     "scryfall_id": "a18becee-460c-4a1d-8ddf-f12f891e2df4"
+  },
+  "deathmist_raptor": {
+    "artist": "Filip Burburan",
+    "scryfall_id": "ed6e6cf5-8fb7-4ba6-943a-e5aa14a3ee92"
   },
   "deathreap_ritual": {
     "artist": "GodMachine",

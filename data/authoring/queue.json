@@ -14492,12 +14492,12 @@
     },
     "Ashcloud Phoenix": {
       "edhrec_rank": 11622,
-      "gate": "template",
+      "gate": null,
       "name": "Ashcloud Phoenix",
-      "reason": "no template for: When this creature dies, return it to the battlefield face down under your control",
+      "reason": "",
       "scryfall_id": "f628c7de-516b-4907-a3c8-b6361f2bd071",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ashcoat Bear": {
@@ -64032,12 +64032,12 @@
     },
     "Deathmist Raptor": {
       "edhrec_rank": 6493,
-      "gate": "template",
+      "gate": null,
       "name": "Deathmist Raptor",
-      "reason": "no template for: Whenever a permanent you control is turned face up, you may return this card from your gra",
+      "reason": "",
       "scryfall_id": "ed6e6cf5-8fb7-4ba6-943a-e5aa14a3ee92",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deathpact Angel": {

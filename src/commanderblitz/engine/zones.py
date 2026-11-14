@@ -330,6 +330,12 @@ def move_object(
     left_with = (
         (*obj.until_eot, *obj.granted_abilities_permanent) if was_on_battlefield else ()
     )
+    # And whether it left **face down**, snapshotted for the same reason:
+    # `reset_permanent_state` clears `face_down` on the way out, and a
+    # face-down permanent has no abilities (707.2), so the hidden card's own
+    # "when this dies" must not hear its departure (603.10a looks back at the
+    # shell). An Ashcloud Phoenix that dies face down stays in the graveyard.
+    left_face_down = was_on_battlefield and obj.face_down
     # "If that mana is spent on a creature spell, **it gains haste until end of
     # turn**" (Arena of Glory). Snapshotted for `left_with`'s reason and carried
     # the other way: `reset_permanent_state` empties it a few lines below, and
@@ -401,6 +407,7 @@ def move_object(
         card = state.card_of(obj)
 
     obj.left_with = left_with
+    obj.left_face_down = left_face_down
     if to_zone is Zone.BATTLEFIELD:
         obj.mana_granted_keywords = mana_granted_keywords
         obj.mana_spent_origins = mana_spent_origins

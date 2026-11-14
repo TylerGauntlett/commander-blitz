@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**401 cards** blocked by **346** capabilities.
+**399 cards** blocked by **346** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -33,7 +33,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [milled-this-turn](#milled-this-turn) | 3 | 4283 | selector |
 | [omen](#omen) | 3 | 3355 | cost, engine |
 | [random-player-choice](#random-player-choice) | 3 | 5120 | op |
-| [return-face-down](#return-face-down) | 3 | 3081 | op |
 | [secret-choice](#secret-choice) | 3 | 3483 | decision |
 | [add-color](#add-color) | 2 | 2040 | op |
 | [all-creature-types](#all-creature-types) | 2 | 958 | static_effect |
@@ -173,6 +172,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exiled-this-way-lki](#exiled-this-way-lki) | 1 | 6960 | value |
 | [exploit](#exploit) | 1 | 8043 | keyword, trigger_event |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
+| [face-down-as-land](#face-down-as-land) | 1 | 3081 | engine |
 | [face-down-counters-pt](#face-down-counters-pt) | 1 | 6774 | engine |
 | [face-down-exile-controller-may-look](#face-down-exile-controller-may-look) | 1 | 1073 | op |
 | [face-down-filter](#face-down-filter) | 1 | 6544 | selector |
@@ -977,28 +977,6 @@ Blocks **3** cards.
   - At the beginning of combat on your turn, choose an opponent at random that this creature didn't attack during your last combat. This creature attacks that player this combat if able. If you can't choose an opponent this way, tap this creature.
 - **Ursine Monstrosity** (rank 9663) — `ursine_monstrosity`
   - At the beginning of combat on your turn, mill a card and choose an opponent at random. This creature attacks that player this combat if able. Until end of turn, this creature gains indestructible and gets +1/+1 for each card type among cards in your graveyard.
-
-</details>
-
-## return-face-down
-
-Blocks **3** cards.
-
-- **(op)** a `face_down: true` option on `return_from_graveyard` (or `put_onto_battlefield`) that puts the card from the graveyard onto the battlefield face down as a 2/2 morph shell (708.2), marked before its enters event fires, under the effect controller's control, so it can later be turned face up for its morph cost
-  <br>Why the existing vocabulary won't do: `return_from_graveyard` and `put_onto_battlefield` carry no face_down key; `face_down` on search_zones/look_at_top/reveal_until is exile privacy only (ops_cards); `manifest` only takes the top card of a library; `exile_and_return`'s `face` is transform front/back, not face-down; the only face-down battlefield entries are a face-down cast (pending_face_down) and the `manifest` move cause in zones._enter_battlefield
-- **(op)** return_from_graveyard to the battlefield with the controller's choice of face up or face down (a face-down 2/2 that can later be turned face up for its morph cost)
-  <br>Why the existing vocabulary won't do: The 'turned_face_up' trigger (controller: you) and active_zones ["graveyard"] already cover the trigger half, and megamorph is morph + morph_counter, but return_from_graveyard takes only controller/counters/destination/host_named/link/objects/tapped with no face_down option, and put_onto_battlefield has none either; face_down exists only on look_at_top/exile, and manifest puts library cards, not this card from the graveyard. Returning face up only would drop the printed face-down choice
-- **(op)** return the dying card from the graveyard to the battlefield face down under its owner's control, with the face-down characteristics overridden to a Forest land (type Land, subtype Forest, no name, no mana cost, colorless, no other types or abilities, so it taps for {G} via the Forest's intrinsic mana ability) rather than the usual face-down 2/2 creature; e.g. a `face_down: {"types": ["Land"], "subtypes": ["Forest"]}` option on return_from_graveyard / put_onto_battlefield, with the card revealed if it leaves the battlefield
-  <br>Why the existing vocabulary won't do: return_from_graveyard and put_onto_battlefield have no face_down option (face_down exists only on look_at_top/reveal_until/search_library, meaning private exile); manifest only takes library cards and makes a 2/2 creature; returning it face up then `animate` with exact types Land/Forest would keep its name, mana cost, colors and mana value and so is a different card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Yedora, Grave Gardener** (rank 3081) — `yedora_grave_gardener`
-  - Whenever another nontoken creature you control dies, you may return it to the battlefield face down under its owner's control. It's a Forest land.
-- **Deathmist Raptor** (rank 6493) — `deathmist_raptor`
-  - Whenever a permanent you control is turned face up, you may return this card from your graveyard to the battlefield face up or face down.
-- **Ashcloud Phoenix** (rank 11622) — `ashcloud_phoenix`
-  - When this creature dies, return it to the battlefield face down under your control.
 
 </details>
 
@@ -3142,6 +3120,20 @@ Blocks **1** card.
 - **Final Fortune** (rank 1512) — `final_fortune`
   - Take an extra turn after this one.
   - At the beginning of that turn's end step, you lose the game.
+
+</details>
+
+## face-down-as-land
+
+Blocks **1** card.
+
+- **(engine)** a face-down permanent whose face-down characteristics are overridden to a Forest land (type Land, subtype Forest, no name, no mana cost, colorless, no other types or abilities, so it taps for {G} through the Forest's intrinsic mana ability, 305.6) instead of the 2/2 creature shell; e.g. `face_down: {"types": ["Land"], "subtypes": ["Forest"]}` on return_from_graveyard, carried per object and read everywhere FACE_DOWN_CHARS / face_down_face are (chars, _base_pt, trigger filters, the intrinsic mana ability, legality), with the card revealed if it leaves the battlefield and never offered a turn-face-up special action
+  <br>Why the existing vocabulary won't do: return_from_graveyard's `face_down` (true or "choose") always produces the fixed 2/2 creature shell FACE_DOWN_CHARS (708.2), which is one global constant with no per-object override; returning it face up then `animate` with exact types Land/Forest keeps its name, mana cost, colors and mana value and so is a different card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Yedora, Grave Gardener** (rank 3081) — `yedora_grave_gardener`
+  - Whenever another nontoken creature you control dies, you may return it to the battlefield face down under its owner's control. It's a Forest land.
 
 </details>
 

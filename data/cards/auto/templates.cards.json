@@ -14339,6 +14339,70 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "face_down": true,
+              "objects": {
+                "binding": "subject",
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, return it to the battlefield face down under your control.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "damage",
+              "player": "each_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature is turned face up, it deals 2 damage to each player.",
+          "trigger": {
+            "event": "turned_face_up",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "ashcloud_phoenix",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{R}{R}",
+      "morph": "{4}{R}{R}",
+      "name": "Ashcloud Phoenix",
+      "oracle_text": "Flying\nWhen this creature dies, return it to the battlefield face down under your control.\nMorph {4}{R}{R} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)\nWhen this creature is turned face up, it deals 2 damage to each player.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Phoenix"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -57732,6 +57796,63 @@
         "Knight"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "effects": [
+            {
+              "effects": [
+                {
+                  "destination": "battlefield",
+                  "face_down": "choose",
+                  "objects": {
+                    "self_only": true,
+                    "zone": "graveyard"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ],
+              "op": "may",
+              "prompt": "Return Deathmist Raptor from your graveyard?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a permanent you control is turned face up, you may return this card from your graveyard to the battlefield face up or face down.",
+          "trigger": {
+            "controller": "you",
+            "event": "turned_face_up"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "deathmist_raptor",
+      "keywords": [
+        "deathtouch"
+      ],
+      "mana_cost": "{1}{G}{G}",
+      "morph": "{4}{G}",
+      "morph_counter": true,
+      "name": "Deathmist Raptor",
+      "oracle_text": "Deathtouch\nWhenever a permanent you control is turned face up, you may return this card from your graveyard to the battlefield face up or face down.\nMegamorph {4}{G} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its megamorph cost and put a +1/+1 counter on it.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Dinosaur",
+        "Beast"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]

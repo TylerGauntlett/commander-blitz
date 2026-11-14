@@ -38,7 +38,7 @@ from ..zones import (
 from . import execute
 from .behold import announce_beheld, behold_count, behold_pool
 from .conditions import evaluate as evaluate_condition_in
-from .context import EffectContext, ask_objects, ask_player, ask_yes_no
+from .context import EffectContext, ask_mode, ask_objects, ask_player, ask_yes_no
 from .registry import register
 from .selectors import (
     ZONE_NAMES,
@@ -1321,41 +1321,80 @@ def op_return_spell_to_hand(ctx: EffectContext, spec: Mapping[str, Any]):
 
 @register("return_from_graveyard")
 def op_return_from_graveyard(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Return cards from a graveyard to a hand, a library or the battlefield.
+
+    ``face_down`` puts a card onto the battlefield **face down** (708.2):
+    ``true`` is "return it to the battlefield face down" (Ashcloud Phoenix),
+    and ``"choose"`` is "face up or face down", the card's new controller
+    choosing as it returns (Deathmist Raptor). The face-down card arrives as
+    the same 2/2 shell a morph cast leaves -- marked through
+    `GameObject.pending_face_down`, so its enters event already sees the shell
+    -- and its controller may look at it (708.5). It turns face up later for
+    its morph or disguise cost, if it has one (702.37e); a card without one
+    stays face down, because it was not manifested (701.34c is manifest's
+    rule, and `GameObject.manifested` says which shells it covers).
+
+    Not `manifest`, which takes the top card of a library, and not
+    `exile_and_return`'s ``face``, which picks a double-faced card's front or
+    back. Only with ``destination: "battlefield"``, and never with
+    ``host_named``: a face-down permanent is a creature, not an Aura.
+    """
     selector = dict(spec.get("objects") or {})
     selector.setdefault("zone", "graveyard")
     destination = DESTINATIONS[spec.get("destination", "hand")]
     oids = yield from choose_objects(ctx, selector, "Return from graveyard")
     hosts = named_hosts(ctx, spec)
+    face_down = spec.get("face_down", False)
     for oid in oids:
         obj = ctx.state.objects.get(oid)
         if obj is None:
             continue
+        down = False
         if destination is Zone.BATTLEFIELD:
             # Same reason as op_search_library: the battlefield is one global
             # list, so nothing else sets controller. Mirrors put_onto_battlefield.
             controller = ctx.controller if spec.get("controller") == "you" else obj.owner
-            # 303.4f: "return this card to the battlefield" names no host, so
-            # an Aura chooses one as it enters and stays in the graveyard when
-            # none is legal. ``host_named`` is "…attached to that creature":
-            # the effect names the host, and an Aura that can't legally
-            # enchant it stays in the graveyard (303.4g).
-            if hosts is not None:
-                if not offer_named_host(ctx.state, oid, controller, hosts):
+            if face_down == "choose":
+                picked = yield from ask_mode(
+                    ctx,
+                    f"Return {ctx.state.card_of(obj).name} face up or face down?",
+                    ("Face up", "Face down"),
+                    controller,
+                )
+                down = picked == [1]
+            else:
+                down = bool(face_down)
+            if down:
+                # 707.2: a card arriving face down has no abilities, so it is
+                # asked none of the arrival questions below -- no host, no
+                # "would enter" replacement, no riot, no read ahead, no
+                # as-enters effect. `_enter_battlefield` reads the flag to mark
+                # it before its enters event, as for a morph spell resolving.
+                obj.pending_face_down = True
+                obj.controller = controller
+            else:
+                # 303.4f: "return this card to the battlefield" names no host, so
+                # an Aura chooses one as it enters and stays in the graveyard when
+                # none is legal. ``host_named`` is "…attached to that creature":
+                # the effect names the host, and an Aura that can't legally
+                # enchant it stays in the graveyard (303.4g).
+                if hosts is not None:
+                    if not offer_named_host(ctx.state, oid, controller, hosts):
+                        continue
+                elif not (yield from offer_aura_host(ctx.state, oid, controller)):
                     continue
-            elif not (yield from offer_aura_host(ctx.state, oid, controller)):
-                continue
-            obj.controller = controller
-            # "If this artifact **would enter**…" -- reanimation is an arrival,
-            # and a replacement wired into the cast line alone would let a
-            # reanimated Mox Diamond enter for free. See
-            # `zones.offer_enters_replacement`.
-            yield from offer_enters_replacement(ctx.state, oid, obj.controller)
-            # "Nontoken creatures you control **have riot**" is about any
-            # arrival, so a reanimated creature is asked exactly as a cast one
-            # is -- see `zones.offer_riot_choice`.
-            yield from offer_riot_choice(ctx.state, oid, obj.controller)
-            yield from offer_read_ahead(ctx.state, oid, obj.controller)
-            yield from offer_as_enters_effects(ctx.state, oid, obj.controller)
+                obj.controller = controller
+                # "If this artifact **would enter**…" -- reanimation is an arrival,
+                # and a replacement wired into the cast line alone would let a
+                # reanimated Mox Diamond enter for free. See
+                # `zones.offer_enters_replacement`.
+                yield from offer_enters_replacement(ctx.state, oid, obj.controller)
+                # "Nontoken creatures you control **have riot**" is about any
+                # arrival, so a reanimated creature is asked exactly as a cast one
+                # is -- see `zones.offer_riot_choice`.
+                yield from offer_riot_choice(ctx.state, oid, obj.controller)
+                yield from offer_read_ahead(ctx.state, oid, obj.controller)
+                yield from offer_as_enters_effects(ctx.state, oid, obj.controller)
         move_object(
             ctx.state,
             oid,
@@ -1364,6 +1403,15 @@ def op_return_from_graveyard(ctx: EffectContext, spec: Mapping[str, Any]):
             tapped=bool(spec.get("tapped")),
             cause="recursion",
         )
+        if down:
+            # After the move, for `_manifest_card`'s reason:
+            # `reset_permanent_state` clears `face_down` on the way in, and
+            # `_enter_battlefield` marked it again before the enters event.
+            obj.pending_face_down = False
+            if obj.zone is Zone.BATTLEFIELD:
+                obj.face_down = True
+                obj.revealed_to.add(obj.controller)
+                ctx.state.bump_chars()
         # "…return it to the battlefield with a -1/-1 counter on it." Persist
         # and undying, and the counter is not decoration: it is the whole loop
         # guard, because the returned creature only persists again if it comes

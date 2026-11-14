@@ -4445,7 +4445,7 @@ Morph and manifest are one mechanism from two sides:
 | | morph | manifest |
 |---|---|---|
 | how it arrives | **cast** face down for `{3}`, fixed by 702.37a | put there off the library |
-| price to turn up | the printed **morph cost** | the hidden card's own mana cost |
+| price to turn up | the printed **morph cost** | its morph or disguise cost if it has one, else the hidden card's own mana cost |
 | a non-creature card | cannot carry morph at all (load error) | can be manifested, and is never offered the turn-up (701.34c); only an effect turns it up |
 
 **Turning face up reuses `ActionKind.ACTIVATE` with `ability_index` 0**, and
@@ -4514,6 +4514,39 @@ the loader accepts.
 
 Written without the key, `player: {"binding": "event_player"}` hands the 2/2 to
 the opponent whose library it was.
+
+### Returned face down — `face_down` on `return_from_graveyard`
+
+```jsonc
+// Ashcloud Phoenix — "When this creature dies, return it to the battlefield
+// face down under your control."
+{ "op": "return_from_graveyard", "destination": "battlefield",
+  "controller": "you", "face_down": true,
+  "objects": { "binding": "subject", "zone": "graveyard" } }
+
+// Deathmist Raptor — "… you may return this card from your graveyard to the
+// battlefield face up or face down."
+{ "op": "may", "effects": [
+  { "op": "return_from_graveyard", "destination": "battlefield",
+    "face_down": "choose", "objects": { "self_only": true, "zone": "graveyard" } } ] }
+```
+
+`face_down: true` puts the card onto the battlefield as the same 2/2 shell a
+morph cast leaves (708.2), already face down when its enters event fires, so
+"whenever a face-down creature enters" hears it and the hidden card's own
+enters abilities, arrival replacements and riot do not apply (707.2). Its
+controller may look at it (708.5). `"choose"` asks that controller "face up or
+face down" as it returns. The loader takes the key only with `destination:
+"battlefield"`, and refuses it beside `host_named`: a face-down permanent is a
+creature, not an Aura.
+
+It turns face up for its **morph or disguise cost** (702.37e), megamorph's
+counter included. A card without one stays face down until an effect turns it
+up: it was not manifested, and only a manifested creature card turns up for its
+own mana cost (701.34c, `GameObject.manifested`).
+
+`manifest` is the near miss, and takes only the top card of a library;
+`exile_and_return`'s `face` is a double-faced card's front or back.
 
 ### An effect turns it face up — `turn_face_up`
 

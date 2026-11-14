@@ -2045,6 +2045,7 @@ def turn_face_up(state: GameState, oid: int, *, megamorph: bool = False) -> bool
     # The shell is gone, and the ward went with it: the card underneath is
     # face up now and has whatever abilities it prints.
     obj.cloaked = False
+    obj.manifested = False
     obj.disguised = False
     obj.revealed_to.clear()
     state.bump_chars()

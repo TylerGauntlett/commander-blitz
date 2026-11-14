@@ -1481,7 +1481,10 @@ def _candidate_abilities(state: GameState, event: GameEvent):
     )
     if subject is not None and subject not in seen:
         obj = state.objects.get(subject)
-        if obj is not None:
+        # A permanent that left face down had no abilities as it left (707.2),
+        # so there is nothing to look back at: `emit_from`'s rule, applied to
+        # the departure. `move_object` snapshots it as `left_face_down`.
+        if obj is not None and not obj.left_face_down:
             # Printed abilities and granted ones both. Every other branch of
             # this generator pairs an abilities walk with `granted_abilities`;
             # this one did not, so an ability granted to a creature could never

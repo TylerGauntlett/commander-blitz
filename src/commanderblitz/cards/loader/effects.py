@@ -1125,6 +1125,31 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             f"destination 'battlefield'"
         )
 
+    # "…return it to the battlefield **face down**" (Ashcloud Phoenix), or
+    # "face up or face down" (Deathmist Raptor). Only `return_from_graveyard`
+    # reads it as a face-down arrival -- elsewhere `face_down` is private exile
+    # or a selector key -- and only onto the battlefield: a card in a hand is
+    # not face down, and a hand's `face_down: true` would load and do nothing.
+    # Not with `host_named`, since a face-down permanent is a creature, never
+    # an Aura with a host to name.
+    if op == "return_from_graveyard" and "face_down" in effect:
+        mode = effect["face_down"]
+        if mode is not True and mode is not False and mode != "choose":
+            raise DslError(
+                f"{where}: return_from_graveyard 'face_down' is true or "
+                f"'choose' (face up or face down), got {mode!r}"
+            )
+        if mode and effect.get("destination") != "battlefield":
+            raise DslError(
+                f"{where}: return_from_graveyard 'face_down' needs destination "
+                f"'battlefield'; a card is face down only as a permanent (708.2)"
+            )
+        if mode and "host_named" in effect:
+            raise DslError(
+                f"{where}: return_from_graveyard 'face_down' with 'host_named': a "
+                f"face-down permanent is a 2/2 creature, not an Aura (708.2)"
+            )
+
     if "target" in effect and str(effect["target"]) not in target_kinds:
         raise DslError(
             f"{where}: references target {effect['target']!r} which the card does not declare"
