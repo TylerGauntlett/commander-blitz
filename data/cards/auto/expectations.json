@@ -20904,6 +20904,10 @@
     },
     "zone": "battlefield"
   },
+  "tocasia_s_dig_site": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "tocasia_s_welcome": {
     "battlefield_count": 33,
     "hand_size": {
@@ -21356,6 +21360,10 @@
   "twilight_mire": {
     "zone": "battlefield"
   },
+  "twilight_prophet": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "twin_silk_spider": {
     "battlefield_count": 34,
     "tokens": {
@@ -21661,6 +21669,13 @@
   },
   "unnatural_growth": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "unshakable_tail": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "unstable_amulet": {

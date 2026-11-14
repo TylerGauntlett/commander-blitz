@@ -288442,12 +288442,12 @@
     },
     "Tocasia's Dig Site": {
       "edhrec_rank": 6137,
-      "gate": "template",
+      "gate": null,
       "name": "Tocasia's Dig Site",
-      "reason": "no template for: {3}, {T}: Surveil 1",
+      "reason": "",
       "scryfall_id": "bbb5d40b-f0e1-4e98-b4d3-1ee2cfa5b579",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tocasia's Onulet": {
@@ -294752,12 +294752,12 @@
     },
     "Twilight Prophet": {
       "edhrec_rank": 1105,
-      "gate": "template",
+      "gate": null,
       "name": "Twilight Prophet",
-      "reason": "no template for: Ascend",
+      "reason": "",
       "scryfall_id": "050ca791-265a-4e7b-9640-4fd5a6d8cd3a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Twilight Shepherd": {
@@ -298602,12 +298602,12 @@
     },
     "Unshakable Tail": {
       "edhrec_rank": 7560,
-      "gate": "template",
+      "gate": null,
       "name": "Unshakable Tail",
-      "reason": "no template for: When this creature enters and at the beginning of your upkeep, surveil 1",
+      "reason": "",
       "scryfall_id": "053183e7-b505-49d2-b614-b704e984cb1a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Unsparing Boltcaster": {

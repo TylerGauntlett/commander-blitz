@@ -250466,6 +250466,50 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{3}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "surveil",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}, {T}: Surveil 1. (Look at the top card of your library. You may put it into your graveyard.)"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "tocasia_s_dig_site",
+      "name": "Tocasia's Dig Site",
+      "oracle_text": "{T}: Add {C}.\n{3}, {T}: Surveil 1. (Look at the top card of your library. You may put it into your graveyard.)",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -255506,6 +255550,85 @@
         {
           "effects": [
             {
+              "as": "top_card",
+              "objects": {
+                "controller": "you",
+                "zone": "library"
+              },
+              "op": "snapshot"
+            },
+            {
+              "objects": {
+                "binding": "top_card"
+              },
+              "op": "reveal"
+            },
+            {
+              "objects": {
+                "binding": "top_card"
+              },
+              "op": "return_to_hand"
+            },
+            {
+              "amount": {
+                "mana_value_of": {
+                  "binding": "top_card"
+                }
+              },
+              "op": "lose_life",
+              "player": "each_opponent"
+            },
+            {
+              "amount": {
+                "mana_value_of": {
+                  "binding": "top_card"
+                }
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, if you have the city's blessing, reveal the top card of your library and put it into your hand. Each opponent loses X life and you gain X life, where X is that card's mana value.",
+          "trigger": {
+            "condition": {
+              "has_city_s_blessing": "you"
+            },
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "ascend": true,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "twilight_prophet",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{B}{B}",
+      "name": "Twilight Prophet",
+      "oracle_text": "Flying\nAscend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\nAt the beginning of your upkeep, if you have the city's blessing, reveal the top card of your library and put it into your hand. Each opponent loses X life and you gain X life, where X is that card's mana value.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Cleric"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "op": "create_token",
               "token": "spider_1_2_g_reach"
             }
@@ -258861,6 +258984,114 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "surveil",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters and at the beginning of your upkeep, surveil 1.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "surveil",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters and at the beginning of your upkeep, surveil 1.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        },
+        {
+          "effects": [
+            {
+              "op": "investigate"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more creature cards are put into your graveyard from your library, investigate.",
+          "trigger": {
+            "batched": true,
+            "controller": "you",
+            "event": "put_into_graveyard",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            },
+            "from_zones": [
+              "library"
+            ]
+          }
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "mana": "{2}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "subtypes": [
+                "Clue"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "return_to_hand"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, Sacrifice a Clue: Return this card from your graveyard to your hand."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "unshakable_tail",
+      "mana_cost": "{2}{B}",
+      "name": "Unshakable Tail",
+      "oracle_text": "When this creature enters and at the beginning of your upkeep, surveil 1.\nWhenever one or more creature cards are put into your graveyard from your library, investigate. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")\n{2}, Sacrifice a Clue: Return this card from your graveyard to your hand.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Detective"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
