@@ -1,0 +1,44 @@
+{
+  "card": {
+    "id": "master_of_death",
+    "name": "Master of Death",
+    "oracle_text": "When this creature enters, surveil 2. (Look at the top two cards of your library, then put any number of them into your graveyard and the rest on top of your library in any order.)\nAt the beginning of your upkeep, if this card is in your graveyard, you may pay 1 life. If you do, return it to your hand.",
+    "mana_cost": "{1}{U}{B}",
+    "types": ["Creature"],
+    "subtypes": ["Zombie", "Wizard"],
+    "power": 3,
+    "toughness": 1,
+    "colors": ["B", "U"],
+    "color_identity": ["B", "U"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature enters, surveil 2",
+        "trigger": {"event": "self_enters", "source": "self"},
+        "effects": [{"op": "surveil", "amount": {"const": 2}, "player": "you"}]
+      },
+      {
+        "kind": "triggered",
+        "active_zones": ["graveyard"],
+        "text": "At the beginning of your upkeep, if this card is in your graveyard, you may pay 1 life. If you do, return it to your hand",
+        "trigger": {"event": "upkeep", "controller": "you"},
+        "effects": [{
+          "op": "may",
+          "pay": {"pay_life": 1},
+          "prompt": "Pay 1 life to return Master of Death from your graveyard to your hand?",
+          "effects": [{
+            "op": "return_from_graveyard",
+            "destination": "hand",
+            "objects": {"self_only": true, "zone": "graveyard"}
+          }]
+        }]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {"0": 1},
+    "life": {"0": 40}
+  }
+}
