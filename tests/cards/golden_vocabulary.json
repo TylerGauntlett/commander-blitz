@@ -1145,6 +1145,7 @@
   "suspend",
   "tap",
   "transform",
+  "turn_face_up",
   "two_piles",
   "unattach",
   "unblockable",

@@ -4446,7 +4446,7 @@ Morph and manifest are one mechanism from two sides:
 |---|---|---|
 | how it arrives | **cast** face down for `{3}`, fixed by 702.37a | put there off the library |
 | price to turn up | the printed **morph cost** | the hidden card's own mana cost |
-| a non-creature card | cannot carry morph at all (load error) | can be manifested, and can never be turned up (701.34c) |
+| a non-creature card | cannot carry morph at all (load error) | can be manifested, and is never offered the turn-up (701.34c); only an effect turns it up |
 
 **Turning face up reuses `ActionKind.ACTIVATE` with `ability_index` 0**, and
 that is not a shortcut: a face-down permanent has no abilities (707.2), so index
@@ -4515,6 +4515,39 @@ the loader accepts.
 Written without the key, `player: {"binding": "event_player"}` hands the 2/2 to
 the opponent whose library it was.
 
+### An effect turns it face up — `turn_face_up`
+
+```jsonc
+// Showstopping Surprise — "Choose target creature you control. Turn it face
+// up if it's face down."
+{ "op": "turn_face_up", "objects": { "target": "t1" } }
+
+// Ugin's Mastery — "… you may turn a face-down creature you control face up."
+{ "op": "turn_face_up",
+  "objects": { "zone": "battlefield", "controller": "you", "types": ["Creature"],
+               "face_down": true, "count": 1, "optional": true } }
+```
+
+`turn_face_up` turns every permanent `objects` names face up and pays nothing
+(708.8): not the morph or disguise cost, not a manifested card's mana cost. It
+goes through the same `primitives.turn_face_up` the special action ends in, so
+the shell's ward goes and `turned_face_up` fires exactly as it does there.
+`objects` is required — the loader refuses the op without it, since a
+face-down permanent has no abilities and "this" is never what turns.
+
+- **No megamorph counter.** The counter comes with paying the megamorph cost
+  (702.37b), so only the special action puts it on.
+- **Any face-down permanent.** A manifested or cloaked land or other noncreature
+  permanent card turns up into what it is; "if it's a creature card" limits the
+  special action, not the turn. An instant or sorcery card is revealed and stays
+  face down, and nothing hears it turn.
+- **A face-up permanent is left alone**, and nothing fires, which is "turn it
+  face up if it's face down" with no condition. Narrow a choice with
+  `face_down: true` so it offers only what can turn.
+
+`transform` is the near miss: it turns a double-faced card over, which a
+face-down permanent is not.
+
 ## "When this creature is turned face up"
 
 ```jsonc
@@ -4539,11 +4572,12 @@ the opponent whose library it was.
 ```
 
 The `turned_face_up` trigger event fires once each time a face-down permanent is
-turned face up, by morph, megamorph, disguise or manifest (702.37e, 701.34a). Its subject
+turned face up, by morph, megamorph, disguise or manifest (702.37e, 701.34a) or by
+a `turn_face_up` effect (708.8). Its subject
 is that permanent **as it is now, face up**: `filter` asks what the card is (a
 `types: ["Creature"]` or `subtypes` filter reads the turned-up card, never the
 2/2 shell), `controller: "you"` asks who controls it, and `{"binding":
-"subject"}` is "it". Only a permanent's controller can turn it face up, so "a
+"subject"}` is "it". The event's player is the permanent's controller, so "a
 permanent you control is turned face up" and "you turn a permanent face up" are
 the same `controller: "you"`.
 

@@ -3289,6 +3289,11 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             f"{where}: investigate names its own Clue and takes 'player' for who "
             f"investigates, not create_token's 'token' or 'controller'"
         )
+    if op == "turn_face_up" and "objects" not in effect:
+        # "Turn it face up" always names what. Unlike `transform`, the op has no
+        # "this" default: a face-down permanent has no abilities, so the source
+        # of a turn-face-up effect is never the permanent it turns.
+        raise DslError(f"{where}: turn_face_up needs 'objects', the permanent it turns face up")
     if op == "empower" and "amount" not in effect:
         # "Empower Jace N" always prints its N. Defaulted, a card missing the
         # key would load and empower by one -- Mindseeker Oculus putting one

@@ -8,12 +8,6 @@
   ],
   "needs": [
     {
-      "capability": "turn_face_up",
-      "kind": "op",
-      "what": "an op that turns a targeted face-down permanent face up for free (702.37e / 708.8 style, no morph/disguise cost paid), firing the turned_face_up event; objects e.g. {\"target\": \"t1\"} over a target spec with face_down: true, attacking: true, controller: you",
-      "why_existing_wont_do": "ops has no face-flip op: manifest/manifest_dread/cloak only create face-down permanents, exile_and_return returns face up but leaves combat and resets the object, and the only way face up today is the special action of paying a morph cost; the turned_face_up trigger event exists but nothing an effect can do raises it"
-    },
-    {
       "capability": "turned_face_up_this_turn",
       "kind": "selector",
       "what": "a selector/trigger-filter key matching a permanent that was turned face up this turn (a per-turn flag set when the permanent turns face up), usable in a deals_combat_damage_to_player trigger's filter with controller: you and types: [Creature]",

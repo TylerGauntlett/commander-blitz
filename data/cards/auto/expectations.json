@@ -17957,6 +17957,9 @@
   "short_sword": {
     "zone": "battlefield"
   },
+  "showstopping_surprise": {
+    "zone": "graveyard"
+  },
   "shriek_raptor": {
     "zone": "battlefield"
   },
@@ -21751,6 +21754,10 @@
     },
     "zone": "graveyard"
   },
+  "ugin_s_mastery": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "ukkima_stalking_shadow": {
     "battlefield_count": 33,
     "hand_size": {
@@ -23869,6 +23876,10 @@
     "zone": "battlefield"
   },
   "ziatora_the_incinerator": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "zimone_mystery_unraveler": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**404 cards** blocked by **347** capabilities.
+**401 cards** blocked by **346** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -19,7 +19,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
 | [rooms](#rooms) | 6 | 4163 | engine |
 | [council-s-dilemma](#council-s-dilemma) | 5 | 3539 | decision, op |
-| [turn-face-up](#turn-face-up) | 5 | 4493 | op |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 4 | 2389 | engine |
@@ -50,10 +49,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [excess-damage](#excess-damage) | 2 | 4086 | value |
 | [exile-permanent-cost](#exile-permanent-cost) | 2 | 6544 | cost |
 | [experience-counters](#experience-counters) | 2 | 1480 | engine |
-| [face-down-filter](#face-down-filter) | 2 | 5772 | selector |
 | [fraction-of-value](#fraction-of-value) | 2 | 6297 | value |
 | [goad](#goad) | 2 | 6258 | op |
-| [manifest-dread](#manifest-dread) | 2 | 5772 | op |
 | [mercenary-token](#mercenary-token) | 2 | 8312 | token |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [pay-energy-x](#pay-energy-x) | 2 | 5122 | cost |
@@ -178,6 +175,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [face-down-counters-pt](#face-down-counters-pt) | 1 | 6774 | engine |
 | [face-down-exile-controller-may-look](#face-down-exile-controller-may-look) | 1 | 1073 | op |
+| [face-down-filter](#face-down-filter) | 1 | 6544 | selector |
 | [face-down-spell-cost-reduction](#face-down-spell-cost-reduction) | 1 | 8939 | op |
 | [face-down-spell-filter](#face-down-spell-filter) | 1 | 10947 | selector |
 | [face-down-static-filter](#face-down-static-filter) | 1 | 15770 | static_effect |
@@ -237,6 +235,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mana-spent-to-activate](#mana-spent-to-activate) | 1 | 5966 | value |
 | [mana-spent-trigger-on-activation](#mana-spent-trigger-on-activation) | 1 | 4444 | trigger_event |
 | [mana-tap-trigger-damage-rider](#mana-tap-trigger-damage-rider) | 1 | 7929 | static_effect |
+| [manifest-dread](#manifest-dread) | 1 | 8930 | op |
 | [manifest-from-hand](#manifest-from-hand) | 1 | 3975 | op |
 | [maximum-hand-size-modifier](#maximum-hand-size-modifier) | 1 | 1712 | static_effect |
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
@@ -619,39 +618,6 @@ Blocks **5** cards.
   - Council's dilemma — Starting with you, each player votes for past or present.
   - You mill a card for each past vote, then Fateful Tempest deals damage to each opponent equal to the total mana value of cards milled this way.
   - Exile the top card of your library for each present vote.
-
-</details>
-
-## turn-face-up
-
-Blocks **5** cards.
-
-- **(op)** an effect op that turns a face-down permanent (the triggering creature) face up, offered as a choose_mode alternative to putting a +1/+1 counter on it
-  <br>Why the existing vocabulary won't do: turning face up exists only as the special action for face-down permanents; ops has no effect that turns a referenced creature face up
-- **(op)** an op that turns a targeted face-down permanent face up for free (702.37e / 708.8 style, no morph/disguise cost paid), firing the turned_face_up event; objects e.g. {"target": "t1"} over a target spec with face_down: true, attacking: true, controller: you
-  <br>Why the existing vocabulary won't do: ops has no face-flip op: manifest/manifest_dread/cloak only create face-down permanents, exile_and_return returns face up but leaves combat and resets the object, and the only way face up today is the special action of paying a morph cost; the turned_face_up trigger event exists but nothing an effect can do raises it
-- **(op)** an effect op that turns a face-down permanent (morph, disguise, manifest, cloak) matched by `objects` face up without paying any cost, firing 'is turned face up' triggers, and doing nothing to a permanent that is already face up
-  <br>Why the existing vocabulary won't do: No op in the reference turns a permanent face up: `transform` (with `to_back`) flips double-faced cards, not face-down permanents, and turning face up exists only as the player's special action (Game._turn_face_up), never as an effect a spell can perform. The damage half is expressible with `damage` using `source_object` on the target, `power_of`, and an `exclude_binding`/`exclude` selector over each other creature
-- **(op)** an effect op that turns a chosen face-down permanent (selector, e.g. {controller: you, face_down: true, types: [Creature]}) face up without paying any cost, revealing its front face and firing turned_face_up; it must work for any face-down permanent, including a manifested noncreature card (701.40/708.8 effect-driven turn face up)
-  <br>Why the existing vocabulary won't do: The engine has the turned_face_up trigger event, the face_down selector key and the manifest/manifest_dread ops, but no op that turns a permanent face up; transform flips double-faced cards, not face-down ones, and the only face-up route is the special action paying the morph/manifest cost. The trigger half is likely expressible as you_attack with a condition on attack_power_this_combat >= 6
-- **(op)** an effect op that turns a chosen face-down permanent its controller controls face up without paying any cost (optional via `may`), reusing the engine's Game._turn_face_up path so turned-face-up events fire, with the choice limited to face-down permanents you control
-  <br>Why the existing vocabulary won't do: No op in `ops` turns a permanent face up; `transform` flips double-faced cards, not face-down morphs/manifests, and the face-up action exists only as the paid special action, not as an effect a resolving ability can perform
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ugin's Mastery** (rank 4493) — `ugin_s_mastery`
-  - Whenever you attack with creatures with total power 6 or greater, you may turn a face-down creature you control face up.
-- **Zimone, Mystery Unraveler** (rank 5772) — `zimone_mystery_unraveler`
-  - Landfall — Whenever a land you control enters, manifest dread if this is the first time this ability has resolved this turn. Otherwise, you may turn a permanent you control face up
-- **Experimental Lab // Staff Room** (rank 8930) — `experimental_lab_staff_room`
-  - When you unlock this door, manifest dread, then put two +1/+1 counters and a trample counter on that creature.
-  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
-  - Whenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it.
-- **Showstopping Surprise** (rank 12318) — `showstopping_surprise`
-  - Turn it face up if it's face down.
-- **Kaust, Eyes of the Glade** (rank 16432) — `kaust_eyes_of_the_glade`
-  - Whenever a creature you control that was turned face up this turn deals combat damage to a player, draw a card.
-  - {T}: Turn target face-down attacking creature you control face up.
 
 </details>
 
@@ -1319,24 +1285,6 @@ Blocks **2** cards.
 
 </details>
 
-## face-down-filter
-
-Blocks **2** cards.
-
-- **(selector)** a selector key matching face-down permanents (manifested, cloaked, morphed, disguised), e.g. `{zone: battlefield, controller: you, face_down: true}`, usable in the cost filter
-  <br>Why the existing vocabulary won't do: `selector_keys` has no face-down key; `face_down` exists only as an option on library/exile ops meaning private exile, not as a property a selector can read on a permanent
-- **(selector)** a selector key matching face-down permanents (`face_down: true`), so 'turn a permanent you control face up' offers only permanents that are face down
-  <br>Why the existing vocabulary won't do: `selector_keys` has no face-down key; `face_down` appears only as an option on look_at_top/reveal_until/search_zones for putting cards onto the battlefield, not as a filter on existing permanents
-
-<details><summary>Cards waiting on this</summary>
-
-- **Zimone, Mystery Unraveler** (rank 5772) — `zimone_mystery_unraveler`
-  - Landfall — Whenever a land you control enters, manifest dread if this is the first time this ability has resolved this turn. Otherwise, you may turn a permanent you control face up
-- **Primordial Mist** (rank 6544) — `primordial_mist`
-  - Exile a face-down permanent you control face up: You may play that card this turn. (You still pay its costs. Timing rules still apply.)
-
-</details>
-
 ## fraction-of-value
 
 Blocks **2** cards.
@@ -1371,26 +1319,6 @@ Blocks **2** cards.
   - At the beginning of combat on your turn, if two or more players have lost the game, gain control of all goaded and/or suspected creatures until end of turn. Untap them. They gain haste until end of turn.
 - **Immortal Obligation** (rank 7526) — `immortal_obligation`
   - For as long as that creature has a duty counter on it, it is goaded, can't attack you or a permanent you control, and can't block creatures you control.
-
-</details>
-
-## manifest-dread
-
-Blocks **2** cards.
-
-- **(op)** manifest dread (701.62): look at the top two cards of your library, manifest one of them, put the other into your graveyard; then refer to the manifested creature as 'that creature' so following effects can put two +1/+1 counters and a trample counter on it
-  <br>Why the existing vocabulary won't do: manifest takes only amount/cloak/player: no look-at-two-choose-one with the other milled, and no way to reference the manifested object afterwards; no trample keyword counter kind appears in the reference
-- **(op)** manifest dread (701.62): look at the top two cards of your library, choose one and manifest it (face-down 2/2, turnable face up for its mana cost if a creature card), put the other into your graveyard
-  <br>Why the existing vocabulary won't do: The `manifest` op takes only amount, cloak and player and manifests the top card(s) with no choice; it cannot look at two, pick one and send the rest to the graveyard. `look_at_top` has face_down and rest_to, but its face_down does not make a manifested 2/2 that can be turned up for its mana cost, so composing them would be an approximation
-
-<details><summary>Cards waiting on this</summary>
-
-- **Zimone, Mystery Unraveler** (rank 5772) — `zimone_mystery_unraveler`
-  - Landfall — Whenever a land you control enters, manifest dread if this is the first time this ability has resolved this turn. Otherwise, you may turn a permanent you control face up
-- **Experimental Lab // Staff Room** (rank 8930) — `experimental_lab_staff_room`
-  - When you unlock this door, manifest dread, then put two +1/+1 counters and a trample counter on that creature.
-  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
-  - Whenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it.
 
 </details>
 
@@ -3245,6 +3173,20 @@ Blocks **1** card.
 
 </details>
 
+## face-down-filter
+
+Blocks **1** card.
+
+- **(selector)** a selector key matching face-down permanents (manifested, cloaked, morphed, disguised), e.g. `{zone: battlefield, controller: you, face_down: true}`, usable in the cost filter
+  <br>Why the existing vocabulary won't do: `selector_keys` has no face-down key; `face_down` exists only as an option on library/exile ops meaning private exile, not as a property a selector can read on a permanent
+
+<details><summary>Cards waiting on this</summary>
+
+- **Primordial Mist** (rank 6544) — `primordial_mist`
+  - Exile a face-down permanent you control face up: You may play that card this turn. (You still pay its costs. Timing rules still apply.)
+
+</details>
+
 ## face-down-spell-cost-reduction
 
 Blocks **1** card.
@@ -4086,6 +4028,22 @@ Blocks **1** card.
 
 - **Barbflare Gremlin** (rank 7929) — `barbflare_gremlin`
   - Whenever a player taps a land for mana, if this creature is tapped, that player adds one mana of any type that land produced. Then that land deals 1 damage to that player.
+
+</details>
+
+## manifest-dread
+
+Blocks **1** card.
+
+- **(op)** manifest dread (701.62): look at the top two cards of your library, manifest one of them, put the other into your graveyard; then refer to the manifested creature as 'that creature' so following effects can put two +1/+1 counters and a trample counter on it
+  <br>Why the existing vocabulary won't do: manifest takes only amount/cloak/player: no look-at-two-choose-one with the other milled, and no way to reference the manifested object afterwards; no trample keyword counter kind appears in the reference
+
+<details><summary>Cards waiting on this</summary>
+
+- **Experimental Lab // Staff Room** (rank 8930) — `experimental_lab_staff_room`
+  - When you unlock this door, manifest dread, then put two +1/+1 counters and a trample counter on that creature.
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - Whenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it.
 
 </details>
 

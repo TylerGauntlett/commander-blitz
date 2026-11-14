@@ -2016,6 +2016,53 @@ def transform(state: GameState, oid: int, *, to_back: bool | None = None) -> boo
     return True
 
 
+def turn_face_up(state: GameState, oid: int, *, megamorph: bool = False) -> bool:
+    """Turn a face-down permanent face up (708.8). Returns whether it turned.
+
+    The one place a permanent turns face up, whoever asked: the special action
+    (`Game._turn_face_up`, which pays the morph, disguise or mana cost first)
+    and the `turn_face_up` op (708.8's "an effect turns it face up", no cost
+    at all) both end here, so "when this is turned face up" hears either.
+
+    ``megamorph`` puts the +1/+1 counter on, which only the special action
+    passes and only when the card has megamorph: the counter comes with paying
+    the megamorph cost (702.37b), so a megamorph creature an effect turns up
+    gets none.
+
+    A permanent already face up, or gone, does nothing. A face-down instant or
+    sorcery card -- only manifest and cloak can put one there -- is revealed
+    and stays face down, and nothing hears it turn, as the manifest and cloak
+    rules say.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield or not obj.face_down:
+        return False
+    card = state.card_of(obj)
+    if card.is_instant or card.is_sorcery:
+        state.emit("reveal", player=obj.controller, source=oid, cards=[card.id])
+        return False
+    obj.face_down = False
+    # The shell is gone, and the ward went with it: the card underneath is
+    # face up now and has whatever abilities it prints.
+    obj.cloaked = False
+    obj.disguised = False
+    obj.revealed_to.clear()
+    state.bump_chars()
+    if megamorph:
+        add_counters(state, oid, PLUS_ONE, 1, source=oid)
+    # `fire`, not `emit`: "When this creature is turned face up" and
+    # "Whenever a permanent you control is turned face up" listen here.
+    fire(
+        state,
+        EventType.TURNED_FACE_UP,
+        player=obj.controller,
+        source=oid,
+        oid=oid,
+        card=card.id,
+    )
+    return True
+
+
 def change_control(
     state: GameState,
     oid: int,

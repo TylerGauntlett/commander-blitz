@@ -332,6 +332,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                  "manifests another player's under yours.", H_MORPH),
     "manifest_dread": ("Board", "Manifest dread: look at the top two cards, manifest one, put the other "
                        "into the graveyard; `as` records the manifest.", "Manifest dread"),
+    "turn_face_up": ("Board", "Turn face-down permanents face up without paying a cost; no megamorph "
+                     "counter, a face-up one untouched.", H_MORPH),
     "meld": ("Board", "Meld the source with its named partner into one permanent.", H_MELD),
     "phase_out": ("Board", "Permanents phase out.", '"Target creature phases out"'),
     "regenerate": ("Board", "Regenerate permanents (a shield for the turn).",

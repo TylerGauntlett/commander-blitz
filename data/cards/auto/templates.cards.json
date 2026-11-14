@@ -213495,6 +213495,70 @@
     },
     {
       "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "showstopping_surprise",
+      "mana_cost": "{3}{R}{R}",
+      "name": "Showstopping Surprise",
+      "oracle_text": "Choose target creature you control. Turn it face up if it's face down. Then it deals damage equal to its power to each other creature.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "turn_face_up"
+        },
+        {
+          "as": "dealer",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "snapshot"
+        },
+        {
+          "amount": {
+            "power_of": {
+              "target": "t1"
+            }
+          },
+          "objects": {
+            "count": "all",
+            "exclude_binding": "dealer",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "damage",
+          "source_object": {
+            "target": "t1"
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "W"
       ],
       "colors": [
@@ -260114,6 +260178,75 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 1
+              },
+              "op": "manifest",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a colorless creature spell, manifest the top card of your library. (Put it onto the battlefield face down as a 2/2 creature. Turn it face up any time for its mana cost if it's a creature card.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "colorless": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "count": 1,
+                "face_down": true,
+                "optional": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "turn_face_up"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you attack with creatures with total power 6 or greater, you may turn a face-down creature you control face up.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "attack_power_this_combat": "you"
+              },
+              "right": {
+                "const": 6
+              }
+            },
+            "controller": "you",
+            "event": "you_attack"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "ugin_s_mastery",
+      "mana_cost": "{4}",
+      "name": "Ugin's Mastery",
+      "oracle_text": "Whenever you cast a colorless creature spell, manifest the top card of your library. (Put it onto the battlefield face down as a 2/2 creature. Turn it face up any time for its mana cost if it's a creature card.)\nWhenever you attack with creatures with total power 6 or greater, you may turn a face-down creature you control face up.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "effects": [
                 {
                   "count": 1,
@@ -284819,6 +284952,79 @@
         "Legendary"
       ],
       "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "condition": {
+                "cmp": "==",
+                "left": {
+                  "resolutions_this_turn": "self"
+                },
+                "right": {
+                  "const": 1
+                }
+              },
+              "else": [
+                {
+                  "objects": {
+                    "controller": "you",
+                    "count": 1,
+                    "face_down": true,
+                    "optional": true,
+                    "zone": "battlefield"
+                  },
+                  "op": "turn_face_up"
+                }
+              ],
+              "op": "if",
+              "then": [
+                {
+                  "op": "manifest_dread"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Landfall — Whenever a land you control enters, manifest dread if this is the first time this ability has resolved this turn. Otherwise, you may turn a permanent you control face up. (To manifest dread, look at the top two cards of your library. Put one onto the battlefield face down as a 2/2 creature and the other into your graveyard. Turn it face up any time for its mana cost if it's a creature card.)",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "zimone_mystery_unraveler",
+      "mana_cost": "{2}{G}{U}",
+      "name": "Zimone, Mystery Unraveler",
+      "oracle_text": "Landfall — Whenever a land you control enters, manifest dread if this is the first time this ability has resolved this turn. Otherwise, you may turn a permanent you control face up. (To manifest dread, look at the top two cards of your library. Put one onto the battlefield face down as a 2/2 creature and the other into your graveyard. Turn it face up any time for its mana cost if it's a creature card.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]

@@ -245322,12 +245322,12 @@
     },
     "Showstopping Surprise": {
       "edhrec_rank": 12318,
-      "gate": "template",
+      "gate": null,
       "name": "Showstopping Surprise",
-      "reason": "no template for: Choose target creature you control. Turn it face up if it's face down. Then it deals damag",
+      "reason": "",
       "scryfall_id": "1ffdad45-0111-4c6a-bfb0-25aeee7aea1d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shrapnel Blast": {
@@ -295742,12 +295742,12 @@
     },
     "Ugin's Mastery": {
       "edhrec_rank": 4493,
-      "gate": "template",
+      "gate": null,
       "name": "Ugin's Mastery",
-      "reason": "no template for: Whenever you cast a colorless creature spell, manifest the top card of your library",
+      "reason": "",
       "scryfall_id": "995b5a27-6a95-4208-9d6d-3a3801a6d0ae",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ugin's Nexus": {
@@ -322812,12 +322812,12 @@
     },
     "Zimone, Mystery Unraveler": {
       "edhrec_rank": 5772,
-      "gate": "template",
+      "gate": null,
       "name": "Zimone, Mystery Unraveler",
-      "reason": "no template for: Landfall — Whenever a land you control enters, manifest dread if this is the first time th",
+      "reason": "",
       "scryfall_id": "30f23588-5064-48d9-a271-039df757f8d2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Zimone, Paradox Sculptor": {

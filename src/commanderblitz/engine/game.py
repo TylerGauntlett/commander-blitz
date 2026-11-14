@@ -77,7 +77,6 @@ from .errors import IllegalActionError, RulesLoopError
 from .events import EventType, GameEvent
 from .legality import _targets_read_x
 from .mana import N_SYMBOLS, OTHER_PAYMENT, ManaCost, format_symbols, max_affordable_x
-from .objects import PLUS_ONE
 from .player import PlayerState
 from .player_statics import (
     cast_lock_min_x,
@@ -88,7 +87,7 @@ from .player_statics import (
     player_spends_mana_as_any_color,
     spell_life_tax,
 )
-from .primitives import add_counters, draw_cards, tap_permanent
+from .primitives import draw_cards, tap_permanent, turn_face_up
 from .rng import Rng
 from .state import GameState, new_object
 from .structs import ACTIVATION_CHOSEN_TYPE, CONVOKED_BINDING, TargetRef
@@ -1693,27 +1692,9 @@ class Game:
         ok = yield from pay(state, pid, Cost(mana=cost), obj.oid, purpose=OTHER_PAYMENT)
         if not ok:  # pragma: no cover - legality already proved payability
             return
-        obj.face_down = False
-        # The shell is gone, and the ward went with it: the card underneath is
-        # face up now and has whatever abilities it prints.
-        obj.cloaked = False
-        obj.disguised = False
-        obj.revealed_to.clear()
-        state.bump_chars()
-        if card.morph_counter:
-            # Megamorph (702.109a), and the only difference between the two
-            # words.
-            add_counters(state, obj.oid, PLUS_ONE, 1, source=obj.oid)
-        # `fire`, not `emit`: "When this creature is turned face up" and
-        # "Whenever a permanent you control is turned face up" listen here.
-        triggers.fire(
-            state,
-            EventType.TURNED_FACE_UP,
-            player=pid,
-            source=obj.oid,
-            oid=obj.oid,
-            card=card.id,
-        )
+        # Megamorph (702.109a) is the only difference between the two words,
+        # and its counter comes with paying this cost (702.37b).
+        turn_face_up(state, obj.oid, megamorph=bool(card.morph_counter))
 
     def _ask_splices(
         self, pid: int, card, oid: int
