@@ -222030,6 +222030,142 @@
       ]
     },
     {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "spectacular_showdown",
+      "mana_cost": "{1}{R}",
+      "name": "Spectacular Showdown",
+      "oracle_text": "Put a double strike counter on target creature, then goad each creature that had a double strike counter put on it this way. (Until your next turn, those creatures attack each combat if able and attack a player other than you if able.)\nOverload {4}{R}{R}{R} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
+      "overload": "{4}{R}{R}{R}",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "overloaded": true
+          },
+          "else": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "counter": "double_strike",
+                  "objects": {
+                    "binding": "each"
+                  },
+                  "op": "add_counters"
+                },
+                {
+                  "condition": {
+                    "cmp": ">",
+                    "left": {
+                      "counters_put_this_turn": {
+                        "counter": "double_strike",
+                        "on": {
+                          "binding": "each"
+                        },
+                        "player": "you"
+                      }
+                    },
+                    "right": {
+                      "const": 0
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "objects": {
+                        "binding": "each"
+                      },
+                      "op": "goad"
+                    }
+                  ]
+                }
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "for_each"
+            }
+          ],
+          "op": "if",
+          "then": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "counter": "double_strike",
+                  "objects": {
+                    "binding": "each"
+                  },
+                  "op": "add_counters"
+                },
+                {
+                  "condition": {
+                    "cmp": ">",
+                    "left": {
+                      "counters_put_this_turn": {
+                        "counter": "double_strike",
+                        "on": {
+                          "binding": "each"
+                        },
+                        "player": "you"
+                      }
+                    },
+                    "right": {
+                      "const": 0
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "objects": {
+                        "binding": "each"
+                      },
+                      "op": "goad"
+                    }
+                  ]
+                }
+              ],
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "for_each"
+            }
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "optional": true,
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -269926,6 +270062,138 @@
     {
       "abilities": [
         {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Enchanted creature gets +2/+2, has vigilance, and can't attack you or planeswalkers you control.",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "vigilance"
+          ],
+          "kind": "static",
+          "text": "Enchanted creature gets +2/+2, has vigilance, and can't attack you or planeswalkers you control."
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "cant_attack_you",
+          "kind": "static",
+          "text": "Enchanted creature gets +2/+2, has vigilance, and can't attack you or planeswalkers you control."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "vow_of_duty",
+      "mana_cost": "{2}{W}",
+      "name": "Vow of Duty",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +2/+2, has vigilance, and can't attack you or planeswalkers you control.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Enchanted creature gets +2/+2, has first strike, and can't attack you or planeswalkers you control.",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "first_strike"
+          ],
+          "kind": "static",
+          "text": "Enchanted creature gets +2/+2, has first strike, and can't attack you or planeswalkers you control."
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "cant_attack_you",
+          "kind": "static",
+          "text": "Enchanted creature gets +2/+2, has first strike, and can't attack you or planeswalkers you control."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "vow_of_lightning",
+      "mana_cost": "{2}{R}",
+      "name": "Vow of Lightning",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +2/+2, has first strike, and can't attack you or planeswalkers you control.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "loyalty": 0
           },
@@ -277179,6 +277447,46 @@
       "subtypes": [
         "Merfolk",
         "Wizard"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ]
+          },
+          "cost": {
+            "mana": "{2}"
+          },
+          "effect": "attack_tax",
+          "kind": "static",
+          "text": "Creatures can't attack you unless their controller pays {2} for each creature they control that's attacking you."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "windborn_muse",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{W}",
+      "name": "Windborn Muse",
+      "oracle_text": "Flying\nCreatures can't attack you unless their controller pays {2} for each creature they control that's attacking you.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Spirit"
       ],
       "toughness": 3,
       "types": [

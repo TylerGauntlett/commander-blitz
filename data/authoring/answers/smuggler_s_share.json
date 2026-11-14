@@ -1,0 +1,60 @@
+{
+  "card": {
+    "id": "smuggler_s_share",
+    "name": "Smuggler's Share",
+    "oracle_text": "At the beginning of each end step, draw a card for each opponent who drew two or more cards this turn, then create a Treasure token for each opponent who had two or more lands enter the battlefield under their control this turn.",
+    "mana_cost": "{2}{W}",
+    "types": ["Enchantment"],
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "At the beginning of each end step, draw a card for each opponent who drew two or more cards this turn, then create a Treasure token for each opponent who had two or more lands enter the battlefield under their control this turn.",
+        "trigger": {"event": "end_step", "controller": "any"},
+        "effects": [
+          {
+            "op": "for_each_player",
+            "players": "each_opponent",
+            "effects": [
+              {
+                "op": "if",
+                "condition": {
+                  "cmp": ">=",
+                  "left": {"cards_drawn_this_turn": {"binding": "each_player"}},
+                  "right": {"const": 2}
+                },
+                "then": [
+                  {"op": "draw", "player": "you", "amount": {"const": 1}}
+                ]
+              }
+            ]
+          },
+          {
+            "op": "for_each_player",
+            "players": "each_opponent",
+            "effects": [
+              {
+                "op": "if",
+                "condition": {
+                  "cmp": ">=",
+                  "left": {
+                    "permanents_entered_this_turn": {
+                      "controller": {"binding": "each_player"},
+                      "types": ["Land"]
+                    }
+                  },
+                  "right": {"const": 2}
+                },
+                "then": [
+                  {"op": "create_token", "token": "treasure_token", "amount": {"const": 1}}
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}

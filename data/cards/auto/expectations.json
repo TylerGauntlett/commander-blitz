@@ -18707,6 +18707,11 @@
     },
     "zone": "battlefield"
   },
+  "spectacular_showdown": {
+    "battlefield_count": 32,
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
   "spectator_seating": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -22582,6 +22587,22 @@
   "vorstclaw": {
     "zone": "battlefield"
   },
+  "vow_of_duty": {
+    "battlefield_count": 33,
+    "target_pt_delta": {
+      "power": 2,
+      "toughness": 2
+    },
+    "zone": "battlefield"
+  },
+  "vow_of_lightning": {
+    "battlefield_count": 33,
+    "target_pt_delta": {
+      "power": 2,
+      "toughness": 2
+    },
+    "zone": "battlefield"
+  },
   "vraska_betrayal_s_sting": {
     "battlefield_count": 33,
     "hand_size": {
@@ -23245,6 +23266,10 @@
     "zone": "battlefield"
   },
   "wind_strider": {
+    "zone": "battlefield"
+  },
+  "windborn_muse": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "windbrisk_heights": {

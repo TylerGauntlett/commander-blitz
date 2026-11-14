@@ -253162,12 +253162,12 @@
     },
     "Smuggler's Share": {
       "edhrec_rank": 1701,
-      "gate": "template",
+      "gate": "compile",
       "name": "Smuggler's Share",
-      "reason": "no template for: At the beginning of each end step, draw a card for each opponent who drew two or more card",
+      "reason": "smuggler_s_share.abilities[0].effects[1].effects[0].condition.left.permanents_entered_this_turn.controller: must name one of ['active_player', 'all', 'controller', 'each_opponent', 'each_player', 'enchanted_player', 'gift_recipient', 'opponent', 'you'] -- 'under whose control' is part of the printed sentence, got {'binding': 'each_player'}",
       "scryfall_id": "f1ced678-5cfd-49ff-9420-6ee52d5edf5a",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Smuggler's Surprise": {
@@ -257422,12 +257422,12 @@
     },
     "Spectacular Showdown": {
       "edhrec_rank": 2648,
-      "gate": "template",
+      "gate": null,
       "name": "Spectacular Showdown",
-      "reason": "no template for: Put a double strike counter on target creature, then goad each creature that had a double ",
+      "reason": "",
       "scryfall_id": "ffee18af-1160-46ad-9640-87eac49a5239",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spectacular Skywhale": {
@@ -308052,12 +308052,12 @@
     },
     "Vow of Duty": {
       "edhrec_rank": 7192,
-      "gate": "template",
+      "gate": null,
       "name": "Vow of Duty",
-      "reason": "no template for: Enchanted creature gets +2/+2, has vigilance, and can't attack you or planeswalkers you co",
+      "reason": "",
       "scryfall_id": "210920ef-917b-4e2c-a5da-1180baa37959",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vow of Flight": {
@@ -308072,12 +308072,12 @@
     },
     "Vow of Lightning": {
       "edhrec_rank": 7688,
-      "gate": "template",
+      "gate": null,
       "name": "Vow of Lightning",
-      "reason": "no template for: Enchanted creature gets +2/+2, has first strike, and can't attack you or planeswalkers you",
+      "reason": "",
       "scryfall_id": "a0742d43-8a67-4485-b0ce-5a4e057fa915",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vow of Malice": {
@@ -316042,12 +316042,12 @@
     },
     "Windborn Muse": {
       "edhrec_rank": 1003,
-      "gate": "template",
+      "gate": null,
       "name": "Windborn Muse",
-      "reason": "no template for: Creatures can't attack you unless their controller pays {2} for each creature they control",
+      "reason": "",
       "scryfall_id": "85fb2d7f-0ae4-47cd-a930-ba46757a2430",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Windborne Charge": {
