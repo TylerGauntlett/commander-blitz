@@ -86005,6 +86005,157 @@
         {
           "effects": [
             {
+              "effects": [
+                {
+                  "as": "steamboat_exiles",
+                  "objects": {
+                    "chooser": {
+                      "binding": "each_player"
+                    },
+                    "controller": {
+                      "binding": "each_player"
+                    },
+                    "count": 2,
+                    "is_token": false,
+                    "not_subtypes": [
+                      "Vehicle"
+                    ],
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "choose_permanents",
+                  "prompt": "Choose two nontoken, non-Vehicle creatures to exile"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_player"
+            },
+            {
+              "objects": {
+                "binding": "steamboat_exiles"
+              },
+              "op": "exile",
+              "until_leaves": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this Vehicle enters, each player chooses two nontoken, non-Vehicle creatures they control. Exile them until this Vehicle leaves the battlefield.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "controller": "owner",
+              "objects": {
+                "controller": "any",
+                "exiled_with": "self",
+                "zone": "exile"
+              },
+              "op": "put_onto_battlefield"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this Vehicle enters, each player chooses two nontoken, non-Vehicle creatures they control. Exile them until this Vehicle leaves the battlefield.",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "as": "steamboat_buried",
+              "objects": {
+                "controller": "any",
+                "count": 1,
+                "exiled_with": "self",
+                "zone": "exile"
+              },
+              "op": "put_exiled_into_graveyard"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "binding": "steamboat_buried"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "op": "investigate"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this Vehicle attacks, put a card exiled with it into its owner's graveyard. If you do, investigate.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 2,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 5
+              },
+              "toughness": {
+                "const": 7
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 2"
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "foreboding_steamboat",
+      "mana_cost": "{3}{B}{B}",
+      "name": "Foreboding Steamboat",
+      "oracle_text": "When this Vehicle enters, each player chooses two nontoken, non-Vehicle creatures they control. Exile them until this Vehicle leaves the battlefield.\nWhenever this Vehicle attacks, put a card exiled with it into its owner's graveyard. If you do, investigate.\nCrew 2",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "toughness": 7,
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "count": 1,
               "destination": "library_top",
               "op": "search_library",

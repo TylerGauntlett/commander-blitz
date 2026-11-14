@@ -7387,6 +7387,9 @@
   "foreboding_ruins": {
     "zone": "battlefield"
   },
+  "foreboding_steamboat": {
+    "zone": "battlefield"
+  },
   "forerunner_of_the_legion": {
     "battlefield_count": 33,
     "graveyard_size": {

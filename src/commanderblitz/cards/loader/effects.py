@@ -2577,6 +2577,21 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
     # selected it is a return that returns nothing.
     if op == "return_to_origin" and "objects" not in effect:
         raise DslError(f"{where}: 'return_to_origin' needs 'objects' -- there is nothing to return")
+    # Out of exile and nowhere else: from the battlefield the same move is
+    # destroy or sacrifice, from a library mill and from a hand discard, each a
+    # rules event of its own that this op would skip.
+    if op == "put_exiled_into_graveyard":
+        objects = effect.get("objects")
+        if not isinstance(objects, Mapping):
+            raise DslError(
+                f"{where}: 'put_exiled_into_graveyard' needs an 'objects' selector "
+                f"-- there is nothing to move"
+            )
+        if objects.get("zone", "exile") != "exile":
+            raise DslError(
+                f"{where}: 'put_exiled_into_graveyard' moves cards out of exile, "
+                f"got zone {objects['zone']!r}"
+            )
     # Same argument, and one degree more dangerous: `choose_objects` over an
     # omitted selector resolves to nothing, so the op is a *silent* no-op --
     # Hellkite Courser's delayed return would fire, move no permanent, and leave

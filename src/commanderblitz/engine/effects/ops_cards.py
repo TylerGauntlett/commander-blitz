@@ -1386,6 +1386,50 @@ def op_return_from_graveyard(ctx: EffectContext, spec: Mapping[str, Any]):
             obj.returned_by = ctx.source_oid
 
 
+@register("put_exiled_into_graveyard")
+def op_put_exiled_into_graveyard(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Put a card exiled with it into its owner's graveyard. If you do, investigate."
+
+    Foreboding Steamboat. The chosen cards leave exile for their **owners'**
+    graveyards (400.3), through the graveyard replacements `move_object`
+    applies, so a Rest in Peace sends one straight back to exile.
+
+    One pool across every exile the selector walks, and one ``count`` over it:
+    `{"zone": "exile", "controller": "any", "exiled_with": "self", "count": 1}`
+    is one card from among everything this permanent exiled, whoever owns it,
+    and the controller picks which (`choose_objects`). `search_zones` is the
+    near miss and is wrong twice over: it takes its count per player, so with
+    cards owned by two players it would move two, and it may take none. Nor is
+    it `return_from_graveyard` pointed at exile, which is recursion and binds
+    nothing, or the `process` cost, which is a cost, reads only cards an
+    opponent owns and ignores the link.
+
+    ``as`` binds what this op **put into a graveyard**, and only that, so "if
+    you do" is an `if` on the binding. A card a replacement sent elsewhere was
+    not put into a graveyard (614.6), so it is not bound and the rider does not
+    run. Extended rather than replaced, as `return_to_hand`'s is.
+
+    The selector's zone defaults to exile, and the loader refuses any other:
+    from the battlefield the move is destroy or sacrifice, from a library mill,
+    from a hand discard, and each of those is its own rules event.
+    """
+    selector = dict(spec.get("objects") or {})
+    selector.setdefault("zone", "exile")
+    oids = yield from choose_objects(ctx, selector, "Put into its owner's graveyard")
+    moved: list[int] = []
+    for oid in oids:
+        obj = ctx.state.objects.get(oid)
+        if obj is None or obj.zone is not Zone.EXILE:
+            continue
+        move_object(ctx.state, oid, Zone.GRAVEYARD, to_player=obj.owner, by=ctx.source_oid)
+        if obj.zone is Zone.GRAVEYARD:
+            moved.append(oid)
+    if name := spec.get("as"):
+        previous = ctx.bindings.get(str(name))
+        earlier = list(previous) if isinstance(previous, list) else []
+        ctx.bindings[str(name)] = earlier + moved
+
+
 @register("reveal")
 def op_reveal(ctx: EffectContext, spec: Mapping[str, Any]):
     """Show cards to the table.

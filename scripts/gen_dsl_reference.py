@@ -188,6 +188,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "surveil": ("Cards", "Surveil N: look at the top cards, graveyard any of them; each surveiling player fires `surveils` once.",
                 "Surveil — the `surveil` op and the `surveils` trigger"),
     "shuffle": ("Cards", "Shuffle a library.", None),
+    "put_exiled_into_graveyard": ("Cards", "Put cards from exile into their owners' graveyards, `count` over every exile the selector walks; `as` records the ones that arrived.",
+                                  '"Put a card exiled with it into its owner\'s graveyard" — `put_exiled_into_graveyard`'),
     "put_on_top": ("Cards", "Put objects on top (or bottom) of their owners' libraries; `from_top` is the depth.",
                    None),
     "two_piles": ("Cards", "Separate cards into two piles; an opponent chooses one.", "Two piles"),

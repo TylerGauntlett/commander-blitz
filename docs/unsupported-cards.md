@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**379 cards** blocked by **326** capabilities.
+**378 cards** blocked by **325** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -272,7 +272,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [protection-from-mana-value](#protection-from-mana-value) | 1 | 16276 | static_effect |
 | [protection-from-multicolored](#protection-from-multicolored) | 1 | 1516 | static_effect |
 | [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
-| [put-exiled-into-graveyard](#put-exiled-into-graveyard) | 1 | 15160 | op |
 | [random-order-bottom](#random-order-bottom) | 1 | 1343 | op |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
@@ -4505,20 +4504,6 @@ Blocks **1** card.
 
 - **Braids, Arisen Nightmare** (rank 291) — `braids_arisen_nightmare`
   - If you do, each opponent may sacrifice a permanent of their choice that shares a card type with it. For each opponent who doesn't, that player loses 2 life and you draw a card.
-
-</details>
-
-## put-exiled-into-graveyard
-
-Blocks **1** card.
-
-- **(op)** an op that moves cards matched by an exile-zone selector across every player's exile (here `{"zone": "exile", "controller": "any", "exiled_with": "self", "count": 1}`, the controller picking one) into each card's owner's graveyard, with an `as` binding of what it moved so "If you do, investigate" can be an `if` on that binding
-  <br>Why the existing vocabulary won't do: No op in reference moves an arbitrary exiled card to a graveyard. `search_zones` with `zones: ["exile"]` walks each player's own zones separately and takes `count` per player, so with cards owned by both players it would move one per player instead of one total, and with `player: "you"` it never sees the opponent-owned cards. `return_from_graveyard` defaults its selector to the graveyard and is a recursion op (cause "recursion", no `as`); pointing it at exile is an unshipped misuse. The `process` cost moves only cards an opponent owns and is not limited to cards exiled with this Vehicle. The enters half (for_each_player + choose_permanents + exile until_leaves + leaves_battlefield put_onto_battlefield) and Crew 2 are expressible.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Foreboding Steamboat** (rank 15160) — `foreboding_steamboat`
-  - Whenever this Vehicle attacks, put a card exiled with it into its owner's graveyard. If you do, investigate.
 
 </details>
 

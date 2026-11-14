@@ -15060,6 +15060,39 @@ would put a card from somebody's hand onto the board.
 `controller: "any"` on the pool, because exile is kept per owner and the card
 was taken from an opponent.
 
+## "Put a card exiled with it into its owner's graveyard" — `put_exiled_into_graveyard`
+
+Foreboding Steamboat's attack trigger takes one of the cards it exiled, from
+whichever player owns it, and puts it into that player's graveyard:
+
+```jsonc
+"trigger": { "event": "attacks", "source": "self" },
+"effects": [
+  { "op": "put_exiled_into_graveyard", "as": "buried",
+    "objects": { "zone": "exile", "controller": "any",
+                 "exiled_with": "self", "count": 1 } },
+  { "op": "if", "condition": { "exists": { "binding": "buried" } },
+    "then": [{ "op": "investigate" }] }
+]
+```
+
+`objects` is required and is a selector over exile: its `zone` defaults to
+`exile` and the loader refuses any other, because from the battlefield the move
+is destroy or sacrifice, from a library mill and from a hand discard. The pool
+is every exile the selector walks, so `count` is over all of it together, and
+the controller chooses (`chooser` says otherwise). Each card goes to its
+**owner's** graveyard through the graveyard replacements.
+
+`as` binds the cards that reached a graveyard, accumulating, which is what "if
+you do" reads. A card a Rest in Peace sent back to exile was not put into a
+graveyard, so it is not bound and the rider does not run; with nothing exiled
+with the permanent the binding is empty too.
+
+The near misses: `search_zones` over `zones: ["exile"]` takes its count per
+player and may take none; `return_from_graveyard` reads a graveyard and binds
+nothing; the `process` cost is a cost, over cards an opponent owns, exiled by
+anything.
+
 ## "Whenever an opponent loses life"
 
 ```jsonc

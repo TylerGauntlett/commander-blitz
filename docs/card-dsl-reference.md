@@ -10,7 +10,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 175 |
+| [Effect ops](#effect-ops) | 176 |
 | [Selectors](#selectors) | 76 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 74 |
@@ -63,6 +63,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `look_at_top` | Cards | yes | Look at the top N cards of any library; you take some (`chooser` says otherwise), onto the battlefield under `controller: you` if named, send the rest somewhere. | [Effect ops](card-dsl.md#effect-ops) |
 | `mill` | Cards | yes | Put the top N cards of a library into its graveyard. | [Effect ops](card-dsl.md#effect-ops) |
 | `play_exiled` | Cards | yes | Cast the exiled card without paying its mana cost; `exiles` exiles the spell instead of putting it into a graveyard; `as` records what was cast. | ["You may play the exiled card this turn" — impulse draw](card-dsl-cookbook.md#you-may-play-the-exiled-card-this-turn--impulse-draw) |
+| `put_exiled_into_graveyard` | Cards | yes | Put cards from exile into their owners' graveyards, `count` over every exile the selector walks; `as` records the ones that arrived. | ["Put a card exiled with it into its owner's graveyard" — put_exiled_into_graveyard](card-dsl-cookbook.md#put-a-card-exiled-with-it-into-its-owners-graveyard--put_exiled_into_graveyard) |
 | `put_on_top` | Cards | yes | Put objects on top (or bottom) of their owners' libraries; `from_top` is the depth. | [Effect ops](card-dsl.md#effect-ops) |
 | `return_from_graveyard` | Cards |  | Return cards from a graveyard to hand or the battlefield; an Aura chooses its host as it enters, or enters on the host `host_named` names if it can enchant it; `link` records the card as returned with this source. | [Effect ops](card-dsl.md#effect-ops) |
 | `return_to_command_zone` | Cards |  | Return a commander from wherever it is to the command zone. | ["Return it to the command zone" — return_to_command_zone](card-dsl-cookbook.md#return-it-to-the-command-zone--return_to_command_zone) |

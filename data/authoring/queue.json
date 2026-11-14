@@ -100202,12 +100202,12 @@
     },
     "Foreboding Steamboat": {
       "edhrec_rank": 15160,
-      "gate": "template",
+      "gate": null,
       "name": "Foreboding Steamboat",
-      "reason": "no template for: When this Vehicle enters, each player chooses two nontoken, non-Vehicle creatures they con",
+      "reason": "",
       "scryfall_id": "cbd9a0cb-e1ea-446e-aa57-4305d4b3b92e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Forecasting Fortune Teller": {
