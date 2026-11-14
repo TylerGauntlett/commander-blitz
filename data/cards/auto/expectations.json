@@ -302,6 +302,11 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "ainok_survivalist": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "ajani_s_chosen": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -2682,6 +2687,10 @@
     "zone": "battlefield"
   },
   "bronze_walrus": {
+    "zone": "battlefield"
+  },
+  "broodhatch_nantuko": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "broodhunter_wurm": {
