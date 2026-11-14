@@ -201,7 +201,7 @@ Not abilities: instructions naming something a player or the game does.
 | Regeneration | shipped | the `regenerate` op puts a spent-once shield on the permanent; `zones.destroy` spends it | `regenerate` |
 | Sacrifice | shipped | op, and also a cost | `sacrifice` |
 | Scry | shipped | op | `scry` |
-| Surveil † | shipped | op — the source lists it under expansion, but it is a keyword action | `surveil` |
+| Surveil † | shipped | op — the source lists it under expansion, but it is a keyword action; one `surveils` event per surveil, with the turn's ordinal for `nth` — Dimir Spybug and Whispering Snitch are the witnesses | `surveil` |
 | Tap / untap | shipped | two ops | `tap` |
 
 ## Expansion keywords

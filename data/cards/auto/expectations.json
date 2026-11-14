@@ -3986,6 +3986,10 @@
   "copperline_gorge": {
     "zone": "battlefield"
   },
+  "copy_catchers": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "copy_land": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -5095,6 +5099,10 @@
   "dimir_signet": {
     "zone": "battlefield"
   },
+  "dimir_spybug": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "dina_essence_brewer": {
     "battlefield_count": 33,
     "hand_size": {
@@ -5160,6 +5168,15 @@
     },
     "life": {
       "0": 40
+    },
+    "zone": "battlefield"
+  },
+  "disinformation_campaign": {
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
     },
     "zone": "battlefield"
   },
@@ -12716,6 +12733,10 @@
     "life": {
       "0": 42
     },
+    "zone": "battlefield"
+  },
+  "mirko_obsessive_theorist": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "mirkwood_bats": {
@@ -20574,6 +20595,10 @@
   "thought_vessel": {
     "zone": "battlefield"
   },
+  "thoughtbound_phantasm": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "thoughtcast": {
     "hand_size": {
       "0": 3
@@ -22850,6 +22875,10 @@
     "zone": "battlefield"
   },
   "whisperer_of_the_wilds": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "whispering_snitch": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

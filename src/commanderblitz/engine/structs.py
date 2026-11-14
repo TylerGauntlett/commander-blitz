@@ -2241,6 +2241,13 @@ class TurnLedger:
     #: is. Counted whether or not anything is listening, so investigating
     #: before the Illuminator arrives spends the turn's first time.
     investigations: dict[int, int] = field(default_factory=dict)
+    #: How many times each player has **surveilled** this turn (701.25).
+    #: Whispering Snitch's "whenever you surveil **for the first time** each
+    #: turn" is a `surveils` trigger with `nth: 1`, and the ordinal is written
+    #: onto the SURVEILLED event from this count, as an investigation's is.
+    #: Counted whether or not anything is listening, so surveilling before the
+    #: Snitch arrives spends the turn's first time.
+    surveils: dict[int, int] = field(default_factory=dict)
     #: How many times each player has created tokens this turn -- creation
     #: **events**, one per `primitives.create_token` call that makes at least
     #: one, keyed by the player the tokens arrive under. Esix, Fractal Bloom's
@@ -2596,6 +2603,7 @@ class TurnLedger:
         self.life_gains.clear()
         self.life_losses.clear()
         self.investigations.clear()
+        self.surveils.clear()
         self.token_creations.clear()
         self.spells_cast.clear()
         self.mana_spent_on_spells.clear()

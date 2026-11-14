@@ -321,6 +321,19 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: `token_created` over Clues is the near miss: "create a Clue token" is
     #: not investigating, and a doubled Clue is still one investigation.
     "investigates": EventType.INVESTIGATED,
+    #: "Whenever you surveil, put a +1/+1 counter on this creature." -- Dimir
+    #: Spybug; "whenever you surveil for the first time each turn" --
+    #: Whispering Snitch. Once per surveilling player per surveil instruction
+    #: (701.25), fired by `ops_cards.op_surveil` after the cards are placed,
+    #: whether or not any went to the graveyard; surveil 0 fires nothing
+    #: (701.25c). `nth` is the surveil's ordinal for its player this turn,
+    #: counted by the ledger whether or not anything listened.
+    #:
+    #: The subject is a **player** -- the surveiller -- so it is absent from
+    #: `OBJECT_SUBJECT_TRIGGERS` and `_actor` reads `event.player`.
+    #: `put_into_graveyard` is the near miss: it fires per card binned, on
+    #: every mill, and not at all for a surveil that keeps every card on top.
+    "surveils": EventType.SURVEILLED,
     #: "Whenever you give a gift, draw a card." -- Jolly Gerbils. Once per gift
     #: given (702.174), fired by `stack` as an instant or sorcery with a
     #: promised gift resolves, or as a permanent's gift trigger resolves
@@ -2280,10 +2293,13 @@ def _actor(
     # `investigates` is listed for `searches_library`'s reason: the actor is
     # the player who **investigated**, and on Fateful Absence that is the
     # destroyed creature's controller, not the controller of the spell.
+    # `surveils` is listed for the same reason: the actor is the player who
+    # **surveilled**, which "target player surveils" makes someone other than
+    # the controller of the spell.
     # `put_into_graveyard` is listed for `discard`'s reason: the clause asks
     # whose **graveyard**, which is the owner's (400.3) and is on the event,
     # while the subject's controller is whatever `reset_permanent_state` left.
-    if dsl_event in ("land_played", "spell_cast", "spell_copied", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target", "becomes_monarch", "ability_activated", "damage_prevented", "creatures_attack_player", "creatures_deal_combat_damage", "searches_library", "wins_coin_flip", "gives_gift", "put_into_graveyard", "investigates"):
+    if dsl_event in ("land_played", "spell_cast", "spell_copied", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target", "becomes_monarch", "ability_activated", "damage_prevented", "creatures_attack_player", "creatures_deal_combat_damage", "searches_library", "wins_coin_flip", "gives_gift", "put_into_graveyard", "investigates", "surveils"):
         return event.player
     # `deals_damage_to_player` is here beside the combat-only trigger it
     # generalises, and for the same reason: `event.player` on a damage event is

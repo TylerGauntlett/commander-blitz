@@ -517,6 +517,14 @@ export function describeEvent(
     case "investigated":
       return `${who} ${v("investigate", "investigates")}`;
     /*
+     * A player surveilled (701.25). Any card it binned has its own
+     * `zone_change` line; this one says a surveil happened, which is what
+     * "whenever you surveil" triggers off -- even one that kept every card
+     * on top and so moved nothing.
+     */
+    case "surveilled":
+      return `${who} ${v("surveil", "surveils")}`;
+    /*
      * A library search (701.19) -- a tutor, a fetchland, landcycling.
      *
      * Nothing else in the log says it: the shuffle that ends a search emits

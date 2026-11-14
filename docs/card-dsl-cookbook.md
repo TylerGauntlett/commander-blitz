@@ -4703,6 +4703,51 @@ A token whose ability needs an op the engine lacks is not added. Vraska the
 Unseen's Assassin ("that player loses the game") waits on a `lose_game` op:
 `win_game` for its controller is a different sentence in a multiplayer game.
 
+## Surveil — the `surveil` op and the `surveils` trigger
+
+Surveil N (701.25a) is "look at the top N cards of your library, then put any
+number of them into your graveyard and the rest on top of your library in any
+order":
+
+```jsonc
+// Consider — "Surveil 1."
+{ "op": "surveil", "amount": { "const": 1 } }
+// "Target player surveils 2."
+{ "op": "surveil", "player": "target_player", "amount": { "const": 2 } }
+```
+
+`amount` is any value expression, defaulting to one; `player` is who surveils,
+defaulting to `"you"`, and every seat it names surveils on their own. The
+surveiller chooses which of the cards to bin. Each surveil fires one
+`surveilled` event once its cards are placed, carrying `looked` and `binned`.
+Surveil 0, or a value below zero, is no surveil and fires nothing (701.25c); a
+surveil of a library with fewer cards than N, even an empty one, looks at what
+there is and still fires.
+
+The trigger is `surveils`, whose subject is the surveilling player, so
+`controller: "you"` is "whenever you surveil". It fires once per surveil
+whatever the player did with the cards, including keeping every one on top.
+`nth` is the surveil's ordinal for that player this turn, folded into
+`TurnLedger.surveils` whether or not anything is listening:
+
+```jsonc
+// Dimir Spybug — "Whenever you surveil, put a +1/+1 counter on this creature."
+{ "trigger": { "event": "surveils", "controller": "you" },
+  "effects": [ { "op": "add_counters", "objects": { "self_only": true },
+                 "counter": "+1/+1", "amount": { "const": 1 } } ] }
+// Whispering Snitch — "Whenever you surveil for the first time each turn, …"
+{ "trigger": { "event": "surveils", "controller": "you", "nth": 1 }, "effects": [ … ] }
+```
+
+Two near misses, both wrong:
+
+- `put_into_graveyard` from the library. It fires per card binned and on every
+  mill, and a surveil that keeps every card on top puts nothing anywhere and
+  is still a surveil.
+- `max_per_turn: 1` for "the first time each turn". It counts the ability's
+  firings, so a Snitch entering after your first surveil would fire on your
+  second.
+
 ## Which mechanism a printed keyword lands on
 
 The next several sections each answer one instance of a single question: a

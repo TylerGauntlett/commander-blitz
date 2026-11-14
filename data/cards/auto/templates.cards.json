@@ -48289,6 +48289,58 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "copy_permanent"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{1}{U}"
+              },
+              "player": "you",
+              "prompt": "Pay {1}{U} to create a token that's a copy of Copy Catchers?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you surveil, you may pay {1}{U}. If you do, create a token that's a copy of this creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "surveils"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "copy_catchers",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{U}",
+      "name": "Copy Catchers",
+      "oracle_text": "Flying\nWhenever you surveil, you may pay {1}{U}. If you do, create a token that's a copy of this creature.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Faerie"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -60605,6 +60657,55 @@
               "amount": {
                 "const": 1
               },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you surveil, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "surveils"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "dimir_spybug",
+      "keywords": [
+        "flying",
+        "menace"
+      ],
+      "mana_cost": "{U}{B}",
+      "name": "Dimir Spybug",
+      "oracle_text": "Flying\nMenace (This creature can't be blocked except by two or more creatures.)\nWhenever you surveil, put a +1/+1 counter on this creature.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Insect"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
               "op": "draw",
               "player": "you"
             }
@@ -61377,6 +61478,66 @@
           }
         }
       ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "discard",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this enchantment enters, you draw a card and each opponent discards a card.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "return_to_hand"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you surveil, return this enchantment to its owner's hand.",
+          "trigger": {
+            "controller": "you",
+            "event": "surveils"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "disinformation_campaign",
+      "mana_cost": "{1}{U}{B}",
+      "name": "Disinformation Campaign",
+      "oracle_text": "When this enchantment enters, you draw a card and each opponent discards a card.\nWhenever you surveil, return this enchantment to its owner's hand.",
+      "source": "auto",
       "types": [
         "Enchantment"
       ]
@@ -150927,6 +151088,109 @@
         "Merfolk"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you surveil, put a +1/+1 counter on Mirko.",
+          "trigger": {
+            "controller": "you",
+            "event": "surveils"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "controller": "you",
+                  "counters": {
+                    "finality": 1
+                  },
+                  "destination": "battlefield",
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Return the targeted creature card to the battlefield with a finality counter on it?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "power": {
+                  "op": "<",
+                  "value": {
+                    "power_of": {
+                      "self": true
+                    }
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "At the beginning of your end step, you may return target creature card with power less than Mirko's from your graveyard to the battlefield with a finality counter on it.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "mirko_obsessive_theorist",
+      "keywords": [
+        "flying",
+        "vigilance"
+      ],
+      "mana_cost": "{1}{U}{B}",
+      "name": "Mirko, Obsessive Theorist",
+      "oracle_text": "Flying, vigilance\nWhenever you surveil, put a +1/+1 counter on Mirko.\nAt the beginning of your end step, you may return target creature card with power less than Mirko's from your graveyard to the battlefield with a finality counter on it. (If it would die, exile it instead.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Detective"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -246764,6 +247028,74 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you surveil, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "surveils"
+          }
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "counters_on": {
+                "counter": "+1/+1",
+                "objects": {
+                  "self_only": true
+                }
+              }
+            },
+            "right": {
+              "const": 3
+            }
+          },
+          "effect": "attack_despite_defender",
+          "kind": "static",
+          "text": "As long as this creature has three or more +1/+1 counters on it, it can attack as though it didn't have defender."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "thoughtbound_phantasm",
+      "keywords": [
+        "defender"
+      ],
+      "mana_cost": "{U}",
+      "name": "Thoughtbound Phantasm",
+      "oracle_text": "Defender\nWhenever you surveil, put a +1/+1 counter on this creature.\nAs long as this creature has three or more +1/+1 counters on it, it can attack as though it didn't have defender.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Spirit"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -272485,6 +272817,55 @@
         "Shaman"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you surveil for the first time each turn, this creature deals 1 damage to each opponent and you gain 1 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "surveils",
+            "nth": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "whispering_snitch",
+      "mana_cost": "{1}{B}",
+      "name": "Whispering Snitch",
+      "oracle_text": "Whenever you surveil for the first time each turn, this creature deals 1 damage to each opponent and you gain 1 life.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Rogue"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]

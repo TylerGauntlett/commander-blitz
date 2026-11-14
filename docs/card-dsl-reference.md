@@ -15,7 +15,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 74 |
 | [Conditions](#conditions) | 34 |
-| [Trigger events](#trigger-events) | 55 |
+| [Trigger events](#trigger-events) | 56 |
 | [Trigger filters](#trigger-filters) | 37 |
 | [Static effects](#static-effects) | 97 |
 | [Player-wide statics](#player-wide-statics) | 47 |
@@ -37,7 +37,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
 | [Card-level face keys](#card-level-face-keys) | 6 |
 | [Card-level rider keys](#card-level-rider-keys) | 21 |
-| [Engine events](#engine-events) | 81 |
+| [Engine events](#engine-events) | 82 |
 
 ## Effect ops
 
@@ -75,7 +75,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `search_library` | Cards | yes | Search a library for cards matching a selector, then shuffle; `may_destination` (gated by `may_destination_if`) offers the found card onto the battlefield. | [Effect ops](card-dsl.md#effect-ops) |
 | `search_zones` | Cards | yes | One search over the union of two or more of your own zones. | [Effect ops](card-dsl.md#effect-ops) |
 | `shuffle` | Cards |  | Shuffle a library. | [Effect ops](card-dsl.md#effect-ops) |
-| `surveil` | Cards |  | Surveil N: look at the top cards, graveyard any of them. | [Effect ops](card-dsl.md#effect-ops) |
+| `surveil` | Cards |  | Surveil N: look at the top cards, graveyard any of them; each surveiling player fires `surveils` once. | [Surveil — the surveil op and the surveils trigger](card-dsl-cookbook.md#surveil--the-surveil-op-and-the-surveils-trigger) |
 | `suspend` | Cards |  | Exile a card (if it is not already in exile) with N time counters; it is suspended, its owner's to tick and cast. | ["It gains suspend" — suspending a card from an effect](card-dsl-cookbook.md#it-gains-suspend--suspending-a-card-from-an-effect) |
 | `two_piles` | Cards |  | Separate cards into two piles; an opponent chooses one. | [Two piles](card-dsl-cookbook.md#two-piles) |
 | `add_counters` | Board |  | Put N counters of a kind on permanents or players; `counter: {"binding": "counter"}` on a `counter_placed` trigger is the kind that placement put. | [Effect ops](card-dsl.md#effect-ops) |
@@ -497,6 +497,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `spell_cast` | `spell_cast` | A spell is cast. | [Triggers](card-dsl.md#triggers) |
 | `spell_copied` | `spell_copied` | A spell is copied (magecraft's other half). | [spell_copied, and why magecraft is two abilities](card-dsl.md#spell_copied-and-why-magecraft-is-two-abilities) |
 | `state` | `state` | A state holds (603.8): the trigger's `state` condition; no event. | [state — "When there are four or more page counters on this artifact"](card-dsl.md#state--when-there-are-four-or-more-page-counters-on-this-artifact) |
+| `surveils` | `surveilled` | A player surveils, once per surveil after its cards are placed (never for surveil 0); `nth` counts that player's surveils this turn. | [Surveil — the surveil op and the surveils trigger](card-dsl-cookbook.md#surveil--the-surveil-op-and-the-surveils-trigger) |
 | `token_created` | `token_created` | A token is created. | [Triggers](card-dsl.md#triggers) |
 | `turned_face_up` | `turned_face_up` | A face-down permanent is turned face up; the subject is that permanent, face up. | ["When this creature is turned face up"](card-dsl-cookbook.md#when-this-creature-is-turned-face-up) |
 | `upkeep` | `upkeep` | At the beginning of the upkeep. | [Triggers](card-dsl.md#triggers) |
@@ -1229,6 +1230,7 @@ Every `EventType` the engine emits, and which trigger events listen to it. An ev
 | `stats_changed` |  |  | [Triggers](card-dsl.md#triggers) |
 | `step_began` |  |  | [Triggers](card-dsl.md#triggers) |
 | `step_ended` |  |  | [Triggers](card-dsl.md#triggers) |
+| `surveilled` | `surveils` |  | [Triggers](card-dsl.md#triggers) |
 | `suspended` |  |  | [Triggers](card-dsl.md#triggers) |
 | `tapped` | `becomes_tapped` |  | [Triggers](card-dsl.md#triggers) |
 | `time_counter_removed` |  |  | [Triggers](card-dsl.md#triggers) |

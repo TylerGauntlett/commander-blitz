@@ -53182,12 +53182,12 @@
     },
     "Copy Catchers": {
       "edhrec_rank": 18757,
-      "gate": "template",
+      "gate": null,
       "name": "Copy Catchers",
-      "reason": "no template for: Whenever you surveil, you may pay {1}{U}. If you do, create a token that's a copy of this ",
+      "reason": "",
       "scryfall_id": "588ebe61-4697-4ef7-8800-3e88e168bb4e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Copy Enchantment": {
@@ -68932,12 +68932,12 @@
     },
     "Dimir Spybug": {
       "edhrec_rank": 13490,
-      "gate": "template",
+      "gate": null,
       "name": "Dimir Spybug",
-      "reason": "no template for: Whenever you surveil, put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "69840910-eb86-49a4-915f-d21b5628fc04",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dimir Strandcatcher": {
@@ -69942,12 +69942,12 @@
     },
     "Disinformation Campaign": {
       "edhrec_rank": 12413,
-      "gate": "template",
+      "gate": null,
       "name": "Disinformation Campaign",
-      "reason": "no template for: When this enchantment enters, you draw a card and each opponent discards a card",
+      "reason": "",
       "scryfall_id": "d34ea8c4-03b1-415f-80e1-7c3cf6933685",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Disintegrate": {
@@ -174942,12 +174942,12 @@
     },
     "Mirko, Obsessive Theorist": {
       "edhrec_rank": 7882,
-      "gate": "template",
+      "gate": null,
       "name": "Mirko, Obsessive Theorist",
-      "reason": "no template for: Whenever you surveil, put a +1/+1 counter on Mirko",
+      "reason": "",
       "scryfall_id": "043c7b0e-2f7b-4936-88fe-84d8022ffb51",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mirkwood": {
@@ -284472,12 +284472,12 @@
     },
     "Thoughtbound Phantasm": {
       "edhrec_rank": 16955,
-      "gate": "template",
+      "gate": null,
       "name": "Thoughtbound Phantasm",
-      "reason": "no template for: Whenever you surveil, put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "dbcdf292-a391-4452-8116-20084754f591",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thoughtbound Primoc": {
@@ -314282,12 +314282,12 @@
     },
     "Whispering Snitch": {
       "edhrec_rank": 16831,
-      "gate": "template",
+      "gate": null,
       "name": "Whispering Snitch",
-      "reason": "no template for: Whenever you surveil for the first time each turn, this creature deals 1 damage to each op",
+      "reason": "",
       "scryfall_id": "be9abe56-7d56-4fc6-ab24-7b78646266be",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Whispering Specter": {

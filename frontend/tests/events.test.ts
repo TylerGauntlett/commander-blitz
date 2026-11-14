@@ -192,6 +192,19 @@ describe("beatsFor", () => {
     expect(beat.text).toBe("Edgar AI investigates");
   });
 
+  it("gives a surveil its own beat and line", () => {
+    // A surveil that keeps every card on top moves nothing; without this
+    // beat a Dimir Spybug trigger would arrive with nothing before it.
+    const [beat] = beatsFor(
+      [event("surveilled", { looked: 2, binned: 0 }, { player: 1, source: 12 })],
+      NAMES,
+      undefined,
+      0,
+    );
+    expect(beat).toMatchObject({ hold: 200 });
+    expect(beat.text).toBe("Edgar AI surveils");
+  });
+
   it("redraws a permanent turned face up in place", () => {
     // `transformed`'s beat: the card changes without moving, and a "when this
     // is turned face up" trigger follows it.

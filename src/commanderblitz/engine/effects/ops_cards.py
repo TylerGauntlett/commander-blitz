@@ -1506,18 +1506,38 @@ def op_scry(ctx: EffectContext, spec: Mapping[str, Any]):
 
 @register("surveil")
 def op_surveil(ctx: EffectContext, spec: Mapping[str, Any]):
-    """Look at the top N cards; put any number into the graveyard."""
+    """Rule 701.25 -- look at the top N cards; put any number into the graveyard.
+
+    Each player ``player`` names surveils on their own, and each surveil fires
+    one `EventType.SURVEILLED` once its cards are placed -- the `surveils`
+    trigger event, with the surveiller as ``player`` and the turn's ordinal
+    for ``nth``. Surveil 0 (or less, 107.1b) is no surveil and fires nothing
+    (701.25c). A surveil N of a library with fewer than N cards looks at what
+    there is and is still a surveil, even of an empty library: 701.25c carves
+    out only surveil 0.
+    """
     amount = evaluate_value(ctx, spec.get("amount", 1))
+    if amount <= 0:
+        return
     for pid in select_players(ctx, spec.get("player", "you")):
         top = list(ctx.state.players[pid].library[:amount])
-        if not top:
-            continue
-        to_bin = yield from ask_objects(
-            ctx, "Put into your graveyard", top, 0, len(top), pid, "surveil"
-        )
+        to_bin = []
+        if top:
+            to_bin = yield from ask_objects(
+                ctx, "Put into your graveyard", top, 0, len(top), pid, "surveil"
+            )
         for oid in to_bin:
             move_object(ctx.state, oid, Zone.GRAVEYARD, to_player=pid, cause="surveil")
-        ctx.state.emit("surveil", player=pid, looked=len(top), binned=len(to_bin))
+        # Fired, not emitted: "whenever you surveil" listens for it. After the
+        # cards are placed, so the surveil is finished when it is heard.
+        fire(
+            ctx.state,
+            EventType.SURVEILLED,
+            player=pid,
+            source=ctx.source_oid,
+            looked=len(top),
+            binned=len(to_bin),
+        )
 
 
 @register("explore")

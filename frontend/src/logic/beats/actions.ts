@@ -65,6 +65,16 @@ export function actionBeat(ctx: EventContext): boolean {
       return true;
 
     /*
+     * A surveil finishing. Short, like an investigation's: a card it binned
+     * has its own beat, and a surveil that kept every card on top shows
+     * nothing on the board, so this is what a "whenever you surveil" trigger
+     * that follows has before it.
+     */
+    case "surveilled":
+      push({ hold: 200 });
+      return true;
+
+    /*
      * A library search. Its own beat rather than log-only, because it is the
      * one moment of a tutor or a cracked fetchland that shows nothing on the
      * board -- the card it finds arrives as a separate `zone_change` and a

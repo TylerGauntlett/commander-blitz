@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**375 cards** blocked by **321** capabilities.
+**387 cards** blocked by **332** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -39,6 +39,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-from-library-top-unrestricted](#cast-from-library-top-unrestricted) | 2 | 1913 | static_effect |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
+| [cost-reduction-if-targets](#cost-reduction-if-targets) | 2 | 4331 | engine |
 | [devotion](#devotion) | 2 | 2401 | value |
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
 | [enters-as-copy-add-subtypes](#enters-as-copy-add-subtypes) | 2 | 3852 | replacement |
@@ -51,6 +52,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mercenary-token](#mercenary-token) | 2 | 8312 | token |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [pay-energy-x](#pay-energy-x) | 2 | 5122 | cost |
+| [playable-exiles-instead](#playable-exiles-instead) | 2 | 3152 | replacement |
 | [plot](#plot) | 2 | 1873 | op |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
 | [remove-named-counters-from-among](#remove-named-counters-from-among) | 2 | 10375 | cost |
@@ -99,6 +101,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cards-put-into-graveyard-from-library](#cards-put-into-graveyard-from-library) | 1 | 6299 | trigger_event |
 | [cards-to-graveyard-this-turn-per-player](#cards-to-graveyard-this-turn-per-player) | 1 | 2881 | value |
 | [cards-to-your-graveyard-from-zones-this-turn](#cards-to-your-graveyard-from-zones-this-turn) | 1 | 7412 | value |
+| [case](#case) | 1 | 8807 | engine |
+| [cast-at-instant-speed-rider](#cast-at-instant-speed-rider) | 1 | 999 | value |
 | [cast-exiled-for-life-equal-to-mana-value](#cast-exiled-for-life-equal-to-mana-value) | 1 | 7161 | op |
 | [cast-from-hand-result](#cast-from-hand-result) | 1 | 7016 | op |
 | [cast-from-library-top-additional-cost](#cast-from-library-top-additional-cost) | 1 | 5828 | static_effect |
@@ -113,6 +117,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [chosen-card-type-cost-reduction](#chosen-card-type-cost-reduction) | 1 | 611 | static_effect |
 | [chosen-number](#chosen-number) | 1 | 1610 | engine |
 | [chosen-player](#chosen-player) | 1 | 6383 | selector |
+| [clash](#clash) | 1 | 7371 | op, trigger_event |
 | [colored-cost-reduction](#colored-cost-reduction) | 1 | 1541 | static_effect |
 | [combat-damage-amount-binding](#combat-damage-amount-binding) | 1 | 8933 | value |
 | [companion](#companion) | 1 | 3861 | engine |
@@ -168,6 +173,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exile-x-from-graveyard-cost](#exile-x-from-graveyard-cost) | 1 | 17252 | cost |
 | [exiled-this-way-lki](#exiled-this-way-lki) | 1 | 6960 | value |
 | [exploit](#exploit) | 1 | 8043 | keyword, trigger_event |
+| [extra-beginning-phase](#extra-beginning-phase) | 1 | 2445 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [face-down-counters-pt](#face-down-counters-pt) | 1 | 6774 | engine |
 | [face-down-exile-controller-may-look](#face-down-exile-controller-may-look) | 1 | 1073 | op |
@@ -198,6 +204,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [graveyard-cast-permission-additional-cost](#graveyard-cast-permission-additional-cost) | 1 | 7356 | static_effect |
 | [graveyard-play-from-library-this-turn](#graveyard-play-from-library-this-turn) | 1 | 7077 | static_effect |
 | [graveyard-play-grants-ability](#graveyard-play-grants-ability) | 1 | 3531 | static_effect |
+| [graveyard-play-pay-life-instead](#graveyard-play-pay-life-instead) | 1 | 10363 | static_effect |
 | [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 1 | 3531 | static_effect |
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
 | [harmonize](#harmonize) | 1 | 7442 | cost |
@@ -254,7 +261,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [play-cost-paid-card](#play-cost-paid-card) | 1 | 6544 | op |
 | [play-exiled-land](#play-exiled-land) | 1 | 11125 | op |
 | [playable-condition-opponent-lost-life](#playable-condition-opponent-lost-life) | 1 | 4478 | engine |
-| [playable-exiles-instead](#playable-exiles-instead) | 1 | 3152 | replacement |
 | [playable-spell-type-restriction](#playable-spell-type-restriction) | 1 | 4763 | op |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-counter-replacement](#player-counter-replacement) | 1 | 2056 | static_effect |
@@ -269,6 +275,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [protection-from-mana-value](#protection-from-mana-value) | 1 | 16276 | static_effect |
 | [protection-from-multicolored](#protection-from-multicolored) | 1 | 1516 | static_effect |
 | [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
+| [put-exiled-into-graveyard](#put-exiled-into-graveyard) | 1 | 15160 | op |
 | [random-order-bottom](#random-order-bottom) | 1 | 1343 | op |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
@@ -299,8 +306,11 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [spirit-2-2-w-flying](#spirit-2-2-w-flying) | 1 | 12596 | token |
 | [squad](#squad) | 1 | 13056 | engine |
 | [stack-wipe](#stack-wipe) | 1 | 8784 | op |
+| [static-step-condition](#static-step-condition) | 1 | 7933 | static_effect |
 | [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
+| [surveil-replacement](#surveil-replacement) | 1 | 5682 | static_effect |
+| [surveilled-this-turn](#surveilled-this-turn) | 1 | 10363 | selector |
 | [switch-power-toughness](#switch-power-toughness) | 1 | 10418 | op |
 | [tapped-for-mana-trigger](#tapped-for-mana-trigger) | 1 | 13900 | trigger_event |
 | [target-if-cast-during](#target-if-cast-during) | 1 | 1524 | selector |
@@ -311,6 +321,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [targets-share-characteristic](#targets-share-characteristic) | 1 | 4421 | selector |
 | [teammates](#teammates) | 1 | 26785 | selector |
 | [this-combat-duration](#this-combat-duration) | 1 | 9126 | op |
+| [time-counter-removed-trigger](#time-counter-removed-trigger) | 1 | 10358 | trigger_event |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
 | [timed-spell-type-cast-lock](#timed-spell-type-cast-lock) | 1 | 2008 | op |
 | [times-attacked-this-turn](#times-attacked-this-turn) | 1 | 988 | value |
@@ -1058,6 +1069,24 @@ Blocks **2** cards.
 
 </details>
 
+## cost-reduction-if-targets
+
+Blocks **2** cards.
+
+- **(engine)** a card-level `cost_reduction` gated on the spell's OWN chosen targets: `{"amount": 2, "targeting": {"types": ["Creature"], "attacking": true}}` (or a condition head reading the cast's target tuple) so the spell is priced {2} cheaper exactly when one of its declared targets matches the selector. `cost_reduction()` already receives the cast's `targets` (it hands them to `spell_cost_reduction`/`spell_mana_tax`); `reduction_amount(card.cost_reduction)` would need them too, read generously while targets are still None at the legality gate, as the `spell_cost_reduction` targeting clause already is. Same shape as Ranger's Guile-era 'costs {N} less if it targets ...' printings (e.g. Dive Down-style, Sigiled Starfish-free cycle)
+  <br>Why the existing vocabulary won't do: `cost_reduction` takes `amount` + `condition`, but `reduction_amount` is target-blind and the loader narrows `condition` to heads answerable at pricing time (is_monarch, exists, cmp...), none of which reads the spell's targets. `condition: {exists: attacking creature}` would discount the spell whenever any creature is attacking, even when it targets a non-attacker -- strictly better than printed. The `spell_cost_reduction` static's targeting clause reads targets but discounts other spells from a permanent, not the card itself
+- **(engine)** a card-level `cost_reduction` gated on the spell's OWN chosen targets, e.g. `{"amount": 2, "targeting": {"types": ["Creature"], "supertypes": ["Legendary"]}}`, so the spell costs {2} less exactly when one of its declared targets matches the selector; `reduction_amount(card.cost_reduction)` in engine/cost_reduction.py needs the cast's `targets`, which `cost_reduction()` already receives and passes to `spell_mana_tax`
+  <br>Why the existing vocabulary won't do: `cost_reduction` takes `amount` plus a `condition`, but `reduction_amount` is target-blind and the loader narrows `condition` to heads answerable at pricing time, none of which reads the spell's targets. `condition: {exists: legendary creature}` would discount the spell whenever any legendary creature is on the battlefield even if it targets a nonlegendary one. The `spell_cost_reduction` static's targeting clause reads targets but discounts other spells from a permanent, not the card itself
+
+<details><summary>Cards waiting on this</summary>
+
+- **Price of Fame** (rank 4331) — `price_of_fame`
+  - This spell costs {2} less to cast if it targets a legendary creature
+- **Ephara's Dispersal** (rank 10857) — `ephara_s_dispersal`
+  - This spell costs {2} less to cast if it targets an attacking creature
+
+</details>
+
 ## devotion
 
 Blocks **2** cards.
@@ -1277,6 +1306,24 @@ Blocks **2** cards.
   - {3}, {T}, Pay X {E}, Sacrifice this land: Destroy target nonland permanent with mana value X. Activate only as a sorcery.
 - **Sphinx of the Revelation** (rank 5591) — `sphinx_of_the_revelation`
   - {W}{U}{U}, {T}, Pay X {E}: Draw X cards.
+
+</details>
+
+## playable-exiles-instead
+
+Blocks **2** cards.
+
+- **(replacement)** a flag on the `exile` / `grant_playable` play permission (e.g. `playable_exiles: true`) meaning "if a spell cast under this permission would be put into a graveyard, exile it instead" -- applied on resolution, on being countered and on fizzling, for the cast that used the permission
+  <br>Why the existing vocabulary won't do: `exile` takes `playable: this_turn`, `playable_cast_only` and `any_type`, which cover the first two clauses, but has no key for the graveyard-to-exile replacement. `cast_from_hand`/`cast_card` carry `exiles` (StackItem.exiles_instead) but cast immediately during resolution rather than granting a cast-this-turn permission. `grant_playable`'s `as_flashback` sets `obj.playable_exiles`, but that is only read in `_place_after_resolution`; the countered path (ops_stack) and fizzle path read only `StackItem.exiles_instead`, so a countered spell would land in the opponent's graveyard -- not exact, and a misuse of the flashback key
+- **(replacement)** a flag on the `grant_playable` (and `exile`) play permission meaning "if a spell cast under this permission would be put into a graveyard, exile it instead" -- carried onto the StackItem as `exiles_instead` for the cast that used the permission, so it applies on resolution, on being countered and on fizzling
+  <br>Why the existing vocabulary won't do: `surveil` and `grant_playable` over a one-card graveyard selector cover the first two sentences, and `as_flashback` sets `obj.playable_exiles`, but that flag is read only in `stack._place_after_resolution`; the countered path (`ops_stack` counter) and the fizzle path read only `StackItem.exiles_instead`, so a countered or fizzled spell cast this way would return to the graveyard and could be cast again. `cast_card`/`cast_from_hand` carry `exiles` (StackItem.exiles_instead) but cast immediately for free during resolution rather than granting a cast-this-turn permission at the printed cost
+
+<details><summary>Cards waiting on this</summary>
+
+- **Dire Fleet Daredevil** (rank 3152) — `dire_fleet_daredevil`
+  - When this creature enters, exile target instant or sorcery card from an opponent's graveyard. You may cast it this turn, and mana of any type can be spent to cast that spell. If that spell would be put into a graveyard, exile it instead
+- **Mission Briefing** (rank 4862) — `mission_briefing`
+  - Surveil 2, then choose an instant or sorcery card in your graveyard. You may cast it this turn. If that spell would be put into your graveyard, exile it instead
 
 </details>
 
@@ -2030,6 +2077,35 @@ Blocks **1** card.
 
 </details>
 
+## case
+
+Blocks **1** card.
+
+- **(engine)** The Case mechanic (rule 719): a 'solved' designation on a Case permanent; a 'To solve — <condition>' line that compiles to the implicit triggered ability 'At the beginning of your end step, if this Case is not solved and <condition>, it becomes solved'; and 'Solved — <ability>' abilities that the permanent has only while it is solved (like a Class `level` gate), plus a condition/filter that reads whether a Case is solved
+  <br>Why the existing vocabulary won't do: Nothing in reference names solving: there is no solved designation, no ability key gating an ability on it (`level` and `threshold` are the closest gates but read Class level and counters), and approximating it with `set_flag` from an end_step trigger plus a `has_flag` condition on the cast trigger would leave the Solved ability always on the permanent and give the designation no rules identity (copy/blink/'solved Case' checks), so it is an approximation
+
+<details><summary>Cards waiting on this</summary>
+
+- **Case of the Shifting Visage** (rank 8807) — `case_of_the_shifting_visage`
+  - To solve — There are fifteen or more cards in your graveyard. (If unsolved, solve at the beginning of your end step.)
+  - Solved — Whenever you cast a nonlegendary creature spell, copy that spell. (The copy becomes a token.)
+
+</details>
+
+## cast-at-instant-speed-rider
+
+Blocks **1** card.
+
+- **(value)** a condition true of a permanent that was cast at a time a sorcery could not have been (not the caster's main phase with an empty stack, 307.1), stamped at cast; plus a `delay` step `cleanup` so the permanent's controller sacrifices it at the beginning of the next cleanup step (514.3a gives priority there when it triggers)
+  <br>Why the existing vocabulary won't do: `cast_during: your_main` reads only the phase the spell was cast in, not whether the stack was empty, so a Necromancy cast in response during your own main phase would wrongly escape the sacrifice; and `delay` steps (turn.DELAY_STEPS) are upkeep, draw_step, begin_combat, end_of_combat and end_step -- no cleanup, and an end_step delay would sacrifice it earlier than printed and miss a cast made during the end step
+
+<details><summary>Cards waiting on this</summary>
+
+- **Necromancy** (rank 999) — `necromancy`
+  - You may cast this spell as though it had flash. If you cast it any time a sorcery couldn't have been cast, the controller of the permanent it becomes sacrifices it at the beginning of the next cleanup step.
+
+</details>
+
 ## cast-exiled-for-life-equal-to-mana-value
 
 Blocks **1** card.
@@ -2231,6 +2307,23 @@ Blocks **1** card.
 - **Sawhorn Nemesis** (rank 6383) — `sawhorn_nemesis`
   - As this creature enters, choose a player
   - If a source would deal damage to the chosen player or a permanent they control, it deals double that damage instead
+
+</details>
+
+## clash
+
+Blocks **1** card.
+
+- **(trigger_event)** a 'wins_clash' trigger event (controller: you) that fires whenever you win any clash, from any source; the engine's op_clash already emits a 'clash' event with player and won=True, so the trigger only has to listen for it
+  <br>Why the existing vocabulary won't do: trigger_events has no clash event; folding the draw/cast into the attack trigger as an `if` on the clash_won binding would miss clashes from every other source, which is an approximation
+- **(op)** a `player`/`opponent` option on the clash op so it clashes with a named player (here the defending player of the attack trigger) instead of asking 'Clash with which opponent?'; plus the loader must accept a clash whose clash_won binding is read by nobody in the same ability (the win is consumed by a separate trigger)
+  <br>Why the existing vocabulary won't do: op_options lists clash with no options -- it always asks the controller to pick any opponent -- and the loader refuses a clash that no `clash_won` read follows
+
+<details><summary>Cards waiting on this</summary>
+
+- **Marvo, Deep Operative** (rank 7371) — `marvo_deep_operative`
+  - Whenever Marvo attacks, clash with defending player.
+  - Whenever you win a clash, draw a card. Then you may cast a spell from your hand with mana value 8 or less without paying its mana cost.
 
 </details>
 
@@ -3021,6 +3114,20 @@ Blocks **1** card.
 
 </details>
 
+## extra-beginning-phase
+
+Blocks **1** card.
+
+- **(op)** an op that inserts an additional beginning phase (untap, upkeep and draw steps, rule 500.8) immediately after the current phase of the current turn, so the turn proceeds postcombat main -> untap -> upkeep -> draw -> end phase, with untap/upkeep/draw triggers firing again
+  <br>Why the existing vocabulary won't do: The postcombat_main trigger event exists, but no op adds a phase: extra_combat (with extra_main) only inserts combat and main phases, extra_turn adds a whole turn, and untap/draw ops only mimic pieces without creating an untap step, upkeep or draw step that triggers and step-based effects see
+
+<details><summary>Cards waiting on this</summary>
+
+- **Sphinx of the Second Sun** (rank 2445) — `sphinx_of_the_second_sun`
+  - At the beginning of each of your postcombat main phases, there is an additional beginning phase after this phase. (The beginning phase includes the untap, upkeep, and draw steps.)
+
+</details>
+
 ## extra-turn
 
 Blocks **1** card.
@@ -3449,6 +3556,20 @@ Blocks **1** card.
 
 - **Serra Paragon** (rank 3531) — `serra_paragon`
   - Once during each of your turns, you may play a land from your graveyard or cast a permanent spell with mana value 3 or less from your graveyard. If you do, it gains "When this permanent is put into a graveyard from the battlefield, exile it and you gain 2 life."
+
+</details>
+
+## graveyard-play-pay-life-instead
+
+Blocks **1** card.
+
+- **(static_effect)** a continuous permission (static, while this permanent is on the battlefield) to play lands and cast spells from your graveyard among a filtered set of cards, where spells cast this way are paid for with life equal to their mana value instead of their mana cost
+  <br>Why the existing vocabulary won't do: playable_pay_life_instead exists only on one-shot ops (exile, look_at_top, grant_playable) over cards an effect touched; the cast_from_graveyard static is the card's own permission for itself (permanent cards only) and carries no pay-life alternative, and play_lands_from_graveyard does not cover spells
+
+<details><summary>Cards waiting on this</summary>
+
+- **Eye of Duskmantle** (rank 10363) — `eye_of_duskmantle`
+  - You may play lands and cast spells from among cards in your graveyard you've surveilled this turn. If you cast a spell this way, you pay life equal to its mana value rather than paying its mana cost.
 
 </details>
 
@@ -4250,20 +4371,6 @@ Blocks **1** card.
 
 </details>
 
-## playable-exiles-instead
-
-Blocks **1** card.
-
-- **(replacement)** a flag on the `exile` / `grant_playable` play permission (e.g. `playable_exiles: true`) meaning "if a spell cast under this permission would be put into a graveyard, exile it instead" -- applied on resolution, on being countered and on fizzling, for the cast that used the permission
-  <br>Why the existing vocabulary won't do: `exile` takes `playable: this_turn`, `playable_cast_only` and `any_type`, which cover the first two clauses, but has no key for the graveyard-to-exile replacement. `cast_from_hand`/`cast_card` carry `exiles` (StackItem.exiles_instead) but cast immediately during resolution rather than granting a cast-this-turn permission. `grant_playable`'s `as_flashback` sets `obj.playable_exiles`, but that is only read in `_place_after_resolution`; the countered path (ops_stack) and fizzle path read only `StackItem.exiles_instead`, so a countered spell would land in the opponent's graveyard -- not exact, and a misuse of the flashback key
-
-<details><summary>Cards waiting on this</summary>
-
-- **Dire Fleet Daredevil** (rank 3152) — `dire_fleet_daredevil`
-  - When this creature enters, exile target instant or sorcery card from an opponent's graveyard. You may cast it this turn, and mana of any type can be spent to cast that spell. If that spell would be put into a graveyard, exile it instead
-
-</details>
-
 ## playable-spell-type-restriction
 
 Blocks **1** card.
@@ -4457,6 +4564,20 @@ Blocks **1** card.
 
 - **Braids, Arisen Nightmare** (rank 291) — `braids_arisen_nightmare`
   - If you do, each opponent may sacrifice a permanent of their choice that shares a card type with it. For each opponent who doesn't, that player loses 2 life and you draw a card.
+
+</details>
+
+## put-exiled-into-graveyard
+
+Blocks **1** card.
+
+- **(op)** an op that moves cards matched by an exile-zone selector across every player's exile (here `{"zone": "exile", "controller": "any", "exiled_with": "self", "count": 1}`, the controller picking one) into each card's owner's graveyard, with an `as` binding of what it moved so "If you do, investigate" can be an `if` on that binding
+  <br>Why the existing vocabulary won't do: No op in reference moves an arbitrary exiled card to a graveyard. `search_zones` with `zones: ["exile"]` walks each player's own zones separately and takes `count` per player, so with cards owned by both players it would move one per player instead of one total, and with `player: "you"` it never sees the opponent-owned cards. `return_from_graveyard` defaults its selector to the graveyard and is a recursion op (cause "recursion", no `as`); pointing it at exile is an unshipped misuse. The `process` cost moves only cards an opponent owns and is not limited to cards exiled with this Vehicle. The enters half (for_each_player + choose_permanents + exile until_leaves + leaves_battlefield put_onto_battlefield) and Crew 2 are expressible.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Foreboding Steamboat** (rank 15160) — `foreboding_steamboat`
+  - Whenever this Vehicle attacks, put a card exiled with it into its owner's graveyard. If you do, investigate.
 
 </details>
 
@@ -4888,6 +5009,20 @@ Blocks **1** card.
 
 </details>
 
+## static-step-condition
+
+Blocks **1** card.
+
+- **(static_effect)** a static ability condition that reads the current step and whose turn it is, so a cast_as_though_flash static with affects_player 'you' can be switched on only during an opponent's end step: e.g. a `step_is` head in the static condition language, combined as {"all": [{"not": {"is_your_turn": true}}, {"step_is": "end"}]}
+  <br>Why the existing vocabulary won't do: cast_as_though_flash exists and takes an optional condition, but static_condition_keys has only counters/all/any/not/exists/exists_derived/is_your_turn/has_flag/etc. and no step test (`step_is` lives only in the effect-level condition_keys). A triggered 'at the beginning of each opponent's end step' + grant_flash_permission is not exact: it uses the stack, can be responded to or countered, and grants nothing if the Phantom is flashed in during that end step after the trigger point, while the printed static applies at once and stops when the Phantom leaves
+
+<details><summary>Cards waiting on this</summary>
+
+- **Final-Word Phantom** (rank 7933) — `final_word_phantom`
+  - During each opponent's end step, you may cast spells as though they had flash.
+
+</details>
+
 ## stun-counters-cant-be-removed
 
 Blocks **1** card.
@@ -4914,6 +5049,34 @@ Blocks **1** card.
 
 - **Lux Artillery** (rank 3735) — `lux_artillery`
   - Whenever you cast an artifact creature spell, it gains sunburst. (It enters with a +1/+1 counter on it for each color of mana spent to cast it.)
+
+</details>
+
+## surveil-replacement
+
+Blocks **1** card.
+
+- **(static_effect)** a player-wide static (affects_player: "you") that modifies every surveil its controller performs, raising the number of cards looked at by a fixed addend (here +2) while the extra cards follow the same graveyard-or-top choice; optional ("you may"), so the player chooses each time whether to look at the extra cards
+  <br>Why the existing vocabulary won't do: static_effects has replace_draw, replace_mill, replace_proliferate and similar replacements but nothing that reads or changes a surveil; the surveil op takes only amount and player, so the change cannot be made at the card's own level, and a surveil trigger (itself a gap) would add a second surveil rather than enlarge the first
+
+<details><summary>Cards waiting on this</summary>
+
+- **Enhanced Surveillance** (rank 5682) — `enhanced_surveillance`
+  - You may look at an additional two cards each time you surveil.
+
+</details>
+
+## surveilled-this-turn
+
+Blocks **1** card.
+
+- **(selector)** a per-turn record of which cards the controller put into their graveyard by surveilling this turn, readable as a selector/static filter key (e.g. surveilled_this_turn: "you") over graveyard cards
+  <br>Why the existing vocabulary won't do: The selector and static filter vocabularies have drawn_this_turn and entered_this_turn but nothing marking a card as surveilled into the graveyard this turn; the surveil op records no such provenance, so a cast_from_graveyard / play_lands_from_graveyard static cannot be narrowed to those cards
+
+<details><summary>Cards waiting on this</summary>
+
+- **Eye of Duskmantle** (rank 10363) — `eye_of_duskmantle`
+  - You may play lands and cast spells from among cards in your graveyard you've surveilled this turn. If you cast a spell this way, you pay life equal to its mana value rather than paying its mana cost.
 
 </details>
 
@@ -5054,6 +5217,20 @@ Blocks **1** card.
 
 - **Suppressor Skyguard** (rank 9126) — `suppressor_skyguard`
   - Whenever a player attacks you, if that player has another opponent who isn't being attacked, prevent all combat damage that would be dealt to you this combat.
+
+</details>
+
+## time-counter-removed-trigger
+
+Blocks **1** card.
+
+- **(trigger_event)** a trigger event that fires each time a time counter is removed from this card while it is in exile (every suspend upkeep tick, the last one included), heard by an ability with active_zones ["exile"] and controlled by the card's owner; the engine already emits TIME_COUNTER_REMOVED from suspend.py, but no DSL trigger event exposes it
+  <br>Why the existing vocabulary won't do: trigger_events has `last_counter_removed`, which fires only when the final counter goes, not on each removal, and `counter_placed`, which is the opposite direction; there is no `counter_removed` / `time_counter_removed` event in reference, so a per-tick surveil from exile cannot be said
+
+<details><summary>Cards waiting on this</summary>
+
+- **Watcher of Hours** (rank 10358) — `watcher_of_hours`
+  - Whenever you remove a time counter from this card while it's exiled, surveil 1.
 
 </details>
 

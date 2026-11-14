@@ -146,6 +146,17 @@ describe("describeEvent", () => {
     );
   });
 
+  it("says who surveilled", () => {
+    // A surveil that binned nothing has no zone change to show; this line is
+    // what "whenever you surveil" waits for.
+    expect(describeEvent(event({ type: "surveilled", player: 0 }), names, 0)).toBe(
+      "You surveil",
+    );
+    expect(describeEvent(event({ type: "surveilled", player: 1 }), names, 0)).toBe(
+      "AI 1 surveils",
+    );
+  });
+
   it("says who turned a permanent face up, and what it was", () => {
     // No zone change happens, so without this line the 2/2 on the board
     // becomes a different card with nothing in the log to say why.

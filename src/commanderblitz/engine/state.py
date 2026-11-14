@@ -1086,6 +1086,13 @@ class GameState:
             if pid is not None:
                 ledger.investigations[pid] = ledger.investigations.get(pid, 0) + 1
                 data["nth"] = ledger.investigations[pid]
+        elif event.type == EventType.SURVEILLED:
+            # "Whenever you surveil for the first time each turn." The ordinal
+            # goes on the event, as an investigation's does above, so a
+            # `surveils` trigger with `nth` reads it at queue time.
+            if pid is not None:
+                ledger.surveils[pid] = ledger.surveils.get(pid, 0) + 1
+                data["nth"] = ledger.surveils[pid]
         elif event.type == EventType.DISCARD:
             # "If you discarded a card this turn" (Typhoid Mary, Fractured).
             # Counted per discarding seat off the event, which both the plain
