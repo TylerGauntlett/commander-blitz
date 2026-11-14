@@ -1,0 +1,39 @@
+{
+  "card": {
+    "id": "root_elemental",
+    "name": "Root Elemental",
+    "oracle_text": "Morph {5}{G}{G} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)\nWhen this creature is turned face up, you may put a creature card from your hand onto the battlefield.",
+    "mana_cost": "{4}{G}{G}",
+    "morph": "{5}{G}{G}",
+    "types": ["Creature"],
+    "subtypes": ["Elemental"],
+    "power": 6,
+    "toughness": 5,
+    "colors": ["G"],
+    "color_identity": ["G"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature is turned face up, you may put a creature card from your hand onto the battlefield.",
+        "trigger": {"event": "turned_face_up", "source": "self"},
+        "effects": [
+          {
+            "op": "may",
+            "prompt": "Put a creature card from your hand onto the battlefield?",
+            "effects": [
+              {
+                "op": "put_onto_battlefield",
+                "objects": {"zone": "hand", "controller": "you", "types": ["Creature"], "count": 1}
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {"0": 1}
+  }
+}
