@@ -44982,12 +44982,12 @@
     },
     "Charnel Serenade": {
       "edhrec_rank": 10200,
-      "gate": "template",
+      "gate": null,
       "name": "Charnel Serenade",
-      "reason": "no template for: Surveil 3, then return a creature card from your graveyard to the battlefield with a final",
+      "reason": "",
       "scryfall_id": "05a2477e-a9a2-49fb-86e6-53d3e153a965",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Charnel Troll": {
@@ -51882,12 +51882,12 @@
     },
     "Connive // Concoct": {
       "edhrec_rank": 9154,
-      "gate": "template",
+      "gate": null,
       "name": "Connive // Concoct",
-      "reason": "no template for: Gain control of target creature with power 2 or less",
+      "reason": "",
       "scryfall_id": "d7481287-fce9-4ef0-a3a8-7801c9eb3fa8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Conquer": {
@@ -54322,12 +54322,12 @@
     },
     "Counterpoint": {
       "edhrec_rank": 9544,
-      "gate": "template",
+      "gate": null,
       "name": "Counterpoint",
-      "reason": "no template for: Counter target spell. You may cast a creature, instant, sorcery, or planeswalker spell fro",
+      "reason": "",
       "scryfall_id": "7cd3d4da-aeed-4f3f-89aa-63b20ce79f7e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Countersculpt": {

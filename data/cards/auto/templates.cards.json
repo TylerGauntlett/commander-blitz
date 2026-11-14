@@ -40773,6 +40773,53 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "charnel_serenade",
+      "mana_cost": "{4}{B}{B}",
+      "name": "Charnel Serenade",
+      "oracle_text": "Surveil 3, then return a creature card from your graveyard to the battlefield with a finality counter on it. Exile Charnel Serenade with three time counters on it.\nSuspend 3—{2}{B} (Rather than cast this card from your hand, you may pay {2}{B} and exile it with three time counters on it. At the beginning of your upkeep, remove a time counter. When the last is removed, you may cast it without paying its mana cost.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 3
+          },
+          "op": "surveil",
+          "player": "you"
+        },
+        {
+          "controller": "you",
+          "counters": {
+            "finality": 1
+          },
+          "destination": "battlefield",
+          "objects": {
+            "chooser": "controller",
+            "controller": "you",
+            "count": 1,
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          },
+          "op": "return_from_graveyard"
+        }
+      ],
+      "suspend": {
+        "cost": "{2}{B}",
+        "counters": 3
+      },
+      "suspends_itself": 3,
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -46495,6 +46542,46 @@
     },
     {
       "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "concoct",
+      "mana_cost": "{3}{U}{B}",
+      "name": "Concoct",
+      "oracle_text": "Surveil 3, then return a creature card from your graveyard to the battlefield.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 3
+          },
+          "op": "surveil",
+          "player": "you"
+        },
+        {
+          "controller": "you",
+          "destination": "battlefield",
+          "objects": {
+            "controller": "you",
+            "count": 1,
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          },
+          "op": "return_from_graveyard"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "W"
       ],
       "colors": [
@@ -47075,6 +47162,55 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "connive_concoct",
+      "mana_cost": "{2}{U/B}{U/B}",
+      "name": "Connive // Concoct",
+      "oracle_text": "Gain control of target creature with power 2 or less.\nSurveil 3, then return a creature card from your graveyard to the battlefield.",
+      "second_face": "concoct",
+      "second_face_zone": "hand",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "duration": "permanent",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "gain_control"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "any",
+            "power": {
+              "op": "<=",
+              "value": {
+                "const": 2
+              }
+            },
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -48973,6 +49109,64 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "counterpoint",
+      "mana_cost": "{3}{U}{B}",
+      "name": "Counterpoint",
+      "oracle_text": "Counter target spell. You may cast a creature, instant, sorcery, or planeswalker spell from your graveyard with mana value less than or equal to that spell's mana value without paying its mana cost.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "countered",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "op": "counter",
+          "target": "t1"
+        },
+        {
+          "op": "cast_from_hand",
+          "player": "you",
+          "selector": {
+            "any_types": [
+              "Creature",
+              "Instant",
+              "Sorcery",
+              "Planeswalker"
+            ],
+            "mana_value": {
+              "op": "<=",
+              "value": {
+                "mana_value_of": {
+                  "binding": "countered"
+                }
+              }
+            }
+          },
+          "zones": [
+            "graveyard"
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "spell"
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
