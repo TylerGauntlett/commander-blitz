@@ -61237,6 +61237,42 @@
       ]
     },
     {
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "discovery_dispersal",
+      "mana_cost": "{1}{U/B}",
+      "name": "Discovery // Dispersal",
+      "oracle_text": "Surveil 2, then draw a card. (To surveil 2, look at the top two cards of your library, then put any number of them into your graveyard and the rest on top of your library in any order.)\nEach opponent returns a nonland permanent they control with the greatest mana value among permanents they control to its owner's hand, then discards a card.",
+      "second_face": "dispersal",
+      "second_face_zone": "hand",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "surveil",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "draw",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "ability": 0,
@@ -61844,6 +61880,59 @@
     },
     {
       "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "dispersal",
+      "mana_cost": "{3}{U}{B}",
+      "name": "Dispersal",
+      "oracle_text": "Each opponent returns a nonland permanent they control with the greatest mana value among permanents they control to its owner's hand, then discards a card.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "chooser": "owner",
+                "controller": {
+                  "binding": "each_player"
+                },
+                "count": 1,
+                "extreme": {
+                  "of": "mana_value",
+                  "pick": "greatest"
+                },
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "return_to_hand"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "discard",
+              "player": {
+                "binding": "each_player"
+              }
+            }
+          ],
+          "op": "for_each_player",
+          "players": "each_opponent"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "U"
       ],
       "colors": [
@@ -62220,6 +62309,75 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "surveil",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, surveil 2",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "effects": [
+            {
+              "effects": [
+                {
+                  "destination": "hand",
+                  "objects": {
+                    "self_only": true,
+                    "zone": "graveyard"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ],
+              "op": "may",
+              "prompt": "Return Dogged Detective from your graveyard to your hand?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent draws their second card each turn, you may return this card from your graveyard to your hand.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "draw",
+            "nth": 2
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "dogged_detective",
+      "mana_cost": "{1}{B}",
+      "name": "Dogged Detective",
+      "oracle_text": "When this creature enters, surveil 2. (Look at the top two cards of your library, then put any number of them into your graveyard and the rest on top of your library in any order.)\nWhenever an opponent draws their second card each turn, you may return this card from your graveyard to your hand.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Rogue"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attacking": true,
             "controller": "you",
@@ -62554,6 +62712,50 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "pay_life": 2
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "surveil",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "Pay 2 life: Surveil 2."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "doom_whisperer",
+      "keywords": [
+        "flying",
+        "trample"
+      ],
+      "mana_cost": "{3}{B}{B}",
+      "name": "Doom Whisperer",
+      "oracle_text": "Flying, trample\nPay 2 life: Surveil 2. (Look at the top two cards of your library, then put any number of them into your graveyard and the rest on top of your library in any order.)",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Nightmare",
+        "Demon"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
       ]
     },
     {

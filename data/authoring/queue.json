@@ -69842,12 +69842,12 @@
     },
     "Discovery // Dispersal": {
       "edhrec_rank": 9849,
-      "gate": "template",
+      "gate": null,
       "name": "Discovery // Dispersal",
-      "reason": "no template for: Surveil 2, then draw a card",
+      "reason": "",
       "scryfall_id": "5b08b019-796b-4304-806f-59bf7d22b729",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Discreet Retreat": {
@@ -71432,12 +71432,12 @@
     },
     "Dogged Detective": {
       "edhrec_rank": 6852,
-      "gate": "template",
+      "gate": null,
       "name": "Dogged Detective",
-      "reason": "no template for: Whenever an opponent draws their second card each turn, you may return this card from your",
+      "reason": "",
       "scryfall_id": "57d1f729-0d7c-4122-9bca-f3b08cf6fe4f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dogged Hunter": {
@@ -71992,12 +71992,12 @@
     },
     "Doom Whisperer": {
       "edhrec_rank": 1817,
-      "gate": "template",
+      "gate": null,
       "name": "Doom Whisperer",
-      "reason": "no template for: Pay 2 life: Surveil 2",
+      "reason": "",
       "scryfall_id": "de1a8780-726b-47f2-904b-a840cfc69d76",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Doom's Servo-Guards": {

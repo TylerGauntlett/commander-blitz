@@ -5147,6 +5147,12 @@
     },
     "zone": "battlefield"
   },
+  "discovery_dispersal": {
+    "hand_size": {
+      "0": 2
+    },
+    "zone": "graveyard"
+  },
   "discreet_retreat": {
     "battlefield_count": 33,
     "hand_size": {
@@ -5229,6 +5235,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "dogged_detective": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "dolmen_gate": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -5246,6 +5259,13 @@
   },
   "doom_s_time_platform": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "doom_whisperer": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40
+    },
     "zone": "battlefield"
   },
   "doomwake_giant": {
