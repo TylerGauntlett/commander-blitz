@@ -14294,6 +14294,9 @@
     },
     "zone": "graveyard"
   },
+  "overseer_of_the_damned": {
+    "zone": "battlefield"
+  },
   "oversold_cemetery": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -14674,6 +14677,10 @@
   "pikemen": {
     "zone": "battlefield"
   },
+  "pile_on": {
+    "battlefield_count": 31,
+    "zone": "graveyard"
+  },
   "pilgrim_of_the_fires": {
     "zone": "battlefield"
   },
@@ -14880,6 +14887,10 @@
     "zone": "battlefield"
   },
   "porcelain_legionnaire": {
+    "zone": "battlefield"
+  },
+  "port_of_karfell": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "port_town": {
@@ -17961,6 +17972,10 @@
     "zone": "battlefield"
   },
   "sinister_gnarlbark": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "sinister_starfish": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

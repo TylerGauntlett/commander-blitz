@@ -196142,12 +196142,12 @@
     },
     "Overseer of the Damned": {
       "edhrec_rank": 3446,
-      "gate": "template",
+      "gate": null,
       "name": "Overseer of the Damned",
-      "reason": "no template for: When this creature enters, you may destroy target creature",
+      "reason": "",
       "scryfall_id": "0a1a06a4-af73-43e3-a2cd-3a2f0f9b18f0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Oversimplify": {
@@ -202382,12 +202382,12 @@
     },
     "Pile On": {
       "edhrec_rank": 4844,
-      "gate": "template",
+      "gate": null,
       "name": "Pile On",
-      "reason": "no template for: Convoke",
+      "reason": "",
       "scryfall_id": "570b56ff-b25a-43e4-927b-99dba542be5e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pileated Provisioner": {
@@ -205162,12 +205162,12 @@
     },
     "Port of Karfell": {
       "edhrec_rank": 3941,
-      "gate": "template",
+      "gate": null,
       "name": "Port of Karfell",
-      "reason": "no template for: {3}{U}{B}{B}, {T}, Sacrifice this land: Mill four cards, then return a creature card from ",
+      "reason": "",
       "scryfall_id": "c1377ca1-aa54-4fed-b289-45309eb2f6b6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Portable Hole": {
@@ -248452,12 +248452,12 @@
     },
     "Sinister Starfish": {
       "edhrec_rank": 9906,
-      "gate": "template",
+      "gate": null,
       "name": "Sinister Starfish",
-      "reason": "no template for: {T}: Surveil 1",
+      "reason": "",
       "scryfall_id": "5f75b7f4-249c-4b10-a06d-6b7654cccc46",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sinister Strength": {
