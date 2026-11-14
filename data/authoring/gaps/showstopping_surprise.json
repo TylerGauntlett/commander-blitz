@@ -1,0 +1,14 @@
+{
+  "card_id": "showstopping_surprise",
+  "name": "Showstopping Surprise",
+  "oracle_text": "Choose target creature you control. Turn it face up if it's face down. Then it deals damage equal to its power to each other creature.",
+  "blocked_sentences": ["Turn it face up if it's face down."],
+  "needs": [{
+    "capability": "turn_face_up",
+    "kind": "op",
+    "what": "an effect op that turns a face-down permanent (morph, disguise, manifest, cloak) matched by `objects` face up without paying any cost, firing 'is turned face up' triggers, and doing nothing to a permanent that is already face up",
+    "why_existing_wont_do": "No op in the reference turns a permanent face up: `transform` (with `to_back`) flips double-faced cards, not face-down permanents, and turning face up exists only as the player's special action (Game._turn_face_up), never as an effect a spell can perform. The damage half is expressible with `damage` using `source_object` on the target, `power_of`, and an `exclude_binding`/`exclude` selector over each other creature"
+  }],
+  "closest_existing": ["transform", "manifest"],
+  "confidence": "high"
+}
