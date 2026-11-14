@@ -1,0 +1,35 @@
+{
+  "card": {
+    "id": "counterpoint",
+    "name": "Counterpoint",
+    "oracle_text": "Counter target spell. You may cast a creature, instant, sorcery, or planeswalker spell from your graveyard with mana value less than or equal to that spell's mana value without paying its mana cost.",
+    "mana_cost": "{3}{U}{B}",
+    "types": ["Instant"],
+    "colors": ["B", "U"],
+    "color_identity": ["B", "U"],
+    "targets": [
+      {"id": "t1", "kind": "spell"}
+    ],
+    "spell_effects": [
+      {"op": "snapshot", "target": "t1", "as": "countered"},
+      {"op": "counter", "target": "t1"},
+      {
+        "op": "cast_from_hand",
+        "player": "you",
+        "zones": ["graveyard"],
+        "selector": {
+          "any_types": ["Creature", "Instant", "Sorcery", "Planeswalker"],
+          "mana_value": {
+            "op": "<=",
+            "value": {"mana_value_of": {"binding": "countered"}}
+          }
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "hand_size": {"0": 1},
+    "library_size": {"0": 40}
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "card": {
+    "id": "connive_concoct",
+    "name": "Connive // Concoct",
+    "oracle_text": "Gain control of target creature with power 2 or less.\nSurveil 3, then return a creature card from your graveyard to the battlefield.",
+    "mana_cost": "{2}{U/B}{U/B}",
+    "types": ["Sorcery"],
+    "colors": ["B", "U"],
+    "color_identity": ["B", "U"],
+    "second_face": "concoct",
+    "second_face_zone": "hand",
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "permanent",
+        "count": 1,
+        "selector": {
+          "controller": "any",
+          "types": ["Creature"],
+          "zone": "battlefield",
+          "power": {"op": "<=", "value": {"const": 2}}
+        }
+      }
+    ],
+    "spell_effects": [
+      {"op": "gain_control", "duration": "permanent", "objects": {"target": "t1"}}
+    ]
+  },
+  "back": {
+    "id": "concoct",
+    "name": "Concoct",
+    "oracle_text": "Surveil 3, then return a creature card from your graveyard to the battlefield.",
+    "mana_cost": "{3}{U}{B}",
+    "types": ["Sorcery"],
+    "colors": ["B", "U"],
+    "color_identity": ["B", "U"],
+    "spell_effects": [
+      {"op": "surveil", "amount": {"const": 3}, "player": "you"},
+      {
+        "op": "return_from_graveyard",
+        "destination": "battlefield",
+        "controller": "you",
+        "objects": {"controller": "you", "zone": "graveyard", "types": ["Creature"], "count": 1}
+      }
+    ]
+  },
+  "expectation": {"zone": "graveyard"}
+}
