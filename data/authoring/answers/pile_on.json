@@ -46,6 +46,6 @@
   },
   "expectation": {
     "zone": "graveyard",
-    "opponent_battlefield_count": 5
+    "battlefield_count": 31
   }
 }

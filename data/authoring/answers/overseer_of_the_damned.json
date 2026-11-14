@@ -1,0 +1,45 @@
+{
+  "card": {
+    "id": "overseer_of_the_damned",
+    "name": "Overseer of the Damned",
+    "oracle_text": "Flying\nWhen this creature enters, you may destroy target creature.\nWhenever a nontoken creature an opponent controls dies, create a tapped 2/2 black Zombie creature token.",
+    "mana_cost": "{5}{B}{B}",
+    "types": ["Creature"],
+    "subtypes": ["Demon"],
+    "power": 5,
+    "toughness": 5,
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "keywords": ["flying"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature enters, you may destroy target creature.",
+        "trigger": {"event": "self_enters", "source": "self"},
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "count": 1,
+            "optional": true,
+            "selector": {"zone": "battlefield", "controller": "any", "types": ["Creature"]}
+          }
+        ],
+        "effects": [{"op": "destroy", "objects": {"target": "t1"}}]
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever a nontoken creature an opponent controls dies, create a tapped 2/2 black Zombie creature token.",
+        "trigger": {
+          "event": "dies",
+          "controller": "opponent",
+          "filter": {"is_token": false, "types": ["Creature"]}
+        },
+        "effects": [
+          {"op": "create_token", "token": "zombie_2_2_b", "amount": {"const": 1}, "controller": "you", "tapped": true}
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield"}
+}
