@@ -1,0 +1,19 @@
+{
+  "card_id": "final_word_phantom",
+  "name": "Final-Word Phantom",
+  "oracle_text": "Flash\nFlying\nDuring each opponent's end step, you may cast spells as though they had flash.",
+  "blocked_sentences": [
+    "During each opponent's end step, you may cast spells as though they had flash."
+  ],
+  "needs": [
+    {
+      "capability": "static_step_condition",
+      "kind": "static_effect",
+      "what": "a static ability condition that reads the current step and whose turn it is, so a cast_as_though_flash static with affects_player 'you' can be switched on only during an opponent's end step: e.g. a `step_is` head in the static condition language, combined as {\"all\": [{\"not\": {\"is_your_turn\": true}}, {\"step_is\": \"end\"}]}",
+      "why_existing_wont_do": "cast_as_though_flash exists and takes an optional condition, but static_condition_keys has only counters/all/any/not/exists/exists_derived/is_your_turn/has_flag/etc. and no step test (`step_is` lives only in the effect-level condition_keys). A triggered 'at the beginning of each opponent's end step' + grant_flash_permission is not exact: it uses the stack, can be responded to or countered, and grants nothing if the Phantom is flashed in during that end step after the trigger point, while the printed static applies at once and stops when the Phantom leaves",
+      "closest_existing": ["cast_as_though_flash", "grant_flash_permission"]
+    }
+  ],
+  "closest_existing": ["cast_as_though_flash", "grant_flash_permission"],
+  "confidence": "high"
+}

@@ -1,0 +1,36 @@
+{
+  "card": {
+    "id": "hostile_desert",
+    "name": "Hostile Desert",
+    "oracle_text": "{T}: Add {C}.\n{2}, Exile a land card from your graveyard: This land becomes a 3/4 Elemental creature until end of turn. It's still a land.",
+    "types": ["Land"],
+    "subtypes": ["Desert"],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add {C}.",
+        "is_mana_ability": true,
+        "cost": {"tap": true},
+        "effects": [{"op": "add_mana", "mana": "{C}"}]
+      },
+      {
+        "kind": "activated",
+        "text": "{2}, Exile a land card from your graveyard: This land becomes a 3/4 Elemental creature until end of turn. It's still a land.",
+        "cost": {"mana": "{2}", "exile_from_graveyard": {"types": ["Land"], "count": 1}},
+        "effects": [
+          {
+            "op": "animate",
+            "objects": {"self_only": true, "zone": "battlefield"},
+            "power": {"const": 3},
+            "toughness": {"const": 4},
+            "types": ["Creature"],
+            "subtypes": ["Elemental"]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}
