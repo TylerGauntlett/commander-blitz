@@ -469,7 +469,11 @@ def _tokens_and_attachments(state: GameState) -> bool:
         if obj is None:
             continue
         card = state.card_of(obj)
-        if not (card.is_aura or card.is_equipment):
+        # An Aura is the printed one or one an effect made (`became_aura`,
+        # Necromancy). Not a bestowed creature: unattached, it is a creature
+        # again (702.103e) and stays.
+        aura = card.is_aura or obj.became_aura
+        if not (aura or card.is_equipment):
             continue
         # 704.5n reads "attached to an illegal **object or player**, or is not
         # attached to an object or player". An Aura enchanting a player who is
@@ -502,7 +506,7 @@ def _tokens_and_attachments(state: GameState) -> bool:
             if obj.attached_to is not None:
                 obj.attached_to = None
                 changed = True
-            if card.is_aura:
+            if aura:
                 move_object(state, oid, Zone.GRAVEYARD, cause="aura_unattached")
                 changed = True
     if changed:

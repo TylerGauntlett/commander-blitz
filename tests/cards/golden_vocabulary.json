@@ -974,6 +974,7 @@
   "attack_despite_defender",
   "attack_tax",
   "aura_swap",
+  "become_aura",
   "become_copy",
   "become_level",
   "become_monarch",

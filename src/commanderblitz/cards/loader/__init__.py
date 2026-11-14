@@ -96,7 +96,7 @@ from .effects import (
     _validate_enchanted_player,
     _validate_was_cast_placement,
 )
-from .linking import _derive_color_identity
+from .linking import _derive_color_identity, _walk_effects
 from .mana import (
     _ANY_COLOR_OPTIONS,
     _ANY_TYPE_OPTIONS,
@@ -2672,7 +2672,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"got {model.cant_cast_first_turns!r}"
         )
 
-    return CardDef(
+    card = CardDef(
         id=model.id,
         name=model.name,
         oracle_text=model.oracle_text,
@@ -2770,6 +2770,17 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         suspend=suspend,
         impending=impending,
     )
+    # 205.3d: Aura is an enchantment type, so "it becomes an Aura" (Necromancy)
+    # means something only on an enchantment -- and on a printed Aura it is
+    # nothing.
+    if (not card.is_enchantment or card.is_aura) and any(
+        effect.get("op") == "become_aura" for effect in _walk_effects(card)
+    ):
+        raise DslError(
+            f"{where}: become_aura makes a non-Aura enchantment an Aura, and "
+            f"this card is " + ("already one" if card.is_aura else "not an enchantment")
+        )
+    return card
 
 
 def _compile_threshold(

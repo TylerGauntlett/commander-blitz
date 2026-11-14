@@ -1289,6 +1289,20 @@ class GameObject:
     #: a new object (400.7) and no longer the one put onto the battlefield with
     #: anything.
     returned_by: int | None = None
+    #: "…it **becomes an Aura** with 'enchant creature put onto the battlefield
+    #: with Necromancy.'" Necromancy. A printed non-Aura enchantment that an
+    #: effect has made an Aura, set by the `become_aura` op and read wherever
+    #: Aura-ness is asked -- beside `CardDef.is_aura` and bestow's
+    #: `cast_bestowed`: `characteristics._compute` (the type line),
+    #: `aura_controllers` ("enchanted"), `zones._auras_had` (the departure
+    #: snapshot) and `sba._tokens_and_attachments` (704.5m). Unlike bestow's,
+    #: the Aura-ness does not hang on being attached: an Aura it has become stays
+    #: one, and attached to nothing it is put into its owner's graveyard.
+    #:
+    #: Indefinite -- the printed effect states no duration (611.2a) -- and
+    #: cleared by `reset_permanent_state`: the enchantment that leaves and comes
+    #: back is a new object (400.7) and was never made an Aura.
+    became_aura: bool = False
     #: **Prepared** (Emeritus of Woe // Demonic Tutor). "This creature enters
     #: prepared. (While it's prepared, you may cast a copy of its spell. Doing
     #: so unprepares it.)"
@@ -1411,6 +1425,7 @@ class GameObject:
         self.skip_next_untap = False
         self.exiled_by = None
         self.returned_by = None
+        self.became_aura = False
         # A phased-out permanent that changes zones anyway (a player leaving the
         # game takes it along) is a new object, and must not arrive on its next
         # battlefield still flagged -- the untap walk would "phase in" a recast

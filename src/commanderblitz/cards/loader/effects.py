@@ -4127,6 +4127,16 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             f'(use {{"phased_out_with": "self"}} for "the creature this '
             f'card phased out")'
         )
+    if op == "become_aura":
+        # "…**it** becomes an Aura" (Necromancy) is the source and nothing else:
+        # a selector here would be accepted and ignored, and the card would read
+        # as if it turned something else into an Aura.
+        extra = sorted(set(effect) - {"op"})
+        if extra:
+            raise DslError(
+                f"{where}: become_aura makes this permanent an Aura and takes no "
+                f"keys; got {extra}"
+            )
     if op == "unattach" and not effect.get("objects"):
         # Explore's trap once more: "unattach this permanent" is three words on
         # the Equipment that prints it, and a default would silently unattach

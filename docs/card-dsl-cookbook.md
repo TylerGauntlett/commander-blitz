@@ -1576,6 +1576,41 @@ once the Aura has left. A creature that left the battlefield and came back is
 not it. `attached: true` is the near miss for the sacrifice: once the Aura has
 left it is attached to nothing.
 
+### A permanent that becomes an Aura — Necromancy
+
+    When this enchantment enters, if it's on the battlefield, it becomes an
+    Aura with "enchant creature put onto the battlefield with Necromancy." Put
+    target creature card from a graveyard onto the battlefield under your
+    control and attach this enchantment to it. When this enchantment leaves the
+    battlefield, that creature's controller sacrifices it.
+
+```jsonc
+{ "kind": "triggered",
+  "trigger": { "event": "self_enters", "source": "self", "condition": { "zone_is": "battlefield" } },
+  "targets": [{ "id": "t1", "kind": "card_in_graveyard", "count": 1,
+                "selector": { "controller": "any", "types": ["Creature"], "zone": "graveyard" } }],
+  "effects": [
+    { "op": "become_aura" },
+    { "op": "return_from_graveyard", "destination": "battlefield", "controller": "you",
+      "link": true, "objects": { "target": "t1" } },
+    { "op": "attach", "objects": { "returned_with": "self" } } ] }
+```
+
+plus Animate Dead's leaves-the-battlefield sacrifice. `become_aura` takes no
+keys: this permanent gains the subtype Aura for as long as it stays on the
+battlefield, and a new object (400.7) is not one. It sets
+`GameObject.became_aura`, read wherever Aura-ness is asked beside the printed
+`is_aura` — the type line, "enchanted", and 704.5m, so the Aura goes to the
+graveyard when the creature leaves or never arrives. Unlike bestow's Aura-ness
+it does not depend on being attached. The loader refuses it on a card that is
+not an enchantment or is already an Aura (205.3d).
+
+The enchant clause it gains is the battlefield one Animate Dead gains, and
+needs no key: `attach` names the host with `returned_with`. Written first, so
+a return a replacement sends elsewhere leaves an Aura attached to nothing.
+Animate Dead's shape without the op is the near miss: it attaches a non-Aura
+enchantment that stays on the battlefield when its creature leaves.
+
 ## Player-wide statics
 
 Some static effects describe the *player* rather than a characteristic, so

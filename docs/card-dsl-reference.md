@@ -10,7 +10,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 176 |
+| [Effect ops](#effect-ops) | 177 |
 | [Selectors](#selectors) | 76 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 74 |
@@ -86,6 +86,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `attack_despite_defender` | Board |  | Until end of turn, creatures can attack as though they didn't have defender, keeping the keyword. | [Attacking as though it didn't have defender](card-dsl-cookbook.md#attacking-as-though-it-didnt-have-defender) |
 | `attack_tax` | Board |  | Until your next turn (or this turn), creatures can't attack you unless their controller pays a mana cost for each (the timed form of the static). | [Pricing an attack rather than forbidding it](card-dsl.md#pricing-an-attack-rather-than-forbidding-it) |
 | `aura_swap` | Board |  | Exchange the source for an Aura card in hand. | [Aura swap — an exchange, not two moves](card-dsl-cookbook.md#aura-swap--an-exchange-not-two-moves) |
+| `become_aura` | Board |  | This enchantment becomes an Aura for as long as it is on the battlefield (Necromancy). | [A permanent that becomes an Aura — Necromancy](card-dsl-cookbook.md#a-permanent-that-becomes-an-aura--necromancy) |
 | `become_copy` | Board |  | A permanent becomes a copy of another. | [A permanent that enters as a copy](card-dsl.md#a-permanent-that-enters-as-a-copy) |
 | `become_prepared` | Board |  | Prepare the source so it may cast a copy of its `prepared_face`. | [Prepared](card-dsl-cookbook.md#prepared) |
 | `cant_attack_player` | Board |  | Creatures (a player's, or named `objects`) can't attack a player (or only their walkers of a subtype) until a duration ends. | ["That player can't attack you"](card-dsl-cookbook.md#that-player-cant-attack-you) |

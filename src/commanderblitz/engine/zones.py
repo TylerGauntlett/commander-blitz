@@ -663,7 +663,7 @@ def _auras_had(state: GameState, obj: GameObject) -> list[int]:
     if (
         host is not None
         and host in state.battlefield
-        and (state.card_of(obj).is_aura or obj.cast_bestowed)
+        and (state.card_of(obj).is_aura or obj.cast_bestowed or obj.became_aura)
     ):
         kept.append((batch, host, obj.controller))
     state.leaving_auras[:] = kept

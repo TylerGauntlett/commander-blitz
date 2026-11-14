@@ -1,0 +1,72 @@
+{
+  "_comment": "Shapes for tests/unit/attachments/test_become_aura.py. t_ba_rite is Necromancy's second paragraph on a bare enchantment: its enters trigger makes it an Aura, returns the target creature card and attaches it, and its leaves trigger has that creature's controller sacrifice it. t_ba_rite_no_aura is the near miss -- the same card without become_aura -- kept live so the 704.5m assertion is measured against an enchantment the state-based action really does leave alone.",
+  "cards": [
+    {
+      "id": "t_ba_rite",
+      "name": "Test Necromantic Rite",
+      "oracle_text": "When this enchantment enters, if it's on the battlefield, it becomes an Aura with \"enchant creature put onto the battlefield with Test Necromantic Rite.\" Put target creature card from a graveyard onto the battlefield under your control and attach this enchantment to it. When this enchantment leaves the battlefield, that creature's controller sacrifices it.",
+      "mana_cost": "{B}",
+      "types": ["Enchantment"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this enchantment enters, if it's on the battlefield, it becomes an Aura with \"enchant creature put onto the battlefield with Test Necromantic Rite.\" Put target creature card from a graveyard onto the battlefield under your control and attach this enchantment to it.",
+          "trigger": {"event": "self_enters", "source": "self", "condition": {"zone_is": "battlefield"}},
+          "targets": [
+            {"id": "t1", "kind": "card_in_graveyard", "count": 1,
+             "selector": {"controller": "any", "types": ["Creature"], "zone": "graveyard"}}
+          ],
+          "effects": [
+            {"op": "become_aura"},
+            {"op": "return_from_graveyard", "destination": "battlefield", "controller": "you",
+             "link": true, "objects": {"target": "t1"}},
+            {"op": "attach", "objects": {"returned_with": "self"}}
+          ]
+        },
+        {
+          "kind": "triggered",
+          "text": "When this enchantment leaves the battlefield, that creature's controller sacrifices it.",
+          "trigger": {"event": "leaves_battlefield", "source": "self"},
+          "effects": [
+            {"op": "sacrifice", "objects": {"returned_with": "self", "controller": "any", "count": "all"}}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_ba_rite_no_aura",
+      "name": "Test Rite Without the Aura",
+      "oracle_text": "When this enchantment enters, if it's on the battlefield, put target creature card from a graveyard onto the battlefield under your control and attach this enchantment to it. When this enchantment leaves the battlefield, that creature's controller sacrifices it.",
+      "mana_cost": "{B}",
+      "types": ["Enchantment"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this enchantment enters, if it's on the battlefield, put target creature card from a graveyard onto the battlefield under your control and attach this enchantment to it.",
+          "trigger": {"event": "self_enters", "source": "self", "condition": {"zone_is": "battlefield"}},
+          "targets": [
+            {"id": "t1", "kind": "card_in_graveyard", "count": 1,
+             "selector": {"controller": "any", "types": ["Creature"], "zone": "graveyard"}}
+          ],
+          "effects": [
+            {"op": "return_from_graveyard", "destination": "battlefield", "controller": "you",
+             "link": true, "objects": {"target": "t1"}},
+            {"op": "attach", "objects": {"returned_with": "self"}}
+          ]
+        },
+        {
+          "kind": "triggered",
+          "text": "When this enchantment leaves the battlefield, that creature's controller sacrifices it.",
+          "trigger": {"event": "leaves_battlefield", "source": "self"},
+          "effects": [
+            {"op": "sacrifice", "objects": {"returned_with": "self", "controller": "any", "count": "all"}}
+          ]
+        }
+      ]
+    }
+  ]
+}

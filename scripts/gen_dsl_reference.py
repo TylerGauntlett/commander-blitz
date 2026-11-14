@@ -256,6 +256,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "untap": ("Board", "Untap permanents.", "Untapping on somebody else's turn"),
     "attach": ("Board", "Attach an Aura, Equipment or Fortification to a permanent; with `player`, move this Aura onto one player (701.3).",
                "Auras and Equipment"),
+    "become_aura": ("Board", "This enchantment becomes an Aura for as long as it is on the battlefield (Necromancy).",
+                    "A permanent that becomes an Aura — Necromancy"),
     "unattach": ("Board", "Unattach the source (reconfigure).", "Reconfigure — taking it off again"),
     "lock_abilities": ("Board", "Its activated abilities can't be activated this turn.",
                        '"Its activated abilities can\'t be activated this turn"'),

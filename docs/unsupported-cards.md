@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**377 cards** blocked by **324** capabilities.
+**376 cards** blocked by **323** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -87,7 +87,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
 | [bat-1-1-b-flying](#bat-1-1-b-flying) | 1 | 20382 | token |
 | [batched-combat-damage-amount](#batched-combat-damage-amount) | 1 | 3943 | value |
-| [becomes-aura](#becomes-aura) | 1 | 999 | static_effect |
 | [block-restriction-relative-power](#block-restriction-relative-power) | 1 | 6993 | static_effect |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [blocking-equipped-creature](#blocking-equipped-creature) | 1 | 8137 | selector |
@@ -1858,20 +1857,6 @@ Blocks **1** card.
 
 - **Broodcaller Scourge** (rank 3943) — `broodcaller_scourge`
   - Whenever one or more Dragons you control deal combat damage to a player, you may put a permanent card with mana value less than or equal to that damage from your hand onto the battlefield.
-
-</details>
-
-## becomes-aura
-
-Blocks **1** card.
-
-- **(static_effect)** a permanent, indefinite type change that makes a printed non-Aura enchantment an Aura ("it becomes an Aura with 'enchant creature put onto the battlefield with Necromancy'"), read wherever Aura-ness is asked -- the bestow precedent: `GameObject.cast_bestowed` is consulted beside `CardDef.is_aura` in characteristics (types, `auras_on`), zones and stack, but `sba._tokens_and_attachments` reads the printed `card.is_aura` alone
-  <br>Why the existing vocabulary won't do: Animate Dead's shape (`return_from_graveyard` with `link` + `attach` with `returned_with: self`, and the leaves-the-battlefield sacrifice) attaches Necromancy fine, but it stays a non-Aura enchantment: if the creature leaves the battlefield the enchantment is not put into the graveyard (704.5m reads the printed `is_aura`), `enchanted_by` and Aura-counting statics do not see it, and its type line is wrong. The first paragraph (as_though_flash + {"cast_at_sorcery_timing": false} + a `delay` at `cleanup`) is now expressible.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Necromancy** (rank 999) — `necromancy`
-  - When this enchantment enters, if it's on the battlefield, it becomes an Aura with "enchant creature put onto the battlefield with Necromancy." Put target creature card from a graveyard onto the battlefield under your control and attach this enchantment to it.
 
 </details>
 

@@ -13480,6 +13480,13 @@
   "necroblossom_snarl": {
     "zone": "battlefield"
   },
+  "necromancy": {
+    "battlefield_count": 34,
+    "graveyard_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "necropotence": {
     "battlefield_count": 33,
     "hand_size": {

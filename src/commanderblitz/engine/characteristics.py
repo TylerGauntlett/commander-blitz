@@ -665,6 +665,14 @@ def _compute(state: GameState, oid: int) -> Characteristics:
         # Its 0/0 is `_base_pt`'s, under the identical condition, so a static
         # filter reads the same non-creature size this line does.
 
+    # "…it becomes an Aura" (Necromancy). The same layer-4 subtype as bestow's,
+    # and for its reason applied before every static: `became_aura` is a field
+    # the `become_aura` op writes and no layer can change, so it is a pipeline
+    # input. Not conditioned on being attached, which is the difference from
+    # bestow -- the enchantment is an Aura from the moment it becomes one.
+    if obj.became_aura and obj.on_battlefield:
+        subtypes.add("Aura")
+
     # Impending (702.176a): "as long as this permanent's impending cost was paid
     # and it has a time counter on it, it's not a creature". A layer-4 type
     # change, placed beside bestow's and for its reason: the rule makes it a
@@ -2821,7 +2829,7 @@ def aura_controllers(state: GameState, oid: int) -> list[int]:
         aura = state.objects.get(aura_oid)
         if aura is None or aura.attached_to != oid:
             continue
-        if not (state.card_of(aura).is_aura or aura.cast_bestowed):
+        if not (state.card_of(aura).is_aura or aura.cast_bestowed or aura.became_aura):
             continue
         seats.append(aura.controller)
     return seats
@@ -3047,6 +3055,10 @@ def _matches_wherever(
                 types=(card.types - {"Creature"}) | {"Enchantment"},
                 subtypes=card.subtypes | {"Aura"},
             )
+        elif obj.became_aura and obj.on_battlefield:
+            # "…it becomes an Aura" (Necromancy): `_compute`'s change under the
+            # identical condition, so "each Aura you control" counts it here too.
+            card = dataclasses.replace(card, subtypes=card.subtypes | {"Aura"})
         if not _matches_printed(card, selector, recorded_subtypes(obj), obj.text_changes):
             return False
         size = None
