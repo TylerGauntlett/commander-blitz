@@ -1,0 +1,18 @@
+{
+  "card_id": "smuggler_s_share",
+  "name": "Smuggler's Share",
+  "oracle_text": "At the beginning of each end step, draw a card for each opponent who drew two or more cards this turn, then create a Treasure token for each opponent who had two or more lands enter the battlefield under their control this turn.",
+  "blocked_sentences": [
+    "At the beginning of each end step, draw a card for each opponent who drew two or more cards this turn, then create a Treasure token for each opponent who had two or more lands enter the battlefield under their control this turn."
+  ],
+  "needs": [
+    {
+      "capability": "permanents_entered_this_turn_per_player",
+      "kind": "value",
+      "what": "let the `permanents_entered_this_turn` value's `controller` take a bound player spec such as {\"binding\": \"each_player\"} inside a `for_each_player` loop (or a `player_count`-style headcount over the ledger), so \"each opponent who had two or more lands enter the battlefield under their control this turn\" can test each opponent's own count of lands entered under their control against 2",
+      "why_existing_wont_do": "`validate_entered_filter` restricts `controller` to fixed specs (you, opponent, each_opponent, ...) and refuses {\"binding\": \"each_player\"}; `each_opponent` sums every opponent's lands into one total, so two opponents with one land each would wrongly count. `player_count` with `cmp`/`than` only counts objects currently matching a selector, and `entered_this_turn` on a battlefield selector misses lands that entered and left and reads current rather than at-entry controller. The draw half is expressible (for_each_player over each_opponent with an `if` on {\"cards_drawn_this_turn\": {\"binding\": \"each_player\"}} >= 2)."
+    }
+  ],
+  "closest_existing": ["permanents_entered_this_turn", "player_count", "for_each_player", "cards_drawn_this_turn"],
+  "confidence": "high"
+}

@@ -1,0 +1,68 @@
+{
+  "card": {
+    "id": "spectacular_showdown",
+    "name": "Spectacular Showdown",
+    "oracle_text": "Put a double strike counter on target creature, then goad each creature that had a double strike counter put on it this way. (Until your next turn, those creatures attack each combat if able and attack a player other than you if able.)\nOverload {4}{R}{R}{R} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
+    "mana_cost": "{1}{R}",
+    "types": ["Sorcery"],
+    "colors": ["R"],
+    "color_identity": ["R"],
+    "overload": "{4}{R}{R}{R}",
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "permanent",
+        "count": 1,
+        "optional": true,
+        "selector": {"types": ["Creature"], "zone": "battlefield"}
+      }
+    ],
+    "spell_effects": [
+      {
+        "op": "if",
+        "condition": {"overloaded": true},
+        "then": [
+          {
+            "op": "for_each",
+            "objects": {"zone": "battlefield", "types": ["Creature"], "controller": "any", "count": "all"},
+            "effects": [
+              {"op": "add_counters", "counter": "double_strike", "amount": {"const": 1}, "objects": {"binding": "each"}},
+              {
+                "op": "if",
+                "condition": {
+                  "cmp": ">",
+                  "left": {"counters_put_this_turn": {"player": "you", "counter": "double_strike", "on": {"binding": "each"}}},
+                  "right": {"const": 0}
+                },
+                "then": [{"op": "goad", "objects": {"binding": "each"}}]
+              }
+            ]
+          }
+        ],
+        "else": [
+          {
+            "op": "for_each",
+            "objects": {"target": "t1"},
+            "effects": [
+              {"op": "add_counters", "counter": "double_strike", "amount": {"const": 1}, "objects": {"binding": "each"}},
+              {
+                "op": "if",
+                "condition": {
+                  "cmp": ">",
+                  "left": {"counters_put_this_turn": {"player": "you", "counter": "double_strike", "on": {"binding": "each"}}},
+                  "right": {"const": 0}
+                },
+                "then": [{"op": "goad", "objects": {"binding": "each"}}]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "battlefield_count": 32,
+    "opponent_battlefield_count": 6
+  }
+}
