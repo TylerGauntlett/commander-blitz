@@ -1,0 +1,31 @@
+{
+  "card_id": "stalking_leonin",
+  "name": "Stalking Leonin",
+  "oracle_text": "When this creature enters, secretly choose an opponent.\nReveal the player you chose: Exile target creature that's attacking you if it's controlled by the chosen player. Activate only once.",
+  "blocked_sentences": [
+    "When this creature enters, secretly choose an opponent.",
+    "Reveal the player you chose: Exile target creature that's attacking you if it's controlled by the chosen player. Activate only once."
+  ],
+  "needs": [
+    {
+      "capability": "secret_choice",
+      "kind": "decision",
+      "what": "a hidden player choice: choose_player whose result is stored on the source permanent and hidden from opponents (and from their observations/AI view) until revealed, plus a 'revealed' state on that stored choice",
+      "why_existing_wont_do": "choose_player takes only as/players/prompt and binds the chosen player openly within one resolution; nothing keeps a concealed choice on a permanent for a later ability to read"
+    },
+    {
+      "capability": "reveal_secret_choice",
+      "kind": "cost",
+      "what": "an activated-ability cost 'Reveal the player you chose' that is payable only while the source's secret choice is unrevealed, reveals it, and binds the chosen player for the ability's effects (so the exile can be gated on 'controlled by the chosen player')",
+      "why_existing_wont_do": "cost_keys has behold, discard, tap, sacrifice and others, but nothing that reveals hidden information or reads a choice stored on the source"
+    },
+    {
+      "capability": "activate_only_once",
+      "kind": "engine",
+      "what": "an ability key limiting an activated ability to a single activation for the lifetime of the permanent ('Activate only once')",
+      "why_existing_wont_do": "once_each_turn and exhaust are the closest; once_each_turn resets every turn, and exhaust is the printed Exhaust mechanic, not a general 'only once' rule text"
+    }
+  ],
+  "closest_existing": ["choose_player", "once_each_turn", "exhaust"],
+  "confidence": "high"
+}

@@ -1,0 +1,24 @@
+{
+  "card_id": "immortal_obligation",
+  "name": "Immortal Obligation",
+  "oracle_text": "Return target creature card from an opponent's graveyard to the battlefield under their control with a duty counter on it. For as long as that creature has a duty counter on it, it is goaded, can't attack you or a permanent you control, and can't block creatures you control.",
+  "blocked_sentences": [
+    "For as long as that creature has a duty counter on it, it is goaded, can't attack you or a permanent you control, and can't block creatures you control."
+  ],
+  "needs": [
+    {
+      "capability": "goad",
+      "kind": "op",
+      "what": "a `while_counter` duration (with `counter` naming the kind) on the `goad` op, so the creature stays goaded by the spell's controller for as long as it has a duty counter on it, and stops being goaded when the last one is removed",
+      "why_existing_wont_do": "`goad` takes only `duration: \"permanent\"` (rest of the game) or the default until-the-goader's-next-turn clock; neither ends when a counter is removed. Only `cant_attack_player` with `objects` has a `while_counter` mark (`structs.AttackMark`)"
+    },
+    {
+      "capability": "cant_block",
+      "kind": "op",
+      "what": "a per-object block restriction lasting `while_counter` that forbids the creature from blocking only attackers controlled by the spell's controller (\"can't block creatures you control\"), not blocking in general",
+      "why_existing_wont_do": "the `cant_block` op forbids all blocking and only lasts `this_turn` or `until_your_next_turn` (`BLOCK_PROHIBITION_DURATIONS`); the `block_restriction` and `cant_block` statics need a source on the battlefield and a printed-characteristics filter, and an instant leaves no source"
+    }
+  ],
+  "closest_existing": ["cant_attack_player", "goad", "cant_block", "return_from_graveyard"],
+  "confidence": "high"
+}

@@ -1,0 +1,31 @@
+{
+  "card_id": "hot_pursuit",
+  "name": "Hot Pursuit",
+  "oracle_text": "When this enchantment enters, suspect target creature an opponent controls. As long as this enchantment remains on the battlefield, that creature is also goaded.\nAt the beginning of combat on your turn, if two or more players have lost the game, gain control of all goaded and/or suspected creatures until end of turn. Untap them. They gain haste until end of turn.",
+  "blocked_sentences": [
+    "When this enchantment enters, suspect target creature an opponent controls. As long as this enchantment remains on the battlefield, that creature is also goaded.",
+    "At the beginning of combat on your turn, if two or more players have lost the game, gain control of all goaded and/or suspected creatures until end of turn. Untap them. They gain haste until end of turn."
+  ],
+  "needs": [
+    {
+      "capability": "suspect",
+      "kind": "op",
+      "what": "an op that makes a creature suspected (701.60): a designation that gives it menace and \"this creature can't block\" for as long as it stays suspected, plus a `suspected` selector key so later effects can find suspected creatures",
+      "why_existing_wont_do": "No `suspect` op or `suspected` selector exists in reference; grant_keyword menace plus cant_block would not be a designation, would not be readable by a selector, and would not end the way suspicion does"
+    },
+    {
+      "capability": "goad",
+      "kind": "op",
+      "what": "goad that lasts as long as the source permanent remains on the battlefield (a duration tied to the source leaving, not to the goading player's next turn)",
+      "why_existing_wont_do": "The `goad` op takes a `duration`, but no listed duration expresses \"as long as this enchantment remains on the battlefield\"; a permanent goad plus a leaves-battlefield trigger running `ungoad` is not printed and the target binding is not available to that later trigger"
+    },
+    {
+      "capability": "players_lost_the_game",
+      "kind": "value",
+      "what": "a value counting players who have lost the game (eliminated seats), for the intervening-if \"if two or more players have lost the game\"",
+      "why_existing_wont_do": "value_keys has `player_count` but nothing counting eliminated players; no starting-player-count value exists to subtract from"
+    }
+  ],
+  "closest_existing": ["goad", "gain_control", "grant_keyword", "untap"],
+  "confidence": "high"
+}

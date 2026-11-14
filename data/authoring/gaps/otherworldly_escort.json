@@ -1,0 +1,27 @@
+{
+  "card_id": "otherworldly_escort",
+  "name": "Otherworldly Escort",
+  "oracle_text": "Flash\nWhen this creature dies, if it's not a Spirit, return it to the battlefield under its owner's control with four charge counters on it. It's a Spirit Detective. (It's no longer a Human.)\n{1}{W}, {T}, Remove a charge counter from this creature: Destroy target creature that dealt damage to you this turn.",
+  "blocked_sentences": [
+    "When this creature dies, if it's not a Spirit, return it to the battlefield under its owner's control with four charge counters on it. It's a Spirit Detective. (It's no longer a Human.)",
+    "{1}{W}, {T}, Remove a charge counter from this creature: Destroy target creature that dealt damage to you this turn."
+  ],
+  "needs": [
+    {
+      "capability": "return_with_new_creature_types",
+      "kind": "op",
+      "what": "a return-to-battlefield from graveyard (return_from_graveyard with counters) whose returned object permanently has its creature types REPLACED by a printed list (\"It's a Spirit Detective. (It's no longer a Human.)\"), applied as part of the return so the new object enters with those types; plus the dies trigger's intervening-if reading the dying object's last-known subtypes (\"if it's not a Spirit\")",
+      "why_existing_wont_do": "return_from_graveyard takes counters/tapped/controller but no subtype override; add_subtype only adds (Human would remain); animate's subtypes is a becomes-a-creature overlay with a duration, not a permanent creature-type replacement on a freshly returned object; set_creature_types exists only as a static_effect, which the card itself cannot carry for the returned object without also affecting its first life",
+      "closest_existing": ["return_from_graveyard", "add_subtype", "animate"]
+    },
+    {
+      "capability": "dealt_damage_to_player_this_turn",
+      "kind": "selector",
+      "what": "a selector key matching creatures that dealt damage (any damage, combat or not) to a given player this turn, e.g. {\"dealt_damage_to\": \"you\", \"this_turn\": true}, backed by a per-turn ledger of source -> damaged player",
+      "why_existing_wont_do": "damaged_by matches objects that were dealt damage BY a source (the reverse direction), damaged only reads marked damage on the object, and the value damage_taken_this_turn is a player total with no link to which creatures dealt it",
+      "closest_existing": ["damaged_by", "damage_taken_this_turn"]
+    }
+  ],
+  "closest_existing": ["return_from_graveyard", "add_subtype", "damaged_by"],
+  "confidence": "high"
+}

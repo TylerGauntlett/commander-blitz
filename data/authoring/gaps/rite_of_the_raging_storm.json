@@ -1,0 +1,25 @@
+{
+  "card_id": "rite_of_the_raging_storm",
+  "name": "Rite of the Raging Storm",
+  "oracle_text": "Creatures named Lightning Rager can't attack you or planeswalkers you control.\nAt the beginning of each player's upkeep, that player creates a 5/1 red Elemental creature token named Lightning Rager. It has trample, haste, and \"At the beginning of the end step, sacrifice this token.\"",
+  "blocked_sentences": [
+    "At the beginning of each player's upkeep, that player creates a 5/1 red Elemental creature token named Lightning Rager. It has trample, haste, and \"At the beginning of the end step, sacrifice this token.\"",
+    "Creatures named Lightning Rager can't attack you or planeswalkers you control."
+  ],
+  "needs": [
+    {
+      "capability": "lightning_rager_token",
+      "kind": "token",
+      "what": "a 5/1 red Elemental creature token named Lightning Rager with trample, haste, and \"At the beginning of the end step, sacrifice this token.\"",
+      "why_existing_wont_do": "token_ids has no 5/1 Elemental and none named Lightning Rager; the nearest red Elementals are elemental_1_1_r and elemental_5_5_rg, which differ in P/T, colors, name and the end-step sacrifice"
+    },
+    {
+      "capability": "static_name_filter",
+      "kind": "selector",
+      "what": "a `name` key in static_affects_filter_keys so the cant_attack_you static can affect only creatures named Lightning Rager (every controller), covering attacks on you and on planeswalkers you control",
+      "why_existing_wont_do": "cant_attack_you exists as a static effect, but static_affects_filter_keys has no name key; subtypes Elemental or is_token would also stop other Elementals or tokens, which the printed card does not"
+    }
+  ],
+  "closest_existing": ["cant_attack_you", "create_token", "elemental_1_1_r"],
+  "confidence": "high"
+}

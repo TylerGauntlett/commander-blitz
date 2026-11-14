@@ -4162,12 +4162,12 @@
     },
     "Agitator Ant": {
       "edhrec_rank": 2427,
-      "gate": "template",
+      "gate": null,
       "name": "Agitator Ant",
-      "reason": "no template for: At the beginning of your end step, each player may put two +1/+1 counters on a creature th",
+      "reason": "",
       "scryfall_id": "bc63ff71-ff42-4baf-977b-55f69c8e122f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Agna Qel'a": {
@@ -8382,12 +8382,12 @@
     },
     "Ancient Stone Idol": {
       "edhrec_rank": 2497,
-      "gate": "template",
+      "gate": null,
       "name": "Ancient Stone Idol",
-      "reason": "no template for: This spell costs {1} less to cast for each attacking creature",
+      "reason": "",
       "scryfall_id": "333f6334-f027-4bec-95d7-7af80508c4ca",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ancient Tomb": {
@@ -29152,12 +29152,12 @@
     },
     "Bloodthirsty Blade": {
       "edhrec_rank": 2260,
-      "gate": "template",
+      "gate": null,
       "name": "Bloodthirsty Blade",
-      "reason": "no template for: Equipped creature gets +2/+0 and is goaded",
+      "reason": "",
       "scryfall_id": "bcdf583e-25f8-4227-96e9-e70ec8a36b09",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bloodthirsty Conqueror": {
@@ -31862,12 +31862,12 @@
     },
     "Boros Garrison": {
       "edhrec_rank": 485,
-      "gate": "template",
+      "gate": null,
       "name": "Boros Garrison",
-      "reason": "no template for: When this land enters, return a land you control to its owner's hand",
+      "reason": "",
       "scryfall_id": "76ec3366-98f3-4903-8f7b-cfcdd60e3be1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Boros Guildgate": {
@@ -31922,12 +31922,12 @@
     },
     "Boros Reckoner": {
       "edhrec_rank": 6290,
-      "gate": "template",
+      "gate": null,
       "name": "Boros Reckoner",
-      "reason": "no template for: Whenever this creature is dealt damage, it deals that much damage to any target",
+      "reason": "",
       "scryfall_id": "55a2f767-5928-44c5-91b7-2300bade458f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Boros Recruit": {
@@ -70292,12 +70292,12 @@
     },
     "Disrupt Decorum": {
       "edhrec_rank": 887,
-      "gate": "template",
+      "gate": null,
       "name": "Disrupt Decorum",
-      "reason": "no template for: Goad all creatures you don't control",
+      "reason": "",
       "scryfall_id": "c5323fe7-d9df-4287-ae13-d9db35f7973b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Disrupting Scepter": {
@@ -76622,12 +76622,12 @@
     },
     "Duelist's Heritage": {
       "edhrec_rank": 1280,
-      "gate": "template",
+      "gate": null,
       "name": "Duelist's Heritage",
-      "reason": "no template for: Whenever one or more creatures attack, you may have target attacking creature gain double ",
+      "reason": "",
       "scryfall_id": "45834bc6-be8d-4064-930d-efc73cf3c64d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Duelists' Convocation International": {
@@ -94452,12 +94452,12 @@
     },
     "Fiendish Duo": {
       "edhrec_rank": 3559,
-      "gate": "template",
+      "gate": null,
       "name": "Fiendish Duo",
-      "reason": "no template for: If a source would deal damage to an opponent, it deals double that damage to that player i",
+      "reason": "",
       "scryfall_id": "50569696-be95-47f6-833a-d49b73e84801",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fiendish Panda": {
@@ -108962,12 +108962,12 @@
     },
     "Gideon's Sacrifice": {
       "edhrec_rank": 5430,
-      "gate": "template",
+      "gate": null,
       "name": "Gideon's Sacrifice",
-      "reason": "no template for: Choose a creature or planeswalker you control. All damage that would be dealt this turn to",
+      "reason": "",
       "scryfall_id": "d483b409-1853-4456-a077-daeb77e165ba",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gideon's Triumph": {
@@ -123772,12 +123772,12 @@
     },
     "Havoc Eater": {
       "edhrec_rank": 7188,
-      "gate": "template",
+      "gate": null,
       "name": "Havoc Eater",
-      "reason": "no template for: When this creature enters, for each opponent, goad up to one target creature that opponent",
+      "reason": "",
       "scryfall_id": "17054e75-d801-4962-83c1-0b52e7b65f66",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Havoc Festival": {
@@ -153722,12 +153722,12 @@
     },
     "Labyrinth of Skophos": {
       "edhrec_rank": 4453,
-      "gate": "template",
+      "gate": null,
       "name": "Labyrinth of Skophos",
-      "reason": "no template for: {4}, {T}: Remove target attacking or blocking creature from combat",
+      "reason": "",
       "scryfall_id": "388169df-4cce-452d-9215-e3f814ff4fdf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Laccolith Grunt": {
@@ -237682,12 +237682,12 @@
     },
     "Seal of Cleansing": {
       "edhrec_rank": 3230,
-      "gate": "template",
+      "gate": null,
       "name": "Seal of Cleansing",
-      "reason": "no template for: Sacrifice this enchantment: Destroy target artifact or enchantment",
+      "reason": "",
       "scryfall_id": "22a6673b-1528-4e0f-b316-bd482c7ed8aa",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Seal of Doom": {
@@ -253162,12 +253162,12 @@
     },
     "Smuggler's Share": {
       "edhrec_rank": 1701,
-      "gate": "template",
+      "gate": "compile",
       "name": "Smuggler's Share",
-      "reason": "no template for: At the beginning of each end step, draw a card for each opponent who drew two or more card",
+      "reason": "smuggler_s_share.abilities[0].effects[1].effects[0].condition.left.permanents_entered_this_turn.controller: must name one of ['active_player', 'all', 'controller', 'each_opponent', 'each_player', 'enchanted_player', 'gift_recipient', 'opponent', 'you'] -- 'under whose control' is part of the printed sentence, got {'binding': 'each_player'}",
       "scryfall_id": "f1ced678-5cfd-49ff-9420-6ee52d5edf5a",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Smuggler's Surprise": {
@@ -257422,12 +257422,12 @@
     },
     "Spectacular Showdown": {
       "edhrec_rank": 2648,
-      "gate": "template",
+      "gate": null,
       "name": "Spectacular Showdown",
-      "reason": "no template for: Put a double strike counter on target creature, then goad each creature that had a double ",
+      "reason": "",
       "scryfall_id": "ffee18af-1160-46ad-9640-87eac49a5239",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spectacular Skywhale": {
@@ -308052,12 +308052,12 @@
     },
     "Vow of Duty": {
       "edhrec_rank": 7192,
-      "gate": "template",
+      "gate": null,
       "name": "Vow of Duty",
-      "reason": "no template for: Enchanted creature gets +2/+2, has vigilance, and can't attack you or planeswalkers you co",
+      "reason": "",
       "scryfall_id": "210920ef-917b-4e2c-a5da-1180baa37959",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vow of Flight": {
@@ -308072,12 +308072,12 @@
     },
     "Vow of Lightning": {
       "edhrec_rank": 7688,
-      "gate": "template",
+      "gate": null,
       "name": "Vow of Lightning",
-      "reason": "no template for: Enchanted creature gets +2/+2, has first strike, and can't attack you or planeswalkers you",
+      "reason": "",
       "scryfall_id": "a0742d43-8a67-4485-b0ce-5a4e057fa915",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vow of Malice": {
@@ -316042,12 +316042,12 @@
     },
     "Windborn Muse": {
       "edhrec_rank": 1003,
-      "gate": "template",
+      "gate": null,
       "name": "Windborn Muse",
-      "reason": "no template for: Creatures can't attack you unless their controller pays {2} for each creature they control",
+      "reason": "",
       "scryfall_id": "85fb2d7f-0ae4-47cd-a930-ba46757a2430",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Windborne Charge": {

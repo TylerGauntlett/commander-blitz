@@ -1,0 +1,16 @@
+{
+  "card_id": "darien_king_of_kjeldor",
+  "name": "Darien, King of Kjeldor",
+  "oracle_text": "Whenever you're dealt damage, you may create that many 1/1 white Soldier creature tokens.",
+  "blocked_sentences": [
+    "Whenever you're dealt damage, you may create that many 1/1 white Soldier creature tokens."
+  ],
+  "needs": [{
+    "capability": "player_dealt_damage_trigger",
+    "kind": "trigger_event",
+    "what": "a trigger on the player half of DAMAGE_DEALT (to=\"player\") keyed on the VICTIM seat ('whenever you're dealt damage'), firing once per damage event with `amount` summed across every source that dealt damage simultaneously (510.2 combat damage from several attackers is one event, one trigger, 'that many' = the total), and firing for damage from any source, including one with no source object",
+    "why_existing_wont_do": "`deals_damage_to_player` with `controller: \"any\"` and `defending: \"you\"` hears the right half, but its subject is the dealer: it fires once per source (three unblocked attackers make three triggers and three separate 'may' prompts instead of one trigger for the total), it refuses sourceless damage (`subject_oid is None`), and `batched` only sums `amount` for `dealt_damage` (`_joins_batched_damage`), so batching it would dedupe the firings and drop all but the first source's damage. `dealt_damage` is the permanent half only (`EVENT_HALVES`), and `life_lost` fires on non-damage life loss and misses infect damage"
+  }],
+  "closest_existing": ["deals_damage_to_player", "dealt_damage", "life_lost"],
+  "confidence": "high"
+}
