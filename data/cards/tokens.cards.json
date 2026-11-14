@@ -2155,6 +2155,29 @@
       "is_token": true
     },
     {
+      "id": "ooze_0_0_g_trample",
+      "name": "Ooze Token",
+      "oracle_text": "0/0 green Ooze creature token with trample.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Ooze"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true,
+      "keywords": [
+        "trample"
+      ]
+    },
+    {
       "id": "aetherborn_x_x_b",
       "name": "Aetherborn Token",
       "oracle_text": "X/X black Aetherborn creature token.",
@@ -4312,6 +4335,26 @@
       "keywords": [
         "deathtouch"
       ]
+    },
+    {
+      "id": "snake_1_1_g",
+      "name": "Snake Token",
+      "oracle_text": "1/1 green Snake creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Snake"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true
     },
     {
       "id": "scarecrow_2_2_c",

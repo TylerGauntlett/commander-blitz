@@ -12526,6 +12526,10 @@
     "artist": "Mike Dringenberg",
     "scryfall_id": "972bb6e4-300c-49f5-8305-459a3ba67baa"
   },
+  "ooze_0_0_g_trample": {
+    "artist": "Gemi",
+    "scryfall_id": "21dfe90c-3383-4da5-9194-c6f7c2ba291c"
+  },
   "ooze_x_x_g": {
     "artist": "Gemi",
     "scryfall_id": "21dfe90c-3383-4da5-9194-c6f7c2ba291c"
@@ -16301,6 +16305,10 @@
     "scryfall_id": "41b76d0d-da55-44ec-add8-61696ee40d21"
   },
   "snake_1_1_b_deathtouch": {
+    "artist": "Caroline Gariba",
+    "scryfall_id": "62340bbb-cff0-48c1-8854-235340e80477"
+  },
+  "snake_1_1_g": {
     "artist": "Caroline Gariba",
     "scryfall_id": "62340bbb-cff0-48c1-8854-235340e80477"
   },

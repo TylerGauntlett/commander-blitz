@@ -1708,6 +1708,31 @@ class TestConvertToSlimesOozeIsAPlainXXGreen:
         assert list(other.subtypes) == ["Fractal"]
 
 
+class TestPrintlifterOozesOozeIsAZeroZeroWithTrample:
+    """Printlifter Ooze: *"create a **0/0 green Ooze** creature token with
+    **trample**. The token enters with X +1/+1 counters on it."*
+
+    A printed 0/0, not an X/X: its size is the counters it enters with, so it
+    carries no `variable_pt`. The X/X green Ooze has no trample and does not
+    stand in.
+    """
+
+    def test_it_is_a_zero_zero_green_ooze_with_trample(self, pool):
+        token = pool.get("ooze_0_0_g_trample")
+        assert token is not None and token.is_token and token.is_creature
+        assert not token.variable_pt
+        assert (token.power, token.toughness) == (0, 0)
+        assert sorted(token.colors) == ["G"]
+        assert list(token.types) == ["Creature"]
+        assert list(token.subtypes) == ["Ooze"]
+        assert list(token.keywords) == ["trample"]
+        assert not token.abilities
+
+    def test_the_x_x_ooze_is_still_a_separate_token(self, pool):
+        other = pool.get("ooze_x_x_g")
+        assert other.variable_pt and not other.keywords
+
+
 class TestAetherRefinerysAetherbornIsAPlainXXBlack:
     """Aether Refinery: *"create an **X/X black Aetherborn** creature token,
     where X is the amount of {E} paid this way."*
@@ -1958,6 +1983,28 @@ class TestCurseOfTheSwinesBoar:
         other = pool.get("elemental_2_2_g")
         assert other is not None
         assert "Boar" not in other.subtypes
+
+
+class TestHoodedHydrasSnakeIsAVanillaGreen:
+    """Hooded Hydra: *"create a **1/1 green Snake** creature token for each
+    +1/+1 counter on it."*
+
+    The pool's green Snake has deathtouch, which Hooded Hydra never prints;
+    under 111.4 it does not stand in.
+    """
+
+    def test_it_is_a_one_one_green_snake_with_no_abilities(self, pool):
+        token = pool.get("snake_1_1_g")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (1, 1)
+        assert sorted(token.colors) == ["G"]
+        assert list(token.types) == ["Creature"]
+        assert list(token.subtypes) == ["Snake"]
+        assert not token.keywords and not token.abilities
+
+    def test_the_deathtouch_snake_is_still_a_separate_token(self, pool):
+        other = pool.get("snake_1_1_g_deathtouch")
+        assert other is not None and "deathtouch" in other.keywords
 
 
 class TestBlightCursesTokens:

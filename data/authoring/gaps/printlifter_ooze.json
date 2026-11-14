@@ -7,12 +7,18 @@
   ],
   "needs": [
     {
-      "capability": "ooze_0_0_g_trample",
-      "kind": "token",
-      "what": "a 0/0 green Ooze creature token with trample",
-      "why_existing_wont_do": "The only Ooze in token_ids is `ooze_x_x_g`, an X/X green Ooze with no keywords; using it would drop the token's trample"
+      "capability": "create_token_enters_with",
+      "kind": "op",
+      "what": "create_token with an `enters_with` key ({\"+1/+1\": <value>}) that hands the counters to primitives.create_token's `enters_with`, so the token enters with them (rule 122.6, 614.1c) rather than having them put on after it is on the battlefield",
+      "why_existing_wont_do": "create_token takes no counters; create_token then add_counters on the bound token places them on a 0/0 already on the battlefield, so its own enters-the-battlefield moment (and every 'whenever a creature with power N or greater enters' trigger) sees a 0/0, a different card from 'The token enters with X +1/+1 counters on it'. The token itself, ooze_0_0_g_trample, is now in the pool"
     }
   ],
-  "closest_existing": ["turned_face_up", "ooze_x_x_g", "create_token", "add_counters", "disguise"],
+  "closest_existing": [
+    "ooze_0_0_g_trample",
+    "create_token",
+    "add_counters",
+    "turned_face_up",
+    "disguise"
+  ],
   "confidence": "high"
 }

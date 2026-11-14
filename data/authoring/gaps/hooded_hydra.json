@@ -3,16 +3,21 @@
   "name": "Hooded Hydra",
   "oracle_text": "This creature enters with X +1/+1 counters on it.\nWhen this creature dies, create a 1/1 green Snake creature token for each +1/+1 counter on it.\nMorph {3}{G}{G}\nAs this creature is turned face up, put five +1/+1 counters on it.",
   "blocked_sentences": [
-    "When this creature dies, create a 1/1 green Snake creature token for each +1/+1 counter on it."
+    "As this creature is turned face up, put five +1/+1 counters on it."
   ],
   "needs": [
     {
-      "capability": "snake_1_1_g",
-      "kind": "token",
-      "what": "a 1/1 green Snake creature token with no abilities",
-      "why_existing_wont_do": "token_ids has only snake_1_1_g_deathtouch and snake_1_1_b_deathtouch; a Snake with deathtouch is not the printed vanilla 1/1 green Snake"
+      "capability": "turned_face_up_with_counters",
+      "kind": "replacement",
+      "what": "a self replacement applied as this permanent is turned face up, by any means (special action or a turn_face_up effect), that puts N counters of a kind on it before turned_face_up fires -- 'As this creature is turned face up, put five +1/+1 counters on it' (708.8, 702.37); a counted generalisation of what primitives.turn_face_up's megamorph flag does for one counter",
+      "why_existing_wont_do": "morph_counter is a boolean for one +1/+1 counter and only applies when the megamorph cost is paid; a turned_face_up trigger with add_counters uses the stack, so the Hydra is a 0/0 face up with the trigger pending and dies to 704.5f before it resolves, and can be responded to. self_enters_with_counters is the X-counters-on-entry line, already expressible. The Snake token the dies trigger names, snake_1_1_g, is now in the pool"
     }
   ],
-  "closest_existing": ["snake_1_1_g_deathtouch"],
+  "closest_existing": [
+    "morph_counter",
+    "turned_face_up",
+    "self_enters_with_counters",
+    "snake_1_1_g"
+  ],
   "confidence": "high"
 }

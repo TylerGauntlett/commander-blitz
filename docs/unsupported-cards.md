@@ -132,6 +132,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cost-reduction-per-counter](#cost-reduction-per-counter) | 1 | 11563 | value |
 | [cost-reduction-targeting-stack-object-targets](#cost-reduction-targeting-stack-object-targets) | 1 | 2461 | value |
 | [coven](#coven) | 1 | 1129 | value |
+| [create-token-enters-with](#create-token-enters-with) | 1 | 8257 | op |
 | [creatures-died-this-turn-filtered](#creatures-died-this-turn-filtered) | 1 | 13665 | value |
 | [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
 | [damage-player-or-planeswalker](#damage-player-or-planeswalker) | 1 | 5120 | op |
@@ -260,7 +261,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [offspring](#offspring) | 1 | 6566 | keyword |
 | [ogre-token](#ogre-token) | 1 | 1855 | token |
 | [one-target-per-graveyard](#one-target-per-graveyard) | 1 | 9139 | selector |
-| [ooze-0-0-g-trample](#ooze-0-0-g-trample) | 1 | 8257 | token |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
 | [opponents-attacked-this-turn](#opponents-attacked-this-turn) | 1 | 4544 | value |
 | [pay-any-amount-of-life](#pay-any-amount-of-life) | 1 | 4322 | cost |
@@ -314,7 +314,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
 | [shares-mana-value-with](#shares-mana-value-with) | 1 | 11266 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
-| [snake-1-1-g](#snake-1-1-g) | 1 | 3297 | token |
 | [source-filtered-damage-shield](#source-filtered-damage-shield) | 1 | 3089 | op |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [spirit-2-2-w-flying](#spirit-2-2-w-flying) | 1 | 12596 | token |
@@ -346,6 +345,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [trigger-filter-base-pt](#trigger-filter-base-pt) | 1 | 10907 | selector |
 | [turn-face-down](#turn-face-down) | 1 | 10947 | op |
 | [turned-face-up-this-turn](#turned-face-up-this-turn) | 1 | 16432 | selector |
+| [turned-face-up-with-counters](#turned-face-up-with-counters) | 1 | 3297 | replacement |
 | [two-share-all-card-types](#two-share-all-card-types) | 1 | 7993 | value |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
@@ -2549,6 +2549,20 @@ Blocks **1** card.
 
 </details>
 
+## create-token-enters-with
+
+Blocks **1** card.
+
+- **(op)** create_token with an `enters_with` key ({"+1/+1": <value>}) that hands the counters to primitives.create_token's `enters_with`, so the token enters with them (rule 122.6, 614.1c) rather than having them put on after it is on the battlefield
+  <br>Why the existing vocabulary won't do: create_token takes no counters; create_token then add_counters on the bound token places them on a 0/0 already on the battlefield, so its own enters-the-battlefield moment (and every 'whenever a creature with power N or greater enters' trigger) sees a 0/0, a different card from 'The token enters with X +1/+1 counters on it'. The token itself, ooze_0_0_g_trample, is now in the pool
+
+<details><summary>Cards waiting on this</summary>
+
+- **Printlifter Ooze** (rank 8257) — `printlifter_ooze`
+  - Whenever this creature or another creature you control is turned face up, create a 0/0 green Ooze creature token with trample. The token enters with X +1/+1 counters on it, where X is the number of other creatures you control.
+
+</details>
+
 ## creatures-died-this-turn-filtered
 
 Blocks **1** card.
@@ -4381,20 +4395,6 @@ Blocks **1** card.
 
 </details>
 
-## ooze-0-0-g-trample
-
-Blocks **1** card.
-
-- **(token)** a 0/0 green Ooze creature token with trample
-  <br>Why the existing vocabulary won't do: The only Ooze in token_ids is `ooze_x_x_g`, an X/X green Ooze with no keywords; using it would drop the token's trample
-
-<details><summary>Cards waiting on this</summary>
-
-- **Printlifter Ooze** (rank 8257) — `printlifter_ooze`
-  - Whenever this creature or another creature you control is turned face up, create a 0/0 green Ooze creature token with trample. The token enters with X +1/+1 counters on it, where X is the number of other creatures you control.
-
-</details>
-
 ## opponent-choice-of-payment
 
 Blocks **1** card.
@@ -5154,20 +5154,6 @@ Blocks **1** card.
 
 </details>
 
-## snake-1-1-g
-
-Blocks **1** card.
-
-- **(token)** a 1/1 green Snake creature token with no abilities
-  <br>Why the existing vocabulary won't do: token_ids has only snake_1_1_g_deathtouch and snake_1_1_b_deathtouch; a Snake with deathtouch is not the printed vanilla 1/1 green Snake
-
-<details><summary>Cards waiting on this</summary>
-
-- **Hooded Hydra** (rank 3297) — `hooded_hydra`
-  - When this creature dies, create a 1/1 green Snake creature token for each +1/+1 counter on it.
-
-</details>
-
 ## source-filtered-damage-shield
 
 Blocks **1** card.
@@ -5606,6 +5592,20 @@ Blocks **1** card.
 - **Kaust, Eyes of the Glade** (rank 16432) — `kaust_eyes_of_the_glade`
   - Whenever a creature you control that was turned face up this turn deals combat damage to a player, draw a card.
   - {T}: Turn target face-down attacking creature you control face up.
+
+</details>
+
+## turned-face-up-with-counters
+
+Blocks **1** card.
+
+- **(replacement)** a self replacement applied as this permanent is turned face up, by any means (special action or a turn_face_up effect), that puts N counters of a kind on it before turned_face_up fires -- 'As this creature is turned face up, put five +1/+1 counters on it' (708.8, 702.37); a counted generalisation of what primitives.turn_face_up's megamorph flag does for one counter
+  <br>Why the existing vocabulary won't do: morph_counter is a boolean for one +1/+1 counter and only applies when the megamorph cost is paid; a turned_face_up trigger with add_counters uses the stack, so the Hydra is a 0/0 face up with the trigger pending and dies to 704.5f before it resolves, and can be responded to. self_enters_with_counters is the X-counters-on-entry line, already expressible. The Snake token the dies trigger names, snake_1_1_g, is now in the pool
+
+<details><summary>Cards waiting on this</summary>
+
+- **Hooded Hydra** (rank 3297) — `hooded_hydra`
+  - As this creature is turned face up, put five +1/+1 counters on it.
 
 </details>
 
