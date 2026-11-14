@@ -532,15 +532,16 @@ def _within_total(
     """
     if cap is None:
         return True
-    total = 0
-    for ref in refs:
-        if ref.kind != "object":
-            continue
-        obj = state.objects.get(ref.id)
-        if obj is None:
-            continue
-        total += state.card_of(obj).mana_value
-    return total <= cap
+    return sum(_ref_mana_value(state, ref) for ref in refs) <= cap
+
+
+def _ref_mana_value(state: GameState, ref: TargetRef) -> int:
+    """One pick's share of `_within_total`: its printed mana value, 0 for a
+    pick that is not an object."""
+    if ref.kind != "object":
+        return 0
+    obj = state.objects.get(ref.id)
+    return 0 if obj is None else state.card_of(obj).mana_value
 
 
 def _within_total_power(
@@ -567,18 +568,112 @@ def _within_total_power(
     """
     if cap is None:
         return True
-    total = 0
-    for ref in refs:
-        if ref.kind != "object":
+    return sum(_ref_power(state, ref) for ref in refs) <= cap
+
+
+def _ref_power(state: GameState, ref: TargetRef) -> int:
+    """One pick's share of `_within_total_power`, read as that docstring says;
+    0 for a pick that is not an object."""
+    if ref.kind != "object":
+        return 0
+    obj = state.objects.get(ref.id)
+    if obj is None:
+        return 0
+    if obj.on_battlefield:
+        return chars(state, ref.id).power
+    return card_in_exile_characteristics(state, obj)[0]
+
+
+def _total_values(
+    state: GameState, spec: TargetSpec, options: Sequence[TargetRef]
+) -> list[tuple[int, list[int]]]:
+    """``(cap, value of each option)`` for each total the spec caps, read once."""
+    return [
+        (cap, [value(state, ref) for ref in options])
+        for cap, value in (
+            (spec.total_mana_value, _ref_mana_value),
+            (spec.total_power, _ref_power),
+        )
+        if cap is not None
+    ]
+
+
+def _combinations_under(
+    options: Sequence[TargetRef], size: int, totals: list[tuple[int, list[int]]]
+):
+    """``itertools.combinations(options, size)``, in the same order, never
+    entering a branch every completion of which overflows a cap.
+
+    A partial pick plus the smallest values still available after it is the
+    least any completion can add up to; once that is over a cap, nothing below
+    the branch can pass `_set_rules_hold`, so it is skipped rather than walked.
+    Each value is read once, not once per subset: over a full graveyard the
+    per-subset reads were most of a pod's hour. Order is unchanged -- the
+    first offer is what a seat that does not ask takes.
+    """
+    if not totals:
+        yield from itertools.combinations(options, size)
+        return
+    n = len(options)
+    # least[t][i][k]: the smallest sum of k values among options[i:], for cap t.
+    least = []
+    for _, values in totals:
+        rows = []
+        for i in range(n + 1):
+            sums = [0]
+            for v in sorted(values[i:]):
+                sums.append(sums[-1] + v)
+            rows.append(sums)
+        least.append(rows)
+
+    def walk(start: int, picked: list[int], running: list[int]):
+        need = size - len(picked)
+        if need == 0:
+            yield tuple(options[i] for i in picked)
+            return
+        for i in range(start, n - need + 1):
+            nxt = [running[t] + totals[t][1][i] for t in range(len(totals))]
+            if any(
+                nxt[t] + least[t][i + 1][need - 1] > totals[t][0]
+                for t in range(len(totals))
+            ):
+                continue
+            picked.append(i)
+            yield from walk(i + 1, picked, nxt)
+            picked.pop()
+
+    yield from walk(0, [], [0] * len(totals))
+
+
+def _total_ceiling(
+    state: GameState, spec: TargetSpec, options: Sequence[TargetRef]
+) -> int:
+    """The largest subset of ``options`` that can pass the spec's totals.
+
+    `_one_each`'s cap, for "total mana value 6 or less" and "total power 10 or
+    less": the cheapest k picks are the smallest sum any k picks can have, so
+    once the k smallest values overflow the cap, every subset of k or more
+    does. Reunion of the House over a full graveyard otherwise walked every
+    combination from the whole graveyard down, rejecting each, before
+    reaching a size that fits -- one four-player pod spent most of an hour
+    there. Exact, negative powers included: the bound only ever removes sizes
+    no subset of which passes.
+    """
+    ceiling = len(options)
+    for cap, value in (
+        (spec.total_mana_value, _ref_mana_value),
+        (spec.total_power, _ref_power),
+    ):
+        if cap is None:
             continue
-        obj = state.objects.get(ref.id)
-        if obj is None:
-            continue
-        if obj.on_battlefield:
-            total += chars(state, ref.id).power
-        else:
-            total += card_in_exile_characteristics(state, obj)[0]
-    return total <= cap
+        running, fits = 0, 0
+        for amount in sorted(value(state, ref) for ref in options):
+            running += amount
+            if running > cap:
+                break
+            fits += 1
+        ceiling = min(ceiling, fits)
+    return ceiling
 
 
 def _set_rules_hold(state: GameState, spec: TargetSpec, refs: Sequence[TargetRef]) -> bool:
@@ -648,6 +743,8 @@ def _spec_options(
             # graveyard" over a few dozen cards would otherwise walk every
             # combination of every size from all of them down, rejecting each.
             ceiling = min(ceiling, _controller_count(state, options))
+        if spec.total_mana_value is not None or spec.total_power is not None:
+            ceiling = min(ceiling, _total_ceiling(state, spec, options))
         # "One, two, or three target creature cards" (Aberrant Return): a floor
         # under the ceiling, so neither the empty subset nor any smaller one is
         # a choice -- and with fewer legal targets than the floor the spec
@@ -661,11 +758,12 @@ def _spec_options(
         # permanents" -- any controller, any type -- asked for exactly that
         # list before slicing it, which hung the verifier. Same order, same
         # filters; it just never builds what it is about to throw away.
+        totals = _total_values(state, spec, options)
         subsets = itertools.islice(
             (
                 tuple(c)
                 for size in range(ceiling, max(floor, 1) - 1, -1)
-                for c in itertools.combinations(options, size)
+                for c in _combinations_under(options, size, totals)
                 if _set_rules_hold(state, spec, c)
             ),
             _room(limit, tail),

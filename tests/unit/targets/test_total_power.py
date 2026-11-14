@@ -180,3 +180,47 @@ class TestTheLoaderChecksIt:
             compile_card(
                 _spec(kind="player", selector={"controller": "opponent"}), source="test"
             )
+
+
+class TestAFullGraveyardStaysCheap:
+    """No subset larger than the cheapest picks that fit is ever walked.
+
+    `_spec_options` offers subsets largest first, and over a full graveyard
+    almost every large subset is over the cap: walking them all to reject
+    them is exponential in the graveyard, and one four-player pod spent most
+    of an hour inside Reunion of the House before the ceiling was capped at
+    the most of the smallest powers that fit (`targeting._total_ceiling`).
+    """
+
+    def test_thirty_six_drops_and_four_dorks(self, builder):
+        """1+1+1+1+6 = 10, so five picks is the ceiling; before the cap this
+        walked combinations of all thirty-four first."""
+        game = board(builder, buried=[BIG] * 30 + [DORK] * 4)
+        state = game.state
+        spec = state.registry.get(REUNION).targets
+        first = enumerate_target_tuples(state, 0, spec, None, limit=3)[0]
+        assert sorted(state.card(ref.id).id for ref in first) == [BIG] + [DORK] * 4
+
+    def test_the_cap_offers_exactly_what_the_check_admits(self, builder):
+        """The bound removes no subset that passes: every combination the
+        brute-force check admits is still offered, and nothing else is. The
+        limit lifts `MAX_TARGET_OPTIONS`, so the whole list is compared."""
+        import itertools
+
+        from commanderblitz.engine.targeting import _within_total_power, candidates
+
+        game = board(builder, buried=(BIG, BIG, BEAR, BEAR, DORK, DORK))
+        state = game.state
+        (spec,) = state.registry.get(REUNION).targets
+        pool = candidates(state, 0, spec, None)
+        admitted = {
+            tuple(sorted(ref.id for ref in combo))
+            for size in range(len(pool) + 1)
+            for combo in itertools.combinations(pool, size)
+            if _within_total_power(state, combo, spec.total_power)
+        }
+        offered = {
+            tuple(sorted(ref.id for ref in combo))
+            for combo in enumerate_target_tuples(state, 0, [spec], None, limit=10_000)
+        }
+        assert offered == admitted
