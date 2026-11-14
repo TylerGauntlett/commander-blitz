@@ -1,0 +1,30 @@
+{
+  "card": {
+    "id": "mastery_of_the_unseen",
+    "name": "Mastery of the Unseen",
+    "oracle_text": "Whenever a permanent you control is turned face up, you gain 1 life for each creature you control.\n{3}{W}: Manifest the top card of your library. (Put it onto the battlefield face down as a 2/2 creature. Turn it face up any time for its mana cost if it's a creature card.)",
+    "mana_cost": "{1}{W}",
+    "types": ["Enchantment"],
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever a permanent you control is turned face up, you gain 1 life for each creature you control.",
+        "trigger": {"event": "turned_face_up", "controller": "you"},
+        "effects": [
+          {"op": "gain_life", "player": "you", "amount": {"creatures_you_control": true}}
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{3}{W}: Manifest the top card of your library. (Put it onto the battlefield face down as a 2/2 creature. Turn it face up any time for its mana cost if it's a creature card.)",
+        "cost": {"mana": "{3}{W}"},
+        "effects": [
+          {"op": "manifest", "player": "you", "amount": {"const": 1}}
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}
