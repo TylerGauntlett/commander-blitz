@@ -207422,12 +207422,12 @@
     },
     "Printlifter Ooze": {
       "edhrec_rank": 8257,
-      "gate": "template",
+      "gate": null,
       "name": "Printlifter Ooze",
-      "reason": "no template for: Whenever this creature or another creature you control is turned face up, create a 0/0 gre",
+      "reason": "",
       "scryfall_id": "db7fbf69-1118-446b-b5cb-02da2de42ce3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Prishe's Wanderings": {

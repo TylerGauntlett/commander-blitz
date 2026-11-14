@@ -182510,6 +182510,63 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "counters": {
+                "+1/+1": {
+                  "count": {
+                    "controller": "you",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  }
+                }
+              },
+              "op": "create_token",
+              "token": "ooze_0_0_g_trample"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature or another creature you control is turned face up, create a 0/0 green Ooze creature token with trample. The token enters with X +1/+1 counters on it, where X is the number of other creatures you control.",
+          "trigger": {
+            "controller": "you",
+            "event": "turned_face_up",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "disguise": "{3}{G}",
+      "id": "printlifter_ooze",
+      "keywords": [
+        "deathtouch"
+      ],
+      "mana_cost": "{1}{G}",
+      "name": "Printlifter Ooze",
+      "oracle_text": "Deathtouch\nWhenever this creature or another creature you control is turned face up, create a 0/0 green Ooze creature token with trample. The token enters with X +1/+1 counters on it, where X is the number of other creatures you control.\nDisguise {3}{G}",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Ooze"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

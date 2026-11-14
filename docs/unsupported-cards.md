@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**399 cards** blocked by **346** capabilities.
+**398 cards** blocked by **345** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -132,7 +132,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cost-reduction-per-counter](#cost-reduction-per-counter) | 1 | 11563 | value |
 | [cost-reduction-targeting-stack-object-targets](#cost-reduction-targeting-stack-object-targets) | 1 | 2461 | value |
 | [coven](#coven) | 1 | 1129 | value |
-| [create-token-enters-with](#create-token-enters-with) | 1 | 8257 | op |
 | [creatures-died-this-turn-filtered](#creatures-died-this-turn-filtered) | 1 | 13665 | value |
 | [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
 | [damage-player-or-planeswalker](#damage-player-or-planeswalker) | 1 | 5120 | op |
@@ -2546,20 +2545,6 @@ Blocks **1** card.
 
 - **Augur of Autumn** (rank 1129) — `augur_of_autumn`
   - Coven — As long as you control three or more creatures with different powers, you may cast creature spells from the top of your library.
-
-</details>
-
-## create-token-enters-with
-
-Blocks **1** card.
-
-- **(op)** create_token with an `enters_with` key ({"+1/+1": <value>}) that hands the counters to primitives.create_token's `enters_with`, so the token enters with them (rule 122.6, 614.1c) rather than having them put on after it is on the battlefield
-  <br>Why the existing vocabulary won't do: create_token takes no counters; create_token then add_counters on the bound token places them on a 0/0 already on the battlefield, so its own enters-the-battlefield moment (and every 'whenever a creature with power N or greater enters' trigger) sees a 0/0, a different card from 'The token enters with X +1/+1 counters on it'. The token itself, ooze_0_0_g_trample, is now in the pool
-
-<details><summary>Cards waiting on this</summary>
-
-- **Printlifter Ooze** (rank 8257) — `printlifter_ooze`
-  - Whenever this creature or another creature you control is turned face up, create a 0/0 green Ooze creature token with trample. The token enters with X +1/+1 counters on it, where X is the number of other creatures you control.
 
 </details>
 

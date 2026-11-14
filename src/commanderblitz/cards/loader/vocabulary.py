@@ -1820,9 +1820,12 @@ MANA_AMOUNT_FORBIDDEN = frozenset({"x", "target", "binding", "loop_value"})
 #: on it" (Turntimber Symbiosis) -- whose counters are a true enters-with, put
 #: on inside the arrival; see `zones.move_object`. `spell_enters_with_counters`
 #: is the other true one, promised to a spell on the stack (Yuna, Grand
-#: Summoner) and cashed on the same placement.
+#: Summoner) and cashed on the same placement. `create_token` is the last --
+#: "the token enters with X +1/+1 counters on it" (Printlifter Ooze) -- whose
+#: amounts are value expressions handed to the token's own arrival.
 COUNTERS_ON_ARRIVAL_OPS = frozenset(
     {
+        "create_token",
         "return_from_graveyard",
         "put_onto_battlefield",
         "look_at_top",

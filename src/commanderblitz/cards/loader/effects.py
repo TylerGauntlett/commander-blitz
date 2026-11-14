@@ -3280,6 +3280,19 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             )
     if op == "create_token" and "token" not in effect:
         raise DslError(f"{where}: create_token needs a 'token' id")
+    if op == "create_token" and "counters" in effect:
+        # "The token enters with X +1/+1 counters on it." Each amount is a value
+        # expression read as the op runs. An empty map, or one whose amount
+        # does not parse, would load and make the bare 0/0 that 704.5f bins --
+        # the printed card with its whole second sentence gone.
+        counters = effect["counters"]
+        if not isinstance(counters, Mapping) or not counters:
+            raise DslError(
+                f"{where}: create_token's 'counters' maps a counter kind to an "
+                f"amount, e.g. {{'+1/+1': {{'count': …}}}}"
+            )
+        for kind, value in counters.items():
+            validate_value(value, f"{where}.counters.{kind}")
     if op == "create_token" and ("power" in effect) != ("toughness" in effect):
         # "Create an X/X …" prints both numbers. One alone would leave the
         # other at the X/X token's written 0, and a 3/0 Shark dies to 704.5f

@@ -80,6 +80,7 @@
    "graveyard"
   ],
   "COUNTERS_ON_ARRIVAL_OPS": [
+   "create_token",
    "look_at_top",
    "put_onto_battlefield",
    "return_from_graveyard",

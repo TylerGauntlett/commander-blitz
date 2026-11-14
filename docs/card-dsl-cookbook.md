@@ -10449,6 +10449,33 @@ cast with (202.3e), so Secure the Wastes for X = 3 makes a 4/4; and a `cycle`
 trigger's `{"x": true}` is the X paid in the cycling cost, which the event
 carries because a card cycled from hand was never cast.
 
+## A token that enters with counters — "the token enters with X +1/+1 counters on it"
+
+Printlifter Ooze. `create_token`'s `counters` maps a counter kind to a value
+expression, each evaluated once as the op runs, and hands them to the token's
+own arrival as its `enters_with` (614.1c, one placement under 122.6):
+
+```jsonc
+// "…create a 0/0 green Ooze creature token with trample. The token enters with
+//  X +1/+1 counters on it, where X is the number of other creatures you control."
+{ "op": "create_token", "token": "ooze_0_0_g_trample",
+  "counters": { "+1/+1": { "count": { "zone": "battlefield", "controller": "you",
+                                       "types": ["Creature"] } } } }
+```
+
+The value is read before any token exists, so a count of creatures never counts
+the token itself, which is what "other creatures" means here. Below zero is
+zero; zero creates the bare token, and a 0/0 dies to 704.5f. Every token the op
+makes, doubled ones included, gets the same counters. The loader refuses an
+empty map and an amount that is not a value expression, and checks each kind as
+it checks every `counters` map.
+
+Not `create_token` then `add_counters`: that pair puts a 0/0 on the battlefield
+first, so "whenever a creature with power 3 or greater enters" (Elemental Bond)
+sees a 0/0, and it is a second placement. Not an X/X token's `power` and
+`toughness` either: that is the token's base size, and counters are what
+proliferate, -1/-1 counters and "creatures with counters" see.
+
 ## Making a token that is already attacking
 
 ```jsonc
