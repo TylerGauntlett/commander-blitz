@@ -4162,12 +4162,12 @@
     },
     "Agitator Ant": {
       "edhrec_rank": 2427,
-      "gate": "template",
+      "gate": null,
       "name": "Agitator Ant",
-      "reason": "no template for: At the beginning of your end step, each player may put two +1/+1 counters on a creature th",
+      "reason": "",
       "scryfall_id": "bc63ff71-ff42-4baf-977b-55f69c8e122f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Agna Qel'a": {
@@ -8382,12 +8382,12 @@
     },
     "Ancient Stone Idol": {
       "edhrec_rank": 2497,
-      "gate": "template",
+      "gate": null,
       "name": "Ancient Stone Idol",
-      "reason": "no template for: This spell costs {1} less to cast for each attacking creature",
+      "reason": "",
       "scryfall_id": "333f6334-f027-4bec-95d7-7af80508c4ca",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ancient Tomb": {
@@ -29152,12 +29152,12 @@
     },
     "Bloodthirsty Blade": {
       "edhrec_rank": 2260,
-      "gate": "template",
+      "gate": null,
       "name": "Bloodthirsty Blade",
-      "reason": "no template for: Equipped creature gets +2/+0 and is goaded",
+      "reason": "",
       "scryfall_id": "bcdf583e-25f8-4227-96e9-e70ec8a36b09",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bloodthirsty Conqueror": {
@@ -31862,12 +31862,12 @@
     },
     "Boros Garrison": {
       "edhrec_rank": 485,
-      "gate": "template",
+      "gate": null,
       "name": "Boros Garrison",
-      "reason": "no template for: When this land enters, return a land you control to its owner's hand",
+      "reason": "",
       "scryfall_id": "76ec3366-98f3-4903-8f7b-cfcdd60e3be1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Boros Guildgate": {
@@ -31922,12 +31922,12 @@
     },
     "Boros Reckoner": {
       "edhrec_rank": 6290,
-      "gate": "template",
+      "gate": null,
       "name": "Boros Reckoner",
-      "reason": "no template for: Whenever this creature is dealt damage, it deals that much damage to any target",
+      "reason": "",
       "scryfall_id": "55a2f767-5928-44c5-91b7-2300bade458f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Boros Recruit": {

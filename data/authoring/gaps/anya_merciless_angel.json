@@ -1,0 +1,19 @@
+{
+  "card_id": "anya_merciless_angel",
+  "name": "Anya, Merciless Angel",
+  "oracle_text": "Flying\nAnya gets +3/+3 for each opponent whose life total is less than half their starting life total.\nAs long as an opponent's life total is less than half their starting life total, Anya has indestructible.",
+  "blocked_sentences": [
+    "Anya gets +3/+3 for each opponent whose life total is less than half their starting life total.",
+    "As long as an opponent's life total is less than half their starting life total, Anya has indestructible."
+  ],
+  "needs": [
+    {
+      "capability": "players_below_half_starting_life",
+      "kind": "value",
+      "what": "a static value (usable as a buff's power/toughness magnitude via `times`, and in a static `cmp` condition) counting the players a spec names (each_opponent) whose current life total is less than half of THEIR OWN starting life total (each player's own `starting_life`, 103.4) -- e.g. {\"player_count\": {\"player\": \"each_opponent\", \"life_below_half_starting\": true}}. Anya's buff is then `times` 3 of it, and her indestructible is a grant_keyword static whose condition is that count `>` 0",
+      "why_existing_wont_do": "static_value_keys has no per-player count at all: `player_count` is only in value_keys (not statics), and its filtered form compares object counts (`objects`/`cmp`/`than`), never life. `min_life_of` gives the lowest opponent life, which can express 'an opponent' only against a single seat's `starting_life_of` (the loader allows at most one seat), so it compares against the wrong player's starting total when starting lives differ and cannot count how many opponents qualify for the +3/+3 per opponent"
+    }
+  ],
+  "closest_existing": ["min_life_of", "starting_life_of", "player_count"],
+  "confidence": "high"
+}

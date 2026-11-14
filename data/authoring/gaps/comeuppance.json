@@ -1,0 +1,30 @@
+{
+  "card_id": "comeuppance",
+  "name": "Comeuppance",
+  "oracle_text": "Prevent all damage that would be dealt to you and planeswalkers you control this turn by sources you don't control. If damage from a creature source is prevented this way, Comeuppance deals that much damage to that creature. If damage from a noncreature source is prevented this way, Comeuppance deals that much damage to the source's controller.",
+  "blocked_sentences": [
+    "Prevent all damage that would be dealt to you and planeswalkers you control this turn by sources you don't control.",
+    "If damage from a creature source is prevented this way, Comeuppance deals that much damage to that creature.",
+    "If damage from a noncreature source is prevented this way, Comeuppance deals that much damage to the source's controller."
+  ],
+  "needs": [
+    {
+      "capability": "source_filtered_damage_shield",
+      "kind": "op",
+      "what": "a this-turn prevention shield over a player AND the planeswalkers that player controls (including ones that enter later this turn), filtered by the damage source's controller (\"by sources you don't control\")",
+      "why_existing_wont_do": "prevent_damage shields only a seat and takes no source filter, so it would also prevent damage from your own sources and leaves planeswalkers unprotected; prevent_damage_permanent resolves its objects now (missing planeswalkers that arrive later) and also has no source filter; prevent_combat_damage filters by source but is combat-only and not keyed to the protected player"
+    },
+    {
+      "capability": "prevented_damage_source_binding",
+      "kind": "value",
+      "what": "the 615.5 rider must see the source of the prevented damage: a binding for the source object (with its characteristics as it was when the damage was prevented) so the rider can branch on whether it was a creature, deal the amount to that creature, or deal the amount to the source's controller",
+      "why_existing_wont_do": "prevent_damage's effects rider gets only {\"binding\": \"amount\"} and event_player (the protected seat); the DAMAGE_PREVENTED event carries source= but nothing exposes it to the rider, so neither 'that creature' nor 'the source's controller' can be named"
+    }
+  ],
+  "closest_existing": [
+    "prevent_damage",
+    "prevent_damage_permanent",
+    "prevent_combat_damage"
+  ],
+  "confidence": "high"
+}

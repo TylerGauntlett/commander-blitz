@@ -1,0 +1,19 @@
+{
+  "card_id": "deflecting_palm",
+  "name": "Deflecting Palm",
+  "oracle_text": "The next time a source of your choice would deal damage to you this turn, prevent that damage. If damage is prevented this way, Deflecting Palm deals that much damage to that source's controller.",
+  "blocked_sentences": [
+    "The next time a source of your choice would deal damage to you this turn, prevent that damage.",
+    "If damage is prevented this way, Deflecting Palm deals that much damage to that source's controller."
+  ],
+  "needs": [
+    {
+      "capability": "prevent_next_damage_from_chosen_source",
+      "kind": "op",
+      "what": "a one-shot player damage shield scoped to a single source chosen on resolution (any object: permanent, spell on the stack, or card), which prevents only the next damage event that source would deal to you this turn and is then used up, exposing the chosen source (and its controller at the time of the damage) to the 615.5 rider so it can deal the prevented amount back to that source's controller",
+      "why_existing_wont_do": "The prevent_damage op installs a blanket shield that prevents ALL damage to the player for the duration (no source filter, no 'next time' consumption), so it would make this a strictly better Fog; its effects rider binds only the prevented amount and the protected seat, not the source or its controller. prevent_damage_permanent works on permanents' damage dealt/received for a duration and is not one-shot; redirect_damage redirects rather than prevents-and-reflects; and there is no 'choose a source' decision in the selector or op vocabulary that can name a spell or nonpermanent source"
+    }
+  ],
+  "closest_existing": ["prevent_damage", "prevent_damage_permanent", "redirect_damage"],
+  "confidence": "high"
+}

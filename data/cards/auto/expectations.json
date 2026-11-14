@@ -294,6 +294,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "agitator_ant": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "ainok_strike_leader": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -659,6 +663,13 @@
       "0": 39
     },
     "zone": "graveyard"
+  },
+  "ancient_stone_idol": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "ancient_tomb": {
     "zone": "battlefield"
@@ -2246,6 +2257,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "bloodthirsty_blade": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "bloodthirsty_conqueror": {
     "battlefield_count": 33,
     "hand_size": {
@@ -2419,7 +2434,17 @@
     },
     "zone": "graveyard"
   },
+  "boros_garrison": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 2
+    }
+  },
   "boros_guildgate": {
+    "zone": "battlefield"
+  },
+  "boros_reckoner": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "boros_recruit": {
