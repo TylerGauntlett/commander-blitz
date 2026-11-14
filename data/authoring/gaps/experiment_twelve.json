@@ -1,0 +1,18 @@
+{
+  "card_id": "experiment_twelve",
+  "name": "Experiment Twelve",
+  "oracle_text": "Trample\nWhenever this creature or another creature you control is turned face up, put +1/+1 counters on that creature equal to its power.\nDisguise {4}{G} (You may cast this card face down for {3} as a 2/2 creature with ward {2}. Turn it face up any time for its disguise cost.)",
+  "blocked_sentences": [
+    "Disguise {4}{G} (You may cast this card face down for {3} as a 2/2 creature with ward {2}. Turn it face up any time for its disguise cost.)"
+  ],
+  "needs": [
+    {
+      "capability": "disguise",
+      "kind": "cost",
+      "what": "the disguise alternative cast (702.168): cast face down for {3} as a 2/2 colourless nameless creature that has ward {2}, turnable face up for the printed disguise cost as a special action",
+      "why_existing_wont_do": "`morph` in card_level_cost_keys gives the face-down {3} 2/2 and the turn-face-up action, but its face-down characteristics carry no abilities, so a disguised permanent would lack ward {2}; the ward {2} the engine supplies to a face-down shell exists only for cloak (a flag on the `manifest` op), not for a card cast face down. The trigger line itself is expressible (`turned_face_up` with controller you, `add_counters` amount `power_of` the subject)."
+    }
+  ],
+  "closest_existing": ["morph", "manifest", "turned_face_up", "ward"],
+  "confidence": "high"
+}
