@@ -15032,6 +15032,98 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_ambush_recall",
+      "name": "Test Ambush Recall",
+      "oracle_text": "This spell costs {2} less to cast if it targets an attacking creature.\nReturn target creature to its owner's hand.",
+      "mana_cost": "{3}{U}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "cost_reduction": {
+        "amount": 2,
+        "targeting": {
+          "types": [
+            "Creature"
+          ],
+          "attacking": true
+        }
+      },
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "controller": "any"
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "return_to_hand",
+          "objects": {
+            "target": "t1"
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_fame_toll",
+      "name": "Test Fame Toll",
+      "oracle_text": "This spell costs {2} less to cast if it targets a legendary creature.\nDestroy target creature.",
+      "mana_cost": "{3}{B}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "cost_reduction": {
+        "amount": 2,
+        "targeting": {
+          "types": [
+            "Creature"
+          ],
+          "supertypes": [
+            "Legendary"
+          ]
+        }
+      },
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "controller": "any"
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "destroy",
+          "objects": {
+            "target": "t1"
+          }
+        }
+      ]
     }
   ]
 }

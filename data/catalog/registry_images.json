@@ -5436,6 +5436,10 @@
     "artist": "Craig Elliott",
     "scryfall_id": "dd4a00ff-2206-4e12-a0ab-61ed82c9e6c5"
   },
+  "ephara_s_dispersal": {
+    "artist": "Awanqi (Angela Wang)",
+    "scryfall_id": "b622aad1-4f57-472e-9bd8-9404da88d6be"
+  },
   "epic_experiment": {
     "artist": "Dan Murayama Scott",
     "scryfall_id": "d3ad9626-3124-4ad6-9cac-49aa9c3ce88c"
@@ -13155,6 +13159,10 @@
   "preordain": {
     "artist": "Aitor Sebasti\u00e1n",
     "scryfall_id": "8221b564-acf0-4d82-94f5-2ba1337ff5e1"
+  },
+  "price_of_fame": {
+    "artist": "Winona Nelson",
+    "scryfall_id": "ac3cfafe-cfc6-4e13-a535-0b8052f0dc0a"
   },
   "prickly_boggart": {
     "artist": "Jesper Ejsing",

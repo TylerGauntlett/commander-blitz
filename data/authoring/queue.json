@@ -84972,12 +84972,12 @@
     },
     "Ephara's Dispersal": {
       "edhrec_rank": 10857,
-      "gate": "template",
+      "gate": null,
       "name": "Ephara's Dispersal",
-      "reason": "no template for: This spell costs {2} less to cast if it targets an attacking creature",
+      "reason": "",
       "scryfall_id": "b622aad1-4f57-472e-9bd8-9404da88d6be",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ephara's Enlightenment": {
@@ -206542,12 +206542,12 @@
     },
     "Price of Fame": {
       "edhrec_rank": 4331,
-      "gate": "template",
+      "gate": null,
       "name": "Price of Fame",
-      "reason": "no template for: This spell costs {2} less to cast if it targets a legendary creature",
+      "reason": "",
       "scryfall_id": "e9054114-6740-4e2d-ae40-ccfb5e497d67",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Price of Freedom": {

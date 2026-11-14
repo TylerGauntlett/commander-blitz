@@ -2704,6 +2704,40 @@ free one.
 The filter may only read printed characteristics, like a static's: it is
 evaluated while deciding what is castable, before anything is on the stack.
 
+### A discount that asks what this spell targets
+
+```jsonc
+// Ephara's Dispersal — "This spell costs {2} less to cast if it targets an
+//  attacking creature. Return target creature to its owner's hand."
+"cost_reduction": {
+  "amount": 2,
+  "targeting": { "types": ["Creature"], "attacking": true }
+}
+```
+
+`targeting` is a gate beside `condition`, and either satisfies a flat
+`amount`'s need for one. It is the reduction filter language matched against the
+**object targets this cast chose** (601.2f fixes the cost after 601.2c announces
+them), true when any one of them matches; a player target never does.
+`controller` defaults to `any`, since "targets a legendary creature" (Price of
+Fame) asks about the creature and not who controls it. It may sit beside any
+arithmetic head and beside a `condition`, which must then hold as well.
+
+`cost_reduction.own_reduction` reads it. A gate asked before a tuple exists
+reads it generously, and `casting._priced_tuples` prices every offered tuple
+with its own targets, so two lands offer Ephara's Dispersal at the attacker and
+not at a blocker; `Game._cast` charges the tuple the action carries. Such a
+card is never given a deferred target choice (`casting.deferred_target_spec`).
+
+The loader refuses it on an ability's or a graveyard cast's `mana_reduction`
+(nothing hands those a tuple), on a card that declares no `targets`, beside
+`strive`, and with `zone`, `self_only` or `exclude_self` in the clause.
+
+The near miss is `condition: {"exists": {... "attacking": true}}`, which
+discounts the spell whenever anything is attacking, whatever it targets — a
+stronger card than the printed one. The `spell_cost_reduction` static's own
+`targeting` clause reads the same tuple, but discounts *other* spells.
+
 ### Making *other* spells cheaper
 
 `cost_reduction` discounts the card that carries it. Warden of Evos Isle

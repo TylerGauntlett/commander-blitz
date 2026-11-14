@@ -15,7 +15,7 @@ from . import suspend as suspend_mod
 from .actions import Action
 from .carddef import BESTOW_TARGET, MUTATE_TARGET, CardDef, Cost, TargetSpec
 from .characteristics import _battlefield_statics, chars
-from .cost_reduction import cost_reduction, variant_reduction
+from .cost_reduction import cost_reduction, targets_own_discount, variant_reduction
 from .costs import (
     _tap_cost_pool,
     can_pay,
@@ -1666,6 +1666,7 @@ def deferred_target_spec(
 
     - strive, which charges per target beyond the first;
     - a targeting tax on the board (Kasmina's mana, Terror of the Peaks' life);
+    - the card's own "costs {N} less if it targets …" (`targets_own_discount`);
     - a cap *between* the picks (total mana value or power) or one per player, which
       the decision's independent toggles cannot express;
     - a spec reading a sibling's answer, which needs the sibling first.
@@ -1673,7 +1674,7 @@ def deferred_target_spec(
     Only a spec that can take **two or more**: "up to one target creature" is
     a chip per creature plus "No target" today, and that already reads well.
     """
-    if not specs or card.strive is not None:
+    if not specs or card.strive is not None or targets_own_discount(card):
         return None
     spec = specs[-1]
     many = spec.count == "any" or (
@@ -2260,6 +2261,9 @@ def _cast_variant(
             for _, static in _battlefield_statics(state)
             if static.get("effect") == "spell_cost_reduction"
         ) or spell_mana_tax_targeted(state)  # Kasmina's surcharge is per tuple too
+        # …and so is the card's own "costs {2} less if it targets an attacking
+        # creature" (Ephara's Dispersal), whatever is on the board.
+        targeted_discount = targeted_discount or targets_own_discount(card)
         # Convoke and delve reduce the generic part, exactly as a cost reduction
         # does -- and go through the same clamp, so delve cannot make a spell
         # free of its coloured pips. Convoke can pay them too (702.51a): each

@@ -1658,7 +1658,22 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     _check_emblem_references(model, abilities, grantable, emblems, where)
 
     if model.cost_reduction is not None:
-        _validate_cost_reduction(model.cost_reduction, f"{where}.cost_reduction")
+        _validate_cost_reduction(model.cost_reduction, f"{where}.cost_reduction", spell=True)
+        if "targeting" in model.cost_reduction and not model.targets:
+            # "…if it targets an attacking creature" on a card that declares no
+            # target would be read against an empty tuple on every cast: a
+            # discount that loads clean and never fires.
+            raise DslError(
+                f"{where}.cost_reduction.targeting: the card declares no targets "
+                f"for the clause to read"
+            )
+        if "targeting" in model.cost_reduction and model.strive is not None:
+            # `casting._priced_tuples` prices strive per target count, not per
+            # tuple, so the discount would be read generously on every line.
+            raise DslError(
+                f"{where}.cost_reduction.targeting: not beside strive, which is "
+                f"priced per target count rather than per tuple"
+            )
 
     suspend = None
     if model.suspend is not None:

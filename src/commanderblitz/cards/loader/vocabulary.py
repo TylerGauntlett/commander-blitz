@@ -1381,6 +1381,20 @@ COST_REDUCTION_ZONES = REDUCTION_ZONES
 #: worth, beside that head. Omitted, a unit is {1}.
 COST_REDUCTION_EACH = "each"
 
+#: "This spell costs {2} less to cast **if it targets** an attacking creature"
+#: (Ephara's Dispersal): a second gate beside ``condition``, a reduction filter
+#: matched against the objects the cast chose as targets (601.2f -- the total
+#: cost is determined after targets are announced). A card-level
+#: `cost_reduction` only; an ability's or a graveyard cast's `mana_reduction` is
+#: priced by readers that never see a target tuple.
+COST_REDUCTION_TARGETING = "targeting"
+
+#: The filter keys a reduction's ``targeting`` clause refuses. ``zone`` because
+#: the pool is the target tuple, not a zone; ``self_only`` and ``exclude_self``
+#: because a spell never targets itself (115.5); and ``any_of`` is accepted, the
+#: same disjunction the counting filters use.
+COST_REDUCTION_TARGETING_REFUSED_KEYS = frozenset({"zone", "self_only", "exclude_self"})
+
 #: Extra filter keys a cost reduction accepts on top of `STATIC_FILTER_KEYS`.
 #:
 #: ``zone`` is the only one left. ``owner`` was here alone, on the grounds that a

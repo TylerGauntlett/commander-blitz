@@ -964,7 +964,13 @@ def reference() -> dict:
             " control\" is"
             " `{\"count\": {\"controller\": \"you\", \"types\": [\"Creature\"],"
             " \"supertypes\": [\"Legendary\"]}}`; anything outside it is a load"
-            " error rather than a discount counted wrong.",
+            " error rather than a discount counted wrong. \"This spell costs"
+            " {2} less to cast if it targets an attacking creature\" gates a"
+            " card's own `amount` on its chosen targets with `targeting`, a"
+            " reduction filter over the cast's object targets (controller"
+            " defaults to any): `{\"amount\": 2, \"targeting\": {\"types\":"
+            " [\"Creature\"], \"attacking\": true}}`. A `condition` with"
+            " `exists` is NOT it: that discounts the spell whatever it targets.",
             "An ability's `text` must be the printed sentence it implements: the"
             " residual gate asks each ability which line it claims, and anything"
             " unclaimed means the card is only half implemented.",

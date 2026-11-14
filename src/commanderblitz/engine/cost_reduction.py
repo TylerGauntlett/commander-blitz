@@ -67,7 +67,49 @@ def cost_reduction(
     # less": a one-shot discount owned by the player, read here so the offer
     # and the charge both see it.
     total += next_spell_discount(state, pid, card)
-    return total + reduction_amount(state, pid, card.cost_reduction)
+    return total + own_reduction(state, pid, card, targets)
+
+
+def own_reduction(state: GameState, pid: int, card: CardDef, targets=None) -> int:
+    """The card's own `cost_reduction`, gated on its ``targeting`` clause if any.
+
+    "This spell costs {2} less to cast **if it targets** an attacking creature"
+    (Ephara's Dispersal, Price of Fame). 601.2f determines the total cost after
+    the targets are announced (601.2c), so the clause is a question about the
+    tuple this cast chose: true when **any** object target matches the filter,
+    which is the reduction filter language with ``controller`` defaulting to
+    ``any``. A player target never matches.
+
+    ``targets=None`` is read generously, for the reason `cost_reduction` gives:
+    a gate prices the card before any tuple exists, and `casting._priced_tuples`
+    re-prices each offered tuple exactly -- see `targets_own_discount`.
+    """
+    spec = card.cost_reduction
+    if not spec:
+        return 0
+    aimed = spec.get("targeting")
+    if aimed is None:
+        return reduction_amount(state, pid, spec)
+    if targets is not None and not _aims_at_match(state, pid, aimed, targets):
+        return 0
+    return reduction_amount(state, pid, {k: v for k, v in spec.items() if k != "targeting"})
+
+
+def targets_own_discount(card: CardDef) -> bool:
+    """Whether ``card``'s own price depends on which targets it chose."""
+    return bool(card.cost_reduction) and "targeting" in card.cost_reduction
+
+
+def _aims_at_match(state: GameState, pid: int, filt: Mapping[str, Any], targets) -> bool:
+    filt = {"controller": "any", **filt}
+    for ref in targets:
+        if getattr(ref, "kind", "") != "object":
+            continue
+        oid = getattr(ref, "id", -1)
+        obj = state.objects.get(oid)
+        if obj is not None and _object_matches(state, pid, filt, oid, obj, None):
+            return True
+    return False
 
 
 def reduction_amount(

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**387 cards** blocked by **332** capabilities.
+**385 cards** blocked by **331** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -39,7 +39,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-from-library-top-unrestricted](#cast-from-library-top-unrestricted) | 2 | 1913 | static_effect |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
-| [cost-reduction-if-targets](#cost-reduction-if-targets) | 2 | 4331 | engine |
 | [devotion](#devotion) | 2 | 2401 | value |
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
 | [enters-as-copy-add-subtypes](#enters-as-copy-add-subtypes) | 2 | 3852 | replacement |
@@ -1066,24 +1065,6 @@ Blocks **2** cards.
   - You may choose new targets for target spell or ability.
 - **Misdirection** (rank 1562) — `misdirection`
   - Change the target of target spell with a single target.
-
-</details>
-
-## cost-reduction-if-targets
-
-Blocks **2** cards.
-
-- **(engine)** a card-level `cost_reduction` gated on the spell's OWN chosen targets: `{"amount": 2, "targeting": {"types": ["Creature"], "attacking": true}}` (or a condition head reading the cast's target tuple) so the spell is priced {2} cheaper exactly when one of its declared targets matches the selector. `cost_reduction()` already receives the cast's `targets` (it hands them to `spell_cost_reduction`/`spell_mana_tax`); `reduction_amount(card.cost_reduction)` would need them too, read generously while targets are still None at the legality gate, as the `spell_cost_reduction` targeting clause already is. Same shape as Ranger's Guile-era 'costs {N} less if it targets ...' printings (e.g. Dive Down-style, Sigiled Starfish-free cycle)
-  <br>Why the existing vocabulary won't do: `cost_reduction` takes `amount` + `condition`, but `reduction_amount` is target-blind and the loader narrows `condition` to heads answerable at pricing time (is_monarch, exists, cmp...), none of which reads the spell's targets. `condition: {exists: attacking creature}` would discount the spell whenever any creature is attacking, even when it targets a non-attacker -- strictly better than printed. The `spell_cost_reduction` static's targeting clause reads targets but discounts other spells from a permanent, not the card itself
-- **(engine)** a card-level `cost_reduction` gated on the spell's OWN chosen targets, e.g. `{"amount": 2, "targeting": {"types": ["Creature"], "supertypes": ["Legendary"]}}`, so the spell costs {2} less exactly when one of its declared targets matches the selector; `reduction_amount(card.cost_reduction)` in engine/cost_reduction.py needs the cast's `targets`, which `cost_reduction()` already receives and passes to `spell_mana_tax`
-  <br>Why the existing vocabulary won't do: `cost_reduction` takes `amount` plus a `condition`, but `reduction_amount` is target-blind and the loader narrows `condition` to heads answerable at pricing time, none of which reads the spell's targets. `condition: {exists: legendary creature}` would discount the spell whenever any legendary creature is on the battlefield even if it targets a nonlegendary one. The `spell_cost_reduction` static's targeting clause reads targets but discounts other spells from a permanent, not the card itself
-
-<details><summary>Cards waiting on this</summary>
-
-- **Price of Fame** (rank 4331) — `price_of_fame`
-  - This spell costs {2} less to cast if it targets a legendary creature
-- **Ephara's Dispersal** (rank 10857) — `ephara_s_dispersal`
-  - This spell costs {2} less to cast if it targets an attacking creature
 
 </details>
 
