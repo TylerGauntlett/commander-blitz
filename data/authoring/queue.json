@@ -130302,12 +130302,12 @@
     },
     "Hostile Desert": {
       "edhrec_rank": 9625,
-      "gate": "template",
+      "gate": null,
       "name": "Hostile Desert",
-      "reason": "no template for: {2}, Exile a land card from your graveyard: This land becomes a 3/4 Elemental creature unt",
+      "reason": "",
       "scryfall_id": "d71031c2-7379-4d83-b6d6-61f3104593c4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hostile Hostel // Creeping Inn": {
@@ -155502,12 +155502,12 @@
     },
     "Lazav, the Multifarious": {
       "edhrec_rank": 8524,
-      "gate": "template",
+      "gate": null,
       "name": "Lazav, the Multifarious",
-      "reason": "no template for: When Lazav enters, surveil 1",
+      "reason": "",
       "scryfall_id": "662758ee-f7c8-4cba-b67b-48ac80c3b5ca",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lazotep Archway": {

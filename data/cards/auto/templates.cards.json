@@ -111860,6 +111860,70 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "exile_from_graveyard": {
+              "count": 1,
+              "types": [
+                "Land"
+              ]
+            },
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 3
+              },
+              "subtypes": [
+                "Elemental"
+              ],
+              "toughness": {
+                "const": 4
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, Exile a land card from your graveyard: This land becomes a 3/4 Elemental creature until end of turn. It's still a land."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "hostile_desert",
+      "name": "Hostile Desert",
+      "oracle_text": "{T}: Add {C}.\n{2}, Exile a land card from your graveyard: This land becomes a 3/4 Elemental creature until end of turn. It's still a land.",
+      "source": "auto",
+      "subtypes": [
+        "Desert"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -133581,6 +133645,100 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "surveil",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Lazav enters, surveil 1. (Look at the top card of your library. You may put it into your graveyard.)",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{X}"
+          },
+          "effects": [
+            {
+              "copying": {
+                "target": "t1"
+              },
+              "duration": "permanent",
+              "except_": {
+                "add_supertypes": [
+                  "Legendary"
+                ],
+                "keep_abilities": [
+                  1
+                ]
+              },
+              "except_name": "Lazav, the Multifarious",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "become_copy"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "mana_value": {
+                  "op": "=",
+                  "value": {
+                    "x": true
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "{X}: Lazav becomes a copy of target creature card in your graveyard with mana value X, except its name is Lazav, the Multifarious, it's legendary in addition to its other types, and it has this ability."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "lazav_the_multifarious",
+      "mana_cost": "{U}{B}",
+      "name": "Lazav, the Multifarious",
+      "oracle_text": "When Lazav enters, surveil 1. (Look at the top card of your library. You may put it into your graveyard.)\n{X}: Lazav becomes a copy of target creature card in your graveyard with mana value X, except its name is Lazav, the Multifarious, it's legendary in addition to its other types, and it has this ability.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Shapeshifter"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {

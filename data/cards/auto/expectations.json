@@ -9490,6 +9490,10 @@
   "hostage_taker": {
     "zone": "battlefield"
   },
+  "hostile_desert": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "hostile_minotaur": {
     "zone": "battlefield"
   },
@@ -11243,6 +11247,13 @@
     "zone": "battlefield"
   },
   "lavaspur_boots": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "lazav_the_multifarious": {
     "battlefield_count": 33,
     "hand_size": {
       "0": 1
