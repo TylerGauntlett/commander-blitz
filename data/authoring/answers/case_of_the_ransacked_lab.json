@@ -1,0 +1,89 @@
+{
+  "card": {
+    "color_identity": [
+      "U"
+    ],
+    "colors": [
+      "U"
+    ],
+    "id": "case_of_the_ransacked_lab",
+    "mana_cost": "{2}{U}",
+    "name": "Case of the Ransacked Lab",
+    "oracle_text": "Instant and sorcery spells you cast cost {1} less to cast.\nTo solve — You've cast four or more instant and sorcery spells this turn. (If unsolved, solve at the beginning of your end step.)\nSolved — Whenever you cast an instant or sorcery spell, draw a card.",
+    "subtypes": [
+      "Case"
+    ],
+    "types": [
+      "Enchantment"
+    ],
+    "abilities": [
+      {
+        "kind": "static",
+        "effect": "spell_cost_reduction",
+        "text": "Instant and sorcery spells you cast cost {1} less to cast.",
+        "affects_spells": {
+          "any_types": [
+            "Instant",
+            "Sorcery"
+          ],
+          "controller": "you"
+        },
+        "amount": {
+          "const": 1
+        }
+      },
+      {
+        "kind": "to_solve",
+        "text": "To solve — You've cast four or more instant and sorcery spells this turn. (If unsolved, solve at the beginning of your end step.)",
+        "condition": {
+          "cmp": ">=",
+          "left": {
+            "spells_cast_this_turn": {
+              "filter": {
+                "any_types": [
+                  "Instant",
+                  "Sorcery"
+                ]
+              },
+              "player": "you"
+            }
+          },
+          "right": {
+            "const": 4
+          }
+        }
+      },
+      {
+        "kind": "triggered",
+        "solved": true,
+        "text": "Solved — Whenever you cast an instant or sorcery spell, draw a card.",
+        "trigger": {
+          "controller": "you",
+          "event": "spell_cast",
+          "filter": {
+            "any_types": [
+              "Instant",
+              "Sorcery"
+            ]
+          }
+        },
+        "effects": [
+          {
+            "amount": {
+              "const": 1
+            },
+            "op": "draw",
+            "player": "you"
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    }
+  }
+}
