@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**371 cards** blocked by **317** capabilities.
+**370 cards** blocked by **316** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -98,7 +98,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cards-put-into-graveyard-from-library](#cards-put-into-graveyard-from-library) | 1 | 6299 | trigger_event |
 | [cards-to-graveyard-this-turn-per-player](#cards-to-graveyard-this-turn-per-player) | 1 | 2881 | value |
 | [cards-to-your-graveyard-from-zones-this-turn](#cards-to-your-graveyard-from-zones-this-turn) | 1 | 7412 | value |
-| [case](#case) | 1 | 8807 | engine |
 | [cast-exiled-for-life-equal-to-mana-value](#cast-exiled-for-life-equal-to-mana-value) | 1 | 7161 | op |
 | [cast-from-hand-result](#cast-from-hand-result) | 1 | 7016 | op |
 | [cast-from-library-top-additional-cost](#cast-from-library-top-additional-cost) | 1 | 5828 | static_effect |
@@ -2005,21 +2004,6 @@ Blocks **1** card.
 
 - **Welcome the Dead** (rank 7412) — `welcome_the_dead`
   - Create X tapped 2/2 black Zombie Druid creature tokens, where X is the number of cards that were put into your graveyard from your hand or library this turn.
-
-</details>
-
-## case
-
-Blocks **1** card.
-
-- **(engine)** The Case mechanic (rule 719): a 'solved' designation on a Case permanent; a 'To solve — <condition>' line that compiles to the implicit triggered ability 'At the beginning of your end step, if this Case is not solved and <condition>, it becomes solved'; and 'Solved — <ability>' abilities that the permanent has only while it is solved (like a Class `level` gate), plus a condition/filter that reads whether a Case is solved
-  <br>Why the existing vocabulary won't do: Nothing in reference names solving: there is no solved designation, no ability key gating an ability on it (`level` and `threshold` are the closest gates but read Class level and counters), and approximating it with `set_flag` from an end_step trigger plus a `has_flag` condition on the cast trigger would leave the Solved ability always on the permanent and give the designation no rules identity (copy/blink/'solved Case' checks), so it is an approximation
-
-<details><summary>Cards waiting on this</summary>
-
-- **Case of the Shifting Visage** (rank 8807) — `case_of_the_shifting_visage`
-  - To solve — There are fifteen or more cards in your graveyard. (If unsolved, solve at the beginning of your end step.)
-  - Solved — Whenever you cast a nonlegendary creature spell, copy that spell. (The copy becomes a token.)
 
 </details>
 

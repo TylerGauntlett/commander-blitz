@@ -1140,6 +1140,7 @@ def exiled_activated_abilities(
                 ability.is_activated
                 and Zone.BATTLEFIELD in ability.active_zones
                 and ability.level is None
+                and not ability.solved
                 and ability.threshold is None
             ):
                 out.append((oid, ability))
@@ -1169,10 +1170,11 @@ def _ability_statics(state: GameState) -> list[tuple[GameObject, Mapping[str, An
                 if not static or static.get("effect") not in ABILITY_STATICS:
                     continue
                 # A Class's level-3 "loses all abilities" or "have …" is not
-                # there at level 2 (716.2b). Read off the printed face for the
-                # regress this function's callers document, so the level gate
-                # `present_printed_abilities` applies has to be applied here too.
-                if not ability.present_at(obj.class_level):
+                # there at level 2 (716.2b), nor a Case's "Solved —" one while
+                # it is unsolved (719.3c). Read off the printed face for the
+                # regress this function's callers document, so the gates
+                # `present_printed_abilities` applies have to be applied here too.
+                if not ability.present_on(obj):
                     continue
                 if _static_active(state, obj, static):
                     out.append((obj, static))
@@ -1271,11 +1273,11 @@ def threshold_met(obj: GameObject, ability: Ability) -> bool:
 def present_printed_abilities(
     obj: GameObject, printed: tuple[Ability, ...]
 ) -> tuple[Ability, ...]:
-    """The printed abilities this object actually has, with both gates applied.
+    """The printed abilities this object actually has, with every gate applied.
 
-    Two printed conditions on *having* an ability rather than on using it, and
-    one function for both because every reader of `abilities_of` has to agree
-    about them. The ability that fails either is **absent**, not refused: it is
+    Printed conditions on *having* an ability rather than on using it, and
+    one function for all of them because every reader of `abilities_of` has to
+    agree about them. The ability that fails one is **absent**, not refused: it is
     not offered, not a mana source for the payment solver, not collected as a
     trigger, not applied as a static, not listed for the client and not the
     AI's to consider. Refusing it in `legality` alone -- `condition`'s shape --
@@ -1283,7 +1285,7 @@ def present_printed_abilities(
 
     Indices must keep meaning what they printed (`Action.ability_index`,
     `StackItem.ability_index`, the per-turn trigger cap and the once-each-turn
-    ledger all address an ability by position), and the two gates keep that
+    ledger all address an ability by position), and the gates keep that
     promise in two ways:
 
     - **A Class level (716.2b-c)** swaps each ability printed above the
@@ -1293,6 +1295,9 @@ def present_printed_abilities(
       in every zone: a leaves-the-battlefield trigger is collected off the
       object after it has left (603.10a), and `GameObject.class_level` still
       holds the level it left at.
+    - **A Case's solved designation (719.3c)** swaps a "Solved —" ability on
+      an unsolved Case the same way and for the same reason, and reads
+      `GameObject.solved` the way the level reads `class_level`.
     - **A station threshold (721)** drops the ability. The loader holds those to
       the end of the list and to rising order, so below its number the list only
       ever loses a tail.
@@ -1304,14 +1309,13 @@ def present_printed_abilities(
     stack resolves whatever happens to its source (113.7a), so resolution reads
     `printed_abilities`.
 
-    The same tuple back, untouched, for a card with neither -- every card but a
-    Class or a Planet -- at the cost of one level check per ability and one
-    attribute read.
+    The same tuple back, untouched, for a card with none -- every card but a
+    Class, a Case or a Planet -- at the cost of one gate check per ability and
+    one attribute read.
     """
-    level = obj.class_level
-    if not all(ability.present_at(level) for ability in printed):
+    if not all(ability.present_on(obj) for ability in printed):
         printed = tuple(
-            ability if ability.present_at(level) else ability.latent() for ability in printed
+            ability if ability.present_on(obj) else ability.latent() for ability in printed
         )
     if not printed or printed[-1].threshold is None:
         return printed

@@ -962,6 +962,14 @@
    "paid_by",
    "self_only",
    "shares_a_creature_type_with"
+  ],
+  "_NOT_SOLVED": {
+   "solved": false
+  },
+  "_TO_SOLVE_LINE_KEYS": [
+   "condition",
+   "kind",
+   "text"
   ]
  },
  "ops": [
@@ -1131,6 +1139,7 @@
   "shuffle",
   "skip_untap",
   "snapshot",
+  "solve",
   "spell_enters_with_counters",
   "surveil",
   "suspend",

@@ -622,7 +622,9 @@ class AbilityModel(BaseModel):
 
     model_config = Strict
 
-    kind: Literal["activated", "triggered", "static", "chapter", "reflexive", "level"]
+    kind: Literal[
+        "activated", "triggered", "static", "chapter", "reflexive", "level", "to_solve"
+    ]
     #: The name a `reflexive_trigger` op calls this ability by -- "when you do"
     #: has to point at *which* do. Required on ``kind: "reflexive"`` and refused
     #: on every other kind, and the loader checks the two halves name each
@@ -651,6 +653,13 @@ class AbilityModel(BaseModel):
     #:   the ability exists only while the Class is at that level or higher
     #:   (716.2b). Omitted for a level-1 ability, which is always there.
     level: int | None = None
+    #: **A Case** (719). ``true`` on an ability printed after "Solved —": it
+    #: exists only while the Case is solved (719.3c). A ``kind: "to_solve"``
+    #: line is the "To solve — [condition]" line itself, and carries only its
+    #: ``text`` and the ``condition``: the loader compiles it into 719.3b's
+    #: "At the beginning of your end step, if this Case is not solved and
+    #: [condition], it becomes solved."
+    solved: bool = False
 
     # activated
     cost: CostModel | None = None

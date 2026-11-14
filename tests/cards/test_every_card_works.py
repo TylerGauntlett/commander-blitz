@@ -518,7 +518,8 @@ def _enchant_something(game: Game, oid: int, zone: Zone) -> None:
 
 
 def _reach_the_level(game: Game, oid: int, ability) -> None:
-    """Stand a Class on the rung this ability needs (716).
+    """Stand a Class on the rung this ability needs (716), and a Case solved
+    when the ability needs it (719).
 
     Same family as `_pay_the_counters`, and the same argument: "not activatable"
     must only ever mean the ability is broken. A card put on the battlefield
@@ -533,6 +534,8 @@ def _reach_the_level(game: Game, oid: int, ability) -> None:
     """
     needed = max(ability.level or 1, (ability.becomes_level or 2) - 1)
     game.state.objects[oid].class_level = needed
+    # A Case's "Solved —" ability (719.3c), arranged the same way.
+    game.state.objects[oid].solved = ability.solved
 
 
 def _afford_the_life(game: Game, ability) -> None:

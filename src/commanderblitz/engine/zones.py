@@ -1872,6 +1872,8 @@ def _enter_battlefield(
     # leaves-the-battlefield trigger is about to be collected off -- see
     # `GameObject.class_level`.
     obj.class_level = 1
+    # 719.3d and 400.7: a Case enters unsolved, for the same reason.
+    obj.solved = False
     # "…**if it was cast**" (603.6e). Written here, before the replacements and
     # long before the ENTERS_BATTLEFIELD event below, because the trigger's own
     # intervening-if is evaluated as the ability queues off that event.

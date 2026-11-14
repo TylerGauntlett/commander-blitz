@@ -291,6 +291,15 @@ describe("describeEvent", () => {
     ).toBe("Wizard Class becomes level 3");
   });
 
+  it("says a Case was solved", () => {
+    expect(
+      describeEvent(
+        event({ type: "became_solved", data: { card: "case_of_the_shifting_visage" } }),
+        names,
+      ),
+    ).toBe("Case Of The Shifting Visage is solved");
+  });
+
   it("prettifies a card id rather than printing the raw slug", () => {
     expect(
       describeEvent(event({ type: "land_played", data: { card: "sol_ring" } }), names),

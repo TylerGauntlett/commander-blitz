@@ -815,12 +815,13 @@ def _ability_aims(
         obj = state.objects.get(oid)
         if obj is None or not threshold_met(obj, ability):
             return None
-    if ability.level is not None:
+    if ability.level is not None or ability.solved:
         # A Class's ability above its level is not on the permanent (716.2b),
-        # and `_offers_something_else` walks the printed face for the reason the
+        # nor an unsolved Case's "Solved —" one (719.3c), and
+        # `_offers_something_else` walks the printed face for the reason the
         # threshold check above gives.
         obj = state.objects.get(oid)
-        if obj is None or not ability.present_at(obj.class_level):
+        if obj is None or not ability.present_on(obj):
             return None
     # "You may activate loyalty abilities of Teferi on any player's turn any time
     # you could cast an instant." The one permission that reaches this refusal,

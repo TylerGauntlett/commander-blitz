@@ -10,11 +10,11 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 178 |
+| [Effect ops](#effect-ops) | 179 |
 | [Selectors](#selectors) | 77 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 74 |
-| [Conditions](#conditions) | 36 |
+| [Conditions](#conditions) | 37 |
 | [Trigger events](#trigger-events) | 58 |
 | [Trigger filters](#trigger-filters) | 37 |
 | [Static effects](#static-effects) | 98 |
@@ -37,7 +37,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
 | [Card-level face keys](#card-level-face-keys) | 6 |
 | [Card-level rider keys](#card-level-rider-keys) | 22 |
-| [Engine events](#engine-events) | 83 |
+| [Engine events](#engine-events) | 84 |
 
 ## Effect ops
 
@@ -159,6 +159,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `pump` | Modify |  | +N/+M until end of turn (or a duration, `as_long_as_you_control_source` included). | ["For as long as you control" this](card-dsl-cookbook.md#for-as-long-as-you-control-this) |
 | `rename` | Modify |  | A permanent's name becomes the chosen or given name. | [Changing a permanent's name](card-dsl.md#changing-a-permanents-name) |
 | `set_pt` | Modify |  | Set base power and toughness for a duration. | [Effect ops](card-dsl.md#effect-ops) |
+| `solve` | Modify |  | A Case becomes solved; supplied by the loader on a `to_solve` line. | [Cases](card-dsl-cookbook.md#cases) |
 | `transform` | Modify |  | Transform a double-faced permanent. | [Transforming double-faced cards](card-dsl-cookbook.md#transforming-double-faced-cards) |
 | `add_energy` | Life & damage |  | A player gets N energy counters ({E}). | [Energy](card-dsl-cookbook.md#energy) |
 | `add_poison` | Life & damage |  | A player gets N poison counters. | [Effect ops](card-dsl.md#effect-ops) |
@@ -442,6 +443,7 @@ Every head a condition may have: an effect's `if`, a trigger's intervening `cond
 | `of` | Which spell the cast-mode conditions ask about. | [Conditions](card-dsl.md#conditions) |
 | `overloaded` | This spell was cast for its overload cost. | [Overload](card-dsl-cookbook.md#overload) |
 | `right` | `cmp`'s right operand. | [Conditions](card-dsl.md#conditions) |
+| `solved` | The source is a solved Case (719.3d). | [Cases](card-dsl-cookbook.md#cases) |
 | `spree_mode` | The given spree mode was bought. | [Spree — "choose one or more additional costs"](card-dsl.md#spree--choose-one-or-more-additional-costs) |
 | `step_is` | The step the game is in now ("during the declare attackers step"). | [Conditions](card-dsl.md#conditions) |
 | `two_share_a_color` | Two cards in a pool share a color. | ["Two cards that share a color" — two_share_a_color](card-dsl.md#two-cards-that-share-a-color--two_share_a_color) |
@@ -1183,6 +1185,7 @@ Every `EventType` the engine emits, and which trigger events listen to it. An ev
 | `became_level` | `becomes_level` |  | [Triggers](card-dsl.md#triggers) |
 | `became_monarch` | `becomes_monarch` |  | [Triggers](card-dsl.md#triggers) |
 | `became_monstrous` | `becomes_monstrous` |  | [Triggers](card-dsl.md#triggers) |
+| `became_solved` |  |  | [Triggers](card-dsl.md#triggers) |
 | `became_target` | `becomes_target` |  | [Triggers](card-dsl.md#triggers) |
 | `begin_combat` | `begin_combat` |  | [Triggers](card-dsl.md#triggers) |
 | `blockers_declared` |  |  | [Triggers](card-dsl.md#triggers) |

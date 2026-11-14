@@ -295,6 +295,15 @@ describe("beatsFor", () => {
     });
   });
 
+  it("floats Solved off a Case as it is solved", () => {
+    const [beat] = beatsFor([event("became_solved", {}, { source: 7 })], NAMES);
+    expect(beat.float).toEqual({
+      anchor: { kind: "object", oid: 7 },
+      value: "Solved",
+      tone: "good",
+    });
+  });
+
   it("floats life gain up and life loss down", () => {
     const [gain] = beatsFor([event("life_gained", { amount: 5 })], NAMES);
     const [loss] = beatsFor([event("life_lost", { amount: 5 })], NAMES);

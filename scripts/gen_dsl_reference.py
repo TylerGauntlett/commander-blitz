@@ -162,6 +162,7 @@ H_ROLL = "Rolling dice"
 H_CASCADE = "Cascade, ripple and `reveal_until` — walking a library"
 H_MONSTROSITY = "Monstrosity, and holding creatures down"
 H_CLASSES = "Classes"
+H_CASES = "Cases"
 H_GAIN_CONTROL = "Gaining control of a permanent"
 H_FIGHT = "`fight`"
 
@@ -367,6 +368,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                     '`change_text` — "replacing all instances of one creature type"'),
     "transform": ("Modify", "Transform a double-faced permanent.", "Transforming double-faced cards"),
     "become_level": ("Modify", "A Class becomes level N.", H_CLASSES),
+    "solve": ("Modify", "A Case becomes solved; supplied by the loader on a `to_solve` line.",
+              H_CASES),
     "lose_all_abilities": ("Modify", "Permanents lose all abilities for a duration.",
                            "Losing all abilities because an effect said so"),
     "lose_keyword": ("Modify", "Permanents found as it resolves lose keywords and can't have "
@@ -757,6 +760,7 @@ CONDITIONS: dict[str, Entry] = {
     "impending": ("The permanent was cast for its impending cost (the rule's own reads).",
                   "Impending — a creature that is not one until it counts down"),
     "exists": ("A selector finds at least one object.", None),
+    "solved": ("The source is a solved Case (719.3d).", H_CASES),
     "gift_promised": ("A gift was promised as this spell was cast.", H_GIFT),
     "has_city_s_blessing": ("The player has the city's blessing (ascend).", "Ascend"),
     "has_flag": ("The source carries a word written by `set_flag`.", H_EXERTED),

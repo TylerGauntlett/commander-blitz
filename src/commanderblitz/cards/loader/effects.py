@@ -1034,6 +1034,14 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             f'write {{"kind": "level", "level": N, "cost": ...}} instead'
         )
 
+    if op == "solve":
+        # 719.3b's effect, supplied by the loader on a `kind: "to_solve"` line
+        # with the end-step trigger and the "if not solved" check it needs.
+        raise DslError(
+            f"{where}: 'solve' is written by the loader for a Case's to_solve line; "
+            f'write {{"kind": "to_solve", "condition": ...}} instead'
+        )
+
     for key in ("objects", "per", "selector", "affects"):
         if key in effect:
             validate_selector(effect[key], f"{where}.{key}")

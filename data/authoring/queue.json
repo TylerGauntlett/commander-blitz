@@ -40642,12 +40642,12 @@
     },
     "Case of the Shifting Visage": {
       "edhrec_rank": 8807,
-      "gate": "template",
+      "gate": null,
       "name": "Case of the Shifting Visage",
-      "reason": "no template for: At the beginning of your upkeep, surveil 1",
+      "reason": "",
       "scryfall_id": "65463a1b-39c1-4fc8-8de2-85224de810ac",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Case of the Stashed Skeleton": {

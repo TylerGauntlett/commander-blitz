@@ -722,6 +722,15 @@ def reference() -> dict:
             " Class becomes level 2, ...\" is a triggered ability with"
             " `\"level\": 2` and `trigger: {\"event\": \"becomes_level\","
             " \"level\": 2}`.",
+            "A **Case** is `subtypes: [\"Case\"]` plus two keys. The printed"
+            " \"To solve — <condition>. (If unsolved, solve at the beginning of"
+            " your end step.)\" line is `{\"kind\": \"to_solve\", \"text\":"
+            " <the whole line, reminder included>, \"condition\": <the"
+            " condition>}` and nothing else -- the end-step trigger, the \"if"
+            " not solved\" check and the effect are rule 719.3b and the"
+            " compiler supplies them. Every ability printed after \"Solved —\""
+            " carries `\"solved\": true` whatever its kind, with the whole line"
+            " as its `text`.",
             "`required_keys` is the subset of each of those lists that is NOT"
             " optional -- every ability needs a `kind`, every target an `id`"
             " and a `kind`, every trigger an `event`. A spec missing one fails"

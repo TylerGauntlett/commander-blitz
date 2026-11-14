@@ -36425,6 +36425,85 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "surveil",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, surveil 1.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "count": {
+                "controller": "you",
+                "zone": "graveyard"
+              }
+            },
+            "right": {
+              "const": 15
+            }
+          },
+          "kind": "to_solve",
+          "text": "To solve — There are fifteen or more cards in your graveyard. (If unsolved, solve at the beginning of your end step.)"
+        },
+        {
+          "effects": [
+            {
+              "op": "copy_spell",
+              "sid": {
+                "binding": "sid"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "solved": true,
+          "text": "Solved — Whenever you cast a nonlegendary creature spell, copy that spell. (The copy becomes a token.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "not_supertypes": [
+                "Legendary"
+              ],
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "case_of_the_shifting_visage",
+      "mana_cost": "{1}{U}{U}",
+      "name": "Case of the Shifting Visage",
+      "oracle_text": "At the beginning of your upkeep, surveil 1.\nTo solve — There are fifteen or more cards in your graveyard. (If unsolved, solve at the beginning of your end step.)\nSolved — Whenever you cast a nonlegendary creature spell, copy that spell. (The copy becomes a token.)",
+      "source": "auto",
+      "subtypes": [
+        "Case"
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],

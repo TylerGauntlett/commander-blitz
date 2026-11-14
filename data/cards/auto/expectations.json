@@ -3039,6 +3039,9 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "case_of_the_shifting_visage": {
+    "zone": "battlefield"
+  },
   "cast_out": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 5,

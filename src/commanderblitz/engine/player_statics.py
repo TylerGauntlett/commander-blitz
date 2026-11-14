@@ -92,8 +92,9 @@ def _active_player_statics(
                 continue
             # Druid Class's "You may play an additional land on each of your
             # turns" is a level-2 ability: at level 1 the Class does not have it
-            # (716.2b). Asked here because this walk reads the printed face.
-            if not ability.present_at(obj.class_level):
+            # (716.2b), and a Case's "Solved —" one is not there unsolved
+            # (719.3c). Asked here because this walk reads the printed face.
+            if not ability.present_on(obj):
                 continue
             if Zone.BATTLEFIELD not in ability.active_zones:
                 # The command-zone walk below refuses a battlefield static on a

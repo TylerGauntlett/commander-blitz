@@ -55,6 +55,11 @@ export interface CardView {
    * prints level lines. Not a counter, so never inside `counters`.
    */
   level?: number;
+  /**
+   * A Case's solved designation (rule 719), on the battlefield and only for a
+   * card that prints a "To solve" line.
+   */
+  solved?: boolean;
   attached_to?: number | null;
   attacking?: boolean;
   blocking?: boolean;

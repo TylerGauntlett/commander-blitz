@@ -7827,6 +7827,7 @@ The cookbook's subsystem chapters, one line each:
 - [Prepared](card-dsl-cookbook.md#prepared)
 - [Sagas](card-dsl-cookbook.md#sagas)
 - [Classes](card-dsl-cookbook.md#classes)
+- [Cases](card-dsl-cookbook.md#cases)
 - [Planeswalkers](card-dsl-cookbook.md#planeswalkers)
 - [Battles](card-dsl-cookbook.md#battles)
 - [Cost reduction](card-dsl-cookbook.md#cost-reduction)

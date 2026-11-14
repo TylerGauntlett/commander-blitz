@@ -72,6 +72,11 @@ CONDITION_KEYS = frozenset(
         # writes for a card's `impending` field -- the rule's two clauses that
         # say so -- and refused on a card without one.
         "impending",
+        # A Case (719.3d): "if this Case is solved", asked of the ability's own
+        # source. Written `false` by the loader into the intervening-if of the
+        # end-step trigger it builds from a "To solve —" line (719.3b), and
+        # refused on a card that prints no such line.
+        "solved",
         # Escape (702.138c-d): "this creature **escapes with** two +1/+1
         # counters on it", which is "if it escaped, it enters with...", and
         # Uro's "sacrifice it unless it escaped". True only of the spell cast
@@ -264,6 +269,12 @@ def evaluate(ctx: EffectContext, cond: Any) -> bool:
         obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
         paid = obj is not None and obj.cast_impending
         return paid == bool(cond["impending"])
+    if "solved" in cond:
+        # Off the object, like `impending`: the designation lives on the Case
+        # and is cleared as it next enters (400.7).
+        obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
+        is_solved = obj is not None and obj.solved
+        return is_solved == bool(cond["solved"])
     if "escaped" in cond:
         # `impending`'s reading, off the object, in both lifetimes: the stamp
         # is written as the spell starts resolving and again as it lands, and
@@ -584,6 +595,8 @@ def validate_condition(cond: Any, where: str) -> None:
     # Gondor's trigger fire in exactly the case it must not.
     if "impending" in cond and not isinstance(cond["impending"], bool):
         raise DslError(f"{where}.impending: must be true or false")
+    if "solved" in cond and not isinstance(cond["solved"], bool):
+        raise DslError(f"{where}.solved: must be true or false")
     if "escaped" in cond and not isinstance(cond["escaped"], bool):
         raise DslError(f"{where}.escaped: must be true or false")
     if "embalmed" in cond and not isinstance(cond["embalmed"], bool):

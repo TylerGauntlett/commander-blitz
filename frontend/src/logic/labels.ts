@@ -471,6 +471,9 @@ export function describeEvent(
       const n = typeof event.data.level === "number" ? event.data.level : 0;
       return `${card ?? "A Class"} becomes level ${n}`;
     }
+    /* A Case became solved (719.3d): its "Solved" abilities switch on. */
+    case "became_solved":
+      return `${card ?? "A Case"} is solved`;
     case "control_changed":
       return `${who} ${v("gain", "gains")} control of ${card ?? "a permanent"}`;
     case "counter_placed":

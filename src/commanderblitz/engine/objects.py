@@ -579,6 +579,15 @@ class GameObject:
     #: after it has left (603.10a), and it has to see the abilities the Class had
     #: at the level it had.
     class_level: int = 1
+    #: **A Case's solved designation** (719.3d). Set only by the `solve` op --
+    #: which the loader supplies on a Case's "To solve —" line -- and read by
+    #: `Ability.present_on` for the "Solved —" abilities (719.3c).
+    #:
+    #: A designation and not a copiable value (707.2), so a token copy of a
+    #: solved Case is a fresh, unsolved one; and lost as the object changes
+    #: zones (400.7). Cleared as the object *enters* the battlefield, for
+    #: `class_level`'s last-known-information reason.
+    solved: bool = False
     #: One-way words a permanent has become: ``renowned``, and whatever the next
     #: set prints. Generic where `monstrous` is a field of its own, because the
     #: pattern turned out to repeat and each new adjective would otherwise be a
@@ -1643,6 +1652,7 @@ class GameObject:
             "animations": [t.to_dict() for t in self.animations],
             "monstrous": self.monstrous,
             "class_level": self.class_level,
+            "solved": self.solved,
             "flags": sorted(self.flags),
             "detained_by": self.detained_by,
             # Sorted rather than the set itself, so the snapshot is JSON and is

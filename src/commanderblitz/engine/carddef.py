@@ -15,10 +15,13 @@ import json
 import re
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field, replace
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from .enums import AbilityKind, CardType, Keyword, Step, Supertype, Zone
 from .mana import ManaCost, ManaKeywordGrant, ManaRestriction
+
+if TYPE_CHECKING:
+    from .objects import GameObject
 
 #: Types whose subtypes contribute to Commander colour identity checks.
 LAND_TYPE = CardType.LAND.value
@@ -1333,6 +1336,14 @@ class Ability:
     #: The effect -- `become_level` -- is supplied by the loader, as a chapter's
     #: trigger is.
     becomes_level: int | None = None
+    # Case (719)
+    #: **"Solved — [ability]"** (719.3c): the ability exists only while its
+    #: Case is solved. The `level` gate's twin, read through the same
+    #: :meth:`present_on` by every reader of a permanent's abilities, so an
+    #: unsolved Case has no such trigger to collect, static to apply or
+    #: activation to offer -- it holds a :attr:`AbilityKind.LATENT` stand-in at
+    #: the ability's printed seat instead.
+    solved: bool = False
 
     @property
     def cast_time_modes(self) -> Mapping[str, Any] | None:
@@ -1396,22 +1407,33 @@ class Ability:
     def is_static(self) -> bool:
         return self.kind is AbilityKind.STATIC
 
-    def present_at(self, class_level: int) -> bool:
-        """Does a permanent at ``class_level`` have this ability? (716.2b-c)
+    def present_on(self, obj: GameObject) -> bool:
+        """Does ``obj`` have this printed ability, given its designations?
 
-        True for every ability without a printed level, which is every ability
-        on every card that is not a Class.
+        A Class's level (716.2b-c) and a Case's solved designation (719.3c) are
+        the two: an ability printed under "Level N" needs the Class at N or
+        higher, and a "Solved —" ability needs the Case solved. True for every
+        ability carrying neither gate, which is every ability on every card
+        that is neither a Class nor a Case.
         """
-        return self.level is None or class_level >= self.level
+        if self.level is not None and obj.class_level < self.level:
+            return False
+        return not self.solved or obj.solved
 
     def latent(self) -> Ability:
         """The :attr:`AbilityKind.LATENT` stand-in that holds this ability's seat.
 
-        Keeps ``index``, ``text`` and ``level`` -- enough to say *what* is
+        Keeps ``index``, ``text``, ``level`` and ``solved`` -- enough to say *what* is
         missing and why -- and nothing any reader could act on: no cost, no
         trigger, no static, no effects, and not a mana ability.
         """
-        return Ability(kind=AbilityKind.LATENT, index=self.index, text=self.text, level=self.level)
+        return Ability(
+            kind=AbilityKind.LATENT,
+            index=self.index,
+            text=self.text,
+            level=self.level,
+            solved=self.solved,
+        )
 
 
 @dataclass(frozen=True)
@@ -2041,6 +2063,18 @@ class CardDef:
         "{cost}: Level N" has no level worth showing.
         """
         return max((a.becomes_level or 0 for a in self.abilities), default=0)
+
+    @property
+    def solvable(self) -> bool:
+        """Does this card print a Case's "To solve —" line (719.3a)?
+
+        What the client is told a solved designation for, the way `top_level`
+        is for a level. Read off the `solve` effect the loader supplies on that
+        line and nowhere else.
+        """
+        return any(
+            effect.get("op") == "solve" for a in self.abilities for effect in a.effects
+        )
 
     def __repr__(self) -> str:  # pragma: no cover - debug helper
         return f"<CardDef {self.id}>"

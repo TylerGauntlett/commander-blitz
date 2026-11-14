@@ -2321,7 +2321,7 @@ out of order, or at instant speed.
 ability's printed position — not offered, not collected as a trigger, not applied
 as a static — and the two printed-face walks (`_ability_statics` for "loses all
 abilities" and "have …", `player_statics` for Druid Class's extra land) ask the
-same `Ability.present_at`. An `activation_condition` on `counters_on` is the near
+same `Ability.present_on`. An `activation_condition` on `counters_on` is the near
 miss: it cannot switch a static off, it does not stop level 2 being bought four
 times, and a `counter_placed` trigger on the invented counter fires again at
 level 3.
@@ -2368,6 +2368,60 @@ trigger of any other event.
 The near misses: `ability_activated` fires when the level line is *activated*, a
 round of priority before the Class is level 2 and whether or not it ever gets
 there; `counter_placed` on an invented level counter fires again at level 3.
+
+## Cases
+
+```jsonc
+{"types": ["Enchantment"], "subtypes": ["Case"],
+ "abilities": [
+   {"kind": "triggered", "text": "At the beginning of your upkeep, surveil 1.", ...},
+   {"kind": "to_solve",
+    "text": "To solve — There are fifteen or more cards in your graveyard. (If unsolved, solve at the beginning of your end step.)",
+    "condition": {"cmp": ">=", "left": {"count": {...}}, "right": {"const": 15}}},
+   {"kind": "triggered", "solved": true,
+    "text": "Solved — Whenever you cast a nonlegendary creature spell, copy that spell. (The copy becomes a token.)",
+    "trigger": {"event": "spell_cast", "controller": "you", ...},
+    "effects": [{"op": "copy_spell", "sid": {"binding": "sid"}}]}]}
+```
+
+Rule 719, in two keys:
+
+| written | means | rule |
+|---|---|---|
+| `{"kind": "to_solve", "condition": …}` | "At the beginning of your end step, if this Case is not solved and [condition], it becomes solved." | 719.3b |
+| `"solved": true` on any other ability | the ability exists only while the Case is solved | 719.3c |
+
+**A to_solve line is its condition, and nothing else.** The loader compiles it
+into a triggered ability on your `end_step` whose intervening-if is `{"all":
+[{"solved": false}, <condition>]}` — checked as the trigger would go on the
+stack and again as it resolves (603.4) — with the `solve` effect; it refuses
+`effects`, `trigger`, `targets` or anything else written on the line. `solve`
+written by hand is refused for the reason `become_level` is.
+
+**A solved-gated ability is absent, not inert**, through the gate a Class level
+uses: `Ability.present_on` reads `GameObject.solved` beside `class_level`, so
+`characteristics.abilities_of` holds an unsolved Case's "Solved —" abilities as
+`AbilityKind.LATENT` stand-ins at their printed seats, and the printed-face walks
+(`_ability_statics`, `player_statics`) and legality ask the same question.
+`set_flag` from an end-step trigger with `has_flag` on the gated ability is the
+near miss: the ability would stay on the permanent, a static could not be
+switched off by it, and the word would mean nothing to a copy.
+
+**Solved is a designation** (719.3d), not a counter and not a copiable value
+(707.2): a token copy of a solved Case is unsolved. It is cleared as the
+permanent *enters*, not as it leaves, `class_level`'s last-known-information
+reason. The `solve` effect fires `became_solved` once, when it changes, and the
+`solved` condition reads it off the ability's source. The client receives
+`solved` on the card view of any card with a to_solve line and shows it as a
+"Solved" badge.
+
+Refused at load: a to_solve line, a gated ability or the `solved` condition
+without the `Case` subtype; more than one to_solve line; a gated ability or
+`solved` condition with no to_solve line to solve it; `solved` with a `level`, on
+a chapter, reflexive or level line, or on one active anywhere but the
+battlefield; and either key on a granted ability. A `Case` with neither is
+accepted and inert. The reminder "(If unsolved, solve at the beginning of your
+end step.)" is part of the to_solve line's `text`.
 
 ## Planeswalkers
 

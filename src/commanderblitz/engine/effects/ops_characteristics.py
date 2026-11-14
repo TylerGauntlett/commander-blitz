@@ -599,6 +599,36 @@ def op_become_level(ctx: EffectContext, spec: Mapping[str, Any]):
     )
 
 
+@register("solve")
+def op_solve(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "…it becomes solved." -- the resolution of a Case's "To solve —" line.
+
+    719.3b's effect, and never written by a card: the loader supplies it on a
+    ``kind: "to_solve"`` ability together with the end-step trigger and the
+    "if this Case is not solved and [condition]" intervening-if, and refuses it
+    anywhere else.
+
+    A source that has left the battlefield has no designation to take: the
+    ability resolves (113.7a) and does nothing. One already solved stays as it
+    is and fires nothing -- a Case is solved once (719.3d).
+    """
+    oid = ctx.source_oid
+    obj = ctx.state.objects.get(oid) if oid is not None else None
+    if obj is None or not obj.on_battlefield or obj.solved:
+        return
+    obj.solved = True
+    # The designation is a pipeline input: a "Solved —" static switches on here.
+    ctx.state.bump_chars()
+    fire(
+        ctx.state,
+        EventType.BECAME_SOLVED,
+        player=obj.controller,
+        source=oid,
+        oid=oid,
+        card=obj.def_id,
+    )
+
+
 @register("freeze")
 def op_freeze(ctx: EffectContext, spec: Mapping[str, Any]):
     """ "…don't untap during their controllers' untap steps for as long as you

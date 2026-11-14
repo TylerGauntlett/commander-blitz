@@ -1583,9 +1583,19 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         raise DslError(f"{where}.grantable_abilities: a threshold is a printed striation")
     final_chapter = _final_chapter(model, abilities, where)
     _check_class_levels(model, abilities, where)
+    _check_case(model, abilities, where)
     _check_reflexive_wiring(model, abilities, where)
 
     for ability in grantable:
+        if ability.solved or _is_to_solve_line(ability):
+            # The Class refusal below, for a Case: "solved" is a designation of
+            # the card that prints the line (719.3d), and the permanent a
+            # granted ability sits on is never that Case.
+            raise DslError(
+                f"{where}.grantable[{ability.index}]: a Case's solved designation "
+                f"belongs to the card that prints it, so a granted ability cannot "
+                f"carry 'solved' or be a 'to_solve' line"
+            )
         if ability.level is not None or ability.becomes_level is not None:
             # A level is a fact about the permanent that *prints* the line (716),
             # and a granted ability sits on some other permanent -- whose level
@@ -3024,6 +3034,10 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
     """
 
     where = f"{card_where}.abilities[{index}]"
+    if model.kind == "to_solve":
+        return _compile_to_solve_line(model, index, card_where, where)
+    if model.solved:
+        return _compile_solved_ability(model, index, card_where, where)
     if model.kind == "level":
         return _compile_level_line(model, index, card_where, where)
     if model.level is None:
@@ -3088,6 +3102,121 @@ def _compile_level_line(
         effects=({"op": "become_level", "level": model.level},),
         becomes_level=model.level,
     )
+
+
+#: The only keys a Case's "To solve —" line may set: its printed words and the
+#: condition after the dash. 719.3b says the rest -- when it is checked, the
+#: "if this Case is not solved" and the effect.
+_TO_SOLVE_LINE_KEYS = frozenset({"kind", "text", "condition"})
+
+#: The intervening-if a "To solve —" line's trigger carries ahead of its
+#: printed condition (719.3b): the trigger neither goes on the stack nor
+#: resolves for a Case already solved.
+_NOT_SOLVED = {"solved": False}
+
+
+def _is_to_solve_line(ability: Ability) -> bool:
+    """Is this the compiled "To solve —" line, by the effect the loader gave it?"""
+    return any(effect.get("op") == "solve" for effect in ability.effects)
+
+
+def _compile_to_solve_line(
+    model: AbilityModel, index: int, card_where: str, where: str
+) -> Ability:
+    """ "To solve — [condition]" -- 719.3b, a whole triggered ability in a dash.
+
+    "At the beginning of your end step, if this Case is not solved and
+    [condition], it becomes solved." The card prints only the condition, so that
+    is all a card writes; the loader supplies the end-step trigger, the "not
+    solved" half of the intervening-if (checked as the trigger would go on the
+    stack and again as it resolves, 603.4) and the `solve` effect. A level
+    line's reasoning: every Case in print would otherwise write the same three
+    things, and any one of them could write one wrong.
+    """
+    if model.condition is None:
+        raise DslError(
+            f"{where}: a to_solve line needs the 'condition' printed after "
+            f"\"To solve —\""
+        )
+    extra = set(model.model_fields_set) - _TO_SOLVE_LINE_KEYS
+    if extra:
+        raise DslError(
+            f"{where}: a to_solve line is its condition; rule 719.3b supplies the "
+            f"rest, so it cannot also set {sorted(extra)}"
+        )
+    validate_condition(model.condition, f"{where}.condition")
+    triggered = AbilityModel.model_validate(
+        {
+            "kind": "triggered",
+            "text": model.text,
+            "trigger": {
+                "event": "end_step",
+                "controller": "you",
+                "condition": {"all": [_NOT_SOLVED, model.condition]},
+            },
+        }
+    )
+    ability = _compile_printed_ability(triggered, index, card_where)
+    return dataclasses.replace(ability, effects=({"op": "solve"},))
+
+
+def _compile_solved_ability(
+    model: AbilityModel, index: int, card_where: str, where: str
+) -> Ability:
+    """ "Solved — [ability]" -- 719.3c: there only while the Case is solved.
+
+    The `level` gate's shape: compiled as the ability it is and stamped, so no
+    branch of the ordinary compiler has to know Cases exist.
+    """
+    if model.kind in ("chapter", "reflexive", "level"):
+        # A chapter is a Saga's and a level line a Class's; a reflexive ability
+        # is fired by the op above it, which is the thing to gate.
+        raise DslError(f"{where}: 'solved' does not mean anything on a {model.kind} ability")
+    if model.level is not None:
+        raise DslError(f"{where}: an ability is gated on a Class level or on a Case, not both")
+    if list(model.active_zones) != ["battlefield"]:
+        # The designation is the permanent's (719.3d) and is lost as it leaves
+        # (400.7), so off the battlefield the gate is always shut.
+        raise DslError(
+            f"{where}: a 'solved' ability only exists on the battlefield, "
+            f"not in {model.active_zones}"
+        )
+    ability = _compile_ability(model.model_copy(update={"solved": False}), index, card_where)
+    return dataclasses.replace(ability, solved=True)
+
+
+def _check_case(model: CardModel, abilities: tuple[Ability, ...], where: str) -> None:
+    """The card-level half of 719: a Case solves one way, and only a Case does.
+
+    Refused, each because it loads clean and plays as a different card:
+
+    - a "To solve —" line, a "Solved —" ability or a ``solved`` condition on a
+      card with no ``Case`` subtype -- the Class refusal's reason;
+    - two "To solve —" lines, which 719.3a never prints and which would solve
+      the Case on either condition;
+    - a "Solved —" ability or a ``solved`` condition on a card with no "To
+      solve —" line: nothing could ever solve it, which is a printed line the
+      card claims and never does.
+
+    A ``Case`` with neither is accepted and inert, the Saga rule.
+    """
+    lines = sum(1 for ability in abilities if _is_to_solve_line(ability))
+    gated = any(ability.solved for ability in abilities)
+    reads = _mentions_condition(model, "solved")
+    if not lines and not gated and not reads:
+        return
+    if "Case" not in model.subtypes:
+        raise DslError(
+            f"{where}: a to_solve line, a 'solved' ability or the 'solved' condition "
+            f"needs the 'Case' subtype (719)"
+        )
+    if lines > 1:
+        raise DslError(f"{where}: a Case has one to_solve line (719.3a), got {lines}")
+    if not lines:
+        raise DslError(
+            f"{where}: 'solved' on a Case with no to_solve line -- nothing could ever "
+            f"solve it"
+        )
 
 
 def _check_class_levels(model: CardModel, abilities: tuple[Ability, ...], where: str) -> None:
