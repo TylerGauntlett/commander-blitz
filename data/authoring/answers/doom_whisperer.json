@@ -1,0 +1,30 @@
+{
+  "card": {
+    "id": "doom_whisperer",
+    "name": "Doom Whisperer",
+    "oracle_text": "Flying, trample\nPay 2 life: Surveil 2. (Look at the top two cards of your library, then put any number of them into your graveyard and the rest on top of your library in any order.)",
+    "mana_cost": "{3}{B}{B}",
+    "types": ["Creature"],
+    "subtypes": ["Nightmare", "Demon"],
+    "power": 6,
+    "toughness": 6,
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "keywords": ["flying", "trample"],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "Pay 2 life: Surveil 2.",
+        "cost": {"pay_life": 2},
+        "effects": [
+          {"op": "surveil", "amount": {"const": 2}, "player": "you"}
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "life": {"0": 40}
+  }
+}

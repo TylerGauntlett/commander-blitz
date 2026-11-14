@@ -1,0 +1,14 @@
+{
+  "card_id": "enhanced_surveillance",
+  "name": "Enhanced Surveillance",
+  "oracle_text": "You may look at an additional two cards each time you surveil.\nExile this enchantment: Shuffle your graveyard into your library.",
+  "blocked_sentences": ["You may look at an additional two cards each time you surveil."],
+  "needs": [{
+    "capability": "surveil_replacement",
+    "kind": "static_effect",
+    "what": "a player-wide static (affects_player: \"you\") that modifies every surveil its controller performs, raising the number of cards looked at by a fixed addend (here +2) while the extra cards follow the same graveyard-or-top choice; optional (\"you may\"), so the player chooses each time whether to look at the extra cards",
+    "why_existing_wont_do": "static_effects has replace_draw, replace_mill, replace_proliferate and similar replacements but nothing that reads or changes a surveil; the surveil op takes only amount and player, so the change cannot be made at the card's own level, and a surveil trigger (itself a gap) would add a second surveil rather than enlarge the first"
+  }],
+  "closest_existing": ["replace_mill", "replace_draw", "surveil"],
+  "confidence": "high"
+}
