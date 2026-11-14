@@ -93222,12 +93222,12 @@
     },
     "Fell the Mighty": {
       "edhrec_rank": 1465,
-      "gate": "template",
+      "gate": null,
       "name": "Fell the Mighty",
-      "reason": "no template for: Destroy all creatures with power greater than target creature's power",
+      "reason": "",
       "scryfall_id": "0cdf4215-0867-47d8-ae61-0da2af542d7b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fell the Pheasant": {
@@ -127262,12 +127262,12 @@
     },
     "Hidden Dragonslayer": {
       "edhrec_rank": 15795,
-      "gate": "template",
+      "gate": null,
       "name": "Hidden Dragonslayer",
-      "reason": "no template for: Megamorph {2}{W}",
+      "reason": "",
       "scryfall_id": "b29a3e7c-4d19-4737-9b58-deb56de26118",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hidden Footblade": {

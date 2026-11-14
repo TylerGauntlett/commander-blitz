@@ -6924,6 +6924,9 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "fell_the_mighty": {
+    "zone": "graveyard"
+  },
   "fellwar_stone": {
     "zone": "battlefield"
   },
@@ -9442,6 +9445,10 @@
     "zone": "battlefield"
   },
   "hidden_cataract": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "hidden_dragonslayer": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
