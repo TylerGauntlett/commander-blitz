@@ -1,0 +1,24 @@
+{
+  "card_id": "eye_of_duskmantle",
+  "name": "Eye of Duskmantle",
+  "oracle_text": "Flying, lifelink\nYou may play lands and cast spells from among cards in your graveyard you've surveilled this turn. If you cast a spell this way, you pay life equal to its mana value rather than paying its mana cost.",
+  "blocked_sentences": [
+    "You may play lands and cast spells from among cards in your graveyard you've surveilled this turn. If you cast a spell this way, you pay life equal to its mana value rather than paying its mana cost."
+  ],
+  "needs": [
+    {
+      "capability": "surveilled_this_turn",
+      "kind": "selector",
+      "what": "a per-turn record of which cards the controller put into their graveyard by surveilling this turn, readable as a selector/static filter key (e.g. surveilled_this_turn: \"you\") over graveyard cards",
+      "why_existing_wont_do": "The selector and static filter vocabularies have drawn_this_turn and entered_this_turn but nothing marking a card as surveilled into the graveyard this turn; the surveil op records no such provenance, so a cast_from_graveyard / play_lands_from_graveyard static cannot be narrowed to those cards"
+    },
+    {
+      "capability": "graveyard_play_pay_life_instead",
+      "kind": "static_effect",
+      "what": "a continuous permission (static, while this permanent is on the battlefield) to play lands and cast spells from your graveyard among a filtered set of cards, where spells cast this way are paid for with life equal to their mana value instead of their mana cost",
+      "why_existing_wont_do": "playable_pay_life_instead exists only on one-shot ops (exile, look_at_top, grant_playable) over cards an effect touched; the cast_from_graveyard static is the card's own permission for itself (permanent cards only) and carries no pay-life alternative, and play_lands_from_graveyard does not cover spells"
+    }
+  ],
+  "closest_existing": ["cast_from_graveyard", "play_lands_from_graveyard", "grant_playable", "playable_pay_life_instead", "drawn_this_turn"],
+  "confidence": "high"
+}
