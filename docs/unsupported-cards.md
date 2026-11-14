@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**382 cards** blocked by **329** capabilities.
+**381 cards** blocked by **328** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -115,7 +115,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [chosen-card-type-cost-reduction](#chosen-card-type-cost-reduction) | 1 | 611 | static_effect |
 | [chosen-number](#chosen-number) | 1 | 1610 | engine |
 | [chosen-player](#chosen-player) | 1 | 6383 | selector |
-| [clash](#clash) | 1 | 7371 | op, trigger_event |
 | [colored-cost-reduction](#colored-cost-reduction) | 1 | 1541 | static_effect |
 | [combat-damage-amount-binding](#combat-damage-amount-binding) | 1 | 8933 | value |
 | [companion](#companion) | 1 | 3861 | engine |
@@ -2268,23 +2267,6 @@ Blocks **1** card.
 - **Sawhorn Nemesis** (rank 6383) — `sawhorn_nemesis`
   - As this creature enters, choose a player
   - If a source would deal damage to the chosen player or a permanent they control, it deals double that damage instead
-
-</details>
-
-## clash
-
-Blocks **1** card.
-
-- **(trigger_event)** a 'wins_clash' trigger event (controller: you) that fires whenever you win any clash, from any source; the engine's op_clash already emits a 'clash' event with player and won=True, so the trigger only has to listen for it
-  <br>Why the existing vocabulary won't do: trigger_events has no clash event; folding the draw/cast into the attack trigger as an `if` on the clash_won binding would miss clashes from every other source, which is an approximation
-- **(op)** a `player`/`opponent` option on the clash op so it clashes with a named player (here the defending player of the attack trigger) instead of asking 'Clash with which opponent?'; plus the loader must accept a clash whose clash_won binding is read by nobody in the same ability (the win is consumed by a separate trigger)
-  <br>Why the existing vocabulary won't do: op_options lists clash with no options -- it always asks the controller to pick any opponent -- and the loader refuses a clash that no `clash_won` read follows
-
-<details><summary>Cards waiting on this</summary>
-
-- **Marvo, Deep Operative** (rank 7371) — `marvo_deep_operative`
-  - Whenever Marvo attacks, clash with defending player.
-  - Whenever you win a clash, draw a card. Then you may cast a spell from your hand with mana value 8 or less without paying its mana cost.
 
 </details>
 

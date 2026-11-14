@@ -75,6 +75,15 @@ export function actionBeat(ctx: EventContext): boolean {
       return true;
 
     /*
+     * A clash's result, one per clashing player. Short, like a surveil's: the
+     * revealed cards have already had their beat, and this is what a
+     * "whenever you win a clash" trigger that follows has before it.
+     */
+    case "clashed":
+      push({ hold: 200 });
+      return true;
+
+    /*
      * A library search. Its own beat rather than log-only, because it is the
      * one moment of a tutor or a cracked fetchland that shows nothing on the
      * board -- the card it finds arrives as a separate `zone_change` and a

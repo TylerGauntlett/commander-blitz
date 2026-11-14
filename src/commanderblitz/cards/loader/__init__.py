@@ -2533,12 +2533,22 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     # win, …", so a `clash` nothing reads is a spell that reveals two cards and
     # does nothing, and a `clash_won` binding with no clash behind it is a
     # clause that reads 0 and can never fire. Both load cleanly.
+    #
+    # The one clash whose win is read elsewhere is a card that also says
+    # "whenever you win a clash" (Marvo, Deep Operative): its `wins_clash`
+    # trigger is what consumes the win, so the clash is not inert. Only a
+    # trigger on the *same* card excuses it, which keeps a lone "clash with an
+    # opponent." refused.
     clashes = _mentions_pair(model, "op", "clash")
     reads_clash = _mentions_pair(model, "binding", "clash_won")
-    if clashes and not reads_clash:
+    hears_clash = any(
+        a.trigger is not None and a.trigger.event == "wins_clash" for a in model.abilities
+    )
+    if clashes and not reads_clash and not hears_clash:
         raise DslError(
             f"{where}: has a 'clash' that no effect reads via "
-            f"{{'binding': 'clash_won'}} -- a clash nobody wins is not a card"
+            f"{{'binding': 'clash_won'}} and no 'wins_clash' trigger hears -- "
+            f"a clash nobody wins is not a card"
         )
     if reads_clash and not clashes:
         raise DslError(

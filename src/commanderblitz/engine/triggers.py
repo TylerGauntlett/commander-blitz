@@ -334,6 +334,18 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: `put_into_graveyard` is the near miss: it fires per card binned, on
     #: every mill, and not at all for a surveil that keeps every card on top.
     "surveils": EventType.SURVEILLED,
+    #: "Whenever you win a clash, draw a card." -- Marvo, Deep Operative. Once
+    #: per clash won (701.23b), whatever made the clash: `ops_cards.op_clash`
+    #: fires one `CLASHED` per clashing player carrying that player's own
+    #: ``won``, and `_outcome_matches` turns away the lost ones and both halves
+    #: of a tie. So the opponent who wins your clash has won a clash, and a
+    #: clash you instigate and lose pays your opponent's watcher.
+    #:
+    #: The subject is a **player** -- the one who clashed -- so it is absent
+    #: from `OBJECT_SUBJECT_TRIGGERS` and `_actor` reads `event.player`. The
+    #: near miss is an `if` on the card's own `clash_won` binding, which pays
+    #: only for the clash that one ability makes.
+    "wins_clash": EventType.CLASHED,
     #: "Whenever you give a gift, draw a card." -- Jolly Gerbils. Once per gift
     #: given (702.174), fired by `stack` as an instant or sorcery with a
     #: promised gift resolves, or as a permanent's gift trigger resolves
@@ -717,18 +729,19 @@ def _half_matches(dsl_event: str, event: GameEvent) -> bool:
     return half is None or event.data.get("to") == half
 
 
-#: DSL trigger name -> the coin-flip outcome it is about (705.2). `COIN_FLIPPED`
-#: carries ``won`` for both outcomes, and "whenever you win a coin flip" must not
-#: pay on a lost one. Compared with ``is`` against the required value, for the
+#: DSL trigger name -> the outcome it is about: a coin flip's (705.2) or a
+#: clash's (701.23b). `COIN_FLIPPED` and `CLASHED` carry ``won`` for both
+#: outcomes, and "whenever you win a coin flip" must not pay on a lost one. Compared with ``is`` against the required value, for the
 #: reason `EVENT_HALVES` is compared with ``==``: an emission that forgot to say
 #: fails the trigger rather than passing it.
 EVENT_OUTCOMES: dict[str, bool] = {
     "wins_coin_flip": True,
+    "wins_clash": True,
 }
 
 
 def _outcome_matches(dsl_event: str, event: GameEvent) -> bool:
-    """Whether this flip came down the way ``dsl_event`` asks.
+    """Whether this flip or clash came down the way ``dsl_event`` asks.
 
     Shared by `_matches` and `_delayed_matches` for `_half_matches`' reason: a
     delayed subscription must not be wider than the hosted trigger of the same
@@ -2296,10 +2309,13 @@ def _actor(
     # `surveils` is listed for the same reason: the actor is the player who
     # **surveilled**, which "target player surveils" makes someone other than
     # the controller of the spell.
+    # `wins_clash` is listed for `wins_coin_flip`'s reason: the actor is the
+    # clashing player the event is about, and its `source` is whichever card
+    # made the clash -- the opponent's half of my clash names my card.
     # `put_into_graveyard` is listed for `discard`'s reason: the clause asks
     # whose **graveyard**, which is the owner's (400.3) and is on the event,
     # while the subject's controller is whatever `reset_permanent_state` left.
-    if dsl_event in ("land_played", "spell_cast", "spell_copied", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target", "becomes_monarch", "ability_activated", "damage_prevented", "creatures_attack_player", "creatures_deal_combat_damage", "searches_library", "wins_coin_flip", "gives_gift", "put_into_graveyard", "investigates", "surveils"):
+    if dsl_event in ("land_played", "spell_cast", "spell_copied", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target", "becomes_monarch", "ability_activated", "damage_prevented", "creatures_attack_player", "creatures_deal_combat_damage", "searches_library", "wins_coin_flip", "gives_gift", "put_into_graveyard", "investigates", "surveils", "wins_clash"):
         return event.player
     # `deals_damage_to_player` is here beside the combat-only trigger it
     # generalises, and for the same reason: `event.player` on a damage event is

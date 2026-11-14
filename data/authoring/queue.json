@@ -168532,12 +168532,12 @@
     },
     "Marvo, Deep Operative": {
       "edhrec_rank": 7371,
-      "gate": "template",
+      "gate": null,
       "name": "Marvo, Deep Operative",
-      "reason": "no template for: Whenever Marvo attacks, clash with defending player",
+      "reason": "",
       "scryfall_id": "8fdb30c1-0551-48b7-8bcb-d7e0dbb6690a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Marwyn, the Clearcutter": {

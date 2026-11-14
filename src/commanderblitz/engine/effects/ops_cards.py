@@ -1737,9 +1737,24 @@ def op_clash(ctx: EffectContext, spec: Mapping[str, Any]):
       other card revealed this way" is vacuously true against no card at all, so
       revealing something beats revealing nothing — and revealing nothing loses
       even to nothing.
+
+    ``opponent`` is the pool to clash with, a player spec defaulting to every
+    opponent. "Clash with defending player" is ``{"binding": "defender"}`` off
+    an `attacks` trigger, and it asks nobody -- `ask_player` does not stop for
+    a pool of one. The pool is narrowed to the controller's living opponents,
+    because 701.23a clashes with an opponent; a defending player who has left
+    the game leaves nobody, and no clash happens.
+
+    Each clashing player fires one `CLASHED` once both cards are placed,
+    carrying their own ``won``, which is what ``wins_clash`` hears: either
+    player can win (701.23b), so the opponent who wins your clash has won a
+    clash too.
     """
     you = ctx.controller
     opponents = ctx.opponents()
+    if "opponent" in spec:
+        named = set(select_players(ctx, spec["opponent"]))
+        opponents = [pid for pid in opponents if pid in named]
     other = yield from ask_player(ctx, "Clash with which opponent?", opponents, you)
     if other is None:
         ctx.bindings[CLASH_WON] = 0
@@ -1780,13 +1795,18 @@ def op_clash(ctx: EffectContext, spec: Mapping[str, Any]):
 
     won = value_of(revealed[you]) > value_of(revealed[other])
     ctx.bindings[CLASH_WON] = 1 if won else 0
-    ctx.state.emit(
-        "clash",
-        player=you,
-        source=ctx.source_oid,
-        opponent=other,
-        won=won,
-    )
+    # Fired, not emitted: "whenever you win a clash" listens for it. One per
+    # clashing player, each with their own result, so the opponent's win is
+    # heard as theirs.
+    for pid, against in ((you, other), (other, you)):
+        fire(
+            ctx.state,
+            EventType.CLASHED,
+            player=pid,
+            source=ctx.source_oid,
+            opponent=against,
+            won=value_of(revealed[pid]) > value_of(revealed[against]),
+        )
 
 
 #: What `roll_dice` writes under its ``as`` name, and what `{"rolled": …}` reads

@@ -12323,6 +12323,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "marvo_deep_operative": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "mask_of_avacyn": {
     "zone": "battlefield"
   },

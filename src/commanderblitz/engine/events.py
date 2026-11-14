@@ -140,6 +140,20 @@ class EventType:
     #: card and on every mill, and a surveil that keeps every card on top puts
     #: nothing into the graveyard and is still a surveil.
     SURVEILLED = "surveilled"
+    #: A player clashed (701.23) -- "Whenever you win a clash" (Marvo, Deep
+    #: Operative). ``player`` is **one clashing player**; ``data["won"]`` is
+    #: whether that player won (701.23b: revealed a card with a greater mana
+    #: value than the other), ``data["opponent"]`` the seat they clashed
+    #: against.
+    #:
+    #: One event per clashing player per clash, fired by `ops_cards.op_clash`
+    #: once both cards are placed -- the clash's instigator first, then the
+    #: opponent -- because both players clash and either may win: an opponent
+    #: who wins your clash has won a clash. A tie fires two lost clashes. The
+    #: `clash_won` binding is the near miss: it is the instigator's result,
+    #: read only by the ability that clashed, so a card listening for every
+    #: clash it wins cannot be built from it.
+    CLASHED = "clashed"
     #: A player gave a gift (702.174) -- "Whenever you give a gift" (Jolly
     #: Gerbils). ``player`` is the **giver**, the controller of the spell or
     #: ability that gave it; ``source`` is the gift card's object, ``card`` its

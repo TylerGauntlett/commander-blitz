@@ -1687,6 +1687,10 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 )
         if high < low:
             raise DslError(f"{where}: choose_number 'max' {high} is below 'min' {low}")
+    if op == "clash" and "opponent" in effect:
+        # "Clash with defending player." A misspelled or undeclared spec would
+        # resolve to nobody and the clash would silently never happen.
+        _validate_player_spec(effect["opponent"], f"{where}.opponent", target_kinds)
     if op == "choose_player":
         # The chosen seat exists only as the binding it is written to -- nothing
         # else on the card can reach it -- so an omitted 'as' is a prompt whose

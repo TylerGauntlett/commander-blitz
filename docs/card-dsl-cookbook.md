@@ -15837,7 +15837,9 @@ The outcome is a **binding**, not a `won:` block, because the printed card is
 two sentences and `if` already says the second one. The loader refuses either
 half without the other, exactly as it refuses half a kicker: a `clash` nothing
 reads reveals two cards and stops, and a `clash_won` with no clash behind it
-reads 0 for ever. Both load cleanly.
+reads 0 for ever. Both load cleanly. The one exception is a card that also has
+a `wins_clash` trigger (below): that trigger is what consumes the win, so its
+clash needs no `clash_won` reader.
 
 Three things the op decides, each of which a card written around it would
 otherwise get quietly wrong:
@@ -15849,7 +15851,37 @@ otherwise get quietly wrong:
 | **An empty library cannot win, and loses to `{0}`** | "higher than each other card revealed" is vacuously true against nothing, so the no-card sentinel has to sit *below* zero rather than at it |
 
 At a pod the op asks which opponent to clash with; in a duel there is one
-opponent and `ask_player` does not stop to ask.
+opponent and `ask_player` does not stop to ask. `opponent`, a player spec,
+narrows the pool to the seats it names among the controller's living
+opponents: "clash with defending player" off an `attacks` trigger is
+`{ "op": "clash", "opponent": { "binding": "defender" } }`, and asks nobody. A
+pool that comes out empty — the defending player has left the game — is no
+clash at all: nothing is revealed and `clash_won` is 0.
+
+### "Whenever you win a clash"
+
+`wins_clash` fires once per clash won, whatever made the clash. Both players
+clash (701.23a) and either may win (701.23b), so every `clash` fires one
+`clashed` event per clashing player once both cards are placed, each carrying
+that player's own `won`, and the trigger hears the won ones. A lost clash fires
+nothing for its loser and a tied clash fires nothing for either player. The
+subject is a **player**, the one who won, so `controller` reads who: `"you"`
+(the default) is "whenever you win a clash", and the opponent who wins *your*
+clash pays their own watcher, not yours.
+
+```jsonc
+// Marvo, Deep Operative — "Whenever Marvo attacks, clash with defending player."
+// / "Whenever you win a clash, draw a card. Then you may cast a spell from your
+// hand with mana value 8 or less without paying its mana cost."
+{ "kind": "triggered", "trigger": { "event": "attacks" },
+  "effects": [ { "op": "clash", "opponent": { "binding": "defender" } } ] },
+{ "kind": "triggered", "trigger": { "event": "wins_clash", "controller": "you" },
+  "effects": [ … ] }
+```
+
+The near miss is an `if` on the attack trigger's own `clash_won`, which is a
+narrower card: it pays only for that ability's clash and misses a clash won off
+any other card.
 
 ## Flipping a coin
 

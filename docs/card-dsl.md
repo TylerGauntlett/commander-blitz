@@ -6011,7 +6011,7 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `becomes_monarch` ·
 `counter_placed` · `sacrificed` · `leaves_graveyard` · `put_into_graveyard` · `token_created` · `draw` · `discard` · `cycle` ·
 `ability_activated` · `damage_prevented` · `deals_damage_to_player` ·
-`searches_library` · `wins_coin_flip` · `gives_gift` · `turned_face_up` · `state`
+`searches_library` · `wins_coin_flip` · `wins_clash` · `gives_gift` · `turned_face_up` · `state`
 
 ### `state` — "When there are four or more page counters on this artifact"
 
@@ -6671,6 +6671,12 @@ one place a coin is flipped, so a flip won off any card counts. Its subject is a
 **player**: `controller` and `event_player` name the player who flipped and won.
 A lost flip fires nothing. See
 ["Whenever you win a coin flip"](card-dsl-cookbook.md#whenever-you-win-a-coin-flip).
+
+**`wins_clash`** fires once per clash won (701.23b), from `op_clash`, whatever
+card made the clash. Both players clash and either may win, so the op fires one
+`clashed` event per clashing player with that player's own `won`. Its subject is
+a **player**: `controller` names the clasher who won. A lost or tied clash fires
+nothing. See ["Whenever you win a clash"](card-dsl-cookbook.md#whenever-you-win-a-clash).
 
 **`gives_gift`** fires once per gift given (702.174): as an instant or sorcery
 with a promised gift resolves, or as a permanent's gift trigger resolves —

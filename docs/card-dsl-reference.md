@@ -15,7 +15,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 74 |
 | [Conditions](#conditions) | 34 |
-| [Trigger events](#trigger-events) | 56 |
+| [Trigger events](#trigger-events) | 57 |
 | [Trigger filters](#trigger-filters) | 37 |
 | [Static effects](#static-effects) | 97 |
 | [Player-wide statics](#player-wide-statics) | 47 |
@@ -37,7 +37,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
 | [Card-level face keys](#card-level-face-keys) | 6 |
 | [Card-level rider keys](#card-level-rider-keys) | 21 |
-| [Engine events](#engine-events) | 82 |
+| [Engine events](#engine-events) | 83 |
 
 ## Effect ops
 
@@ -49,7 +49,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `cascade` | Cards |  | Cascade: exile from the top until a cheaper nonland, cast it free. | [Cascade, ripple and reveal_until — walking a library](card-dsl-cookbook.md#cascade-ripple-and-reveal_until--walking-a-library) |
 | `cast_card` | Cards | yes | Cast a named card during resolution, paying its mana cost; `exiles` exiles the spell instead of putting it into a graveyard; `as` records what was cast. | ["You may cast that card" — a paid cast during resolution](card-dsl-cookbook.md#you-may-cast-that-card--a-paid-cast-during-resolution) |
 | `cast_from_hand` | Cards | yes | Cast a spell from hand (or listed zones, or a named pool once per owner) without paying its mana cost; `exiles` exiles the spell instead of putting it into a graveyard; `as` records what was cast, accumulating. | [Effect ops](card-dsl.md#effect-ops) |
-| `clash` | Cards |  | Clash with an opponent; the winner is bound for a later `if`. | [Clash](card-dsl-cookbook.md#clash) |
+| `clash` | Cards |  | Clash with an opponent (or one from the `opponent` pool, e.g. the defending player); the result is bound for a later `if`, and each clashing player fires `wins_clash` if they win. | [Clash](card-dsl-cookbook.md#clash) |
 | `connive` | Cards |  | Connive: draw, discard, +1/+1 counter if a nonland was discarded. | [Connive](card-dsl-cookbook.md#connive) |
 | `discard` | Cards | yes | A player discards N cards, chosen or at random, from the hand or only the cards in it matching `selector`; `as` records them. | [discard: up_to, selector and as](card-dsl.md#discard-up_to-selector-and-as) |
 | `discover` | Cards | yes | Discover N: exile until a nonland of mana value N or less; cast it free or take it. | [Discover — cascade's walk, N or less, cast or hand](card-dsl-cookbook.md#discover--cascades-walk-n-or-less-cast-or-hand) |
@@ -501,6 +501,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `token_created` | `token_created` | A token is created. | [Triggers](card-dsl.md#triggers) |
 | `turned_face_up` | `turned_face_up` | A face-down permanent is turned face up; the subject is that permanent, face up. | ["When this creature is turned face up"](card-dsl-cookbook.md#when-this-creature-is-turned-face-up) |
 | `upkeep` | `upkeep` | At the beginning of the upkeep. | [Triggers](card-dsl.md#triggers) |
+| `wins_clash` | `clashed` | A clashing player wins a clash (701.23b), whatever made it; a lost or tied clash fires nothing. | [Clash](card-dsl-cookbook.md#clash) |
 | `wins_coin_flip` | `coin_flipped` | A player wins a coin flip (705); a lost flip fires nothing. | ["Whenever you win a coin flip"](card-dsl-cookbook.md#whenever-you-win-a-coin-flip) |
 | `you_attack` | `attackers_declared` | You attack with one or more creatures. | ["Whenever you attack"](card-dsl-cookbook.md#whenever-you-attack) |
 | `you_gain_life` | `life_gained` | You gain life. | [Triggers](card-dsl.md#triggers) |
@@ -1177,6 +1178,7 @@ Every `EventType` the engine emits, and which trigger events listen to it. An ev
 | `blocks` | `blocks` |  | [Triggers](card-dsl.md#triggers) |
 | `chapter_reached` | `chapter` |  | [Triggers](card-dsl.md#triggers) |
 | `city_s_blessing` |  |  | [Triggers](card-dsl.md#triggers) |
+| `clashed` | `wins_clash` |  | [Triggers](card-dsl.md#triggers) |
 | `coin_flipped` | `wins_coin_flip` |  | [Triggers](card-dsl.md#triggers) |
 | `combat_damage_to_planeswalker` | `deals_combat_damage_to_planeswalker` |  | [Triggers](card-dsl.md#triggers) |
 | `combat_damage_to_player` | `deals_combat_damage_to_player` |  | [Triggers](card-dsl.md#triggers) |
