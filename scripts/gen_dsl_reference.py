@@ -143,6 +143,7 @@ H_DREDGE = "Dredge, madness and miracle — replacements that stop to ask"
 H_SECOND_FACE = "A second castable face — adventure, aftermath and split cards"
 H_MELD = "Meld — mutate's merged permanent, with the pair fixed by the card"
 H_MORPH = "Face-down permanents — morph, megamorph and manifest"
+H_DISGUISE = "Disguise — morph whose shell has ward {2}"
 H_ATTACKED = "Which creatures attacked this turn, and how many"
 H_ENTERED = "Which permanents entered the battlefield this turn"
 H_LEDGER = "Counting an event rather than the board"
@@ -1191,6 +1192,8 @@ CARD_LEVEL_COSTS: dict[str, Entry] = {
     "madness": ("Madness cost.", H_DREDGE),
     "mayhem": ("Mayhem cost: castable from the graveyard if discarded this turn.", "Mayhem"),
     "morph": ("Morph cost.", H_MORPH),
+    "disguise": ("Disguise cost: morph's face-down cast, and the shell has ward {2}; on any permanent card.",
+                 H_DISGUISE),
     "multikicker": ("Multikicker cost.", "Multikicker"),
     "escalate": ("Escalate cost (mana or a full cost), paid once per mode beyond the first.", "Escalate"),
     "mutate": ("Mutate cost.", "Mutate — two cards, one permanent, and one synthesised `CardDef`"),

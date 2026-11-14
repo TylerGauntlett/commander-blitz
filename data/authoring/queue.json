@@ -33072,12 +33072,12 @@
     },
     "Branch of Vitu-Ghazi": {
       "edhrec_rank": 7391,
-      "gate": "template",
+      "gate": null,
       "name": "Branch of Vitu-Ghazi",
-      "reason": "no template for: Disguise {3}",
+      "reason": "",
       "scryfall_id": "73a8169f-b858-47a5-9c76-2e7c50ad4ecd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Branchblight Stalker": {
@@ -88412,12 +88412,12 @@
     },
     "Experiment Twelve": {
       "edhrec_rank": 7820,
-      "gate": "template",
+      "gate": null,
       "name": "Experiment Twelve",
-      "reason": "no template for: Whenever this creature or another creature you control is turned face up, put +1/+1 counte",
+      "reason": "",
       "scryfall_id": "1c1d66b4-2e40-41fd-afc8-901835108931",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Experimental Armor": {
@@ -185232,12 +185232,12 @@
     },
     "Nervous Gardener": {
       "edhrec_rank": 11995,
-      "gate": "template",
+      "gate": null,
       "name": "Nervous Gardener",
-      "reason": "no template for: Disguise {G}",
+      "reason": "",
       "scryfall_id": "93b747c7-b342-47f8-a190-16c393b20607",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nessian Asp": {
@@ -293532,12 +293532,12 @@
     },
     "True Identity": {
       "edhrec_rank": 16768,
-      "gate": "template",
+      "gate": null,
       "name": "True Identity",
-      "reason": "no template for: Whenever this enchantment or another permanent you control is turned face up, scry 1, then",
+      "reason": "",
       "scryfall_id": "69edb35e-6e87-4529-a449-6f635f24466a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "True Love's Kiss": {

@@ -3,7 +3,6 @@
   "name": "Boltbender",
   "oracle_text": "Disguise {1}{R} (You may cast this card face down for {3} as a 2/2 creature with ward {2}. Turn it face up any time for its disguise cost.)\nWhen this creature is turned face up, you may choose new targets for any number of other spells and/or abilities.",
   "blocked_sentences": [
-    "Disguise {1}{R} (You may cast this card face down for {3} as a 2/2 creature with ward {2}. Turn it face up any time for its disguise cost.)",
     "When this creature is turned face up, you may choose new targets for any number of other spells and/or abilities."
   ],
   "needs": [
@@ -12,14 +11,8 @@
       "kind": "op",
       "what": "an op that retargets objects already on the stack -- here over 'any number of other spells and/or abilities' (every stack object except this trigger), letting this ability's controller optionally choose new legal targets for each chosen one (115.7), leaving the originals on the stack rather than copying them",
       "why_existing_wont_do": "The only retargeting in `ops` is the `new_targets` flag on `copy_spell` / `copy_ability`, which retargets a freshly made copy, never the original object; `counter` touches another spell but removes it. No op mutates the target list of an existing stack object. Same capability Deflecting Swat is blocked on, here with a multi-object 'any number of' selection."
-    },
-    {
-      "capability": "disguise",
-      "kind": "cost",
-      "what": "the disguise alternative cast (702.168): cast face down for {3} as a 2/2 colourless nameless creature that has ward {2}, turnable face up for the printed disguise cost as a special action",
-      "why_existing_wont_do": "`morph` in card_level_cost_keys gives the face-down {3} 2/2 and the turn-face-up action, but its face-down characteristics carry no abilities, so a disguised permanent would lack ward {2}; nothing on the card can grant ward to its own face-down form, and the engine has no disguise handling at all"
     }
   ],
-  "closest_existing": ["copy_spell", "copy_ability", "counter", "morph", "turned_face_up", "ward"],
+  "closest_existing": ["copy_spell", "copy_ability", "counter", "turned_face_up", "ward", "disguise"],
   "confidence": "high"
 }

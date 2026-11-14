@@ -1697,6 +1697,7 @@ class Game:
         # The shell is gone, and the ward went with it: the card underneath is
         # face up now and has whatever abilities it prints.
         obj.cloaked = False
+        obj.disguised = False
         obj.revealed_to.clear()
         state.bump_chars()
         if card.morph_counter:

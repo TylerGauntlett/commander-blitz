@@ -1374,7 +1374,9 @@ def _candidate_abilities(state: GameState, event: GameEvent):
             # card underneath -- and must not come from the card, since that
             # card is usually not even a creature. So it is supplied here, in
             # the same breath as the sentence that says everything else is gone.
-            if obj.cloaked:
+            # Disguise grants the same ward to a permanent cast face down
+            # with it (702.168a).
+            if obj.cloaked or obj.disguised:
                 yield obj, CLOAK_WARD
             return
         # Derived rather than printed: a permanent that has lost its

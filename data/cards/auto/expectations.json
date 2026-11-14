@@ -2556,6 +2556,10 @@
   "brambleweft_behemoth": {
     "zone": "battlefield"
   },
+  "branch_of_vitu_ghazi": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "branching_evolution": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -6603,6 +6607,10 @@
       "0": 3
     },
     "zone": "graveyard"
+  },
+  "experiment_twelve": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "experimental_armor": {
     "zone": "battlefield"
@@ -13685,6 +13693,10 @@
     "zone": "battlefield"
   },
   "neriv_heart_of_the_storm": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "nervous_gardener": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -21545,6 +21557,10 @@
     "zone": "battlefield"
   },
   "trudge_garden": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "true_identity": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

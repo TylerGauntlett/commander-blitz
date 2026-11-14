@@ -82,6 +82,49 @@
       "morph": "{2}{G}"
     },
     {
+      "id": "t_disguiser",
+      "name": "Test Disguised Beast",
+      "oracle_text": "Flying\nDisguise {G} (You may cast this card face down for {3} as a 2/2 creature with ward {2}. Turn it face up any time for its disguise cost.)",
+      "mana_cost": "{4}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Beast"
+      ],
+      "power": 5,
+      "toughness": 5,
+      "keywords": [
+        "flying"
+      ],
+      "disguise": "{G}"
+    },
+    {
+      "id": "t_disguised_land",
+      "name": "Test Disguised Land",
+      "oracle_text": "{T}: Add {C}.\nDisguise {3} (You may cast this card face down for {3} as a 2/2 creature with ward {2}. Turn it face up any time for its disguise cost.)",
+      "types": [
+        "Land"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {C}.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{C}"
+            }
+          ]
+        }
+      ],
+      "disguise": "{3}"
+    },
+    {
       "id": "t_plain_instant",
       "name": "Test Plain Rite",
       "oracle_text": "You gain 1 life.",

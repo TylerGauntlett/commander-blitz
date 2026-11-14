@@ -635,6 +635,10 @@ class GameObject:
     #: puts on it -- which comes from the rule, not from the card underneath, so
     #: it cannot live on either and has to be a flag the engine reads.
     cloaked: bool = False
+    #: Cast face down with disguise (702.168a): the shell has cloak's ward {2}
+    #: for the same reason. Set as the face-down spell resolves, and not by
+    #: manifesting a disguise card, which gets no ward (701.34).
+    disguised: bool = False
     #: Set on the resolving spell and read a moment later by
     #: `_place_after_resolution`, because `reset_permanent_state` clears
     #: `face_down` on the way onto the battlefield. Identity state, like
@@ -1460,6 +1464,7 @@ class GameObject:
         self.paired_with = None
         self.face_down = False
         self.cloaked = False
+        self.disguised = False
         self.until_eot = []
         self.dies_to = None
         self.leaves_to = None

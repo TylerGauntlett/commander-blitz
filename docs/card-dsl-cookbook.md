@@ -4430,8 +4430,7 @@ The printed "Morph {cost}" line is claimed by the field, not by an ability:
 the residual gate accepts it only when the printed cost parses to the declared
 `morph`, and only under the word `morph_counter` says — "Megamorph" needs the
 counter, "Morph" must not have it. A non-mana morph cost ("Morph—Reveal a white
-card") does not parse and stays residual. Disguise is not this field: it also
-grants ward {2} while face down, which the shell does not model.
+card") does not parse and stays residual. Disguise is its own field, below.
 
 Two choke points carry it: `card_of` is a single choke point, and `chars` is the
 single place derived characteristics are decided.
@@ -4465,6 +4464,32 @@ because the shell is *returned* rather than layered over — a real face-down
 creature is still affected by both. And "any time you have priority" is here an
 ordinary activation rather than a special action, which is observable only to
 something that could respond to it, and nothing can.
+
+### Disguise — morph whose shell has ward {2}
+
+```jsonc
+// Nervous Gardener — "Disguise {G} (You may cast this card face down for {3}
+// as a 2/2 creature with ward {2}. Turn it face up any time for its disguise
+// cost.)"
+"disguise": "{G}"
+```
+
+`disguise` (702.168a) is the turn-face-up price, written **instead of**
+`morph`: the loader refuses both on one card. It loads as `morph` holding that
+cost plus `CardDef.disguise`, so the face-down cast for `{3}`, the 2/2 shell and
+the turn-up are morph's. The difference is the ward: a permanent cast face down
+with disguise is marked `disguised` as it resolves, and the rules supply it the
+same `CLOAK_WARD` a cloaked permanent has, until it turns face up. A disguise
+card that is manifested instead has no ward, and turns up for its disguise
+cost.
+
+Disguise is printed on any permanent card, so the loader takes it on a land or
+an enchantment where it refuses `morph`. A land card with disguise is offered a
+face-down cast from hand beside its land play, at the timing of the 2/2
+creature spell it is (601.3e), and turns up into the land. The printed
+"Disguise {cost}" line is claimed by the field when the cost matches, as
+morph's is. Written as `morph`, the card loads without the ward — a cheaper
+card than the printed one.
 
 ### Another player's library — `controller: "you"`
 
@@ -4514,7 +4539,7 @@ the opponent whose library it was.
 ```
 
 The `turned_face_up` trigger event fires once each time a face-down permanent is
-turned face up, by morph, megamorph or manifest (702.37e, 701.34a). Its subject
+turned face up, by morph, megamorph, disguise or manifest (702.37e, 701.34a). Its subject
 is that permanent **as it is now, face up**: `filter` asks what the card is (a
 `types: ["Creature"]` or `subtypes` filter reads the turned-up card, never the
 2/2 shell), `controller: "you"` asks who controls it, and `{"binding":

@@ -1401,6 +1401,8 @@ def _place_after_resolution(
         # which is right for every permanent except one arriving face down.
         obj.face_down = True
         obj.pending_face_down = False
+        # Disguise: the same cast, and a shell with ward {2} (702.168a).
+        obj.disguised = state.card_of(obj).disguise
         obj.revealed_to.add(obj.controller)
         state.bump_chars()
     if enters_tapped and destination is Zone.BATTLEFIELD:

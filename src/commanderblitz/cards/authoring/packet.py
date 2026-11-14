@@ -95,6 +95,9 @@ CARD_LEVEL_COST_KEYS = (
     "bestow",
     "buyback",
     "cost_reduction",  # int; "this spell costs {X} less to cast"
+    #: "Disguise {G}": morph's face-down cast whose shell has ward {2}; the
+    #: turn-up price, written instead of `morph`. On any permanent card.
+    "disguise",
     "dredge",  # int
     "emerge",
     #: "Escalate {G}": paid once per mode beyond the first, on a spell that is

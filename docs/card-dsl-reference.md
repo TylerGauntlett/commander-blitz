@@ -22,7 +22,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Grantable statics](#grantable-statics) | 43 |
 | [Cost reduction](#cost-reduction) | 8 |
 | [Ability costs](#ability-costs) | 34 |
-| [Card-level costs](#card-level-costs) | 34 |
+| [Card-level costs](#card-level-costs) | 35 |
 | [Keywords](#keywords) | 46 |
 | [Card types and supertypes](#card-types-and-supertypes) | 12 |
 | [Durations](#durations) | 6 |
@@ -841,6 +841,7 @@ The alternative and additional costs that live on the *card* rather than inside 
 | `bestow` | Bestow cost. | [Bestow — the alternative cost that changes what the spell points at](card-dsl-cookbook.md#bestow--the-alternative-cost-that-changes-what-the-spell-points-at) |
 | `buyback` | Buyback cost. | [Alternative ways to play a card](card-dsl-cookbook.md#alternative-ways-to-play-a-card) |
 | `cost_reduction` | This spell costs less to cast. | [Cost reduction](card-dsl-cookbook.md#cost-reduction) |
+| `disguise` | Disguise cost: morph's face-down cast, and the shell has ward {2}; on any permanent card. | [Disguise — morph whose shell has ward {2}](card-dsl-cookbook.md#disguise--morph-whose-shell-has-ward-2) |
 | `dredge` | Dredge N. | [Dredge, madness and miracle — replacements that stop to ask](card-dsl-cookbook.md#dredge-madness-and-miracle--replacements-that-stop-to-ask) |
 | `emerge` | Emerge cost. | [Alternative ways to play a card](card-dsl-cookbook.md#alternative-ways-to-play-a-card) |
 | `escalate` | Escalate cost (mana or a full cost), paid once per mode beyond the first. | [Escalate](card-dsl-cookbook.md#escalate) |

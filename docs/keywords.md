@@ -252,6 +252,7 @@ This is the long tail, and where the build order comes from.
 | Dethrone | shipped | `Keyword`, whose trigger `carddef.DETHRONE_TRIGGER` the rules supply once per permanent with the keyword: `attacks` with `defending: "most_life"` (a player, not a planeswalker or battle, with the most life or tied, asked as part of the event), then `add_counters` +1/+1 on itself. A keyword for exalted's reason: Marchesa, the Black Rose grants it — cashed by `test_dethrone.py` | `dethrone` |
 | Detain | free | the `detain` op — one word, three restrictions, cleared by the *detaining* player's untap step | `detain` |
 | Devour | free | `self_enters` trigger: `sacrifice` with `count: "any"` and `as`, then `add_counters` off the recorded set | `as` |
+| Disguise | shipped | the `disguise` card field: morph's face-down cast and turn-up, plus cloak's `CLOAK_WARD` on the shell while it is down | `disguise` |
 | Disturb | shipped | `graveyard_cost` plus `graveyard_cast_transformed` -- the card is the back face from the moment it is cast | `graveyard_cast_transformed` |
 | Dredge | shipped | the `dredge` card field, offered by `replacements.draw` -- it replaces the draw rather than adding to it | `dredge` |
 | Echo | free | `upkeep` trigger with an intervening-if `{"not": {"has_flag": …}}`, `set_flag`, then `may` `pay` with a sacrifice `else` | `set_flag` |

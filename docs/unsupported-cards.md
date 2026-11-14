@@ -10,14 +10,13 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**408 cards** blocked by **348** capabilities.
+**404 cards** blocked by **347** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [rad-counters](#rad-counters) | 22 | 2709 | engine |
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
-| [disguise](#disguise) | 6 | 7391 | cost |
 | [rooms](#rooms) | 6 | 4163 | engine |
 | [council-s-dilemma](#council-s-dilemma) | 5 | 3539 | decision, op |
 | [turn-face-up](#turn-face-up) | 5 | 4493 | op |
@@ -543,42 +542,6 @@ Blocks **8** cards.
 
 </details>
 
-## disguise
-
-Blocks **6** cards.
-
-- **(cost)** the disguise alternative cast (702.168): cast face down for {3} as a 2/2 colourless nameless creature that has ward {2}, turnable face up for the printed disguise cost as a special action
-  <br>Why the existing vocabulary won't do: `morph` in card_level_cost_keys gives the face-down {3} 2/2 and the turn-face-up action, but its face-down characteristics carry no abilities, so a disguised permanent would lack ward {2}; nothing on the card can grant ward to its own face-down form, and the engine has no disguise handling at all
-- **(cost)** a card-level disguise cost (702.168): cast face down for {3} as a 2/2 creature that has ward {2} while face down, and turn face up any time for the disguise cost; like morph but the face-down characteristics include ward {2}
-  <br>Why the existing vocabulary won't do: The card-level `morph` key casts a vanilla 2/2 face-down creature (702.37) with no abilities; writing Disguise as `morph` would drop the face-down ward {2}, and there is no disguise flag or face-down ward option beside it
-- **(cost)** the disguise alternative cast (702.168): cast face down for {3} as a 2/2 colourless nameless creature that has ward {2}, turnable face up for the printed disguise cost as a special action
-  <br>Why the existing vocabulary won't do: `morph` in card_level_cost_keys gives the face-down {3} 2/2 and the turn-face-up action, but its face-down characteristics carry no abilities, so a disguised permanent would lack ward {2}; the ward {2} the engine supplies to a face-down shell exists only for cloak (a flag on the `manifest` op), not for a card cast face down. The trigger line itself is expressible (`turned_face_up` with controller you, `add_counters` amount `power_of` the subject).
-- **(cost)** the disguise alternative cast (702.168): cast face down for {3} as a 2/2 colourless nameless creature that has ward {2}, turnable face up for the printed disguise cost as a special action
-  <br>Why the existing vocabulary won't do: `morph` in card_level_cost_keys gives the face-down {3} 2/2 and the turn-face-up action, but its face-down characteristics carry no abilities, so a disguised permanent would lack ward {2}; nothing on the card can grant ward to its own face-down form, and the engine has no disguise handling at all. The turned-face-up trigger itself is expressible (`turned_face_up` event plus `search_library` with a basic-land-type selector), so only the disguise line blocks the card
-- **(cost)** the disguise alternative cast (702.168): cast face down for {3} as a 2/2 colourless nameless creature that has ward {2}, turnable face up for the printed disguise cost ({3}{G} here) as a special action, firing turned_face_up
-  <br>Why the existing vocabulary won't do: `morph` in card_level_cost_keys gives the face-down {3} 2/2 and the turn-face-up action, but its face-down characteristics carry no abilities, so a disguised permanent would lack ward {2}; there is no disguise key or face-down ward option. Same capability Boltbender and Branch of Vitu-Ghazi are blocked on
-- **(cost)** the disguise alternative cast (702.168): cast face down for {3} as a 2/2 colourless nameless creature that has ward {2}, turnable face up for the printed disguise cost as a special action
-  <br>Why the existing vocabulary won't do: `morph` in card_level_cost_keys gives the face-down {3} 2/2 and the turn-face-up action, but its face-down characteristics carry no abilities, so a disguised permanent would lack ward {2}; the engine's only face-down ward is CLOAK_WARD, supplied by the cloak rule to cloaked permanents, and nothing on a card can select it for its own face-down cast
-
-<details><summary>Cards waiting on this</summary>
-
-- **Branch of Vitu-Ghazi** (rank 7391) — `branch_of_vitu_ghazi`
-  - Disguise {3} (You may cast this card face down for {3} as a 2/2 creature with ward {2}. Turn it face up any time for its disguise cost.)
-- **Experiment Twelve** (rank 7820) — `experiment_twelve`
-  - Disguise {4}{G} (You may cast this card face down for {3} as a 2/2 creature with ward {2}. Turn it face up any time for its disguise cost.)
-- **Printlifter Ooze** (rank 8257) — `printlifter_ooze`
-  - Disguise {3}{G}
-  - Whenever this creature or another creature you control is turned face up, create a 0/0 green Ooze creature token with trample. The token enters with X +1/+1 counters on it, where X is the number of other creatures you control.
-- **Boltbender** (rank 10169) — `boltbender`
-  - Disguise {1}{R} (You may cast this card face down for {3} as a 2/2 creature with ward {2}. Turn it face up any time for its disguise cost.)
-  - When this creature is turned face up, you may choose new targets for any number of other spells and/or abilities.
-- **Nervous Gardener** (rank 11995) — `nervous_gardener`
-  - Disguise {G} (You may cast this card face down for {3} as a 2/2 creature with ward {2}. Turn it face up any time for its disguise cost.)
-- **True Identity** (rank 16768) — `true_identity`
-  - Disguise {W} (You may cast this card face down for {3} as a 2/2 creature with ward {2}. Turn it face up any time for its disguise cost.)
-
-</details>
-
 ## rooms
 
 Blocks **6** cards.
@@ -935,7 +898,6 @@ Blocks **3** cards.
 - **Misdirection** (rank 1562) — `misdirection`
   - Change the target of target spell with a single target.
 - **Boltbender** (rank 10169) — `boltbender`
-  - Disguise {1}{R} (You may cast this card face down for {3} as a 2/2 creature with ward {2}. Turn it face up any time for its disguise cost.)
   - When this creature is turned face up, you may choose new targets for any number of other spells and/or abilities.
 
 </details>
@@ -4479,7 +4441,6 @@ Blocks **1** card.
 <details><summary>Cards waiting on this</summary>
 
 - **Printlifter Ooze** (rank 8257) — `printlifter_ooze`
-  - Disguise {3}{G}
   - Whenever this creature or another creature you control is turned face up, create a 0/0 green Ooze creature token with trample. The token enters with X +1/+1 counters on it, where X is the number of other creatures you control.
 
 </details>
