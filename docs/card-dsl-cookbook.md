@@ -906,9 +906,9 @@ If a spell cast this way would be put into a graveyard, exile it instead."
 
 The spec **is** a `cast_from_graveyard` static, and that is the design rather
 than a coincidence. It means the `affects_spells` filter, `max_per_turn`,
-`grants_flashback` and the `cast_from_graveyard` mark that makes the spell exile
-as it resolves are all shared with the static — so the second printed sentence
-needs nothing at all, and the loader asks for the same two guarantees the
+and `grants_flashback`, which `Game._cast` stamps onto the spell's stack item as
+flashback's exile, are all shared with the static — so the second printed
+sentence needs nothing at all, and the loader asks for the same two guarantees the
 static's own loader does: a filter (an absent one would free the whole
 graveyard) and either a cap or `grants_flashback` (a permission that neither
 meters nor exiles is an engine, not a printed line).
@@ -6991,12 +6991,53 @@ not spent.
 
 The loader refuses a second zone in `active_zones`, any `affects_player` other
 than `you`, and `affects_spells`, `affects`, `max_per_turn`, `grants_flashback`,
-`enters_tapped` and `arrived_this_turn_from`. The permission frees only the card
-carrying it, and each use takes that card out of the graveyard, so no reader
-looks at those keys. It is refused on an instant or sorcery, which would be
-exiled as it resolves the way flashback is. The near miss is `graveyard_cost`
+`enters_tapped`, `arrived_this_turn_from`, `surveilled_this_turn` and
+`pay_life_instead`. The permission frees only the card carrying it, at its
+printed price, and each use takes that card out of the graveyard, so no reader
+looks at those keys. It is refused on an instant or sorcery, a form with no
+witness or test behind it. The near miss is `graveyard_cost`
 with the printed mana, which has no `condition`: the card would be castable from
 the graveyard with no Zombie at all.
+
+#### A graveyard permission priced in life
+
+```jsonc
+// Eye of Duskmantle -- "You may play lands and cast spells from among cards in
+//  your graveyard you've surveilled this turn. If you cast a spell this way,
+//  you pay life equal to its mana value rather than paying its mana cost."
+{ "kind": "static", "effect": "play_lands_from_graveyard", "affects_player": "you",
+  "surveilled_this_turn": true },
+{ "kind": "static", "effect": "cast_from_graveyard", "affects_player": "you",
+  "affects_spells": { "not_types": ["Land"] },
+  "surveilled_this_turn": true, "pay_life_instead": true }
+```
+
+`pay_life_instead` is Bolas's Citadel's word on Edgar's permission. It is the
+permission's only price, an alternative cost (118.9), so its lane offers the
+life lines `casting._pay_life_lines` builds for Nashi's
+`playable_pay_life_instead` and no line at the printed cost. X is 0 (107.3b),
+additional costs and a kicker are still owed (118.9d), and the line is offered
+only while the player has that much life (119.4). A printed-price permission
+beside it (an Edgar) offers its own line, and `Game._cast` bills whichever
+permission the line came from: a life line at the mana value is the
+life-priced permission's, every other line the printed one's. So using one
+never spends the other's turn.
+
+`max_per_turn` may be left out beside `surveilled_this_turn`, and then the
+permission is unmetered. Each cast takes a surveilled card out of the graveyard,
+and a card that comes back is a new object nobody surveilled (400.7), so the
+turn's surveils are the cap. Without the surveil clause the loader still asks
+for `max_per_turn` or `grants_flashback`. It refuses `pay_life_instead` beside
+`grants_flashback` (two prices for one cast), on a card's own `active_zones:
+["graveyard"]` permission, and on any static but this one and
+`cast_from_library_top`.
+
+The spell goes where it normally would. A spell cast under a
+`cast_from_graveyard` permission is exiled only when the permission grants
+flashback (Lier, Urabrask's grant): `Game._cast` stamps that as
+`StackItem.exiles_instead`, which holds on resolving, fizzling and being
+countered. Eye's sorcery goes back to the graveyard, a new object that is not
+surveilled.
 
 #### Mayhem
 

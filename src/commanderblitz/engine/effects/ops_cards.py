@@ -340,8 +340,8 @@ def op_grant_graveyard_cast(ctx: EffectContext, spec: Mapping[str, Any]):
 
     The spec **is** a `cast_from_graveyard` static, which is why the second
     printed sentence needs nothing here: "if a spell cast this way would be put
-    into a graveyard, exile it instead" is what a graveyard cast already does,
-    through `graveyard_cast_exiles` on the resolving spell.
+    into a graveyard, exile it instead" is the spec's `grants_flashback`, which
+    `Game._cast` stamps onto the spell's stack item as `exiles_instead`.
     """
 
     if ctx.source_oid is None:

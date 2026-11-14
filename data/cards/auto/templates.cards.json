@@ -77486,6 +77486,53 @@
     {
       "abilities": [
         {
+          "affects_player": "you",
+          "affects_spells": {
+            "not_types": [
+              "Land"
+            ]
+          },
+          "effect": "cast_from_graveyard",
+          "kind": "static",
+          "pay_life_instead": true,
+          "surveilled_this_turn": true,
+          "text": "You may play lands and cast spells from among cards in your graveyard you've surveilled this turn. If you cast a spell this way, you pay life equal to its mana value rather than paying its mana cost."
+        },
+        {
+          "affects_player": "you",
+          "effect": "play_lands_from_graveyard",
+          "kind": "static",
+          "surveilled_this_turn": true,
+          "text": "You may play lands and cast spells from among cards in your graveyard you've surveilled this turn. If you cast a spell this way, you pay life equal to its mana value rather than paying its mana cost."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "eye_of_duskmantle",
+      "keywords": [
+        "flying",
+        "lifelink"
+      ],
+      "mana_cost": "{5}{B}{B}",
+      "name": "Eye of Duskmantle",
+      "oracle_text": "Flying, lifelink\nYou may play lands and cast spells from among cards in your graveyard you've surveilled this turn. If you cast a spell this way, you pay life equal to its mana value rather than paying its mana cost.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Eye"
+      ],
+      "toughness": 8,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },

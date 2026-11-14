@@ -1144,6 +1144,7 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
         enters_tapped=item.enters_tapped,
         warped=item.warped,
         exiles_instead=item.exiles_instead,
+        flashback=item.flashback,
     )
     _attach_aura(state, obj, card, targets, specs)
 
@@ -1196,6 +1197,7 @@ def _place_after_resolution(
     enters_tapped: bool = False,
     warped: bool = False,
     exiles_instead: bool = False,
+    flashback: bool = False,
 ):
     """A resolved permanent enters the battlefield; anything else goes to the graveyard.
 
@@ -1212,12 +1214,14 @@ def _place_after_resolution(
     # legality widening, and the one thing that separates it is that the card
     # comes back for another go, so `graveyard_cast_exiles` is the whole
     # difference between the two keywords.
-    # Two paths into a graveyard cast and both exile, but they are different
-    # facts and neither implies the other. A `cast_from_graveyard` permission
-    # (or the card's own flashback) sets `cast_from_graveyard`, and
-    # `graveyard_cast_exiles` is what escape turns off.
+    # The card's own graveyard-cost slot (`item.flashback`) exiles unless it is
+    # escape, which `graveyard_cast_exiles` turns off. A `cast_from_graveyard`
+    # permission is not that slot: it exiles only when it grants flashback
+    # (Lier, Urabrask's grant), which `Game._cast` stamps as `exiles_instead`
+    # below, and otherwise the spell goes where it normally would (Eye of
+    # Duskmantle).
     if destination is Zone.GRAVEYARD and (
-        (obj.cast_from_graveyard and card.graveyard_cast_exiles)
+        (flashback and card.graveyard_cast_exiles)
         # "If that spell would be put into your graveyard, exile it instead"
         # -- the rider on the stack item, put there by whoever cast it: an
         # effect's free cast (`cast_card`'s ``exiles``), or a `grant_playable`

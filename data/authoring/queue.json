@@ -89232,12 +89232,12 @@
     },
     "Eye of Duskmantle": {
       "edhrec_rank": 10363,
-      "gate": "template",
+      "gate": null,
       "name": "Eye of Duskmantle",
-      "reason": "no template for: You may play lands and cast spells from among cards in your graveyard you've surveilled th",
+      "reason": "",
       "scryfall_id": "8ce43e1a-04a8-48fc-a9c0-4dbb0aaf1a7b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Eye of Jace": {

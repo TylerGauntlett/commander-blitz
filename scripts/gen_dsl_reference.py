@@ -949,7 +949,8 @@ STATICS: dict[str, Entry] = {
     "cant_win_the_game": ("The player can't win the game.", None),
     "cast_as_though_flash": ("The player may cast matching spells as though they had flash.", None),
     "cast_from_graveyard": ("The player may cast matching spells from their graveyard, narrowed to "
-                            "cards surveilled this turn by `surveilled_this_turn`; with "
+                            "cards surveilled this turn by `surveilled_this_turn`, for life equal "
+                            "to their mana value with `pay_life_instead`; with "
                             "`active_zones: [\"graveyard\"]`, the card may cast itself from there.",
                             H_CASTING_FROM_GY),
     "cast_from_library_top": ("The player may cast spells from the top of their library: for life "

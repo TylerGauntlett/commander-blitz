@@ -2646,10 +2646,9 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
 
     # Gravecrawler's own graveyard permission is cast at the printed price and
     # the card goes wherever it normally would. For a permanent that is the
-    # battlefield. An instant or sorcery would be marked cast-from-a-graveyard
-    # and exiled as it resolves (`graveyard_cast_exiles`), which is flashback's
-    # rider and not this permission's -- so the line is refused rather than
-    # loaded as a once-only card.
+    # battlefield. An instant or sorcery cast this way would go back to the
+    # graveyard, a form with no witness or test behind it, so the line is
+    # refused rather than loaded untested.
     owns_graveyard_permission = any(
         ability.effect == "cast_from_graveyard" and "graveyard" in ability.active_zones
         for ability in model.abilities
@@ -2657,8 +2656,8 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     if owns_graveyard_permission and not (set(model.types) & PERMANENT_TYPES):
         raise DslError(
             f"{where}: a card's own permission to cast itself from the graveyard "
-            f"is supported on permanent cards only -- a nonpermanent cast that way "
-            f"would be exiled as it resolves, and the printed card is not"
+            f"is supported on permanent cards only -- the nonpermanent form has "
+            f"no witness"
         )
 
     _validate_was_cast_placement(model, where)
@@ -4951,6 +4950,16 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"'affects_spells' filter -- the permission without its price or its "
             f"filter is a different card"
         )
+    if model.pay_life_instead and model.effect not in (
+        "cast_from_library_top",
+        "cast_from_graveyard",
+    ):
+        # The price of the two casting permissions that print it, Bolas's
+        # Citadel's and Eye of Duskmantle's, and read by nothing else.
+        raise DslError(
+            f"{where}: 'pay_life_instead' prices a cast_from_library_top or "
+            f"cast_from_graveyard permission; nothing reads it on {model.effect!r}"
+        )
     if model.cast_gains_keywords and model.effect != "cast_from_library_top":
         raise DslError(
             f"{where}: 'cast_gains_keywords' is the rider on a spell cast through "
@@ -4988,6 +4997,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 ("enters_tapped", model.enters_tapped),
                 ("arrived_this_turn_from", model.arrived_this_turn_from is not None),
                 ("surveilled_this_turn", model.surveilled_this_turn),
+                ("pay_life_instead", model.pay_life_instead),
             )
             if present
         ]
@@ -5018,11 +5028,25 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"{where}: cast_from_graveyard filters spells with "
                 f"'affects_spells', not 'affects' (which picks out permanents)"
             )
-        if not model.static_max_per_turn and not model.grants_flashback:
+        if model.pay_life_instead and model.grants_flashback:
+            raise DslError(
+                f"{where}: 'pay_life_instead' beside 'grants_flashback' is a second "
+                f"price for the same cast -- flashback's cost is the mana cost"
+            )
+        if (
+            not model.static_max_per_turn
+            and not model.grants_flashback
+            and not model.surveilled_this_turn
+        ):
             # `grants_flashback` IS the rate limit, and a different one: each
             # card is exiled as it resolves, so the permission spends itself
             # card by card rather than being metered per turn. Lier prints no
             # per-turn cap and needs none -- your graveyard runs out.
+            #
+            # `surveilled_this_turn` is a third: each cast takes a surveilled
+            # card out of the graveyard, and a card that comes back is a new
+            # object nobody surveilled (400.7), so the turn's surveils are the
+            # cap. Eye of Duskmantle prints none.
             raise DslError(
                 f"{where}: cast_from_graveyard needs 'max_per_turn' or "
                 f"'grants_flashback' -- "
@@ -7146,7 +7170,21 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # `grant_ability`'s reason a few lines down: the mapping is all
         # `characteristics` ever sees, and a rate limit left behind would read
         # as no limit at all.
-        static["max_per_turn"] = int(model.static_max_per_turn or 1)
+        if model.static_max_per_turn:
+            static["max_per_turn"] = int(model.static_max_per_turn)
+        elif model.surveilled_this_turn and not model.grants_flashback:
+            # Unmetered, and written as an explicit None so the reader cannot
+            # mistake it for a grant that left the key out. The surveil clause
+            # is the bound (see the refusal above).
+            static["max_per_turn"] = None
+        else:
+            static["max_per_turn"] = 1
+        if model.pay_life_instead:
+            static["pay_life_instead"] = True
+        if model.grants_flashback:
+            # Read by `Game._cast`, which stamps flashback's exile onto the
+            # stack item: a permission that is not flashback exiles nothing.
+            static["grants_flashback"] = True
         if model.enters_tapped:
             static["enters_tapped"] = True
         if model.arrived_this_turn_from is not None:

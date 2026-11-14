@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**373 cards** blocked by **320** capabilities.
+**372 cards** blocked by **318** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -197,7 +197,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [graveyard-cast-permission-additional-cost](#graveyard-cast-permission-additional-cost) | 1 | 7356 | static_effect |
 | [graveyard-play-from-library-this-turn](#graveyard-play-from-library-this-turn) | 1 | 7077 | static_effect |
 | [graveyard-play-grants-ability](#graveyard-play-grants-ability) | 1 | 3531 | static_effect |
-| [graveyard-play-pay-life-instead](#graveyard-play-pay-life-instead) | 1 | 10363 | static_effect |
 | [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 1 | 3531 | static_effect |
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
 | [harmonize](#harmonize) | 1 | 7442 | cost |
@@ -299,7 +298,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [stack-wipe](#stack-wipe) | 1 | 8784 | op |
 | [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
-| [surveilled-this-turn](#surveilled-this-turn) | 1 | 10363 | selector |
 | [switch-power-toughness](#switch-power-toughness) | 1 | 10418 | op |
 | [tapped-for-mana-trigger](#tapped-for-mana-trigger) | 1 | 13900 | trigger_event |
 | [target-if-cast-during](#target-if-cast-during) | 1 | 1524 | selector |
@@ -3432,20 +3430,6 @@ Blocks **1** card.
 
 </details>
 
-## graveyard-play-pay-life-instead
-
-Blocks **1** card.
-
-- **(static_effect)** a continuous permission (static, while this permanent is on the battlefield) to play lands and cast spells from your graveyard among a filtered set of cards, where spells cast this way are paid for with life equal to their mana value instead of their mana cost
-  <br>Why the existing vocabulary won't do: playable_pay_life_instead exists only on one-shot ops (exile, look_at_top, grant_playable) over cards an effect touched; the cast_from_graveyard static is the card's own permission for itself (permanent cards only) and carries no pay-life alternative, and play_lands_from_graveyard does not cover spells
-
-<details><summary>Cards waiting on this</summary>
-
-- **Eye of Duskmantle** (rank 10363) — `eye_of_duskmantle`
-  - You may play lands and cast spells from among cards in your graveyard you've surveilled this turn. If you cast a spell this way, you pay life equal to its mana value rather than paying its mana cost.
-
-</details>
-
 ## graveyard-play-shared-limit
 
 Blocks **1** card.
@@ -4880,20 +4864,6 @@ Blocks **1** card.
 
 - **Lux Artillery** (rank 3735) — `lux_artillery`
   - Whenever you cast an artifact creature spell, it gains sunburst. (It enters with a +1/+1 counter on it for each color of mana spent to cast it.)
-
-</details>
-
-## surveilled-this-turn
-
-Blocks **1** card.
-
-- **(selector)** a per-turn record of which cards the controller put into their graveyard by surveilling this turn, readable as a selector/static filter key (e.g. surveilled_this_turn: "you") over graveyard cards
-  <br>Why the existing vocabulary won't do: The selector and static filter vocabularies have drawn_this_turn and entered_this_turn but nothing marking a card as surveilled into the graveyard this turn; the surveil op records no such provenance, so a cast_from_graveyard / play_lands_from_graveyard static cannot be narrowed to those cards
-
-<details><summary>Cards waiting on this</summary>
-
-- **Eye of Duskmantle** (rank 10363) — `eye_of_duskmantle`
-  - You may play lands and cast spells from among cards in your graveyard you've surveilled this turn. If you cast a spell this way, you pay life equal to its mana value rather than paying its mana cost.
 
 </details>
 
