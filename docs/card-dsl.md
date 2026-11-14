@@ -4006,6 +4006,39 @@ is self-clearing.
 
 Effect-side only: nothing continuous asks the question.
 
+### Cards in a graveyard surveilled this turn
+
+```jsonc
+// "…from among cards in your graveyard you've surveilled this turn"
+{ "zone": "graveyard", "controller": "you", "surveilled_this_turn": true }
+
+// The same clause on a graveyard permission (Eye of Duskmantle)
+{ "kind": "static", "effect": "play_lands_from_graveyard", "affects_player": "you",
+  "surveilled_this_turn": true }
+```
+
+`EventType.SURVEILLED` says how many cards a surveil binned, never which, so the
+fact is recorded per card as it lands. `zones.move_object` writes the move's
+`cause` onto `GameObject.graveyard_cause` beside Banon's `graveyard_turn` and
+`graveyard_from`, and the `surveil` op moves its cards with `cause: "surveil"`.
+`GameObject.surveilled_this_turn` is the one reader: a card in a graveyard
+whose last arrival was a surveil on the current turn. A surveil puts cards only
+into the surveiller's own graveyard, so "you've surveilled" is the card's owner.
+
+A card that leaves the graveyard and comes back is a new object (400.7). Its
+arrival writes all three fields again, so it is no longer surveilled unless a
+surveil put it back. The mark is a turn and not a flag, `drawn_this_turn`'s
+way, so it needs no clearing.
+
+`true` is the only value. On a static the key narrows `cast_from_graveyard` (beside
+`arrived_this_turn_from`, asked of the object by
+`player_statics.graveyard_cast_arrival_ok`) and `play_lands_from_graveyard`
+(asked by `graveyard_land_play_allows`). It is beside `affects_spells` rather
+than inside it because that filter reads only the printed face. The loader
+refuses it on any other static, and on a card's own `active_zones:
+["graveyard"]` permission. The near miss is `arrived_this_turn_from:
+["library"]`, which a milled card also passes.
+
 ### A search whose destination depends on what it found
 
 ```jsonc

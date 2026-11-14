@@ -285,6 +285,16 @@ class GameObject:
     #: graveyard has no use for it and one that comes back is written again.
     graveyard_turn: int = -1
     graveyard_from: str | None = None
+    #: **What put it there** -- the `cause` of that same move, written beside
+    #: the two above. "Cards in your graveyard **you've surveilled this turn**"
+    #: (Eye of Duskmantle) is ``"surveil"`` here with `graveyard_turn` the
+    #: current turn, read by `surveilled_this_turn`.
+    #:
+    #: Per card for Banon's reason: `EventType.SURVEILLED` says how many cards a
+    #: surveil binned and never which. And self-clearing for the same reason:
+    #: a card that leaves the graveyard and comes back is a new object (400.7),
+    #: and its arrival writes all three fields again.
+    graveyard_cause: str | None = None
     #: Which **permanents' mana abilities made the mana that paid for this** --
     #: Path of Ancestry, Opal Palace, "when that mana is spent". Recorded by
     #: `pay_mana` alongside `colors_spent`, for the same reason and at the same
@@ -1368,6 +1378,21 @@ class GameObject:
             # card leaves exile by being cast.
             return turn > self.playable_turn
         return True
+
+    def surveilled_this_turn(self, turn: int) -> bool:
+        """Is this a card in a graveyard that a surveil put there this turn?
+
+        "…cards in your graveyard **you've surveilled this turn**" -- Eye of
+        Duskmantle. Only surveil moves a library card with ``cause="surveil"``,
+        and its cards go to their own owner's graveyard, so the owner is the
+        player who surveilled. Asked of the object and compared against the
+        turn, `drawn_turn`'s way, so nothing has to clear it.
+        """
+        return (
+            self.zone is Zone.GRAVEYARD
+            and self.graveyard_turn == turn
+            and self.graveyard_cause == "surveil"
+        )
 
     def reset_permanent_state(self) -> None:
         """Wipe everything that only means something on the battlefield."""

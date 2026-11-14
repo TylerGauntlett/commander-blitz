@@ -98,6 +98,12 @@ SELECTOR_KEYS = frozenset(
         #: ask which; this reads the mark `draw_cards` puts on each card as it is
         #: drawn. Effect-side only: nothing continuous asks the question.
         "drawn_this_turn",
+        #: "…cards in your graveyard **you've surveilled this turn**" -- Eye of
+        #: Duskmantle. The graveyard card's own record of the move that put it
+        #: there, `GameObject.surveilled_this_turn`; `true` only. A card that
+        #: left and came back is a new object (400.7) and has been surveilled
+        #: by nobody.
+        "surveilled_this_turn",
         #: "Each creature **that convoked this spell** connives" -- Lethal
         #: Scheme. The creatures tapped to pay for the resolving spell (702.51c),
         #: recorded on its stack item by the cast that tapped them; `true` only,
@@ -947,6 +953,8 @@ def matches(
         # Compared against the turn rather than read as a flag, so nothing has
         # to clear it at a turn boundary -- a stale `true` would read as a card
         # drawn this turn that was not.
+        return False
+    if selector.get("surveilled_this_turn") and not obj.surveilled_this_turn(state.turn):
         return False
     if (name := selector.get("exclude_binding")) is not None and oid in _bound_oids(ctx, str(name)):
         # `_bound_oids`, not `_bound_oid`: a binding is one oid for a trigger or

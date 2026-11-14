@@ -522,6 +522,8 @@ SELECTORS: dict[str, Entry] = {
     "damaged_by": ("Was dealt damage this turn by the named object.",
                    '"…dealt damage by this creature this turn"'),
     "drawn_this_turn": ("Cards drawn this turn (hand only).", "Cards in a hand drawn this turn"),
+    "surveilled_this_turn": ("Cards a surveil put into a graveyard this turn, as the same object.",
+                             "Cards in a graveyard surveilled this turn"),
     "enchanted_by": ("Has an Aura attached (`true`/`false`), or one whose controller is `you`/`opponent`.",
                      '"Enchanted creatures" — `enchanted_by`'),
     "equipped": ("Has one or more Equipment attached, anybody's (`true`/`false`).",
@@ -946,7 +948,8 @@ STATICS: dict[str, Entry] = {
                           '"All damage is dealt as though its source had wither"'),
     "cant_win_the_game": ("The player can't win the game.", None),
     "cast_as_though_flash": ("The player may cast matching spells as though they had flash.", None),
-    "cast_from_graveyard": ("The player may cast matching spells from their graveyard; with "
+    "cast_from_graveyard": ("The player may cast matching spells from their graveyard, narrowed to "
+                            "cards surveilled this turn by `surveilled_this_turn`; with "
                             "`active_zones: [\"graveyard\"]`, the card may cast itself from there.",
                             H_CASTING_FROM_GY),
     "cast_from_library_top": ("The player may cast spells from the top of their library: for life "
@@ -1011,7 +1014,8 @@ STATICS: dict[str, Entry] = {
     "opponents_cant_force_discard_or_sacrifice": ("Opponents' spells and abilities can't make the player discard or sacrifice.",
                                                   '"Can\'t cause you to discard cards or sacrifice permanents"'),
     "play_lands_from_graveyard": ("The player may play lands from their graveyard: every land, or "
-                                  "only those whose printed face matches `affects_spells`.",
+                                  "only those whose printed face matches `affects_spells`, or "
+                                  "those surveilled this turn with `surveilled_this_turn`.",
                                   None),
     "play_lands_from_library_top": ("The player may play lands from the top of their library.", None),
     "plot_cost_reduction": ("Plotting a card from the player's hand costs N less generic mana.", "Plot"),

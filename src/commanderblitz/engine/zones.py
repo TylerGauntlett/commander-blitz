@@ -450,6 +450,7 @@ def move_object(
     if to_zone is Zone.GRAVEYARD and from_zone is not Zone.GRAVEYARD:
         obj.graveyard_turn = state.turn
         obj.graveyard_from = from_zone.value
+        obj.graveyard_cause = cause
 
     # "Whenever one or more cards leave your graveyard" -- Spirit Mascot, Cyan.
     # Narrow on purpose: `ZONE_CHANGE` above records *every* move and stays off

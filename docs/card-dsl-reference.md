@@ -11,7 +11,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | Family | Count |
 |---|---|
 | [Effect ops](#effect-ops) | 177 |
-| [Selectors](#selectors) | 76 |
+| [Selectors](#selectors) | 77 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 74 |
 | [Conditions](#conditions) | 36 |
@@ -297,6 +297,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `shares_permanent_type_with` | Shares a permanent type with the named object. | [Describing objects relative to another object](card-dsl.md#describing-objects-relative-to-another-object) |
 | `subtypes` | Has one of these subtypes. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `supertypes` | Has one of these supertypes. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
+| `surveilled_this_turn` | Cards a surveil put into a graveyard this turn, as the same object. | [Cards in a graveyard surveilled this turn](card-dsl.md#cards-in-a-graveyard-surveilled-this-turn) |
 | `tapped` | Is (or is not) tapped. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `target` | The objects a target id chose. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `toughness` | A comparison on live toughness, or its `parity`. | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
@@ -588,7 +589,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `cant_search_library` | yes |  | The player can't search libraries. | ["Can't cause their controller to search their library"](card-dsl-cookbook.md#cant-cause-their-controller-to-search-their-library) |
 | `cant_win_the_game` | yes |  | The player can't win the game. | [Static abilities](card-dsl.md#static-abilities) |
 | `cast_as_though_flash` | yes |  | The player may cast matching spells as though they had flash. | [Static abilities](card-dsl.md#static-abilities) |
-| `cast_from_graveyard` | yes |  | The player may cast matching spells from their graveyard; with `active_zones: ["graveyard"]`, the card may cast itself from there. | [Casting from the graveyard](card-dsl-cookbook.md#casting-from-the-graveyard) |
+| `cast_from_graveyard` | yes |  | The player may cast matching spells from their graveyard, narrowed to cards surveilled this turn by `surveilled_this_turn`; with `active_zones: ["graveyard"]`, the card may cast itself from there. | [Casting from the graveyard](card-dsl-cookbook.md#casting-from-the-graveyard) |
 | `cast_from_library_top` | yes |  | The player may cast spells from the top of their library: for life with `pay_life_instead`, or matching `affects_spells` at the printed cost, granting `cast_gains_keywords` to what is cast that way. | [Static abilities](card-dsl.md#static-abilities) |
 | `cast_only_at_sorcery_speed` | yes |  | The player may cast matching spells only at sorcery speed. | [Static abilities](card-dsl.md#static-abilities) |
 | `combat_damage_by_toughness` |  | yes | Matching creatures assign combat damage equal to their toughness rather than their power. | [Combat damage equal to toughness](card-dsl-cookbook.md#combat-damage-equal-to-toughness) |
@@ -624,7 +625,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `maximum_hand_size` | yes |  | The player's maximum hand size is N; the newest hand-size effect wins. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `no_hand_limit` | yes |  | The player has no maximum hand size. | [Static abilities](card-dsl.md#static-abilities) |
 | `opponents_cant_force_discard_or_sacrifice` | yes |  | Opponents' spells and abilities can't make the player discard or sacrifice. | ["Can't cause you to discard cards or sacrifice permanents"](card-dsl-cookbook.md#cant-cause-you-to-discard-cards-or-sacrifice-permanents) |
-| `play_lands_from_graveyard` | yes |  | The player may play lands from their graveyard: every land, or only those whose printed face matches `affects_spells`. | [Static abilities](card-dsl.md#static-abilities) |
+| `play_lands_from_graveyard` | yes |  | The player may play lands from their graveyard: every land, or only those whose printed face matches `affects_spells`, or those surveilled this turn with `surveilled_this_turn`. | [Static abilities](card-dsl.md#static-abilities) |
 | `play_lands_from_library_top` | yes |  | The player may play lands from the top of their library. | [Static abilities](card-dsl.md#static-abilities) |
 | `player_hexproof` | yes |  | The player has hexproof: opponents' spells and abilities can't target them. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `player_protection` | yes |  | The player has protection from a quality: damage, targeting and enchanting by it. | [Protection](card-dsl-cookbook.md#protection) |
@@ -676,7 +677,7 @@ The static effects that describe the *player* rather than a characteristic, and 
 | `cant_search_library` | The player can't search libraries. | ["Can't cause their controller to search their library"](card-dsl-cookbook.md#cant-cause-their-controller-to-search-their-library) |
 | `cant_win_the_game` | The player can't win the game. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `cast_as_though_flash` | The player may cast matching spells as though they had flash. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
-| `cast_from_graveyard` | The player may cast matching spells from their graveyard; with `active_zones: ["graveyard"]`, the card may cast itself from there. | [Casting from the graveyard](card-dsl-cookbook.md#casting-from-the-graveyard) |
+| `cast_from_graveyard` | The player may cast matching spells from their graveyard, narrowed to cards surveilled this turn by `surveilled_this_turn`; with `active_zones: ["graveyard"]`, the card may cast itself from there. | [Casting from the graveyard](card-dsl-cookbook.md#casting-from-the-graveyard) |
 | `cast_from_library_top` | The player may cast spells from the top of their library: for life with `pay_life_instead`, or matching `affects_spells` at the printed cost, granting `cast_gains_keywords` to what is cast that way. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `cast_only_at_sorcery_speed` | The player may cast matching spells only at sorcery speed. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `damage_life_floor` | Damage can't reduce the player's life below N. | [Damage can't take you below 1](card-dsl-cookbook.md#damage-cant-take-you-below-1) |
@@ -697,7 +698,7 @@ The static effects that describe the *player* rather than a characteristic, and 
 | `maximum_hand_size` | The player's maximum hand size is N; the newest hand-size effect wins. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `no_hand_limit` | The player has no maximum hand size. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `opponents_cant_force_discard_or_sacrifice` | Opponents' spells and abilities can't make the player discard or sacrifice. | ["Can't cause you to discard cards or sacrifice permanents"](card-dsl-cookbook.md#cant-cause-you-to-discard-cards-or-sacrifice-permanents) |
-| `play_lands_from_graveyard` | The player may play lands from their graveyard: every land, or only those whose printed face matches `affects_spells`. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
+| `play_lands_from_graveyard` | The player may play lands from their graveyard: every land, or only those whose printed face matches `affects_spells`, or those surveilled this turn with `surveilled_this_turn`. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `play_lands_from_library_top` | The player may play lands from the top of their library. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `player_hexproof` | The player has hexproof: opponents' spells and abilities can't target them. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `player_protection` | The player has protection from a quality: damage, targeting and enchanting by it. | [Protection](card-dsl-cookbook.md#protection) |

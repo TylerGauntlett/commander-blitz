@@ -921,6 +921,13 @@ class AbilityModel(BaseModel):
     #: reached a graveyard and from where are facts about *this copy* and not
     #: about the card, and `affects_spells` may only read the printed face.
     arrived_this_turn_from: list[str] | None = None
+    #: "…from among cards in your graveyard **you've surveilled this turn**."
+    #: Eye of Duskmantle, on a `cast_from_graveyard` or
+    #: `play_lands_from_graveyard` static. `arrived_this_turn_from`'s sibling
+    #: and beside `affects_spells` for its reason: what put a card into a
+    #: graveyard is a fact about this copy, read off
+    #: `GameObject.surveilled_this_turn`.
+    surveilled_this_turn: bool = False
     #: ``cant_cast_spells_from_zones``: the zones the named players can't cast
     #: spells **from** -- or, as ``except_zones``, the ones they still can.
     #: Drannith Magistrate's "from anywhere other than their hands" is

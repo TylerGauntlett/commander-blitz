@@ -4987,6 +4987,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 ("grants_flashback", model.grants_flashback),
                 ("enters_tapped", model.enters_tapped),
                 ("arrived_this_turn_from", model.arrived_this_turn_from is not None),
+                ("surveilled_this_turn", model.surveilled_this_turn),
             )
             if present
         ]
@@ -7160,6 +7161,16 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             if known:
                 raise DslError(f"{where}.arrived_this_turn_from: unknown zone(s) {sorted(known)}")
             static["arrived_this_turn_from"] = zones
+    if model.surveilled_this_turn:
+        # Read by the two graveyard permissions' per-object checks and by
+        # nothing else, so anywhere else it would be a clause silently dropped.
+        if model.effect not in ("cast_from_graveyard", "play_lands_from_graveyard"):
+            raise DslError(
+                f"{where}: 'surveilled_this_turn' narrows a cast_from_graveyard or "
+                f"play_lands_from_graveyard permission; nothing reads it on "
+                f"{model.effect!r}"
+            )
+        static["surveilled_this_turn"] = True
     if model.effect == "cant_cast_spells_from_zones":
         # Resolved to the positive list here, once, by the op's own helper, so
         # the static carries exactly what a `CastLock` row carries and the

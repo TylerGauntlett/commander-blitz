@@ -387,7 +387,7 @@ def _land_actions(state: GameState, pid: int) -> list[Action]:
             [
                 oid
                 for oid in state.players[pid].graveyard
-                if graveyard_land_play_allows(state, pid, state.card(oid))
+                if graveyard_land_play_allows(state, pid, state.objects[oid])
             ]
         )
     # "You may **play** the exiled card this turn" covers a land, which is

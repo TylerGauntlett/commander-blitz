@@ -2451,7 +2451,7 @@ def player_plays_lands_from_graveyard(state: GameState, pid: int) -> bool:
     return _player_static(state, pid, "play_lands_from_graveyard")
 
 
-def graveyard_land_play_allows(state: GameState, pid: int, card: CardDef) -> bool:
+def graveyard_land_play_allows(state: GameState, pid: int, obj: GameObject) -> bool:
     """Whether some `play_lands_from_graveyard` reaching ``pid`` covers *this* land.
 
     The per-card half of the permission. Crucible of Worlds prints no filter and
@@ -2461,9 +2461,15 @@ def graveyard_land_play_allows(state: GameState, pid: int, card: CardDef) -> boo
     because a card in a graveyard has a printed face and nothing else to read.
     Any one permission covering the card is enough: two statics are two
     separate permissions (Hazezon beside Crucible frees every land).
+
+    Eye of Duskmantle's ``surveilled_this_turn`` is asked of the land's
+    *object*, for `graveyard_cast_arrival_ok`'s reason.
     """
-    for obj, static in _active_player_statics(state, "play_lands_from_graveyard"):
-        if not _reaches_player(obj, static, pid):
+    card = state.card_of(obj)
+    for source, static in _active_player_statics(state, "play_lands_from_graveyard"):
+        if not _reaches_player(source, static, pid):
+            continue
+        if static.get("surveilled_this_turn") and not obj.surveilled_this_turn(state.turn):
             continue
         filt = static.get("affects_spells")
         if filt is None or _matches_printed(card, filt):
@@ -2574,7 +2580,12 @@ def graveyard_cast_arrival_ok(state: GameState, static: Mapping[str, Any], obj: 
     `affects_spells` beside the type filter.
 
     Absent from the static, every card in the yard qualifies, which is Edgar.
+
+    ``surveilled_this_turn`` is the other fact about how this copy arrived:
+    "cards in your graveyard you've surveilled this turn" (Eye of Duskmantle).
     """
+    if static.get("surveilled_this_turn") and not obj.surveilled_this_turn(state.turn):
+        return False
     arrival = static.get("arrived_this_turn_from")
     if arrival is None:
         return True
