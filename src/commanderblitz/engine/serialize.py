@@ -92,6 +92,10 @@ def card_view(state: GameState, oid: int, *, revealed: bool = True) -> dict[str,
             # card with level lines, so every other permanent's view is as it
             # was.
             view["level"] = obj.class_level
+        if card.solvable:
+            # A Case's solved designation (719.3d): the same reasoning, for
+            # the "Solved —" abilities it switches on.
+            view["solved"] = obj.solved
     else:
         view.update(
             {

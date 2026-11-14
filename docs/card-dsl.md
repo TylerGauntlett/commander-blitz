@@ -3261,9 +3261,13 @@ The other keys, each a copiable value the copy carries until it ends:
 |---|---|
 | `add_keywords` | keywords added to the copied face |
 | `add_types` | `copy_permanent`'s key of the same name: card types the copy has in addition to the copied ones, on `copying_add_types` — Phyrexian Metamorph's `["Artifact"]` |
+| `add_subtypes` | `copy_permanent`'s key of the same name: subtypes the copy has in addition to the copied ones, on `copying_add_subtypes` — Deceptive Frostkite's `["Dragon"]` |
+| `colors` | `copy_permanent`'s key of the same name: the copy's colours instead of the copied ones, on `copying_colors` |
+| `no_mana_cost` | `copy_permanent`'s key of the same name: the copy has no mana cost (202.1b), on `copying_no_mana_cost`; its mana value is 0 |
 | `remove_supertypes` | `copy_permanent`'s key of the same name: supertypes the copy does not take, on `copying_remove_supertypes`. The legend rule reads the result |
 | `name` | the name the copy keeps (`become_copy`'s `except_name`), on `copying_name` |
 | `enters_with` | counters the copy enters with, each `{counter, amount, condition}`, the fields `self_enters_with_counters` has; `amount` is a value expression in which `{"x": true}` is the X announced on casting (Altered Ego) |
+| `condition` | the whole exception applies only when this holds, judged as the permanent arrives, before the copy, with it as the source; otherwise the copy is plain. Vizier of Many Faces' "except if this creature was embalmed" is `{"embalmed": true}` ([cookbook](card-dsl-cookbook.md#an-embalmed-token-that-enters-as-a-copy)) |
 
 `enters_with` is part of the replacement (614.1c). Its conditions are judged once
 the copy is applied, with the arriving permanent as `self_only`, so "if it's a
@@ -3279,8 +3283,15 @@ loyalty (306.5b), which the loader compiles as a `self_enters_with_counters` on
 that face. The printed card's other replacements stay the ones read.
 
 The loader holds the key set as `ENTERS_COPY_EXCEPT_KEYS`. It refuses an unknown
-key, an empty exception, an empty list, an unknown keyword, supertype or counter,
-a malformed condition and an empty name.
+key, an empty exception (a `condition` alone is one), an empty list, an unknown
+keyword, colour, supertype or counter, a malformed condition, an empty name and a
+`no_mana_cost` that is not `true`.
+
+A copy applied as a permanent enters overwrites every copiable value the object
+had (613.2a, 707.2), so a token's own creating exception (`copy_overrides`) does
+not apply while it is copying: only this exception does. A token copy of a card
+with this replacement is asked the question too, by `copy_permanent` before the
+token is made, unless what it copied was itself copying something.
 
 `copying` is required on the event; `copying`, `except_` and a non-default
 `duration` are refused on the other four. Always an
@@ -3995,6 +4006,39 @@ is self-clearing.
 
 Effect-side only: nothing continuous asks the question.
 
+### Cards in a graveyard surveilled this turn
+
+```jsonc
+// "…from among cards in your graveyard you've surveilled this turn"
+{ "zone": "graveyard", "controller": "you", "surveilled_this_turn": true }
+
+// The same clause on a graveyard permission (Eye of Duskmantle)
+{ "kind": "static", "effect": "play_lands_from_graveyard", "affects_player": "you",
+  "surveilled_this_turn": true }
+```
+
+`EventType.SURVEILLED` says how many cards a surveil binned, never which, so the
+fact is recorded per card as it lands. `zones.move_object` writes the move's
+`cause` onto `GameObject.graveyard_cause` beside Banon's `graveyard_turn` and
+`graveyard_from`, and the `surveil` op moves its cards with `cause: "surveil"`.
+`GameObject.surveilled_this_turn` is the one reader: a card in a graveyard
+whose last arrival was a surveil on the current turn. A surveil puts cards only
+into the surveiller's own graveyard, so "you've surveilled" is the card's owner.
+
+A card that leaves the graveyard and comes back is a new object (400.7). Its
+arrival writes all three fields again, so it is no longer surveilled unless a
+surveil put it back. The mark is a turn and not a flag, `drawn_this_turn`'s
+way, so it needs no clearing.
+
+`true` is the only value. On a static the key narrows `cast_from_graveyard` (beside
+`arrived_this_turn_from`, asked of the object by
+`player_statics.graveyard_cast_arrival_ok`) and `play_lands_from_graveyard`
+(asked by `graveyard_land_play_allows`). It is beside `affects_spells` rather
+than inside it because that filter reads only the printed face. The loader
+refuses it on any other static, and on a card's own `active_zones:
+["graveyard"]` permission. The near miss is `arrived_this_turn_from:
+["library"]`, which a milled card also passes.
+
 ### A search whose destination depends on what it found
 
 ```jsonc
@@ -4043,6 +4087,11 @@ The two are refused together.
 moment it sees an instant, and everything after it — `flash`,
 `cast_as_though_flash`, an ability's `sorcery_speed_only` — is another way of
 saying yes.
+
+`as_though_flash: true` is the widening twin on the card itself: "you may cast
+this spell as though it had flash" (Necromancy), a permission and not the flash
+keyword — see the cookbook's
+["If you cast it any time a sorcery couldn't have been cast"](card-dsl-cookbook.md#if-you-cast-it-any-time-a-sorcery-couldnt-have-been-cast).
 
 `cast_before_step` names the step the window closes at, and it is asked **first**,
 before any of the widening branches. Written after them it would load, read
@@ -5531,6 +5580,7 @@ The form list is
 { "has_turn_flag": "exerted" }                // …and one written by `set_turn_flag`, for the turn
 { "cast_during": "your_main" }                // addendum — the phase the spell was *cast* in
 { "was_cast": true }                          // 603.6e — *this* arrival was a resolving spell
+{ "cast_at_sorcery_timing": false }           // 307.1 — cast any time a sorcery couldn't have been
 { "is_active_player": { "binding": "event_player" } }   // "during their turn"
 { "step_is": "declare_attackers" }            // the step the game is in *now*
 ```
@@ -5600,6 +5650,12 @@ see ["If it was cast"](card-dsl-cookbook.md#if-it-was-cast--6036e) in the cookbo
 a `self_enters` trigger, which is the only place the clause is printed and the
 only place it asks about the right object.
 
+`cast_at_sorcery_timing` reads a stamp made as the spell was cast: whether a
+sorcery could have been cast at that moment (307.1). It is false both ways for
+anything not cast into its present life — see
+["If you cast it any time a sorcery couldn't have been cast"](card-dsl-cookbook.md#if-you-cast-it-any-time-a-sorcery-couldnt-have-been-cast)
+in the cookbook.
+
 `step_is` is the step the game is in when the condition is asked, named the
 way `Step` names it lower-cased (`"declare_attackers"`, `"end_step"`), or a list
 of names for any of them; the loader refuses a name the turn does not have.
@@ -5637,8 +5693,9 @@ and the filter keys are
     "recheck": false,                // makes `condition` a "while": checked as it triggers only
     "defending": "you",              // attack and damage triggers: whom it hit
     "not_cause": "kodama_of_the_east_tree", // enters triggers only: a loop guard
-    "counter": "+1/+1",              // `counter_placed` only: which kind
+    "counter": "+1/+1",              // counter triggers only: which kind
     "put_by": "you",                 // `counter_placed` only: YOU put them
+    "removed_by": "you",             // `counter_removed` only: YOU removed them
     "mana_ability": false,           // `ability_activated` only: exclude mana abilities
     "targeted_by": "spell",          // `becomes_target` only: a spell, an ability, or an activated ability
     "to_zones": ["graveyard", "exile"], // `leaves_battlefield` only: where it went
@@ -5808,8 +5865,10 @@ false`, because only the active player declares attackers (508.1).
 trigger fires on *every* kind — and the pool places `charge` and `slumber`
 counters, so Fathom Mage's "whenever a +1/+1 counter is put on this creature"
 would also draw off Arixmethes waking up. The kind is also copied into `bindings`
-beside `amount`, so effects can read what fired them. Rejected on any other event,
-for the same reason as `defending`.
+beside `amount`, so effects can read what fired them. It also names the kind on
+`counter_removed` and `last_counter_removed` (see the cookbook's
+["Whenever you remove a time counter"](card-dsl-cookbook.md#whenever-you-remove-a-time-counter--counter_removed)).
+Rejected on any other event, for the same reason as `defending`.
 
 `put_by: "you"` is "whenever **you** put one or more +1/+1 counters on this
 creature" -- Exemplar of Light. `controller` on `counter_placed` reads the
@@ -6011,7 +6070,7 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `becomes_monarch` ·
 `counter_placed` · `sacrificed` · `leaves_graveyard` · `put_into_graveyard` · `token_created` · `draw` · `discard` · `cycle` ·
 `ability_activated` · `damage_prevented` · `deals_damage_to_player` ·
-`searches_library` · `wins_coin_flip` · `gives_gift` · `turned_face_up` · `state`
+`searches_library` · `wins_coin_flip` · `wins_clash` · `gives_gift` · `turned_face_up` · `state`
 
 ### `state` — "When there are four or more page counters on this artifact"
 
@@ -6672,6 +6731,12 @@ one place a coin is flipped, so a flip won off any card counts. Its subject is a
 A lost flip fires nothing. See
 ["Whenever you win a coin flip"](card-dsl-cookbook.md#whenever-you-win-a-coin-flip).
 
+**`wins_clash`** fires once per clash won (701.23b), from `op_clash`, whatever
+card made the clash. Both players clash and either may win, so the op fires one
+`clashed` event per clashing player with that player's own `won`. Its subject is
+a **player**: `controller` names the clasher who won. A lost or tied clash fires
+nothing. See ["Whenever you win a clash"](card-dsl-cookbook.md#whenever-you-win-a-clash).
+
 **`gives_gift`** fires once per gift given (702.174): as an instant or sorcery
 with a promised gift resolves, or as a permanent's gift trigger resolves —
 whichever part of the card `CardDef.gift_ability` names. Its subject is a
@@ -7259,6 +7324,7 @@ Each node names **exactly one** form:
 | `{"exists": filter}` | does anything match — `count > 0`, spelled the way it reads |
 | `{"all": [ … ]}` / `{"any": [ … ]}` / `{"not": …}` | combine the above |
 | `{"is_your_turn": true}` | whether it is the source's controller's turn |
+| `{"step_is": "end_step"}` | whether the game is in that step, or one of a list — the `Step` names the effect-level leaf takes. "During each opponent's end step" is `{"all": [{"not": {"is_your_turn": true}}, {"step_is": "end_step"}]}` (Final-Word Phantom) |
 | `{"is_attached": true}` | whether the source is attached to something — reconfigure |
 | `{"is_monstrous": true}` | whether the source is monstrous — [monstrosity](card-dsl-cookbook.md#monstrosity-and-holding-creatures-down) |
 | `{"has_flag": "mardu"}` | whether `set_flag` wrote that word on the source — a Siege's chosen mode |
@@ -7761,6 +7827,7 @@ The cookbook's subsystem chapters, one line each:
 - [Prepared](card-dsl-cookbook.md#prepared)
 - [Sagas](card-dsl-cookbook.md#sagas)
 - [Classes](card-dsl-cookbook.md#classes)
+- [Cases](card-dsl-cookbook.md#cases)
 - [Planeswalkers](card-dsl-cookbook.md#planeswalkers)
 - [Battles](card-dsl-cookbook.md#battles)
 - [Cost reduction](card-dsl-cookbook.md#cost-reduction)
@@ -7784,6 +7851,7 @@ The cookbook's subsystem chapters, one line each:
 - [Haunt — the exile link pointing the other way](card-dsl-cookbook.md#haunt--the-exile-link-pointing-the-other-way)
 - [Hideaway — "that one, from there"](card-dsl-cookbook.md#hideaway--that-one-from-there)
 - [Investigate — the `investigate` op and the `investigates` trigger](card-dsl-cookbook.md#investigate--the-investigate-op-and-the-investigates-trigger)
+- [Surveil — the `surveil` op and the `surveils` trigger](card-dsl-cookbook.md#surveil--the-surveil-op-and-the-surveils-trigger)
 - [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on)
 - [The inert keywords — partner, and choose a Background](card-dsl-cookbook.md#the-inert-keywords--partner-and-choose-a-background)
 - [Landwalk, and global attack prohibitions](card-dsl-cookbook.md#landwalk-and-global-attack-prohibitions)

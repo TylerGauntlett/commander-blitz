@@ -522,6 +522,12 @@ class TriggerModel(BaseModel):
     #: the recipient's controller, so an opponent's counter on your creature
     #: passes it. Mirrors ``put_by`` on the ``replace_counters`` static.
     put_by: Literal["you"] | None = None
+    #: For ``counter_removed``: "whenever **you** remove a time counter from
+    #: this card" (Watcher of Hours). The player who removed the counters --
+    #: the controller of the removing effect, the payer of a cost, the
+    #: suspending player for suspend's upkeep tick -- must be this ability's
+    #: controller.
+    removed_by: Literal["you"] | None = None
     #: For ``ability_activated``: "…if it isn't a mana ability".  ``false``
     #: excludes mana abilities, ``true`` keeps only them, omitted is both.
     #: Both activation paths tag the event, so the two stop being
@@ -616,7 +622,9 @@ class AbilityModel(BaseModel):
 
     model_config = Strict
 
-    kind: Literal["activated", "triggered", "static", "chapter", "reflexive", "level"]
+    kind: Literal[
+        "activated", "triggered", "static", "chapter", "reflexive", "level", "to_solve"
+    ]
     #: The name a `reflexive_trigger` op calls this ability by -- "when you do"
     #: has to point at *which* do. Required on ``kind: "reflexive"`` and refused
     #: on every other kind, and the loader checks the two halves name each
@@ -645,6 +653,13 @@ class AbilityModel(BaseModel):
     #:   the ability exists only while the Class is at that level or higher
     #:   (716.2b). Omitted for a level-1 ability, which is always there.
     level: int | None = None
+    #: **A Case** (719). ``true`` on an ability printed after "Solved —": it
+    #: exists only while the Case is solved (719.3c). A ``kind: "to_solve"``
+    #: line is the "To solve — [condition]" line itself, and carries only its
+    #: ``text`` and the ``condition``: the loader compiles it into 719.3b's
+    #: "At the beginning of your end step, if this Case is not solved and
+    #: [condition], it becomes solved."
+    solved: bool = False
 
     # activated
     cost: CostModel | None = None
@@ -915,6 +930,13 @@ class AbilityModel(BaseModel):
     #: reached a graveyard and from where are facts about *this copy* and not
     #: about the card, and `affects_spells` may only read the printed face.
     arrived_this_turn_from: list[str] | None = None
+    #: "…from among cards in your graveyard **you've surveilled this turn**."
+    #: Eye of Duskmantle, on a `cast_from_graveyard` or
+    #: `play_lands_from_graveyard` static. `arrived_this_turn_from`'s sibling
+    #: and beside `affects_spells` for its reason: what put a card into a
+    #: graveyard is a fact about this copy, read off
+    #: `GameObject.surveilled_this_turn`.
+    surveilled_this_turn: bool = False
     #: ``cant_cast_spells_from_zones``: the zones the named players can't cast
     #: spells **from** -- or, as ``except_zones``, the ones they still can.
     #: Drannith Magistrate's "from anywhere other than their hands" is
@@ -1250,6 +1272,17 @@ class AbilityModel(BaseModel):
     #: 701.13a makes milling N cards one event, where 121.2 makes drawing N
     #: cards N draws.
     mill_multiplier: int | None = None
+    #: ``replace_surveil``: how many more cards each surveil looks at.
+    #: Enhanced Surveillance's "you may look at an additional **two** cards
+    #: each time you surveil" is ``2``. Required, and refused below 1: 0 adds
+    #: nothing. An addend, never a multiplier, and per surveil: the extra cards
+    #: are part of the same surveil (701.25a), binned or kept by the same
+    #: choice, and two such statics add up.
+    surveil_addend: int | None = None
+    #: ``replace_surveil``: "you **may** look at" -- the surveiller is asked,
+    #: per static and before any card is looked at, whether to take the extra
+    #: cards. Without it the addend always applies.
+    surveil_optional: bool = False
     #: ``add_mana_on_tap``: what a tapped permanent must be for the static to
     #: add mana -- Crypt Ghast's ``{"subtypes": ["Swamp"]}``. Only
     #: `loader.TAPPED_PERMANENT_KEYS`.
@@ -1329,7 +1362,10 @@ class ReplacementModel(BaseModel):
     #: "…and it isn't legendary"), ``name`` ("…except his name is Chameleon,
     #: Master of Disguise") and ``enters_with``, a list of ``{counter, amount,
     #: condition}`` judged against the copy as it enters (Spark Double's "an
-    #: additional +1/+1 counter on it if it's a creature"). The loader holds
+    #: additional +1/+1 counter on it if it's a creature"); ``add_subtypes``,
+    #: ``colors`` and ``no_mana_cost``, `copy_permanent`'s spellings; and
+    #: ``condition``, which makes the whole exception conditional (Vizier of
+    #: Many Faces' "except if this creature was embalmed"). The loader holds
     #: the set as ``ENTERS_COPY_EXCEPT_KEYS``.
     except_: dict[str, Any] | None = None
     #: `self_enters_as_copy`: how long the copy lasts. ``permanent`` (the
@@ -1565,6 +1601,9 @@ class CardModel(BaseModel):
     #: A card-level flag rather than an ability, because it is true of the
     #: *spell on the stack* and there is no permanent for it to sit on.
     split_second: bool = False
+    #: "You may cast this spell as though it had flash" (Necromancy). The card's
+    #: own timing permission; it does not give the card the flash keyword.
+    as_though_flash: bool = False
     #: "Cast this spell only before the combat damage step" (Berserk). The name
     #: of the step the casting window closes at, lowercased -- the one card
     #: field that narrows the timing window itself (`casting._timing_ok`).

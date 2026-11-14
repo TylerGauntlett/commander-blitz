@@ -1216,6 +1216,10 @@ def op_delay(ctx: EffectContext, spec: Mapping[str, Any]):
     name alone cannot tell the two apart, and the gap only opens when the delay
     is created on somebody else's turn -- which is the ordinary line of play for
     an instant-speed ability, and the reason the word is printed at all.
+
+    ``next_turn`` is "at the beginning of **the next turn's** upkeep" as against
+    "at the beginning of the next upkeep": the same step in one turn, two once
+    an additional beginning phase gives a turn a second upkeep.
     """
 
     state = ctx.state
@@ -1231,6 +1235,7 @@ def op_delay(ctx: EffectContext, spec: Mapping[str, Any]):
             turn=state.turn,
             combat=_scheduled_combat(state) if step == "end_of_combat" else None,
             your_turn=bool(spec.get("your_turn", False)),
+            next_turn=bool(spec.get("next_turn", False)),
         )
     )
 
@@ -1378,3 +1383,21 @@ def op_extra_combat(ctx: EffectContext, spec: Mapping[str, Any]):
         if spec.get("extra_main"):
             kinds.append("main")
     grant_extra_phases(ctx.state, kinds)
+
+
+@register("extra_beginning_phase")
+def op_extra_beginning_phase(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "There is an additional beginning phase after this phase" (500.8, 501.1).
+
+    Sphinx of the Second Sun. An untap step, an upkeep and a draw step, queued on
+    `GameState.extra_phases` exactly as `extra_combat` queues a combat, and
+    entered at the end of the phase this resolves in -- so a trigger "at the
+    beginning of your postcombat main phase" puts it between that main phase and
+    the end step. Every untap, upkeep and draw-step trigger, turn-based action
+    and `step_is` reader sees the steps as real ones, and none of the per-turn
+    records restarts: it is the same turn (see `turn._untap_step`).
+
+    Takes no player, for `extra_combat`'s reason: a phase belongs to the turn.
+    """
+
+    grant_extra_phases(ctx.state, ["beginning"])

@@ -906,9 +906,9 @@ If a spell cast this way would be put into a graveyard, exile it instead."
 
 The spec **is** a `cast_from_graveyard` static, and that is the design rather
 than a coincidence. It means the `affects_spells` filter, `max_per_turn`,
-`grants_flashback` and the `cast_from_graveyard` mark that makes the spell exile
-as it resolves are all shared with the static — so the second printed sentence
-needs nothing at all, and the loader asks for the same two guarantees the
+and `grants_flashback`, which `Game._cast` stamps onto the spell's stack item as
+flashback's exile, are all shared with the static — so the second printed
+sentence needs nothing at all, and the loader asks for the same two guarantees the
 static's own loader does: a filter (an absent one would free the whole
 graveyard) and either a cap or `grants_flashback` (a permission that neither
 meters nor exiles is an engine, not a printed line).
@@ -1171,6 +1171,33 @@ The near misses are `cast_from_library_top`'s `pay_life_instead` (Bolas's
 Citadel), which is the same price off the top of your own library and no
 permission at all, and the `granted_alternative_cost` static, which offers its
 price *beside* the printed one.
+
+### "If that spell would be put into a graveyard, exile it instead"
+
+```jsonc
+// Dire Fleet Daredevil's trigger, targeting t1: an instant or sorcery card in
+// an opponent's graveyard
+{ "op": "exile", "objects": { "target": "t1" }, "playable": "this_turn",
+  "playable_cast_only": true, "any_type": true, "playable_exiles": true }
+// Mission Briefing, after choosing the card into "briefed"
+{ "op": "grant_playable", "playable_cast_only": true, "playable_exiles": true,
+  "objects": { "binding": "briefed" } }
+```
+
+`playable_exiles` is a replacement (614.1a) the permission puts on the spell
+cast under it, on `exile` beside a `playable` duration or on `grant_playable`.
+It sets the object's `playable_exiles`, and `Game` stamps it onto the stack item
+(`StackItem.exiles_instead`) as the spell is cast while that permission is live
+-- so it holds on every way the spell can reach a graveyard: resolving, being
+countered and fizzling all read the item. A permanent spell still enters the
+battlefield; only the graveyard is replaced. `grant_playable`'s `as_flashback`
+("gains flashback", Will of the Jeskai) sets the same rider.
+
+The loader refuses it without a permission to ride on, any value but `true`, and
+beside `as_flashback` or `as_adventure`, each of which already says where the
+spell goes. The near misses are `cast_from_hand`'s and `cast_card`'s `exiles`,
+the same rider on a cast made during the effect's resolution rather than a
+permission to cast later at the printed price.
 
 ## Auras and Equipment
 
@@ -1548,6 +1575,41 @@ source, and `{"returned_with": "self"}` reads it back — "that creature", even
 once the Aura has left. A creature that left the battlefield and came back is
 not it. `attached: true` is the near miss for the sacrifice: once the Aura has
 left it is attached to nothing.
+
+### A permanent that becomes an Aura — Necromancy
+
+    When this enchantment enters, if it's on the battlefield, it becomes an
+    Aura with "enchant creature put onto the battlefield with Necromancy." Put
+    target creature card from a graveyard onto the battlefield under your
+    control and attach this enchantment to it. When this enchantment leaves the
+    battlefield, that creature's controller sacrifices it.
+
+```jsonc
+{ "kind": "triggered",
+  "trigger": { "event": "self_enters", "source": "self", "condition": { "zone_is": "battlefield" } },
+  "targets": [{ "id": "t1", "kind": "card_in_graveyard", "count": 1,
+                "selector": { "controller": "any", "types": ["Creature"], "zone": "graveyard" } }],
+  "effects": [
+    { "op": "become_aura" },
+    { "op": "return_from_graveyard", "destination": "battlefield", "controller": "you",
+      "link": true, "objects": { "target": "t1" } },
+    { "op": "attach", "objects": { "returned_with": "self" } } ] }
+```
+
+plus Animate Dead's leaves-the-battlefield sacrifice. `become_aura` takes no
+keys: this permanent gains the subtype Aura for as long as it stays on the
+battlefield, and a new object (400.7) is not one. It sets
+`GameObject.became_aura`, read wherever Aura-ness is asked beside the printed
+`is_aura` — the type line, "enchanted", and 704.5m, so the Aura goes to the
+graveyard when the creature leaves or never arrives. Unlike bestow's Aura-ness
+it does not depend on being attached. The loader refuses it on a card that is
+not an enchantment or is already an Aura (205.3d).
+
+The enchant clause it gains is the battlefield one Animate Dead gains, and
+needs no key: `attach` names the host with `returned_with`. Written first, so
+a return a replacement sends elsewhere leaves an Aura attached to nothing.
+Animate Dead's shape without the op is the near miss: it attaches a non-Aura
+enchantment that stays on the battlefield when its creature leaves.
 
 ## Player-wide statics
 
@@ -2259,7 +2321,7 @@ out of order, or at instant speed.
 ability's printed position — not offered, not collected as a trigger, not applied
 as a static — and the two printed-face walks (`_ability_statics` for "loses all
 abilities" and "have …", `player_statics` for Druid Class's extra land) ask the
-same `Ability.present_at`. An `activation_condition` on `counters_on` is the near
+same `Ability.present_on`. An `activation_condition` on `counters_on` is the near
 miss: it cannot switch a static off, it does not stop level 2 being bought four
 times, and a `counter_placed` trigger on the invented counter fires again at
 level 3.
@@ -2306,6 +2368,60 @@ trigger of any other event.
 The near misses: `ability_activated` fires when the level line is *activated*, a
 round of priority before the Class is level 2 and whether or not it ever gets
 there; `counter_placed` on an invented level counter fires again at level 3.
+
+## Cases
+
+```jsonc
+{"types": ["Enchantment"], "subtypes": ["Case"],
+ "abilities": [
+   {"kind": "triggered", "text": "At the beginning of your upkeep, surveil 1.", ...},
+   {"kind": "to_solve",
+    "text": "To solve — There are fifteen or more cards in your graveyard. (If unsolved, solve at the beginning of your end step.)",
+    "condition": {"cmp": ">=", "left": {"count": {...}}, "right": {"const": 15}}},
+   {"kind": "triggered", "solved": true,
+    "text": "Solved — Whenever you cast a nonlegendary creature spell, copy that spell. (The copy becomes a token.)",
+    "trigger": {"event": "spell_cast", "controller": "you", ...},
+    "effects": [{"op": "copy_spell", "sid": {"binding": "sid"}}]}]}
+```
+
+Rule 719, in two keys:
+
+| written | means | rule |
+|---|---|---|
+| `{"kind": "to_solve", "condition": …}` | "At the beginning of your end step, if this Case is not solved and [condition], it becomes solved." | 719.3b |
+| `"solved": true` on any other ability | the ability exists only while the Case is solved | 719.3c |
+
+**A to_solve line is its condition, and nothing else.** The loader compiles it
+into a triggered ability on your `end_step` whose intervening-if is `{"all":
+[{"solved": false}, <condition>]}` — checked as the trigger would go on the
+stack and again as it resolves (603.4) — with the `solve` effect; it refuses
+`effects`, `trigger`, `targets` or anything else written on the line. `solve`
+written by hand is refused for the reason `become_level` is.
+
+**A solved-gated ability is absent, not inert**, through the gate a Class level
+uses: `Ability.present_on` reads `GameObject.solved` beside `class_level`, so
+`characteristics.abilities_of` holds an unsolved Case's "Solved —" abilities as
+`AbilityKind.LATENT` stand-ins at their printed seats, and the printed-face walks
+(`_ability_statics`, `player_statics`) and legality ask the same question.
+`set_flag` from an end-step trigger with `has_flag` on the gated ability is the
+near miss: the ability would stay on the permanent, a static could not be
+switched off by it, and the word would mean nothing to a copy.
+
+**Solved is a designation** (719.3d), not a counter and not a copiable value
+(707.2): a token copy of a solved Case is unsolved. It is cleared as the
+permanent *enters*, not as it leaves, `class_level`'s last-known-information
+reason. The `solve` effect fires `became_solved` once, when it changes, and the
+`solved` condition reads it off the ability's source. The client receives
+`solved` on the card view of any card with a to_solve line and shows it as a
+"Solved" badge.
+
+Refused at load: a to_solve line, a gated ability or the `solved` condition
+without the `Case` subtype; more than one to_solve line; a gated ability or
+`solved` condition with no to_solve line to solve it; `solved` with a `level`, on
+a chapter, reflexive or level line, or on one active anywhere but the
+battlefield; and either key on a granted ability. A `Case` with neither is
+accepted and inert. The reminder "(If unsolved, solve at the beginning of your
+end step.)" is part of the to_solve line's `text`.
 
 ## Planeswalkers
 
@@ -2703,6 +2819,40 @@ free one.
 
 The filter may only read printed characteristics, like a static's: it is
 evaluated while deciding what is castable, before anything is on the stack.
+
+### A discount that asks what this spell targets
+
+```jsonc
+// Ephara's Dispersal — "This spell costs {2} less to cast if it targets an
+//  attacking creature. Return target creature to its owner's hand."
+"cost_reduction": {
+  "amount": 2,
+  "targeting": { "types": ["Creature"], "attacking": true }
+}
+```
+
+`targeting` is a gate beside `condition`, and either satisfies a flat
+`amount`'s need for one. It is the reduction filter language matched against the
+**object targets this cast chose** (601.2f fixes the cost after 601.2c announces
+them), true when any one of them matches; a player target never does.
+`controller` defaults to `any`, since "targets a legendary creature" (Price of
+Fame) asks about the creature and not who controls it. It may sit beside any
+arithmetic head and beside a `condition`, which must then hold as well.
+
+`cost_reduction.own_reduction` reads it. A gate asked before a tuple exists
+reads it generously, and `casting._priced_tuples` prices every offered tuple
+with its own targets, so two lands offer Ephara's Dispersal at the attacker and
+not at a blocker; `Game._cast` charges the tuple the action carries. Such a
+card is never given a deferred target choice (`casting.deferred_target_spec`).
+
+The loader refuses it on an ability's or a graveyard cast's `mana_reduction`
+(nothing hands those a tuple), on a card that declares no `targets`, beside
+`strive`, and with `zone`, `self_only` or `exclude_self` in the clause.
+
+The near miss is `condition: {"exists": {... "attacking": true}}`, which
+discounts the spell whenever anything is attacking, whatever it targets — a
+stronger card than the printed one. The `spell_cost_reduction` static's own
+`targeting` clause reads the same tuple, but discounts *other* spells.
 
 ### Making *other* spells cheaper
 
@@ -3151,13 +3301,13 @@ Denial is the whole argument for it — without the delayed draws it is a strict
 worse Counterspell, and nothing on screen would say so.
 
 ```jsonc
-{ "op": "delay", "step": "upkeep",
+{ "op": "delay", "step": "upkeep", "next_turn": true,
   "text": "At the beginning of the next turn's upkeep, draw a card.",
   "effects": [ { "op": "draw", "player": "you", "amount": { "const": 1 } } ] }
 ```
 
 `step` is one of `upkeep` · `draw_step` · `begin_combat` · `end_of_combat` ·
-`end_step`, checked at load time like every other piece of vocabulary: a
+`end_step` · `cleanup`, checked at load time like every other piece of vocabulary: a
 misspelled step would schedule something that never comes due. An ability that
 waits for a **thing that happens** rather than a moment that arrives is the other
 half of 603.7 and a different op — see [`delayed_trigger`](#delayed_trigger--an-ability-that-watches-an-event)
@@ -3171,7 +3321,17 @@ Two things are worth knowing before writing one:
   scheduling effect had.
 - **It waits for the step's *next* occurrence.** `begin_step` for the current
   step has already run by the time any effect resolves, so scheduling `upkeep`
-  during an upkeep means the following turn's, which is what the cards say.
+  during an upkeep means the next upkeep to begin. That is usually the following
+  turn's, but an [additional beginning phase](#an-additional-beginning-phase)
+  gives a turn a second upkeep and draw step, and the next one is then later in
+  the same turn.
+- **`next_turn` says "the next *turn's*".** "At the beginning of the next turn's
+  upkeep" (Portent, Arcane Denial) is due only on a turn after the one the delay
+  was made on, so an added upkeep later this turn is not it; "at the beginning
+  of the next upkeep" (The Eagles Are Coming) and "your next upkeep" (Pact of
+  Negation) omit it and take the added one. `turn._delay_due` compares the
+  delay's `turn` against the current one. The loader refuses a `next_turn` that
+  is not true or false.
 - **`your_turn` says *whose* step.** "At the beginning of **your** next end
   step" (Necropotence, and fifteen more) as against "at the beginning of the
   next end step" (Arcane Denial). Every seat has an end step, so the step name
@@ -3192,7 +3352,7 @@ Two things are worth knowing before writing one:
   controller, so it is that controller's turn and not a fixed seat.
 
   The struct's `turn` field does not stand in for this. It records the turn the
-  delay was created on, nothing reads it for timing, and "your next" is about
+  delay was created on and only `next_turn` reads it; "your next" is about
   *whose* turn rather than how many have passed.
 
 The scheduled effects resolve directly rather than going on the stack. That is a
@@ -3284,6 +3444,18 @@ version leaves the token alive through the whole postcombat main phase, where it
 can be sacrificed, tapped for an ability, or attack again in the extra combat —
 which is exactly what the printed line stops.
 
+### `cleanup` — the step that gives priority only when something triggers
+
+`cleanup` is "at the beginning of the next cleanup step" (Necromancy). It runs
+after the cleanup's turn-based actions — the discard to hand size and the end of
+"until end of turn" effects (514.1, 514.2) — and because 514.3a gives players
+priority when anything triggers in cleanup, a `cleanup` delay that fires sets
+`GameState.cleanup_repeat`: the players get a priority window and another
+cleanup step follows. A delay scheduled in that window is due in the cleanup
+step it leads into, which is the next one. `end_step` is the near miss: it takes
+the permanent a step early, and a delay scheduled during the end step waits for
+the following turn's.
+
 ### `delayed_trigger` — an ability that watches an event
 
 ```jsonc
@@ -3300,7 +3472,7 @@ which is exactly what the printed line stops.
 
 Rule 603.7 has two shapes and `delay` is one of them. `delay` names a **moment**
 — "at the beginning of the next end step" — and its whole vocabulary is
-`turn.DELAY_STEPS`, five step names. This is the other: a subscription to a
+`turn.DELAY_STEPS`, a whitelist of step names. This is the other: a subscription to a
 **thing that happens**, created by a resolving effect, lasting the rest of the
 turn.
 
@@ -4099,6 +4271,40 @@ strictly: the printed N must be the card's.
 `last_counter_removed` is an ordinary trigger as well, for any printed "when
 the last <kind> counter is removed from it"; it needs `counter`.
 
+## "Whenever you remove a time counter" — `counter_removed`
+
+```jsonc
+// Watcher of Hours: "Whenever you remove a time counter from this card while
+// it's exiled, surveil 1."
+{ "kind": "triggered", "active_zones": ["exile"],
+  "trigger": { "event": "counter_removed", "source": "self",
+               "counter": "time", "removed_by": "you" },
+  "effects": [ { "op": "surveil", "amount": { "const": 1 } } ] }
+```
+
+`counter_removed` hears counters coming off an object, by any road:
+`primitives.remove_counters` is the one funnel, and an effect, a cost,
+vanishing's tick and suspend's upkeep tick all come through it. It is heard
+**once per counter** (603.2c): a removal of three is three firings, each with
+`amount` 1. A player's counters (energy, poison) carry no object and are not
+heard.
+
+- `counter` names the kind. Without it every kind fires.
+- `removed_by: "you"` is "whenever **you** remove". The event's `removed_by` is
+  the controller of the removing effect, the payer of a cost, or the suspending
+  player for suspend's tick, and otherwise the object's own controller; the
+  clause requires it to be the ability's controller, so an opponent's effect
+  taking counters off your card does not fire it. `"you"` is the only value,
+  and the loader refuses it on any other event.
+- "While it's exiled" is `active_zones: ["exile"]` with `source: "self"`.
+
+On suspend's last tick the trigger is queued before `suspend.cast_for_free`
+puts the card on the stack, and is stacked above that spell, so the surveil
+resolves first.
+
+`last_counter_removed` is the near miss: it fires only on the removal that
+leaves none of the kind.
+
 ## Fuse — the case where the answer is *both* faces
 
 ```jsonc
@@ -4702,6 +4908,51 @@ an activated `draw`. Jace, Cunning Castaway's Illusion
 A token whose ability needs an op the engine lacks is not added. Vraska the
 Unseen's Assassin ("that player loses the game") waits on a `lose_game` op:
 `win_game` for its controller is a different sentence in a multiplayer game.
+
+## Surveil — the `surveil` op and the `surveils` trigger
+
+Surveil N (701.25a) is "look at the top N cards of your library, then put any
+number of them into your graveyard and the rest on top of your library in any
+order":
+
+```jsonc
+// Consider — "Surveil 1."
+{ "op": "surveil", "amount": { "const": 1 } }
+// "Target player surveils 2."
+{ "op": "surveil", "player": "target_player", "amount": { "const": 2 } }
+```
+
+`amount` is any value expression, defaulting to one; `player` is who surveils,
+defaulting to `"you"`, and every seat it names surveils on their own. The
+surveiller chooses which of the cards to bin. Each surveil fires one
+`surveilled` event once its cards are placed, carrying `looked` and `binned`.
+Surveil 0, or a value below zero, is no surveil and fires nothing (701.25c); a
+surveil of a library with fewer cards than N, even an empty one, looks at what
+there is and still fires.
+
+The trigger is `surveils`, whose subject is the surveilling player, so
+`controller: "you"` is "whenever you surveil". It fires once per surveil
+whatever the player did with the cards, including keeping every one on top.
+`nth` is the surveil's ordinal for that player this turn, folded into
+`TurnLedger.surveils` whether or not anything is listening:
+
+```jsonc
+// Dimir Spybug — "Whenever you surveil, put a +1/+1 counter on this creature."
+{ "trigger": { "event": "surveils", "controller": "you" },
+  "effects": [ { "op": "add_counters", "objects": { "self_only": true },
+                 "counter": "+1/+1", "amount": { "const": 1 } } ] }
+// Whispering Snitch — "Whenever you surveil for the first time each turn, …"
+{ "trigger": { "event": "surveils", "controller": "you", "nth": 1 }, "effects": [ … ] }
+```
+
+Two near misses, both wrong:
+
+- `put_into_graveyard` from the library. It fires per card binned and on every
+  mill, and a surveil that keeps every card on top puts nothing anywhere and
+  is still a surveil.
+- `max_per_turn: 1` for "the first time each turn". It counts the ability's
+  firings, so a Snitch entering after your first surveil would fire on your
+  second.
 
 ## Which mechanism a printed keyword lands on
 
@@ -6804,12 +7055,53 @@ not spent.
 
 The loader refuses a second zone in `active_zones`, any `affects_player` other
 than `you`, and `affects_spells`, `affects`, `max_per_turn`, `grants_flashback`,
-`enters_tapped` and `arrived_this_turn_from`. The permission frees only the card
-carrying it, and each use takes that card out of the graveyard, so no reader
-looks at those keys. It is refused on an instant or sorcery, which would be
-exiled as it resolves the way flashback is. The near miss is `graveyard_cost`
+`enters_tapped`, `arrived_this_turn_from`, `surveilled_this_turn` and
+`pay_life_instead`. The permission frees only the card carrying it, at its
+printed price, and each use takes that card out of the graveyard, so no reader
+looks at those keys. It is refused on an instant or sorcery, a form with no
+witness or test behind it. The near miss is `graveyard_cost`
 with the printed mana, which has no `condition`: the card would be castable from
 the graveyard with no Zombie at all.
+
+#### A graveyard permission priced in life
+
+```jsonc
+// Eye of Duskmantle -- "You may play lands and cast spells from among cards in
+//  your graveyard you've surveilled this turn. If you cast a spell this way,
+//  you pay life equal to its mana value rather than paying its mana cost."
+{ "kind": "static", "effect": "play_lands_from_graveyard", "affects_player": "you",
+  "surveilled_this_turn": true },
+{ "kind": "static", "effect": "cast_from_graveyard", "affects_player": "you",
+  "affects_spells": { "not_types": ["Land"] },
+  "surveilled_this_turn": true, "pay_life_instead": true }
+```
+
+`pay_life_instead` is Bolas's Citadel's word on Edgar's permission. It is the
+permission's only price, an alternative cost (118.9), so its lane offers the
+life lines `casting._pay_life_lines` builds for Nashi's
+`playable_pay_life_instead` and no line at the printed cost. X is 0 (107.3b),
+additional costs and a kicker are still owed (118.9d), and the line is offered
+only while the player has that much life (119.4). A printed-price permission
+beside it (an Edgar) offers its own line, and `Game._cast` bills whichever
+permission the line came from: a life line at the mana value is the
+life-priced permission's, every other line the printed one's. So using one
+never spends the other's turn.
+
+`max_per_turn` may be left out beside `surveilled_this_turn`, and then the
+permission is unmetered. Each cast takes a surveilled card out of the graveyard,
+and a card that comes back is a new object nobody surveilled (400.7), so the
+turn's surveils are the cap. Without the surveil clause the loader still asks
+for `max_per_turn` or `grants_flashback`. It refuses `pay_life_instead` beside
+`grants_flashback` (two prices for one cast), on a card's own `active_zones:
+["graveyard"]` permission, and on any static but this one and
+`cast_from_library_top`.
+
+The spell goes where it normally would. A spell cast under a
+`cast_from_graveyard` permission is exiled only when the permission grants
+flashback (Lier, Urabrask's grant): `Game._cast` stamps that as
+`StackItem.exiles_instead`, which holds on resolving, fizzling and being
+countered. Eye's sorcery goes back to the graveyard, a new object that is not
+surveilled.
 
 #### Mayhem
 
@@ -8513,6 +8805,36 @@ each source is visited once none applies twice (614.5) without needing the
 
 A mill of zero is not an event, so no doubler applies — "one or more" is read
 rather than left to arithmetic.
+
+## Looking at more cards when you surveil
+
+    Enhanced Surveillance — "You may look at an additional two cards each time
+    you surveil."
+
+```jsonc
+{ "kind": "static", "effect": "replace_surveil",
+  "affects_player": "you", "surveil_addend": 2, "surveil_optional": true }
+```
+
+A player-wide static, so it takes `affects_player` and no `affects`; the loader
+refuses `affects`, `amount`, an addend below 1, and either key on any other
+static.
+
+Read by the `surveil` op through `player_statics.surveil_additions`. Surveil is
+a keyword action with no primitive beneath it, so the op is the one place its
+number lives, and every surveil — a spell's, an upkeep trigger's, "target
+player surveils" — passes through it. The addend enlarges **the same** surveil
+(701.25a): the extra cards take the one graveyard-or-top choice, one
+`SURVEILLED` fires, and its `looked` counts them. A `surveils` trigger is the
+near miss and is a different card: it would be a second surveil after the
+first, firing "whenever you surveil" twice.
+
+`surveil_optional` is the printed "may". The surveiller is asked one yes/no per
+static before any card is looked at, so the choice cannot depend on what the
+printed number showed; without the key the addend always applies. Two statics
+add up, each asked on its own. Surveil 0 is still no surveil (701.25c) and is
+not enlarged, and a library no deeper than the cards already being looked at
+asks nothing.
 
 ## Proliferating twice
 
@@ -12933,12 +13255,52 @@ things follow that are easy to get wrong in the other direction:
 
 An additional main phase is a `POSTCOMBAT_MAIN` step, because 505.1b makes any
 main phase after a combat a postcombat one. It is another sorcery window and not
-another land drop: `lands_played` is reset by the untap step, so rule 305.2 holds
+another land drop: `lands_played` is reset by the turn's first untap step, so rule 305.2 holds
 with no code. An unspent grant expires at the turn boundary — Aggravated Assault
 activated in an end step has no phase left to come after — and a turn takes at
 most `MAX_EXTRA_PHASES_PER_TURN` of them, which is the same kind of valve as the
 turn cap: the rules would let an untap-and-attack-again loop run for ever, and a
 self-play run cannot.
+
+## An additional beginning phase
+
+```jsonc
+{ "kind": "triggered",
+  "text": "At the beginning of each of your postcombat main phases, there is an additional beginning phase after this phase.",
+  "trigger": { "event": "postcombat_main", "controller": "you" },
+  "effects": [ { "op": "extra_beginning_phase" } ] }
+```
+
+Sphinx of the Second Sun. `extra_beginning_phase` takes no keys, and the loader
+refuses `player`, `controller` and `amount`: like
+[an extra combat](#an-additional-combat-phase) it belongs to the turn in
+progress, and the printed sentence grants one. It queues a `"beginning"` kind on
+`GameState.extra_phases`, entered at `Step.UNTAP` when the current phase ends;
+the draw step that closes it hands on to the rest of the queue or back to
+`resume_step`, while a turn's own draw step still walks on into its precombat
+main.
+
+The three steps are real ones. The untap step phases, checks day and night and
+untaps (502.1–502.3), spending `skip_next_untap` and asking Winter Orb's question
+again; the draw step draws; every upkeep and draw-step trigger, `delay` and
+`step_is` reader sees them. What the added untap step does not do is begin a
+turn: `turn._start_turn` (land drops, `cards_drawn_this_turn`, every "until your
+next turn" clock, `turns_begun`, `TURN_BEGAN`) runs only in the turn's first
+untap step, and the 103.8a skip of the starting player's first draw applies only
+to the turn's own draw step.
+
+Three consequences of the shared queue:
+
+- **An added main phase is a postcombat main phase** (505.1a), so Relentless
+  Assault under the Sphinx gives two beginning phases, and the cap,
+  `MAX_EXTRA_PHASES_PER_TURN`, counts them with every other grant.
+- **The most recently created phase comes first** (500.8): a grant goes on the
+  front of the queue, so Relentless Assault cast after the Sphinx's trigger
+  resolved puts its combat and main before the beginning phase.
+- **A grant made in a beginning or ending phase waits** in
+  `GameState.deferred_phases` until the next main phase begins, because every
+  printed grant times itself off a main or combat phase. One made in the added
+  upkeep after the last main phase of a turn therefore expires with the turn.
 
 ## "…dealt damage by this creature this turn"
 
@@ -13755,6 +14117,38 @@ what the token is rather than an effect on it — so an anthem afterwards layers
 on top exactly as it would on a real card. The loader rejects unknown keys: a
 misspelled one dropped silently gives a plain copy, which looks identical until
 somebody reads its colour.
+
+### An embalmed token that enters as a copy
+
+```jsonc
+// Vizier of Many Faces
+"replacements": [
+  { "event": "self_enters_as_copy",
+    "copying": { "zone": "battlefield", "controller": "any", "types": ["Creature"] },
+    "except_": { "condition": { "embalmed": true },
+                 "no_mana_cost": true, "colors": ["W"], "add_subtypes": ["Zombie"] } } ],
+// …and its embalm ability's effect
+{ "op": "copy_permanent",
+  "objects": { "zone": "exile", "controller": "any", "self_only": true },
+  "controller": "you", "embalm": true,
+  "except_": { "colors": ["W"], "add_subtypes": ["Zombie"], "no_mana_cost": true } }
+```
+
+*"…except if this creature was embalmed, the token has no mana cost, it's white,
+and it's a Zombie in addition to its other types."*
+
+`"embalm": true` on `copy_permanent` stamps each token it makes `embalmed`
+(702.128a), which the `{"embalmed": true}` condition reads off its source. The
+loader refuses the condition on a card with no such `copy_permanent`, since it
+could never be true there. A copy of an embalmed token is not embalmed.
+
+A token copy of a card that prints an as-enters copy is asked that question
+before it exists, exactly as a cast one is, so the embalmed Vizier enters as a
+copy of a creature. That copy overwrites every copiable value the token was
+created with, embalm's exception included (613.2a, 707.2), so the copy is white,
+a Zombie and costless only because the Vizier's own exception says so. That is
+why the card prints it, and why the condition is on `except_` rather than on the
+replacement: cast from hand, the Vizier still enters as a copy, a plain one.
 
 ## "You may play the exiled card this turn" — impulse draw
 
@@ -14920,6 +15314,39 @@ would put a card from somebody's hand onto the board.
 `controller: "any"` on the pool, because exile is kept per owner and the card
 was taken from an opponent.
 
+## "Put a card exiled with it into its owner's graveyard" — `put_exiled_into_graveyard`
+
+Foreboding Steamboat's attack trigger takes one of the cards it exiled, from
+whichever player owns it, and puts it into that player's graveyard:
+
+```jsonc
+"trigger": { "event": "attacks", "source": "self" },
+"effects": [
+  { "op": "put_exiled_into_graveyard", "as": "buried",
+    "objects": { "zone": "exile", "controller": "any",
+                 "exiled_with": "self", "count": 1 } },
+  { "op": "if", "condition": { "exists": { "binding": "buried" } },
+    "then": [{ "op": "investigate" }] }
+]
+```
+
+`objects` is required and is a selector over exile: its `zone` defaults to
+`exile` and the loader refuses any other, because from the battlefield the move
+is destroy or sacrifice, from a library mill and from a hand discard. The pool
+is every exile the selector walks, so `count` is over all of it together, and
+the controller chooses (`chooser` says otherwise). Each card goes to its
+**owner's** graveyard through the graveyard replacements.
+
+`as` binds the cards that reached a graveyard, accumulating, which is what "if
+you do" reads. A card a Rest in Peace sent back to exile was not put into a
+graveyard, so it is not bound and the rider does not run; with nothing exiled
+with the permanent the binding is empty too.
+
+The near misses: `search_zones` over `zones: ["exile"]` takes its count per
+player and may take none; `return_from_graveyard` reads a graveyard and binds
+nothing; the `process` cost is a cost, over cards an opponent owns, exiled by
+anything.
+
 ## "Whenever an opponent loses life"
 
 ```jsonc
@@ -15053,6 +15480,43 @@ Two details that bite:
 The link is written *after* the move (`move_object` runs
 `reset_permanent_state` on the way, which would wipe it) and cleared by that
 same reset when the card returns, which is right: it is spent once followed.
+
+## "If you cast it any time a sorcery couldn't have been cast"
+
+```jsonc
+// Necromancy's first paragraph
+{ "types": ["Enchantment"], "as_though_flash": true,
+  "abilities": [
+    { "kind": "triggered",
+      "trigger": { "event": "self_enters", "source": "self",
+                   "condition": { "cast_at_sorcery_timing": false } },
+      "effects": [
+        { "op": "delay", "step": "cleanup",
+          "effects": [ { "op": "sacrifice",
+                         "objects": { "self_only": true, "controller": "any" } } ] } ] } ] }
+```
+
+`as_though_flash` is "you may cast this spell as though it had flash": the
+card's own timing permission, read by `casting._timing_ok` beside the printed
+keyword. It is not `"keywords": ["flash"]`, because the card does not have
+flash, and anything that asks whether a spell or permanent has flash must not
+see it. The board-wide permission ("you may cast artifact spells as though they
+had flash") is the `cast_as_though_flash` static, a different key on a
+different permanent.
+
+`cast_at_sorcery_timing` is whether the spell was cast at a time a sorcery could
+have been (307.1): by the active player, holding priority, in a main phase, onto
+an empty stack. `stack.push_spell` stamps it as the spell is cast, before the
+spell joins the stack, and only a cast made with priority (`Game._cast`) can be
+stamped true: a cast made while an effect resolves (cascade, "cast it without
+paying its mana cost", a miracle trigger) is never at sorcery timing. It is
+false **both ways** for anything this life of the object was not cast into (a
+token, a copy, a permanent that arrived any way but by resolving as that
+spell), so the printed "if you cast it any time a sorcery couldn't have been
+cast" is `false` and never `{"not": {"cast_at_sorcery_timing": true}}`, which
+is also true of a reanimated card. `cast_during` is the near miss: it reads the
+phase alone, and a copy cast in response during your own main phase is in the
+right phase and not at sorcery timing.
 
 ## "If it was cast" — 603.6e
 
@@ -15731,7 +16195,9 @@ The outcome is a **binding**, not a `won:` block, because the printed card is
 two sentences and `if` already says the second one. The loader refuses either
 half without the other, exactly as it refuses half a kicker: a `clash` nothing
 reads reveals two cards and stops, and a `clash_won` with no clash behind it
-reads 0 for ever. Both load cleanly.
+reads 0 for ever. Both load cleanly. The one exception is a card that also has
+a `wins_clash` trigger (below): that trigger is what consumes the win, so its
+clash needs no `clash_won` reader.
 
 Three things the op decides, each of which a card written around it would
 otherwise get quietly wrong:
@@ -15743,7 +16209,37 @@ otherwise get quietly wrong:
 | **An empty library cannot win, and loses to `{0}`** | "higher than each other card revealed" is vacuously true against nothing, so the no-card sentinel has to sit *below* zero rather than at it |
 
 At a pod the op asks which opponent to clash with; in a duel there is one
-opponent and `ask_player` does not stop to ask.
+opponent and `ask_player` does not stop to ask. `opponent`, a player spec,
+narrows the pool to the seats it names among the controller's living
+opponents: "clash with defending player" off an `attacks` trigger is
+`{ "op": "clash", "opponent": { "binding": "defender" } }`, and asks nobody. A
+pool that comes out empty — the defending player has left the game — is no
+clash at all: nothing is revealed and `clash_won` is 0.
+
+### "Whenever you win a clash"
+
+`wins_clash` fires once per clash won, whatever made the clash. Both players
+clash (701.23a) and either may win (701.23b), so every `clash` fires one
+`clashed` event per clashing player once both cards are placed, each carrying
+that player's own `won`, and the trigger hears the won ones. A lost clash fires
+nothing for its loser and a tied clash fires nothing for either player. The
+subject is a **player**, the one who won, so `controller` reads who: `"you"`
+(the default) is "whenever you win a clash", and the opponent who wins *your*
+clash pays their own watcher, not yours.
+
+```jsonc
+// Marvo, Deep Operative — "Whenever Marvo attacks, clash with defending player."
+// / "Whenever you win a clash, draw a card. Then you may cast a spell from your
+// hand with mana value 8 or less without paying its mana cost."
+{ "kind": "triggered", "trigger": { "event": "attacks" },
+  "effects": [ { "op": "clash", "opponent": { "binding": "defender" } } ] },
+{ "kind": "triggered", "trigger": { "event": "wins_clash", "controller": "you" },
+  "effects": [ … ] }
+```
+
+The near miss is an `if` on the attack trigger's own `clash_won`, which is a
+narrower card: it pays only for that ability's clash and misses a clash won off
+any other card.
 
 ## Flipping a coin
 

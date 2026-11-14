@@ -15,7 +15,7 @@ from . import suspend as suspend_mod
 from .actions import Action
 from .carddef import BESTOW_TARGET, MUTATE_TARGET, CardDef, Cost, TargetSpec
 from .characteristics import _battlefield_statics, chars
-from .cost_reduction import cost_reduction, variant_reduction
+from .cost_reduction import cost_reduction, targets_own_discount, variant_reduction
 from .costs import (
     _tap_cost_pool,
     can_pay,
@@ -311,10 +311,18 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
         # card itself rather than a permanent -- so it is one line offered when
         # either permission holds, not two identical ones.
         if (
-            _graveyard_cast_permission(state, pid, card, oid) is not None
+            _graveyard_cast_permission(state, pid, card, oid, pay_life=False) is not None
             or own_graveyard_cast_permission(state, pid, oid)
         ):
             out.extend(_cast_options(state, pid, oid, card, extra_generic=0))
+        # "If you cast a spell this way, you pay life equal to its mana value
+        # rather than paying its mana cost" -- Eye of Duskmantle. The Citadel's
+        # `pay_life_instead` on Edgar's permission: that permission's only
+        # price, so its lane offers the life lines Nashi's does and nothing at
+        # the printed cost. A board with both shapes offers both lanes, and the
+        # line taken names the permission `Game._cast` bills.
+        if _graveyard_cast_permission(state, pid, card, oid, pay_life=True) is not None:
+            out.extend(_pay_life_lines(state, pid, oid, card))
         if card.retrace and can_pay(state, pid, card.retrace_cost, oid):
             out.extend(_cast_options(state, pid, oid, card, extra_generic=0))
         # Flashback is the same widening with a different price: an alternative
@@ -560,7 +568,7 @@ def _timing_ok(state: GameState, pid: int, card: CardDef, sorcery_speed: bool) -
         # `cast_as_though_flash` permission all say "may", and 101.2 gives
         # "only" the last word.
         return sorcery_speed
-    if card.is_instant or Keyword.FLASH.value in card.keywords:
+    if card.is_instant or Keyword.FLASH.value in card.keywords or card.as_though_flash:
         return True
     if sorcery_speed:
         return True
@@ -1133,8 +1141,19 @@ def _permissions_for(state: GameState, pid: int):
     return graveyard_cast_permissions(state, pid)
 
 
-def _graveyard_cast_permission(state: GameState, pid: int, card: CardDef, oid: int | None = None):
+def _graveyard_cast_permission(
+    state: GameState,
+    pid: int,
+    card: CardDef,
+    oid: int | None = None,
+    *,
+    pay_life: bool | None = None,
+):
     """The permission that would let ``card`` be cast from a graveyard, if any.
+
+    ``pay_life`` picks a lane: ``True`` only a permission priced in life
+    (`pay_life_instead`, Eye of Duskmantle), ``False`` only one at the printed
+    price (Edgar), ``None`` either.
 
     Returns the granting permanent, or ``None``. Both `legality` and
     `Game._cast` go through here, so the permission a line was offered under is
@@ -1147,6 +1166,8 @@ def _graveyard_cast_permission(state: GameState, pid: int, card: CardDef, oid: i
 
     subject = state.objects.get(oid) if oid is not None else None
     for source_obj, static in graveyard_cast_permissions(state, pid):
+        if pay_life is not None and bool(static.get("pay_life_instead")) != pay_life:
+            continue
         if not graveyard_cast_allows(state, source_obj, static, card):
             continue
         # "…put there from anywhere other than the battlefield this turn" is a
@@ -1163,12 +1184,19 @@ def _graveyard_cast_permission(state: GameState, pid: int, card: CardDef, oid: i
             and not static.get("any_graveyard")
         ):
             continue
-        cap = int(static.get("max_per_turn") or 1)
+        # An explicit ``None`` is the unmetered permission the loader allows
+        # only beside `surveilled_this_turn` (Eye of Duskmantle): each cast
+        # takes a surveilled card out, and whatever returns is a new object
+        # (400.7). A missing key is still one a turn, which a resolving grant
+        # (`grant_graveyard_cast`) relies on.
+        cap = static.get("max_per_turn", 1)
         # Billed against the granting permanent through the ordinary activation
         # ledger, keyed on a sentinel index no real ability can occupy, so a
         # permanent that also has activated abilities does not share a counter
         # with them.
-        if state.turn_ledger.activations(source_obj.oid, GRAVEYARD_CAST_SLOT) >= cap:
+        if cap is not None and state.turn_ledger.activations(
+            source_obj.oid, GRAVEYARD_CAST_SLOT
+        ) >= int(cap or 1):
             continue
         return source_obj
     return None
@@ -1666,6 +1694,7 @@ def deferred_target_spec(
 
     - strive, which charges per target beyond the first;
     - a targeting tax on the board (Kasmina's mana, Terror of the Peaks' life);
+    - the card's own "costs {N} less if it targets …" (`targets_own_discount`);
     - a cap *between* the picks (total mana value or power) or one per player, which
       the decision's independent toggles cannot express;
     - a spec reading a sibling's answer, which needs the sibling first.
@@ -1673,7 +1702,7 @@ def deferred_target_spec(
     Only a spec that can take **two or more**: "up to one target creature" is
     a chip per creature plus "No target" today, and that already reads well.
     """
-    if not specs or card.strive is not None:
+    if not specs or card.strive is not None or targets_own_discount(card):
         return None
     spec = specs[-1]
     many = spec.count == "any" or (
@@ -2260,6 +2289,9 @@ def _cast_variant(
             for _, static in _battlefield_statics(state)
             if static.get("effect") == "spell_cost_reduction"
         ) or spell_mana_tax_targeted(state)  # Kasmina's surcharge is per tuple too
+        # …and so is the card's own "costs {2} less if it targets an attacking
+        # creature" (Ephara's Dispersal), whatever is on the board.
+        targeted_discount = targeted_discount or targets_own_discount(card)
         # Convoke and delve reduce the generic part, exactly as a cost reduction
         # does -- and go through the same clamp, so delve cannot make a spell
         # free of its coloured pips. Convoke can pay them too (702.51a): each

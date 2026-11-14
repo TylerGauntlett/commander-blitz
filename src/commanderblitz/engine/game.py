@@ -981,6 +981,7 @@ class Game:
 
         permission = None
         enters_tapped = False
+        graveyard_flashback = False
         if obj.zone is Zone.GRAVEYARD and not action.flashback and not card.retrace:
             # Gravecrawler's own permission, when it holds, is the one used: it
             # costs nothing to spend, and billing an Edgar for a cast the card
@@ -991,7 +992,16 @@ class Game:
                 permission = oid
                 granting = None
             else:
-                granting = _graveyard_cast_permission(state, pid, card, oid)
+                # The lane the line was offered in: a life line priced at the
+                # mana value is a `pay_life_instead` permission's (Eye of
+                # Duskmantle), every other line a printed-price one's, so one
+                # permission's use never spends the other's.
+                life_line = tuple(action.granted_cost) == (("pay_life", card.mana_value),)
+                granting = _graveyard_cast_permission(
+                    state, pid, card, oid, pay_life=life_line
+                )
+                if granting is None and life_line:  # pragma: no cover - a granted cost
+                    granting = _graveyard_cast_permission(state, pid, card, oid, pay_life=False)
             if granting is not None:
                 permission = granting.oid
                 state.turn_ledger.activated(granting.oid, GRAVEYARD_CAST_SLOT)
@@ -1001,6 +1011,13 @@ class Game:
                         continue
                     if static.get("enters_tapped"):
                         enters_tapped = True
+                    if static.get("grants_flashback"):
+                        # Flashback's exile (702.34a) is the permission's, so
+                        # it rides on the stack item and holds on resolving,
+                        # fizzling and being countered alike. A permission
+                        # that is not flashback exiles nothing: Eye of
+                        # Duskmantle's sorcery goes back to the graveyard.
+                        graveyard_flashback = True
 
 
         if action.prepared:
@@ -1028,6 +1045,19 @@ class Game:
             oid = spell.oid
             state.bump_chars()
 
+        # "If that spell would be put into a graveyard, exile it instead"
+        # (Mission Briefing, Dire Fleet Daredevil), and a granted flashback's
+        # exile (Will of the Jeskai): a rider the **permission** puts on the
+        # spell cast under it. Read here, off the same live permission the
+        # group ledger above bills, and carried on the stack item -- not read
+        # off the card at resolution -- because it is a replacement on the
+        # spell's every way into a graveyard: resolving, being countered and
+        # fizzling all read `StackItem.exiles_instead`, and a countered spell
+        # left in the graveyard would still be castable under the same grant.
+        permission_exiles = (
+            obj.playable_exiles and obj.playable_live(state.turn)
+        ) or graveyard_flashback
+
         item = stack.push_spell(
             state,
             oid,
@@ -1035,7 +1065,11 @@ class Game:
             targets + x_refs + mode_refs,
             x=x,
             kicked=action.kicked,
+            # The one cast a player makes holding priority, which is half of
+            # 307.1's sorcery timing (`GameObject.cast_at_sorcery_timing`).
+            with_priority=True,
             graveyard_permission=permission,
+            exiles_instead=permission_exiles,
             enters_tapped=enters_tapped,
             # Gift (702.164a). Carried onto the stack item and paid for with
             # nothing -- there is no `pay` call above for it, and that is the

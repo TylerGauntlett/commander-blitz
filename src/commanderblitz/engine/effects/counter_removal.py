@@ -109,5 +109,5 @@ def remove_counters_one_at_a_time(
         kind = yield from ask_counter_kind(ctx, picked[0], chooser)
         if kind is None:
             break
-        removed += remove_counters(ctx.state, picked[0], kind, 1)
+        removed += remove_counters(ctx.state, picked[0], kind, 1, by=chooser)
     return removed

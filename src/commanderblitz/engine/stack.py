@@ -43,7 +43,7 @@ from .effects.modes import (
 )
 from .effects.selectors import select_players
 from .effects.values import evaluate_value
-from .enums import DecisionKind, Zone
+from .enums import DecisionKind, Step, Zone
 from .events import EventType
 from .primitives import attach, attach_to_player, merge_permanents, shuffle_library
 from .structs import DelayedTrigger, StackItem, TargetRef, TriggerInstance
@@ -98,6 +98,7 @@ def push_spell(
     mutated: bool = False,
     modes: tuple[int, ...] = (),
     modes_answered: bool = False,
+    with_priority: bool = False,
 ) -> StackItem:
     """Move a card from hand (or the command zone) onto the stack as a spell."""
     obj = state.objects[oid]
@@ -126,6 +127,18 @@ def push_spell(
     # active player, because "your main phase" is both.
     obj.cast_step = state.step
     obj.cast_on_own_turn = state.active_player == controller
+    # 307.1, asked before this spell joins the stack: a sorcery may be cast by
+    # the active player, holding priority, in a main phase, while the stack is
+    # empty. `with_priority` is the caller's word for the second clause -- only
+    # `Game._cast` casts with priority; every other caller is an effect
+    # resolving, a turn-based action or a trigger, and none of those is a
+    # moment a sorcery could have been cast.
+    obj.cast_at_sorcery_timing = (
+        with_priority
+        and state.active_player == controller
+        and state.step in (Step.PRECOMBAT_MAIN, Step.POSTCOMBAT_MAIN)
+        and not state.stack
+    )
     # Bestow (702.103a). Recorded on the object as well as the stack item,
     # because it outlives the spell: it is what makes the resolved permanent an
     # Aura, and `chars` asks the object rather than the stack.
@@ -1131,6 +1144,7 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
         enters_tapped=item.enters_tapped,
         warped=item.warped,
         exiles_instead=item.exiles_instead,
+        flashback=item.flashback,
     )
     _attach_aura(state, obj, card, targets, specs)
 
@@ -1183,6 +1197,7 @@ def _place_after_resolution(
     enters_tapped: bool = False,
     warped: bool = False,
     exiles_instead: bool = False,
+    flashback: bool = False,
 ):
     """A resolved permanent enters the battlefield; anything else goes to the graveyard.
 
@@ -1199,25 +1214,22 @@ def _place_after_resolution(
     # legality widening, and the one thing that separates it is that the card
     # comes back for another go, so `graveyard_cast_exiles` is the whole
     # difference between the two keywords.
-    # Two paths into a graveyard cast and both exile, but they are different
-    # facts and neither implies the other. A `cast_from_graveyard` permission
-    # (or the card's own flashback) sets `cast_from_graveyard`, and
-    # `graveyard_cast_exiles` is what escape turns off. A `grant_playable`
-    # permission sets neither, so without its own clause Will of the Jeskai's
-    # "gains flashback" would be a permission the card could use again and again
-    # for the rest of the turn.
-    #
-    # The second is gated on the turn as well as the flag, because the
-    # permission itself is: a card granted flashback last turn and cast this one
-    # was never given anything, and must not be exiled for it.
+    # The card's own graveyard-cost slot (`item.flashback`) exiles unless it is
+    # escape, which `graveyard_cast_exiles` turns off. A `cast_from_graveyard`
+    # permission is not that slot: it exiles only when it grants flashback
+    # (Lier, Urabrask's grant), which `Game._cast` stamps as `exiles_instead`
+    # below, and otherwise the spell goes where it normally would (Eye of
+    # Duskmantle).
     if destination is Zone.GRAVEYARD and (
-        (obj.cast_from_graveyard and card.graveyard_cast_exiles)
-        or (obj.playable_exiles and obj.playable_live(state.turn))
+        (flashback and card.graveyard_cast_exiles)
         # "If that spell would be put into your graveyard, exile it instead"
-        # -- the rider the effect that cast it put on the stack item
-        # (`cast_card`'s ``exiles``). A third path, and the one with no flag
-        # on the object: neither of the above is true of a card Helmut Zemo
-        # cast from a graveyard, which would otherwise come back every attack.
+        # -- the rider on the stack item, put there by whoever cast it: an
+        # effect's free cast (`cast_card`'s ``exiles``), or a `grant_playable`
+        # / `exile` permission's ``playable_exiles`` (and ``as_flashback``),
+        # stamped by `Game` as the spell was cast under it. Neither of the
+        # above is true of a card Helmut Zemo cast from a graveyard, nor of one
+        # Will of the Jeskai granted flashback, and both would otherwise come
+        # back to be cast again.
         or exiles_instead
     ):
         destination = Zone.EXILE

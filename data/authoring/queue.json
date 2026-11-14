@@ -7472,12 +7472,12 @@
     },
     "Amphin Mutineer": {
       "edhrec_rank": 3395,
-      "gate": "template",
+      "gate": null,
       "name": "Amphin Mutineer",
-      "reason": "no template for: When this creature enters, exile up to one target non-Salamander creature. That creature's",
+      "reason": "",
       "scryfall_id": "0f54f429-80c2-4f55-bb99-236f2c697985",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Amphin Pathmage": {
@@ -40592,12 +40592,12 @@
     },
     "Case of the Locked Hothouse": {
       "edhrec_rank": 1428,
-      "gate": "template",
+      "gate": null,
       "name": "Case of the Locked Hothouse",
-      "reason": "no template for: To solve — You control seven or more lands",
+      "reason": "",
       "scryfall_id": "0929a1bd-e35c-4ca5-8c8c-dd304cf4b830",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Case of the Lost Witness": {
@@ -40622,12 +40622,12 @@
     },
     "Case of the Ransacked Lab": {
       "edhrec_rank": 2664,
-      "gate": "template",
+      "gate": null,
       "name": "Case of the Ransacked Lab",
-      "reason": "no template for: Instant and sorcery spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "16a9a596-61de-4fcf-aae0-41836c3deca5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Case of the Shattered Pact": {
@@ -40642,12 +40642,12 @@
     },
     "Case of the Shifting Visage": {
       "edhrec_rank": 8807,
-      "gate": "template",
+      "gate": null,
       "name": "Case of the Shifting Visage",
-      "reason": "no template for: At the beginning of your upkeep, surveil 1",
+      "reason": "",
       "scryfall_id": "65463a1b-39c1-4fc8-8de2-85224de810ac",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Case of the Stashed Skeleton": {
@@ -40672,12 +40672,12 @@
     },
     "Case of the Uneaten Feast": {
       "edhrec_rank": 5672,
-      "gate": "template",
+      "gate": null,
       "name": "Case of the Uneaten Feast",
-      "reason": "no template for: Whenever a creature you control enters, you gain 1 life",
+      "reason": "",
       "scryfall_id": "ac63941b-3f78-4bd3-8b05-ca12aaaa006c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Case the Joint": {
@@ -44982,12 +44982,12 @@
     },
     "Charnel Serenade": {
       "edhrec_rank": 10200,
-      "gate": "template",
+      "gate": null,
       "name": "Charnel Serenade",
-      "reason": "no template for: Surveil 3, then return a creature card from your graveyard to the battlefield with a final",
+      "reason": "",
       "scryfall_id": "05a2477e-a9a2-49fb-86e6-53d3e153a965",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Charnel Troll": {
@@ -51882,12 +51882,12 @@
     },
     "Connive // Concoct": {
       "edhrec_rank": 9154,
-      "gate": "template",
+      "gate": null,
       "name": "Connive // Concoct",
-      "reason": "no template for: Gain control of target creature with power 2 or less",
+      "reason": "",
       "scryfall_id": "d7481287-fce9-4ef0-a3a8-7801c9eb3fa8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Conquer": {
@@ -53182,12 +53182,12 @@
     },
     "Copy Catchers": {
       "edhrec_rank": 18757,
-      "gate": "template",
+      "gate": null,
       "name": "Copy Catchers",
-      "reason": "no template for: Whenever you surveil, you may pay {1}{U}. If you do, create a token that's a copy of this ",
+      "reason": "",
       "scryfall_id": "588ebe61-4697-4ef7-8800-3e88e168bb4e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Copy Enchantment": {
@@ -54322,12 +54322,12 @@
     },
     "Counterpoint": {
       "edhrec_rank": 9544,
-      "gate": "template",
+      "gate": null,
       "name": "Counterpoint",
-      "reason": "no template for: Counter target spell. You may cast a creature, instant, sorcery, or planeswalker spell fro",
+      "reason": "",
       "scryfall_id": "7cd3d4da-aeed-4f3f-89aa-63b20ce79f7e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Countersculpt": {
@@ -64282,12 +64282,12 @@
     },
     "Deceptive Frostkite": {
       "edhrec_rank": 3852,
-      "gate": "template",
+      "gate": null,
       "name": "Deceptive Frostkite",
-      "reason": "no template for: You may have this creature enter as a copy of a creature you control with power 4 or great",
+      "reason": "",
       "scryfall_id": "1f87120f-d2a7-4c06-aadd-3ed5729d7abf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deceptive Landscape": {
@@ -68932,12 +68932,12 @@
     },
     "Dimir Spybug": {
       "edhrec_rank": 13490,
-      "gate": "template",
+      "gate": null,
       "name": "Dimir Spybug",
-      "reason": "no template for: Whenever you surveil, put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "69840910-eb86-49a4-915f-d21b5628fc04",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dimir Strandcatcher": {
@@ -69182,12 +69182,12 @@
     },
     "Dire Fleet Daredevil": {
       "edhrec_rank": 3152,
-      "gate": "template",
+      "gate": null,
       "name": "Dire Fleet Daredevil",
-      "reason": "no template for: When this creature enters, exile target instant or sorcery card from an opponent's graveya",
+      "reason": "",
       "scryfall_id": "9de2ad47-c6d5-4cd8-ae32-66ae167e25a0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dire Fleet Hoarder": {
@@ -69842,12 +69842,12 @@
     },
     "Discovery // Dispersal": {
       "edhrec_rank": 9849,
-      "gate": "template",
+      "gate": null,
       "name": "Discovery // Dispersal",
-      "reason": "no template for: Surveil 2, then draw a card",
+      "reason": "",
       "scryfall_id": "5b08b019-796b-4304-806f-59bf7d22b729",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Discreet Retreat": {
@@ -69942,12 +69942,12 @@
     },
     "Disinformation Campaign": {
       "edhrec_rank": 12413,
-      "gate": "template",
+      "gate": null,
       "name": "Disinformation Campaign",
-      "reason": "no template for: When this enchantment enters, you draw a card and each opponent discards a card",
+      "reason": "",
       "scryfall_id": "d34ea8c4-03b1-415f-80e1-7c3cf6933685",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Disintegrate": {
@@ -71432,12 +71432,12 @@
     },
     "Dogged Detective": {
       "edhrec_rank": 6852,
-      "gate": "template",
+      "gate": null,
       "name": "Dogged Detective",
-      "reason": "no template for: Whenever an opponent draws their second card each turn, you may return this card from your",
+      "reason": "",
       "scryfall_id": "57d1f729-0d7c-4122-9bca-f3b08cf6fe4f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dogged Hunter": {
@@ -71992,12 +71992,12 @@
     },
     "Doom Whisperer": {
       "edhrec_rank": 1817,
-      "gate": "template",
+      "gate": null,
       "name": "Doom Whisperer",
-      "reason": "no template for: Pay 2 life: Surveil 2",
+      "reason": "",
       "scryfall_id": "de1a8780-726b-47f2-904b-a840cfc69d76",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Doom's Servo-Guards": {
@@ -84252,12 +84252,12 @@
     },
     "Enhanced Surveillance": {
       "edhrec_rank": 5682,
-      "gate": "template",
+      "gate": null,
       "name": "Enhanced Surveillance",
-      "reason": "no template for: You may look at an additional two cards each time you surveil",
+      "reason": "",
       "scryfall_id": "42e6f705-2af7-47c2-961a-cf4c02b29f21",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Enigma Drake": {
@@ -84972,12 +84972,12 @@
     },
     "Ephara's Dispersal": {
       "edhrec_rank": 10857,
-      "gate": "template",
+      "gate": null,
       "name": "Ephara's Dispersal",
-      "reason": "no template for: This spell costs {2} less to cast if it targets an attacking creature",
+      "reason": "",
       "scryfall_id": "b622aad1-4f57-472e-9bd8-9404da88d6be",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ephara's Enlightenment": {
@@ -89232,12 +89232,12 @@
     },
     "Eye of Duskmantle": {
       "edhrec_rank": 10363,
-      "gate": "template",
+      "gate": null,
       "name": "Eye of Duskmantle",
-      "reason": "no template for: You may play lands and cast spells from among cards in your graveyard you've surveilled th",
+      "reason": "",
       "scryfall_id": "8ce43e1a-04a8-48fc-a9c0-4dbb0aaf1a7b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Eye of Jace": {
@@ -95142,12 +95142,12 @@
     },
     "Final-Word Phantom": {
       "edhrec_rank": 7933,
-      "gate": "template",
+      "gate": null,
       "name": "Final-Word Phantom",
-      "reason": "no template for: During each opponent's end step, you may cast spells as though they had flash",
+      "reason": "",
       "scryfall_id": "2bda2277-68f3-4201-80c6-3ff6077e9e38",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Finale of Devastation": {
@@ -100202,12 +100202,12 @@
     },
     "Foreboding Steamboat": {
       "edhrec_rank": 15160,
-      "gate": "template",
+      "gate": null,
       "name": "Foreboding Steamboat",
-      "reason": "no template for: When this Vehicle enters, each player chooses two nontoken, non-Vehicle creatures they con",
+      "reason": "",
       "scryfall_id": "cbd9a0cb-e1ea-446e-aa57-4305d4b3b92e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Forecasting Fortune Teller": {
@@ -130302,12 +130302,12 @@
     },
     "Hostile Desert": {
       "edhrec_rank": 9625,
-      "gate": "template",
+      "gate": null,
       "name": "Hostile Desert",
-      "reason": "no template for: {2}, Exile a land card from your graveyard: This land becomes a 3/4 Elemental creature unt",
+      "reason": "",
       "scryfall_id": "d71031c2-7379-4d83-b6d6-61f3104593c4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hostile Hostel // Creeping Inn": {
@@ -155502,12 +155502,12 @@
     },
     "Lazav, the Multifarious": {
       "edhrec_rank": 8524,
-      "gate": "template",
+      "gate": null,
       "name": "Lazav, the Multifarious",
-      "reason": "no template for: When Lazav enters, surveil 1",
+      "reason": "",
       "scryfall_id": "662758ee-f7c8-4cba-b67b-48ac80c3b5ca",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lazotep Archway": {
@@ -168532,12 +168532,12 @@
     },
     "Marvo, Deep Operative": {
       "edhrec_rank": 7371,
-      "gate": "template",
+      "gate": null,
       "name": "Marvo, Deep Operative",
-      "reason": "no template for: Whenever Marvo attacks, clash with defending player",
+      "reason": "",
       "scryfall_id": "8fdb30c1-0551-48b7-8bcb-d7e0dbb6690a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Marwyn, the Clearcutter": {
@@ -169162,12 +169162,12 @@
     },
     "Master of Death": {
       "edhrec_rank": 7004,
-      "gate": "template",
+      "gate": null,
       "name": "Master of Death",
-      "reason": "no template for: At the beginning of your upkeep, if this card is in your graveyard, you may pay 1 life. If",
+      "reason": "",
       "scryfall_id": "73903784-06c9-48ec-9d4a-e78461903617",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Master of Diversion": {
@@ -174942,12 +174942,12 @@
     },
     "Mirko, Obsessive Theorist": {
       "edhrec_rank": 7882,
-      "gate": "template",
+      "gate": null,
       "name": "Mirko, Obsessive Theorist",
-      "reason": "no template for: Whenever you surveil, put a +1/+1 counter on Mirko",
+      "reason": "",
       "scryfall_id": "043c7b0e-2f7b-4936-88fe-84d8022ffb51",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mirkwood": {
@@ -175952,12 +175952,12 @@
     },
     "Mission Briefing": {
       "edhrec_rank": 4862,
-      "gate": "template",
+      "gate": null,
       "name": "Mission Briefing",
-      "reason": "no template for: Surveil 2, then choose an instant or sorcery card in your graveyard. You may cast it this ",
+      "reason": "",
       "scryfall_id": "5ed398e7-9d2b-4bd2-9a4b-2885e4749003",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Misstep": {
@@ -184462,12 +184462,12 @@
     },
     "Necromancy": {
       "edhrec_rank": 999,
-      "gate": "template",
+      "gate": null,
       "name": "Necromancy",
-      "reason": "no template for: You may cast this spell as though it had flash. If you cast it any time a sorcery couldn't",
+      "reason": "",
       "scryfall_id": "3dd34a1a-e76b-46ee-be8d-5f7f4a092648",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Necromantic Selection": {
@@ -186972,12 +186972,12 @@
     },
     "Nightveil Sprite": {
       "edhrec_rank": 7324,
-      "gate": "template",
+      "gate": null,
       "name": "Nightveil Sprite",
-      "reason": "no template for: Whenever this creature attacks, surveil 1",
+      "reason": "",
       "scryfall_id": "b5c266ca-f2fc-4815-be7e-ee59894e4cc4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nightwhorl Hermit": {
@@ -188862,12 +188862,12 @@
     },
     "Notion Rain": {
       "edhrec_rank": 8407,
-      "gate": "template",
+      "gate": null,
       "name": "Notion Rain",
-      "reason": "no template for: Surveil 2, then draw two cards. deals 2 damage to you",
+      "reason": "",
       "scryfall_id": "66ed78c5-be23-4fcb-9143-e6574cd6ec68",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Notion Thief": {
@@ -196142,12 +196142,12 @@
     },
     "Overseer of the Damned": {
       "edhrec_rank": 3446,
-      "gate": "template",
+      "gate": null,
       "name": "Overseer of the Damned",
-      "reason": "no template for: When this creature enters, you may destroy target creature",
+      "reason": "",
       "scryfall_id": "0a1a06a4-af73-43e3-a2cd-3a2f0f9b18f0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Oversimplify": {
@@ -202382,12 +202382,12 @@
     },
     "Pile On": {
       "edhrec_rank": 4844,
-      "gate": "template",
+      "gate": null,
       "name": "Pile On",
-      "reason": "no template for: Convoke",
+      "reason": "",
       "scryfall_id": "570b56ff-b25a-43e4-927b-99dba542be5e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pileated Provisioner": {
@@ -205162,12 +205162,12 @@
     },
     "Port of Karfell": {
       "edhrec_rank": 3941,
-      "gate": "template",
+      "gate": null,
       "name": "Port of Karfell",
-      "reason": "no template for: {3}{U}{B}{B}, {T}, Sacrifice this land: Mill four cards, then return a creature card from ",
+      "reason": "",
       "scryfall_id": "c1377ca1-aa54-4fed-b289-45309eb2f6b6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Portable Hole": {
@@ -206542,12 +206542,12 @@
     },
     "Price of Fame": {
       "edhrec_rank": 4331,
-      "gate": "template",
+      "gate": null,
       "name": "Price of Fame",
-      "reason": "no template for: This spell costs {2} less to cast if it targets a legendary creature",
+      "reason": "",
       "scryfall_id": "e9054114-6740-4e2d-ae40-ccfb5e497d67",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Price of Freedom": {
@@ -234082,12 +234082,12 @@
     },
     "Savage Stomp": {
       "edhrec_rank": 6114,
-      "gate": "template",
+      "gate": null,
       "name": "Savage Stomp",
-      "reason": "no template for: This spell costs {2} less to cast if it targets a Dinosaur you control",
+      "reason": "",
       "scryfall_id": "541dc998-abdd-42dc-8dc5-a373e500961c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Savage Summoning": {
@@ -241992,12 +241992,12 @@
     },
     "Shadow of the Second Sun": {
       "edhrec_rank": 3673,
-      "gate": "template",
+      "gate": null,
       "name": "Shadow of the Second Sun",
-      "reason": "no template for: Enchant player",
+      "reason": "",
       "scryfall_id": "0da72736-574d-4d99-98ba-3a91c374cd10",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shadow the Hedgehog": {
@@ -248452,12 +248452,12 @@
     },
     "Sinister Starfish": {
       "edhrec_rank": 9906,
-      "gate": "template",
+      "gate": null,
       "name": "Sinister Starfish",
-      "reason": "no template for: {T}: Surveil 1",
+      "reason": "",
       "scryfall_id": "5f75b7f4-249c-4b10-a06d-6b7654cccc46",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sinister Strength": {
@@ -258572,12 +258572,12 @@
     },
     "Sphinx of the Second Sun": {
       "edhrec_rank": 2445,
-      "gate": "template",
+      "gate": null,
       "name": "Sphinx of the Second Sun",
-      "reason": "no template for: At the beginning of each of your postcombat main phases, there is an additional beginning ",
+      "reason": "",
       "scryfall_id": "1c0ca3bd-da1d-46ce-843a-cc583b3ecda9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sphinx of the Steel Wind": {
@@ -273102,12 +273102,12 @@
     },
     "Synth Infiltrator": {
       "edhrec_rank": 8844,
-      "gate": "template",
+      "gate": null,
       "name": "Synth Infiltrator",
-      "reason": "no template for: You may have this creature enter as a copy of any creature on the battlefield, except it's",
+      "reason": "",
       "scryfall_id": "3fe16bc4-8457-4c5f-902a-0746112e80a4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Synthesis Pod": {
@@ -284472,12 +284472,12 @@
     },
     "Thoughtbound Phantasm": {
       "edhrec_rank": 16955,
-      "gate": "template",
+      "gate": null,
       "name": "Thoughtbound Phantasm",
-      "reason": "no template for: Whenever you surveil, put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "dbcdf292-a391-4452-8116-20084754f591",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thoughtbound Primoc": {
@@ -288442,12 +288442,12 @@
     },
     "Tocasia's Dig Site": {
       "edhrec_rank": 6137,
-      "gate": "template",
+      "gate": null,
       "name": "Tocasia's Dig Site",
-      "reason": "no template for: {3}, {T}: Surveil 1",
+      "reason": "",
       "scryfall_id": "bbb5d40b-f0e1-4e98-b4d3-1ee2cfa5b579",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tocasia's Onulet": {
@@ -294752,12 +294752,12 @@
     },
     "Twilight Prophet": {
       "edhrec_rank": 1105,
-      "gate": "template",
+      "gate": null,
       "name": "Twilight Prophet",
-      "reason": "no template for: Ascend",
+      "reason": "",
       "scryfall_id": "050ca791-265a-4e7b-9640-4fd5a6d8cd3a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Twilight Shepherd": {
@@ -298602,12 +298602,12 @@
     },
     "Unshakable Tail": {
       "edhrec_rank": 7560,
-      "gate": "template",
+      "gate": null,
       "name": "Unshakable Tail",
-      "reason": "no template for: When this creature enters and at the beginning of your upkeep, surveil 1",
+      "reason": "",
       "scryfall_id": "053183e7-b505-49d2-b614-b704e984cb1a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Unsparing Boltcaster": {
@@ -306422,12 +306422,12 @@
     },
     "Vizier of Many Faces": {
       "edhrec_rank": 4333,
-      "gate": "template",
+      "gate": null,
       "name": "Vizier of Many Faces",
-      "reason": "no template for: You may have this creature enter as a copy of any creature on the battlefield, except if t",
+      "reason": "",
       "scryfall_id": "b8385f76-3057-4f8f-af84-f70214364870",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vizier of Remedies": {
@@ -311692,12 +311692,12 @@
     },
     "Watcher of Hours": {
       "edhrec_rank": 10358,
-      "gate": "template",
+      "gate": null,
       "name": "Watcher of Hours",
-      "reason": "no template for: Flying, ward {3}",
+      "reason": "",
       "scryfall_id": "d827fc3c-bc86-4ee9-9db9-461cb0276f6b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Watcher of the Roost": {
@@ -314282,12 +314282,12 @@
     },
     "Whispering Snitch": {
       "edhrec_rank": 16831,
-      "gate": "template",
+      "gate": null,
       "name": "Whispering Snitch",
-      "reason": "no template for: Whenever you surveil for the first time each turn, this creature deals 1 damage to each op",
+      "reason": "",
       "scryfall_id": "be9abe56-7d56-4fc6-ab24-7b78646266be",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Whispering Specter": {

@@ -253,6 +253,18 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: only when the tick took the last counter, and as part of the tick rather
     #: than as a trigger of its own.
     "last_counter_removed": EventType.COUNTER_REMOVED,
+    #: "Whenever you remove a time counter from this card while it's exiled"
+    #: -- Watcher of Hours. Counters coming off an object, by anything: an
+    #: effect, a cost, vanishing's tick and suspend's upkeep tick all come
+    #: through `primitives.remove_counters`. Heard **once per counter** (603.2c:
+    #: one removal of three is three occurrences of "a counter is removed"),
+    #: each firing with `amount` 1; `counter` names the kind and `removed_by:
+    #: "you"` requires the remover to be this ability's controller. A player's
+    #: counters carry no `oid` and are not heard.
+    #:
+    #: `last_counter_removed` is the near miss: it hears only the removal that
+    #: leaves none.
+    "counter_removed": EventType.COUNTER_REMOVED,
     "creature_dies": EventType.DIES,
     #: "Whenever you **sacrifice** a token…" -- Mirkwood Bats. Not `dies`: a
     #: sacrifice is one specific way of leaving, and the printed line is about
@@ -321,6 +333,31 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: `token_created` over Clues is the near miss: "create a Clue token" is
     #: not investigating, and a doubled Clue is still one investigation.
     "investigates": EventType.INVESTIGATED,
+    #: "Whenever you surveil, put a +1/+1 counter on this creature." -- Dimir
+    #: Spybug; "whenever you surveil for the first time each turn" --
+    #: Whispering Snitch. Once per surveilling player per surveil instruction
+    #: (701.25), fired by `ops_cards.op_surveil` after the cards are placed,
+    #: whether or not any went to the graveyard; surveil 0 fires nothing
+    #: (701.25c). `nth` is the surveil's ordinal for its player this turn,
+    #: counted by the ledger whether or not anything listened.
+    #:
+    #: The subject is a **player** -- the surveiller -- so it is absent from
+    #: `OBJECT_SUBJECT_TRIGGERS` and `_actor` reads `event.player`.
+    #: `put_into_graveyard` is the near miss: it fires per card binned, on
+    #: every mill, and not at all for a surveil that keeps every card on top.
+    "surveils": EventType.SURVEILLED,
+    #: "Whenever you win a clash, draw a card." -- Marvo, Deep Operative. Once
+    #: per clash won (701.23b), whatever made the clash: `ops_cards.op_clash`
+    #: fires one `CLASHED` per clashing player carrying that player's own
+    #: ``won``, and `_outcome_matches` turns away the lost ones and both halves
+    #: of a tie. So the opponent who wins your clash has won a clash, and a
+    #: clash you instigate and lose pays your opponent's watcher.
+    #:
+    #: The subject is a **player** -- the one who clashed -- so it is absent
+    #: from `OBJECT_SUBJECT_TRIGGERS` and `_actor` reads `event.player`. The
+    #: near miss is an `if` on the card's own `clash_won` binding, which pays
+    #: only for the clash that one ability makes.
+    "wins_clash": EventType.CLASHED,
     #: "Whenever you give a gift, draw a card." -- Jolly Gerbils. Once per gift
     #: given (702.174), fired by `stack` as an instant or sorcery with a
     #: promised gift resolves, or as a permanent's gift trigger resolves
@@ -583,6 +620,7 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         # The permanent the counter came off, so `source: "self"` is "from
         # *this* permanent".
         "last_counter_removed",
+        "counter_removed",
         "land_played",
         # The merged permanent, so `source: "self"` scopes the trigger to the
         # creature that mutated rather than to every mutation on the table.
@@ -704,18 +742,19 @@ def _half_matches(dsl_event: str, event: GameEvent) -> bool:
     return half is None or event.data.get("to") == half
 
 
-#: DSL trigger name -> the coin-flip outcome it is about (705.2). `COIN_FLIPPED`
-#: carries ``won`` for both outcomes, and "whenever you win a coin flip" must not
-#: pay on a lost one. Compared with ``is`` against the required value, for the
+#: DSL trigger name -> the outcome it is about: a coin flip's (705.2) or a
+#: clash's (701.23b). `COIN_FLIPPED` and `CLASHED` carry ``won`` for both
+#: outcomes, and "whenever you win a coin flip" must not pay on a lost one. Compared with ``is`` against the required value, for the
 #: reason `EVENT_HALVES` is compared with ``==``: an emission that forgot to say
 #: fails the trigger rather than passing it.
 EVENT_OUTCOMES: dict[str, bool] = {
     "wins_coin_flip": True,
+    "wins_clash": True,
 }
 
 
 def _outcome_matches(dsl_event: str, event: GameEvent) -> bool:
-    """Whether this flip came down the way ``dsl_event`` asks.
+    """Whether this flip or clash came down the way ``dsl_event`` asks.
 
     Shared by `_matches` and `_delayed_matches` for `_half_matches`' reason: a
     delayed subscription must not be wider than the hosted trigger of the same
@@ -824,9 +863,27 @@ def collect(state: GameState, event: GameEvent) -> None:
         spec = ability.trigger
         if spec is None:
             continue
-        for heard in _per_player_events(state, obj, spec, event):
+        for heard in _per_counter_events(spec, _per_player_events(state, obj, spec, event)):
             _collect_one(state, obj, ability, heard, doubled, doublers)
     _arm_delayed(state, event)
+
+
+def _per_counter_events(spec: TriggerSpec, events: list[GameEvent]) -> list[GameEvent]:
+    """A `counter_removed` trigger hears one copy per counter that came off.
+
+    "Whenever you remove **a** time counter" is one occurrence per counter
+    (603.2c), and `remove_counters` fires one event per removal however many it
+    takes, so a removal of N is handed over as N copies, each with `amount` 1.
+    Copies rather than more fired events, `_per_player_events`' reason: a second
+    event would fire every other listener again.
+    """
+    if spec.event != "counter_removed":
+        return events
+    heard: list[GameEvent] = []
+    for event in events:
+        amount = int(event.data.get("amount") or 0)
+        heard.extend(replace(event, data={**event.data, "amount": 1}) for _ in range(amount))
+    return heard
 
 
 def _per_player_events(
@@ -1594,6 +1651,19 @@ def _matches(
     ):
         return False
 
+    # "Whenever you remove a time counter **from this card**": an object's
+    # counters, never a player's, and "you" is the remover rather than the
+    # object's controller -- an opponent's effect taking counters off your
+    # exiled card fails it. An emission with no remover fails too.
+    if spec.event == "counter_removed":
+        if event.data.get("oid") is None:
+            return False
+        if spec.removed_by == "you" and (
+            event.data.get("removed_by") is None
+            or event.data.get("removed_by") != obj.controller
+        ):
+            return False
+
     # "Whenever **you** put one or more +1/+1 counters on this creature" --
     # Exemplar of Light. The putter, not the recipient's controller: the
     # `controller` clause reads `event.player`, which is whoever controls the
@@ -2280,10 +2350,16 @@ def _actor(
     # `investigates` is listed for `searches_library`'s reason: the actor is
     # the player who **investigated**, and on Fateful Absence that is the
     # destroyed creature's controller, not the controller of the spell.
+    # `surveils` is listed for the same reason: the actor is the player who
+    # **surveilled**, which "target player surveils" makes someone other than
+    # the controller of the spell.
+    # `wins_clash` is listed for `wins_coin_flip`'s reason: the actor is the
+    # clashing player the event is about, and its `source` is whichever card
+    # made the clash -- the opponent's half of my clash names my card.
     # `put_into_graveyard` is listed for `discard`'s reason: the clause asks
     # whose **graveyard**, which is the owner's (400.3) and is on the event,
     # while the subject's controller is whatever `reset_permanent_state` left.
-    if dsl_event in ("land_played", "spell_cast", "spell_copied", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target", "becomes_monarch", "ability_activated", "damage_prevented", "creatures_attack_player", "creatures_deal_combat_damage", "searches_library", "wins_coin_flip", "gives_gift", "put_into_graveyard", "investigates"):
+    if dsl_event in ("land_played", "spell_cast", "spell_copied", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target", "becomes_monarch", "ability_activated", "damage_prevented", "creatures_attack_player", "creatures_deal_combat_damage", "searches_library", "wins_coin_flip", "gives_gift", "put_into_graveyard", "investigates", "surveils", "wins_clash"):
         return event.player
     # `deals_damage_to_player` is here beside the combat-only trigger it
     # generalises, and for the same reason: `event.player` on a damage event is

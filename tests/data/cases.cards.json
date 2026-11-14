@@ -1,0 +1,61 @@
+{
+  "_comment": "Cards that exist only for the Case tests (tests/unit/keywords/test_cases.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_case` solves when its controller controls three or more creatures, and puts one 'Solved —' ability of every kind the gate has to reach after its 'To solve —' line: a trigger, an anthem, a player-wide static (read off the printed face by `player_statics`) and an activated ability.",
+  "cards": [
+    {
+      "id": "t_case",
+      "name": "Test Case",
+      "oracle_text": "To solve — You control three or more creatures. (If unsolved, solve at the beginning of your end step.)\nSolved — Whenever a creature you control enters, you gain 1 life.\nSolved — Creatures you control get +1/+1.\nSolved — You may play an additional land on each of your turns.\nSolved — {2}: You gain 2 life.",
+      "mana_cost": "{W}",
+      "types": ["Enchantment"],
+      "subtypes": ["Case"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "to_solve",
+          "text": "To solve — You control three or more creatures. (If unsolved, solve at the beginning of your end step.)",
+          "condition": {
+            "cmp": ">=",
+            "left": { "count": { "controller": "you", "types": ["Creature"] } },
+            "right": { "const": 3 }
+          }
+        },
+        {
+          "kind": "triggered",
+          "text": "Solved — Whenever a creature you control enters, you gain 1 life.",
+          "solved": true,
+          "trigger": {
+            "event": "permanent_enters",
+            "controller": "you",
+            "filter": { "types": ["Creature"] }
+          },
+          "effects": [{ "op": "gain_life", "player": "you", "amount": { "const": 1 } }]
+        },
+        {
+          "kind": "static",
+          "text": "Solved — Creatures you control get +1/+1.",
+          "solved": true,
+          "effect": "buff",
+          "affects": { "controller": "you", "types": ["Creature"] },
+          "power": { "const": 1 },
+          "toughness": { "const": 1 }
+        },
+        {
+          "kind": "static",
+          "text": "Solved — You may play an additional land on each of your turns.",
+          "solved": true,
+          "effect": "extra_land_drops",
+          "affects_player": "you",
+          "amount": { "const": 1 }
+        },
+        {
+          "kind": "activated",
+          "text": "Solved — {2}: You gain 2 life.",
+          "solved": true,
+          "cost": { "mana": "{2}" },
+          "effects": [{ "op": "gain_life", "player": "you", "amount": { "const": 2 } }]
+        }
+      ]
+    }
+  ]
+}

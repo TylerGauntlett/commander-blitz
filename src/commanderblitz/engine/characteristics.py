@@ -518,14 +518,14 @@ def _base_pt(state: GameState, obj: GameObject) -> tuple[int, int]:
     card = state.card_of(obj)
     power = card.power or 0
     toughness = card.toughness or 0
-    if obj.copy_overrides:
+    if overrides := obj.live_copy_overrides:
         # "…except it's a **4/4** black Zombie" (eternalize, 702.129a). The base
         # size, before every layer, so counters and anthems land on top of the
         # 4/4 exactly as they would on a printed one (707.9b: the exception
         # becomes the copiable value).
-        if (base_power := obj.copy_overrides.get("power")) is not None:
+        if (base_power := overrides.get("power")) is not None:
             power = int(base_power)
-        if (base_toughness := obj.copy_overrides.get("toughness")) is not None:
+        if (base_toughness := overrides.get("toughness")) is not None:
             toughness = int(base_toughness)
     if obj.cast_bestowed and obj.attached_to is not None and obj.on_battlefield:
         # Bestow (702.103b): while it is attached it is not a creature, so it
@@ -570,8 +570,8 @@ def _compute(state: GameState, oid: int) -> Characteristics:
     # Applied to the *printed* face, before any layer: the exception is part of
     # what this object is, not an effect on it, so an anthem or an animate
     # afterwards should layer on top exactly as it would on a printed card.
-    if obj.copy_overrides:
-        if (renamed := obj.copy_overrides.get("subtypes")) is not None:
+    if overrides := obj.live_copy_overrides:
+        if (renamed := overrides.get("subtypes")) is not None:
             # "…except it's a 4/4 black **Zombie**." No "in addition to its
             # other types", so the copy is a Zombie *instead of* its creature
             # types (205.1b): The Scarab God's token of a Llanowar Elves is no
@@ -579,18 +579,18 @@ def _compute(state: GameState, oid: int) -> Characteristics:
             # would leave a Zombie Elf Druid -- a better card than the printed
             # one on every Elf-matters board.
             subtypes = set(renamed)
-        if added := obj.copy_overrides.get("add_subtypes"):
+        if added := overrides.get("add_subtypes"):
             subtypes.update(added)
-        if added_keywords := obj.copy_overrides.get("add_keywords"):
+        if added_keywords := overrides.get("add_keywords"):
             # "…except it's a 5/5 artifact creature in addition to its other
             # types and **has haste**" (Saheeli, Radiant Creator). A copiable
             # value, so it sits beside the printed keywords before layer 6: a
             # "loses all abilities" effect removes it, and a copy of this token
             # inherits it through `copy_overrides` (707.9b).
             keywords.update(added_keywords)
-        if (repaint := obj.copy_overrides.get("colors")) is not None:
+        if (repaint := overrides.get("colors")) is not None:
             colors = set(repaint)
-        if (retyped := obj.copy_overrides.get("types")) is not None:
+        if (retyped := overrides.get("types")) is not None:
             # "…except it's an artifact and it **loses all other card types**."
             # A replacement, where `add_subtypes` above is an addition, and the
             # printed clause is what decides which: Espers to Magicite's token
@@ -601,17 +601,17 @@ def _compute(state: GameState, oid: int) -> Characteristics:
             # which is also what the printing says: it loses its card types and
             # is not told to lose its creature types.
             types = set(retyped)
-        if added_types := obj.copy_overrides.get("add_types"):
+        if added_types := overrides.get("add_types"):
             # "…except it's an artifact **in addition to its other types**."
             # Faerie Artisans. The addition beside `types`' replacement, and the
             # printing decides again: a copied Enchantment Creature stays both.
             types.update(added_types)
-        if added_supers := obj.copy_overrides.get("add_supertypes"):
+        if added_supers := overrides.get("add_supertypes"):
             # "…except it's legendary." Adagia, Windswept Bastion. Unioned onto
             # the copied card's supertypes, so the legend rule -- which reads
             # this, not the printed card -- applies to the token.
             supertypes.update(added_supers)
-        if dropped_supers := obj.copy_overrides.get("remove_supertypes"):
+        if dropped_supers := overrides.get("remove_supertypes"):
             # "…except the token isn't legendary." Miirym, Sentinel Wyrm; Helm
             # of the Host; Kindred Charge. The set difference beside the union
             # above, and the *only* subtraction any printing asks for -- and the
@@ -664,6 +664,14 @@ def _compute(state: GameState, oid: int) -> Characteristics:
         subtypes.add("Aura")
         # Its 0/0 is `_base_pt`'s, under the identical condition, so a static
         # filter reads the same non-creature size this line does.
+
+    # "…it becomes an Aura" (Necromancy). The same layer-4 subtype as bestow's,
+    # and for its reason applied before every static: `became_aura` is a field
+    # the `become_aura` op writes and no layer can change, so it is a pipeline
+    # input. Not conditioned on being attached, which is the difference from
+    # bestow -- the enchantment is an Aura from the moment it becomes one.
+    if obj.became_aura and obj.on_battlefield:
+        subtypes.add("Aura")
 
     # Impending (702.176a): "as long as this permanent's impending cost was paid
     # and it has a time counter on it, it's not a creature". A layer-4 type
@@ -1132,6 +1140,7 @@ def exiled_activated_abilities(
                 ability.is_activated
                 and Zone.BATTLEFIELD in ability.active_zones
                 and ability.level is None
+                and not ability.solved
                 and ability.threshold is None
             ):
                 out.append((oid, ability))
@@ -1161,10 +1170,11 @@ def _ability_statics(state: GameState) -> list[tuple[GameObject, Mapping[str, An
                 if not static or static.get("effect") not in ABILITY_STATICS:
                     continue
                 # A Class's level-3 "loses all abilities" or "have …" is not
-                # there at level 2 (716.2b). Read off the printed face for the
-                # regress this function's callers document, so the level gate
-                # `present_printed_abilities` applies has to be applied here too.
-                if not ability.present_at(obj.class_level):
+                # there at level 2 (716.2b), nor a Case's "Solved —" one while
+                # it is unsolved (719.3c). Read off the printed face for the
+                # regress this function's callers document, so the gates
+                # `present_printed_abilities` applies have to be applied here too.
+                if not ability.present_on(obj):
                     continue
                 if _static_active(state, obj, static):
                     out.append((obj, static))
@@ -1263,11 +1273,11 @@ def threshold_met(obj: GameObject, ability: Ability) -> bool:
 def present_printed_abilities(
     obj: GameObject, printed: tuple[Ability, ...]
 ) -> tuple[Ability, ...]:
-    """The printed abilities this object actually has, with both gates applied.
+    """The printed abilities this object actually has, with every gate applied.
 
-    Two printed conditions on *having* an ability rather than on using it, and
-    one function for both because every reader of `abilities_of` has to agree
-    about them. The ability that fails either is **absent**, not refused: it is
+    Printed conditions on *having* an ability rather than on using it, and
+    one function for all of them because every reader of `abilities_of` has to
+    agree about them. The ability that fails one is **absent**, not refused: it is
     not offered, not a mana source for the payment solver, not collected as a
     trigger, not applied as a static, not listed for the client and not the
     AI's to consider. Refusing it in `legality` alone -- `condition`'s shape --
@@ -1275,7 +1285,7 @@ def present_printed_abilities(
 
     Indices must keep meaning what they printed (`Action.ability_index`,
     `StackItem.ability_index`, the per-turn trigger cap and the once-each-turn
-    ledger all address an ability by position), and the two gates keep that
+    ledger all address an ability by position), and the gates keep that
     promise in two ways:
 
     - **A Class level (716.2b-c)** swaps each ability printed above the
@@ -1285,6 +1295,9 @@ def present_printed_abilities(
       in every zone: a leaves-the-battlefield trigger is collected off the
       object after it has left (603.10a), and `GameObject.class_level` still
       holds the level it left at.
+    - **A Case's solved designation (719.3c)** swaps a "Solved —" ability on
+      an unsolved Case the same way and for the same reason, and reads
+      `GameObject.solved` the way the level reads `class_level`.
     - **A station threshold (721)** drops the ability. The loader holds those to
       the end of the list and to rising order, so below its number the list only
       ever loses a tail.
@@ -1296,14 +1309,13 @@ def present_printed_abilities(
     stack resolves whatever happens to its source (113.7a), so resolution reads
     `printed_abilities`.
 
-    The same tuple back, untouched, for a card with neither -- every card but a
-    Class or a Planet -- at the cost of one level check per ability and one
-    attribute read.
+    The same tuple back, untouched, for a card with none -- every card but a
+    Class, a Case or a Planet -- at the cost of one gate check per ability and
+    one attribute read.
     """
-    level = obj.class_level
-    if not all(ability.present_at(level) for ability in printed):
+    if not all(ability.present_on(obj) for ability in printed):
         printed = tuple(
-            ability if ability.present_at(level) else ability.latent() for ability in printed
+            ability if ability.present_on(obj) else ability.latent() for ability in printed
         )
     if not printed or printed[-1].threshold is None:
         return printed
@@ -1806,6 +1818,7 @@ def _condition_met(
     ``exists``/``cmp`` over ``{"count": filter}``, matched on printed
                       characteristics and, off the battlefield, on zone contents
     ``is_your_turn``  whose turn it is
+    ``step_is``       the step the game is in (a name or a list of them)
     ``has_flag``      a word `set_flag` wrote on the static's own source
     ``is_monstrous``  whether the static's own source is monstrous (701.37b)
     ``is_monarch``    who holds the crown -- the only leaf that may name the
@@ -1848,6 +1861,15 @@ def _condition_met(
         )
     if "is_your_turn" in cond:
         return (state.active_player == source.controller) == bool(cond["is_your_turn"])
+    if "step_is" in cond:
+        # "During each opponent's end step" (Final-Word Phantom), beside
+        # `is_your_turn` for the "opponent's" half. Turn state, a pipeline input
+        # on `is_your_turn`'s terms: no layer writes `state.step`, and
+        # `turn.advance` bumps `char_version` on every step change, so a cached
+        # answer is re-read the moment the step moves on.
+        want = cond["step_is"]
+        names = [want] if isinstance(want, str) else list(want)
+        return state.step.name.lower() in names
     if "has_flag" in cond:
         # A Siege's "as this enters, choose Mardu or Jeskai" switching on the
         # chosen mode's static. `flags` is written only by `set_flag` (which
@@ -2811,7 +2833,7 @@ def aura_controllers(state: GameState, oid: int) -> list[int]:
         aura = state.objects.get(aura_oid)
         if aura is None or aura.attached_to != oid:
             continue
-        if not (state.card_of(aura).is_aura or aura.cast_bestowed):
+        if not (state.card_of(aura).is_aura or aura.cast_bestowed or aura.became_aura):
             continue
         seats.append(aura.controller)
     return seats
@@ -3037,6 +3059,10 @@ def _matches_wherever(
                 types=(card.types - {"Creature"}) | {"Enchantment"},
                 subtypes=card.subtypes | {"Aura"},
             )
+        elif obj.became_aura and obj.on_battlefield:
+            # "…it becomes an Aura" (Necromancy): `_compute`'s change under the
+            # identical condition, so "each Aura you control" counts it here too.
+            card = dataclasses.replace(card, subtypes=card.subtypes | {"Aura"})
         if not _matches_printed(card, selector, recorded_subtypes(obj), obj.text_changes):
             return False
         size = None
@@ -3167,7 +3193,8 @@ def keyword_as_it_enters(state: GameState, oid: int, keyword: str) -> bool:
         return True
     # A token copy's exception (707.9b) is part of what arrives, as printed as
     # the copied card's own keywords.
-    if obj.copy_overrides and keyword in (obj.copy_overrides.get("add_keywords") or ()):
+    overrides = obj.live_copy_overrides
+    if overrides and keyword in (overrides.get("add_keywords") or ()):
         return True
     for source_obj, static in _battlefield_statics(state):
         if static.get("effect") != "grant_keyword":

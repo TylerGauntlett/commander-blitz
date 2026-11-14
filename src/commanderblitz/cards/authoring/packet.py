@@ -198,6 +198,9 @@ CARD_LEVEL_RIDER_KEYS = (
     "melds_with",  # the other half of a meld pair
     "melds_into",  # what the pair becomes
     "cant_cast_first_turns",  # "You can't cast this during your first N turns of the game"
+    # bool; "You may cast this spell as though it had flash" -- the card's own
+    # timing permission, NOT the flash keyword
+    "as_though_flash",
     # {"turn": "yours"|"opponents", "steps": [...] | "phase": ...}; "Cast this
     # spell only during [combat|the <step>] [on your|an opponent's] turn"
     "cast_only_during",
@@ -719,6 +722,15 @@ def reference() -> dict:
             " Class becomes level 2, ...\" is a triggered ability with"
             " `\"level\": 2` and `trigger: {\"event\": \"becomes_level\","
             " \"level\": 2}`.",
+            "A **Case** is `subtypes: [\"Case\"]` plus two keys. The printed"
+            " \"To solve — <condition>. (If unsolved, solve at the beginning of"
+            " your end step.)\" line is `{\"kind\": \"to_solve\", \"text\":"
+            " <the whole line, reminder included>, \"condition\": <the"
+            " condition>}` and nothing else -- the end-step trigger, the \"if"
+            " not solved\" check and the effect are rule 719.3b and the"
+            " compiler supplies them. Every ability printed after \"Solved —\""
+            " carries `\"solved\": true` whatever its kind, with the whole line"
+            " as its `text`.",
             "`required_keys` is the subset of each of those lists that is NOT"
             " optional -- every ability needs a `kind`, every target an `id`"
             " and a `kind`, every trigger an `event`. A spec missing one fails"
@@ -822,6 +834,10 @@ def reference() -> dict:
             " stays exiled (305.9). \"If you cast a spell this way, pay life"
             " equal to its mana value rather than paying its mana cost\" is"
             " `playable_pay_life_instead: true` on the same permission;"
+            " \"if that spell would be put into a graveyard, exile it instead\""
+            " after \"you may cast it\" is `playable_exiles: true` on the same"
+            " `exile` or `grant_playable` permission (it holds when the spell is"
+            " countered or fizzles too);"
             " \"you may play one of those cards\" is `grant_playable` with"
             " `limit: 1` over the exiled cards' `as` binding.",
             "\"You don't lose unspent red mana as steps and phases end\" is the"
@@ -964,7 +980,13 @@ def reference() -> dict:
             " control\" is"
             " `{\"count\": {\"controller\": \"you\", \"types\": [\"Creature\"],"
             " \"supertypes\": [\"Legendary\"]}}`; anything outside it is a load"
-            " error rather than a discount counted wrong.",
+            " error rather than a discount counted wrong. \"This spell costs"
+            " {2} less to cast if it targets an attacking creature\" gates a"
+            " card's own `amount` on its chosen targets with `targeting`, a"
+            " reduction filter over the cast's object targets (controller"
+            " defaults to any): `{\"amount\": 2, \"targeting\": {\"types\":"
+            " [\"Creature\"], \"attacking\": true}}`. A `condition` with"
+            " `exists` is NOT it: that discounts the spell whatever it targets.",
             "An ability's `text` must be the printed sentence it implements: the"
             " residual gate asks each ability which line it claims, and anything"
             " unclaimed means the card is only half implemented.",

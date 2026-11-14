@@ -37,6 +37,7 @@ from commanderblitz.engine.effects.context import EffectContext
 from commanderblitz.engine.effects.ops_counters import EMPOWER_TOKEN
 from commanderblitz.engine.enums import ActionKind, DecisionKind, Step
 from commanderblitz.engine.errors import DslError
+from commanderblitz.engine.events import EventType
 from commanderblitz.engine.primitives import create_token
 from tests.conftest import (
     action_for_card,
@@ -228,7 +229,7 @@ class TestTheTokensLoyaltyAbilities:
         assert loyalty(game, jace) == 1, "paid as the ability is activated"
         settle_completely(game)
         [looked] = [
-            e for e in game.state.events[mark:] if e.type == "surveil" and e.player == 0
+            e for e in game.state.events[mark:] if e.type == EventType.SURVEILLED and e.player == 0
         ]
         assert looked.data["looked"] == 1
         assert loyalty(game, jace) == 1

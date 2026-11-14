@@ -417,7 +417,7 @@ def op_remove_counters(ctx: EffectContext, spec: Mapping[str, Any]):
                 continue
             for kind, there in list(obj.counters.items()):
                 if there > 0:
-                    removed += remove_counters(ctx.state, oid, kind, there)
+                    removed += remove_counters(ctx.state, oid, kind, there, by=ctx.controller)
     elif spec.get("any_kind"):
         most = (
             max(0, evaluate_value(ctx, spec["amount"])) if "amount" in spec else None
@@ -438,7 +438,7 @@ def op_remove_counters(ctx: EffectContext, spec: Mapping[str, Any]):
         kind = str(spec.get("counter", "+1/+1"))
         oids = yield from choose_objects(ctx, spec.get("objects"), "Remove counters from")
         for oid in oids:
-            removed += remove_counters(ctx.state, oid, kind, amount)
+            removed += remove_counters(ctx.state, oid, kind, amount, by=ctx.controller)
     if name := spec.get("as"):
         ctx.bindings[str(name)] = removed
 
@@ -556,6 +556,39 @@ def op_attach(ctx: EffectContext, spec: Mapping[str, Any]):
     for oid in oids[:1]:
         for mover in movers:
             attach(ctx.state, mover, oid)
+
+
+@register("become_aura")
+def op_become_aura(ctx: EffectContext, spec: Mapping[str, Any]) -> None:
+    """ "…it becomes an Aura with 'enchant creature put onto the battlefield with
+    Necromancy.'" -- Necromancy. This permanent, an enchantment, gains the
+    subtype Aura for as long as it stays on the battlefield (611.2a: no duration
+    is printed, and the effect ends with the object, 400.7).
+
+    `GameObject.became_aura` is what every Aura reader consults beside the
+    printed `CardDef.is_aura`, the way bestow's `cast_bestowed` is: the type line
+    (`characteristics._compute`), "enchanted" (`aura_controllers`), and 704.5m
+    (`sba._tokens_and_attachments`), so an Aura attached to nothing -- the
+    creature died, or never arrived -- is put into its owner's graveyard.
+
+    The enchant clause it gains is Animate Dead's battlefield one, and needs no
+    key: the attach that follows names the host with ``{"returned_with":
+    "self"}``, and nothing re-tests an Aura's clause on the battlefield
+    (`docs/rules-coverage.md`).
+
+    Only the source, and only while it is an enchantment on the battlefield
+    (205.3d: Aura is an enchantment type): the loader refuses the op on a card
+    that is not a printed non-Aura enchantment.
+    """
+    if ctx.source_oid is None:
+        return
+    obj = ctx.state.objects.get(ctx.source_oid)
+    if obj is None or not obj.on_battlefield or obj.became_aura:
+        return
+    if "Enchantment" not in chars(ctx.state, obj.oid).types:
+        return
+    obj.became_aura = True
+    ctx.state.bump_chars()
 
 
 def _attach_source_to_player(ctx: EffectContext, who: Any) -> None:

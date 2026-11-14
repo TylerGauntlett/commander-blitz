@@ -1,0 +1,25 @@
+{
+  "card_id": "not_of_this_world",
+  "name": "Not of This World",
+  "oracle_text": "Counter target spell or ability that targets a permanent you control.\nThis spell costs {7} less to cast if it targets a spell or ability that targets a creature you control with power 7 or greater.",
+  "blocked_sentences": [
+    "Counter target spell or ability that targets a permanent you control.",
+    "This spell costs {7} less to cast if it targets a spell or ability that targets a creature you control with power 7 or greater."
+  ],
+  "needs": [
+    {
+      "capability": "stack_object_targets_filter",
+      "kind": "selector",
+      "what": "a selector clause on a 'spell_or_ability' (and 'spell') target that narrows the stack object by what IT targets: 'that targets a permanent you control' -- true when any of the stack object's chosen targets is a battlefield permanent matching a permanent filter (controller: you), re-checked on resolution",
+      "why_existing_wont_do": "The loader restricts a 'spell_or_ability' target's selector to 'controller' only (loader.targets._compile_target), and no selector_keys entry reads a stack object's own targets; 'counter' with target t1 can only counter any spell or ability, which is strictly wider than the printing"
+    },
+    {
+      "capability": "cost_reduction_targeting_stack_object_targets",
+      "kind": "value",
+      "what": "a cost_reduction 'targeting' gate that can look through a stack-object target to its targets: {amount: 7} if the chosen spell-or-ability target itself targets a creature you control with power 7 or greater",
+      "why_existing_wont_do": "cost_reduction 'targeting' filters the cast's object targets with cost_reduction_filter_keys (types, controller, power...) but a stack-object target has no such characteristics and there is no key to reach the objects that stack object targets"
+    }
+  ],
+  "closest_existing": ["counter", "spell_or_ability", "cost_reduction.targeting"],
+  "confidence": "high"
+}

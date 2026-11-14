@@ -37,7 +37,7 @@ from .events import EventType
 from .mana import OTHER_PAYMENT, ManaCost
 from .objects import TIME_COUNTER
 from .player_statics import player_cant_cast_while_resolving, plot_cost_reduction
-from .primitives import cast_locked_zones
+from .primitives import cast_locked_zones, remove_counters
 from .targeting import additional_sized_targets, enumerate_target_tuples
 from .zones import exile, move_object
 
@@ -248,7 +248,12 @@ def tick(state: GameState, pid: int) -> None:
         obj = state.objects.get(oid)
         if obj is None or obj.zone is not Zone.EXILE:
             continue
-        obj.remove_counter(TIME_COUNTER, 1)
+        # Through the removal funnel, so the tick is a COUNTER_REMOVED like
+        # every other road a counter comes off by: "whenever you remove a time
+        # counter from this card while it's exiled" (Watcher of Hours) hears
+        # each tick, the last included. Its trigger is queued before the free
+        # cast below and stacked above the spell, so it resolves first.
+        remove_counters(state, oid, TIME_COUNTER, 1, by=pid)
         state.emit(
             EventType.TIME_COUNTER_REMOVED,
             player=pid,

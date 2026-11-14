@@ -9,7 +9,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from commanderblitz.engine.effects.conditions import validate_condition
+from commanderblitz.engine.effects.conditions import STEP_NAMES, validate_condition
 from commanderblitz.engine.effects.selectors import (
     validate_colorless_key,
     validate_enchanted_by_key,
@@ -32,6 +32,8 @@ from .vocabulary import (
     COST_REDUCTION_FILTER_KEYS,
     COST_REDUCTION_KEYS,
     COST_REDUCTION_REFUSED_FILTER_KEYS,
+    COST_REDUCTION_TARGETING,
+    COST_REDUCTION_TARGETING_REFUSED_KEYS,
     COST_REDUCTION_ZONES,
     KNOWN_SUPERTYPES,
     KNOWN_TYPES,
@@ -168,23 +170,82 @@ def _validate_reduction_any_of(filt: Mapping[str, Any], where: str) -> None:
         _validate_reduction_any_of(branch, f"{where}.any_of[{i}]")
 
 
-def _validate_cost_reduction(spec: Any, where: str) -> None:
+def _validate_reduction_targeting(filt: Any, where: str) -> None:
+    """A card-level reduction's ``targeting`` clause: a filter over its targets.
+
+    "This spell costs {2} less to cast if it targets **an attacking creature**"
+    (Ephara's Dispersal). The reduction filter language, asked of each object
+    the cast chose rather than of a zone, so ``zone`` is refused -- and so are
+    ``self_only`` and ``exclude_self``, because a spell never targets itself
+    (115.5). ``controller`` defaults to ``any`` here, since "targets a legendary
+    creature" asks about the creature and not about who controls it.
+    """
+    if not isinstance(filt, Mapping) or not filt:
+        raise DslError(f"{where}: needs a non-empty filter over the spell's targets")
+    if refused := sorted(set(filt) & COST_REDUCTION_TARGETING_REFUSED_KEYS):
+        raise DslError(
+            f"{where}: {refused} cannot be asked of a target -- the pool is the "
+            f"objects the cast chose, and a spell never targets itself"
+        )
+    unknown = set(filt) - STATIC_FILTER_KEYS - COST_REDUCTION_FILTER_KEYS
+    if unknown:
+        raise DslError(f"{where}: unsupported filter keys {sorted(unknown)}")
+    if refused := sorted(set(filt) & COST_REDUCTION_REFUSED_FILTER_KEYS):
+        raise DslError(
+            f"{where}: {refused} name a relation to one permanent that a "
+            f"reduction filter does not read"
+        )
+    controller = filt.get("controller", "any")
+    if controller not in ("you", "opponent", "any"):
+        raise DslError(
+            f"{where}.controller: must be 'you', 'opponent' or 'any', got {controller!r}"
+        )
+    _validate_reduction_any_of(filt, where)
+    _check_owner_key(filt, where)
+    _check_mana_cost_key(filt, where)
+    _check_pt_keys(filt, where)
+    validate_colorless_key(filt, where)
+    validate_enchanted_by_key(filt, where)
+    validate_has_counters_key(filt, where)
+    _check_reduction_type_names(filt, where)
+
+
+def _validate_cost_reduction(spec: Any, where: str, *, spell: bool = False) -> None:
     """One validator for every "costs {N} less", wherever it is written.
 
     A card's own `cost_reduction`, an activated ability's
     `cost.mana_reduction` and a graveyard cast's `mana_reduction` are three
     readers of one language -- `costs.reduction_amount` -- so they get one
     validator, or they drift about what "for each" and "if" mean.
+
+    ``spell`` is the card's own `cost_reduction`, the one reader handed the
+    cast's targets, so the only place a ``targeting`` gate may be written. On
+    the other two it would load and be read by nobody -- a discount that fired
+    whatever the ability aimed at.
     """
     if not isinstance(spec, Mapping):
         raise DslError(f"{where}: must name exactly one of {sorted(COST_REDUCTION_KEYS)}")
+    if COST_REDUCTION_TARGETING in spec:
+        if not spell:
+            raise DslError(
+                f"{where}.{COST_REDUCTION_TARGETING}: only a card's own "
+                f"`cost_reduction` is priced with its targets; this reduction is "
+                f"read where there is no target tuple"
+            )
+        _validate_reduction_targeting(
+            spec[COST_REDUCTION_TARGETING], f"{where}.{COST_REDUCTION_TARGETING}"
+        )
     arithmetic = set(spec) & COST_REDUCTION_KEYS
-    unknown = set(spec) - COST_REDUCTION_KEYS - {"condition", COST_REDUCTION_EACH}
+    unknown = (
+        set(spec)
+        - COST_REDUCTION_KEYS
+        - {"condition", COST_REDUCTION_EACH, COST_REDUCTION_TARGETING}
+    )
     if unknown:
         raise DslError(
             f"{where}: unknown reduction keys {sorted(unknown)} "
-            f"(implemented: {sorted(COST_REDUCTION_KEYS)} plus an optional 'condition' "
-            f"and '{COST_REDUCTION_EACH}')"
+            f"(implemented: {sorted(COST_REDUCTION_KEYS)} plus an optional 'condition', "
+            f"'{COST_REDUCTION_EACH}' and, on a card, '{COST_REDUCTION_TARGETING}')"
         )
     if len(arithmetic) != 1:
         # Two would be paid at whichever the code read first, which is not
@@ -214,12 +275,13 @@ def _validate_cost_reduction(spec: Any, where: str) -> None:
             raise DslError(
                 f"{where}.amount: a flat reduction is a positive integer, got {amount!r}"
             )
-        if "condition" not in spec:
+        if "condition" not in spec and COST_REDUCTION_TARGETING not in spec:
             # "Costs {3} less" with nothing to gate it is a card with a smaller
             # printed cost, written the long way -- and it would load clean.
             raise DslError(
-                f"{where}: a flat 'amount' needs a 'condition' -- an unconditional "
-                f"flat reduction is just a cheaper printed cost"
+                f"{where}: a flat 'amount' needs a 'condition' or a "
+                f"'{COST_REDUCTION_TARGETING}' -- an unconditional flat reduction is "
+                f"just a cheaper printed cost"
             )
     elif key == "energy_spent_this_turn":
         # A player spec, not a filter: the ledger is per player.
@@ -400,6 +462,19 @@ def _validate_static_condition(condition: Any, where: str) -> None:
     elif head == "is_your_turn":
         if not isinstance(condition["is_your_turn"], bool):
             raise DslError(f"{where}.is_your_turn: must be true or false")
+    elif head == "step_is":
+        # The effect-level leaf's spelling and its refusals: a misspelled step
+        # matches nothing, so the static would never switch on. `"end"` and
+        # `"ending"` (a phase) are the tempting misses for `"end_step"`.
+        want = condition["step_is"]
+        steps = [want] if isinstance(want, str) else want
+        if not isinstance(steps, list) or not steps:
+            raise DslError(f"{where}.step_is: needs a step name, or a list of them")
+        for name in steps:
+            if name not in STEP_NAMES:
+                raise DslError(
+                    f"{where}.step_is: must name one of {sorted(STEP_NAMES)}, got {name!r}"
+                )
     elif head == "has_flag":
         # Read by exact string off the source's `flags`, so an empty or
         # non-string flag would switch the static off for ever.

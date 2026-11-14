@@ -1,0 +1,44 @@
+{
+  "_comment": "Shapes for tests/unit/casting/test_cast_at_sorcery_timing.py. t_casr_rider is Necromancy's first paragraph on a bare enchantment: castable as though it had flash, and sacrificed at the beginning of the next cleanup step when it was cast at a time a sorcery couldn't have been (307.1). t_casr_plain is the same enchantment without either line, kept live so every timing assertion is measured against a card the window really does refuse.",
+  "cards": [
+    {
+      "id": "t_casr_rider",
+      "name": "Test Instant-Speed Rider",
+      "oracle_text": "You may cast this spell as though it had flash. If you cast it any time a sorcery couldn't have been cast, the controller of the permanent it becomes sacrifices it at the beginning of the next cleanup step.",
+      "mana_cost": "{B}",
+      "types": ["Enchantment"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "as_though_flash": true,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "If you cast it any time a sorcery couldn't have been cast, the controller of the permanent it becomes sacrifices it at the beginning of the next cleanup step.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self",
+            "condition": {"cast_at_sorcery_timing": false}
+          },
+          "effects": [
+            {
+              "op": "delay",
+              "step": "cleanup",
+              "effects": [
+                {"op": "sacrifice", "objects": {"self_only": true, "controller": "any"}}
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_casr_plain",
+      "name": "Test Sorcery-Speed Enchantment",
+      "oracle_text": "",
+      "mana_cost": "{B}",
+      "types": ["Enchantment"],
+      "colors": ["B"],
+      "color_identity": ["B"]
+    }
+  ]
+}

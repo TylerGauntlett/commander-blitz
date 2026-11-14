@@ -1,0 +1,810 @@
+{
+  "id": "mkc_revenant_recon",
+  "name": "Revenant Recon",
+  "commanders": [
+    "mirko_obsessive_theorist"
+  ],
+  "color_identity": [
+    "B",
+    "U"
+  ],
+  "source": "precon",
+  "release": {
+    "set_code": "MKC",
+    "set_name": "Murders at Karlov Manor Commander",
+    "date": "2024-02-09"
+  },
+  "notes": "Murders at Karlov Manor Commander precon, card for card (https://mtgjson.com/api/v5/decks/RevenantRecon_MKC.json).",
+  "tags": [
+    "Surveil",
+    "Reanimation",
+    "Graveyard",
+    "Removal"
+  ],
+  "strategy": "Mirko, Obsessive Theorist grows with every surveil and, at each of your end steps, returns a creature card with less power from your graveyard with a finality counter, so the deck fills its graveyard and climbs back out of it. Doom Whisperer, Notion Rain, Discovery // Dispersal, Pile On, Sinister Starfish, Tocasia's Dig Site, Master of Death and the upkeep surveils of Case of the Shifting Visage and Unshakable Tail feed Dimir Spybug, Thoughtbound Phantasm, Copy Catchers, Whispering Snitch and Disinformation Campaign, while Enhanced Surveillance looks deeper and Eye of Duskmantle plays what was binned. Animate Dead, Necromancy, Reanimate and Connive // Concoct bring back Grave Titan, Massacre Wurm and Sphinx of the Second Sun; Ravenous Chupacabra, Shriekmaw, Overseer of the Damned, Price of Fame, Toxic Deluge and Black Sun's Zenith answer the board, and Counterpoint protects it.",
+  "archetype": "control",
+  "ratings": {
+    "speed": 2,
+    "complexity": 4,
+    "interaction": 3,
+    "resilience": 4,
+    "pilot": 3
+  },
+  "signature": [
+    {
+      "card_id": "mirko_obsessive_theorist",
+      "why": "Grows with every surveil, and each end step returns a smaller creature card from your graveyard with a finality counter."
+    },
+    {
+      "card_id": "copy_catchers",
+      "why": "Each surveil can buy another copy of it."
+    },
+    {
+      "card_id": "eye_of_duskmantle",
+      "why": "Cards you surveilled into the graveyard this turn can be played from there, spells paid for in life."
+    },
+    {
+      "card_id": "sphinx_of_the_second_sun",
+      "why": "A second beginning phase every turn: another untap, upkeep and draw."
+    }
+  ],
+  "printings": {
+    "amphin_mutineer": {
+      "scryfall_id": "0f54f429-80c2-4f55-bb99-236f2c697985",
+      "artist": "Nicholas Gregory",
+      "set_code": "mkc",
+      "collector_number": "95"
+    },
+    "animate_dead": {
+      "scryfall_id": "1489943b-c010-488e-9c9d-87f4af67a4e4",
+      "artist": "Anthony Jones",
+      "set_code": "mkc",
+      "collector_number": "125"
+    },
+    "arcane_signet": {
+      "scryfall_id": "e593bb16-e709-4d92-bf6f-239f6a11f7db",
+      "artist": "Dan Murayama Scott",
+      "set_code": "mkc",
+      "collector_number": "223"
+    },
+    "ash_barrens": {
+      "scryfall_id": "46b99a84-3733-48bf-b743-522e5f94aca3",
+      "artist": "Jonas De Ro",
+      "set_code": "mkc",
+      "collector_number": "248"
+    },
+    "baleful_strix": {
+      "scryfall_id": "679c1ac6-a015-45ec-a634-e665e377672b",
+      "artist": "Nils Hamm",
+      "set_code": "mkc",
+      "collector_number": "200"
+    },
+    "black_sun_s_zenith": {
+      "scryfall_id": "e842b4bb-a1b7-440b-a0da-856fb0eea4c4",
+      "artist": "Daniel Ljunggren",
+      "set_code": "mkc",
+      "collector_number": "126"
+    },
+    "bojuka_bog": {
+      "scryfall_id": "73d9ec0e-9d88-454e-aa48-a861b2bb8b77",
+      "artist": "Howard Lyon",
+      "set_code": "mkc",
+      "collector_number": "250"
+    },
+    "brainstorm": {
+      "scryfall_id": "84479779-d570-4eee-9982-f6e918b4d75b",
+      "artist": "Willian Murai",
+      "set_code": "mkc",
+      "collector_number": "96"
+    },
+    "case_of_the_shifting_visage": {
+      "scryfall_id": "65463a1b-39c1-4fc8-8de2-85224de810ac",
+      "artist": "Chris Seaman",
+      "set_code": "mkc",
+      "collector_number": "19"
+    },
+    "charnel_serenade": {
+      "scryfall_id": "05a2477e-a9a2-49fb-86e6-53d3e153a965",
+      "artist": "Alex Stone",
+      "set_code": "mkc",
+      "collector_number": "26"
+    },
+    "choked_estuary": {
+      "scryfall_id": "e9ad18b2-1061-4893-9171-07ffe142a762",
+      "artist": "Vincent Proce",
+      "set_code": "mkc",
+      "collector_number": "254"
+    },
+    "command_tower": {
+      "scryfall_id": "96c3244e-930f-498c-959e-0f000151597d",
+      "artist": "Ryan Yee",
+      "set_code": "mkc",
+      "collector_number": "256"
+    },
+    "connive_concoct": {
+      "scryfall_id": "d7481287-fce9-4ef0-a3a8-7801c9eb3fa8",
+      "artist": "Dan Murayama Scott",
+      "set_code": "mkc",
+      "collector_number": "203"
+    },
+    "consider": {
+      "scryfall_id": "edd144f2-ab2d-486f-bf0a-8860022b7c35",
+      "artist": "Zezhou Chen",
+      "set_code": "mkc",
+      "collector_number": "98"
+    },
+    "copy_catchers": {
+      "scryfall_id": "af6b5cec-49fa-4f8d-8493-4bb7f3e291e8",
+      "artist": "Edgar Sánchez Hidalgo",
+      "set_code": "mkc",
+      "collector_number": "20"
+    },
+    "counterpoint": {
+      "scryfall_id": "b74caf65-1e6c-444e-9121-906ba7e8ea20",
+      "artist": "Brian Valeza",
+      "set_code": "mkc",
+      "collector_number": "41"
+    },
+    "curate": {
+      "scryfall_id": "78cd258b-431e-42f7-a938-76ebc80d528d",
+      "artist": "Ryan Valle",
+      "set_code": "mkc",
+      "collector_number": "99"
+    },
+    "darkwater_catacombs": {
+      "scryfall_id": "c5c68f5e-b6ce-4832-9e76-2ceb54afe29a",
+      "artist": "Monte Michael Moore",
+      "set_code": "mkc",
+      "collector_number": "257"
+    },
+    "deep_analysis": {
+      "scryfall_id": "42ea52a4-15fa-4243-ae27-cd293bd176e7",
+      "artist": "Daren Bader",
+      "set_code": "mkc",
+      "collector_number": "100"
+    },
+    "dimir_aqueduct": {
+      "scryfall_id": "6fbf38d3-4922-42ec-ae3a-bea2172c3258",
+      "artist": "John Avon",
+      "set_code": "mkc",
+      "collector_number": "258"
+    },
+    "dimir_signet": {
+      "scryfall_id": "343a0d98-56b3-4113-a287-e36f2a1652f1",
+      "artist": "Raoul Vitale",
+      "set_code": "mkc",
+      "collector_number": "226"
+    },
+    "dimir_spybug": {
+      "scryfall_id": "69840910-eb86-49a4-915f-d21b5628fc04",
+      "artist": "James Paick",
+      "set_code": "mkc",
+      "collector_number": "206"
+    },
+    "discovery_dispersal": {
+      "scryfall_id": "8df2658a-6174-411c-9217-aa5d15b9fef2",
+      "artist": "Mark Behm",
+      "set_code": "mkc",
+      "collector_number": "207"
+    },
+    "disinformation_campaign": {
+      "scryfall_id": "d34ea8c4-03b1-415f-80e1-7c3cf6933685",
+      "artist": "Anthony Palumbo",
+      "set_code": "mkc",
+      "collector_number": "208"
+    },
+    "dogged_detective": {
+      "scryfall_id": "57d1f729-0d7c-4122-9bca-f3b08cf6fe4f",
+      "artist": "Caroline Gariba",
+      "set_code": "mkc",
+      "collector_number": "127"
+    },
+    "doom_whisperer": {
+      "scryfall_id": "e8aabcaf-0968-402f-bc9f-289756e4d4b7",
+      "artist": "Vincent Proce",
+      "set_code": "mkc",
+      "collector_number": "128"
+    },
+    "dream_eater": {
+      "scryfall_id": "2b7b2d1b-aefd-4199-ac82-548da3025e82",
+      "artist": "Daarken",
+      "set_code": "mkc",
+      "collector_number": "101"
+    },
+    "drownyard_temple": {
+      "scryfall_id": "a2ac347e-3dad-42a2-b57f-fd2c70373730",
+      "artist": "John Avon",
+      "set_code": "mkc",
+      "collector_number": "259"
+    },
+    "enhanced_surveillance": {
+      "scryfall_id": "42e6f705-2af7-47c2-961a-cf4c02b29f21",
+      "artist": "Grzegorz Rutkowski",
+      "set_code": "mkc",
+      "collector_number": "102"
+    },
+    "ephara_s_dispersal": {
+      "scryfall_id": "b622aad1-4f57-472e-9bd8-9404da88d6be",
+      "artist": "Awanqi (Angela Wang)",
+      "set_code": "mkc",
+      "collector_number": "103"
+    },
+    "everflowing_chalice": {
+      "scryfall_id": "e89eca1c-19f5-4db0-9330-cecb87be8b55",
+      "artist": "Steve Argyle",
+      "set_code": "mkc",
+      "collector_number": "227"
+    },
+    "eye_of_duskmantle": {
+      "scryfall_id": "905fa4ed-e496-43d8-9c4a-38e85d9b7651",
+      "artist": "Anthony Devine",
+      "set_code": "mkc",
+      "collector_number": "27"
+    },
+    "fetid_pools": {
+      "scryfall_id": "404fb2b0-cce9-4fe2-8008-2c9fb29e710d",
+      "artist": "Jonas De Ro",
+      "set_code": "mkc",
+      "collector_number": "261"
+    },
+    "final_word_phantom": {
+      "scryfall_id": "7a51d392-58dc-483e-81f7-2d51e64e54ff",
+      "artist": "Anthony Devine",
+      "set_code": "mkc",
+      "collector_number": "22"
+    },
+    "foreboding_steamboat": {
+      "scryfall_id": "cbd9a0cb-e1ea-446e-aa57-4305d4b3b92e",
+      "artist": "Josu Solano",
+      "set_code": "mkc",
+      "collector_number": "28"
+    },
+    "grave_titan": {
+      "scryfall_id": "13680953-cf05-4e38-a3cf-22900c02fab7",
+      "artist": "Nils Hamm",
+      "set_code": "mkc",
+      "collector_number": "129"
+    },
+    "hostile_desert": {
+      "scryfall_id": "d71031c2-7379-4d83-b6d6-61f3104593c4",
+      "artist": "Josh Hass",
+      "set_code": "mkc",
+      "collector_number": "266"
+    },
+    "island": {
+      "scryfall_id": "6908b583-4a52-4819-82a3-9db9c860aeb6",
+      "artist": "Jorge Jacinto",
+      "set_code": "mkm",
+      "collector_number": "279"
+    },
+    "lazav_the_multifarious": {
+      "scryfall_id": "662758ee-f7c8-4cba-b67b-48ac80c3b5ca",
+      "artist": "Yongjae Choi",
+      "set_code": "mkc",
+      "collector_number": "214"
+    },
+    "marvo_deep_operative": {
+      "scryfall_id": "8fdb30c1-0551-48b7-8bcb-d7e0dbb6690a",
+      "artist": "John Tedrick",
+      "set_code": "mkc",
+      "collector_number": "7"
+    },
+    "massacre_wurm": {
+      "scryfall_id": "95cca140-e371-4d32-8a44-fd080329a28f",
+      "artist": "Jason Chan",
+      "set_code": "mkc",
+      "collector_number": "130"
+    },
+    "master_of_death": {
+      "scryfall_id": "73903784-06c9-48ec-9d4a-e78461903617",
+      "artist": "John Stanko",
+      "set_code": "mkc",
+      "collector_number": "216"
+    },
+    "mind_stone": {
+      "scryfall_id": "b227672f-967e-4f8d-87f4-c6cd4622fe3f",
+      "artist": "Adam Rex",
+      "set_code": "mkc",
+      "collector_number": "232"
+    },
+    "mirko_obsessive_theorist": {
+      "scryfall_id": "690acbbf-5e92-4323-b939-31bdb07f9905",
+      "artist": "Heonhwa",
+      "set_code": "mkc",
+      "collector_number": "2"
+    },
+    "mission_briefing": {
+      "scryfall_id": "5ed398e7-9d2b-4bd2-9a4b-2885e4749003",
+      "artist": "Matt Stewart",
+      "set_code": "mkc",
+      "collector_number": "110"
+    },
+    "mulldrifter": {
+      "scryfall_id": "eb6d8d1c-8d23-4273-9c9b-f3b71eb0e105",
+      "artist": "Eric Fortune",
+      "set_code": "mkc",
+      "collector_number": "111"
+    },
+    "myriad_landscape": {
+      "scryfall_id": "bf4797b0-4d0a-433f-b891-b14f96fd1484",
+      "artist": "Richard Wright",
+      "set_code": "mkc",
+      "collector_number": "276"
+    },
+    "mystic_sanctuary": {
+      "scryfall_id": "67652446-6d12-4e2a-bb51-ba685f2e79d1",
+      "artist": "Randy Vargas",
+      "set_code": "mkc",
+      "collector_number": "277"
+    },
+    "necromancy": {
+      "scryfall_id": "3dd34a1a-e76b-46ee-be8d-5f7f4a092648",
+      "artist": "Bastien L. Deharme",
+      "set_code": "mkc",
+      "collector_number": "131"
+    },
+    "nightveil_sprite": {
+      "scryfall_id": "82f806fe-3970-4ae2-b232-d99002d46062",
+      "artist": "Uriah Voth",
+      "set_code": "mkc",
+      "collector_number": "113"
+    },
+    "notion_rain": {
+      "scryfall_id": "66ed78c5-be23-4fcb-9143-e6574cd6ec68",
+      "artist": "Lius Lasahido",
+      "set_code": "mkc",
+      "collector_number": "217"
+    },
+    "otherworldly_gaze": {
+      "scryfall_id": "2ed35631-2435-4873-a45f-c620e86a60dd",
+      "artist": "Chris Cold",
+      "set_code": "mkc",
+      "collector_number": "115"
+    },
+    "overseer_of_the_damned": {
+      "scryfall_id": "0a1a06a4-af73-43e3-a2cd-3a2f0f9b18f0",
+      "artist": "rk post",
+      "set_code": "mkc",
+      "collector_number": "132"
+    },
+    "phyrexian_arena": {
+      "scryfall_id": "26bfb2b4-8dc2-4632-a393-d3477f6c3c40",
+      "artist": "Martina Fačková",
+      "set_code": "mkc",
+      "collector_number": "133"
+    },
+    "phyrexian_metamorph": {
+      "scryfall_id": "e5a1ff9e-fef2-4890-baf2-7bd0852ea0b9",
+      "artist": "Jana Schirmer & Johannes Voss",
+      "set_code": "mkc",
+      "collector_number": "116"
+    },
+    "pile_on": {
+      "scryfall_id": "570b56ff-b25a-43e4-927b-99dba542be5e",
+      "artist": "Javier Charro",
+      "set_code": "mkc",
+      "collector_number": "134"
+    },
+    "port_of_karfell": {
+      "scryfall_id": "c1377ca1-aa54-4fed-b289-45309eb2f6b6",
+      "artist": "Mauricio Calle",
+      "set_code": "mkc",
+      "collector_number": "280"
+    },
+    "price_of_fame": {
+      "scryfall_id": "e9054114-6740-4e2d-ae40-ccfb5e497d67",
+      "artist": "Winona Nelson",
+      "set_code": "mkc",
+      "collector_number": "135"
+    },
+    "ransom_note": {
+      "scryfall_id": "24a93c86-e0a5-4d94-8df3-f6ebf8b42892",
+      "artist": "Gaboleps",
+      "set_code": "mkc",
+      "collector_number": "48"
+    },
+    "ravenous_chupacabra": {
+      "scryfall_id": "a4dfbac0-1849-41c5-853a-1fee108d0b01",
+      "artist": "Daarken",
+      "set_code": "mkc",
+      "collector_number": "136"
+    },
+    "reanimate": {
+      "scryfall_id": "7d0fe02b-f45a-45c6-ab7c-270594a29da7",
+      "artist": "Johann Bodin",
+      "set_code": "mkc",
+      "collector_number": "137"
+    },
+    "reliquary_tower": {
+      "scryfall_id": "f5a1db89-d37f-4839-8ca4-598686c5d6de",
+      "artist": "Jesper Ejsing",
+      "set_code": "mkc",
+      "collector_number": "282"
+    },
+    "rise_of_the_dark_realms": {
+      "scryfall_id": "ceb5df52-4e03-4629-b8d5-d440d9cc5175",
+      "artist": "Michael Komarck",
+      "set_code": "mkc",
+      "collector_number": "138"
+    },
+    "river_of_tears": {
+      "scryfall_id": "67b626cc-1c12-4059-afa5-e5a1221ea1ba",
+      "artist": "Chris J. Anderson",
+      "set_code": "mkc",
+      "collector_number": "283"
+    },
+    "rogue_s_passage": {
+      "scryfall_id": "670d6a0d-d10b-4b0a-961a-a95dbf413fc5",
+      "artist": "Christine Choi",
+      "set_code": "mkc",
+      "collector_number": "284"
+    },
+    "shriekmaw": {
+      "scryfall_id": "9c062442-a84b-4b47-8f84-a7c0abfff41b",
+      "artist": "Steve Prescott",
+      "set_code": "mkc",
+      "collector_number": "139"
+    },
+    "sinister_starfish": {
+      "scryfall_id": "5f75b7f4-249c-4b10-a06d-6b7654cccc46",
+      "artist": "Nils Hamm",
+      "set_code": "mkc",
+      "collector_number": "140"
+    },
+    "sol_ring": {
+      "scryfall_id": "d9e098aa-a886-430e-8f11-78fb6f2d8ada",
+      "artist": "Mike Bierek",
+      "set_code": "mkc",
+      "collector_number": "237"
+    },
+    "sphinx_of_the_second_sun": {
+      "scryfall_id": "be2d74cd-76fb-4bca-99b5-07749aef4d06",
+      "artist": "Antonio José Manzanedo",
+      "set_code": "mkc",
+      "collector_number": "118"
+    },
+    "sunken_hollow": {
+      "scryfall_id": "d9352f50-1289-4fa9-a595-226dd6ca807c",
+      "artist": "Adam Paquette",
+      "set_code": "mkc",
+      "collector_number": "299"
+    },
+    "swamp": {
+      "scryfall_id": "70d0ef58-c0b3-4bcd-b470-0cf41219a4e6",
+      "artist": "Carlos Palma Cruchaga",
+      "set_code": "mkm",
+      "collector_number": "281"
+    },
+    "syr_konrad_the_grim": {
+      "scryfall_id": "9241a72e-cb88-4cea-a2f4-ff10af461437",
+      "artist": "Anna Steinbauer",
+      "set_code": "mkc",
+      "collector_number": "141"
+    },
+    "tainted_isle": {
+      "scryfall_id": "867c8386-c317-4131-83d1-a8bdfb746380",
+      "artist": "Alan Pollack",
+      "set_code": "mkc",
+      "collector_number": "300"
+    },
+    "talisman_of_dominance": {
+      "scryfall_id": "f6c8e0b5-218e-41dd-8b09-2d4aaec2c979",
+      "artist": "Mike Dringenberg",
+      "set_code": "mkc",
+      "collector_number": "242"
+    },
+    "temple_of_the_false_god": {
+      "scryfall_id": "2d21d25e-830a-4d32-b292-c24cdab7516a",
+      "artist": "James Zapata",
+      "set_code": "mkc",
+      "collector_number": "305"
+    },
+    "thought_vessel": {
+      "scryfall_id": "67b26b45-19bf-4675-86c4-fae4f3aca234",
+      "artist": "rk post",
+      "set_code": "mkc",
+      "collector_number": "245"
+    },
+    "thoughtbound_phantasm": {
+      "scryfall_id": "dbcdf292-a391-4452-8116-20084754f591",
+      "artist": "Johann Bodin",
+      "set_code": "mkc",
+      "collector_number": "122"
+    },
+    "tocasia_s_dig_site": {
+      "scryfall_id": "bbb5d40b-f0e1-4e98-b4d3-1ee2cfa5b579",
+      "artist": "Nadia Hurianova",
+      "set_code": "mkc",
+      "collector_number": "308"
+    },
+    "toxic_deluge": {
+      "scryfall_id": "64d3d8ad-927f-4c4e-96cf-03e98bec3987",
+      "artist": "Svetlin Velinov",
+      "set_code": "mkc",
+      "collector_number": "142"
+    },
+    "twilight_prophet": {
+      "scryfall_id": "050ca791-265a-4e7b-9640-4fd5a6d8cd3a",
+      "artist": "David Astruga",
+      "set_code": "mkc",
+      "collector_number": "143"
+    },
+    "unshakable_tail": {
+      "scryfall_id": "053183e7-b505-49d2-b614-b704e984cb1a",
+      "artist": "Sean Murray",
+      "set_code": "mkc",
+      "collector_number": "29"
+    },
+    "vizier_of_many_faces": {
+      "scryfall_id": "f4f5deae-3fa7-4c06-abe1-753d94158a0a",
+      "artist": "Ryan Yee",
+      "set_code": "mkc",
+      "collector_number": "123"
+    },
+    "watcher_of_hours": {
+      "scryfall_id": "d827fc3c-bc86-4ee9-9db9-461cb0276f6b",
+      "artist": "Daniel Romanovsky",
+      "set_code": "mkc",
+      "collector_number": "25"
+    },
+    "whispering_snitch": {
+      "scryfall_id": "be9abe56-7d56-4fc6-ab24-7b78646266be",
+      "artist": "Jason Rainville",
+      "set_code": "mkc",
+      "collector_number": "144"
+    }
+  },
+  "cards": [
+    {
+      "id": "amphin_mutineer"
+    },
+    {
+      "id": "animate_dead"
+    },
+    {
+      "id": "arcane_signet"
+    },
+    {
+      "id": "ash_barrens"
+    },
+    {
+      "id": "baleful_strix"
+    },
+    {
+      "id": "black_sun_s_zenith"
+    },
+    {
+      "id": "bojuka_bog"
+    },
+    {
+      "id": "brainstorm"
+    },
+    {
+      "id": "case_of_the_shifting_visage"
+    },
+    {
+      "id": "charnel_serenade"
+    },
+    {
+      "id": "choked_estuary"
+    },
+    {
+      "id": "command_tower"
+    },
+    {
+      "id": "connive_concoct"
+    },
+    {
+      "id": "consider"
+    },
+    {
+      "id": "copy_catchers"
+    },
+    {
+      "id": "counterpoint"
+    },
+    {
+      "id": "curate"
+    },
+    {
+      "id": "darkwater_catacombs"
+    },
+    {
+      "id": "deep_analysis"
+    },
+    {
+      "id": "dimir_aqueduct"
+    },
+    {
+      "id": "dimir_signet"
+    },
+    {
+      "id": "dimir_spybug"
+    },
+    {
+      "id": "discovery_dispersal"
+    },
+    {
+      "id": "disinformation_campaign"
+    },
+    {
+      "id": "dogged_detective"
+    },
+    {
+      "id": "doom_whisperer"
+    },
+    {
+      "id": "dream_eater"
+    },
+    {
+      "id": "drownyard_temple"
+    },
+    {
+      "id": "enhanced_surveillance"
+    },
+    {
+      "id": "ephara_s_dispersal"
+    },
+    {
+      "id": "everflowing_chalice"
+    },
+    {
+      "id": "eye_of_duskmantle"
+    },
+    {
+      "id": "fetid_pools"
+    },
+    {
+      "id": "final_word_phantom"
+    },
+    {
+      "id": "foreboding_steamboat"
+    },
+    {
+      "id": "grave_titan"
+    },
+    {
+      "id": "hostile_desert"
+    },
+    {
+      "id": "island",
+      "qty": 9
+    },
+    {
+      "id": "lazav_the_multifarious"
+    },
+    {
+      "id": "marvo_deep_operative"
+    },
+    {
+      "id": "massacre_wurm"
+    },
+    {
+      "id": "master_of_death"
+    },
+    {
+      "id": "mind_stone"
+    },
+    {
+      "id": "mission_briefing"
+    },
+    {
+      "id": "mulldrifter"
+    },
+    {
+      "id": "myriad_landscape"
+    },
+    {
+      "id": "mystic_sanctuary"
+    },
+    {
+      "id": "necromancy"
+    },
+    {
+      "id": "nightveil_sprite"
+    },
+    {
+      "id": "notion_rain"
+    },
+    {
+      "id": "otherworldly_gaze"
+    },
+    {
+      "id": "overseer_of_the_damned"
+    },
+    {
+      "id": "phyrexian_arena"
+    },
+    {
+      "id": "phyrexian_metamorph"
+    },
+    {
+      "id": "pile_on"
+    },
+    {
+      "id": "port_of_karfell"
+    },
+    {
+      "id": "price_of_fame"
+    },
+    {
+      "id": "ransom_note"
+    },
+    {
+      "id": "ravenous_chupacabra"
+    },
+    {
+      "id": "reanimate"
+    },
+    {
+      "id": "reliquary_tower"
+    },
+    {
+      "id": "rise_of_the_dark_realms"
+    },
+    {
+      "id": "river_of_tears"
+    },
+    {
+      "id": "rogue_s_passage"
+    },
+    {
+      "id": "shriekmaw"
+    },
+    {
+      "id": "sinister_starfish"
+    },
+    {
+      "id": "sol_ring"
+    },
+    {
+      "id": "sphinx_of_the_second_sun"
+    },
+    {
+      "id": "sunken_hollow"
+    },
+    {
+      "id": "swamp",
+      "qty": 9
+    },
+    {
+      "id": "syr_konrad_the_grim"
+    },
+    {
+      "id": "tainted_isle"
+    },
+    {
+      "id": "talisman_of_dominance"
+    },
+    {
+      "id": "temple_of_the_false_god"
+    },
+    {
+      "id": "thought_vessel"
+    },
+    {
+      "id": "thoughtbound_phantasm"
+    },
+    {
+      "id": "tocasia_s_dig_site"
+    },
+    {
+      "id": "toxic_deluge"
+    },
+    {
+      "id": "twilight_prophet"
+    },
+    {
+      "id": "unshakable_tail"
+    },
+    {
+      "id": "vizier_of_many_faces"
+    },
+    {
+      "id": "watcher_of_hours"
+    },
+    {
+      "id": "whispering_snitch"
+    }
+  ]
+}

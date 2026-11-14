@@ -120,19 +120,16 @@ class TestItProtectsEverybody:
 class TestGrantedFlashback:
     """"Each instant and sorcery card in your graveyard has flashback."
 
-    Lier's second line, and the interesting part is how little of it was
-    missing. A spell cast out of a graveyard **already** exiles as it resolves:
-    `graveyard_cast_exiles` defaults to True and escape is the only thing that
-    turns it off, so the exile half of flashback had been there all along.
-
-    What Lier could not say was that it needs no rate limit. The loader refuses
-    a `cast_from_graveyard` static with no `max_per_turn`, and it is right to --
-    a permission that neither meters nor exiles recasts one graveyard card every
-    turn for ever. `grants_flashback` is the card stating that the exile *is*
-    the limit: spent card by card, capped by the graveyard running out.
-
-    So the flag adds no behaviour, and deliberately: a second mechanism for an
-    exile the engine already performs would be two spellings of one question.
+    Lier's second line. `grants_flashback` says two things about the
+    permission. It needs no rate limit: the loader refuses a
+    `cast_from_graveyard` static with no `max_per_turn`, and it is right to --
+    a permission that neither meters nor exiles recasts one graveyard card
+    every turn for ever -- but flashback's exile *is* the limit, spent card by
+    card. And the exile is flashback's (702.34a), not every graveyard cast's:
+    `Game._cast` stamps it onto the stack item for a cast under a permission
+    that grants flashback, and a permission that does not (Eye of Duskmantle's
+    "cast spells from among cards in your graveyard") sends its instant or
+    sorcery back to the graveyard as usual.
     """
 
     def flashback_a_spell(self, builder, lier: str):
@@ -171,10 +168,10 @@ class TestGrantedFlashback:
         """
         assert self.flashback_a_spell(builder, LIER) is Zone.EXILE
 
-    def test_a_metered_permission_exiles_the_same_way(self, builder):
-        """The comparison that shows the flag adds no behaviour of its own.
+    def test_a_permission_that_is_not_flashback_does_not_exile(self, builder):
+        """The comparison that shows what the flag carries.
 
-        Same cast, same zone, different rate limit -- and the same exile, because
-        the exile was never the missing part.
+        Same cast, a rate limit instead of flashback -- and the spell goes back
+        to the graveyard, because nothing printed on the permission exiles it.
         """
-        assert self.flashback_a_spell(builder, "t_lier_no_exile") is Zone.EXILE
+        assert self.flashback_a_spell(builder, "t_lier_no_exile") is Zone.GRAVEYARD

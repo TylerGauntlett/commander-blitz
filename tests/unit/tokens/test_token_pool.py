@@ -2424,6 +2424,37 @@ class TestFishersTalentsSharkIsAPlainThreeThree:
         assert list(other.keywords) == ["flying"]
 
 
+class TestAmphinMutineersSalamanderIsAPlainFourThreeBlue:
+    """Amphin Mutineer: *"exile up to one target non-Salamander creature. That
+    creature's controller creates a **4/3 blue Salamander Warrior** creature
+    token."*
+
+    `vampire_demon_4_3_wb_flying` is the pool's other 4/3: white and black, the
+    wrong creature types, and a flier. The subtype is load-bearing as well as
+    the body: the Mutineer's own clause refuses Salamanders, so the token it
+    hands over can never be exiled by a second Mutineer.
+    """
+
+    TOKEN = "salamander_warrior_4_3_u"
+
+    def test_it_is_a_vanilla_four_three_blue_salamander_warrior(self, pool):
+        token = pool.get(self.TOKEN)
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (4, 3)
+        assert sorted(token.colors) == ["U"]
+        assert list(token.types) == ["Creature"]
+        assert sorted(token.subtypes) == ["Salamander", "Warrior"]
+        assert not token.keywords
+        assert not token.abilities
+
+    def test_the_vampire_demon_is_still_a_separate_token(self, pool):
+        other = pool.get("vampire_demon_4_3_wb_flying")
+        assert other is not None
+        assert (other.power, other.toughness) == (4, 3)
+        assert list(other.keywords) == ["flying"]
+        assert "Salamander" not in other.subtypes
+
+
 class TestSquirreledAwayTokens:
     """Squirreled Away's tokens, each pinned beside its nearest near miss
     (111.4: a token is exactly what its creating effect says).

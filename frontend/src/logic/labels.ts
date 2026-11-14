@@ -471,6 +471,9 @@ export function describeEvent(
       const n = typeof event.data.level === "number" ? event.data.level : 0;
       return `${card ?? "A Class"} becomes level ${n}`;
     }
+    /* A Case became solved (719.3d): its "Solved" abilities switch on. */
+    case "became_solved":
+      return `${card ?? "A Case"} is solved`;
     case "control_changed":
       return `${who} ${v("gain", "gains")} control of ${card ?? "a permanent"}`;
     case "counter_placed":
@@ -516,6 +519,22 @@ export function describeEvent(
      */
     case "investigated":
       return `${who} ${v("investigate", "investigates")}`;
+    /*
+     * A player surveilled (701.25). Any card it binned has its own
+     * `zone_change` line; this one says a surveil happened, which is what
+     * "whenever you surveil" triggers off -- even one that kept every card
+     * on top and so moved nothing.
+     */
+    case "surveilled":
+      return `${who} ${v("surveil", "surveils")}`;
+    /*
+     * One clashing player's result (701.23). Each clash logs a line per
+     * clasher, because either may win: the revealed cards have their own
+     * `reveal` line, and this one says who won, which is what "whenever you
+     * win a clash" triggers off.
+     */
+    case "clashed":
+      return `${who} ${event.data.won ? v("win", "wins") : v("lose", "loses")} a clash`;
     /*
      * A library search (701.19) -- a tutor, a fetchland, landcycling.
      *

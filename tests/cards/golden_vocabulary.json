@@ -104,9 +104,13 @@
   ],
   "ENTERS_COPY_EXCEPT_KEYS": [
    "add_keywords",
+   "add_subtypes",
    "add_types",
+   "colors",
+   "condition",
    "enters_with",
    "name",
+   "no_mana_cost",
    "remove_supertypes"
   ],
   "FIRST_ACTIVATION_TARGETING_KEYS": [
@@ -360,6 +364,7 @@
    "replace_life_loss",
    "replace_mill",
    "replace_proliferate",
+   "replace_surveil",
    "reveal_library_top",
    "skip_draw_step",
    "skip_extra_turn",
@@ -464,7 +469,8 @@
    "top_of_library",
    "is_monarch",
    "exists_derived",
-   "has_flag"
+   "has_flag",
+   "step_is"
   ],
   "STATIC_CONDITION_OPS": [
    "!=",
@@ -608,6 +614,7 @@
    "replace_life_loss",
    "replace_mill",
    "replace_proliferate",
+   "replace_surveil",
    "replace_token_creation",
    "reveal_library_top",
    "set_colors",
@@ -808,6 +815,7 @@
    "replace_life_loss",
    "replace_mill",
    "replace_proliferate",
+   "replace_surveil",
    "replace_token_creation",
    "reveal_library_top",
    "skip_draw_step",
@@ -954,6 +962,14 @@
    "paid_by",
    "self_only",
    "shares_a_creature_type_with"
+  ],
+  "_NOT_SOLVED": {
+   "solved": false
+  },
+  "_TO_SOLVE_LINE_KEYS": [
+   "condition",
+   "kind",
+   "text"
   ]
  },
  "ops": [
@@ -970,6 +986,7 @@
   "attack_despite_defender",
   "attack_tax",
   "aura_swap",
+  "become_aura",
   "become_copy",
   "become_level",
   "become_monarch",
@@ -1026,6 +1043,7 @@
   "exile_spell_on_resolution",
   "exile_until",
   "explore",
+  "extra_beginning_phase",
   "extra_combat",
   "extra_land_drop",
   "extra_loyalty_activation",
@@ -1086,6 +1104,7 @@
   "prevent_damage_permanent",
   "proliferate",
   "pump",
+  "put_exiled_into_graveyard",
   "put_on_top",
   "put_onto_battlefield",
   "redirect_attack",
@@ -1120,6 +1139,7 @@
   "shuffle",
   "skip_untap",
   "snapshot",
+  "solve",
   "spell_enters_with_counters",
   "surveil",
   "suspend",

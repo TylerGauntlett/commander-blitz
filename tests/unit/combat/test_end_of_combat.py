@@ -213,12 +213,21 @@ class TestTheStepIsReachableAtAll:
             )
 
     def test_the_four_older_steps_are_untouched(self):
+        assert {name: DELAY_STEPS[name] for name in ("upkeep", "draw_step", "begin_combat", "end_step")} == {
+            "upkeep": Step.UPKEEP,
+            "draw_step": Step.DRAW,
+            "begin_combat": Step.BEGIN_COMBAT,
+            "end_step": Step.END_STEP,
+        }
+        # The whole whitelist, so a step added without a reason still fails
+        # here: `cleanup` is Necromancy's (`test_cast_at_sorcery_timing.py`).
         assert set(DELAY_STEPS) == {
             "upkeep",
             "draw_step",
             "begin_combat",
             "end_of_combat",
             "end_step",
+            "cleanup",
         }
 
 

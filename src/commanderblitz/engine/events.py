@@ -126,6 +126,34 @@ class EventType:
     #: ways: a Clue made by "create a Clue token" is not an investigation, and
     #: one investigation whose Clue a token doubler doubles is still one.
     INVESTIGATED = "investigated"
+    #: A player surveilled (701.25) -- "Whenever you surveil" (Dimir Spybug)
+    #: and "whenever you surveil for the first time each turn" (Whispering
+    #: Snitch). ``player`` is the **surveiller**; ``data["looked"]`` is how
+    #: many cards they looked at and ``data["binned"]`` how many went to the
+    #: graveyard; ``data["nth"]`` is that surveil's ordinal for its player
+    #: this turn, written by `GameState._tally` from `TurnLedger.surveils`.
+    #:
+    #: One event per surveilling player per surveil instruction, fired by
+    #: `ops_cards.op_surveil` once the cards are placed, so surveil 2 is one.
+    #: Surveil 0 fires nothing (701.25c). Its own type because
+    #: `put_into_graveyard` is the near miss and wrong both ways: it fires per
+    #: card and on every mill, and a surveil that keeps every card on top puts
+    #: nothing into the graveyard and is still a surveil.
+    SURVEILLED = "surveilled"
+    #: A player clashed (701.23) -- "Whenever you win a clash" (Marvo, Deep
+    #: Operative). ``player`` is **one clashing player**; ``data["won"]`` is
+    #: whether that player won (701.23b: revealed a card with a greater mana
+    #: value than the other), ``data["opponent"]`` the seat they clashed
+    #: against.
+    #:
+    #: One event per clashing player per clash, fired by `ops_cards.op_clash`
+    #: once both cards are placed -- the clash's instigator first, then the
+    #: opponent -- because both players clash and either may win: an opponent
+    #: who wins your clash has won a clash. A tie fires two lost clashes. The
+    #: `clash_won` binding is the near miss: it is the instigator's result,
+    #: read only by the ability that clashed, so a card listening for every
+    #: clash it wins cannot be built from it.
+    CLASHED = "clashed"
     #: A player gave a gift (702.174) -- "Whenever you give a gift" (Jolly
     #: Gerbils). ``player`` is the **giver**, the controller of the spell or
     #: ability that gave it; ``source`` is the gift card's object, ``card`` its
@@ -228,6 +256,11 @@ class EventType:
     #: is *activated*, a stack's width earlier and before an opponent has had the
     #: chance to answer it, and neither can tell level 2 from level 3.
     BECAME_LEVEL = "became_level"
+    #: A Case **became solved** (719.3d). ``source`` and ``data["oid"]`` are
+    #: the Case. Fired by `solve`, only when it was not solved already, and
+    #: after the designation is written -- `became_level`'s order, so the
+    #: "Solved —" abilities are on the permanent when anything looks.
+    BECAME_SOLVED = "became_solved"
     #: A Saga's lore counters **reached** a chapter number (714.2c). ``source``
     #: and ``data["oid"]`` are the Saga, ``data["chapter"]`` the number reached.
     #:

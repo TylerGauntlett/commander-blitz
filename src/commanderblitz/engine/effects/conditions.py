@@ -12,6 +12,7 @@ clauses on triggers, and static ability conditions.
     {"escaped": true}
     {"cast_during": "your_main"}
     {"was_cast": true}
+    {"cast_at_sorcery_timing": false}
     {"is_active_player": {"binding": "event_player"}}
     {"step_is": "declare_attackers"}
 """
@@ -71,12 +72,21 @@ CONDITION_KEYS = frozenset(
         # writes for a card's `impending` field -- the rule's two clauses that
         # say so -- and refused on a card without one.
         "impending",
+        # A Case (719.3d): "if this Case is solved", asked of the ability's own
+        # source. Written `false` by the loader into the intervening-if of the
+        # end-step trigger it builds from a "To solve —" line (719.3b), and
+        # refused on a card that prints no such line.
+        "solved",
         # Escape (702.138c-d): "this creature **escapes with** two +1/+1
         # counters on it", which is "if it escaped, it enters with...", and
         # Uro's "sacrifice it unless it escaped". True only of the spell cast
         # for the card's own escape cost and the permanent it resolved into --
         # not of a cast from the graveyard under another permission.
         "escaped",
+        # "…except **if this creature was embalmed**" (Vizier of Many Faces):
+        # the source is a token an embalm ability created (702.128a), stamped
+        # by `copy_permanent`'s ``embalm`` key as the token is made.
+        "embalmed",
         "cast_from_graveyard",
         #: Approach of the Second Sun's "if this spell was cast from your hand".
         #: The sibling of the key above and not its negation: a spell cast from
@@ -142,6 +152,10 @@ CONDITION_KEYS = frozenset(
         # they still answer for a permanent that was cast, died and was
         # reanimated. See `entered_by_cast`.
         "was_cast",
+        # Necromancy: "if you cast it **any time a sorcery couldn't have been
+        # cast**" (307.1), written `false`. The stamp `stack.push_spell` writes
+        # as the spell is cast -- see `_cast_at_sorcery_timing`.
+        "cast_at_sorcery_timing",
         # "…**during their turn**". Whether the player a spec names is the
         # active player. Takes a full player spec the way `is_monarch` does, so
         # a trigger writes `{"binding": "event_player"}` and asks about the
@@ -255,6 +269,12 @@ def evaluate(ctx: EffectContext, cond: Any) -> bool:
         obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
         paid = obj is not None and obj.cast_impending
         return paid == bool(cond["impending"])
+    if "solved" in cond:
+        # Off the object, like `impending`: the designation lives on the Case
+        # and is cleared as it next enters (400.7).
+        obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
+        is_solved = obj is not None and obj.solved
+        return is_solved == bool(cond["solved"])
     if "escaped" in cond:
         # `impending`'s reading, off the object, in both lifetimes: the stamp
         # is written as the spell starts resolving and again as it lands, and
@@ -262,6 +282,12 @@ def evaluate(ctx: EffectContext, cond: Any) -> bool:
         obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
         did = obj is not None and obj.cast_escaped
         return did == bool(cond["escaped"])
+    if "embalmed" in cond:
+        # A stamp of the object's creation, never cleared, so it reads the
+        # same as the token enters and for as long as it exists.
+        obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
+        was = obj is not None and obj.embalmed
+        return was == bool(cond["embalmed"])
     if "cast_from_graveyard" in cond:
         # "If this spell was cast from a graveyard, create ten of those tokens
         # instead." Read while the spell is still resolving, so `ctx.source_oid`
@@ -427,6 +453,9 @@ def evaluate(ctx: EffectContext, cond: Any) -> bool:
         obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
         was_cast = obj is not None and obj.entered_by_cast
         return was_cast == bool(cond["was_cast"])
+    if "cast_at_sorcery_timing" in cond:
+        obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
+        return _cast_at_sorcery_timing(obj, bool(cond["cast_at_sorcery_timing"]))
     if "is_your_turn" in cond:
         return (ctx.state.active_player == ctx.controller) == bool(cond["is_your_turn"])
     if "cmp" in cond:
@@ -448,6 +477,29 @@ def evaluate(ctx: EffectContext, cond: Any) -> bool:
         raise DslError(f"unknown comparison operator {op!r}")
 
     raise DslError(f"unknown condition {sorted(cond)}")
+
+
+def _cast_at_sorcery_timing(obj: Any, want: bool) -> bool:
+    """Was ``obj`` cast, and was that cast at sorcery timing exactly when ``want``?
+
+    ``False`` both ways for anything this life of the object was not cast
+    into: a token, a copy (707.10), and a permanent that arrived any way but
+    by resolving as the spell that was stamped. That last one is why the
+    battlefield reads `entered_by_cast` rather than `cast_step`: the `cast_*`
+    stamps are written once and never cleared, so a Necromancy cast at instant
+    speed, killed and reanimated would otherwise still be sacrificed for a cast
+    made in its previous life. On the stack the spell is its own cast, so the
+    stamp is enough there.
+
+    So "if you cast it any time a sorcery couldn't have been cast" is ``false``
+    and never ``{"not": {"cast_at_sorcery_timing": true}}``, which would also
+    be true of everything never cast.
+    """
+    if obj is None or obj.cast_step is None:
+        return False
+    if obj.on_battlefield and not obj.entered_by_cast:
+        return False
+    return obj.cast_at_sorcery_timing == want
 
 
 def _cast_during(obj: Any, spec: str) -> bool:
@@ -543,8 +595,12 @@ def validate_condition(cond: Any, where: str) -> None:
     # Gondor's trigger fire in exactly the case it must not.
     if "impending" in cond and not isinstance(cond["impending"], bool):
         raise DslError(f"{where}.impending: must be true or false")
+    if "solved" in cond and not isinstance(cond["solved"], bool):
+        raise DslError(f"{where}.solved: must be true or false")
     if "escaped" in cond and not isinstance(cond["escaped"], bool):
         raise DslError(f"{where}.escaped: must be true or false")
+    if "embalmed" in cond and not isinstance(cond["embalmed"], bool):
+        raise DslError(f"{where}.embalmed: must be true or false")
     if "cast_from_exile" in cond and not isinstance(cond["cast_from_exile"], bool):
         raise DslError(f"{where}.cast_from_exile: must be true or false")
     if "no_monarch" in cond and not isinstance(cond["no_monarch"], bool):
@@ -601,6 +657,8 @@ def validate_condition(cond: Any, where: str) -> None:
     # the difference between one copy and one per reanimation.
     if "was_cast" in cond and not isinstance(cond["was_cast"], bool):
         raise DslError(f"{where}.was_cast: must be true or false")
+    if "cast_at_sorcery_timing" in cond and not isinstance(cond["cast_at_sorcery_timing"], bool):
+        raise DslError(f"{where}.cast_at_sorcery_timing: must be true or false")
     # A flag name that is not a name matches nothing, so the guard never bites
     # and the once-each-turn clause it was written for is simply absent from a
     # card that reads as though it has one. `true` is the tempting mistake --

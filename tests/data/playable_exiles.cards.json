@@ -1,0 +1,37 @@
+{
+  "_comment": "The `playable_exiles` rider on a play permission: 'If that spell would be put into a graveyard, exile it instead.' t_pe_briefing is Mission Briefing's grant over your own graveyard; t_pe_daredevil is Dire Fleet Daredevil's exile from an opponent's.",
+  "cards": [
+    {
+      "id": "t_pe_briefing",
+      "name": "Test Exiling Briefing",
+      "oracle_text": "You may cast instant and sorcery cards from your graveyard this turn. If a spell cast this way would be put into your graveyard, exile it instead.",
+      "mana_cost": "{U}",
+      "types": ["Sorcery"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "spell_effects": [
+        {"op": "grant_playable", "playable_exiles": true, "playable_cast_only": true,
+         "objects": {"zone": "graveyard", "controller": "you",
+                     "any_types": ["Instant", "Sorcery"]}}
+      ]
+    },
+    {
+      "id": "t_pe_daredevil",
+      "name": "Test Exiling Daredevil",
+      "oracle_text": "Exile target instant or sorcery card from an opponent's graveyard. You may cast it this turn, and mana of any type can be spent to cast that spell. If that spell would be put into a graveyard, exile it instead.",
+      "mana_cost": "{U}",
+      "types": ["Sorcery"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "targets": [
+        {"id": "t1", "kind": "card_in_graveyard", "count": 1,
+         "selector": {"zone": "graveyard", "player": "opponent",
+                      "any_types": ["Instant", "Sorcery"]}}
+      ],
+      "spell_effects": [
+        {"op": "exile", "objects": {"target": "t1"}, "playable": "this_turn",
+         "playable_cast_only": true, "any_type": true, "playable_exiles": true}
+      ]
+    }
+  ]
+}

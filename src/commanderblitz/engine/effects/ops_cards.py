@@ -16,6 +16,7 @@ from ..player_statics import (
     forced_discard_or_sacrifice_barred,
     player_cant_cast_while_resolving,
     search_forbidden,
+    surveil_additions,
 )
 from ..primitives import add_counters, mill_cards, shuffle_library
 from ..stack import pull_spell_off_stack
@@ -265,6 +266,12 @@ def op_grant_playable(ctx: EffectContext, spec: Mapping[str, Any]):
     ``playable_pay_life_instead`` is Nashi's "If you cast a spell this way, pay
     life equal to its mana value rather than paying its mana cost": the
     permission's alternative cost (118.9), and the only price it offers.
+
+    ``playable_exiles`` is Mission Briefing's "If that spell would be put into
+    your graveyard, exile it instead": a replacement the permission puts on the
+    spell cast under it, carried on its stack item, so it reaches the spell
+    that resolves, is countered or fizzles. ``as_flashback`` ("gains
+    flashback", Will of the Jeskai) sets the same rider.
     """
     oids = resolve_pool(ctx, spec.get("objects"))
     limit = int(spec.get("limit", 0) or 0)
@@ -279,10 +286,14 @@ def op_grant_playable(ctx: EffectContext, spec: Mapping[str, Any]):
         obj.playable_duration = playable_duration_of(spec) or "this_turn"
         obj.playable_condition = spec.get("playable_condition")
         obj.playable_group = group
-        # "…gains **flashback**", rather than a bare permission to cast it: the
-        # card is exiled as it resolves, so the grant is worth one cast per card
-        # rather than as many as the turn's mana allows.
-        obj.playable_exiles = bool(spec.get("as_flashback"))
+        # "…gains **flashback**", rather than a bare permission to cast it, or
+        # "if that spell would be put into your graveyard, exile it instead"
+        # (Mission Briefing): the spell cast under the permission is exiled
+        # rather than put into a graveyard, so the grant is worth one cast per
+        # card rather than as many as the turn's mana allows. `Game` carries it
+        # onto the stack item as the spell is cast (`StackItem.exiles_instead`),
+        # so it holds whether the spell resolves, is countered or fizzles.
+        obj.playable_exiles = bool(spec.get("as_flashback") or spec.get("playable_exiles"))
         # "…cast it from your graveyard **as an Adventure**" (Hildibrand
         # Manderville): the permission reaches the Adventure half only, and
         # the half's own resolution exiles it on an adventure (715.3d).
@@ -329,8 +340,8 @@ def op_grant_graveyard_cast(ctx: EffectContext, spec: Mapping[str, Any]):
 
     The spec **is** a `cast_from_graveyard` static, which is why the second
     printed sentence needs nothing here: "if a spell cast this way would be put
-    into a graveyard, exile it instead" is what a graveyard cast already does,
-    through `graveyard_cast_exiles` on the resolving spell.
+    into a graveyard, exile it instead" is the spec's `grants_flashback`, which
+    `Game._cast` stamps onto the spell's stack item as `exiles_instead`.
     """
 
     if ctx.source_oid is None:
@@ -1376,6 +1387,50 @@ def op_return_from_graveyard(ctx: EffectContext, spec: Mapping[str, Any]):
             obj.returned_by = ctx.source_oid
 
 
+@register("put_exiled_into_graveyard")
+def op_put_exiled_into_graveyard(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Put a card exiled with it into its owner's graveyard. If you do, investigate."
+
+    Foreboding Steamboat. The chosen cards leave exile for their **owners'**
+    graveyards (400.3), through the graveyard replacements `move_object`
+    applies, so a Rest in Peace sends one straight back to exile.
+
+    One pool across every exile the selector walks, and one ``count`` over it:
+    `{"zone": "exile", "controller": "any", "exiled_with": "self", "count": 1}`
+    is one card from among everything this permanent exiled, whoever owns it,
+    and the controller picks which (`choose_objects`). `search_zones` is the
+    near miss and is wrong twice over: it takes its count per player, so with
+    cards owned by two players it would move two, and it may take none. Nor is
+    it `return_from_graveyard` pointed at exile, which is recursion and binds
+    nothing, or the `process` cost, which is a cost, reads only cards an
+    opponent owns and ignores the link.
+
+    ``as`` binds what this op **put into a graveyard**, and only that, so "if
+    you do" is an `if` on the binding. A card a replacement sent elsewhere was
+    not put into a graveyard (614.6), so it is not bound and the rider does not
+    run. Extended rather than replaced, as `return_to_hand`'s is.
+
+    The selector's zone defaults to exile, and the loader refuses any other:
+    from the battlefield the move is destroy or sacrifice, from a library mill,
+    from a hand discard, and each of those is its own rules event.
+    """
+    selector = dict(spec.get("objects") or {})
+    selector.setdefault("zone", "exile")
+    oids = yield from choose_objects(ctx, selector, "Put into its owner's graveyard")
+    moved: list[int] = []
+    for oid in oids:
+        obj = ctx.state.objects.get(oid)
+        if obj is None or obj.zone is not Zone.EXILE:
+            continue
+        move_object(ctx.state, oid, Zone.GRAVEYARD, to_player=obj.owner, by=ctx.source_oid)
+        if obj.zone is Zone.GRAVEYARD:
+            moved.append(oid)
+    if name := spec.get("as"):
+        previous = ctx.bindings.get(str(name))
+        earlier = list(previous) if isinstance(previous, list) else []
+        ctx.bindings[str(name)] = earlier + moved
+
+
 @register("reveal")
 def op_reveal(ctx: EffectContext, spec: Mapping[str, Any]):
     """Show cards to the table.
@@ -1506,18 +1561,60 @@ def op_scry(ctx: EffectContext, spec: Mapping[str, Any]):
 
 @register("surveil")
 def op_surveil(ctx: EffectContext, spec: Mapping[str, Any]):
-    """Look at the top N cards; put any number into the graveyard."""
+    """Rule 701.25 -- look at the top N cards; put any number into the graveyard.
+
+    Each player ``player`` names surveils on their own, and each surveil fires
+    one `EventType.SURVEILLED` once its cards are placed -- the `surveils`
+    trigger event, with the surveiller as ``player`` and the turn's ordinal
+    for ``nth``. Surveil 0 (or less, 107.1b) is no surveil and fires nothing
+    (701.25c). A surveil N of a library with fewer than N cards looks at what
+    there is and is still a surveil, even of an empty library: 701.25c carves
+    out only surveil 0.
+
+    A ``replace_surveil`` static reaching the surveiller (Enhanced
+    Surveillance) adds its ``surveil_addend`` to the cards looked at, the
+    optional ones asked of the surveiller before any card is seen, one yes/no
+    per static. The extra cards are part of the same surveil, so ``looked``
+    counts them; surveil 0 is still no surveil and adds nothing.
+    """
     amount = evaluate_value(ctx, spec.get("amount", 1))
+    if amount <= 0:
+        return
     for pid in select_players(ctx, spec.get("player", "you")):
-        top = list(ctx.state.players[pid].library[:amount])
-        if not top:
-            continue
-        to_bin = yield from ask_objects(
-            ctx, "Put into your graveyard", top, 0, len(top), pid, "surveil"
-        )
+        looked_at = amount
+        library_size = len(ctx.state.players[pid].library)
+        for source, addend, optional in surveil_additions(ctx.state, pid):
+            if looked_at >= library_size:
+                # Nothing more to see: the question would change nothing.
+                break
+            if optional and not (
+                yield from ask_yes_no(
+                    ctx,
+                    f"Look at {addend} more card{'s' if addend != 1 else ''} "
+                    f"({ctx.state.card_of(source).name})?",
+                    pid,
+                )
+            ):
+                continue
+            looked_at += addend
+        top = list(ctx.state.players[pid].library[:looked_at])
+        to_bin = []
+        if top:
+            to_bin = yield from ask_objects(
+                ctx, "Put into your graveyard", top, 0, len(top), pid, "surveil"
+            )
         for oid in to_bin:
             move_object(ctx.state, oid, Zone.GRAVEYARD, to_player=pid, cause="surveil")
-        ctx.state.emit("surveil", player=pid, looked=len(top), binned=len(to_bin))
+        # Fired, not emitted: "whenever you surveil" listens for it. After the
+        # cards are placed, so the surveil is finished when it is heard.
+        fire(
+            ctx.state,
+            EventType.SURVEILLED,
+            player=pid,
+            source=ctx.source_oid,
+            looked=len(top),
+            binned=len(to_bin),
+        )
 
 
 @register("explore")
@@ -1707,9 +1804,24 @@ def op_clash(ctx: EffectContext, spec: Mapping[str, Any]):
       other card revealed this way" is vacuously true against no card at all, so
       revealing something beats revealing nothing — and revealing nothing loses
       even to nothing.
+
+    ``opponent`` is the pool to clash with, a player spec defaulting to every
+    opponent. "Clash with defending player" is ``{"binding": "defender"}`` off
+    an `attacks` trigger, and it asks nobody -- `ask_player` does not stop for
+    a pool of one. The pool is narrowed to the controller's living opponents,
+    because 701.23a clashes with an opponent; a defending player who has left
+    the game leaves nobody, and no clash happens.
+
+    Each clashing player fires one `CLASHED` once both cards are placed,
+    carrying their own ``won``, which is what ``wins_clash`` hears: either
+    player can win (701.23b), so the opponent who wins your clash has won a
+    clash too.
     """
     you = ctx.controller
     opponents = ctx.opponents()
+    if "opponent" in spec:
+        named = set(select_players(ctx, spec["opponent"]))
+        opponents = [pid for pid in opponents if pid in named]
     other = yield from ask_player(ctx, "Clash with which opponent?", opponents, you)
     if other is None:
         ctx.bindings[CLASH_WON] = 0
@@ -1750,13 +1862,18 @@ def op_clash(ctx: EffectContext, spec: Mapping[str, Any]):
 
     won = value_of(revealed[you]) > value_of(revealed[other])
     ctx.bindings[CLASH_WON] = 1 if won else 0
-    ctx.state.emit(
-        "clash",
-        player=you,
-        source=ctx.source_oid,
-        opponent=other,
-        won=won,
-    )
+    # Fired, not emitted: "whenever you win a clash" listens for it. One per
+    # clashing player, each with their own result, so the opponent's win is
+    # heard as theirs.
+    for pid, against in ((you, other), (other, you)):
+        fire(
+            ctx.state,
+            EventType.CLASHED,
+            player=pid,
+            source=ctx.source_oid,
+            opponent=against,
+            won=value_of(revealed[pid]) > value_of(revealed[against]),
+        )
 
 
 #: What `roll_dice` writes under its ``as`` name, and what `{"rolled": …}` reads

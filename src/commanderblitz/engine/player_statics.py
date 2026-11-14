@@ -92,8 +92,9 @@ def _active_player_statics(
                 continue
             # Druid Class's "You may play an additional land on each of your
             # turns" is a level-2 ability: at level 1 the Class does not have it
-            # (716.2b). Asked here because this walk reads the printed face.
-            if not ability.present_at(obj.class_level):
+            # (716.2b), and a Case's "Solved —" one is not there unsolved
+            # (719.3c). Asked here because this walk reads the printed face.
+            if not ability.present_on(obj):
                 continue
             if Zone.BATTLEFIELD not in ability.active_zones:
                 # The command-zone walk below refuses a battlefield static on a
@@ -457,6 +458,27 @@ def mill_multiplier(state: GameState, pid: int) -> int:
             continue
         factor *= max(1, int(static.get("mill_multiplier", 1)))
     return factor
+
+
+def surveil_additions(state: GameState, pid: int) -> list[tuple[GameObject, int, bool]]:
+    """The ``replace_surveil`` statics that enlarge ``pid``'s next surveil.
+
+    Enhanced Surveillance: "You may look at an additional two cards each time
+    you surveil." Each entry is ``(source, surveil_addend, surveil_optional)``
+    in battlefield order, and the caller -- `op_surveil`, the only place a
+    surveil's number lives -- asks each optional one and sums what is taken.
+
+    A list rather than `mill_multiplier`'s folded number because the "may" is
+    per static: two Enhanced Surveillances are two choices, each of two cards,
+    and the cards they add are one surveil (701.25a), not two.
+    """
+    out: list[tuple[GameObject, int, bool]] = []
+    for obj, static in _active_player_statics(state, "replace_surveil"):
+        if _reaches_player(obj, static, pid):
+            out.append(
+                (obj, max(0, int(static.get("surveil_addend", 0))), bool(static.get("surveil_optional")))
+            )
+    return out
 
 
 def proliferate_times(state: GameState, pid: int) -> int:
@@ -2430,7 +2452,7 @@ def player_plays_lands_from_graveyard(state: GameState, pid: int) -> bool:
     return _player_static(state, pid, "play_lands_from_graveyard")
 
 
-def graveyard_land_play_allows(state: GameState, pid: int, card: CardDef) -> bool:
+def graveyard_land_play_allows(state: GameState, pid: int, obj: GameObject) -> bool:
     """Whether some `play_lands_from_graveyard` reaching ``pid`` covers *this* land.
 
     The per-card half of the permission. Crucible of Worlds prints no filter and
@@ -2440,9 +2462,15 @@ def graveyard_land_play_allows(state: GameState, pid: int, card: CardDef) -> boo
     because a card in a graveyard has a printed face and nothing else to read.
     Any one permission covering the card is enough: two statics are two
     separate permissions (Hazezon beside Crucible frees every land).
+
+    Eye of Duskmantle's ``surveilled_this_turn`` is asked of the land's
+    *object*, for `graveyard_cast_arrival_ok`'s reason.
     """
-    for obj, static in _active_player_statics(state, "play_lands_from_graveyard"):
-        if not _reaches_player(obj, static, pid):
+    card = state.card_of(obj)
+    for source, static in _active_player_statics(state, "play_lands_from_graveyard"):
+        if not _reaches_player(source, static, pid):
+            continue
+        if static.get("surveilled_this_turn") and not obj.surveilled_this_turn(state.turn):
             continue
         filt = static.get("affects_spells")
         if filt is None or _matches_printed(card, filt):
@@ -2553,7 +2581,12 @@ def graveyard_cast_arrival_ok(state: GameState, static: Mapping[str, Any], obj: 
     `affects_spells` beside the type filter.
 
     Absent from the static, every card in the yard qualifies, which is Edgar.
+
+    ``surveilled_this_turn`` is the other fact about how this copy arrived:
+    "cards in your graveyard you've surveilled this turn" (Eye of Duskmantle).
     """
+    if static.get("surveilled_this_turn") and not obj.surveilled_this_turn(state.turn):
+        return False
     arrival = static.get("arrived_this_turn_from")
     if arrival is None:
         return True

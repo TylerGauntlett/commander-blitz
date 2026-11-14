@@ -781,6 +781,16 @@ STATIC_EFFECTS = frozenset(
         # one would fire after the cards were already in the graveyard and mill
         # again alongside rather than instead.
         "replace_mill",
+        # Enhanced Surveillance.  "You may look at an additional two cards each
+        # time you surveil."  Read by the `surveil` op through
+        # `player_statics.surveil_additions` -- surveil is a keyword action with
+        # no primitive beneath it, so the op is the one place its number lives.
+        # An addend on the cards looked at, per surveil, so the extra cards are
+        # part of the same surveil (one SURVEILLED, `looked` counting them) and
+        # take the same graveyard-or-top choice; a `surveils` trigger would be a
+        # second surveil after the first rather than a bigger one.
+        # `surveil_optional` is the printed "may", asked before looking.
+        "replace_surveil",
         # Jace, Wielder of Mysteries; Laboratory Maniac.  "If you would draw a
         # card while your library has no cards in it, you win the game instead."
         # The one draw-replacement branch `replace_draw` can never reach, since
@@ -906,6 +916,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         # one choke point every mill goes through, so a `mill` op, a `mill`
         # cost and dredge are all replaced, whoever caused them.
         "replace_mill",
+        "replace_surveil",
         "replace_empty_draw",
         "replace_proliferate",
         "cant_cast_spells",
@@ -1381,6 +1392,20 @@ COST_REDUCTION_ZONES = REDUCTION_ZONES
 #: worth, beside that head. Omitted, a unit is {1}.
 COST_REDUCTION_EACH = "each"
 
+#: "This spell costs {2} less to cast **if it targets** an attacking creature"
+#: (Ephara's Dispersal): a second gate beside ``condition``, a reduction filter
+#: matched against the objects the cast chose as targets (601.2f -- the total
+#: cost is determined after targets are announced). A card-level
+#: `cost_reduction` only; an ability's or a graveyard cast's `mana_reduction` is
+#: priced by readers that never see a target tuple.
+COST_REDUCTION_TARGETING = "targeting"
+
+#: The filter keys a reduction's ``targeting`` clause refuses. ``zone`` because
+#: the pool is the target tuple, not a zone; ``self_only`` and ``exclude_self``
+#: because a spell never targets itself (115.5); and ``any_of`` is accepted, the
+#: same disjunction the counting filters use.
+COST_REDUCTION_TARGETING_REFUSED_KEYS = frozenset({"zone", "self_only", "exclude_self"})
+
 #: Extra filter keys a cost reduction accepts on top of `STATIC_FILTER_KEYS`.
 #:
 #: ``zone`` is the only one left. ``owner`` was here alone, on the grounds that a
@@ -1519,6 +1544,12 @@ STATIC_CONDITION_HEADS = (
     # characteristics pipeline reads or writes it, so no static can come to
     # depend on another static's output through it.
     "has_flag",
+    # "During each opponent's end step, you may cast spells as though they had
+    # flash" (Final-Word Phantom). `GameState.step` is turn state, a pipeline
+    # input exactly as whose turn it is: no layer writes it, and `turn.advance`
+    # bumps `char_version` as it moves, so a cached answer cannot outlive the
+    # step. The effect-level leaf of the same name and spelling, `STEP_NAMES`.
+    "step_is",
 )
 
 #: The static effects whose condition may read *derived* characteristics

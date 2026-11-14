@@ -1034,6 +1034,14 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             f'write {{"kind": "level", "level": N, "cost": ...}} instead'
         )
 
+    if op == "solve":
+        # 719.3b's effect, supplied by the loader on a `kind: "to_solve"` line
+        # with the end-step trigger and the "if not solved" check it needs.
+        raise DslError(
+            f"{where}: 'solve' is written by the loader for a Case's to_solve line; "
+            f'write {{"kind": "to_solve", "condition": ...}} instead'
+        )
+
     for key in ("objects", "per", "selector", "affects"):
         if key in effect:
             validate_selector(effect[key], f"{where}.{key}")
@@ -1687,6 +1695,10 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 )
         if high < low:
             raise DslError(f"{where}: choose_number 'max' {high} is below 'min' {low}")
+    if op == "clash" and "opponent" in effect:
+        # "Clash with defending player." A misspelled or undeclared spec would
+        # resolve to nobody and the clash would silently never happen.
+        _validate_player_spec(effect["opponent"], f"{where}.opponent", target_kinds)
     if op == "choose_player":
         # The chosen seat exists only as the binding it is written to -- nothing
         # else on the card can reach it -- so an omitted 'as' is a prompt whose
@@ -2573,6 +2585,21 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
     # selected it is a return that returns nothing.
     if op == "return_to_origin" and "objects" not in effect:
         raise DslError(f"{where}: 'return_to_origin' needs 'objects' -- there is nothing to return")
+    # Out of exile and nowhere else: from the battlefield the same move is
+    # destroy or sacrifice, from a library mill and from a hand discard, each a
+    # rules event of its own that this op would skip.
+    if op == "put_exiled_into_graveyard":
+        objects = effect.get("objects")
+        if not isinstance(objects, Mapping):
+            raise DslError(
+                f"{where}: 'put_exiled_into_graveyard' needs an 'objects' selector "
+                f"-- there is nothing to move"
+            )
+        if objects.get("zone", "exile") != "exile":
+            raise DslError(
+                f"{where}: 'put_exiled_into_graveyard' moves cards out of exile, "
+                f"got zone {objects['zone']!r}"
+            )
     # Same argument, and one degree more dangerous: `choose_objects` over an
     # omitted selector resolves to nothing, so the op is a *silent* no-op --
     # Hellkite Courser's delayed return would fire, move no permanent, and leave
@@ -2735,6 +2762,32 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             )
         if effect["playable_cast_only"] is not True:
             raise DslError(f"{where}.playable_cast_only: the only value is true")
+    if "playable_exiles" in effect:
+        # "If that spell would be put into a graveyard, exile it instead"
+        # (Mission Briefing, Dire Fleet Daredevil) is a rider on the spell a
+        # "you may cast it" permission lets you cast. On a bare exile it would
+        # load, print its sentence and exile nothing. `look_at_top` does not
+        # carry it: no card has asked, and a key accepted there would be
+        # written nowhere.
+        grants = op == "grant_playable" or (
+            op == "exile" and ("playable" in effect or effect.get("playable_this_turn"))
+        )
+        if not grants:
+            raise DslError(
+                f"{where}: 'playable_exiles' exiles the spell a 'playable' permission "
+                f"lets you cast, so it needs one (exile with 'playable', or "
+                f"grant_playable)"
+            )
+        if effect["playable_exiles"] is not True:
+            raise DslError(f"{where}.playable_exiles: the only value is true")
+        if effect.get("as_flashback") or effect.get("as_adventure"):
+            # Flashback already exiles the spell, and an Adventure's exile is
+            # the one its creature is cast out of (715.3d): beside either, this
+            # says a second destination nobody printed.
+            raise DslError(
+                f"{where}: 'playable_exiles' beside 'as_flashback'/'as_adventure' "
+                f"says where the spell goes twice -- write the one the card says"
+            )
     if "playable_pay_life_instead" in effect:
         # "If you cast a spell this way, pay life equal to its mana value
         # rather than paying its mana cost" (Nashi, Moon Sage's Scion) is the
@@ -2903,6 +2956,10 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             for name in named:
                 if name not in known:
                     raise DslError(f"{where}.except_.{key}: unknown {noun} {name!r}")
+    if op == "copy_permanent" and "embalm" in effect and effect["embalm"] is not True:
+        # Embalm's stamp (702.128a). Present-and-false says nothing, and a
+        # string would load and stamp nothing a condition could read.
+        raise DslError(f"{where}.embalm: must be true -- omit it otherwise")
     if op == "copy_permanent" and (overrides := effect.get("except_") or effect.get("except")):
         # "…except it's a white Zombie Angel with no mana cost." A misspelled
         # key here would be silently dropped, and the token would come back a
@@ -3653,6 +3710,15 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                     f"{where}: extra_combat takes no {key!r} -- an extra phase belongs "
                     f"to the turn in progress, whoever's turn that is"
                 )
+    if op == "extra_beginning_phase":
+        # The same refusal as extra_combat's, for the same reason, and nothing
+        # else to say: the printed sentence grants exactly one phase.
+        for key in ("player", "controller", "amount"):
+            if key in effect:
+                raise DslError(
+                    f"{where}: extra_beginning_phase takes no {key!r} -- it is one "
+                    f"additional beginning phase for the turn in progress"
+                )
     if op == "extra_turn" and "controller" in effect:
         # Whose turn it is goes in `player`, the key every player-naming op
         # uses. `controller` is the near miss worth refusing by name: it is what
@@ -4082,6 +4148,16 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             f'(use {{"phased_out_with": "self"}} for "the creature this '
             f'card phased out")'
         )
+    if op == "become_aura":
+        # "…**it** becomes an Aura" (Necromancy) is the source and nothing else:
+        # a selector here would be accepted and ignored, and the card would read
+        # as if it turned something else into an Aura.
+        extra = sorted(set(effect) - {"op"})
+        if extra:
+            raise DslError(
+                f"{where}: become_aura makes this permanent an Aura and takes no "
+                f"keys; got {extra}"
+            )
     if op == "unattach" and not effect.get("objects"):
         # Explore's trap once more: "unattach this permanent" is three words on
         # the Equipment that prints it, and a default would silently unattach
@@ -4779,6 +4855,13 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"must be its controller's own -- 'at the beginning of *your* "
                 f"next end step' -- so it takes true or false, not "
                 f"{effect.get('your_turn')!r}"
+            )
+        if not isinstance(effect.get("next_turn", False), bool):
+            raise DslError(
+                f"{where}: delay's 'next_turn' is a flag saying whether the step "
+                f"must be on a later turn -- 'at the beginning of *the next "
+                f"turn's* upkeep' -- so it takes true or false, not "
+                f"{effect.get('next_turn')!r}"
             )
         _refuse_targets_inside_a_delay(effect.get("effects") or (), f"{where}.effects")
     if op == "change_text":

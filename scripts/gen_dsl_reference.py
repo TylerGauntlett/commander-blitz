@@ -162,6 +162,7 @@ H_ROLL = "Rolling dice"
 H_CASCADE = "Cascade, ripple and `reveal_until` — walking a library"
 H_MONSTROSITY = "Monstrosity, and holding creatures down"
 H_CLASSES = "Classes"
+H_CASES = "Cases"
 H_GAIN_CONTROL = "Gaining control of a permanent"
 H_FIGHT = "`fight`"
 
@@ -185,8 +186,11 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "behold": ("Cards", "Choose a matching permanent you control or reveal a matching card from hand; `effects` is \"if you do\".",
                "behold — choose a permanent or reveal a card"),
     "scry": ("Cards", "Scry N; `chooser` separate from `player` is fateseal.", None),
-    "surveil": ("Cards", "Surveil N: look at the top cards, graveyard any of them.", None),
+    "surveil": ("Cards", "Surveil N: look at the top cards, graveyard any of them; each surveiling player fires `surveils` once.",
+                "Surveil — the `surveil` op and the `surveils` trigger"),
     "shuffle": ("Cards", "Shuffle a library.", None),
+    "put_exiled_into_graveyard": ("Cards", "Put cards from exile into their owners' graveyards, `count` over every exile the selector walks; `as` records the ones that arrived.",
+                                  '"Put a card exiled with it into its owner\'s graveyard" — `put_exiled_into_graveyard`'),
     "put_on_top": ("Cards", "Put objects on top (or bottom) of their owners' libraries; `from_top` is the depth.",
                    None),
     "two_piles": ("Cards", "Separate cards into two piles; an opponent chooses one.", "Two piles"),
@@ -194,7 +198,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                 "Explore"),
     "connive": ("Cards", "Connive: draw, discard, +1/+1 counter if a nonland was discarded.",
                 "Connive"),
-    "clash": ("Cards", "Clash with an opponent; the winner is bound for a later `if`.", "Clash"),
+    "clash": ("Cards", "Clash with an opponent (or one from the `opponent` pool, e.g. the defending player); the result is bound for a later `if`, and each clashing player fires `wins_clash` if they win.", "Clash"),
     "cascade": ("Cards", "Cascade: exile from the top until a cheaper nonland, cast it free.",
                 H_CASCADE),
     "discover": ("Cards", "Discover N: exile until a nonland of mana value N or less; cast it free or take it.",
@@ -211,7 +215,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                  'Hideaway — "that one, from there"'),
     "play_exiled": ("Cards", "Cast the exiled card without paying its mana cost; `exiles` exiles the spell instead of putting it into a graveyard; `as` records what was cast.",
                     '"You may play the exiled card this turn" — impulse draw'),
-    "grant_playable": ("Cards", "Permit playing cards from a zone that normally forbids it, for a duration; `as_adventure` narrows it to the card's Adventure half; `playable_cost_reduction` discounts the casts made under it; `playable_pay_life_instead` prices them in life equal to their mana value instead; `limit` caps one resolution's cards at that many plays; `playable_cast_only` narrows it to casting, so no land is played.",
+    "grant_playable": ("Cards", "Permit playing cards from a zone that normally forbids it, for a duration; `as_adventure` narrows it to the card's Adventure half; `playable_cost_reduction` discounts the casts made under it; `playable_pay_life_instead` prices them in life equal to their mana value instead; `limit` caps one resolution's cards at that many plays; `playable_cast_only` narrows it to casting, so no land is played; `playable_exiles` exiles the spell cast under it instead of putting it into a graveyard.",
                        H_PLAYABLE),
     "grant_graveyard_cast": ("Cards", "Permit casting matching spells from graveyards until end of turn.",
                              "Casting out of every graveyard, until end of turn"),
@@ -225,7 +229,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                                '"Return it to the command zone" — `return_to_command_zone`'),
     # ---- Board -----------------------------------------------------------
     "destroy": ("Board", "Destroy permanents; `no_regeneration` forbids regeneration; `as` records what was destroyed.", None),
-    "exile": ("Board", "Exile objects, or a spell a `{\"target\": …}` selector names off the stack without countering it; `link`/`playable` tie them to the source or a permission; `playable_condition` shuts that permission on some turns; `playable_cast_only` narrows it to casting; `playable_by: \"owner\"` hands a `while_exiled` permission to each card's owner.",
+    "exile": ("Board", "Exile objects, or a spell a `{\"target\": …}` selector names off the stack without countering it; `link`/`playable` tie them to the source or a permission; `playable_condition` shuts that permission on some turns; `playable_cast_only` narrows it to casting; `playable_exiles` exiles the spell cast under it instead of putting it into a graveyard; `playable_by: \"owner\"` hands a `while_exiled` permission to each card's owner.",
               None),
     "sacrifice": ("Board", "A player sacrifices permanents; `snapshot` remembers what they had.",
                   None),
@@ -253,6 +257,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "untap": ("Board", "Untap permanents.", "Untapping on somebody else's turn"),
     "attach": ("Board", "Attach an Aura, Equipment or Fortification to a permanent; with `player`, move this Aura onto one player (701.3).",
                "Auras and Equipment"),
+    "become_aura": ("Board", "This enchantment becomes an Aura for as long as it is on the battlefield (Necromancy).",
+                    "A permanent that becomes an Aura — Necromancy"),
     "unattach": ("Board", "Unattach the source (reconfigure).", "Reconfigure — taking it off again"),
     "lock_abilities": ("Board", "Its activated abilities can't be activated this turn.",
                        '"Its activated abilities can\'t be activated this turn"'),
@@ -362,6 +368,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                     '`change_text` — "replacing all instances of one creature type"'),
     "transform": ("Modify", "Transform a double-faced permanent.", "Transforming double-faced cards"),
     "become_level": ("Modify", "A Class becomes level N.", H_CLASSES),
+    "solve": ("Modify", "A Case becomes solved; supplied by the loader on a `to_solve` line.",
+              H_CASES),
     "lose_all_abilities": ("Modify", "Permanents lose all abilities for a duration.",
                            "Losing all abilities because an effect said so"),
     "lose_keyword": ("Modify", "Permanents found as it resolves lose keywords and can't have "
@@ -444,6 +452,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     # ---- Turn structure --------------------------------------------------
     "extra_combat": ("Turn structure", "An additional combat phase (and main phase) this turn.",
                      "An additional combat phase"),
+    "extra_beginning_phase": ("Turn structure", "An additional beginning phase (untap, upkeep, draw) after this phase.",
+                              "An additional beginning phase"),
     "extra_turn": ("Turn structure", "A player takes an extra turn after this one.", "An extra turn"),
     # ---- Combat decisions ------------------------------------------------
     "choose_blockers": ("Combat decisions", "Decide blocks on another player's behalf.", None),
@@ -517,6 +527,8 @@ SELECTORS: dict[str, Entry] = {
     "damaged_by": ("Was dealt damage this turn by the named object.",
                    '"…dealt damage by this creature this turn"'),
     "drawn_this_turn": ("Cards drawn this turn (hand only).", "Cards in a hand drawn this turn"),
+    "surveilled_this_turn": ("Cards a surveil put into a graveyard this turn, as the same object.",
+                             "Cards in a graveyard surveilled this turn"),
     "enchanted_by": ("Has an Aura attached (`true`/`false`), or one whose controller is `you`/`opponent`.",
                      '"Enchanted creatures" — `enchanted_by`'),
     "equipped": ("Has one or more Equipment attached, anybody's (`true`/`false`).",
@@ -728,6 +740,8 @@ CONDITIONS: dict[str, Entry] = {
     "any": ("At least one listed condition holds.", None),
     "attacked_you_last_turn": ("One of these players attacked you (not your planeswalker or battle) during their last completed turn.",
                                None),
+    "cast_at_sorcery_timing": ("This life of the object was cast at a time a sorcery could have been (307.1); false both ways if not cast.",
+                               '"If you cast it any time a sorcery couldn\'t have been cast"'),
     "cast_during": ("The phase this spell was cast in (addendum).",
                     "Addendum — the phase a spell was cast in"),
     "cast_from_graveyard": ("This spell was cast from a graveyard.", None),
@@ -741,9 +755,12 @@ CONDITIONS: dict[str, Entry] = {
     "evoked": ("The source was cast with evoke.", None),
     "escaped": ("The source was cast for its escape cost (702.138c-d), or resolved from that spell.",
                 "Casting from the graveyard"),
+    "embalmed": ("The source is a token an embalm ability created (702.128a), stamped by "
+                 "`copy_permanent`'s `embalm`.", "An embalmed token that enters as a copy"),
     "impending": ("The permanent was cast for its impending cost (the rule's own reads).",
                   "Impending — a creature that is not one until it counts down"),
     "exists": ("A selector finds at least one object.", None),
+    "solved": ("The source is a solved Case (719.3d).", H_CASES),
     "gift_promised": ("A gift was promised as this spell was cast.", H_GIFT),
     "has_city_s_blessing": ("The player has the city's blessing (ascend).", "Ascend"),
     "has_flag": ("The source carries a word written by `set_flag`.", H_EXERTED),
@@ -821,6 +838,8 @@ TRIGGER_EVENT_DESCRIPTIONS: dict[str, Entry] = {
                  '"Whenever a creature you control connives"'),
     "counter_placed": ("Counters are put on a permanent or player; with `counter` and `nth`, the placement that puts the Nth counter of that kind on it.",
                        None),
+    "counter_removed": ("Counters are removed from a permanent or card, once per counter; `counter` names the kind and `removed_by: \"you\"` requires you to be the remover.",
+                        '"Whenever you remove a time counter" — `counter_removed`'),
     "creature_dies": ("A creature dies.", None),
     "creatures_attack_player": ("One or more creatures attack a player.",
                                 '"Whenever one or more creatures attack one of your opponents"'),
@@ -855,6 +874,8 @@ TRIGGER_EVENT_DESCRIPTIONS: dict[str, Entry] = {
                   '"Whenever an opponent loses life"'),
     "investigates": ("A player investigates, once per investigation; `nth` counts that player's investigations this turn.",
                      "Investigate — the `investigate` op and the `investigates` trigger"),
+    "surveils": ("A player surveils, once per surveil after its cards are placed (never for surveil 0); `nth` counts that player's surveils this turn.",
+                 "Surveil — the `surveil` op and the `surveils` trigger"),
     "mutates": ("A creature mutates.", '"Whenever this creature mutates…"'),
     "permanent_enters": ("A permanent enters the battlefield.", None),
     "postcombat_main": ("At the beginning of the postcombat main phase.", None),
@@ -873,6 +894,8 @@ TRIGGER_EVENT_DESCRIPTIONS: dict[str, Entry] = {
     "turned_face_up": ("A face-down permanent is turned face up; the subject is that permanent, face up.",
                        '"When this creature is turned face up"'),
     "upkeep": ("At the beginning of the upkeep.", None),
+    "wins_clash": ("A clashing player wins a clash (701.23b), whatever made it; a lost or tied clash fires nothing.",
+                   "Clash"),
     "wins_coin_flip": ("A player wins a coin flip (705); a lost flip fires nothing.",
                        '"Whenever you win a coin flip"'),
     "you_attack": ("You attack with one or more creatures.", '"Whenever you attack"'),
@@ -931,7 +954,9 @@ STATICS: dict[str, Entry] = {
                           '"All damage is dealt as though its source had wither"'),
     "cant_win_the_game": ("The player can't win the game.", None),
     "cast_as_though_flash": ("The player may cast matching spells as though they had flash.", None),
-    "cast_from_graveyard": ("The player may cast matching spells from their graveyard; with "
+    "cast_from_graveyard": ("The player may cast matching spells from their graveyard, narrowed to "
+                            "cards surveilled this turn by `surveilled_this_turn`, for life equal "
+                            "to their mana value with `pay_life_instead`; with "
                             "`active_zones: [\"graveyard\"]`, the card may cast itself from there.",
                             H_CASTING_FROM_GY),
     "cast_from_library_top": ("The player may cast spells from the top of their library: for life "
@@ -996,7 +1021,8 @@ STATICS: dict[str, Entry] = {
     "opponents_cant_force_discard_or_sacrifice": ("Opponents' spells and abilities can't make the player discard or sacrifice.",
                                                   '"Can\'t cause you to discard cards or sacrifice permanents"'),
     "play_lands_from_graveyard": ("The player may play lands from their graveyard: every land, or "
-                                  "only those whose printed face matches `affects_spells`.",
+                                  "only those whose printed face matches `affects_spells`, or "
+                                  "those surveilled this turn with `surveilled_this_turn`.",
                                   None),
     "play_lands_from_library_top": ("The player may play lands from the top of their library.", None),
     "plot_cost_reduction": ("Plotting a card from the player's hand costs N less generic mana.", "Plot"),
@@ -1021,6 +1047,8 @@ STATICS: dict[str, Entry] = {
     "replace_life_loss": ("If the player would lose life, they lose more instead.",
                           '"If a player would lose life, they lose twice that much instead"'),
     "replace_mill": ("If the player would mill, they mill more instead.", "Doubling a mill"),
+    "replace_surveil": ("Each time the player surveils, they look at more cards; `surveil_optional` makes each static a \"may\".",
+                        "Looking at more cards when you surveil"),
     "replace_proliferate": ("If the player would proliferate, they proliferate again.",
                             "Proliferating twice"),
     "replace_token_creation": ("If the player would create tokens, create more, different or additional ones instead; `copy_instead` asks whether to make that many copies of a chosen creature instead, `first_during_your_turn` only on the first creation of your turn.",
@@ -1210,6 +1238,8 @@ RIDER_KEYS: dict[str, Entry] = {
     "splice_onto": ("What this card may be spliced onto.", "Splice"),
     "melds_with": ("The card this one melds with.", H_MELD),
     "melds_into": ("The permanent the pair melds into.", H_MELD),
+    "as_though_flash": ("May be cast as though it had flash; the card does not have flash.",
+                        '"If you cast it any time a sorcery couldn\'t have been cast"'),
     "cant_cast_first_turns": ("Can't be cast during its controller's first N turns of the game.",
                               "Narrowing when a spell may be cast"),
     "cast_only_during": ("Castable only on whose turn (`turn`) and in which `steps` or `phase` it names, by any route.",

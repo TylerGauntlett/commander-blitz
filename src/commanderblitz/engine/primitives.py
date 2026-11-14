@@ -1423,7 +1423,9 @@ def add_counters(
     return amount
 
 
-def remove_counters(state: GameState, oid: int, kind: str, amount: int) -> int:
+def remove_counters(
+    state: GameState, oid: int, kind: str, amount: int, *, by: int | None = None
+) -> int:
     """Take up to ``amount`` counters of ``kind`` off a permanent, and return how many.
 
     The removal funnel for a permanent's counters -- an effect, a cost and
@@ -1432,6 +1434,11 @@ def remove_counters(state: GameState, oid: int, kind: str, amount: int) -> int:
     the trigger bus, so "when the last time counter is removed from it"
     (`last_counter_removed`) hears every road to zero; nothing fires when there
     was none to take.
+
+    ``by`` is the player removing them, for "whenever **you** remove a time
+    counter" (Watcher of Hours, `removed_by` on `counter_removed`): the
+    controller of the removing effect, or suspend's suspending player;
+    omitted, it is the object's own controller, which is who pays a cost.
     """
     obj = state.objects.get(oid)
     if obj is None:
@@ -1448,6 +1455,7 @@ def remove_counters(state: GameState, oid: int, kind: str, amount: int) -> int:
             counter=kind,
             amount=taken,
             total=obj.counter(kind),
+            removed_by=obj.controller if by is None else by,
         )
     return taken
 
@@ -1658,6 +1666,33 @@ def _token_creation_plan(
     return plan if replaced else None
 
 
+def token_plan(
+    state: GameState,
+    def_id: str,
+    controller: int,
+    count: int,
+    copies: Sequence[tuple[str, Mapping[str, Any] | None]] = (),
+) -> tuple[list[tuple[str, int, bool]], Mapping[str, Any] | None]:
+    """What `create_token` will make: the plan, and the copied overrides.
+
+    `_token_creation_plan` with the ``copy_instead`` answers applied on top,
+    exactly as `create_token` applies them. Pure, so the effect layer can read
+    the tokens about to be made and ask a question of each before the call
+    (`effects.tokens.ask_token_enters_copies`).
+    """
+    plan = _token_creation_plan(state, def_id, controller, count)
+    if plan is None:
+        plan = [(def_id, count, False)]
+    copy_overrides: Mapping[str, Any] | None = None
+    for copied_id, copied_overrides in copies:
+        total = sum(max(0, n) for _, n, _ in plan)
+        if total <= 0:
+            break
+        plan = [(copied_id, total, True)]
+        copy_overrides = copied_overrides
+    return plan, copy_overrides
+
+
 def create_token(
     state: GameState,
     def_id: str,
@@ -1670,6 +1705,8 @@ def create_token(
     source: int | None = None,
     enters_with: Mapping[str, int] | None = None,
     copies: Sequence[tuple[str, Mapping[str, Any] | None]] = (),
+    embalmed: bool = False,
+    enters_copies: Sequence[str | None] = (),
 ) -> list[int]:
     """Put ``count`` copies of a token onto the battlefield under ``controller``.
 
@@ -1718,6 +1755,11 @@ def create_token(
     `_token_creation_plan` on 616.1), which is the order that makes the most
     copies. A copy is a substitution for ``overrides``' purposes: the creating
     effect's exceptions described a token that was never made.
+
+    ``embalmed`` is embalm's stamp (702.128a), set on every token that is not
+    a substitution. ``enters_copies`` is the as-enters copy answer for each
+    token in creation order (`GameObject.enters_copy_of`), asked by the effect
+    layer a moment before this call over the same `token_plan`.
     """
     if count > 0:
         # The creation event, for "the first time you would create one or more
@@ -1725,16 +1767,8 @@ def create_token(
         # replaced: the event is the one that *would* happen.
         ledger = state.turn_ledger.token_creations
         ledger[controller] = ledger.get(controller, 0) + 1
-    plan = _token_creation_plan(state, def_id, controller, count)
-    if plan is None:
-        plan = [(def_id, count, False)]
-    copy_overrides: Mapping[str, Any] | None = None
-    for copied_id, copied_overrides in copies:
-        total = sum(max(0, n) for _, n, _ in plan)
-        if total <= 0:
-            break
-        plan = [(copied_id, total, True)]
-        copy_overrides = copied_overrides
+    plan, copy_overrides = token_plan(state, def_id, controller, count, copies)
+    entering = list(enters_copies)
     # "Whenever you create **one or more** creature tokens" (Staff of the
     # Storyteller) fires once per creation, and every token this call makes --
     # doubled or substituted -- is that one creation (603.2c). Read once,
@@ -1756,6 +1790,15 @@ def create_token(
                 obj.copy_overrides = dict(copy_overrides)
             elif overrides and not substituted:
                 obj.copy_overrides = dict(overrides)
+            # "Embalm" (702.128a): the token knows it was embalmed, for
+            # Vizier of Many Faces' "except if this creature was embalmed".
+            # A substituted token is not the one embalm made.
+            obj.embalmed = embalmed and not substituted
+            # And the as-enters copy its controller already chose for it
+            # (`effects.tokens.ask_token_enters_copies`), one answer per token
+            # in the order this loop makes them.
+            if entering:
+                obj.enters_copy_of = entering.pop(0)
             # Before the move, so the token's own enters-triggers already see
             # which object created it.
             creator = state.objects.get(source) if source is not None else None
@@ -2543,6 +2586,9 @@ def clear_until_eot(state: GameState) -> None:
             obj.copying_keywords = None
             obj.copying_remove_supertypes = None
             obj.copying_add_types = None
+            obj.copying_add_subtypes = None
+            obj.copying_colors = None
+            obj.copying_no_mana_cost = False
             obj.copying_add_supertypes = None
             obj.copying_own_abilities = None
             obj.copying_until_eot = False

@@ -306,14 +306,19 @@ export function isSummoningSick(card: CardView): boolean {
  * cannot touch it and the server sends it apart from `counters` -- but it
  * sits in the same place for the same reason counters do: it is a fact about
  * the permanent that nothing else on the card restates, and it is the one
- * that says which of the printed abilities are switched on.
+ * that says which of the printed abilities are switched on. A solved Case's
+ * "Solved" leads for the same reason (rule 719); an unsolved one shows none.
  */
 export function counterBadges(card: CardView): string[] {
   const counters = card.counters ?? {};
   const badges = Object.entries(counters)
     .filter(([, amount]) => amount > 0)
     .map(([kind, amount]) => (amount === 1 ? kind : `${kind} x${amount}`));
-  return card.level === undefined ? badges : [`Level ${card.level}`, ...badges];
+  const leading = [
+    ...(card.level === undefined ? [] : [`Level ${card.level}`]),
+    ...(card.solved ? ["Solved"] : []),
+  ];
+  return [...leading, ...badges];
 }
 
 /** Keywords as they should read on a card face: "first_strike" -> "First strike". */

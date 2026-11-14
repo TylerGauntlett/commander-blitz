@@ -7014,6 +7014,145 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "victim",
+              "op": "snapshot",
+              "target": "t1"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": {
+                "controller_of": "victim"
+              },
+              "op": "create_token",
+              "token": "salamander_warrior_4_3_u"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "not_subtypes": [
+                  "Salamander"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, exile up to one target non-Salamander creature. That creature's controller creates a 4/3 blue Salamander Warrior creature token.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "exile_from_graveyard": {
+              "count": 1,
+              "self_only": true
+            },
+            "mana": "{4}{U}{U}"
+          },
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "encore_copy",
+                  "controller": "you",
+                  "objects": {
+                    "controller": "any",
+                    "self_only": true,
+                    "zone": "exile"
+                  },
+                  "op": "copy_permanent"
+                },
+                {
+                  "defender": {
+                    "binding": "each_player"
+                  },
+                  "duration": "this_turn",
+                  "objects": {
+                    "binding": "encore_copy",
+                    "count": "all"
+                  },
+                  "op": "must_attack_player"
+                },
+                {
+                  "duration": "permanent",
+                  "keywords": [
+                    "haste"
+                  ],
+                  "objects": {
+                    "binding": "encore_copy",
+                    "count": "all"
+                  },
+                  "op": "grant_keyword"
+                },
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "binding": "encore_copy",
+                        "count": "all"
+                      },
+                      "op": "sacrifice"
+                    }
+                  ],
+                  "op": "delay",
+                  "step": "end_step",
+                  "text": "Sacrifice them at the beginning of the next end step."
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Encore {4}{U}{U} ({4}{U}{U}, Exile this card from your graveyard: For each opponent, create a token copy that attacks that opponent this turn if able. They gain haste. Sacrifice them at the beginning of the next end step. Activate only as a sorcery.)"
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "amphin_mutineer",
+      "mana_cost": "{3}{U}",
+      "name": "Amphin Mutineer",
+      "oracle_text": "When this creature enters, exile up to one target non-Salamander creature. That creature's controller creates a 4/3 blue Salamander Warrior creature token.\nEncore {4}{U}{U} ({4}{U}{U}, Exile this card from your graveyard: For each opponent, create a token copy that attacks that opponent this turn if able. They gain haste. Sacrifice them at the beginning of the next end step. Activate only as a sorcery.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Salamander",
+        "Pirate"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "amulet_of_vigor",
@@ -10742,6 +10881,7 @@
               "player": "opponent"
             }
           ],
+          "next_turn": true,
           "op": "delay",
           "step": "upkeep",
           "text": "Its controller may draw up to two cards at the beginning of the next turn's upkeep."
@@ -10756,6 +10896,7 @@
               "player": "you"
             }
           ],
+          "next_turn": true,
           "op": "delay",
           "step": "upkeep",
           "text": "You draw a card at the beginning of the next turn's upkeep."
@@ -36284,6 +36425,326 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "amount": {
+            "const": 1
+          },
+          "effect": "extra_land_drops",
+          "kind": "static",
+          "text": "You may play an additional land on each of your turns."
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "count": {
+                "controller": "you",
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 7
+            }
+          },
+          "kind": "to_solve",
+          "text": "To solve — You control seven or more lands. (If unsolved, solve at the beginning of your end step.)"
+        },
+        {
+          "affects_player": "you",
+          "effect": "look_at_library_top",
+          "kind": "static",
+          "solved": true,
+          "text": "Solved — You may look at the top card of your library any time, and you may play lands and cast creature and enchantment spells from the top of your library."
+        },
+        {
+          "affects_player": "you",
+          "effect": "play_lands_from_library_top",
+          "kind": "static",
+          "solved": true,
+          "text": "Solved — You may look at the top card of your library any time, and you may play lands and cast creature and enchantment spells from the top of your library."
+        },
+        {
+          "affects_player": "you",
+          "affects_spells": {
+            "any_types": [
+              "Creature",
+              "Enchantment"
+            ]
+          },
+          "effect": "cast_from_library_top",
+          "kind": "static",
+          "solved": true,
+          "text": "Solved — You may look at the top card of your library any time, and you may play lands and cast creature and enchantment spells from the top of your library."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "case_of_the_locked_hothouse",
+      "mana_cost": "{3}{G}",
+      "name": "Case of the Locked Hothouse",
+      "oracle_text": "You may play an additional land on each of your turns.\nTo solve — You control seven or more lands. (If unsolved, solve at the beginning of your end step.)\nSolved — You may look at the top card of your library any time, and you may play lands and cast creature and enchantment spells from the top of your library.",
+      "source": "auto",
+      "subtypes": [
+        "Case"
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_spells": {
+            "any_types": [
+              "Instant",
+              "Sorcery"
+            ],
+            "controller": "you"
+          },
+          "amount": {
+            "const": 1
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Instant and sorcery spells you cast cost {1} less to cast."
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "spells_cast_this_turn": {
+                "filter": {
+                  "any_types": [
+                    "Instant",
+                    "Sorcery"
+                  ]
+                },
+                "player": "you"
+              }
+            },
+            "right": {
+              "const": 4
+            }
+          },
+          "kind": "to_solve",
+          "text": "To solve — You've cast four or more instant and sorcery spells this turn. (If unsolved, solve at the beginning of your end step.)"
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "solved": true,
+          "text": "Solved — Whenever you cast an instant or sorcery spell, draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "case_of_the_ransacked_lab",
+      "mana_cost": "{2}{U}",
+      "name": "Case of the Ransacked Lab",
+      "oracle_text": "Instant and sorcery spells you cast cost {1} less to cast.\nTo solve — You've cast four or more instant and sorcery spells this turn. (If unsolved, solve at the beginning of your end step.)\nSolved — Whenever you cast an instant or sorcery spell, draw a card.",
+      "source": "auto",
+      "subtypes": [
+        "Case"
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "surveil",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, surveil 1.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "count": {
+                "controller": "you",
+                "zone": "graveyard"
+              }
+            },
+            "right": {
+              "const": 15
+            }
+          },
+          "kind": "to_solve",
+          "text": "To solve — There are fifteen or more cards in your graveyard. (If unsolved, solve at the beginning of your end step.)"
+        },
+        {
+          "effects": [
+            {
+              "op": "copy_spell",
+              "sid": {
+                "binding": "sid"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "solved": true,
+          "text": "Solved — Whenever you cast a nonlegendary creature spell, copy that spell. (The copy becomes a token.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "not_supertypes": [
+                "Legendary"
+              ],
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "case_of_the_shifting_visage",
+      "mana_cost": "{1}{U}{U}",
+      "name": "Case of the Shifting Visage",
+      "oracle_text": "At the beginning of your upkeep, surveil 1.\nTo solve — There are fifteen or more cards in your graveyard. (If unsolved, solve at the beginning of your end step.)\nSolved — Whenever you cast a nonlegendary creature spell, copy that spell. (The copy becomes a token.)",
+      "source": "auto",
+      "subtypes": [
+        "Case"
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control enters, you gain 1 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "life_gained_this_turn": "you"
+            },
+            "right": {
+              "const": 5
+            }
+          },
+          "kind": "to_solve",
+          "text": "To solve — You've gained 5 or more life this turn. (If unsolved, solve at the beginning of your end step.)"
+        },
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              },
+              "op": "grant_playable",
+              "playable": "this_turn",
+              "playable_cast_only": true
+            }
+          ],
+          "kind": "activated",
+          "solved": true,
+          "text": "Solved — Sacrifice this Case: Creature cards in your graveyard gain \"You may cast this card from your graveyard\" until end of turn."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "case_of_the_uneaten_feast",
+      "mana_cost": "{W}",
+      "name": "Case of the Uneaten Feast",
+      "oracle_text": "Whenever a creature you control enters, you gain 1 life.\nTo solve — You've gained 5 or more life this turn. (If unsolved, solve at the beginning of your end step.)\nSolved — Sacrifice this Case: Creature cards in your graveyard gain \"You may cast this card from your graveyard\" until end of turn.",
+      "source": "auto",
+      "subtypes": [
+        "Case"
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -40770,6 +41231,53 @@
       "toughness": 5,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "charnel_serenade",
+      "mana_cost": "{4}{B}{B}",
+      "name": "Charnel Serenade",
+      "oracle_text": "Surveil 3, then return a creature card from your graveyard to the battlefield with a finality counter on it. Exile Charnel Serenade with three time counters on it.\nSuspend 3—{2}{B} (Rather than cast this card from your hand, you may pay {2}{B} and exile it with three time counters on it. At the beginning of your upkeep, remove a time counter. When the last is removed, you may cast it without paying its mana cost.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 3
+          },
+          "op": "surveil",
+          "player": "you"
+        },
+        {
+          "controller": "you",
+          "counters": {
+            "finality": 1
+          },
+          "destination": "battlefield",
+          "objects": {
+            "chooser": "controller",
+            "controller": "you",
+            "count": 1,
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          },
+          "op": "return_from_graveyard"
+        }
+      ],
+      "suspend": {
+        "cost": "{2}{B}",
+        "counters": 3
+      },
+      "suspends_itself": 3,
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -46495,6 +47003,46 @@
     },
     {
       "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "concoct",
+      "mana_cost": "{3}{U}{B}",
+      "name": "Concoct",
+      "oracle_text": "Surveil 3, then return a creature card from your graveyard to the battlefield.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 3
+          },
+          "op": "surveil",
+          "player": "you"
+        },
+        {
+          "controller": "you",
+          "destination": "battlefield",
+          "objects": {
+            "controller": "you",
+            "count": 1,
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          },
+          "op": "return_from_graveyard"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "W"
       ],
       "colors": [
@@ -47075,6 +47623,55 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "connive_concoct",
+      "mana_cost": "{2}{U/B}{U/B}",
+      "name": "Connive // Concoct",
+      "oracle_text": "Gain control of target creature with power 2 or less.\nSurveil 3, then return a creature card from your graveyard to the battlefield.",
+      "second_face": "concoct",
+      "second_face_zone": "hand",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "duration": "permanent",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "gain_control"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "any",
+            "power": {
+              "op": "<=",
+              "value": {
+                "const": 2
+              }
+            },
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -48153,6 +48750,58 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "copy_permanent"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{1}{U}"
+              },
+              "player": "you",
+              "prompt": "Pay {1}{U} to create a token that's a copy of Copy Catchers?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you surveil, you may pay {1}{U}. If you do, create a token that's a copy of this creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "surveils"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "copy_catchers",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{U}",
+      "name": "Copy Catchers",
+      "oracle_text": "Flying\nWhenever you surveil, you may pay {1}{U}. If you do, create a token that's a copy of this creature.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Faerie"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -48973,6 +49622,64 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "counterpoint",
+      "mana_cost": "{3}{U}{B}",
+      "name": "Counterpoint",
+      "oracle_text": "Counter target spell. You may cast a creature, instant, sorcery, or planeswalker spell from your graveyard with mana value less than or equal to that spell's mana value without paying its mana cost.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "countered",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "op": "counter",
+          "target": "t1"
+        },
+        {
+          "op": "cast_from_hand",
+          "player": "you",
+          "selector": {
+            "any_types": [
+              "Creature",
+              "Instant",
+              "Sorcery",
+              "Planeswalker"
+            ],
+            "mana_value": {
+              "op": "<=",
+              "value": {
+                "mana_value_of": {
+                  "binding": "countered"
+                }
+              }
+            }
+          },
+          "zones": [
+            "graveyard"
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "spell"
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -56731,6 +57438,54 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "deceptive_frostkite",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{U}{U}",
+      "name": "Deceptive Frostkite",
+      "oracle_text": "Flying\nYou may have this creature enter as a copy of a creature you control with power 4 or greater, except it's a Dragon in addition to its other types and it has flying.",
+      "power": 1,
+      "replacements": [
+        {
+          "copying": {
+            "controller": "you",
+            "power": {
+              "op": ">=",
+              "value": 4
+            },
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "event": "self_enters_as_copy",
+          "except_": {
+            "add_keywords": [
+              "flying"
+            ],
+            "add_subtypes": [
+              "Dragon"
+            ]
+          }
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -60411,6 +61166,55 @@
               "amount": {
                 "const": 1
               },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you surveil, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "surveils"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "dimir_spybug",
+      "keywords": [
+        "flying",
+        "menace"
+      ],
+      "mana_cost": "{U}{B}",
+      "name": "Dimir Spybug",
+      "oracle_text": "Flying\nMenace (This creature can't be blocked except by two or more creatures.)\nWhenever you surveil, put a +1/+1 counter on this creature.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Insect"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
               "op": "draw",
               "player": "you"
             }
@@ -60627,6 +61431,68 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "any_type": true,
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile",
+              "playable": "this_turn",
+              "playable_cast_only": true,
+              "playable_exiles": true
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "any_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "player": "opponent",
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When this creature enters, exile target instant or sorcery card from an opponent's graveyard. You may cast it this turn, and mana of any type can be spent to cast that spell. If that spell would be put into a graveyard, exile it instead",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "dire_fleet_daredevil",
+      "keywords": [
+        "first_strike"
+      ],
+      "mana_cost": "{1}{R}",
+      "name": "Dire Fleet Daredevil",
+      "oracle_text": "First strike\nWhen this creature enters, exile target instant or sorcery card from an opponent's graveyard. You may cast it this turn, and mana of any type can be spent to cast that spell. If that spell would be put into a graveyard, exile it instead.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Pirate"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -61043,6 +61909,42 @@
       ]
     },
     {
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "discovery_dispersal",
+      "mana_cost": "{1}{U/B}",
+      "name": "Discovery // Dispersal",
+      "oracle_text": "Surveil 2, then draw a card. (To surveil 2, look at the top two cards of your library, then put any number of them into your graveyard and the rest on top of your library in any order.)\nEach opponent returns a nonland permanent they control with the greatest mana value among permanents they control to its owner's hand, then discards a card.",
+      "second_face": "dispersal",
+      "second_face_zone": "hand",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "surveil",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "draw",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "ability": 0,
@@ -61147,6 +62049,66 @@
           }
         }
       ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "discard",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this enchantment enters, you draw a card and each opponent discards a card.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "return_to_hand"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you surveil, return this enchantment to its owner's hand.",
+          "trigger": {
+            "controller": "you",
+            "event": "surveils"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "disinformation_campaign",
+      "mana_cost": "{1}{U}{B}",
+      "name": "Disinformation Campaign",
+      "oracle_text": "When this enchantment enters, you draw a card and each opponent discards a card.\nWhenever you surveil, return this enchantment to its owner's hand.",
+      "source": "auto",
       "types": [
         "Enchantment"
       ]
@@ -61650,6 +62612,59 @@
     },
     {
       "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "dispersal",
+      "mana_cost": "{3}{U}{B}",
+      "name": "Dispersal",
+      "oracle_text": "Each opponent returns a nonland permanent they control with the greatest mana value among permanents they control to its owner's hand, then discards a card.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "chooser": "owner",
+                "controller": {
+                  "binding": "each_player"
+                },
+                "count": 1,
+                "extreme": {
+                  "of": "mana_value",
+                  "pick": "greatest"
+                },
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "return_to_hand"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "discard",
+              "player": {
+                "binding": "each_player"
+              }
+            }
+          ],
+          "op": "for_each_player",
+          "players": "each_opponent"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "U"
       ],
       "colors": [
@@ -62026,6 +63041,75 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "surveil",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, surveil 2",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "effects": [
+            {
+              "effects": [
+                {
+                  "destination": "hand",
+                  "objects": {
+                    "self_only": true,
+                    "zone": "graveyard"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ],
+              "op": "may",
+              "prompt": "Return Dogged Detective from your graveyard to your hand?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent draws their second card each turn, you may return this card from your graveyard to your hand.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "draw",
+            "nth": 2
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "dogged_detective",
+      "mana_cost": "{1}{B}",
+      "name": "Dogged Detective",
+      "oracle_text": "When this creature enters, surveil 2. (Look at the top two cards of your library, then put any number of them into your graveyard and the rest on top of your library in any order.)\nWhenever an opponent draws their second card each turn, you may return this card from your graveyard to your hand.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Rogue"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attacking": true,
             "controller": "you",
@@ -62360,6 +63444,50 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "pay_life": 2
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "surveil",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "Pay 2 life: Surveil 2."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "doom_whisperer",
+      "keywords": [
+        "flying",
+        "trample"
+      ],
+      "mana_cost": "{3}{B}{B}",
+      "name": "Doom Whisperer",
+      "oracle_text": "Flying, trample\nPay 2 life: Surveil 2. (Look at the top two cards of your library, then put any number of them into your graveyard and the rest on top of your library in any order.)",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Nightmare",
+        "Demon"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -71941,6 +73069,53 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "effect": "replace_surveil",
+          "kind": "static",
+          "surveil_addend": 2,
+          "surveil_optional": true,
+          "text": "You may look at an additional two cards each time you surveil."
+        },
+        {
+          "cost": {
+            "exile_self": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "count": "all",
+                "player": "you",
+                "zone": "graveyard"
+              },
+              "op": "put_on_top"
+            },
+            {
+              "op": "shuffle",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "Exile this enchantment: Shuffle your graveyard into your library."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "enhanced_surveillance",
+      "mana_cost": "{1}{U}",
+      "name": "Enhanced Surveillance",
+      "oracle_text": "You may look at an additional two cards each time you surveil.\nExile this enchantment: Shuffle your graveyard into your library.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -72651,6 +73826,59 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "cost_reduction": {
+        "amount": 2,
+        "targeting": {
+          "attacking": true,
+          "types": [
+            "Creature"
+          ]
+        }
+      },
+      "id": "ephara_s_dispersal",
+      "mana_cost": "{2}{U}",
+      "name": "Ephara's Dispersal",
+      "oracle_text": "This spell costs {2} less to cast if it targets an attacking creature.\nReturn target creature to its owner's hand. Surveil 2. (Look at the top two cards of your library, then put any number of them into your graveyard and the rest on top of your library in any order.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "return_to_hand"
+        },
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "surveil",
+          "player": "you"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -76573,6 +77801,53 @@
         "Soldier"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "affects_spells": {
+            "not_types": [
+              "Land"
+            ]
+          },
+          "effect": "cast_from_graveyard",
+          "kind": "static",
+          "pay_life_instead": true,
+          "surveilled_this_turn": true,
+          "text": "You may play lands and cast spells from among cards in your graveyard you've surveilled this turn. If you cast a spell this way, you pay life equal to its mana value rather than paying its mana cost."
+        },
+        {
+          "affects_player": "you",
+          "effect": "play_lands_from_graveyard",
+          "kind": "static",
+          "surveilled_this_turn": true,
+          "text": "You may play lands and cast spells from among cards in your graveyard you've surveilled this turn. If you cast a spell this way, you pay life equal to its mana value rather than paying its mana cost."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "eye_of_duskmantle",
+      "keywords": [
+        "flying",
+        "lifelink"
+      ],
+      "mana_cost": "{5}{B}{B}",
+      "name": "Eye of Duskmantle",
+      "oracle_text": "Flying, lifelink\nYou may play lands and cast spells from among cards in your graveyard you've surveilled this turn. If you cast a spell this way, you pay life equal to its mana value rather than paying its mana cost.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Eye"
+      ],
+      "toughness": 8,
       "types": [
         "Creature"
       ]
@@ -81014,6 +82289,52 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "condition": {
+            "all": [
+              {
+                "not": {
+                  "is_your_turn": true
+                }
+              },
+              {
+                "step_is": "end_step"
+              }
+            ]
+          },
+          "effect": "cast_as_though_flash",
+          "kind": "static",
+          "text": "During each opponent's end step, you may cast spells as though they had flash."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "final_word_phantom",
+      "keywords": [
+        "flash",
+        "flying"
+      ],
+      "mana_cost": "{2}{U}",
+      "name": "Final-Word Phantom",
+      "oracle_text": "Flash\nFlying\nDuring each opponent's end step, you may cast spells as though they had flash.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Detective"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -85141,6 +86462,157 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "steamboat_exiles",
+                  "objects": {
+                    "chooser": {
+                      "binding": "each_player"
+                    },
+                    "controller": {
+                      "binding": "each_player"
+                    },
+                    "count": 2,
+                    "is_token": false,
+                    "not_subtypes": [
+                      "Vehicle"
+                    ],
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "choose_permanents",
+                  "prompt": "Choose two nontoken, non-Vehicle creatures to exile"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_player"
+            },
+            {
+              "objects": {
+                "binding": "steamboat_exiles"
+              },
+              "op": "exile",
+              "until_leaves": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this Vehicle enters, each player chooses two nontoken, non-Vehicle creatures they control. Exile them until this Vehicle leaves the battlefield.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "controller": "owner",
+              "objects": {
+                "controller": "any",
+                "exiled_with": "self",
+                "zone": "exile"
+              },
+              "op": "put_onto_battlefield"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this Vehicle enters, each player chooses two nontoken, non-Vehicle creatures they control. Exile them until this Vehicle leaves the battlefield.",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "as": "steamboat_buried",
+              "objects": {
+                "controller": "any",
+                "count": 1,
+                "exiled_with": "self",
+                "zone": "exile"
+              },
+              "op": "put_exiled_into_graveyard"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "binding": "steamboat_buried"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "op": "investigate"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this Vehicle attacks, put a card exiled with it into its owner's graveyard. If you do, investigate.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 2,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 5
+              },
+              "toughness": {
+                "const": 7
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 2"
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "foreboding_steamboat",
+      "mana_cost": "{3}{B}{B}",
+      "name": "Foreboding Steamboat",
+      "oracle_text": "When this Vehicle enters, each player chooses two nontoken, non-Vehicle creatures they control. Exile them until this Vehicle leaves the battlefield.\nWhenever this Vehicle attacks, put a card exiled with it into its owner's graveyard. If you do, investigate.\nCrew 2",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "toughness": 7,
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -111464,6 +112936,70 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "exile_from_graveyard": {
+              "count": 1,
+              "types": [
+                "Land"
+              ]
+            },
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 3
+              },
+              "subtypes": [
+                "Elemental"
+              ],
+              "toughness": {
+                "const": 4
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, Exile a land card from your graveyard: This land becomes a 3/4 Elemental creature until end of turn. It's still a land."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "hostile_desert",
+      "name": "Hostile Desert",
+      "oracle_text": "{T}: Add {C}.\n{2}, Exile a land card from your graveyard: This land becomes a 3/4 Elemental creature until end of turn. It's still a land.",
+      "source": "auto",
+      "subtypes": [
+        "Desert"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -133190,6 +134726,100 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "surveil",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Lazav enters, surveil 1. (Look at the top card of your library. You may put it into your graveyard.)",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{X}"
+          },
+          "effects": [
+            {
+              "copying": {
+                "target": "t1"
+              },
+              "duration": "permanent",
+              "except_": {
+                "add_supertypes": [
+                  "Legendary"
+                ],
+                "keep_abilities": [
+                  1
+                ]
+              },
+              "except_name": "Lazav, the Multifarious",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "become_copy"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "mana_value": {
+                  "op": "=",
+                  "value": {
+                    "x": true
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "{X}: Lazav becomes a copy of target creature card in your graveyard with mana value X, except its name is Lazav, the Multifarious, it's legendary in addition to its other types, and it has this ability."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "lazav_the_multifarious",
+      "mana_cost": "{U}{B}",
+      "name": "Lazav, the Multifarious",
+      "oracle_text": "When Lazav enters, surveil 1. (Look at the top card of your library. You may put it into your graveyard.)\n{X}: Lazav becomes a copy of target creature card in your graveyard with mana value X, except its name is Lazav, the Multifarious, it's legendary in addition to its other types, and it has this ability.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Shapeshifter"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -145918,6 +147548,79 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "op": "clash",
+              "opponent": {
+                "binding": "defender"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Marvo attacks, clash with defending player.",
+          "trigger": {
+            "event": "attacks"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "op": "cast_from_hand",
+              "player": "you",
+              "selector": {
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "const": 8
+                  }
+                }
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you win a clash, draw a card. Then you may cast a spell from your hand with mana value 8 or less without paying its mana cost.",
+          "trigger": {
+            "controller": "you",
+            "event": "wins_clash"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "marvo_deep_operative",
+      "mana_cost": "{3}{U}{B}",
+      "name": "Marvo, Deep Operative",
+      "oracle_text": "Whenever Marvo attacks, clash with defending player. (Each clashing player reveals the top card of their library, then puts that card on their choice of the top or bottom. A player wins if their card had a greater mana value.)\nWhenever you win a clash, draw a card. Then you may cast a spell from your hand with mana value 8 or less without paying its mana cost.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Octopus",
+        "Rogue"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 8,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -146820,6 +148523,79 @@
       "subtypes": [
         "Vampire",
         "Cleric"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "surveil",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, surveil 2",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "effects": [
+            {
+              "effects": [
+                {
+                  "destination": "hand",
+                  "objects": {
+                    "self_only": true,
+                    "zone": "graveyard"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "pay_life": 1
+              },
+              "prompt": "Pay 1 life to return Master of Death from your graveyard to your hand?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, if this card is in your graveyard, you may pay 1 life. If you do, return it to your hand",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "master_of_death",
+      "mana_cost": "{1}{U}{B}",
+      "name": "Master of Death",
+      "oracle_text": "When this creature enters, surveil 2. (Look at the top two cards of your library, then put any number of them into your graveyard and the rest on top of your library in any order.)\nAt the beginning of your upkeep, if this card is in your graveyard, you may pay 1 life. If you do, return it to your hand.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Wizard"
       ],
       "toughness": 1,
       "types": [
@@ -150312,6 +152088,109 @@
               "amount": {
                 "const": 1
               },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you surveil, put a +1/+1 counter on Mirko.",
+          "trigger": {
+            "controller": "you",
+            "event": "surveils"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "controller": "you",
+                  "counters": {
+                    "finality": 1
+                  },
+                  "destination": "battlefield",
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Return the targeted creature card to the battlefield with a finality counter on it?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "power": {
+                  "op": "<",
+                  "value": {
+                    "power_of": {
+                      "self": true
+                    }
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "At the beginning of your end step, you may return target creature card with power less than Mirko's from your graveyard to the battlefield with a finality counter on it.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "mirko_obsessive_theorist",
+      "keywords": [
+        "flying",
+        "vigilance"
+      ],
+      "mana_cost": "{1}{U}{B}",
+      "name": "Mirko, Obsessive Theorist",
+      "oracle_text": "Flying, vigilance\nWhenever you surveil, put a +1/+1 counter on Mirko.\nAt the beginning of your end step, you may return target creature card with power less than Mirko's from your graveyard to the battlefield with a finality counter on it. (If it would die, exile it instead.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Detective"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
               "op": "lose_life",
               "player": "each_opponent"
             }
@@ -150868,6 +152747,54 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "mission_briefing",
+      "mana_cost": "{U}{U}",
+      "name": "Mission Briefing",
+      "oracle_text": "Surveil 2, then choose an instant or sorcery card in your graveyard. You may cast it this turn. If that spell would be put into your graveyard, exile it instead. (To surveil 2, look at the top two cards of your library, then put any number of them into your graveyard and the rest on top of your library in any order.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "surveil",
+          "player": "you"
+        },
+        {
+          "as": "briefed",
+          "objects": {
+            "any_types": [
+              "Instant",
+              "Sorcery"
+            ],
+            "controller": "you",
+            "count": 1,
+            "zone": "graveyard"
+          },
+          "op": "choose_permanents",
+          "prompt": "Choose an instant or sorcery card in your graveyard"
+        },
+        {
+          "objects": {
+            "binding": "briefed"
+          },
+          "op": "grant_playable",
+          "playable": "this_turn",
+          "playable_cast_only": true,
+          "playable_exiles": true
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -157944,6 +159871,114 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "controller": "any",
+                    "self_only": true
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "delay",
+              "step": "cleanup"
+            }
+          ],
+          "kind": "triggered",
+          "text": "You may cast this spell as though it had flash. If you cast it any time a sorcery couldn't have been cast, the controller of the permanent it becomes sacrifices it at the beginning of the next cleanup step.",
+          "trigger": {
+            "condition": {
+              "cast_at_sorcery_timing": false
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "op": "become_aura"
+            },
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "link": true,
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            },
+            {
+              "objects": {
+                "returned_with": "self"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When this enchantment enters, if it's on the battlefield, it becomes an Aura with \"enchant creature put onto the battlefield with Necromancy.\" Put target creature card from a graveyard onto the battlefield under your control and attach this enchantment to it. When this enchantment leaves the battlefield, that creature's controller sacrifices it.",
+          "trigger": {
+            "condition": {
+              "zone_is": "battlefield"
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "returned_with": "self"
+              },
+              "op": "sacrifice"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this enchantment enters, if it's on the battlefield, it becomes an Aura with \"enchant creature put onto the battlefield with Necromancy.\" Put target creature card from a graveyard onto the battlefield under your control and attach this enchantment to it. When this enchantment leaves the battlefield, that creature's controller sacrifices it.",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "source": "self"
+          }
+        }
+      ],
+      "as_though_flash": true,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "necromancy",
+      "mana_cost": "{2}{B}",
+      "name": "Necromancy",
+      "oracle_text": "You may cast this spell as though it had flash. If you cast it any time a sorcery couldn't have been cast, the controller of the permanent it becomes sacrifices it at the beginning of the next cleanup step.\nWhen this enchantment enters, if it's on the battlefield, it becomes an Aura with \"enchant creature put onto the battlefield with Necromancy.\" Put target creature card from a graveyard onto the battlefield under your control and attach this enchantment to it. When this enchantment leaves the battlefield, that creature's controller sacrifices it.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_player": "you",
           "effect": "skip_draw_step",
           "kind": "static",
@@ -160107,6 +162142,50 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 1
+              },
+              "op": "surveil",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, surveil 1",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "nightveil_sprite",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{U}",
+      "name": "Nightveil Sprite",
+      "oracle_text": "Flying\nWhenever this creature attacks, surveil 1. (Look at the top card of your library. You may put it into your graveyard.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Faerie",
+        "Rogue"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "effects": [
                 {
                   "count": 1,
@@ -161758,6 +163837,47 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "notion_rain",
+      "mana_cost": "{1}{U}{B}",
+      "name": "Notion Rain",
+      "oracle_text": "Surveil 2, then draw two cards. Notion Rain deals 2 damage to you. (To surveil 2, look at the top two cards of your library, then put any number of them into your graveyard and the rest on top of your library in any order.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "surveil",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "damage",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -169230,6 +171350,88 @@
         {
           "effects": [
             {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, you may destroy target creature.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "tapped": true,
+              "token": "zombie_2_2_b"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a nontoken creature an opponent controls dies, create a tapped 2/2 black Zombie creature token.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "dies",
+            "filter": {
+              "is_token": false,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "overseer_of_the_damned",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{5}{B}{B}",
+      "name": "Overseer of the Damned",
+      "oracle_text": "Flying\nWhen this creature enters, you may destroy target creature.\nWhenever a nontoken creature an opponent controls dies, create a tapped 2/2 black Zombie creature token.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Demon"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "effects": [
                 {
                   "destination": "hand",
@@ -174089,6 +176291,52 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "pile_on",
+      "mana_cost": "{3}{B}",
+      "name": "Pile On",
+      "oracle_text": "Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nDestroy target creature or planeswalker. Surveil 2. (Look at the top two cards of your library, then put any number of them into your graveyard and the rest on top of your library in any order.)",
+      "pay_generic_with": "tap_creatures",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        },
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "surveil",
+          "player": "you"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "any_types": [
+              "Creature",
+              "Planeswalker"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "pilgrim_of_the_fires",
@@ -176450,6 +178698,77 @@
           },
           "effects": [
             {
+              "mana": "{U}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {U}."
+        },
+        {
+          "cost": {
+            "mana": "{3}{U}{B}{B}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "mill",
+              "player": "you"
+            },
+            {
+              "objects": {
+                "chooser": "controller",
+                "controller": "you",
+                "count": 1,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              },
+              "op": "put_onto_battlefield",
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}{U}{B}{B}, {T}, Sacrifice this land: Mill four cards, then return a creature card from your graveyard to the battlefield tapped"
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [],
+      "id": "port_of_karfell",
+      "name": "Port of Karfell",
+      "oracle_text": "This land enters tapped.\n{T}: Add {U}.\n{3}{U}{B}{B}, {T}, Sacrifice this land: Mill four cards, then return a creature card from your graveyard to the battlefield tapped. (To mill a card, put the top card of your library into your graveyard.)",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
               "modes": [
                 {
                   "effects": [
@@ -176542,6 +178861,7 @@
               "player": "you"
             }
           ],
+          "next_turn": true,
           "op": "delay",
           "step": "upkeep",
           "text": "Draw a card at the beginning of the next turn's upkeep."
@@ -177338,6 +179658,61 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "cost_reduction": {
+        "amount": 2,
+        "targeting": {
+          "supertypes": [
+            "Legendary"
+          ],
+          "types": [
+            "Creature"
+          ]
+        }
+      },
+      "id": "price_of_fame",
+      "mana_cost": "{3}{B}",
+      "name": "Price of Fame",
+      "oracle_text": "This spell costs {2} less to cast if it targets a legendary creature.\nDestroy target creature.\nSurveil 2. (Look at the top two cards of your library, then put any number of them into your graveyard and the rest on top of your library in any order.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        },
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "surveil",
+          "player": "you"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -199142,6 +201517,78 @@
       ]
     },
     {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "cost_reduction": {
+        "amount": 2,
+        "targeting": {
+          "controller": "you",
+          "subtypes": [
+            "Dinosaur"
+          ]
+        }
+      },
+      "id": "savage_stomp",
+      "mana_cost": "{2}{G}",
+      "name": "Savage Stomp",
+      "oracle_text": "This spell costs {2} less to cast if it targets a Dinosaur you control.\nPut a +1/+1 counter on target creature you control. Then that creature fights target creature you don't control. (Each deals damage equal to its power to the other.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "counter": "+1/+1",
+          "objects": {
+            "target": "mine"
+          },
+          "op": "add_counters"
+        },
+        {
+          "objects": {
+            "target": "mine"
+          },
+          "op": "fight",
+          "other": {
+            "target": "theirs"
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "mine",
+          "kind": "permanent",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "theirs",
+          "kind": "permanent",
+          "selector": {
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -205651,6 +208098,53 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "extra_beginning_phase"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each of enchanted player's postcombat main phases, there is an additional beginning phase after this phase.",
+          "trigger": {
+            "condition": {
+              "is_active_player": "enchanted_player"
+            },
+            "controller": "any",
+            "event": "postcombat_main"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "shadow_of_the_second_sun",
+      "mana_cost": "{4}{U}{U}",
+      "name": "Shadow of the Second Sun",
+      "oracle_text": "Enchant player\nAt the beginning of each of enchanted player's postcombat main phases, there is an additional beginning phase after this phase. (The end step happens after the added untap, upkeep, and draw steps.)",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "any"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -212384,6 +214878,45 @@
         "Warlock"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "surveil",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}: Surveil 1"
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "sinister_starfish",
+      "mana_cost": "{1}{B}",
+      "name": "Sinister Starfish",
+      "oracle_text": "{T}: Surveil 1. (Look at the top card of your library. You may put it into your graveyard.)",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Starfish"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -219219,6 +221752,45 @@
         "Sphinx"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "extra_beginning_phase"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each of your postcombat main phases, there is an additional beginning phase after this phase.",
+          "trigger": {
+            "controller": "you",
+            "event": "postcombat_main"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "sphinx_of_the_second_sun",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{6}{U}{U}",
+      "name": "Sphinx of the Second Sun",
+      "oracle_text": "Flying\nAt the beginning of each of your postcombat main phases, there is an additional beginning phase after this phase. (The beginning phase includes the untap, upkeep, and draw steps.)",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Sphinx"
+      ],
+      "toughness": 6,
       "types": [
         "Creature"
       ]
@@ -231795,6 +234367,48 @@
         "Soldier"
       ],
       "toughness": 3,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "synth_infiltrator",
+      "mana_cost": "{3}{U}{U}",
+      "name": "Synth Infiltrator",
+      "oracle_text": "Improvise (Your artifacts can help cast this spell. Each artifact you tap after you're done activating mana abilities pays for {1}.)\nYou may have this creature enter as a copy of any creature on the battlefield, except it's a Synth artifact creature in addition to its other types.",
+      "pay_generic_with": "tap_artifacts",
+      "power": 0,
+      "replacements": [
+        {
+          "copying": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "event": "self_enters_as_copy",
+          "except_": {
+            "add_subtypes": [
+              "Synth"
+            ],
+            "add_types": [
+              "Artifact"
+            ]
+          }
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Synth"
+      ],
+      "toughness": 0,
       "types": [
         "Artifact",
         "Creature"
@@ -245814,6 +248428,74 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you surveil, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "surveils"
+          }
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "counters_on": {
+                "counter": "+1/+1",
+                "objects": {
+                  "self_only": true
+                }
+              }
+            },
+            "right": {
+              "const": 3
+            }
+          },
+          "effect": "attack_despite_defender",
+          "kind": "static",
+          "text": "As long as this creature has three or more +1/+1 counters on it, it can attack as though it didn't have defender."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "thoughtbound_phantasm",
+      "keywords": [
+        "defender"
+      ],
+      "mana_cost": "{U}",
+      "name": "Thoughtbound Phantasm",
+      "oracle_text": "Defender\nWhenever you surveil, put a +1/+1 counter on this creature.\nAs long as this creature has three or more +1/+1 counters on it, it can attack as though it didn't have defender.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Spirit"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -249511,6 +252193,50 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{3}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "surveil",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}, {T}: Surveil 1. (Look at the top card of your library. You may put it into your graveyard.)"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "tocasia_s_dig_site",
+      "name": "Tocasia's Dig Site",
+      "oracle_text": "{T}: Add {C}.\n{3}, {T}: Surveil 1. (Look at the top card of your library. You may put it into your graveyard.)",
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -254556,6 +257282,85 @@
         {
           "effects": [
             {
+              "as": "top_card",
+              "objects": {
+                "controller": "you",
+                "zone": "library"
+              },
+              "op": "snapshot"
+            },
+            {
+              "objects": {
+                "binding": "top_card"
+              },
+              "op": "reveal"
+            },
+            {
+              "objects": {
+                "binding": "top_card"
+              },
+              "op": "return_to_hand"
+            },
+            {
+              "amount": {
+                "mana_value_of": {
+                  "binding": "top_card"
+                }
+              },
+              "op": "lose_life",
+              "player": "each_opponent"
+            },
+            {
+              "amount": {
+                "mana_value_of": {
+                  "binding": "top_card"
+                }
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, if you have the city's blessing, reveal the top card of your library and put it into your hand. Each opponent loses X life and you gain X life, where X is that card's mana value.",
+          "trigger": {
+            "condition": {
+              "has_city_s_blessing": "you"
+            },
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "ascend": true,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "twilight_prophet",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{B}{B}",
+      "name": "Twilight Prophet",
+      "oracle_text": "Flying\nAscend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\nAt the beginning of your upkeep, if you have the city's blessing, reveal the top card of your library and put it into your hand. Each opponent loses X life and you gain X life, where X is that card's mana value.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Cleric"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "op": "create_token",
               "token": "spider_1_2_g_reach"
             }
@@ -257911,6 +260716,114 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "surveil",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters and at the beginning of your upkeep, surveil 1.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "surveil",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters and at the beginning of your upkeep, surveil 1.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        },
+        {
+          "effects": [
+            {
+              "op": "investigate"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more creature cards are put into your graveyard from your library, investigate.",
+          "trigger": {
+            "batched": true,
+            "controller": "you",
+            "event": "put_into_graveyard",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            },
+            "from_zones": [
+              "library"
+            ]
+          }
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "mana": "{2}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "subtypes": [
+                "Clue"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "return_to_hand"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, Sacrifice a Clue: Return this card from your graveyard to your hand."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "unshakable_tail",
+      "mana_cost": "{2}{B}",
+      "name": "Unshakable Tail",
+      "oracle_text": "When this creature enters and at the beginning of your upkeep, surveil 1.\nWhenever one or more creature cards are put into your graveyard from your library, investigate. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")\n{2}, Sacrifice a Clue: Return this card from your graveyard to your hand.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Detective"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -265371,6 +268284,89 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "exile_from_graveyard": {
+              "count": 1,
+              "self_only": true
+            },
+            "mana": "{3}{U}{U}"
+          },
+          "effects": [
+            {
+              "controller": "you",
+              "embalm": true,
+              "except_": {
+                "add_subtypes": [
+                  "Zombie"
+                ],
+                "colors": [
+                  "W"
+                ],
+                "no_mana_cost": true
+              },
+              "objects": {
+                "controller": "any",
+                "self_only": true,
+                "zone": "exile"
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Embalm {3}{U}{U}"
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "vizier_of_many_faces",
+      "mana_cost": "{2}{U}{U}",
+      "name": "Vizier of Many Faces",
+      "oracle_text": "You may have this creature enter as a copy of any creature on the battlefield, except if this creature was embalmed, the token has no mana cost, it's white, and it's a Zombie in addition to its other types.\nEmbalm {3}{U}{U}",
+      "power": 0,
+      "replacements": [
+        {
+          "copying": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "event": "self_enters_as_copy",
+          "except_": {
+            "add_subtypes": [
+              "Zombie"
+            ],
+            "colors": [
+              "W"
+            ],
+            "condition": {
+              "embalmed": true
+            },
+            "no_mana_cost": true
+          }
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Shapeshifter",
+        "Cleric"
+      ],
+      "toughness": 0,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B",
         "W"
@@ -269270,6 +272266,69 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "cost": {
+            "mana": "{3}"
+          },
+          "effect": "ward",
+          "kind": "static",
+          "text": "Flying, ward {3}"
+        },
+        {
+          "active_zones": [
+            "exile"
+          ],
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "surveil"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you remove a time counter from this card while it's exiled, surveil 1.",
+          "trigger": {
+            "controller": "you",
+            "counter": "time",
+            "event": "counter_removed",
+            "removed_by": "you",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "watcher_of_hours",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{5}{U}",
+      "name": "Watcher of Hours",
+      "oracle_text": "Flying, ward {3}\nWhenever you remove a time counter from this card while it's exiled, surveil 1.\nSuspend 6—{1}{U} (Rather than cast this card from your hand, you may pay {1}{U} and exile it with six time counters on it. At the beginning of your upkeep, remove a time counter. When the last is removed, you may cast it without paying its mana cost. It has haste.)",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Sphinx"
+      ],
+      "suspend": {
+        "cost": "{1}{U}",
+        "counters": 6
+      },
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -271304,6 +274363,55 @@
         "Shaman"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you surveil for the first time each turn, this creature deals 1 damage to each opponent and you gain 1 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "surveils",
+            "nth": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "whispering_snitch",
+      "mana_cost": "{1}{B}",
+      "name": "Whispering Snitch",
+      "oracle_text": "Whenever you surveil for the first time each turn, this creature deals 1 damage to each opponent and you gain 1 life.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Rogue"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]

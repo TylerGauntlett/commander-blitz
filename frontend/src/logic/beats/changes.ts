@@ -351,6 +351,19 @@ export function changeBeat(ctx: EventContext): boolean {
       return true;
     }
 
+    /* A Case becoming solved: the Class level's beat, for its reason. */
+    case "became_solved": {
+      if (event.source === null) return true;
+      const anchor = { kind: "object", oid: event.source } as const;
+      push({
+        hold: 320,
+        sound: "chime",
+        float: { anchor, value: "Solved", tone: "good" },
+        fx: [{ at: 0, kind: "actuate", oid: event.source, move: "pulse", power: 1 }],
+      });
+      return true;
+    }
+
     /*
      * The crown changing hands, which is a table-level moment and not a board
      * one: no permanent to flash, no number to float, nothing on screen that

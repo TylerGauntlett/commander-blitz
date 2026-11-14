@@ -148,6 +148,11 @@ RECORDING_OPS = frozenset(
         #: arrived, not what was chosen: a commander redirected to the command
         #: zone was not put there. See `ops_cards.op_put_on_top`.
         "put_on_top",
+        #: The exiled cards actually put into a graveyard -- Foreboding
+        #: Steamboat's "if you do, investigate". What arrived, not what was
+        #: chosen: one a Rest in Peace sent back to exile is not in it. See
+        #: `ops_cards.op_put_exiled_into_graveyard`.
+        "put_exiled_into_graveyard",
         #: A plain **int**, like `lose_life`'s: the counters actually removed --
         #: Eventide's Shadow's "equal to the number of counters removed this
         #: way", which nothing on the board still shows once they are gone.

@@ -96,7 +96,7 @@ from .effects import (
     _validate_enchanted_player,
     _validate_was_cast_placement,
 )
-from .linking import _derive_color_identity
+from .linking import _derive_color_identity, _walk_effects
 from .mana import (
     _ANY_COLOR_OPTIONS,
     _ANY_TYPE_OPTIONS,
@@ -444,9 +444,23 @@ def load_deck_file(path: Path) -> DeckModel:
 #: ``enters_with`` is the one clause no token copy prints, because a token is
 #: never "entering" as anything but itself. ``add_types`` is `copy_permanent`'s
 #: key of the same name: Phyrexian Metamorph's "…except it's an artifact in
-#: addition to its other types".
+#: addition to its other types". ``add_subtypes``, ``colors`` and
+#: ``no_mana_cost`` are `copy_permanent`'s keys of the same names: Vizier of
+#: Many Faces' "…the token has no mana cost, it's white, and it's a Zombie in
+#: addition to its other types". ``condition`` makes the whole exception
+#: conditional -- Vizier's "except **if this creature was embalmed**".
 ENTERS_COPY_EXCEPT_KEYS = frozenset(
-    {"add_keywords", "add_types", "remove_supertypes", "name", "enters_with"}
+    {
+        "add_keywords",
+        "add_types",
+        "add_subtypes",
+        "colors",
+        "no_mana_cost",
+        "remove_supertypes",
+        "name",
+        "enters_with",
+        "condition",
+    }
 )
 
 
@@ -464,8 +478,32 @@ def _check_enters_copy_except(spec: Mapping[str, Any], where: str) -> None:
             f"{where}: unsupported keys {sorted(unknown)} "
             f"(known: {sorted(ENTERS_COPY_EXCEPT_KEYS)})"
         )
-    if not spec:
+    if not set(spec) - {"condition"}:
         raise DslError(f"{where}: an empty exception -- omit 'except_' instead")
+    if "condition" in spec:
+        # "…except if this creature was embalmed, …" (Vizier of Many Faces).
+        # Judged as the permanent arrives; failing, the copy has no exception.
+        validate_condition(spec["condition"], f"{where}.condition")
+    if "add_subtypes" in spec:
+        # "…it's a Zombie in addition to its other types." Dropped, the copy
+        # is no Zombie and every Zombie lord and count misses it.
+        added = spec["add_subtypes"]
+        if not isinstance(added, list) or not added or not all(
+            isinstance(name, str) and name for name in added
+        ):
+            raise DslError(f"{where}.add_subtypes: needs a non-empty list of subtype names")
+    if "colors" in spec:
+        # "…it's white": the copy's colours *instead of* the copied ones, so an
+        # empty list is a colourless copy no printed clause asks for.
+        colors = spec["colors"]
+        if not isinstance(colors, list) or not colors:
+            raise DslError(f"{where}.colors: must be a non-empty list of colours")
+        for color in colors:
+            if color not in KNOWN_COLORS:
+                raise DslError(f"{where}.colors: unknown colour {color!r}")
+    if "no_mana_cost" in spec and spec["no_mana_cost"] is not True:
+        # A present-and-false key is a clause that says nothing.
+        raise DslError(f"{where}.no_mana_cost: must be true -- omit it otherwise")
     if "add_keywords" in spec:
         # "…except it has haste and dethrone" (Dack's Duplicate).
         added = spec["add_keywords"]
@@ -1545,9 +1583,19 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         raise DslError(f"{where}.grantable_abilities: a threshold is a printed striation")
     final_chapter = _final_chapter(model, abilities, where)
     _check_class_levels(model, abilities, where)
+    _check_case(model, abilities, where)
     _check_reflexive_wiring(model, abilities, where)
 
     for ability in grantable:
+        if ability.solved or _is_to_solve_line(ability):
+            # The Class refusal below, for a Case: "solved" is a designation of
+            # the card that prints the line (719.3d), and the permanent a
+            # granted ability sits on is never that Case.
+            raise DslError(
+                f"{where}.grantable[{ability.index}]: a Case's solved designation "
+                f"belongs to the card that prints it, so a granted ability cannot "
+                f"carry 'solved' or be a 'to_solve' line"
+            )
         if ability.level is not None or ability.becomes_level is not None:
             # A level is a fact about the permanent that *prints* the line (716),
             # and a granted ability sits on some other permanent -- whose level
@@ -1658,7 +1706,22 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     _check_emblem_references(model, abilities, grantable, emblems, where)
 
     if model.cost_reduction is not None:
-        _validate_cost_reduction(model.cost_reduction, f"{where}.cost_reduction")
+        _validate_cost_reduction(model.cost_reduction, f"{where}.cost_reduction", spell=True)
+        if "targeting" in model.cost_reduction and not model.targets:
+            # "…if it targets an attacking creature" on a card that declares no
+            # target would be read against an empty tuple on every cast: a
+            # discount that loads clean and never fires.
+            raise DslError(
+                f"{where}.cost_reduction.targeting: the card declares no targets "
+                f"for the clause to read"
+            )
+        if "targeting" in model.cost_reduction and model.strive is not None:
+            # `casting._priced_tuples` prices strive per target count, not per
+            # tuple, so the discount would be read generously on every line.
+            raise DslError(
+                f"{where}.cost_reduction.targeting: not beside strive, which is "
+                f"priced per target count rather than per tuple"
+            )
 
     suspend = None
     if model.suspend is not None:
@@ -2503,6 +2566,16 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         # A destination with nothing to send there. Silently ignoring it would
         # let a card claim to be an escape card and never be castable at all.
         raise DslError(f"{where}: 'graveyard_cast' needs a 'graveyard_cost' to describe")
+    # Embalm (702.128a): only a card whose embalm ability stamps its token can
+    # ask whether it was embalmed. A reader on any other card loads, prints
+    # "if this creature was embalmed" and never fires.
+    if _mentions_key_anywhere(model, "embalmed") and not _mentions(
+        model, lambda node: node.get("op") == "copy_permanent" and node.get("embalm") is True
+    ):
+        raise DslError(
+            f"{where}: reads the 'embalmed' condition but no 'copy_permanent' "
+            f"with \"embalm\": true makes its embalmed token"
+        )
     # Escape (702.138c-d): only a card with an escape cost can have escaped. A
     # reader on any other card loads, prints "escapes with" and never fires --
     # and on a flashback card it would fire for the wrong keyword.
@@ -2518,12 +2591,22 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     # win, …", so a `clash` nothing reads is a spell that reveals two cards and
     # does nothing, and a `clash_won` binding with no clash behind it is a
     # clause that reads 0 and can never fire. Both load cleanly.
+    #
+    # The one clash whose win is read elsewhere is a card that also says
+    # "whenever you win a clash" (Marvo, Deep Operative): its `wins_clash`
+    # trigger is what consumes the win, so the clash is not inert. Only a
+    # trigger on the *same* card excuses it, which keeps a lone "clash with an
+    # opponent." refused.
     clashes = _mentions_pair(model, "op", "clash")
     reads_clash = _mentions_pair(model, "binding", "clash_won")
-    if clashes and not reads_clash:
+    hears_clash = any(
+        a.trigger is not None and a.trigger.event == "wins_clash" for a in model.abilities
+    )
+    if clashes and not reads_clash and not hears_clash:
         raise DslError(
             f"{where}: has a 'clash' that no effect reads via "
-            f"{{'binding': 'clash_won'}} -- a clash nobody wins is not a card"
+            f"{{'binding': 'clash_won'}} and no 'wins_clash' trigger hears -- "
+            f"a clash nobody wins is not a card"
         )
     if reads_clash and not clashes:
         raise DslError(
@@ -2573,10 +2656,9 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
 
     # Gravecrawler's own graveyard permission is cast at the printed price and
     # the card goes wherever it normally would. For a permanent that is the
-    # battlefield. An instant or sorcery would be marked cast-from-a-graveyard
-    # and exiled as it resolves (`graveyard_cast_exiles`), which is flashback's
-    # rider and not this permission's -- so the line is refused rather than
-    # loaded as a once-only card.
+    # battlefield. An instant or sorcery cast this way would go back to the
+    # graveyard, a form with no witness or test behind it, so the line is
+    # refused rather than loaded untested.
     owns_graveyard_permission = any(
         ability.effect == "cast_from_graveyard" and "graveyard" in ability.active_zones
         for ability in model.abilities
@@ -2584,8 +2666,8 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     if owns_graveyard_permission and not (set(model.types) & PERMANENT_TYPES):
         raise DslError(
             f"{where}: a card's own permission to cast itself from the graveyard "
-            f"is supported on permanent cards only -- a nonpermanent cast that way "
-            f"would be exiled as it resolves, and the printed card is not"
+            f"is supported on permanent cards only -- the nonpermanent form has "
+            f"no witness"
         )
 
     _validate_was_cast_placement(model, where)
@@ -2647,7 +2729,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"got {model.cant_cast_first_turns!r}"
         )
 
-    return CardDef(
+    card = CardDef(
         id=model.id,
         name=model.name,
         oracle_text=model.oracle_text,
@@ -2685,6 +2767,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         fuse=model.fuse,
         uncounterable=model.uncounterable,
         split_second=model.split_second,
+        as_though_flash=model.as_though_flash,
         cast_before_step=cast_before_step,
         cant_cast_first_turns=model.cant_cast_first_turns,
         cast_only_during=cast_only_during,
@@ -2744,6 +2827,17 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         suspend=suspend,
         impending=impending,
     )
+    # 205.3d: Aura is an enchantment type, so "it becomes an Aura" (Necromancy)
+    # means something only on an enchantment -- and on a printed Aura it is
+    # nothing.
+    if (not card.is_enchantment or card.is_aura) and any(
+        effect.get("op") == "become_aura" for effect in _walk_effects(card)
+    ):
+        raise DslError(
+            f"{where}: become_aura makes a non-Aura enchantment an Aura, and "
+            f"this card is " + ("already one" if card.is_aura else "not an enchantment")
+        )
+    return card
 
 
 def _compile_threshold(
@@ -2940,6 +3034,10 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
     """
 
     where = f"{card_where}.abilities[{index}]"
+    if model.kind == "to_solve":
+        return _compile_to_solve_line(model, index, card_where, where)
+    if model.solved:
+        return _compile_solved_ability(model, index, card_where, where)
     if model.kind == "level":
         return _compile_level_line(model, index, card_where, where)
     if model.level is None:
@@ -3004,6 +3102,121 @@ def _compile_level_line(
         effects=({"op": "become_level", "level": model.level},),
         becomes_level=model.level,
     )
+
+
+#: The only keys a Case's "To solve —" line may set: its printed words and the
+#: condition after the dash. 719.3b says the rest -- when it is checked, the
+#: "if this Case is not solved" and the effect.
+_TO_SOLVE_LINE_KEYS = frozenset({"kind", "text", "condition"})
+
+#: The intervening-if a "To solve —" line's trigger carries ahead of its
+#: printed condition (719.3b): the trigger neither goes on the stack nor
+#: resolves for a Case already solved.
+_NOT_SOLVED = {"solved": False}
+
+
+def _is_to_solve_line(ability: Ability) -> bool:
+    """Is this the compiled "To solve —" line, by the effect the loader gave it?"""
+    return any(effect.get("op") == "solve" for effect in ability.effects)
+
+
+def _compile_to_solve_line(
+    model: AbilityModel, index: int, card_where: str, where: str
+) -> Ability:
+    """ "To solve — [condition]" -- 719.3b, a whole triggered ability in a dash.
+
+    "At the beginning of your end step, if this Case is not solved and
+    [condition], it becomes solved." The card prints only the condition, so that
+    is all a card writes; the loader supplies the end-step trigger, the "not
+    solved" half of the intervening-if (checked as the trigger would go on the
+    stack and again as it resolves, 603.4) and the `solve` effect. A level
+    line's reasoning: every Case in print would otherwise write the same three
+    things, and any one of them could write one wrong.
+    """
+    if model.condition is None:
+        raise DslError(
+            f"{where}: a to_solve line needs the 'condition' printed after "
+            f"\"To solve —\""
+        )
+    extra = set(model.model_fields_set) - _TO_SOLVE_LINE_KEYS
+    if extra:
+        raise DslError(
+            f"{where}: a to_solve line is its condition; rule 719.3b supplies the "
+            f"rest, so it cannot also set {sorted(extra)}"
+        )
+    validate_condition(model.condition, f"{where}.condition")
+    triggered = AbilityModel.model_validate(
+        {
+            "kind": "triggered",
+            "text": model.text,
+            "trigger": {
+                "event": "end_step",
+                "controller": "you",
+                "condition": {"all": [_NOT_SOLVED, model.condition]},
+            },
+        }
+    )
+    ability = _compile_printed_ability(triggered, index, card_where)
+    return dataclasses.replace(ability, effects=({"op": "solve"},))
+
+
+def _compile_solved_ability(
+    model: AbilityModel, index: int, card_where: str, where: str
+) -> Ability:
+    """ "Solved — [ability]" -- 719.3c: there only while the Case is solved.
+
+    The `level` gate's shape: compiled as the ability it is and stamped, so no
+    branch of the ordinary compiler has to know Cases exist.
+    """
+    if model.kind in ("chapter", "reflexive", "level"):
+        # A chapter is a Saga's and a level line a Class's; a reflexive ability
+        # is fired by the op above it, which is the thing to gate.
+        raise DslError(f"{where}: 'solved' does not mean anything on a {model.kind} ability")
+    if model.level is not None:
+        raise DslError(f"{where}: an ability is gated on a Class level or on a Case, not both")
+    if list(model.active_zones) != ["battlefield"]:
+        # The designation is the permanent's (719.3d) and is lost as it leaves
+        # (400.7), so off the battlefield the gate is always shut.
+        raise DslError(
+            f"{where}: a 'solved' ability only exists on the battlefield, "
+            f"not in {model.active_zones}"
+        )
+    ability = _compile_ability(model.model_copy(update={"solved": False}), index, card_where)
+    return dataclasses.replace(ability, solved=True)
+
+
+def _check_case(model: CardModel, abilities: tuple[Ability, ...], where: str) -> None:
+    """The card-level half of 719: a Case solves one way, and only a Case does.
+
+    Refused, each because it loads clean and plays as a different card:
+
+    - a "To solve —" line, a "Solved —" ability or a ``solved`` condition on a
+      card with no ``Case`` subtype -- the Class refusal's reason;
+    - two "To solve —" lines, which 719.3a never prints and which would solve
+      the Case on either condition;
+    - a "Solved —" ability or a ``solved`` condition on a card with no "To
+      solve —" line: nothing could ever solve it, which is a printed line the
+      card claims and never does.
+
+    A ``Case`` with neither is accepted and inert, the Saga rule.
+    """
+    lines = sum(1 for ability in abilities if _is_to_solve_line(ability))
+    gated = any(ability.solved for ability in abilities)
+    reads = _mentions_condition(model, "solved")
+    if not lines and not gated and not reads:
+        return
+    if "Case" not in model.subtypes:
+        raise DslError(
+            f"{where}: a to_solve line, a 'solved' ability or the 'solved' condition "
+            f"needs the 'Case' subtype (719)"
+        )
+    if lines > 1:
+        raise DslError(f"{where}: a Case has one to_solve line (719.3a), got {lines}")
+    if not lines:
+        raise DslError(
+            f"{where}: 'solved' on a Case with no to_solve line -- nothing could ever "
+            f"solve it"
+        )
 
 
 def _check_class_levels(model: CardModel, abilities: tuple[Ability, ...], where: str) -> None:
@@ -3541,14 +3754,16 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
 
         if model.trigger.counter is not None and model.trigger.event not in (
             "counter_placed",
+            "counter_removed",
             "last_counter_removed",
         ):
             # Same reasoning as `not_cause` above: only the counter events carry
             # a counter kind, so accepting it elsewhere would look like a filter
             # and be one that never applies.
             raise DslError(
-                f"{where}: 'counter' only means anything on a counter_placed or "
-                f"last_counter_removed trigger, not on {model.trigger.event!r}"
+                f"{where}: 'counter' only means anything on a counter_placed, "
+                f"counter_removed or last_counter_removed trigger, not on "
+                f"{model.trigger.event!r}"
             )
         if model.trigger.event == "last_counter_removed" and model.trigger.counter is None:
             # "The last" is the last of one kind: without it the trigger would
@@ -3564,6 +3779,14 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             raise DslError(
                 f"{where}: 'put_by' on a trigger only means anything on "
                 f"counter_placed, not on {model.trigger.event!r}"
+            )
+        if model.trigger.removed_by is not None and model.trigger.event != "counter_removed":
+            # Only an object's COUNTER_REMOVED records who removed something;
+            # on any other event the clause would read an absent remover and
+            # never fire.
+            raise DslError(
+                f"{where}: 'removed_by' on a trigger only means anything on "
+                f"counter_removed, not on {model.trigger.event!r}"
             )
         if model.trigger.counter is not None:
             # "Whenever a vigilance counter is put on this creature." The filter
@@ -3601,10 +3824,11 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             "expend",
             "put_into_graveyard",
             "investigates",
+            "surveils",
         ):
             # Same reasoning as `counter` and `mana_ability` above: only `draw`,
-            # `spell_cast`, `you_gain_life`, `life_lost`, `attacks` and
-            # `investigates` carry an ordinal, and `counter_placed` and `expend` the count before the
+            # `spell_cast`, `you_gain_life`, `life_lost`, `attacks`,
+            # `investigates` and `surveils` carry an ordinal, and `counter_placed` and `expend` the count before the
             # placement or payment, so
             # accepting it elsewhere would look like "your second card each
             # turn" and be a restriction that never matches -- an ability that
@@ -3613,7 +3837,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 f"{where}: 'nth' only means anything on a draw, spell_cast or "
                 f"you_gain_life trigger, or a life_lost trigger, or an attacks "
                 f"trigger, or a counter_placed or expend trigger, or a "
-                f"put_into_graveyard or investigates trigger, not on "
+                f"put_into_graveyard, investigates or surveils trigger, not on "
                 f"{model.trigger.event!r}"
             )
         if model.trigger.event == "expend":
@@ -3821,6 +4045,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             cause_controller=model.trigger.cause_controller,
             counter=model.trigger.counter,
             put_by=model.trigger.put_by,
+            removed_by=model.trigger.removed_by,
             mana_ability=model.trigger.mana_ability,
             targeted_by=model.trigger.targeted_by,
             nth=model.trigger.nth,
@@ -4854,6 +5079,16 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"'affects_spells' filter -- the permission without its price or its "
             f"filter is a different card"
         )
+    if model.pay_life_instead and model.effect not in (
+        "cast_from_library_top",
+        "cast_from_graveyard",
+    ):
+        # The price of the two casting permissions that print it, Bolas's
+        # Citadel's and Eye of Duskmantle's, and read by nothing else.
+        raise DslError(
+            f"{where}: 'pay_life_instead' prices a cast_from_library_top or "
+            f"cast_from_graveyard permission; nothing reads it on {model.effect!r}"
+        )
     if model.cast_gains_keywords and model.effect != "cast_from_library_top":
         raise DslError(
             f"{where}: 'cast_gains_keywords' is the rider on a spell cast through "
@@ -4890,6 +5125,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 ("grants_flashback", model.grants_flashback),
                 ("enters_tapped", model.enters_tapped),
                 ("arrived_this_turn_from", model.arrived_this_turn_from is not None),
+                ("surveilled_this_turn", model.surveilled_this_turn),
+                ("pay_life_instead", model.pay_life_instead),
             )
             if present
         ]
@@ -4920,11 +5157,25 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"{where}: cast_from_graveyard filters spells with "
                 f"'affects_spells', not 'affects' (which picks out permanents)"
             )
-        if not model.static_max_per_turn and not model.grants_flashback:
+        if model.pay_life_instead and model.grants_flashback:
+            raise DslError(
+                f"{where}: 'pay_life_instead' beside 'grants_flashback' is a second "
+                f"price for the same cast -- flashback's cost is the mana cost"
+            )
+        if (
+            not model.static_max_per_turn
+            and not model.grants_flashback
+            and not model.surveilled_this_turn
+        ):
             # `grants_flashback` IS the rate limit, and a different one: each
             # card is exiled as it resolves, so the permission spends itself
             # card by card rather than being metered per turn. Lier prints no
             # per-turn cap and needs none -- your graveyard runs out.
+            #
+            # `surveilled_this_turn` is a third: each cast takes a surveilled
+            # card out of the graveyard, and a card that comes back is a new
+            # object nobody surveilled (400.7), so the turn's surveils are the
+            # cap. Eye of Duskmantle prints none.
             raise DslError(
                 f"{where}: cast_from_graveyard needs 'max_per_turn' or "
                 f"'grants_flashback' -- "
@@ -5808,6 +6059,33 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         raise DslError(
             f"{where}: 'mill_multiplier' only means anything on a replace_mill "
             f"static, not on {model.effect!r}"
+        )
+    if model.effect == "replace_surveil":
+        # An addend, so 0 is the only number that means nothing; there is no
+        # "look at fewer cards" card, and a negative addend would load clean as
+        # a smaller surveil than the one printed.
+        if model.surveil_addend is None:
+            raise DslError(
+                f"{where}: replace_surveil needs 'surveil_addend' -- how many "
+                f"more cards each surveil looks at"
+            )
+        if model.surveil_addend < 1:
+            raise DslError(
+                f"{where}.surveil_addend: must be 1 or more; "
+                f"0 adds nothing to a surveil"
+            )
+        if model.affects is not None or model.amount is not None:
+            # "Each time you surveil" names a player, and the size is
+            # `surveil_addend`; nothing reads either key.
+            raise DslError(
+                f"{where}: replace_surveil takes 'affects_player', "
+                f"'surveil_addend', 'surveil_optional' and an optional "
+                f"'condition', and no 'affects' or 'amount'"
+            )
+    elif model.surveil_addend is not None or model.surveil_optional:
+        raise DslError(
+            f"{where}: 'surveil_addend'/'surveil_optional' only mean anything "
+            f"on a replace_surveil static, not on {model.effect!r}"
         )
     if model.effect == "replace_empty_draw" and (
         model.affects is not None or model.amount is not None
@@ -6906,6 +7184,10 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["except_first_in_draw_step"] = True
     if model.mill_multiplier is not None:
         static["mill_multiplier"] = model.mill_multiplier
+    if model.surveil_addend is not None:
+        static["surveil_addend"] = model.surveil_addend
+    if model.surveil_optional:
+        static["surveil_optional"] = True
     if model.affects_player is not None:
         static["affects_player"] = model.affects_player
     if model.tapped_permanent is not None:
@@ -7017,7 +7299,21 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # `grant_ability`'s reason a few lines down: the mapping is all
         # `characteristics` ever sees, and a rate limit left behind would read
         # as no limit at all.
-        static["max_per_turn"] = int(model.static_max_per_turn or 1)
+        if model.static_max_per_turn:
+            static["max_per_turn"] = int(model.static_max_per_turn)
+        elif model.surveilled_this_turn and not model.grants_flashback:
+            # Unmetered, and written as an explicit None so the reader cannot
+            # mistake it for a grant that left the key out. The surveil clause
+            # is the bound (see the refusal above).
+            static["max_per_turn"] = None
+        else:
+            static["max_per_turn"] = 1
+        if model.pay_life_instead:
+            static["pay_life_instead"] = True
+        if model.grants_flashback:
+            # Read by `Game._cast`, which stamps flashback's exile onto the
+            # stack item: a permission that is not flashback exiles nothing.
+            static["grants_flashback"] = True
         if model.enters_tapped:
             static["enters_tapped"] = True
         if model.arrived_this_turn_from is not None:
@@ -7032,6 +7328,16 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             if known:
                 raise DslError(f"{where}.arrived_this_turn_from: unknown zone(s) {sorted(known)}")
             static["arrived_this_turn_from"] = zones
+    if model.surveilled_this_turn:
+        # Read by the two graveyard permissions' per-object checks and by
+        # nothing else, so anywhere else it would be a clause silently dropped.
+        if model.effect not in ("cast_from_graveyard", "play_lands_from_graveyard"):
+            raise DslError(
+                f"{where}: 'surveilled_this_turn' narrows a cast_from_graveyard or "
+                f"play_lands_from_graveyard permission; nothing reads it on "
+                f"{model.effect!r}"
+            )
+        static["surveilled_this_turn"] = True
     if model.effect == "cant_cast_spells_from_zones":
         # Resolved to the positive list here, once, by the op's own helper, so
         # the static carries exactly what a `CastLock` row carries and the

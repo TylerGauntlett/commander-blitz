@@ -212,6 +212,21 @@ class GameObject:
     #: types". Written, read and cleared beside `copying_keywords`, for its
     #: reasons.
     copying_add_types: frozenset[str] | None = None
+    #: Creature and other subtypes the copy carries *in addition to* the copied
+    #: ones (707.9b) -- Vizier of Many Faces' "…it's a Zombie in addition to
+    #: its other types", Deceptive Frostkite's Dragon. Written, read and
+    #: cleared beside `copying_add_types`, for its reasons.
+    copying_add_subtypes: frozenset[str] | None = None
+    #: The colours the copy has *instead of* the copied ones (707.9b) --
+    #: Vizier of Many Faces' "…it's white". Written, read and cleared beside
+    #: `copying_add_types`, for its reasons.
+    copying_colors: frozenset[str] | None = None
+    #: Whether the copy has no mana cost (707.9b) -- Vizier of Many Faces'
+    #: "…the token has no mana cost". `GameState.card_of` gives the copied
+    #: face an empty `ManaCost`, so its mana value is 0 and it matches no
+    #: printed-cost filter (202.1b). Written, read and cleared beside
+    #: `copying_add_types`, for its reasons.
+    copying_no_mana_cost: bool = False
     #: Supertypes the copy carries *in addition to* the copied ones (707.9b) --
     #: Sarkhan, Soul Aflame's "…and it's legendary in addition to its other
     #: types". Written by `become_copy` from its ``except_.add_supertypes``,
@@ -270,6 +285,16 @@ class GameObject:
     #: graveyard has no use for it and one that comes back is written again.
     graveyard_turn: int = -1
     graveyard_from: str | None = None
+    #: **What put it there** -- the `cause` of that same move, written beside
+    #: the two above. "Cards in your graveyard **you've surveilled this turn**"
+    #: (Eye of Duskmantle) is ``"surveil"`` here with `graveyard_turn` the
+    #: current turn, read by `surveilled_this_turn`.
+    #:
+    #: Per card for Banon's reason: `EventType.SURVEILLED` says how many cards a
+    #: surveil binned and never which. And self-clearing for the same reason:
+    #: a card that leaves the graveyard and comes back is a new object (400.7),
+    #: and its arrival writes all three fields again.
+    graveyard_cause: str | None = None
     #: Which **permanents' mana abilities made the mana that paid for this** --
     #: Path of Ancestry, Opal Palace, "when that mana is spent". Recorded by
     #: `pay_mana` alongside `colors_spent`, for the same reason and at the same
@@ -554,6 +579,15 @@ class GameObject:
     #: after it has left (603.10a), and it has to see the abilities the Class had
     #: at the level it had.
     class_level: int = 1
+    #: **A Case's solved designation** (719.3d). Set only by the `solve` op --
+    #: which the loader supplies on a Case's "To solve —" line -- and read by
+    #: `Ability.present_on` for the "Solved —" abilities (719.3c).
+    #:
+    #: A designation and not a copiable value (707.2), so a token copy of a
+    #: solved Case is a fresh, unsolved one; and lost as the object changes
+    #: zones (400.7). Cleared as the object *enters* the battlefield, for
+    #: `class_level`'s last-known-information reason.
+    solved: bool = False
     #: One-way words a permanent has become: ``renowned``, and whatever the next
     #: set prints. Generic where `monstrous` is a field of its own, because the
     #: pattern turned out to repeat and each new adjective would otherwise be a
@@ -785,6 +819,21 @@ class GameObject:
     #: as a player id so that a later change of control cannot rewrite history:
     #: the sentence is about who cast it, and that is settled at cast time.
     cast_on_own_turn: bool = False
+    #: Whether it was cast **at a time a sorcery could have been cast** (307.1):
+    #: by the active player, with priority, in a main phase, onto an empty
+    #: stack. Necromancy's "if you cast it any time a sorcery couldn't have been
+    #: cast". Stamped by `stack.push_spell` beside `cast_step`, because neither
+    #: half of it is knowable later: the stack it went onto is not the stack it
+    #: resolves off, and `cast_during` reads the phase alone -- a Necromancy
+    #: cast in response during your own main phase is in the right phase and
+    #: still not at sorcery timing.
+    #:
+    #: A cast made while an effect resolves ("you may cast it without paying
+    #: its mana cost") is never at sorcery timing, whatever the step: nobody
+    #: has priority mid-resolution, and 307.1 is a priority rule. Read through
+    #: the `cast_at_sorcery_timing` condition, which also asks whether this
+    #: object's present life is the one that cast stamped.
+    cast_at_sorcery_timing: bool = False
     #: How many times this object's additional cost was paid as it was cast --
     #: casualty and replicate. On the object rather than only the StackItem,
     #: because a "when you cast this spell" trigger reads it while the spell is
@@ -1179,7 +1228,18 @@ class GameObject:
     #:
     #: Preserved across zone changes for the same reason ``is_token`` is: it is
     #: part of what the object *is*, not something that happened to it.
+    #:
+    #: Read through `live_copy_overrides`, never directly: a later copy effect
+    #: on the object overwrites these values (613.2a, 707.2).
     copy_overrides: dict[str, Any] | None = None
+    #: "…except **if this creature was embalmed**, the token has no mana cost"
+    #: -- Vizier of Many Faces. True of a token an embalm ability created
+    #: (702.128a), written by `copy_permanent`'s ``embalm`` key before the
+    #: token enters, so an as-enters copy exception can ask about it, and read
+    #: by the ``embalmed`` condition. Not a copiable value: a copy of an
+    #: embalmed token was created by something else and is not embalmed.
+    #: Never cleared, for ``is_token``'s reason.
+    embalmed: bool = False
 
     #: "It becomes a Vampire in addition to its other types." Captivating
     #: Vampire — a *one-shot* type change with no duration, which is a different
@@ -1274,6 +1334,20 @@ class GameObject:
     #: a new object (400.7) and no longer the one put onto the battlefield with
     #: anything.
     returned_by: int | None = None
+    #: "…it **becomes an Aura** with 'enchant creature put onto the battlefield
+    #: with Necromancy.'" Necromancy. A printed non-Aura enchantment that an
+    #: effect has made an Aura, set by the `become_aura` op and read wherever
+    #: Aura-ness is asked -- beside `CardDef.is_aura` and bestow's
+    #: `cast_bestowed`: `characteristics._compute` (the type line),
+    #: `aura_controllers` ("enchanted"), `zones._auras_had` (the departure
+    #: snapshot) and `sba._tokens_and_attachments` (704.5m). Unlike bestow's,
+    #: the Aura-ness does not hang on being attached: an Aura it has become stays
+    #: one, and attached to nothing it is put into its owner's graveyard.
+    #:
+    #: Indefinite -- the printed effect states no duration (611.2a) -- and
+    #: cleared by `reset_permanent_state`: the enchantment that leaves and comes
+    #: back is a new object (400.7) and was never made an Aura.
+    became_aura: bool = False
     #: **Prepared** (Emeritus of Woe // Demonic Tutor). "This creature enters
     #: prepared. (While it's prepared, you may cast a copy of its spell. Doing
     #: so unprepares it.)"
@@ -1313,6 +1387,21 @@ class GameObject:
             # card leaves exile by being cast.
             return turn > self.playable_turn
         return True
+
+    def surveilled_this_turn(self, turn: int) -> bool:
+        """Is this a card in a graveyard that a surveil put there this turn?
+
+        "…cards in your graveyard **you've surveilled this turn**" -- Eye of
+        Duskmantle. Only surveil moves a library card with ``cause="surveil"``,
+        and its cards go to their own owner's graveyard, so the owner is the
+        player who surveilled. Asked of the object and compared against the
+        turn, `drawn_turn`'s way, so nothing has to clear it.
+        """
+        return (
+            self.zone is Zone.GRAVEYARD
+            and self.graveyard_turn == turn
+            and self.graveyard_cause == "surveil"
+        )
 
     def reset_permanent_state(self) -> None:
         """Wipe everything that only means something on the battlefield."""
@@ -1383,6 +1472,9 @@ class GameObject:
         self.copying_keywords = None
         self.copying_remove_supertypes = None
         self.copying_add_types = None
+        self.copying_add_subtypes = None
+        self.copying_colors = None
+        self.copying_no_mana_cost = False
         self.copying_add_supertypes = None
         self.copying_own_abilities = None
         self.renamed_to = None
@@ -1396,6 +1488,7 @@ class GameObject:
         self.skip_next_untap = False
         self.exiled_by = None
         self.returned_by = None
+        self.became_aura = False
         # A phased-out permanent that changes zones anyway (a player leaving the
         # game takes it along) is a new object, and must not arrive on its next
         # battlefield still flagged -- the untap walk would "phase in" a recast
@@ -1430,6 +1523,7 @@ class GameObject:
         self.playable_free = False
         self.playable_sorcery_only = False
         self.playable_cast_only = False
+        self.playable_exiles = False
         self.playable_as_adventure = False
         self.playable_group = None
         self.playable_any_type = False
@@ -1500,6 +1594,23 @@ class GameObject:
     # -- convenience ----------------------------------------------------------
 
     @property
+    def live_copy_overrides(self) -> dict[str, Any] | None:
+        """The `copy_overrides` still in force: none while a later copy applies.
+
+        The exception a token's creating effect set is part of that copy
+        effect's copiable values (707.9b), and a copy effect applied to the
+        object afterwards -- an as-enters copy (614.1b), a `become_copy` --
+        overwrites every copiable value, exceptions included (613.2a, 707.2).
+        So an embalmed Vizier of Many Faces that enters as a copy of a
+        creature is not white or a Zombie by embalm's exception: only by its
+        own printed one, which is why the card prints it. While `copying` is
+        set the copy's own exception (`copying_colors` and its siblings) is
+        the one that applies, and these values come back when a timed copy
+        ends.
+        """
+        return None if self.copying is not None else self.copy_overrides
+
+    @property
     def on_battlefield(self) -> bool:
         return self.zone is Zone.BATTLEFIELD
 
@@ -1541,6 +1652,7 @@ class GameObject:
             "animations": [t.to_dict() for t in self.animations],
             "monstrous": self.monstrous,
             "class_level": self.class_level,
+            "solved": self.solved,
             "flags": sorted(self.flags),
             "detained_by": self.detained_by,
             # Sorted rather than the set itself, so the snapshot is JSON and is

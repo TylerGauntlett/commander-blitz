@@ -1,0 +1,66 @@
+{
+  "_comment": "An additional beginning phase (Sphinx of the Second Sun), and the two readings of a delayed upkeep it pulls apart: 'the next upkeep' against 'the next turn's upkeep'.",
+  "cards": [
+    {
+      "id": "t_second_sun",
+      "name": "Test Second Sun",
+      "oracle_text": "At the beginning of each of your postcombat main phases, there is an additional beginning phase after this phase.",
+      "mana_cost": "{4}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "At the beginning of each of your postcombat main phases, there is an additional beginning phase after this phase.",
+          "trigger": {"event": "postcombat_main", "controller": "you"},
+          "effects": [{"op": "extra_beginning_phase"}]
+        }
+      ]
+    },
+    {
+      "id": "t_draw_step_gainer",
+      "name": "Test Draw Step Gainer",
+      "oracle_text": "At the beginning of your draw step, you gain 1 life.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "At the beginning of your draw step, you gain 1 life.",
+          "trigger": {"event": "draw_step", "controller": "you"},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_next_turns_upkeep",
+      "name": "Test Next Turn's Upkeep",
+      "oracle_text": "You gain 3 life at the beginning of the next turn's upkeep.",
+      "mana_cost": "{U}",
+      "types": ["Sorcery"],
+      "spell_effects": [
+        {
+          "op": "delay",
+          "step": "upkeep",
+          "next_turn": true,
+          "text": "You gain 3 life at the beginning of the next turn's upkeep.",
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 3}}]
+        }
+      ]
+    },
+    {
+      "id": "t_next_upkeep",
+      "name": "Test Next Upkeep",
+      "oracle_text": "At the beginning of the next upkeep, you gain 3 life.",
+      "mana_cost": "{U}",
+      "types": ["Sorcery"],
+      "spell_effects": [
+        {
+          "op": "delay",
+          "step": "upkeep",
+          "text": "At the beginning of the next upkeep, you gain 3 life.",
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 3}}]
+        }
+      ]
+    }
+  ]
+}

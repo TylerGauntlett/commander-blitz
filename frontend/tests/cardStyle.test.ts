@@ -387,6 +387,14 @@ describe("counterBadges", () => {
     expect(counterBadges(talent)).toEqual(["Level 1", "charge x2"]);
   });
 
+  it("leads with a solved Case's designation, and says nothing unsolved", () => {
+    const solved = card({ zone: "battlefield", solved: true, counters: { clue: 1 } });
+    expect(counterBadges(solved)).toEqual(["Solved", "clue"]);
+    expect(counterBadges(card({ zone: "battlefield", solved: false, counters: {} }))).toEqual(
+      [],
+    );
+  });
+
   it("says nothing of a level for a card the server sent none for", () => {
     expect(counterBadges(card({ zone: "battlefield", counters: {} }))).toEqual([]);
   });

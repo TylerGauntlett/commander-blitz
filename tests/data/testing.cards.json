@@ -15032,6 +15032,191 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_ambush_recall",
+      "name": "Test Ambush Recall",
+      "oracle_text": "This spell costs {2} less to cast if it targets an attacking creature.\nReturn target creature to its owner's hand.",
+      "mana_cost": "{3}{U}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "cost_reduction": {
+        "amount": 2,
+        "targeting": {
+          "types": [
+            "Creature"
+          ],
+          "attacking": true
+        }
+      },
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "controller": "any"
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "return_to_hand",
+          "objects": {
+            "target": "t1"
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_fame_toll",
+      "name": "Test Fame Toll",
+      "oracle_text": "This spell costs {2} less to cast if it targets a legendary creature.\nDestroy target creature.",
+      "mana_cost": "{3}{B}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "cost_reduction": {
+        "amount": 2,
+        "targeting": {
+          "types": [
+            "Creature"
+          ],
+          "supertypes": [
+            "Legendary"
+          ]
+        }
+      },
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "controller": "any"
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "destroy",
+          "objects": {
+            "target": "t1"
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_clash_watcher",
+      "name": "Test Clash Watcher",
+      "oracle_text": "Whenever you win a clash, you gain 1 life.",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you win a clash, you gain 1 life.",
+          "trigger": {
+            "event": "wins_clash",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_clash_raider",
+      "name": "Test Clash Raider",
+      "oracle_text": "Whenever this creature attacks, clash with defending player.\nWhenever you win a clash, draw a card.",
+      "mana_cost": "{1}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, clash with defending player.",
+          "trigger": {
+            "event": "attacks"
+          },
+          "effects": [
+            {
+              "op": "clash",
+              "opponent": {
+                "binding": "defender"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "triggered",
+          "text": "Whenever you win a clash, draw a card.",
+          "trigger": {
+            "event": "wins_clash",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }
