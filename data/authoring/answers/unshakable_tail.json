@@ -1,0 +1,51 @@
+{
+  "card": {
+    "id": "unshakable_tail",
+    "name": "Unshakable Tail",
+    "oracle_text": "When this creature enters and at the beginning of your upkeep, surveil 1.\nWhenever one or more creature cards are put into your graveyard from your library, investigate. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")\n{2}, Sacrifice a Clue: Return this card from your graveyard to your hand.",
+    "mana_cost": "{2}{B}",
+    "types": ["Creature"],
+    "subtypes": ["Zombie", "Detective"],
+    "power": 3,
+    "toughness": 2,
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature enters and at the beginning of your upkeep, surveil 1.",
+        "trigger": {"event": "self_enters", "source": "self"},
+        "effects": [{"op": "surveil", "amount": {"const": 1}, "player": "you"}]
+      },
+      {
+        "kind": "triggered",
+        "text": "When this creature enters and at the beginning of your upkeep, surveil 1.",
+        "trigger": {"event": "upkeep", "controller": "you"},
+        "effects": [{"op": "surveil", "amount": {"const": 1}, "player": "you"}]
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever one or more creature cards are put into your graveyard from your library, investigate.",
+        "trigger": {
+          "event": "put_into_graveyard",
+          "batched": true,
+          "controller": "you",
+          "filter": {"types": ["Creature"]},
+          "from_zones": ["library"]
+        },
+        "effects": [{"op": "investigate"}]
+      },
+      {
+        "kind": "activated",
+        "text": "{2}, Sacrifice a Clue: Return this card from your graveyard to your hand.",
+        "active_zones": ["graveyard"],
+        "cost": {
+          "mana": "{2}",
+          "sacrifice": {"controller": "you", "count": 1, "subtypes": ["Clue"], "zone": "battlefield"}
+        },
+        "effects": [{"op": "return_to_hand", "objects": {"controller": "you", "self_only": true, "zone": "graveyard"}}]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33, "hand_size": {"0": 1}}
+}

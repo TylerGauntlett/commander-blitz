@@ -1,0 +1,84 @@
+{
+  "card": {
+    "color_identity": [
+      "B"
+    ],
+    "colors": [
+      "B"
+    ],
+    "id": "twilight_prophet",
+    "keywords": [
+      "flying"
+    ],
+    "mana_cost": "{2}{B}{B}",
+    "name": "Twilight Prophet",
+    "oracle_text": "Flying\nAscend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\nAt the beginning of your upkeep, if you have the city's blessing, reveal the top card of your library and put it into your hand. Each opponent loses X life and you gain X life, where X is that card's mana value.",
+    "power": 2,
+    "subtypes": [
+      "Vampire",
+      "Cleric"
+    ],
+    "toughness": 4,
+    "types": [
+      "Creature"
+    ],
+    "ascend": true,
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "At the beginning of your upkeep, if you have the city's blessing, reveal the top card of your library and put it into your hand. Each opponent loses X life and you gain X life, where X is that card's mana value.",
+        "trigger": {
+          "event": "upkeep",
+          "controller": "you",
+          "condition": {
+            "has_city_s_blessing": "you"
+          }
+        },
+        "effects": [
+          {
+            "op": "snapshot",
+            "as": "top_card",
+            "objects": {
+              "controller": "you",
+              "zone": "library"
+            }
+          },
+          {
+            "op": "reveal",
+            "objects": {
+              "binding": "top_card"
+            }
+          },
+          {
+            "op": "return_to_hand",
+            "objects": {
+              "binding": "top_card"
+            }
+          },
+          {
+            "op": "lose_life",
+            "player": "each_opponent",
+            "amount": {
+              "mana_value_of": {
+                "binding": "top_card"
+              }
+            }
+          },
+          {
+            "op": "gain_life",
+            "player": "you",
+            "amount": {
+              "mana_value_of": {
+                "binding": "top_card"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}
