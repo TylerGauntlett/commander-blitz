@@ -1,0 +1,41 @@
+{
+  "card": {
+    "id": "imperial_hellkite",
+    "name": "Imperial Hellkite",
+    "oracle_text": "Flying\nMorph {6}{R}{R} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)\nWhen this creature is turned face up, you may search your library for a Dragon card, reveal it, put it into your hand, then shuffle.",
+    "mana_cost": "{5}{R}{R}",
+    "morph": "{6}{R}{R}",
+    "types": ["Creature"],
+    "subtypes": ["Dragon"],
+    "power": 6,
+    "toughness": 6,
+    "colors": ["R"],
+    "color_identity": ["R"],
+    "keywords": ["flying"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature is turned face up, you may search your library for a Dragon card, reveal it, put it into your hand, then shuffle.",
+        "trigger": {"event": "turned_face_up", "source": "self"},
+        "effects": [
+          {
+            "op": "may",
+            "player": "you",
+            "prompt": "Search for a Dragon card?",
+            "effects": [
+              {
+                "op": "search_library",
+                "player": "you",
+                "count": {"const": 1},
+                "selector": {"subtypes": ["Dragon"]},
+                "destination": "hand",
+                "reveal": true
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33, "hand_size": {"0": 1}}
+}
