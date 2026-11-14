@@ -467,6 +467,10 @@
     "artist": "Howard Lyon",
     "scryfall_id": "fd169064-9c7b-40bd-8be0-a89fcb28ae2f"
   },
+  "amphin_mutineer": {
+    "artist": "Nicholas Gregory",
+    "scryfall_id": "0f54f429-80c2-4f55-bb99-236f2c697985"
+  },
   "amulet_of_vigor": {
     "artist": "Chris Seaman",
     "scryfall_id": "0790fb8c-7ff3-4681-a2c0-f16642f4f94b"
@@ -14679,6 +14683,10 @@
   "sakura_tribe_elder": {
     "artist": "Anastasia Ovchinnikova",
     "scryfall_id": "7a8b1c49-8594-426d-b585-41140235bb0e"
+  },
+  "salamander_warrior_4_3_u": {
+    "artist": "J.P. Targete",
+    "scryfall_id": "3c2c5370-d170-44de-a406-15141bc7959a"
   },
   "salt_flats": {
     "artist": "Scott Kirschner",

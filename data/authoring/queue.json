@@ -7472,12 +7472,12 @@
     },
     "Amphin Mutineer": {
       "edhrec_rank": 3395,
-      "gate": "template",
+      "gate": null,
       "name": "Amphin Mutineer",
-      "reason": "no template for: When this creature enters, exile up to one target non-Salamander creature. That creature's",
+      "reason": "",
       "scryfall_id": "0f54f429-80c2-4f55-bb99-236f2c697985",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Amphin Pathmage": {

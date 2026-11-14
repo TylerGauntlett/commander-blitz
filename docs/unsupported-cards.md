@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**385 cards** blocked by **331** capabilities.
+**384 cards** blocked by **330** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -288,7 +288,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [sacrifice-multiple-distinct](#sacrifice-multiple-distinct) | 1 | 1918 | cost |
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
-| [salamander-warrior-4-3-u](#salamander-warrior-4-3-u) | 1 | 3395 | token |
 | [same-target-for-each-target-word](#same-target-for-each-target-word) | 1 | 5003 | engine |
 | [sandbox-low-mana-value-permanent](#sandbox-low-mana-value-permanent) | 1 | 14140 | engine |
 | [scavenge](#scavenge) | 1 | 11499 | static_effect |
@@ -4745,20 +4744,6 @@ Blocks **1** card.
 
 - **Evendo Brushrazer** (rank 4225) — `evendo_brushrazer`
   - During your turn, as long as you've sacrificed a nontoken permanent this turn, you may play cards exiled with this creature.
-
-</details>
-
-## salamander-warrior-4-3-u
-
-Blocks **1** card.
-
-- **(token)** a 4/3 blue Salamander Warrior creature token (no abilities), created under the exiled creature's controller
-  <br>Why the existing vocabulary won't do: token_ids has no Salamander Warrior token; the only 4/3 is vampire_demon_4_3_wb_flying, which is a different token. The rest of the card (exile with up_to target, create_token with controller, encore via active_zones graveyard + exile_from_graveyard cost as Angel of Indemnity does) is expressible
-
-<details><summary>Cards waiting on this</summary>
-
-- **Amphin Mutineer** (rank 3395) — `amphin_mutineer`
-  - When this creature enters, exile up to one target non-Salamander creature. That creature's controller creates a 4/3 blue Salamander Warrior creature token.
 
 </details>
 

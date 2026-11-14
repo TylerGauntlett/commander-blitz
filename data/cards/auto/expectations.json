@@ -571,6 +571,15 @@
   "amphin_cutthroat": {
     "zone": "battlefield"
   },
+  "amphin_mutineer": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "tokens": {
+      "count": 1,
+      "id": "salamander_warrior_4_3_u"
+    },
+    "zone": "battlefield"
+  },
   "amulet_of_vigor": {
     "zone": "battlefield"
   },
