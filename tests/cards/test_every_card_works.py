@@ -453,6 +453,7 @@ class TestActivatedAbilities:
             _provide_the_counter_fodder(game, registry, ability, oid)
             _satisfy_the_activation_condition(game, registry, ability, oid)
             _stock_the_hand(game, registry, ability)
+            _provide_the_graveyard_exile(game, registry, ability)
             _provide_the_target(game, registry, oid, ability)
             for other in game.state.battlefield:
                 game.state.objects[other].entered_turn = 0
@@ -1280,6 +1281,36 @@ def _stock_the_hand(game: Game, registry, ability) -> None:
     for _ in range(needed - (fits if selector else len(hand))):
         card = new_object(game.state, card_id, owner=0, zone=Zone.HAND)
         hand.append(card.oid)
+
+
+def _provide_the_graveyard_exile(game: Game, registry, ability) -> None:
+    """Put the cards an "exile N <type> cards from your graveyard" cost takes.
+
+    The same family as `_stock_the_hand`: the sandbox graveyard holds two
+    creature cards, so a cost that exiles a creature card (Ongoing
+    Investigation, Coin of Fate) is payable as the board arrives, and one that
+    exiles a **land** card is not. Hostile Desert is the witness: "{2}, Exile a
+    land card from your graveyard". A `self_only` cost exiles the card itself,
+    which `_home_zone` already put there.
+    """
+    cost = ability.cost
+    selector = getattr(cost, "exile_from_graveyard", None) if cost else None
+    if not selector or selector.get("self_only"):
+        return
+    needed = selector.get("count", 1)
+    if not isinstance(needed, int) or not selector.get("types"):
+        return
+    match = _fodder_for(registry, dict(selector), needed)
+    if match is None:
+        return
+    graveyard = game.state.players[0].graveyard
+    wanted = {str(t) for t in selector["types"]}
+    fits = sum(
+        1 for g in graveyard if wanted <= set(registry.get(game.state.objects[g].def_id).types)
+    )
+    for _ in range(max(0, needed - fits)):
+        card = new_object(game.state, match.id, owner=0, zone=Zone.GRAVEYARD)
+        graveyard.append(card.oid)
 
 
 def _provide_the_target(game: Game, registry, oid: int, ability) -> None:
