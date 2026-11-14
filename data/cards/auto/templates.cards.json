@@ -36427,6 +36427,163 @@
     {
       "abilities": [
         {
+          "affects_player": "you",
+          "amount": {
+            "const": 1
+          },
+          "effect": "extra_land_drops",
+          "kind": "static",
+          "text": "You may play an additional land on each of your turns."
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "count": {
+                "controller": "you",
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 7
+            }
+          },
+          "kind": "to_solve",
+          "text": "To solve — You control seven or more lands. (If unsolved, solve at the beginning of your end step.)"
+        },
+        {
+          "affects_player": "you",
+          "effect": "look_at_library_top",
+          "kind": "static",
+          "solved": true,
+          "text": "Solved — You may look at the top card of your library any time, and you may play lands and cast creature and enchantment spells from the top of your library."
+        },
+        {
+          "affects_player": "you",
+          "effect": "play_lands_from_library_top",
+          "kind": "static",
+          "solved": true,
+          "text": "Solved — You may look at the top card of your library any time, and you may play lands and cast creature and enchantment spells from the top of your library."
+        },
+        {
+          "affects_player": "you",
+          "affects_spells": {
+            "any_types": [
+              "Creature",
+              "Enchantment"
+            ]
+          },
+          "effect": "cast_from_library_top",
+          "kind": "static",
+          "solved": true,
+          "text": "Solved — You may look at the top card of your library any time, and you may play lands and cast creature and enchantment spells from the top of your library."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "case_of_the_locked_hothouse",
+      "mana_cost": "{3}{G}",
+      "name": "Case of the Locked Hothouse",
+      "oracle_text": "You may play an additional land on each of your turns.\nTo solve — You control seven or more lands. (If unsolved, solve at the beginning of your end step.)\nSolved — You may look at the top card of your library any time, and you may play lands and cast creature and enchantment spells from the top of your library.",
+      "source": "auto",
+      "subtypes": [
+        "Case"
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_spells": {
+            "any_types": [
+              "Instant",
+              "Sorcery"
+            ],
+            "controller": "you"
+          },
+          "amount": {
+            "const": 1
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Instant and sorcery spells you cast cost {1} less to cast."
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "spells_cast_this_turn": {
+                "filter": {
+                  "any_types": [
+                    "Instant",
+                    "Sorcery"
+                  ]
+                },
+                "player": "you"
+              }
+            },
+            "right": {
+              "const": 4
+            }
+          },
+          "kind": "to_solve",
+          "text": "To solve — You've cast four or more instant and sorcery spells this turn. (If unsolved, solve at the beginning of your end step.)"
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "solved": true,
+          "text": "Solved — Whenever you cast an instant or sorcery spell, draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "case_of_the_ransacked_lab",
+      "mana_cost": "{2}{U}",
+      "name": "Case of the Ransacked Lab",
+      "oracle_text": "Instant and sorcery spells you cast cost {1} less to cast.\nTo solve — You've cast four or more instant and sorcery spells this turn. (If unsolved, solve at the beginning of your end step.)\nSolved — Whenever you cast an instant or sorcery spell, draw a card.",
+      "source": "auto",
+      "subtypes": [
+        "Case"
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -36495,6 +36652,90 @@
       "mana_cost": "{1}{U}{U}",
       "name": "Case of the Shifting Visage",
       "oracle_text": "At the beginning of your upkeep, surveil 1.\nTo solve — There are fifteen or more cards in your graveyard. (If unsolved, solve at the beginning of your end step.)\nSolved — Whenever you cast a nonlegendary creature spell, copy that spell. (The copy becomes a token.)",
+      "source": "auto",
+      "subtypes": [
+        "Case"
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control enters, you gain 1 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "life_gained_this_turn": "you"
+            },
+            "right": {
+              "const": 5
+            }
+          },
+          "kind": "to_solve",
+          "text": "To solve — You've gained 5 or more life this turn. (If unsolved, solve at the beginning of your end step.)"
+        },
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              },
+              "op": "grant_playable",
+              "playable": "this_turn",
+              "playable_cast_only": true
+            }
+          ],
+          "kind": "activated",
+          "solved": true,
+          "text": "Solved — Sacrifice this Case: Creature cards in your graveyard gain \"You may cast this card from your graveyard\" until end of turn."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "case_of_the_uneaten_feast",
+      "mana_cost": "{W}",
+      "name": "Case of the Uneaten Feast",
+      "oracle_text": "Whenever a creature you control enters, you gain 1 life.\nTo solve — You've gained 5 or more life this turn. (If unsolved, solve at the beginning of your end step.)\nSolved — Sacrifice this Case: Creature cards in your graveyard gain \"You may cast this card from your graveyard\" until end of turn.",
       "source": "auto",
       "subtypes": [
         "Case"
@@ -201276,6 +201517,78 @@
       ]
     },
     {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "cost_reduction": {
+        "amount": 2,
+        "targeting": {
+          "controller": "you",
+          "subtypes": [
+            "Dinosaur"
+          ]
+        }
+      },
+      "id": "savage_stomp",
+      "mana_cost": "{2}{G}",
+      "name": "Savage Stomp",
+      "oracle_text": "This spell costs {2} less to cast if it targets a Dinosaur you control.\nPut a +1/+1 counter on target creature you control. Then that creature fights target creature you don't control. (Each deals damage equal to its power to the other.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "counter": "+1/+1",
+          "objects": {
+            "target": "mine"
+          },
+          "op": "add_counters"
+        },
+        {
+          "objects": {
+            "target": "mine"
+          },
+          "op": "fight",
+          "other": {
+            "target": "theirs"
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "mine",
+          "kind": "permanent",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "theirs",
+          "kind": "permanent",
+          "selector": {
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -207785,6 +208098,53 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "extra_beginning_phase"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each of enchanted player's postcombat main phases, there is an additional beginning phase after this phase.",
+          "trigger": {
+            "condition": {
+              "is_active_player": "enchanted_player"
+            },
+            "controller": "any",
+            "event": "postcombat_main"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "shadow_of_the_second_sun",
+      "mana_cost": "{4}{U}{U}",
+      "name": "Shadow of the Second Sun",
+      "oracle_text": "Enchant player\nAt the beginning of each of enchanted player's postcombat main phases, there is an additional beginning phase after this phase. (The end step happens after the added untap, upkeep, and draw steps.)",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "any"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {

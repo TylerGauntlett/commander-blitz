@@ -3039,7 +3039,22 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "case_of_the_locked_hothouse": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "case_of_the_ransacked_lab": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "case_of_the_shifting_visage": {
+    "zone": "battlefield"
+  },
+  "case_of_the_uneaten_feast": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "cast_out": {
@@ -16923,6 +16938,9 @@
   "savage_lands": {
     "zone": "battlefield"
   },
+  "savage_stomp": {
+    "zone": "graveyard"
+  },
   "savai_crystal": {
     "zone": "battlefield"
   },
@@ -17497,6 +17515,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "shadow_of_the_second_sun": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "shadow_summoning": {

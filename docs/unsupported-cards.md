@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**370 cards** blocked by **316** capabilities.
+**371 cards** blocked by **318** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -125,6 +125,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cost-reduction-attacking-player](#cost-reduction-attacking-player) | 1 | 9998 | selector |
 | [cost-reduction-per-attacker-this-turn](#cost-reduction-per-attacker-this-turn) | 1 | 9578 | value |
 | [cost-reduction-per-counter](#cost-reduction-per-counter) | 1 | 11563 | value |
+| [cost-reduction-targeting-stack-object-targets](#cost-reduction-targeting-stack-object-targets) | 1 | 2461 | value |
 | [coven](#coven) | 1 | 1129 | value |
 | [creatures-died-this-turn-filtered](#creatures-died-this-turn-filtered) | 1 | 13665 | value |
 | [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
@@ -293,6 +294,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [spirit-2-2-w-flying](#spirit-2-2-w-flying) | 1 | 12596 | token |
 | [squad](#squad) | 1 | 13056 | engine |
+| [stack-object-targets-filter](#stack-object-targets-filter) | 1 | 2461 | selector |
 | [stack-wipe](#stack-wipe) | 1 | 8784 | op |
 | [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
@@ -2392,6 +2394,21 @@ Blocks **1** card.
 
 - **Lumbering Megasloth** (rank 11563) — `lumbering_megasloth`
   - This spell costs {1} less to cast for each counter among players and permanents.
+
+</details>
+
+## cost-reduction-targeting-stack-object-targets
+
+Blocks **1** card.
+
+- **(value)** a cost_reduction 'targeting' gate that can look through a stack-object target to its targets: {amount: 7} if the chosen spell-or-ability target itself targets a creature you control with power 7 or greater
+  <br>Why the existing vocabulary won't do: cost_reduction 'targeting' filters the cast's object targets with cost_reduction_filter_keys (types, controller, power...) but a stack-object target has no such characteristics and there is no key to reach the objects that stack object targets
+
+<details><summary>Cards waiting on this</summary>
+
+- **Not of This World** (rank 2461) — `not_of_this_world`
+  - Counter target spell or ability that targets a permanent you control.
+  - This spell costs {7} less to cast if it targets a spell or ability that targets a creature you control with power 7 or greater.
 
 </details>
 
@@ -4790,6 +4807,21 @@ Blocks **1** card.
 
 - **Ruthless Radrat** (rank 13056) — `ruthless_radrat`
   - Squad—Exile four cards from your graveyard
+
+</details>
+
+## stack-object-targets-filter
+
+Blocks **1** card.
+
+- **(selector)** a selector clause on a 'spell_or_ability' (and 'spell') target that narrows the stack object by what IT targets: 'that targets a permanent you control' -- true when any of the stack object's chosen targets is a battlefield permanent matching a permanent filter (controller: you), re-checked on resolution
+  <br>Why the existing vocabulary won't do: The loader restricts a 'spell_or_ability' target's selector to 'controller' only (loader.targets._compile_target), and no selector_keys entry reads a stack object's own targets; 'counter' with target t1 can only counter any spell or ability, which is strictly wider than the printing
+
+<details><summary>Cards waiting on this</summary>
+
+- **Not of This World** (rank 2461) — `not_of_this_world`
+  - Counter target spell or ability that targets a permanent you control.
+  - This spell costs {7} less to cast if it targets a spell or ability that targets a creature you control with power 7 or greater.
 
 </details>
 

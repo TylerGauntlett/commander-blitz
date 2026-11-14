@@ -2663,9 +2663,21 @@
     "artist": "Sam Chivers",
     "scryfall_id": "016a3d0d-08f5-4352-97a2-262b802c46e2"
   },
+  "case_of_the_locked_hothouse": {
+    "artist": "Leanna Crossan",
+    "scryfall_id": "0929a1bd-e35c-4ca5-8c8c-dd304cf4b830"
+  },
+  "case_of_the_ransacked_lab": {
+    "artist": "Borja Pindado",
+    "scryfall_id": "16a9a596-61de-4fcf-aae0-41836c3deca5"
+  },
   "case_of_the_shifting_visage": {
     "artist": "Chris Seaman",
     "scryfall_id": "65463a1b-39c1-4fc8-8de2-85224de810ac"
+  },
+  "case_of_the_uneaten_feast": {
+    "artist": "Titus Lunter",
+    "scryfall_id": "ac63941b-3f78-4bd3-8b05-ca12aaaa006c"
   },
   "cast_off_realm_cloaked_giant": {
     "artist": "Adam Paquette",
@@ -14844,6 +14856,10 @@
     "artist": "Pace Wilder",
     "scryfall_id": "428df1ff-e13e-48a3-bcc9-301bdc9470fb"
   },
+  "savage_stomp": {
+    "artist": "Wayne Reynolds",
+    "scryfall_id": "541dc998-abdd-42dc-8dc5-a373e500961c"
+  },
   "savai_crystal": {
     "artist": "Daniel Ljunggren",
     "scryfall_id": "6954a5c1-89b1-4edd-814e-8f88fd49cda3"
@@ -15347,6 +15363,10 @@
   "shadow_mysterious_assassin": {
     "artist": "Wisnu Tan",
     "scryfall_id": "d2a400d2-cf8e-4be8-9eb8-46af1aa73698"
+  },
+  "shadow_of_the_second_sun": {
+    "artist": "Danny Schwartz",
+    "scryfall_id": "4d1d6bbb-5589-4606-bd66-a6e8e607ca7d"
   },
   "shadow_summoning": {
     "artist": "Campbell White",

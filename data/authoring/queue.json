@@ -40592,12 +40592,12 @@
     },
     "Case of the Locked Hothouse": {
       "edhrec_rank": 1428,
-      "gate": "template",
+      "gate": null,
       "name": "Case of the Locked Hothouse",
-      "reason": "no template for: To solve — You control seven or more lands",
+      "reason": "",
       "scryfall_id": "0929a1bd-e35c-4ca5-8c8c-dd304cf4b830",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Case of the Lost Witness": {
@@ -40622,12 +40622,12 @@
     },
     "Case of the Ransacked Lab": {
       "edhrec_rank": 2664,
-      "gate": "template",
+      "gate": null,
       "name": "Case of the Ransacked Lab",
-      "reason": "no template for: Instant and sorcery spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "16a9a596-61de-4fcf-aae0-41836c3deca5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Case of the Shattered Pact": {
@@ -40672,12 +40672,12 @@
     },
     "Case of the Uneaten Feast": {
       "edhrec_rank": 5672,
-      "gate": "template",
+      "gate": null,
       "name": "Case of the Uneaten Feast",
-      "reason": "no template for: Whenever a creature you control enters, you gain 1 life",
+      "reason": "",
       "scryfall_id": "ac63941b-3f78-4bd3-8b05-ca12aaaa006c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Case the Joint": {
@@ -234082,12 +234082,12 @@
     },
     "Savage Stomp": {
       "edhrec_rank": 6114,
-      "gate": "template",
+      "gate": null,
       "name": "Savage Stomp",
-      "reason": "no template for: This spell costs {2} less to cast if it targets a Dinosaur you control",
+      "reason": "",
       "scryfall_id": "541dc998-abdd-42dc-8dc5-a373e500961c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Savage Summoning": {
@@ -241992,12 +241992,12 @@
     },
     "Shadow of the Second Sun": {
       "edhrec_rank": 3673,
-      "gate": "template",
+      "gate": null,
       "name": "Shadow of the Second Sun",
-      "reason": "no template for: Enchant player",
+      "reason": "",
       "scryfall_id": "0da72736-574d-4d99-98ba-3a91c374cd10",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shadow the Hedgehog": {
