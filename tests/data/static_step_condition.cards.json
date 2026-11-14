@@ -1,0 +1,44 @@
+{
+  "_comment": "Cards that exist only for the static `step_is` condition test (tests/unit/statics/test_static_step_condition.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_end_step_flash` is Final-Word Phantom's third line alone, on a vanilla artifact, so the condition is what is tested and not the body. `t_end_step_bruiser` is a layered self-buff switched by the same leaf, the witness that the characteristics cache is re-read as the step moves.",
+  "cards": [
+    {
+      "id": "t_end_step_flash",
+      "name": "Test End Step Permission",
+      "oracle_text": "During each opponent's end step, you may cast spells as though they had flash.",
+      "mana_cost": "{3}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "During each opponent's end step, you may cast spells as though they had flash.",
+          "effect": "cast_as_though_flash",
+          "affects_player": "you",
+          "condition": {"all": [{"not": {"is_your_turn": true}}, {"step_is": "end_step"}]}
+        }
+      ]
+    },
+    {
+      "id": "t_end_step_bruiser",
+      "name": "Test End Step Bruiser",
+      "oracle_text": "During the end step, this creature gets +2/+0.",
+      "mana_cost": "{1}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Ogre"],
+      "power": 1,
+      "toughness": 1,
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "During the end step, this creature gets +2/+0.",
+          "effect": "buff",
+          "affects": {"self_only": true},
+          "power": {"const": 2},
+          "toughness": {"const": 0},
+          "condition": {"step_is": ["end_step"]}
+        }
+      ]
+    }
+  ]
+}

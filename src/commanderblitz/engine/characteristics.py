@@ -1806,6 +1806,7 @@ def _condition_met(
     ``exists``/``cmp`` over ``{"count": filter}``, matched on printed
                       characteristics and, off the battlefield, on zone contents
     ``is_your_turn``  whose turn it is
+    ``step_is``       the step the game is in (a name or a list of them)
     ``has_flag``      a word `set_flag` wrote on the static's own source
     ``is_monstrous``  whether the static's own source is monstrous (701.37b)
     ``is_monarch``    who holds the crown -- the only leaf that may name the
@@ -1848,6 +1849,15 @@ def _condition_met(
         )
     if "is_your_turn" in cond:
         return (state.active_player == source.controller) == bool(cond["is_your_turn"])
+    if "step_is" in cond:
+        # "During each opponent's end step" (Final-Word Phantom), beside
+        # `is_your_turn` for the "opponent's" half. Turn state, a pipeline input
+        # on `is_your_turn`'s terms: no layer writes `state.step`, and
+        # `turn.advance` bumps `char_version` on every step change, so a cached
+        # answer is re-read the moment the step moves on.
+        want = cond["step_is"]
+        names = [want] if isinstance(want, str) else list(want)
+        return state.step.name.lower() in names
     if "has_flag" in cond:
         # A Siege's "as this enters, choose Mardu or Jeskai" switching on the
         # chosen mode's static. `flags` is written only by `set_flag` (which

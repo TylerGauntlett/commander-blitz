@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**381 cards** blocked by **328** capabilities.
+**380 cards** blocked by **327** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -302,7 +302,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [spirit-2-2-w-flying](#spirit-2-2-w-flying) | 1 | 12596 | token |
 | [squad](#squad) | 1 | 13056 | engine |
 | [stack-wipe](#stack-wipe) | 1 | 8784 | op |
-| [static-step-condition](#static-step-condition) | 1 | 7933 | static_effect |
 | [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
 | [surveil-replacement](#surveil-replacement) | 1 | 5682 | static_effect |
@@ -4935,20 +4934,6 @@ Blocks **1** card.
 
 - **Summary Dismissal** (rank 8784) — `summary_dismissal`
   - Exile all other spells and counter all abilities.
-
-</details>
-
-## static-step-condition
-
-Blocks **1** card.
-
-- **(static_effect)** a static ability condition that reads the current step and whose turn it is, so a cast_as_though_flash static with affects_player 'you' can be switched on only during an opponent's end step: e.g. a `step_is` head in the static condition language, combined as {"all": [{"not": {"is_your_turn": true}}, {"step_is": "end"}]}
-  <br>Why the existing vocabulary won't do: cast_as_though_flash exists and takes an optional condition, but static_condition_keys has only counters/all/any/not/exists/exists_derived/is_your_turn/has_flag/etc. and no step test (`step_is` lives only in the effect-level condition_keys). A triggered 'at the beginning of each opponent's end step' + grant_flash_permission is not exact: it uses the stack, can be responded to or countered, and grants nothing if the Phantom is flashed in during that end step after the trigger point, while the printed static applies at once and stops when the Phantom leaves
-
-<details><summary>Cards waiting on this</summary>
-
-- **Final-Word Phantom** (rank 7933) — `final_word_phantom`
-  - During each opponent's end step, you may cast spells as though they had flash.
 
 </details>
 

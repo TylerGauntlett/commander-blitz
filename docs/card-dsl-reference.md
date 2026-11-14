@@ -28,7 +28,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Durations](#durations) | 6 |
 | [Decision kinds](#decision-kinds) | 11 |
 | [Static filter keys](#static-filter-keys) | 34 |
-| [Static conditions](#static-conditions) | 14 |
+| [Static conditions](#static-conditions) | 15 |
 | [Static values](#static-values) | 21 |
 | [Spell filter keys](#spell-filter-keys) | 12 |
 | [Spell cost-reduction filter keys](#spell-cost-reduction-filter-keys) | 5 |
@@ -1018,6 +1018,7 @@ What a static's "as long as …" `condition` may ask. Defined under ["As long as
 | `is_monstrous` | The source is monstrous (701.37b). | [Monstrosity, and holding creatures down](card-dsl-cookbook.md#monstrosity-and-holding-creatures-down) |
 | `is_your_turn` | It is the controller's turn. | ["As long as…"](card-dsl.md#as-long-as) |
 | `not` | The condition does not hold. | ["As long as…"](card-dsl.md#as-long-as) |
+| `step_is` | The step the game is in now ("during the declare attackers step"). | ["As long as…"](card-dsl.md#as-long-as) |
 | `top_of_library` | The top card of a library matches a filter. | ["The top card of your library is black"](card-dsl.md#the-top-card-of-your-library-is-black) |
 
 ## Static values

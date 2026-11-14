@@ -1533,6 +1533,12 @@ STATIC_CONDITION_HEADS = (
     # characteristics pipeline reads or writes it, so no static can come to
     # depend on another static's output through it.
     "has_flag",
+    # "During each opponent's end step, you may cast spells as though they had
+    # flash" (Final-Word Phantom). `GameState.step` is turn state, a pipeline
+    # input exactly as whose turn it is: no layer writes it, and `turn.advance`
+    # bumps `char_version` as it moves, so a cached answer cannot outlive the
+    # step. The effect-level leaf of the same name and spelling, `STEP_NAMES`.
+    "step_is",
 )
 
 #: The static effects whose condition may read *derived* characteristics

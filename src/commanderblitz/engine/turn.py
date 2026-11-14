@@ -1013,6 +1013,9 @@ def advance(state: GameState) -> None:
         return
 
     state.step = nxt
+    # The step is a static's input (`step_is`), and `chars` caches per
+    # `char_version`, so an answer read in the last step must not survive it.
+    state.bump_chars()
     state.step_started = False
     state.priority_idx = None
     state.passes_in_row = 0
@@ -1095,6 +1098,8 @@ def _take_extra_turn(state: GameState) -> int | None:
 def _enter_turn(state: GameState) -> None:
     """Reset the step walk to the top of the turn `_begin_next_turn` just chose."""
     state.step = Step.UNTAP
+    # A static's input, as in `advance`; so is whose turn it now is.
+    state.bump_chars()
     state.step_started = False
     state.priority_idx = None
     state.passes_in_row = 0

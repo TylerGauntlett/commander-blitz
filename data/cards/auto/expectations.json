@@ -6968,6 +6968,10 @@
     "opponent_battlefield_count": 4,
     "zone": "graveyard"
   },
+  "final_word_phantom": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "finale_of_devastation": {
     "battlefield_count": 33,
     "granted": {

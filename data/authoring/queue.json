@@ -95142,12 +95142,12 @@
     },
     "Final-Word Phantom": {
       "edhrec_rank": 7933,
-      "gate": "template",
+      "gate": null,
       "name": "Final-Word Phantom",
-      "reason": "no template for: During each opponent's end step, you may cast spells as though they had flash",
+      "reason": "",
       "scryfall_id": "2bda2277-68f3-4201-80c6-3ff6077e9e38",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Finale of Devastation": {

@@ -9,7 +9,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from commanderblitz.engine.effects.conditions import validate_condition
+from commanderblitz.engine.effects.conditions import STEP_NAMES, validate_condition
 from commanderblitz.engine.effects.selectors import (
     validate_colorless_key,
     validate_enchanted_by_key,
@@ -462,6 +462,19 @@ def _validate_static_condition(condition: Any, where: str) -> None:
     elif head == "is_your_turn":
         if not isinstance(condition["is_your_turn"], bool):
             raise DslError(f"{where}.is_your_turn: must be true or false")
+    elif head == "step_is":
+        # The effect-level leaf's spelling and its refusals: a misspelled step
+        # matches nothing, so the static would never switch on. `"end"` and
+        # `"ending"` (a phase) are the tempting misses for `"end_step"`.
+        want = condition["step_is"]
+        steps = [want] if isinstance(want, str) else want
+        if not isinstance(steps, list) or not steps:
+            raise DslError(f"{where}.step_is: needs a step name, or a list of them")
+        for name in steps:
+            if name not in STEP_NAMES:
+                raise DslError(
+                    f"{where}.step_is: must name one of {sorted(STEP_NAMES)}, got {name!r}"
+                )
     elif head == "has_flag":
         # Read by exact string off the source's `flags`, so an empty or
         # non-string flag would switch the static off for ever.

@@ -81825,6 +81825,52 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "condition": {
+            "all": [
+              {
+                "not": {
+                  "is_your_turn": true
+                }
+              },
+              {
+                "step_is": "end_step"
+              }
+            ]
+          },
+          "effect": "cast_as_though_flash",
+          "kind": "static",
+          "text": "During each opponent's end step, you may cast spells as though they had flash."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "final_word_phantom",
+      "keywords": [
+        "flash",
+        "flying"
+      ],
+      "mana_cost": "{2}{U}",
+      "name": "Final-Word Phantom",
+      "oracle_text": "Flash\nFlying\nDuring each opponent's end step, you may cast spells as though they had flash.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Detective"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],

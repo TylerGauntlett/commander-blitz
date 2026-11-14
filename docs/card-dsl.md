@@ -7265,6 +7265,7 @@ Each node names **exactly one** form:
 | `{"exists": filter}` | does anything match — `count > 0`, spelled the way it reads |
 | `{"all": [ … ]}` / `{"any": [ … ]}` / `{"not": …}` | combine the above |
 | `{"is_your_turn": true}` | whether it is the source's controller's turn |
+| `{"step_is": "end_step"}` | whether the game is in that step, or one of a list — the `Step` names the effect-level leaf takes. "During each opponent's end step" is `{"all": [{"not": {"is_your_turn": true}}, {"step_is": "end_step"}]}` (Final-Word Phantom) |
 | `{"is_attached": true}` | whether the source is attached to something — reconfigure |
 | `{"is_monstrous": true}` | whether the source is monstrous — [monstrosity](card-dsl-cookbook.md#monstrosity-and-holding-creatures-down) |
 | `{"has_flag": "mardu"}` | whether `set_flag` wrote that word on the source — a Siege's chosen mode |

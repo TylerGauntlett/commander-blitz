@@ -464,7 +464,8 @@
    "top_of_library",
    "is_monarch",
    "exists_derived",
-   "has_flag"
+   "has_flag",
+   "step_is"
   ],
   "STATIC_CONDITION_OPS": [
    "!=",
