@@ -1,0 +1,51 @@
+{
+  "card": {
+    "color_identity": [
+      "B"
+    ],
+    "colors": [
+      "B"
+    ],
+    "id": "pile_on",
+    "mana_cost": "{3}{B}",
+    "name": "Pile On",
+    "oracle_text": "Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nDestroy target creature or planeswalker. Surveil 2. (Look at the top two cards of your library, then put any number of them into your graveyard and the rest on top of your library in any order.)",
+    "types": [
+      "Instant"
+    ],
+    "pay_generic_with": "tap_creatures",
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "permanent",
+        "count": 1,
+        "selector": {
+          "zone": "battlefield",
+          "any_types": [
+            "Creature",
+            "Planeswalker"
+          ]
+        }
+      }
+    ],
+    "spell_effects": [
+      {
+        "op": "destroy",
+        "objects": {
+          "target": "t1"
+        }
+      },
+      {
+        "op": "surveil",
+        "player": "you",
+        "amount": {
+          "const": 2
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "opponent_battlefield_count": 5
+  }
+}
