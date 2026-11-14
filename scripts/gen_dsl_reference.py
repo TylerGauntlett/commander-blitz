@@ -1030,6 +1030,8 @@ STATICS: dict[str, Entry] = {
     "replace_life_loss": ("If the player would lose life, they lose more instead.",
                           '"If a player would lose life, they lose twice that much instead"'),
     "replace_mill": ("If the player would mill, they mill more instead.", "Doubling a mill"),
+    "replace_surveil": ("Each time the player surveils, they look at more cards; `surveil_optional` makes each static a \"may\".",
+                        "Looking at more cards when you surveil"),
     "replace_proliferate": ("If the player would proliferate, they proliferate again.",
                             "Proliferating twice"),
     "replace_token_creation": ("If the player would create tokens, create more, different or additional ones instead; `copy_instead` asks whether to make that many copies of a chosen creature instead, `first_during_your_turn` only on the first creation of your turn.",

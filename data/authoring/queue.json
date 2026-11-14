@@ -84252,12 +84252,12 @@
     },
     "Enhanced Surveillance": {
       "edhrec_rank": 5682,
-      "gate": "template",
+      "gate": null,
       "name": "Enhanced Surveillance",
-      "reason": "no template for: You may look at an additional two cards each time you surveil",
+      "reason": "",
       "scryfall_id": "42e6f705-2af7-47c2-961a-cf4c02b29f21",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Enigma Drake": {

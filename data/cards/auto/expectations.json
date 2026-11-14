@@ -6130,6 +6130,15 @@
   "enforcer_griffin": {
     "zone": "battlefield"
   },
+  "enhanced_surveillance": {
+    "graveyard_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "enormous_baloth": {
     "zone": "battlefield"
   },

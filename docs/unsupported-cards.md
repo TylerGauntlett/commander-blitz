@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**378 cards** blocked by **325** capabilities.
+**377 cards** blocked by **324** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -303,7 +303,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [stack-wipe](#stack-wipe) | 1 | 8784 | op |
 | [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
-| [surveil-replacement](#surveil-replacement) | 1 | 5682 | static_effect |
 | [surveilled-this-turn](#surveilled-this-turn) | 1 | 10363 | selector |
 | [switch-power-toughness](#switch-power-toughness) | 1 | 10418 | op |
 | [tapped-for-mana-trigger](#tapped-for-mana-trigger) | 1 | 13900 | trigger_event |
@@ -4947,20 +4946,6 @@ Blocks **1** card.
 
 - **Lux Artillery** (rank 3735) — `lux_artillery`
   - Whenever you cast an artifact creature spell, it gains sunburst. (It enters with a +1/+1 counter on it for each color of mana spent to cast it.)
-
-</details>
-
-## surveil-replacement
-
-Blocks **1** card.
-
-- **(static_effect)** a player-wide static (affects_player: "you") that modifies every surveil its controller performs, raising the number of cards looked at by a fixed addend (here +2) while the extra cards follow the same graveyard-or-top choice; optional ("you may"), so the player chooses each time whether to look at the extra cards
-  <br>Why the existing vocabulary won't do: static_effects has replace_draw, replace_mill, replace_proliferate and similar replacements but nothing that reads or changes a surveil; the surveil op takes only amount and player, so the change cannot be made at the card's own level, and a surveil trigger (itself a gap) would add a second surveil rather than enlarge the first
-
-<details><summary>Cards waiting on this</summary>
-
-- **Enhanced Surveillance** (rank 5682) — `enhanced_surveillance`
-  - You may look at an additional two cards each time you surveil.
 
 </details>
 

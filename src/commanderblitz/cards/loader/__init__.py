@@ -5846,6 +5846,33 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: 'mill_multiplier' only means anything on a replace_mill "
             f"static, not on {model.effect!r}"
         )
+    if model.effect == "replace_surveil":
+        # An addend, so 0 is the only number that means nothing; there is no
+        # "look at fewer cards" card, and a negative addend would load clean as
+        # a smaller surveil than the one printed.
+        if model.surveil_addend is None:
+            raise DslError(
+                f"{where}: replace_surveil needs 'surveil_addend' -- how many "
+                f"more cards each surveil looks at"
+            )
+        if model.surveil_addend < 1:
+            raise DslError(
+                f"{where}.surveil_addend: must be 1 or more; "
+                f"0 adds nothing to a surveil"
+            )
+        if model.affects is not None or model.amount is not None:
+            # "Each time you surveil" names a player, and the size is
+            # `surveil_addend`; nothing reads either key.
+            raise DslError(
+                f"{where}: replace_surveil takes 'affects_player', "
+                f"'surveil_addend', 'surveil_optional' and an optional "
+                f"'condition', and no 'affects' or 'amount'"
+            )
+    elif model.surveil_addend is not None or model.surveil_optional:
+        raise DslError(
+            f"{where}: 'surveil_addend'/'surveil_optional' only mean anything "
+            f"on a replace_surveil static, not on {model.effect!r}"
+        )
     if model.effect == "replace_empty_draw" and (
         model.affects is not None or model.amount is not None
     ):
@@ -6943,6 +6970,10 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["except_first_in_draw_step"] = True
     if model.mill_multiplier is not None:
         static["mill_multiplier"] = model.mill_multiplier
+    if model.surveil_addend is not None:
+        static["surveil_addend"] = model.surveil_addend
+    if model.surveil_optional:
+        static["surveil_optional"] = True
     if model.affects_player is not None:
         static["affects_player"] = model.affects_player
     if model.tapped_permanent is not None:

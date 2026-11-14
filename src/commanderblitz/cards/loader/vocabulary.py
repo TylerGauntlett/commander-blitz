@@ -781,6 +781,16 @@ STATIC_EFFECTS = frozenset(
         # one would fire after the cards were already in the graveyard and mill
         # again alongside rather than instead.
         "replace_mill",
+        # Enhanced Surveillance.  "You may look at an additional two cards each
+        # time you surveil."  Read by the `surveil` op through
+        # `player_statics.surveil_additions` -- surveil is a keyword action with
+        # no primitive beneath it, so the op is the one place its number lives.
+        # An addend on the cards looked at, per surveil, so the extra cards are
+        # part of the same surveil (one SURVEILLED, `looked` counting them) and
+        # take the same graveyard-or-top choice; a `surveils` trigger would be a
+        # second surveil after the first rather than a bigger one.
+        # `surveil_optional` is the printed "may", asked before looking.
+        "replace_surveil",
         # Jace, Wielder of Mysteries; Laboratory Maniac.  "If you would draw a
         # card while your library has no cards in it, you win the game instead."
         # The one draw-replacement branch `replace_draw` can never reach, since
@@ -906,6 +916,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         # one choke point every mill goes through, so a `mill` op, a `mill`
         # cost and dredge are all replaced, whoever caused them.
         "replace_mill",
+        "replace_surveil",
         "replace_empty_draw",
         "replace_proliferate",
         "cant_cast_spells",

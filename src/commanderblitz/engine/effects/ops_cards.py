@@ -16,6 +16,7 @@ from ..player_statics import (
     forced_discard_or_sacrifice_barred,
     player_cant_cast_while_resolving,
     search_forbidden,
+    surveil_additions,
 )
 from ..primitives import add_counters, mill_cards, shuffle_library
 from ..stack import pull_spell_off_stack
@@ -1569,12 +1570,34 @@ def op_surveil(ctx: EffectContext, spec: Mapping[str, Any]):
     (701.25c). A surveil N of a library with fewer than N cards looks at what
     there is and is still a surveil, even of an empty library: 701.25c carves
     out only surveil 0.
+
+    A ``replace_surveil`` static reaching the surveiller (Enhanced
+    Surveillance) adds its ``surveil_addend`` to the cards looked at, the
+    optional ones asked of the surveiller before any card is seen, one yes/no
+    per static. The extra cards are part of the same surveil, so ``looked``
+    counts them; surveil 0 is still no surveil and adds nothing.
     """
     amount = evaluate_value(ctx, spec.get("amount", 1))
     if amount <= 0:
         return
     for pid in select_players(ctx, spec.get("player", "you")):
-        top = list(ctx.state.players[pid].library[:amount])
+        looked_at = amount
+        library_size = len(ctx.state.players[pid].library)
+        for source, addend, optional in surveil_additions(ctx.state, pid):
+            if looked_at >= library_size:
+                # Nothing more to see: the question would change nothing.
+                break
+            if optional and not (
+                yield from ask_yes_no(
+                    ctx,
+                    f"Look at {addend} more card{'s' if addend != 1 else ''} "
+                    f"({ctx.state.card_of(source).name})?",
+                    pid,
+                )
+            ):
+                continue
+            looked_at += addend
+        top = list(ctx.state.players[pid].library[:looked_at])
         to_bin = []
         if top:
             to_bin = yield from ask_objects(

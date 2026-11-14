@@ -72699,6 +72699,53 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "effect": "replace_surveil",
+          "kind": "static",
+          "surveil_addend": 2,
+          "surveil_optional": true,
+          "text": "You may look at an additional two cards each time you surveil."
+        },
+        {
+          "cost": {
+            "exile_self": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "count": "all",
+                "player": "you",
+                "zone": "graveyard"
+              },
+              "op": "put_on_top"
+            },
+            {
+              "op": "shuffle",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "Exile this enchantment: Shuffle your graveyard into your library."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "enhanced_surveillance",
+      "mana_cost": "{1}{U}",
+      "name": "Enhanced Surveillance",
+      "oracle_text": "You may look at an additional two cards each time you surveil.\nExile this enchantment: Shuffle your graveyard into your library.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],

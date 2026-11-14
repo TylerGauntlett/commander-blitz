@@ -1256,6 +1256,17 @@ class AbilityModel(BaseModel):
     #: 701.13a makes milling N cards one event, where 121.2 makes drawing N
     #: cards N draws.
     mill_multiplier: int | None = None
+    #: ``replace_surveil``: how many more cards each surveil looks at.
+    #: Enhanced Surveillance's "you may look at an additional **two** cards
+    #: each time you surveil" is ``2``. Required, and refused below 1: 0 adds
+    #: nothing. An addend, never a multiplier, and per surveil: the extra cards
+    #: are part of the same surveil (701.25a), binned or kept by the same
+    #: choice, and two such statics add up.
+    surveil_addend: int | None = None
+    #: ``replace_surveil``: "you **may** look at" -- the surveiller is asked,
+    #: per static and before any card is looked at, whether to take the extra
+    #: cards. Without it the addend always applies.
+    surveil_optional: bool = False
     #: ``add_mana_on_tap``: what a tapped permanent must be for the static to
     #: add mana -- Crypt Ghast's ``{"subtypes": ["Swamp"]}``. Only
     #: `loader.TAPPED_PERMANENT_KEYS`.

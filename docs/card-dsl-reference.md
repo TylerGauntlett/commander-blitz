@@ -17,8 +17,8 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Conditions](#conditions) | 34 |
 | [Trigger events](#trigger-events) | 58 |
 | [Trigger filters](#trigger-filters) | 37 |
-| [Static effects](#static-effects) | 97 |
-| [Player-wide statics](#player-wide-statics) | 47 |
+| [Static effects](#static-effects) | 98 |
+| [Player-wide statics](#player-wide-statics) | 48 |
 | [Grantable statics](#grantable-statics) | 43 |
 | [Cost reduction](#cost-reduction) | 8 |
 | [Ability costs](#ability-costs) | 34 |
@@ -639,6 +639,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `replace_life_loss` | yes |  | If the player would lose life, they lose more instead. | ["If a player would lose life, they lose twice that much instead"](card-dsl-cookbook.md#if-a-player-would-lose-life-they-lose-twice-that-much-instead) |
 | `replace_mill` | yes |  | If the player would mill, they mill more instead. | [Doubling a mill](card-dsl-cookbook.md#doubling-a-mill) |
 | `replace_proliferate` | yes |  | If the player would proliferate, they proliferate again. | [Proliferating twice](card-dsl-cookbook.md#proliferating-twice) |
+| `replace_surveil` | yes |  | Each time the player surveils, they look at more cards; `surveil_optional` makes each static a "may". | [Looking at more cards when you surveil](card-dsl-cookbook.md#looking-at-more-cards-when-you-surveil) |
 | `replace_token_creation` |  |  | If the player would create tokens, create more, different or additional ones instead; `copy_instead` asks whether to make that many copies of a chosen creature instead, `first_during_your_turn` only on the first creation of your turn. | ["If you would create a … token, instead …"](card-dsl-cookbook.md#if-you-would-create-a--token-instead-) |
 | `reveal_library_top` | yes |  | The player plays with the top card of their library revealed. | [Static abilities](card-dsl.md#static-abilities) |
 | `set_colors` |  | yes | Matching permanents are the given colors. | [set_colors](card-dsl-cookbook.md#set_colors) |
@@ -704,6 +705,7 @@ The static effects that describe the *player* rather than a characteristic, and 
 | `replace_life_loss` | If the player would lose life, they lose more instead. | ["If a player would lose life, they lose twice that much instead"](card-dsl-cookbook.md#if-a-player-would-lose-life-they-lose-twice-that-much-instead) |
 | `replace_mill` | If the player would mill, they mill more instead. | [Doubling a mill](card-dsl-cookbook.md#doubling-a-mill) |
 | `replace_proliferate` | If the player would proliferate, they proliferate again. | [Proliferating twice](card-dsl-cookbook.md#proliferating-twice) |
+| `replace_surveil` | Each time the player surveils, they look at more cards; `surveil_optional` makes each static a "may". | [Looking at more cards when you surveil](card-dsl-cookbook.md#looking-at-more-cards-when-you-surveil) |
 | `reveal_library_top` | The player plays with the top card of their library revealed. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `skip_draw_step` | The player skips their draw step. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `skip_extra_turn` | The player skips extra turns. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |

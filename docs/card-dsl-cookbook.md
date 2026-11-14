@@ -8654,6 +8654,36 @@ each source is visited once none applies twice (614.5) without needing the
 A mill of zero is not an event, so no doubler applies — "one or more" is read
 rather than left to arithmetic.
 
+## Looking at more cards when you surveil
+
+    Enhanced Surveillance — "You may look at an additional two cards each time
+    you surveil."
+
+```jsonc
+{ "kind": "static", "effect": "replace_surveil",
+  "affects_player": "you", "surveil_addend": 2, "surveil_optional": true }
+```
+
+A player-wide static, so it takes `affects_player` and no `affects`; the loader
+refuses `affects`, `amount`, an addend below 1, and either key on any other
+static.
+
+Read by the `surveil` op through `player_statics.surveil_additions`. Surveil is
+a keyword action with no primitive beneath it, so the op is the one place its
+number lives, and every surveil — a spell's, an upkeep trigger's, "target
+player surveils" — passes through it. The addend enlarges **the same** surveil
+(701.25a): the extra cards take the one graveyard-or-top choice, one
+`SURVEILLED` fires, and its `looked` counts them. A `surveils` trigger is the
+near miss and is a different card: it would be a second surveil after the
+first, firing "whenever you surveil" twice.
+
+`surveil_optional` is the printed "may". The surveiller is asked one yes/no per
+static before any card is looked at, so the choice cannot depend on what the
+printed number showed; without the key the addend always applies. Two statics
+add up, each asked on its own. Surveil 0 is still no surveil (701.25c) and is
+not enlarged, and a library no deeper than the cards already being looked at
+asks nothing.
+
 ## Proliferating twice
 
     Tekuthal, Inquiry Dominus — "If you would proliferate, proliferate twice

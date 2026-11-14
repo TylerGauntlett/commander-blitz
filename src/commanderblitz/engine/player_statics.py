@@ -459,6 +459,27 @@ def mill_multiplier(state: GameState, pid: int) -> int:
     return factor
 
 
+def surveil_additions(state: GameState, pid: int) -> list[tuple[GameObject, int, bool]]:
+    """The ``replace_surveil`` statics that enlarge ``pid``'s next surveil.
+
+    Enhanced Surveillance: "You may look at an additional two cards each time
+    you surveil." Each entry is ``(source, surveil_addend, surveil_optional)``
+    in battlefield order, and the caller -- `op_surveil`, the only place a
+    surveil's number lives -- asks each optional one and sums what is taken.
+
+    A list rather than `mill_multiplier`'s folded number because the "may" is
+    per static: two Enhanced Surveillances are two choices, each of two cards,
+    and the cards they add are one surveil (701.25a), not two.
+    """
+    out: list[tuple[GameObject, int, bool]] = []
+    for obj, static in _active_player_statics(state, "replace_surveil"):
+        if _reaches_player(obj, static, pid):
+            out.append(
+                (obj, max(0, int(static.get("surveil_addend", 0))), bool(static.get("surveil_optional")))
+            )
+    return out
+
+
 def proliferate_times(state: GameState, pid: int) -> int:
     """How many proliferates one "proliferate" by ``pid`` becomes (`replace_proliferate`).
 
