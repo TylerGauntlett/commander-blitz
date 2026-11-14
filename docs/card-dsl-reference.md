@@ -14,7 +14,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Selectors](#selectors) | 76 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 74 |
-| [Conditions](#conditions) | 34 |
+| [Conditions](#conditions) | 35 |
 | [Trigger events](#trigger-events) | 58 |
 | [Trigger filters](#trigger-filters) | 37 |
 | [Static effects](#static-effects) | 98 |
@@ -36,7 +36,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Mana rider ops](#mana-rider-ops) | 7 |
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
 | [Card-level face keys](#card-level-face-keys) | 6 |
-| [Card-level rider keys](#card-level-rider-keys) | 21 |
+| [Card-level rider keys](#card-level-rider-keys) | 22 |
 | [Engine events](#engine-events) | 83 |
 
 ## Effect ops
@@ -411,6 +411,7 @@ Every head a condition may have: an effect's `if`, a trigger's intervening `cond
 | `all` | Every listed condition holds. | [Conditions](card-dsl.md#conditions) |
 | `any` | At least one listed condition holds. | [Conditions](card-dsl.md#conditions) |
 | `attacked_you_last_turn` | One of these players attacked you (not your planeswalker or battle) during their last completed turn. | [Conditions](card-dsl.md#conditions) |
+| `cast_at_sorcery_timing` | This life of the object was cast at a time a sorcery could have been (307.1); false both ways if not cast. | ["If you cast it any time a sorcery couldn't have been cast"](card-dsl-cookbook.md#if-you-cast-it-any-time-a-sorcery-couldnt-have-been-cast) |
 | `cast_during` | The phase this spell was cast in (addendum). | [Addendum — the phase a spell was cast in](card-dsl-cookbook.md#addendum--the-phase-a-spell-was-cast-in) |
 | `cast_from_exile` | This spell was cast from exile (foretell, plot or any exile play permission). | [Conditions](card-dsl.md#conditions) |
 | `cast_from_graveyard` | This spell was cast from a graveyard. | [Conditions](card-dsl.md#conditions) |
@@ -1153,6 +1154,7 @@ Things a card says about itself that are neither a price nor a second face. Defi
 | `melds_with` | The card this one melds with. | [Meld — mutate's merged permanent, with the pair fixed by the card](card-dsl-cookbook.md#meld--mutates-merged-permanent-with-the-pair-fixed-by-the-card) |
 | `melds_into` | The permanent the pair melds into. | [Meld — mutate's merged permanent, with the pair fixed by the card](card-dsl-cookbook.md#meld--mutates-merged-permanent-with-the-pair-fixed-by-the-card) |
 | `cant_cast_first_turns` | Can't be cast during its controller's first N turns of the game. | [Narrowing when a spell may be cast](card-dsl.md#narrowing-when-a-spell-may-be-cast) |
+| `as_though_flash` | May be cast as though it had flash; the card does not have flash. | ["If you cast it any time a sorcery couldn't have been cast"](card-dsl-cookbook.md#if-you-cast-it-any-time-a-sorcery-couldnt-have-been-cast) |
 | `cast_only_during` | Castable only on whose turn (`turn`) and in which `steps` or `phase` it names, by any route. | [Narrowing when a spell may be cast](card-dsl.md#narrowing-when-a-spell-may-be-cast) |
 | `toxic` | Toxic N: the N, beside `toxic` in `keywords`. | [Toxic N](card-dsl-cookbook.md#toxic-n) |
 | `annihilator` | Annihilator N: the N, beside `annihilator` in `keywords`. | [Annihilator N](card-dsl-cookbook.md#annihilator-n) |

@@ -87,6 +87,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
 | [bat-1-1-b-flying](#bat-1-1-b-flying) | 1 | 20382 | token |
 | [batched-combat-damage-amount](#batched-combat-damage-amount) | 1 | 3943 | value |
+| [becomes-aura](#becomes-aura) | 1 | 999 | static_effect |
 | [block-restriction-relative-power](#block-restriction-relative-power) | 1 | 6993 | static_effect |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [blocking-equipped-creature](#blocking-equipped-creature) | 1 | 8137 | selector |
@@ -100,7 +101,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cards-to-graveyard-this-turn-per-player](#cards-to-graveyard-this-turn-per-player) | 1 | 2881 | value |
 | [cards-to-your-graveyard-from-zones-this-turn](#cards-to-your-graveyard-from-zones-this-turn) | 1 | 7412 | value |
 | [case](#case) | 1 | 8807 | engine |
-| [cast-at-instant-speed-rider](#cast-at-instant-speed-rider) | 1 | 999 | value |
 | [cast-exiled-for-life-equal-to-mana-value](#cast-exiled-for-life-equal-to-mana-value) | 1 | 7161 | op |
 | [cast-from-hand-result](#cast-from-hand-result) | 1 | 7016 | op |
 | [cast-from-library-top-additional-cost](#cast-from-library-top-additional-cost) | 1 | 5828 | static_effect |
@@ -1861,6 +1861,20 @@ Blocks **1** card.
 
 </details>
 
+## becomes-aura
+
+Blocks **1** card.
+
+- **(static_effect)** a permanent, indefinite type change that makes a printed non-Aura enchantment an Aura ("it becomes an Aura with 'enchant creature put onto the battlefield with Necromancy'"), read wherever Aura-ness is asked -- the bestow precedent: `GameObject.cast_bestowed` is consulted beside `CardDef.is_aura` in characteristics (types, `auras_on`), zones and stack, but `sba._tokens_and_attachments` reads the printed `card.is_aura` alone
+  <br>Why the existing vocabulary won't do: Animate Dead's shape (`return_from_graveyard` with `link` + `attach` with `returned_with: self`, and the leaves-the-battlefield sacrifice) attaches Necromancy fine, but it stays a non-Aura enchantment: if the creature leaves the battlefield the enchantment is not put into the graveyard (704.5m reads the printed `is_aura`), `enchanted_by` and Aura-counting statics do not see it, and its type line is wrong. The first paragraph (as_though_flash + {"cast_at_sorcery_timing": false} + a `delay` at `cleanup`) is now expressible.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Necromancy** (rank 999) — `necromancy`
+  - When this enchantment enters, if it's on the battlefield, it becomes an Aura with "enchant creature put onto the battlefield with Necromancy." Put target creature card from a graveyard onto the battlefield under your control and attach this enchantment to it.
+
+</details>
+
 ## block-restriction-relative-power
 
 Blocks **1** card.
@@ -2045,20 +2059,6 @@ Blocks **1** card.
 - **Case of the Shifting Visage** (rank 8807) — `case_of_the_shifting_visage`
   - To solve — There are fifteen or more cards in your graveyard. (If unsolved, solve at the beginning of your end step.)
   - Solved — Whenever you cast a nonlegendary creature spell, copy that spell. (The copy becomes a token.)
-
-</details>
-
-## cast-at-instant-speed-rider
-
-Blocks **1** card.
-
-- **(value)** a condition true of a permanent that was cast at a time a sorcery could not have been (not the caster's main phase with an empty stack, 307.1), stamped at cast; plus a `delay` step `cleanup` so the permanent's controller sacrifices it at the beginning of the next cleanup step (514.3a gives priority there when it triggers)
-  <br>Why the existing vocabulary won't do: `cast_during: your_main` reads only the phase the spell was cast in, not whether the stack was empty, so a Necromancy cast in response during your own main phase would wrongly escape the sacrifice; and `delay` steps (turn.DELAY_STEPS) are upkeep, draw_step, begin_combat, end_of_combat and end_step -- no cleanup, and an end_step delay would sacrifice it earlier than printed and miss a cast made during the end step
-
-<details><summary>Cards waiting on this</summary>
-
-- **Necromancy** (rank 999) — `necromancy`
-  - You may cast this spell as though it had flash. If you cast it any time a sorcery couldn't have been cast, the controller of the permanent it becomes sacrifices it at the beginning of the next cleanup step.
 
 </details>
 

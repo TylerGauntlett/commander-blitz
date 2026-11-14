@@ -168,7 +168,14 @@ def begin_step(state: GameState) -> Generator[Any, list[int]]:
         _expire_permissions(state, "end_of_your_next_turn", after_grant_turn=True)
         yield from _cleanup_step(state)
 
-    yield from _run_delayed(state)
+    fired = yield from _run_delayed(state)
+    if fired and step is Step.CLEANUP:
+        # 514.3a: a delayed trigger "at the beginning of the next cleanup step"
+        # is an ability triggering during cleanup, so players get priority and
+        # another cleanup step follows -- the same as a trigger left pending,
+        # which `_cleanup_step` already counted. Resolved inline like every
+        # delay (see `_run_delayed`), so nothing is pending for it to count.
+        state.cleanup_repeat = True
 
 
 #: Which ``delay`` step names map to which step.  A small whitelist rather than
@@ -180,6 +187,11 @@ DELAY_STEPS = {
     "begin_combat": Step.BEGIN_COMBAT,
     "end_of_combat": Step.END_OF_COMBAT,
     "end_step": Step.END_STEP,
+    # "At the beginning of the next cleanup step" (Necromancy). Run after the
+    # cleanup's turn-based actions (514.1, 514.2), where 514.3a puts a trigger
+    # from this step. A delay made in a 514.3a priority window is due in the
+    # cleanup step that window leads into, which is the next one.
+    "cleanup": Step.CLEANUP,
 }
 
 
@@ -222,8 +234,8 @@ def grant_extra_phases(state: GameState, kinds: Sequence[str]) -> list[str]:
     return queued
 
 
-def _run_delayed(state: GameState) -> Generator[Any, list[int]]:
-    """Resolve anything scheduled for the step just entered.
+def _run_delayed(state: GameState) -> Generator[Any, list[int], bool]:
+    """Resolve anything scheduled for the step just entered; say whether any was.
 
     Resolved directly rather than put on the stack. That is a divergence -- a
     delayed trigger is a real triggered ability and should be respondable -- and
@@ -240,10 +252,10 @@ def _run_delayed(state: GameState) -> Generator[Any, list[int]]:
     """
 
     if not state.delayed_triggers:
-        return
+        return False
     due = [d for d in state.delayed_triggers if _delay_due(state, d)]
     if not due:
-        return
+        return False
     state.delayed_triggers = [d for d in state.delayed_triggers if d not in due]
     for delayed in due:
         ctx = EffectContext(
@@ -255,6 +267,7 @@ def _run_delayed(state: GameState) -> Generator[Any, list[int]]:
             source_name=delayed.description,
         )
         yield from execute(ctx, list(delayed.effects))
+    return True
 
 
 def _delay_due(state: GameState, delayed: DelayedTrigger) -> bool:

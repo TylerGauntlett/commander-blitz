@@ -560,7 +560,7 @@ def _timing_ok(state: GameState, pid: int, card: CardDef, sorcery_speed: bool) -
         # `cast_as_though_flash` permission all say "may", and 101.2 gives
         # "only" the last word.
         return sorcery_speed
-    if card.is_instant or Keyword.FLASH.value in card.keywords:
+    if card.is_instant or Keyword.FLASH.value in card.keywords or card.as_though_flash:
         return True
     if sorcery_speed:
         return True

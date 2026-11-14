@@ -43,7 +43,7 @@ from .effects.modes import (
 )
 from .effects.selectors import select_players
 from .effects.values import evaluate_value
-from .enums import DecisionKind, Zone
+from .enums import DecisionKind, Step, Zone
 from .events import EventType
 from .primitives import attach, attach_to_player, merge_permanents, shuffle_library
 from .structs import DelayedTrigger, StackItem, TargetRef, TriggerInstance
@@ -98,6 +98,7 @@ def push_spell(
     mutated: bool = False,
     modes: tuple[int, ...] = (),
     modes_answered: bool = False,
+    with_priority: bool = False,
 ) -> StackItem:
     """Move a card from hand (or the command zone) onto the stack as a spell."""
     obj = state.objects[oid]
@@ -126,6 +127,18 @@ def push_spell(
     # active player, because "your main phase" is both.
     obj.cast_step = state.step
     obj.cast_on_own_turn = state.active_player == controller
+    # 307.1, asked before this spell joins the stack: a sorcery may be cast by
+    # the active player, holding priority, in a main phase, while the stack is
+    # empty. `with_priority` is the caller's word for the second clause -- only
+    # `Game._cast` casts with priority; every other caller is an effect
+    # resolving, a turn-based action or a trigger, and none of those is a
+    # moment a sorcery could have been cast.
+    obj.cast_at_sorcery_timing = (
+        with_priority
+        and state.active_player == controller
+        and state.step in (Step.PRECOMBAT_MAIN, Step.POSTCOMBAT_MAIN)
+        and not state.stack
+    )
     # Bestow (702.103a). Recorded on the object as well as the stack item,
     # because it outlives the spell: it is what makes the resolved permanent an
     # Aura, and `chars` asks the object rather than the stack.

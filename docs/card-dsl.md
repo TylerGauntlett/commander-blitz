@@ -4044,6 +4044,11 @@ moment it sees an instant, and everything after it — `flash`,
 `cast_as_though_flash`, an ability's `sorcery_speed_only` — is another way of
 saying yes.
 
+`as_though_flash: true` is the widening twin on the card itself: "you may cast
+this spell as though it had flash" (Necromancy), a permission and not the flash
+keyword — see the cookbook's
+["If you cast it any time a sorcery couldn't have been cast"](card-dsl-cookbook.md#if-you-cast-it-any-time-a-sorcery-couldnt-have-been-cast).
+
 `cast_before_step` names the step the window closes at, and it is asked **first**,
 before any of the widening branches. Written after them it would load, read
 exactly like the printed card, and never once refuse a cast.
@@ -5531,6 +5536,7 @@ The form list is
 { "has_turn_flag": "exerted" }                // …and one written by `set_turn_flag`, for the turn
 { "cast_during": "your_main" }                // addendum — the phase the spell was *cast* in
 { "was_cast": true }                          // 603.6e — *this* arrival was a resolving spell
+{ "cast_at_sorcery_timing": false }           // 307.1 — cast any time a sorcery couldn't have been
 { "is_active_player": { "binding": "event_player" } }   // "during their turn"
 { "step_is": "declare_attackers" }            // the step the game is in *now*
 ```
@@ -5599,6 +5605,12 @@ the battlefield rather than about anything the card did earlier in the game —
 see ["If it was cast"](card-dsl-cookbook.md#if-it-was-cast--6036e) in the cookbook. The loader confines it to
 a `self_enters` trigger, which is the only place the clause is printed and the
 only place it asks about the right object.
+
+`cast_at_sorcery_timing` reads a stamp made as the spell was cast: whether a
+sorcery could have been cast at that moment (307.1). It is false both ways for
+anything not cast into its present life — see
+["If you cast it any time a sorcery couldn't have been cast"](card-dsl-cookbook.md#if-you-cast-it-any-time-a-sorcery-couldnt-have-been-cast)
+in the cookbook.
 
 `step_is` is the step the game is in when the condition is asked, named the
 way `Step` names it lower-cased (`"declare_attackers"`, `"end_step"`), or a list

@@ -3218,7 +3218,7 @@ worse Counterspell, and nothing on screen would say so.
 ```
 
 `step` is one of `upkeep` · `draw_step` · `begin_combat` · `end_of_combat` ·
-`end_step`, checked at load time like every other piece of vocabulary: a
+`end_step` · `cleanup`, checked at load time like every other piece of vocabulary: a
 misspelled step would schedule something that never comes due. An ability that
 waits for a **thing that happens** rather than a moment that arrives is the other
 half of 603.7 and a different op — see [`delayed_trigger`](#delayed_trigger--an-ability-that-watches-an-event)
@@ -3345,6 +3345,18 @@ version leaves the token alive through the whole postcombat main phase, where it
 can be sacrificed, tapped for an ability, or attack again in the extra combat —
 which is exactly what the printed line stops.
 
+### `cleanup` — the step that gives priority only when something triggers
+
+`cleanup` is "at the beginning of the next cleanup step" (Necromancy). It runs
+after the cleanup's turn-based actions — the discard to hand size and the end of
+"until end of turn" effects (514.1, 514.2) — and because 514.3a gives players
+priority when anything triggers in cleanup, a `cleanup` delay that fires sets
+`GameState.cleanup_repeat`: the players get a priority window and another
+cleanup step follows. A delay scheduled in that window is due in the cleanup
+step it leads into, which is the next one. `end_step` is the near miss: it takes
+the permanent a step early, and a delay scheduled during the end step waits for
+the following turn's.
+
 ### `delayed_trigger` — an ability that watches an event
 
 ```jsonc
@@ -3361,7 +3373,7 @@ which is exactly what the printed line stops.
 
 Rule 603.7 has two shapes and `delay` is one of them. `delay` names a **moment**
 — "at the beginning of the next end step" — and its whole vocabulary is
-`turn.DELAY_STEPS`, five step names. This is the other: a subscription to a
+`turn.DELAY_STEPS`, a whitelist of step names. This is the other: a subscription to a
 **thing that happens**, created by a resolving effect, lasting the rest of the
 turn.
 
@@ -15256,6 +15268,43 @@ Two details that bite:
 The link is written *after* the move (`move_object` runs
 `reset_permanent_state` on the way, which would wipe it) and cleared by that
 same reset when the card returns, which is right: it is spent once followed.
+
+## "If you cast it any time a sorcery couldn't have been cast"
+
+```jsonc
+// Necromancy's first paragraph
+{ "types": ["Enchantment"], "as_though_flash": true,
+  "abilities": [
+    { "kind": "triggered",
+      "trigger": { "event": "self_enters", "source": "self",
+                   "condition": { "cast_at_sorcery_timing": false } },
+      "effects": [
+        { "op": "delay", "step": "cleanup",
+          "effects": [ { "op": "sacrifice",
+                         "objects": { "self_only": true, "controller": "any" } } ] } ] } ] }
+```
+
+`as_though_flash` is "you may cast this spell as though it had flash": the
+card's own timing permission, read by `casting._timing_ok` beside the printed
+keyword. It is not `"keywords": ["flash"]`, because the card does not have
+flash, and anything that asks whether a spell or permanent has flash must not
+see it. The board-wide permission ("you may cast artifact spells as though they
+had flash") is the `cast_as_though_flash` static, a different key on a
+different permanent.
+
+`cast_at_sorcery_timing` is whether the spell was cast at a time a sorcery could
+have been (307.1): by the active player, holding priority, in a main phase, onto
+an empty stack. `stack.push_spell` stamps it as the spell is cast, before the
+spell joins the stack, and only a cast made with priority (`Game._cast`) can be
+stamped true: a cast made while an effect resolves (cascade, "cast it without
+paying its mana cost", a miracle trigger) is never at sorcery timing. It is
+false **both ways** for anything this life of the object was not cast into (a
+token, a copy, a permanent that arrived any way but by resolving as that
+spell), so the printed "if you cast it any time a sorcery couldn't have been
+cast" is `false` and never `{"not": {"cast_at_sorcery_timing": true}}`, which
+is also true of a reanimated card. `cast_during` is the near miss: it reads the
+phase alone, and a copy cast in response during your own main phase is in the
+right phase and not at sorcery timing.
 
 ## "If it was cast" — 603.6e
 

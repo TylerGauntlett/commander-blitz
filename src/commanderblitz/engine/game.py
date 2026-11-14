@@ -1046,6 +1046,9 @@ class Game:
             targets + x_refs + mode_refs,
             x=x,
             kicked=action.kicked,
+            # The one cast a player makes holding priority, which is half of
+            # 307.1's sorcery timing (`GameObject.cast_at_sorcery_timing`).
+            with_priority=True,
             graveyard_permission=permission,
             exiles_instead=permission_exiles,
             enters_tapped=enters_tapped,

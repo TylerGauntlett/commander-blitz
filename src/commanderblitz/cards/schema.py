@@ -1582,6 +1582,9 @@ class CardModel(BaseModel):
     #: A card-level flag rather than an ability, because it is true of the
     #: *spell on the stack* and there is no permanent for it to sit on.
     split_second: bool = False
+    #: "You may cast this spell as though it had flash" (Necromancy). The card's
+    #: own timing permission; it does not give the card the flash keyword.
+    as_though_flash: bool = False
     #: "Cast this spell only before the combat damage step" (Berserk). The name
     #: of the step the casting window closes at, lowercased -- the one card
     #: field that narrows the timing window itself (`casting._timing_ok`).

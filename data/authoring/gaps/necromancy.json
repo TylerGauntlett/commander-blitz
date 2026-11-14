@@ -3,16 +3,21 @@
   "name": "Necromancy",
   "oracle_text": "You may cast this spell as though it had flash. If you cast it any time a sorcery couldn't have been cast, the controller of the permanent it becomes sacrifices it at the beginning of the next cleanup step.\nWhen this enchantment enters, if it's on the battlefield, it becomes an Aura with \"enchant creature put onto the battlefield with Necromancy.\" Put target creature card from a graveyard onto the battlefield under your control and attach this enchantment to it. When this enchantment leaves the battlefield, that creature's controller sacrifices it.",
   "blocked_sentences": [
-    "You may cast this spell as though it had flash. If you cast it any time a sorcery couldn't have been cast, the controller of the permanent it becomes sacrifices it at the beginning of the next cleanup step."
+    "When this enchantment enters, if it's on the battlefield, it becomes an Aura with \"enchant creature put onto the battlefield with Necromancy.\" Put target creature card from a graveyard onto the battlefield under your control and attach this enchantment to it."
   ],
   "needs": [
     {
-      "capability": "cast_at_instant_speed_rider",
-      "kind": "value",
-      "what": "a condition true of a permanent that was cast at a time a sorcery could not have been (not the caster's main phase with an empty stack, 307.1), stamped at cast; plus a `delay` step `cleanup` so the permanent's controller sacrifices it at the beginning of the next cleanup step (514.3a gives priority there when it triggers)",
-      "why_existing_wont_do": "`cast_during: your_main` reads only the phase the spell was cast in, not whether the stack was empty, so a Necromancy cast in response during your own main phase would wrongly escape the sacrifice; and `delay` steps (turn.DELAY_STEPS) are upkeep, draw_step, begin_combat, end_of_combat and end_step -- no cleanup, and an end_step delay would sacrifice it earlier than printed and miss a cast made during the end step"
+      "capability": "becomes_aura",
+      "kind": "static_effect",
+      "what": "a permanent, indefinite type change that makes a printed non-Aura enchantment an Aura (\"it becomes an Aura with 'enchant creature put onto the battlefield with Necromancy'\"), read wherever Aura-ness is asked -- the bestow precedent: `GameObject.cast_bestowed` is consulted beside `CardDef.is_aura` in characteristics (types, `auras_on`), zones and stack, but `sba._tokens_and_attachments` reads the printed `card.is_aura` alone",
+      "why_existing_wont_do": "Animate Dead's shape (`return_from_graveyard` with `link` + `attach` with `returned_with: self`, and the leaves-the-battlefield sacrifice) attaches Necromancy fine, but it stays a non-Aura enchantment: if the creature leaves the battlefield the enchantment is not put into the graveyard (704.5m reads the printed `is_aura`), `enchanted_by` and Aura-counting statics do not see it, and its type line is wrong. The first paragraph (as_though_flash + {\"cast_at_sorcery_timing\": false} + a `delay` at `cleanup`) is now expressible."
     }
   ],
-  "closest_existing": ["cast_during", "delay", "animate_dead"],
+  "closest_existing": [
+    "animate_dead",
+    "bestow",
+    "cast_at_sorcery_timing",
+    "delay"
+  ],
   "confidence": "high"
 }

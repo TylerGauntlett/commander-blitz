@@ -2710,6 +2710,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         fuse=model.fuse,
         uncounterable=model.uncounterable,
         split_second=model.split_second,
+        as_though_flash=model.as_though_flash,
         cast_before_step=cast_before_step,
         cant_cast_first_turns=model.cant_cast_first_turns,
         cast_only_during=cast_only_during,

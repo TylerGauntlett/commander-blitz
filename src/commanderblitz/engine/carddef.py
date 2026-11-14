@@ -1569,6 +1569,12 @@ class CardDef:
     uncounterable: bool = False
     #: Split second: read off the stack by `legality.split_second_active`.
     split_second: bool = False
+    #: "You may cast this spell **as though it had flash**" (Necromancy). A
+    #: timing permission the card gives itself, read by `casting._timing_ok`
+    #: beside the printed keyword -- and not the keyword, because the card does
+    #: not *have* flash: nothing that asks whether a spell or permanent has
+    #: flash may see it. The permissive twin of `cast_before_step` below.
+    as_though_flash: bool = False
     #: "Cast this spell only before the combat damage step" (Berserk). The step
     #: at which the casting window **closes**, read by `casting._timing_ok`.
     #:

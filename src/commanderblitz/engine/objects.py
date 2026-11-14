@@ -785,6 +785,21 @@ class GameObject:
     #: as a player id so that a later change of control cannot rewrite history:
     #: the sentence is about who cast it, and that is settled at cast time.
     cast_on_own_turn: bool = False
+    #: Whether it was cast **at a time a sorcery could have been cast** (307.1):
+    #: by the active player, with priority, in a main phase, onto an empty
+    #: stack. Necromancy's "if you cast it any time a sorcery couldn't have been
+    #: cast". Stamped by `stack.push_spell` beside `cast_step`, because neither
+    #: half of it is knowable later: the stack it went onto is not the stack it
+    #: resolves off, and `cast_during` reads the phase alone -- a Necromancy
+    #: cast in response during your own main phase is in the right phase and
+    #: still not at sorcery timing.
+    #:
+    #: A cast made while an effect resolves ("you may cast it without paying
+    #: its mana cost") is never at sorcery timing, whatever the step: nobody
+    #: has priority mid-resolution, and 307.1 is a priority rule. Read through
+    #: the `cast_at_sorcery_timing` condition, which also asks whether this
+    #: object's present life is the one that cast stamped.
+    cast_at_sorcery_timing: bool = False
     #: How many times this object's additional cost was paid as it was cast --
     #: casualty and replicate. On the object rather than only the StackItem,
     #: because a "when you cast this spell" trigger reads it while the spell is
