@@ -1,0 +1,14 @@
+{
+  "card_id": "thoughtbound_phantasm",
+  "name": "Thoughtbound Phantasm",
+  "oracle_text": "Defender\nWhenever you surveil, put a +1/+1 counter on this creature.\nAs long as this creature has three or more +1/+1 counters on it, it can attack as though it didn't have defender.",
+  "blocked_sentences": ["Whenever you surveil, put a +1/+1 counter on this creature."],
+  "needs": [{
+    "capability": "surveil_trigger",
+    "kind": "trigger_event",
+    "what": "a trigger event fired once each time a player completes a surveil action (701.25), with a controller filter so \"whenever you surveil\" matches only surveils performed by this permanent's controller; it fires whatever the player does with the cards, including keeping all of them on top",
+    "why_existing_wont_do": "trigger_events has no surveil event; the closest are 'put_into_graveyard' and 'connives'/'investigates' (other keyword-action events), but a surveil that keeps every card on top puts nothing into the graveyard and must still trigger, so no existing event matches"
+  }],
+  "closest_existing": ["connives", "investigates", "put_into_graveyard"],
+  "confidence": "high"
+}

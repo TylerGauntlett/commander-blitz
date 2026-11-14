@@ -1,0 +1,26 @@
+{
+  "card": {
+    "id": "tocasia_s_dig_site",
+    "name": "Tocasia's Dig Site",
+    "oracle_text": "{T}: Add {C}.\n{3}, {T}: Surveil 1. (Look at the top card of your library. You may put it into your graveyard.)",
+    "types": ["Land"],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "cost": {"tap": true},
+        "effects": [{"mana": "{C}", "op": "add_mana"}],
+        "is_mana_ability": true,
+        "kind": "activated",
+        "text": "{T}: Add {C}."
+      },
+      {
+        "cost": {"mana": "{3}", "tap": true},
+        "effects": [{"op": "surveil", "amount": {"const": 1}, "player": "you"}],
+        "kind": "activated",
+        "text": "{3}, {T}: Surveil 1. (Look at the top card of your library. You may put it into your graveyard.)"
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}

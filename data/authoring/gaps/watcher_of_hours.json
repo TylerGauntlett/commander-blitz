@@ -1,0 +1,18 @@
+{
+  "card_id": "watcher_of_hours",
+  "name": "Watcher of Hours",
+  "oracle_text": "Flying, ward {3}\nWhenever you remove a time counter from this card while it's exiled, surveil 1.\nSuspend 6—{1}{U} (Rather than cast this card from your hand, you may pay {1}{U} and exile it with six time counters on it. At the beginning of your upkeep, remove a time counter. When the last is removed, you may cast it without paying its mana cost. It has haste.)",
+  "blocked_sentences": [
+    "Whenever you remove a time counter from this card while it's exiled, surveil 1."
+  ],
+  "needs": [
+    {
+      "capability": "time_counter_removed_trigger",
+      "kind": "trigger_event",
+      "what": "a trigger event that fires each time a time counter is removed from this card while it is in exile (every suspend upkeep tick, the last one included), heard by an ability with active_zones [\"exile\"] and controlled by the card's owner; the engine already emits TIME_COUNTER_REMOVED from suspend.py, but no DSL trigger event exposes it",
+      "why_existing_wont_do": "trigger_events has `last_counter_removed`, which fires only when the final counter goes, not on each removal, and `counter_placed`, which is the opposite direction; there is no `counter_removed` / `time_counter_removed` event in reference, so a per-tick surveil from exile cannot be said"
+    }
+  ],
+  "closest_existing": ["last_counter_removed", "counter_placed", "suspend"],
+  "confidence": "high"
+}
