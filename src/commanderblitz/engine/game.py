@@ -1028,6 +1028,17 @@ class Game:
             oid = spell.oid
             state.bump_chars()
 
+        # "If that spell would be put into a graveyard, exile it instead"
+        # (Mission Briefing, Dire Fleet Daredevil), and a granted flashback's
+        # exile (Will of the Jeskai): a rider the **permission** puts on the
+        # spell cast under it. Read here, off the same live permission the
+        # group ledger above bills, and carried on the stack item -- not read
+        # off the card at resolution -- because it is a replacement on the
+        # spell's every way into a graveyard: resolving, being countered and
+        # fizzling all read `StackItem.exiles_instead`, and a countered spell
+        # left in the graveyard would still be castable under the same grant.
+        permission_exiles = obj.playable_exiles and obj.playable_live(state.turn)
+
         item = stack.push_spell(
             state,
             oid,
@@ -1036,6 +1047,7 @@ class Game:
             x=x,
             kicked=action.kicked,
             graveyard_permission=permission,
+            exiles_instead=permission_exiles,
             enters_tapped=enters_tapped,
             # Gift (702.164a). Carried onto the stack item and paid for with
             # nothing -- there is no `pay` call above for it, and that is the

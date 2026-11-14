@@ -212,7 +212,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                  'Hideaway — "that one, from there"'),
     "play_exiled": ("Cards", "Cast the exiled card without paying its mana cost; `exiles` exiles the spell instead of putting it into a graveyard; `as` records what was cast.",
                     '"You may play the exiled card this turn" — impulse draw'),
-    "grant_playable": ("Cards", "Permit playing cards from a zone that normally forbids it, for a duration; `as_adventure` narrows it to the card's Adventure half; `playable_cost_reduction` discounts the casts made under it; `playable_pay_life_instead` prices them in life equal to their mana value instead; `limit` caps one resolution's cards at that many plays; `playable_cast_only` narrows it to casting, so no land is played.",
+    "grant_playable": ("Cards", "Permit playing cards from a zone that normally forbids it, for a duration; `as_adventure` narrows it to the card's Adventure half; `playable_cost_reduction` discounts the casts made under it; `playable_pay_life_instead` prices them in life equal to their mana value instead; `limit` caps one resolution's cards at that many plays; `playable_cast_only` narrows it to casting, so no land is played; `playable_exiles` exiles the spell cast under it instead of putting it into a graveyard.",
                        H_PLAYABLE),
     "grant_graveyard_cast": ("Cards", "Permit casting matching spells from graveyards until end of turn.",
                              "Casting out of every graveyard, until end of turn"),
@@ -226,7 +226,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                                '"Return it to the command zone" — `return_to_command_zone`'),
     # ---- Board -----------------------------------------------------------
     "destroy": ("Board", "Destroy permanents; `no_regeneration` forbids regeneration; `as` records what was destroyed.", None),
-    "exile": ("Board", "Exile objects, or a spell a `{\"target\": …}` selector names off the stack without countering it; `link`/`playable` tie them to the source or a permission; `playable_condition` shuts that permission on some turns; `playable_cast_only` narrows it to casting; `playable_by: \"owner\"` hands a `while_exiled` permission to each card's owner.",
+    "exile": ("Board", "Exile objects, or a spell a `{\"target\": …}` selector names off the stack without countering it; `link`/`playable` tie them to the source or a permission; `playable_condition` shuts that permission on some turns; `playable_cast_only` narrows it to casting; `playable_exiles` exiles the spell cast under it instead of putting it into a graveyard; `playable_by: \"owner\"` hands a `while_exiled` permission to each card's owner.",
               None),
     "sacrifice": ("Board", "A player sacrifices permanents; `snapshot` remembers what they had.",
                   None),

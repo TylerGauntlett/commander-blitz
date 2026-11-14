@@ -265,6 +265,12 @@ def op_grant_playable(ctx: EffectContext, spec: Mapping[str, Any]):
     ``playable_pay_life_instead`` is Nashi's "If you cast a spell this way, pay
     life equal to its mana value rather than paying its mana cost": the
     permission's alternative cost (118.9), and the only price it offers.
+
+    ``playable_exiles`` is Mission Briefing's "If that spell would be put into
+    your graveyard, exile it instead": a replacement the permission puts on the
+    spell cast under it, carried on its stack item, so it reaches the spell
+    that resolves, is countered or fizzles. ``as_flashback`` ("gains
+    flashback", Will of the Jeskai) sets the same rider.
     """
     oids = resolve_pool(ctx, spec.get("objects"))
     limit = int(spec.get("limit", 0) or 0)
@@ -279,10 +285,14 @@ def op_grant_playable(ctx: EffectContext, spec: Mapping[str, Any]):
         obj.playable_duration = playable_duration_of(spec) or "this_turn"
         obj.playable_condition = spec.get("playable_condition")
         obj.playable_group = group
-        # "…gains **flashback**", rather than a bare permission to cast it: the
-        # card is exiled as it resolves, so the grant is worth one cast per card
-        # rather than as many as the turn's mana allows.
-        obj.playable_exiles = bool(spec.get("as_flashback"))
+        # "…gains **flashback**", rather than a bare permission to cast it, or
+        # "if that spell would be put into your graveyard, exile it instead"
+        # (Mission Briefing): the spell cast under the permission is exiled
+        # rather than put into a graveyard, so the grant is worth one cast per
+        # card rather than as many as the turn's mana allows. `Game` carries it
+        # onto the stack item as the spell is cast (`StackItem.exiles_instead`),
+        # so it holds whether the spell resolves, is countered or fizzles.
+        obj.playable_exiles = bool(spec.get("as_flashback") or spec.get("playable_exiles"))
         # "…cast it from your graveyard **as an Adventure**" (Hildibrand
         # Manderville): the permission reaches the Adventure half only, and
         # the half's own resolution exiles it on an adventure (715.3d).

@@ -2735,6 +2735,32 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             )
         if effect["playable_cast_only"] is not True:
             raise DslError(f"{where}.playable_cast_only: the only value is true")
+    if "playable_exiles" in effect:
+        # "If that spell would be put into a graveyard, exile it instead"
+        # (Mission Briefing, Dire Fleet Daredevil) is a rider on the spell a
+        # "you may cast it" permission lets you cast. On a bare exile it would
+        # load, print its sentence and exile nothing. `look_at_top` does not
+        # carry it: no card has asked, and a key accepted there would be
+        # written nowhere.
+        grants = op == "grant_playable" or (
+            op == "exile" and ("playable" in effect or effect.get("playable_this_turn"))
+        )
+        if not grants:
+            raise DslError(
+                f"{where}: 'playable_exiles' exiles the spell a 'playable' permission "
+                f"lets you cast, so it needs one (exile with 'playable', or "
+                f"grant_playable)"
+            )
+        if effect["playable_exiles"] is not True:
+            raise DslError(f"{where}.playable_exiles: the only value is true")
+        if effect.get("as_flashback") or effect.get("as_adventure"):
+            # Flashback already exiles the spell, and an Adventure's exile is
+            # the one its creature is cast out of (715.3d): beside either, this
+            # says a second destination nobody printed.
+            raise DslError(
+                f"{where}: 'playable_exiles' beside 'as_flashback'/'as_adventure' "
+                f"says where the spell goes twice -- write the one the card says"
+            )
     if "playable_pay_life_instead" in effect:
         # "If you cast a spell this way, pay life equal to its mana value
         # rather than paying its mana cost" (Nashi, Moon Sage's Scion) is the

@@ -1202,22 +1202,17 @@ def _place_after_resolution(
     # Two paths into a graveyard cast and both exile, but they are different
     # facts and neither implies the other. A `cast_from_graveyard` permission
     # (or the card's own flashback) sets `cast_from_graveyard`, and
-    # `graveyard_cast_exiles` is what escape turns off. A `grant_playable`
-    # permission sets neither, so without its own clause Will of the Jeskai's
-    # "gains flashback" would be a permission the card could use again and again
-    # for the rest of the turn.
-    #
-    # The second is gated on the turn as well as the flag, because the
-    # permission itself is: a card granted flashback last turn and cast this one
-    # was never given anything, and must not be exiled for it.
+    # `graveyard_cast_exiles` is what escape turns off.
     if destination is Zone.GRAVEYARD and (
         (obj.cast_from_graveyard and card.graveyard_cast_exiles)
-        or (obj.playable_exiles and obj.playable_live(state.turn))
         # "If that spell would be put into your graveyard, exile it instead"
-        # -- the rider the effect that cast it put on the stack item
-        # (`cast_card`'s ``exiles``). A third path, and the one with no flag
-        # on the object: neither of the above is true of a card Helmut Zemo
-        # cast from a graveyard, which would otherwise come back every attack.
+        # -- the rider on the stack item, put there by whoever cast it: an
+        # effect's free cast (`cast_card`'s ``exiles``), or a `grant_playable`
+        # / `exile` permission's ``playable_exiles`` (and ``as_flashback``),
+        # stamped by `Game` as the spell was cast under it. Neither of the
+        # above is true of a card Helmut Zemo cast from a graveyard, nor of one
+        # Will of the Jeskai granted flashback, and both would otherwise come
+        # back to be cast again.
         or exiles_instead
     ):
         destination = Zone.EXILE

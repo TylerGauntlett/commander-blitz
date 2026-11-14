@@ -1430,6 +1430,7 @@ class GameObject:
         self.playable_free = False
         self.playable_sorcery_only = False
         self.playable_cast_only = False
+        self.playable_exiles = False
         self.playable_as_adventure = False
         self.playable_group = None
         self.playable_any_type = False

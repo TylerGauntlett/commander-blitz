@@ -5129,6 +5129,10 @@
       "graveyard"
     ]
   },
+  "dire_fleet_daredevil": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "director_nick_fury": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -12800,6 +12804,12 @@
   },
   "misshapen_fiend": {
     "zone": "battlefield"
+  },
+  "mission_briefing": {
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
   },
   "mist_leopard": {
     "zone": "battlefield"

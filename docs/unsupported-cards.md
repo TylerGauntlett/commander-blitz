@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**384 cards** blocked by **330** capabilities.
+**382 cards** blocked by **329** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -51,7 +51,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mercenary-token](#mercenary-token) | 2 | 8312 | token |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [pay-energy-x](#pay-energy-x) | 2 | 5122 | cost |
-| [playable-exiles-instead](#playable-exiles-instead) | 2 | 3152 | replacement |
 | [plot](#plot) | 2 | 1873 | op |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
 | [remove-named-counters-from-among](#remove-named-counters-from-among) | 2 | 10375 | cost |
@@ -1286,24 +1285,6 @@ Blocks **2** cards.
   - {3}, {T}, Pay X {E}, Sacrifice this land: Destroy target nonland permanent with mana value X. Activate only as a sorcery.
 - **Sphinx of the Revelation** (rank 5591) — `sphinx_of_the_revelation`
   - {W}{U}{U}, {T}, Pay X {E}: Draw X cards.
-
-</details>
-
-## playable-exiles-instead
-
-Blocks **2** cards.
-
-- **(replacement)** a flag on the `exile` / `grant_playable` play permission (e.g. `playable_exiles: true`) meaning "if a spell cast under this permission would be put into a graveyard, exile it instead" -- applied on resolution, on being countered and on fizzling, for the cast that used the permission
-  <br>Why the existing vocabulary won't do: `exile` takes `playable: this_turn`, `playable_cast_only` and `any_type`, which cover the first two clauses, but has no key for the graveyard-to-exile replacement. `cast_from_hand`/`cast_card` carry `exiles` (StackItem.exiles_instead) but cast immediately during resolution rather than granting a cast-this-turn permission. `grant_playable`'s `as_flashback` sets `obj.playable_exiles`, but that is only read in `_place_after_resolution`; the countered path (ops_stack) and fizzle path read only `StackItem.exiles_instead`, so a countered spell would land in the opponent's graveyard -- not exact, and a misuse of the flashback key
-- **(replacement)** a flag on the `grant_playable` (and `exile`) play permission meaning "if a spell cast under this permission would be put into a graveyard, exile it instead" -- carried onto the StackItem as `exiles_instead` for the cast that used the permission, so it applies on resolution, on being countered and on fizzling
-  <br>Why the existing vocabulary won't do: `surveil` and `grant_playable` over a one-card graveyard selector cover the first two sentences, and `as_flashback` sets `obj.playable_exiles`, but that flag is read only in `stack._place_after_resolution`; the countered path (`ops_stack` counter) and the fizzle path read only `StackItem.exiles_instead`, so a countered or fizzled spell cast this way would return to the graveyard and could be cast again. `cast_card`/`cast_from_hand` carry `exiles` (StackItem.exiles_instead) but cast immediately for free during resolution rather than granting a cast-this-turn permission at the printed cost
-
-<details><summary>Cards waiting on this</summary>
-
-- **Dire Fleet Daredevil** (rank 3152) — `dire_fleet_daredevil`
-  - When this creature enters, exile target instant or sorcery card from an opponent's graveyard. You may cast it this turn, and mana of any type can be spent to cast that spell. If that spell would be put into a graveyard, exile it instead
-- **Mission Briefing** (rank 4862) — `mission_briefing`
-  - Surveil 2, then choose an instant or sorcery card in your graveyard. You may cast it this turn. If that spell would be put into your graveyard, exile it instead
 
 </details>
 

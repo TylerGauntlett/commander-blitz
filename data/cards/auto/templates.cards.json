@@ -61066,6 +61066,68 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "any_type": true,
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile",
+              "playable": "this_turn",
+              "playable_cast_only": true,
+              "playable_exiles": true
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "any_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "player": "opponent",
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When this creature enters, exile target instant or sorcery card from an opponent's graveyard. You may cast it this turn, and mana of any type can be spent to cast that spell. If that spell would be put into a graveyard, exile it instead",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "dire_fleet_daredevil",
+      "keywords": [
+        "first_strike"
+      ],
+      "mana_cost": "{1}{R}",
+      "name": "Dire Fleet Daredevil",
+      "oracle_text": "First strike\nWhen this creature enters, exile target instant or sorcery card from an opponent's graveyard. You may cast it this turn, and mana of any type can be spent to cast that spell. If that spell would be put into a graveyard, exile it instead.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Pirate"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_spells": {
             "controller": "you",
             "subtypes": [
@@ -151951,6 +152013,54 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "mission_briefing",
+      "mana_cost": "{U}{U}",
+      "name": "Mission Briefing",
+      "oracle_text": "Surveil 2, then choose an instant or sorcery card in your graveyard. You may cast it this turn. If that spell would be put into your graveyard, exile it instead. (To surveil 2, look at the top two cards of your library, then put any number of them into your graveyard and the rest on top of your library in any order.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "surveil",
+          "player": "you"
+        },
+        {
+          "as": "briefed",
+          "objects": {
+            "any_types": [
+              "Instant",
+              "Sorcery"
+            ],
+            "controller": "you",
+            "count": 1,
+            "zone": "graveyard"
+          },
+          "op": "choose_permanents",
+          "prompt": "Choose an instant or sorcery card in your graveyard"
+        },
+        {
+          "objects": {
+            "binding": "briefed"
+          },
+          "op": "grant_playable",
+          "playable": "this_turn",
+          "playable_cast_only": true,
+          "playable_exiles": true
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {

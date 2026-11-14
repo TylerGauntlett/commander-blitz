@@ -69182,12 +69182,12 @@
     },
     "Dire Fleet Daredevil": {
       "edhrec_rank": 3152,
-      "gate": "template",
+      "gate": null,
       "name": "Dire Fleet Daredevil",
-      "reason": "no template for: When this creature enters, exile target instant or sorcery card from an opponent's graveya",
+      "reason": "",
       "scryfall_id": "9de2ad47-c6d5-4cd8-ae32-66ae167e25a0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dire Fleet Hoarder": {
@@ -175952,12 +175952,12 @@
     },
     "Mission Briefing": {
       "edhrec_rank": 4862,
-      "gate": "template",
+      "gate": null,
       "name": "Mission Briefing",
-      "reason": "no template for: Surveil 2, then choose an instant or sorcery card in your graveyard. You may cast it this ",
+      "reason": "",
       "scryfall_id": "5ed398e7-9d2b-4bd2-9a4b-2885e4749003",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Misstep": {

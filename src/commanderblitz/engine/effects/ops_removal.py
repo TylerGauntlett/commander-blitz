@@ -408,6 +408,10 @@ def op_exile(ctx: EffectContext, spec: Mapping[str, Any]):
                 # "You may **cast** that card" (Hostage Taker): an exiled
                 # artifact land is not a land drop. See `GameObject`.
                 obj.playable_cast_only = bool(spec.get("playable_cast_only"))
+                # "If that spell would be put into a graveyard, exile it
+                # instead" (Dire Fleet Daredevil) -- `grant_playable`'s rider,
+                # carried onto the stack item by the cast made under it.
+                obj.playable_exiles = bool(spec.get("playable_exiles"))
                 record_playable_source(ctx.state, oid, ctx.source_oid)
         if link and ctx.source_oid is not None:
             # After the move: `move_object` runs `reset_permanent_state` on the

@@ -822,6 +822,10 @@ def reference() -> dict:
             " stays exiled (305.9). \"If you cast a spell this way, pay life"
             " equal to its mana value rather than paying its mana cost\" is"
             " `playable_pay_life_instead: true` on the same permission;"
+            " \"if that spell would be put into a graveyard, exile it instead\""
+            " after \"you may cast it\" is `playable_exiles: true` on the same"
+            " `exile` or `grant_playable` permission (it holds when the spell is"
+            " countered or fizzles too);"
             " \"you may play one of those cards\" is `grant_playable` with"
             " `limit: 1` over the exiled cards' `as` binding.",
             "\"You don't lose unspent red mana as steps and phases end\" is the"

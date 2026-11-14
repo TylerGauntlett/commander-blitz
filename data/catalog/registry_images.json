@@ -4451,6 +4451,10 @@
     "artist": "Terese Nielsen",
     "scryfall_id": "fb1e610e-a4a2-460b-8e4c-13674badbce3"
   },
+  "dire_fleet_daredevil": {
+    "artist": "Zoltan Boros",
+    "scryfall_id": "9de2ad47-c6d5-4cd8-ae32-66ae167e25a0"
+  },
   "director_nick_fury": {
     "artist": "Javier Charro",
     "scryfall_id": "7b7e00b4-d2f5-4c89-8a1b-e22b7bba111b"
@@ -11205,6 +11209,10 @@
   "misshapen_fiend": {
     "artist": "Adam Rex",
     "scryfall_id": "a43cf59e-7583-4651-968a-2a7201c69b6b"
+  },
+  "mission_briefing": {
+    "artist": "Matt Stewart",
+    "scryfall_id": "5ed398e7-9d2b-4bd2-9a4b-2885e4749003"
   },
   "mist_leopard": {
     "artist": "John Matson",

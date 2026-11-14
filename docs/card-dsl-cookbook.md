@@ -1172,6 +1172,33 @@ Citadel), which is the same price off the top of your own library and no
 permission at all, and the `granted_alternative_cost` static, which offers its
 price *beside* the printed one.
 
+### "If that spell would be put into a graveyard, exile it instead"
+
+```jsonc
+// Dire Fleet Daredevil's trigger, targeting t1: an instant or sorcery card in
+// an opponent's graveyard
+{ "op": "exile", "objects": { "target": "t1" }, "playable": "this_turn",
+  "playable_cast_only": true, "any_type": true, "playable_exiles": true }
+// Mission Briefing, after choosing the card into "briefed"
+{ "op": "grant_playable", "playable_cast_only": true, "playable_exiles": true,
+  "objects": { "binding": "briefed" } }
+```
+
+`playable_exiles` is a replacement (614.1a) the permission puts on the spell
+cast under it, on `exile` beside a `playable` duration or on `grant_playable`.
+It sets the object's `playable_exiles`, and `Game` stamps it onto the stack item
+(`StackItem.exiles_instead`) as the spell is cast while that permission is live
+-- so it holds on every way the spell can reach a graveyard: resolving, being
+countered and fizzling all read the item. A permanent spell still enters the
+battlefield; only the graveyard is replaced. `grant_playable`'s `as_flashback`
+("gains flashback", Will of the Jeskai) sets the same rider.
+
+The loader refuses it without a permission to ride on, any value but `true`, and
+beside `as_flashback` or `as_adventure`, each of which already says where the
+spell goes. The near misses are `cast_from_hand`'s and `cast_card`'s `exiles`,
+the same rider on a cast made during the effect's resolution rather than a
+permission to cast later at the printed price.
+
 ## Auras and Equipment
 
 An Aura's "Enchant creature" line is not an ability — it is the spell's
