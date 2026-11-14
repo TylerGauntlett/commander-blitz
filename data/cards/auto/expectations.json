@@ -17249,6 +17249,11 @@
   "seal_away": {
     "zone": "battlefield"
   },
+  "seal_of_cleansing": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "seance_board": {
     "battlefield_count": 33,
     "zone": "battlefield"

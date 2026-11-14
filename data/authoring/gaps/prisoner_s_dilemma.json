@@ -1,0 +1,18 @@
+{
+  "card_id": "prisoner_s_dilemma",
+  "name": "Prisoner's Dilemma",
+  "oracle_text": "Each opponent secretly chooses silence or snitch, then the choices are revealed. If each opponent chose silence, Prisoner's Dilemma deals 4 damage to each of them. If each opponent chose snitch, Prisoner's Dilemma deals 8 damage to each of them. Otherwise, Prisoner's Dilemma deals 12 damage to each opponent who chose silence.\nFlashback {5}{R}{R}",
+  "blocked_sentences": [
+    "Each opponent secretly chooses silence or snitch, then the choices are revealed. If each opponent chose silence, Prisoner's Dilemma deals 4 damage to each of them. If each opponent chose snitch, Prisoner's Dilemma deals 8 damage to each of them. Otherwise, Prisoner's Dilemma deals 12 damage to each opponent who chose silence."
+  ],
+  "needs": [
+    {
+      "capability": "secret_choice",
+      "kind": "decision",
+      "what": "a decision where each opponent secretly and simultaneously chooses one of two named options (silence or snitch), all choices revealed together and bound per player under an `as`, so that (a) a condition can ask whether every opponent chose a given option ('each opponent chose silence' / 'each opponent chose snitch') and (b) a player selector can pick out the opponents who chose a given option ('each opponent who chose silence') for a damage op",
+      "why_existing_wont_do": "choose_mode has a `chooser`, but wrapping it in for_each_player over opponents makes the choices sequential and public, so later opponents see earlier choices, which changes the card; set_flag/has_flag could mark each chooser but condition_keys has no 'every opponent has flag' aggregate and no player selector filters opponents by a recorded choice. The sibling gap expert_level_safe files the same secret_choice need for numbers"
+    }
+  ],
+  "closest_existing": ["choose_mode", "for_each_player", "set_flag", "has_flag"],
+  "confidence": "high"
+}

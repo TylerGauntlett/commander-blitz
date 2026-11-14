@@ -237682,12 +237682,12 @@
     },
     "Seal of Cleansing": {
       "edhrec_rank": 3230,
-      "gate": "template",
+      "gate": null,
       "name": "Seal of Cleansing",
-      "reason": "no template for: Sacrifice this enchantment: Destroy target artifact or enchantment",
+      "reason": "",
       "scryfall_id": "22a6673b-1528-4e0f-b316-bd482c7ed8aa",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Seal of Doom": {
