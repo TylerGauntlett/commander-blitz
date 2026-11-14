@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**372 cards** blocked by **318** capabilities.
+**371 cards** blocked by **317** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -166,7 +166,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exile-x-from-graveyard-cost](#exile-x-from-graveyard-cost) | 1 | 17252 | cost |
 | [exiled-this-way-lki](#exiled-this-way-lki) | 1 | 6960 | value |
 | [exploit](#exploit) | 1 | 8043 | keyword, trigger_event |
-| [extra-beginning-phase](#extra-beginning-phase) | 1 | 2445 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [face-down-counters-pt](#face-down-counters-pt) | 1 | 6774 | engine |
 | [face-down-exile-controller-may-look](#face-down-exile-controller-may-look) | 1 | 1073 | op |
@@ -2982,20 +2981,6 @@ Blocks **1** card.
   - Exploit (When this creature enters, you may sacrifice a creature.)
   - Other legendary creatures you control have exploit.
   - Whenever a creature you control exploits a creature, put a +1/+1 counter on each creature you control.
-
-</details>
-
-## extra-beginning-phase
-
-Blocks **1** card.
-
-- **(op)** an op that inserts an additional beginning phase (untap, upkeep and draw steps, rule 500.8) immediately after the current phase of the current turn, so the turn proceeds postcombat main -> untap -> upkeep -> draw -> end phase, with untap/upkeep/draw triggers firing again
-  <br>Why the existing vocabulary won't do: The postcombat_main trigger event exists, but no op adds a phase: extra_combat (with extra_main) only inserts combat and main phases, extra_turn adds a whole turn, and untap/draw ops only mimic pieces without creating an untap step, upkeep or draw step that triggers and step-based effects see
-
-<details><summary>Cards waiting on this</summary>
-
-- **Sphinx of the Second Sun** (rank 2445) — `sphinx_of_the_second_sun`
-  - At the beginning of each of your postcombat main phases, there is an additional beginning phase after this phase. (The beginning phase includes the untap, upkeep, and draw steps.)
 
 </details>
 

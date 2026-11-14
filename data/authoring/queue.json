@@ -258572,12 +258572,12 @@
     },
     "Sphinx of the Second Sun": {
       "edhrec_rank": 2445,
-      "gate": "template",
+      "gate": null,
       "name": "Sphinx of the Second Sun",
-      "reason": "no template for: At the beginning of each of your postcombat main phases, there is an additional beginning ",
+      "reason": "",
       "scryfall_id": "1c0ca3bd-da1d-46ce-843a-cc583b3ecda9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sphinx of the Steel Wind": {

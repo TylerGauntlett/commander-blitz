@@ -3702,6 +3702,15 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                     f"{where}: extra_combat takes no {key!r} -- an extra phase belongs "
                     f"to the turn in progress, whoever's turn that is"
                 )
+    if op == "extra_beginning_phase":
+        # The same refusal as extra_combat's, for the same reason, and nothing
+        # else to say: the printed sentence grants exactly one phase.
+        for key in ("player", "controller", "amount"):
+            if key in effect:
+                raise DslError(
+                    f"{where}: extra_beginning_phase takes no {key!r} -- it is one "
+                    f"additional beginning phase for the turn in progress"
+                )
     if op == "extra_turn" and "controller" in effect:
         # Whose turn it is goes in `player`, the key every player-naming op
         # uses. `controller` is the near miss worth refusing by name: it is what
@@ -4838,6 +4847,13 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"must be its controller's own -- 'at the beginning of *your* "
                 f"next end step' -- so it takes true or false, not "
                 f"{effect.get('your_turn')!r}"
+            )
+        if not isinstance(effect.get("next_turn", False), bool):
+            raise DslError(
+                f"{where}: delay's 'next_turn' is a flag saying whether the step "
+                f"must be on a later turn -- 'at the beginning of *the next "
+                f"turn's* upkeep' -- so it takes true or false, not "
+                f"{effect.get('next_turn')!r}"
             )
         _refuse_targets_inside_a_delay(effect.get("effects") or (), f"{where}.effects")
     if op == "change_text":

@@ -449,6 +449,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     # ---- Turn structure --------------------------------------------------
     "extra_combat": ("Turn structure", "An additional combat phase (and main phase) this turn.",
                      "An additional combat phase"),
+    "extra_beginning_phase": ("Turn structure", "An additional beginning phase (untap, upkeep, draw) after this phase.",
+                              "An additional beginning phase"),
     "extra_turn": ("Turn structure", "A player takes an extra turn after this one.", "An extra turn"),
     # ---- Combat decisions ------------------------------------------------
     "choose_blockers": ("Combat decisions", "Decide blocks on another player's behalf.", None),

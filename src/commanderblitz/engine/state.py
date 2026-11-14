@@ -321,6 +321,14 @@ class GameState:
     #: Seats only (506.2): attacking a planeswalker or a battle you control is
     #: not attacking you.
     attacked_last_turn: dict[int, tuple[int, frozenset[int]]] = field(default_factory=dict)
+    #: ``(turn, spells)``: how many spells the active player of turn ``turn``
+    #: cast during it, written by the cleanup step before it clears the ledger.
+    #: The day/night check of every untap step reads it (502.2, 726.2): "the
+    #: previous turn's active player cast no spells during that turn". A turn's
+    #: first untap step and an additional one later in the same turn (Sphinx of
+    #: the Second Sun) both ask about the turn before, which by then only this
+    #: record remembers. ``None`` until a turn has ended.
+    spells_cast_last_turn: tuple[int, int] | None = None
     #: Day / night (726). ``None`` until a daybound permanent makes it day, then
     #: ``"day"`` or ``"night"`` for the rest of the game.
     #:
@@ -512,7 +520,9 @@ class GameState:
     sacrifice_restrictions: list[SacrificeRestriction] = field(default_factory=list)
     max_turns: int = DEFAULT_MAX_TURNS
     #: Phases this turn has been granted and not yet begun, in the order they
-    #: will run: `"combat"` or `"main"` (see `turn.EXTRA_PHASE_STEPS`).
+    #: will run: `"combat"`, `"main"` or `"beginning"` (see
+    #: `turn.EXTRA_PHASE_STEPS`). A grant goes on the **front**, because 500.8
+    #: runs the most recently created of the phases added after one phase first.
     #:
     #: "After this phase, there is an additional combat phase" (Combat
     #: Celebrant); "after this main phase, there is an additional combat phase
@@ -528,6 +538,18 @@ class GameState:
     #: main phase left to come after -- expires rather than leaking into the next
     #: player's turn.
     extra_phases: list[str] = field(default_factory=list)
+    #: Phases granted during a beginning or ending phase, waiting for the next
+    #: main phase to begin before they join `extra_phases`.
+    #:
+    #: Every printed grant times itself off a main or combat phase ("after this
+    #: main phase"), so one made in an upkeep comes after the *next* main phase,
+    #: not straight after the upkeep. Without the wait, a grant made in an
+    #: additional beginning phase (Sphinx of the Second Sun) would run before
+    #: the draw step that ends it hands back to the turn. Released by
+    #: `turn.begin_step` as a main phase begins, ahead of the grants that main
+    #: phase makes itself (500.8), and cleared with the queue at the turn
+    #: boundary.
+    deferred_phases: list[str] = field(default_factory=list)
     #: Where the ordinary turn resumes once the extra phases are done.
     #:
     #: An extra phase is *inserted*, so the phase the turn was about to enter is

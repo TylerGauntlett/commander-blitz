@@ -10881,6 +10881,7 @@
               "player": "opponent"
             }
           ],
+          "next_turn": true,
           "op": "delay",
           "step": "upkeep",
           "text": "Its controller may draw up to two cards at the beginning of the next turn's upkeep."
@@ -10895,6 +10896,7 @@
               "player": "you"
             }
           ],
+          "next_turn": true,
           "op": "delay",
           "step": "upkeep",
           "text": "You draw a card at the beginning of the next turn's upkeep."
@@ -178539,6 +178541,7 @@
               "player": "you"
             }
           ],
+          "next_turn": true,
           "op": "delay",
           "step": "upkeep",
           "text": "Draw a card at the beginning of the next turn's upkeep."
@@ -221310,6 +221313,45 @@
         "Sphinx"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "extra_beginning_phase"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each of your postcombat main phases, there is an additional beginning phase after this phase.",
+          "trigger": {
+            "controller": "you",
+            "event": "postcombat_main"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "sphinx_of_the_second_sun",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{6}{U}{U}",
+      "name": "Sphinx of the Second Sun",
+      "oracle_text": "Flying\nAt the beginning of each of your postcombat main phases, there is an additional beginning phase after this phase. (The beginning phase includes the untap, upkeep, and draw steps.)",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Sphinx"
+      ],
+      "toughness": 6,
       "types": [
         "Creature"
       ]

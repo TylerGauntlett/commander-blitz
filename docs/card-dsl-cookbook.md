@@ -3247,7 +3247,7 @@ Denial is the whole argument for it — without the delayed draws it is a strict
 worse Counterspell, and nothing on screen would say so.
 
 ```jsonc
-{ "op": "delay", "step": "upkeep",
+{ "op": "delay", "step": "upkeep", "next_turn": true,
   "text": "At the beginning of the next turn's upkeep, draw a card.",
   "effects": [ { "op": "draw", "player": "you", "amount": { "const": 1 } } ] }
 ```
@@ -3267,7 +3267,17 @@ Two things are worth knowing before writing one:
   scheduling effect had.
 - **It waits for the step's *next* occurrence.** `begin_step` for the current
   step has already run by the time any effect resolves, so scheduling `upkeep`
-  during an upkeep means the following turn's, which is what the cards say.
+  during an upkeep means the next upkeep to begin. That is usually the following
+  turn's, but an [additional beginning phase](#an-additional-beginning-phase)
+  gives a turn a second upkeep and draw step, and the next one is then later in
+  the same turn.
+- **`next_turn` says "the next *turn's*".** "At the beginning of the next turn's
+  upkeep" (Portent, Arcane Denial) is due only on a turn after the one the delay
+  was made on, so an added upkeep later this turn is not it; "at the beginning
+  of the next upkeep" (The Eagles Are Coming) and "your next upkeep" (Pact of
+  Negation) omit it and take the added one. `turn._delay_due` compares the
+  delay's `turn` against the current one. The loader refuses a `next_turn` that
+  is not true or false.
 - **`your_turn` says *whose* step.** "At the beginning of **your** next end
   step" (Necropotence, and fifteen more) as against "at the beginning of the
   next end step" (Arcane Denial). Every seat has an end step, so the step name
@@ -3288,7 +3298,7 @@ Two things are worth knowing before writing one:
   controller, so it is that controller's turn and not a fixed seat.
 
   The struct's `turn` field does not stand in for this. It records the turn the
-  delay was created on, nothing reads it for timing, and "your next" is about
+  delay was created on and only `next_turn` reads it; "your next" is about
   *whose* turn rather than how many have passed.
 
 The scheduled effects resolve directly rather than going on the stack. That is a
@@ -13191,12 +13201,52 @@ things follow that are easy to get wrong in the other direction:
 
 An additional main phase is a `POSTCOMBAT_MAIN` step, because 505.1b makes any
 main phase after a combat a postcombat one. It is another sorcery window and not
-another land drop: `lands_played` is reset by the untap step, so rule 305.2 holds
+another land drop: `lands_played` is reset by the turn's first untap step, so rule 305.2 holds
 with no code. An unspent grant expires at the turn boundary — Aggravated Assault
 activated in an end step has no phase left to come after — and a turn takes at
 most `MAX_EXTRA_PHASES_PER_TURN` of them, which is the same kind of valve as the
 turn cap: the rules would let an untap-and-attack-again loop run for ever, and a
 self-play run cannot.
+
+## An additional beginning phase
+
+```jsonc
+{ "kind": "triggered",
+  "text": "At the beginning of each of your postcombat main phases, there is an additional beginning phase after this phase.",
+  "trigger": { "event": "postcombat_main", "controller": "you" },
+  "effects": [ { "op": "extra_beginning_phase" } ] }
+```
+
+Sphinx of the Second Sun. `extra_beginning_phase` takes no keys, and the loader
+refuses `player`, `controller` and `amount`: like
+[an extra combat](#an-additional-combat-phase) it belongs to the turn in
+progress, and the printed sentence grants one. It queues a `"beginning"` kind on
+`GameState.extra_phases`, entered at `Step.UNTAP` when the current phase ends;
+the draw step that closes it hands on to the rest of the queue or back to
+`resume_step`, while a turn's own draw step still walks on into its precombat
+main.
+
+The three steps are real ones. The untap step phases, checks day and night and
+untaps (502.1–502.3), spending `skip_next_untap` and asking Winter Orb's question
+again; the draw step draws; every upkeep and draw-step trigger, `delay` and
+`step_is` reader sees them. What the added untap step does not do is begin a
+turn: `turn._start_turn` (land drops, `cards_drawn_this_turn`, every "until your
+next turn" clock, `turns_begun`, `TURN_BEGAN`) runs only in the turn's first
+untap step, and the 103.8a skip of the starting player's first draw applies only
+to the turn's own draw step.
+
+Three consequences of the shared queue:
+
+- **An added main phase is a postcombat main phase** (505.1a), so Relentless
+  Assault under the Sphinx gives two beginning phases, and the cap,
+  `MAX_EXTRA_PHASES_PER_TURN`, counts them with every other grant.
+- **The most recently created phase comes first** (500.8): a grant goes on the
+  front of the queue, so Relentless Assault cast after the Sphinx's trigger
+  resolved puts its combat and main before the beginning phase.
+- **A grant made in a beginning or ending phase waits** in
+  `GameState.deferred_phases` until the next main phase begins, because every
+  printed grant times itself off a main or combat phase. One made in the added
+  upkeep after the last main phase of a turn therefore expires with the turn.
 
 ## "…dealt damage by this creature this turn"
 

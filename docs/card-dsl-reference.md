@@ -10,7 +10,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 177 |
+| [Effect ops](#effect-ops) | 178 |
 | [Selectors](#selectors) | 77 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 74 |
@@ -199,6 +199,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `return_spell_to_hand` | Stack |  | Return a spell from the stack to its owner's hand. | [Doing something to a spell that is not countering it](card-dsl.md#doing-something-to-a-spell-that-is-not-countering-it) |
 | `spell_enters_with_counters` | Stack |  | Promise a spell's permanent counters it enters with. | [Promising counters to the permanent a spell becomes](card-dsl.md#promising-counters-to-the-permanent-a-spell-becomes) |
 | `uncounterable_this_turn` | Stack |  | Until end of turn, the controller's spells matching `affects_spells` (`cast`: only ones they cast; `next_spell`: only the next one) can't be countered; outlives its source. | ["Creature spells you cast this turn can't be countered"](card-dsl-cookbook.md#creature-spells-you-cast-this-turn-cant-be-countered) |
+| `extra_beginning_phase` | Turn structure |  | An additional beginning phase (untap, upkeep, draw) after this phase. | [An additional beginning phase](card-dsl-cookbook.md#an-additional-beginning-phase) |
 | `extra_combat` | Turn structure |  | An additional combat phase (and main phase) this turn. | [An additional combat phase](card-dsl-cookbook.md#an-additional-combat-phase) |
 | `extra_turn` | Turn structure |  | A player takes an extra turn after this one. | [An extra turn](card-dsl-cookbook.md#an-extra-turn) |
 | `choose_blockers` | Combat decisions |  | Decide blocks on another player's behalf. | [Effect ops](card-dsl.md#effect-ops) |

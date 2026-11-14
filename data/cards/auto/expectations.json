@@ -18659,6 +18659,9 @@
     },
     "zone": "battlefield"
   },
+  "sphinx_of_the_second_sun": {
+    "zone": "battlefield"
+  },
   "sphinx_of_uthuun": {
     "battlefield_count": 33,
     "library_size": {

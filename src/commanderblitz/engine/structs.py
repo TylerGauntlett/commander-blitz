@@ -1753,6 +1753,12 @@ class DelayedTrigger:
     #: "at the beginning of **your** next end step" -- due only on a turn this
     #: trigger's own controller is taking.
     your_turn: bool = False
+    #: "at the beginning of **the next turn's** upkeep" (Portent) -- due only on
+    #: a turn after the one it was created on. Not the default: a turn with an
+    #: additional beginning phase (Sphinx of the Second Sun) has a second upkeep
+    #: and draw step, which "the next upkeep" (The Eagles Are Coming) and "your
+    #: next upkeep" (Pact of Negation) are and "the next turn's upkeep" is not.
+    next_turn: bool = False
     trigger: TriggerSpec | None = None
     #: "Whenever **that creature** deals combat damage to a player or
     #: planeswalker this turn" -- Hunter's Insight. The one object this

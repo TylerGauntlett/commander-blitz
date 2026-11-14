@@ -16,7 +16,7 @@ from .characteristics import chars
 from .effects import execute
 from .effects.context import EffectContext, ask_objects
 from .effects.ops_stack import put_copy_on_stack
-from .enums import DecisionKind, Keyword, Step
+from .enums import STEP_PHASE, DecisionKind, Keyword, Phase, Step
 from .events import EventType
 from .player_statics import (
     maximum_hand_size,
@@ -63,6 +63,7 @@ from .temp_effects import (
 from .triggers import fire
 
 if TYPE_CHECKING:  # pragma: no cover
+    from .player import PlayerState
     from .state import GameState
     from .structs import DelayedTrigger
 
@@ -120,6 +121,7 @@ def begin_step(state: GameState) -> Generator[Any, list[int]]:
         # has ever had, because a precombat main phase otherwise does nothing but
         # hand out priority -- and the reason a Saga's advance belongs here rather
         # than on the card is that nothing is printed on the card to hang it on.
+        release_deferred_phases(state)
         sagas.turn_based_lore(state)
         # "At the beginning of your first main phase." Fired after the lore
         # counters, because 714.2d's turn-based action happens as the phase
@@ -141,6 +143,7 @@ def begin_step(state: GameState) -> Generator[Any, list[int]]:
     elif step is Step.END_OF_COMBAT:
         combat_mod.end_combat(state)
     elif step is Step.POSTCOMBAT_MAIN:
+        release_deferred_phases(state)
         # "At the beginning of each of your postcombat main phases." Fired per
         # phase rather than per turn, because an extra combat gives an extra
         # postcombat main and the printed word is "each".
@@ -197,14 +200,22 @@ DELAY_STEPS = {
 
 #: The phases a card can add to a turn, and the step each one starts at.
 #:
-#: Two, because printed cards grant two: "there is an additional combat phase"
-#: (506.1) and "an additional main phase" (505.1). A main phase inserted after a
-#: combat is a *postcombat* main phase by 505.1b, so it is the POSTCOMBAT_MAIN
-#: step rather than a third kind.
+#: Three, because printed cards grant three: "there is an additional combat
+#: phase" (506.1), "an additional main phase" (505.1) and "an additional
+#: beginning phase" (501.1, Sphinx of the Second Sun). A main phase inserted after
+#: a combat is a *postcombat* main phase by 505.1b, so it is the POSTCOMBAT_MAIN
+#: step rather than a fourth kind. A beginning phase is its three steps entered
+#: again -- untap, upkeep, draw -- so every untap, upkeep and draw-step trigger,
+#: turn-based action and `step_is` reader sees a real step; what it does not do
+#: is begin a turn, which `_untap_step` keeps apart.
 EXTRA_PHASE_STEPS = {
     "combat": Step.BEGIN_COMBAT,
     "main": Step.POSTCOMBAT_MAIN,
+    "beginning": Step.UNTAP,
 }
+
+#: The phases a grant made inside them waits out: see `GameState.deferred_phases`.
+_DEFERRING_PHASES = frozenset({Phase.BEGINNING, Phase.ENDING})
 
 #: The last step of every phase an extra phase may be inserted after -- a main
 #: phase, or a combat phase.
@@ -214,7 +225,8 @@ EXTRA_PHASE_STEPS = {
 #: "after this main phase"), so an extra combat granted during an upkeep -- an
 #: Aggravated Assault activation is legal there -- waits for the precombat main
 #: to end rather than jumping in front of it, which is what the card says and how
-#: it is ruled.
+#: it is ruled. The draw step ends a phase the queue runs only inside a detour,
+#: an additional beginning phase handing back to the turn; see `next_step`.
 PHASE_END_STEPS = frozenset(
     {Step.PRECOMBAT_MAIN, Step.END_OF_COMBAT, Step.POSTCOMBAT_MAIN}
 )
@@ -228,10 +240,43 @@ def grant_extra_phases(state: GameState, kinds: Sequence[str]) -> list[str]:
     rules would let Aggravated Assault take combats until its controller runs out
     of mana, and a self-play run would sit in that turn for ever.
     """
-    room = MAX_EXTRA_PHASES_PER_TURN - state.extra_phases_taken - len(state.extra_phases)
+    room = (
+        MAX_EXTRA_PHASES_PER_TURN
+        - state.extra_phases_taken
+        - len(state.extra_phases)
+        - len(state.deferred_phases)
+    )
     queued = [kind for kind in kinds if kind in EXTRA_PHASE_STEPS][: max(0, room)]
-    state.extra_phases.extend(queued)
+    # 500.8: "if multiple extra phases are created after the same phase, the
+    # most recently created phase will occur first" -- so a grant goes on the
+    # front, its own phases in printed order. Whatever is already queued was
+    # created earlier, or after an earlier phase, and comes after it.
+    if STEP_PHASE[state.step] in _DEFERRING_PHASES:
+        state.deferred_phases[:0] = queued
+    else:
+        state.extra_phases[:0] = queued
     return queued
+
+
+def release_deferred_phases(state: GameState) -> None:
+    """A main phase has begun: the grants waiting for one now follow it.
+
+    Ahead of what was already queued (created after an earlier phase, so it
+    comes later) and behind whatever this main phase grants itself, which is
+    created later still and goes on the front (500.8).
+    """
+    if state.deferred_phases:
+        state.extra_phases[:0] = state.deferred_phases
+        state.deferred_phases.clear()
+
+
+def in_added_phase(state: GameState) -> bool:
+    """Is the turn inside a phase an effect added, rather than one of its own?
+
+    `resume_step` is set exactly while the turn is away from its ordinary walk
+    (see `_after_phase`), and an added phase is the only way away from it.
+    """
+    return state.resume_step is not None
 
 
 def _run_delayed(state: GameState) -> Generator[Any, list[int], bool]:
@@ -275,8 +320,10 @@ def _delay_due(state: GameState, delayed: DelayedTrigger) -> bool:
 
     The step name, and for ``end_of_combat`` the **combat** as well.
 
-    A turn has one upkeep, one draw step and one end step, so for those the name
-    is the whole of the timing -- of *a* turn. Whose turn is a second question,
+    A turn has one end step, and one upkeep and draw step unless an additional
+    beginning phase gives it more, so for those the name is the whole of the
+    timing -- of *a* turn, "the next upkeep" being whichever comes first and
+    ``next_turn`` the delays that want a later turn's. Whose turn is a second question,
     and ``your_turn`` is the delays that ask it: see the note below. Since `extra_combat` it can have several combat
     phases, and `Step.END_OF_COMBAT` is therefore re-entered within one turn --
     at which point "at end of combat" stops being a step and becomes a step *of
@@ -309,6 +356,11 @@ def _delay_due(state: GameState, delayed: DelayedTrigger) -> bool:
         # and unlike the combat case above, the difference only shows when the
         # delay was created on somebody else's turn, which for an instant-speed
         # ability is the ordinary line of play rather than the corner case.
+        return False
+    if delayed.next_turn and state.turn <= delayed.turn:
+        # "The next **turn's** upkeep" (Portent). One upkeep a turn makes it
+        # "the next upkeep" -- until an additional beginning phase (Sphinx of
+        # the Second Sun) gives this turn a second one, which is not it.
         return False
     if delayed.combat is not None:
         return delayed.combat == state.combat_number
@@ -345,7 +397,44 @@ def _monarch_draw(state: GameState) -> Generator[Any, list[int]]:
 
 
 def _untap_step(state: GameState) -> Generator[Any, list[int]]:
+    """The untap step (502): phasing, day and night, then untapping.
+
+    And, the first time in a turn, the start of the turn. The two are one step
+    for every turn but one with an additional beginning phase in it (Sphinx of
+    the Second Sun), whose second untap step is an untap step in every respect
+    -- 502.1-502.3 again, `skip_next_untap` spent, Winter Orb asked again -- and
+    begins nothing: it is the same turn, so the per-turn records and every
+    "until your next turn" clock carry on through it untouched.
+    """
     player = state.players[state.active_idx]
+    added = in_added_phase(state)
+    if not added:
+        _start_turn(state, player)
+    # Phasing (702.26b) happens **before** untapping and it is a turn-based
+    # action, not an ability -- which is why it lives here beside the untap
+    # rather than in a card's effect list.
+    _phase(state, player.pid)
+    _day_night(state, player.pid)
+    yield from _untap_permanents(state, player)
+    if added:
+        return
+    # Both counters: `turn` is the rules one, `round` is the one the log prints.
+    # `extra` only when it is one, so an ordinary turn's event -- which every
+    # recorded log and golden replay holds thousands of -- is byte-for-byte
+    # what it was. The log has to say it: an extra turn does not advance the
+    # round, so without the word it reads as the same turn printed twice.
+    extra = {"extra": True} if state.extra_turn else {}
+    state.emit(
+        EventType.TURN_BEGAN, player=player.pid, turn=state.turn, round=state.round, **extra
+    )
+
+
+def _start_turn(state: GameState, player: PlayerState) -> None:
+    """Everything the first untap step of a turn resets, because a turn began.
+
+    Turn-scoped, never step-scoped: an additional untap step later in the same
+    turn does not run this (see `_untap_step`).
+    """
     player.turns_begun += 1
     player.lands_played = 0
     player.extra_land_drops = 0
@@ -426,11 +515,10 @@ def _untap_step(state: GameState) -> Generator[Any, list[int]]:
     # Teferi, Time Raveler's +1 -- "until your next turn, you may cast sorcery
     # spells as though they had flash" -- on the same clock.
     clear_flash_permissions(state, "until_your_next_turn", player.pid)
-    # Phasing (702.26b) happens **before** untapping and it is a turn-based
-    # action, not an ability -- which is why it lives here beside the untap
-    # rather than in a card's effect list.
-    _phase(state, player.pid)
-    _day_night(state, player.pid)
+
+
+def _untap_permanents(state: GameState, player: PlayerState) -> Generator[Any, list[int]]:
+    """502.3: the active player untaps their permanents."""
     # Winter Orb: "players can't untap more than one land during their untap
     # steps." The untap step is a turn-based action that asks nobody anything --
     # 502.2 untaps, it does not choose -- so this is the first question it has
@@ -466,15 +554,6 @@ def _untap_step(state: GameState) -> Generator[Any, list[int]]:
         obj = state.objects.get(oid)
         if obj is not None and obj.tapped and not obj.skip_next_untap:
             untap_permanent(state, oid)
-    # Both counters: `turn` is the rules one, `round` is the one the log prints.
-    # `extra` only when it is one, so an ordinary turn's event -- which every
-    # recorded log and golden replay holds thousands of -- is byte-for-byte
-    # what it was. The log has to say it: an extra turn does not advance the
-    # round, so without the word it reads as the same turn printed twice.
-    extra = {"extra": True} if state.extra_turn else {}
-    state.emit(
-        EventType.TURN_BEGAN, player=player.pid, turn=state.turn, round=state.round, **extra
-    )
 
 
 def _day_night(state: GameState, pid: int) -> None:
@@ -496,10 +575,11 @@ def _day_night(state: GameState, pid: int) -> None:
     - **726.2c** -- if it is night and that player cast two or more, it becomes
       day.
 
-    The count comes from `TurnLedger.spells_cast`, which storm already folds in
-    `emit`. Read here, at the start of the next turn, because that is when 726
-    asks -- and it is the last moment the previous turn's tally still exists,
-    since cleanup clears the ledger.
+    The count is `GameState.spells_cast_last_turn`, which the previous turn's
+    cleanup step copies out of `TurnLedger.spells_cast` before clearing the
+    ledger, so that this check -- made in the next turn, and again in any
+    additional untap step of that turn -- still has the turn it asks about. A
+    hand-built position that never crossed a cleanup falls back to the ledger.
 
     Turning the permanents over is `transform`, direction forced, because 726.3
     is the whole content: every daybound permanent becomes its nightbound back
@@ -533,7 +613,11 @@ def _day_night(state: GameState, pid: int) -> None:
         if state.previous_active is not None
         else state.players[(state.active_idx - 1) % len(state.players)].pid
     )
-    cast = state.turn_ledger.spells_cast.get(previous, 0)
+    record = state.spells_cast_last_turn
+    if record is not None and record[0] == state.turn - 1:
+        cast = record[1]
+    else:
+        cast = state.turn_ledger.spells_cast.get(previous, 0)
     if state.day_night == "day" and cast == 0:
         _become(state, "night", pid)
     elif state.day_night == "night" and cast >= 2:
@@ -707,7 +791,14 @@ def _draw_step(state: GameState) -> Generator[Any, list[int]]:
     # is skipped, whatever draws first in this step -- is the first.
     state.cards_drawn_this_draw_step.clear()
     # In a two-player game the starting player skips their first draw.
-    skip = state.turn == 1 and pid == state.starting_player and state.num_players == 2
+    # The turn's own draw step only (103.8a): an additional beginning phase is
+    # not the draw step the rule skips.
+    skip = (
+        state.turn == 1
+        and pid == state.starting_player
+        and state.num_players == 2
+        and not in_added_phase(state)
+    )
     # "Skip your draw step." Necropotence. Only the turn-based draw (504.1) is
     # skipped; the step still happens, so DRAW_STEP still fires below and the
     # Saga tick and every "at the beginning of your draw step" trigger survive.
@@ -908,6 +999,11 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int]]:
     if kept is None or kept[0] != state.turn:
         seats = state.turn_ledger.seats_attacked.get(pid, set())
         state.attacked_last_turn[pid] = (state.turn, frozenset(seats))
+    # The next untap step's day/night check asks about this turn (726.2), and
+    # the ledger is about to forget it. The same first-pass guard.
+    spells = state.spells_cast_last_turn
+    if spells is None or spells[0] != state.turn:
+        state.spells_cast_last_turn = (state.turn, state.turn_ledger.spells_cast.get(pid, 0))
     state.turn_ledger.clear()
     # The ledger is a static's input (`spells_cast_this_turn`,
     # `permanents_entered_this_turn`), and `chars` caches per `char_version`.
@@ -956,6 +1052,12 @@ def next_step(state: GameState) -> Step | None:
         return Step.COMBAT_DAMAGE
     if step is Step.CLEANUP:
         return None if not state.cleanup_repeat else Step.CLEANUP
+    if step is Step.DRAW and in_added_phase(state):
+        # The end of an additional beginning phase. The turn's own draw step
+        # walks on into its precombat main, and anything queued then is still
+        # waiting for that main phase to end; this one hands on to the rest of
+        # the detour, or back to the turn.
+        return _after_phase(state, step)
     if step in PHASE_END_STEPS:
         return _after_phase(state, step)
     return Step(int(step) + 1)
@@ -1042,6 +1144,7 @@ def _begin_next_turn(state: GameState) -> None:
     # phase left to follow -- Aggravated Assault activated in an end step -- does
     # nothing, rather than handing the next player a combat they did not pay for.
     state.extra_phases.clear()
+    state.deferred_phases.clear()
     state.resume_step = None
     state.extra_phases_taken = 0
     state.previous_active = state.active_player
