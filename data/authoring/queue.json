@@ -169162,12 +169162,12 @@
     },
     "Master of Death": {
       "edhrec_rank": 7004,
-      "gate": "template",
+      "gate": null,
       "name": "Master of Death",
-      "reason": "no template for: At the beginning of your upkeep, if this card is in your graveyard, you may pay 1 life. If",
+      "reason": "",
       "scryfall_id": "73903784-06c9-48ec-9d4a-e78461903617",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Master of Diversion": {
@@ -186972,12 +186972,12 @@
     },
     "Nightveil Sprite": {
       "edhrec_rank": 7324,
-      "gate": "template",
+      "gate": null,
       "name": "Nightveil Sprite",
-      "reason": "no template for: Whenever this creature attacks, surveil 1",
+      "reason": "",
       "scryfall_id": "b5c266ca-f2fc-4815-be7e-ee59894e4cc4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nightwhorl Hermit": {
@@ -188862,12 +188862,12 @@
     },
     "Notion Rain": {
       "edhrec_rank": 8407,
-      "gate": "template",
+      "gate": null,
       "name": "Notion Rain",
-      "reason": "no template for: Surveil 2, then draw two cards. deals 2 damage to you",
+      "reason": "",
       "scryfall_id": "66ed78c5-be23-4fcb-9143-e6574cd6ec68",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Notion Thief": {

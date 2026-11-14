@@ -12369,6 +12369,16 @@
     },
     "zone": "battlefield"
   },
+  "master_of_death": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "life": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "master_of_etherium": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -13572,6 +13582,10 @@
   "nightveil_predator": {
     "zone": "battlefield"
   },
+  "nightveil_sprite": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "nikara_lair_scavenger": {
     "battlefield_count": 33,
     "life": {
@@ -13683,6 +13697,15 @@
   "not_dead_after_all": {
     "hand_size": {
       "0": 1
+    },
+    "zone": "graveyard"
+  },
+  "notion_rain": {
+    "hand_size": {
+      "0": 3
+    },
+    "life": {
+      "0": 38
     },
     "zone": "graveyard"
   },
