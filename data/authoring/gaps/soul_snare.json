@@ -1,0 +1,18 @@
+{
+  "card_id": "soul_snare",
+  "name": "Soul Snare",
+  "oracle_text": "{W}, Sacrifice this enchantment: Exile target creature that's attacking you or a planeswalker you control.",
+  "blocked_sentences": [
+    "{W}, Sacrifice this enchantment: Exile target creature that's attacking you or a planeswalker you control."
+  ],
+  "needs": [
+    {
+      "capability": "attacking_you_or_your_planeswalker",
+      "kind": "selector",
+      "what": "a selector key matching a creature attacking the ability's controller OR a planeswalker that controller controls (not a battle, not another player), e.g. attacking_player: \"you\" widened by an or_planeswalkers flag that also accepts attackers whose combat.attacking_permanent is a planeswalker controlled by the ability's controller",
+      "why_existing_wont_do": "`attacking_player: \"you\"` deliberately excludes creatures in combat.attacking_permanent, so it misses attackers aimed at your planeswalkers; `attacking: true` is a bare boolean with no notion of whom (wrong in multiplayer, where the creature may be attacking another opponent); `controller: \"opponent\"` beside it is the same over-approximation; the trigger key `defending` and the attack_tax `or_planeswalkers` flag express exactly this reading but exist only on triggers/statics, not in selector_keys, so no target selector can say it"
+    }
+  ],
+  "closest_existing": ["attacking_player", "attacking", "or_planeswalkers"],
+  "confidence": "high"
+}
