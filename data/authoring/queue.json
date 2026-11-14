@@ -169192,12 +169192,12 @@
     },
     "Master of Pearls": {
       "edhrec_rank": 19711,
-      "gate": "template",
+      "gate": null,
       "name": "Master of Pearls",
-      "reason": "no template for: Morph {3}{W}{W}",
+      "reason": "",
       "scryfall_id": "5c0267c9-e0a7-4c16-afc9-f05de9fccaba",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Master of Predicaments": {
@@ -169392,12 +169392,12 @@
     },
     "Mastery of the Unseen": {
       "edhrec_rank": 16242,
-      "gate": "template",
+      "gate": null,
       "name": "Mastery of the Unseen",
-      "reason": "no template for: Whenever a permanent you control is turned face up, you gain 1 life for each creature you ",
+      "reason": "",
       "scryfall_id": "b27f4217-881d-401d-860e-d3d8689ca1e4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Masticore": {
@@ -183312,12 +183312,12 @@
     },
     "Nantuko Vigilante": {
       "edhrec_rank": 7687,
-      "gate": "template",
+      "gate": null,
       "name": "Nantuko Vigilante",
-      "reason": "no template for: Morph {1}{G}",
+      "reason": "",
       "scryfall_id": "85b0dc2f-7d96-47a6-89f9-8318f0b74f12",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Naomi, Pillar of Order": {

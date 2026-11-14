@@ -12570,6 +12570,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "master_of_pearls": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "master_of_the_feast": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -12579,6 +12583,10 @@
     "zone": "battlefield"
   },
   "masterwork_of_ingenuity": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "mastery_of_the_unseen": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -13557,6 +13565,11 @@
     }
   },
   "nantuko_elder": {
+    "zone": "battlefield"
+  },
+  "nantuko_vigilante": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
   "narset_parter_of_veils": {
