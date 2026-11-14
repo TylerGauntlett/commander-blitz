@@ -1,0 +1,33 @@
+{
+  "card": {
+    "id": "krosan_cloudscraper",
+    "name": "Krosan Cloudscraper",
+    "oracle_text": "At the beginning of your upkeep, sacrifice this creature unless you pay {G}{G}.\nMorph {7}{G}{G} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)",
+    "mana_cost": "{7}{G}{G}{G}",
+    "types": ["Creature"],
+    "subtypes": ["Beast", "Mutant"],
+    "colors": ["G"],
+    "color_identity": ["G"],
+    "power": 13,
+    "toughness": 13,
+    "morph": "{7}{G}{G}",
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "At the beginning of your upkeep, sacrifice this creature unless you pay {G}{G}.",
+        "trigger": {"event": "upkeep", "controller": "you", "source": "self"},
+        "effects": [
+          {
+            "op": "may",
+            "player": "you",
+            "pay": {"mana": "{G}{G}"},
+            "prompt": "Pay {G}{G} to keep Krosan Cloudscraper?",
+            "effects": [],
+            "else": [{"op": "sacrifice", "objects": {"self_only": true}}]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33, "hand_size": {"0": 1}}
+}

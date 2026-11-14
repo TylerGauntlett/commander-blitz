@@ -1,0 +1,18 @@
+{
+  "card_id": "hooded_hydra",
+  "name": "Hooded Hydra",
+  "oracle_text": "This creature enters with X +1/+1 counters on it.\nWhen this creature dies, create a 1/1 green Snake creature token for each +1/+1 counter on it.\nMorph {3}{G}{G}\nAs this creature is turned face up, put five +1/+1 counters on it.",
+  "blocked_sentences": [
+    "When this creature dies, create a 1/1 green Snake creature token for each +1/+1 counter on it."
+  ],
+  "needs": [
+    {
+      "capability": "snake_1_1_g",
+      "kind": "token",
+      "what": "a 1/1 green Snake creature token with no abilities",
+      "why_existing_wont_do": "token_ids has only snake_1_1_g_deathtouch and snake_1_1_b_deathtouch; a Snake with deathtouch is not the printed vanilla 1/1 green Snake"
+    }
+  ],
+  "closest_existing": ["snake_1_1_g_deathtouch"],
+  "confidence": "high"
+}
