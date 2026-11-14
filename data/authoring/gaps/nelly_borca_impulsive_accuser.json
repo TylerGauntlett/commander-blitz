@@ -1,0 +1,18 @@
+{
+  "card_id": "nelly_borca_impulsive_accuser",
+  "name": "Nelly Borca, Impulsive Accuser",
+  "oracle_text": "Vigilance\nWhenever Nelly Borca attacks, suspect target creature. Then goad all suspected creatures. (A suspected creature has menace and can't block.)\nWhenever one or more creatures an opponent controls deal combat damage to one or more of your opponents, you and the controller of those creatures each draw a card.",
+  "blocked_sentences": [
+    "Whenever Nelly Borca attacks, suspect target creature. Then goad all suspected creatures. (A suspected creature has menace and can't block.)"
+  ],
+  "needs": [
+    {
+      "capability": "suspect",
+      "kind": "op",
+      "what": "an op that makes a creature suspected (701.60): a designation that gives it menace and \"this creature can't block\" for as long as it stays suspected, plus a `suspected` selector key so \"goad all suspected creatures\" can find every suspected creature on the battlefield, including ones suspected earlier by other sources",
+      "why_existing_wont_do": "No `suspect` op and no `suspected` key in selector_keys; grant_keyword menace plus cant_block is not a designation, cannot be found by a selector, and would make `goad` over \"all suspected creatures\" collapse to only the one target, which is a different card"
+    }
+  ],
+  "closest_existing": ["goad", "grant_keyword", "cant_block"],
+  "confidence": "high"
+}
