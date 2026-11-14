@@ -9912,6 +9912,13 @@
     },
     "zone": "battlefield"
   },
+  "imperial_hellkite": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "imperial_outrider": {
     "zone": "battlefield"
   },
@@ -11264,6 +11271,20 @@
     },
     "zone": "battlefield"
   },
+  "krosan_cloudscraper": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "krosan_colossus": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "krosan_grip": {
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
@@ -11544,6 +11565,13 @@
     "counters": {
       "amount": 20,
       "kind": "+1/+1"
+    },
+    "zone": "battlefield"
+  },
+  "lifecrafter_s_bestiary": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
     },
     "zone": "battlefield"
   },

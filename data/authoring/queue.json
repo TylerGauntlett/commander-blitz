@@ -134622,12 +134622,12 @@
     },
     "Imperial Hellkite": {
       "edhrec_rank": 18423,
-      "gate": "template",
+      "gate": null,
       "name": "Imperial Hellkite",
-      "reason": "no template for: Morph {6}{R}{R}",
+      "reason": "",
       "scryfall_id": "cffb1feb-9368-4d91-bd4b-36a24fe849e6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Imperial Lancer": {
@@ -152612,22 +152612,22 @@
     },
     "Krosan Cloudscraper": {
       "edhrec_rank": 13411,
-      "gate": "template",
+      "gate": null,
       "name": "Krosan Cloudscraper",
-      "reason": "no template for: At the beginning of your upkeep, sacrifice this creature unless you pay {G}{G}",
+      "reason": "",
       "scryfall_id": "c1fab763-4e62-418d-b3a6-77c52bf21f23",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Krosan Colossus": {
       "edhrec_rank": 15220,
-      "gate": "template",
+      "gate": null,
       "name": "Krosan Colossus",
-      "reason": "no template for: Morph {6}{G}{G}",
+      "reason": "",
       "scryfall_id": "4f3c1e1a-bd75-4bfb-b44b-05b94f64c634",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Krosan Constrictor": {
@@ -157822,12 +157822,12 @@
     },
     "Lifecrafter's Bestiary": {
       "edhrec_rank": 1366,
-      "gate": "template",
+      "gate": null,
       "name": "Lifecrafter's Bestiary",
-      "reason": "no template for: At the beginning of your upkeep, scry 1",
+      "reason": "",
       "scryfall_id": "cfb90c0c-50e7-4602-a64b-eeba9ec32e17",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lifecrafter's Gift": {

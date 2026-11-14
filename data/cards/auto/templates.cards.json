@@ -116954,6 +116954,64 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "count": {
+                    "const": 1
+                  },
+                  "destination": "hand",
+                  "op": "search_library",
+                  "player": "you",
+                  "reveal": true,
+                  "selector": {
+                    "subtypes": [
+                      "Dragon"
+                    ]
+                  }
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Search for a Dragon card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature is turned face up, you may search your library for a Dragon card, reveal it, put it into your hand, then shuffle.",
+          "trigger": {
+            "event": "turned_face_up",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "imperial_hellkite",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{5}{R}{R}",
+      "morph": "{6}{R}{R}",
+      "name": "Imperial Hellkite",
+      "oracle_text": "Flying\nMorph {6}{R}{R} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)\nWhen this creature is turned face up, you may search your library for a Dragon card, reveal it, put it into your hand, then shuffle.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -134023,6 +134081,81 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [],
+              "else": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{G}{G}"
+              },
+              "player": "you",
+              "prompt": "Pay {G}{G} to keep Krosan Cloudscraper?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, sacrifice this creature unless you pay {G}{G}.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "krosan_cloudscraper",
+      "mana_cost": "{7}{G}{G}{G}",
+      "morph": "{7}{G}{G}",
+      "name": "Krosan Cloudscraper",
+      "oracle_text": "At the beginning of your upkeep, sacrifice this creature unless you pay {G}{G}.\nMorph {7}{G}{G} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)",
+      "power": 13,
+      "source": "auto",
+      "subtypes": [
+        "Beast",
+        "Mutant"
+      ],
+      "toughness": 13,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "krosan_colossus",
+      "mana_cost": "{6}{G}{G}{G}",
+      "morph": "{6}{G}{G}",
+      "name": "Krosan Colossus",
+      "oracle_text": "Morph {6}{G}{G} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)",
+      "power": 9,
+      "source": "auto",
+      "subtypes": [
+        "Beast"
+      ],
+      "toughness": 9,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -137593,6 +137726,70 @@
       "toughness": 0,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "scry",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, scry 1.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{G}"
+              },
+              "prompt": "Pay {G} to draw a card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a creature spell, you may pay {G}. If you do, draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "id": "lifecrafter_s_bestiary",
+      "mana_cost": "{3}",
+      "name": "Lifecrafter's Bestiary",
+      "oracle_text": "At the beginning of your upkeep, scry 1.\nWhenever you cast a creature spell, you may pay {G}. If you do, draw a card.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {
