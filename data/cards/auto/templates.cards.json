@@ -94432,6 +94432,49 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "gideon_s_sacrifice",
+      "mana_cost": "{W}",
+      "name": "Gideon's Sacrifice",
+      "oracle_text": "Choose a creature or planeswalker you control. All damage that would be dealt this turn to you and permanents you control is dealt to the chosen permanent instead (if it's still on the battlefield).",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "chosen",
+          "objects": {
+            "any_types": [
+              "Creature",
+              "Planeswalker"
+            ],
+            "controller": "you",
+            "count": 1,
+            "zone": "battlefield"
+          },
+          "op": "choose_permanents",
+          "prompt": "Choose a creature or planeswalker you control"
+        },
+        {
+          "duration": "this_turn",
+          "op": "redirect_damage",
+          "permanents": {
+            "controller": "you"
+          },
+          "player": "you",
+          "to": {
+            "binding": "chosen"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -107134,6 +107177,75 @@
       "source": "auto",
       "subtypes": [
         "Devil"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "goad"
+            },
+            {
+              "amount": {
+                "power_of": {
+                  "target": "t1"
+                }
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": "any",
+              "id": "t1",
+              "kind": "permanent",
+              "one_per_player": true,
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, for each opponent, goad up to one target creature that opponent controls. Put X +1/+1 counters on this creature, where X is the total power of creatures goaded this way.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "havoc_eater",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{5}{R}{R}",
+      "name": "Havoc Eater",
+      "oracle_text": "Flying\nWhen this creature enters, for each opponent, goad up to one target creature that opponent controls. Put X +1/+1 counters on this creature, where X is the total power of creatures goaded this way.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Elemental"
       ],
       "toughness": 3,
       "types": [
@@ -133971,6 +134083,71 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{4}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "remove_from_combat"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "any_of": [
+                  {
+                    "attacking": true
+                  },
+                  {
+                    "blocking": true
+                  }
+                ],
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{4}, {T}: Remove target attacking or blocking creature from combat."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "labyrinth_of_skophos",
+      "name": "Labyrinth of Skophos",
+      "oracle_text": "{T}: Add {C}.\n{4}, {T}: Remove target attacking or blocking creature from combat.",
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {

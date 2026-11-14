@@ -108962,12 +108962,12 @@
     },
     "Gideon's Sacrifice": {
       "edhrec_rank": 5430,
-      "gate": "template",
+      "gate": null,
       "name": "Gideon's Sacrifice",
-      "reason": "no template for: Choose a creature or planeswalker you control. All damage that would be dealt this turn to",
+      "reason": "",
       "scryfall_id": "d483b409-1853-4456-a077-daeb77e165ba",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gideon's Triumph": {
@@ -123772,12 +123772,12 @@
     },
     "Havoc Eater": {
       "edhrec_rank": 7188,
-      "gate": "template",
+      "gate": null,
       "name": "Havoc Eater",
-      "reason": "no template for: When this creature enters, for each opponent, goad up to one target creature that opponent",
+      "reason": "",
       "scryfall_id": "17054e75-d801-4962-83c1-0b52e7b65f66",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Havoc Festival": {
@@ -153722,12 +153722,12 @@
     },
     "Labyrinth of Skophos": {
       "edhrec_rank": 4453,
-      "gate": "template",
+      "gate": null,
       "name": "Labyrinth of Skophos",
-      "reason": "no template for: {4}, {T}: Remove target attacking or blocking creature from combat",
+      "reason": "",
       "scryfall_id": "388169df-4cce-452d-9215-e3f814ff4fdf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Laccolith Grunt": {

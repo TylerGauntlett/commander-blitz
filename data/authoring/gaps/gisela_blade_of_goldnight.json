@@ -1,0 +1,22 @@
+{
+  "card_id": "gisela_blade_of_goldnight",
+  "name": "Gisela, Blade of Goldnight",
+  "oracle_text": "Flying, first strike\nIf a source would deal damage to an opponent or a permanent an opponent controls, that source deals double that damage to that player or permanent instead.\nIf a source would deal damage to you or a permanent you control, prevent half that damage, rounded up.",
+  "blocked_sentences": [
+    "If a source would deal damage to you or a permanent you control, prevent half that damage, rounded up."
+  ],
+  "needs": [
+    {
+      "capability": "prevent_half_damage",
+      "kind": "static_effect",
+      "what": "a static damage-prevention shield whose prevented amount is a fraction of each damage event (half, rounded up) rather than a fixed number, applying to damage dealt to you (affects_player: you) or a permanent you control (affects: controller you)",
+      "why_existing_wont_do": "The prevent_damage static subtracts a fixed static_value 'amount' from each event (prevented_player_damage / prevented_damage sum constants) and static_value_keys has no reference to the incoming event's damage nor a 'half' leaf; prevent_all_but caps at a fixed amount; replace_damage's damage_multiplier is an integer >= 2 and the loader refuses anything lower, so it cannot halve"
+    }
+  ],
+  "closest_existing": [
+    "prevent_damage",
+    "prevent_all_but",
+    "replace_damage"
+  ],
+  "confidence": "high"
+}

@@ -1,0 +1,18 @@
+{
+  "card_id": "mob_verdict",
+  "name": "Mob Verdict",
+  "oracle_text": "Secret council — Each player secretly votes for another player, then those votes are revealed. For each vote an opponent received, Mob Verdict deals 2 damage to that player and each creature that player controls. For each vote you received, draw a card.",
+  "blocked_sentences": [
+    "Secret council — Each player secretly votes for another player, then those votes are revealed. For each vote an opponent received, Mob Verdict deals 2 damage to that player and each creature that player controls. For each vote you received, draw a card."
+  ],
+  "needs": [
+    {
+      "capability": "council_s_dilemma",
+      "kind": "op",
+      "what": "a vote op (rule 701.38) in its Secret council form: every player simultaneously and hidden from the others chooses a player other than themselves as their vote, then all votes are revealed at once; the op binds the per-player tally under an `as` so later effects can read 'number of votes player P received' as an amount (here a for_each_player over opponents repeating 2 damage to the player and each creature they control once per vote, and a draw of {votes received by you} cards)",
+      "why_existing_wont_do": "for_each_player can walk the seats, but choose_player has only as/players/prompt -- no per-player chooser, so each player cannot cast their own vote, and nothing makes the choices simultaneous and secret; value_keys has no vote count, so neither the damage repetition per vote an opponent received nor the draw per vote you received can be sized. join_forces is the closest per-player decision but it collects mana payments, not a choice of player"
+    }
+  ],
+  "closest_existing": ["for_each_player", "choose_player", "join_forces", "repeat"],
+  "confidence": "high"
+}
