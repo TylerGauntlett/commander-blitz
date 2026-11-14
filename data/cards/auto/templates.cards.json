@@ -62987,6 +62987,35 @@
     },
     {
       "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "disrupt_decorum",
+      "mana_cost": "{2}{R}{R}",
+      "name": "Disrupt Decorum",
+      "oracle_text": "Goad all creatures you don't control. (Until your next turn, those creatures attack each combat if able and attack a player other than you if able.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "controller": "opponent",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "goad"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "U"
       ],
       "colors": [
@@ -67548,6 +67577,64 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "duration": "until_end_of_turn",
+                  "keywords": [
+                    "double_strike"
+                  ],
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "grant_keyword"
+                }
+              ],
+              "op": "may",
+              "prompt": "Have target attacking creature gain double strike until end of turn?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "attacking": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever one or more creatures attack, you may have target attacking creature gain double strike until end of turn.",
+          "trigger": {
+            "controller": "any",
+            "event": "you_attack"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "duelist_s_heritage",
+      "mana_cost": "{2}{W}",
+      "name": "Duelist's Heritage",
+      "oracle_text": "Whenever one or more creatures attack, you may have target attacking creature gain double strike until end of turn.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -82152,6 +82239,39 @@
         "Cleric"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "opponent",
+          "damage_multiplier": 2,
+          "effect": "replace_damage",
+          "kind": "static",
+          "text": "If a source would deal damage to an opponent, it deals double that damage to that player instead."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "fiendish_duo",
+      "keywords": [
+        "first_strike"
+      ],
+      "mana_cost": "{4}{R}{R}",
+      "name": "Fiendish Duo",
+      "oracle_text": "First strike (This creature deals combat damage before creatures without first strike.)\nIf a source would deal damage to an opponent, it deals double that damage to that player instead.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Devil"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]

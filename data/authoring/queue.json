@@ -70292,12 +70292,12 @@
     },
     "Disrupt Decorum": {
       "edhrec_rank": 887,
-      "gate": "template",
+      "gate": null,
       "name": "Disrupt Decorum",
-      "reason": "no template for: Goad all creatures you don't control",
+      "reason": "",
       "scryfall_id": "c5323fe7-d9df-4287-ae13-d9db35f7973b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Disrupting Scepter": {
@@ -76622,12 +76622,12 @@
     },
     "Duelist's Heritage": {
       "edhrec_rank": 1280,
-      "gate": "template",
+      "gate": null,
       "name": "Duelist's Heritage",
-      "reason": "no template for: Whenever one or more creatures attack, you may have target attacking creature gain double ",
+      "reason": "",
       "scryfall_id": "45834bc6-be8d-4064-930d-efc73cf3c64d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Duelists' Convocation International": {
@@ -94452,12 +94452,12 @@
     },
     "Fiendish Duo": {
       "edhrec_rank": 3559,
-      "gate": "template",
+      "gate": null,
       "name": "Fiendish Duo",
-      "reason": "no template for: If a source would deal damage to an opponent, it deals double that damage to that player i",
+      "reason": "",
       "scryfall_id": "50569696-be95-47f6-833a-d49b73e84801",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fiendish Panda": {

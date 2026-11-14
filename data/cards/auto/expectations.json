@@ -5275,6 +5275,11 @@
     },
     "zone": "graveyard"
   },
+  "disrupt_decorum": {
+    "battlefield_count": 32,
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
   "distant_melody": {
     "hand_size": {
       "0": 1
@@ -5630,6 +5635,10 @@
     ]
   },
   "dryad_sophisticate": {
+    "zone": "battlefield"
+  },
+  "duelist_s_heritage": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "dune_beetle": {
@@ -6985,6 +6994,10 @@
   },
   "fiend_hunter": {
     "battlefield_count": 32,
+    "zone": "battlefield"
+  },
+  "fiendish_duo": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "fierce_guardianship": {
