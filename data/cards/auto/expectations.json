@@ -4787,6 +4787,10 @@
     },
     "zone": "battlefield"
   },
+  "deceptive_frostkite": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "deceptive_landscape": {
     "zone": "battlefield"
   },
@@ -19628,6 +19632,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "synth_infiltrator": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "synthetic_destiny": {
     "battlefield_count": 30,
     "library_size": {
@@ -22377,6 +22385,10 @@
     "hand_size": {
       "0": 4
     }
+  },
+  "vizier_of_many_faces": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "vizkopa_vampire": {
     "zone": "battlefield"

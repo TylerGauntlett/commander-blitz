@@ -444,9 +444,23 @@ def load_deck_file(path: Path) -> DeckModel:
 #: ``enters_with`` is the one clause no token copy prints, because a token is
 #: never "entering" as anything but itself. ``add_types`` is `copy_permanent`'s
 #: key of the same name: Phyrexian Metamorph's "…except it's an artifact in
-#: addition to its other types".
+#: addition to its other types". ``add_subtypes``, ``colors`` and
+#: ``no_mana_cost`` are `copy_permanent`'s keys of the same names: Vizier of
+#: Many Faces' "…the token has no mana cost, it's white, and it's a Zombie in
+#: addition to its other types". ``condition`` makes the whole exception
+#: conditional -- Vizier's "except **if this creature was embalmed**".
 ENTERS_COPY_EXCEPT_KEYS = frozenset(
-    {"add_keywords", "add_types", "remove_supertypes", "name", "enters_with"}
+    {
+        "add_keywords",
+        "add_types",
+        "add_subtypes",
+        "colors",
+        "no_mana_cost",
+        "remove_supertypes",
+        "name",
+        "enters_with",
+        "condition",
+    }
 )
 
 
@@ -464,8 +478,32 @@ def _check_enters_copy_except(spec: Mapping[str, Any], where: str) -> None:
             f"{where}: unsupported keys {sorted(unknown)} "
             f"(known: {sorted(ENTERS_COPY_EXCEPT_KEYS)})"
         )
-    if not spec:
+    if not set(spec) - {"condition"}:
         raise DslError(f"{where}: an empty exception -- omit 'except_' instead")
+    if "condition" in spec:
+        # "…except if this creature was embalmed, …" (Vizier of Many Faces).
+        # Judged as the permanent arrives; failing, the copy has no exception.
+        validate_condition(spec["condition"], f"{where}.condition")
+    if "add_subtypes" in spec:
+        # "…it's a Zombie in addition to its other types." Dropped, the copy
+        # is no Zombie and every Zombie lord and count misses it.
+        added = spec["add_subtypes"]
+        if not isinstance(added, list) or not added or not all(
+            isinstance(name, str) and name for name in added
+        ):
+            raise DslError(f"{where}.add_subtypes: needs a non-empty list of subtype names")
+    if "colors" in spec:
+        # "…it's white": the copy's colours *instead of* the copied ones, so an
+        # empty list is a colourless copy no printed clause asks for.
+        colors = spec["colors"]
+        if not isinstance(colors, list) or not colors:
+            raise DslError(f"{where}.colors: must be a non-empty list of colours")
+        for color in colors:
+            if color not in KNOWN_COLORS:
+                raise DslError(f"{where}.colors: unknown colour {color!r}")
+    if "no_mana_cost" in spec and spec["no_mana_cost"] is not True:
+        # A present-and-false key is a clause that says nothing.
+        raise DslError(f"{where}.no_mana_cost: must be true -- omit it otherwise")
     if "add_keywords" in spec:
         # "…except it has haste and dethrone" (Dack's Duplicate).
         added = spec["add_keywords"]
@@ -2518,6 +2556,16 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         # A destination with nothing to send there. Silently ignoring it would
         # let a card claim to be an escape card and never be castable at all.
         raise DslError(f"{where}: 'graveyard_cast' needs a 'graveyard_cost' to describe")
+    # Embalm (702.128a): only a card whose embalm ability stamps its token can
+    # ask whether it was embalmed. A reader on any other card loads, prints
+    # "if this creature was embalmed" and never fires.
+    if _mentions_key_anywhere(model, "embalmed") and not _mentions(
+        model, lambda node: node.get("op") == "copy_permanent" and node.get("embalm") is True
+    ):
+        raise DslError(
+            f"{where}: reads the 'embalmed' condition but no 'copy_permanent' "
+            f"with \"embalm\": true makes its embalmed token"
+        )
     # Escape (702.138c-d): only a card with an escape cost can have escaped. A
     # reader on any other card loads, prints "escapes with" and never fires --
     # and on a flashback card it would fire for the wrong keyword.

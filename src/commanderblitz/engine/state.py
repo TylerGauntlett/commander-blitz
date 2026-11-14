@@ -10,6 +10,7 @@ from .carddef import CardDef
 from .characteristics import chars
 from .enums import STEP_PHASE, Phase, Step, Zone
 from .events import EventType, GameEvent
+from .mana import ManaCost
 from .objects import GameObject
 from .player import PlayerState
 from .player_statics import colorless_instead_players, retained_mana_by_player
@@ -649,6 +650,20 @@ class GameState:
                 # (Phyrexian Metamorph): on the copied face, so the copy is an
                 # artifact before any layer and to every reader.
                 copied = replace(copied, types=copied.types | obj.copying_add_types)
+            if obj.copying_add_subtypes:
+                # "…it's a Zombie in addition to its other types" (Vizier of
+                # Many Faces): on the copied face, so a Zombie lord and a
+                # Zombie count see the copy, and a copy of it is a Zombie too.
+                copied = replace(
+                    copied, subtypes=copied.subtypes | obj.copying_add_subtypes
+                )
+            if obj.copying_colors is not None:
+                # "…it's white": the copy's colours instead of the copied ones.
+                copied = replace(copied, colors=obj.copying_colors)
+            if obj.copying_no_mana_cost:
+                # "…the token has no mana cost": an empty cost (202.1b), so
+                # its mana value is 0 and no printed-cost filter matches it.
+                copied = replace(copied, mana_cost=ManaCost())
             if obj.copying_own_abilities:
                 # "…and it has vigilance **and this ability**" (Kimahri,
                 # Valiant Guardian): the permanent's own printed abilities,

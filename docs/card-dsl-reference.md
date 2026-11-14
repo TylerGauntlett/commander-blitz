@@ -14,7 +14,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Selectors](#selectors) | 76 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 74 |
-| [Conditions](#conditions) | 35 |
+| [Conditions](#conditions) | 36 |
 | [Trigger events](#trigger-events) | 58 |
 | [Trigger filters](#trigger-filters) | 37 |
 | [Static effects](#static-effects) | 98 |
@@ -420,6 +420,7 @@ Every head a condition may have: an effect's `if`, a trigger's intervening `cond
 | `cmp` | Compare `left` and `right` values with `op`. | [Conditions](card-dsl.md#conditions) |
 | `combat_damage_by` | A player was dealt combat damage this turn by one of these subtypes (prowl). | [Conditions](card-dsl.md#conditions) |
 | `cost_option` | Which of the tiered additional costs was paid. | [Tiered, and reading back which price was paid](card-dsl.md#tiered-and-reading-back-which-price-was-paid) |
+| `embalmed` | The source is a token an embalm ability created (702.128a), stamped by `copy_permanent`'s `embalm`. | [An embalmed token that enters as a copy](card-dsl-cookbook.md#an-embalmed-token-that-enters-as-a-copy) |
 | `entered_from` | The source entered from the named zone. | [Conditions](card-dsl.md#conditions) |
 | `escaped` | The source was cast for its escape cost (702.138c-d), or resolved from that spell. | [Casting from the graveyard](card-dsl-cookbook.md#casting-from-the-graveyard) |
 | `evoked` | The source was cast with evoke. | [Conditions](card-dsl.md#conditions) |

@@ -4151,6 +4151,10 @@
     "artist": "Titus Lunter",
     "scryfall_id": "e8be8435-8fb4-47d2-8e7c-0350f354ddbd"
   },
+  "deceptive_frostkite": {
+    "artist": "Josu Solano",
+    "scryfall_id": "1f87120f-d2a7-4c06-aadd-3ed5729d7abf"
+  },
   "deceptive_landscape": {
     "artist": "Erikas Perl",
     "scryfall_id": "2ae6828e-ff19-45db-8b59-61616353491f"
@@ -17284,6 +17288,10 @@
     "artist": "Kekai Kotaki",
     "scryfall_id": "084d641b-7740-471f-bf93-671858ea720f"
   },
+  "synth_infiltrator": {
+    "artist": "Leonardo Borazio",
+    "scryfall_id": "3fe16bc4-8457-4c5f-902a-0746112e80a4"
+  },
   "synthetic_destiny": {
     "artist": "Dave Kendall",
     "scryfall_id": "78ab1d69-da01-424b-9d09-ef985aef4cbd"
@@ -19610,6 +19618,10 @@
   "vivisection": {
     "artist": "Aaron Miller",
     "scryfall_id": "a4eebb5e-cfb3-445e-b090-99f3c572169d"
+  },
+  "vizier_of_many_faces": {
+    "artist": "Ryan Yee",
+    "scryfall_id": "b8385f76-3057-4f8f-af84-f70214364870"
   },
   "vizkopa_vampire": {
     "artist": "Winona Nelson",

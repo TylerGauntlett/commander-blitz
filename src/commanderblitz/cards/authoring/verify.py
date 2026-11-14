@@ -2568,6 +2568,22 @@ def _covered(card: CardDef, line: str) -> bool:
                 continue
             if "enters with" in lowered and not exception.get("enters_with"):
                 continue
+            # "…except if this creature was embalmed, the token has no mana
+            # cost, it's white, and it's a Zombie in addition to its other
+            # types" (Vizier of Many Faces): the condition, the cost, the
+            # colour and the type are each a key.
+            if "was embalmed" in lowered and exception.get("condition") != {"embalmed": True}:
+                continue
+            if "no mana cost" in lowered and not exception.get("no_mana_cost"):
+                continue
+            if any(
+                f"it's {colour}" in lowered for colour in ("white", "blue", "black", "red", "green")
+            ) and not exception.get("colors"):
+                continue
+            if "in addition to its other types" in lowered and not (
+                exception.get("add_types") or exception.get("add_subtypes")
+            ):
+                continue
             # "…with a number of additional +1/+1 counters on it" (The
             # Mimeoplasm) is the same half without the words "enters with".
             if "additional" in lowered and "counter" in lowered and not exception.get(

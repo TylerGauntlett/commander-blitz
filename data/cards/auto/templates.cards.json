@@ -57116,6 +57116,54 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "deceptive_frostkite",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{U}{U}",
+      "name": "Deceptive Frostkite",
+      "oracle_text": "Flying\nYou may have this creature enter as a copy of a creature you control with power 4 or greater, except it's a Dragon in addition to its other types and it has flying.",
+      "power": 1,
+      "replacements": [
+        {
+          "copying": {
+            "controller": "you",
+            "power": {
+              "op": ">=",
+              "value": 4
+            },
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "event": "self_enters_as_copy",
+          "except_": {
+            "add_keywords": [
+              "flying"
+            ],
+            "add_subtypes": [
+              "Dragon"
+            ]
+          }
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -233803,6 +233851,48 @@
       "colors": [
         "U"
       ],
+      "id": "synth_infiltrator",
+      "mana_cost": "{3}{U}{U}",
+      "name": "Synth Infiltrator",
+      "oracle_text": "Improvise (Your artifacts can help cast this spell. Each artifact you tap after you're done activating mana abilities pays for {1}.)\nYou may have this creature enter as a copy of any creature on the battlefield, except it's a Synth artifact creature in addition to its other types.",
+      "pay_generic_with": "tap_artifacts",
+      "power": 0,
+      "replacements": [
+        {
+          "copying": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "event": "self_enters_as_copy",
+          "except_": {
+            "add_subtypes": [
+              "Synth"
+            ],
+            "add_types": [
+              "Artifact"
+            ]
+          }
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Synth"
+      ],
+      "toughness": 0,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
       "id": "synthetic_destiny",
       "mana_cost": "{4}{U}{U}",
       "name": "Synthetic Destiny",
@@ -267663,6 +267753,89 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "exile_from_graveyard": {
+              "count": 1,
+              "self_only": true
+            },
+            "mana": "{3}{U}{U}"
+          },
+          "effects": [
+            {
+              "controller": "you",
+              "embalm": true,
+              "except_": {
+                "add_subtypes": [
+                  "Zombie"
+                ],
+                "colors": [
+                  "W"
+                ],
+                "no_mana_cost": true
+              },
+              "objects": {
+                "controller": "any",
+                "self_only": true,
+                "zone": "exile"
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Embalm {3}{U}{U}"
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "vizier_of_many_faces",
+      "mana_cost": "{2}{U}{U}",
+      "name": "Vizier of Many Faces",
+      "oracle_text": "You may have this creature enter as a copy of any creature on the battlefield, except if this creature was embalmed, the token has no mana cost, it's white, and it's a Zombie in addition to its other types.\nEmbalm {3}{U}{U}",
+      "power": 0,
+      "replacements": [
+        {
+          "copying": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "event": "self_enters_as_copy",
+          "except_": {
+            "add_subtypes": [
+              "Zombie"
+            ],
+            "colors": [
+              "W"
+            ],
+            "condition": {
+              "embalmed": true
+            },
+            "no_mana_cost": true
+          }
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Shapeshifter",
+        "Cleric"
+      ],
+      "toughness": 0,
+      "types": [
+        "Creature"
       ]
     },
     {

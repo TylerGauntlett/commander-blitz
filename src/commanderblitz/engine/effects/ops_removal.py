@@ -48,7 +48,7 @@ from .selectors import (
     pick_from_pool,
     resolve_pool,
 )
-from .tokens import ask_token_copies
+from .tokens import ask_token_copies, ask_token_enters_copies
 from .values import evaluate_value
 
 
@@ -176,6 +176,9 @@ def op_become_copy(ctx: EffectContext, spec: Mapping[str, Any]):
         obj.copying_keywords = frozenset(added) if added else None
         obj.copying_remove_supertypes = None
         obj.copying_add_types = frozenset(types_added) if types_added else None
+        obj.copying_add_subtypes = None
+        obj.copying_colors = None
+        obj.copying_no_mana_cost = False
         obj.copying_add_supertypes = frozenset(supertypes_added) if supertypes_added else None
         obj.copying_own_abilities = kept
         obj.copying_until_eot = until_eot
@@ -878,6 +881,14 @@ def op_copy_permanent(ctx: EffectContext, spec: Mapping[str, Any]):
     *graveyard*, and `self_only` reaches it there because an oid survives every
     zone change.
 
+    ``embalm: true`` says this is an embalm ability's copy (702.128a): each
+    token it makes is stamped `embalmed`, which the ``embalmed`` condition
+    reads -- Vizier of Many Faces' "except if this creature was embalmed".
+
+    A copied card that prints an as-enters copy ("you may have this creature
+    enter as a copy of…") asks it of each token before the token is made
+    (`tokens.ask_token_enters_copies`), as a cast one would be asked.
+
     ``as`` records the copies, the same way `create_token`'s does and for the
     same card: Flamerush Rider's "create a token that's a copy of another target
     attacking creature… Exile **the token** at end of combat." The binding holds
@@ -926,6 +937,21 @@ def op_copy_permanent(ctx: EffectContext, spec: Mapping[str, Any]):
             )
         for pid in controllers:
             copies = yield from ask_token_copies(ctx, pid, amount)
+            # "You may have this creature enter as a copy of…" on the copied
+            # card (an embalmed Vizier of Many Faces): asked of each token now,
+            # before it exists. Not of a copy of a permanent that is itself
+            # copying something -- its token is made from the printed card
+            # (`docs/rules-coverage.md`), whose clause the copiable values it
+            # should have taken do not print.
+            entering = (
+                []
+                if source.copying is not None
+                else (
+                    yield from ask_token_enters_copies(
+                        ctx, pid, source.def_id, amount, copies
+                    )
+                )
+            )
             made.extend(
                 create_token(
                     ctx.state,
@@ -937,6 +963,8 @@ def op_copy_permanent(ctx: EffectContext, spec: Mapping[str, Any]):
                     overrides=dict(overrides) if overrides else None,
                     source=ctx.source_oid,
                     copies=copies,
+                    embalmed=bool(spec.get("embalm")),
+                    enters_copies=entering,
                 )
             )
     if made and attacking is not None:

@@ -13973,6 +13973,38 @@ on top exactly as it would on a real card. The loader rejects unknown keys: a
 misspelled one dropped silently gives a plain copy, which looks identical until
 somebody reads its colour.
 
+### An embalmed token that enters as a copy
+
+```jsonc
+// Vizier of Many Faces
+"replacements": [
+  { "event": "self_enters_as_copy",
+    "copying": { "zone": "battlefield", "controller": "any", "types": ["Creature"] },
+    "except_": { "condition": { "embalmed": true },
+                 "no_mana_cost": true, "colors": ["W"], "add_subtypes": ["Zombie"] } } ],
+// …and its embalm ability's effect
+{ "op": "copy_permanent",
+  "objects": { "zone": "exile", "controller": "any", "self_only": true },
+  "controller": "you", "embalm": true,
+  "except_": { "colors": ["W"], "add_subtypes": ["Zombie"], "no_mana_cost": true } }
+```
+
+*"…except if this creature was embalmed, the token has no mana cost, it's white,
+and it's a Zombie in addition to its other types."*
+
+`"embalm": true` on `copy_permanent` stamps each token it makes `embalmed`
+(702.128a), which the `{"embalmed": true}` condition reads off its source. The
+loader refuses the condition on a card with no such `copy_permanent`, since it
+could never be true there. A copy of an embalmed token is not embalmed.
+
+A token copy of a card that prints an as-enters copy is asked that question
+before it exists, exactly as a cast one is, so the embalmed Vizier enters as a
+copy of a creature. That copy overwrites every copiable value the token was
+created with, embalm's exception included (613.2a, 707.2), so the copy is white,
+a Zombie and costless only because the Vizier's own exception says so. That is
+why the card prints it, and why the condition is on `except_` rather than on the
+replacement: cast from hand, the Vizier still enters as a copy, a plain one.
+
 ## "You may play the exiled card this turn" — impulse draw
 
 Florian, Voldaren Scion, and the whole impulse family. A key on the `exile` op:

@@ -1,0 +1,82 @@
+{
+  "_comment": "Shapes for tests/unit/copies/test_enters_as_copy_embalmed.py. t_eace_vizier is Vizier of Many Faces: a 0/1 blue Shapeshifter Cleric that may enter as a copy of any creature, except if it was embalmed the copy has no mana cost, is white and is a Zombie in addition to its other types; Embalm {3}{U}{U}. t_eace_frostkite is Deceptive Frostkite's clause: a copy of a creature you control with power 4 or greater, except it's a Dragon in addition to its other types and has flying. t_eace_ogre is a 4/4 vanilla Ogre with mana cost {3}{R}, the thing copied.",
+  "cards": [
+    {
+      "id": "t_eace_vizier",
+      "name": "Test Vizier",
+      "oracle_text": "You may have this creature enter as a copy of any creature on the battlefield, except if this creature was embalmed, the token has no mana cost, it's white, and it's a Zombie in addition to its other types.\nEmbalm {3}{U}{U}",
+      "mana_cost": "{2}{U}{U}",
+      "types": ["Creature"],
+      "subtypes": ["Shapeshifter", "Cleric"],
+      "power": 0,
+      "toughness": 1,
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "replacements": [
+        {
+          "event": "self_enters_as_copy",
+          "copying": {"zone": "battlefield", "controller": "any", "types": ["Creature"]},
+          "except_": {
+            "condition": {"embalmed": true},
+            "no_mana_cost": true,
+            "colors": ["W"],
+            "add_subtypes": ["Zombie"]
+          }
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Embalm {3}{U}{U}",
+          "active_zones": ["graveyard"],
+          "sorcery_speed_only": true,
+          "cost": {
+            "mana": "{3}{U}{U}",
+            "exile_from_graveyard": {"self_only": true, "count": 1}
+          },
+          "effects": [
+            {
+              "op": "copy_permanent",
+              "objects": {"zone": "exile", "controller": "any", "self_only": true},
+              "controller": "you",
+              "embalm": true,
+              "except_": {"colors": ["W"], "add_subtypes": ["Zombie"], "no_mana_cost": true}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_eace_frostkite",
+      "name": "Test Frostkite",
+      "oracle_text": "Flying\nYou may have this creature enter as a copy of a creature you control with power 4 or greater, except it's a Dragon in addition to its other types and it has flying.",
+      "mana_cost": "{3}{U}",
+      "types": ["Creature"],
+      "subtypes": ["Drake"],
+      "power": 3,
+      "toughness": 3,
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "keywords": ["flying"],
+      "replacements": [
+        {
+          "event": "self_enters_as_copy",
+          "copying": {"zone": "battlefield", "controller": "you", "types": ["Creature"], "power": {"op": ">=", "value": 4}},
+          "except_": {"add_subtypes": ["Dragon"], "add_keywords": ["flying"]}
+        }
+      ]
+    },
+    {
+      "id": "t_eace_ogre",
+      "name": "Test Ogre",
+      "oracle_text": "",
+      "mana_cost": "{3}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Ogre"],
+      "power": 4,
+      "toughness": 4,
+      "colors": ["R"],
+      "color_identity": ["R"]
+    }
+  ]
+}

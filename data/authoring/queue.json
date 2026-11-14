@@ -64282,12 +64282,12 @@
     },
     "Deceptive Frostkite": {
       "edhrec_rank": 3852,
-      "gate": "template",
+      "gate": null,
       "name": "Deceptive Frostkite",
-      "reason": "no template for: You may have this creature enter as a copy of a creature you control with power 4 or great",
+      "reason": "",
       "scryfall_id": "1f87120f-d2a7-4c06-aadd-3ed5729d7abf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deceptive Landscape": {
@@ -273102,12 +273102,12 @@
     },
     "Synth Infiltrator": {
       "edhrec_rank": 8844,
-      "gate": "template",
+      "gate": null,
       "name": "Synth Infiltrator",
-      "reason": "no template for: You may have this creature enter as a copy of any creature on the battlefield, except it's",
+      "reason": "",
       "scryfall_id": "3fe16bc4-8457-4c5f-902a-0746112e80a4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Synthesis Pod": {
@@ -306422,12 +306422,12 @@
     },
     "Vizier of Many Faces": {
       "edhrec_rank": 4333,
-      "gate": "template",
+      "gate": null,
       "name": "Vizier of Many Faces",
-      "reason": "no template for: You may have this creature enter as a copy of any creature on the battlefield, except if t",
+      "reason": "",
       "scryfall_id": "b8385f76-3057-4f8f-af84-f70214364870",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vizier of Remedies": {

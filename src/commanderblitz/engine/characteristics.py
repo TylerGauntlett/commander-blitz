@@ -518,14 +518,14 @@ def _base_pt(state: GameState, obj: GameObject) -> tuple[int, int]:
     card = state.card_of(obj)
     power = card.power or 0
     toughness = card.toughness or 0
-    if obj.copy_overrides:
+    if overrides := obj.live_copy_overrides:
         # "…except it's a **4/4** black Zombie" (eternalize, 702.129a). The base
         # size, before every layer, so counters and anthems land on top of the
         # 4/4 exactly as they would on a printed one (707.9b: the exception
         # becomes the copiable value).
-        if (base_power := obj.copy_overrides.get("power")) is not None:
+        if (base_power := overrides.get("power")) is not None:
             power = int(base_power)
-        if (base_toughness := obj.copy_overrides.get("toughness")) is not None:
+        if (base_toughness := overrides.get("toughness")) is not None:
             toughness = int(base_toughness)
     if obj.cast_bestowed and obj.attached_to is not None and obj.on_battlefield:
         # Bestow (702.103b): while it is attached it is not a creature, so it
@@ -570,8 +570,8 @@ def _compute(state: GameState, oid: int) -> Characteristics:
     # Applied to the *printed* face, before any layer: the exception is part of
     # what this object is, not an effect on it, so an anthem or an animate
     # afterwards should layer on top exactly as it would on a printed card.
-    if obj.copy_overrides:
-        if (renamed := obj.copy_overrides.get("subtypes")) is not None:
+    if overrides := obj.live_copy_overrides:
+        if (renamed := overrides.get("subtypes")) is not None:
             # "…except it's a 4/4 black **Zombie**." No "in addition to its
             # other types", so the copy is a Zombie *instead of* its creature
             # types (205.1b): The Scarab God's token of a Llanowar Elves is no
@@ -579,18 +579,18 @@ def _compute(state: GameState, oid: int) -> Characteristics:
             # would leave a Zombie Elf Druid -- a better card than the printed
             # one on every Elf-matters board.
             subtypes = set(renamed)
-        if added := obj.copy_overrides.get("add_subtypes"):
+        if added := overrides.get("add_subtypes"):
             subtypes.update(added)
-        if added_keywords := obj.copy_overrides.get("add_keywords"):
+        if added_keywords := overrides.get("add_keywords"):
             # "…except it's a 5/5 artifact creature in addition to its other
             # types and **has haste**" (Saheeli, Radiant Creator). A copiable
             # value, so it sits beside the printed keywords before layer 6: a
             # "loses all abilities" effect removes it, and a copy of this token
             # inherits it through `copy_overrides` (707.9b).
             keywords.update(added_keywords)
-        if (repaint := obj.copy_overrides.get("colors")) is not None:
+        if (repaint := overrides.get("colors")) is not None:
             colors = set(repaint)
-        if (retyped := obj.copy_overrides.get("types")) is not None:
+        if (retyped := overrides.get("types")) is not None:
             # "…except it's an artifact and it **loses all other card types**."
             # A replacement, where `add_subtypes` above is an addition, and the
             # printed clause is what decides which: Espers to Magicite's token
@@ -601,17 +601,17 @@ def _compute(state: GameState, oid: int) -> Characteristics:
             # which is also what the printing says: it loses its card types and
             # is not told to lose its creature types.
             types = set(retyped)
-        if added_types := obj.copy_overrides.get("add_types"):
+        if added_types := overrides.get("add_types"):
             # "…except it's an artifact **in addition to its other types**."
             # Faerie Artisans. The addition beside `types`' replacement, and the
             # printing decides again: a copied Enchantment Creature stays both.
             types.update(added_types)
-        if added_supers := obj.copy_overrides.get("add_supertypes"):
+        if added_supers := overrides.get("add_supertypes"):
             # "…except it's legendary." Adagia, Windswept Bastion. Unioned onto
             # the copied card's supertypes, so the legend rule -- which reads
             # this, not the printed card -- applies to the token.
             supertypes.update(added_supers)
-        if dropped_supers := obj.copy_overrides.get("remove_supertypes"):
+        if dropped_supers := overrides.get("remove_supertypes"):
             # "…except the token isn't legendary." Miirym, Sentinel Wyrm; Helm
             # of the Host; Kindred Charge. The set difference beside the union
             # above, and the *only* subtraction any printing asks for -- and the
@@ -3189,7 +3189,8 @@ def keyword_as_it_enters(state: GameState, oid: int, keyword: str) -> bool:
         return True
     # A token copy's exception (707.9b) is part of what arrives, as printed as
     # the copied card's own keywords.
-    if obj.copy_overrides and keyword in (obj.copy_overrides.get("add_keywords") or ()):
+    overrides = obj.live_copy_overrides
+    if overrides and keyword in (overrides.get("add_keywords") or ()):
         return True
     for source_obj, static in _battlefield_statics(state):
         if static.get("effect") != "grant_keyword":

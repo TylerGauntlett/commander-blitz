@@ -12,7 +12,7 @@ missing.
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from typing import Any
 
 from ..player_statics import token_copy_replacements
@@ -76,3 +76,37 @@ def ask_token_copies(ctx: EffectContext, pid: int, count: int):
                 (chosen.def_id, dict(chosen.copy_overrides) if chosen.copy_overrides else None)
             )
     return copies
+
+
+def ask_token_enters_copies(
+    ctx: EffectContext,
+    pid: int,
+    def_id: str,
+    count: int,
+    copies: Sequence[tuple[str, Mapping[str, Any] | None]] = (),
+):
+    """Ask the as-enters copy question of each token about to be made.
+
+    A token copy of a card that prints "you may have this creature enter as a
+    copy of any creature on the battlefield" enters with that replacement
+    (614.1b), so it is asked exactly as a cast one is -- Vizier of Many Faces
+    embalmed is the printed case. `create_token` is not a generator, so the
+    question is asked here, a moment before the call, over the same
+    `primitives.token_plan`; nobody receives priority in between, and the
+    token is never seen as itself.
+
+    Returns the answers `create_token` takes as ``enters_copies``: one def id
+    or None per token, in the order it makes them. A token whose face prints
+    no such clause, and one whose clause copies what its own ``as_enters``
+    effects bind (which a token runs none of), answers None.
+    """
+    from ..primitives import token_plan
+    from ..zones import ask_enters_copy
+
+    plan, _ = token_plan(ctx.state, def_id, pid, count, copies)
+    answers: list[str | None] = []
+    for token_id, token_count, _ in plan:
+        card = ctx.state.registry.get(token_id)
+        for _ in range(max(0, token_count)):
+            answers.append((yield from ask_enters_copy(ctx.state, card, pid, ctx.source_oid)))
+    return answers if any(answers) else []

@@ -1401,7 +1401,7 @@ def has_printed_cost(state, oid: int, wanted) -> bool:
     obj = state.objects.get(oid)
     if obj is None:
         return False
-    if obj.copy_overrides and obj.copy_overrides.get("no_mana_cost"):
+    if (overrides := obj.live_copy_overrides) and overrides.get("no_mana_cost"):
         return False
     return printed_cost_is(state.card_of(obj).mana_cost, wanted)
 

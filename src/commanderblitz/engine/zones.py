@@ -935,7 +935,20 @@ def offer_enters_copy(state: GameState, oid: int, controller: int):
     obj = state.objects.get(oid)
     if obj is None:
         return
-    card = state.card_of(obj)
+    chosen = yield from ask_enters_copy(state, state.card_of(obj), controller, oid)
+    if chosen is not None:
+        obj.enters_copy_of = chosen
+
+
+def ask_enters_copy(state: GameState, card: CardDef, controller: int, source_oid: int | None):
+    """Ask ``card``'s as-enters copy question; the def id chosen, or None.
+
+    The body of `offer_enters_copy`, apart so a token can be asked before it
+    exists: `effects.tokens.ask_token_enters_copies` asks it for each token a
+    `copy_permanent` is about to make whose copied face prints the clause --
+    an embalmed Vizier of Many Faces enters as a copy as surely as a cast one
+    does. ``source_oid`` is the object the pool is resolved for.
+    """
     for replacement in card.replacements:
         if replacement.get("event") != "self_enters_as_copy":
             continue
@@ -948,7 +961,7 @@ def offer_enters_copy(state: GameState, oid: int, controller: int):
             continue
         selector = replacement.get("copying") or {}
         ctx = EffectContext(
-            state=state, controller=controller, source_oid=oid, source_name=card.name
+            state=state, controller=controller, source_oid=source_oid, source_name=card.name
         )
 
         # `exclude_self` is implicit and structural rather than written: the
@@ -977,8 +990,9 @@ def offer_enters_copy(state: GameState, oid: int, controller: int):
             continue
         model = state.objects.get(chosen[0])
         if model is not None:
-            obj.enters_copy_of = state.card_of(model).id
-        return
+            return state.card_of(model).id
+        return None
+    return None
 
 
 #: Riot's two halves, in the order the reminder text prints them.
@@ -1943,6 +1957,18 @@ def _enter_battlefield(
             # counters, appended below.
             if copy_on_arrival is not None:
                 exception = replacement.get("except_") or {}
+                # "…except **if this creature was embalmed**, the token has no
+                # mana cost…" (Vizier of Many Faces): an exception that is
+                # part of the copy only when its condition holds, judged now,
+                # before the copy applies, with the arriving permanent as the
+                # source. Failing, the copy is a plain one (707.9b).
+                if not evaluate_condition(
+                    state,
+                    exception.get("condition"),
+                    controller=obj.controller,
+                    source=obj.oid,
+                ):
+                    exception = {}
                 obj.copying = copy_on_arrival
                 obj.copying_until_eot = replacement.get("duration") == "end_of_turn"
                 added = exception.get("add_keywords")
@@ -1956,6 +1982,20 @@ def _enter_battlefield(
                 # (Phyrexian Metamorph).
                 types_added = exception.get("add_types")
                 obj.copying_add_types = frozenset(types_added) if types_added else None
+                # "…it's a Zombie in addition to its other types", "…it's
+                # white", "…the token has no mana cost" (Vizier of Many Faces;
+                # Deceptive Frostkite's Dragon) -- `copy_permanent`'s keys of
+                # the same names, here as the copy's own copiable values. A
+                # token's creating exception does not survive this copy
+                # (`GameObject.live_copy_overrides`), so these are the only
+                # ones the copy has.
+                subtypes_added = exception.get("add_subtypes")
+                obj.copying_add_subtypes = (
+                    frozenset(subtypes_added) if subtypes_added else None
+                )
+                colors = exception.get("colors")
+                obj.copying_colors = frozenset(colors) if colors is not None else None
+                obj.copying_no_mana_cost = bool(exception.get("no_mana_cost"))
                 obj.copying_add_supertypes = None
                 obj.copying_own_abilities = None
                 obj.copying_name = exception.get("name")

@@ -2948,6 +2948,10 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             for name in named:
                 if name not in known:
                     raise DslError(f"{where}.except_.{key}: unknown {noun} {name!r}")
+    if op == "copy_permanent" and "embalm" in effect and effect["embalm"] is not True:
+        # Embalm's stamp (702.128a). Present-and-false says nothing, and a
+        # string would load and stamp nothing a condition could read.
+        raise DslError(f"{where}.embalm: must be true -- omit it otherwise")
     if op == "copy_permanent" and (overrides := effect.get("except_") or effect.get("except")):
         # "…except it's a white Zombie Angel with no mana cost." A misspelled
         # key here would be silently dropped, and the token would come back a

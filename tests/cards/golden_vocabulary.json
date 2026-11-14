@@ -104,9 +104,13 @@
   ],
   "ENTERS_COPY_EXCEPT_KEYS": [
    "add_keywords",
+   "add_subtypes",
    "add_types",
+   "colors",
+   "condition",
    "enters_with",
    "name",
+   "no_mana_cost",
    "remove_supertypes"
   ],
   "FIRST_ACTIVATION_TARGETING_KEYS": [

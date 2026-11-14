@@ -1299,7 +1299,7 @@ def object_mana_value(state: Any, obj: Any) -> int:
     spell's mana value" (Shark Typhoon, Plasm Capture) is 6 for a Fireball cast
     with X = 5. Everywhere else X is 0 and this is the printed number.
     """
-    if obj.copy_overrides and obj.copy_overrides.get("no_mana_cost"):
+    if (overrides := obj.live_copy_overrides) and overrides.get("no_mana_cost"):
         return 0
     card = state.card_of(obj)
     spell_x = next(

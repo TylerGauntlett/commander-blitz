@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**376 cards** blocked by **323** capabilities.
+**373 cards** blocked by **320** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -41,7 +41,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [devotion](#devotion) | 2 | 2401 | value |
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
-| [enters-as-copy-add-subtypes](#enters-as-copy-add-subtypes) | 2 | 3852 | replacement |
 | [excess-damage](#excess-damage) | 2 | 4086 | value |
 | [exile-permanent-cost](#exile-permanent-cost) | 2 | 6544 | cost |
 | [experience-counters](#experience-counters) | 2 | 1480 | engine |
@@ -147,7 +146,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [echo](#echo) | 1 | 961 | keyword |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
-| [embalm](#embalm) | 1 | 4333 | cost |
 | [encore](#encore) | 1 | 9330 | static_effect |
 | [end-of-combat-trigger](#end-of-combat-trigger) | 1 | 4544 | trigger_event |
 | [energy-alternative-cost](#energy-alternative-cost) | 1 | 7462 | op |
@@ -155,7 +153,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [energy-gained-trigger](#energy-gained-trigger) | 1 | 7466 | trigger_event |
 | [enlist](#enlist) | 1 | 13396 | keyword, value |
 | [entered-without-being-cast](#entered-without-being-cast) | 1 | 7379 | selector |
-| [enters-as-copy-embalmed-exception](#enters-as-copy-embalmed-exception) | 1 | 4333 | replacement |
 | [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
 | [equipment-had](#equipment-had) | 1 | 14101 | value |
 | [equipped-trigger-filter](#equipped-trigger-filter) | 1 | 9043 | selector |
@@ -1093,24 +1090,6 @@ Blocks **2** cards.
   - Magma Opus deals 4 damage divided as you choose among any number of targets.
 - **Skarrgan Hellkite** (rank 13459) — `skarrgan_hellkite`
   - {3}{R}: This creature deals 2 damage divided as you choose among one or two targets. Activate only if this creature has a +1/+1 counter on it.
-
-</details>
-
-## enters-as-copy-add-subtypes
-
-Blocks **2** cards.
-
-- **(replacement)** an `add_subtypes` key in a `self_enters_as_copy` replacement's `except_` (707.9b), written into the copy's copiable values like `add_types`, so "except it's a Dragon in addition to its other types" is {"add_subtypes": ["Dragon"], "add_keywords": ["flying"]}
-  <br>Why the existing vocabulary won't do: The packet's reference does not list the `self_enters_as_copy` replacement at all, and the engine's ENTERS_COPY_EXCEPT_KEYS is only add_keywords, add_types, remove_supertypes, name and enters_with: `add_types` adds card types (Phyrexian Metamorph's artifact), not a creature subtype. A self_enters trigger with `become_copy` or `add_subtype` would let the 1/1 be seen as itself first and make the subtype a later effect rather than part of the copy, which is a different card
-- **(replacement)** an `add_subtypes` key in a `self_enters_as_copy` replacement's `except_`, written into the copiable values as the permanent enters (707.9b) so the copy is a Synth in addition to the copied creature's subtypes, beside the existing `add_types: ["Artifact"]`
-  <br>Why the existing vocabulary won't do: `self_enters_as_copy`'s `except_` accepts only ENTERS_COPY_EXCEPT_KEYS (add_keywords, add_types, remove_supertypes, name, enters_with); `zones._enter_battlefield` sets copying_add_types but has no subtype field. `characteristics` already reads `add_subtypes` from `copy_overrides`, but only token copies (`copy_permanent`) set that. A self_enters trigger with `add_subtype` would be a separate, later effect rather than a copiable value, and a copy of this permanent would not be a Synth
-
-<details><summary>Cards waiting on this</summary>
-
-- **Deceptive Frostkite** (rank 3852) — `deceptive_frostkite`
-  - You may have this creature enter as a copy of a creature you control with power 4 or greater, except it's a Dragon in addition to its other types and it has flying.
-- **Synth Infiltrator** (rank 8844) — `synth_infiltrator`
-  - You may have this creature enter as a copy of any creature on the battlefield, except it's a Synth artifact creature in addition to its other types.
 
 </details>
 
@@ -2720,21 +2699,6 @@ Blocks **1** card.
 
 </details>
 
-## embalm
-
-Blocks **1** card.
-
-- **(cost)** a card-level `embalm` cost (702.128): an activated ability usable only from the graveyard at sorcery speed whose cost is the printed mana plus exiling the card itself from the graveyard, and whose effect creates a token that is a copy of the card except it is white, has no mana cost and is a Zombie in addition to its other types; the token must remember it was embalmed so the card's own text can read it
-  <br>Why the existing vocabulary won't do: `card_level_cost_keys` has no embalm/eternalize; `exile_self` as a cost requires the source on the battlefield, `graveyard_cost`/`flashback` cast the card rather than create a token copy of it, and `copy_permanent` copies a permanent on the battlefield, not a card in the graveyard, with no white/no-mana-cost/Zombie exception
-
-<details><summary>Cards waiting on this</summary>
-
-- **Vizier of Many Faces** (rank 4333) — `vizier_of_many_faces`
-  - You may have this creature enter as a copy of any creature on the battlefield, except if this creature was embalmed, the token has no mana cost, it's white, and it's a Zombie in addition to its other types
-  - Embalm {3}{U}{U}
-
-</details>
-
 ## encore
 
 Blocks **1** card.
@@ -2833,21 +2797,6 @@ Blocks **1** card.
 
 - **Rapid Augmenter** (rank 7379) — `rapid_augmenter`
   - Whenever another creature you control enters, if it wasn't cast, put a +1/+1 counter on this creature and this creature can't be blocked this turn.
-
-</details>
-
-## enters-as-copy-embalmed-exception
-
-Blocks **1** card.
-
-- **(replacement)** a `self_enters_as_copy` replacement (707.9) whose `except_` is conditional on the entering object being an embalmed token: if so, the copy's copiable values become white, lose their mana cost and add the Zombie subtype (707.9b), otherwise no exception; needs an `embalmed` condition plus `set_colors`, `no_mana_cost` and `add_subtypes` exception keys
-  <br>Why the existing vocabulary won't do: The packet's reference does not list `self_enters_as_copy` at all, and the engine's enters-as-copy exception keys (add_keywords, add_types, remove_supertypes, name, enters_with) have no colour, mana-cost or subtype override and no condition; a `self_enters` trigger with `become_copy` would make the copy a later effect rather than the entering object's copiable values
-
-<details><summary>Cards waiting on this</summary>
-
-- **Vizier of Many Faces** (rank 4333) — `vizier_of_many_faces`
-  - You may have this creature enter as a copy of any creature on the battlefield, except if this creature was embalmed, the token has no mana cost, it's white, and it's a Zombie in addition to its other types
-  - Embalm {3}{U}{U}
 
 </details>
 

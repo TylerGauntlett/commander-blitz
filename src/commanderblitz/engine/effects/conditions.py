@@ -78,6 +78,10 @@ CONDITION_KEYS = frozenset(
         # for the card's own escape cost and the permanent it resolved into --
         # not of a cast from the graveyard under another permission.
         "escaped",
+        # "…except **if this creature was embalmed**" (Vizier of Many Faces):
+        # the source is a token an embalm ability created (702.128a), stamped
+        # by `copy_permanent`'s ``embalm`` key as the token is made.
+        "embalmed",
         "cast_from_graveyard",
         #: Approach of the Second Sun's "if this spell was cast from your hand".
         #: The sibling of the key above and not its negation: a spell cast from
@@ -267,6 +271,12 @@ def evaluate(ctx: EffectContext, cond: Any) -> bool:
         obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
         did = obj is not None and obj.cast_escaped
         return did == bool(cond["escaped"])
+    if "embalmed" in cond:
+        # A stamp of the object's creation, never cleared, so it reads the
+        # same as the token enters and for as long as it exists.
+        obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
+        was = obj is not None and obj.embalmed
+        return was == bool(cond["embalmed"])
     if "cast_from_graveyard" in cond:
         # "If this spell was cast from a graveyard, create ten of those tokens
         # instead." Read while the spell is still resolving, so `ctx.source_oid`
@@ -576,6 +586,8 @@ def validate_condition(cond: Any, where: str) -> None:
         raise DslError(f"{where}.impending: must be true or false")
     if "escaped" in cond and not isinstance(cond["escaped"], bool):
         raise DslError(f"{where}.escaped: must be true or false")
+    if "embalmed" in cond and not isinstance(cond["embalmed"], bool):
+        raise DslError(f"{where}.embalmed: must be true or false")
     if "cast_from_exile" in cond and not isinstance(cond["cast_from_exile"], bool):
         raise DslError(f"{where}.cast_from_exile: must be true or false")
     if "no_monarch" in cond and not isinstance(cond["no_monarch"], bool):

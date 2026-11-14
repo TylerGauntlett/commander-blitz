@@ -212,6 +212,21 @@ class GameObject:
     #: types". Written, read and cleared beside `copying_keywords`, for its
     #: reasons.
     copying_add_types: frozenset[str] | None = None
+    #: Creature and other subtypes the copy carries *in addition to* the copied
+    #: ones (707.9b) -- Vizier of Many Faces' "…it's a Zombie in addition to
+    #: its other types", Deceptive Frostkite's Dragon. Written, read and
+    #: cleared beside `copying_add_types`, for its reasons.
+    copying_add_subtypes: frozenset[str] | None = None
+    #: The colours the copy has *instead of* the copied ones (707.9b) --
+    #: Vizier of Many Faces' "…it's white". Written, read and cleared beside
+    #: `copying_add_types`, for its reasons.
+    copying_colors: frozenset[str] | None = None
+    #: Whether the copy has no mana cost (707.9b) -- Vizier of Many Faces'
+    #: "…the token has no mana cost". `GameState.card_of` gives the copied
+    #: face an empty `ManaCost`, so its mana value is 0 and it matches no
+    #: printed-cost filter (202.1b). Written, read and cleared beside
+    #: `copying_add_types`, for its reasons.
+    copying_no_mana_cost: bool = False
     #: Supertypes the copy carries *in addition to* the copied ones (707.9b) --
     #: Sarkhan, Soul Aflame's "…and it's legendary in addition to its other
     #: types". Written by `become_copy` from its ``except_.add_supertypes``,
@@ -1194,7 +1209,18 @@ class GameObject:
     #:
     #: Preserved across zone changes for the same reason ``is_token`` is: it is
     #: part of what the object *is*, not something that happened to it.
+    #:
+    #: Read through `live_copy_overrides`, never directly: a later copy effect
+    #: on the object overwrites these values (613.2a, 707.2).
     copy_overrides: dict[str, Any] | None = None
+    #: "…except **if this creature was embalmed**, the token has no mana cost"
+    #: -- Vizier of Many Faces. True of a token an embalm ability created
+    #: (702.128a), written by `copy_permanent`'s ``embalm`` key before the
+    #: token enters, so an as-enters copy exception can ask about it, and read
+    #: by the ``embalmed`` condition. Not a copiable value: a copy of an
+    #: embalmed token was created by something else and is not embalmed.
+    #: Never cleared, for ``is_token``'s reason.
+    embalmed: bool = False
 
     #: "It becomes a Vampire in addition to its other types." Captivating
     #: Vampire — a *one-shot* type change with no duration, which is a different
@@ -1412,6 +1438,9 @@ class GameObject:
         self.copying_keywords = None
         self.copying_remove_supertypes = None
         self.copying_add_types = None
+        self.copying_add_subtypes = None
+        self.copying_colors = None
+        self.copying_no_mana_cost = False
         self.copying_add_supertypes = None
         self.copying_own_abilities = None
         self.renamed_to = None
@@ -1529,6 +1558,23 @@ class GameObject:
             self.attack_marks = [m for m in self.attack_marks if m.while_counter != kind]
 
     # -- convenience ----------------------------------------------------------
+
+    @property
+    def live_copy_overrides(self) -> dict[str, Any] | None:
+        """The `copy_overrides` still in force: none while a later copy applies.
+
+        The exception a token's creating effect set is part of that copy
+        effect's copiable values (707.9b), and a copy effect applied to the
+        object afterwards -- an as-enters copy (614.1b), a `become_copy` --
+        overwrites every copiable value, exceptions included (613.2a, 707.2).
+        So an embalmed Vizier of Many Faces that enters as a copy of a
+        creature is not white or a Zombie by embalm's exception: only by its
+        own printed one, which is why the card prints it. While `copying` is
+        set the copy's own exception (`copying_colors` and its siblings) is
+        the one that applies, and these values come back when a timed copy
+        ends.
+        """
+        return None if self.copying is not None else self.copy_overrides
 
     @property
     def on_battlefield(self) -> bool:

@@ -748,6 +748,8 @@ CONDITIONS: dict[str, Entry] = {
     "evoked": ("The source was cast with evoke.", None),
     "escaped": ("The source was cast for its escape cost (702.138c-d), or resolved from that spell.",
                 "Casting from the graveyard"),
+    "embalmed": ("The source is a token an embalm ability created (702.128a), stamped by "
+                 "`copy_permanent`'s `embalm`.", "An embalmed token that enters as a copy"),
     "impending": ("The permanent was cast for its impending cost (the rule's own reads).",
                   "Impending — a creature that is not one until it counts down"),
     "exists": ("A selector finds at least one object.", None),

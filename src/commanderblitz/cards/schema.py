@@ -1346,7 +1346,10 @@ class ReplacementModel(BaseModel):
     #: "…and it isn't legendary"), ``name`` ("…except his name is Chameleon,
     #: Master of Disguise") and ``enters_with``, a list of ``{counter, amount,
     #: condition}`` judged against the copy as it enters (Spark Double's "an
-    #: additional +1/+1 counter on it if it's a creature"). The loader holds
+    #: additional +1/+1 counter on it if it's a creature"); ``add_subtypes``,
+    #: ``colors`` and ``no_mana_cost``, `copy_permanent`'s spellings; and
+    #: ``condition``, which makes the whole exception conditional (Vizier of
+    #: Many Faces' "except if this creature was embalmed"). The loader holds
     #: the set as ``ENTERS_COPY_EXCEPT_KEYS``.
     except_: dict[str, Any] | None = None
     #: `self_enters_as_copy`: how long the copy lasts. ``permanent`` (the

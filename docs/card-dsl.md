@@ -3261,9 +3261,13 @@ The other keys, each a copiable value the copy carries until it ends:
 |---|---|
 | `add_keywords` | keywords added to the copied face |
 | `add_types` | `copy_permanent`'s key of the same name: card types the copy has in addition to the copied ones, on `copying_add_types` — Phyrexian Metamorph's `["Artifact"]` |
+| `add_subtypes` | `copy_permanent`'s key of the same name: subtypes the copy has in addition to the copied ones, on `copying_add_subtypes` — Deceptive Frostkite's `["Dragon"]` |
+| `colors` | `copy_permanent`'s key of the same name: the copy's colours instead of the copied ones, on `copying_colors` |
+| `no_mana_cost` | `copy_permanent`'s key of the same name: the copy has no mana cost (202.1b), on `copying_no_mana_cost`; its mana value is 0 |
 | `remove_supertypes` | `copy_permanent`'s key of the same name: supertypes the copy does not take, on `copying_remove_supertypes`. The legend rule reads the result |
 | `name` | the name the copy keeps (`become_copy`'s `except_name`), on `copying_name` |
 | `enters_with` | counters the copy enters with, each `{counter, amount, condition}`, the fields `self_enters_with_counters` has; `amount` is a value expression in which `{"x": true}` is the X announced on casting (Altered Ego) |
+| `condition` | the whole exception applies only when this holds, judged as the permanent arrives, before the copy, with it as the source; otherwise the copy is plain. Vizier of Many Faces' "except if this creature was embalmed" is `{"embalmed": true}` ([cookbook](card-dsl-cookbook.md#an-embalmed-token-that-enters-as-a-copy)) |
 
 `enters_with` is part of the replacement (614.1c). Its conditions are judged once
 the copy is applied, with the arriving permanent as `self_only`, so "if it's a
@@ -3279,8 +3283,15 @@ loyalty (306.5b), which the loader compiles as a `self_enters_with_counters` on
 that face. The printed card's other replacements stay the ones read.
 
 The loader holds the key set as `ENTERS_COPY_EXCEPT_KEYS`. It refuses an unknown
-key, an empty exception, an empty list, an unknown keyword, supertype or counter,
-a malformed condition and an empty name.
+key, an empty exception (a `condition` alone is one), an empty list, an unknown
+keyword, colour, supertype or counter, a malformed condition, an empty name and a
+`no_mana_cost` that is not `true`.
+
+A copy applied as a permanent enters overwrites every copiable value the object
+had (613.2a, 707.2), so a token's own creating exception (`copy_overrides`) does
+not apply while it is copying: only this exception does. A token copy of a card
+with this replacement is asked the question too, by `copy_permanent` before the
+token is made, unless what it copied was itself copying something.
 
 `copying` is required on the event; `copying`, `except_` and a non-default
 `duration` are refused on the other four. Always an
