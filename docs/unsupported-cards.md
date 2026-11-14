@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**371 cards** blocked by **318** capabilities.
+**389 cards** blocked by **337** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -18,9 +18,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
 | [rooms](#rooms) | 6 | 4163 | engine |
+| [council-s-dilemma](#council-s-dilemma) | 5 | 3539 | decision, op |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
-| [council-s-dilemma](#council-s-dilemma) | 4 | 3539 | decision, op |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 4 | 2389 | engine |
 | [escape](#escape) | 4 | 388 | engine, op, static_effect |
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 4 | 714 | engine |
@@ -32,6 +32,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [milled-this-turn](#milled-this-turn) | 3 | 4283 | selector |
 | [omen](#omen) | 3 | 3355 | cost, engine |
 | [random-player-choice](#random-player-choice) | 3 | 5120 | op |
+| [secret-choice](#secret-choice) | 3 | 3483 | decision |
 | [add-color](#add-color) | 2 | 2040 | op |
 | [all-creature-types](#all-creature-types) | 2 | 958 | static_effect |
 | [attach-enchant-legality](#attach-enchant-legality) | 2 | 1540 | engine |
@@ -39,6 +40,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-from-library-top-unrestricted](#cast-from-library-top-unrestricted) | 2 | 1913 | static_effect |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
+| [copy-for-each-other-target](#copy-for-each-other-target) | 2 | 8216 | op |
+| [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 2 | 15516 | selector |
 | [devotion](#devotion) | 2 | 2401 | value |
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
 | [excess-damage](#excess-damage) | 2 | 4086 | value |
@@ -46,6 +49,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [experience-counters](#experience-counters) | 2 | 1480 | engine |
 | [face-down-filter](#face-down-filter) | 2 | 5772 | selector |
 | [fraction-of-value](#fraction-of-value) | 2 | 6297 | value |
+| [goad](#goad) | 2 | 6258 | op |
 | [manifest-dread](#manifest-dread) | 2 | 5772 | op |
 | [mercenary-token](#mercenary-token) | 2 | 8312 | token |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
@@ -59,7 +63,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [robot-token-3-3](#robot-token-3-3) | 2 | 5966 | token |
 | [soldier-1-1-rw-haste](#soldier-1-1-rw-haste) | 2 | 2160 | token |
 | [static-greatest-power-in-graveyard](#static-greatest-power-in-graveyard) | 2 | 7077 | value |
+| [suspect](#suspect) | 2 | 4851 | op |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
+| [targets-only-self](#targets-only-self) | 2 | 8216 | trigger_event |
 | [turn-face-up](#turn-face-up) | 2 | 5772 | op |
 | [venture](#venture) | 2 | 19644 | engine |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
@@ -67,6 +73,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [x-maximum](#x-maximum) | 2 | 1665 | engine |
 | [zombie-1-1-w](#zombie-1-1-w) | 2 | 3702 | token |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
+| [activate-only-once](#activate-only-once) | 1 | 9335 | engine |
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
 | [add-card-type-to-spells](#add-card-type-to-spells) | 1 | 4178 | static_effect |
 | [add-mana-on-tap-any-color](#add-mana-on-tap-any-color) | 1 | 1052 | static_effect |
@@ -78,9 +85,11 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [assassin-token](#assassin-token) | 1 | 2604 | token |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [attachments-had](#attachments-had) | 1 | 10726 | selector |
+| [attack-restriction-until-your-next-turn](#attack-restriction-until-your-next-turn) | 1 | 3290 | op |
 | [attack-tax-x-count](#attack-tax-x-count) | 1 | 671 | value |
 | [attacked-this-turn-static-condition](#attacked-this-turn-static-condition) | 1 | 3425 | static_effect |
 | [attacking-opponents-of-player](#attacking-opponents-of-player) | 1 | 705 | selector |
+| [attacking-you-or-your-planeswalker](#attacking-you-or-your-planeswalker) | 1 | 6445 | selector |
 | [base-power](#base-power) | 1 | 8936 | value |
 | [base-power-had](#base-power-had) | 1 | 8762 | value |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
@@ -93,6 +102,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [can-block-only](#can-block-only) | 1 | 2673 | static_effect |
 | [cant-attack-this-turn](#cant-attack-this-turn) | 1 | 2358 | op |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
+| [cant-block](#cant-block) | 1 | 7526 | op |
 | [cant-block-filtered-group](#cant-block-filtered-group) | 1 | 7948 | op |
 | [cards-exiled-trigger](#cards-exiled-trigger) | 1 | 1303 | trigger_event |
 | [cards-put-into-graveyard-from-library](#cards-put-into-graveyard-from-library) | 1 | 6299 | trigger_event |
@@ -120,7 +130,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [control-while-has-counter](#control-while-has-counter) | 1 | 10319 | op |
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [copy-all-on-stack](#copy-all-on-stack) | 1 | 4558 | op |
-| [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
 | [copy-spell-forced-target](#copy-spell-forced-target) | 1 | 13586 | op |
 | [cost-reduction-attacking-player](#cost-reduction-attacking-player) | 1 | 9998 | selector |
 | [cost-reduction-per-attacker-this-turn](#cost-reduction-per-attacker-this-turn) | 1 | 9578 | value |
@@ -130,7 +139,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [creatures-died-this-turn-filtered](#creatures-died-this-turn-filtered) | 1 | 13665 | value |
 | [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
 | [damage-player-or-planeswalker](#damage-player-or-planeswalker) | 1 | 5120 | op |
-| [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [delayed-creature-dies](#delayed-creature-dies) | 1 | 1661 | trigger_event |
 | [delayed-trigger-filter](#delayed-trigger-filter) | 1 | 12175 | trigger_event |
 | [demon-token-5-5-b-flying](#demon-token-5-5-b-flying) | 1 | 7993 | token |
@@ -207,6 +215,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [last-known-controller](#last-known-controller) | 1 | 5109 | value |
 | [life-lost-this-turn-static-value](#life-lost-this-turn-static-value) | 1 | 2559 | value |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
+| [lightning-rager-token](#lightning-rager-token) | 1 | 3304 | token |
 | [living-metal](#living-metal) | 1 | 11641 | keyword |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
 | [look-at-top-attacking](#look-at-top-attacking) | 1 | 7846 | op |
@@ -245,21 +254,29 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [noncombat-damage-trigger](#noncombat-damage-trigger) | 1 | 6793 | trigger_event |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [offspring](#offspring) | 1 | 6566 | keyword |
+| [ogre-token](#ogre-token) | 1 | 1855 | token |
 | [one-target-per-graveyard](#one-target-per-graveyard) | 1 | 9139 | selector |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
 | [opponents-attacked-this-turn](#opponents-attacked-this-turn) | 1 | 4544 | value |
 | [pay-any-amount-of-life](#pay-any-amount-of-life) | 1 | 4322 | cost |
+| [permanents-entered-this-turn-per-player](#permanents-entered-this-turn-per-player) | 1 | 1701 | value |
 | [play-cost-paid-card](#play-cost-paid-card) | 1 | 6544 | op |
 | [play-exiled-land](#play-exiled-land) | 1 | 11125 | op |
 | [playable-condition-opponent-lost-life](#playable-condition-opponent-lost-life) | 1 | 4478 | engine |
 | [playable-spell-type-restriction](#playable-spell-type-restriction) | 1 | 4763 | op |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-counter-replacement](#player-counter-replacement) | 1 | 2056 | static_effect |
+| [player-dealt-damage-trigger](#player-dealt-damage-trigger) | 1 | 4451 | trigger_event |
 | [player-mana-ability-until-end-of-turn](#player-mana-ability-until-end-of-turn) | 1 | 12705 | op |
 | [players-attacked-last-combat](#players-attacked-last-combat) | 1 | 6681 | value |
+| [players-below-half-starting-life](#players-below-half-starting-life) | 1 | 10833 | value |
+| [players-lost-the-game](#players-lost-the-game) | 1 | 6258 | value |
 | [players-lost-the-game-count](#players-lost-the-game-count) | 1 | 4941 | value |
 | [prevent-damage-from-source-to-permanent](#prevent-damage-from-source-to-permanent) | 1 | 29255 | static_effect |
+| [prevent-half-damage](#prevent-half-damage) | 1 | 1132 | static_effect |
+| [prevent-next-damage-from-chosen-source](#prevent-next-damage-from-chosen-source) | 1 | 1143 | op |
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
+| [prevented-damage-source-binding](#prevented-damage-source-binding) | 1 | 3089 | value |
 | [prime-number](#prime-number) | 1 | 11527 | value |
 | [primo-the-indivisible](#primo-the-indivisible) | 1 | 11527 | token |
 | [proliferate-binding](#proliferate-binding) | 1 | 957 | op |
@@ -275,7 +292,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [replace-dies-link](#replace-dies-link) | 1 | 2740 | replacement |
 | [replace-graveyard-with-counter](#replace-graveyard-with-counter) | 1 | 386 | replacement |
 | [retrace](#retrace) | 1 | 5451 | engine |
+| [return-with-new-creature-types](#return-with-new-creature-types) | 1 | 19485 | op |
 | [reveal-from-hand](#reveal-from-hand) | 1 | 3623 | cost |
+| [reveal-secret-choice](#reveal-secret-choice) | 1 | 9335 | cost |
 | [sacrifice-multiple-distinct](#sacrifice-multiple-distinct) | 1 | 1918 | cost |
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
@@ -285,17 +304,18 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
-| [secret-choice](#secret-choice) | 1 | 17791 | decision |
 | [self-bounce-playable-gate](#self-bounce-playable-gate) | 1 | 10013 | engine |
 | [settlement-token](#settlement-token) | 1 | 12594 | token |
 | [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
 | [shares-mana-value-with](#shares-mana-value-with) | 1 | 11266 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
+| [source-filtered-damage-shield](#source-filtered-damage-shield) | 1 | 3089 | op |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [spirit-2-2-w-flying](#spirit-2-2-w-flying) | 1 | 12596 | token |
 | [squad](#squad) | 1 | 13056 | engine |
 | [stack-object-targets-filter](#stack-object-targets-filter) | 1 | 2461 | selector |
 | [stack-wipe](#stack-wipe) | 1 | 8784 | op |
+| [static-name-filter](#static-name-filter) | 1 | 3304 | selector |
 | [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
 | [switch-power-toughness](#switch-power-toughness) | 1 | 10418 | op |
@@ -303,7 +323,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [target-if-cast-during](#target-if-cast-during) | 1 | 1524 | selector |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
-| [targets-only-self](#targets-only-self) | 1 | 8216 | trigger_event |
 | [targets-only-single](#targets-only-single) | 1 | 13586 | trigger_event |
 | [targets-share-characteristic](#targets-share-characteristic) | 1 | 4421 | selector |
 | [teammates](#teammates) | 1 | 26785 | selector |
@@ -559,6 +578,40 @@ Blocks **6** cards.
 
 </details>
 
+## council-s-dilemma
+
+Blocks **5** cards.
+
+- **(op)** a vote op (rule 701.38): starting with the spell's controller and going in turn order, each player chooses one object from a selector (here nonland permanents the controller doesn't control) as a vote, without targeting; the tally is kept per candidate, and the op binds 'each candidate with the most votes or tied for most' under an `as` so a following effect (exile) can act on that set
+  <br>Why the existing vocabulary won't do: for_each_player with starting_with can walk the players, but choose_permanents has no per-player chooser (only as/max_total_power/objects/prompt) and no value key counts how many players chose a given object, so neither the per-player vote nor the 'most votes or tied' tally can be said; targeting would be wrong because Council's Judgment does not target (it beats hexproof/shroud)
+- **(decision)** a voting op: starting with the controller and proceeding in turn order, each player chooses one of N named options (here 'past' or 'present'); the op binds the vote tally per option (e.g. as: 'votes' giving {binding: 'votes.past'} / {binding: 'votes.present'}) so later effects in the same spell can use each count as an amount. Each player's vote must be visible to the players voting after them (Council's dilemma / Will of the council)
+  <br>Why the existing vocabulary won't do: choose_mode is one chooser picking modes, not every player casting a public vote with a per-option tally; for_each_player + choose_mode cannot accumulate a count per chosen option into a value, and value_keys has no vote count. Also needed: the damage amount is the total mana value of the cards milled this way, which needs mill's `as` binding to be readable as a sum of mana values (mana_value_of over the binding) -- unverified, but the vote tally is the hard blocker
+- **(op)** a vote op (rule 701.38) in its Secret council form: every player simultaneously and hidden from the others chooses a player other than themselves as their vote, then all votes are revealed at once; the op binds the per-player tally under an `as` so later effects can read 'number of votes player P received' as an amount (here a for_each_player over opponents repeating 2 damage to the player and each creature they control once per vote, and a draw of {votes received by you} cards)
+  <br>Why the existing vocabulary won't do: for_each_player can walk the seats, but choose_player has only as/players/prompt -- no per-player chooser, so each player cannot cast their own vote, and nothing makes the choices simultaneous and secret; value_keys has no vote count, so neither the damage repetition per vote an opponent received nor the draw per vote you received can be sized. join_forces is the closest per-player decision but it collects mana payments, not a choice of player
+- **(decision)** a voting op: starting with the controller and proceeding in turn order, each player publicly chooses one of N named options (here 'wild' or 'free'); the op binds the tally per option (e.g. as: 'votes' giving {binding: 'votes.wild'} / {binding: 'votes.free'}) so later effects in the same spell can use each count as an amount -- here reveal_until's creature count and a repeated optional put-from-hand of a permanent card
+  <br>Why the existing vocabulary won't do: value_keys has no vote count and no op in reference casts a vote; choose_mode is one chooser picking modes, and for_each_player + choose_mode cannot accumulate a per-option tally into a value. join_forces pools mana payments, not choices. Once the tally exists, the rest looks expressible: reveal_until with amount {binding: votes.wild}, selector Creature, destination battlefield, shuffle_rest; and repeat over {binding: votes.free} of a may put_onto_battlefield of a permanent card from hand
+- **(op)** a vote op: each player (in turn order, here secretly, revealed simultaneously) chooses up to one object from a selector (here any creature on the battlefield), the tally is bound so later effects can read it -- a condition for 'no object got votes' and a selector for 'each object with the most votes or tied for most votes' -- feeding an if/else of draw for each player vs destroy over the top-voted set
+  <br>Why the existing vocabulary won't do: choose_permanents and choose_player are made by one player only, join_forces collects payments not choices, and for_each_player wrapping choose_permanents has no way to aggregate the choices into a per-object vote count nor a selector for the most-voted (tied included) objects; no condition reads 'no votes cast'
+
+<details><summary>Cards waiting on this</summary>
+
+- **Council's Judgment** (rank 3539) — `council_s_judgment`
+  - Will of the council — Starting with you, each player votes for a nonland permanent you don't control. Exile each permanent with the most votes or tied for most votes.
+- **Selvala's Stampede** (rank 4067) — `selvala_s_stampede`
+  - Council's dilemma — Starting with you, each player votes for wild or free.
+  - Reveal cards from the top of your library until you reveal a creature card for each wild vote.
+  - You may put a permanent card from your hand onto the battlefield for each free vote.
+- **Mob Verdict** (rank 6957) — `mob_verdict`
+  - Secret council — Each player secretly votes for another player, then those votes are revealed. For each vote an opponent received, Mob Verdict deals 2 damage to that player and each creature that player controls. For each vote you received, draw a card.
+- **Vault 11: Voter's Dilemma** (rank 11857) — `vault_11_voter_s_dilemma`
+  - II, III — Each player secretly votes for up to one creature, then those votes are revealed. If no creature got votes, each player draws a card. Otherwise, destroy each creature with the most votes or tied for most votes.
+- **Fateful Tempest** (rank 15065) — `fateful_tempest`
+  - Council's dilemma — Starting with you, each player votes for past or present.
+  - You mill a card for each past vote, then Fateful Tempest deals damage to each opponent equal to the total mana value of cards milled this way.
+  - Exile the top card of your library for each present vote.
+
+</details>
+
 ## unlock-door
 
 Blocks **5** cards.
@@ -624,36 +677,6 @@ Blocks **5** cards.
   - Whenever you cast your first spell with {X} in its mana cost each turn, put X +1/+1 counters on Nev.
 - **Lattice Library** (rank 10607) — `lattice_library`
   - When this enchantment enters and whenever you cast your first spell with {X} in its mana cost each turn, create a 0/0 green and blue Fractal creature token. Put a number of +1/+1 counters on it equal to the number of study counters on this enchantment.
-
-</details>
-
-## council-s-dilemma
-
-Blocks **4** cards.
-
-- **(op)** a vote op (rule 701.38): starting with the spell's controller and going in turn order, each player chooses one object from a selector (here nonland permanents the controller doesn't control) as a vote, without targeting; the tally is kept per candidate, and the op binds 'each candidate with the most votes or tied for most' under an `as` so a following effect (exile) can act on that set
-  <br>Why the existing vocabulary won't do: for_each_player with starting_with can walk the players, but choose_permanents has no per-player chooser (only as/max_total_power/objects/prompt) and no value key counts how many players chose a given object, so neither the per-player vote nor the 'most votes or tied' tally can be said; targeting would be wrong because Council's Judgment does not target (it beats hexproof/shroud)
-- **(decision)** a voting op: starting with the controller and proceeding in turn order, each player chooses one of N named options (here 'past' or 'present'); the op binds the vote tally per option (e.g. as: 'votes' giving {binding: 'votes.past'} / {binding: 'votes.present'}) so later effects in the same spell can use each count as an amount. Each player's vote must be visible to the players voting after them (Council's dilemma / Will of the council)
-  <br>Why the existing vocabulary won't do: choose_mode is one chooser picking modes, not every player casting a public vote with a per-option tally; for_each_player + choose_mode cannot accumulate a count per chosen option into a value, and value_keys has no vote count. Also needed: the damage amount is the total mana value of the cards milled this way, which needs mill's `as` binding to be readable as a sum of mana values (mana_value_of over the binding) -- unverified, but the vote tally is the hard blocker
-- **(decision)** a voting op: starting with the controller and proceeding in turn order, each player publicly chooses one of N named options (here 'wild' or 'free'); the op binds the tally per option (e.g. as: 'votes' giving {binding: 'votes.wild'} / {binding: 'votes.free'}) so later effects in the same spell can use each count as an amount -- here reveal_until's creature count and a repeated optional put-from-hand of a permanent card
-  <br>Why the existing vocabulary won't do: value_keys has no vote count and no op in reference casts a vote; choose_mode is one chooser picking modes, and for_each_player + choose_mode cannot accumulate a per-option tally into a value. join_forces pools mana payments, not choices. Once the tally exists, the rest looks expressible: reveal_until with amount {binding: votes.wild}, selector Creature, destination battlefield, shuffle_rest; and repeat over {binding: votes.free} of a may put_onto_battlefield of a permanent card from hand
-- **(op)** a vote op: each player (in turn order, here secretly, revealed simultaneously) chooses up to one object from a selector (here any creature on the battlefield), the tally is bound so later effects can read it -- a condition for 'no object got votes' and a selector for 'each object with the most votes or tied for most votes' -- feeding an if/else of draw for each player vs destroy over the top-voted set
-  <br>Why the existing vocabulary won't do: choose_permanents and choose_player are made by one player only, join_forces collects payments not choices, and for_each_player wrapping choose_permanents has no way to aggregate the choices into a per-object vote count nor a selector for the most-voted (tied included) objects; no condition reads 'no votes cast'
-
-<details><summary>Cards waiting on this</summary>
-
-- **Council's Judgment** (rank 3539) — `council_s_judgment`
-  - Will of the council — Starting with you, each player votes for a nonland permanent you don't control. Exile each permanent with the most votes or tied for most votes.
-- **Selvala's Stampede** (rank 4067) — `selvala_s_stampede`
-  - Council's dilemma — Starting with you, each player votes for wild or free.
-  - Reveal cards from the top of your library until you reveal a creature card for each wild vote.
-  - You may put a permanent card from your hand onto the battlefield for each free vote.
-- **Vault 11: Voter's Dilemma** (rank 11857) — `vault_11_voter_s_dilemma`
-  - II, III — Each player secretly votes for up to one creature, then those votes are revealed. If no creature got votes, each player draws a card. Otherwise, destroy each creature with the most votes or tied for most votes.
-- **Fateful Tempest** (rank 15065) — `fateful_tempest`
-  - Council's dilemma — Starting with you, each player votes for past or present.
-  - You mill a card for each past vote, then Fateful Tempest deals damage to each opponent equal to the total mana value of cards milled this way.
-  - Exile the top card of your library for each present vote.
 
 </details>
 
@@ -926,6 +949,29 @@ Blocks **3** cards.
 
 </details>
 
+## secret-choice
+
+Blocks **3** cards.
+
+- **(decision)** a decision where several players (you and a target opponent) each secretly and simultaneously choose a number from a fixed set (1, 2 or 3), revealed together and bound per player so a condition can compare them for equality
+  <br>Why the existing vocabulary won't do: choose_number takes only min/max/as/prompt with no chooser or player key, so the opponent cannot make the choice; wrapping it in for_each_player would make the choices sequential and public, letting the second chooser see the first, which changes the card
+- **(decision)** a decision where each opponent secretly and simultaneously chooses one of two named options (silence or snitch), all choices revealed together and bound per player under an `as`, so that (a) a condition can ask whether every opponent chose a given option ('each opponent chose silence' / 'each opponent chose snitch') and (b) a player selector can pick out the opponents who chose a given option ('each opponent who chose silence') for a damage op
+  <br>Why the existing vocabulary won't do: choose_mode has a `chooser`, but wrapping it in for_each_player over opponents makes the choices sequential and public, so later opponents see earlier choices, which changes the card; set_flag/has_flag could mark each chooser but condition_keys has no 'every opponent has flag' aggregate and no player selector filters opponents by a recorded choice. The sibling gap expert_level_safe files the same secret_choice need for numbers
+- **(decision)** a hidden player choice: choose_player whose result is stored on the source permanent and hidden from opponents (and from their observations/AI view) until revealed, plus a 'revealed' state on that stored choice
+  <br>Why the existing vocabulary won't do: choose_player takes only as/players/prompt and binds the chosen player openly within one resolution; nothing keeps a concealed choice on a permanent for a later ability to read
+
+<details><summary>Cards waiting on this</summary>
+
+- **Prisoner's Dilemma** (rank 3483) — `prisoner_s_dilemma`
+  - Each opponent secretly chooses silence or snitch, then the choices are revealed. If each opponent chose silence, Prisoner's Dilemma deals 4 damage to each of them. If each opponent chose snitch, Prisoner's Dilemma deals 8 damage to each of them. Otherwise, Prisoner's Dilemma deals 12 damage to each opponent who chose silence.
+- **Stalking Leonin** (rank 9335) — `stalking_leonin`
+  - When this creature enters, secretly choose an opponent.
+  - Reveal the player you chose: Exile target creature that's attacking you if it's controlled by the chosen player. Activate only once.
+- **Expert-Level Safe** (rank 17791) — `expert_level_safe`
+  - {1}, {T}: You and target opponent each secretly choose 1, 2, or 3. Then those choices are revealed. If they match, sacrifice this artifact and put all cards exiled with it into their owners' hands. Otherwise, exile the top card of your library face down.
+
+</details>
+
 ## add-color
 
 Blocks **2** cards.
@@ -1055,6 +1101,43 @@ Blocks **2** cards.
 
 </details>
 
+## copy-for-each-other-target
+
+Blocks **2** cards.
+
+- **(op)** an op that lets the controller choose any number of other creatures the triggering spell could legally target, pay {2} per chosen creature, and then create one copy of that spell per chosen creature with each copy's single target fixed to that creature (permanent-spell copies becoming tokens) -- the Mirrorwing Dragon / Zada / Precursor Golem pattern with a per-object price
+  <br>Why the existing vocabulary won't do: copy_spell takes amount, controller and new_targets, but new_targets lets the copier re-choose targets freely rather than binding each copy to a distinct pre-chosen object; may.pay carries a fixed price, not one scaled by a chosen count of legal targets; and for_each cannot pass its loop object into a copy's target
+- **(op)** an op that copies the triggering spell once for each other object that spell could legally target (here: each other creature the caster controls), with the copies controlled by the spell's caster and each copy's single target set to a different one of those objects (the Precursor Golem / Ink-Treader Nephilim / Zada / Radiate pattern)
+  <br>Why the existing vocabulary won't do: copy_spell takes amount, controller and new_targets, but new_targets lets the copier choose new targets freely; nothing iterates over the spell's legal targets and binds each copy to a distinct one, and for_each cannot pass its loop object into a copy's target
+
+<details><summary>Cards waiting on this</summary>
+
+- **Mirrorwing Dragon** (rank 8216) — `mirrorwing_dragon`
+  - Whenever a player casts an instant or sorcery spell that targets only this creature, that player copies that spell for each other creature they control that the spell could target. Each copy targets a different one of those creatures.
+- **Feather, Radiant Arbiter** (rank 13967) — `feather_radiant_arbiter`
+  - Whenever you cast a noncreature spell that targets only Feather, you may choose any number of other creatures that spell could target and pay {2} for each of those creatures. If you do, for each of those creatures, copy that spell. The copy targets that creature.
+
+</details>
+
+## dealt-damage-to-player-this-turn
+
+Blocks **2** cards.
+
+- **(selector)** a selector key matching objects that dealt damage to a given player this turn (e.g. `dealt_damage_to: "you"`), backed by a per-turn ledger of player victim -> source oids written wherever damage is dealt to a player and cleared at cleanup
+  <br>Why the existing vocabulary won't do: `damaged_by` reads `state.damage_ledger`, which is keyed by victim permanent oid and written only on the permanent-damage path of the damage primitive; damage to a player is never recorded by source, so nothing can ask which creatures dealt damage to you. `damaged` is only 'has damage marked on it', and `damage_taken_this_turn` is a player total, not a per-source record
+- **(selector)** a selector key matching creatures that dealt damage (any damage, combat or not) to a given player this turn, e.g. {"dealt_damage_to": "you", "this_turn": true}, backed by a per-turn ledger of source -> damaged player
+  <br>Why the existing vocabulary won't do: damaged_by matches objects that were dealt damage BY a source (the reverse direction), damaged only reads marked damage on the object, and the value damage_taken_this_turn is a player total with no link to which creatures dealt it
+
+<details><summary>Cards waiting on this</summary>
+
+- **Giltspire Avenger** (rank 15516) — `giltspire_avenger`
+  - {T}: Destroy target creature that dealt damage to you this turn.
+- **Otherworldly Escort** (rank 19485) — `otherworldly_escort`
+  - When this creature dies, if it's not a Spirit, return it to the battlefield under its owner's control with four charge counters on it. It's a Spirit Detective. (It's no longer a Human.)
+  - {1}{W}, {T}, Remove a charge counter from this creature: Destroy target creature that dealt damage to you this turn.
+
+</details>
+
 ## devotion
 
 Blocks **2** cards.
@@ -1181,6 +1264,25 @@ Blocks **2** cards.
   - When this creature enters, each player loses a third of their life, rounded up.
 - **Legate Lanius, Caesar's Ace** (rank 10854) — `legate_lanius_caesar_s_ace`
   - Decimate — When Legate Lanius enters, each opponent sacrifices a tenth of the creatures they control of their choice, rounded up.
+
+</details>
+
+## goad
+
+Blocks **2** cards.
+
+- **(op)** goad that lasts as long as the source permanent remains on the battlefield (a duration tied to the source leaving, not to the goading player's next turn)
+  <br>Why the existing vocabulary won't do: The `goad` op takes a `duration`, but no listed duration expresses "as long as this enchantment remains on the battlefield"; a permanent goad plus a leaves-battlefield trigger running `ungoad` is not printed and the target binding is not available to that later trigger
+- **(op)** a `while_counter` duration (with `counter` naming the kind) on the `goad` op, so the creature stays goaded by the spell's controller for as long as it has a duty counter on it, and stops being goaded when the last one is removed
+  <br>Why the existing vocabulary won't do: `goad` takes only `duration: "permanent"` (rest of the game) or the default until-the-goader's-next-turn clock; neither ends when a counter is removed. Only `cant_attack_player` with `objects` has a `while_counter` mark (`structs.AttackMark`)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Hot Pursuit** (rank 6258) — `hot_pursuit`
+  - When this enchantment enters, suspect target creature an opponent controls. As long as this enchantment remains on the battlefield, that creature is also goaded.
+  - At the beginning of combat on your turn, if two or more players have lost the game, gain control of all goaded and/or suspected creatures until end of turn. Untap them. They gain haste until end of turn.
+- **Immortal Obligation** (rank 7526) — `immortal_obligation`
+  - For as long as that creature has a duty counter on it, it is goaded, can't attack you or a permanent you control, and can't block creatures you control.
 
 </details>
 
@@ -1423,6 +1525,25 @@ Blocks **2** cards.
 
 </details>
 
+## suspect
+
+Blocks **2** cards.
+
+- **(op)** an op that makes a creature suspected (701.60): a designation that gives it menace and "this creature can't block" for as long as it stays suspected, plus a `suspected` selector key so later effects can find suspected creatures
+  <br>Why the existing vocabulary won't do: No `suspect` op or `suspected` selector exists in reference; grant_keyword menace plus cant_block would not be a designation, would not be readable by a selector, and would not end the way suspicion does
+- **(op)** an op that makes a creature suspected (701.60): a designation that gives it menace and "this creature can't block" for as long as it stays suspected, plus a `suspected` selector key so "goad all suspected creatures" can find every suspected creature on the battlefield, including ones suspected earlier by other sources
+  <br>Why the existing vocabulary won't do: No `suspect` op and no `suspected` key in selector_keys; grant_keyword menace plus cant_block is not a designation, cannot be found by a selector, and would make `goad` over "all suspected creatures" collapse to only the one target, which is a different card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Nelly Borca, Impulsive Accuser** (rank 4851) — `nelly_borca_impulsive_accuser`
+  - Whenever Nelly Borca attacks, suspect target creature. Then goad all suspected creatures. (A suspected creature has menace and can't block.)
+- **Hot Pursuit** (rank 6258) — `hot_pursuit`
+  - When this enchantment enters, suspect target creature an opponent controls. As long as this enchantment remains on the battlefield, that creature is also goaded.
+  - At the beginning of combat on your turn, if two or more players have lost the game, gain control of all goaded and/or suspected creatures until end of turn. Untap them. They gain haste until end of turn.
+
+</details>
+
 ## targeted-discard
 
 Blocks **2** cards.
@@ -1439,6 +1560,24 @@ Blocks **2** cards.
   - • Target opponent reveals their hand. You choose an instant or sorcery card from it. That player discards that card.
 - **Toll of the Invasion** (rank 20219) — `toll_of_the_invasion`
   - Target opponent reveals their hand. You choose a nonland card from it. That player discards that card.
+
+</details>
+
+## targets-only-self
+
+Blocks **2** cards.
+
+- **(trigger_event)** a spell_cast trigger filter matching a spell you cast (here noncreature) whose every target is this permanent, with the spell bound as the trigger's subject
+  <br>Why the existing vocabulary won't do: spell_cast's trigger_filter_keys read the spell's own characteristics (types, not_types, colors, mana_value), not its targets; becomes_target with targeted_by fires when this creature is one target among several and on copies too, so it cannot say 'cast ... that targets only Feather'
+- **(trigger_event)** a spell_cast trigger filter matching an instant or sorcery spell whose every target is this permanent (a single target, the source), with the caster of that spell bound as the copying player
+  <br>Why the existing vocabulary won't do: spell_cast's trigger_filter_keys read the spell's own characteristics, not its targets; becomes_target with targeted_by fires on any spell or ability that targets this creature among others and on copies, so it cannot say 'casts ... that targets only this creature'
+
+<details><summary>Cards waiting on this</summary>
+
+- **Mirrorwing Dragon** (rank 8216) — `mirrorwing_dragon`
+  - Whenever a player casts an instant or sorcery spell that targets only this creature, that player copies that spell for each other creature they control that the spell could target. Each copy targets a different one of those creatures.
+- **Feather, Radiant Arbiter** (rank 13967) — `feather_radiant_arbiter`
+  - Whenever you cast a noncreature spell that targets only Feather, you may choose any number of other creatures that spell could target and pay {2} for each of those creatures. If you do, for each of those creatures, copy that spell. The copy targets that creature.
 
 </details>
 
@@ -1565,6 +1704,21 @@ Blocks **1** card.
 
 - **Lion's Eye Diamond** (rank 725) — `lion_s_eye_diamond`
   - Discard your hand, Sacrifice this artifact: Add three mana of any one color. Activate only as an instant.
+
+</details>
+
+## activate-only-once
+
+Blocks **1** card.
+
+- **(engine)** an ability key limiting an activated ability to a single activation for the lifetime of the permanent ('Activate only once')
+  <br>Why the existing vocabulary won't do: once_each_turn and exhaust are the closest; once_each_turn resets every turn, and exhaust is the printed Exhaust mechanic, not a general 'only once' rule text
+
+<details><summary>Cards waiting on this</summary>
+
+- **Stalking Leonin** (rank 9335) — `stalking_leonin`
+  - When this creature enters, secretly choose an opponent.
+  - Reveal the player you chose: Exile target creature that's attacking you if it's controlled by the chosen player. Activate only once.
 
 </details>
 
@@ -1724,6 +1878,20 @@ Blocks **1** card.
 
 </details>
 
+## attack-restriction-until-your-next-turn
+
+Blocks **1** card.
+
+- **(op)** an `until_your_next_turn` duration on the `cant_attack_player` op's player form (`attacker` = the player bound by the enclosing for_each_player/may, `defender: "you"`, `planeswalkers: true`): the prohibition holds from resolution until the effect controller's next turn begins, across however many turns other players take in between, and ends at the start of the controller's next turn even if no other player has had a turn
+  <br>Why the existing vocabulary won't do: cant_attack_player's player form takes only ATTACK_RESTRICTION_DURATIONS = this_turn, this_combat, attacker_next_turn. attacker_next_turn is the nearest, but it is keyed on the ATTACKER's next turn: an opponent who takes an extra turn gets a second turn free of the lock, and if the Advokist's controller takes an extra turn first the lock wrongly persists into the opponent's next turn after the controller's next turn has started. The objects form only has while_counter and next_combat. The `cant_attack_you` static lasts while its source is on the battlefield, not until your next turn, and cannot be keyed on which players chose to take the counters. The `until_your_next_turn` delayed duration exists only for delayed triggers. The rest of the sentence (for_each_player + may with player + add_counters on a chosen creature they control) appears expressible.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Orzhov Advokist** (rank 3290) — `orzhov_advokist`
+  - At the beginning of your upkeep, each player may put two +1/+1 counters on a creature they control. If a player does, creatures that player controls can't attack you or planeswalkers you control until your next turn.
+
+</details>
+
 ## attack-tax-x-count
 
 Blocks **1** card.
@@ -1757,12 +1925,26 @@ Blocks **1** card.
 Blocks **1** card.
 
 - **(selector)** a player set for for_each_player meaning "each opponent (of the Curse's controller) who is attacking the enchanted player this combat", so each of them creates a Gold token under their own control alongside the Curse's controller
-  <br>Why the existing vocabulary won't do: for_each_player takes `players` (e.g. each_opponent), and the trigger side is covered by `creatures_attack_player` with `defending: enchanted_player`, but no player spec found in reference filters opponents down to those with a creature attacking the enchanted player; each_opponent would also give tokens to non-attacking opponents and to the enchanted player. Secondary to the token gap; unverified whether a select_players spec already exists for this
+  <br>Why the existing vocabulary won't do: the trigger side is covered by `creatures_attack_player` with `defending: enchanted_player`, and for_each_player takes `players` (e.g. each_opponent), but no player spec in reference narrows opponents to those with a creature attacking the enchanted player; each_opponent would also give tokens to non-attacking opponents and to the enchanted player. Secondary to the token gap
 
 <details><summary>Cards waiting on this</summary>
 
 - **Curse of Opulence** (rank 705) — `curse_of_opulence`
   - Whenever enchanted player is attacked, create a Gold token. Each opponent attacking that player does the same.
+
+</details>
+
+## attacking-you-or-your-planeswalker
+
+Blocks **1** card.
+
+- **(selector)** a selector key matching a creature attacking the ability's controller OR a planeswalker that controller controls (not a battle, not another player), e.g. attacking_player: "you" widened by an or_planeswalkers flag that also accepts attackers whose combat.attacking_permanent is a planeswalker controlled by the ability's controller
+  <br>Why the existing vocabulary won't do: `attacking_player: "you"` deliberately excludes creatures in combat.attacking_permanent, so it misses attackers aimed at your planeswalkers; `attacking: true` is a bare boolean with no notion of whom (wrong in multiplayer, where the creature may be attacking another opponent); `controller: "opponent"` beside it is the same over-approximation; the trigger key `defending` and the attack_tax `or_planeswalkers` flag express exactly this reading but exist only on triggers/statics, not in selector_keys, so no target selector can say it
+
+<details><summary>Cards waiting on this</summary>
+
+- **Soul Snare** (rank 6445) — `soul_snare`
+  - {W}, Sacrifice this enchantment: Exile target creature that's attacking you or a planeswalker you control.
 
 </details>
 
@@ -1934,6 +2116,20 @@ Blocks **1** card.
 
 - **Hexing Squelcher** (rank 717) — `hexing_squelcher`
   - Spells you control can't be countered.
+
+</details>
+
+## cant-block
+
+Blocks **1** card.
+
+- **(op)** a per-object block restriction lasting `while_counter` that forbids the creature from blocking only attackers controlled by the spell's controller ("can't block creatures you control"), not blocking in general
+  <br>Why the existing vocabulary won't do: the `cant_block` op forbids all blocking and only lasts `this_turn` or `until_your_next_turn` (`BLOCK_PROHIBITION_DURATIONS`); the `block_restriction` and `cant_block` statics need a source on the battlefield and a printed-characteristics filter, and an instant leaves no source
+
+<details><summary>Cards waiting on this</summary>
+
+- **Immortal Obligation** (rank 7526) — `immortal_obligation`
+  - For as long as that creature has a duty counter on it, it is goaded, can't attack you or a permanent you control, and can't block creatures you control.
 
 </details>
 
@@ -2327,20 +2523,6 @@ Blocks **1** card.
 
 </details>
 
-## copy-for-each-other-target
-
-Blocks **1** card.
-
-- **(op)** an op that copies the triggering spell once for each other object that spell could legally target (here: each other creature the caster controls), with the copies controlled by the spell's caster and each copy's single target set to a different one of those objects (the Precursor Golem / Ink-Treader Nephilim / Zada / Radiate pattern)
-  <br>Why the existing vocabulary won't do: copy_spell takes amount, controller and new_targets, but new_targets lets the copier choose new targets freely; nothing iterates over the spell's legal targets and binds each copy to a distinct one, and for_each cannot pass its loop object into a copy's target
-
-<details><summary>Cards waiting on this</summary>
-
-- **Mirrorwing Dragon** (rank 8216) — `mirrorwing_dragon`
-  - Whenever a player casts an instant or sorcery spell that targets only this creature, that player copies that spell for each other creature they control that the spell could target. Each copy targets a different one of those creatures.
-
-</details>
-
 ## copy-spell-forced-target
 
 Blocks **1** card.
@@ -2465,20 +2647,6 @@ Blocks **1** card.
 
 - **Vial Smasher the Fierce** (rank 5120) — `vial_smasher_the_fierce`
   - Whenever you cast your first spell each turn, choose an opponent at random. Vial Smasher deals damage equal to that spell's mana value to that player or a planeswalker that player controls.
-
-</details>
-
-## dealt-damage-to-player-this-turn
-
-Blocks **1** card.
-
-- **(selector)** a selector key matching objects that dealt damage to a given player this turn (e.g. `dealt_damage_to: "you"`), backed by a per-turn ledger of player victim -> source oids written wherever damage is dealt to a player and cleared at cleanup
-  <br>Why the existing vocabulary won't do: `damaged_by` reads `state.damage_ledger`, which is keyed by victim permanent oid and written only on the permanent-damage path of the damage primitive; damage to a player is never recorded by source, so nothing can ask which creatures dealt damage to you. `damaged` is only 'has damage marked on it', and `damage_taken_this_turn` is a player total, not a per-source record
-
-<details><summary>Cards waiting on this</summary>
-
-- **Giltspire Avenger** (rank 15516) — `giltspire_avenger`
-  - {T}: Destroy target creature that dealt damage to you this turn.
 
 </details>
 
@@ -3571,6 +3739,21 @@ Blocks **1** card.
 
 </details>
 
+## lightning-rager-token
+
+Blocks **1** card.
+
+- **(token)** a 5/1 red Elemental creature token named Lightning Rager with trample, haste, and "At the beginning of the end step, sacrifice this token."
+  <br>Why the existing vocabulary won't do: token_ids has no 5/1 Elemental and none named Lightning Rager; the nearest red Elementals are elemental_1_1_r and elemental_5_5_rg, which differ in P/T, colors, name and the end-step sacrifice
+
+<details><summary>Cards waiting on this</summary>
+
+- **Rite of the Raging Storm** (rank 3304) — `rite_of_the_raging_storm`
+  - At the beginning of each player's upkeep, that player creates a 5/1 red Elemental creature token named Lightning Rager. It has trample, haste, and "At the beginning of the end step, sacrifice this token."
+  - Creatures named Lightning Rager can't attack you or planeswalkers you control.
+
+</details>
+
 ## living-metal
 
 Blocks **1** card.
@@ -4114,6 +4297,20 @@ Blocks **1** card.
 
 </details>
 
+## ogre-token
+
+Blocks **1** card.
+
+- **(token)** a 3/3 red Ogre creature token (no abilities), e.g. id ogre_3_3_r
+  <br>Why the existing vocabulary won't do: token_ids is a closed list with no Ogre token at all; the nearest 3/3 red token is ape_villain_3_3_r_haste, which has the wrong creature type and haste. The rest of the sentence looks expressible: an `attacks` trigger with controller opponent and `defending: "you"`, and a `may` whose `player` is the attacking creature's controller with `pay: {mana: "{3}"}` and `else` holding the create_token
+
+<details><summary>Cards waiting on this</summary>
+
+- **Kazuul, Tyrant of the Cliffs** (rank 1855) — `kazuul_tyrant_of_the_cliffs`
+  - Whenever a creature an opponent controls attacks, if you're the defending player, create a 3/3 red Ogre creature token unless that creature's controller pays {3}.
+
+</details>
+
 ## one-target-per-graveyard
 
 Blocks **1** card.
@@ -4169,6 +4366,20 @@ Blocks **1** card.
 
 - **Necrodominance** (rank 4322) — `necrodominance`
   - At the beginning of your end step, you may pay any amount of life. If you do, draw that many cards.
+
+</details>
+
+## permanents-entered-this-turn-per-player
+
+Blocks **1** card.
+
+- **(value)** let the `permanents_entered_this_turn` value's `controller` take a bound player spec such as {"binding": "each_player"} inside a `for_each_player` loop (or a `player_count`-style headcount over the ledger), so "each opponent who had two or more lands enter the battlefield under their control this turn" can test each opponent's own count of lands entered under their control against 2
+  <br>Why the existing vocabulary won't do: `validate_entered_filter` restricts `controller` to fixed specs (you, opponent, each_opponent, ...) and refuses {"binding": "each_player"}; `each_opponent` sums every opponent's lands into one total, so two opponents with one land each would wrongly count. `player_count` with `cmp`/`than` only counts objects currently matching a selector, and `entered_this_turn` on a battlefield selector misses lands that entered and left and reads current rather than at-entry controller. The draw half is expressible (for_each_player over each_opponent with an `if` on {"cards_drawn_this_turn": {"binding": "each_player"}} >= 2).
+
+<details><summary>Cards waiting on this</summary>
+
+- **Smuggler's Share** (rank 1701) — `smuggler_s_share`
+  - At the beginning of each end step, draw a card for each opponent who drew two or more cards this turn, then create a Treasure token for each opponent who had two or more lands enter the battlefield under their control this turn.
 
 </details>
 
@@ -4256,6 +4467,20 @@ Blocks **1** card.
 
 </details>
 
+## player-dealt-damage-trigger
+
+Blocks **1** card.
+
+- **(trigger_event)** a trigger on the player half of DAMAGE_DEALT (to="player") keyed on the VICTIM seat ('whenever you're dealt damage'), firing once per damage event with `amount` summed across every source that dealt damage simultaneously (510.2 combat damage from several attackers is one event, one trigger, 'that many' = the total), and firing for damage from any source, including one with no source object
+  <br>Why the existing vocabulary won't do: `deals_damage_to_player` with `controller: "any"` and `defending: "you"` hears the right half, but its subject is the dealer: it fires once per source (three unblocked attackers make three triggers and three separate 'may' prompts instead of one trigger for the total), it refuses sourceless damage (`subject_oid is None`), and `batched` only sums `amount` for `dealt_damage` (`_joins_batched_damage`), so batching it would dedupe the firings and drop all but the first source's damage. `dealt_damage` is the permanent half only (`EVENT_HALVES`), and `life_lost` fires on non-damage life loss and misses infect damage
+
+<details><summary>Cards waiting on this</summary>
+
+- **Darien, King of Kjeldor** (rank 4451) — `darien_king_of_kjeldor`
+  - Whenever you're dealt damage, you may create that many 1/1 white Soldier creature tokens.
+
+</details>
+
 ## player-mana-ability-until-end-of-turn
 
 Blocks **1** card.
@@ -4281,6 +4506,36 @@ Blocks **1** card.
 
 - **Territorial Hellkite** (rank 6681) — `territorial_hellkite`
   - At the beginning of combat on your turn, choose an opponent at random that this creature didn't attack during your last combat. This creature attacks that player this combat if able. If you can't choose an opponent this way, tap this creature.
+
+</details>
+
+## players-below-half-starting-life
+
+Blocks **1** card.
+
+- **(value)** a static value (usable as a buff's power/toughness magnitude via `times`, and in a static `cmp` condition) counting the players a spec names (each_opponent) whose current life total is less than half of THEIR OWN starting life total (each player's own `starting_life`, 103.4) -- e.g. {"player_count": {"player": "each_opponent", "life_below_half_starting": true}}. Anya's buff is then `times` 3 of it, and her indestructible is a grant_keyword static whose condition is that count `>` 0
+  <br>Why the existing vocabulary won't do: static_value_keys has no per-player count at all: `player_count` is only in value_keys (not statics), and its filtered form compares object counts (`objects`/`cmp`/`than`), never life. `min_life_of` gives the lowest opponent life, which can express 'an opponent' only against a single seat's `starting_life_of` (the loader allows at most one seat), so it compares against the wrong player's starting total when starting lives differ and cannot count how many opponents qualify for the +3/+3 per opponent
+
+<details><summary>Cards waiting on this</summary>
+
+- **Anya, Merciless Angel** (rank 10833) — `anya_merciless_angel`
+  - Anya gets +3/+3 for each opponent whose life total is less than half their starting life total.
+  - As long as an opponent's life total is less than half their starting life total, Anya has indestructible.
+
+</details>
+
+## players-lost-the-game
+
+Blocks **1** card.
+
+- **(value)** a value counting players who have lost the game (eliminated seats), for the intervening-if "if two or more players have lost the game"
+  <br>Why the existing vocabulary won't do: value_keys has `player_count` but nothing counting eliminated players; no starting-player-count value exists to subtract from
+
+<details><summary>Cards waiting on this</summary>
+
+- **Hot Pursuit** (rank 6258) — `hot_pursuit`
+  - When this enchantment enters, suspect target creature an opponent controls. As long as this enchantment remains on the battlefield, that creature is also goaded.
+  - At the beginning of combat on your turn, if two or more players have lost the game, gain control of all goaded and/or suspected creatures until end of turn. Untap them. They gain haste until end of turn.
 
 </details>
 
@@ -4312,6 +4567,35 @@ Blocks **1** card.
 
 </details>
 
+## prevent-half-damage
+
+Blocks **1** card.
+
+- **(static_effect)** a static damage-prevention shield whose prevented amount is a fraction of each damage event (half, rounded up) rather than a fixed number, applying to damage dealt to you (affects_player: you) or a permanent you control (affects: controller you)
+  <br>Why the existing vocabulary won't do: The prevent_damage static subtracts a fixed static_value 'amount' from each event (prevented_player_damage / prevented_damage sum constants) and static_value_keys has no reference to the incoming event's damage nor a 'half' leaf; prevent_all_but caps at a fixed amount; replace_damage's damage_multiplier is an integer >= 2 and the loader refuses anything lower, so it cannot halve
+
+<details><summary>Cards waiting on this</summary>
+
+- **Gisela, Blade of Goldnight** (rank 1132) — `gisela_blade_of_goldnight`
+  - If a source would deal damage to you or a permanent you control, prevent half that damage, rounded up.
+
+</details>
+
+## prevent-next-damage-from-chosen-source
+
+Blocks **1** card.
+
+- **(op)** a one-shot player damage shield scoped to a single source chosen on resolution (any object: permanent, spell on the stack, or card), which prevents only the next damage event that source would deal to you this turn and is then used up, exposing the chosen source (and its controller at the time of the damage) to the 615.5 rider so it can deal the prevented amount back to that source's controller
+  <br>Why the existing vocabulary won't do: The prevent_damage op installs a blanket shield that prevents ALL damage to the player for the duration (no source filter, no 'next time' consumption), so it would make this a strictly better Fog; its effects rider binds only the prevented amount and the protected seat, not the source or its controller. prevent_damage_permanent works on permanents' damage dealt/received for a duration and is not one-shot; redirect_damage redirects rather than prevents-and-reflects; and there is no 'choose a source' decision in the selector or op vocabulary that can name a spell or nonpermanent source
+
+<details><summary>Cards waiting on this</summary>
+
+- **Deflecting Palm** (rank 1143) — `deflecting_palm`
+  - The next time a source of your choice would deal damage to you this turn, prevent that damage.
+  - If damage is prevented this way, Deflecting Palm deals that much damage to that source's controller.
+
+</details>
+
 ## prevent-noncombat-damage
 
 Blocks **1** card.
@@ -4323,6 +4607,22 @@ Blocks **1** card.
 
 - **Crystal Barricade** (rank 2070) — `crystal_barricade`
   - Prevent all noncombat damage that would be dealt to other creatures you control.
+
+</details>
+
+## prevented-damage-source-binding
+
+Blocks **1** card.
+
+- **(value)** the 615.5 rider must see the source of the prevented damage: a binding for the source object (with its characteristics as it was when the damage was prevented) so the rider can branch on whether it was a creature, deal the amount to that creature, or deal the amount to the source's controller
+  <br>Why the existing vocabulary won't do: prevent_damage's effects rider gets only {"binding": "amount"} and event_player (the protected seat); the DAMAGE_PREVENTED event carries source= but nothing exposes it to the rider, so neither 'that creature' nor 'the source's controller' can be named
+
+<details><summary>Cards waiting on this</summary>
+
+- **Comeuppance** (rank 3089) — `comeuppance`
+  - Prevent all damage that would be dealt to you and planeswalkers you control this turn by sources you don't control.
+  - If damage from a creature source is prevented this way, Comeuppance deals that much damage to that creature.
+  - If damage from a noncreature source is prevented this way, Comeuppance deals that much damage to the source's controller.
 
 </details>
 
@@ -4540,6 +4840,21 @@ Blocks **1** card.
 
 </details>
 
+## return-with-new-creature-types
+
+Blocks **1** card.
+
+- **(op)** a return-to-battlefield from graveyard (return_from_graveyard with counters) whose returned object permanently has its creature types REPLACED by a printed list ("It's a Spirit Detective. (It's no longer a Human.)"), applied as part of the return so the new object enters with those types; plus the dies trigger's intervening-if reading the dying object's last-known subtypes ("if it's not a Spirit")
+  <br>Why the existing vocabulary won't do: return_from_graveyard takes counters/tapped/controller but no subtype override; add_subtype only adds (Human would remain); animate's subtypes is a becomes-a-creature overlay with a duration, not a permanent creature-type replacement on a freshly returned object; set_creature_types exists only as a static_effect, which the card itself cannot carry for the returned object without also affecting its first life
+
+<details><summary>Cards waiting on this</summary>
+
+- **Otherworldly Escort** (rank 19485) — `otherworldly_escort`
+  - When this creature dies, if it's not a Spirit, return it to the battlefield under its owner's control with four charge counters on it. It's a Spirit Detective. (It's no longer a Human.)
+  - {1}{W}, {T}, Remove a charge counter from this creature: Destroy target creature that dealt damage to you this turn.
+
+</details>
+
 ## reveal-from-hand
 
 Blocks **1** card.
@@ -4551,6 +4866,21 @@ Blocks **1** card.
 
 - **Flamekin Village** (rank 3623) — `flamekin_village`
   - As this land enters, you may reveal an Elemental card from your hand. If you don't, this land enters tapped.
+
+</details>
+
+## reveal-secret-choice
+
+Blocks **1** card.
+
+- **(cost)** an activated-ability cost 'Reveal the player you chose' that is payable only while the source's secret choice is unrevealed, reveals it, and binds the chosen player for the ability's effects (so the exile can be gated on 'controlled by the chosen player')
+  <br>Why the existing vocabulary won't do: cost_keys has behold, discard, tap, sacrifice and others, but nothing that reveals hidden information or reads a choice stored on the source
+
+<details><summary>Cards waiting on this</summary>
+
+- **Stalking Leonin** (rank 9335) — `stalking_leonin`
+  - When this creature enters, secretly choose an opponent.
+  - Reveal the player you chose: Exile target creature that's attacking you if it's controlled by the chosen player. Activate only once.
 
 </details>
 
@@ -4684,20 +5014,6 @@ Blocks **1** card.
 
 </details>
 
-## secret-choice
-
-Blocks **1** card.
-
-- **(decision)** a decision where several players (you and a target opponent) each secretly and simultaneously choose a number from a fixed set (1, 2 or 3), revealed together and bound per player so a condition can compare them for equality
-  <br>Why the existing vocabulary won't do: choose_number takes only min/max/as/prompt with no chooser or player key, so the opponent cannot make the choice; wrapping it in for_each_player would make the choices sequential and public, letting the second chooser see the first, which changes the card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Expert-Level Safe** (rank 17791) — `expert_level_safe`
-  - {1}, {T}: You and target opponent each secretly choose 1, 2, or 3. Then those choices are revealed. If they match, sacrifice this artifact and put all cards exiled with it into their owners' hands. Otherwise, exile the top card of your library face down.
-
-</details>
-
 ## self-bounce-playable-gate
 
 Blocks **1** card.
@@ -4765,6 +5081,22 @@ Blocks **1** card.
 
 - **Misdirection** (rank 1562) — `misdirection`
   - Change the target of target spell with a single target.
+
+</details>
+
+## source-filtered-damage-shield
+
+Blocks **1** card.
+
+- **(op)** a this-turn prevention shield over a player AND the planeswalkers that player controls (including ones that enter later this turn), filtered by the damage source's controller ("by sources you don't control")
+  <br>Why the existing vocabulary won't do: prevent_damage shields only a seat and takes no source filter, so it would also prevent damage from your own sources and leaves planeswalkers unprotected; prevent_damage_permanent resolves its objects now (missing planeswalkers that arrive later) and also has no source filter; prevent_combat_damage filters by source but is combat-only and not keyed to the protected player
+
+<details><summary>Cards waiting on this</summary>
+
+- **Comeuppance** (rank 3089) — `comeuppance`
+  - Prevent all damage that would be dealt to you and planeswalkers you control this turn by sources you don't control.
+  - If damage from a creature source is prevented this way, Comeuppance deals that much damage to that creature.
+  - If damage from a noncreature source is prevented this way, Comeuppance deals that much damage to the source's controller.
 
 </details>
 
@@ -4836,6 +5168,21 @@ Blocks **1** card.
 
 - **Summary Dismissal** (rank 8784) — `summary_dismissal`
   - Exile all other spells and counter all abilities.
+
+</details>
+
+## static-name-filter
+
+Blocks **1** card.
+
+- **(selector)** a `name` key in static_affects_filter_keys so the cant_attack_you static can affect only creatures named Lightning Rager (every controller), covering attacks on you and on planeswalkers you control
+  <br>Why the existing vocabulary won't do: cant_attack_you exists as a static effect, but static_affects_filter_keys has no name key; subtypes Elemental or is_token would also stop other Elementals or tokens, which the printed card does not
+
+<details><summary>Cards waiting on this</summary>
+
+- **Rite of the Raging Storm** (rank 3304) — `rite_of_the_raging_storm`
+  - At the beginning of each player's upkeep, that player creates a 5/1 red Elemental creature token named Lightning Rager. It has trample, haste, and "At the beginning of the end step, sacrifice this token."
+  - Creatures named Lightning Rager can't attack you or planeswalkers you control.
 
 </details>
 
@@ -4935,20 +5282,6 @@ Blocks **1** card.
 
 - **Hope of Ghirapur** (rank 3240) — `hope_of_ghirapur`
   - Sacrifice Hope of Ghirapur: Until your next turn, target player who was dealt combat damage by Hope of Ghirapur this turn can't cast noncreature spells.
-
-</details>
-
-## targets-only-self
-
-Blocks **1** card.
-
-- **(trigger_event)** a spell_cast trigger filter matching an instant or sorcery spell whose every target is this permanent (a single target, the source), with the caster of that spell bound as the copying player
-  <br>Why the existing vocabulary won't do: spell_cast's trigger_filter_keys read the spell's own characteristics, not its targets; becomes_target with targeted_by fires on any spell or ability that targets this creature among others and on copies, so it cannot say 'casts ... that targets only this creature'
-
-<details><summary>Cards waiting on this</summary>
-
-- **Mirrorwing Dragon** (rank 8216) — `mirrorwing_dragon`
-  - Whenever a player casts an instant or sorcery spell that targets only this creature, that player copies that spell for each other creature they control that the spell could target. Each copy targets a different one of those creatures.
 
 </details>
 
