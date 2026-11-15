@@ -150455,6 +150455,96 @@
     {
       "abilities": [
         {
+          "affects_spells": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "amount": {
+            "const": 1
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Creature spells you cast cost {1} less to cast."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "damage"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "binding": "subject",
+                  "damaged_by": "self",
+                  "subtypes": [
+                    "Dinosaur"
+                  ]
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "duration": "until_end_of_turn",
+                  "objects": {
+                    "self_only": true,
+                    "zone": "battlefield"
+                  },
+                  "op": "pump",
+                  "power": {
+                    "const": 2
+                  },
+                  "toughness": {
+                    "const": 0
+                  }
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another creature you control enters, this creature deals 2 damage to it. If a Dinosaur is dealt damage this way, this creature gets +2/+0 until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "marauding_raptor",
+      "mana_cost": "{1}{R}",
+      "name": "Marauding Raptor",
+      "oracle_text": "Creature spells you cast cost {1} less to cast.\nWhenever another creature you control enters, this creature deals 2 damage to it. If a Dinosaur is dealt damage this way, this creature gets +2/+0 until end of turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Dinosaur"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -177253,6 +177343,82 @@
         "Warrior"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "condition": {
+                "not": {
+                  "has_turn_flag": "pantlaza_discovered"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "toughness_of": {
+                          "binding": "subject"
+                        }
+                      },
+                      "op": "discover"
+                    },
+                    {
+                      "flag": "pantlaza_discovered",
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "set_turn_flag"
+                    }
+                  ],
+                  "op": "may",
+                  "prompt": "Discover X, where X is that creature's toughness?"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Pantlaza or another Dinosaur you control enters, you may discover X, where X is that creature's toughness. Do this only once each turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "subtypes": [
+                "Dinosaur"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "R",
+        "W"
+      ],
+      "id": "pantlaza_sun_favored",
+      "mana_cost": "{2}{R}{G}{W}",
+      "name": "Pantlaza, Sun-Favored",
+      "oracle_text": "Whenever Pantlaza or another Dinosaur you control enters, you may discover X, where X is that creature's toughness. Do this only once each turn. (Exile cards from the top of your library until you exile a nonland card with that mana value or less. Cast it without paying its mana cost or put it into your hand. Put the rest on the bottom in a random order.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Dinosaur"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]

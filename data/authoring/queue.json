@@ -167172,12 +167172,12 @@
     },
     "Marauding Raptor": {
       "edhrec_rank": 2979,
-      "gate": "template",
+      "gate": null,
       "name": "Marauding Raptor",
-      "reason": "no template for: Creature spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "0b5cf2aa-f6dd-47d2-a57f-0ae2308c0f9a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Marauding Sphinx": {
@@ -197522,12 +197522,12 @@
     },
     "Pantlaza, Sun-Favored": {
       "edhrec_rank": 2420,
-      "gate": "template",
+      "gate": null,
       "name": "Pantlaza, Sun-Favored",
-      "reason": "no template for: Whenever Pantlaza or another Dinosaur you control enters, you may discover X, where X is t",
+      "reason": "",
       "scryfall_id": "150a35f8-bbdc-4f6e-98e3-3bd6a3b8154a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Papalymo Totolymo": {

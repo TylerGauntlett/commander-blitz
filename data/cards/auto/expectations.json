@@ -12539,6 +12539,13 @@
     },
     "zone": "battlefield"
   },
+  "marauding_raptor": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "marble_diamond": {
     "zone": "battlefield"
   },
@@ -14807,6 +14814,10 @@
     "zone": "battlefield"
   },
   "panther_warriors": {
+    "zone": "battlefield"
+  },
+  "pantlaza_sun_favored": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "papalymo_totolymo": {
