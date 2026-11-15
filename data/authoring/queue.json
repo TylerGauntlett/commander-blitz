@@ -287662,12 +287662,12 @@
     },
     "Timestream Navigator": {
       "edhrec_rank": 5107,
-      "gate": "template",
+      "gate": null,
       "name": "Timestream Navigator",
-      "reason": "no template for: Ascend",
+      "reason": "",
       "scryfall_id": "086afafe-6b6c-4a54-8ce7-0040295d309c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Timetwister": {

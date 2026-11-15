@@ -138,6 +138,11 @@ class CostModel(BaseModel):
     #: could be activated and responded to with the source still on the
     #: battlefield, and 601.2h pays costs before any of that.
     exile_self: bool = False
+    #: "**Put this creature on the bottom of its owner's library**" --
+    #: Timestream Navigator. The library twin of ``exile_self``: the source
+    #: must be on the battlefield, and it goes to the bottom of its owner's
+    #: library as the ability is activated, not as it resolves.
+    tuck_self: bool = False
     #: "**Exile a blue card from your hand**" -- Force of Will's pitch. A
     #: selector over the payer's own hand with an optional ``count``, and the
     #: exile twin of ``discard`` + ``discard_selector``.

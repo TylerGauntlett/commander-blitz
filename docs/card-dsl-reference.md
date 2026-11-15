@@ -21,7 +21,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Player-wide statics](#player-wide-statics) | 48 |
 | [Grantable statics](#grantable-statics) | 44 |
 | [Cost reduction](#cost-reduction) | 8 |
-| [Ability costs](#ability-costs) | 35 |
+| [Ability costs](#ability-costs) | 36 |
 | [Card-level costs](#card-level-costs) | 35 |
 | [Keywords](#keywords) | 46 |
 | [Card types and supertypes](#card-types-and-supertypes) | 12 |
@@ -830,6 +830,7 @@ Every field an activated ability's `cost` (or a `may`'s `pay`) may carry -- the 
 | `tap_permanents` | Tap N other permanents, or `total_power` of them (crew). | [Crew — a tap cost measured in power](card-dsl.md#crew--a-tap-cost-measured-in-power) |
 | `tap_x` | Tap X matching untapped permanents, X announced and bounded by them. | [tap_x — tap X untapped permanents, X announced](card-dsl.md#tap_x--tap-x-untapped-permanents-x-announced) |
 | `times` | Pay the whole cost that many times (cumulative upkeep). | [Costs](card-dsl.md#costs) |
+| `tuck_self` | Put the source on the bottom of its owner's library. | [tuck_self — the source to the bottom of its owner's library](card-dsl.md#tuck_self--the-source-to-the-bottom-of-its-owners-library) |
 | `untap` | {Q}: untap the source. | [Costs](card-dsl.md#costs) |
 | `untap_permanents` | Untap N other permanents. | [Costs](card-dsl.md#costs) |
 | `x_minimum` | The least X an activated ability may announce ("X can't be 0"). | [x_minimum — X can't be 0](card-dsl.md#x_minimum--x-cant-be-0) |

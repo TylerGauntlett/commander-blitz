@@ -60,6 +60,7 @@ NOT_A_CAST_TIME_COST = frozenset(
         "remove_counters",
         "exile_self",
         "exile_self_from_hand",
+        "tuck_self",
         "discard_self",
         "discard_x",
         "sacrifice_x",

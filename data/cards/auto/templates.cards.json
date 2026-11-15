@@ -261048,6 +261048,50 @@
     {
       "abilities": [
         {
+          "condition": {
+            "has_city_s_blessing": "you"
+          },
+          "cost": {
+            "mana": "{2}{U}{U}",
+            "tap": true,
+            "tuck_self": true
+          },
+          "effects": [
+            {
+              "op": "extra_turn",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{U}{U}, {T}, Put this creature on the bottom of its owner's library: Take an extra turn after this one. Activate only if you have the city's blessing."
+        }
+      ],
+      "ascend": true,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "timestream_navigator",
+      "mana_cost": "{1}{U}",
+      "name": "Timestream Navigator",
+      "oracle_text": "Ascend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\n{2}{U}{U}, {T}, Put this creature on the bottom of its owner's library: Take an extra turn after this one. Activate only if you have the city's blessing.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Pirate",
+        "Wizard"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "self_only": true
           },

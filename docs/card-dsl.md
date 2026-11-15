@@ -4744,6 +4744,7 @@ and [#card-level-costs](card-dsl-reference.md#card-level-costs):
   "discard": 1, "discard_selector": { "types": ["Land"] },
   "discard_self": true,                           // cycling: *this* card, no choice
   "exile_self": true,                             // Phoenix Down: exiles the source, not to the graveyard
+  "tuck_self": true,                              // Timestream Navigator: the source to its owner's library bottom
   "exile_from_hand": { "colors": ["U"] },         // Force of Will: a selector over *your* hand
   "exile_self_from_hand": true,                   // Simian Spirit Guide: *this* card, out of hand
   "mill": 1,                                      // Millikin: off *your* library's top
@@ -5122,6 +5123,29 @@ the battlefield, so this one reaches the player through
 `legality._activate_zones`, which already walks their own hand. That is the right
 answer as well as the only one — the solver exiling cards out of a hand it was
 never asked about is not a thing anybody wants.
+
+### `tuck_self` — the source to the bottom of its owner's library
+
+"{2}{U}{U}, {T}, **Put this creature on the bottom of its owner's library**: Take
+an extra turn after this one." — Timestream Navigator.
+
+```jsonc
+"cost": { "mana": "{2}{U}{U}", "tap": true, "tuck_self": true }
+```
+
+A boolean, the library twin of `exile_self`: no choice and no selector, because
+the permanent that goes is *this* one. `costs.can_pay` requires the source on the
+battlefield, and the payment moves it to the bottom of its **owner's** library —
+a stolen creature goes home, and a commander may go to the command zone instead
+(903.9b). It is not a cast-time cost (`vocabulary.NOT_A_CAST_TIME_COST`), and
+giving it beside `exile_self`, `exile_self_from_hand` or `discard_self` is a load
+error: one card cannot leave for two zones.
+
+The near miss is the `put_on_top` op with `bottom: true` in the effects. That
+moves the creature at resolution, so the ability could be activated twice in
+response, and the creature would stay on the battlefield if the ability were
+countered; 601.2h pays the cost first. `sacrifice` is the other near miss, and it
+puts the creature in the graveyard, which is the wrong zone and fires `dies`.
 
 ### `x_minimum` — X can't be 0
 

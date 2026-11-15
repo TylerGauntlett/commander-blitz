@@ -21661,6 +21661,10 @@
     },
     "zone": "battlefield"
   },
+  "timestream_navigator": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "timothar_baron_of_bats": {
     "battlefield_count": 33,
     "zone": "battlefield"

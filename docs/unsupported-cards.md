@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**391 cards** blocked by **343** capabilities.
+**390 cards** blocked by **342** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -339,7 +339,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [training](#training) | 1 | 8710 | keyword |
 | [treefolk-x-x-g-reach-land-count](#treefolk-x-x-g-reach-land-count) | 1 | 2396 | token |
 | [trigger-filter-base-pt](#trigger-filter-base-pt) | 1 | 10907 | selector |
-| [tuck-self-cost](#tuck-self-cost) | 1 | 5107 | cost |
 | [turn-face-down](#turn-face-down) | 1 | 10947 | op |
 | [turned-face-up-this-turn](#turned-face-up-this-turn) | 1 | 16432 | selector |
 | [turned-face-up-with-counters](#turned-face-up-with-counters) | 1 | 3297 | replacement |
@@ -5480,20 +5479,6 @@ Blocks **1** card.
 
 - **Duskana, the Rage Mother** (rank 10907) — `duskana_the_rage_mother`
   - Whenever a creature you control with base power and toughness 2/2 attacks, it gets +3/+3 until end of turn.
-
-</details>
-
-## tuck-self-cost
-
-Blocks **1** card.
-
-- **(cost)** an activated-ability cost that puts the source permanent on the bottom of its owner's library ("Put this creature on the bottom of its owner's library"), paid at activation alongside mana and {T}, so the ability cannot be activated twice and the creature is gone even if the ability is countered
-  <br>Why the existing vocabulary won't do: cost_keys has exile_self, sacrifice, return_to_hand and discard_self, but nothing that moves the source to its owner's library; sacrifice sends it to the graveyard (wrong zone, triggers dies), and moving it with a put_on_top {bottom: true} effect would shift the payment to resolution, which the packet notes forbid. The rest is expressible: card-level ascend: true, the extra_turn op with player you, and condition {has_city_s_blessing: true} on the activated ability
-
-<details><summary>Cards waiting on this</summary>
-
-- **Timestream Navigator** (rank 5107) — `timestream_navigator`
-  - {2}{U}{U}, {T}, Put this creature on the bottom of its owner's library: Take an extra turn after this one. Activate only if you have the city's blessing.
 
 </details>
 

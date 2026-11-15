@@ -380,6 +380,15 @@ class Cost:
     #: could be activated and responded to with the source still on the
     #: battlefield, and 601.2h pays costs before any of that.
     exile_self: bool = False
+    #: "{2}{U}{U}, {T}, **Put this creature on the bottom of its owner's
+    #: library**:" -- Timestream Navigator. The library twin of `exile_self`,
+    #: with the same battlefield check and the same no-choice payment: which
+    #: permanent goes is *this* one, into its **owner's** library (a stolen
+    #: creature goes home), at the bottom. Not the `put_on_top` op with
+    #: ``bottom``: an op runs at resolution, so the ability could be activated
+    #: again in response and the creature would still be there if the ability
+    #: were countered (601.2h pays costs first).
+    tuck_self: bool = False
     #: "**Exile a blue card from your hand**" -- the pitch cost of Force of
     #: Will, Misdirection, Pyrokinesis and the Modern Horizons elementals. A
     #: selector over the payer's own hand, with an optional ``count``.
@@ -611,6 +620,7 @@ class Cost:
                 else int(spec.get("pay_energy", 0) or 0)
             ),
             exile_self=bool(spec.get("exile_self")),
+            tuck_self=bool(spec.get("tuck_self")),
             exile_from_hand=(
                 dict(spec["exile_from_hand"]) if spec.get("exile_from_hand") else None
             ),
@@ -686,6 +696,7 @@ class Cost:
             # the same place a Signet's {1} and a Vivid land's counter sit.
             and self.mill == 0
             and not self.exile_self
+            and not self.tuck_self
             # Simian Spirit Guide is a mana ability that costs a card, not a
             # tap. Left out of `is_tap_only` it would be invisible to the
             # payment solver *and* to the player; counted in, the solver would
@@ -738,6 +749,8 @@ class Cost:
             parts.append("Discard this card")
         if self.exile_self:
             parts.append("Exile this permanent")
+        if self.tuck_self:
+            parts.append("Put this permanent on the bottom of its owner's library")
         if self.exile_self_from_hand:
             parts.append("Exile this card from your hand")
         if self.exile_from_hand:

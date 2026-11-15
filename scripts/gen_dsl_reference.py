@@ -1151,6 +1151,8 @@ ABILITY_COSTS: dict[str, Entry] = {
                          "behold — choose a permanent or reveal a card"),
     "exile_self": ("Exile the source.", None),
     "exile_self_from_hand": ("Exile this card from your hand.", None),
+    "tuck_self": ("Put the source on the bottom of its owner's library.",
+                  "`tuck_self` — the source to the bottom of its owner's library"),
     "loyalty": ("A loyalty cost (+N / -N).", "Planeswalkers"),
     # The heading prints a real minus sign (U+2212), and the slug keeps the
     # difference from a hyphen, so the glyph is load-bearing.
