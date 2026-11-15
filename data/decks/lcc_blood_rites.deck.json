@@ -1,0 +1,783 @@
+{
+  "id": "lcc_blood_rites",
+  "name": "Blood Rites",
+  "commanders": [
+    "clavileno_first_of_the_blessed"
+  ],
+  "color_identity": [
+    "B",
+    "W"
+  ],
+  "source": "precon",
+  "release": {
+    "set_code": "LCC",
+    "set_name": "The Lost Caverns of Ixalan Commander",
+    "date": "2023-11-17"
+  },
+  "notes": "The Lost Caverns of Ixalan Commander precon, card for card (https://mtgjson.com/api/v5/decks/BloodRites_LCC.json).",
+  "tags": [
+    "Vampires",
+    "Aristocrats",
+    "Lifegain",
+    "Tokens"
+  ],
+  "strategy": "Clavile\u00f1o, First of the Blessed turns an attacking Vampire into a Demon each combat, and when that creature dies its controller draws a card and makes a 4/3 flying Vampire Demon, so the deck attacks with Vampires and is glad to lose them. Viscera Seer, Village Rites, Indulgent Aristocrat and Bloodline Necromancer turn bodies into value, while Blood Artist, Cruel Celebrant, Falkenrath Noble, Butcher of Malakir and Elenda, the Dusk Rose punish every death. Exquisite Blood, Sanctum Seeker, Elenda's Hierophant and Patron of the Vein turn the drain into a lifegain engine, Order of Sacred Dusk, Legion Lieutenant and Kindred Boon keep the tribe on the board, and Austere Command, Damn, Olivia's Wrath and Swords to Plowshares clear the way before Vona, Butcher of Magan and Glass-Cast Heart close the game.",
+  "archetype": "aristocrats",
+  "ratings": {
+    "speed": 3,
+    "complexity": 3,
+    "interaction": 3,
+    "resilience": 3,
+    "pilot": 3
+  },
+  "signature": [
+    {
+      "card_id": "clavileno_first_of_the_blessed",
+      "why": "Each attack makes a Vampire a Demon that leaves a card and a 4/3 flier behind when it dies."
+    },
+    {
+      "card_id": "blood_artist",
+      "why": "Every creature that dies drains a player for one."
+    },
+    {
+      "card_id": "exquisite_blood",
+      "why": "Every point an opponent loses comes back to you as life."
+    },
+    {
+      "card_id": "timothar_baron_of_bats",
+      "why": "A dead Vampire becomes a Bat that brings it back when it connects."
+    }
+  ],
+  "printings": {
+    "arcane_signet": {
+      "scryfall_id": "fc6c69a0-ac24-4486-8893-a6303d08fc6e",
+      "artist": "Dan Murayama Scott",
+      "set_code": "lcc",
+      "collector_number": "299"
+    },
+    "austere_command": {
+      "scryfall_id": "cf1f630e-8b55-4f5a-a7f2-3161801de767",
+      "artist": "Anna Steinbauer",
+      "set_code": "lcc",
+      "collector_number": "126"
+    },
+    "bartolome_del_presidio": {
+      "scryfall_id": "690ccdc7-6c43-4902-9d11-2f07b7a36b11",
+      "artist": "Randy Gallegos",
+      "set_code": "lci",
+      "collector_number": "224"
+    },
+    "blade_of_the_bloodchief": {
+      "scryfall_id": "34e7bebf-1844-476c-a947-978393908fa2",
+      "artist": "Jung Park",
+      "set_code": "lcc",
+      "collector_number": "300"
+    },
+    "blood_artist": {
+      "scryfall_id": "b7f1c316-cf2f-4bbf-89a1-79c8043bdd96",
+      "artist": "L.A. Draws",
+      "set_code": "lcc",
+      "collector_number": "182"
+    },
+    "bloodghast": {
+      "scryfall_id": "08e01310-d192-41e9-a6f0-0edbd6fb3cfb",
+      "artist": "Lixin Yin",
+      "set_code": "lcc",
+      "collector_number": "184"
+    },
+    "bloodline_necromancer": {
+      "scryfall_id": "6b1e719c-4679-4cf0-8ca4-ae740eb0ba92",
+      "artist": "J.P. Targete",
+      "set_code": "lcc",
+      "collector_number": "185"
+    },
+    "bloodtracker": {
+      "scryfall_id": "d654462f-5346-454f-9905-41218cf6b29e",
+      "artist": "Magali Villeneuve",
+      "set_code": "lcc",
+      "collector_number": "186"
+    },
+    "bojuka_bog": {
+      "scryfall_id": "0c7d4fbe-fa7a-4b34-b339-197f08409cbf",
+      "artist": "Howard Lyon",
+      "set_code": "lcc",
+      "collector_number": "320"
+    },
+    "butcher_of_malakir": {
+      "scryfall_id": "9d805499-0739-403e-8447-ed2707dc9eb2",
+      "artist": "Jason Chan",
+      "set_code": "lcc",
+      "collector_number": "187"
+    },
+    "carmen_cruel_skymarcher": {
+      "scryfall_id": "c0e07f8a-5290-47c4-a93d-0c3a14afebd3",
+      "artist": "Randy Vargas",
+      "set_code": "lcc",
+      "collector_number": "5"
+    },
+    "champion_of_dusk": {
+      "scryfall_id": "5fa1674a-86cc-4fdf-8671-860b2bf5043d",
+      "artist": "Josh Hass",
+      "set_code": "lcc",
+      "collector_number": "188"
+    },
+    "charismatic_conqueror": {
+      "scryfall_id": "599c934d-bfff-43ce-a545-6e3cde124515",
+      "artist": "Bram Sels",
+      "set_code": "lcc",
+      "collector_number": "70"
+    },
+    "clavileno_first_of_the_blessed": {
+      "scryfall_id": "9f55b648-b1ec-407a-a0c7-7647755793d1",
+      "artist": "Matt Stewart",
+      "set_code": "lcc",
+      "collector_number": "2"
+    },
+    "command_tower": {
+      "scryfall_id": "d477d733-2360-4f1d-9ecd-cdedc2e8a7ae",
+      "artist": "Evan Shipard",
+      "set_code": "lcc",
+      "collector_number": "325"
+    },
+    "commanders_sphere": {
+      "scryfall_id": "c643146f-da7b-4cc0-b874-4accad99ccce",
+      "artist": "Ryan Alexander Lee",
+      "set_code": "lcc",
+      "collector_number": "301"
+    },
+    "cordial_vampire": {
+      "scryfall_id": "0d91e61d-e3bf-4ddc-9f01-18b1abe35a61",
+      "artist": "Winona Nelson",
+      "set_code": "lcc",
+      "collector_number": "189"
+    },
+    "crossway_troublemakers": {
+      "scryfall_id": "95ef4f86-9b96-4181-9442-44adce180984",
+      "artist": "Aaron J. Riley",
+      "set_code": "lcc",
+      "collector_number": "190"
+    },
+    "cruel_celebrant": {
+      "scryfall_id": "b3f8be99-a398-4664-beb6-3e98d6e62a32",
+      "artist": "Bastien L. Deharme",
+      "set_code": "lcc",
+      "collector_number": "267"
+    },
+    "damn": {
+      "scryfall_id": "84056124-1a6f-4274-bee2-74cf0debddb5",
+      "artist": "Lucas Graciano",
+      "set_code": "lcc",
+      "collector_number": "191"
+    },
+    "drana_liberator_of_malakir": {
+      "scryfall_id": "0850b41d-3589-40cd-ae22-cc5b4ddee1c4",
+      "artist": "Mike Bierek",
+      "set_code": "lcc",
+      "collector_number": "193"
+    },
+    "dusk_legion_sergeant": {
+      "scryfall_id": "5bfc9243-7aec-48e6-9f3b-1bbbb5370063",
+      "artist": "Igor Kieryluk",
+      "set_code": "lcc",
+      "collector_number": "80"
+    },
+    "dusk_legion_zealot": {
+      "scryfall_id": "72048624-e3fd-4e9b-91a9-996ea3a1a74f",
+      "artist": "Winona Nelson",
+      "set_code": "lcc",
+      "collector_number": "194"
+    },
+    "elenda_s_hierophant": {
+      "scryfall_id": "d12f728a-1bbb-4bee-96d4-d721292997ba",
+      "artist": "Miranda Meeks",
+      "set_code": "lcc",
+      "collector_number": "71"
+    },
+    "elenda_the_dusk_rose": {
+      "scryfall_id": "e18feca3-1b1b-4456-8873-25a24849a917",
+      "artist": "Chris Rahn",
+      "set_code": "lcc",
+      "collector_number": "268"
+    },
+    "etchings_of_the_chosen": {
+      "scryfall_id": "496e4759-9d6b-42fa-833c-1fff2c9d03f2",
+      "artist": "Chuck Lukacs",
+      "set_code": "lcc",
+      "collector_number": "269"
+    },
+    "exquisite_blood": {
+      "scryfall_id": "0e8ccfa7-4178-476a-a155-0ca1c98556c9",
+      "artist": "Cynthia Sheppard",
+      "set_code": "lcc",
+      "collector_number": "195"
+    },
+    "falkenrath_noble": {
+      "scryfall_id": "0fad9e17-c45c-4f94-af5b-63dc1dda1e5b",
+      "artist": "Slawomir Maniak",
+      "set_code": "lcc",
+      "collector_number": "196"
+    },
+    "glass_cast_heart": {
+      "scryfall_id": "f36a4054-903c-468a-877b-0ba43a403cc1",
+      "artist": "Alayna Danner",
+      "set_code": "lcc",
+      "collector_number": "199"
+    },
+    "heirloom_blade": {
+      "scryfall_id": "49fe8b13-3f83-4a35-aa2d-2292b96f3d3e",
+      "artist": "Carmen Sinek",
+      "set_code": "lcc",
+      "collector_number": "303"
+    },
+    "indulgent_aristocrat": {
+      "scryfall_id": "296e4dc6-6997-4c4a-8137-c0835b44a1c9",
+      "artist": "Anna Steinbauer",
+      "set_code": "lcc",
+      "collector_number": "200"
+    },
+    "isolated_chapel": {
+      "scryfall_id": "c688891e-0a25-4630-acfc-c3a0bed2b2f2",
+      "artist": "Richard Wright",
+      "set_code": "lcc",
+      "collector_number": "337"
+    },
+    "kindred_boon": {
+      "scryfall_id": "a9d21710-3006-45a0-9af2-275159bb5315",
+      "artist": "Carlos Palma Cruchaga",
+      "set_code": "lcc",
+      "collector_number": "129"
+    },
+    "legion_lieutenant": {
+      "scryfall_id": "85c6bd7d-537a-42fe-9c68-742bdf2e7025",
+      "artist": "Zezhou Chen",
+      "set_code": "lcc",
+      "collector_number": "275"
+    },
+    "march_of_the_canonized": {
+      "scryfall_id": "547581d0-025a-435a-8016-ee7c6b890e53",
+      "artist": "Dominik Mayer",
+      "set_code": "lcc",
+      "collector_number": "73"
+    },
+    "martyr_of_dusk": {
+      "scryfall_id": "d32e68b4-2584-4b1c-9268-642e3678bae7",
+      "artist": "Greg Staples",
+      "set_code": "lcc",
+      "collector_number": "132"
+    },
+    "master_of_dark_rites": {
+      "scryfall_id": "6394a522-37bb-4cf3-b434-5121c8000ac6",
+      "artist": "Igor Kieryluk",
+      "set_code": "lcc",
+      "collector_number": "83"
+    },
+    "mavren_fein_dusk_apostle": {
+      "scryfall_id": "fdc3e998-760b-41ca-9f92-270aaa82f3fb",
+      "artist": "Daarken",
+      "set_code": "lcc",
+      "collector_number": "133"
+    },
+    "mind_stone": {
+      "scryfall_id": "8615e46e-56c3-49f6-b4ad-44ec25be5f05",
+      "artist": "Camille Alquier",
+      "set_code": "lcc",
+      "collector_number": "309"
+    },
+    "myriad_landscape": {
+      "scryfall_id": "92a45243-2ea9-4da1-984b-287a555a51f4",
+      "artist": "Richard Wright",
+      "set_code": "lcc",
+      "collector_number": "343"
+    },
+    "new_blood": {
+      "scryfall_id": "6ee669ab-0ae6-43e5-86fd-f0dcb621e478",
+      "artist": "Howard Lyon",
+      "set_code": "lcc",
+      "collector_number": "202"
+    },
+    "nighthawk_scavenger": {
+      "scryfall_id": "ebc64d89-4fa0-40fc-9d93-154d50deaaa1",
+      "artist": "Heonhwa",
+      "set_code": "lcc",
+      "collector_number": "203"
+    },
+    "oathsworn_vampire": {
+      "scryfall_id": "cde542de-0b87-4eb1-be05-abdb729ada10",
+      "artist": "Greg Opalinski",
+      "set_code": "lcc",
+      "collector_number": "204"
+    },
+    "olivia_s_wrath": {
+      "scryfall_id": "3eb5cc8d-a198-43cd-a2bd-9c9414d815b2",
+      "artist": "N\u00e9stor Ossand\u00f3n Leal",
+      "set_code": "lcc",
+      "collector_number": "205"
+    },
+    "order_of_sacred_dusk": {
+      "scryfall_id": "32f34099-c6ff-49d2-911a-23ab806c77e9",
+      "artist": "Bartek Fedyczak",
+      "set_code": "lcc",
+      "collector_number": "97"
+    },
+    "orzhov_basilica": {
+      "scryfall_id": "315107f2-3c1c-43b5-aa23-80ec8f722861",
+      "artist": "John Avon",
+      "set_code": "lcc",
+      "collector_number": "345"
+    },
+    "orzhov_signet": {
+      "scryfall_id": "0f0d3c9c-7b3d-4dd1-bf0a-41652e2e1f94",
+      "artist": "Martina Pilcerova",
+      "set_code": "lcc",
+      "collector_number": "310"
+    },
+    "pact_of_the_serpent": {
+      "scryfall_id": "481d268a-848c-4ccd-95ff-eed77dc20776",
+      "artist": "Donato Giancola",
+      "set_code": "lcc",
+      "collector_number": "206"
+    },
+    "path_of_ancestry": {
+      "scryfall_id": "f30552a5-db59-4164-bbd2-44bf7ae1e91e",
+      "artist": "Alayna Danner",
+      "set_code": "lcc",
+      "collector_number": "346"
+    },
+    "patron_of_the_vein": {
+      "scryfall_id": "a70d7b65-77d0-41d3-9735-d64b9288fde1",
+      "artist": "Tommy Arnold",
+      "set_code": "lcc",
+      "collector_number": "207"
+    },
+    "plains": {
+      "scryfall_id": "4716a32c-91a6-470a-a686-d5eb3d27f46e",
+      "artist": "Carlos Palma Cruchaga",
+      "set_code": "lci",
+      "collector_number": "393"
+    },
+    "promise_of_aclazotz_foul_rebirth": {
+      "scryfall_id": "b88a3b40-bf04-4017-be97-08ab86e331d1",
+      "artist": "Lixin Yin",
+      "set_code": "lcc",
+      "collector_number": "84"
+    },
+    "radiant_destiny": {
+      "scryfall_id": "d1d03bfb-c3bf-4837-b4df-e6339997dedb",
+      "artist": "Emrah Elmasli",
+      "set_code": "lcc",
+      "collector_number": "135"
+    },
+    "redemption_choir": {
+      "scryfall_id": "981dcacb-24a3-43bb-bb64-2b227f31dc3e",
+      "artist": "Michele Giorgi",
+      "set_code": "lcc",
+      "collector_number": "74"
+    },
+    "return_to_dust": {
+      "scryfall_id": "664e3826-799b-4edb-8811-2d2b6355edaf",
+      "artist": "Anato Finnstark",
+      "set_code": "lcc",
+      "collector_number": "136"
+    },
+    "rogue_s_passage": {
+      "scryfall_id": "a7dc75a8-c500-4b50-aff9-32ce36566104",
+      "artist": "Christine Choi",
+      "set_code": "lcc",
+      "collector_number": "349"
+    },
+    "sanctum_seeker": {
+      "scryfall_id": "893279fb-6f51-4d1e-b2fd-a0cdb603785f",
+      "artist": "Volkan Ba\u01f5a",
+      "set_code": "lcc",
+      "collector_number": "209"
+    },
+    "secluded_courtyard": {
+      "scryfall_id": "26c40b2a-cb27-4fad-a9b2-1fb065d44d77",
+      "artist": "Sam Burley",
+      "set_code": "lcc",
+      "collector_number": "350"
+    },
+    "shineshadow_snarl": {
+      "scryfall_id": "3d483bcf-438a-499b-86a5-6357d718faf1",
+      "artist": "Sam Burley",
+      "set_code": "lcc",
+      "collector_number": "351"
+    },
+    "sol_ring": {
+      "scryfall_id": "2d47121d-8b90-4d28-9ffa-0a640b9dd611",
+      "artist": "Mike Bierek",
+      "set_code": "lcc",
+      "collector_number": "313"
+    },
+    "sorin_lord_of_innistrad": {
+      "scryfall_id": "ab98caf7-cc24-4027-ad8a-026150b61858",
+      "artist": "Michael Komarck",
+      "set_code": "lcc",
+      "collector_number": "289"
+    },
+    "swamp": {
+      "scryfall_id": "4f893107-84b0-4e3f-b1f5-b04632f192c5",
+      "artist": "Logan Feliciano",
+      "set_code": "lci",
+      "collector_number": "397"
+    },
+    "swiftfoot_boots": {
+      "scryfall_id": "a3b1da84-9c26-4c3c-b90f-43a0b2b20103",
+      "artist": "Svetlin Velinov",
+      "set_code": "lcc",
+      "collector_number": "314"
+    },
+    "swords_to_plowshares": {
+      "scryfall_id": "7cdee412-3519-4626-80ca-e3e431a604f0",
+      "artist": "Jesper Ejsing",
+      "set_code": "lcc",
+      "collector_number": "137"
+    },
+    "tainted_field": {
+      "scryfall_id": "299b3b1d-4c31-4701-870e-15ee1ef85cd2",
+      "artist": "Alayna Danner",
+      "set_code": "lcc",
+      "collector_number": "356"
+    },
+    "talisman_of_hierarchy": {
+      "scryfall_id": "16d49e21-dbe6-41da-b4b0-fd587e3326a5",
+      "artist": "Lindsey Look",
+      "set_code": "lcc",
+      "collector_number": "315"
+    },
+    "temple_of_silence": {
+      "scryfall_id": "dbd36bbb-2d0e-4d81-9646-b8263ef29a8e",
+      "artist": "Adam Paquette",
+      "set_code": "lcc",
+      "collector_number": "358"
+    },
+    "temple_of_the_false_god": {
+      "scryfall_id": "96a31b2d-ee3f-48e5-b0dd-481a0c3efea2",
+      "artist": "James Zapata",
+      "set_code": "lcc",
+      "collector_number": "359"
+    },
+    "timothar_baron_of_bats": {
+      "scryfall_id": "7b01ecb8-02e2-4da2-8bf3-9c3753b23ba4",
+      "artist": "Jason A. Engle",
+      "set_code": "lcc",
+      "collector_number": "210"
+    },
+    "twilight_prophet": {
+      "scryfall_id": "41f90e2b-cdbb-4a7c-aba0-c72055b414ed",
+      "artist": "Seb McKinnon",
+      "set_code": "lcc",
+      "collector_number": "211"
+    },
+    "unclaimed_territory": {
+      "scryfall_id": "e7bd3aaa-864c-4cbb-bbab-68d87c824e3d",
+      "artist": "Dimitar Marinski",
+      "set_code": "lcc",
+      "collector_number": "366"
+    },
+    "utter_end": {
+      "scryfall_id": "b7d2161e-8ef5-463d-a84f-966e4419fc6c",
+      "artist": "Mark Winters",
+      "set_code": "lcc",
+      "collector_number": "292"
+    },
+    "vault_of_the_archangel": {
+      "scryfall_id": "03a91bc2-bf45-45f3-8a14-911b6148720b",
+      "artist": "John Avon",
+      "set_code": "lcc",
+      "collector_number": "367"
+    },
+    "village_rites": {
+      "scryfall_id": "2841339b-faef-407d-9838-d03fe80e6294",
+      "artist": "Igor Kieryluk",
+      "set_code": "lcc",
+      "collector_number": "212"
+    },
+    "viscera_seer": {
+      "scryfall_id": "486fd8a2-dd97-4082-84ef-4795c7e559a0",
+      "artist": "John Stanko",
+      "set_code": "lcc",
+      "collector_number": "213"
+    },
+    "voldaren_estate": {
+      "scryfall_id": "1fcbc704-4fb3-49c3-9040-aa1681e86e2c",
+      "artist": "Richard Wright",
+      "set_code": "lcc",
+      "collector_number": "369"
+    },
+    "vona_butcher_of_magan": {
+      "scryfall_id": "27beed9c-a42e-46de-8fbc-885da337ae75",
+      "artist": "Volkan Ba\u01f5a",
+      "set_code": "lcc",
+      "collector_number": "293"
+    },
+    "wayfarers_bauble": {
+      "scryfall_id": "2eb513b3-9c9e-4837-8f58-67d698677041",
+      "artist": "David Sondered",
+      "set_code": "lcc",
+      "collector_number": "317"
+    },
+    "welcoming_vampire": {
+      "scryfall_id": "2ea7710e-2eae-47e7-bcb1-3465f8b62728",
+      "artist": "Lorenzo Mastroianni",
+      "set_code": "lcc",
+      "collector_number": "140"
+    },
+    "windbrisk_heights": {
+      "scryfall_id": "047f2401-d2dc-4bfd-a7fa-83ef1d825219",
+      "artist": "Omar Rayyan",
+      "set_code": "lcc",
+      "collector_number": "370"
+    },
+    "yahenni_undying_partisan": {
+      "scryfall_id": "2b77cd68-fbdd-4bca-a68c-299425588a61",
+      "artist": "Lius Lasahido",
+      "set_code": "lcc",
+      "collector_number": "214"
+    }
+  },
+  "cards": [
+    {
+      "id": "arcane_signet"
+    },
+    {
+      "id": "austere_command"
+    },
+    {
+      "id": "bartolome_del_presidio"
+    },
+    {
+      "id": "blade_of_the_bloodchief"
+    },
+    {
+      "id": "blood_artist"
+    },
+    {
+      "id": "bloodghast"
+    },
+    {
+      "id": "bloodline_necromancer"
+    },
+    {
+      "id": "bloodtracker"
+    },
+    {
+      "id": "bojuka_bog"
+    },
+    {
+      "id": "butcher_of_malakir"
+    },
+    {
+      "id": "carmen_cruel_skymarcher"
+    },
+    {
+      "id": "champion_of_dusk"
+    },
+    {
+      "id": "charismatic_conqueror"
+    },
+    {
+      "id": "command_tower"
+    },
+    {
+      "id": "commanders_sphere"
+    },
+    {
+      "id": "cordial_vampire"
+    },
+    {
+      "id": "crossway_troublemakers"
+    },
+    {
+      "id": "cruel_celebrant"
+    },
+    {
+      "id": "damn"
+    },
+    {
+      "id": "drana_liberator_of_malakir"
+    },
+    {
+      "id": "dusk_legion_sergeant"
+    },
+    {
+      "id": "dusk_legion_zealot"
+    },
+    {
+      "id": "elenda_s_hierophant"
+    },
+    {
+      "id": "elenda_the_dusk_rose"
+    },
+    {
+      "id": "etchings_of_the_chosen"
+    },
+    {
+      "id": "exquisite_blood"
+    },
+    {
+      "id": "falkenrath_noble"
+    },
+    {
+      "id": "glass_cast_heart"
+    },
+    {
+      "id": "heirloom_blade"
+    },
+    {
+      "id": "indulgent_aristocrat"
+    },
+    {
+      "id": "isolated_chapel"
+    },
+    {
+      "id": "kindred_boon"
+    },
+    {
+      "id": "legion_lieutenant"
+    },
+    {
+      "id": "march_of_the_canonized"
+    },
+    {
+      "id": "martyr_of_dusk"
+    },
+    {
+      "id": "master_of_dark_rites"
+    },
+    {
+      "id": "mavren_fein_dusk_apostle"
+    },
+    {
+      "id": "mind_stone"
+    },
+    {
+      "id": "myriad_landscape"
+    },
+    {
+      "id": "new_blood"
+    },
+    {
+      "id": "nighthawk_scavenger"
+    },
+    {
+      "id": "oathsworn_vampire"
+    },
+    {
+      "id": "olivia_s_wrath"
+    },
+    {
+      "id": "order_of_sacred_dusk"
+    },
+    {
+      "id": "orzhov_basilica"
+    },
+    {
+      "id": "orzhov_signet"
+    },
+    {
+      "id": "pact_of_the_serpent"
+    },
+    {
+      "id": "path_of_ancestry"
+    },
+    {
+      "id": "patron_of_the_vein"
+    },
+    {
+      "id": "plains",
+      "qty": 8
+    },
+    {
+      "id": "promise_of_aclazotz_foul_rebirth"
+    },
+    {
+      "id": "radiant_destiny"
+    },
+    {
+      "id": "redemption_choir"
+    },
+    {
+      "id": "return_to_dust"
+    },
+    {
+      "id": "rogue_s_passage"
+    },
+    {
+      "id": "sanctum_seeker"
+    },
+    {
+      "id": "secluded_courtyard"
+    },
+    {
+      "id": "shineshadow_snarl"
+    },
+    {
+      "id": "sol_ring"
+    },
+    {
+      "id": "sorin_lord_of_innistrad"
+    },
+    {
+      "id": "swamp",
+      "qty": 13
+    },
+    {
+      "id": "swiftfoot_boots"
+    },
+    {
+      "id": "swords_to_plowshares"
+    },
+    {
+      "id": "tainted_field"
+    },
+    {
+      "id": "talisman_of_hierarchy"
+    },
+    {
+      "id": "temple_of_silence"
+    },
+    {
+      "id": "temple_of_the_false_god"
+    },
+    {
+      "id": "timothar_baron_of_bats"
+    },
+    {
+      "id": "twilight_prophet"
+    },
+    {
+      "id": "unclaimed_territory"
+    },
+    {
+      "id": "utter_end"
+    },
+    {
+      "id": "vault_of_the_archangel"
+    },
+    {
+      "id": "village_rites"
+    },
+    {
+      "id": "viscera_seer"
+    },
+    {
+      "id": "voldaren_estate"
+    },
+    {
+      "id": "vona_butcher_of_magan"
+    },
+    {
+      "id": "wayfarers_bauble"
+    },
+    {
+      "id": "welcoming_vampire"
+    },
+    {
+      "id": "windbrisk_heights"
+    },
+    {
+      "id": "yahenni_undying_partisan"
+    }
+  ]
+}
