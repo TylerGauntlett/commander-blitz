@@ -10122,12 +10122,12 @@
     },
     "Apex Altisaur": {
       "edhrec_rank": 1495,
-      "gate": "template",
+      "gate": null,
       "name": "Apex Altisaur",
-      "reason": "no template for: When this creature enters, it fights up to one target creature you don't control",
+      "reason": "",
       "scryfall_id": "1e6beba4-128c-418e-83ed-8a82afc0c39e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Apex Devastator": {
@@ -11732,12 +11732,12 @@
     },
     "Arch of Orazca": {
       "edhrec_rank": 2531,
-      "gate": "template",
+      "gate": null,
       "name": "Arch of Orazca",
-      "reason": "no template for: Ascend",
+      "reason": "",
       "scryfall_id": "581dcadd-7de4-4b39-bab0-d3567194a252",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Archaeological Dig": {
@@ -16022,12 +16022,12 @@
     },
     "Atzocan Seer": {
       "edhrec_rank": 4711,
-      "gate": "template",
+      "gate": null,
       "name": "Atzocan Seer",
-      "reason": "no template for: Sacrifice this creature: Return target Dinosaur card from your graveyard to your hand",
+      "reason": "",
       "scryfall_id": "985448b8-5852-4074-a4bd-1dee5192b104",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Audacious Infiltrator": {
@@ -23422,12 +23422,12 @@
     },
     "Bellowing Aegisaur": {
       "edhrec_rank": 7843,
-      "gate": "template",
+      "gate": null,
       "name": "Bellowing Aegisaur",
-      "reason": "no template for: Enrage — Whenever this creature is dealt damage, put a +1/+1 counter on each other creatur",
+      "reason": "",
       "scryfall_id": "d468cfcc-7d53-4439-bfec-2c6c3fea2616",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bellowing Bruiser // Beat a Path": {
@@ -63882,12 +63882,12 @@
     },
     "Deathgorge Scavenger": {
       "edhrec_rank": 11701,
-      "gate": "template",
+      "gate": null,
       "name": "Deathgorge Scavenger",
-      "reason": "no template for: Whenever this creature enters or attacks, you may exile target card from a graveyard. If a",
+      "reason": "",
       "scryfall_id": "c175e50f-3858-43d7-8d4b-359ece106ccf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deathgreeter": {

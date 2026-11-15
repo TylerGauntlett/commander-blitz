@@ -861,6 +861,12 @@
   "anvilwrought_raptor": {
     "zone": "battlefield"
   },
+  "apex_altisaur": {
+    "zone": [
+      "battlefield",
+      "graveyard"
+    ]
+  },
   "apex_devastator": {
     "zone": "battlefield"
   },
@@ -966,6 +972,13 @@
     "zone": "battlefield"
   },
   "arcane_sanctum": {
+    "zone": "battlefield"
+  },
+  "arch_of_orazca": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "archaeomancer": {
@@ -1354,6 +1367,10 @@
       "0": 39
     },
     "zone": "graveyard"
+  },
+  "atzocan_seer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "augusta_order_returned": {
     "battlefield_count": 33,
@@ -1883,6 +1900,10 @@
     "zone": "battlefield"
   },
   "bello_bard_of_the_brambles": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "bellowing_aegisaur": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -4858,6 +4879,15 @@
     "zone": "battlefield"
   },
   "deathgaze_cockatrice": {
+    "zone": "battlefield"
+  },
+  "deathgorge_scavenger": {
+    "graveyard_size": {
+      "0": 1
+    },
+    "life": {
+      "0": 42
+    },
     "zone": "battlefield"
   },
   "deathless_knight": {
