@@ -16062,6 +16062,10 @@
   "rampaging_aetherhood": {
     "zone": "battlefield"
   },
+  "rampaging_brontodon": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "rampaging_ferocidon": {
     "battlefield_count": 33,
     "life": {
@@ -16107,6 +16111,13 @@
     "zone": "battlefield"
   },
   "ranger_s_longbow": {
+    "zone": "battlefield"
+  },
+  "ranging_raptors": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "rankle_master_of_pranks": {

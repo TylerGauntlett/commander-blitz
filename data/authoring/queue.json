@@ -214772,12 +214772,12 @@
     },
     "Rampaging Brontodon": {
       "edhrec_rank": 3862,
-      "gate": "template",
+      "gate": null,
       "name": "Rampaging Brontodon",
-      "reason": "no template for: Whenever this creature attacks, it gets +1/+1 until end of turn for each land you control",
+      "reason": "",
       "scryfall_id": "ea3f71d6-e333-4e50-9545-deb73749413c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rampaging Ceratops": {
@@ -215242,12 +215242,12 @@
     },
     "Ranging Raptors": {
       "edhrec_rank": 3008,
-      "gate": "template",
+      "gate": null,
       "name": "Ranging Raptors",
-      "reason": "no template for: Enrage — Whenever this creature is dealt damage, you may search your library for a basic l",
+      "reason": "",
       "scryfall_id": "7d4f04bc-30ee-4948-9905-774f532ac811",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rank Officer": {
