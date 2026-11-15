@@ -370,7 +370,9 @@ def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
             # "Costs {3} less" with no mana half to take it off. Clamped at zero,
             # so it would load clean and do nothing at all.
             raise DslError(f"{where}.cost: 'mana_reduction' needs a 'mana' cost to reduce")
-        _validate_cost_reduction(model.mana_reduction, f"{where}.cost.mana_reduction")
+        _validate_cost_reduction(
+            model.mana_reduction, f"{where}.cost.mana_reduction", activated=True
+        )
     if model.discard_selector is not None and not (model.discard or model.discard_x):
         raise DslError(
             f"{where}: 'discard_selector' needs a 'discard' count or 'discard_x' to narrow"

@@ -22,7 +22,7 @@ from .characteristics import (
     crew_power_bonus,
     mana_source_traits,
 )
-from .cost_reduction import reduction_amount
+from .cost_reduction import every_target_matches, reduction_amount
 from .effects import execute
 from .effects.behold import announce_beheld, behold_count, behold_pool, reveal_pool
 from .effects.conditions import evaluate
@@ -1069,7 +1069,16 @@ def ability_mana(
     if defined is not None:
         x = defined
     req = cost.mana.with_x(x)
-    less = reduction_amount(state, pid, cost.mana_reduction, source_oid=source_oid)
+    reduction = cost.mana_reduction
+    if reduction and (each := reduction.get("targeting_each")) is not None:
+        # Wayta's "costs {2} less … if it targets two creatures you control".
+        # Read generously with no tuple yet, as `cost_reduction.own_reduction`
+        # reads its gate: legality prices every offered tuple again.
+        aimed = targets is None or every_target_matches(state, pid, each, targets)
+        reduction = (
+            {k: v for k, v in reduction.items() if k != "targeting_each"} if aimed else None
+        )
+    less = reduction_amount(state, pid, reduction, source_oid=source_oid)
     # "Equip abilities you activate … cost {3} less to activate" -- Strong Back,
     # a discount written on a *different* permanent. Added to the ability's own
     # `mana_reduction` rather than replacing it: two cards may both be talking

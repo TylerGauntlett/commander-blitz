@@ -6584,6 +6584,13 @@ carries two independent filters:
   "cause_filter": { "any_types": ["Instant", "Sorcery"] } }
 ```
 
+A cause event with halves is matched on the half it names, as a trigger is:
+`cause_events: ["dealt_damage"]` with `cause_controller: "you"` and
+`cause_filter: {"types": ["Creature"]}` is Wayta's "a creature you control
+**being dealt damage**", and your creature dealing damage to a player is not
+it. The additional time is the same firing queued again, so a `batched`
+trigger is doubled too (Wayta beside Wrathful Raptors).
+
 "A creature you control **dealing combat damage to a player**" (Felix
 Five-Boots) is a cause no list of `cause_events` says, because one blow reaches
 the trigger layer as four events and each counts only sometimes. It is the flag

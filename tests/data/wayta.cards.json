@@ -1,0 +1,148 @@
+{
+  "_comment": "Shapes for tests/unit/costs/test_targeting_each_reduction.py and tests/unit/triggers/test_double_triggers_dealt_damage.py. Never part of a deck list. t_wy_fighter is Wayta's activated ability without its {T}; t_wy_doubler is Wayta's last line on a plain enchantment; t_wy_pinger gains 1 life whenever a creature you control deals damage to a player, the half the doubler must not reach.",
+  "cards": [
+    {
+      "id": "t_wy_fighter",
+      "name": "Test Wy Fighter",
+      "oracle_text": "{2}{G}: Target creature you control fights another target creature. This ability costs {2} less to activate if it targets two creatures you control.",
+      "mana_cost": "{G}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{2}{G}: Target creature you control fights another target creature. This ability costs {2} less to activate if it targets two creatures you control.",
+          "cost": {
+            "mana": "{2}{G}",
+            "mana_reduction": {
+              "amount": 2,
+              "targeting_each": {
+                "types": [
+                  "Creature"
+                ],
+                "controller": "you"
+              }
+            }
+          },
+          "targets": [
+            {
+              "id": "mine",
+              "kind": "permanent",
+              "count": 1,
+              "selector": {
+                "zone": "battlefield",
+                "types": [
+                  "Creature"
+                ],
+                "controller": "you"
+              }
+            },
+            {
+              "id": "other",
+              "kind": "permanent",
+              "count": 1,
+              "selector": {
+                "zone": "battlefield",
+                "types": [
+                  "Creature"
+                ],
+                "controller": "any"
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "fight",
+              "objects": {
+                "target": "mine"
+              },
+              "other": {
+                "target": "other"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_wy_doubler",
+      "name": "Test Wy Doubler",
+      "oracle_text": "If a creature you control being dealt damage causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time.",
+      "mana_cost": "{G}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If a creature you control being dealt damage causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time.",
+          "effect": "double_triggers",
+          "affects": {
+            "controller": "you"
+          },
+          "cause_events": [
+            "dealt_damage"
+          ],
+          "cause_controller": "you",
+          "cause_filter": {
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_wy_pinger",
+      "name": "Test Wy Pinger",
+      "oracle_text": "Whenever a creature you control deals damage to a player, you gain 1 life.",
+      "mana_cost": "{G}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a creature you control deals damage to a player, you gain 1 life.",
+          "trigger": {
+            "event": "deals_damage_to_player",
+            "controller": "you",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

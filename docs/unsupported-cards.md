@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**394 cards** blocked by **344** capabilities.
+**393 cards** blocked by **342** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -126,7 +126,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [copy-all-on-stack](#copy-all-on-stack) | 1 | 4558 | op |
 | [copy-spell-forced-target](#copy-spell-forced-target) | 1 | 13586 | op |
 | [cost-reduction-attacking-player](#cost-reduction-attacking-player) | 1 | 9998 | selector |
-| [cost-reduction-if-all-targets-match](#cost-reduction-if-all-targets-match) | 1 | 8292 | value |
 | [cost-reduction-per-attacker-this-turn](#cost-reduction-per-attacker-this-turn) | 1 | 9578 | value |
 | [cost-reduction-per-counter](#cost-reduction-per-counter) | 1 | 11563 | value |
 | [cost-reduction-per-life-gained-this-turn](#cost-reduction-per-life-gained-this-turn) | 1 | 15353 | value |
@@ -145,7 +144,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [distribute-counters-spell](#distribute-counters-spell) | 1 | 6993 | op |
 | [divided-damage-on-activated](#divided-damage-on-activated) | 1 | 13459 | engine |
-| [double-triggers-dealt-damage-cause](#double-triggers-dealt-damage-cause) | 1 | 8292 | static_effect |
 | [double-x](#double-x) | 1 | 2672 | op |
 | [each-player-chooses-color](#each-player-chooses-color) | 1 | 3587 | op |
 | [echo](#echo) | 1 | 961 | keyword |
@@ -2458,21 +2456,6 @@ Blocks **1** card.
 
 </details>
 
-## cost-reduction-if-all-targets-match
-
-Blocks **1** card.
-
-- **(value)** an activated ability's mana_reduction gated on its chosen targets where EVERY object target (here both fight targets) must match the filter (Creature, controller you), not just any one of them
-  <br>Why the existing vocabulary won't do: The `targeting` gate (cost_reduction.own_reduction / ability_cost_reduction) is true when ANY object target matches; since the first fight target is always a creature you control, any-match would discount every activation. It is also documented for a card's own spell cost_reduction, not for an activated ability's cost.mana_reduction
-
-<details><summary>Cards waiting on this</summary>
-
-- **Wayta, Trainer Prodigy** (rank 8292) — `wayta_trainer_prodigy`
-  - {2}{G}, {T}: Target creature you control fights another target creature. This ability costs {2} less to activate if it targets two creatures you control.
-  - If a creature you control being dealt damage causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time.
-
-</details>
-
 ## cost-reduction-per-attacker-this-turn
 
 Blocks **1** card.
@@ -2728,21 +2711,6 @@ Blocks **1** card.
 
 - **Skarrgan Hellkite** (rank 13459) — `skarrgan_hellkite`
   - {3}{R}: This creature deals 2 damage divided as you choose among one or two targets. Activate only if this creature has a +1/+1 counter on it.
-
-</details>
-
-## double-triggers-dealt-damage-cause
-
-Blocks **1** card.
-
-- **(static_effect)** a double_triggers cause clause meaning 'a creature you control being dealt damage': only the permanent half of DAMAGE_DEALT (to='permanent') whose victim (oid) is a creature you control counts as the cause
-  <br>Why the existing vocabulary won't do: double_triggers with cause_events ['dealt_damage'] + cause_filter {types: Creature, controller: you} loads, but triggers._cause_matches never applies EVENT_HALVES, and on the player half of DAMAGE_DEALT (no oid) _subject_oid falls through to event.source, the dealer -- so your creature dealing damage to a player would also double triggers, which is wider than the printed line. Needs _cause_matches to honour _half_matches (or a dedicated flag like cause_combat_damage_to_player)
-
-<details><summary>Cards waiting on this</summary>
-
-- **Wayta, Trainer Prodigy** (rank 8292) — `wayta_trainer_prodigy`
-  - {2}{G}, {T}: Target creature you control fights another target creature. This ability costs {2} less to activate if it targets two creatures you control.
-  - If a creature you control being dealt damage causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time.
 
 </details>
 

@@ -2856,6 +2856,14 @@ The loader refuses it on an ability's or a graveyard cast's `mana_reduction`
 (nothing hands those a tuple), on a card that declares no `targets`, beside
 `strive`, and with `zone`, `self_only` or `exclude_self` in the clause.
 
+**Every target: `targeting_each`.** Wayta, Trainer Prodigy's "this ability
+costs {2} less to activate if it targets **two creatures you control**" is the
+same filter asked of every object target (`cost_reduction.every_target_matches`),
+on an activated ability's `mana_reduction`, the one place it may be written:
+`costs.ability_mana` prices it with the activation's targets and legality
+prices every offered tuple. `targeting` would be the near miss there and is
+always true, because Wayta's first target is a creature you control.
+
 The near miss is `condition: {"exists": {... "attacking": true}}`, which
 discounts the spell whenever anything is attacking, whatever it targets — a
 stronger card than the printed one. The `spell_cost_reduction` static's own
