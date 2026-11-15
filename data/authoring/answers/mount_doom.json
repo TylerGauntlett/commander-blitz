@@ -1,0 +1,57 @@
+{
+  "card": {
+    "id": "mount_doom",
+    "name": "Mount Doom",
+    "oracle_text": "{T}, Pay 1 life: Add {B} or {R}.\n{1}{B}{R}, {T}: Mount Doom deals 1 damage to each opponent.\n{5}{B}{R}, {T}, Sacrifice Mount Doom and a legendary artifact: Choose up to two creatures, then destroy the rest. Activate only as a sorcery.",
+    "supertypes": ["Legendary"],
+    "types": ["Land"],
+    "colors": [],
+    "color_identity": ["B", "R"],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}, Pay 1 life: Add {B} or {R}.",
+        "is_mana_ability": true,
+        "cost": {"tap": true, "pay_life": 1},
+        "effects": [
+          {"op": "choose_mode", "modes": [
+            {"label": "B", "effects": [{"op": "add_mana", "mana": "{B}"}]},
+            {"label": "R", "effects": [{"op": "add_mana", "mana": "{R}"}]}
+          ]}
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{1}{B}{R}, {T}: Mount Doom deals 1 damage to each opponent.",
+        "cost": {"mana": "{1}{B}{R}", "tap": true},
+        "effects": [{"op": "damage", "amount": {"const": 1}, "player": "each_opponent"}]
+      },
+      {
+        "kind": "activated",
+        "text": "{5}{B}{R}, {T}, Sacrifice Mount Doom and a legendary artifact: Choose up to two creatures, then destroy the rest. Activate only as a sorcery.",
+        "sorcery_speed_only": true,
+        "cost": {
+          "mana": "{5}{B}{R}",
+          "tap": true,
+          "sacrifice": [
+            {"self_only": true},
+            {"types": ["Artifact"], "supertypes": ["Legendary"]}
+          ]
+        },
+        "effects": [
+          {
+            "op": "choose_permanents",
+            "as": "kept",
+            "prompt": "Choose up to two creatures to keep",
+            "objects": {"zone": "battlefield", "types": ["Creature"], "count": 2, "optional": true}
+          },
+          {
+            "op": "destroy",
+            "objects": {"zone": "battlefield", "types": ["Creature"], "count": "all", "exclude_binding": "kept"}
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}
