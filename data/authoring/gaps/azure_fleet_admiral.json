@@ -1,0 +1,18 @@
+{
+  "card_id": "azure_fleet_admiral",
+  "name": "Azure Fleet Admiral",
+  "oracle_text": "When this creature enters, you become the monarch.\nThis creature can't be blocked by creatures the monarch controls.",
+  "blocked_sentences": [
+    "This creature can't be blocked by creatures the monarch controls."
+  ],
+  "needs": [
+    {
+      "capability": "monarch_block_evasion",
+      "kind": "selector",
+      "what": "a blocker-filter controller spec on the block_restriction static's `blockers` that matches creatures controlled by whoever is currently the monarch (e.g. `blockers: {\"controller\": \"monarch\"}`), read per blocker at declare-blockers time",
+      "why_existing_wont_do": "block_restriction's `blockers` is a static filter whose `controller` resolves through _static_players to only you/opponent/any; the static condition `is_monarch` only switches the whole static on or off for a fixed player spec (or `affected_controller`, which names the attacker's controller, not the blocker's), so `{is_monarch: opponent}` plus an unfiltered block_restriction would make it unblockable by every opponent's creatures in multiplayer, not just the monarch's"
+    }
+  ],
+  "closest_existing": ["block_restriction", "is_monarch", "become_monarch"],
+  "confidence": "high"
+}

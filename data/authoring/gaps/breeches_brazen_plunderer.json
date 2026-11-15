@@ -1,0 +1,18 @@
+{
+  "card_id": "breeches_brazen_plunderer",
+  "name": "Breeches, Brazen Plunderer",
+  "oracle_text": "Menace\nWhenever one or more Pirates you control deal damage to your opponents, exile the top card of each of those opponents' libraries. You may play those cards this turn, and you may spend mana as though it were mana of any color to cast those spells.\nPartner (You can have two commanders if both have partner.)",
+  "blocked_sentences": [
+    "Whenever one or more Pirates you control deal damage to your opponents, exile the top card of each of those opponents' libraries. You may play those cards this turn, and you may spend mana as though it were mana of any color to cast those spells."
+  ],
+  "needs": [
+    {
+      "capability": "batched_damage_to_players_trigger",
+      "kind": "trigger_event",
+      "what": "a 'whenever one or more <filter> you control deal damage to your opponents' trigger over ANY damage (combat and noncombat), batched across every matching source in one simultaneous damage event (a combat damage step, or one effect op), firing once per batch and binding the set of damaged opponents so the effect can iterate 'each of those opponents' (e.g. `batched: true` accepted on `deals_damage_to_player`, with the damaged seats exposed as a player binding usable by `for_each_player`)",
+      "why_existing_wont_do": "`creatures_deal_combat_damage` has the right batching, `filter` and `defending: \"opponent\"` but is combat damage only, so a Pirate's noncombat damage (a pinger, a fight, a burn trigger) would be missed -- a narrower card. `deals_damage_to_player` hears noncombat damage but is keyed per source: two Pirates hitting the same opponent would fire twice and exile two cards from that library, and `batched` is refused there because it is not in `BATCHED_EVENTS`. The effect half is expressible (`exile` of each damaged opponent's top card with `playable: \"this_turn\"` and `any_color: true`); only the trigger is missing"
+    }
+  ],
+  "closest_existing": ["creatures_deal_combat_damage", "deals_damage_to_player"],
+  "confidence": "high"
+}
