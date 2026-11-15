@@ -13969,6 +13969,10 @@
   "nema_siltlurker": {
     "zone": "battlefield"
   },
+  "nephalia_drownyard": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "nephalia_seakite": {
     "zone": "battlefield"
   },

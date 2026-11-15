@@ -185152,12 +185152,12 @@
     },
     "Nephalia Drownyard": {
       "edhrec_rank": 3256,
-      "gate": "template",
+      "gate": null,
       "name": "Nephalia Drownyard",
-      "reason": "no template for: {1}{U}{B}, {T}: Target player mills three cards",
+      "reason": "",
       "scryfall_id": "fe2e25b7-f950-482b-9e35-266b1278a71a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nephalia Moondrakes": {
