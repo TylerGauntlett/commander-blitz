@@ -1,0 +1,54 @@
+{
+  "card": {
+    "id": "athreos_god_of_passage",
+    "name": "Athreos, God of Passage",
+    "oracle_text": "Indestructible\nAs long as your devotion to white and black is less than seven, Athreos isn't a creature.\nWhenever another creature you own dies, return it to your hand unless target opponent pays 3 life.",
+    "mana_cost": "{1}{W}{B}",
+    "types": ["Enchantment", "Creature"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["God"],
+    "power": 5,
+    "toughness": 4,
+    "colors": ["B", "W"],
+    "color_identity": ["B", "W"],
+    "keywords": ["indestructible"],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "As long as your devotion to white and black is less than seven, Athreos isn't a creature.",
+        "effect": "set_types",
+        "affects": {"self_only": true},
+        "types": ["Enchantment"],
+        "condition": {
+          "cmp": "<",
+          "left": {"mana_symbols": {"objects": {"controller": "you", "zone": "battlefield"}, "of": ["W", "B"]}},
+          "right": {"const": 7}
+        }
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever another creature you own dies, return it to your hand unless target opponent pays 3 life.",
+        "trigger": {
+          "event": "creature_dies",
+          "controller": "any",
+          "filter": {"owner": "you", "exclude_self": true}
+        },
+        "targets": [
+          {"id": "t1", "kind": "player", "selector": {"controller": "opponent"}}
+        ],
+        "effects": [
+          {
+            "op": "may",
+            "player": {"target": "t1"},
+            "pay": {"pay_life": 3},
+            "prompt": "Pay 3 life to stop Athreos returning that card to its owner's hand?",
+            "else": [
+              {"op": "return_from_graveyard", "destination": "hand", "objects": {"binding": "subject", "zone": "graveyard"}}
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}
