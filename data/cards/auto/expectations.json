@@ -17449,6 +17449,11 @@
   "school_of_the_unseen": {
     "zone": "battlefield"
   },
+  "scion_of_calamity": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "scion_of_ugin": {
     "zone": "battlefield"
   },
@@ -18105,6 +18110,10 @@
         "indestructible"
       ]
     },
+    "zone": "battlefield"
+  },
+  "shifting_ceratops": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "shifting_woodland": {
@@ -19871,6 +19880,10 @@
     },
     "zone": "graveyard"
   },
+  "sunfrill_imitator": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sungrace_pegasus": {
     "zone": "battlefield"
   },
@@ -20484,6 +20497,10 @@
     "life": {
       "0": 43
     }
+  },
+  "temple_altisaur": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "temple_bell": {
     "battlefield_count": 33,
@@ -23304,6 +23321,10 @@
       "0": 40,
       "1": 40
     },
+    "zone": "battlefield"
+  },
+  "wayward_swordtooth": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "weakness": {

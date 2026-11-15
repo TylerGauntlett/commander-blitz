@@ -1,0 +1,18 @@
+{
+  "card_id": "thundering_spineback",
+  "name": "Thundering Spineback",
+  "oracle_text": "Other Dinosaurs you control get +1/+1.\n{5}{G}: Create a 3/3 green Dinosaur creature token with trample. (It can deal excess combat damage to the player or planeswalker it's attacking.)",
+  "blocked_sentences": [
+    "{5}{G}: Create a 3/3 green Dinosaur creature token with trample. (It can deal excess combat damage to the player or planeswalker it's attacking.)"
+  ],
+  "needs": [
+    {
+      "capability": "dinosaur_3_3_g_trample",
+      "kind": "token",
+      "what": "a 3/3 green Dinosaur creature token with trample",
+      "why_existing_wont_do": "token_ids is a closed list and its only Dinosaur is dinosaur_3_1_r (3/1 red Dinosaur); the 3/3 green tramplers there are other creature types (no Dinosaur), and substituting a near token is forbidden. The static line is expressible as a buff with affects {subtypes: [Dinosaur], controller: you, exclude_self: true}."
+    }
+  ],
+  "closest_existing": ["dinosaur_3_1_r", "beast_3_3_g", "rhino_4_4_g_trample"],
+  "confidence": "high"
+}

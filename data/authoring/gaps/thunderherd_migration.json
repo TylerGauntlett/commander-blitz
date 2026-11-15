@@ -1,0 +1,18 @@
+{
+  "card_id": "thunderherd_migration",
+  "name": "Thunderherd Migration",
+  "oracle_text": "As an additional cost to cast this spell, reveal a Dinosaur card from your hand or pay {1}.\nSearch your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
+  "blocked_sentences": [
+    "As an additional cost to cast this spell, reveal a Dinosaur card from your hand or pay {1}."
+  ],
+  "needs": [
+    {
+      "capability": "reveal_from_hand_cost",
+      "kind": "cost",
+      "what": "a cost node that reveals N cards matching a selector from the payer's own hand without moving them (the source spell excluded, 601.2a), usable as one option of additional_cost_options beside a {1} mana option -- the Ixalan 'reveal a Dinosaur/Dragon card from your hand or pay {1}' cycle",
+      "why_existing_wont_do": "behold is the closest cost and does reveal from hand, but its pool always also includes matching permanents you control, so a Dinosaur on the battlefield would wrongly pay it; exile_from_hand and discard move the card, which the printed cost does not"
+    }
+  ],
+  "closest_existing": ["behold", "additional_cost_options", "exile_from_hand"],
+  "confidence": "high"
+}

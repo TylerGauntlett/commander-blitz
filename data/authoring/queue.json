@@ -235632,12 +235632,12 @@
     },
     "Scion of Calamity": {
       "edhrec_rank": 3255,
-      "gate": "template",
+      "gate": null,
       "name": "Scion of Calamity",
-      "reason": "no template for: Myriad",
+      "reason": "",
       "scryfall_id": "75db3c02-7a03-4de5-a70e-220777227dd3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Scion of Darkness": {
@@ -244112,12 +244112,12 @@
     },
     "Shifting Ceratops": {
       "edhrec_rank": 8633,
-      "gate": "template",
+      "gate": null,
       "name": "Shifting Ceratops",
-      "reason": "no template for: This spell can't be countered",
+      "reason": "",
       "scryfall_id": "8be37115-b4aa-437a-9b72-01af0cf0a0cd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shifting Grift": {
@@ -269682,12 +269682,12 @@
     },
     "Sunfrill Imitator": {
       "edhrec_rank": 3730,
-      "gate": "template",
+      "gate": null,
       "name": "Sunfrill Imitator",
-      "reason": "no template for: Whenever this creature attacks, you may have it become a copy of another target Dinosaur y",
+      "reason": "",
       "scryfall_id": "d0b65a61-51bd-47eb-bc51-64270c12c8c3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sunglasses of Urza": {
@@ -277182,12 +277182,12 @@
     },
     "Temple Altisaur": {
       "edhrec_rank": 3037,
-      "gate": "template",
+      "gate": null,
       "name": "Temple Altisaur",
-      "reason": "no template for: If a source would deal damage to another Dinosaur you control, prevent all but 1 of that d",
+      "reason": "",
       "scryfall_id": "83c1ba83-c394-4ff1-b2ba-56907403162a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Temple Bell": {
@@ -312512,12 +312512,12 @@
     },
     "Wayward Swordtooth": {
       "edhrec_rank": 1007,
-      "gate": "template",
+      "gate": null,
       "name": "Wayward Swordtooth",
-      "reason": "no template for: Ascend",
+      "reason": "",
       "scryfall_id": "076c5abd-6ae5-4c59-b1f4-f18eeb9159d9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "We Ride at Dawn": {
