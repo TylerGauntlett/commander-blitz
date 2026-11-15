@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**404 cards** blocked by **353** capabilities.
+**401 cards** blocked by **352** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -26,7 +26,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
 | [basic-land-type-mana](#basic-land-type-mana) | 3 | 73 | engine |
-| [batched-damage-to-players-trigger](#batched-damage-to-players-trigger) | 3 | 3043 | trigger_event |
 | [choose-new-targets](#choose-new-targets) | 3 | 75 | op |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 6346 | op |
 | [crime](#crime) | 3 | 2244 | trigger_event |
@@ -822,28 +821,6 @@ Blocks **3** cards.
 - **Omo, Queen of Vesuva** (rank 4942) — `omo_queen_of_vesuva`
   - Each land with an everything counter on it is every land type in addition to its other types.
   - Each nonland creature with an everything counter on it is every creature type.
-
-</details>
-
-## batched-damage-to-players-trigger
-
-Blocks **3** cards.
-
-- **(trigger_event)** a 'whenever one or more <filter> you control deal damage to your opponents' trigger over ANY damage (combat and noncombat), batched across every matching source in one simultaneous damage event (a combat damage step, or one effect op), firing once per batch and binding the set of damaged opponents so the effect can iterate 'each of those opponents' (e.g. `batched: true` accepted on `deals_damage_to_player`, with the damaged seats exposed as a player binding usable by `for_each_player`)
-  <br>Why the existing vocabulary won't do: `creatures_deal_combat_damage` has the right batching, `filter` and `defending: "opponent"` but is combat damage only, so a Pirate's noncombat damage (a pinger, a fight, a burn trigger) would be missed -- a narrower card. `deals_damage_to_player` hears noncombat damage but is keyed per source: two Pirates hitting the same opponent would fire twice and exile two cards from that library, and `batched` is refused there because it is not in `BATCHED_EVENTS`. The effect half is expressible (`exile` of each damaged opponent's top card with `playable: "this_turn"` and `any_color: true`); only the trigger is missing
-- **(trigger_event)** a 'whenever one or more <filter> you control deal damage to a player' trigger over ANY damage (combat and noncombat), batched across every matching source in one simultaneous damage event (a combat damage step, or one effect op), firing once per batch -- e.g. `batched: true` accepted on `deals_damage_to_player` (adding it to `BATCHED_EVENTS`, grouped by the `batch` that `damage_player` stamps), with `filter: {"subtypes": ["Pirate"]}` and `controller: "you"`
-  <br>Why the existing vocabulary won't do: `creatures_deal_combat_damage` has the right one-or-more batching and a `filter` over the damagers but is combat damage only, so a Pirate's noncombat damage (a pinger, a burn trigger) would be missed -- a narrower card. `deals_damage_to_player` hears noncombat damage but is keyed per source: two Pirates connecting in the same combat damage step would fire twice and make Francisco explore twice, and `batched` is refused there because it is not in `BATCHED_EVENTS`. The effect (`explore` with `objects: {"self_only": true}`) and the 'can't block' static (`cant_block` on self) are expressible; only the trigger is missing
-- **(trigger_event)** a 'whenever one or more <filter> you control deal damage to your opponents' trigger over ANY damage (combat and noncombat), batched across every matching source in one simultaneous damage event (a combat damage step, or one effect op), firing once per batch and exposing the set of damaged opponents -- here as a count ("for each opponent dealt damage") usable as `create_token`'s `amount`, e.g. `batched: true` accepted on `deals_damage_to_player` (added to `BATCHED_EVENTS`, grouped by the `batch` that `damage_player` stamps) with a value reading the number of distinct damaged opponents in the batch
-  <br>Why the existing vocabulary won't do: `creatures_deal_combat_damage` with `per_player` and `defending: "opponent"` gives one Treasure per damaged opponent but is combat damage only, so a Pirate's noncombat damage would be missed -- a narrower card. `deals_damage_to_player` hears noncombat damage but is keyed per source: two Pirates hitting the same opponent would fire twice and make two Treasures, and `batched` is refused there because it is not in `BATCHED_EVENTS`. The effect (`create_token` of `treasure_token`) and Flying/Partner are expressible; only the trigger and its damaged-opponent count are missing
-
-<details><summary>Cards waiting on this</summary>
-
-- **Malcolm, Keen-Eyed Navigator** (rank 3043) — `malcolm_keen_eyed_navigator`
-  - Whenever one or more Pirates you control deal damage to your opponents, you create a Treasure token for each opponent dealt damage. (It's an artifact with "{T}, Sacrifice this token: Add one mana of any color.")
-- **Breeches, Brazen Plunderer** (rank 4521) — `breeches_brazen_plunderer`
-  - Whenever one or more Pirates you control deal damage to your opponents, exile the top card of each of those opponents' libraries. You may play those cards this turn, and you may spend mana as though it were mana of any color to cast those spells.
-- **Francisco, Fowl Marauder** (rank 6731) — `francisco_fowl_marauder`
-  - Whenever one or more Pirates you control deal damage to a player, Francisco explores.
 
 </details>
 

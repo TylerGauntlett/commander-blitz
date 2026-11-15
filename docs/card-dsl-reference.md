@@ -483,7 +483,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `deals_combat_damage_to_planeswalker` | `combat_damage_to_planeswalker` | A creature deals combat damage to a planeswalker. | ["…deals combat damage to a player or planeswalker"](card-dsl.md#deals-combat-damage-to-a-player-or-planeswalker) |
 | `deals_combat_damage_to_player` | `combat_damage_to_player` | A creature deals combat damage to a player. | [Triggers](card-dsl.md#triggers) |
 | `deals_damage` | `damage_dealt` | A source deals any damage to anything, combat or noncombat; once per damage event (a combat damage step or one effect), `amount` its total; the subject is the dealer. | ["Whenever this creature deals damage" — deals_damage](card-dsl.md#whenever-this-creature-deals-damage--deals_damage) |
-| `deals_damage_to_player` | `damage_dealt` | A source deals any damage to a player. | [Triggers](card-dsl.md#triggers) |
+| `deals_damage_to_player` | `damage_dealt` | A source deals any damage to a player; `batched` fires once per combat damage step or effect op, with `damaged_players` the seats it hit. | ["Whenever one or more …" — batched](card-dsl-cookbook.md#whenever-one-or-more---batched) |
 | `dealt_damage` | `damage_dealt` | A permanent is dealt damage; `batched` fires once per simultaneous damage event, `amount` its total. | ["Whenever one or more …" — batched](card-dsl-cookbook.md#whenever-one-or-more---batched) |
 | `dies` | `dies` | A permanent dies. | [Triggers](card-dsl.md#triggers) |
 | `discard` | `discard` | A player discards a card; `batched` fires once per discard, however many cards it takes. | ["Whenever one or more …" — batched](card-dsl-cookbook.md#whenever-one-or-more---batched) |

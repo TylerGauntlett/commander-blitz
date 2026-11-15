@@ -33912,12 +33912,12 @@
     },
     "Breeches, Brazen Plunderer": {
       "edhrec_rank": 4521,
-      "gate": "template",
+      "gate": null,
       "name": "Breeches, Brazen Plunderer",
-      "reason": "no template for: Whenever one or more Pirates you control deal damage to your opponents, exile the top card",
+      "reason": "",
       "scryfall_id": "fb6dc94e-9b57-4161-a835-15e46c3bb13a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Breeches, Eager Pillager": {
@@ -101582,12 +101582,12 @@
     },
     "Francisco, Fowl Marauder": {
       "edhrec_rank": 6731,
-      "gate": "template",
+      "gate": null,
       "name": "Francisco, Fowl Marauder",
-      "reason": "no template for: Francisco can't block",
+      "reason": "",
       "scryfall_id": "5182b527-739e-4523-8611-01244ced26ac",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Frankenstein's Monster": {
@@ -165842,12 +165842,12 @@
     },
     "Malcolm, Keen-Eyed Navigator": {
       "edhrec_rank": 3043,
-      "gate": "template",
+      "gate": null,
       "name": "Malcolm, Keen-Eyed Navigator",
-      "reason": "no template for: Whenever one or more Pirates you control deal damage to your opponents, you create a Treas",
+      "reason": "",
       "scryfall_id": "51187cdb-85ee-4f68-9e29-d84d296f0825",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Malcolm, the Eyes": {

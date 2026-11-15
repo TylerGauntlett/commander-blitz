@@ -6688,7 +6688,9 @@ Curiosity, Ophidian Eye and Tandem Lookout. Its subject is the permanent that
 **dealt** the damage, so `filter: {"attached": true}` is how an Aura says
 "enchanted creature" and `source: "self"` is how a granted copy says "this
 creature"; `defending` says who took it, and `controller` whose creature dealt
-it.
+it. `batched: true` is "whenever **one or more** … deal damage to a player":
+once per combat damage step or effect op, with the seats it hit bound as
+`damaged_players` (see [the cookbook](card-dsl-cookbook.md#whenever-one-or-more---batched)).
 
 The other half of the same event `dealt_damage` takes, and the pair is worth
 reading together: DAMAGE_DEALT covers damage to a permanent and damage to a

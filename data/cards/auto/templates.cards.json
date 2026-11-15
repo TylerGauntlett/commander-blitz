@@ -32472,6 +32472,77 @@
         {
           "effects": [
             {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "any_color": true,
+                  "destination": "exile",
+                  "objects": {
+                    "count": "all"
+                  },
+                  "op": "look_at_top",
+                  "playable": "this_turn",
+                  "player": {
+                    "binding": "each_player"
+                  }
+                }
+              ],
+              "op": "for_each_player",
+              "players": {
+                "binding": "damaged_players"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more Pirates you control deal damage to your opponents, exile the top card of each of those opponents' libraries. You may play those cards this turn, and you may spend mana as though it were mana of any color to cast those spells.",
+          "trigger": {
+            "batched": true,
+            "controller": "you",
+            "defending": "opponent",
+            "event": "deals_damage_to_player",
+            "filter": {
+              "subtypes": [
+                "Pirate"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "breeches_brazen_plunderer",
+      "keywords": [
+        "menace",
+        "partner"
+      ],
+      "mana_cost": "{3}{R}",
+      "name": "Breeches, Brazen Plunderer",
+      "oracle_text": "Menace\nWhenever one or more Pirates you control deal damage to your opponents, exile the top card of each of those opponents' libraries. You may play those cards this turn, and you may spend mana as though it were mana of any color to cast those spells.\nPartner (You can have two commanders if both have partner.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Goblin",
+        "Pirate"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "count": 1,
               "modes": [
                 {
@@ -91594,6 +91665,68 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "cant_block",
+          "kind": "static",
+          "text": "Francisco can't block."
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "explore"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more Pirates you control deal damage to a player, Francisco explores.",
+          "trigger": {
+            "batched": true,
+            "controller": "you",
+            "event": "deals_damage_to_player",
+            "filter": {
+              "subtypes": [
+                "Pirate"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "francisco_fowl_marauder",
+      "keywords": [
+        "flying",
+        "partner"
+      ],
+      "mana_cost": "{1}{B}",
+      "name": "Francisco, Fowl Marauder",
+      "oracle_text": "Flying\nFrancisco can't block.\nWhenever one or more Pirates you control deal damage to a player, Francisco explores.\nPartner (You can have two commanders if both have partner.)",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Bird",
+        "Pirate"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -150427,6 +150560,64 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "player_count": {
+                  "binding": "damaged_players"
+                }
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more Pirates you control deal damage to your opponents, you create a Treasure token for each opponent dealt damage.",
+          "trigger": {
+            "batched": true,
+            "controller": "you",
+            "defending": "opponent",
+            "event": "deals_damage_to_player",
+            "filter": {
+              "subtypes": [
+                "Pirate"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "malcolm_keen_eyed_navigator",
+      "keywords": [
+        "flying",
+        "partner"
+      ],
+      "mana_cost": "{2}{U}",
+      "name": "Malcolm, Keen-Eyed Navigator",
+      "oracle_text": "Flying\nWhenever one or more Pirates you control deal damage to your opponents, you create a Treasure token for each opponent dealt damage. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")\nPartner (You can have two commanders if both have partner.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Siren",
+        "Pirate"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {

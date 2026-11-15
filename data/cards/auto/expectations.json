@@ -2703,6 +2703,9 @@
     },
     "zone": "battlefield"
   },
+  "breeches_brazen_plunderer": {
+    "zone": "battlefield"
+  },
   "breeches_eager_pillager": {
     "zone": "battlefield"
   },
@@ -7803,6 +7806,9 @@
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
   },
+  "francisco_fowl_marauder": {
+    "zone": "battlefield"
+  },
   "franklin_richards_ascendant": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -12526,6 +12532,9 @@
     },
     "opponent_battlefield_count": 6,
     "zone": "graveyard"
+  },
+  "malcolm_keen_eyed_navigator": {
+    "zone": "battlefield"
   },
   "mammoth_spider": {
     "zone": "battlefield"

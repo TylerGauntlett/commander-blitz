@@ -11321,6 +11321,32 @@ even in one resolution. Nothing is summed, since the group spans players:
 `amount` and `event_player` are the first opponent's, so a card that pays out
 "that much" per opponent wants the unbatched trigger.
 
+"Whenever one or more Pirates you control deal damage to your opponents, you
+create a Treasure token for each opponent dealt damage." (Malcolm, Keen-Eyed
+Navigator)
+
+```jsonc
+"trigger": {"event": "deals_damage_to_player", "controller": "you",
+            "filter": {"subtypes": ["Pirate"]}, "defending": "opponent",
+            "batched": true},
+"effects": [{"op": "create_token", "token": "treasure_token",
+             "amount": {"player_count": {"binding": "damaged_players"}}}]
+```
+
+`deals_damage_to_player` groups by the damage event `primitives.damage_player`
+stamps: one combat damage step (510.2) or one effect op, combat or not. Every
+later hit of the group joins the first firing: its seat is added to
+`damaged_players` once however many matching sources hit it, its dealer to
+`damagers`, and its damage to `amount`. So "each of those opponents" is the
+player spec `{"binding": "damaged_players"}` (Breeches, Brazen Plunderer exiles
+the top of each of those libraries) and "for each opponent dealt damage" is its
+`player_count`. `filter`, `controller` and `defending` are asked of each hit
+first, so a non-Pirate beside the Pirates, or a Pirate hitting you, neither
+fires nor joins it; "to a player" (Francisco, Fowl Marauder) leaves `defending`
+off. `creatures_deal_combat_damage` is the near miss and is combat only, so a
+Pirate's ping would be missed; unbatched `deals_damage_to_player` fires once per
+Pirate per seat.
+
 ## "…put into your graveyard from anywhere" — `put_into_graveyard`
 
 "Whenever one or more land cards are put into your graveyard from anywhere,

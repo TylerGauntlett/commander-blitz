@@ -246,8 +246,10 @@ class TestTheLoader:
         assert ability.trigger is not None
         assert ability.trigger.batched and ability.trigger.max_per_turn == 1
 
-    def test_batched_is_still_refused_on_player_damage(self):
+    def test_batched_is_still_refused_on_combat_damage_to_a_player(self):
+        """`deals_damage_to_player` is batched (`test_batched_player_damage`);
+        its combat-only twin carries no batch, so the flag would count nothing."""
         with pytest.raises(DslError, match="batched"):
             compile_card(
-                _card({"event": "deals_damage_to_player", "source": "self", "batched": True})
+                _card({"event": "deals_combat_damage_to_player", "source": "self", "batched": True})
             )
