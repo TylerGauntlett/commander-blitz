@@ -95,6 +95,26 @@ def own_reduction(state: GameState, pid: int, card: CardDef, targets=None) -> in
     return reduction_amount(state, pid, {k: v for k, v in spec.items() if k != "targeting"})
 
 
+def every_target_matches(state: GameState, pid: int, filt: Mapping[str, Any], targets) -> bool:
+    """Whether the tuple has an object target and every object target matches.
+
+    Wayta, Trainer Prodigy: "This ability costs {2} less to activate if it
+    targets **two creatures you control**." `_aims_at_match` asks whether any
+    one target matches, which on Wayta is always true -- its first target is a
+    creature you control -- so this is the gate asked of all of them. A player
+    target never matches, as there.
+    """
+    filt = {"controller": "any", **filt}
+    objects = [ref for ref in targets if getattr(ref, "kind", "") == "object"]
+    if not objects or len(objects) != len(tuple(targets)):
+        return False
+    for ref in objects:
+        obj = state.objects.get(getattr(ref, "id", -1))
+        if obj is None or not _object_matches(state, pid, filt, ref.id, obj, None):
+            return False
+    return True
+
+
 def targets_own_discount(card: CardDef) -> bool:
     """Whether ``card``'s own price depends on which targets it chose."""
     return bool(card.cost_reduction) and "targeting" in card.cost_reduction

@@ -33,6 +33,7 @@ from .vocabulary import (
     COST_REDUCTION_KEYS,
     COST_REDUCTION_REFUSED_FILTER_KEYS,
     COST_REDUCTION_TARGETING,
+    COST_REDUCTION_TARGETING_EACH,
     COST_REDUCTION_TARGETING_REFUSED_KEYS,
     COST_REDUCTION_ZONES,
     KNOWN_SUPERTYPES,
@@ -211,7 +212,9 @@ def _validate_reduction_targeting(filt: Any, where: str) -> None:
     _check_reduction_type_names(filt, where)
 
 
-def _validate_cost_reduction(spec: Any, where: str, *, spell: bool = False) -> None:
+def _validate_cost_reduction(
+    spec: Any, where: str, *, spell: bool = False, activated: bool = False
+) -> None:
     """One validator for every "costs {N} less", wherever it is written.
 
     A card's own `cost_reduction`, an activated ability's
@@ -223,6 +226,10 @@ def _validate_cost_reduction(spec: Any, where: str, *, spell: bool = False) -> N
     cast's targets, so the only place a ``targeting`` gate may be written. On
     the other two it would load and be read by nobody -- a discount that fired
     whatever the ability aimed at.
+
+    ``activated`` is an activated ability's `cost.mana_reduction`, priced with
+    the activation's targets, and the only place ``targeting_each`` -- the gate
+    asked of every target (Wayta) -- may be written.
     """
     if not isinstance(spec, Mapping):
         raise DslError(f"{where}: must name exactly one of {sorted(COST_REDUCTION_KEYS)}")
@@ -236,11 +243,25 @@ def _validate_cost_reduction(spec: Any, where: str, *, spell: bool = False) -> N
         _validate_reduction_targeting(
             spec[COST_REDUCTION_TARGETING], f"{where}.{COST_REDUCTION_TARGETING}"
         )
+    if COST_REDUCTION_TARGETING_EACH in spec:
+        if not activated:
+            raise DslError(
+                f"{where}.{COST_REDUCTION_TARGETING_EACH}: only an activated "
+                f"ability's `mana_reduction` is priced with every one of its targets"
+            )
+        _validate_reduction_targeting(
+            spec[COST_REDUCTION_TARGETING_EACH], f"{where}.{COST_REDUCTION_TARGETING_EACH}"
+        )
     arithmetic = set(spec) & COST_REDUCTION_KEYS
     unknown = (
         set(spec)
         - COST_REDUCTION_KEYS
-        - {"condition", COST_REDUCTION_EACH, COST_REDUCTION_TARGETING}
+        - {
+            "condition",
+            COST_REDUCTION_EACH,
+            COST_REDUCTION_TARGETING,
+            COST_REDUCTION_TARGETING_EACH,
+        }
     )
     if unknown:
         raise DslError(
@@ -276,7 +297,7 @@ def _validate_cost_reduction(spec: Any, where: str, *, spell: bool = False) -> N
             raise DslError(
                 f"{where}.amount: a flat reduction is a positive integer, got {amount!r}"
             )
-        if "condition" not in spec and COST_REDUCTION_TARGETING not in spec:
+        if not ({"condition", COST_REDUCTION_TARGETING, COST_REDUCTION_TARGETING_EACH} & set(spec)):
             # "Costs {3} less" with nothing to gate it is a card with a smaller
             # printed cost, written the long way -- and it would load clean.
             raise DslError(

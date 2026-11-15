@@ -1015,13 +1015,16 @@ def _collect_one(
         return
     if _joins_batched_arrival(state, obj, ability, event):
         return
-    _queue(state, obj, ability, event)
+    if not _queue(state, obj, ability, event):
+        # Nothing triggered -- a later event of a batch that already fired, or
+        # a spent per-turn cap -- so there is nothing to trigger again either.
+        return
     if obj.controller in doubled:
         # Ancient Greenwarden: "that ability triggers an additional time".
         # Queued twice rather than resolved twice, because the two copies are
         # separate abilities on the stack and anything in between -- another
         # landfall trigger, a response -- goes between them.
-        _queue(state, obj, ability, event)
+        _queue(state, obj, ability, event, again=True)
     for source_obj, static in doublers:
         # `affects` asks about the permanent whose ability just triggered,
         # which is the axis Harmonic Prodigy scopes on ("a Shaman or another
@@ -1031,7 +1034,7 @@ def _collect_one(
         # Greenwarden -- each queues one more copy, which is what "triggers
         # an additional time" says however many say it.
         if _static_matches(state, obj, source_obj, static.get("affects")):
-            _queue(state, obj, ability, event)
+            _queue(state, obj, ability, event, again=True)
 
 
 def _arm_delayed(state: GameState, event: GameEvent) -> None:
@@ -1288,7 +1291,19 @@ def _cause_matches(
     names = static.get("cause_events")
     if names is None:
         return True
-    dsl = next((n for n in names if TRIGGER_EVENTS.get(n) == event.type), None)
+    # The half matters as it does for a trigger (`_half_matches`): "a creature
+    # you control **being dealt damage**" (Wayta) is `dealt_damage`, the
+    # permanent half of `DAMAGE_DEALT`. Without it the player half -- your
+    # creature dealing damage to a player -- falls through `_subject_oid` to
+    # the dealer and doubled triggers the card never names.
+    dsl = next(
+        (
+            n
+            for n in names
+            if TRIGGER_EVENTS.get(n) == event.type and _half_matches(n, event)
+        ),
+        None,
+    )
     if dsl is None:
         return False
 
@@ -2072,9 +2087,30 @@ def _matching_damagers(
     damagers = event.data.get("damagers") or []
     if spec.filter is None:
         return [int(oid) for oid in damagers]
+    # "Whenever one or more creatures you control **with trample** deal combat
+    # damage" (Quartzwood Crasher) asks about the creatures as they deal the
+    # damage, and they are all still on the battlefield then: the batch fires
+    # inside the damage step, before state-based actions. So `keywords` reads
+    # their current keywords, and a creature granted trample counts; the
+    # printed face would leave it out. Every other key still reads the face.
+    filt = dict(spec.filter)
+    wanted = set(filt.pop("keywords", None) or ())
     return [
-        int(oid) for oid in damagers if matches_card_filter(state, int(oid), spec.filter, obj)
+        int(oid)
+        for oid in damagers
+        if matches_card_filter(state, int(oid), filt, obj)
+        and (not wanted or wanted <= set(_live_keywords(state, int(oid))))
     ]
+
+
+def _live_keywords(state: GameState, oid: int) -> frozenset[str]:
+    """A combat damager's keywords now, or its printed ones once it is gone."""
+    obj = state.objects.get(oid)
+    if obj is None:
+        return frozenset()
+    if obj.on_battlefield:
+        return frozenset(chars(state, oid).keywords)
+    return frozenset(state.card_of(obj).keywords)
 
 
 def event_bindings(
@@ -2107,6 +2143,15 @@ def event_bindings(
             bindings[key] = event.data[key]
     if spec.event == "creatures_deal_combat_damage" and spec.filter is not None:
         bindings["damagers"] = _matching_damagers(state, obj, spec, event)
+    if spec.event == "creatures_deal_combat_damage" and spec.per_player:
+        # "…create an X/X token, where X is **the amount of damage those
+        # creatures dealt to that player**" -- Quartzwood Crasher. A
+        # `per_player` copy carries one seat's hit, and `amount` is what the
+        # creatures the filter kept dealt to that seat, summed.
+        hits = event.data.get("hits") or []
+        amounts = dict((int(o), int(n)) for o, n in hits[0].get("amounts", [])) if len(hits) == 1 else {}
+        kept = _matching_damagers(state, obj, spec, event)
+        bindings["amount"] = sum(int(amounts.get(oid, 0)) for oid in kept)
     return bindings
 
 
@@ -2972,7 +3017,21 @@ def _granter_of(state: GameState, obj: GameObject, ability: Ability) -> tuple[in
     return None, ability.index
 
 
-def _queue(state: GameState, obj: GameObject, ability: Ability, event: GameEvent) -> None:
+def _queue(
+    state: GameState,
+    obj: GameObject,
+    ability: Ability,
+    event: GameEvent,
+    *,
+    again: bool = False,
+) -> bool:
+    """Queue one firing of ``ability`` for ``event``; whether it queued.
+
+    ``again`` is a trigger doubler's additional time for the firing just queued
+    (Ancient Greenwarden, Wayta): the same event, so a batched trigger's
+    "already fired for this batch" must not swallow it -- that check is for a
+    *later* event of the batch, which joins the firing instead.
+    """
     # "This ability triggers only once each turn." Counted here, where the
     # ability *queues*, because that is the printed word: an ability that
     # triggered and then fizzled has still used its one for the turn.
@@ -3000,14 +3059,14 @@ def _queue(state: GameState, obj: GameObject, ability: Ability, event: GameEvent
     if spec_batched:
         batch = event.data.get("batch")
         if batch is not None:
-            batched_key = (obj.oid, ability.index, batch)
-            if batched_key in state.batched_triggers:
-                return
+            batched_key = (obj.oid, ability.index, batch, *_batch_subject(ability, event))
+            if batched_key in state.batched_triggers and not again:
+                return False
 
     if spec_cap is not None:
         key = (obj.oid, ability.index)
         if state.triggers_this_turn.get(key, 0) >= spec_cap:
-            return
+            return False
         state.triggers_this_turn[key] = state.triggers_this_turn.get(key, 0) + 1
 
     if batched_key is not None:
@@ -3070,6 +3129,7 @@ def _queue(state: GameState, obj: GameObject, ability: Ability, event: GameEvent
         ability=ability.index,
         trigger=spec.event,
     )
+    return True
 
 
 def _joins_batched_damage(
@@ -3093,7 +3153,8 @@ def _joins_batched_damage(
     if spec is None or not spec.batched or spec.event != "dealt_damage":
         return False
     batch = event.data.get("batch")
-    if batch is None or (obj.oid, ability.index, batch) not in state.batched_triggers:
+    subject = _batch_subject(ability, event)
+    if batch is None or (obj.oid, ability.index, batch, *subject) not in state.batched_triggers:
         return False
     granted_by, ability_index = _granter_of(state, obj, ability)
     amount = int(event.data.get("amount", 0))
@@ -3103,9 +3164,22 @@ def _joins_batched_damage(
             and pending.ability_index == ability_index
             and pending.granted_by == granted_by
             and pending.bindings.get("batch") == batch
+            and (not subject or pending.bindings.get("subject") == subject[0])
         ):
             pending.bindings["amount"] = int(pending.bindings.get("amount", 0)) + amount
     return True
+
+
+def _batch_subject(ability: Ability, event: GameEvent) -> tuple[int, ...]:
+    """What a ``per_subject`` batch is further keyed by: the damaged permanent
+    (Wrathful Raptors' "whenever a Dinosaur you control is dealt damage"), so
+    each one fires once per damage event. Empty for every other trigger, which
+    groups the whole batch."""
+    spec = ability.trigger
+    if spec is None or not spec.per_subject:
+        return ()
+    subject = _subject_oid(spec.event, event)
+    return () if subject is None else (subject,)
 
 
 def _damage_dealt_key(obj: GameObject, ability: Ability, event: GameEvent) -> tuple | None:

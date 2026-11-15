@@ -1,5 +1,11 @@
 """Behold (Tarkir: Dragonstorm, Lorwyn Eclipsed): the pool and the reveal.
 
+Its hand half is a cost of its own, older than behold: "As an additional cost
+to cast this spell, **reveal a Dinosaur card from your hand** or pay {1}"
+(Thunderherd Migration, the Ixalan and Lorwyn cycles). That is
+`reveal_pool`, the same walk over the payer's own hand with no permanent
+offered, so a Dinosaur already on the battlefield never pays it.
+
 "To behold a Dragon, choose a Dragon you control or reveal a Dragon card from
 your hand." One action with two sources, used in two places: the ``behold`` op
 ("When Sarkhan enters, you may behold a Dragon. If you do, …") and the
@@ -57,6 +63,25 @@ def behold_pool(
     return pool
 
 
+def reveal_pool(
+    state: GameState,
+    pid: int,
+    selector: Mapping[str, Any],
+    source_oid: int | None,
+) -> list[int]:
+    """Every card ``pid`` could reveal from their own hand to pay a
+    ``reveal_from_hand`` cost: `behold_pool`'s hand half alone, the source
+    excluded (601.2a), because the printed cost names only the hand."""
+    spec = {k: v for k, v in selector.items() if k not in IMPLIED_KEYS}
+    ctx = EffectContext(state=state, controller=pid, source_oid=source_oid)
+    hand_spec = {**spec, "zone": "hand"}
+    return [
+        oid
+        for oid in state.players[pid].hand
+        if oid != source_oid and matches(ctx, oid, hand_spec)
+    ]
+
+
 def behold_count(selector: Mapping[str, Any]) -> int:
     """How many objects the action beholds -- "behold **three** Elementals"."""
     return max(1, int(selector.get("count", 1) or 1))
@@ -78,25 +103,28 @@ def announce_beheld(
         state.emit("reveal", player=pid, source=source_oid, cards=shown)
 
 
-def validate_behold_selector(selector: Any, where: str) -> None:
-    """Load-time refusals for a behold selector, shared by the op and the cost.
+def validate_behold_selector(selector: Any, where: str, *, reveal: bool = False) -> None:
+    """Load-time refusals for a behold selector, shared by the op and the cost,
+    and for a ``reveal_from_hand`` cost's (``reveal=True``).
 
     It must say *what* is beheld -- a behold of anything is no printed card --
     and may not carry ``zone`` or ``controller``, which the action fixes (a
     written one would read as a knob and be overwritten in silence). ``count``
     is a positive integer.
     """
+    noun, fixed = (
+        ("reveal_from_hand", "a card in your own hand")
+        if reveal
+        else ("behold", "a permanent you control or a card in your own hand")
+    )
     if not isinstance(selector, Mapping) or not selector:
         raise DslError(
-            f"{where}: behold needs a selector naming what is beheld, "
+            f"{where}: {noun} needs a selector naming what is revealed, "
             f'e.g. {{"subtypes": ["Dragon"]}}'
         )
     for key in ("zone", "controller"):
         if key in selector:
-            raise DslError(
-                f"{where}: '{key}' is implied -- behold is always a permanent you "
-                f"control or a card in your own hand"
-            )
+            raise DslError(f"{where}: '{key}' is implied -- {noun} is always {fixed}")
     count = selector.get("count", 1)
     if not isinstance(count, int) or isinstance(count, bool) or count < 1:
         raise DslError(f"{where}.count: a positive integer, got {count!r}")

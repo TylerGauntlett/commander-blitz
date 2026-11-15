@@ -47,6 +47,7 @@ PRECONS = {
     "fic_scions_spellcraft_final_fantasy_xiv",
     "frc_multiverse_reforged",
     "lcc_blood_rites",
+    "lcc_veloci_ramp_tor",
     "mkc_deep_clue_sea",
     "mkc_revenant_recon",
     "msc_avengers_assemble",

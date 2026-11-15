@@ -1135,6 +1135,8 @@ ABILITY_COSTS: dict[str, Entry] = {
                         "`exile_from_hand` — the pitch cost, and why it is not a discard"),
     "behold": ("Behold: choose matching permanents you control or reveal matching cards from hand.",
                "behold — choose a permanent or reveal a card"),
+    "reveal_from_hand": ("Reveal matching cards from your own hand; nothing moves.",
+                         "behold — choose a permanent or reveal a card"),
     "exile_self": ("Exile the source.", None),
     "exile_self_from_hand": ("Exile this card from your hand.", None),
     "loyalty": ("A loyalty cost (+N / -N).", "Planeswalkers"),

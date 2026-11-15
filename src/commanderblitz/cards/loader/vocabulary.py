@@ -1400,6 +1400,14 @@ COST_REDUCTION_EACH = "each"
 #: priced by readers that never see a target tuple.
 COST_REDUCTION_TARGETING = "targeting"
 
+#: "This ability costs {2} less to activate if it targets **two creatures you
+#: control**" -- Wayta, Trainer Prodigy. The ``targeting`` gate asked of
+#: **every** object target rather than any one: the first of Wayta's two
+#: targets is always a creature you control, so the any-match reading would
+#: discount every activation. On an activated ability's `mana_reduction` only,
+#: which `costs.ability_mana` prices with the activation's targets.
+COST_REDUCTION_TARGETING_EACH = "targeting_each"
+
 #: The filter keys a reduction's ``targeting`` clause refuses. ``zone`` because
 #: the pool is the target tuple, not a zone; ``self_only`` and ``exclude_self``
 #: because a spell never targets itself (115.5); and ``any_of`` is accepted, the

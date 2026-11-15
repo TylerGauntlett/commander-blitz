@@ -55,7 +55,9 @@ from .costs import (
     commander_cost,
     cost_x_ceiling,
     defined_x,
+    mana_amount,
     mana_options_of,
+    mana_produced,
     mana_sources,
     most_life_for_mana,
     pay,
@@ -72,17 +74,19 @@ from .effects.modes import (
     pick_at_random,
 )
 from .effects.ops_mana import ask_split_mana
-from .enums import ActionKind, DecisionKind, Step, Zone
+from .enums import COLOR_ORDER, ActionKind, DecisionKind, Step, Zone
 from .errors import IllegalActionError, RulesLoopError
 from .events import EventType, GameEvent
 from .legality import _targets_read_x
 from .mana import N_SYMBOLS, OTHER_PAYMENT, ManaCost, format_symbols, max_affordable_x
 from .player import PlayerState
 from .player_statics import (
+    any_color_added_on_tap,
     cast_lock_min_x,
     graveyard_cast_permissions,
     library_top_cast_permissions,
     own_graveyard_cast_permission,
+    player_doubles_mana_from,
     player_pays_life_for_black,
     player_spends_mana_as_any_color,
     spell_life_tax,
@@ -2116,6 +2120,31 @@ class Game:
                     )
                 option = options[picked[0] if picked else 0] if options else (0,) * N_SYMBOLS
 
+        # Regal Behemoth's "add an additional one mana of any color": the
+        # triggered mana ability resolves now and its controller picks the
+        # colour (605.1b). The solver picks for itself; by hand, the player is
+        # asked, once per extra.
+        extra_colors: list[int] = []
+        if ability.cost is not None and ability.cost.tap:
+            yielded = option
+            if yielded is None:
+                options = mana_options_of(state, oid, ability)
+                yielded = options[action.mana_option or 0] if options else None
+            if yielded is not None:
+                produced = mana_produced(
+                    yielded,
+                    doubled=player_doubles_mana_from(state, pid, oid),
+                    times=mana_amount(state, oid, ability, x),
+                )
+                for _ in any_color_added_on_tap(state, pid, oid, produced):
+                    picked = yield from ask_mode(
+                        ctx,
+                        f"Additional mana from {card.name}",
+                        [f"{{{color.value}}}" for color in COLOR_ORDER],
+                        pid,
+                    )
+                    extra_colors.append(picked[0] if picked else 0)
+
         activate_mana_ability(
             state,
             oid,
@@ -2126,6 +2155,7 @@ class Game:
             ability=ability,
             x=x,
             option=option,
+            extra_colors=extra_colors,
         )
 
     def _pass_priority(self) -> None:

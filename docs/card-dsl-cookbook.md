@@ -1798,6 +1798,13 @@ in their cost count (106.12). The loader requires both keys and refuses
 Utopia Sprawl's "one mana of the chosen color" — the same spelling the `add_mana`
 op uses, read off the static's own source, and adding nothing while no colour has
 been chosen, since this runs inside cost payment where nothing may stop to ask.
+And it takes `{"any_color": 1}` for Regal Behemoth's "add an additional one mana
+of **any color**": the tapping player picks the colour each time. Inside a
+payment the solver is the one picking, so `costs._sources_of` offers each of the
+tapped source's yields once per colour (`ManaSource.option_keys` remembers which)
+and `pay_mana` names the pick to `activate_mana_ability` as `extra_colors`; a
+mana ability activated by hand asks. A fixed `"{G}"` is the near miss, and a
+narrower card. Any count but 1 is refused.
 
 ### `fight`
 
@@ -2849,6 +2856,14 @@ The loader refuses it on an ability's or a graveyard cast's `mana_reduction`
 (nothing hands those a tuple), on a card that declares no `targets`, beside
 `strive`, and with `zone`, `self_only` or `exclude_self` in the clause.
 
+**Every target: `targeting_each`.** Wayta, Trainer Prodigy's "this ability
+costs {2} less to activate if it targets **two creatures you control**" is the
+same filter asked of every object target (`cost_reduction.every_target_matches`),
+on an activated ability's `mana_reduction`, the one place it may be written:
+`costs.ability_mana` prices it with the activation's targets and legality
+prices every offered tuple. `targeting` would be the near miss there and is
+always true, because Wayta's first target is a creature you control.
+
 The near miss is `condition: {"exists": {... "attacking": true}}`, which
 discounts the spell whenever anything is attacking, whatever it targets — a
 stronger card than the printed one. The `spell_cost_reduction` static's own
@@ -3726,7 +3741,16 @@ payload, with three keys narrowed to that seat:
   Dragon's seat -- and "those Dragons" names only them;
 - `defender` is the seat, so `{"binding": "defender"}` is "that player" (the
   same spelling `creatures_attack_player` uses), and `defending: "opponent"` is
-  "to **an opponent**".
+  "to **an opponent**";
+- `amount` is the damage the creatures the `filter` kept dealt to that seat,
+  summed: Quartzwood Crasher's "an X/X … where X is the amount of damage those
+  creatures dealt to that player" is a `create_token` sized by
+  `{"binding": "amount"}`.
+
+The filter's `keywords` reads the damagers' **current** keywords, because they
+are on the battlefield as the damage is dealt, so a creature granted trample is
+one of "creatures you control with trample". Every other filter key reads the
+printed face, as everywhere in trigger filters.
 
 Two Dragons through to the same seat are still one firing: it is "one or more"
 per seat. "Each other opponent" is `{"not": {"binding": "defender"}, "except":
@@ -11217,6 +11241,23 @@ still triggers the ability, and it resolves with him gone, which is the
 reminder text. Without `batched` the cap keeps the first source's event and
 `amount` reads one blocker's damage.
 
+"Whenever a Dinosaur you control is dealt damage, it deals that much damage to
+any target that isn't a Dinosaur." (Wrathful Raptors)
+
+```jsonc
+"trigger": {"event": "dealt_damage", "filter": {"subtypes": ["Dinosaur"]},
+            "controller": "you", "batched": true, "per_subject": true}
+```
+
+A trigger watching *other* permanents fires once per damaged permanent per
+damage event. `batched` alone groups the whole event, which is right when the
+subject is always the same permanent (Hercules) and wrong here: a sweeper over
+three Dinosaurs would fire once, bound to the first, for the sum. `per_subject`
+keys the group by the damaged permanent as well, so the sweeper fires three
+times, each with its own `subject` and `amount`, and a Dinosaur blocked by two
+creatures still fires once for both. The loader refuses it without `batched`
+or off `dealt_damage`.
+
 "Whenever one or more opponents lose life, you may cast target instant or
 sorcery card from your graveyard." (Emet-Selch of the Third Seat)
 
@@ -16305,6 +16346,10 @@ upkeeps later.
 // a Dragon. … If a Dragon was beheld, …"
 "additional_cost": { "behold": { "subtypes": ["Dragon"] } }, "additional_optional": true
 // …and the spell reads it back with {"cmp": ">=", "left": {"additional_paid": true}, "right": {"const": 1}}
+
+// Thunderherd Migration -- "As an additional cost to cast this spell, reveal a
+// Dinosaur card from your hand or pay {1}."
+"additional_cost_options": [{ "reveal_from_hand": { "subtypes": ["Dinosaur"] } }, { "mana": "{1}" }]
 ```
 
 To behold is to choose a permanent you control matching the selector **or** reveal
@@ -16323,14 +16368,19 @@ nothing. The pool is built once, in `effects.behold.behold_pool`, for both forms
   cast never beholds itself (601.2a), so a Dragon with a behold cost needs a
   second Dragon. "Or pay {N}" is `additional_cost_options`; "you may" is
   `additional_optional`, read back with `additional_paid`.
+- **Reveal from hand.** `reveal_from_hand` on a `Cost` is the hand half alone,
+  for the older cost that prints "reveal a Dinosaur card from your hand" with no
+  permanent offered (`effects.behold.reveal_pool`). Same selector, same
+  `count`, same 601.2a exclusion and the same reveal; a matching permanent you
+  control does not pay it, which is why it is not `behold`.
 
 The near miss is `may` with an `exists` condition over the battlefield and hand:
 it never asks which object and never reveals the card, so it is a cheaper card.
 "Behold a Kithkin **and exile it**" is a different cost: the beheld card moves
 and a later line returns it, and this capability does not say it.
 
-The loader refuses a missing or empty selector, a `zone` or `controller` in it
-(both are fixed by the action), a `count` below 1, and an op with no `effects`,
+The loader refuses, for both costs, a missing or empty selector, a `zone` or
+`controller` in it (both are fixed by the action), a `count` below 1, and an op with no `effects`,
 `else` or `as` to read the result.
 
 ## Connive

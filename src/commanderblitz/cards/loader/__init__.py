@@ -3978,6 +3978,17 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 f"506.2's battle half and means nothing on "
                 f"{model.trigger.event!r}"
             )
+        if model.trigger.per_subject and not (
+            model.trigger.event == "dealt_damage" and model.trigger.batched
+        ):
+            # One firing per damaged permanent is a way of grouping a batch, and
+            # only the batched `dealt_damage` groups by `subject`; anywhere else
+            # `_queue` would never read the flag.
+            raise DslError(
+                f"{where}: 'per_subject' groups a batched 'dealt_damage' trigger "
+                f"per damaged permanent, so it needs event 'dealt_damage' and "
+                f"'batched: true'"
+            )
         if model.trigger.per_player:
             # "…to a player" read once per seat. Only the batched combat-damage
             # event has seats to fan out over; anywhere else `collect` would
@@ -4072,6 +4083,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             level=model.trigger.level,
             or_battle=model.trigger.or_battle,
             per_player=model.trigger.per_player,
+            per_subject=model.trigger.per_subject,
             to_zones=tuple(model.trigger.to_zones) if model.trigger.to_zones else None,
             from_zones=tuple(model.trigger.from_zones) if model.trigger.from_zones else None,
             state=dict(model.trigger.state) if model.trigger.state else None,
@@ -4711,10 +4723,18 @@ def _validate_add_mana_on_tap(model: AbilityModel, where: str) -> None:
         # and the colour is read at the mana choke point. Deliberately the same
         # spelling the `add_mana` op accepts, so one card cannot mean two things
         # by it; a source that has chosen nothing yet adds nothing.
+        #
+        # ``{"any_color": 1}`` is "add an additional one mana of **any color**"
+        # (Regal Behemoth): one pip whose colour the tapping player picks as
+        # the triggered mana ability resolves. One, because no card prints more
+        # from one trigger, and a count the reader ignored would be a quietly
+        # smaller card.
+        if model.add_mana == {"any_color": 1}:
+            return
         if set(model.add_mana) != {"chosen_color_of"} or model.add_mana["chosen_color_of"] != "self":
             raise DslError(
-                f'{where}.add_mana: the only dynamic form is {{"chosen_color_of": "self"}}, '
-                f"not {model.add_mana!r}"
+                f'{where}.add_mana: the dynamic forms are {{"chosen_color_of": "self"}} '
+                f'and {{"any_color": 1}}, not {model.add_mana!r}'
             )
         return
     try:

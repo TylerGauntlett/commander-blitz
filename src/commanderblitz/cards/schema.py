@@ -169,6 +169,13 @@ class CostModel(BaseModel):
     #: is not ``exile_from_hand`` -- "behold a Kithkin **and exile it**" is a
     #: different cost.
     behold: dict[str, Any] | None = None
+    #: "As an additional cost to cast this spell, **reveal a Dinosaur card
+    #: from your hand** or pay {1}" -- Thunderherd Migration. A selector with
+    #: an optional ``count``, matched among the payer's own hand only; the
+    #: spell being cast never reveals itself (601.2a). Not ``behold``, which
+    #: also accepts a matching permanent you control, and not
+    #: ``exile_from_hand``: nothing moves.
+    reveal_from_hand: dict[str, Any] | None = None
     #: "{1}{G}, **Put a card an opponent owns from exile into that player's
     #: graveyard**: ..." -- Void Attendant, the Eldrazi processors. A positive
     #: integer, how many cards: the payer chooses them among the cards in exile
@@ -611,6 +618,14 @@ class TriggerModel(BaseModel):
     #: whom it may be. The loader refuses it on any other event and beside
     #: ``or_battle``.
     per_player: bool = False
+    #: "Whenever **a Dinosaur you control** is dealt damage, it deals **that
+    #: much** damage…" -- Wrathful Raptors. With ``batched`` on ``dealt_damage``,
+    #: one firing per damaged permanent per damage event rather than one for
+    #: the whole event: a Dinosaur blocked by two creatures triggers once for
+    #: the sum, and a sweeper hitting three Dinosaurs triggers three times,
+    #: each with its own ``subject`` and ``amount``. The loader refuses it
+    #: anywhere else.
+    per_subject: bool = False
     #: For ``leaves_battlefield``: the zones the permanent must have gone *to*.
     #: "When this creature **dies or is put into exile**" -- Kaya the
     #: Inexorable's ghostform -- is ``["graveyard", "exile"]``, and a bounce or
@@ -1308,7 +1323,9 @@ class AbilityModel(BaseModel):
     tapped_permanent: dict[str, Any] | None = None
     #: ``add_mana_on_tap``: the mana added -- Crypt Ghast's ``"{B}"``, or
     #: ``{"chosen_color_of": "self"}`` for Utopia Sprawl's "one mana of the
-    #: chosen color", the same spelling the ``add_mana`` op uses.
+    #: chosen color", the same spelling the ``add_mana`` op uses, or
+    #: ``{"any_color": 1}`` for Regal Behemoth's "one mana of any color",
+    #: picked by the tapping player each time.
     add_mana: str | dict[str, Any] | None = None
     #: ``grant_warp``: the price the filtered cards in hand gain -- Tannuk's
     #: ``"{2}{R}"``. Beside `affects_spells` rather than inside it, for

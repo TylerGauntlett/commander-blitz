@@ -605,7 +605,46 @@ def mana_added_on_tap(
     least one of that mana. Once per tap however much of it there was: a Sol
     Ring's {C}{C} is one tap for {C}, so one more {C}.
     """
-    out: list[tuple[int, tuple[int, ...]]] = []
+    return [
+        (source.oid, _mana_added(source, static.get("add_mana", "")))
+        for source, static in _tap_statics(state, pid, oid, produced)
+        if not _adds_any_color(static)
+    ]
+
+
+def any_color_added_on_tap(
+    state: GameState, pid: int, oid: int, produced: Sequence[int]
+) -> list[int]:
+    """The sources of the ``add_mana_on_tap`` statics that add **one mana of
+    any color** when ``pid`` taps ``oid`` for mana, one oid per pip.
+
+    Regal Behemoth: "Whenever you tap a land for mana while you're the monarch,
+    add an additional one mana of any color." The colour is chosen as the
+    triggered mana ability resolves (605.1b), so it is not a production tuple
+    `mana_added_on_tap` could return. Matched by the same walk; the payment
+    solver offers every colour (`costs._sources_of`) and a by-hand activation
+    asks (`Game._activate_mana`), and both name the pick to
+    `costs.activate_mana_ability` as ``extra_colors``.
+    """
+    return [
+        source.oid
+        for source, static in _tap_statics(state, pid, oid, produced)
+        if _adds_any_color(static)
+    ]
+
+
+def _adds_any_color(static: Mapping[str, Any]) -> bool:
+    add_mana = static.get("add_mana")
+    return isinstance(add_mana, Mapping) and "any_color" in add_mana
+
+
+def _tap_statics(
+    state: GameState, pid: int, oid: int, produced: Sequence[int]
+) -> list[tuple[Any, Mapping[str, Any]]]:
+    """Every ``add_mana_on_tap`` static that applies to this tap, with its
+    source: the matching half of `mana_added_on_tap`, shared with
+    `any_color_added_on_tap` so the two cannot disagree about what applies."""
+    out: list[tuple[Any, Mapping[str, Any]]] = []
     tapped: Any = None
     for source, static in _active_player_statics(state, "add_mana_on_tap"):
         if not _reaches_player(source, static, pid):
@@ -626,7 +665,7 @@ def mana_added_on_tap(
             produced[i] >= 1 for i, n in enumerate(parse_mana_production(tapped_for)) if n
         ):
             continue
-        out.append((source.oid, _mana_added(source, static.get("add_mana", ""))))
+        out.append((source, static))
     return out
 
 

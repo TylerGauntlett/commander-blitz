@@ -1,0 +1,94 @@
+{
+  "_comment": "Cards that exist only for tests/unit/mana/test_add_mana_on_tap_any_color.py: Regal Behemoth's 'whenever you tap a land for mana, add an additional one mana of any color' without its monarch condition, a {W}{U}{B}{R}{G} spell only that extra can finish paying, and a land whose mana ability is activated by hand. Never part of a deck list.",
+  "cards": [
+    {
+      "id": "t_any_color_behemoth",
+      "name": "Test Any Color Behemoth",
+      "oracle_text": "Whenever you tap a land for mana, add an additional one mana of any color.",
+      "mana_cost": "{4}{G}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Dinosaur"
+      ],
+      "power": 5,
+      "toughness": 5,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Whenever you tap a land for mana, add an additional one mana of any color.",
+          "effect": "add_mana_on_tap",
+          "affects_player": "you",
+          "tapped_permanent": {
+            "types": [
+              "Land"
+            ]
+          },
+          "add_mana": {
+            "any_color": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_any_color_rainbow",
+      "name": "Test Any Color Rainbow",
+      "oracle_text": "",
+      "mana_cost": "{W}{U}{B}{R}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Avatar"
+      ],
+      "power": 5,
+      "toughness": 5,
+      "colors": [
+        "W",
+        "U",
+        "B",
+        "R",
+        "G"
+      ],
+      "color_identity": [
+        "W",
+        "U",
+        "B",
+        "R",
+        "G"
+      ]
+    },
+    {
+      "id": "t_any_color_filter",
+      "name": "Test Any Color Filter",
+      "oracle_text": "{1}, {T}: Add {G}.",
+      "types": [
+        "Land"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}, {T}: Add {G}.",
+          "cost": {
+            "mana": "{1}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{G}"
+            }
+          ],
+          "is_mana_ability": true
+        }
+      ]
+    }
+  ]
+}

@@ -2431,15 +2431,21 @@ def _covered(card: CardDef, line: str) -> bool:
     # and unclaimed for the same reason on a creature, which has no
     # `spell_effects` to claim it wholesale. Stricter than the line above,
     # because it is added after the fact: a printed "behold" needs a behold
-    # branch and a declared one needs the word, and printed mana symbols must be
+    # branch and a declared one needs the word, a printed "reveal a Dinosaur
+    # card from your hand" (Thunderherd Migration) likewise needs a
+    # `reveal_from_hand` branch and nothing else claims it, and printed mana symbols must be
     # some branch's mana, so a card declaring "or pay {1}" cannot claim a
     # printed "or pay {2}". A mismatch leaves the line residual.
     if card.additional_cost_options and stripped.lower().startswith("as an additional cost"):
         printed = stripped.split("(")[0]
         options = card.additional_cost_options
         beholds = any(option.behold is not None for option in options)
+        reveals = any(option.reveal_from_hand is not None for option in options)
         symbols = "".join(re.findall(r"\{[^}]+\}", printed))
-        if ("behold" in printed.lower()) == beholds and (
+        if (
+            ("behold" in printed.lower()) == beholds
+            and ("from your hand" in printed.lower() and not beholds) == reveals
+        ) and (
             not symbols or any(_declares_printed_cost(symbols, o.mana) for o in options)
         ):
             return True
