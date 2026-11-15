@@ -256870,6 +256870,51 @@
       ]
     },
     {
+      "additional_cost_options": [
+        {
+          "reveal_from_hand": {
+            "subtypes": [
+              "Dinosaur"
+            ]
+          }
+        },
+        {
+          "mana": "{1}"
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "thunderherd_migration",
+      "mana_cost": "{1}{G}",
+      "name": "Thunderherd Migration",
+      "oracle_text": "As an additional cost to cast this spell, reveal a Dinosaur card from your hand or pay {1}.\nSearch your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "destination": "battlefield",
+          "op": "search_library",
+          "player": "you",
+          "selector": {
+            "supertypes": [
+              "Basic"
+            ],
+            "types": [
+              "Land"
+            ]
+          },
+          "tapped": true
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [

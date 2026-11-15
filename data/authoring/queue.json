@@ -286182,12 +286182,12 @@
     },
     "Thunderherd Migration": {
       "edhrec_rank": 5370,
-      "gate": "template",
+      "gate": null,
       "name": "Thunderherd Migration",
-      "reason": "no template for: As an additional cost to cast this spell, reveal a Dinosaur card from your hand or pay {1}",
+      "reason": "",
       "scryfall_id": "5b71c6bd-db67-46ca-9c96-119e89f8ef69",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thundering Broodwagon": {

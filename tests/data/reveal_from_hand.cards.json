@@ -1,0 +1,88 @@
+{
+  "_comment": "Cards that exist only for the reveal_from_hand cost tests (tests/unit/costs/test_reveal_from_hand.py): a vanilla Dinosaur to reveal, Thunderherd Migration's 'reveal a Dinosaur card from your hand or pay {1}' branch on an instant, and a Dinosaur whose own cost must find a different Dinosaur. Never part of a deck list.",
+  "cards": [
+    {
+      "id": "t_reveal_raptor",
+      "name": "Test Reveal Raptor",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Dinosaur"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ]
+    },
+    {
+      "id": "t_reveal_migration",
+      "name": "Test Reveal Migration",
+      "oracle_text": "As an additional cost to cast this spell, reveal a Dinosaur card from your hand or pay {1}.\nDraw a card.",
+      "mana_cost": "{G}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "additional_cost_options": [
+        {
+          "reveal_from_hand": {
+            "subtypes": [
+              "Dinosaur"
+            ]
+          }
+        },
+        {
+          "mana": "{1}"
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_reveal_buccaneer",
+      "name": "Test Reveal Buccaneer",
+      "oracle_text": "As an additional cost to cast this spell, reveal a Dinosaur card from your hand.",
+      "mana_cost": "{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Dinosaur"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "additional_cost": {
+        "reveal_from_hand": {
+          "subtypes": [
+            "Dinosaur"
+          ]
+        }
+      }
+    }
+  ]
+}

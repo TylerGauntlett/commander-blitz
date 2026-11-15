@@ -169,6 +169,13 @@ class CostModel(BaseModel):
     #: is not ``exile_from_hand`` -- "behold a Kithkin **and exile it**" is a
     #: different cost.
     behold: dict[str, Any] | None = None
+    #: "As an additional cost to cast this spell, **reveal a Dinosaur card
+    #: from your hand** or pay {1}" -- Thunderherd Migration. A selector with
+    #: an optional ``count``, matched among the payer's own hand only; the
+    #: spell being cast never reveals itself (601.2a). Not ``behold``, which
+    #: also accepts a matching permanent you control, and not
+    #: ``exile_from_hand``: nothing moves.
+    reveal_from_hand: dict[str, Any] | None = None
     #: "{1}{G}, **Put a card an opponent owns from exile into that player's
     #: graveyard**: ..." -- Void Attendant, the Eldrazi processors. A positive
     #: integer, how many cards: the payer chooses them among the cards in exile

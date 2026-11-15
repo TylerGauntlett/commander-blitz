@@ -16305,6 +16305,10 @@ upkeeps later.
 // a Dragon. … If a Dragon was beheld, …"
 "additional_cost": { "behold": { "subtypes": ["Dragon"] } }, "additional_optional": true
 // …and the spell reads it back with {"cmp": ">=", "left": {"additional_paid": true}, "right": {"const": 1}}
+
+// Thunderherd Migration -- "As an additional cost to cast this spell, reveal a
+// Dinosaur card from your hand or pay {1}."
+"additional_cost_options": [{ "reveal_from_hand": { "subtypes": ["Dinosaur"] } }, { "mana": "{1}" }]
 ```
 
 To behold is to choose a permanent you control matching the selector **or** reveal
@@ -16323,14 +16327,19 @@ nothing. The pool is built once, in `effects.behold.behold_pool`, for both forms
   cast never beholds itself (601.2a), so a Dragon with a behold cost needs a
   second Dragon. "Or pay {N}" is `additional_cost_options`; "you may" is
   `additional_optional`, read back with `additional_paid`.
+- **Reveal from hand.** `reveal_from_hand` on a `Cost` is the hand half alone,
+  for the older cost that prints "reveal a Dinosaur card from your hand" with no
+  permanent offered (`effects.behold.reveal_pool`). Same selector, same
+  `count`, same 601.2a exclusion and the same reveal; a matching permanent you
+  control does not pay it, which is why it is not `behold`.
 
 The near miss is `may` with an `exists` condition over the battlefield and hand:
 it never asks which object and never reveals the card, so it is a cheaper card.
 "Behold a Kithkin **and exile it**" is a different cost: the beheld card moves
 and a later line returns it, and this capability does not say it.
 
-The loader refuses a missing or empty selector, a `zone` or `controller` in it
-(both are fixed by the action), a `count` below 1, and an op with no `effects`,
+The loader refuses, for both costs, a missing or empty selector, a `zone` or
+`controller` in it (both are fixed by the action), a `count` below 1, and an op with no `effects`,
 `else` or `as` to read the result.
 
 ## Connive

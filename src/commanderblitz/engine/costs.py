@@ -23,7 +23,7 @@ from .characteristics import (
 )
 from .cost_reduction import reduction_amount
 from .effects import execute
-from .effects.behold import announce_beheld, behold_count, behold_pool
+from .effects.behold import announce_beheld, behold_count, behold_pool, reveal_pool
 from .effects.conditions import evaluate
 from .effects.context import EffectContext, ask_mode, ask_objects
 from .effects.counter_removal import remove_counters_one_at_a_time
@@ -1335,6 +1335,10 @@ def can_pay(
         behold_pool(state, pid, cost.behold, source_oid, exclude_source=True)
     ) < behold_count(cost.behold):
         return False
+    if cost.reveal_from_hand is not None and len(
+        reveal_pool(state, pid, cost.reveal_from_hand, source_oid)
+    ) < behold_count(cost.reveal_from_hand):
+        return False
     if cost.process and len(process_pool(state, pid)) < cost.process:
         # 118.3: a cost that needs cards that are not there cannot be paid, so
         # Void Attendant with nothing of an opponent's in exile is never
@@ -2170,6 +2174,15 @@ def pay(
         count = behold_count(cost.behold)
         pool = behold_pool(state, pid, cost.behold, source_oid, exclude_source=True)
         picked = yield from ask_objects(ctx, "Behold", pool, count, count, pid)
+        if len(picked) < count:
+            return False
+        announce_beheld(state, pid, picked, source_oid)
+
+    if cost.reveal_from_hand is not None:
+        # Behold's hand half: the card is shown to the table and stays in hand.
+        count = behold_count(cost.reveal_from_hand)
+        pool = reveal_pool(state, pid, cost.reveal_from_hand, source_oid)
+        picked = yield from ask_objects(ctx, "Reveal from your hand", pool, count, count, pid)
         if len(picked) < count:
             return False
         announce_beheld(state, pid, picked, source_oid)

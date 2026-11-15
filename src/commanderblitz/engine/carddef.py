@@ -407,6 +407,13 @@ class Cost:
     #: beholding (601.2a), and nothing moves: a permanent stays put, a card
     #: goes back among the hand, and the reveal is the whole price.
     behold: Mapping[str, Any] | None = None
+    #: "As an additional cost to cast this spell, **reveal a Dinosaur card
+    #: from your hand** or pay {1}" -- Thunderherd Migration. `behold`'s hand
+    #: half alone (`effects.behold.reveal_pool`): a selector with an optional
+    #: ``count``, matched only among the payer's own hand, never the source
+    #: (601.2a). A matching permanent does not pay it, which is the whole
+    #: difference from behold; nothing moves, and the reveal is the price.
+    reveal_from_hand: Mapping[str, Any] | None = None
     #: The Eldrazi processor cost -- "Put **a card an opponent owns** from
     #: exile into that player's graveyard" (Void Attendant), "put **two cards
     #: your opponents own** from exile into their owners' graveyards" (Ulamog's
@@ -609,6 +616,9 @@ class Cost:
             ),
             exile_self_from_hand=bool(spec.get("exile_self_from_hand")),
             behold=(dict(spec["behold"]) if spec.get("behold") else None),
+            reveal_from_hand=(
+                dict(spec["reveal_from_hand"]) if spec.get("reveal_from_hand") else None
+            ),
             process=int(spec.get("process", 0) or 0),
             mana_reduction=(
                 dict(spec["mana_reduction"]) if spec.get("mana_reduction") else None
@@ -683,6 +693,7 @@ class Cost:
             and not self.exile_self_from_hand
             and self.exile_from_hand is None
             and self.behold is None
+            and self.reveal_from_hand is None
             and not self.process
             and not self.pay_life
             and not self.pay_energy
@@ -735,6 +746,9 @@ class Cost:
         if self.behold:
             count = self.behold.get("count", 1)
             parts.append("Behold" if count == 1 else f"Behold {count}")
+        if self.reveal_from_hand:
+            count = self.reveal_from_hand.get("count", 1)
+            parts.append("Reveal from hand" if count == 1 else f"Reveal {count} from hand")
         if self.process:
             parts.append(f"Put {self.process} from opponents' exile into graveyards")
         if self.pay_life:

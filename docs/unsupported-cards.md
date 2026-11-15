@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**399 cards** blocked by **348** capabilities.
+**398 cards** blocked by **347** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -301,7 +301,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [retrace](#retrace) | 1 | 5451 | engine |
 | [return-with-new-creature-types](#return-with-new-creature-types) | 1 | 19485 | op |
 | [reveal-from-hand](#reveal-from-hand) | 1 | 3623 | cost |
-| [reveal-from-hand-cost](#reveal-from-hand-cost) | 1 | 5370 | cost |
 | [reveal-secret-choice](#reveal-secret-choice) | 1 | 9335 | cost |
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
@@ -4970,20 +4969,6 @@ Blocks **1** card.
 
 - **Flamekin Village** (rank 3623) — `flamekin_village`
   - As this land enters, you may reveal an Elemental card from your hand. If you don't, this land enters tapped.
-
-</details>
-
-## reveal-from-hand-cost
-
-Blocks **1** card.
-
-- **(cost)** a cost node that reveals N cards matching a selector from the payer's own hand without moving them (the source spell excluded, 601.2a), usable as one option of additional_cost_options beside a {1} mana option -- the Ixalan 'reveal a Dinosaur/Dragon card from your hand or pay {1}' cycle
-  <br>Why the existing vocabulary won't do: behold is the closest cost and does reveal from hand, but its pool always also includes matching permanents you control, so a Dinosaur on the battlefield would wrongly pay it; exile_from_hand and discard move the card, which the printed cost does not
-
-<details><summary>Cards waiting on this</summary>
-
-- **Thunderherd Migration** (rank 5370) — `thunderherd_migration`
-  - As an additional cost to cast this spell, reveal a Dinosaur card from your hand or pay {1}.
 
 </details>
 

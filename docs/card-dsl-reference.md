@@ -21,7 +21,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Player-wide statics](#player-wide-statics) | 48 |
 | [Grantable statics](#grantable-statics) | 43 |
 | [Cost reduction](#cost-reduction) | 8 |
-| [Ability costs](#ability-costs) | 34 |
+| [Ability costs](#ability-costs) | 35 |
 | [Card-level costs](#card-level-costs) | 35 |
 | [Keywords](#keywords) | 46 |
 | [Card types and supertypes](#card-types-and-supertypes) | 12 |
@@ -817,6 +817,7 @@ Every field an activated ability's `cost` (or a `may`'s `pay`) may carry -- the 
 | `remove_counters` | Remove N counters of a kind from the source. | [Costs](card-dsl.md#costs) |
 | `remove_counters_from_among` | Remove N counters of any kinds from among other permanents. | [remove_counters_from_among — counters of any kind, off other permanents](card-dsl.md#remove_counters_from_among--counters-of-any-kind-off-other-permanents) |
 | `return_to_hand` | Return a matching permanent to hand; `as` names it, and whom it was attacking, for the effects. | [Ninjutsu — swapping into a combat already under way](card-dsl-cookbook.md#ninjutsu--swapping-into-a-combat-already-under-way) |
+| `reveal_from_hand` | Reveal matching cards from your own hand; nothing moves. | [behold — choose a permanent or reveal a card](card-dsl-cookbook.md#behold--choose-a-permanent-or-reveal-a-card) |
 | `sacrifice` | Sacrifice a matching permanent (or `count` of them); `as` names it for the effects; a list of selectors is several parts, each paid by different permanents. | [Ghoulcaller Gisa — a sacrifice cost that names what it sacrificed](card-dsl.md#ghoulcaller-gisa--a-sacrifice-cost-that-names-what-it-sacrificed) |
 | `sacrifice_x` | Sacrifice X matching permanents, X announced and bounded by them. | [sacrifice_x — sacrifice X permanents, X announced](card-dsl.md#sacrifice_x--sacrifice-x-permanents-x-announced) |
 | `tap` | {T}: tap the source. | [Costs](card-dsl.md#costs) |
