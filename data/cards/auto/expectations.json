@@ -15987,6 +15987,9 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "raging_swordtooth": {
+    "zone": "battlefield"
+  },
   "raiding_nightstalker": {
     "zone": "battlefield"
   },
@@ -17102,6 +17105,10 @@
     "zone": "battlefield"
   },
   "runeclaw_bear": {
+    "zone": "battlefield"
+  },
+  "runic_armasaur": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "rupture_spire": {

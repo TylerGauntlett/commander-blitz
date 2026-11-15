@@ -213452,12 +213452,12 @@
     },
     "Raging Swordtooth": {
       "edhrec_rank": 7347,
-      "gate": "template",
+      "gate": null,
       "name": "Raging Swordtooth",
-      "reason": "no template for: When this creature enters, it deals 1 damage to each other creature",
+      "reason": "",
       "scryfall_id": "6bf82a3f-2faf-45b8-95af-32a93880b54c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ragnar": {
@@ -229552,12 +229552,12 @@
     },
     "Runic Armasaur": {
       "edhrec_rank": 2398,
-      "gate": "template",
+      "gate": null,
       "name": "Runic Armasaur",
-      "reason": "no template for: Whenever an opponent activates an ability of a creature or land that isn't a mana ability,",
+      "reason": "",
       "scryfall_id": "17913fb0-ef73-4b20-8625-b84d4e62178a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Runic Repetition": {

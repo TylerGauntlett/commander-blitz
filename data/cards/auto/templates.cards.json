@@ -191550,6 +191550,59 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "damage"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, it deals 1 damage to each other creature",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "raging_swordtooth",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{3}{R}{G}",
+      "name": "Raging Swordtooth",
+      "oracle_text": "Trample\nWhen this creature enters, it deals 1 damage to each other creature.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Dinosaur"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -204123,6 +204176,60 @@
         "Bear"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Draw a card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent activates an ability of a creature or land that isn't a mana ability, you may draw a card.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "ability_activated",
+            "filter": {
+              "any_types": [
+                "Creature",
+                "Land"
+              ]
+            },
+            "mana_ability": false
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "runic_armasaur",
+      "mana_cost": "{1}{G}{G}",
+      "name": "Runic Armasaur",
+      "oracle_text": "Whenever an opponent activates an ability of a creature or land that isn't a mana ability, you may draw a card.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Dinosaur"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
