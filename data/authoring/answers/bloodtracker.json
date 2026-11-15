@@ -1,0 +1,34 @@
+{
+  "card": {
+    "id": "bloodtracker",
+    "name": "Bloodtracker",
+    "oracle_text": "Flying\n{B}, Pay 2 life: Put a +1/+1 counter on this creature.\nWhen this creature leaves the battlefield, draw a card for each +1/+1 counter on it.",
+    "mana_cost": "{3}{B}",
+    "types": ["Creature"],
+    "subtypes": ["Vampire", "Wizard"],
+    "power": 2,
+    "toughness": 2,
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "keywords": ["flying"],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{B}, Pay 2 life: Put a +1/+1 counter on this creature.",
+        "cost": {"mana": "{B}", "pay_life": 2},
+        "effects": [
+          {"op": "add_counters", "counter": "+1/+1", "amount": {"const": 1}, "objects": {"self_only": true, "zone": "battlefield"}}
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "When this creature leaves the battlefield, draw a card for each +1/+1 counter on it.",
+        "trigger": {"event": "leaves_battlefield", "source": "self"},
+        "effects": [
+          {"op": "draw", "player": "you", "amount": {"counters_had": "+1/+1"}}
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33, "hand_size": {"0": 1}}
+}

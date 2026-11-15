@@ -194252,12 +194252,12 @@
     },
     "Order of Sacred Dusk": {
       "edhrec_rank": 11110,
-      "gate": "residual",
+      "gate": "template",
       "name": "Order of Sacred Dusk",
-      "reason": "printed text not represented: Convoke",
+      "reason": "no template for: Convoke",
       "scryfall_id": "134fe0d8-4326-43f3-ba0c-95589079164e",
       "source": "",
-      "status": "failed",
+      "status": "pending",
       "wanted": false
     },
     "Order of Succession": {
