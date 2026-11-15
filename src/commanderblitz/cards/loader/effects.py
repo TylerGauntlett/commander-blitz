@@ -1253,7 +1253,14 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: grant_graveyard_cast needs 'affects_spells' -- "
                 f"without it the permission names no cards"
             )
-        if not effect.get("max_per_turn") and not effect.get("grants_flashback"):
+        if effect.get("escape") is not None:
+            validate_escape_rider(effect["escape"], f"{where}.escape")
+            if effect.get("grants_flashback"):
+                raise DslError(
+                    f"{where}: 'escape' beside 'grants_flashback' is two keywords "
+                    f"for one cast -- escape returns the card to the graveyard"
+                )
+        elif not effect.get("max_per_turn") and not effect.get("grants_flashback"):
             # A permission that neither meters nor exiles recasts one card every
             # turn for ever. `grants_flashback` IS the rate limit for the cards
             # that print no cap -- the spent card is the brake -- which is the
@@ -5086,3 +5093,34 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(f"{where}.modes[{i}]: must be an object")
         for j, sub in enumerate(mode.get("effects", []) or []):
             _validate_effect(sub, f"{where}.modes[{i}].effects[{j}]", target_kinds)
+
+
+def validate_escape_rider(rider: Any, where: str) -> None:
+    """A granted escape cost: ``{"exile_from_graveyard": N}`` and, optionally, ``"mana"``.
+
+    Shared by the `cast_from_graveyard` static (Underworld Breach) and the
+    `grant_graveyard_cast` op (The Grim Captain's Locker). The count is of
+    *other* cards, which is the only kind of exile escape prints; ``mana``
+    absent means the covered card's own mana cost.
+    """
+    if not isinstance(rider, Mapping):
+        raise DslError(f"{where}: must be an object like {{'exile_from_graveyard': 3}}")
+    unknown = set(rider) - {"mana", "exile_from_graveyard"}
+    if unknown:
+        raise DslError(
+            f"{where}: unknown keys {sorted(unknown)} -- a granted escape cost is "
+            f"'mana' (omitted for the card's own mana cost) and "
+            f"'exile_from_graveyard'"
+        )
+    count = rider.get("exile_from_graveyard")
+    if isinstance(count, bool) or not isinstance(count, int) or count < 1:
+        raise DslError(
+            f"{where}.exile_from_graveyard: the number of other graveyard cards "
+            f"escape exiles, a positive integer -- escape without it is the "
+            f"printed-price permission"
+        )
+    mana = rider.get("mana")
+    if mana is not None:
+        if not isinstance(mana, str) or not mana.strip():
+            raise DslError(f"{where}.mana: a mana cost string like '{{3}}{{B}}'")
+        ManaCost.parse(mana)  # raises DslError on an unparsable cost

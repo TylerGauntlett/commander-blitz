@@ -253062,6 +253062,64 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "surveil",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}: Surveil 1"
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "affects_spells": {
+                "types": [
+                  "Creature"
+                ]
+              },
+              "escape": {
+                "exile_from_graveyard": 4,
+                "mana": "{3}{B}"
+              },
+              "op": "grant_graveyard_cast"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}: Until end of turn, each creature card in your graveyard gains \"Escape—{3}{B}, Exile four other cards from your graveyard.\""
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "the_grim_captain_s_locker",
+      "mana_cost": "{3}{B}",
+      "name": "The Grim Captain's Locker",
+      "oracle_text": "{T}: Surveil 1. (Look at the top card of your library. You may put it into your graveyard.)\n{T}: Until end of turn, each creature card in your graveyard gains \"Escape—{3}{B}, Exile four other cards from your graveyard.\" (You may cast a card with escape from your graveyard for its escape cost.)",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -253464,6 +253522,88 @@
       ],
       "toughness": 5,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "x": true
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            },
+            {
+              "amount": {
+                "times": [
+                  {
+                    "const": 2
+                  },
+                  {
+                    "x": true
+                  }
+                ]
+              },
+              "op": "mill",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When The Master of Keys enters, put X +1/+1 counters on it and mill twice X cards",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects_player": "you",
+          "affects_spells": {
+            "types": [
+              "Enchantment"
+            ]
+          },
+          "effect": "cast_from_graveyard",
+          "escape": {
+            "exile_from_graveyard": 3
+          },
+          "kind": "static",
+          "text": "Each enchantment card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard"
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "U",
+        "W"
+      ],
+      "id": "the_master_of_keys",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{X}{W}{U}{B}",
+      "name": "The Master of Keys",
+      "oracle_text": "Flying\nWhen The Master of Keys enters, put X +1/+1 counters on it and mill twice X cards.\nEach enchantment card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard. (You may cast cards from your graveyard for their escape cost.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Horror"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Enchantment",
         "Creature"
       ]
     },
@@ -269224,6 +269364,54 @@
       "toughness": 6,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "affects_spells": {
+            "not_types": [
+              "Land"
+            ]
+          },
+          "effect": "cast_from_graveyard",
+          "escape": {
+            "exile_from_graveyard": 3
+          },
+          "kind": "static",
+          "text": "Each nonland card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard"
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "sacrifice"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of the end step, sacrifice this enchantment",
+          "trigger": {
+            "controller": "any",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "underworld_breach",
+      "mana_cost": "{1}{R}",
+      "name": "Underworld Breach",
+      "oracle_text": "Each nonland card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard. (You may cast cards from your graveyard for their escape cost.)\nAt the beginning of the end step, sacrifice this enchantment.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {

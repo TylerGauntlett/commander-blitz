@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**407 cards** blocked by **353** capabilities.
+**404 cards** blocked by **353** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -19,7 +19,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
 | [rooms](#rooms) | 6 | 4163 | engine |
 | [council-s-dilemma](#council-s-dilemma) | 5 | 3539 | decision, op |
-| [escape](#escape) | 5 | 388 | engine, op, static_effect |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 4 | 2389 | engine |
@@ -45,6 +44,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [copy-for-each-other-target](#copy-for-each-other-target) | 2 | 8216 | op |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 2 | 15516 | selector |
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
+| [escape](#escape) | 2 | 1514 | engine, op |
 | [excess-damage](#excess-damage) | 2 | 4086 | value |
 | [exile-permanent-cost](#exile-permanent-cost) | 2 | 6544 | cost |
 | [experience-counters](#experience-counters) | 2 | 1480 | engine |
@@ -628,38 +628,6 @@ Blocks **5** cards.
 
 </details>
 
-## escape
-
-Blocks **5** cards.
-
-- **(op)** an op that grants escape until end of turn to one targeted card in a graveyard: the card may be cast from the graveyard this turn for its own mana cost plus an additional cost of exiling N other cards from its owner's graveyard (N=2 here), with the escaped condition readable afterwards
-  <br>Why the existing vocabulary won't do: grant_playable with playable: this_turn lets the card be cast from the graveyard but carries no extra non-mana cost, so the 'exile two other cards from your graveyard' half would be dropped; grant_graveyard_cast is a player-wide permission over affects_spells (flashback-style), not a per-target grant with an exile_from_graveyard additional cost; the card-level graveyard_cost/graveyard_cast riders describe a card's own printed escape, not one granted to another card
-- **(op)** a turn-long grant that gives every creature card in your graveyard (including ones that arrive later this turn) an escape cost fixed by the granting card -- an alternative cost of {3}{B} plus exiling four other cards from your graveyard -- castable from the graveyard, with the escaped condition set on the resulting spell
-  <br>Why the existing vocabulary won't do: grant_graveyard_cast carries only affects_spells, any_graveyard, grants_flashback and max_per_turn and lets the card be cast for its own printed mana cost, with no way to substitute a granted cost; escape exists only as a card-level graveyard_cost/graveyard_cast on the escaping card itself; grant_playable marks a snapshot of cards and takes playable_cost_reduction/playable_free but no replacement cost with an exile_from_graveyard component; grant_ability grants abilities to permanents, not a card-level cost to cards in a graveyard
-- **(static_effect)** a granted escape permission: a `cast_from_graveyard`-style static (here `affects_spells: {"types": ["Enchantment"]}`) whose granted cast charges an additional cost on top of the card's own mana cost -- `exile_from_graveyard: {"count": 3}` where 'other' excludes the card being escaped, not the granting permanent -- priced and paid when the granted spell is cast, with no per-turn cap (the exile is the brake), and marking the spell as escaped (702.138) rather than exiling it on resolution, so an escaped enchantment returns to the graveyard and can escape again
-  <br>Why the existing vocabulary won't do: `cast_from_graveyard` grants the cast at the printed cost only, carries no additional-cost rider, and the loader requires `static_max_per_turn`, which this card does not print. The card-level `graveyard_cost` / `graveyard_additional_cost` slot is escape and can carry `exile_from_graveyard`, but it is set on the escaping card itself at load time; nothing writes a cost onto other cards. `grant_graveyard_cast` only takes `affects_spells`, `any_graveyard` and `grants_flashback` (flashback exiles the card, escape does not). `grant_keyword` has no escape keyword. Same blocker as underworld_breach.
-- **(static_effect)** an additional-cost rider on the `cast_from_graveyard` static -- a Cost charged on top of the granted spell's own mana cost, drawn from `cost_keys`, so this card's static can carry `exile_from_graveyard: {"count": 3, "exclude_self": true}`. It must be priced and paid by `legality.graveyard_cast_permission` / `Game._cast` at the moment the granted spell is cast (the way `chosen_additional` charges a card's own `additional_cost`), and `exclude_self` has to mean the card being escaped, not the permanent granting the permission -- otherwise a three-card graveyard pays for the escape with the escaping card itself.
-  <br>Why the existing vocabulary won't do: `cast_from_graveyard` is the only static that lets a card out of a graveyard and it grants the cast at the card's printed cost with no price attached. Its whole rider vocabulary is `enters_tapped`, `arrived_this_turn_from` and `affects_spells`; the one cost field on any permission static is `pay_life_instead`, which belongs to `cast_from_library_top`, swaps mana for life rather than adding to it, and cannot express an exile. The card-level `graveyard_cost` / `flashback` slot *is* escape and does carry `exile_from_graveyard` with `exclude_self` -- but it is a field on the escaping card itself, set at load time, and Underworld Breach hands escape to cards it has never seen. There is no op or static that writes a cost onto another card, and `grant_keyword` knows only the 34 ability keywords, none of which is escape.
-- **(static_effect)** an unbounded `cast_from_graveyard` permission -- `static_max_per_turn` made optional (or given an explicit unlimited spelling) for permissions whose price is itself the rate limit, with `legality.graveyard_cast_permission` skipping the `GRAVEYARD_CAST_SLOT` ledger check instead of defaulting `cap` to 1. Underworld Breach prints no cap at all; the three exiled cards per cast are the whole brake.
-  <br>Why the existing vocabulary won't do: The loader hard-refuses `cast_from_graveyard` without `static_max_per_turn` (`if not model.static_max_per_turn`), on the stated grounds that a permission with no rate limit is an unbounded engine rather than a printed line -- which is true of Edgar, Master Machinist's "once during each of your turns" and exactly false of this card. Every accepted value is a finite integer, so any number I could write would be a cap this card does not print: the card is a storm/loop enabler and an invented ceiling is the approximation, not a rounding of one.
-- **(engine)** a verification sandbox that can cast an escape card for its escape cost from the graveyard (the card in the graveyard plus at least five other cards there), or an argued exception in the playable gate for a creature whose own 'sacrifice it unless it escaped' trigger lawfully bins it when cast from hand
-  <br>Why the existing vocabulary won't do: Every line is expressible: graveyard_cost {mana: {G}{G}{U}{U}, exile_from_graveyard: {count: 5, exclude_self: true}} + graveyard_cast: graveyard, a self_enters trigger with if {escaped: false} -> sacrifice self_only, and self_enters/attacks triggers with gain_life 3, draw 1, may put_onto_battlefield a land from hand. A dry run of verify() passes schema/compile/residual but fails the playable gate: '_cast' always casts from hand via build_sandbox (graveyard holds only 2 cards, so escape is unpayable), Uro correctly sacrifices itself, and _play_once allows a permanent only on the battlefield. Its docstring forbids widening that set and says the fix is a sandbox role, not a weaker gate. Dropping or inverting the sacrifice clause would be an approximation.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Underworld Breach** (rank 388) — `underworld_breach`
-  - Each nonland card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard.
-- **Uro, Titan of Nature's Wrath** (rank 1514) — `uro_titan_of_nature_s_wrath`
-  - When Uro enters, sacrifice it unless it escaped.
-- **The Master of Keys** (rank 4992) — `the_master_of_keys`
-  - Each enchantment card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard. (You may cast cards from your graveyard for their escape cost.)
-- **The Grim Captain's Locker** (rank 9558) — `the_grim_captain_s_locker`
-  - {T}: Until end of turn, each creature card in your graveyard gains "Escape—{3}{B}, Exile four other cards from your graveyard."
-- **Desdemona, Freedom's Edge** (rank 16346) — `desdemona_freedom_s_edge`
-  - Whenever Desdemona attacks, target creature card in your graveyard that's an artifact or that has mana value 3 or less gains escape until end of turn. The escape cost is equal to its mana cost plus exile two other cards from your graveyard.
-
-</details>
-
 ## unlock-door
 
 Blocks **5** cards.
@@ -1218,6 +1186,24 @@ Blocks **2** cards.
   - Magma Opus deals 4 damage divided as you choose among any number of targets.
 - **Skarrgan Hellkite** (rank 13459) — `skarrgan_hellkite`
   - {3}{R}: This creature deals 2 damage divided as you choose among one or two targets. Activate only if this creature has a +1/+1 counter on it.
+
+</details>
+
+## escape
+
+Blocks **2** cards.
+
+- **(op)** an op that grants escape until end of turn to one targeted card in a graveyard: the card may be cast from the graveyard this turn for its own mana cost plus an additional cost of exiling N other cards from its owner's graveyard (N=2 here), with the escaped condition readable afterwards
+  <br>Why the existing vocabulary won't do: grant_playable with playable: this_turn lets the card be cast from the graveyard but carries no extra non-mana cost, so the 'exile two other cards from your graveyard' half would be dropped; grant_graveyard_cast is a player-wide permission over affects_spells (flashback-style), not a per-target grant with an exile_from_graveyard additional cost; the card-level graveyard_cost/graveyard_cast riders describe a card's own printed escape, not one granted to another card
+- **(engine)** a verification sandbox that can cast an escape card for its escape cost from the graveyard (the card in the graveyard plus at least five other cards there), or an argued exception in the playable gate for a creature whose own 'sacrifice it unless it escaped' trigger lawfully bins it when cast from hand
+  <br>Why the existing vocabulary won't do: Every line is expressible: graveyard_cost {mana: {G}{G}{U}{U}, exile_from_graveyard: {count: 5, exclude_self: true}} + graveyard_cast: graveyard, a self_enters trigger with if {escaped: false} -> sacrifice self_only, and self_enters/attacks triggers with gain_life 3, draw 1, may put_onto_battlefield a land from hand. A dry run of verify() passes schema/compile/residual but fails the playable gate: '_cast' always casts from hand via build_sandbox (graveyard holds only 2 cards, so escape is unpayable), Uro correctly sacrifices itself, and _play_once allows a permanent only on the battlefield. Its docstring forbids widening that set and says the fix is a sandbox role, not a weaker gate. Dropping or inverting the sacrifice clause would be an approximation.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Uro, Titan of Nature's Wrath** (rank 1514) — `uro_titan_of_nature_s_wrath`
+  - When Uro enters, sacrifice it unless it escaped.
+- **Desdemona, Freedom's Edge** (rank 16346) — `desdemona_freedom_s_edge`
+  - Whenever Desdemona attacks, target creature card in your graveyard that's an artifact or that has mana value 3 or less gains escape until end of turn. The escape cost is equal to its mana cost plus exile two other cards from your graveyard.
 
 </details>
 

@@ -21022,6 +21022,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "the_grim_captain_s_locker": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "the_indomitable": {
     "battlefield_count": 33,
     "hand_size": {
@@ -21041,6 +21045,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "the_master_of_keys": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "the_mending_of_dominaria": {
@@ -22380,6 +22388,10 @@
     "zone": "battlefield"
   },
   "undersea_invader": {
+    "zone": "battlefield"
+  },
+  "underworld_breach": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "underworld_dreams": {

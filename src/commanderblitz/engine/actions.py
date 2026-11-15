@@ -120,6 +120,15 @@ class Action:
     #: being offered and the cast being charged, and a re-derived price would
     #: then be the printed one. Empty for every other cast.
     granted_cost: tuple[tuple[str, int], ...] = ()
+    #: Cast for an **escape cost a permission granted** -- Underworld Breach's
+    #: "each nonland card in your graveyard has escape", The Grim Captain's
+    #: Locker's "gains 'Escape--{3}{B}, ...'". The mana half as a string and
+    #: the count of *other* graveyard cards exiled beside it, for `warp`'s
+    #: reason: the granting permanent can leave between the line being offered
+    #: and the cast being charged. ``None`` for every other cast, including the
+    #: card's own printed escape, which is `flashback`'s slot.
+    escape: str | None = None
+    escape_exile: int = 0
     #: Cast out of the exile it was foretold to, for the foretell cost. Part of
     #: the identity like `flashback`: the same card can be nowhere else, but the
     #: price is not the printed one and the action must not compare equal to a
@@ -278,6 +287,10 @@ class Action:
             self.spree_modes,
             # The granted line and the printed one share everything else.
             self.granted_cost,
+            # A granted escape line and the printed-price line under the same
+            # permission-bearing board share everything else.
+            "" if self.escape is None else self.escape,
+            self.escape_exile,
             # A shock land's two drops share everything else.
             -1 if self.enters_paid is None else int(self.enters_paid),
         )

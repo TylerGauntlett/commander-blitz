@@ -281082,12 +281082,12 @@
     },
     "The Grim Captain's Locker": {
       "edhrec_rank": 9558,
-      "gate": "template",
+      "gate": null,
       "name": "The Grim Captain's Locker",
-      "reason": "no template for: {T}: Surveil 1",
+      "reason": "",
       "scryfall_id": "20feab19-d4b3-45f4-a7b9-fdfbedc83c72",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Haunt of Hightower": {
@@ -281522,12 +281522,12 @@
     },
     "The Master of Keys": {
       "edhrec_rank": 4992,
-      "gate": "template",
+      "gate": null,
       "name": "The Master of Keys",
-      "reason": "no template for: When enters, put X +1/+1 counters on it and mill twice X cards",
+      "reason": "",
       "scryfall_id": "3545341b-dacc-4ac8-976e-39754a62bbc3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Master of Lake-town": {
@@ -297402,12 +297402,12 @@
     },
     "Underworld Breach": {
       "edhrec_rank": 388,
-      "gate": "template",
+      "gate": null,
       "name": "Underworld Breach",
-      "reason": "no template for: Each nonland card in your graveyard has escape. The escape cost is equal to the card's man",
+      "reason": "",
       "scryfall_id": "49c8b2ed-95bf-4a85-a0d7-6d7c01fc086d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Underworld Cerberus": {

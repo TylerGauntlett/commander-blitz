@@ -18462,6 +18462,10 @@
     "back": true,
     "scryfall_id": "52173f36-19d2-48be-a8e8-8cbe946759c0"
   },
+  "the_grim_captain_s_locker": {
+    "artist": "Bruce Brenneise",
+    "scryfall_id": "20feab19-d4b3-45f4-a7b9-fdfbedc83c72"
+  },
   "the_indomitable": {
     "artist": "Samuel Perin",
     "scryfall_id": "736cabaf-1387-4035-8751-3976eb835c8a"
@@ -18482,6 +18486,10 @@
   "the_lord_of_pain": {
     "artist": "Greg Staples",
     "scryfall_id": "494c244e-dcdc-4169-9743-8a61f58e8763"
+  },
+  "the_master_of_keys": {
+    "artist": "Wisnu Tan",
+    "scryfall_id": "3545341b-dacc-4ac8-976e-39754a62bbc3"
   },
   "the_mending_of_dominaria": {
     "artist": "Adam Paquette",
@@ -19542,6 +19550,10 @@
   "undersea_invader": {
     "artist": "Lorenzo Mastroianni",
     "scryfall_id": "c3314e64-e0ba-4720-817c-a6f7b317af14"
+  },
+  "underworld_breach": {
+    "artist": "Dan Berger & Eric Talbot",
+    "scryfall_id": "49c8b2ed-95bf-4a85-a0d7-6d7c01fc086d"
   },
   "underworld_dreams": {
     "artist": "Mark Riddick",

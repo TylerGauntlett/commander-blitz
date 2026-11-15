@@ -220,7 +220,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                     '"You may play the exiled card this turn" — impulse draw'),
     "grant_playable": ("Cards", "Permit playing cards from a zone that normally forbids it, for a duration; `as_adventure` narrows it to the card's Adventure half; `playable_cost_reduction` discounts the casts made under it; `playable_pay_life_instead` prices them in life equal to their mana value instead; `limit` caps one resolution's cards at that many plays; `playable_cast_only` narrows it to casting, so no land is played; `playable_exiles` exiles the spell cast under it instead of putting it into a graveyard.",
                        H_PLAYABLE),
-    "grant_graveyard_cast": ("Cards", "Permit casting matching spells from graveyards until end of turn.",
+    "grant_graveyard_cast": ("Cards", "Permit casting matching spells from graveyards until end of turn; `escape` grants them escape instead, at that cost only.",
                              "Casting out of every graveyard, until end of turn"),
     "cast_from_hand": ("Cards", "Cast a spell from hand (or listed zones, or a named pool once per owner) without paying its mana cost; `exiles` exiles the spell instead of putting it into a graveyard; `as` records what was cast, accumulating.",
                        None),
@@ -965,7 +965,8 @@ STATICS: dict[str, Entry] = {
     "cast_as_though_flash": ("The player may cast matching spells as though they had flash.", None),
     "cast_from_graveyard": ("The player may cast matching spells from their graveyard, narrowed to "
                             "cards surveilled this turn by `surveilled_this_turn`, for life equal "
-                            "to their mana value with `pay_life_instead`; with "
+                            "to their mana value with `pay_life_instead`, or for an escape "
+                            "cost with `escape`; with "
                             "`active_zones: [\"graveyard\"]`, the card may cast itself from there.",
                             H_CASTING_FROM_GY),
     "cast_from_library_top": ("The player may cast spells from the top of their library: for life "

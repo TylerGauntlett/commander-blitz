@@ -910,8 +910,9 @@ and `grants_flashback`, which `Game._cast` stamps onto the spell's stack item as
 flashback's exile, are all shared with the static — so the second printed
 sentence needs nothing at all, and the loader asks for the same two guarantees the
 static's own loader does: a filter (an absent one would free the whole
-graveyard) and either a cap or `grants_flashback` (a permission that neither
-meters nor exiles is an engine, not a printed line).
+graveyard) and either a cap, `grants_flashback` or `escape` (a permission that
+neither meters nor exiles nor charges an exile is an engine, not a printed line;
+[Granted escape](#granted-escape) is the last).
 
 The difference is where the permission *lives*. `cast_from_graveyard` is read off a
 permanent on the battlefield, and this chapter exiles the Saga in the same breath
@@ -7232,6 +7233,51 @@ flashback (Lier, Urabrask's grant): `Game._cast` stamps that as
 `StackItem.exiles_instead`, which holds on resolving, fizzling and being
 countered. Eye's sorcery goes back to the graveyard, a new object that is not
 surveilled.
+
+#### Granted escape
+
+```jsonc
+// Underworld Breach -- "Each nonland card in your graveyard has escape. The
+//  escape cost is equal to the card's mana cost plus exile three other cards
+//  from your graveyard."
+{ "kind": "static", "effect": "cast_from_graveyard", "affects_player": "you",
+  "affects_spells": { "not_types": ["Land"] },
+  "escape": { "exile_from_graveyard": 3 } }
+
+// The Grim Captain's Locker -- "{T}: Until end of turn, each creature card in
+//  your graveyard gains 'Escape--{3}{B}, Exile four other cards from your
+//  graveyard.'"
+{ "op": "grant_graveyard_cast", "affects_spells": { "types": ["Creature"] },
+  "escape": { "mana": "{3}{B}", "exile_from_graveyard": 4 } }
+```
+
+`escape` on a `cast_from_graveyard` permission, static or granted by the op,
+makes the permission escape (702.138a) given to the cards it covers. It is the
+permission's only price. A covered card gets a line at the escape cost and no
+line at its printed cost. `mana` is that cost's mana half, and when it is left
+out the cost is the card's own mana cost. A card with no mana cost then gets no
+line (118.6). `exile_from_graveyard` counts the **other** cards exiled from the
+caster's graveyard. The card being cast is the cost's source, so "other" means
+it and not the permanent granting escape.
+
+`casting._granted_escape_lines` offers one line per distinct price. The Locker
+beside a Breach is two lines for one creature card. Additional costs are owed on
+top (601.2f), as on a flashback line. The line carries its price on the action
+(`Action.escape`, `Action.escape_exile`), so `Game._cast` charges what was
+offered even if the granting permanent has left. The spell escaped
+(`StackItem.granted_escape`, so `escaped` reads true of it and of the permanent
+it becomes), and it goes where it normally would. An escaped instant comes back
+to the graveyard to be escaped again.
+
+The exile is the rate limit, so the permission needs no `max_per_turn` and is
+unmetered without one. The loader validates the rider and refuses it beside
+`grants_flashback` or `pay_life_instead` (a second price for the same cast), on a
+card's own `active_zones: ["graveyard"]` permission, and on any other static.
+
+The near misses are a card's own `graveyard_cost`, which is printed escape
+(Woe Strider) and is set on the escaping card at load time, and the same
+permission without `escape`, which casts at the printed cost and is the Edgar
+line, a much stronger card.
 
 #### Mayhem
 

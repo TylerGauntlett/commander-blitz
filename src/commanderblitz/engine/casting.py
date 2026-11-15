@@ -7,9 +7,9 @@ read apart.
 from __future__ import annotations
 
 import dataclasses
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from itertools import combinations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from . import suspend as suspend_mod
 from .actions import Action
@@ -66,6 +66,7 @@ from .targeting import (
 from .temp_effects import flash_permission_covers, sacrifice_forbidden
 
 if TYPE_CHECKING:  # pragma: no cover
+    from .objects import GameObject
     from .state import GameState
 
 
@@ -330,6 +331,10 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
         # line taken names the permission `Game._cast` bills.
         if _graveyard_cast_permission(state, pid, card, oid, pay_life=True) is not None:
             out.extend(_pay_life_lines(state, pid, oid, card))
+        # "Each nonland card in your graveyard has escape" -- Underworld
+        # Breach -- and the Locker's turn-long grant: an escape cost a
+        # permission hands the card, offered as its own line at that price.
+        out.extend(_granted_escape_lines(state, pid, oid, card))
         if card.retrace and can_pay(state, pid, card.retrace_cost, oid):
             out.extend(_cast_options(state, pid, oid, card, extra_generic=0))
         # Flashback is the same widening with a different price: an alternative
@@ -1173,39 +1178,161 @@ def _graveyard_cast_permission(
 
     subject = state.objects.get(oid) if oid is not None else None
     for source_obj, static in graveyard_cast_permissions(state, pid):
+        # A granted escape is its own lane (`_escape_permissions`): it lets the
+        # card out at the escape cost and never at the printed one, so an
+        # Underworld Breach is not an Edgar beside it.
+        if static.get("escape"):
+            continue
         if pay_life is not None and bool(static.get("pay_life_instead")) != pay_life:
             continue
-        if not graveyard_cast_allows(state, source_obj, static, card):
+        if _permission_reaches(state, pid, card, subject, source_obj, static):
+            return source_obj
+    return None
+
+
+def _permission_reaches(
+    state: GameState,
+    pid: int,
+    card: CardDef,
+    subject: GameObject | None,
+    source_obj: GameObject,
+    static: Mapping[str, Any],
+) -> bool:
+    """Does this one permission cover this card now, with a use left this turn?"""
+    if not graveyard_cast_allows(state, source_obj, static, card):
+        return False
+    # "…put there from anywhere other than the battlefield this turn" is a
+    # fact about *this copy* of the card, so it is asked of the object.
+    if subject is not None and not graveyard_cast_arrival_ok(state, static, subject):
+        return False
+    # "…from **any** graveyard". A permission that does not say so reaches
+    # only the caster's own, which is every permission the engine had --
+    # so the check is here rather than in the widening, and a card sitting
+    # in an opponent's graveyard is invisible to Edgar and to flashback.
+    if subject is not None and subject.owner != pid and not static.get("any_graveyard"):
+        return False
+    # An explicit ``None`` is the unmetered permission the loader allows
+    # beside `surveilled_this_turn` (Eye of Duskmantle) and `escape`
+    # (Underworld Breach): each cast takes a card out, and whatever returns
+    # is a new object (400.7) -- or, for escape, the exiled cards are the
+    # brake. A missing key is one a turn, which a resolving grant
+    # (`grant_graveyard_cast`) relies on, unless it grants escape.
+    cap = static.get("max_per_turn", None if static.get("escape") else 1)
+    # Billed against the granting permanent through the ordinary activation
+    # ledger, keyed on a sentinel index no real ability can occupy, so a
+    # permanent that also has activated abilities does not share a counter
+    # with them.
+    return not (
+        cap is not None
+        and state.turn_ledger.activations(source_obj.oid, GRAVEYARD_CAST_SLOT) >= int(cap or 1)
+    )
+
+
+def escape_price(static: Mapping[str, Any], card: CardDef) -> tuple[str, int] | None:
+    """The escape cost a permission's ``escape`` rider gives ``card``, if it can be paid.
+
+    "The escape cost is equal to the card's mana cost plus exile three other
+    cards from your graveyard" (Underworld Breach) leaves ``mana`` out;
+    "gains 'Escape--{3}{B}, Exile four other cards from your graveyard'"
+    (The Grim Captain's Locker) writes it. A card with no mana cost has an
+    escape cost it cannot pay when the cost is its mana cost (118.6), so it
+    gets no line at all.
+    """
+    rider = static.get("escape")
+    if not rider:
+        return None
+    mana = rider.get("mana") or card.mana_cost.text
+    if not mana:
+        return None
+    return str(mana), int(rider["exile_from_graveyard"])
+
+
+def _escape_permissions(
+    state: GameState, pid: int, card: CardDef, oid: int
+) -> list[tuple[GameObject, tuple[str, int]]]:
+    """Every granted escape covering the card in ``oid``, with the price each gives.
+
+    Granted escape (702.138a on a card that does not print it): the card may be
+    cast from the graveyard for the escape cost, never for its printed one. Two
+    grants may price it differently -- the Locker's {3}{B} beside Breach's
+    mana cost -- and each price is its own line, so the list keeps them all;
+    legality offers one line per distinct price and `Game._cast` bills the
+    first permission giving the price the line was offered at.
+    """
+    subject = state.objects.get(oid)
+    out: list[tuple[GameObject, tuple[str, int]]] = []
+    for source_obj, static in graveyard_cast_permissions(state, pid):
+        price = escape_price(static, card)
+        if price is None:
             continue
-        # "…put there from anywhere other than the battlefield this turn" is a
-        # fact about *this copy* of the card, so it is asked of the object.
-        if subject is not None and not graveyard_cast_arrival_ok(state, static, subject):
+        if _permission_reaches(state, pid, card, subject, source_obj, static):
+            out.append((source_obj, price))
+    return out
+
+
+def _escape_exile_cost(count: int) -> Cost:
+    """"Exile N **other** cards from your graveyard", with the escaping card excluded.
+
+    The card being cast is the cost's source, so ``exclude_self`` means it and
+    not the permanent granting the escape -- otherwise a graveyard of exactly N
+    cards would pay for the escape with the card it frees.
+    """
+    return Cost(exile_from_graveyard={"count": count, "exclude_self": True})
+
+
+def _granted_escape_lines(state: GameState, pid: int, oid: int, card: CardDef) -> list[Action]:
+    """The cast lines granted escape offers the card in ``oid``, one per price."""
+    if card.is_land:
+        return []
+    prices = sorted({price for _source, price in _escape_permissions(state, pid, card, oid)})
+    out: list[Action] = []
+    for mana, count in prices:
+        if not can_pay(state, pid, _escape_exile_cost(count), oid):
             continue
-        # "…from **any** graveyard". A permission that does not say so reaches
-        # only the caster's own, which is every permission the engine had --
-        # so the check is here rather than in the widening, and a card sitting
-        # in an opponent's graveyard is invisible to Edgar and to flashback.
-        if (
-            subject is not None
-            and subject.owner != pid
-            and not static.get("any_graveyard")
-        ):
-            continue
-        # An explicit ``None`` is the unmetered permission the loader allows
-        # only beside `surveilled_this_turn` (Eye of Duskmantle): each cast
-        # takes a surveilled card out, and whatever returns is a new object
-        # (400.7). A missing key is still one a turn, which a resolving grant
-        # (`grant_graveyard_cast`) relies on.
-        cap = static.get("max_per_turn", 1)
-        # Billed against the granting permanent through the ordinary activation
-        # ledger, keyed on a sentinel index no real ability can occupy, so a
-        # permanent that also has activated abilities does not share a counter
-        # with them.
-        if cap is not None and state.turn_ledger.activations(
-            source_obj.oid, GRAVEYARD_CAST_SLOT
-        ) >= int(cap or 1):
-            continue
-        return source_obj
+        tuples = enumerate_target_tuples(
+            state,
+            pid,
+            card.targets,
+            oid,
+            exclude_sid=state.objects[oid].stack_id,
+            defer=deferred_target_spec(state, card, card.targets),
+        )
+        # "…for its escape cost **and any additional costs**" (601.2f), as
+        # flashback's line charges them.
+        out.extend(
+            _charge_additional_cost(
+                state,
+                pid,
+                oid,
+                card,
+                _cast_variant(
+                    state, pid, oid, card, tuples, extra_generic=0,
+                    escape=mana, escape_exile=count,
+                ),
+                lambda times, choice, tuples=tuples, mana=mana, count=count: _cast_variant(
+                    state,
+                    pid,
+                    oid,
+                    card,
+                    tuples,
+                    extra_generic=0,
+                    escape=mana,
+                    escape_exile=count,
+                    additional_times=times,
+                    additional_choice=choice,
+                ),
+            )
+        )
+    return out
+
+
+def granted_escape_permission(
+    state: GameState, pid: int, card: CardDef, oid: int, price: tuple[str, int]
+) -> GameObject | None:
+    """The permission `Game._cast` bills for an escape line offered at ``price``."""
+    for source_obj, offered in _escape_permissions(state, pid, card, oid):
+        if offered == price:
+            return source_obj
     return None
 
 
@@ -1999,6 +2126,8 @@ def _cast_variant(
     pay_generic: int = 0,
     alt_cost: str | None = None,
     granted_cost: tuple[tuple[str, int], ...] = (),
+    escape: str | None = None,
+    escape_exile: int = 0,
 ) -> list[Action]:
     # 601.2b: a spell that cannot choose the modes it is required to choose
     # cannot be cast. Asked on every variant rather than in `_cast_options`
@@ -2146,6 +2275,11 @@ def _cast_variant(
         # paid (601.2f) -- and they reach only its generic part, which is all
         # of it.
         cost = ManaCost.parse(alt_cost)
+    elif escape is not None:
+        # A granted escape cost's mana half (702.138a), replacing the printed
+        # cost the way flashback's does; the exile is charged by `Game._cast`
+        # after the mana, and was proved payable by `_granted_escape_lines`.
+        cost = ManaCost.parse(escape)
     elif flashback and card.flashback is not None:
         cost = card.flashback.mana
         variant_less += variant_reduction(state, pid, card.flashback, oid)
@@ -2450,6 +2584,10 @@ def _cast_variant(
         # price the row has to tell apart from another row.
         if flashback:
             label_base += " (mayhem)" if card.mayhem else " (flashback)"
+        if escape is not None:
+            # The price, because two grants may price one card differently and
+            # the client groups rows by `base_label`.
+            label_base += f" (escape {escape}, exile {escape_exile})"
         if emerge_oid is not None:
             label_base += f" (emerge, sacrificing {state.card(emerge_oid).name})"
         if extra_generic:
@@ -2494,6 +2632,8 @@ def _cast_variant(
                     pay_generic=pay_generic,
                     phyrexian=phyrexian,
                     flashback=flashback,
+                    escape=escape,
+                    escape_exile=escape_exile,
                     emerge_oid=emerge_oid,
                     label=label,
                     base_label=label_base,

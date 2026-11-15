@@ -913,6 +913,18 @@ class AbilityModel(BaseModel):
     #: the loader refuses an uncapped permission, correctly -- one that neither
     #: meters nor exiles recasts the same card every turn for ever.
     grants_flashback: bool = False
+    #: ``cast_from_graveyard``: this permission is **escape** -- Underworld
+    #: Breach's "each nonland card in your graveyard has escape. The escape cost
+    #: is equal to the card's mana cost plus exile three other cards from your
+    #: graveyard". ``{"exile_from_graveyard": 3}``, with ``"mana": "{3}{B}"``
+    #: when the grant prints its own mana (The Grim Captain's Locker) rather
+    #: than the card's mana cost.
+    #:
+    #: The cards it covers are castable from the graveyard **only** at that
+    #: price, never at the printed one; the spell escaped (702.138c) and goes
+    #: back to the graveyard afterwards. The exile is the rate limit, so the
+    #: permission needs no `max_per_turn`.
+    escape: dict[str, Any] | None = None
     #: ``double_triggers``: which EVENT counts as the cause. Veyran's "if **you
     #: casting or copying an instant or sorcery spell** causes a triggered
     #: ability ... to trigger" -- a clause about what happened, not about whose

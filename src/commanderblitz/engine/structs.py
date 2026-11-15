@@ -1584,6 +1584,10 @@ class StackItem:
     #: the once-only rider that exiles the card instead of
     #: returning it to the graveyard.
     flashback: bool = False
+    #: Cast for an escape cost a **permission granted** (Underworld Breach, The
+    #: Grim Captain's Locker), not the card's own. Read by `stack.escaped`: the
+    #: spell escaped (702.138c), and it goes back to the graveyard afterwards.
+    granted_escape: bool = False
     #: Cast out of a graveyard under a **permission granted by a permanent** --
     #: Edgar, Master Machinist -- rather than by the card's own flashback. The
     #: granting permanent's oid, so the per-turn use is billed to the one the
