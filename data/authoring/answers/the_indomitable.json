@@ -1,0 +1,43 @@
+{
+  "card": {
+    "id": "the_indomitable",
+    "name": "The Indomitable",
+    "oracle_text": "Trample\nWhenever a creature you control deals combat damage to a player, draw a card.\nCrew 3\nYou may cast this card from your graveyard as long as you control three or more tapped Pirates and/or Vehicles.",
+    "mana_cost": "{2}{U}{U}",
+    "supertypes": ["Legendary"],
+    "types": ["Artifact"],
+    "subtypes": ["Vehicle"],
+    "power": 6,
+    "toughness": 6,
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "keywords": ["trample"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever a creature you control deals combat damage to a player, draw a card.",
+        "trigger": {"event": "deals_combat_damage_to_player", "controller": "you", "filter": {"types": ["Creature"]}},
+        "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+      },
+      {
+        "kind": "activated",
+        "text": "Crew 3",
+        "cost": {"tap_permanents": {"controller": "you", "total_power": 3, "types": ["Creature"]}},
+        "effects": [{"op": "animate", "objects": {"self_only": true, "zone": "battlefield"}, "keep_pt": true, "types": ["Creature"]}]
+      },
+      {
+        "kind": "static",
+        "effect": "cast_from_graveyard",
+        "text": "You may cast this card from your graveyard as long as you control three or more tapped Pirates and/or Vehicles.",
+        "active_zones": ["graveyard"],
+        "affects_player": "you",
+        "condition": {
+          "cmp": ">=",
+          "left": {"count": {"controller": "you", "zone": "battlefield", "tapped": true, "any_of": [{"subtypes": ["Pirate"]}, {"subtypes": ["Vehicle"]}]}},
+          "right": {"const": 3}
+        }
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33, "hand_size": {"0": 1}}
+}
