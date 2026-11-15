@@ -618,6 +618,14 @@ class TriggerModel(BaseModel):
     #: whom it may be. The loader refuses it on any other event and beside
     #: ``or_battle``.
     per_player: bool = False
+    #: "Whenever **a Dinosaur you control** is dealt damage, it deals **that
+    #: much** damage…" -- Wrathful Raptors. With ``batched`` on ``dealt_damage``,
+    #: one firing per damaged permanent per damage event rather than one for
+    #: the whole event: a Dinosaur blocked by two creatures triggers once for
+    #: the sum, and a sweeper hitting three Dinosaurs triggers three times,
+    #: each with its own ``subject`` and ``amount``. The loader refuses it
+    #: anywhere else.
+    per_subject: bool = False
     #: For ``leaves_battlefield``: the zones the permanent must have gone *to*.
     #: "When this creature **dies or is put into exile**" -- Kaya the
     #: Inexorable's ghostform -- is ``["graveyard", "exile"]``, and a bounce or

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**396 cards** blocked by **346** capabilities.
+**395 cards** blocked by **345** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -136,7 +136,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [creatures-died-this-turn-filtered](#creatures-died-this-turn-filtered) | 1 | 13665 | value |
 | [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
 | [damage-player-or-planeswalker](#damage-player-or-planeswalker) | 1 | 5120 | op |
-| [dealt-damage-batched-per-subject](#dealt-damage-batched-per-subject) | 1 | 2617 | trigger_event |
 | [delayed-creature-dies](#delayed-creature-dies) | 1 | 1661 | trigger_event |
 | [delayed-trigger-filter](#delayed-trigger-filter) | 1 | 12175 | trigger_event |
 | [demon-token-5-5-b-flying](#demon-token-5-5-b-flying) | 1 | 7993 | token |
@@ -2600,20 +2599,6 @@ Blocks **1** card.
 
 - **Vial Smasher the Fierce** (rank 5120) — `vial_smasher_the_fierce`
   - Whenever you cast your first spell each turn, choose an opponent at random. Vial Smasher deals damage equal to that spell's mana value to that player or a planeswalker that player controls.
-
-</details>
-
-## dealt-damage-batched-per-subject
-
-Blocks **1** card.
-
-- **(trigger_event)** A `dealt_damage` trigger watching OTHER permanents (filter: Dinosaur you control) that batches simultaneous damage per damaged permanent: one firing per Dinosaur per damage event, `subject` that Dinosaur and `amount` the total damage dealt to it by every source at once (two blockers on one Dinosaur = one trigger for the sum; a sweeper hitting three Dinosaurs = three triggers, each with its own amount and subject).
-  <br>Why the existing vocabulary won't do: `batched: true` keys the batch by (permanent, ability, batch) in `triggers._collect_one`, not by subject, so a sweeper hitting several Dinosaurs folds them into ONE firing whose subject is the first Dinosaur and whose amount is the sum of all of them (`_joins_batched_damage`). Without `batched`, the trigger fires once per DAMAGE_DEALT, which `damage_permanent` emits per source, so a Dinosaur blocked by two creatures triggers twice with split amounts and can split the damage between two targets, which the printed single trigger cannot. Boros Reckoner's self-only batched form is right only because its subject is always the same permanent.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Wrathful Raptors** (rank 2617) — `wrathful_raptors`
-  - Whenever a Dinosaur you control is dealt damage, it deals that much damage to any target that isn't a Dinosaur.
 
 </details>
 

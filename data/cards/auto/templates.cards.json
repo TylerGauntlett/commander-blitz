@@ -287526,6 +287526,76 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "damage",
+              "source_object": {
+                "binding": "subject"
+              },
+              "target": "t1"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker",
+                  "Battle"
+                ],
+                "not_subtypes": [
+                  "Dinosaur"
+                ]
+              }
+            }
+          ],
+          "text": "Whenever a Dinosaur you control is dealt damage, it deals that much damage to any target that isn't a Dinosaur.",
+          "trigger": {
+            "batched": true,
+            "event": "dealt_damage",
+            "filter": {
+              "controller": "you",
+              "subtypes": [
+                "Dinosaur"
+              ]
+            },
+            "per_subject": true
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "wrathful_raptors",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{4}{R}",
+      "name": "Wrathful Raptors",
+      "oracle_text": "Trample\nWhenever a Dinosaur you control is dealt damage, it deals that much damage to any target that isn't a Dinosaur.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Dinosaur"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G",
         "R"

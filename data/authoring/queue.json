@@ -319412,12 +319412,12 @@
     },
     "Wrathful Raptors": {
       "edhrec_rank": 2617,
-      "gate": "template",
+      "gate": null,
       "name": "Wrathful Raptors",
-      "reason": "no template for: Whenever a Dinosaur you control is dealt damage, it deals that much damage to any target t",
+      "reason": "",
       "scryfall_id": "49243e92-93e3-4090-b4f7-86fa4ca2fef5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wrathful Red Dragon": {

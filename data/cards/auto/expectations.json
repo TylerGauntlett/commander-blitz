@@ -24004,6 +24004,10 @@
   "worn_powerstone": {
     "zone": "battlefield"
   },
+  "wrathful_raptors": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "wreck_and_rebuild": {
     "opponent_battlefield_count": 5,
     "zone": "graveyard"

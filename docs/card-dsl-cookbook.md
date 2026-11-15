@@ -11224,6 +11224,23 @@ still triggers the ability, and it resolves with him gone, which is the
 reminder text. Without `batched` the cap keeps the first source's event and
 `amount` reads one blocker's damage.
 
+"Whenever a Dinosaur you control is dealt damage, it deals that much damage to
+any target that isn't a Dinosaur." (Wrathful Raptors)
+
+```jsonc
+"trigger": {"event": "dealt_damage", "filter": {"subtypes": ["Dinosaur"]},
+            "controller": "you", "batched": true, "per_subject": true}
+```
+
+A trigger watching *other* permanents fires once per damaged permanent per
+damage event. `batched` alone groups the whole event, which is right when the
+subject is always the same permanent (Hercules) and wrong here: a sweeper over
+three Dinosaurs would fire once, bound to the first, for the sum. `per_subject`
+keys the group by the damaged permanent as well, so the sweeper fires three
+times, each with its own `subject` and `amount`, and a Dinosaur blocked by two
+creatures still fires once for both. The loader refuses it without `batched`
+or off `dealt_damage`.
+
 "Whenever one or more opponents lose life, you may cast target instant or
 sorcery card from your graveyard." (Emet-Selch of the Third Seat)
 

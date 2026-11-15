@@ -1,0 +1,141 @@
+{
+  "_comment": "Shapes for tests/unit/damage/test_dealt_damage_per_subject.py. Never part of a deck list. t_dps_watcher is Wrathful Raptors' trigger ('whenever a Dinosaur you control is dealt damage ... that much') with a counter payload that shows which Dinosaur fired and for how much; t_dps_near_miss is the same without per_subject, which folds a whole damage event into one firing; t_dps_brute is a 2/6 Dinosaur that survives it; t_dps_quake deals 1 damage to each creature in one op.",
+  "cards": [
+    {
+      "id": "t_dps_watcher",
+      "name": "T Dps Watcher",
+      "oracle_text": "Whenever a Dinosaur you control is dealt damage, put that many +1/+1 counters on it.",
+      "mana_cost": "{2}{G}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a Dinosaur you control is dealt damage, put that many +1/+1 counters on it.",
+          "trigger": {
+            "event": "dealt_damage",
+            "filter": {
+              "subtypes": [
+                "Dinosaur"
+              ]
+            },
+            "controller": "you",
+            "batched": true,
+            "per_subject": true
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": {
+                "binding": "amount"
+              },
+              "objects": {
+                "binding": "subject"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_dps_near_miss",
+      "name": "T Dps Near Miss",
+      "oracle_text": "Whenever a Dinosaur you control is dealt damage, put that many +1/+1 counters on it.",
+      "mana_cost": "{2}{G}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a Dinosaur you control is dealt damage, put that many +1/+1 counters on it.",
+          "trigger": {
+            "event": "dealt_damage",
+            "filter": {
+              "subtypes": [
+                "Dinosaur"
+              ]
+            },
+            "controller": "you",
+            "batched": true
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": {
+                "binding": "amount"
+              },
+              "objects": {
+                "binding": "subject"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_dps_brute",
+      "name": "Test Dps Brute",
+      "oracle_text": "",
+      "mana_cost": "{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Dinosaur"
+      ],
+      "power": 2,
+      "toughness": 6,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ]
+    },
+    {
+      "id": "t_dps_quake",
+      "name": "Test Dps Quake",
+      "oracle_text": "Test Dps Quake deals 1 damage to each creature.",
+      "mana_cost": "{R}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "spell_effects": [
+        {
+          "op": "damage",
+          "objects": {
+            "types": [
+              "Creature"
+            ],
+            "controller": "any"
+          },
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    }
+  ]
+}

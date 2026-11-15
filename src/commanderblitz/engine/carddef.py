@@ -941,6 +941,14 @@ class TriggerSpec:
     #: with ``damaged``, ``damagers`` and ``defender`` narrowed to that seat.
     #: Off by default: "…to one or more players" is one trigger for the batch.
     per_player: bool = False
+    #: "Whenever **a Dinosaur you control** is dealt damage, it deals **that
+    #: much** damage…" -- Wrathful Raptors. With ``batched`` on ``dealt_damage``,
+    #: one firing per damaged permanent per damage event rather than one for
+    #: the whole event: a Dinosaur blocked by two creatures triggers once for
+    #: the sum, and a sweeper hitting three Dinosaurs triggers three times,
+    #: each with its own ``subject`` and ``amount``. The loader refuses it
+    #: anywhere else.
+    per_subject: bool = False
     #: For ``leaves_battlefield``: the zone names the permanent must have gone
     #: to -- "when this creature dies **or is put into exile**" is
     #: ``("graveyard", "exile")``. Compared with the event's ``to_zone``, which

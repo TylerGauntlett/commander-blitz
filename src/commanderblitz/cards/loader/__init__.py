@@ -3978,6 +3978,17 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 f"506.2's battle half and means nothing on "
                 f"{model.trigger.event!r}"
             )
+        if model.trigger.per_subject and not (
+            model.trigger.event == "dealt_damage" and model.trigger.batched
+        ):
+            # One firing per damaged permanent is a way of grouping a batch, and
+            # only the batched `dealt_damage` groups by `subject`; anywhere else
+            # `_queue` would never read the flag.
+            raise DslError(
+                f"{where}: 'per_subject' groups a batched 'dealt_damage' trigger "
+                f"per damaged permanent, so it needs event 'dealt_damage' and "
+                f"'batched: true'"
+            )
         if model.trigger.per_player:
             # "…to a player" read once per seat. Only the batched combat-damage
             # event has seats to fan out over; anywhere else `collect` would
@@ -4072,6 +4083,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             level=model.trigger.level,
             or_battle=model.trigger.or_battle,
             per_player=model.trigger.per_player,
+            per_subject=model.trigger.per_subject,
             to_zones=tuple(model.trigger.to_zones) if model.trigger.to_zones else None,
             from_zones=tuple(model.trigger.from_zones) if model.trigger.from_zones else None,
             state=dict(model.trigger.state) if model.trigger.state else None,

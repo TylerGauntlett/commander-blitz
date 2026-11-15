@@ -3000,7 +3000,7 @@ def _queue(state: GameState, obj: GameObject, ability: Ability, event: GameEvent
     if spec_batched:
         batch = event.data.get("batch")
         if batch is not None:
-            batched_key = (obj.oid, ability.index, batch)
+            batched_key = (obj.oid, ability.index, batch, *_batch_subject(ability, event))
             if batched_key in state.batched_triggers:
                 return
 
@@ -3093,7 +3093,8 @@ def _joins_batched_damage(
     if spec is None or not spec.batched or spec.event != "dealt_damage":
         return False
     batch = event.data.get("batch")
-    if batch is None or (obj.oid, ability.index, batch) not in state.batched_triggers:
+    subject = _batch_subject(ability, event)
+    if batch is None or (obj.oid, ability.index, batch, *subject) not in state.batched_triggers:
         return False
     granted_by, ability_index = _granter_of(state, obj, ability)
     amount = int(event.data.get("amount", 0))
@@ -3103,9 +3104,22 @@ def _joins_batched_damage(
             and pending.ability_index == ability_index
             and pending.granted_by == granted_by
             and pending.bindings.get("batch") == batch
+            and (not subject or pending.bindings.get("subject") == subject[0])
         ):
             pending.bindings["amount"] = int(pending.bindings.get("amount", 0)) + amount
     return True
+
+
+def _batch_subject(ability: Ability, event: GameEvent) -> tuple[int, ...]:
+    """What a ``per_subject`` batch is further keyed by: the damaged permanent
+    (Wrathful Raptors' "whenever a Dinosaur you control is dealt damage"), so
+    each one fires once per damage event. Empty for every other trigger, which
+    groups the whole batch."""
+    spec = ability.trigger
+    if spec is None or not spec.per_subject:
+        return ()
+    subject = _subject_oid(spec.event, event)
+    return () if subject is None else (subject,)
 
 
 def _damage_dealt_key(obj: GameObject, ability: Ability, event: GameEvent) -> tuple | None:
