@@ -34932,12 +34932,12 @@
     },
     "Broadside Bombardiers": {
       "edhrec_rank": 5183,
-      "gate": "template",
+      "gate": null,
       "name": "Broadside Bombardiers",
-      "reason": "no template for: Boast — Sacrifice another creature or artifact: This creature deals damage equal to 2 plus",
+      "reason": "",
       "scryfall_id": "e74176a0-52bb-407e-9cce-f26bf1eceb41",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Broken Ambitions": {
@@ -60822,12 +60822,12 @@
     },
     "Daring Saboteur": {
       "edhrec_rank": 10832,
-      "gate": "template",
+      "gate": null,
       "name": "Daring Saboteur",
-      "reason": "no template for: {2}{U}: This creature can't be blocked this turn",
+      "reason": "",
       "scryfall_id": "93a78e9a-33ff-44d2-91d7-1f190996ceb9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Daring Skyjek": {
@@ -66612,12 +66612,12 @@
     },
     "Departed Deckhand": {
       "edhrec_rank": 9220,
-      "gate": "template",
+      "gate": null,
       "name": "Departed Deckhand",
-      "reason": "no template for: When this creature becomes the target of a spell, sacrifice it",
+      "reason": "",
       "scryfall_id": "985cfee6-97b7-4f42-8bfe-5e1e44bb54d6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dependable Quinjet": {

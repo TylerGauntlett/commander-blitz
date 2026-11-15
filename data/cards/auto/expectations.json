@@ -2749,6 +2749,10 @@
     },
     "zone": "battlefield"
   },
+  "broadside_bombardiers": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "broken_wings": {
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
@@ -4699,6 +4703,10 @@
     },
     "zone": "battlefield"
   },
+  "daring_saboteur": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "daring_thunder_thief": {
     "zone": "battlefield"
   },
@@ -5124,6 +5132,10 @@
       "0": 39
     },
     "zone": "graveyard"
+  },
+  "departed_deckhand": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "deploy_the_gatewatch": {
     "battlefield_count": 32,
