@@ -281202,12 +281202,12 @@
     },
     "The Indomitable": {
       "edhrec_rank": 2326,
-      "gate": "template",
+      "gate": null,
       "name": "The Indomitable",
-      "reason": "no template for: Whenever a creature you control deals combat damage to a player, draw a card",
+      "reason": "",
       "scryfall_id": "736cabaf-1387-4035-8751-3976eb835c8a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Infamous Cruelclaw": {

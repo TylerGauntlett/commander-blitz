@@ -253062,6 +253062,117 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control deals combat damage to a player, draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "deals_combat_damage_to_player",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 3,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "keep_pt": true,
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 3"
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "affects_player": "you",
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "count": {
+                "any_of": [
+                  {
+                    "subtypes": [
+                      "Pirate"
+                    ]
+                  },
+                  {
+                    "subtypes": [
+                      "Vehicle"
+                    ]
+                  }
+                ],
+                "controller": "you",
+                "tapped": true,
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 3
+            }
+          },
+          "effect": "cast_from_graveyard",
+          "kind": "static",
+          "text": "You may cast this card from your graveyard as long as you control three or more tapped Pirates and/or Vehicles."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "the_indomitable",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{2}{U}{U}",
+      "name": "The Indomitable",
+      "oracle_text": "Trample\nWhenever a creature you control deals combat damage to a player, draw a card.\nCrew 3\nYou may cast this card from your graveyard as long as you control three or more tapped Pirates and/or Vehicles.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
