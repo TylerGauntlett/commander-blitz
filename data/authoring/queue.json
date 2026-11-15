@@ -308862,12 +308862,12 @@
     },
     "Wakening Sun's Avatar": {
       "edhrec_rank": 3181,
-      "gate": "template",
+      "gate": null,
       "name": "Wakening Sun's Avatar",
-      "reason": "no template for: When this creature enters, if you cast it from your hand, destroy all non-Dinosaur creatur",
+      "reason": "",
       "scryfall_id": "820b6327-2cbf-4054-bc33-4baf9c26dd70",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Waker of Waves": {
@@ -321762,12 +321762,12 @@
     },
     "Zacama, Primal Calamity": {
       "edhrec_rank": 1788,
-      "gate": "template",
+      "gate": null,
       "name": "Zacama, Primal Calamity",
-      "reason": "no template for: When Zacama enters, if you cast it, untap all lands you control",
+      "reason": "",
       "scryfall_id": "05c5a9a8-badd-43ab-8408-a13e75407681",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Zack Fair": {

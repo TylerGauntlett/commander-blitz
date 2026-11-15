@@ -23075,6 +23075,14 @@
     },
     "zone": "graveyard"
   },
+  "wakening_sun_s_avatar": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 4
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "battlefield"
+  },
   "wakestone_gargoyle": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -24111,6 +24119,18 @@
       "0": 40
     },
     "zone": "graveyard"
+  },
+  "zacama_primal_calamity": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "reach",
+        "vigilance",
+        "trample"
+      ]
+    },
+    "zone": "battlefield"
   },
   "zack_fair": {
     "counters": {
