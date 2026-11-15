@@ -76,7 +76,7 @@ each heading; this table is generated from them.
 | [Science! (Fallout)](#science-fallout) | L | high | Secret choices | 0 |
 | [Mutant Menace (Fallout)](#mutant-menace-fallout) | L | high | Rad counters | 0 |
 | [Blame Game (Murders at Karlov Manor Commander)](#blame-game-murders-at-karlov-manor-commander) | L | high | Voting: will of the council and council's dilemma, Secret choices | 0 |
-| [Deadly Disguise (Murders at Karlov Manor Commander)](#deadly-disguise-murders-at-karlov-manor-commander) | L | high | nothing | 0 |
+| [Deadly Disguise (Murders at Karlov Manor Commander)](#deadly-disguise-murders-at-karlov-manor-commander) | L | high | Every creature type means every creature type | 0 |
 | [Blood Rites (The Lost Caverns of Ixalan Commander)](#blood-rites-the-lost-caverns-of-ixalan-commander) | M | high | nothing | 0 |
 | [Veloci-Ramp-Tor (The Lost Caverns of Ixalan Commander)](#veloci-ramp-tor-the-lost-caverns-of-ixalan-commander) | L | high | nothing | 0 |
 | [Ahoy Mateys (The Lost Caverns of Ixalan Commander)](#ahoy-mateys-the-lost-caverns-of-ixalan-commander) | L | high | nothing | 0 |
@@ -141,10 +141,10 @@ each heading; this table is generated from them.
 | [CPU takeover and reconnection](#cpu-takeover-and-reconnection) | M | medium | nothing | 1 |
 | [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) | M | medium | nothing | 1 |
 | [Distributing counters from a spell](#distributing-counters-from-a-spell) | M | medium | nothing | 1 |
+| [Every creature type means every creature type](#every-creature-type-means-every-creature-type) | M | medium | nothing | 1 |
 | [Replays and sharing](#replays-and-sharing) | M | medium | nothing | 1 |
 | [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) | M | medium | nothing | 0 |
 | [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) | M | medium | nothing | 0 |
-| [Every creature type means every creature type](#every-creature-type-means-every-creature-type) | M | medium | nothing | 0 |
 | [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) | M | medium | nothing | 0 |
 | [Viewing a deck's list](#viewing-a-decks-list) | M | medium | nothing | 0 |
 | [A queue](#a-queue) | L | medium | CPU takeover and reconnection, Brackets, derived from the list, Outcomes as data | 0 |
@@ -157,8 +157,6 @@ Derived from the properties: an item is **ready** when nothing it depends
 on is still on this page, and the ready items are ranked by impact, then
 rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
-
-**In progress:** [Deadly Disguise (Murders at Karlov Manor Commander)](#deadly-disguise-murders-at-karlov-manor-commander).
 
 **Ready now, best first:**
 
@@ -226,10 +224,10 @@ same list, and `/extend-roadmap` starts at the top of it.
 62. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
 63. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
 64. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
-65. [Replays and sharing](#replays-and-sharing) — M, medium
-66. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-67. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
-68. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
+65. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
+66. [Replays and sharing](#replays-and-sharing) — M, medium
+67. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+68. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
 69. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
 70. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
 71. [Archidekt import](#archidekt-import) — S, low
@@ -262,6 +260,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Science! (Fallout)](#science-fallout) — [Secret choices](#secret-choices)
 - [Mutant Menace (Fallout)](#mutant-menace-fallout) — [Rad counters](#rad-counters)
 - [Blame Game (Murders at Karlov Manor Commander)](#blame-game-murders-at-karlov-manor-commander) — [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma), [Secret choices](#secret-choices)
+- [Deadly Disguise (Murders at Karlov Manor Commander)](#deadly-disguise-murders-at-karlov-manor-commander) — [Every creature type means every creature type](#every-creature-type-means-every-creature-type)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -2821,7 +2820,7 @@ whole-game test able to draw the deck.
 
 ### Deadly Disguise (Murders at Karlov Manor Commander)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing · **In progress**.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Every creature type means every creature type](#every-creature-type-means-every-creature-type).
 
 #### Today
 
@@ -2832,6 +2831,34 @@ coming-soon shell on the shelf: its row `mkc_deadly_disguise` is in
 `python scripts/sync_precons.py --missing mkc_deadly_disguise` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+
+Every card on the list has been through `/author-cards` once, and disguise,
+`turn_face_up`, a face-down `return_from_graveyard`, counters on
+`create_token` and the `deals_damage` trigger are built. Thirteen cards are
+left, and each has a gap record naming what it waits on:
+
+- Mirror Entity is every creature type, which
+  [changeling-every-type](changeling-every-type.md) covers; this item
+  depends on it.
+- Boltbender needs "choose new targets" for spells and abilities already on
+  the stack.
+- Den Protector needs a block restriction comparing a blocker's power with
+  this creature's.
+- Duskana, the Rage Mother needs base power and toughness in a trigger
+  filter.
+- Hooded Hydra needs "as this is turned face up, put five +1/+1 counters on
+  it", a replacement on turning face up.
+- Kaust, Eyes of the Glade needs a "turned face up this turn" filter key.
+- Obscuring Aether needs an op that turns a permanent face down and a
+  face-down filter on spell cost reductions.
+- Panoptic Projektor needs a next-spell discount for a face-down creature
+  spell.
+- Scroll of Fate needs manifest from hand.
+- Tesak, Judith's Hellhound needs unleash.
+- Veiled Ascension needs `face_down` in a static's `affects` filter.
+- Yedora, Grave Gardener needs a face-down permanent that is a Forest land
+  rather than a 2/2 creature.
+- Zoetic Cavern needs morph on a land card.
 
 #### The change
 
