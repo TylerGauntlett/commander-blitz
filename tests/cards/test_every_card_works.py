@@ -1427,6 +1427,15 @@ def _provide_the_target(game: Game, registry, oid: int, ability) -> None:
             )
         return
     for spec in ability.targets:
+        if spec.kind == "card_in_exile" and spec.selector.get("exiled_with") == "self":
+            # Bronzebeak Foragers -- "{X}{W}: Put target card with mana value X
+            # **exiled with this creature** into its owner's graveyard." Only
+            # its own enters trigger can have exiled one, and the harness puts
+            # the card straight onto the battlefield, so the ability reported as
+            # unusable when nothing had been exiled with it yet. One of the
+            # opponent's cards, linked to the source the way `exile` links it.
+            _stock_the_exiled_with(game, oid)
+            continue
         if spec.kind == "card_in_graveyard":
             # Emry, Lurker of the Loch -- "{T}: Choose target artifact card in
             # your graveyard." The fodder below is stocked onto the
@@ -1491,6 +1500,23 @@ def _provide_the_target(game: Game, registry, oid: int, ability) -> None:
                 )
             )
     game.state.bump_chars()
+
+
+def _stock_the_exiled_with(game: Game, oid: int) -> None:
+    """Exile one card of the opponent's, linked to ``oid`` as its exiler.
+
+    The pick is the first card in the opponent's library, whatever it is: an
+    "exiled with this creature" target names no type, and an X it must match
+    is announced at activation, so any mana value has an X that reaches it.
+    """
+    library = game.state.players[1].library
+    if not library:
+        return
+    card = library.pop(0)
+    obj = game.state.objects[card]
+    obj.zone = Zone.EXILE
+    obj.exiled_by = oid
+    game.state.players[1].exile.append(card)
 
 
 def _stock_the_graveyard(game: Game, registry, spec) -> None:
