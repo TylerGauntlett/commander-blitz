@@ -31,6 +31,7 @@ from ..characteristics import (
 from ..enums import PERMANENT_TYPES, CardType, Supertype, Zone
 from ..errors import DslError
 from ..mana import printed_cost_is, validate_printed_cost_list
+from ..objects import GRAVEYARD_ARRIVAL_WAYS
 from ..player_statics import commander_subtypes, goaders
 from ..structs import CONVOKED_BINDING
 from .context import EffectContext, ask_objects
@@ -104,6 +105,12 @@ SELECTOR_KEYS = frozenset(
         #: left and came back is a new object (400.7) and has been surveilled
         #: by nobody.
         "surveilled_this_turn",
+        #: "…target card in a graveyard that was **discarded or put there from
+        #: a library this turn**" -- Ghost of Ramirez DePietro. A list of
+        #: `objects.GRAVEYARD_ARRIVAL_WAYS`, any one enough, asked of the card's
+        #: own record of its arrival (`GameObject.arrived_in_graveyard_this_turn`).
+        #: `surveilled_this_turn` is the surveil-only sibling.
+        "graveyard_arrival_this_turn",
         #: "Each creature **that convoked this spell** connives" -- Lethal
         #: Scheme. The creatures tapped to pay for the resolving spell (702.51c),
         #: recorded on its stack item by the cast that tapped them; `true` only,
@@ -959,6 +966,10 @@ def matches(
         # drawn this turn that was not.
         return False
     if selector.get("surveilled_this_turn") and not obj.surveilled_this_turn(state.turn):
+        return False
+    if (ways := selector.get("graveyard_arrival_this_turn")) is not None and not (
+        obj.arrived_in_graveyard_this_turn(state.turn, ways)
+    ):
         return False
     if (name := selector.get("exclude_binding")) is not None and oid in _bound_oids(ctx, str(name)):
         # `_bound_oids`, not `_bound_oid`: a binding is one oid for a trigger or
@@ -2026,6 +2037,19 @@ def validate_parity_clauses(selector: Any, where: str) -> None:
             )
 
 
+def validate_graveyard_arrival_ways(ways: Any, where: str) -> None:
+    """A non-empty list of `GRAVEYARD_ARRIVAL_WAYS`: how a card reached a graveyard."""
+    if not isinstance(ways, list) or not ways:
+        raise DslError(
+            f"{where}: a non-empty list of {sorted(GRAVEYARD_ARRIVAL_WAYS)}, got {ways!r}"
+        )
+    unknown = [w for w in ways if w not in GRAVEYARD_ARRIVAL_WAYS]
+    if unknown:
+        raise DslError(
+            f"{where}: unknown way(s) {unknown}; one of {sorted(GRAVEYARD_ARRIVAL_WAYS)}"
+        )
+
+
 def validate_selector(selector: Any, where: str) -> None:
     """Load-time check that a selector uses only known keys."""
     if selector is None:
@@ -2046,6 +2070,15 @@ def validate_selector(selector: Any, where: str) -> None:
     zone = selector.get("zone")
     if zone is not None and zone not in ZONE_NAMES:
         raise DslError(f"{where}: unknown zone {zone!r}")
+    if "graveyard_arrival_this_turn" in selector:
+        validate_graveyard_arrival_ways(
+            selector["graveyard_arrival_this_turn"], f"{where}.graveyard_arrival_this_turn"
+        )
+        if zone not in (None, "graveyard"):
+            raise DslError(
+                f"{where}.graveyard_arrival_this_turn: asks how a card reached a "
+                f"graveyard, so it means nothing on a {zone!r} selector"
+            )
     # `paid_by` takes either "self"/an oid ("when **that mana** is spent") or a
     # selector over what the mana's source *was* ("if mana from a **Treasure**
     # was spent to cast it"). The selector half is validated against its own

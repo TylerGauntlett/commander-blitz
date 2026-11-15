@@ -96980,6 +96980,81 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "blockers": {
+            "toughness": {
+              "op": ">=",
+              "value": 3
+            }
+          },
+          "effect": "block_restriction",
+          "kind": "static",
+          "text": "Ghost of Ramirez DePietro can't be blocked by creatures with toughness 3 or greater."
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_to_hand"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "optional": true,
+              "selector": {
+                "controller": "any",
+                "graveyard_arrival_this_turn": [
+                  "discarded",
+                  "from_library"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Whenever Ghost of Ramirez DePietro deals combat damage to a player, choose up to one target card in a graveyard that was discarded or put there from a library this turn. Put that card into its owner's hand.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "ghost_of_ramirez_depietro",
+      "keywords": [
+        "partner"
+      ],
+      "mana_cost": "{2}{U}",
+      "name": "Ghost of Ramirez DePietro",
+      "oracle_text": "Ghost of Ramirez DePietro can't be blocked by creatures with toughness 3 or greater.\nWhenever Ghost of Ramirez DePietro deals combat damage to a player, choose up to one target card in a graveyard that was discarded or put there from a library this turn. Put that card into its owner's hand.\nPartner (You can have two commanders if both have partner.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Pirate"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -195832,6 +195907,70 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "affects_spells": {
+            "not_types": [
+              "Land"
+            ]
+          },
+          "condition": {
+            "is_your_turn": true
+          },
+          "effect": "cast_from_graveyard",
+          "graveyard_arrival_this_turn": [
+            "milled"
+          ],
+          "kind": "static",
+          "static_max_per_turn": 1,
+          "text": "Once during each of your turns, you may cast a spell from among cards in your graveyard that were milled this turn."
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "mill",
+              "player": "each_player"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}: Each player mills a card. (They each put the top card of their library into their graveyard.)"
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "raul_trouble_shooter",
+      "mana_cost": "{1}{U}{B}",
+      "name": "Raul, Trouble Shooter",
+      "oracle_text": "Once during each of your turns, you may cast a spell from among cards in your graveyard that were milled this turn.\n{T}: Each player mills a card. (They each put the top card of their library into their graveyard.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Mutant",
+        "Rogue"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
       ]
     },
     {

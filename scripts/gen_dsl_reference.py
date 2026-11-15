@@ -534,6 +534,8 @@ SELECTORS: dict[str, Entry] = {
     "drawn_this_turn": ("Cards drawn this turn (hand only).", "Cards in a hand drawn this turn"),
     "surveilled_this_turn": ("Cards a surveil put into a graveyard this turn, as the same object.",
                              "Cards in a graveyard surveilled this turn"),
+    "graveyard_arrival_this_turn": ("Cards that reached a graveyard this turn in one of a list of ways: `discarded`, `milled`, `from_<zone>`.",
+                                    "Cards in a graveyard by how they arrived this turn"),
     "enchanted_by": ("Has an Aura attached (`true`/`false`), or one whose controller is `you`/`opponent`.",
                      '"Enchanted creatures" — `enchanted_by`'),
     "equipped": ("Has one or more Equipment attached, anybody's (`true`/`false`).",

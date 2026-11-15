@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**397 cards** blocked by **349** capabilities.
+**395 cards** blocked by **347** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -29,7 +29,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [choose-new-targets](#choose-new-targets) | 3 | 75 | op |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 6346 | op |
 | [crime](#crime) | 3 | 2244 | trigger_event |
-| [milled-this-turn](#milled-this-turn) | 3 | 4283 | selector |
 | [omen](#omen) | 3 | 3355 | cost, engine |
 | [random-player-choice](#random-player-choice) | 3 | 5120 | op |
 | [secret-choice](#secret-choice) | 3 | 3483 | decision |
@@ -199,7 +198,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [granted-alternative-cost-life-equal-to-mana-value](#granted-alternative-cost-life-equal-to-mana-value) | 1 | 3022 | static_effect |
 | [granted-miracle-from-mana-cost](#granted-miracle-from-mana-cost) | 1 | 5025 | static_effect |
 | [granted-player-wide-static](#granted-player-wide-static) | 1 | 4512 | static_effect |
-| [graveyard-arrival-this-turn](#graveyard-arrival-this-turn) | 1 | 9699 | selector |
 | [graveyard-cast-dynamic-mana-value-cap](#graveyard-cast-dynamic-mana-value-cap) | 1 | 11023 | static_effect |
 | [graveyard-cast-per-permanent-type](#graveyard-cast-per-permanent-type) | 1 | 1104 | static_effect |
 | [graveyard-cast-permission-additional-cost](#graveyard-cast-permission-additional-cost) | 1 | 7356 | static_effect |
@@ -391,7 +389,6 @@ Blocks **22** cards.
   - When this creature enters, target player gets two rad counters.
 - **Tato Farmer** (rank 4283) — `tato_farmer`
   - Landfall — Whenever a land you control enters, you may get two rad counters.
-  - {T}: Put target land card in a graveyard that was milled this turn onto the battlefield under your control tapped.
 - **Glowing One** (rank 4485) — `glowing_one`
   - Whenever this creature deals combat damage to a player, they get four rad counters.
 - **Vexing Radgull** (rank 4685) — `vexing_radgull`
@@ -884,26 +881,6 @@ Blocks **3** cards.
   - Whenever you commit a crime, put a loot counter on this artifact. This ability triggers only once each turn
 - **Duelist of the Mind** (rank 10244) — `duelist_of_the_mind`
   - Whenever you commit a crime, you may draw a card. If you do, discard a card. This ability triggers only once each turn
-
-</details>
-
-## milled-this-turn
-
-Blocks **3** cards.
-
-- **(selector)** a per-turn record of which cards were put into a graveyard by milling this turn (any source, any player's mill), exposed as a spell filter key (e.g. `milled_this_turn: true` in `affects_spells`) that the `cast_from_graveyard` static can read, so 'once during each of your turns, you may cast a spell from among cards in your graveyard that were milled this turn' is `cast_from_graveyard` with `affects_player: "you"`, `max_per_turn: 1`, `condition: {is_your_turn: true}` and that filter; the same record would also serve Tato Farmer and The Master, Transcendent's 'card in a graveyard that was milled this turn' target selectors
-  <br>Why the existing vocabulary won't do: cast_from_graveyard's affects_spells only takes SPELL_FILTER_KEYS (types, colors, mana_value, ...), none of which reads how a card arrived in the graveyard; the mill op's `as` binding only records cards milled by that one resolution (Locke's 'milled this way' / grant_playable), not every card milled this turn by any source, and selector_keys has drawn_this_turn and entered_this_turn but no milled equivalent
-
-<details><summary>Cards waiting on this</summary>
-
-- **Tato Farmer** (rank 4283) — `tato_farmer`
-  - Landfall — Whenever a land you control enters, you may get two rad counters.
-  - {T}: Put target land card in a graveyard that was milled this turn onto the battlefield under your control tapped.
-- **The Master, Transcendent** (rank 5158) — `the_master_transcendent`
-  - When The Master enters, target player gets two rad counters.
-  - {T}: Put target creature card in a graveyard that was milled this turn onto the battlefield under your control. It's a green Mutant with base power and toughness 3/3. (It loses its other colors and creature types.)
-- **Raul, Trouble Shooter** (rank 5441) — `raul_trouble_shooter`
-  - Once during each of your turns, you may cast a spell from among cards in your graveyard that were milled this turn.
 
 </details>
 
@@ -3494,20 +3471,6 @@ Blocks **1** card.
 
 - **Nerd Rage** (rank 4512) — `nerd_rage`
   - Enchanted creature has "You have no maximum hand size" and "Whenever this creature attacks, if you have ten or more cards in hand, it gets +10/+10 until end of turn."
-
-</details>
-
-## graveyard-arrival-this-turn
-
-Blocks **1** card.
-
-- **(selector)** a per-turn record, on each card in a graveyard, of how it got there this turn -- discarded from hand, or moved from a library (mill, surveil, any library-to-graveyard move) by any source and any player -- exposed as a selector key for graveyard targets, e.g. `put_into_graveyard_this_turn: {"by": ["discard", "from_library"]}`, so the target is `{"kind": "card", "optional": true, "selector": {"zone": "graveyard", "controller": "any", "put_into_graveyard_this_turn": {...}}}` and the effect a return_to_hand of it. The same record would serve the existing `milled_this_turn` gap (Raul, Tato Farmer, The Master, Transcendent) as the from_library half
-  <br>Why the existing vocabulary won't do: selector_keys has drawn_this_turn, entered_this_turn and surveilled_this_turn but nothing that reads how or when a card arrived in a graveyard; the value keys cards_discarded_this_turn and cards_to_graveyard_this_turn are only counts, not per-card filters; the ability key arrived_this_turn_from belongs to the play_lands_from_graveyard static, not to target selectors; discard and mill `as` bindings only cover cards moved by that one resolution, not every card discarded or milled this turn by any source
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ghost of Ramirez DePietro** (rank 9699) — `ghost_of_ramirez_depietro`
-  - Whenever Ghost of Ramirez DePietro deals combat damage to a player, choose up to one target card in a graveyard that was discarded or put there from a library this turn. Put that card into its owner's hand.
 
 </details>
 

@@ -4084,6 +4084,42 @@ refuses it on any other static, and on a card's own `active_zones:
 ["graveyard"]` permission. The near miss is `arrived_this_turn_from:
 ["library"]`, which a milled card also passes.
 
+### Cards in a graveyard by how they arrived this turn
+
+```jsonc
+// Ghost of Ramirez DePietro: "…target card in a graveyard that was discarded
+// or put there from a library this turn"
+{ "zone": "graveyard", "controller": "any",
+  "graveyard_arrival_this_turn": ["discarded", "from_library"] }
+
+// Raul, Trouble Shooter: "Once during each of your turns, you may cast a spell
+// from among cards in your graveyard that were milled this turn."
+{ "kind": "static", "effect": "cast_from_graveyard", "affects_player": "you",
+  "affects_spells": { "not_types": ["Land"] }, "static_max_per_turn": 1,
+  "condition": { "is_your_turn": true },
+  "graveyard_arrival_this_turn": ["milled"] }
+```
+
+`graveyard_arrival_this_turn` is a non-empty list of ways, any one enough,
+asked of the card's own record of its latest arrival — the `graveyard_turn`,
+`graveyard_from` and `graveyard_cause` that `zones.move_object` writes — by
+`GameObject.arrived_in_graveyard_this_turn`. The ways are
+`objects.GRAVEYARD_ARRIVAL_WAYS`: `discarded` (the discard action, 701.9, by an
+effect or a cost), `milled` (the mill action, 701.13, by any source) and
+`from_<zone>` (from that zone by any route). `from_library` is wider than
+`milled`: a surveil or a look-at-the-top that bins a card put it there from a
+library and milled nothing, which is the difference between Ghost's sentence
+and Raul's. A card that left and came back is a new object (400.7) and answers
+for its new arrival only.
+
+On a selector it is effect-side and needs no `zone` beyond `graveyard`; another
+`zone` is refused. On a static it narrows `cast_from_graveyard` and
+`play_lands_from_graveyard` exactly where `surveilled_this_turn` does, and the
+loader refuses it on any other static. The near misses: `surveilled_this_turn`
+is the surveil-only case, `arrived_this_turn_from` (Banon) knows the zone but
+not the action, and a `mill` or `discard` op's `as` binding holds only the
+cards that one resolution moved.
+
 ### A search whose destination depends on what it found
 
 ```jsonc

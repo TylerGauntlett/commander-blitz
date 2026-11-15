@@ -8238,6 +8238,9 @@
   "ghitu_encampment": {
     "zone": "battlefield"
   },
+  "ghost_of_ramirez_depietro": {
+    "zone": "battlefield"
+  },
   "ghost_quarter": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -16320,6 +16323,9 @@
     "zone": "battlefield"
   },
   "raugrin_triome": {
+    "zone": "battlefield"
+  },
+  "raul_trouble_shooter": {
     "zone": "battlefield"
   },
   "ravenous_chupacabra": {

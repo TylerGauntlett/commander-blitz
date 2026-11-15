@@ -47,6 +47,7 @@ from commanderblitz.engine.effects.selectors import (
     ZONE_NAMES,
     validate_colorless_key,
     validate_enchanted_by_key,
+    validate_graveyard_arrival_ways,
     validate_has_counters_key,
     validate_selector,
 )
@@ -5170,6 +5171,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 ("enters_tapped", model.enters_tapped),
                 ("arrived_this_turn_from", model.arrived_this_turn_from is not None),
                 ("surveilled_this_turn", model.surveilled_this_turn),
+                ("graveyard_arrival_this_turn", model.graveyard_arrival_this_turn is not None),
                 ("pay_life_instead", model.pay_life_instead),
                 ("escape", model.escape is not None),
             )
@@ -7394,6 +7396,19 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             if known:
                 raise DslError(f"{where}.arrived_this_turn_from: unknown zone(s) {sorted(known)}")
             static["arrived_this_turn_from"] = zones
+    if model.graveyard_arrival_this_turn is not None:
+        # Read where `surveilled_this_turn` is read, and refused elsewhere for
+        # its reason below.
+        if model.effect not in ("cast_from_graveyard", "play_lands_from_graveyard"):
+            raise DslError(
+                f"{where}: 'graveyard_arrival_this_turn' narrows a cast_from_graveyard "
+                f"or play_lands_from_graveyard permission; nothing reads it on "
+                f"{model.effect!r}"
+            )
+        validate_graveyard_arrival_ways(
+            model.graveyard_arrival_this_turn, f"{where}.graveyard_arrival_this_turn"
+        )
+        static["graveyard_arrival_this_turn"] = list(model.graveyard_arrival_this_turn)
     if model.surveilled_this_turn:
         # Read by the two graveyard permissions' per-object checks and by
         # nothing else, so anywhere else it would be a clause silently dropped.

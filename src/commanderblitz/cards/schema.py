@@ -983,6 +983,11 @@ class AbilityModel(BaseModel):
     #: graveyard is a fact about this copy, read off
     #: `GameObject.surveilled_this_turn`.
     surveilled_this_turn: bool = False
+    #: "…from among cards in your graveyard that were **milled this turn**."
+    #: Raul, Trouble Shooter. The selector key of the same name on a
+    #: `cast_from_graveyard` or `play_lands_from_graveyard` static: a list of
+    #: `objects.GRAVEYARD_ARRIVAL_WAYS`, any one enough, asked of the object.
+    graveyard_arrival_this_turn: list[str] | None = None
     #: ``cant_cast_spells_from_zones``: the zones the named players can't cast
     #: spells **from** -- or, as ``except_zones``, the ones they still can.
     #: Drannith Magistrate's "from anywhere other than their hands" is

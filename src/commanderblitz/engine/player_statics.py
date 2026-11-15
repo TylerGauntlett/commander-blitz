@@ -2511,6 +2511,9 @@ def graveyard_land_play_allows(state: GameState, pid: int, obj: GameObject) -> b
             continue
         if static.get("surveilled_this_turn") and not obj.surveilled_this_turn(state.turn):
             continue
+        ways = static.get("graveyard_arrival_this_turn")
+        if ways is not None and not obj.arrived_in_graveyard_this_turn(state.turn, ways):
+            continue
         filt = static.get("affects_spells")
         if filt is None or _matches_printed(card, filt):
             return True
@@ -2625,6 +2628,9 @@ def graveyard_cast_arrival_ok(state: GameState, static: Mapping[str, Any], obj: 
     "cards in your graveyard you've surveilled this turn" (Eye of Duskmantle).
     """
     if static.get("surveilled_this_turn") and not obj.surveilled_this_turn(state.turn):
+        return False
+    ways = static.get("graveyard_arrival_this_turn")
+    if ways is not None and not obj.arrived_in_graveyard_this_turn(state.turn, ways):
         return False
     arrival = static.get("arrived_this_turn_from")
     if arrival is None:

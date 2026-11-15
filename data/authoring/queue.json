@@ -107872,12 +107872,12 @@
     },
     "Ghost of Ramirez DePietro": {
       "edhrec_rank": 9699,
-      "gate": "template",
+      "gate": null,
       "name": "Ghost of Ramirez DePietro",
-      "reason": "no template for: can't be blocked by creatures with toughness 3 or greater",
+      "reason": "",
       "scryfall_id": "15e649e1-dcb3-41d9-8055-cf3c98e25b1e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ghost, Spectral Saboteur": {
@@ -215952,12 +215952,12 @@
     },
     "Raul, Trouble Shooter": {
       "edhrec_rank": 5441,
-      "gate": "template",
+      "gate": null,
       "name": "Raul, Trouble Shooter",
-      "reason": "no template for: Once during each of your turns, you may cast a spell from among cards in your graveyard th",
+      "reason": "",
       "scryfall_id": "3b73a314-b197-4954-a242-7d9096a406c1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ravaged Highlands": {

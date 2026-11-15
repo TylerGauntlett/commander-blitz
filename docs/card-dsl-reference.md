@@ -11,7 +11,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | Family | Count |
 |---|---|
 | [Effect ops](#effect-ops) | 181 |
-| [Selectors](#selectors) | 77 |
+| [Selectors](#selectors) | 78 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 76 |
 | [Conditions](#conditions) | 37 |
@@ -267,6 +267,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `face_down` | A permanent that is face down (`true`) or face up (`false`), 708.2; not in a static's filters, nor on a departure trigger. | ["Face-down creatures" — face_down](card-dsl-cookbook.md#face-down-creatures--face_down) |
 | `goaded` | Is (or is not) goaded, by anyone (701.38). | ["Goaded creatures" — goaded](card-dsl-cookbook.md#goaded-creatures--goaded) |
 | `granter` | The permanent that granted the resolving ability (`self` there is the recipient); true only, and only in a granted trigger's or activated ability's effects. | ["…fight Grothama" — granter](card-dsl-cookbook.md#fight-grothama--granter) |
+| `graveyard_arrival_this_turn` | Cards that reached a graveyard this turn in one of a list of ways: `discarded`, `milled`, `from_<zone>`. | [Cards in a graveyard by how they arrived this turn](card-dsl.md#cards-in-a-graveyard-by-how-they-arrived-this-turn) |
 | `has_counters` | Has counters on it: `true` any kind, or one named kind. | [has_counters — "with counters on them"](card-dsl.md#has_counters--with-counters-on-them) |
 | `haunted_by` | Haunted by the named card. | [Haunt — the exile link pointing the other way](card-dsl-cookbook.md#haunt--the-exile-link-pointing-the-other-way) |
 | `is_commander` | Is (or is not) a commander. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
