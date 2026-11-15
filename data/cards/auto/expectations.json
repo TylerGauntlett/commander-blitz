@@ -7054,6 +7054,10 @@
     },
     "zone": "graveyard"
   },
+  "fathom_fleet_captain": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "fathom_mage": {
     "battlefield_count": 33,
     "zone": "battlefield"

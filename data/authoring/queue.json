@@ -92042,12 +92042,12 @@
     },
     "Fathom Fleet Captain": {
       "edhrec_rank": 9414,
-      "gate": "template",
+      "gate": null,
       "name": "Fathom Fleet Captain",
-      "reason": "no template for: Whenever this creature attacks, if you control another nontoken Pirate, you may pay {2}. I",
+      "reason": "",
       "scryfall_id": "7374d12c-6a0a-457a-b7b8-5aaf3c11e009",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fathom Fleet Cutthroat": {

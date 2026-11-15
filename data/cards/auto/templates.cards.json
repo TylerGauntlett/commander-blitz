@@ -83207,6 +83207,71 @@
         {
           "effects": [
             {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "create_token",
+                  "token": "pirate_2_2_b_menace"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{2}"
+              },
+              "player": "you",
+              "prompt": "Pay {2} to create a 2/2 black Pirate creature token with menace?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, if you control another nontoken Pirate, you may pay {2}. If you do, create a 2/2 black Pirate creature token with menace.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "controller": "you",
+                "exclude_self": true,
+                "is_token": false,
+                "subtypes": [
+                  "Pirate"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "fathom_fleet_captain",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{1}{B}",
+      "name": "Fathom Fleet Captain",
+      "oracle_text": "Menace\nWhenever this creature attacks, if you control another nontoken Pirate, you may pay {2}. If you do, create a 2/2 black Pirate creature token with menace.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Pirate"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "condition": {
                 "any": [
                   {
